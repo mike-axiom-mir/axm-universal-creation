@@ -1,0 +1,13 @@
+# Generated/logging surfaces are not architectural requirements.
+logs/
+telemetry/
+traces/
+
+# Local daily snapshots belong outside the active source tree by default.
+snapshots/
+
+# Common generated/runtime clutter.
+node_modules/
+__pycache__/
+*.pyc
+.DS_Store

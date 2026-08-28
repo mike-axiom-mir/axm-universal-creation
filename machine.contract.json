@@ -1,0 +1,78 @@
+{
+  "name": "AXM Universal Creation",
+  "status": "seed-experimental",
+  "mode": "persistent-running-creation-system",
+  "agentRequired": false,
+  "brainArchitecture": "unspecified-by-design",
+  "globalEndCondition": null,
+  "globalGrowthTarget": null,
+  "globalActivityTarget": null,
+  "roots": [
+    "truth",
+    "agency",
+    "continuity",
+    "wisdom-before-speed"
+  ],
+  "growth": {
+    "isRoot": false,
+    "isBenchmark": false,
+    "isReward": false,
+    "isGlobalTarget": false,
+    "meaning": "possible outcome of real creation and experience exposing capability gaps"
+  },
+  "selfModification": {
+    "allowed": true,
+    "outsideBuilderRequired": false,
+    "rootFitRequiredBeforeContinuingAdoption": true,
+    "currentResultMustRemainInspectable": true
+  },
+  "inspectability": {
+    "machineStructureMustBeNonHidden": true,
+    "externalBlackBoxesMustBeExplicitlyLabeled": true,
+    "actionLogsRequired": false,
+    "promptLogsRequired": false,
+    "chainOfThoughtCaptureRequired": false,
+    "continuousTelemetryRequired": false
+  },
+  "recovery": {
+    "model": "one-complete-snapshot-per-day",
+    "badCurrentState": "quarantine-and-restore-earlier-snapshot"
+  },
+  "startingCreationLayers": [
+    "atoms",
+    "components",
+    "organs",
+    "capabilities",
+    "creations"
+  ],
+  "standalone": true,
+  "inheritsOldWorkshopArchitectureByDefault": false,
+  "buildHygiene": {
+    "activeMachineCopies": 1,
+    "temporaryWorkspaceCloneRequired": false,
+    "mergeBackWorkflowRequired": false,
+    "buildOwnsAndRemovesItsDebris": true,
+    "destructiveGlobalCleanIsNormalOperation": false
+  },
+  "integrity": {
+    "internalHashesAllowed": true,
+    "participantTrustClassification": false,
+    "ordinaryCreationBlockedByHashMismatch": false,
+    "purpose": "state verification, corruption/change localization, recovery support"
+  },
+  "directionalOutcomes": {
+    "capabilityGapTargetsOutcomeNotExactPriorSolution": true
+  },
+  "hostEmbedding": {
+    "coreIntendedAsInnerBody": true,
+    "hostAdaptersExpected": true,
+    "hostOwnershipRequired": false
+  },
+  "workshop": {
+    "status": "paused",
+    "isFoundation": false,
+    "standaloneCapabilitiesFirst": true,
+    "laterRepairAttemptMayUseProvenExternalCapabilities": true,
+    "repairMustNotEndangerStandaloneMachine": true
+  }
+}
