@@ -1,0 +1,25 @@
+{
+  "id": "AXM-CAP-INSPECT-REGISTRY",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Inspect the current Universal Creation registry without hiding source locations or implementation status.",
+  "handles": ["registry-inspection"],
+  "input_contract": {
+    "required": [],
+    "properties": {
+      "query": "optional text search",
+      "level": "optional atom/component/organ filter",
+      "limit": "optional result limit"
+    }
+  },
+  "output_contract": {"kind": "structured-data", "format": "json-compatible"},
+  "dependencies": ["reference Universal Creation Map v0.1"],
+  "relationships": [],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:inspect_registry",
+    "source": "src/axm_uc/capabilities.py"
+  },
+  "limitations": ["registry candidates are data candidates, not claims of implemented capability"],
+  "persistent_state": null
+}

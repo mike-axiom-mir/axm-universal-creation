@@ -1,0 +1,24 @@
+{
+  "id": "AXM-CAP-WRITE-TEXT",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Create an exact UTF-8 text file at an explicitly supplied output path.",
+  "handles": ["text-file"],
+  "input_contract": {
+    "required": ["path", "content"],
+    "properties": {
+      "path": "absolute path or path relative to the machine root",
+      "content": "exact UTF-8 text content"
+    }
+  },
+  "output_contract": {"kind": "file", "encoding": "utf-8"},
+  "dependencies": [],
+  "relationships": [],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:write_text",
+    "source": "src/axm_uc/capabilities.py"
+  },
+  "limitations": ["normal creation cannot rewrite the machine body; self-modification uses candidate adoption/root fit"],
+  "persistent_state": null
+}

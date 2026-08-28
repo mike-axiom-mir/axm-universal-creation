@@ -1,0 +1,36 @@
+{
+  "id": "AXM-CAP-WRITE-MARKDOWN",
+  "version": "0.1.0",
+  "status": "candidate",
+  "purpose": "Reach the directional outcome 'create a Markdown document' by reusing the already-live exact text writer through a new inspectable route.",
+  "handles": ["markdown-file"],
+  "input_contract": {
+    "required": ["path", "content"],
+    "properties": {
+      "path": "Markdown output path",
+      "content": "exact Markdown source"
+    }
+  },
+  "output_contract": {"kind": "file", "encoding": "utf-8", "format": "markdown"},
+  "dependencies": ["AXM-CAP-WRITE-TEXT"],
+  "relationships": [{"type": "delegates-to", "target": "AXM-CAP-WRITE-TEXT"}],
+  "implementation": {
+    "kind": "DETERMINISTIC_ALIAS",
+    "delegate": "AXM-CAP-WRITE-TEXT",
+    "source": "this manifest"
+  },
+  "limitations": ["This adds routing/meaning, not a new byte-writing primitive."],
+  "persistent_state": null,
+  "tests": [
+    {
+      "inputs": {"path": "${TEST_DIR}/proof.md", "content": "# Universal Creation\n\nCandidate route works.\n"},
+      "expect": {"file_text": "# Universal Creation\n\nCandidate route works.\n"}
+    }
+  ],
+  "root_fit": {
+    "truth": {"fit": true, "basis": "The candidate claims only a Markdown routing capability and explicitly states that byte writing is delegated to the existing text writer."},
+    "agency": {"fit": true, "basis": "The caller still supplies the requested output path and exact content; the candidate does not invent a hidden objective."},
+    "continuity": {"fit": true, "basis": "It reuses a live capability through a declared dependency and does not replace unrelated machinery."},
+    "wisdom-before-speed": {"fit": true, "basis": "It uses the smallest missing adapter instead of creating a redundant writer implementation."}
+  }
+}

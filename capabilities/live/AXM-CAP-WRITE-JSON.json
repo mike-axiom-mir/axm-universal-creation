@@ -1,0 +1,24 @@
+{
+  "id": "AXM-CAP-WRITE-JSON",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Create a deterministic inspectable JSON file from a supplied value.",
+  "handles": ["json-file"],
+  "input_contract": {
+    "required": ["path", "value"],
+    "properties": {
+      "path": "absolute path or path relative to the machine root",
+      "value": "JSON-serializable value"
+    }
+  },
+  "output_contract": {"kind": "file", "encoding": "utf-8", "format": "json"},
+  "dependencies": [],
+  "relationships": [],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:write_json",
+    "source": "src/axm_uc/capabilities.py"
+  },
+  "limitations": ["normal creation cannot rewrite the machine body; self-modification uses candidate adoption/root fit"],
+  "persistent_state": null
+}

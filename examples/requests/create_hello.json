@@ -1,0 +1,12 @@
+{
+  "kind": "text-file",
+  "direction": "Create an exact human-readable text artifact.",
+  "inputs": {
+    "path": "creations/hello.txt",
+    "content": "Hello from the first standalone AXM Universal Creation runtime.\n"
+  },
+  "constraints": {
+    "encoding": "utf-8",
+    "exact_content": true
+  }
+}

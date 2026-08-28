@@ -1,0 +1,11 @@
+{
+  "kind": "markdown-file",
+  "direction": "Create a Markdown document that a human or AI can inspect and edit directly.",
+  "inputs": {
+    "path": "creations/example.md",
+    "content": "# Directional outcome\n\nThe route may change; the direction stays visible.\n"
+  },
+  "constraints": {
+    "inspectable_source": true
+  }
+}

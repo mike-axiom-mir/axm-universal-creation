@@ -1,0 +1,11 @@
+{
+  "runtime_version": "0.1.0",
+  "status": "standalone-foundation",
+  "active_tree": "this directory",
+  "registry_baseline": "reference/AXM_Universal_Creation_Map_v0.1/registry/master_registry.json",
+  "implementation_kernel": "reference/AXM_Universal_Creation_Map_v0.1/registry/core_build_seed.json",
+  "capability_directory": "capabilities/live",
+  "candidate_directory": "capabilities/candidates",
+  "creation_output_directory": "creations",
+  "brain_architecture": "unspecified-by-design"
+}
