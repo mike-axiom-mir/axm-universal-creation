@@ -1,0 +1,60 @@
+AXM UNIVERSAL CREATION — NEW CHAT HANDOFF
+=========================================
+
+TARGET REPOSITORY
+mike-axiom-mir/axm-universal-creation
+
+Treat this repository as the standalone Universal Creation body. The old AXM Workshop is paused and is not the foundation.
+
+Build capabilities here first and prove them outside the Workshop. Only after those capabilities work independently may a separate contained attempt be made to repair the old Workshop, without endangering this standalone machine.
+
+CORE DIRECTION
+--------------
+Persistent universal creation system. Do not reduce it to an autonomous AI agent and do not choose a final brain architecture in advance.
+
+FOUR ROOTS
+----------
+1. Truth
+2. Agency
+3. Continuity
+4. Wisdom Before Speed
+
+Growth is an outcome, not a target, benchmark, reward, score, or fifth root.
+
+ONE ACTIVE MACHINE
+------------------
+Work on the authoritative active tree. Do not create clone-and-merge-back safety workflows.
+
+A build is not complete until it has cleaned the temporary/intermediate debris that build itself created:
+
+build -> verify -> remove build debris -> confirm clean -> done
+
+Internal hashes may diagnose machine state, corruption, or unexpected changes. Hash mismatches describe state, not the trustworthiness of a human, AI, or tool, and must not create ordinary user-facing bureaucracy.
+
+CAPABILITY GAPS
+---------------
+Target the requested directional outcome, not exact reproduction of a prior material, component, process, implementation, or route. Preserve limits and uncertainty honestly.
+
+STARTING MAP
+------------
+atoms -> components -> organs -> capabilities -> creations
+
+The included reference baseline contains 2,165 candidates (1,000 atoms, 750 components, 415 organs) plus a 100-record implementation kernel. Preserve and use that material rather than regenerating a generic taxonomy from memory.
+
+STANDALONE INNER BODY
+---------------------
+The same inner body is intended to connect later to different hosts through explicit adapters: software, AI, games, hardware, robots, fabrication systems, and other environments. Host ownership is not required to connect.
+
+RECOVERY
+--------
+One complete restorable snapshot per day. If a day goes genuinely wrong, quarantine that state and restore an earlier known-good daily snapshot.
+
+AGENT LANES
+-----------
+The main instance works on main. Every additional AI instance gets one PR lane only. Keep one instance's work in its existing PR rather than scattering it over multiple PRs or cleanup branches. See AGENTS.md.
+
+TRUTH STATUS
+------------
+Experimental architecture. Do not claim universal creation, emergence, intelligence, AGI, safety, or successful self-improvement before measurement supports it.
+
+Mike - Axiom/Mir
