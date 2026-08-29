@@ -299,7 +299,7 @@ class CreationDecomposer:
 
         return {
             "type": "CREATION_DECOMPOSITION",
-            "truth_status": "DETERMINISTIC_LEXICAL_BASELINE_PLUS_DECLARED_KERNEL_TOPOLOGY",
+            "truth_status": "DETERMINISTIC_LEXICAL_BASELINE",
             "directional_outcome": request.get("direction") or request.get("purpose") or kind,
             "request_kind": kind,
             "request_terms": sorted(terms),
