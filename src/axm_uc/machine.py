@@ -9,6 +9,7 @@ from typing import Any
 
 from .atomic import atomic_write_json
 from .capabilities import CapabilityError, CapabilityStore
+from .decompose import CreationDecomposer
 from .registry import Registry
 from .root_fit import evaluate_declared_root_fit
 
@@ -18,6 +19,7 @@ class UniversalCreationMachine:
         self.root = Path(root).resolve()
         self.registry = Registry(self.root)
         self.capabilities = CapabilityStore(self.root)
+        self.decomposer = CreationDecomposer(self.registry, self.capabilities)
 
     def inspect(self, query: str = "", level: str | None = None, limit: int = 20) -> dict[str, Any]:
         contract = json.loads((self.root / "machine.contract.json").read_text(encoding="utf-8"))
@@ -27,6 +29,10 @@ class UniversalCreationMachine:
             "live_capabilities": self.capabilities.live(),
             "records": self.registry.search(query=query, level=level, limit=limit) if (query or level) else [],
         }
+
+    def plan(self, request: dict[str, Any], per_level: int = 6) -> dict[str, Any]:
+        """Map a creation request onto the explicit registry before inventing machinery."""
+        return self.decomposer.decompose(request, per_level=per_level)
 
     def _capability_gap(self, request: dict[str, Any]) -> dict[str, Any]:
         kind = str(request.get("kind", "unknown"))
@@ -55,6 +61,7 @@ class UniversalCreationMachine:
             "existing_partial_coverage": partial,
             "smallest_missing_capability_currently_justified": smallest,
             "supported_creation_kinds": sorted({h for c in self.capabilities.live() for h in c.get("handles", [])}),
+            "decomposition": self.plan(request, per_level=4),
         }
 
     def create(self, request: dict[str, Any]) -> dict[str, Any]:
