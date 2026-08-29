@@ -34,9 +34,19 @@ class KernelTopology:
         self.core_index = {str(row.get("id")): row for row in self.core if row.get("id")}
 
         self.core_by_key: dict[tuple[str, str], list[dict[str, Any]]] = {}
+        self.core_similarity_rows: list[dict[str, Any]] = []
         for row in self.core:
             key = (str(row.get("level", "")).casefold(), _normalize(row.get("name", "")))
             self.core_by_key.setdefault(key, []).append(row)
+            self.core_similarity_rows.append(
+                {
+                    "row": row,
+                    "level": key[0],
+                    "name_tokens": _tokens(row.get("name", "")),
+                    "definition_tokens": _tokens(row.get("definition", "")),
+                    "source_keys": set(row.get("source_keys") or []),
+                }
+            )
 
         self.master_by_core: dict[str, list[dict[str, Any]]] = {}
         self.master_crosswalk: dict[str, dict[str, Any]] = {}
@@ -56,13 +66,15 @@ class KernelTopology:
         level = str(master.get("level", "")).casefold()
         master_name_tokens = _tokens(master.get("name", ""))
         master_definition_tokens = _tokens(master.get("definition", ""))
+        master_sources = set(master.get("source_keys") or [])
         suggestions: list[dict[str, Any]] = []
-        for core in self.core:
-            if str(core.get("level", "")).casefold() != level:
+        for cached in self.core_similarity_rows:
+            if cached["level"] != level:
                 continue
-            name_overlap = sorted(master_name_tokens & _tokens(core.get("name", "")))
-            definition_overlap = sorted(master_definition_tokens & _tokens(core.get("definition", "")))
-            source_overlap = self._source_overlap(master, core)
+            core = cached["row"]
+            name_overlap = sorted(master_name_tokens & cached["name_tokens"])
+            definition_overlap = sorted(master_definition_tokens & cached["definition_tokens"])
+            source_overlap = sorted(master_sources & cached["source_keys"])
             score = (12 * len(name_overlap)) + (2 * len(definition_overlap)) + (3 * len(source_overlap))
             if score <= 0:
                 continue
@@ -119,15 +131,18 @@ class KernelTopology:
             "status": "unresolved",
             "truth_status": "UNRESOLVED",
             "traversable": False,
-            "candidate_suggestions": self._candidate_suggestions(master),
             "reason": "no exact normalized-name plus level bridge exists",
         }
 
-    def mapping_for_master(self, master_id: str) -> dict[str, Any]:
-        mapping = self.master_crosswalk.get(str(master_id))
+    def mapping_for_master(self, master_id: str, include_suggestions: bool = True) -> dict[str, Any]:
+        master_id = str(master_id)
+        mapping = self.master_crosswalk.get(master_id)
         if mapping is None:
             raise KeyError(f"unknown master record: {master_id}")
-        return mapping
+        result = dict(mapping)
+        if include_suggestions and result.get("status") == "unresolved":
+            result["candidate_suggestions"] = self._candidate_suggestions(self.master_index[master_id])
+        return result
 
     def master_matches_for_core(self, core_id: str) -> list[dict[str, Any]]:
         rows = self.master_by_core.get(str(core_id), [])
@@ -161,7 +176,7 @@ class KernelTopology:
         mapped_core_ids = {str(mapping["core_id"]) for mapping in traversable}
         return {
             "truth_status": "OBSERVED_REGISTRY_TOPOLOGY",
-            "mapping_method": "exact normalized name plus same anatomy level; weaker suggestions never create edges",
+            "mapping_method": "exact normalized name plus same anatomy level; weaker suggestions are lazy and never create edges",
             "master_records": len(self.master),
             "core_records": len(self.core),
             "master_dependency_edges": master_dependency_edges,
@@ -245,7 +260,7 @@ class KernelTopology:
         for level in ("organ", "component", "atom"):
             for hit in selected.get(level, []):
                 master_id = str(hit.get("id"))
-                mapping = dict(self.mapping_for_master(master_id))
+                mapping = self.mapping_for_master(master_id, include_suggestions=True)
                 mapping["request_match_score"] = hit.get("score")
                 mapping["request_match_strength"] = hit.get("strength")
                 mappings.append(mapping)
