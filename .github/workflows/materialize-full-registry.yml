@@ -1,0 +1,67 @@
+name: materialize-full-registry
+
+on:
+  push:
+    branches:
+      - axm/materialize-full-registry
+    paths:
+      - tools/materialize_registry_entries.py
+      - .github/workflows/materialize-full-registry.yml
+
+permissions:
+  contents: write
+
+jobs:
+  materialize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: axm/materialize-full-registry
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Materialize all atoms components and organs
+        run: python tools/materialize_registry_entries.py
+      - name: Verify exact counts and canonical equality
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root = Path('.')
+          master = json.loads((root/'reference/AXM_Universal_Creation_Map_v0.1/registry/master_registry.json').read_text())['records']
+          expected = {'atom': 1000, 'component': 750, 'organ': 415}
+          dirs = {'atom': root/'atoms', 'component': root/'components', 'organ': root/'organs'}
+          canonical = {row['id']: row for row in master}
+          seen = {}
+          for level, folder in dirs.items():
+              files = list(folder.glob('*.json'))
+              assert len(files) == expected[level], (level, len(files))
+              for path in files:
+                  row = json.loads(path.read_text())
+                  assert row['level'] == level, path
+                  assert row['id'] in canonical, row['id']
+                  assert row == canonical[row['id']], row['id']
+                  assert row['id'] not in seen, row['id']
+                  seen[row['id']] = row
+          assert len(master) == 2165
+          assert len(seen) == 2165
+          assert set(seen) == set(canonical)
+          manifest = json.loads((root/'registry_materialization.json').read_text())
+          assert manifest['total'] == 2165
+          assert manifest['counts'] == expected
+          print('verified materialized body', expected, 'total', len(seen))
+          PY
+      - name: Run complete repository tests
+        run: python -m unittest discover -s tests
+      - name: Commit materialized body
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add atoms components organs registry_materialization.json
+          if git diff --cached --quiet; then
+            echo "Materialized body already current"
+            exit 0
+          fi
+          git commit -m "Materialize complete atom component organ body"
+          git push origin HEAD:axm/materialize-full-registry
