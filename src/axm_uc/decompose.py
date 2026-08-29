@@ -5,6 +5,7 @@ from typing import Any
 
 from .capabilities import CapabilityStore
 from .registry import Registry
+from .topology import KernelTopology
 
 TOKEN_RE = re.compile(r"[a-z0-9]+")
 STOP_WORDS = frozenset(
@@ -75,16 +76,17 @@ def _strength(score: int) -> str:
 
 
 class CreationDecomposer:
-    """Deterministic lexical bridge from a request into the explicit AXM anatomy.
+    """Deterministic bridge from a request into explicit AXM anatomy and topology.
 
-    This is deliberately not a semantic oracle. It exposes exactly why a registry
-    record matched so later learned or neural matchers can be compared against a
-    visible baseline instead of silently replacing it.
+    Lexical matching remains a visible baseline. Exact name+level crosswalks may
+    then enter the separately declared core-kernel dependency graph. Weaker
+    crosswalk suggestions stay suggestions and never silently create graph edges.
     """
 
     def __init__(self, registry: Registry, capabilities: CapabilityStore):
         self.registry = registry
         self.capabilities = capabilities
+        self.topology = KernelTopology(registry)
 
     @staticmethod
     def _request_text(request: dict[str, Any]) -> tuple[str, set[str]]:
@@ -153,6 +155,11 @@ class CreationDecomposer:
         index: dict[str, dict[str, Any]],
         limit: int = 24,
     ) -> list[dict[str, Any]]:
+        """Direct master-map dependency hints kept for backwards compatibility.
+
+        The current master map is flat, so useful dependency topology normally
+        comes from ``kernel_topology`` rather than this field.
+        """
         hints: list[dict[str, Any]] = []
         seen: set[tuple[str, str]] = set()
         for level in reversed(LEVELS):
@@ -181,6 +188,7 @@ class CreationDecomposer:
         request: dict[str, Any],
         selected: dict[str, list[dict[str, Any]]],
         live_hits: list[dict[str, Any]],
+        kernel_topology: dict[str, Any],
     ) -> dict[str, Any]:
         exact = next((hit for hit in live_hits if hit["exact_handle_match"]), None)
         if exact:
@@ -212,6 +220,24 @@ class CreationDecomposer:
                 },
             }
 
+        traversal = kernel_topology.get("traversal") if isinstance(kernel_topology, dict) else None
+        nodes = traversal.get("nodes", []) if isinstance(traversal, dict) else []
+        seeds = traversal.get("seed_ids", []) if isinstance(traversal, dict) else []
+        if nodes and seeds:
+            seed_node = next((node for node in nodes if node.get("id") == seeds[0]), nodes[0])
+            return {
+                "status": "visible-gap",
+                "truth_status": "HYPOTHESIS",
+                "smallest_visible_gap": {
+                    "kind": "kernel-backed-unimplemented-path",
+                    "kernel_seed": seed_node.get("id"),
+                    "kernel_name": seed_node.get("name"),
+                    "declared_dependency_nodes": len(nodes),
+                    "declared_dependency_edges": len(traversal.get("edges", [])),
+                    "reason": "selected master anatomy has an exact crosswalk into a declared kernel dependency path, but kernel topology is not proof of a live implementation",
+                },
+            }
+
         for level in ("organ", "component", "atom"):
             if selected[level]:
                 top = selected[level][0]
@@ -231,7 +257,7 @@ class CreationDecomposer:
             "truth_status": "HYPOTHESIS",
             "smallest_visible_gap": {
                 "kind": "taxonomy-or-capability-gap",
-                "reason": "no current live capability or lexical registry match explains the request",
+                "reason": "no current live capability, traversable kernel bridge, or lexical registry match explains the request",
             },
         }
 
@@ -268,9 +294,12 @@ class CreationDecomposer:
         ]
         live_hits.sort(key=lambda item: (-int(item["score"]), str(item["id"])))
 
+        kernel_topology = self.topology.for_selected_anatomy(selected)
+        master_dependency_hints = self._dependency_hints(selected, index)
+
         return {
             "type": "CREATION_DECOMPOSITION",
-            "truth_status": "DETERMINISTIC_LEXICAL_BASELINE",
+            "truth_status": "DETERMINISTIC_LEXICAL_BASELINE_PLUS_DECLARED_KERNEL_TOPOLOGY",
             "directional_outcome": request.get("direction") or request.get("purpose") or kind,
             "request_kind": kind,
             "request_terms": sorted(terms),
@@ -279,10 +308,13 @@ class CreationDecomposer:
                 "field_weights": dict(FIELD_WEIGHTS),
                 "semantic_inference": False,
                 "learned_model": False,
-                "meaning": "candidate anatomy, not proof that a matched item is required or implemented",
+                "kernel_crosswalk": "only exact normalized name plus same level is traversable",
+                "meaning": "candidate anatomy plus declared kernel dependencies; neither registry presence nor kernel presence proves a live implementation",
             },
             "live_capability_coverage": live_hits[:8],
             "registry_matches": selected,
-            "dependency_hints": self._dependency_hints(selected, index),
-            "gap": self._gap(request, selected, live_hits),
+            "dependency_hints": master_dependency_hints,
+            "master_dependency_hints": master_dependency_hints,
+            "kernel_topology": kernel_topology,
+            "gap": self._gap(request, selected, live_hits, kernel_topology),
         }
