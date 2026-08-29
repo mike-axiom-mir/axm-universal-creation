@@ -4,7 +4,6 @@ import argparse
 import json
 from pathlib import Path
 
-from .integrity import refresh, verify
 from .machine import UniversalCreationMachine
 from .paths import find_machine_root
 from .snapshot import create_daily_snapshot, restore_snapshot
@@ -23,7 +22,6 @@ def build_parser() -> argparse.ArgumentParser:
     inspect_p.add_argument("--query", default="")
     inspect_p.add_argument("--level", choices=["atom", "component", "organ"])
     inspect_p.add_argument("--limit", type=int, default=20)
-    inspect_p.add_argument("--integrity", action="store_true")
 
     create_p = sub.add_parser("create", help="route one creation request")
     create_p.add_argument("request", help="JSON request file")
@@ -33,9 +31,6 @@ def build_parser() -> argparse.ArgumentParser:
     for name in ("test", "adopt"):
         cp = candidate_sub.add_parser(name)
         cp.add_argument("manifest")
-
-    integrity_p = sub.add_parser("integrity", help="internal body integrity")
-    integrity_p.add_argument("action", choices=["verify", "refresh"])
 
     snapshot_p = sub.add_parser("snapshot", help="daily snapshot export/restore")
     snapshot_sub = snapshot_p.add_subparsers(dest="snapshot_command", required=True)
@@ -54,10 +49,7 @@ def main(argv: list[str] | None = None) -> int:
     machine = UniversalCreationMachine(root)
 
     if args.command == "inspect":
-        result = machine.inspect(args.query, args.level, args.limit)
-        if args.integrity:
-            result["integrity"] = verify(root)
-        _print(result)
+        _print(machine.inspect(args.query, args.level, args.limit))
         return 0
     if args.command == "create":
         request = json.loads(Path(args.request).read_text(encoding="utf-8"))
@@ -68,9 +60,6 @@ def main(argv: list[str] | None = None) -> int:
         result = machine.test_candidate(manifest) if args.candidate_command == "test" else machine.adopt_candidate(manifest)
         _print(result)
         return 0 if result.get("passed", result.get("adopted", False)) else 2
-    if args.command == "integrity":
-        _print(refresh(root) if args.action == "refresh" else verify(root))
-        return 0
     if args.command == "snapshot":
         if args.snapshot_command == "create":
             _print(create_daily_snapshot(root, Path(args.output_dir) if args.output_dir else None, args.replace))
