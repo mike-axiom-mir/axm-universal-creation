@@ -1,0 +1,1107 @@
+AXM SOFTWARE ASSET ATOMS — RAW RESEARCH SEED
+TOTAL ATOMS: 1000
+
+
+================================================================================
+UNIVERSAL FOUNDATION AND METADATA
+================================================================================
+- identifier
+- namespace
+- name
+- label
+- description
+- type tag
+- subtype tag
+- version
+- revision
+- status
+- flag
+- scalar
+- boolean
+- integer
+- floating-point number
+- decimal number
+- string
+- byte sequence
+- enumeration value
+- null value
+- unit
+- quantity
+- dimension
+- timestamp
+- duration
+- date
+- time zone
+- locale
+- path
+- URI
+- hash digest
+- checksum
+- digital signature
+- deterministic seed
+- random stream position
+- parameter
+- default value
+- constraint
+- capability tag
+- feature flag
+- confidence value
+- priority
+- ownership reference
+- source reference
+- input port
+- output port
+- parameter port
+- relation predicate
+- contains relation
+- part-of relation
+- requires relation
+- produces relation
+- consumes relation
+- transforms relation
+- binds-to relation
+- drives relation
+- references relation
+- instantiates relation
+- inherits relation
+- variant-of relation
+- compiles-to relation
+- derived-from relation
+- validates relation
+- tested-by relation
+- generated-by relation
+- supersedes relation
+- conflicts-with relation
+- equivalent-to relation
+- interoperates-with relation
+- licensed-under relation
+- observed-in-use relation
+- failed-in-use relation
+
+================================================================================
+PROVENANCE RIGHTS CONSENT AND EVIDENCE
+================================================================================
+- entity reference
+- activity reference
+- agent reference
+- generation assertion
+- usage assertion
+- derivation assertion
+- attribution
+- association
+- delegation
+- source citation
+- evidence item
+- observation
+- claim
+- test result reference
+- usage event reference
+- license expression
+- copyright notice
+- creator
+- contributor
+- publisher
+- creation time
+- modification time
+- chain-of-custody step
+- provenance timestamp
+- approval
+- rejection
+- dissent record
+- rollback anchor
+- append-only log pointer
+- retention rule
+- privacy classification
+- consent state
+- evidence confidence
+- source integrity state
+- transformation record reference
+
+================================================================================
+DATA MATHEMATICAL AND STRUCTURAL PRIMITIVES
+================================================================================
+- bit
+- byte
+- symbol
+- scalar
+- vector element
+- matrix element
+- tensor element
+- tensor index
+- coordinate
+- axis
+- origin
+- basis vector
+- quaternion component
+- complex-number component
+- interval endpoint
+- range endpoint
+- set member
+- tuple item
+- key
+- value
+- pair
+- row value
+- column value
+- cell
+- field
+- tag
+- label
+- sample
+- distribution parameter
+- probability
+- weight
+- rank
+- shape dimension
+- stride
+- mask value
+- missing value
+- uncertainty value
+- error bound
+- unit conversion factor
+- formula token
+- operator
+- operand
+- sign
+- magnitude
+- exponent
+- precision
+- scale factor
+
+================================================================================
+TIME STATE EVENT AND WORKFLOW
+================================================================================
+- clock tick
+- timecode
+- frame number
+- timestamp
+- duration
+- temporal offset
+- rate
+- event
+- event type
+- event payload field
+- state
+- state variable
+- transition
+- condition
+- guard
+- action
+- trigger
+- signal
+- message
+- cue
+- marker
+- keyframe time
+- synchronization point
+- deadline
+- recurrence rule
+- timeout
+- retry count
+- sequence number
+- correlation identifier
+- workflow token
+- success criterion
+- failure criterion
+
+================================================================================
+TEXT LANGUAGE TYPOGRAPHY SPEECH NOTATION AND LOCALIZATION
+================================================================================
+- Unicode code point
+- grapheme cluster
+- glyph identifier
+- character
+- whitespace
+- line break
+- word token
+- subword token
+- sentence boundary
+- paragraph break
+- punctuation mark
+- phoneme
+- morpheme
+- language tag
+- locale tag
+- script tag
+- directionality value
+- plural category
+- grammatical gender
+- grammatical case
+- grammatical number
+- message variable
+- translation key
+- font family reference
+- font weight
+- font width
+- font style
+- font size
+- kerning pair
+- baseline
+- line height
+- letter spacing
+- word spacing
+- hyphenation opportunity
+- pronunciation token
+- ruby annotation
+- emphasis marker
+- semantic text role
+- variation-axis coordinate
+- glyph outline point
+
+================================================================================
+CODE GRAMMAR AND EXECUTABLE PROGRAM STRUCTURE
+================================================================================
+- source character
+- token
+- keyword
+- identifier token
+- literal
+- operator token
+- delimiter
+- comment
+- whitespace trivia
+- grammar terminal
+- grammar nonterminal
+- production rule
+- precedence rule
+- associativity rule
+- parse node
+- abstract-syntax node
+- concrete-syntax node
+- symbol
+- scope
+- binding
+- type
+- type parameter
+- function parameter
+- argument
+- expression
+- statement
+- declaration
+- annotation
+- attribute
+- import
+- export
+- module path
+- instruction
+- opcode
+- operand
+- basic block
+- branch target
+- source span
+- diagnostic code
+- compiler flag
+- memory address
+- local variable
+- global variable
+- constant
+- function reference
+- table reference
+
+================================================================================
+BUILD PACKAGING DEPLOYMENT RELEASE AND DISTRIBUTION
+================================================================================
+- artifact digest
+- file entry
+- directory entry
+- filesystem layer entry
+- platform tuple
+- architecture tag
+- operating-system tag
+- dependency constraint
+- package name
+- package version
+- script hook
+- environment variable
+- build argument
+- secret reference
+- mount point
+- port declaration
+- command
+- entrypoint
+- cache key
+- target name
+- build step
+- output path
+- release channel
+- install scope
+- permission bit
+- compression method
+- content media type
+- descriptor reference
+- layer diff identifier
+- update sequence
+
+================================================================================
+APIS NETWORKING MESSAGING AND PROTOCOLS
+================================================================================
+- endpoint path
+- operation identifier
+- method
+- status code
+- header
+- query parameter
+- path parameter
+- cookie parameter
+- media type
+- schema reference
+- request field
+- response field
+- server URL
+- protocol name
+- channel address
+- topic
+- message key
+- message header
+- message payload field
+- correlation identifier
+- subscription
+- callback reference
+- webhook reference
+- retry header
+- pagination cursor
+- rate-limit value
+- socket address
+- port number
+- connection state
+- stream identifier
+- frame type
+- tool argument field
+- resource URI
+- capability declaration
+
+================================================================================
+STORAGE DATABASES SEARCH AND RETRIEVAL
+================================================================================
+- database identifier
+- schema identifier
+- table identifier
+- column
+- row
+- cell
+- data type
+- primary-key value
+- foreign-key value
+- index key
+- constraint
+- null marker
+- transaction identifier
+- log sequence number
+- partition key
+- shard key
+- document field
+- graph node identifier
+- graph edge identifier
+- triple subject
+- triple predicate
+- triple object
+- query parameter
+- sort key
+- cursor
+- retention timestamp
+- revision identifier
+- search term
+- posting reference
+- relevance score
+
+================================================================================
+USER INTERFACE INTERACTION ACCESSIBILITY AND DESIGN SYSTEMS
+================================================================================
+- design token
+- color token
+- spacing token
+- size token
+- radius token
+- border token
+- shadow token
+- typography token
+- motion token
+- breakpoint
+- z-index
+- role
+- accessible name
+- accessible description
+- accessibility state property
+- focus state
+- tab index
+- pointer coordinate
+- pressure
+- tilt
+- contact geometry
+- key code
+- modifier key
+- gesture phase
+- input value
+- validation state
+- selection range
+- cursor position
+- scroll offset
+- viewport size
+- anchor point
+- alignment
+- gap
+- padding
+- margin
+- opacity
+- visibility
+- hover state
+- pressed state
+- checked state
+- expanded state
+- disabled state
+
+================================================================================
+2D RASTER VECTOR IMAGING COLOR AND TEXTURE
+================================================================================
+- pixel
+- sample channel
+- color channel
+- alpha sample
+- palette index
+- scanline
+- image tile
+- mip level
+- image coordinate
+- resolution
+- bit depth
+- compression block
+- path command
+- move command
+- line command
+- curve command
+- arc command
+- close-path command
+- control point
+- vector point
+- stroke width
+- stroke cap
+- stroke join
+- fill rule
+- gradient stop
+- pattern cell
+- clipping point
+- mask sample
+- filter parameter
+- kernel value
+- layer order
+- blend mode
+- opacity
+- crop boundary
+- selection-mask value
+- image metadata field
+- color-profile reference
+- deep-sample depth
+- deep-sample value
+- view identifier
+- channel name
+
+================================================================================
+3D GEOMETRY SCENES VOLUMES FIELDS AND SPATIAL REPRESENTATIONS
+================================================================================
+- 3D point
+- vertex
+- edge
+- polygon corner
+- face
+- triangle
+- quad
+- polygon
+- normal
+- tangent
+- bitangent
+- UV coordinate
+- vertex color
+- vertex weight
+- bone index
+- transform
+- translation
+- rotation
+- scale
+- bounding box
+- bounding sphere
+- ray
+- plane
+- curve control point
+- spline knot
+- voxel
+- voxel value
+- point sample
+- splat center
+- Gaussian covariance
+- Gaussian opacity
+- Gaussian color coefficient
+- signed-distance sample
+- occupancy value
+- density sample
+- radiance sample
+- topology index
+- primitive mode
+- node reference
+- camera parameter
+- projection parameter
+- light parameter
+- level-of-detail threshold
+- spatial cell
+- tile coordinate
+- instance identifier
+- skin joint index
+- morph-target delta
+- scene-layer offset
+
+================================================================================
+MATERIALS SHADERS COLOR LIGHTING AND RENDERING
+================================================================================
+- material input
+- shader parameter
+- shader uniform
+- shader attribute
+- shader varying
+- resource binding
+- texture coordinate
+- sampler setting
+- texture slot
+- color value
+- color-space tag
+- transfer function
+- luminance
+- chromaticity
+- roughness
+- metallic value
+- specular value
+- normal value
+- displacement value
+- emission value
+- opacity value
+- index of refraction
+- transmission value
+- subsurface value
+- anisotropy value
+- clearcoat value
+- light intensity
+- light color
+- light direction
+- exposure value
+- tone-map parameter
+- render state
+- blend factor
+- depth-test value
+- stencil value
+- workgroup size
+- shader entry point
+- pipeline constant
+- render-target format
+- sample count
+
+================================================================================
+ANIMATION MOTION VIDEO CINEMATICS AND TIMELINES
+================================================================================
+- frame
+- video sample
+- audio-sample reference
+- timecode
+- frame rate
+- keyframe
+- interpolation mode
+- tangent
+- animation channel
+- target property
+- pose sample
+- bone transform
+- morph weight
+- clip in-point
+- clip out-point
+- transition duration
+- timeline marker
+- effect parameter
+- track index
+- layer weight
+- camera cut
+- caption timestamp
+- subtitle text
+- caption region coordinate
+- codec parameter
+- pixel format
+- sample timestamp
+- decode timestamp
+- presentation timestamp
+- motion vector
+- optical-flow sample
+
+================================================================================
+AUDIO MUSIC SPEECH AND SONIC INTERACTION
+================================================================================
+- audio sample
+- channel sample
+- sample rate
+- bit depth
+- waveform point
+- frequency bin
+- phase value
+- amplitude
+- gain
+- pan value
+- pitch
+- MIDI note number
+- note-on event
+- note-off event
+- velocity
+- channel pressure
+- pitch-bend value
+- controller value
+- program number
+- tempo
+- beat
+- bar position
+- time signature
+- key signature
+- note duration
+- articulation
+- lyric syllable
+- phoneme
+- formant
+- speech timestamp
+- speaker identifier
+- spatial position
+- orientation
+- attenuation parameter
+- loop point
+- cue point
+- loudness value
+- dynamic marking
+- music accidental
+- rest value
+- harmony symbol
+
+================================================================================
+SIMULATION PHYSICS ROBOTICS NAVIGATION AND XR
+================================================================================
+- mass
+- center of mass
+- inertia-tensor element
+- position
+- orientation
+- linear velocity
+- angular velocity
+- force
+- torque
+- impulse
+- acceleration
+- gravity value
+- friction
+- restitution
+- damping
+- collision layer
+- contact point
+- contact normal
+- joint axis
+- joint limit
+- motor target
+- constraint error
+- time step
+- solver iteration
+- sensor reading
+- actuator command
+- robot-link reference
+- robot-joint reference
+- XR-space reference
+- pose
+- action state
+- interaction path
+- haptic amplitude
+- haptic duration
+- field value
+- particle state
+- navigation cost
+- path waypoint
+- fluid density
+- fluid velocity
+- temperature sample
+- pressure sample
+
+================================================================================
+GAMES INTERACTIVE WORLDS AND PLAYABLE SYSTEMS
+================================================================================
+- entity identifier
+- component identifier
+- system identifier
+- gameplay tag
+- stat value
+- resource value
+- health value
+- score value
+- input action
+- trigger volume
+- spawn point
+- waypoint
+- navigation link
+- tile identifier
+- biome tag
+- faction identifier
+- quest state
+- dialogue line
+- choice
+- gameplay condition
+- reward
+- loot weight
+- encounter weight
+- checkpoint identifier
+- save key
+- network tick
+- player slot
+- difficulty value
+- experience value
+- level value
+- cooldown value
+- damage value
+- team identifier
+- world seed
+
+================================================================================
+DOCUMENTS PUBLISHING SPREADSHEETS PRESENTATIONS AND FORMS
+================================================================================
+- document character
+- glyph reference
+- text-style property
+- paragraph-style property
+- section break
+- page break
+- column break
+- list marker
+- footnote marker
+- citation key
+- bookmark
+- hyperlink target
+- field code
+- page number
+- cell address
+- cell value
+- formula token
+- formula operator
+- named-range reference
+- row index
+- column index
+- merge span
+- slide index
+- object anchor
+- master-layout reference
+- speaker-note marker
+- form-field value
+- tag-tree role
+- reading-order index
+- print margin
+- page size
+- orientation value
+- revision mark
+- comment anchor
+
+================================================================================
+DATA VISUALIZATION GEOSPATIAL MAPS AND SPATIAL ANALYTICS
+================================================================================
+- datum value
+- dimension field
+- measure field
+- category value
+- mark type
+- encoding channel
+- scale-domain value
+- scale-range value
+- axis tick
+- axis label
+- legend entry
+- bin boundary
+- aggregate operator
+- filter predicate
+- selection state
+- latitude
+- longitude
+- altitude
+- coordinate-reference-system reference
+- geometry coordinate
+- feature property
+- geospatial extent
+- tile coordinate
+- zoom level
+- georeference tag
+- time coordinate
+- map scale
+- projection parameter
+- spatial resolution
+- nodata value
+- elevation value
+
+================================================================================
+AI MACHINE LEARNING AGENTS KNOWLEDGE AND RETRIEVAL
+================================================================================
+- token identifier
+- special token
+- vocabulary entry
+- normalized character
+- pre-token boundary
+- tensor element
+- tensor-shape dimension
+- model input
+- model output
+- operator attribute
+- parameter weight
+- bias value
+- activation value
+- attention-mask value
+- position identifier
+- embedding coordinate
+- label
+- feature value
+- dataset-split tag
+- sample weight
+- hyperparameter
+- learning rate
+- loss value
+- metric value
+- checkpoint step
+- prompt role
+- prompt message
+- tool-argument field
+- tool-result field
+- resource URI
+- memory-record field
+- retrieval score
+- citation reference
+- evaluation score
+- policy outcome
+- random seed
+- context-window position
+- sampling temperature
+- top-p value
+- stop token
+- reason code
+- confidence score
+
+================================================================================
+TESTING VERIFICATION BENCHMARKING OBSERVABILITY AND INCIDENTS
+================================================================================
+- test identifier
+- assertion
+- expected value
+- actual value
+- fixture parameter
+- case parameter
+- tolerance
+- timeout
+- pass state
+- failure state
+- skip state
+- error code
+- severity
+- log-record field
+- trace identifier
+- span identifier
+- parent-span identifier
+- span event
+- span attribute
+- metric point
+- metric label
+- counter value
+- gauge value
+- histogram bucket
+- profile sample
+- baggage item
+- coverage location
+- mutation identifier
+- benchmark value
+- incident timestamp
+- reproduction seed
+- failure signature
+- performance budget
+- availability value
+- latency value
+- throughput value
+
+================================================================================
+SECURITY IDENTITY AUTHORIZATION PRIVACY AND INTEGRITY
+================================================================================
+- principal identifier
+- subject identifier
+- issuer identifier
+- audience
+- claim
+- scope
+- permission
+- role
+- capability
+- policy effect
+- policy condition
+- key identifier
+- cryptographic-key reference
+- nonce
+- salt
+- initialization vector
+- digest
+- signature
+- certificate field
+- token expiry
+- token issue time
+- authentication method
+- secret reference
+- vulnerability identifier
+- weakness identifier
+- severity score
+- trust level
+- integrity status
+- rollback pointer
+- consent flag
+- privacy label
+- session identifier
+- revocation state
+- security event
+- sandbox boundary
+- authority limit
+
+================================================================================
+CAD FABRICATION ELECTRONICS AND BUILDING INFORMATION MODELS
+================================================================================
+- sketch point
+- sketch line
+- sketch arc
+- spline point
+- construction line
+- reference plane
+- reference axis
+- dimension
+- geometric constraint
+- dimensional constraint
+- CAD parameter
+- profile loop
+- solid edge
+- solid face
+- shell
+- solid cell
+- feature parameter
+- tolerance
+- material specification
+- manufacturing layer identifier
+- tool diameter
+- feed rate
+- spindle speed
+- extrusion temperature
+- slice height
+- PCB coordinate
+- pad
+- via
+- trace segment
+- net identifier
+- pin
+- drill size
+- copper layer
+- mask opening
+- courtyard boundary
+- building-element reference
+- property value
+- quantity value
+- placement coordinate
+- clearance value
+- hole parameter
+- thread parameter
+- surface finish
+
+================================================================================
+PROCEDURAL GENERATIVE AND SEARCH-BASED CREATION
+================================================================================
+- deterministic seed
+- random sample
+- noise value
+- rule symbol
+- production rule
+- rewrite depth
+- grammar parameter
+- recursion limit
+- tile state
+- adjacency constraint
+- cell domain
+- entropy value
+- collapse choice
+- signed-distance primitive value
+- signed-distance operation
+- constructive-solid-geometry operation
+- transform instruction
+- generator parameter
+- distribution parameter
+- variation parameter
+- symmetry rule
+- repetition count
+- growth step
+- branch angle
+- mutation operator
+- fitness value
+- constraint weight
+- provenance-seed reference
+- search budget
+- candidate score
+- termination condition
+- fallback rule
+- replay step
+
+================================================================================
+PROJECTS WORKSPACES VERSIONING COLLABORATION AND LIFECYCLE
+================================================================================
+- repository reference
+- branch reference
+- commit reference
+- tree reference
+- blob reference
+- tag reference
+- file path
+- change hunk
+- author reference
+- committer reference
+- issue identifier
+- task identifier
+- milestone identifier
+- comment identifier
+- review state
+- approval state
+- workspace path
+- project role
+- assignment
+- deadline
+- dependency link
+- status transition
+- priority
+- estimate
+- actual effort
+- decision-record reference
+- conflict marker
+- lock reference
+- presence signal
+- synchronization version
+- handoff state
+- archive state
+- merge-base reference
+- change-request identifier
+
+================================================================================
+CONVERSION IMPORT EXPORT COMPATIBILITY AND INTEROPERABILITY
+================================================================================
+- source-format tag
+- target-format tag
+- media type
+- codec identifier
+- schema version
+- field mapping
+- type mapping
+- unit mapping
+- coordinate mapping
+- color-space mapping
+- character-encoding tag
+- endianness
+- compression setting
+- quality setting
+- fallback rule
+- loss flag
+- unsupported-feature marker
+- warning code
+- compatibility level
+- round-trip test value
+- precision-loss value
+- semantic-loss value
+- conversion-step identifier
+- adapter-version value
+- target-capability tag

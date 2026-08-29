@@ -1,0 +1,10 @@
+AXM UNIVERSAL CREATION MAP v0.1
+
+Canonical registry: registry/master_registry.json
+Total records: 2165
+Atoms: 1000
+Components: 750
+Organs: 415
+
+This reference body is a working, extensible creation map. It is not a claim of universal completeness.
+The standalone AXM Universal Creation architecture is authoritative over older Workshop-era instructions.

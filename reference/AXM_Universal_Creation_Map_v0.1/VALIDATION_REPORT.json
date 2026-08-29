@@ -1,0 +1,10 @@
+{
+  "status": "pass",
+  "master_records": 2165,
+  "core_records": 100,
+  "source_records": 64,
+  "required_dependency_cycles": 0,
+  "schema_validation": "passed",
+  "errors": [],
+  "warnings": []
+}
