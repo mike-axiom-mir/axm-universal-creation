@@ -1,0 +1,20 @@
+{
+  "id": "AXM-12-RENDERING-MATERIALS-C-002-shader",
+  "level": "component",
+  "domain_code": "12-rendering-materials",
+  "domain": "Materials shaders color lighting and rendering",
+  "name": "shader",
+  "definition": "Reusable shader assembly in materials shaders color lighting and rendering, with a bounded role and an interface that can be tested independently.",
+  "source_keys": [
+    "SRC-MATERIALX",
+    "SRC-WEBGPU",
+    "SRC-OCIO",
+    "SRC-GLTF",
+    "SRC-CSSCOLOR"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

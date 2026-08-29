@@ -1,0 +1,19 @@
+{
+  "id": "AXM-22-CAD-FABRICATION-A-006-reference-plane",
+  "level": "atom",
+  "domain_code": "22-cad-fabrication",
+  "domain": "CAD fabrication electronics and building information models",
+  "name": "reference plane",
+  "definition": "Smallest independently addressable reference plane unit in cad fabrication electronics and building information models, intended to be typed, referenced, transformed or validated without requiring a whole finished asset.",
+  "source_keys": [
+    "SRC-OPENSCAD",
+    "SRC-KICAD",
+    "SRC-IFC",
+    "SRC-USDPHYS"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

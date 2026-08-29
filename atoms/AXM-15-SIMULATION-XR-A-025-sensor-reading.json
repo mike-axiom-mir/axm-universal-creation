@@ -1,0 +1,20 @@
+{
+  "id": "AXM-15-SIMULATION-XR-A-025-sensor-reading",
+  "level": "atom",
+  "domain_code": "15-simulation-xr",
+  "domain": "Simulation physics robotics navigation and XR",
+  "name": "sensor reading",
+  "definition": "Smallest independently addressable sensor reading unit in simulation physics robotics navigation and xr, intended to be typed, referenced, transformed or validated without requiring a whole finished asset.",
+  "source_keys": [
+    "SRC-USDPHYS",
+    "SRC-URDF",
+    "SRC-OPENXR",
+    "SRC-SCXML",
+    "SRC-OPENVDB"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

@@ -1,0 +1,20 @@
+{
+  "id": "AXM-03-TIME-STATE-EVENT-O-007-workflow-engine",
+  "level": "organ",
+  "domain_code": "03-time-state-event",
+  "domain": "Time state event and workflow",
+  "name": "workflow engine",
+  "definition": "Functional subsystem for workflow engine in time state event and workflow; orchestrates lower-level components, applies policy and emits results plus evidence.",
+  "source_keys": [
+    "SRC-SCXML",
+    "SRC-OTIO",
+    "SRC-WEBVTT",
+    "SRC-BPMN",
+    "SRC-OTEL"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

@@ -1,0 +1,19 @@
+{
+  "id": "AXM-24-WORKSPACE-COLLABORATION-A-013-milestone-identifier",
+  "level": "atom",
+  "domain_code": "24-workspace-collaboration",
+  "domain": "Projects workspaces versioning collaboration and lifecycle",
+  "name": "milestone identifier",
+  "definition": "Smallest independently addressable milestone identifier unit in projects workspaces versioning collaboration and lifecycle, intended to be typed, referenced, transformed or validated without requiring a whole finished asset.",
+  "source_keys": [
+    "SRC-GIT",
+    "SRC-PROV",
+    "SRC-SPDX",
+    "SRC-BPMN"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

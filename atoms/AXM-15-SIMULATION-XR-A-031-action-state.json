@@ -1,0 +1,20 @@
+{
+  "id": "AXM-15-SIMULATION-XR-A-031-action-state",
+  "level": "atom",
+  "domain_code": "15-simulation-xr",
+  "domain": "Simulation physics robotics navigation and XR",
+  "name": "action state",
+  "definition": "Smallest independently addressable action state unit in simulation physics robotics navigation and xr, intended to be typed, referenced, transformed or validated without requiring a whole finished asset.",
+  "source_keys": [
+    "SRC-USDPHYS",
+    "SRC-URDF",
+    "SRC-OPENXR",
+    "SRC-SCXML",
+    "SRC-OPENVDB"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

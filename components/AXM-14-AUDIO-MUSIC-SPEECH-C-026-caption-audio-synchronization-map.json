@@ -1,0 +1,20 @@
+{
+  "id": "AXM-14-AUDIO-MUSIC-SPEECH-C-026-caption-audio-synchronization-map",
+  "level": "component",
+  "domain_code": "14-audio-music-speech",
+  "domain": "Audio music speech and sonic interaction",
+  "name": "caption-audio synchronization map",
+  "definition": "Reusable caption-audio synchronization map assembly in audio music speech and sonic interaction, with a bounded role and an interface that can be tested independently.",
+  "source_keys": [
+    "SRC-WEBAUDIO",
+    "SRC-MIDI",
+    "SRC-MUSICXML",
+    "SRC-WEBCODECS",
+    "SRC-WEBVTT"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

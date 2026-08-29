@@ -1,0 +1,20 @@
+{
+  "id": "AXM-23-PROCEDURAL-O-004-graph-rewrite-engine",
+  "level": "organ",
+  "domain_code": "23-procedural",
+  "domain": "Procedural generative and search-based creation",
+  "name": "graph-rewrite engine",
+  "definition": "Functional subsystem for graph-rewrite engine in procedural generative and search-based creation; orchestrates lower-level components, applies policy and emits results plus evidence.",
+  "source_keys": [
+    "SRC-OPENSCAD",
+    "SRC-MATERIALX",
+    "SRC-TREESITTER",
+    "SRC-SCXML",
+    "SRC-3DGS"
+  ],
+  "source_basis": "cross-standard-plus-engineering-inference",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

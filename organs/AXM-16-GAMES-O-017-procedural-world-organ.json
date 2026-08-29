@@ -1,0 +1,20 @@
+{
+  "id": "AXM-16-GAMES-O-017-procedural-world-organ",
+  "level": "organ",
+  "domain_code": "16-games",
+  "domain": "Games interactive worlds and playable systems",
+  "name": "procedural-world organ",
+  "definition": "Functional subsystem for procedural-world organ in games interactive worlds and playable systems; orchestrates lower-level components, applies policy and emits results plus evidence.",
+  "source_keys": [
+    "SRC-GLTF",
+    "SRC-USDPHYS",
+    "SRC-SCXML",
+    "SRC-OPENXR",
+    "SRC-WEBAUDIO"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

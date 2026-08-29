@@ -1,0 +1,20 @@
+{
+  "id": "AXM-10-2D-IMAGING-A-034-crop-boundary",
+  "level": "atom",
+  "domain_code": "10-2d-imaging",
+  "domain": "2D raster vector imaging color and texture",
+  "name": "crop boundary",
+  "definition": "Smallest independently addressable crop boundary unit in 2d raster vector imaging color and texture, intended to be typed, referenced, transformed or validated without requiring a whole finished asset.",
+  "source_keys": [
+    "SRC-SVG",
+    "SRC-PNG",
+    "SRC-OPENEXR",
+    "SRC-OCIO",
+    "SRC-CSSCOLOR"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

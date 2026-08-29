@@ -1,0 +1,20 @@
+{
+  "id": "AXM-16-GAMES-A-026-network-tick",
+  "level": "atom",
+  "domain_code": "16-games",
+  "domain": "Games interactive worlds and playable systems",
+  "name": "network tick",
+  "definition": "Smallest independently addressable network tick unit in games interactive worlds and playable systems, intended to be typed, referenced, transformed or validated without requiring a whole finished asset.",
+  "source_keys": [
+    "SRC-GLTF",
+    "SRC-USDPHYS",
+    "SRC-SCXML",
+    "SRC-OPENXR",
+    "SRC-WEBAUDIO"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

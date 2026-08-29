@@ -1,0 +1,19 @@
+{
+  "id": "AXM-24-WORKSPACE-COLLABORATION-A-027-conflict-marker",
+  "level": "atom",
+  "domain_code": "24-workspace-collaboration",
+  "domain": "Projects workspaces versioning collaboration and lifecycle",
+  "name": "conflict marker",
+  "definition": "Smallest independently addressable conflict marker unit in projects workspaces versioning collaboration and lifecycle, intended to be typed, referenced, transformed or validated without requiring a whole finished asset.",
+  "source_keys": [
+    "SRC-GIT",
+    "SRC-PROV",
+    "SRC-SPDX",
+    "SRC-BPMN"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

@@ -1,0 +1,10 @@
+{
+  "canonical_source": "reference/AXM_Universal_Creation_Map_v0.1/registry/master_registry.json",
+  "total": 2165,
+  "counts": {
+    "atom": 1000,
+    "component": 750,
+    "organ": 415
+  },
+  "format": "one complete registry record per JSON file"
+}

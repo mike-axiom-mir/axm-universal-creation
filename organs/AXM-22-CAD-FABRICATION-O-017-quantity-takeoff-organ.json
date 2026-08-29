@@ -1,0 +1,19 @@
+{
+  "id": "AXM-22-CAD-FABRICATION-O-017-quantity-takeoff-organ",
+  "level": "organ",
+  "domain_code": "22-cad-fabrication",
+  "domain": "CAD fabrication electronics and building information models",
+  "name": "quantity-takeoff organ",
+  "definition": "Functional subsystem for quantity-takeoff organ in cad fabrication electronics and building information models; orchestrates lower-level components, applies policy and emits results plus evidence.",
+  "source_keys": [
+    "SRC-OPENSCAD",
+    "SRC-KICAD",
+    "SRC-IFC",
+    "SRC-USDPHYS"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

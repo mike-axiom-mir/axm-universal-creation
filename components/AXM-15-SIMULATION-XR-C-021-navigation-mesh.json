@@ -1,0 +1,20 @@
+{
+  "id": "AXM-15-SIMULATION-XR-C-021-navigation-mesh",
+  "level": "component",
+  "domain_code": "15-simulation-xr",
+  "domain": "Simulation physics robotics navigation and XR",
+  "name": "navigation mesh",
+  "definition": "Reusable navigation mesh assembly in simulation physics robotics navigation and xr, with a bounded role and an interface that can be tested independently.",
+  "source_keys": [
+    "SRC-USDPHYS",
+    "SRC-URDF",
+    "SRC-OPENXR",
+    "SRC-SCXML",
+    "SRC-OPENVDB"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

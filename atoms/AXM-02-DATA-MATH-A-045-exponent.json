@@ -1,0 +1,19 @@
+{
+  "id": "AXM-02-DATA-MATH-A-045-exponent",
+  "level": "atom",
+  "domain_code": "02-data-math",
+  "domain": "Data mathematical and structural primitives",
+  "name": "exponent",
+  "definition": "Smallest independently addressable exponent unit in data mathematical and structural primitives, intended to be typed, referenced, transformed or validated without requiring a whole finished asset.",
+  "source_keys": [
+    "SRC-JSONSCHEMA",
+    "SRC-RDF",
+    "SRC-ONNX",
+    "SRC-CSSVALUES"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

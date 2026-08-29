@@ -1,0 +1,21 @@
+{
+  "id": "AXM-09-UI-INTERACTION-A-032-alignment",
+  "level": "atom",
+  "domain_code": "09-ui-interaction",
+  "domain": "User interface interaction accessibility and design systems",
+  "name": "alignment",
+  "definition": "Smallest independently addressable alignment unit in user interface interaction accessibility and design systems, intended to be typed, referenced, transformed or validated without requiring a whole finished asset.",
+  "source_keys": [
+    "SRC-HTML",
+    "SRC-ARIA",
+    "SRC-DESIGNTOKENS",
+    "SRC-POINTER",
+    "SRC-CSSVALUES",
+    "SRC-CSSCOLOR"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

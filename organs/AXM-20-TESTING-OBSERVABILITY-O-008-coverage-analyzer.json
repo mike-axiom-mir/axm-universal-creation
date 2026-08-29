@@ -1,0 +1,20 @@
+{
+  "id": "AXM-20-TESTING-OBSERVABILITY-O-008-coverage-analyzer",
+  "level": "organ",
+  "domain_code": "20-testing-observability",
+  "domain": "Testing verification benchmarking observability and incidents",
+  "name": "coverage analyzer",
+  "definition": "Functional subsystem for coverage analyzer in testing verification benchmarking observability and incidents; orchestrates lower-level components, applies policy and emits results plus evidence.",
+  "source_keys": [
+    "SRC-PYTEST",
+    "SRC-OTEL",
+    "SRC-CYCLONEDX",
+    "SRC-SLSA",
+    "SRC-JSONSCHEMA"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

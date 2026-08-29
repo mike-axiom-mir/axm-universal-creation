@@ -1,0 +1,21 @@
+{
+  "id": "AXM-04-TEXT-LANGUAGE-C-006-rich-text-block",
+  "level": "component",
+  "domain_code": "04-text-language",
+  "domain": "Text language typography speech notation and localization",
+  "name": "rich-text block",
+  "definition": "Reusable rich-text block assembly in text language typography speech notation and localization, with a bounded role and an interface that can be tested independently.",
+  "source_keys": [
+    "SRC-OPENTYPE",
+    "SRC-LDML",
+    "SRC-HTML",
+    "SRC-EPUB",
+    "SRC-WEBVTT",
+    "SRC-TOKENIZERS"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

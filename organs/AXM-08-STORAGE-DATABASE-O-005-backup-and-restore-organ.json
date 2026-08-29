@@ -1,0 +1,19 @@
+{
+  "id": "AXM-08-STORAGE-DATABASE-O-005-backup-and-restore-organ",
+  "level": "organ",
+  "domain_code": "08-storage-database",
+  "domain": "Storage databases search and retrieval",
+  "name": "backup and restore organ",
+  "definition": "Functional subsystem for backup and restore organ in storage databases search and retrieval; orchestrates lower-level components, applies policy and emits results plus evidence.",
+  "source_keys": [
+    "SRC-POSTGRES",
+    "SRC-RDF",
+    "SRC-JSONSCHEMA",
+    "SRC-OTEL"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

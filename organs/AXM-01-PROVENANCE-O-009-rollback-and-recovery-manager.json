@@ -1,0 +1,19 @@
+{
+  "id": "AXM-01-PROVENANCE-O-009-rollback-and-recovery-manager",
+  "level": "organ",
+  "domain_code": "01-provenance",
+  "domain": "Provenance rights consent and evidence",
+  "name": "rollback and recovery manager",
+  "definition": "Functional subsystem for rollback and recovery manager in provenance rights consent and evidence; orchestrates lower-level components, applies policy and emits results plus evidence.",
+  "source_keys": [
+    "SRC-PROV",
+    "SRC-SPDX",
+    "SRC-SLSA",
+    "SRC-CYCLONEDX"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

@@ -1,0 +1,20 @@
+{
+  "id": "AXM-23-PROCEDURAL-O-007-constructive-solid-geometry-evaluator",
+  "level": "organ",
+  "domain_code": "23-procedural",
+  "domain": "Procedural generative and search-based creation",
+  "name": "constructive-solid-geometry evaluator",
+  "definition": "Functional subsystem for constructive-solid-geometry evaluator in procedural generative and search-based creation; orchestrates lower-level components, applies policy and emits results plus evidence.",
+  "source_keys": [
+    "SRC-OPENSCAD",
+    "SRC-MATERIALX",
+    "SRC-TREESITTER",
+    "SRC-SCXML",
+    "SRC-3DGS"
+  ],
+  "source_basis": "cross-standard-plus-engineering-inference",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

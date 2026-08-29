@@ -1,0 +1,20 @@
+{
+  "id": "AXM-20-TESTING-OBSERVABILITY-A-008-timeout",
+  "level": "atom",
+  "domain_code": "20-testing-observability",
+  "domain": "Testing verification benchmarking observability and incidents",
+  "name": "timeout",
+  "definition": "Smallest independently addressable timeout unit in testing verification benchmarking observability and incidents, intended to be typed, referenced, transformed or validated without requiring a whole finished asset.",
+  "source_keys": [
+    "SRC-PYTEST",
+    "SRC-OTEL",
+    "SRC-CYCLONEDX",
+    "SRC-SLSA",
+    "SRC-JSONSCHEMA"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

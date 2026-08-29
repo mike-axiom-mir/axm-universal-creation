@@ -1,0 +1,20 @@
+{
+  "id": "AXM-07-API-NETWORK-A-030-stream-identifier",
+  "level": "atom",
+  "domain_code": "07-api-network",
+  "domain": "APIs networking messaging and protocols",
+  "name": "stream identifier",
+  "definition": "Smallest independently addressable stream identifier unit in apis networking messaging and protocols, intended to be typed, referenced, transformed or validated without requiring a whole finished asset.",
+  "source_keys": [
+    "SRC-OPENAPI",
+    "SRC-ASYNCAPI",
+    "SRC-ARAZZO",
+    "SRC-MCP",
+    "SRC-OAUTH"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

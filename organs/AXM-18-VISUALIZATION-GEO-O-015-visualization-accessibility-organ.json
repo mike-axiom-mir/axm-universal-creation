@@ -1,0 +1,19 @@
+{
+  "id": "AXM-18-VISUALIZATION-GEO-O-015-visualization-accessibility-organ",
+  "level": "organ",
+  "domain_code": "18-visualization-geo",
+  "domain": "Data visualization geospatial maps and spatial analytics",
+  "name": "visualization-accessibility organ",
+  "definition": "Functional subsystem for visualization-accessibility organ in data visualization geospatial maps and spatial analytics; orchestrates lower-level components, applies policy and emits results plus evidence.",
+  "source_keys": [
+    "SRC-VEGALITE",
+    "SRC-GEOJSON",
+    "SRC-OGC",
+    "SRC-3DTILES"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

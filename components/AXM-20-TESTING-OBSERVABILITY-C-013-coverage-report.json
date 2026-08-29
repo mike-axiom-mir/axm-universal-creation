@@ -1,0 +1,20 @@
+{
+  "id": "AXM-20-TESTING-OBSERVABILITY-C-013-coverage-report",
+  "level": "component",
+  "domain_code": "20-testing-observability",
+  "domain": "Testing verification benchmarking observability and incidents",
+  "name": "coverage report",
+  "definition": "Reusable coverage report assembly in testing verification benchmarking observability and incidents, with a bounded role and an interface that can be tested independently.",
+  "source_keys": [
+    "SRC-PYTEST",
+    "SRC-OTEL",
+    "SRC-CYCLONEDX",
+    "SRC-SLSA",
+    "SRC-JSONSCHEMA"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

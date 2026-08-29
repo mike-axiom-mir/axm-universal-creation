@@ -1,0 +1,20 @@
+{
+  "id": "AXM-16-GAMES-A-021-reward",
+  "level": "atom",
+  "domain_code": "16-games",
+  "domain": "Games interactive worlds and playable systems",
+  "name": "reward",
+  "definition": "Smallest independently addressable reward unit in games interactive worlds and playable systems, intended to be typed, referenced, transformed or validated without requiring a whole finished asset.",
+  "source_keys": [
+    "SRC-GLTF",
+    "SRC-USDPHYS",
+    "SRC-SCXML",
+    "SRC-OPENXR",
+    "SRC-WEBAUDIO"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

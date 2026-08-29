@@ -1,0 +1,21 @@
+{
+  "id": "AXM-25-INTEROPERABILITY-C-020-migration-report",
+  "level": "component",
+  "domain_code": "25-interoperability",
+  "domain": "Conversion import export compatibility and interoperability",
+  "name": "migration report",
+  "definition": "Reusable migration report assembly in conversion import export compatibility and interoperability, with a bounded role and an interface that can be tested independently.",
+  "source_keys": [
+    "SRC-JSONSCHEMA",
+    "SRC-GLTF",
+    "SRC-OCI",
+    "SRC-ODF",
+    "SRC-ONNX",
+    "SRC-OCIO"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

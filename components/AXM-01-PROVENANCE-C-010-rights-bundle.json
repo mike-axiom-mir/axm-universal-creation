@@ -1,0 +1,19 @@
+{
+  "id": "AXM-01-PROVENANCE-C-010-rights-bundle",
+  "level": "component",
+  "domain_code": "01-provenance",
+  "domain": "Provenance rights consent and evidence",
+  "name": "rights bundle",
+  "definition": "Reusable rights bundle assembly in provenance rights consent and evidence, with a bounded role and an interface that can be tested independently.",
+  "source_keys": [
+    "SRC-PROV",
+    "SRC-SPDX",
+    "SRC-SLSA",
+    "SRC-CYCLONEDX"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

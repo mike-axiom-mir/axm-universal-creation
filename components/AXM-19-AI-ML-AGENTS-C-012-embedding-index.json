@@ -1,0 +1,21 @@
+{
+  "id": "AXM-19-AI-ML-AGENTS-C-012-embedding-index",
+  "level": "component",
+  "domain_code": "19-ai-ml-agents",
+  "domain": "AI machine learning agents knowledge and retrieval",
+  "name": "embedding index",
+  "definition": "Reusable embedding index assembly in ai machine learning agents knowledge and retrieval, with a bounded role and an interface that can be tested independently.",
+  "source_keys": [
+    "SRC-ONNX",
+    "SRC-CROISSANT",
+    "SRC-OPENML",
+    "SRC-TOKENIZERS",
+    "SRC-MCP",
+    "SRC-RDF"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

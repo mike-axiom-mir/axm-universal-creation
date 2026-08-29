@@ -1,0 +1,20 @@
+{
+  "id": "AXM-21-SECURITY-INTEGRITY-A-002-subject-identifier",
+  "level": "atom",
+  "domain_code": "21-security-integrity",
+  "domain": "Security identity authorization privacy and integrity",
+  "name": "subject identifier",
+  "definition": "Smallest independently addressable subject identifier unit in security identity authorization privacy and integrity, intended to be typed, referenced, transformed or validated without requiring a whole finished asset.",
+  "source_keys": [
+    "SRC-JWT",
+    "SRC-OAUTH",
+    "SRC-SLSA",
+    "SRC-SPDX",
+    "SRC-CYCLONEDX"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

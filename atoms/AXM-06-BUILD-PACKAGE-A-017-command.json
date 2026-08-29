@@ -1,0 +1,20 @@
+{
+  "id": "AXM-06-BUILD-PACKAGE-A-017-command",
+  "level": "atom",
+  "domain_code": "06-build-package",
+  "domain": "Build packaging deployment release and distribution",
+  "name": "command",
+  "definition": "Smallest independently addressable command unit in build packaging deployment release and distribution, intended to be typed, referenced, transformed or validated without requiring a whole finished asset.",
+  "source_keys": [
+    "SRC-OCI",
+    "SRC-NPM",
+    "SRC-SLSA",
+    "SRC-SPDX",
+    "SRC-CYCLONEDX"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

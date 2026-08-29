@@ -1,0 +1,21 @@
+{
+  "id": "AXM-19-AI-ML-AGENTS-O-007-model-converter",
+  "level": "organ",
+  "domain_code": "19-ai-ml-agents",
+  "domain": "AI machine learning agents knowledge and retrieval",
+  "name": "model converter",
+  "definition": "Functional subsystem for model converter in ai machine learning agents knowledge and retrieval; orchestrates lower-level components, applies policy and emits results plus evidence.",
+  "source_keys": [
+    "SRC-ONNX",
+    "SRC-CROISSANT",
+    "SRC-OPENML",
+    "SRC-TOKENIZERS",
+    "SRC-MCP",
+    "SRC-RDF"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

@@ -1,0 +1,20 @@
+{
+  "id": "AXM-03-TIME-STATE-EVENT-O-008-temporal-validator",
+  "level": "organ",
+  "domain_code": "03-time-state-event",
+  "domain": "Time state event and workflow",
+  "name": "temporal validator",
+  "definition": "Functional subsystem for temporal validator in time state event and workflow; orchestrates lower-level components, applies policy and emits results plus evidence.",
+  "source_keys": [
+    "SRC-SCXML",
+    "SRC-OTIO",
+    "SRC-WEBVTT",
+    "SRC-BPMN",
+    "SRC-OTEL"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

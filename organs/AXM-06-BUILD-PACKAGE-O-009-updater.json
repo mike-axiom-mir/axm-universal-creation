@@ -1,0 +1,20 @@
+{
+  "id": "AXM-06-BUILD-PACKAGE-O-009-updater",
+  "level": "organ",
+  "domain_code": "06-build-package",
+  "domain": "Build packaging deployment release and distribution",
+  "name": "updater",
+  "definition": "Functional subsystem for updater in build packaging deployment release and distribution; orchestrates lower-level components, applies policy and emits results plus evidence.",
+  "source_keys": [
+    "SRC-OCI",
+    "SRC-NPM",
+    "SRC-SLSA",
+    "SRC-SPDX",
+    "SRC-CYCLONEDX"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

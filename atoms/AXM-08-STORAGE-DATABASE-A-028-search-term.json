@@ -1,0 +1,19 @@
+{
+  "id": "AXM-08-STORAGE-DATABASE-A-028-search-term",
+  "level": "atom",
+  "domain_code": "08-storage-database",
+  "domain": "Storage databases search and retrieval",
+  "name": "search term",
+  "definition": "Smallest independently addressable search term unit in storage databases search and retrieval, intended to be typed, referenced, transformed or validated without requiring a whole finished asset.",
+  "source_keys": [
+    "SRC-POSTGRES",
+    "SRC-RDF",
+    "SRC-JSONSCHEMA",
+    "SRC-OTEL"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

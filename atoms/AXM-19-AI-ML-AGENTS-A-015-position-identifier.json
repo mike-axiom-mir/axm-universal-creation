@@ -1,0 +1,21 @@
+{
+  "id": "AXM-19-AI-ML-AGENTS-A-015-position-identifier",
+  "level": "atom",
+  "domain_code": "19-ai-ml-agents",
+  "domain": "AI machine learning agents knowledge and retrieval",
+  "name": "position identifier",
+  "definition": "Smallest independently addressable position identifier unit in ai machine learning agents knowledge and retrieval, intended to be typed, referenced, transformed or validated without requiring a whole finished asset.",
+  "source_keys": [
+    "SRC-ONNX",
+    "SRC-CROISSANT",
+    "SRC-OPENML",
+    "SRC-TOKENIZERS",
+    "SRC-MCP",
+    "SRC-RDF"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

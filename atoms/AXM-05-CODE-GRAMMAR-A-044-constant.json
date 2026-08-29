@@ -1,0 +1,19 @@
+{
+  "id": "AXM-05-CODE-GRAMMAR-A-044-constant",
+  "level": "atom",
+  "domain_code": "05-code-grammar",
+  "domain": "Code grammar and executable program structure",
+  "name": "constant",
+  "definition": "Smallest independently addressable constant unit in code grammar and executable program structure, intended to be typed, referenced, transformed or validated without requiring a whole finished asset.",
+  "source_keys": [
+    "SRC-TREESITTER",
+    "SRC-WASM",
+    "SRC-GIT",
+    "SRC-JSONSCHEMA"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

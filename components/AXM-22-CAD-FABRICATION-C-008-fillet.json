@@ -1,0 +1,19 @@
+{
+  "id": "AXM-22-CAD-FABRICATION-C-008-fillet",
+  "level": "component",
+  "domain_code": "22-cad-fabrication",
+  "domain": "CAD fabrication electronics and building information models",
+  "name": "fillet",
+  "definition": "Reusable fillet assembly in cad fabrication electronics and building information models, with a bounded role and an interface that can be tested independently.",
+  "source_keys": [
+    "SRC-OPENSCAD",
+    "SRC-KICAD",
+    "SRC-IFC",
+    "SRC-USDPHYS"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

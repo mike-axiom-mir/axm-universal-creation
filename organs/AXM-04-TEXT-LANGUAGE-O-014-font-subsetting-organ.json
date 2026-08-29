@@ -1,0 +1,21 @@
+{
+  "id": "AXM-04-TEXT-LANGUAGE-O-014-font-subsetting-organ",
+  "level": "organ",
+  "domain_code": "04-text-language",
+  "domain": "Text language typography speech notation and localization",
+  "name": "font-subsetting organ",
+  "definition": "Functional subsystem for font-subsetting organ in text language typography speech notation and localization; orchestrates lower-level components, applies policy and emits results plus evidence.",
+  "source_keys": [
+    "SRC-OPENTYPE",
+    "SRC-LDML",
+    "SRC-HTML",
+    "SRC-EPUB",
+    "SRC-WEBVTT",
+    "SRC-TOKENIZERS"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

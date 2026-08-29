@@ -1,0 +1,20 @@
+{
+  "id": "AXM-17-DOCUMENTS-OFFICE-C-017-footer",
+  "level": "component",
+  "domain_code": "17-documents-office",
+  "domain": "Documents publishing spreadsheets presentations and forms",
+  "name": "footer",
+  "definition": "Reusable footer assembly in documents publishing spreadsheets presentations and forms, with a bounded role and an interface that can be tested independently.",
+  "source_keys": [
+    "SRC-ODF",
+    "SRC-PDF",
+    "SRC-EPUB",
+    "SRC-HTML",
+    "SRC-OPENTYPE"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

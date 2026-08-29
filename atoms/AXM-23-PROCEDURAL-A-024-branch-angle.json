@@ -1,0 +1,20 @@
+{
+  "id": "AXM-23-PROCEDURAL-A-024-branch-angle",
+  "level": "atom",
+  "domain_code": "23-procedural",
+  "domain": "Procedural generative and search-based creation",
+  "name": "branch angle",
+  "definition": "Smallest independently addressable branch angle unit in procedural generative and search-based creation, intended to be typed, referenced, transformed or validated without requiring a whole finished asset.",
+  "source_keys": [
+    "SRC-OPENSCAD",
+    "SRC-MATERIALX",
+    "SRC-TREESITTER",
+    "SRC-SCXML",
+    "SRC-3DGS"
+  ],
+  "source_basis": "cross-standard-plus-engineering-inference",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

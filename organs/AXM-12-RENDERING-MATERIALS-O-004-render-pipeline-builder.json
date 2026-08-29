@@ -1,0 +1,20 @@
+{
+  "id": "AXM-12-RENDERING-MATERIALS-O-004-render-pipeline-builder",
+  "level": "organ",
+  "domain_code": "12-rendering-materials",
+  "domain": "Materials shaders color lighting and rendering",
+  "name": "render-pipeline builder",
+  "definition": "Functional subsystem for render-pipeline builder in materials shaders color lighting and rendering; orchestrates lower-level components, applies policy and emits results plus evidence.",
+  "source_keys": [
+    "SRC-MATERIALX",
+    "SRC-WEBGPU",
+    "SRC-OCIO",
+    "SRC-GLTF",
+    "SRC-CSSCOLOR"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

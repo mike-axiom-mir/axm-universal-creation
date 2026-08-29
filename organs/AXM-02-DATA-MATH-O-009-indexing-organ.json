@@ -1,0 +1,19 @@
+{
+  "id": "AXM-02-DATA-MATH-O-009-indexing-organ",
+  "level": "organ",
+  "domain_code": "02-data-math",
+  "domain": "Data mathematical and structural primitives",
+  "name": "indexing organ",
+  "definition": "Functional subsystem for indexing organ in data mathematical and structural primitives; orchestrates lower-level components, applies policy and emits results plus evidence.",
+  "source_keys": [
+    "SRC-JSONSCHEMA",
+    "SRC-RDF",
+    "SRC-ONNX",
+    "SRC-CSSVALUES"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

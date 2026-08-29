@@ -1,0 +1,19 @@
+{
+  "id": "AXM-18-VISUALIZATION-GEO-C-028-choropleth-layer",
+  "level": "component",
+  "domain_code": "18-visualization-geo",
+  "domain": "Data visualization geospatial maps and spatial analytics",
+  "name": "choropleth layer",
+  "definition": "Reusable choropleth layer assembly in data visualization geospatial maps and spatial analytics, with a bounded role and an interface that can be tested independently.",
+  "source_keys": [
+    "SRC-VEGALITE",
+    "SRC-GEOJSON",
+    "SRC-OGC",
+    "SRC-3DTILES"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

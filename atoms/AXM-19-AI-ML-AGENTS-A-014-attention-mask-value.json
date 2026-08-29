@@ -1,0 +1,21 @@
+{
+  "id": "AXM-19-AI-ML-AGENTS-A-014-attention-mask-value",
+  "level": "atom",
+  "domain_code": "19-ai-ml-agents",
+  "domain": "AI machine learning agents knowledge and retrieval",
+  "name": "attention-mask value",
+  "definition": "Smallest independently addressable attention-mask value unit in ai machine learning agents knowledge and retrieval, intended to be typed, referenced, transformed or validated without requiring a whole finished asset.",
+  "source_keys": [
+    "SRC-ONNX",
+    "SRC-CROISSANT",
+    "SRC-OPENML",
+    "SRC-TOKENIZERS",
+    "SRC-MCP",
+    "SRC-RDF"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

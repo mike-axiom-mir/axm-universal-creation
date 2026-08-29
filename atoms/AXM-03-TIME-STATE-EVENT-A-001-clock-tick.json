@@ -1,0 +1,20 @@
+{
+  "id": "AXM-03-TIME-STATE-EVENT-A-001-clock-tick",
+  "level": "atom",
+  "domain_code": "03-time-state-event",
+  "domain": "Time state event and workflow",
+  "name": "clock tick",
+  "definition": "Smallest independently addressable clock tick unit in time state event and workflow, intended to be typed, referenced, transformed or validated without requiring a whole finished asset.",
+  "source_keys": [
+    "SRC-SCXML",
+    "SRC-OTIO",
+    "SRC-WEBVTT",
+    "SRC-BPMN",
+    "SRC-OTEL"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

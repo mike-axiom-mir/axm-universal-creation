@@ -1,0 +1,20 @@
+{
+  "id": "AXM-13-ANIMATION-VIDEO-O-001-animation-engine",
+  "level": "organ",
+  "domain_code": "13-animation-video",
+  "domain": "Animation motion video cinematics and timelines",
+  "name": "animation engine",
+  "definition": "Functional subsystem for animation engine in animation motion video cinematics and timelines; orchestrates lower-level components, applies policy and emits results plus evidence.",
+  "source_keys": [
+    "SRC-OTIO",
+    "SRC-GLTF",
+    "SRC-WEBCODECS",
+    "SRC-WEBVTT",
+    "SRC-SCXML"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

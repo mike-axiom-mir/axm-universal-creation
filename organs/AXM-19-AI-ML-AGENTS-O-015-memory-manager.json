@@ -1,0 +1,21 @@
+{
+  "id": "AXM-19-AI-ML-AGENTS-O-015-memory-manager",
+  "level": "organ",
+  "domain_code": "19-ai-ml-agents",
+  "domain": "AI machine learning agents knowledge and retrieval",
+  "name": "memory manager",
+  "definition": "Functional subsystem for memory manager in ai machine learning agents knowledge and retrieval; orchestrates lower-level components, applies policy and emits results plus evidence.",
+  "source_keys": [
+    "SRC-ONNX",
+    "SRC-CROISSANT",
+    "SRC-OPENML",
+    "SRC-TOKENIZERS",
+    "SRC-MCP",
+    "SRC-RDF"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

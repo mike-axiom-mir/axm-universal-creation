@@ -1,0 +1,20 @@
+{
+  "id": "AXM-14-AUDIO-MUSIC-SPEECH-A-028-phoneme",
+  "level": "atom",
+  "domain_code": "14-audio-music-speech",
+  "domain": "Audio music speech and sonic interaction",
+  "name": "phoneme",
+  "definition": "Smallest independently addressable phoneme unit in audio music speech and sonic interaction, intended to be typed, referenced, transformed or validated without requiring a whole finished asset.",
+  "source_keys": [
+    "SRC-WEBAUDIO",
+    "SRC-MIDI",
+    "SRC-MUSICXML",
+    "SRC-WEBCODECS",
+    "SRC-WEBVTT"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

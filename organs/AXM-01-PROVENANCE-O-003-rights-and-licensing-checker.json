@@ -1,0 +1,19 @@
+{
+  "id": "AXM-01-PROVENANCE-O-003-rights-and-licensing-checker",
+  "level": "organ",
+  "domain_code": "01-provenance",
+  "domain": "Provenance rights consent and evidence",
+  "name": "rights and licensing checker",
+  "definition": "Functional subsystem for rights and licensing checker in provenance rights consent and evidence; orchestrates lower-level components, applies policy and emits results plus evidence.",
+  "source_keys": [
+    "SRC-PROV",
+    "SRC-SPDX",
+    "SRC-SLSA",
+    "SRC-CYCLONEDX"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

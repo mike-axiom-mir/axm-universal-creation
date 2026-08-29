@@ -1,0 +1,19 @@
+{
+  "id": "AXM-05-CODE-GRAMMAR-C-005-abstract-syntax-tree",
+  "level": "component",
+  "domain_code": "05-code-grammar",
+  "domain": "Code grammar and executable program structure",
+  "name": "abstract syntax tree",
+  "definition": "Reusable abstract syntax tree assembly in code grammar and executable program structure, with a bounded role and an interface that can be tested independently.",
+  "source_keys": [
+    "SRC-TREESITTER",
+    "SRC-WASM",
+    "SRC-GIT",
+    "SRC-JSONSCHEMA"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

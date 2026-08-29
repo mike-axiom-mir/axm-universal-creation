@@ -1,0 +1,19 @@
+{
+  "id": "AXM-00-FOUNDATION-O-001-identity-registry",
+  "level": "organ",
+  "domain_code": "00-foundation",
+  "domain": "Universal foundation and metadata",
+  "name": "identity registry",
+  "definition": "Functional subsystem for identity registry in universal foundation and metadata; orchestrates lower-level components, applies policy and emits results plus evidence.",
+  "source_keys": [
+    "SRC-JSONSCHEMA",
+    "SRC-RDF",
+    "SRC-PROV",
+    "SRC-SPDX"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

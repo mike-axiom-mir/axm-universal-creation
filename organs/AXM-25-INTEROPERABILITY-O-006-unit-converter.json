@@ -1,0 +1,21 @@
+{
+  "id": "AXM-25-INTEROPERABILITY-O-006-unit-converter",
+  "level": "organ",
+  "domain_code": "25-interoperability",
+  "domain": "Conversion import export compatibility and interoperability",
+  "name": "unit converter",
+  "definition": "Functional subsystem for unit converter in conversion import export compatibility and interoperability; orchestrates lower-level components, applies policy and emits results plus evidence.",
+  "source_keys": [
+    "SRC-JSONSCHEMA",
+    "SRC-GLTF",
+    "SRC-OCI",
+    "SRC-ODF",
+    "SRC-ONNX",
+    "SRC-OCIO"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

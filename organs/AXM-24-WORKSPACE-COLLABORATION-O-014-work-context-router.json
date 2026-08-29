@@ -1,0 +1,19 @@
+{
+  "id": "AXM-24-WORKSPACE-COLLABORATION-O-014-work-context-router",
+  "level": "organ",
+  "domain_code": "24-workspace-collaboration",
+  "domain": "Projects workspaces versioning collaboration and lifecycle",
+  "name": "work-context router",
+  "definition": "Functional subsystem for work-context router in projects workspaces versioning collaboration and lifecycle; orchestrates lower-level components, applies policy and emits results plus evidence.",
+  "source_keys": [
+    "SRC-GIT",
+    "SRC-PROV",
+    "SRC-SPDX",
+    "SRC-BPMN"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

@@ -1,0 +1,20 @@
+{
+  "id": "AXM-12-RENDERING-MATERIALS-A-033-blend-factor",
+  "level": "atom",
+  "domain_code": "12-rendering-materials",
+  "domain": "Materials shaders color lighting and rendering",
+  "name": "blend factor",
+  "definition": "Smallest independently addressable blend factor unit in materials shaders color lighting and rendering, intended to be typed, referenced, transformed or validated without requiring a whole finished asset.",
+  "source_keys": [
+    "SRC-MATERIALX",
+    "SRC-WEBGPU",
+    "SRC-OCIO",
+    "SRC-GLTF",
+    "SRC-CSSCOLOR"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

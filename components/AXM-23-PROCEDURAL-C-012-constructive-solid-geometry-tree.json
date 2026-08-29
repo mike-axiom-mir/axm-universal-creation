@@ -1,0 +1,20 @@
+{
+  "id": "AXM-23-PROCEDURAL-C-012-constructive-solid-geometry-tree",
+  "level": "component",
+  "domain_code": "23-procedural",
+  "domain": "Procedural generative and search-based creation",
+  "name": "constructive-solid-geometry tree",
+  "definition": "Reusable constructive-solid-geometry tree assembly in procedural generative and search-based creation, with a bounded role and an interface that can be tested independently.",
+  "source_keys": [
+    "SRC-OPENSCAD",
+    "SRC-MATERIALX",
+    "SRC-TREESITTER",
+    "SRC-SCXML",
+    "SRC-3DGS"
+  ],
+  "source_basis": "cross-standard-plus-engineering-inference",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

@@ -1,0 +1,19 @@
+{
+  "id": "AXM-01-PROVENANCE-A-035-transformation-record-reference",
+  "level": "atom",
+  "domain_code": "01-provenance",
+  "domain": "Provenance rights consent and evidence",
+  "name": "transformation record reference",
+  "definition": "Smallest independently addressable transformation record reference unit in provenance rights consent and evidence, intended to be typed, referenced, transformed or validated without requiring a whole finished asset.",
+  "source_keys": [
+    "SRC-PROV",
+    "SRC-SPDX",
+    "SRC-SLSA",
+    "SRC-CYCLONEDX"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

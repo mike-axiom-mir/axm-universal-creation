@@ -1,0 +1,20 @@
+{
+  "id": "AXM-21-SECURITY-INTEGRITY-O-016-trust-evaluator",
+  "level": "organ",
+  "domain_code": "21-security-integrity",
+  "domain": "Security identity authorization privacy and integrity",
+  "name": "trust evaluator",
+  "definition": "Functional subsystem for trust evaluator in security identity authorization privacy and integrity; orchestrates lower-level components, applies policy and emits results plus evidence.",
+  "source_keys": [
+    "SRC-JWT",
+    "SRC-OAUTH",
+    "SRC-SLSA",
+    "SRC-SPDX",
+    "SRC-CYCLONEDX"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

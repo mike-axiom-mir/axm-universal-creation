@@ -1,0 +1,20 @@
+{
+  "id": "AXM-20-TESTING-OBSERVABILITY-O-017-evidence-verifier",
+  "level": "organ",
+  "domain_code": "20-testing-observability",
+  "domain": "Testing verification benchmarking observability and incidents",
+  "name": "evidence verifier",
+  "definition": "Functional subsystem for evidence verifier in testing verification benchmarking observability and incidents; orchestrates lower-level components, applies policy and emits results plus evidence.",
+  "source_keys": [
+    "SRC-PYTEST",
+    "SRC-OTEL",
+    "SRC-CYCLONEDX",
+    "SRC-SLSA",
+    "SRC-JSONSCHEMA"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

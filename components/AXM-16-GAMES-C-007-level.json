@@ -1,0 +1,20 @@
+{
+  "id": "AXM-16-GAMES-C-007-level",
+  "level": "component",
+  "domain_code": "16-games",
+  "domain": "Games interactive worlds and playable systems",
+  "name": "level",
+  "definition": "Reusable level assembly in games interactive worlds and playable systems, with a bounded role and an interface that can be tested independently.",
+  "source_keys": [
+    "SRC-GLTF",
+    "SRC-USDPHYS",
+    "SRC-SCXML",
+    "SRC-OPENXR",
+    "SRC-WEBAUDIO"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

@@ -1,0 +1,21 @@
+{
+  "id": "AXM-11-3D-SPATIAL-A-038-primitive-mode",
+  "level": "atom",
+  "domain_code": "11-3d-spatial",
+  "domain": "3D geometry scenes volumes fields and spatial representations",
+  "name": "primitive mode",
+  "definition": "Smallest independently addressable primitive mode unit in 3d geometry scenes volumes fields and spatial representations, intended to be typed, referenced, transformed or validated without requiring a whole finished asset.",
+  "source_keys": [
+    "SRC-GLTF",
+    "SRC-USD",
+    "SRC-OPENVDB",
+    "SRC-3DTILES",
+    "SRC-NERF",
+    "SRC-3DGS"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

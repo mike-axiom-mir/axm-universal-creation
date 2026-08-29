@@ -1,0 +1,19 @@
+{
+  "id": "AXM-08-STORAGE-DATABASE-C-024-vector-index",
+  "level": "component",
+  "domain_code": "08-storage-database",
+  "domain": "Storage databases search and retrieval",
+  "name": "vector index",
+  "definition": "Reusable vector index assembly in storage databases search and retrieval, with a bounded role and an interface that can be tested independently.",
+  "source_keys": [
+    "SRC-POSTGRES",
+    "SRC-RDF",
+    "SRC-JSONSCHEMA",
+    "SRC-OTEL"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

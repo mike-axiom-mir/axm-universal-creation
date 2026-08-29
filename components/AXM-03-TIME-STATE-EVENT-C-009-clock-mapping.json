@@ -1,0 +1,20 @@
+{
+  "id": "AXM-03-TIME-STATE-EVENT-C-009-clock-mapping",
+  "level": "component",
+  "domain_code": "03-time-state-event",
+  "domain": "Time state event and workflow",
+  "name": "clock mapping",
+  "definition": "Reusable clock mapping assembly in time state event and workflow, with a bounded role and an interface that can be tested independently.",
+  "source_keys": [
+    "SRC-SCXML",
+    "SRC-OTIO",
+    "SRC-WEBVTT",
+    "SRC-BPMN",
+    "SRC-OTEL"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

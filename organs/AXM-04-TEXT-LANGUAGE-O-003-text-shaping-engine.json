@@ -1,0 +1,21 @@
+{
+  "id": "AXM-04-TEXT-LANGUAGE-O-003-text-shaping-engine",
+  "level": "organ",
+  "domain_code": "04-text-language",
+  "domain": "Text language typography speech notation and localization",
+  "name": "text shaping engine",
+  "definition": "Functional subsystem for text shaping engine in text language typography speech notation and localization; orchestrates lower-level components, applies policy and emits results plus evidence.",
+  "source_keys": [
+    "SRC-OPENTYPE",
+    "SRC-LDML",
+    "SRC-HTML",
+    "SRC-EPUB",
+    "SRC-WEBVTT",
+    "SRC-TOKENIZERS"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

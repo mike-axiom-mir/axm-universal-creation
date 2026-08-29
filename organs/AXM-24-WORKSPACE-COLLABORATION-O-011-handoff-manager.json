@@ -1,0 +1,19 @@
+{
+  "id": "AXM-24-WORKSPACE-COLLABORATION-O-011-handoff-manager",
+  "level": "organ",
+  "domain_code": "24-workspace-collaboration",
+  "domain": "Projects workspaces versioning collaboration and lifecycle",
+  "name": "handoff manager",
+  "definition": "Functional subsystem for handoff manager in projects workspaces versioning collaboration and lifecycle; orchestrates lower-level components, applies policy and emits results plus evidence.",
+  "source_keys": [
+    "SRC-GIT",
+    "SRC-PROV",
+    "SRC-SPDX",
+    "SRC-BPMN"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

@@ -1,0 +1,19 @@
+{
+  "id": "AXM-02-DATA-MATH-C-023-statistical-summary",
+  "level": "component",
+  "domain_code": "02-data-math",
+  "domain": "Data mathematical and structural primitives",
+  "name": "statistical summary",
+  "definition": "Reusable statistical summary assembly in data mathematical and structural primitives, with a bounded role and an interface that can be tested independently.",
+  "source_keys": [
+    "SRC-JSONSCHEMA",
+    "SRC-RDF",
+    "SRC-ONNX",
+    "SRC-CSSVALUES"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

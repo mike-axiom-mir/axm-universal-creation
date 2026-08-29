@@ -1,0 +1,20 @@
+{
+  "id": "AXM-10-2D-IMAGING-C-018-icon",
+  "level": "component",
+  "domain_code": "10-2d-imaging",
+  "domain": "2D raster vector imaging color and texture",
+  "name": "icon",
+  "definition": "Reusable icon assembly in 2d raster vector imaging color and texture, with a bounded role and an interface that can be tested independently.",
+  "source_keys": [
+    "SRC-SVG",
+    "SRC-PNG",
+    "SRC-OPENEXR",
+    "SRC-OCIO",
+    "SRC-CSSCOLOR"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

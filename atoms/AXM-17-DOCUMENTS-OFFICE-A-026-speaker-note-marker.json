@@ -1,0 +1,20 @@
+{
+  "id": "AXM-17-DOCUMENTS-OFFICE-A-026-speaker-note-marker",
+  "level": "atom",
+  "domain_code": "17-documents-office",
+  "domain": "Documents publishing spreadsheets presentations and forms",
+  "name": "speaker-note marker",
+  "definition": "Smallest independently addressable speaker-note marker unit in documents publishing spreadsheets presentations and forms, intended to be typed, referenced, transformed or validated without requiring a whole finished asset.",
+  "source_keys": [
+    "SRC-ODF",
+    "SRC-PDF",
+    "SRC-EPUB",
+    "SRC-HTML",
+    "SRC-OPENTYPE"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

@@ -1,0 +1,19 @@
+{
+  "id": "AXM-05-CODE-GRAMMAR-O-001-grammar-compiler",
+  "level": "organ",
+  "domain_code": "05-code-grammar",
+  "domain": "Code grammar and executable program structure",
+  "name": "grammar compiler",
+  "definition": "Functional subsystem for grammar compiler in code grammar and executable program structure; orchestrates lower-level components, applies policy and emits results plus evidence.",
+  "source_keys": [
+    "SRC-TREESITTER",
+    "SRC-WASM",
+    "SRC-GIT",
+    "SRC-JSONSCHEMA"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

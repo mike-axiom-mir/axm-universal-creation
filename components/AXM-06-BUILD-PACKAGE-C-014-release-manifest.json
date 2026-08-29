@@ -1,0 +1,20 @@
+{
+  "id": "AXM-06-BUILD-PACKAGE-C-014-release-manifest",
+  "level": "component",
+  "domain_code": "06-build-package",
+  "domain": "Build packaging deployment release and distribution",
+  "name": "release manifest",
+  "definition": "Reusable release manifest assembly in build packaging deployment release and distribution, with a bounded role and an interface that can be tested independently.",
+  "source_keys": [
+    "SRC-OCI",
+    "SRC-NPM",
+    "SRC-SLSA",
+    "SRC-SPDX",
+    "SRC-CYCLONEDX"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

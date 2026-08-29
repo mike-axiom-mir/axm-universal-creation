@@ -1,0 +1,21 @@
+{
+  "id": "AXM-11-3D-SPATIAL-C-014-heightfield",
+  "level": "component",
+  "domain_code": "11-3d-spatial",
+  "domain": "3D geometry scenes volumes fields and spatial representations",
+  "name": "heightfield",
+  "definition": "Reusable heightfield assembly in 3d geometry scenes volumes fields and spatial representations, with a bounded role and an interface that can be tested independently.",
+  "source_keys": [
+    "SRC-GLTF",
+    "SRC-USD",
+    "SRC-OPENVDB",
+    "SRC-3DTILES",
+    "SRC-NERF",
+    "SRC-3DGS"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

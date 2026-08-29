@@ -1,0 +1,21 @@
+{
+  "id": "AXM-09-UI-INTERACTION-C-003-button",
+  "level": "component",
+  "domain_code": "09-ui-interaction",
+  "domain": "User interface interaction accessibility and design systems",
+  "name": "button",
+  "definition": "Reusable button assembly in user interface interaction accessibility and design systems, with a bounded role and an interface that can be tested independently.",
+  "source_keys": [
+    "SRC-HTML",
+    "SRC-ARIA",
+    "SRC-DESIGNTOKENS",
+    "SRC-POINTER",
+    "SRC-CSSVALUES",
+    "SRC-CSSCOLOR"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

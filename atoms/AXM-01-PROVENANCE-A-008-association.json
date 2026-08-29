@@ -1,0 +1,19 @@
+{
+  "id": "AXM-01-PROVENANCE-A-008-association",
+  "level": "atom",
+  "domain_code": "01-provenance",
+  "domain": "Provenance rights consent and evidence",
+  "name": "association",
+  "definition": "Smallest independently addressable association unit in provenance rights consent and evidence, intended to be typed, referenced, transformed or validated without requiring a whole finished asset.",
+  "source_keys": [
+    "SRC-PROV",
+    "SRC-SPDX",
+    "SRC-SLSA",
+    "SRC-CYCLONEDX"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

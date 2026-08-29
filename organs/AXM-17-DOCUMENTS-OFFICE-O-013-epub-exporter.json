@@ -1,0 +1,20 @@
+{
+  "id": "AXM-17-DOCUMENTS-OFFICE-O-013-epub-exporter",
+  "level": "organ",
+  "domain_code": "17-documents-office",
+  "domain": "Documents publishing spreadsheets presentations and forms",
+  "name": "EPUB exporter",
+  "definition": "Functional subsystem for EPUB exporter in documents publishing spreadsheets presentations and forms; orchestrates lower-level components, applies policy and emits results plus evidence.",
+  "source_keys": [
+    "SRC-ODF",
+    "SRC-PDF",
+    "SRC-EPUB",
+    "SRC-HTML",
+    "SRC-OPENTYPE"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

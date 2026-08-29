@@ -1,0 +1,19 @@
+{
+  "id": "AXM-00-FOUNDATION-A-022-quantity",
+  "level": "atom",
+  "domain_code": "00-foundation",
+  "domain": "Universal foundation and metadata",
+  "name": "quantity",
+  "definition": "Smallest independently addressable quantity unit in universal foundation and metadata, intended to be typed, referenced, transformed or validated without requiring a whole finished asset.",
+  "source_keys": [
+    "SRC-JSONSCHEMA",
+    "SRC-RDF",
+    "SRC-PROV",
+    "SRC-SPDX"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

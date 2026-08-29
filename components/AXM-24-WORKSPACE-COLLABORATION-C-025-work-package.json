@@ -1,0 +1,19 @@
+{
+  "id": "AXM-24-WORKSPACE-COLLABORATION-C-025-work-package",
+  "level": "component",
+  "domain_code": "24-workspace-collaboration",
+  "domain": "Projects workspaces versioning collaboration and lifecycle",
+  "name": "work package",
+  "definition": "Reusable work package assembly in projects workspaces versioning collaboration and lifecycle, with a bounded role and an interface that can be tested independently.",
+  "source_keys": [
+    "SRC-GIT",
+    "SRC-PROV",
+    "SRC-SPDX",
+    "SRC-BPMN"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

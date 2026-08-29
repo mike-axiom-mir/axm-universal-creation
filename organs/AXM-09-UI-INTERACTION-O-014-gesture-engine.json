@@ -1,0 +1,21 @@
+{
+  "id": "AXM-09-UI-INTERACTION-O-014-gesture-engine",
+  "level": "organ",
+  "domain_code": "09-ui-interaction",
+  "domain": "User interface interaction accessibility and design systems",
+  "name": "gesture engine",
+  "definition": "Functional subsystem for gesture engine in user interface interaction accessibility and design systems; orchestrates lower-level components, applies policy and emits results plus evidence.",
+  "source_keys": [
+    "SRC-HTML",
+    "SRC-ARIA",
+    "SRC-DESIGNTOKENS",
+    "SRC-POINTER",
+    "SRC-CSSVALUES",
+    "SRC-CSSCOLOR"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

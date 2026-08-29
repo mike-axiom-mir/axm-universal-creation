@@ -1,0 +1,19 @@
+{
+  "id": "AXM-08-STORAGE-DATABASE-O-012-change-stream-processor",
+  "level": "organ",
+  "domain_code": "08-storage-database",
+  "domain": "Storage databases search and retrieval",
+  "name": "change-stream processor",
+  "definition": "Functional subsystem for change-stream processor in storage databases search and retrieval; orchestrates lower-level components, applies policy and emits results plus evidence.",
+  "source_keys": [
+    "SRC-POSTGRES",
+    "SRC-RDF",
+    "SRC-JSONSCHEMA",
+    "SRC-OTEL"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

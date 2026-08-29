@@ -1,0 +1,20 @@
+{
+  "id": "AXM-14-AUDIO-MUSIC-SPEECH-O-003-synthesizer",
+  "level": "organ",
+  "domain_code": "14-audio-music-speech",
+  "domain": "Audio music speech and sonic interaction",
+  "name": "synthesizer",
+  "definition": "Functional subsystem for synthesizer in audio music speech and sonic interaction; orchestrates lower-level components, applies policy and emits results plus evidence.",
+  "source_keys": [
+    "SRC-WEBAUDIO",
+    "SRC-MIDI",
+    "SRC-MUSICXML",
+    "SRC-WEBCODECS",
+    "SRC-WEBVTT"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}

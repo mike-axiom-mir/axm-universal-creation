@@ -1,0 +1,19 @@
+{
+  "id": "AXM-22-CAD-FABRICATION-O-008-slicer",
+  "level": "organ",
+  "domain_code": "22-cad-fabrication",
+  "domain": "CAD fabrication electronics and building information models",
+  "name": "slicer",
+  "definition": "Functional subsystem for slicer in cad fabrication electronics and building information models; orchestrates lower-level components, applies policy and emits results plus evidence.",
+  "source_keys": [
+    "SRC-OPENSCAD",
+    "SRC-KICAD",
+    "SRC-IFC",
+    "SRC-USDPHYS"
+  ],
+  "source_basis": "cross-standard",
+  "registry_status": "candidate",
+  "maturity": "research-seed",
+  "extension_allowed": true,
+  "notes": ""
+}
