@@ -109,10 +109,28 @@ The small Python runtime currently provides:
 - one complete daily snapshot export and explicit restore with the current body moved to quarantine;
 - no autonomous-agent requirement and no selected final brain architecture.
 
+## First actual build: creation decomposition
+
+The first build on top of the recovered anatomy adds a deterministic `plan` path.
+
+A creation request is now mapped against the explicit 2,165-record registry before new machinery is invented. The result exposes:
+
+- request terms used by the matcher;
+- live capability coverage, including exact route matches;
+- ranked atom, component, and organ candidates;
+- the exact matched fields and tokens that produced each score;
+- direct dependency hints from selected registry records;
+- the smallest currently visible capability gap, explicitly labeled as a hypothesis when it is not already covered.
+
+This matcher is intentionally a **deterministic lexical baseline**, not a claim of semantic understanding. It does not use a learned model and it says so in its output. A future neural or coupled matcher can therefore be evaluated beside an inspectable baseline instead of silently replacing it.
+
+Unroutable `create` requests now carry this decomposition inside their `CAPABILITY_GAP`, so the machine can move from "I cannot do this" toward "these explicit pieces appear relevant and this is the smallest visible missing path."
+
 ### Run
 
 ```bash
 PYTHONPATH=src python -m axm_uc inspect
+PYTHONPATH=src python -m axm_uc plan examples/requests/plan_mesh.json
 PYTHONPATH=src python -m axm_uc create examples/requests/create_hello.json
 PYTHONPATH=src python -m axm_uc create examples/requests/gap_markdown.json
 PYTHONPATH=src python -m axm_uc candidate test capabilities/candidates/AXM-CAP-WRITE-MARKDOWN.json
@@ -120,6 +138,8 @@ python tools/build.py
 ```
 
 The Markdown example intentionally begins as a gap. The candidate demonstrates the smallest justified growth in this case: reuse the exact text writer and add an inspectable Markdown route rather than inventing a duplicate writer.
+
+GitHub collaboration uses one branch/PR lane per AI chat or instance by default; see `AGENTS.md`. That convention is repository hygiene, not machine architecture.
 
 ## Status
 
