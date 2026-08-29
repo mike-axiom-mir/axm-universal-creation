@@ -23,6 +23,10 @@ def build_parser() -> argparse.ArgumentParser:
     inspect_p.add_argument("--level", choices=["atom", "component", "organ"])
     inspect_p.add_argument("--limit", type=int, default=20)
 
+    plan_p = sub.add_parser("plan", help="decompose a creation request against the explicit registry")
+    plan_p.add_argument("request", help="JSON request file")
+    plan_p.add_argument("--per-level", type=int, default=6, help="maximum matches returned per anatomy level")
+
     create_p = sub.add_parser("create", help="route one creation request")
     create_p.add_argument("request", help="JSON request file")
 
@@ -50,6 +54,10 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "inspect":
         _print(machine.inspect(args.query, args.level, args.limit))
+        return 0
+    if args.command == "plan":
+        request = json.loads(Path(args.request).read_text(encoding="utf-8"))
+        _print(machine.plan(request, per_level=args.per_level))
         return 0
     if args.command == "create":
         request = json.loads(Path(args.request).read_text(encoding="utf-8"))
