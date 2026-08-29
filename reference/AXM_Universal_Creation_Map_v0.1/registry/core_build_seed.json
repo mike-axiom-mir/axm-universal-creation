@@ -1,0 +1,4118 @@
+{
+  "version": "0.1-research-seed",
+  "created": "2026-08-28",
+  "records": [
+    {
+      "id": "AXM-CORE-A-001-identifier",
+      "level": "atom",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "identifier",
+      "definition": "Stable machine-readable identity for one registry object or instance.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "namespace plus local name or generated UUID"
+      ],
+      "outputs": [
+        "canonical identifier"
+      ],
+      "validation": [
+        "unique within declared namespace; immutable after publication"
+      ],
+      "constraints": [
+        "unique within declared namespace; immutable after publication"
+      ],
+      "dependencies": [],
+      "relationships": [],
+      "source_keys": [
+        "SRC-JSONSCHEMA",
+        "SRC-RDF",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "value_type": "identifier",
+      "unit": null,
+      "canonical_form": null
+    },
+    {
+      "id": "AXM-CORE-A-002-namespace",
+      "level": "atom",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "namespace",
+      "definition": "Scope that prevents otherwise identical names from colliding.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "owner or registry identifier"
+      ],
+      "outputs": [
+        "namespace URI or slug"
+      ],
+      "validation": [
+        "resolvable or locally documented; no ambiguous aliases"
+      ],
+      "constraints": [
+        "resolvable or locally documented; no ambiguous aliases"
+      ],
+      "dependencies": [],
+      "relationships": [],
+      "source_keys": [
+        "SRC-JSONSCHEMA",
+        "SRC-RDF",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "value_type": "namespace",
+      "unit": null,
+      "canonical_form": null
+    },
+    {
+      "id": "AXM-CORE-A-003-type-tag",
+      "level": "atom",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "type tag",
+      "definition": "Declared semantic class of a value or object.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "type vocabulary entry"
+      ],
+      "outputs": [
+        "type reference"
+      ],
+      "validation": [
+        "must resolve to a registered type"
+      ],
+      "constraints": [
+        "must resolve to a registered type"
+      ],
+      "dependencies": [],
+      "relationships": [],
+      "source_keys": [
+        "SRC-JSONSCHEMA",
+        "SRC-RDF",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "value_type": "type tag",
+      "unit": null,
+      "canonical_form": null
+    },
+    {
+      "id": "AXM-CORE-A-004-version",
+      "level": "atom",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "version",
+      "definition": "Ordered identity for a released state of an item or schema.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "versioning policy"
+      ],
+      "outputs": [
+        "version string"
+      ],
+      "validation": [
+        "matches policy and does not silently overwrite prior meaning"
+      ],
+      "constraints": [
+        "matches policy and does not silently overwrite prior meaning"
+      ],
+      "dependencies": [],
+      "relationships": [],
+      "source_keys": [
+        "SRC-JSONSCHEMA",
+        "SRC-RDF",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "value_type": "version",
+      "unit": null,
+      "canonical_form": null
+    },
+    {
+      "id": "AXM-CORE-A-005-status",
+      "level": "atom",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "status",
+      "definition": "Lifecycle state such as proposed, implemented, test-passed, usage-backed, repeated, portable, deprecated or failed.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "evidence events"
+      ],
+      "outputs": [
+        "controlled status value"
+      ],
+      "validation": [
+        "transition allowed by lifecycle state machine"
+      ],
+      "constraints": [
+        "transition allowed by lifecycle state machine"
+      ],
+      "dependencies": [],
+      "relationships": [],
+      "source_keys": [
+        "SRC-JSONSCHEMA",
+        "SRC-RDF",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "value_type": "status",
+      "unit": null,
+      "canonical_form": null
+    },
+    {
+      "id": "AXM-CORE-A-006-boolean",
+      "level": "atom",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "boolean",
+      "definition": "Two-state truth value used only where a binary distinction is honest.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "true or false"
+      ],
+      "outputs": [
+        "boolean value"
+      ],
+      "validation": [
+        "no hidden third state; use unknown/null when evidence is absent"
+      ],
+      "constraints": [
+        "no hidden third state; use unknown/null when evidence is absent"
+      ],
+      "dependencies": [],
+      "relationships": [],
+      "source_keys": [
+        "SRC-JSONSCHEMA",
+        "SRC-RDF",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "value_type": "boolean",
+      "unit": null,
+      "canonical_form": null
+    },
+    {
+      "id": "AXM-CORE-A-007-integer",
+      "level": "atom",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "integer",
+      "definition": "Whole-number quantity with declared range and unit when applicable.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "numeric value"
+      ],
+      "outputs": [
+        "integer"
+      ],
+      "validation": [
+        "within declared minimum and maximum"
+      ],
+      "constraints": [
+        "within declared minimum and maximum"
+      ],
+      "dependencies": [],
+      "relationships": [],
+      "source_keys": [
+        "SRC-JSONSCHEMA",
+        "SRC-RDF",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "value_type": "integer",
+      "unit": null,
+      "canonical_form": null
+    },
+    {
+      "id": "AXM-CORE-A-008-floating-point-number",
+      "level": "atom",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "floating-point number",
+      "definition": "Approximate real-number value with explicit precision expectations.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "numeric value"
+      ],
+      "outputs": [
+        "floating-point value"
+      ],
+      "validation": [
+        "finite unless non-finite values are explicitly allowed"
+      ],
+      "constraints": [
+        "finite unless non-finite values are explicitly allowed"
+      ],
+      "dependencies": [],
+      "relationships": [],
+      "source_keys": [
+        "SRC-JSONSCHEMA",
+        "SRC-RDF",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "value_type": "floating-point number",
+      "unit": null,
+      "canonical_form": null
+    },
+    {
+      "id": "AXM-CORE-A-009-string",
+      "level": "atom",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "string",
+      "definition": "Ordered text value with declared encoding, language or pattern when needed.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "Unicode text"
+      ],
+      "outputs": [
+        "string"
+      ],
+      "validation": [
+        "encoding valid; pattern and length constraints pass"
+      ],
+      "constraints": [
+        "encoding valid; pattern and length constraints pass"
+      ],
+      "dependencies": [],
+      "relationships": [],
+      "source_keys": [
+        "SRC-JSONSCHEMA",
+        "SRC-RDF",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "value_type": "string",
+      "unit": null,
+      "canonical_form": null
+    },
+    {
+      "id": "AXM-CORE-A-010-byte-sequence",
+      "level": "atom",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "byte sequence",
+      "definition": "Ordered raw bytes for binary payloads or exact-byte evidence.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "binary data"
+      ],
+      "outputs": [
+        "byte array"
+      ],
+      "validation": [
+        "declared length and digest match"
+      ],
+      "constraints": [
+        "declared length and digest match"
+      ],
+      "dependencies": [],
+      "relationships": [],
+      "source_keys": [
+        "SRC-JSONSCHEMA",
+        "SRC-RDF",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "value_type": "byte sequence",
+      "unit": null,
+      "canonical_form": null
+    },
+    {
+      "id": "AXM-CORE-A-011-unit",
+      "level": "atom",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "unit",
+      "definition": "Named measurement unit attached to a numeric quantity.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "unit vocabulary"
+      ],
+      "outputs": [
+        "unit identifier"
+      ],
+      "validation": [
+        "dimensionally compatible with the quantity"
+      ],
+      "constraints": [
+        "dimensionally compatible with the quantity"
+      ],
+      "dependencies": [],
+      "relationships": [],
+      "source_keys": [
+        "SRC-JSONSCHEMA",
+        "SRC-RDF",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "value_type": "unit",
+      "unit": null,
+      "canonical_form": null
+    },
+    {
+      "id": "AXM-CORE-A-012-timestamp",
+      "level": "atom",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "timestamp",
+      "definition": "Point on a declared time scale.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "date-time plus zone or UTC"
+      ],
+      "outputs": [
+        "canonical timestamp"
+      ],
+      "validation": [
+        "timezone and precision are explicit"
+      ],
+      "constraints": [
+        "timezone and precision are explicit"
+      ],
+      "dependencies": [],
+      "relationships": [],
+      "source_keys": [
+        "SRC-JSONSCHEMA",
+        "SRC-RDF",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "value_type": "timestamp",
+      "unit": null,
+      "canonical_form": null
+    },
+    {
+      "id": "AXM-CORE-A-013-duration",
+      "level": "atom",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "duration",
+      "definition": "Measured or planned interval of time.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "quantity plus time unit"
+      ],
+      "outputs": [
+        "duration"
+      ],
+      "validation": [
+        "non-negative unless signed intervals are explicitly supported"
+      ],
+      "constraints": [
+        "non-negative unless signed intervals are explicitly supported"
+      ],
+      "dependencies": [],
+      "relationships": [],
+      "source_keys": [
+        "SRC-JSONSCHEMA",
+        "SRC-RDF",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "value_type": "duration",
+      "unit": null,
+      "canonical_form": null
+    },
+    {
+      "id": "AXM-CORE-A-014-uri",
+      "level": "atom",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "URI",
+      "definition": "Portable reference to a resource, concept or local address.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "URI string"
+      ],
+      "outputs": [
+        "normalized URI"
+      ],
+      "validation": [
+        "syntactically valid and scheme policy allowed"
+      ],
+      "constraints": [
+        "syntactically valid and scheme policy allowed"
+      ],
+      "dependencies": [],
+      "relationships": [],
+      "source_keys": [
+        "SRC-JSONSCHEMA",
+        "SRC-RDF",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "value_type": "URI",
+      "unit": null,
+      "canonical_form": null
+    },
+    {
+      "id": "AXM-CORE-A-015-hash-digest",
+      "level": "atom",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "hash digest",
+      "definition": "Content-derived fingerprint used to detect changes when the reference digest and verification path are protected.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "bytes plus algorithm"
+      ],
+      "outputs": [
+        "digest"
+      ],
+      "validation": [
+        "algorithm declared and recomputation matches"
+      ],
+      "constraints": [
+        "algorithm declared and recomputation matches"
+      ],
+      "dependencies": [],
+      "relationships": [],
+      "source_keys": [
+        "SRC-JSONSCHEMA",
+        "SRC-RDF",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "value_type": "hash digest",
+      "unit": null,
+      "canonical_form": null
+    },
+    {
+      "id": "AXM-CORE-A-016-deterministic-seed",
+      "level": "atom",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "deterministic seed",
+      "definition": "Recorded value that initializes a reproducible pseudo-random or procedural route.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "integer or byte seed"
+      ],
+      "outputs": [
+        "seed value"
+      ],
+      "validation": [
+        "same implementation and version replay to the same trace"
+      ],
+      "constraints": [
+        "same implementation and version replay to the same trace"
+      ],
+      "dependencies": [],
+      "relationships": [],
+      "source_keys": [
+        "SRC-JSONSCHEMA",
+        "SRC-RDF",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "value_type": "deterministic seed",
+      "unit": null,
+      "canonical_form": null
+    },
+    {
+      "id": "AXM-CORE-A-017-parameter",
+      "level": "atom",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "parameter",
+      "definition": "Named controllable input that changes a component or organ without changing its identity.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "name type value constraints"
+      ],
+      "outputs": [
+        "bound parameter"
+      ],
+      "validation": [
+        "type and constraints pass"
+      ],
+      "constraints": [
+        "type and constraints pass"
+      ],
+      "dependencies": [],
+      "relationships": [],
+      "source_keys": [
+        "SRC-JSONSCHEMA",
+        "SRC-RDF",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "value_type": "parameter",
+      "unit": null,
+      "canonical_form": null
+    },
+    {
+      "id": "AXM-CORE-A-018-constraint",
+      "level": "atom",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "constraint",
+      "definition": "Machine-testable limit on values, relationships, order or allowed behavior.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "predicate plus scope"
+      ],
+      "outputs": [
+        "constraint result"
+      ],
+      "validation": [
+        "deterministic pass fail or explicit unknown"
+      ],
+      "constraints": [
+        "deterministic pass fail or explicit unknown"
+      ],
+      "dependencies": [],
+      "relationships": [],
+      "source_keys": [
+        "SRC-JSONSCHEMA",
+        "SRC-RDF",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "value_type": "constraint",
+      "unit": null,
+      "canonical_form": null
+    },
+    {
+      "id": "AXM-CORE-A-019-input-port",
+      "level": "atom",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "input port",
+      "definition": "Typed entry point through which a component or organ accepts data or capability.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "port name type cardinality"
+      ],
+      "outputs": [
+        "interface declaration"
+      ],
+      "validation": [
+        "incoming value type and cardinality match"
+      ],
+      "constraints": [
+        "incoming value type and cardinality match"
+      ],
+      "dependencies": [],
+      "relationships": [],
+      "source_keys": [
+        "SRC-JSONSCHEMA",
+        "SRC-RDF",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "value_type": "input port",
+      "unit": null,
+      "canonical_form": null
+    },
+    {
+      "id": "AXM-CORE-A-020-output-port",
+      "level": "atom",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "output port",
+      "definition": "Typed exit point through which a component or organ emits a result or evidence.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "port name type cardinality"
+      ],
+      "outputs": [
+        "interface declaration"
+      ],
+      "validation": [
+        "emitted value conforms to contract"
+      ],
+      "constraints": [
+        "emitted value conforms to contract"
+      ],
+      "dependencies": [],
+      "relationships": [],
+      "source_keys": [
+        "SRC-JSONSCHEMA",
+        "SRC-RDF",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "value_type": "output port",
+      "unit": null,
+      "canonical_form": null
+    },
+    {
+      "id": "AXM-CORE-A-021-reference",
+      "level": "atom",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "reference",
+      "definition": "Link to another registered object without copying or silently changing it.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "target identifier plus optional version"
+      ],
+      "outputs": [
+        "resolved or unresolved reference"
+      ],
+      "validation": [
+        "target exists or is explicitly external/unresolved"
+      ],
+      "constraints": [
+        "target exists or is explicitly external/unresolved"
+      ],
+      "dependencies": [],
+      "relationships": [],
+      "source_keys": [
+        "SRC-JSONSCHEMA",
+        "SRC-RDF",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "value_type": "reference",
+      "unit": null,
+      "canonical_form": null
+    },
+    {
+      "id": "AXM-CORE-A-022-relation-predicate",
+      "level": "atom",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "relation predicate",
+      "definition": "Typed meaning attached to an edge between registry objects.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "relationship vocabulary entry"
+      ],
+      "outputs": [
+        "predicate identifier"
+      ],
+      "validation": [
+        "domain and range rules pass"
+      ],
+      "constraints": [
+        "domain and range rules pass"
+      ],
+      "dependencies": [],
+      "relationships": [],
+      "source_keys": [
+        "SRC-JSONSCHEMA",
+        "SRC-RDF",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "value_type": "relation predicate",
+      "unit": null,
+      "canonical_form": null
+    },
+    {
+      "id": "AXM-CORE-A-023-event",
+      "level": "atom",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "event",
+      "definition": "Recorded occurrence with type, time, source and payload.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "event fields"
+      ],
+      "outputs": [
+        "event record"
+      ],
+      "validation": [
+        "required identity time and source fields exist"
+      ],
+      "constraints": [
+        "required identity time and source fields exist"
+      ],
+      "dependencies": [],
+      "relationships": [],
+      "source_keys": [
+        "SRC-SCXML",
+        "SRC-OTIO",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "value_type": "event",
+      "unit": null,
+      "canonical_form": null
+    },
+    {
+      "id": "AXM-CORE-A-024-state",
+      "level": "atom",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "state",
+      "definition": "Named condition of a component, organ, workflow or capability at one point in time.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "state vocabulary"
+      ],
+      "outputs": [
+        "state value"
+      ],
+      "validation": [
+        "state belongs to declared machine"
+      ],
+      "constraints": [
+        "state belongs to declared machine"
+      ],
+      "dependencies": [],
+      "relationships": [],
+      "source_keys": [
+        "SRC-SCXML",
+        "SRC-OTIO",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "value_type": "state",
+      "unit": null,
+      "canonical_form": null
+    },
+    {
+      "id": "AXM-CORE-A-025-condition",
+      "level": "atom",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "condition",
+      "definition": "Predicate evaluated before a transition, rule or route may proceed.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "context values"
+      ],
+      "outputs": [
+        "true false or unknown"
+      ],
+      "validation": [
+        "evaluation is side-effect free unless declared otherwise"
+      ],
+      "constraints": [
+        "evaluation is side-effect free unless declared otherwise"
+      ],
+      "dependencies": [],
+      "relationships": [],
+      "source_keys": [
+        "SRC-SCXML",
+        "SRC-OTIO",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "value_type": "condition",
+      "unit": null,
+      "canonical_form": null
+    },
+    {
+      "id": "AXM-CORE-A-026-action",
+      "level": "atom",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "action",
+      "definition": "Declared operation invoked by a rule, workflow or user decision.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "action name plus arguments"
+      ],
+      "outputs": [
+        "result and evidence"
+      ],
+      "validation": [
+        "authority and preconditions pass"
+      ],
+      "constraints": [
+        "authority and preconditions pass"
+      ],
+      "dependencies": [],
+      "relationships": [],
+      "source_keys": [
+        "SRC-SCXML",
+        "SRC-OTIO",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "value_type": "action",
+      "unit": null,
+      "canonical_form": null
+    },
+    {
+      "id": "AXM-CORE-A-027-token",
+      "level": "atom",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "token",
+      "definition": "Small typed symbol produced by lexical or domain segmentation.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "source span"
+      ],
+      "outputs": [
+        "token value and type"
+      ],
+      "validation": [
+        "source offsets and token type are valid"
+      ],
+      "constraints": [
+        "source offsets and token type are valid"
+      ],
+      "dependencies": [],
+      "relationships": [],
+      "source_keys": [
+        "SRC-TREESITTER",
+        "SRC-WASM",
+        "SRC-JSONSCHEMA"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "value_type": "token",
+      "unit": null,
+      "canonical_form": null
+    },
+    {
+      "id": "AXM-CORE-A-028-node-reference",
+      "level": "atom",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "node reference",
+      "definition": "Identity of a node inside a graph, tree, scene or workflow.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "graph identity plus local node identity"
+      ],
+      "outputs": [
+        "node reference"
+      ],
+      "validation": [
+        "node exists in the addressed structure"
+      ],
+      "constraints": [
+        "node exists in the addressed structure"
+      ],
+      "dependencies": [],
+      "relationships": [],
+      "source_keys": [
+        "SRC-JSONSCHEMA",
+        "SRC-RDF",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "value_type": "node reference",
+      "unit": null,
+      "canonical_form": null
+    },
+    {
+      "id": "AXM-CORE-A-029-edge",
+      "level": "atom",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "edge",
+      "definition": "Connection between two node references with direction and optional predicate.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "source target predicate"
+      ],
+      "outputs": [
+        "graph edge"
+      ],
+      "validation": [
+        "endpoints and relationship rules pass"
+      ],
+      "constraints": [
+        "endpoints and relationship rules pass"
+      ],
+      "dependencies": [],
+      "relationships": [],
+      "source_keys": [
+        "SRC-JSONSCHEMA",
+        "SRC-RDF",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "value_type": "edge",
+      "unit": null,
+      "canonical_form": null
+    },
+    {
+      "id": "AXM-CORE-A-030-coordinate",
+      "level": "atom",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "coordinate",
+      "definition": "Position value in a declared coordinate system and dimensionality.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "ordered numeric values plus coordinate-system reference"
+      ],
+      "outputs": [
+        "coordinate"
+      ],
+      "validation": [
+        "dimension count and units match the system"
+      ],
+      "constraints": [
+        "dimension count and units match the system"
+      ],
+      "dependencies": [],
+      "relationships": [],
+      "source_keys": [
+        "SRC-JSONSCHEMA",
+        "SRC-RDF",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "value_type": "coordinate",
+      "unit": null,
+      "canonical_form": null
+    },
+    {
+      "id": "AXM-CORE-A-031-vector",
+      "level": "atom",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "vector",
+      "definition": "Ordered numeric tuple representing direction, displacement or multi-dimensional value.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "numeric elements"
+      ],
+      "outputs": [
+        "vector"
+      ],
+      "validation": [
+        "declared dimension and units pass"
+      ],
+      "constraints": [
+        "declared dimension and units pass"
+      ],
+      "dependencies": [],
+      "relationships": [],
+      "source_keys": [
+        "SRC-JSONSCHEMA",
+        "SRC-RDF",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "value_type": "vector",
+      "unit": null,
+      "canonical_form": null
+    },
+    {
+      "id": "AXM-CORE-A-032-matrix",
+      "level": "atom",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "matrix",
+      "definition": "Rectangular numeric array used for transforms, linear maps or structured data.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "rows columns elements"
+      ],
+      "outputs": [
+        "matrix"
+      ],
+      "validation": [
+        "shape and numeric constraints pass"
+      ],
+      "constraints": [
+        "shape and numeric constraints pass"
+      ],
+      "dependencies": [],
+      "relationships": [],
+      "source_keys": [
+        "SRC-JSONSCHEMA",
+        "SRC-RDF",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "value_type": "matrix",
+      "unit": null,
+      "canonical_form": null
+    },
+    {
+      "id": "AXM-CORE-A-033-color-value",
+      "level": "atom",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "color value",
+      "definition": "Color sample expressed in an explicit color space with optional alpha.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "channel values plus color-space reference"
+      ],
+      "outputs": [
+        "color"
+      ],
+      "validation": [
+        "channel count and range match color space"
+      ],
+      "constraints": [
+        "channel count and range match color space"
+      ],
+      "dependencies": [],
+      "relationships": [],
+      "source_keys": [
+        "SRC-GLTF",
+        "SRC-SVG",
+        "SRC-OPENVDB",
+        "SRC-MATERIALX",
+        "SRC-OTIO",
+        "SRC-WEBAUDIO"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "value_type": "color value",
+      "unit": null,
+      "canonical_form": null
+    },
+    {
+      "id": "AXM-CORE-A-034-sample",
+      "level": "atom",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "sample",
+      "definition": "One measured, generated or selected observation from a signal, field or dataset.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "value coordinate or time plus provenance"
+      ],
+      "outputs": [
+        "sample record"
+      ],
+      "validation": [
+        "sampling domain and units are declared"
+      ],
+      "constraints": [
+        "sampling domain and units are declared"
+      ],
+      "dependencies": [],
+      "relationships": [],
+      "source_keys": [
+        "SRC-GLTF",
+        "SRC-SVG",
+        "SRC-OPENVDB",
+        "SRC-MATERIALX",
+        "SRC-OTIO",
+        "SRC-WEBAUDIO"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "value_type": "sample",
+      "unit": null,
+      "canonical_form": null
+    },
+    {
+      "id": "AXM-CORE-A-035-frame",
+      "level": "atom",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "frame",
+      "definition": "One time-indexed image, pose, audio block or state snapshot.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "payload plus time index"
+      ],
+      "outputs": [
+        "frame record"
+      ],
+      "validation": [
+        "timebase and payload type are declared"
+      ],
+      "constraints": [
+        "timebase and payload type are declared"
+      ],
+      "dependencies": [],
+      "relationships": [],
+      "source_keys": [
+        "SRC-GLTF",
+        "SRC-SVG",
+        "SRC-OPENVDB",
+        "SRC-MATERIALX",
+        "SRC-OTIO",
+        "SRC-WEBAUDIO"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "value_type": "frame",
+      "unit": null,
+      "canonical_form": null
+    },
+    {
+      "id": "AXM-CORE-A-036-keyframe",
+      "level": "atom",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "keyframe",
+      "definition": "Authored or generated value fixed at a particular time for interpolation.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "time value target property interpolation"
+      ],
+      "outputs": [
+        "keyframe"
+      ],
+      "validation": [
+        "target exists and time lies on timeline"
+      ],
+      "constraints": [
+        "target exists and time lies on timeline"
+      ],
+      "dependencies": [],
+      "relationships": [],
+      "source_keys": [
+        "SRC-GLTF",
+        "SRC-SVG",
+        "SRC-OPENVDB",
+        "SRC-MATERIALX",
+        "SRC-OTIO",
+        "SRC-WEBAUDIO"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "value_type": "keyframe",
+      "unit": null,
+      "canonical_form": null
+    },
+    {
+      "id": "AXM-CORE-A-037-instruction",
+      "level": "atom",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "instruction",
+      "definition": "Atomic executable operation in a declared language or intermediate representation.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "opcode plus operands"
+      ],
+      "outputs": [
+        "instruction record"
+      ],
+      "validation": [
+        "opcode and operand types are valid"
+      ],
+      "constraints": [
+        "opcode and operand types are valid"
+      ],
+      "dependencies": [],
+      "relationships": [],
+      "source_keys": [
+        "SRC-TREESITTER",
+        "SRC-WASM",
+        "SRC-JSONSCHEMA"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "value_type": "instruction",
+      "unit": null,
+      "canonical_form": null
+    },
+    {
+      "id": "AXM-CORE-A-038-source-span",
+      "level": "atom",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "source span",
+      "definition": "Exact start and end location in source text or binary from which an item was derived.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "source identity offsets"
+      ],
+      "outputs": [
+        "source range"
+      ],
+      "validation": [
+        "range falls inside immutable source version"
+      ],
+      "constraints": [
+        "range falls inside immutable source version"
+      ],
+      "dependencies": [],
+      "relationships": [],
+      "source_keys": [
+        "SRC-TREESITTER",
+        "SRC-WASM",
+        "SRC-JSONSCHEMA"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "value_type": "source span",
+      "unit": null,
+      "canonical_form": null
+    },
+    {
+      "id": "AXM-CORE-A-039-license-expression",
+      "level": "atom",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "license expression",
+      "definition": "Machine-readable statement of applicable license terms.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "SPDX expression or documented equivalent"
+      ],
+      "outputs": [
+        "license expression"
+      ],
+      "validation": [
+        "syntax valid and referenced licenses known"
+      ],
+      "constraints": [
+        "syntax valid and referenced licenses known"
+      ],
+      "dependencies": [],
+      "relationships": [],
+      "source_keys": [
+        "SRC-PROV",
+        "SRC-SPDX",
+        "SRC-SLSA"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "value_type": "license expression",
+      "unit": null,
+      "canonical_form": null
+    },
+    {
+      "id": "AXM-CORE-A-040-generation-assertion",
+      "level": "atom",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "generation assertion",
+      "definition": "Provenance statement that an activity produced an entity.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "entity activity time"
+      ],
+      "outputs": [
+        "provenance edge"
+      ],
+      "validation": [
+        "referenced entities and activity exist"
+      ],
+      "constraints": [
+        "referenced entities and activity exist"
+      ],
+      "dependencies": [],
+      "relationships": [],
+      "source_keys": [
+        "SRC-PROV",
+        "SRC-SPDX",
+        "SRC-SLSA"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "value_type": "generation assertion",
+      "unit": null,
+      "canonical_form": null
+    },
+    {
+      "id": "AXM-CORE-A-041-evidence-item",
+      "level": "atom",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "evidence item",
+      "definition": "Addressable observation, test result, source or receipt supporting or challenging a claim.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "content reference source time"
+      ],
+      "outputs": [
+        "evidence record"
+      ],
+      "validation": [
+        "source and integrity information are present"
+      ],
+      "constraints": [
+        "source and integrity information are present"
+      ],
+      "dependencies": [],
+      "relationships": [],
+      "source_keys": [
+        "SRC-PROV",
+        "SRC-SPDX",
+        "SRC-SLSA"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "value_type": "evidence item",
+      "unit": null,
+      "canonical_form": null
+    },
+    {
+      "id": "AXM-CORE-A-042-usage-event-reference",
+      "level": "atom",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "usage event reference",
+      "definition": "Reference to a real use of a capability, including context and outcome.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "usage event identifier"
+      ],
+      "outputs": [
+        "usage link"
+      ],
+      "validation": [
+        "event exists and result state is explicit"
+      ],
+      "constraints": [
+        "event exists and result state is explicit"
+      ],
+      "dependencies": [],
+      "relationships": [],
+      "source_keys": [
+        "SRC-PROV",
+        "SRC-SPDX",
+        "SRC-SLSA"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "value_type": "usage event reference",
+      "unit": null,
+      "canonical_form": null
+    },
+    {
+      "id": "AXM-CORE-A-043-assertion",
+      "level": "atom",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "assertion",
+      "definition": "Machine-checkable expected relationship between actual and expected values.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "predicate expected actual"
+      ],
+      "outputs": [
+        "pass fail or error"
+      ],
+      "validation": [
+        "comparison semantics and tolerance are declared"
+      ],
+      "constraints": [
+        "comparison semantics and tolerance are declared"
+      ],
+      "dependencies": [],
+      "relationships": [],
+      "source_keys": [
+        "SRC-PYTEST",
+        "SRC-OTEL",
+        "SRC-JSONSCHEMA"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "value_type": "assertion",
+      "unit": null,
+      "canonical_form": null
+    },
+    {
+      "id": "AXM-CORE-A-044-confidence-value",
+      "level": "atom",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "confidence value",
+      "definition": "Bounded estimate of evidence strength, never a replacement for evidence itself.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "scoring method and supporting evidence"
+      ],
+      "outputs": [
+        "numeric or ordinal confidence"
+      ],
+      "validation": [
+        "method, range and basis are declared"
+      ],
+      "constraints": [
+        "method, range and basis are declared"
+      ],
+      "dependencies": [],
+      "relationships": [],
+      "source_keys": [
+        "SRC-PYTEST",
+        "SRC-OTEL",
+        "SRC-JSONSCHEMA"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "value_type": "confidence value",
+      "unit": null,
+      "canonical_form": null
+    },
+    {
+      "id": "AXM-CORE-A-045-failure-signature",
+      "level": "atom",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "failure signature",
+      "definition": "Stable description or digest of a reproducible failure pattern.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "error state logs environment trace"
+      ],
+      "outputs": [
+        "failure identity"
+      ],
+      "validation": [
+        "reproduction evidence or explicit single-observation status"
+      ],
+      "constraints": [
+        "reproduction evidence or explicit single-observation status"
+      ],
+      "dependencies": [],
+      "relationships": [],
+      "source_keys": [
+        "SRC-PYTEST",
+        "SRC-OTEL",
+        "SRC-JSONSCHEMA"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "value_type": "failure signature",
+      "unit": null,
+      "canonical_form": null
+    },
+    {
+      "id": "AXM-CORE-A-046-capability-tag",
+      "level": "atom",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "capability tag",
+      "definition": "Controlled label describing what an item can do rather than what it is called.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "capability vocabulary"
+      ],
+      "outputs": [
+        "capability reference"
+      ],
+      "validation": [
+        "resolves to capability registry"
+      ],
+      "constraints": [
+        "resolves to capability registry"
+      ],
+      "dependencies": [],
+      "relationships": [],
+      "source_keys": [
+        "SRC-JSONSCHEMA",
+        "SRC-RDF",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "value_type": "capability tag",
+      "unit": null,
+      "canonical_form": null
+    },
+    {
+      "id": "AXM-CORE-A-047-target-format-tag",
+      "level": "atom",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "target-format tag",
+      "definition": "Identifier for a representation or format an item can emit or consume.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "format registry value"
+      ],
+      "outputs": [
+        "format reference"
+      ],
+      "validation": [
+        "format profile exists"
+      ],
+      "constraints": [
+        "format profile exists"
+      ],
+      "dependencies": [],
+      "relationships": [],
+      "source_keys": [
+        "SRC-OCI",
+        "SRC-SPDX",
+        "SRC-JSONSCHEMA"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "value_type": "target-format tag",
+      "unit": null,
+      "canonical_form": null
+    },
+    {
+      "id": "AXM-CORE-C-001-typed-record",
+      "level": "component",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "typed record",
+      "definition": "Named collection of fields governed by a schema.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "field values plus schema"
+      ],
+      "outputs": [
+        "validated record"
+      ],
+      "validation": [
+        "all required fields and constraints pass"
+      ],
+      "constraints": [
+        "all required fields and constraints pass"
+      ],
+      "dependencies": [
+        "AXM-CORE-C-002-schema",
+        "AXM-CORE-A-001-identifier",
+        "AXM-CORE-A-003-type-tag"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-JSONSCHEMA",
+        "SRC-RDF",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "interface": {
+        "inputs": [
+          "field values plus schema"
+        ],
+        "outputs": [
+          "validated record"
+        ]
+      },
+      "implementation_refs": []
+    },
+    {
+      "id": "AXM-CORE-C-002-schema",
+      "level": "component",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "schema",
+      "definition": "Machine-readable declaration of allowed structure types constraints and references.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "type and constraint definitions"
+      ],
+      "outputs": [
+        "validation contract"
+      ],
+      "validation": [
+        "schema self-validates and has a versioned identifier"
+      ],
+      "constraints": [
+        "schema self-validates and has a versioned identifier"
+      ],
+      "dependencies": [
+        "AXM-CORE-A-001-identifier",
+        "AXM-CORE-A-004-version",
+        "AXM-CORE-A-003-type-tag",
+        "AXM-CORE-A-018-constraint",
+        "AXM-CORE-A-021-reference"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-JSONSCHEMA",
+        "SRC-RDF",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "interface": {
+        "inputs": [
+          "type and constraint definitions"
+        ],
+        "outputs": [
+          "validation contract"
+        ]
+      },
+      "implementation_refs": []
+    },
+    {
+      "id": "AXM-CORE-C-003-manifest",
+      "level": "component",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "manifest",
+      "definition": "Inventory and identity record for the files components dependencies and metadata in one package.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "package contents"
+      ],
+      "outputs": [
+        "manifest record"
+      ],
+      "validation": [
+        "listed contents and digests match reality"
+      ],
+      "constraints": [
+        "listed contents and digests match reality"
+      ],
+      "dependencies": [
+        "AXM-CORE-C-001-typed-record",
+        "AXM-CORE-A-015-hash-digest",
+        "AXM-CORE-A-014-uri",
+        "AXM-CORE-A-004-version"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-OCI",
+        "SRC-SPDX",
+        "SRC-JSONSCHEMA"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "interface": {
+        "inputs": [
+          "package contents"
+        ],
+        "outputs": [
+          "manifest record"
+        ]
+      },
+      "implementation_refs": []
+    },
+    {
+      "id": "AXM-CORE-C-004-dependency-record",
+      "level": "component",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "dependency record",
+      "definition": "Typed requirement from one item to another with version capability and optionality rules.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "source target relation constraints"
+      ],
+      "outputs": [
+        "dependency edge"
+      ],
+      "validation": [
+        "target resolves or gap is explicit"
+      ],
+      "constraints": [
+        "target resolves or gap is explicit"
+      ],
+      "dependencies": [
+        "AXM-CORE-A-001-identifier",
+        "AXM-CORE-A-021-reference",
+        "AXM-CORE-A-022-relation-predicate",
+        "AXM-CORE-A-018-constraint"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-JSONSCHEMA",
+        "SRC-RDF",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "interface": {
+        "inputs": [
+          "source target relation constraints"
+        ],
+        "outputs": [
+          "dependency edge"
+        ]
+      },
+      "implementation_refs": []
+    },
+    {
+      "id": "AXM-CORE-C-005-property-set",
+      "level": "component",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "property set",
+      "definition": "Reusable named group of typed properties applied to an object.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "property definitions and values"
+      ],
+      "outputs": [
+        "property bundle"
+      ],
+      "validation": [
+        "all values conform to definitions"
+      ],
+      "constraints": [
+        "all values conform to definitions"
+      ],
+      "dependencies": [],
+      "relationships": [],
+      "source_keys": [
+        "SRC-JSONSCHEMA",
+        "SRC-RDF",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "interface": {
+        "inputs": [
+          "property definitions and values"
+        ],
+        "outputs": [
+          "property bundle"
+        ]
+      },
+      "implementation_refs": []
+    },
+    {
+      "id": "AXM-CORE-C-006-graph",
+      "level": "component",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "graph",
+      "definition": "Nodes and typed edges representing relationships and dependency routes.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "nodes edges graph schema"
+      ],
+      "outputs": [
+        "graph structure"
+      ],
+      "validation": [
+        "identifiers unique and edge constraints pass"
+      ],
+      "constraints": [
+        "identifiers unique and edge constraints pass"
+      ],
+      "dependencies": [
+        "AXM-CORE-A-028-node-reference",
+        "AXM-CORE-A-029-edge",
+        "AXM-CORE-A-022-relation-predicate"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-JSONSCHEMA",
+        "SRC-RDF",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "interface": {
+        "inputs": [
+          "nodes edges graph schema"
+        ],
+        "outputs": [
+          "graph structure"
+        ]
+      },
+      "implementation_refs": []
+    },
+    {
+      "id": "AXM-CORE-C-007-tree",
+      "level": "component",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "tree",
+      "definition": "Hierarchical graph in which each child has one declared parent within the tree.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "root nodes parent links"
+      ],
+      "outputs": [
+        "tree structure"
+      ],
+      "validation": [
+        "no cycles and parent rules pass"
+      ],
+      "constraints": [
+        "no cycles and parent rules pass"
+      ],
+      "dependencies": [
+        "AXM-CORE-C-006-graph",
+        "AXM-CORE-A-028-node-reference"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-JSONSCHEMA",
+        "SRC-RDF",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "interface": {
+        "inputs": [
+          "root nodes parent links"
+        ],
+        "outputs": [
+          "tree structure"
+        ]
+      },
+      "implementation_refs": []
+    },
+    {
+      "id": "AXM-CORE-C-008-timeline",
+      "level": "component",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "timeline",
+      "definition": "Ordered temporal container for tracks events clips markers and synchronization.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "timebase and temporal items"
+      ],
+      "outputs": [
+        "timeline"
+      ],
+      "validation": [
+        "timebase valid and placement constraints pass"
+      ],
+      "constraints": [
+        "timebase valid and placement constraints pass"
+      ],
+      "dependencies": [
+        "AXM-CORE-A-012-timestamp",
+        "AXM-CORE-A-013-duration",
+        "AXM-CORE-A-023-event",
+        "AXM-CORE-A-035-frame",
+        "AXM-CORE-A-036-keyframe"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-SCXML",
+        "SRC-OTIO",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "interface": {
+        "inputs": [
+          "timebase and temporal items"
+        ],
+        "outputs": [
+          "timeline"
+        ]
+      },
+      "implementation_refs": []
+    },
+    {
+      "id": "AXM-CORE-C-009-state-machine",
+      "level": "component",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "state machine",
+      "definition": "Finite or hierarchical states with transitions guards events and actions.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "states transitions initial state"
+      ],
+      "outputs": [
+        "executable state model"
+      ],
+      "validation": [
+        "initial state exists and transitions resolve"
+      ],
+      "constraints": [
+        "initial state exists and transitions resolve"
+      ],
+      "dependencies": [
+        "AXM-CORE-A-024-state",
+        "AXM-CORE-A-023-event",
+        "AXM-CORE-A-025-condition",
+        "AXM-CORE-A-026-action"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-SCXML",
+        "SRC-OTIO",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "interface": {
+        "inputs": [
+          "states transitions initial state"
+        ],
+        "outputs": [
+          "executable state model"
+        ]
+      },
+      "implementation_refs": []
+    },
+    {
+      "id": "AXM-CORE-C-010-grammar-definition",
+      "level": "component",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "grammar definition",
+      "definition": "Formal rules describing valid tokens structures and combinations in a language or creation vocabulary.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "terminals nonterminals productions"
+      ],
+      "outputs": [
+        "grammar"
+      ],
+      "validation": [
+        "parser generation or grammar checks complete"
+      ],
+      "constraints": [
+        "parser generation or grammar checks complete"
+      ],
+      "dependencies": [
+        "AXM-CORE-A-027-token",
+        "AXM-CORE-A-003-type-tag",
+        "AXM-CORE-A-018-constraint"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-JSONSCHEMA",
+        "SRC-RDF",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "interface": {
+        "inputs": [
+          "terminals nonterminals productions"
+        ],
+        "outputs": [
+          "grammar"
+        ]
+      },
+      "implementation_refs": []
+    },
+    {
+      "id": "AXM-CORE-C-011-abstract-syntax-tree",
+      "level": "component",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "abstract syntax tree",
+      "definition": "Semantic tree of parsed structure without irrelevant source formatting.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "parsed source"
+      ],
+      "outputs": [
+        "typed AST"
+      ],
+      "validation": [
+        "nodes match grammar and semantic rules"
+      ],
+      "constraints": [
+        "nodes match grammar and semantic rules"
+      ],
+      "dependencies": [
+        "AXM-CORE-C-010-grammar-definition",
+        "AXM-CORE-A-027-token",
+        "AXM-CORE-A-038-source-span",
+        "AXM-CORE-A-028-node-reference"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-TREESITTER",
+        "SRC-WASM",
+        "SRC-JSONSCHEMA"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "interface": {
+        "inputs": [
+          "parsed source"
+        ],
+        "outputs": [
+          "typed AST"
+        ]
+      },
+      "implementation_refs": []
+    },
+    {
+      "id": "AXM-CORE-C-012-module",
+      "level": "component",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "module",
+      "definition": "Versioned code unit with explicit imports exports and execution boundary.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "source or intermediate code"
+      ],
+      "outputs": [
+        "module artifact"
+      ],
+      "validation": [
+        "dependencies resolve and static checks pass"
+      ],
+      "constraints": [
+        "dependencies resolve and static checks pass"
+      ],
+      "dependencies": [
+        "AXM-CORE-A-001-identifier",
+        "AXM-CORE-A-004-version",
+        "AXM-CORE-A-037-instruction",
+        "AXM-CORE-A-021-reference"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-TREESITTER",
+        "SRC-WASM",
+        "SRC-JSONSCHEMA"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "interface": {
+        "inputs": [
+          "source or intermediate code"
+        ],
+        "outputs": [
+          "module artifact"
+        ]
+      },
+      "implementation_refs": []
+    },
+    {
+      "id": "AXM-CORE-C-013-package-manifest",
+      "level": "component",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "package manifest",
+      "definition": "Package identity scripts dependencies entrypoints and distribution metadata.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "package configuration"
+      ],
+      "outputs": [
+        "package contract"
+      ],
+      "validation": [
+        "schema passes and referenced files exist"
+      ],
+      "constraints": [
+        "schema passes and referenced files exist"
+      ],
+      "dependencies": [
+        "AXM-CORE-C-003-manifest",
+        "AXM-CORE-C-004-dependency-record",
+        "AXM-CORE-A-047-target-format-tag"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-OCI",
+        "SRC-SPDX",
+        "SRC-JSONSCHEMA"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "interface": {
+        "inputs": [
+          "package configuration"
+        ],
+        "outputs": [
+          "package contract"
+        ]
+      },
+      "implementation_refs": []
+    },
+    {
+      "id": "AXM-CORE-C-014-service-contract",
+      "level": "component",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "service contract",
+      "definition": "Machine-readable description of operations messages schemas security and server bindings.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "API or message specification"
+      ],
+      "outputs": [
+        "contract"
+      ],
+      "validation": [
+        "specification validator passes"
+      ],
+      "constraints": [
+        "specification validator passes"
+      ],
+      "dependencies": [
+        "AXM-CORE-C-002-schema",
+        "AXM-CORE-A-014-uri",
+        "AXM-CORE-A-019-input-port",
+        "AXM-CORE-A-020-output-port"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-JSONSCHEMA",
+        "SRC-RDF",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "interface": {
+        "inputs": [
+          "API or message specification"
+        ],
+        "outputs": [
+          "contract"
+        ]
+      },
+      "implementation_refs": []
+    },
+    {
+      "id": "AXM-CORE-C-015-table",
+      "level": "component",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "table",
+      "definition": "Rows and columns governed by field types keys and constraints.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "schema plus row values"
+      ],
+      "outputs": [
+        "table"
+      ],
+      "validation": [
+        "row constraints and key uniqueness pass"
+      ],
+      "constraints": [
+        "row constraints and key uniqueness pass"
+      ],
+      "dependencies": [
+        "AXM-CORE-C-002-schema",
+        "AXM-CORE-C-001-typed-record"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-JSONSCHEMA",
+        "SRC-RDF",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "interface": {
+        "inputs": [
+          "schema plus row values"
+        ],
+        "outputs": [
+          "table"
+        ]
+      },
+      "implementation_refs": []
+    },
+    {
+      "id": "AXM-CORE-C-016-ui-element",
+      "level": "component",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "UI element",
+      "definition": "Accessible interface element with role state properties styling and interaction behavior.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "content tokens state events"
+      ],
+      "outputs": [
+        "renderable interactive element"
+      ],
+      "validation": [
+        "accessibility and interaction contract pass"
+      ],
+      "constraints": [
+        "accessibility and interaction contract pass"
+      ],
+      "dependencies": [
+        "AXM-CORE-A-003-type-tag",
+        "AXM-CORE-A-024-state",
+        "AXM-CORE-A-023-event",
+        "AXM-CORE-A-033-color-value"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-JSONSCHEMA",
+        "SRC-RDF",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "interface": {
+        "inputs": [
+          "content tokens state events"
+        ],
+        "outputs": [
+          "renderable interactive element"
+        ]
+      },
+      "implementation_refs": []
+    },
+    {
+      "id": "AXM-CORE-C-017-layout-container",
+      "level": "component",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "layout container",
+      "definition": "Component that positions and sizes child elements under explicit layout rules.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "children constraints viewport"
+      ],
+      "outputs": [
+        "layout boxes"
+      ],
+      "validation": [
+        "no unsatisfied required constraints"
+      ],
+      "constraints": [
+        "no unsatisfied required constraints"
+      ],
+      "dependencies": [
+        "AXM-CORE-C-016-ui-element",
+        "AXM-CORE-A-018-constraint",
+        "AXM-CORE-A-030-coordinate",
+        "AXM-CORE-A-031-vector"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-JSONSCHEMA",
+        "SRC-RDF",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "interface": {
+        "inputs": [
+          "children constraints viewport"
+        ],
+        "outputs": [
+          "layout boxes"
+        ]
+      },
+      "implementation_refs": []
+    },
+    {
+      "id": "AXM-CORE-C-018-raster-image",
+      "level": "component",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "raster image",
+      "definition": "Two-dimensional grid of pixel samples with dimensions channels color information and metadata.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "pixel data and image profile"
+      ],
+      "outputs": [
+        "image"
+      ],
+      "validation": [
+        "dimensions channels and encoding are consistent"
+      ],
+      "constraints": [
+        "dimensions channels and encoding are consistent"
+      ],
+      "dependencies": [
+        "AXM-CORE-A-030-coordinate",
+        "AXM-CORE-A-033-color-value",
+        "AXM-CORE-A-034-sample",
+        "AXM-CORE-A-047-target-format-tag"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-GLTF",
+        "SRC-SVG",
+        "SRC-OPENVDB",
+        "SRC-MATERIALX",
+        "SRC-OTIO",
+        "SRC-WEBAUDIO"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "interface": {
+        "inputs": [
+          "pixel data and image profile"
+        ],
+        "outputs": [
+          "image"
+        ]
+      },
+      "implementation_refs": []
+    },
+    {
+      "id": "AXM-CORE-C-019-vector-shape",
+      "level": "component",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "vector shape",
+      "definition": "Resolution-independent 2D geometry built from paths or primitives plus fill and stroke properties.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "geometry and style"
+      ],
+      "outputs": [
+        "vector object"
+      ],
+      "validation": [
+        "path commands and paint references are valid"
+      ],
+      "constraints": [
+        "path commands and paint references are valid"
+      ],
+      "dependencies": [
+        "AXM-CORE-A-030-coordinate",
+        "AXM-CORE-A-031-vector",
+        "AXM-CORE-A-033-color-value"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-GLTF",
+        "SRC-SVG",
+        "SRC-OPENVDB",
+        "SRC-MATERIALX",
+        "SRC-OTIO",
+        "SRC-WEBAUDIO"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "interface": {
+        "inputs": [
+          "geometry and style"
+        ],
+        "outputs": [
+          "vector object"
+        ]
+      },
+      "implementation_refs": []
+    },
+    {
+      "id": "AXM-CORE-C-020-mesh",
+      "level": "component",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "mesh",
+      "definition": "3D surface geometry composed of vertices topology attributes and optional material groups.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "vertex streams and indices"
+      ],
+      "outputs": [
+        "mesh"
+      ],
+      "validation": [
+        "index bounds topology and required attributes pass"
+      ],
+      "constraints": [
+        "index bounds topology and required attributes pass"
+      ],
+      "dependencies": [
+        "AXM-CORE-A-030-coordinate",
+        "AXM-CORE-A-031-vector",
+        "AXM-CORE-A-021-reference"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-GLTF",
+        "SRC-SVG",
+        "SRC-OPENVDB",
+        "SRC-MATERIALX",
+        "SRC-OTIO",
+        "SRC-WEBAUDIO"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "interface": {
+        "inputs": [
+          "vertex streams and indices"
+        ],
+        "outputs": [
+          "mesh"
+        ]
+      },
+      "implementation_refs": []
+    },
+    {
+      "id": "AXM-CORE-C-021-sparse-volume",
+      "level": "component",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "sparse volume",
+      "definition": "Memory-efficient spatial grid storing values only in active regions.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "grid topology values transform"
+      ],
+      "outputs": [
+        "volume grid"
+      ],
+      "validation": [
+        "grid transform and active topology are coherent"
+      ],
+      "constraints": [
+        "grid transform and active topology are coherent"
+      ],
+      "dependencies": [
+        "AXM-CORE-A-030-coordinate",
+        "AXM-CORE-A-034-sample",
+        "AXM-CORE-A-032-matrix"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-GLTF",
+        "SRC-SVG",
+        "SRC-OPENVDB",
+        "SRC-MATERIALX",
+        "SRC-OTIO",
+        "SRC-WEBAUDIO"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "interface": {
+        "inputs": [
+          "grid topology values transform"
+        ],
+        "outputs": [
+          "volume grid"
+        ]
+      },
+      "implementation_refs": []
+    },
+    {
+      "id": "AXM-CORE-C-022-material",
+      "level": "component",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "material",
+      "definition": "Appearance contract connecting surface or volume properties to a shading model.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "parameters textures shader references"
+      ],
+      "outputs": [
+        "material instance"
+      ],
+      "validation": [
+        "all required inputs bind and target renderer supports them"
+      ],
+      "constraints": [
+        "all required inputs bind and target renderer supports them"
+      ],
+      "dependencies": [
+        "AXM-CORE-A-033-color-value",
+        "AXM-CORE-A-017-parameter",
+        "AXM-CORE-A-021-reference"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-GLTF",
+        "SRC-SVG",
+        "SRC-OPENVDB",
+        "SRC-MATERIALX",
+        "SRC-OTIO",
+        "SRC-WEBAUDIO"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "interface": {
+        "inputs": [
+          "parameters textures shader references"
+        ],
+        "outputs": [
+          "material instance"
+        ]
+      },
+      "implementation_refs": []
+    },
+    {
+      "id": "AXM-CORE-C-023-shader-graph",
+      "level": "component",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "shader graph",
+      "definition": "Directed graph of typed shader nodes and connections that computes appearance or GPU data.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "nodes edges outputs"
+      ],
+      "outputs": [
+        "compilable shader graph"
+      ],
+      "validation": [
+        "types connect and graph has valid outputs"
+      ],
+      "constraints": [
+        "types connect and graph has valid outputs"
+      ],
+      "dependencies": [
+        "AXM-CORE-C-006-graph",
+        "AXM-CORE-A-017-parameter",
+        "AXM-CORE-A-019-input-port",
+        "AXM-CORE-A-020-output-port"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-GLTF",
+        "SRC-SVG",
+        "SRC-OPENVDB",
+        "SRC-MATERIALX",
+        "SRC-OTIO",
+        "SRC-WEBAUDIO"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "interface": {
+        "inputs": [
+          "nodes edges outputs"
+        ],
+        "outputs": [
+          "compilable shader graph"
+        ]
+      },
+      "implementation_refs": []
+    },
+    {
+      "id": "AXM-CORE-C-024-animation-clip",
+      "level": "component",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "animation clip",
+      "definition": "Bounded set of animation tracks over a shared time interval.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "tracks duration timebase"
+      ],
+      "outputs": [
+        "clip"
+      ],
+      "validation": [
+        "targets resolve and keyframes are ordered"
+      ],
+      "constraints": [
+        "targets resolve and keyframes are ordered"
+      ],
+      "dependencies": [
+        "AXM-CORE-C-008-timeline",
+        "AXM-CORE-A-036-keyframe",
+        "AXM-CORE-A-021-reference"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-GLTF",
+        "SRC-SVG",
+        "SRC-OPENVDB",
+        "SRC-MATERIALX",
+        "SRC-OTIO",
+        "SRC-WEBAUDIO"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "interface": {
+        "inputs": [
+          "tracks duration timebase"
+        ],
+        "outputs": [
+          "clip"
+        ]
+      },
+      "implementation_refs": []
+    },
+    {
+      "id": "AXM-CORE-C-025-audio-buffer",
+      "level": "component",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "audio buffer",
+      "definition": "Time-ordered sampled audio data with declared rate channels and format.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "samples format metadata"
+      ],
+      "outputs": [
+        "audio buffer"
+      ],
+      "validation": [
+        "sample count and channel layout agree"
+      ],
+      "constraints": [
+        "sample count and channel layout agree"
+      ],
+      "dependencies": [
+        "AXM-CORE-A-034-sample",
+        "AXM-CORE-A-013-duration",
+        "AXM-CORE-A-047-target-format-tag"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-GLTF",
+        "SRC-SVG",
+        "SRC-OPENVDB",
+        "SRC-MATERIALX",
+        "SRC-OTIO",
+        "SRC-WEBAUDIO"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "interface": {
+        "inputs": [
+          "samples format metadata"
+        ],
+        "outputs": [
+          "audio buffer"
+        ]
+      },
+      "implementation_refs": []
+    },
+    {
+      "id": "AXM-CORE-C-026-document-section",
+      "level": "component",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "document section",
+      "definition": "Structured document region containing blocks with semantic role and ordering.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "blocks style metadata"
+      ],
+      "outputs": [
+        "section"
+      ],
+      "validation": [
+        "document structure and references pass"
+      ],
+      "constraints": [
+        "document structure and references pass"
+      ],
+      "dependencies": [
+        "AXM-CORE-C-001-typed-record",
+        "AXM-CORE-A-021-reference"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-JSONSCHEMA",
+        "SRC-RDF",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "interface": {
+        "inputs": [
+          "blocks style metadata"
+        ],
+        "outputs": [
+          "section"
+        ]
+      },
+      "implementation_refs": []
+    },
+    {
+      "id": "AXM-CORE-C-027-model-graph",
+      "level": "component",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "model graph",
+      "definition": "AI model computation graph containing operators tensors attributes inputs and outputs.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "nodes tensors metadata"
+      ],
+      "outputs": [
+        "model graph"
+      ],
+      "validation": [
+        "operator schemas shapes and graph connectivity pass"
+      ],
+      "constraints": [
+        "operator schemas shapes and graph connectivity pass"
+      ],
+      "dependencies": [
+        "AXM-CORE-C-006-graph",
+        "AXM-CORE-A-032-matrix",
+        "AXM-CORE-A-031-vector",
+        "AXM-CORE-A-017-parameter"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-ONNX",
+        "SRC-MCP",
+        "SRC-CROISSANT"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "interface": {
+        "inputs": [
+          "nodes tensors metadata"
+        ],
+        "outputs": [
+          "model graph"
+        ]
+      },
+      "implementation_refs": []
+    },
+    {
+      "id": "AXM-CORE-C-028-test-case",
+      "level": "component",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "test case",
+      "definition": "Repeatable setup action and expected outcome for one behavior or property.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "fixture inputs expectations"
+      ],
+      "outputs": [
+        "test result"
+      ],
+      "validation": [
+        "result and evidence recorded deterministically where possible"
+      ],
+      "constraints": [
+        "result and evidence recorded deterministically where possible"
+      ],
+      "dependencies": [
+        "AXM-CORE-A-043-assertion",
+        "AXM-CORE-A-041-evidence-item",
+        "AXM-CORE-A-045-failure-signature"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-PYTEST",
+        "SRC-OTEL",
+        "SRC-JSONSCHEMA"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "interface": {
+        "inputs": [
+          "fixture inputs expectations"
+        ],
+        "outputs": [
+          "test result"
+        ]
+      },
+      "implementation_refs": []
+    },
+    {
+      "id": "AXM-CORE-C-029-provenance-graph",
+      "level": "component",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "provenance graph",
+      "definition": "Graph linking entities activities agents sources and transformations.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "provenance assertions"
+      ],
+      "outputs": [
+        "queryable provenance structure"
+      ],
+      "validation": [
+        "references resolve and mandatory source facts exist"
+      ],
+      "constraints": [
+        "references resolve and mandatory source facts exist"
+      ],
+      "dependencies": [
+        "AXM-CORE-C-006-graph",
+        "AXM-CORE-A-040-generation-assertion",
+        "AXM-CORE-A-021-reference"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-PROV",
+        "SRC-SPDX",
+        "SRC-SLSA"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "interface": {
+        "inputs": [
+          "provenance assertions"
+        ],
+        "outputs": [
+          "queryable provenance structure"
+        ]
+      },
+      "implementation_refs": []
+    },
+    {
+      "id": "AXM-CORE-C-030-evidence-packet",
+      "level": "component",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "evidence packet",
+      "definition": "Portable bundle of claims observations tests usage receipts sources and integrity references.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "evidence items and subject"
+      ],
+      "outputs": [
+        "evidence package"
+      ],
+      "validation": [
+        "every claim links to evidence or explicit unknown"
+      ],
+      "constraints": [
+        "every claim links to evidence or explicit unknown"
+      ],
+      "dependencies": [
+        "AXM-CORE-C-003-manifest",
+        "AXM-CORE-A-041-evidence-item",
+        "AXM-CORE-A-042-usage-event-reference",
+        "AXM-CORE-A-015-hash-digest"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-PROV",
+        "SRC-SPDX",
+        "SRC-SLSA"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "interface": {
+        "inputs": [
+          "evidence items and subject"
+        ],
+        "outputs": [
+          "evidence package"
+        ]
+      },
+      "implementation_refs": []
+    },
+    {
+      "id": "AXM-CORE-C-031-generator-recipe",
+      "level": "component",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "generator recipe",
+      "definition": "Versioned declarative route that turns parameters and source primitives into derived outputs.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "parameters dependencies rules seed"
+      ],
+      "outputs": [
+        "output plus generation trace"
+      ],
+      "validation": [
+        "replay matches declared deterministic envelope"
+      ],
+      "constraints": [
+        "replay matches declared deterministic envelope"
+      ],
+      "dependencies": [
+        "AXM-CORE-C-004-dependency-record",
+        "AXM-CORE-A-017-parameter",
+        "AXM-CORE-A-016-deterministic-seed",
+        "AXM-CORE-A-047-target-format-tag"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-JSONSCHEMA",
+        "SRC-RDF",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "interface": {
+        "inputs": [
+          "parameters dependencies rules seed"
+        ],
+        "outputs": [
+          "output plus generation trace"
+        ]
+      },
+      "implementation_refs": []
+    },
+    {
+      "id": "AXM-CORE-C-032-compatibility-profile",
+      "level": "component",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "compatibility profile",
+      "definition": "Declared source and target features mappings losses and fallback rules for interoperability.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "format capabilities mappings"
+      ],
+      "outputs": [
+        "compatibility contract"
+      ],
+      "validation": [
+        "round-trip and loss tests recorded"
+      ],
+      "constraints": [
+        "round-trip and loss tests recorded"
+      ],
+      "dependencies": [
+        "AXM-CORE-A-047-target-format-tag",
+        "AXM-CORE-A-018-constraint",
+        "AXM-CORE-A-041-evidence-item"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-OCI",
+        "SRC-SPDX",
+        "SRC-JSONSCHEMA"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "interface": {
+        "inputs": [
+          "format capabilities mappings"
+        ],
+        "outputs": [
+          "compatibility contract"
+        ]
+      },
+      "implementation_refs": []
+    },
+    {
+      "id": "AXM-CORE-O-001-capability-registry",
+      "level": "organ",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "capability registry",
+      "definition": "Stores versioned capabilities, interfaces, dependencies, evidence state and lifecycle.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "validated registry entries"
+      ],
+      "outputs": [
+        "queryable capability map"
+      ],
+      "validation": [
+        "schema, identity and relationship checks pass"
+      ],
+      "constraints": [
+        "schema, identity and relationship checks pass"
+      ],
+      "dependencies": [
+        "AXM-CORE-C-002-schema",
+        "AXM-CORE-A-046-capability-tag",
+        "AXM-CORE-C-004-dependency-record",
+        "AXM-CORE-C-030-evidence-packet"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-JSONSCHEMA",
+        "SRC-RDF",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "component_refs": [
+        "AXM-CORE-C-002-schema",
+        "AXM-CORE-C-004-dependency-record",
+        "AXM-CORE-C-030-evidence-packet"
+      ],
+      "authority_scope": [
+        "declared request authority",
+        "Mike final gate for canon and publication"
+      ],
+      "side_effects": [],
+      "rollback_contract": "Mutating runs require a recorded baseline and explicit approved recovery path.",
+      "evidence_contract": "Every success, failure, block and state transition must link to evidence."
+    },
+    {
+      "id": "AXM-CORE-O-002-dependency-resolver",
+      "level": "organ",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "dependency resolver",
+      "definition": "Expands requirements recursively and reports resolved routes cycles conflicts and missing dependencies.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "target capability plus registry graph"
+      ],
+      "outputs": [
+        "resolution plan and gap set"
+      ],
+      "validation": [
+        "same registry snapshot yields same result"
+      ],
+      "constraints": [
+        "same registry snapshot yields same result"
+      ],
+      "dependencies": [
+        "AXM-CORE-O-001-capability-registry",
+        "AXM-CORE-C-006-graph",
+        "AXM-CORE-C-004-dependency-record"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-JSONSCHEMA",
+        "SRC-RDF",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "component_refs": [
+        "AXM-CORE-C-006-graph",
+        "AXM-CORE-C-004-dependency-record"
+      ],
+      "authority_scope": [
+        "declared request authority",
+        "Mike final gate for canon and publication"
+      ],
+      "side_effects": [],
+      "rollback_contract": "Mutating runs require a recorded baseline and explicit approved recovery path.",
+      "evidence_contract": "Every success, failure, block and state transition must link to evidence."
+    },
+    {
+      "id": "AXM-CORE-O-003-gap-detector",
+      "level": "organ",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "gap detector",
+      "definition": "Finds the smallest unresolved dependency or validation failure that blocks a requested creation route.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "resolution plan evidence states and target"
+      ],
+      "outputs": [
+        "ranked precise gaps"
+      ],
+      "validation": [
+        "each gap traces back to a blocked requirement"
+      ],
+      "constraints": [
+        "each gap traces back to a blocked requirement"
+      ],
+      "dependencies": [
+        "AXM-CORE-O-002-dependency-resolver",
+        "AXM-CORE-C-028-test-case",
+        "AXM-CORE-A-042-usage-event-reference",
+        "AXM-CORE-A-044-confidence-value"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-PYTEST",
+        "SRC-OTEL",
+        "SRC-JSONSCHEMA"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "component_refs": [
+        "AXM-CORE-C-028-test-case"
+      ],
+      "authority_scope": [
+        "declared request authority",
+        "Mike final gate for canon and publication"
+      ],
+      "side_effects": [],
+      "rollback_contract": "Mutating runs require a recorded baseline and explicit approved recovery path.",
+      "evidence_contract": "Every success, failure, block and state transition must link to evidence."
+    },
+    {
+      "id": "AXM-CORE-O-004-grammar-compiler",
+      "level": "organ",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "grammar compiler",
+      "definition": "Turns a formal grammar into parsers validators or composition rules usable by other organs.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "versioned grammar definition"
+      ],
+      "outputs": [
+        "compiled grammar artifact"
+      ],
+      "validation": [
+        "grammar tests and sample parses pass"
+      ],
+      "constraints": [
+        "grammar tests and sample parses pass"
+      ],
+      "dependencies": [
+        "AXM-CORE-C-010-grammar-definition",
+        "AXM-CORE-O-011-test-runner",
+        "AXM-CORE-O-019-artifact-builder"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-TREESITTER",
+        "SRC-WASM",
+        "SRC-JSONSCHEMA"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "component_refs": [
+        "AXM-CORE-C-010-grammar-definition"
+      ],
+      "authority_scope": [
+        "declared request authority",
+        "Mike final gate for canon and publication"
+      ],
+      "side_effects": [],
+      "rollback_contract": "Mutating runs require a recorded baseline and explicit approved recovery path.",
+      "evidence_contract": "Every success, failure, block and state transition must link to evidence."
+    },
+    {
+      "id": "AXM-CORE-O-005-parser-runtime",
+      "level": "organ",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "parser runtime",
+      "definition": "Converts source material into typed structures while preserving exact source locations.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "source bytes grammar profile"
+      ],
+      "outputs": [
+        "CST AST diagnostics"
+      ],
+      "validation": [
+        "round-trip or source-span integrity checks pass"
+      ],
+      "constraints": [
+        "round-trip or source-span integrity checks pass"
+      ],
+      "dependencies": [
+        "AXM-CORE-C-010-grammar-definition",
+        "AXM-CORE-C-011-abstract-syntax-tree",
+        "AXM-CORE-A-038-source-span"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-TREESITTER",
+        "SRC-WASM",
+        "SRC-JSONSCHEMA"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "component_refs": [
+        "AXM-CORE-C-010-grammar-definition",
+        "AXM-CORE-C-011-abstract-syntax-tree"
+      ],
+      "authority_scope": [
+        "declared request authority",
+        "Mike final gate for canon and publication"
+      ],
+      "side_effects": [],
+      "rollback_contract": "Mutating runs require a recorded baseline and explicit approved recovery path.",
+      "evidence_contract": "Every success, failure, block and state transition must link to evidence."
+    },
+    {
+      "id": "AXM-CORE-O-006-procedural-generator",
+      "level": "organ",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "procedural generator",
+      "definition": "Produces derived assets from recipes parameters rules and recorded seeds.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "generator recipe capability dependencies parameters"
+      ],
+      "outputs": [
+        "asset and generation trace"
+      ],
+      "validation": [
+        "output schema tests and replay checks pass"
+      ],
+      "constraints": [
+        "output schema tests and replay checks pass"
+      ],
+      "dependencies": [
+        "AXM-CORE-C-031-generator-recipe",
+        "AXM-CORE-O-018-capability-router",
+        "AXM-CORE-O-015-provenance-ledger"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-JSONSCHEMA",
+        "SRC-RDF",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "component_refs": [
+        "AXM-CORE-C-031-generator-recipe"
+      ],
+      "authority_scope": [
+        "declared request authority",
+        "Mike final gate for canon and publication"
+      ],
+      "side_effects": [],
+      "rollback_contract": "Mutating runs require a recorded baseline and explicit approved recovery path.",
+      "evidence_contract": "Every success, failure, block and state transition must link to evidence."
+    },
+    {
+      "id": "AXM-CORE-O-007-data-transformation-organ",
+      "level": "organ",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "data-transformation organ",
+      "definition": "Applies declared mappings or transforms without hiding loss or unsupported fields.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "source data transform profile"
+      ],
+      "outputs": [
+        "transformed data and loss report"
+      ],
+      "validation": [
+        "mapping and invariant tests pass"
+      ],
+      "constraints": [
+        "mapping and invariant tests pass"
+      ],
+      "dependencies": [
+        "AXM-CORE-C-002-schema",
+        "AXM-CORE-C-032-compatibility-profile",
+        "AXM-CORE-O-011-test-runner"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-JSONSCHEMA",
+        "SRC-RDF",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "component_refs": [
+        "AXM-CORE-C-002-schema",
+        "AXM-CORE-C-032-compatibility-profile"
+      ],
+      "authority_scope": [
+        "declared request authority",
+        "Mike final gate for canon and publication"
+      ],
+      "side_effects": [],
+      "rollback_contract": "Mutating runs require a recorded baseline and explicit approved recovery path.",
+      "evidence_contract": "Every success, failure, block and state transition must link to evidence."
+    },
+    {
+      "id": "AXM-CORE-O-008-compiler",
+      "level": "organ",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "compiler",
+      "definition": "Translates a valid source representation into a target executable or renderable representation.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "source IR target profile dependencies"
+      ],
+      "outputs": [
+        "compiled artifact diagnostics"
+      ],
+      "validation": [
+        "target conformance and behavior tests pass"
+      ],
+      "constraints": [
+        "target conformance and behavior tests pass"
+      ],
+      "dependencies": [
+        "AXM-CORE-C-011-abstract-syntax-tree",
+        "AXM-CORE-C-012-module",
+        "AXM-CORE-A-047-target-format-tag",
+        "AXM-CORE-O-011-test-runner"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-TREESITTER",
+        "SRC-WASM",
+        "SRC-JSONSCHEMA"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "component_refs": [
+        "AXM-CORE-C-011-abstract-syntax-tree",
+        "AXM-CORE-C-012-module"
+      ],
+      "authority_scope": [
+        "declared request authority",
+        "Mike final gate for canon and publication"
+      ],
+      "side_effects": [],
+      "rollback_contract": "Mutating runs require a recorded baseline and explicit approved recovery path.",
+      "evidence_contract": "Every success, failure, block and state transition must link to evidence."
+    },
+    {
+      "id": "AXM-CORE-O-009-renderer",
+      "level": "organ",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "renderer",
+      "definition": "Turns scene document interface or media descriptions into pixels sound or interactive output.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "render description resources target profile"
+      ],
+      "outputs": [
+        "rendered frames or stream"
+      ],
+      "validation": [
+        "structural conformance plus visual or signal tests"
+      ],
+      "constraints": [
+        "structural conformance plus visual or signal tests"
+      ],
+      "dependencies": [
+        "AXM-CORE-C-022-material",
+        "AXM-CORE-C-023-shader-graph",
+        "AXM-CORE-A-035-frame",
+        "AXM-CORE-A-047-target-format-tag"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-GLTF",
+        "SRC-SVG",
+        "SRC-OPENVDB",
+        "SRC-MATERIALX",
+        "SRC-OTIO",
+        "SRC-WEBAUDIO"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "component_refs": [
+        "AXM-CORE-C-022-material",
+        "AXM-CORE-C-023-shader-graph"
+      ],
+      "authority_scope": [
+        "declared request authority",
+        "Mike final gate for canon and publication"
+      ],
+      "side_effects": [],
+      "rollback_contract": "Mutating runs require a recorded baseline and explicit approved recovery path.",
+      "evidence_contract": "Every success, failure, block and state transition must link to evidence."
+    },
+    {
+      "id": "AXM-CORE-O-010-schema-validator",
+      "level": "organ",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "schema validator",
+      "definition": "Checks instances against versioned structural and semantic constraints.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "instance schema"
+      ],
+      "outputs": [
+        "validation report"
+      ],
+      "validation": [
+        "validator passes its conformance suite"
+      ],
+      "constraints": [
+        "validator passes its conformance suite"
+      ],
+      "dependencies": [
+        "AXM-CORE-C-002-schema",
+        "AXM-CORE-A-043-assertion"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-PYTEST",
+        "SRC-OTEL",
+        "SRC-JSONSCHEMA"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "component_refs": [
+        "AXM-CORE-C-002-schema"
+      ],
+      "authority_scope": [
+        "declared request authority",
+        "Mike final gate for canon and publication"
+      ],
+      "side_effects": [],
+      "rollback_contract": "Mutating runs require a recorded baseline and explicit approved recovery path.",
+      "evidence_contract": "Every success, failure, block and state transition must link to evidence."
+    },
+    {
+      "id": "AXM-CORE-O-011-test-runner",
+      "level": "organ",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "test runner",
+      "definition": "Executes repeatable tests in a declared environment and records complete outcomes.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "test suite environment subject"
+      ],
+      "outputs": [
+        "test results logs traces"
+      ],
+      "validation": [
+        "no missing or silently skipped required tests"
+      ],
+      "constraints": [
+        "no missing or silently skipped required tests"
+      ],
+      "dependencies": [
+        "AXM-CORE-C-028-test-case",
+        "AXM-CORE-C-030-evidence-packet"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-PYTEST",
+        "SRC-OTEL",
+        "SRC-JSONSCHEMA"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "component_refs": [
+        "AXM-CORE-C-028-test-case",
+        "AXM-CORE-C-030-evidence-packet"
+      ],
+      "authority_scope": [
+        "declared request authority",
+        "Mike final gate for canon and publication"
+      ],
+      "side_effects": [],
+      "rollback_contract": "Mutating runs require a recorded baseline and explicit approved recovery path.",
+      "evidence_contract": "Every success, failure, block and state transition must link to evidence."
+    },
+    {
+      "id": "AXM-CORE-O-012-serializer",
+      "level": "organ",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "serializer",
+      "definition": "Encodes typed internal structures into a canonical or declared external representation.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "typed object format profile"
+      ],
+      "outputs": [
+        "bytes or text"
+      ],
+      "validation": [
+        "parse-serialize round trip and digest tests"
+      ],
+      "constraints": [
+        "parse-serialize round trip and digest tests"
+      ],
+      "dependencies": [
+        "AXM-CORE-C-002-schema",
+        "AXM-CORE-A-047-target-format-tag",
+        "AXM-CORE-O-011-test-runner"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-TREESITTER",
+        "SRC-WASM",
+        "SRC-JSONSCHEMA"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "component_refs": [
+        "AXM-CORE-C-002-schema"
+      ],
+      "authority_scope": [
+        "declared request authority",
+        "Mike final gate for canon and publication"
+      ],
+      "side_effects": [],
+      "rollback_contract": "Mutating runs require a recorded baseline and explicit approved recovery path.",
+      "evidence_contract": "Every success, failure, block and state transition must link to evidence."
+    },
+    {
+      "id": "AXM-CORE-O-013-importer",
+      "level": "organ",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "importer",
+      "definition": "Reads external representations into the internal registry model while recording mapping and loss.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "external artifact import profile"
+      ],
+      "outputs": [
+        "internal objects and import report"
+      ],
+      "validation": [
+        "source retained and unsupported features explicit"
+      ],
+      "constraints": [
+        "source retained and unsupported features explicit"
+      ],
+      "dependencies": [
+        "AXM-CORE-C-032-compatibility-profile",
+        "AXM-CORE-O-015-provenance-ledger",
+        "AXM-CORE-O-010-schema-validator"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-OCI",
+        "SRC-SPDX",
+        "SRC-JSONSCHEMA"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "component_refs": [
+        "AXM-CORE-C-032-compatibility-profile"
+      ],
+      "authority_scope": [
+        "declared request authority",
+        "Mike final gate for canon and publication"
+      ],
+      "side_effects": [],
+      "rollback_contract": "Mutating runs require a recorded baseline and explicit approved recovery path.",
+      "evidence_contract": "Every success, failure, block and state transition must link to evidence."
+    },
+    {
+      "id": "AXM-CORE-O-014-exporter",
+      "level": "organ",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "exporter",
+      "definition": "Writes internal objects to a target format with compatibility and loss evidence.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "internal objects export profile"
+      ],
+      "outputs": [
+        "target artifact and export report"
+      ],
+      "validation": [
+        "target validator and round-trip checks where possible"
+      ],
+      "constraints": [
+        "target validator and round-trip checks where possible"
+      ],
+      "dependencies": [
+        "AXM-CORE-C-032-compatibility-profile",
+        "AXM-CORE-O-010-schema-validator",
+        "AXM-CORE-O-011-test-runner"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-OCI",
+        "SRC-SPDX",
+        "SRC-JSONSCHEMA"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "component_refs": [
+        "AXM-CORE-C-032-compatibility-profile"
+      ],
+      "authority_scope": [
+        "declared request authority",
+        "Mike final gate for canon and publication"
+      ],
+      "side_effects": [],
+      "rollback_contract": "Mutating runs require a recorded baseline and explicit approved recovery path.",
+      "evidence_contract": "Every success, failure, block and state transition must link to evidence."
+    },
+    {
+      "id": "AXM-CORE-O-015-provenance-ledger",
+      "level": "organ",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "provenance ledger",
+      "definition": "Records append-oriented source transformation agent evidence and usage relationships.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "signed or attributable events"
+      ],
+      "outputs": [
+        "queryable provenance history"
+      ],
+      "validation": [
+        "event integrity order and references pass"
+      ],
+      "constraints": [
+        "event integrity order and references pass"
+      ],
+      "dependencies": [
+        "AXM-CORE-C-029-provenance-graph",
+        "AXM-CORE-A-015-hash-digest",
+        "AXM-CORE-A-012-timestamp"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-PROV",
+        "SRC-SPDX",
+        "SRC-SLSA"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "component_refs": [
+        "AXM-CORE-C-029-provenance-graph"
+      ],
+      "authority_scope": [
+        "declared request authority",
+        "Mike final gate for canon and publication"
+      ],
+      "side_effects": [],
+      "rollback_contract": "Mutating runs require a recorded baseline and explicit approved recovery path.",
+      "evidence_contract": "Every success, failure, block and state transition must link to evidence."
+    },
+    {
+      "id": "AXM-CORE-O-016-rights-and-licensing-checker",
+      "level": "organ",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "rights and licensing checker",
+      "definition": "Evaluates whether sources dependencies and outputs carry sufficient rights and attribution data for intended use.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "rights records intended use dependency graph"
+      ],
+      "outputs": [
+        "clear blocked or unknown decision with reasons"
+      ],
+      "validation": [
+        "no missing source is silently treated as permitted"
+      ],
+      "constraints": [
+        "no missing source is silently treated as permitted"
+      ],
+      "dependencies": [
+        "AXM-CORE-A-039-license-expression",
+        "AXM-CORE-C-029-provenance-graph",
+        "AXM-CORE-C-004-dependency-record"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-PROV",
+        "SRC-SPDX",
+        "SRC-SLSA"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "component_refs": [
+        "AXM-CORE-C-029-provenance-graph",
+        "AXM-CORE-C-004-dependency-record"
+      ],
+      "authority_scope": [
+        "declared request authority",
+        "Mike final gate for canon and publication"
+      ],
+      "side_effects": [],
+      "rollback_contract": "Mutating runs require a recorded baseline and explicit approved recovery path.",
+      "evidence_contract": "Every success, failure, block and state transition must link to evidence."
+    },
+    {
+      "id": "AXM-CORE-O-017-usage-evidence-manager",
+      "level": "organ",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "usage-evidence manager",
+      "definition": "Updates capability trust only from recorded real use tests outcomes and failures.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "usage events test results incidents"
+      ],
+      "outputs": [
+        "evidence state and confidence history"
+      ],
+      "validation": [
+        "state transition rules and source links pass"
+      ],
+      "constraints": [
+        "state transition rules and source links pass"
+      ],
+      "dependencies": [
+        "AXM-CORE-A-042-usage-event-reference",
+        "AXM-CORE-C-030-evidence-packet",
+        "AXM-CORE-C-028-test-case"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-PROV",
+        "SRC-SPDX",
+        "SRC-SLSA"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "component_refs": [
+        "AXM-CORE-C-030-evidence-packet",
+        "AXM-CORE-C-028-test-case"
+      ],
+      "authority_scope": [
+        "declared request authority",
+        "Mike final gate for canon and publication"
+      ],
+      "side_effects": [],
+      "rollback_contract": "Mutating runs require a recorded baseline and explicit approved recovery path.",
+      "evidence_contract": "Every success, failure, block and state transition must link to evidence."
+    },
+    {
+      "id": "AXM-CORE-O-018-capability-router",
+      "level": "organ",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "capability router",
+      "definition": "Selects a verified creation route based on requested output constraints available capabilities evidence and authority.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "request registry snapshot policy"
+      ],
+      "outputs": [
+        "route plan or explicit gap"
+      ],
+      "validation": [
+        "selection reasons are reproducible and inspectable"
+      ],
+      "constraints": [
+        "selection reasons are reproducible and inspectable"
+      ],
+      "dependencies": [
+        "AXM-CORE-O-001-capability-registry",
+        "AXM-CORE-O-003-gap-detector",
+        "AXM-CORE-A-044-confidence-value"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-ONNX",
+        "SRC-MCP",
+        "SRC-CROISSANT"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "component_refs": [],
+      "authority_scope": [
+        "declared request authority",
+        "Mike final gate for canon and publication"
+      ],
+      "side_effects": [],
+      "rollback_contract": "Mutating runs require a recorded baseline and explicit approved recovery path.",
+      "evidence_contract": "Every success, failure, block and state transition must link to evidence."
+    },
+    {
+      "id": "AXM-CORE-O-019-artifact-builder",
+      "level": "organ",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "artifact builder",
+      "definition": "Packages validated outputs dependencies manifests and exact-byte evidence into a distributable artifact.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "outputs manifests dependencies release profile"
+      ],
+      "outputs": [
+        "artifact package and receipt"
+      ],
+      "validation": [
+        "contents digests install or mount checks pass"
+      ],
+      "constraints": [
+        "contents digests install or mount checks pass"
+      ],
+      "dependencies": [
+        "AXM-CORE-C-013-package-manifest",
+        "AXM-CORE-O-012-serializer",
+        "AXM-CORE-A-015-hash-digest",
+        "AXM-CORE-O-011-test-runner"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-OCI",
+        "SRC-SPDX",
+        "SRC-JSONSCHEMA"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "component_refs": [
+        "AXM-CORE-C-013-package-manifest"
+      ],
+      "authority_scope": [
+        "declared request authority",
+        "Mike final gate for canon and publication"
+      ],
+      "side_effects": [],
+      "rollback_contract": "Mutating runs require a recorded baseline and explicit approved recovery path.",
+      "evidence_contract": "Every success, failure, block and state transition must link to evidence."
+    },
+    {
+      "id": "AXM-CORE-O-020-rollback-and-recovery-manager",
+      "level": "organ",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "rollback and recovery manager",
+      "definition": "Restores an approved prior state after a detected invalid mutation or failed change, subject to protected anchors and authority.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "snapshot integrity evidence recovery policy"
+      ],
+      "outputs": [
+        "restored state and recovery record"
+      ],
+      "validation": [
+        "restored digest matches anchor and no newer approved data is silently lost"
+      ],
+      "constraints": [
+        "restored digest matches anchor and no newer approved data is silently lost"
+      ],
+      "dependencies": [
+        "AXM-CORE-A-015-hash-digest",
+        "AXM-CORE-C-003-manifest",
+        "AXM-CORE-O-015-provenance-ledger",
+        "AXM-CORE-C-030-evidence-packet"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-SCXML",
+        "SRC-OTIO",
+        "SRC-PROV"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "component_refs": [
+        "AXM-CORE-C-003-manifest",
+        "AXM-CORE-C-030-evidence-packet"
+      ],
+      "authority_scope": [
+        "declared request authority",
+        "Mike final gate for canon and publication"
+      ],
+      "side_effects": [],
+      "rollback_contract": "Mutating runs require a recorded baseline and explicit approved recovery path.",
+      "evidence_contract": "Every success, failure, block and state transition must link to evidence."
+    },
+    {
+      "id": "AXM-CORE-O-021-publication-gate",
+      "level": "organ",
+      "domain_code": "core-kernel",
+      "domain": "AXM minimum universal creation kernel",
+      "name": "publication gate",
+      "definition": "Final authority boundary that checks evidence rights privacy safety versioning and human approval before release.",
+      "version": "0.1-research-seed",
+      "status": "proposed",
+      "inputs": [
+        "candidate package evidence policy approval"
+      ],
+      "outputs": [
+        "publish permit or blocked report"
+      ],
+      "validation": [
+        "all mandatory gates explicitly accounted for"
+      ],
+      "constraints": [
+        "all mandatory gates explicitly accounted for"
+      ],
+      "dependencies": [
+        "AXM-CORE-O-016-rights-and-licensing-checker",
+        "AXM-CORE-O-011-test-runner",
+        "AXM-CORE-O-017-usage-evidence-manager",
+        "AXM-CORE-O-019-artifact-builder"
+      ],
+      "relationships": [],
+      "source_keys": [
+        "SRC-PROV",
+        "SRC-SPDX",
+        "SRC-SLSA"
+      ],
+      "registry_status": "seed-ready",
+      "maturity": "implementation-seed",
+      "usage_evidence_required": true,
+      "component_refs": [],
+      "authority_scope": [
+        "declared request authority",
+        "Mike final gate for canon and publication"
+      ],
+      "side_effects": [],
+      "rollback_contract": "Mutating runs require a recorded baseline and explicit approved recovery path.",
+      "evidence_contract": "Every success, failure, block and state transition must link to evidence."
+    }
+  ]
+}
