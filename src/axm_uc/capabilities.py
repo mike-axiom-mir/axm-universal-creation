@@ -5,11 +5,14 @@ from pathlib import Path
 from typing import Any, Callable
 
 from .atomic import atomic_write_json, atomic_write_text
+from .project import ProjectError, build_project, validate_project
 from .registry import Registry
 
 
 class CapabilityError(RuntimeError):
-    pass
+    def __init__(self, message: str, details: dict[str, Any] | None = None):
+        super().__init__(message)
+        self.details = details or {}
 
 
 def _resolve_output_path(root: Path, requested: str) -> Path:
@@ -69,10 +72,39 @@ def builtin_inspect_registry(root: Path, inputs: dict[str, Any]) -> dict[str, An
     }
 
 
+def builtin_write_project(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+    target = _resolve_output_path(root, str(inputs["path"]))
+    if _is_machine_body_path(root, target):
+        raise CapabilityError("normal project creation cannot rewrite the machine body; self-modification remains a separate root-fit path")
+    try:
+        return build_project(
+            target=target,
+            files=inputs["files"],
+            project_type=str(inputs.get("project_type", "generic")),
+            checks=inputs.get("checks") if isinstance(inputs.get("checks"), list) else None,
+            replace=bool(inputs.get("replace", False)),
+        )
+    except ProjectError as exc:
+        raise CapabilityError(str(exc), exc.details) from exc
+
+
+def builtin_verify_project(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+    target = _resolve_output_path(root, str(inputs["path"]))
+    if _is_machine_body_path(root, target):
+        raise CapabilityError("verify-project is for created project bodies; use inspect for the machine itself")
+    return validate_project(
+        target,
+        project_type=str(inputs.get("project_type", "generic")),
+        checks=inputs.get("checks") if isinstance(inputs.get("checks"), list) else None,
+    )
+
+
 BUILTINS: dict[str, Callable[[Path, dict[str, Any]], dict[str, Any]]] = {
     "builtin:write_text": builtin_write_text,
     "builtin:write_json": builtin_write_json,
     "builtin:inspect_registry": builtin_inspect_registry,
+    "builtin:write_project": builtin_write_project,
+    "builtin:verify_project": builtin_verify_project,
 }
 
 
