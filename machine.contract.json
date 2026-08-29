@@ -32,7 +32,8 @@
     "actionLogsRequired": false,
     "promptLogsRequired": false,
     "chainOfThoughtCaptureRequired": false,
-    "continuousTelemetryRequired": false
+    "continuousTelemetryRequired": false,
+    "hashBaselineRequired": false
   },
   "recovery": {
     "model": "one-complete-snapshot-per-day",
@@ -53,12 +54,6 @@
     "mergeBackWorkflowRequired": false,
     "buildOwnsAndRemovesItsDebris": true,
     "destructiveGlobalCleanIsNormalOperation": false
-  },
-  "integrity": {
-    "internalHashesAllowed": true,
-    "participantTrustClassification": false,
-    "ordinaryCreationBlockedByHashMismatch": false,
-    "purpose": "state verification, corruption/change localization, recovery support"
   },
   "directionalOutcomes": {
     "capabilityGapTargetsOutcomeNotExactPriorSolution": true
