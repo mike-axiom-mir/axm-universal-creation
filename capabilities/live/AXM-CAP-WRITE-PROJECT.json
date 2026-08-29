@@ -1,0 +1,48 @@
+{
+  "id": "AXM-CAP-WRITE-PROJECT",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Create a deterministic multi-file text project, validate it before publish, then publish it as one project body.",
+  "handles": [
+    "software-project",
+    "static-web-project",
+    "python-project"
+  ],
+  "input_contract": {
+    "required": [
+      "path",
+      "files"
+    ],
+    "properties": {
+      "path": "target project directory, absolute or relative to the machine root",
+      "files": "object mapping project-relative file paths to exact UTF-8 text",
+      "project_type": "generic, static-web, or python",
+      "checks": "optional deterministic validation checks",
+      "replace": "optional boolean; defaults false"
+    }
+  },
+  "output_contract": {
+    "kind": "directory",
+    "encoding": "utf-8-text-files",
+    "validation": "deterministic pre-publish and post-publish project validation"
+  },
+  "dependencies": [
+    "AXM-CAP-WRITE-TEXT",
+    "AXM-CAP-WRITE-JSON"
+  ],
+  "relationships": [
+    "creates project bodies outside the protected machine body",
+    "pairs with AXM-CAP-VERIFY-PROJECT for independent post-create verification"
+  ],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:write_project",
+    "source": "src/axm_uc/project.py"
+  },
+  "limitations": [
+    "current milestone writes text files only",
+    "generated code is validated but not executed",
+    "visual and interactive behavior still requires an authorized browser/host test"
+  ],
+  "persistent_state": null
+}
