@@ -58,7 +58,7 @@ jobs:
         run: python -m unittest discover -s tests
       - name: Commit restored mirrors
         run: |
-          if git diff --quiet -- reference; then
+          if [ -z "$(git status --porcelain -- reference)" ]; then
             echo "Reference mirrors already current"
             exit 0
           fi
