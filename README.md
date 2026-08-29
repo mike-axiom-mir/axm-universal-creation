@@ -124,15 +124,57 @@ A creation request is now mapped against the explicit 2,165-record registry befo
 
 This matcher is intentionally a **deterministic lexical baseline**, not a claim of semantic understanding. It does not use a learned model and it says so in its output. A future neural or coupled matcher can therefore be evaluated beside an inspectable baseline instead of silently replacing it.
 
-Unroutable `create` requests now carry this decomposition inside their `CAPABILITY_GAP`, so the machine can move from "I cannot do this" toward "these explicit pieces appear relevant and this is the smallest visible missing path."
+Unroutable `create` requests carry this decomposition inside their `CAPABILITY_GAP`, so the machine can move from "I cannot do this" toward "these explicit pieces appear relevant and this is the smallest visible missing path."
 
-### Run
+## Real project creation milestone
+
+The runtime can now create and deterministically verify small real multi-file software projects.
+
+Current live project handles:
+
+- `software-project`
+- `static-web-project`
+- `python-project`
+- `verify-project`
+
+Project creation is staged before publish. Project-relative file paths may not escape the project body. A failed deterministic validation does not publish the staged project.
+
+Current deterministic project checks:
+
+- `file-exists`
+- `nonempty`
+- `contains`
+- `json-valid`
+- `python-compile`
+- `html-local-links`
+
+`static-web` automatically checks for `index.html` and verifies local `src`/`href` references from the entry page. `python` automatically compiles `.py` files for syntax without executing them.
+
+The `trial` command ties the current loop together:
+
+`PLAN -> CREATE -> POST-CREATE VERIFY -> PASS / GAP`
+
+Run the included first real creation trial:
+
+```bash
+PYTHONPATH=src python -m axm_uc plan examples/requests/create_real_site.json
+PYTHONPATH=src python -m axm_uc trial examples/requests/create_real_site.json
+PYTHONPATH=src python -m axm_uc create examples/requests/verify_real_site.json
+```
+
+That creates `creations/first-real-site/` with `index.html`, `style.css`, and `app.js`. Open `index.html` in a browser for the separate human/host visual and interaction test.
+
+A passing deterministic trial proves what it actually checked. It **does not** claim that generated code was executed, that browser interaction was automatically verified, that visual quality was judged, or that every semantic user requirement was satisfied.
+
+See `REAL_CREATION_TRIAL.md` for the working-chat protocol and exact truth boundary.
+
+### Core commands
 
 ```bash
 PYTHONPATH=src python -m axm_uc inspect
 PYTHONPATH=src python -m axm_uc plan examples/requests/plan_mesh.json
 PYTHONPATH=src python -m axm_uc create examples/requests/create_hello.json
-PYTHONPATH=src python -m axm_uc create examples/requests/gap_markdown.json
+PYTHONPATH=src python -m axm_uc trial examples/requests/create_real_site.json
 PYTHONPATH=src python -m axm_uc candidate test capabilities/candidates/AXM-CAP-WRITE-MARKDOWN.json
 python tools/build.py
 ```

@@ -1,0 +1,38 @@
+{
+  "kind": "static-web-project",
+  "direction": "create a small polished local interactive website that can be opened directly in a browser",
+  "constraints": {
+    "local_first": true,
+    "no_external_dependencies_required": true,
+    "inspectable_source": true
+  },
+  "inputs": {
+    "path": "creations/first-real-site",
+    "project_type": "static-web",
+    "replace": true,
+    "files": {
+      "index.html": "<!doctype html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"utf-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n  <title>AXM First Real Creation</title>\n  <link rel=\"stylesheet\" href=\"style.css\">\n</head>\n<body>\n  <main class=\"shell\">\n    <p class=\"eyebrow\">AXM UNIVERSAL CREATION</p>\n    <h1>First real creation trial.</h1>\n    <p id=\"status\">The project body was created and structurally verified.</p>\n    <button id=\"pulse\" type=\"button\">Test interaction</button>\n    <p class=\"counter\">Interactions: <strong id=\"count\">0</strong></p>\n  </main>\n  <script src=\"app.js\"></script>\n</body>\n</html>\n",
+      "style.css": ":root { color-scheme: dark; font-family: Inter, ui-sans-serif, system-ui, sans-serif; }\n* { box-sizing: border-box; }\nbody { margin: 0; min-height: 100vh; display: grid; place-items: center; background: radial-gradient(circle at 50% 20%, #27304d, #080a11 55%); color: #f4f7ff; }\n.shell { width: min(760px, calc(100% - 32px)); padding: clamp(28px, 6vw, 64px); border: 1px solid rgba(255,255,255,.18); border-radius: 28px; background: rgba(9,12,22,.72); box-shadow: 0 30px 100px rgba(0,0,0,.45); backdrop-filter: blur(18px); }\n.eyebrow { letter-spacing: .18em; font-size: .72rem; opacity: .65; }\nh1 { margin: .35em 0; font-size: clamp(2.5rem, 8vw, 5.6rem); line-height: .92; max-width: 8ch; }\n#status { max-width: 48ch; opacity: .78; }\nbutton { margin-top: 1.25rem; padding: .9rem 1.2rem; border-radius: 999px; border: 1px solid rgba(255,255,255,.24); background: #f4f7ff; color: #0a0c14; font: inherit; font-weight: 700; cursor: pointer; }\nbutton:active { transform: translateY(1px) scale(.99); }\n.counter { margin-bottom: 0; opacity: .7; }\n",
+      "app.js": "const button = document.querySelector('#pulse');\nconst count = document.querySelector('#count');\nconst status = document.querySelector('#status');\nlet value = 0;\nbutton.addEventListener('click', () => {\n  value += 1;\n  count.textContent = String(value);\n  status.textContent = value === 1 ? 'Interaction observed in the browser.' : `Interaction observed ${value} times.`;\n});\n"
+    },
+    "checks": [
+      {
+        "type": "contains",
+        "path": "index.html",
+        "text": "AXM First Real Creation"
+      },
+      {
+        "type": "file-exists",
+        "path": "style.css"
+      },
+      {
+        "type": "nonempty",
+        "path": "app.js"
+      },
+      {
+        "type": "html-local-links",
+        "path": "index.html"
+      }
+    ]
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "kind": "verify-project",
+  "direction": "independently verify the first real static website trial",
+  "inputs": {
+    "path": "creations/first-real-site",
+    "project_type": "static-web",
+    "checks": [
+      {
+        "type": "contains",
+        "path": "index.html",
+        "text": "AXM First Real Creation"
+      },
+      {
+        "type": "file-exists",
+        "path": "style.css"
+      },
+      {
+        "type": "nonempty",
+        "path": "app.js"
+      },
+      {
+        "type": "html-local-links",
+        "path": "index.html"
+      }
+    ]
+  }
+}
