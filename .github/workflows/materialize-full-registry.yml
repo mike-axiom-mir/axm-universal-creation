@@ -4,9 +4,16 @@ on:
   push:
     branches:
       - axm/materialize-full-registry
+      - axm/final-standalone-cleanup
     paths:
       - tools/materialize_registry_entries.py
       - tests/test_registry_materialization.py
+      - src/**
+      - tests/**
+      - tools/build.py
+      - README.md
+      - AGENTS.md
+      - machine.contract.json
       - .github/workflows/materialize-full-registry.yml
 
 permissions:
@@ -18,7 +25,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: axm/materialize-full-registry
+          ref: ${{ github.ref_name }}
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -53,9 +60,17 @@ jobs:
           assert manifest['counts'] == expected
           print('verified materialized body', expected, 'total', len(seen))
           PY
+      - name: Confirm obsolete integrity runtime is absent
+        run: |
+          test ! -e src/axm_uc/integrity.py
+          test ! -e state/integrity.json
+          test ! -e tests/test_integrity.py
+          ! grep -R -n -E 'from \.integrity|axm_uc\.integrity|integrity_body_sha256|--integrity' src tools tests README.md machine.contract.json AGENTS.md
       - name: Run complete repository tests
         run: python -m unittest discover -s tests
-      - name: Commit materialized body
+      - name: Run build entrypoint
+        run: python tools/build.py
+      - name: Commit materialized body only if needed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -64,5 +79,5 @@ jobs:
             echo "Materialized body already current"
             exit 0
           fi
-          git commit -m "Materialize complete atom component organ body"
-          git push origin HEAD:axm/materialize-full-registry
+          git commit -m "Refresh complete atom component organ body"
+          git push origin HEAD:${{ github.ref_name }}
