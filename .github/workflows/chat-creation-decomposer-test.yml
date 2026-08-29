@@ -1,0 +1,47 @@
+name: chat-creation-decomposer-test
+
+on:
+  push:
+    branches:
+      - axm/chat-creation-decomposer
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run complete repository tests
+        run: python -m unittest discover -s tests -v
+      - name: Run build entrypoint
+        run: python tools/build.py
+      - name: Exercise first creation plan
+        run: |
+          PYTHONPATH=src python -m axm_uc plan examples/requests/plan_mesh.json --per-level 8 > /tmp/axm-plan.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          plan = json.loads(Path('/tmp/axm-plan.json').read_text())
+          assert plan['type'] == 'CREATION_DECOMPOSITION'
+          assert plan['truth_status'] == 'DETERMINISTIC_LEXICAL_BASELINE'
+          assert any('mesh' in str(x['name']).lower() for x in plan['registry_matches']['component'])
+          assert any('mesh' in (str(x['name']) + str(x['id'])).lower() for x in plan['registry_matches']['organ'])
+          assert plan['gap']['status'] == 'visible-gap'
+          print('PLAN_OK', plan['gap']['smallest_visible_gap'])
+          PY
+      - name: Exercise enriched capability gap
+        run: |
+          PYTHONPATH=src python -m axm_uc create examples/requests/gap_markdown.json > /tmp/axm-gap.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          gap = json.loads(Path('/tmp/axm-gap.json').read_text())
+          assert gap['type'] == 'CAPABILITY_GAP'
+          assert gap['decomposition']['type'] == 'CREATION_DECOMPOSITION'
+          print('GAP_OK')
+          PY
