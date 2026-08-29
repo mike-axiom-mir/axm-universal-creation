@@ -6,6 +6,7 @@ on:
       - axm/materialize-full-registry
     paths:
       - tools/materialize_registry_entries.py
+      - tests/test_registry_materialization.py
       - .github/workflows/materialize-full-registry.yml
 
 permissions:
