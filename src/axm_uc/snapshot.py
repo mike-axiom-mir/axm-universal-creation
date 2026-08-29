@@ -7,9 +7,6 @@ import zipfile
 from pathlib import Path
 from typing import Any
 
-from .atomic import atomic_write_json
-from .integrity import refresh as refresh_integrity
-
 EXCLUDED_DIRS = {".git", "__pycache__", ".pytest_cache", ".axm-build", "snapshots"}
 
 
@@ -72,7 +69,6 @@ def restore_snapshot(root: Path, snapshot: Path, confirm: bool = False) -> dict[
         with zipfile.ZipFile(snapshot, "r") as archive:
             _validate_archive(archive)
             archive.extractall(root)
-        refresh_integrity(root)
     except Exception:
         # A failed restore returns the moved body to its original location.
         for child in list(root.iterdir()):
