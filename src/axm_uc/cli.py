@@ -23,6 +23,11 @@ def build_parser() -> argparse.ArgumentParser:
     inspect_p.add_argument("--level", choices=["atom", "component", "organ"])
     inspect_p.add_argument("--limit", type=int, default=20)
 
+    topology_p = sub.add_parser("topology", help="inspect the master-to-kernel crosswalk and declared kernel dependencies")
+    topology_p.add_argument("--master-id", help="master atom/component/organ id to map into the kernel")
+    topology_p.add_argument("--core-id", help="core-kernel id to traverse directly")
+    topology_p.add_argument("--depth", type=int, default=6, help="maximum dependency traversal depth")
+
     plan_p = sub.add_parser("plan", help="decompose a creation request against the explicit registry")
     plan_p.add_argument("request", help="JSON request file")
     plan_p.add_argument("--per-level", type=int, default=6, help="maximum matches returned per anatomy level")
@@ -58,6 +63,9 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "inspect":
         _print(machine.inspect(args.query, args.level, args.limit))
+        return 0
+    if args.command == "topology":
+        _print(machine.topology(master_id=args.master_id, core_id=args.core_id, depth=args.depth))
         return 0
     if args.command == "plan":
         request = json.loads(Path(args.request).read_text(encoding="utf-8"))
