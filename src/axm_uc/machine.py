@@ -76,16 +76,64 @@ class UniversalCreationMachine:
         try:
             result = self.capabilities.invoke(manifest, request.get("inputs", {}))
         except CapabilityError as exc:
-            return {
+            error = {
                 "type": "CREATION_ERROR",
                 "capability": manifest.get("id"),
                 "message": str(exc),
             }
+            if exc.details:
+                error["details"] = exc.details
+            return error
         return {
             "type": "CREATION_RESULT",
             "capability": manifest.get("id"),
             "directional_outcome": request.get("direction") or request.get("purpose") or kind,
             "result": result,
+        }
+
+    def trial(self, request: dict[str, Any], per_level: int = 6) -> dict[str, Any]:
+        """Plan, create, then independently re-verify a project-style creation.
+
+        The trial intentionally does not execute generated code. It proves that the
+        explicit plan, deterministic project builder, and post-create verification
+        agree on what was actually written.
+        """
+        plan = self.plan(request, per_level=per_level)
+        creation = self.create(request)
+        verification: dict[str, Any] | None = None
+        passed = False
+
+        if creation.get("type") == "CREATION_RESULT":
+            result = creation.get("result") if isinstance(creation.get("result"), dict) else {}
+            project_path = result.get("path")
+            inputs = request.get("inputs") if isinstance(request.get("inputs"), dict) else {}
+            if project_path and isinstance(result.get("validation"), dict):
+                verification = self.create({
+                    "kind": "verify-project",
+                    "direction": f"verify creation trial for {request.get('kind')}",
+                    "inputs": {
+                        "path": project_path,
+                        "project_type": inputs.get("project_type", result.get("project_type", "generic")),
+                        "checks": inputs.get("checks", []),
+                    },
+                })
+                passed = (
+                    verification.get("type") == "CREATION_RESULT"
+                    and isinstance(verification.get("result"), dict)
+                    and verification["result"].get("passed") is True
+                )
+
+        return {
+            "type": "CREATION_TRIAL",
+            "passed": passed,
+            "truth_status": "OBSERVED_DETERMINISTIC_PROJECT_VALIDATION",
+            "plan": plan,
+            "creation": creation,
+            "verification": verification,
+            "limitations": [
+                "generated code was not executed by this trial",
+                "browser visuals and interactive behavior still require a browser/user/authorized host test",
+            ],
         }
 
     def test_candidate(self, candidate_path: Path) -> dict[str, Any]:
@@ -114,14 +162,14 @@ class UniversalCreationMachine:
                 try:
                     result = self.capabilities.invoke(test_manifest, inputs)
                     expected = test.get("expect", {})
-                    passed = True
+                    passed_test = True
                     detail: dict[str, Any] = {"result": result}
                     if "file_text" in expected:
                         output_path = Path(result["path"])
                         actual = output_path.read_text(encoding="utf-8")
-                        passed = actual == expected["file_text"]
+                        passed_test = actual == expected["file_text"]
                         detail["actual_file_text"] = actual
-                    test_results.append({"index": index, "passed": passed, **detail})
+                    test_results.append({"index": index, "passed": passed_test, **detail})
                 except Exception as exc:
                     test_results.append({"index": index, "passed": False, "error": str(exc)})
         finally:
