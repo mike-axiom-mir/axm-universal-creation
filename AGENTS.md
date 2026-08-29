@@ -1,39 +1,35 @@
-# AXM Universal Creation — Agent Lanes
+# AXM Universal Creation — Builder Guidance
 
-This repository uses one clean work lane per AI instance.
+This repository represents one standalone machine.
 
-## Main instance
+## Current truth
 
-The main instance works on the authoritative `main` tree and preserves the standalone Universal Creation direction.
+`main` is the authoritative shared GitHub state.
 
-## Additional instances
+GitHub is a publication and collaboration surface, not a required heartbeat for the machine. Local or other active builds may move faster than GitHub. Do not infer that a capability does not exist merely because a public push has not caught up.
 
-Each additional AI instance gets exactly **one PR lane** for its work.
+## Working style
 
-Logical order:
+There is **no mandatory PR-lane system** and no merge ritual required by the machine.
 
-- main instance → `main`
-- next AI instance → PR lane 1
-- next AI instance → PR lane 2
-- next AI instance → PR lane 3
-- continue sequentially
+A builder may use a branch when isolation is technically useful, but branches are ordinary Git tooling, not governance or safety machinery. When work is verified and integration is requested, it may be incorporated into `main` directly.
 
-One instance does not scatter its work across multiple PRs, cleanup branches, merge-back branches, or parallel copies of the machine.
+Do not create cleanup branches, merge-back branches, duplicate machines, or extra process merely to satisfy a workflow convention.
 
-An instance stays responsible for its one PR until that work is finished, abandoned, or explicitly handed over.
+## Build responsibility
 
-If several tasks belong to the same instance and active direction, keep them in that instance's existing PR rather than opening another PR.
+A build owns temporary debris it creates:
 
-## Integration
+`build -> verify -> remove temporary debris -> done`
 
-The active machine remains singular. PRs are proposal lanes into that one machine, not alternate machines.
+Intended source and state changes remain part of the active machine. Daily snapshot recovery is the recovery boundary for a genuinely bad machine state.
 
-Do not merge a PR unless the user explicitly directs the merge.
+## Direction
 
-After integration, normal build hygiene still applies:
+Do not silently reintroduce the old Workshop architecture, logging systems, hash baselines, automatic governance, or forced agent architecture.
 
-`build -> verify -> remove build debris -> confirm clean -> done`
+The machine may inspect and modify itself. Self-modification passes the four-root fit step:
 
-## GitHub numbering note
+**Truth · Agency · Continuity · Wisdom Before Speed**
 
-GitHub issues and pull requests share one numeric sequence. Therefore the human-facing lane number above is the stable AXM instance lane even when GitHub's displayed PR number is higher because issue numbers already exist.
+Growth is an outcome, not a benchmark or reward.
