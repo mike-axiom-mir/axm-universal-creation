@@ -9,7 +9,6 @@ from typing import Any
 
 from .atomic import atomic_write_json
 from .capabilities import CapabilityError, CapabilityStore
-from .integrity import refresh as refresh_integrity
 from .registry import Registry
 from .root_fit import evaluate_declared_root_fit
 
@@ -94,14 +93,12 @@ class UniversalCreationMachine:
         if errors:
             return {"passed": False, "errors": errors, "root_fit": root_fit, "tests": []}
 
-        # Candidate tests get a small build-output directory, not a copy of the machine.
         build_root = self.root / ".axm-build" / f"candidate-{uuid.uuid4().hex}"
         build_root.mkdir(parents=True, exist_ok=False)
         test_results: list[dict[str, Any]] = []
         try:
             test_manifest = copy.deepcopy(candidate)
             test_manifest["status"] = "candidate-under-test"
-            # Alias candidates can be exercised before adoption because their delegate is already live.
             for index, test in enumerate(candidate.get("tests", []), start=1):
                 inputs = copy.deepcopy(test.get("inputs", {}))
                 for key, value in list(inputs.items()):
@@ -118,7 +115,7 @@ class UniversalCreationMachine:
                         passed = actual == expected["file_text"]
                         detail["actual_file_text"] = actual
                     test_results.append({"index": index, "passed": passed, **detail})
-                except Exception as exc:  # visible test failure, not hidden suppression
+                except Exception as exc:
                     test_results.append({"index": index, "passed": False, "error": str(exc)})
         finally:
             shutil.rmtree(self.root / ".axm-build", ignore_errors=True)
@@ -141,7 +138,6 @@ class UniversalCreationMachine:
         candidate["status"] = "live"
         target = self.root / "capabilities/live" / f"{candidate['id']}.json"
         atomic_write_json(target, candidate)
-        # If this was an internal candidate, adoption consumes it instead of leaving duplicate debris.
         candidates_dir = (self.root / "capabilities/candidates").resolve()
         try:
             candidate_path.relative_to(candidates_dir)
@@ -149,11 +145,9 @@ class UniversalCreationMachine:
             pass
         else:
             candidate_path.unlink()
-        integrity = refresh_integrity(self.root)
         return {
             "adopted": True,
             "capability": candidate["id"],
             "manifest": str(target.relative_to(self.root)),
             "test": test,
-            "integrity_body_sha256": integrity["body_sha256"],
         }
