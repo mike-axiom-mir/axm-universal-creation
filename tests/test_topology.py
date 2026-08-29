@@ -26,7 +26,11 @@ class KernelTopologyTests(unittest.TestCase):
         self.assertEqual(summary["core_dependency_edges"], 175)
         self.assertEqual(summary["core_resolved_dependency_edges"], 175)
         self.assertEqual(summary["core_unresolved_dependency_edges"], 0)
-        self.assertGreater(summary["traversable_master_records"], 0)
+        self.assertEqual(summary["traversable_master_records"], 104)
+        self.assertEqual(summary["ambiguous_master_records"], 0)
+        self.assertEqual(summary["unresolved_master_records"], 2061)
+        self.assertEqual(summary["core_records_reached_by_crosswalk"], 94)
+        self.assertEqual(summary["core_records_without_master_crosswalk"], 6)
 
     def test_exact_graph_crosswalk_enters_declared_kernel_dependencies(self):
         master_id = "AXM-02-DATA-MATH-C-012-graph"
