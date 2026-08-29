@@ -30,6 +30,10 @@ def build_parser() -> argparse.ArgumentParser:
     create_p = sub.add_parser("create", help="route one creation request")
     create_p.add_argument("request", help="JSON request file")
 
+    trial_p = sub.add_parser("trial", help="plan, create, and independently verify a project creation")
+    trial_p.add_argument("request", help="JSON project creation request file")
+    trial_p.add_argument("--per-level", type=int, default=6, help="maximum matches returned per anatomy level")
+
     candidate_p = sub.add_parser("candidate", help="test or adopt a candidate capability")
     candidate_sub = candidate_p.add_subparsers(dest="candidate_command", required=True)
     for name in ("test", "adopt"):
@@ -63,6 +67,11 @@ def main(argv: list[str] | None = None) -> int:
         request = json.loads(Path(args.request).read_text(encoding="utf-8"))
         _print(machine.create(request))
         return 0
+    if args.command == "trial":
+        request = json.loads(Path(args.request).read_text(encoding="utf-8"))
+        result = machine.trial(request, per_level=args.per_level)
+        _print(result)
+        return 0 if result.get("passed") is True else 2
     if args.command == "candidate":
         manifest = Path(args.manifest)
         result = machine.test_candidate(manifest) if args.candidate_command == "test" else machine.adopt_candidate(manifest)
