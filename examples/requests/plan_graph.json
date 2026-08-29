@@ -1,0 +1,12 @@
+{
+  "kind": "graph-model",
+  "direction": "create a graph with nodes, edges, and typed relation predicates",
+  "inputs": {
+    "nodes": [],
+    "edges": []
+  },
+  "constraints": {
+    "inspectable": true,
+    "do_not_invent_undeclared_dependencies": true
+  }
+}
