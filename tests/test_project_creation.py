@@ -1,13 +1,14 @@
 from __future__ import annotations
 
+import sys
 import tempfile
 import unittest
 from pathlib import Path
 
-from axm_uc.machine import UniversalCreationMachine
-
-
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "src"))
+
+from axm_uc.machine import UniversalCreationMachine
 
 
 class ProjectCreationTests(unittest.TestCase):
