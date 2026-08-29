@@ -1,0 +1,11 @@
+{
+  "kind": "mesh-file",
+  "direction": "create and process a reusable 3D mesh",
+  "constraints": {
+    "inspectable": true,
+    "reusable": true
+  },
+  "inputs": {
+    "name": "example-mesh"
+  }
+}
