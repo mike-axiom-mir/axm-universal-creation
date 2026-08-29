@@ -12,17 +12,7 @@ The brain is deliberately **not predefined**. It may remain deterministic, becom
 
 > **Do not hide what the machine is.**
 
-A human or AI should be able to inspect:
-
-- what pieces exist;
-- what each piece is;
-- how pieces connect;
-- what inputs they accept;
-- what outputs they produce;
-- what dependencies they require;
-- which parts are deterministic, learned, external, or still unknown;
-- the current persistent state required to understand the machine;
-- and the exact source that makes each internal capability exist.
+A human or AI should be able to inspect what pieces exist, what each piece is, how pieces connect, what they accept and produce, what they depend on, which parts are deterministic/learned/external/unknown, the current persistent state needed to understand the machine, and the exact source that makes each internal capability exist.
 
 Complexity is allowed. Machine-scale modularity is allowed. A simple interface is allowed. Hidden internal structure is not.
 
@@ -44,7 +34,7 @@ The machine is part of a running system. It does not exist only because a prompt
 
 Creation may happen. Analysis may happen. A capability gap may be found. A modification may follow. Or nothing relevant may happen.
 
-There is no requirement that the machine continuously act, improve, produce, or keep itself busy. Doing nothing does not need to be modeled as a special rewarded action because there is no obligation to act in the first place.
+There is no requirement that the machine continuously act, improve, produce, or keep itself busy.
 
 See `PERSISTENT_SYSTEM.md`.
 
@@ -66,16 +56,7 @@ See `SELF_GROWTH.md`.
 
 Inspectability means being able to inspect **what the machine is now**. It does not require surveillance of everything it ever did.
 
-This project does **not** require:
-
-- action logs;
-- prompt logs;
-- chain-of-thought capture;
-- per-step execution traces;
-- continuous telemetry;
-- user-behavior tracking;
-- automatic history accumulation;
-- merge bureaucracy as a safety system.
+This project does **not** require action logs, prompt logs, chain-of-thought capture, per-step execution traces, continuous telemetry, user-behavior tracking, automatic history accumulation, hash baselines, or merge bureaucracy as a safety system.
 
 See `NON_HIDDEN.md`.
 
@@ -99,38 +80,39 @@ Existing AXM work may be used as knowledge or donor material only when deliberat
 
 These are starting structural names, not a permanent ontology. The machine may refine them if experience shows a better representation and the change fits the four roots.
 
-## Status
+## Creation body now present
 
-**SEED / EXPERIMENTAL**
+The repository contains the recovered Universal Creation Map v0.1 under `reference/` and also materializes the canonical registry directly into inspectable files:
 
-No claim of universal creation is made. The name describes the direction of the experiment, not a completed capability.
+- `atoms/` — 1,000 atom records
+- `components/` — 750 component records
+- `organs/` — 415 organ records
+- total canonical registry — 2,165 records
+- implementation kernel — 100 records
 
-Mike - Axiom/Mir
+The dedicated 1,000-atom CSV/JSON/TXT tables, master CSV/JSON, all-in-one master list, source catalog, and validation report are also present under `reference/`.
 
-## Included creation tables
+`registry_materialization.json` records the materialized counts. `tests/test_registry_materialization.py` verifies that every individual file exactly matches its canonical registry record.
 
-This handoff includes the existing Universal Creation Map v0.1 and the dedicated 1,000-atom tables under `reference/`. Read `DATA_INTAKE.md` before importing them. The older map's taxonomy/data remains useful; any old Workshop-specific implementation direction is superseded by this standalone design.
+Read `DATA_INTAKE.md` before extending the taxonomy. Older Workshop-specific implementation direction inside historical reference material is superseded by this standalone design.
 
 ## First runnable standalone milestone
 
-The repository now includes a small, real Python runtime that proves the initial shape without pretending the larger research problem is solved.
+The small Python runtime currently provides:
 
-It currently provides:
-
-- direct inspection of the included 2,165-candidate Universal Creation Map and 100-record implementation kernel;
+- direct inspection of the 2,165-record Universal Creation Map and 100-record implementation kernel;
 - inspectable live capability manifests;
 - creation routing through live deterministic capabilities;
 - structured `CAPABILITY_GAP` results that preserve the directional outcome and distinguish current partial coverage;
 - candidate capability testing and direct adoption through the four-root fit declaration;
 - build-owned cleanup of candidate-test debris;
-- internal SHA-256 body integrity that diagnoses state without classifying participants as trusted/untrusted or blocking ordinary creation;
 - one complete daily snapshot export and explicit restore with the current body moved to quarantine;
 - no autonomous-agent requirement and no selected final brain architecture.
 
 ### Run
 
 ```bash
-PYTHONPATH=src python -m axm_uc inspect --integrity
+PYTHONPATH=src python -m axm_uc inspect
 PYTHONPATH=src python -m axm_uc create examples/requests/create_hello.json
 PYTHONPATH=src python -m axm_uc create examples/requests/gap_markdown.json
 PYTHONPATH=src python -m axm_uc candidate test capabilities/candidates/AXM-CAP-WRITE-MARKDOWN.json
@@ -139,4 +121,10 @@ python tools/build.py
 
 The Markdown example intentionally begins as a gap. The candidate demonstrates the smallest justified growth in this case: reuse the exact text writer and add an inspectable Markdown route rather than inventing a duplicate writer.
 
-See `BUILD_HYGIENE.md`, `INTEGRITY.md`, `DIRECTIONAL_OUTCOMES.md`, `HOST_ADAPTERS.md`, and `WORKSHOP_STATUS.md` for the clarified standalone invariants.
+## Status
+
+**SEED / EXPERIMENTAL**
+
+No claim of universal creation is made. The name describes the direction of the experiment, not a completed capability.
+
+Mike - Axiom/Mir
