@@ -168,10 +168,36 @@ A passing deterministic trial proves what it actually checked. It **does not** c
 
 See `REAL_CREATION_TRIAL.md` for the working-chat protocol and exact truth boundary.
 
+## Anatomy / kernel topology bridge
+
+The 2,165-record master anatomy is broad but currently flat: it contains zero dependency edges and zero relationships. The separate 100-record implementation kernel contains 175 declared dependency edges, all of which resolve internally.
+
+The runtime now connects the two conservatively without editing the master map or inventing edges. A master record becomes a traversable kernel seed only when its normalized name exactly matches one unique kernel record at the same anatomy level. Weaker correspondences remain visible suggestions and are never traversed as facts.
+
+Current measured bridge coverage:
+
+- 104 master records have a traversable exact crosswalk;
+- those exact mappings reach 94 of the 100 kernel records;
+- 0 exact mappings are ambiguous;
+- 2,061 master records remain explicitly unresolved.
+
+The planner keeps its top-level truth label `DETERMINISTIC_LEXICAL_BASELINE`; kernel topology is reported separately so attaching a dependency graph does not pretend the lexical matcher became semantic intelligence.
+
+Inspect the bridge directly:
+
+```bash
+PYTHONPATH=src python -m axm_uc topology
+PYTHONPATH=src python -m axm_uc topology --master-id AXM-02-DATA-MATH-C-012-graph --depth 4
+PYTHONPATH=src python -m axm_uc plan examples/requests/plan_graph.json --per-level 8
+```
+
+See `TOPOLOGY.md` for the measured baseline, crosswalk rule, truth boundary, and graph example.
+
 ### Core commands
 
 ```bash
 PYTHONPATH=src python -m axm_uc inspect
+PYTHONPATH=src python -m axm_uc topology
 PYTHONPATH=src python -m axm_uc plan examples/requests/plan_mesh.json
 PYTHONPATH=src python -m axm_uc create examples/requests/create_hello.json
 PYTHONPATH=src python -m axm_uc trial examples/requests/create_real_site.json

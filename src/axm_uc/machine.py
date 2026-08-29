@@ -26,9 +26,27 @@ class UniversalCreationMachine:
         return {
             "machine": contract,
             "registry": self.registry.summary(),
+            "topology": self.decomposer.topology.summary(),
             "live_capabilities": self.capabilities.live(),
             "records": self.registry.search(query=query, level=level, limit=limit) if (query or level) else [],
         }
+
+    def topology(self, master_id: str | None = None, core_id: str | None = None, depth: int = 6) -> dict[str, Any]:
+        bridge = self.decomposer.topology
+        result: dict[str, Any] = {"type": "ANATOMY_KERNEL_TOPOLOGY", "summary": bridge.summary()}
+        if master_id:
+            mapping = bridge.mapping_for_master(master_id)
+            result["master_mapping"] = mapping
+            if mapping.get("traversable") is True:
+                result["traversal"] = bridge.traverse_core([str(mapping["core_id"])], max_depth=depth)
+        if core_id:
+            core = bridge.core_index.get(str(core_id))
+            if core is None:
+                raise KeyError(f"unknown core record: {core_id}")
+            result["core_record"] = core
+            result["core_master_matches"] = bridge.master_matches_for_core(str(core_id))
+            result["traversal"] = bridge.traverse_core([str(core_id)], max_depth=depth)
+        return result
 
     def plan(self, request: dict[str, Any], per_level: int = 6) -> dict[str, Any]:
         """Map a creation request onto the explicit registry before inventing machinery."""
