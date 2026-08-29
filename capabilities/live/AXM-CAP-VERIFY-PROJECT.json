@@ -1,0 +1,42 @@
+{
+  "id": "AXM-CAP-VERIFY-PROJECT",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Independently inspect a created project body using deterministic structural checks without executing generated code.",
+  "handles": [
+    "verify-project"
+  ],
+  "input_contract": {
+    "required": [
+      "path"
+    ],
+    "properties": {
+      "path": "existing project directory, absolute or relative to the machine root",
+      "project_type": "generic, static-web, or python",
+      "checks": "optional deterministic checks such as file-exists, contains, json-valid, python-compile, html-local-links"
+    }
+  },
+  "output_contract": {
+    "kind": "project-validation-report",
+    "contains": [
+      "passed",
+      "checks",
+      "files",
+      "limitations"
+    ]
+  },
+  "dependencies": [],
+  "relationships": [
+    "read-only counterpart to AXM-CAP-WRITE-PROJECT"
+  ],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:verify_project",
+    "source": "src/axm_uc/project.py"
+  },
+  "limitations": [
+    "does not execute generated code",
+    "does not substitute for browser visual/interaction testing"
+  ],
+  "persistent_state": null
+}
