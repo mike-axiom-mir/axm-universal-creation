@@ -40,6 +40,7 @@ At this milestone the machine deliberately starts sparse:
 - `AXM-05-CODE-GRAMMAR-C-025-dependency-graph` and `AXM-00-FOUNDATION-C-019-interface-contract` are explicitly implemented for declared software-organ assembly by `AXM-CAP-ASSEMBLE-ORGAN-PROJECT`.
 - `AXM-06-BUILD-PACKAGE-C-001-package-manifest` is explicitly implemented for installed executable-organ packages by `AXM-CAP-INSPECT-EXECUTABLE-ORGANS`.
 - `AXM-06-BUILD-PACKAGE-O-004-artifact-builder` is explicitly implemented for detached typed creation-unit materialization by `AXM-CAP-SPAWN-CREATION-UNIT`.
+- `AXM-19-AI-ML-AGENTS-C-009-adapter` is explicitly implemented for evidence-bound gap-derived route proposals by `AXM-CAP-SYNTHESIZE-CREATION-GAP`.
 
 The runtime reports the current counts rather than hard-coding a claim:
 

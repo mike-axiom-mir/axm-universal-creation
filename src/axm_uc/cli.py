@@ -42,6 +42,7 @@ def build_parser() -> argparse.ArgumentParser:
     organs_p.add_argument("--provides", help="filter by one exact provided interface")
 
     sub.add_parser("forge", help="inspect the detached creation-unit spawning surface and truth boundary")
+    sub.add_parser("gap-forge", help="inspect the bounded gap-to-proposal synthesis surface and truth boundary")
 
     plan_p = sub.add_parser("plan", help="decompose a creation request against direction, anatomy, topology, and live coverage")
     plan_p.add_argument("request", help="JSON request file")
@@ -93,6 +94,9 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if args.command == "forge":
         _print(machine.creation_forge())
+        return 0
+    if args.command == "gap-forge":
+        _print(machine.gap_forge())
         return 0
     if args.command == "plan":
         request = json.loads(Path(args.request).read_text(encoding="utf-8"))

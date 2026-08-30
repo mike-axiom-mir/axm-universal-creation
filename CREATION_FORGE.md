@@ -4,7 +4,7 @@ Universal Creation now has one small live capability whose output can be new cre
 
 `AXM-CAP-SPAWN-CREATION-UNIT`
 
-The important measure is not how many top-level routes exist today. It is whether a human, AI, deterministic recipe, or explicitly labelled external boundary can supply a new bounded design and have the machine turn it into an exact, inspectable, testable candidate without silently installing it.
+The important measure is not how many top-level routes exist today. It is whether a human, AI, deterministic recipe, bounded gap compiler, or explicitly labelled external boundary can supply a new bounded design and have the machine turn it into an exact, inspectable, testable candidate without silently installing it.
 
 ## Growth path
 
@@ -103,6 +103,8 @@ The result remains under `creations/spawned/creation-request-protocol/`. Its adm
 
 ## Current capability gap
 
-The forge can now carry a human/AI design into an exact candidate body and can prove bounded structural or declared fixture behavior. It does not yet autonomously synthesize semantic source from a high-level gap, activate a newly spawned recipe as a builder, prove arbitrary protocol semantics, run a generated organ end to end, or adopt every unit kind into a live registry.
+The separate evidence-bound gap compiler can now produce one narrow class of forge proposal from a real unroutable request: an exact UTF-8 file-route adapter backed by one observed compatible live primitive. It embeds its gap analysis and runs a request-shaped fixture, while explicitly leaving semantic equivalence unproven. See `GAP_SYNTHESIS.md`.
+
+The forge still does not autonomously synthesize arbitrary semantic source from a high-level gap, activate a newly spawned recipe as a general builder, prove arbitrary protocol semantics, run a generated organ end to end, or adopt every unit kind into a live registry.
 
 Those are now visible next layers rather than reasons to inflate the live capability count.

@@ -181,6 +181,23 @@ def builtin_spawn_creation_unit(root: Path, inputs: dict[str, Any]) -> dict[str,
         raise CapabilityError(str(exc), exc.details) from exc
 
 
+def builtin_synthesize_creation_gap(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+    from .gap_synthesis import GapSynthesisError, operate_gap_synthesis
+    from .spawn import SpawnError
+
+    operation = str(inputs.get("operation", "")).strip().casefold()
+    if operation == "materialize-and-test":
+        target = _resolve_output_path(root, str(inputs.get("path", "")))
+        if _is_machine_body_path(root, target):
+            raise CapabilityError(
+                "gap-derived candidates must stay outside the live machine body; use creations/ or an external path"
+            )
+    try:
+        return operate_gap_synthesis(root, inputs)
+    except (GapSynthesisError, ProjectError, SpawnError) as exc:
+        raise CapabilityError(str(exc), getattr(exc, "details", {})) from exc
+
+
 def builtin_verify_project(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
     target = _resolve_output_path(root, str(inputs["path"]))
     if _is_machine_body_path(root, target):
@@ -226,6 +243,7 @@ BUILTINS: dict[str, Callable[[Path, dict[str, Any]], dict[str, Any]]] = {
     "builtin:assemble_organ_project": builtin_assemble_organ_project,
     "builtin:inspect_executable_organs": builtin_inspect_executable_organs,
     "builtin:spawn_creation_unit": builtin_spawn_creation_unit,
+    "builtin:gap_synthesis": builtin_synthesize_creation_gap,
     "builtin:verify_project": builtin_verify_project,
     "builtin:patch_project": builtin_patch_project,
 }

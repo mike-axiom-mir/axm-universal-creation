@@ -1,0 +1,16 @@
+{
+  "kind": "explore-gap-candidate",
+  "direction": "materialize and test the smallest supported detached candidate",
+  "inputs": {
+    "operation": "materialize-and-test",
+    "path": "creations/spawned/generated-note-adapter",
+    "request": {
+      "kind": "portable-note-file",
+      "direction": "create an exact portable note",
+      "inputs": {
+        "path": "creations/generated/example.note",
+        "content": "# Gap-derived creation\n\nThe exact request becomes the candidate fixture.\n"
+      }
+    }
+  }
+}

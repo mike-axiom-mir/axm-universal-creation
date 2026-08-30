@@ -23,6 +23,7 @@ PYTHONPATH=src python -m axm_uc inspect
 PYTHONPATH=src python -m axm_uc topology
 PYTHONPATH=src python -m axm_uc executable
 PYTHONPATH=src python -m axm_uc forge
+PYTHONPATH=src python -m axm_uc gap-forge
 ```
 
 The important distinction is:
@@ -86,7 +87,9 @@ For a new experiment:
 9. if something is wrong, repair the smallest affected portion instead of regenerating the whole project;
 10. report observed results separately from hypotheses and remaining gaps.
 
-When the smallest honest gap is new creation machinery rather than another end artifact, use `spawn-creation-unit`. The proposal may describe a hand, capability, organ, protocol, skill, specialist, recipe, or a new extension kind. Test the detached body, then let the candidate choose whether to request admission review. A request is not approval or installation.
+When the smallest honest gap is new creation machinery rather than another end artifact, inspect the `gap_synthesis` field first. The current compiler can derive one narrow exact UTF-8 adapter proposal from a compatible live primitive. READY means a detached experiment is justified, not that the meanings are equivalent. Ambiguous and unsupported gaps remain HOLD.
+
+For designs beyond that blueprint, use `spawn-creation-unit` with an explicit human, AI, recipe, or external-boundary proposal. The proposal may describe a hand, capability, organ, protocol, skill, specialist, recipe, or a new extension kind. Test the detached body, then let the candidate choose whether to request admission review. A request is not approval or installation.
 
 For a whole-body experiment, create one self-workspace clone and edit/test there for as long as the experiment needs. Do not force a readiness check after each step. When the candidate itself chooses that it is ready, it may request selected merge observations. That request does not merge or approve the body.
 
@@ -106,7 +109,8 @@ At this handoff:
 - candidates can request merge checks, but whole-body adoption is not yet implemented;
 - software-organ dependencies and declared interface names are checked structurally, but source-level conformance and runtime wiring are not synthesized or proven;
 - installed executable-organ packages are exact local source packages, while the 415 anatomy organs remain descriptive until separately implemented;
-- the creation-unit forge materializes supplied designs deterministically but does not claim to invent their semantic source by itself;
+- the creation-unit forge materializes supplied designs deterministically, and the gap compiler can derive one narrow adapter design from structural evidence; neither claims general semantic source invention;
+- gap synthesis currently covers only exact UTF-8 `path`+`content` file routes, and one passing request fixture does not prove general format semantics;
 - capability/hand fixtures and organ package contracts have specialized tests; protocols, skills, specialists, recipes, and extension kinds currently have structural/file evidence only;
 - spawned recipes are detached candidates and are not yet automatically activated as forge builders;
 - software-direction suggestions do not choose a direction;

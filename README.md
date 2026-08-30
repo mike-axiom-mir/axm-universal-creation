@@ -64,6 +64,12 @@ The machine can also spawn smaller detached creation-unit bodies without cloning
 
 See `CREATION_FORGE.md`.
 
+For one bounded class of real gaps, the machine can now compile the missing design itself. An unroutable exact UTF-8 file request may expose one uniquely compatible live primitive; the gap compiler turns that observation into a closed detached adapter proposal and runs the exact request content as its disposable fixture. Ambiguous or unsupported gaps remain typed HOLD states.
+
+`unroutable request -> evidence-bound structural bridge -> proposal -> detached test -> no automatic admission`
+
+See `GAP_SYNTHESIS.md`.
+
 ## No activity-log architecture
 
 Inspectability means being able to inspect **what the machine is now**. It does not require surveillance of everything it ever did.
@@ -120,6 +126,7 @@ The small Python runtime currently provides:
 - dependency-aware software-organ assembly with declared interfaces, explicit order, and file ownership;
 - an exact local executable-organ package body that makes working organs reusable across creations;
 - a deterministic detached creation-unit forge for hands, capabilities, organs, protocols, skills, specialists, recipes, and new extension kinds;
+- an evidence-bound gap compiler that can derive and test the smallest supported UTF-8 file-route adapter proposal from a real unroutable request;
 - complete editable self-workspace cloning, exact source comparison, independent build logs, and voluntary merge-check requests;
 - structured `CAPABILITY_GAP` results that preserve the directional outcome and distinguish current partial coverage;
 - candidate capability testing and direct adoption through the four-root fit declaration;
@@ -169,6 +176,9 @@ Current live project handles:
 - `inspect-spawned-unit`
 - `test-spawned-unit`
 - `request-unit-admission-check`
+- `analyze-creation-gap`
+- `propose-gap-candidate`
+- `explore-gap-candidate`
 
 Project creation is staged before publish and project-relative file paths may not escape the project body. Plain project creation defaults to `grounded-draft`: exact publication integrity is required, while failed quality/grammar checks remain visible and the imperfect creation survives. Explicit `validated` mode and verified composite handles remain strict and do not publish a failed body.
 
@@ -206,6 +216,8 @@ PYTHONPATH=src python -m axm_uc create examples/requests/create_organ_site.json
 PYTHONPATH=src python -m axm_uc create examples/requests/create_reusable_organ_site.json
 PYTHONPATH=src python -m axm_uc create examples/requests/spawn_creation_protocol.json
 PYTHONPATH=src python -m axm_uc create examples/requests/test_spawned_creation_protocol.json
+PYTHONPATH=src python -m axm_uc create examples/requests/analyze_note_route_gap.json
+PYTHONPATH=src python -m axm_uc create examples/requests/explore_note_route_gap.json
 ```
 
 That creates `creations/first-real-site/` with `index.html`, `style.css`, and `app.js`. Open `index.html` in a browser for the separate human/host visual and interaction test.

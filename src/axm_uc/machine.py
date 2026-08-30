@@ -10,6 +10,7 @@ from .capabilities import CapabilityError, CapabilityStore
 from .decompose import CreationDecomposer
 from .directions import SoftwareDirections
 from .executable import ExecutableAnatomy
+from .gap_synthesis import analyze_creation_gap, gap_synthesis_summary
 from .organ_library import ExecutableOrganLibrary
 from .registry import Registry
 from .spawn import creation_forge_summary
@@ -34,12 +35,16 @@ class UniversalCreationMachine:
             "software_directions": self.direction_model.summary(),
             "executable_organs": ExecutableOrganLibrary(self.root).summary(),
             "creation_forge": creation_forge_summary(),
+            "gap_synthesis": gap_synthesis_summary(),
             "live_capabilities": self.capabilities.live(),
             "records": self.registry.search(query=query, level=level, limit=limit) if (query or level) else [],
         }
 
     def creation_forge(self) -> dict[str, Any]:
         return {"type": "CREATION_UNIT_FORGE", **creation_forge_summary()}
+
+    def gap_forge(self) -> dict[str, Any]:
+        return {"type": "CREATION_GAP_SYNTHESIS", **gap_synthesis_summary()}
 
     def software_directions(self, direction_id: str | None = None, suggest: str | None = None) -> dict[str, Any]:
         result: dict[str, Any] = {
@@ -141,6 +146,7 @@ class UniversalCreationMachine:
             "smallest_missing_capability_currently_justified": smallest,
             "supported_creation_kinds": sorted({h for c in self.capabilities.live() for h in c.get("handles", [])}),
             "decomposition": self.plan(request, per_level=4),
+            "gap_synthesis": analyze_creation_gap(self.root, request),
         }
 
     def create(self, request: dict[str, Any]) -> dict[str, Any]:

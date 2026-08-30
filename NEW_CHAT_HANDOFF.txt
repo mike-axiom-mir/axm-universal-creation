@@ -57,6 +57,10 @@ CREATION-UNIT FORGE
 -------------------
 The live machine can turn one closed supplied design into a detached hand, capability, organ, protocol, skill, specialist, recipe, or newly named extension kind. It preserves exact path-independent lineage, runs the strongest implemented evidence for that kind, and permits a voluntary admission-review request without installing or merging anything. Skills are bounded methods; specialists are temporary method overlays, not identities or authority. See CREATION_FORGE.md.
 
+EVIDENCE-BOUND GAP SYNTHESIS
+----------------------------
+Every unroutable create result now exposes whether one implemented deterministic blueprint can compile the observed gap. The first blueprint creates an exact UTF-8 file-route alias proposal from one uniquely compatible live primitive, spawns it detached, and runs the request content as a disposable fixture. Unsupported or ambiguous gaps HOLD. This is structural proposal synthesis, not general semantic source invention, admission, or installation. See GAP_SYNTHESIS.md.
+
 RECOVERY
 --------
 One complete restorable snapshot per day. If a day goes genuinely wrong, quarantine that state and restore an earlier known-good daily snapshot.

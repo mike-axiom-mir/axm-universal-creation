@@ -67,6 +67,20 @@ This is the first direct answer to capability-count inflation: the live kernel r
 
 Skills and specialists are supported without being anthropomorphized. A skill is a bounded portable method. A specialist is a temporary method overlay and is not identity, authority, expertise proof, or independent evidence. See `CREATION_FORGE.md`.
 
+## Compile a bounded proposal from a real gap
+
+The first deterministic gap-to-proposal compiler now connects an observed unroutable request to the Creation-Unit Forge without claiming general semantic invention.
+
+For exact UTF-8 file requests with `path` and `content`, it observes current live input/output contracts. One uniquely compatible live primitive can justify a detached adapter experiment. The compiler emits the full closed proposal, persists the exact gap analysis inside the candidate package, and runs the supplied request content through a disposable test path.
+
+Uniqueness is not semantic proof. It selects only the smallest supported experiment. Multiple candidates produce `HOLD_AMBIGUOUS_STRUCTURAL_BRIDGE`; unsupported gaps produce `HOLD_NO_SUPPORTED_SYNTHESIS_BLUEPRINT`. Neither is silently resolved.
+
+This establishes one working segment of:
+
+`real use -> explicit gap -> bounded proposal synthesis -> detached build -> request-shaped test -> later voluntary admission request`
+
+It still does not install the candidate, decide admission, or synthesize arbitrary source. See `GAP_SYNTHESIS.md`.
+
 ## Non-hidden after change
 
 If the machine changes what it is, the resulting source, structure, relationships, capability boundaries, configuration, and persistent learned state required to understand the live machine must remain inspectable.

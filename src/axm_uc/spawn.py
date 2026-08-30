@@ -392,7 +392,7 @@ def creation_forge_summary() -> dict[str, Any]:
         "capability_and_hand_candidates_receive_declared_test_execution": True,
         "organ_candidates_receive_executable_package_schema_validation": True,
         "other_kinds_currently_receive_structural_and_declared_file_checks": True,
-        "candidate_design_source": "supplied by a human, AI, deterministic recipe, or explicitly labelled external boundary; the forge does not claim to invent semantic design by itself",
+        "candidate_design_source": "supplied by a human, AI, deterministic recipe, bounded gap compiler, or explicitly labelled external boundary; the forge does not claim to invent semantic design by itself",
     }
 
 

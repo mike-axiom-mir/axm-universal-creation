@@ -1,0 +1,15 @@
+{
+  "kind": "propose-gap-candidate",
+  "direction": "compile the smallest supported detached candidate proposal",
+  "inputs": {
+    "operation": "propose",
+    "request": {
+      "kind": "portable-note-file",
+      "direction": "create an exact portable note",
+      "inputs": {
+        "path": "creations/generated/example.note",
+        "content": "# Gap-derived creation\n\nThe exact request becomes the candidate fixture.\n"
+      }
+    }
+  }
+}

@@ -16,10 +16,10 @@ class CompositeAndExecutableTests(unittest.TestCase):
         machine = UniversalCreationMachine(ROOT)
         summary = machine.executable()["summary"]
         self.assertEqual(summary["truth_status"], "EXPLICIT_LIVE_CAPABILITY_BINDINGS")
-        self.assertEqual(summary["implemented_master_records"], 9)
-        self.assertEqual(summary["implemented_master_by_level"], {"component": 8, "organ": 1})
-        self.assertEqual(summary["live_capabilities"], 13)
-        self.assertEqual(summary["resolved_bindings"], 24)
+        self.assertEqual(summary["implemented_master_records"], 10)
+        self.assertEqual(summary["implemented_master_by_level"], {"component": 9, "organ": 1})
+        self.assertEqual(summary["live_capabilities"], 14)
+        self.assertEqual(summary["resolved_bindings"], 27)
 
         project = machine.executable(master_id="AXM-24-WORKSPACE-COLLABORATION-C-010-project")["master"]
         self.assertEqual(project["status"], "live-backed")
@@ -56,6 +56,10 @@ class CompositeAndExecutableTests(unittest.TestCase):
         artifact_builder = machine.executable(master_id="AXM-06-BUILD-PACKAGE-O-004-artifact-builder")["master"]
         self.assertEqual(artifact_builder["status"], "live-backed")
         self.assertEqual(artifact_builder["implemented_by"], ["AXM-CAP-SPAWN-CREATION-UNIT"])
+
+        adapter = machine.executable(master_id="AXM-19-AI-ML-AGENTS-C-009-adapter")["master"]
+        self.assertEqual(adapter["status"], "live-backed")
+        self.assertEqual(adapter["implemented_by"], ["AXM-CAP-SYNTHESIZE-CREATION-GAP"])
 
     def test_planner_surfaces_explicit_live_anatomy_bindings(self):
         plan = UniversalCreationMachine(ROOT).plan({

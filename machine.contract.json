@@ -98,6 +98,22 @@
     "automaticAdmissionOrMerge": false,
     "candidateMayRequestAdmissionReview": true
   },
+  "gapSynthesis": {
+    "evidenceBoundAnalysisAvailable": true,
+    "exactRequestDigestPreserved": true,
+    "implementedBlueprints": [
+      "axm.blueprint.exact-utf8-file-route-alias/v0.1"
+    ],
+    "existingDetachedCandidateReusePrecedesNewSynthesis": true,
+    "uniqueStructuralBridgeMaySelectDetachedExperiment": true,
+    "structuralBridgeIsSemanticEquivalenceProof": false,
+    "ambiguousBridgeAutoSelected": false,
+    "unsupportedGapHeld": true,
+    "requestShapedDisposableFixtureAvailable": true,
+    "originalRequestedDestinationUsedDuringExperiment": false,
+    "arbitrarySemanticSourceSynthesisAvailable": false,
+    "automaticAdmissionOrInstallation": false
+  },
   "hostEmbedding": {
     "coreIntendedAsInnerBody": true,
     "hostAdaptersExpected": true,
