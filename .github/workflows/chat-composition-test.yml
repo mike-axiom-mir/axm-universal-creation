@@ -1,0 +1,58 @@
+name: chat-composition-test
+
+on:
+  push:
+    branches:
+      - axm/chat-creation-decomposer
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run complete repository tests
+        run: python -m unittest discover -s tests -v
+      - name: Run repository build gate
+        run: python tools/build.py
+      - name: Measure executable anatomy
+        run: |
+          PYTHONPATH=src python -m axm_uc executable > /tmp/executable.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path('/tmp/executable.json').read_text())
+          summary = report['summary']
+          assert summary['implemented_master_records'] == 2, summary
+          assert summary['implemented_master_by_level'] == {'component': 2}, summary
+          print('EXECUTABLE_ANATOMY_OK', summary)
+          PY
+      - name: Test first composite candidate through machine root-fit path
+        run: |
+          PYTHONPATH=src python -m axm_uc candidate test capabilities/candidates/AXM-CAP-BUILD-VERIFY-PROJECT.json > /tmp/composite.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          result = json.loads(Path('/tmp/composite.json').read_text())
+          assert result['passed'] is True, result
+          assert result['root_fit']['fit'] is True, result
+          assert result['tests'][0]['result']['build']['published'] is True, result
+          assert result['tests'][0]['result']['verification']['passed'] is True, result
+          print('COMPOSITE_CANDIDATE_OK')
+          PY
+      - name: Confirm planner reports live anatomy separately from lexical matching
+        run: |
+          PYTHONPATH=src python -m axm_uc plan examples/requests/create_real_site.json --per-level 20 > /tmp/plan.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          plan = json.loads(Path('/tmp/plan.json').read_text())
+          assert plan['truth_status'] == 'DETERMINISTIC_LEXICAL_BASELINE'
+          assert plan['executable_anatomy']['truth_status'] == 'EXPLICIT_LIVE_CAPABILITY_BINDINGS'
+          print('PLANNER_EXECUTABLE_LAYER_OK', len(plan['executable_anatomy']['selected_records_with_declared_binding']))
+          PY
