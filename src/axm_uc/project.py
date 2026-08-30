@@ -403,6 +403,26 @@ def _rollback_publish(target: Path, backup: Path | None) -> None:
         os.replace(backup, target)
 
 
+def preview_project_files(files: Any, project_type: Any = "generic") -> dict[str, Any]:
+    """Normalize one exact UTF-8 project file map without touching the filesystem."""
+    if not isinstance(files, dict) or not files:
+        raise ProjectError("files must be a non-empty object mapping relative paths to text content")
+
+    normalized_files: dict[str, str] = {}
+    for raw_path, raw_content in files.items():
+        rel = _safe_relative_path(str(raw_path))
+        key = rel.as_posix()
+        if key in normalized_files:
+            raise ProjectError(f"duplicate project file path: {key}")
+        if not isinstance(raw_content, str):
+            raise ProjectError(f"project file content must be text for the current milestone: {key}")
+        normalized_files[key] = raw_content
+    return {
+        "project_type": str(project_type or "generic").strip().casefold(),
+        "files": normalized_files,
+    }
+
+
 def build_project(
     target: Path,
     files: dict[str, Any],
@@ -415,22 +435,10 @@ def build_project(
     publish_mode = str(publish_mode).strip().casefold()
     if publish_mode not in PUBLISH_MODES:
         raise ProjectError("publish_mode must be validated or grounded-draft")
-    if not isinstance(files, dict) or not files:
-        raise ProjectError("files must be a non-empty object mapping relative paths to text content")
-
-    normalized: list[tuple[PurePosixPath, str]] = []
-    seen: set[str] = set()
-    expected_files: dict[str, str] = {}
-    for raw_path, raw_content in files.items():
-        rel = _safe_relative_path(str(raw_path))
-        key = rel.as_posix()
-        if key in seen:
-            raise ProjectError(f"duplicate project file path: {key}")
-        seen.add(key)
-        if not isinstance(raw_content, str):
-            raise ProjectError(f"project file content must be text for the current milestone: {key}")
-        normalized.append((rel, raw_content))
-        expected_files[key] = raw_content
+    preview = preview_project_files(files, project_type)
+    project_type = preview["project_type"]
+    expected_files = preview["files"]
+    normalized = [(PurePosixPath(path), content) for path, content in expected_files.items()]
 
     target.parent.mkdir(parents=True, exist_ok=True)
     stage = target.with_name(f".{target.name}.axm-build-{uuid.uuid4().hex}")

@@ -101,6 +101,27 @@ def test_capability_candidate(root: Path, candidate_path: Path) -> dict[str, Any
         ]
         if unsafe_paths:
             errors.append("candidate test input paths must stay under ${TEST_DIR}/")
+        invalid_json_result_checks: list[dict[str, Any]] = []
+        for index, test in enumerate(candidate["tests"]):
+            if not isinstance(test, dict):
+                continue
+            expected = test.get("expect", {})
+            comparison = expected.get("json_file_equals_result") if isinstance(expected, dict) else None
+            if comparison is None:
+                continue
+            path = comparison.get("path") if isinstance(comparison, dict) else None
+            result_field = comparison.get("result_field") if isinstance(comparison, dict) else None
+            if (
+                not isinstance(comparison, dict)
+                or set(comparison) != {"path", "result_field"}
+                or not isinstance(path, str)
+                or not path.startswith("${TEST_DIR}/")
+                or not isinstance(result_field, str)
+                or not result_field.strip()
+            ):
+                invalid_json_result_checks.append({"test_index": index, "comparison": comparison})
+        if invalid_json_result_checks:
+            errors.append("json_file_equals_result requires a ${TEST_DIR}/ path and one non-empty result_field")
     root_fit = evaluate_declared_root_fit(candidate)
     if errors:
         result = {"passed": False, "errors": errors, "root_fit": root_fit, "tests": []}
@@ -157,6 +178,28 @@ def test_capability_candidate(root: Path, candidate_path: Path) -> dict[str, Any
                             field_checks.append({"field": field_path, "passed": False, "error": "field not found"})
                         passed_test = passed_test and match
                     detail["result_field_checks"] = field_checks
+                json_result_comparison = expected.get("json_file_equals_result")
+                if isinstance(json_result_comparison, dict):
+                    comparison_path = Path(str(json_result_comparison["path"])).resolve()
+                    try:
+                        comparison_path.relative_to(build_root.resolve())
+                        actual_json = json.loads(comparison_path.read_text(encoding="utf-8"))
+                        expected_json = _result_field(result, str(json_result_comparison["result_field"]))
+                        match = actual_json == expected_json
+                        detail["json_file_result_check"] = {
+                            "path": str(comparison_path),
+                            "result_field": json_result_comparison["result_field"],
+                            "passed": match,
+                        }
+                    except Exception as exc:
+                        match = False
+                        detail["json_file_result_check"] = {
+                            "path": str(comparison_path),
+                            "result_field": json_result_comparison.get("result_field"),
+                            "passed": False,
+                            "error": str(exc),
+                        }
+                    passed_test = passed_test and match
                 test_results.append({"index": index, "passed": passed_test, **detail})
             except Exception as exc:
                 test_results.append({"index": index, "passed": False, "error": str(exc)})

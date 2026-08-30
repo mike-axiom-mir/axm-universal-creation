@@ -81,7 +81,7 @@ This establishes one working segment of:
 
 It still does not install the candidate, decide admission, or synthesize arbitrary source. See `GAP_SYNTHESIS.md`.
 
-A second blueprint composes existing abilities instead of wrapping only one. It discovers one explicitly supported exact project producer from request markers, read-only preview evidence, and its live receipt contract. Strict template instantiation and exact executable-organ assembly now enter the same producer→digest-verifier grammar. Missing, duplicate, ambiguous, or contract-drifted links remain explicit HOLD states. The result is a detached composite capability candidate, not a new live route.
+A second blueprint composes existing abilities instead of wrapping only one. It searches an exact-contract project graph bounded to three steps. Strict template instantiation and exact executable-organ assembly can flow through independent digest verification and then persist that exact verification object as JSON. Raw project-file requests expose both a new writer→verifier path and the already-live verified composite; the shorter reusable path wins only when its exact contract is complete. Missing, duplicate, ambiguous, over-depth, or contract-drifted links remain explicit HOLD states. The result is a detached composite capability candidate, not a new live route.
 
 ## Non-hidden after change
 

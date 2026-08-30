@@ -30,7 +30,7 @@ The result exposes:
 - exact package refs, source paths, and instance-scoped parameter bindings when installed packages are used;
 - the final project validation and grounding receipt.
 
-The assembly logic also exposes a read-only deterministic preview seam. It performs exact package resolution, dependency/interface validation, rendering, and ownership checks without publishing a project. Gap synthesis uses that preview together with the live `AXM-CAP-ASSEMBLE-ORGAN-PROJECT@0.3.0` receipt contract to compile a detached `produce -> digest-verify` composite for a real unroutable organ request. The preview does not select packages, invent organs, wire runtime semantics, or grant admission authority.
+The assembly logic also exposes a read-only deterministic preview seam. It performs exact package resolution, dependency/interface validation, rendering, and ownership checks without publishing a project. Gap synthesis uses that preview together with the live `AXM-CAP-ASSEMBLE-ORGAN-PROJECT@0.3.0` receipt contract to compile a detached `produce -> digest-verify` recipe and, when `report_path` is requested, extend it to `produce -> digest-verify -> exact JSON report`. The preview does not select packages, invent organs, wire runtime semantics, or grant admission authority.
 
 Try the included three-organ local site:
 
@@ -38,6 +38,7 @@ Try the included three-organ local site:
 PYTHONPATH=src python -m axm_uc create examples/requests/create_organ_site.json
 PYTHONPATH=src python -m axm_uc create examples/requests/create_reusable_organ_site.json
 PYTHONPATH=src python -m axm_uc create examples/requests/explore_verified_organ_gap.json
+PYTHONPATH=src python -m axm_uc create examples/requests/explore_verified_organ_report_gap.json
 ```
 
 Its `shell-organ` owns `index.html`, `theme-organ` owns `style.css`, and `interaction-organ` owns `app.js`. The latter two depend on the shell, and the interaction organ also depends on the theme.

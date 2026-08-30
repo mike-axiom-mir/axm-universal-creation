@@ -1,6 +1,6 @@
 {
   "id": "AXM-CAP-WRITE-PROJECT",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "status": "live",
   "purpose": "Create a deterministic multi-file text project, retain it as a grounded draft when checks expose gaps, or require complete deterministic validation when explicitly requested.",
   "handles": [
@@ -25,7 +25,17 @@
   "output_contract": {
     "kind": "directory",
     "encoding": "utf-8-text-files",
-    "validation": "deterministic pre-publish and post-publish grounding with exact requested-text integrity; ordinary creation retains visible gaps unless validated mode is explicitly selected"
+    "validation": "deterministic pre-publish and post-publish grounding with exact requested-text integrity; ordinary creation retains visible gaps unless validated mode is explicitly selected",
+    "contains": [
+      "path",
+      "project_type",
+      "published",
+      "creation_status",
+      "files",
+      "validation",
+      "grounding",
+      "grammar_inventory"
+    ]
   },
   "dependencies": [
     "AXM-CAP-WRITE-TEXT",

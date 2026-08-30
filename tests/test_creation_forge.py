@@ -237,6 +237,27 @@ class CreationForgeTests(unittest.TestCase):
             self.assertIn("candidate test input paths must stay under ${TEST_DIR}/", candidate_test["errors"])
             self.assertFalse((parent / "must-not-be-written.md").exists())
 
+    def test_capability_test_refuses_json_result_comparison_outside_test_space(self):
+        with tempfile.TemporaryDirectory() as td:
+            parent = Path(td)
+            proposal = self._proposal("capability", "axm.test.unconfined-json-comparison")
+            entry = json.loads(proposal["files"]["capability.json"])
+            entry["tests"][0]["expect"]["json_file_equals_result"] = {
+                "path": str(parent / "outside.json"),
+                "result_field": "kind",
+            }
+            proposal["files"]["capability.json"] = json.dumps(entry, indent=2, sort_keys=True) + "\n"
+            target = parent / "candidate"
+            self._spawn(target, proposal)
+            tested = self._operate(target, "test")
+            self.assertFalse(tested["result"]["passed"])
+            errors = tested["result"]["kind_test"]["capability_test"]["errors"]
+            self.assertIn(
+                "json_file_equals_result requires a ${TEST_DIR}/ path and one non-empty result_field",
+                errors,
+            )
+            self.assertFalse((parent / "outside.json").exists())
+
     def test_passing_capability_may_request_review_without_becoming_live(self):
         with tempfile.TemporaryDirectory() as td:
             target = Path(td) / "capability"

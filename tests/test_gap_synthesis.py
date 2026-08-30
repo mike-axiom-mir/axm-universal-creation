@@ -6,6 +6,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
@@ -57,6 +58,36 @@ class GapSynthesisTests(unittest.TestCase):
         request["inputs"]["path"] = path
         request["inputs"]["replace"] = False
         return request
+
+    @classmethod
+    def _verified_organ_report_request(
+        cls,
+        path: str = "creations/requested-organ-report-site",
+        report_path: str = "creations/requested-organ-verification.json",
+    ) -> dict:
+        request = cls._verified_organ_request(path)
+        request["kind"] = "verified-reusable-organ-project-with-json-report"
+        request["direction"] = "assemble exact executable organs, verify their receipt, and persist that exact evidence as JSON"
+        request["inputs"]["report_path"] = report_path
+        return request
+
+    @staticmethod
+    def _verified_files_report_request(
+        path: str = "creations/requested-files-site",
+        report_path: str = "creations/requested-files-verification.json",
+    ) -> dict:
+        return {
+            "kind": "verified-exact-files-project-with-json-report",
+            "direction": "create exact files, independently verify them, and persist the exact evidence as JSON",
+            "inputs": {
+                "path": path,
+                "files": {"README.md": "# Reuse first\n"},
+                "project_type": "generic",
+                "checks": [{"type": "contains", "path": "README.md", "text": "Reuse first"}],
+                "replace": False,
+                "report_path": report_path,
+            },
+        }
 
     def test_unroutable_creation_exposes_ready_gap_synthesis_without_inflating_live_coverage(self):
         result = self.machine.create(self._note_request())
@@ -120,7 +151,7 @@ class GapSynthesisTests(unittest.TestCase):
         self.assertEqual(analysis["status"], "SYNTHESIS_READY_EXACT_COMPOSITE_CHAIN")
         self.assertEqual(
             analysis["selected_blueprint"]["blueprint"],
-            "axm.blueprint.receipted-project-producer-verify-composite/v0.1",
+            "axm.blueprint.bounded-project-recipe-graph/v0.1",
         )
         self.assertEqual(
             [row["ref"] for row in analysis["selected_blueprint"]["dependencies"]],
@@ -172,7 +203,7 @@ class GapSynthesisTests(unittest.TestCase):
             self.assertIsNone(explored["selected_bridge"])
             self.assertEqual(
                 explored["selected_blueprint"]["blueprint"],
-                "axm.blueprint.receipted-project-producer-verify-composite/v0.1",
+                "axm.blueprint.bounded-project-recipe-graph/v0.1",
             )
             candidate_test = explored["test"]["kind_test"]["capability_test"]["tests"][0]
             self.assertTrue(candidate_test["result"]["production"]["published"])
@@ -238,6 +269,160 @@ class GapSynthesisTests(unittest.TestCase):
             self.assertEqual(production["executable_organ_resolution"]["referenced_package_count"], 3)
             self.assertTrue(candidate_test["result"]["verification"]["passed"])
             self.assertIsNone(self.machine.capabilities.route("verified-reusable-organ-static-web-project"))
+
+    def test_organ_report_gap_discovers_and_compiles_exact_three_step_recipe(self):
+        request = self._verified_organ_report_request()
+        analysis = analyze_creation_gap(ROOT, request)
+        selected = analysis["selected_blueprint"]
+        self.assertEqual(analysis["status"], "SYNTHESIS_READY_EXACT_COMPOSITE_CHAIN")
+        self.assertEqual(selected["goal"], "verified-project-with-json-report")
+        self.assertEqual(selected["step_order"], ["produce", "verify", "report"])
+        self.assertEqual(selected["step_count"], 3)
+        self.assertEqual(selected["maximum_step_count"], 3)
+        self.assertEqual(
+            [row["ref"] for row in selected["dependencies"]],
+            [
+                "AXM-CAP-ASSEMBLE-ORGAN-PROJECT@0.3.0",
+                "AXM-CAP-VERIFY-PROJECT@0.5.0",
+                "AXM-CAP-WRITE-JSON@0.1.0",
+            ],
+        )
+
+        first = compile_gap_proposal(ROOT, request)
+        second = compile_gap_proposal(ROOT, request)
+        self.assertEqual(first["proposal_digest"], second["proposal_digest"])
+        manifest = json.loads(first["proposal"]["files"]["capability.json"])
+        self.assertEqual(
+            [step["capability"] for step in manifest["implementation"]["steps"]],
+            [
+                "AXM-CAP-ASSEMBLE-ORGAN-PROJECT",
+                "AXM-CAP-VERIFY-PROJECT",
+                "AXM-CAP-WRITE-JSON",
+            ],
+        )
+        self.assertEqual(
+            manifest["implementation"]["steps"][2]["inputs"]["value"],
+            {"from": "steps.verify"},
+        )
+        self.assertEqual(
+            manifest["tests"][0]["expect"]["json_file_equals_result"]["result_field"],
+            "verification",
+        )
+
+    def test_organ_report_recipe_materializes_and_proves_exact_json_receipt(self):
+        with tempfile.TemporaryDirectory() as td:
+            parent = Path(td)
+            requested = parent / "original-organ-must-not-exist"
+            requested_report = parent / "original-report-must-not-exist.json"
+            target = parent / "detached-organ-report-composite"
+            result = self.machine.create({
+                "kind": "explore-gap-candidate",
+                "inputs": {
+                    "operation": "materialize-and-test",
+                    "path": str(target),
+                    "request": self._verified_organ_report_request(
+                        str(requested),
+                        str(requested_report),
+                    ),
+                },
+            })
+            explored = result["result"]
+            self.assertTrue(explored["passed"], explored)
+            self.assertFalse(requested.exists())
+            self.assertFalse(requested_report.exists())
+            candidate_test = explored["test"]["kind_test"]["capability_test"]["tests"][0]
+            self.assertTrue(candidate_test["result"]["verification"]["passed"])
+            self.assertEqual(candidate_test["result"]["report"]["kind"], "json")
+            self.assertTrue(candidate_test["json_file_result_check"]["passed"])
+            self.assertIsNone(
+                self.machine.capabilities.route("verified-reusable-organ-project-with-json-report")
+            )
+
+    def test_raw_files_report_recipe_reuses_shorter_verified_composite(self):
+        request = self._verified_files_report_request()
+        analysis = analyze_creation_gap(ROOT, request)
+        selected = analysis["selected_blueprint"]
+        self.assertEqual(selected["producer"]["profile"], "existing-verified-project-composite")
+        self.assertEqual(selected["step_order"], ["produce", "report"])
+        self.assertEqual(selected["step_count"], 2)
+        self.assertTrue(selected["reuses_existing_verified_composite"])
+        self.assertTrue(selected["path_selection"]["reuse_precedes_new_embodiment"])
+        self.assertEqual(
+            [(row["producer_profile"], row["step_count"]) for row in selected["candidate_paths"]],
+            [("exact-project-files", 3), ("existing-verified-project-composite", 2)],
+        )
+        manifest = json.loads(
+            compile_gap_proposal(ROOT, request)["proposal"]["files"]["capability.json"]
+        )
+        self.assertEqual(
+            [step["capability"] for step in manifest["implementation"]["steps"]],
+            ["AXM-CAP-BUILD-VERIFY-PROJECT", "AXM-CAP-WRITE-JSON"],
+        )
+        self.assertEqual(
+            manifest["implementation"]["steps"][1]["inputs"]["value"],
+            {"from": "steps.produce.verification"},
+        )
+        with tempfile.TemporaryDirectory() as td:
+            parent = Path(td)
+            requested = parent / "original-files-must-not-exist"
+            requested_report = parent / "original-files-report-must-not-exist.json"
+            result = self.machine.create({
+                "kind": "explore-gap-candidate",
+                "inputs": {
+                    "operation": "materialize-and-test",
+                    "path": str(parent / "detached-files-report-composite"),
+                    "request": self._verified_files_report_request(
+                        str(requested),
+                        str(requested_report),
+                    ),
+                },
+            })
+            explored = result["result"]
+            self.assertTrue(explored["passed"], explored)
+            candidate_test = explored["test"]["kind_test"]["capability_test"]["tests"][0]
+            self.assertTrue(candidate_test["json_file_result_check"]["passed"])
+            self.assertFalse(requested.exists())
+            self.assertFalse(requested_report.exists())
+
+    def test_report_recipe_holds_on_missing_reporter_or_depth_overflow(self):
+        request = self._verified_organ_report_request()
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            live = root / "capabilities/live"
+            live.mkdir(parents=True)
+            shutil.copytree(ROOT / "executable-organs", root / "executable-organs")
+            for filename in (
+                "AXM-CAP-ASSEMBLE-ORGAN-PROJECT.json",
+                "AXM-CAP-VERIFY-PROJECT.json",
+            ):
+                shutil.copy2(ROOT / "capabilities/live" / filename, live / filename)
+            missing = analyze_creation_gap(root, request)
+            self.assertEqual(missing["status"], "HOLD_MISSING_COMPOSITE_LINK")
+            self.assertEqual(
+                missing["composite_candidates"][0]["missing_links"][0]["expected_ref"],
+                "AXM-CAP-WRITE-JSON@0.1.0",
+            )
+            reporter = json.loads(
+                (ROOT / "capabilities/live/AXM-CAP-WRITE-JSON.json").read_text(encoding="utf-8")
+            )
+            reporter["output_contract"]["format"] = "yaml"
+            (live / "AXM-CAP-WRITE-JSON.json").write_text(
+                json.dumps(reporter),
+                encoding="utf-8",
+            )
+            drifted = analyze_creation_gap(root, request)
+            self.assertEqual(drifted["status"], "HOLD_MISSING_COMPOSITE_LINK")
+            self.assertIn(
+                "JSON reporter dependency contract mismatch",
+                drifted["composite_candidates"][0]["missing_links"][0]["reason"],
+            )
+
+        with patch("axm_uc.gap_synthesis.MAX_PROJECT_RECIPE_STEPS", 2):
+            over_depth = analyze_creation_gap(ROOT, request)
+            held = compile_gap_proposal(ROOT, request)
+        self.assertEqual(over_depth["status"], "HOLD_RECIPE_DEPTH_EXCEEDED")
+        self.assertIsNone(over_depth["selected_blueprint"])
+        self.assertIsNone(held["proposal"])
 
     def test_organ_recipe_holds_on_missing_or_drifted_receipt_contract(self):
         request = self._verified_organ_request()
@@ -401,12 +586,20 @@ class GapSynthesisTests(unittest.TestCase):
         inspection = self.machine.inspect()
         summary = inspection["gap_synthesis"]
         self.assertIn("axm.blueprint.exact-utf8-file-route-alias/v0.1", summary["implemented_blueprints"])
-        self.assertIn("axm.blueprint.receipted-project-producer-verify-composite/v0.1", summary["implemented_blueprints"])
+        self.assertIn("axm.blueprint.bounded-project-recipe-graph/v0.1", summary["implemented_blueprints"])
         self.assertEqual(
             [row["profile"] for row in summary["project_producer_profiles"]],
-            ["strict-project-template", "exact-executable-organ-assembly"],
+            [
+                "strict-project-template",
+                "exact-executable-organ-assembly",
+                "exact-project-files",
+                "existing-verified-project-composite",
+            ],
         )
         self.assertEqual(summary["closed_binding_transforms"], ["file-digest-map"])
+        self.assertEqual(summary["closed_binding_edges"], ["file-digest-map", "exact-whole-object"])
+        self.assertEqual(summary["maximum_project_recipe_steps"], 3)
+        self.assertTrue(summary["reuse_precedes_new_embodiment"])
         self.assertFalse(summary["semantic_source_invention"])
         self.assertFalse(summary["automatic_admission"])
         self.assertEqual(len(inspection["live_capabilities"]), 14)

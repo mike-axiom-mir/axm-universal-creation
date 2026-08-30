@@ -103,21 +103,33 @@
     "exactRequestDigestPreserved": true,
     "implementedBlueprints": [
       "axm.blueprint.exact-utf8-file-route-alias/v0.1",
-      "axm.blueprint.receipted-project-producer-verify-composite/v0.1"
+      "axm.blueprint.bounded-project-recipe-graph/v0.1"
     ],
     "existingDetachedCandidateReusePrecedesNewSynthesis": true,
     "uniqueStructuralBridgeMaySelectDetachedExperiment": true,
     "structuralBridgeIsSemanticEquivalenceProof": false,
     "ambiguousBridgeAutoSelected": false,
     "exactCompositeChainCompilationAvailable": true,
+    "maximumProjectRecipeSteps": 3,
+    "shortestReadyExactPathSelected": true,
+    "recipePathAmbiguityHeld": true,
+    "recipeDepthOverflowHeld": true,
+    "existingVerifiedCompositeReusePrecedesNewEmbodiment": true,
     "supportedProjectProducerProfiles": [
       "strict-project-template",
-      "exact-executable-organ-assembly"
+      "exact-executable-organ-assembly",
+      "exact-project-files",
+      "existing-verified-project-composite"
     ],
     "compositeMissingOrAmbiguousLinkHeld": true,
     "closedCompositeBindingTransforms": [
       "file-digest-map"
     ],
+    "closedCompositeBindingEdges": [
+      "file-digest-map",
+      "exact-whole-object"
+    ],
+    "exactVerificationJsonArtifactAvailable": true,
     "arbitraryCompositeExpressionEvaluationAvailable": false,
     "unsupportedGapHeld": true,
     "requestShapedDisposableFixtureAvailable": true,

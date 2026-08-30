@@ -45,20 +45,20 @@ The compiler emits a candidate `DETERMINISTIC_ALIAS` manifest. It copies the cho
 
 The original output path is never used during the experiment. The fixture path is rewritten under `${TEST_DIR}/`, and the candidate tester removes its build space afterward.
 
-## Blueprint 2: receipt-discovered project production and independent verification
+## Blueprint 2: bounded exact-contract project recipe graph
 
 The second recipe is:
 
-`axm.blueprint.receipted-project-producer-verify-composite/v0.1`
+`axm.blueprint.bounded-project-recipe-graph/v0.1`
 
 It applies only when:
 
 - the requested kind has no live route or existing detached candidate;
-- exactly one supported producer profile matches the request markers;
-- inputs exactly satisfy that producer profile, plus only optional `checks` and `replace`;
+- exactly one supported producer marker family matches the request;
+- inputs exactly satisfy that producer family, plus its declared optional fields and optional `report_path`;
 - a read-only deterministic preview resolves the complete creation recipe without publishing files;
-- the exact live producer contract declares `path`, `project_type`, `published`, `creation_status`, and `files` receipts;
-- exactly one live `AXM-CAP-VERIFY-PROJECT@0.5.0` exists.
+- every used live dependency has its exact tested version, implementation kind, input contract, and output contract;
+- the shortest complete path is unique and contains no more than three steps.
 
 The current producer profiles are:
 
@@ -66,15 +66,20 @@ The current producer profiles are:
 | --- | --- | --- | --- |
 | `strict-project-template` | `AXM-CAP-INSTANTIATE-PROJECT-TEMPLATE@0.2.0` | `template` | strict placeholder and rendered-path resolution |
 | `exact-executable-organ-assembly` | `AXM-CAP-ASSEMBLE-ORGAN-PROJECT@0.3.0` | `assembly` | exact package refs, dependency graph, declared interfaces, bindings, and exclusive file ownership |
+| `exact-project-files` | `AXM-CAP-WRITE-PROJECT@0.6.0` | `files` | exact safe relative paths, project type, and UTF-8 text |
+| `existing-verified-project-composite` | `AXM-CAP-BUILD-VERIFY-PROJECT@0.2.0` | `files` | the same exact file preview, with verification already present in the producer result |
 
-The compiler emits the same candidate `DETERMINISTIC_COMPOSITE` grammar for either producer:
+For template and organ input, the compiler can emit this three-step candidate `DETERMINISTIC_COMPOSITE` grammar when `report_path` is requested:
 
 1. run the selected producer with the caller's exact inputs and `publish_mode: validated`;
-2. independently verify the produced path, project type, caller checks, and every SHA-256 receipt emitted by step one.
+2. independently verify the produced path, project type, caller checks, and every SHA-256 receipt emitted by step one;
+3. write the exact whole verification object as deterministic JSON.
 
-The bridge between those steps is deliberately small. `file-digest-map` is a closed binding transform that accepts only a non-empty list of unique `{path, sha256}` file receipts with lowercase 64-character SHA-256 values. It produces the exact mapping already accepted by `AXM-CAP-VERIFY-PROJECT`. Unknown transforms, duplicate paths, malformed rows, and malformed digests fail; there is no arbitrary expression evaluator.
+Raw `files` input exposes two paths. The direct writer→verifier→reporter path has three steps. The already-live `AXM-CAP-BUILD-VERIFY-PROJECT`→reporter path has two, so the graph preserves both candidates in its evidence and selects the shorter complete path. This is reuse-before-new-embodiment, not an assertion that fewer steps always means better semantics.
 
-The generated test runs the exact request recipe under `${TEST_DIR}/request-example-project`, verifies every previewed file byte, observes validated publication, and requires the independent verifier to pass its digest comparison. For organs, the result also preserves exact package-resolution, dependency-order, interface, and ownership receipts. The requested destination remains untouched, and passing does not install or route the candidate.
+The bridges between steps are deliberately small. `file-digest-map` accepts only a non-empty list of unique `{path, sha256}` file receipts with lowercase 64-character SHA-256 values and produces the exact mapping already accepted by `AXM-CAP-VERIFY-PROJECT`. The reporter uses a whole-object binding with no projection or reinterpretation. Unknown transforms, duplicate paths, malformed rows, and malformed digests fail; there is no arbitrary expression evaluator.
+
+The generated test runs the exact request recipe under `${TEST_DIR}/request-example-project`, verifies every previewed file byte, observes validated publication, and requires the independent verifier to pass its digest comparison. When a report is requested, it also loads the generated JSON and deep-compares it with the returned `verification` object. For organs, the result preserves exact package-resolution, dependency-order, interface, and ownership receipts. The requested project and report destinations remain untouched, and passing does not install or route the candidate.
 
 ## READY is not semantic proof
 
@@ -88,7 +93,7 @@ Alias analysis therefore remains:
 
 The tested candidate remains detached even when its fixture passes.
 
-Composite analysis is similarly labeled `DETERMINISTIC_COMPOSITE_CHAIN_HYPOTHESIS`. A passing producer→verify chain proves the observed fixture, closed dataflow, deterministic checks, and byte identity across the two receipts. It does not prove execution of generated software, browser behavior, visual quality, organ source-level interface conformance, or that the discovered recipe is the best meaning for every future request carrying the same kind.
+Composite analysis is similarly labeled `DETERMINISTIC_COMPOSITE_CHAIN_HYPOTHESIS`. A passing bounded recipe proves the observed fixture, closed dataflow, deterministic checks, byte identity across creation and verification receipts, and—when requested—exact JSON persistence of that verification object. It does not prove execution of generated software, browser behavior, visual quality, organ source-level interface conformance, or that the discovered recipe is the best meaning for every future request carrying the same kind.
 
 ## HOLD states
 
@@ -100,6 +105,8 @@ The compiler refuses to guess when its blueprint cannot carry the gap:
 - `HOLD_NO_SUPPORTED_SYNTHESIS_BLUEPRINT` — the current compiler would need to invent source or semantics;
 - `HOLD_AMBIGUOUS_STRUCTURAL_BRIDGE` — several compatible primitives exist and none is silently selected;
 - `HOLD_AMBIGUOUS_COMPOSITE_RECIPE` — more than one supported producer profile matches the request markers and none is silently selected;
+- `HOLD_AMBIGUOUS_RECIPE_PATH` — equally short complete exact paths remain and none is silently selected;
+- `HOLD_RECIPE_DEPTH_EXCEEDED` — the applicable path exceeds the explicit three-step bound;
 - `HOLD_MISSING_COMPOSITE_LINK` — an applicable recipe is missing one of its exact tested live dependencies;
 - `HOLD_AMBIGUOUS_COMPOSITE_LINK` — more than one live manifest declares a required composite dependency identity.
 
@@ -134,19 +141,20 @@ The same grammar can now discover and test an organ producer:
 
 ```bash
 PYTHONPATH=src python -m axm_uc create examples/requests/explore_verified_organ_gap.json
+PYTHONPATH=src python -m axm_uc create examples/requests/explore_verified_organ_report_gap.json
 ```
 
-The organ example selects `AXM-CAP-ASSEMBLE-ORGAN-PROJECT@0.3.0` and `AXM-CAP-VERIFY-PROJECT@0.5.0`, resolves three exact executable-organ packages, verifies the dependency order `shell-organ -> theme-organ -> interaction-organ`, and independently rechecks all emitted file digests. Two detached runs reproduced proposal digest `sha256:a930d86e9f464e11c39eee2d1123e5805a890101fc7a6c232d9cdf33bfcd187b` and package digest `sha256:8a66d47194862bc370ad1a47d840fc231b81d02d2f68919d295715ac4f5f2b1e`. The original destination and live route remained absent.
+The first organ example selects `AXM-CAP-ASSEMBLE-ORGAN-PROJECT@0.3.0` and `AXM-CAP-VERIFY-PROJECT@0.5.0`. The second adds `AXM-CAP-WRITE-JSON@0.1.0`, producing the full `produce -> verify -> report` path at the three-step bound. Both resolve three exact executable-organ packages, verify the dependency order `shell-organ -> theme-organ -> interaction-organ`, and independently recheck all emitted file digests. The report example additionally proves that the JSON artifact equals the returned verification object. Original destinations and live routes remain absent.
 
 ## Current boundary and next multiplier
 
-The compiler currently knows one manifest-level alias recipe and one general two-step receipt grammar with two explicitly supported producer profiles. Adding a profile still requires a deterministic preview adapter and exact contract tests. It does not yet synthesize:
+The compiler currently knows one manifest-level alias recipe and one bounded linear project graph with four explicitly supported producer profiles, two closed edge forms, and a three-step maximum. Adding a profile still requires a deterministic preview adapter and exact contract tests. It does not yet synthesize:
 
 - parser-aware or runtime-aware format implementations;
-- arbitrary composite graphs, dynamic step search, branching, loops, or unbounded data transforms;
+- branching, loops, paths beyond three steps, arbitrary graph edges, or unbounded data transforms;
 - missing organ source, runtime wiring, or protocol semantics;
 - verifier code for a previously unsupported evidence type;
 - learned or AI-authored source without an explicitly labelled external cognition boundary;
 - admission decisions.
 
-The next useful growth should still come from real creation gaps. Likely extensions are more producer/verifier profiles, bounded multi-step recipe discovery, and separately labeled runtime or visual evidence providers. Each should be added only with a concrete request and tests that expose why the new recipe is justified.
+The next useful growth should still come from real creation gaps. Likely extensions are more exact producer/verifier profiles, bounded repair edges, and separately labeled runtime or visual evidence providers. Each should be added only with a concrete request and tests that expose why the new recipe is justified.
