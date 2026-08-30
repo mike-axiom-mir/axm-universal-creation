@@ -10,34 +10,11 @@ from .topology import KernelTopology
 TOKEN_RE = re.compile(r"[a-z0-9]+")
 STOP_WORDS = frozenset(
     {
-        "a",
-        "an",
-        "and",
-        "as",
-        "at",
-        "be",
-        "by",
-        "for",
-        "from",
-        "in",
-        "into",
-        "is",
-        "it",
-        "of",
-        "on",
-        "or",
-        "the",
-        "to",
-        "with",
+        "a", "an", "and", "as", "at", "be", "by", "for", "from", "in", "into",
+        "is", "it", "of", "on", "or", "the", "to", "with",
     }
 )
-FIELD_WEIGHTS = {
-    "name": 12,
-    "id": 5,
-    "domain_code": 5,
-    "domain": 4,
-    "definition": 3,
-}
+FIELD_WEIGHTS = {"name": 12, "id": 5, "domain_code": 5, "domain": 4, "definition": 3}
 LEVELS = ("atom", "component", "organ")
 
 
@@ -81,6 +58,11 @@ class CreationDecomposer:
     Lexical matching remains a visible baseline. Exact name+level crosswalks may
     then enter the separately declared core-kernel dependency graph. Weaker
     crosswalk suggestions stay suggestions and never silently create graph edges.
+
+    A caller may also provide an explicit planning context. The current use is
+    software-direction expectations selected by the caller. Such context expands
+    matching terms but is returned separately and never becomes implementation
+    proof or an automatic direction choice.
     """
 
     def __init__(self, registry: Registry, capabilities: CapabilityStore):
@@ -89,8 +71,9 @@ class CreationDecomposer:
         self.topology = KernelTopology(registry)
 
     @staticmethod
-    def _request_text(request: dict[str, Any]) -> tuple[str, set[str]]:
-        flattened = _flatten(request)
+    def _request_text(request: dict[str, Any], extra_context: dict[str, Any] | None = None) -> tuple[str, set[str]]:
+        body: Any = request if extra_context is None else {"request": request, "explicit_planning_context": extra_context}
+        flattened = _flatten(body)
         text = " ".join(flattened)
         return _normalize(text), _tokens(text)
 
@@ -109,10 +92,8 @@ class CreationDecomposer:
         phrase_match = bool(normalized_name and normalized_name in request_text)
         if phrase_match:
             score += 18
-
         if score <= 0:
             return None
-
         return {
             "id": record.get("id"),
             "level": record.get("level"),
@@ -131,9 +112,7 @@ class CreationDecomposer:
     def _capability_hit(capability: dict[str, Any], terms: set[str], kind: str) -> dict[str, Any] | None:
         handles = [str(handle) for handle in capability.get("handles", [])]
         exact = kind in handles
-        searchable = " ".join(
-            [str(capability.get("id", "")), str(capability.get("purpose", "")), *handles]
-        )
+        searchable = " ".join([str(capability.get("id", "")), str(capability.get("purpose", "")), *handles])
         matched = sorted(terms & _tokens(searchable))
         if not exact and not matched:
             return None
@@ -155,11 +134,6 @@ class CreationDecomposer:
         index: dict[str, dict[str, Any]],
         limit: int = 24,
     ) -> list[dict[str, Any]]:
-        """Direct master-map dependency hints kept for backwards compatibility.
-
-        The current master map is flat, so useful dependency topology normally
-        comes from ``kernel_topology`` rather than this field.
-        """
         hints: list[dict[str, Any]] = []
         seen: set[tuple[str, str]] = set()
         for level in reversed(LEVELS):
@@ -261,7 +235,12 @@ class CreationDecomposer:
             },
         }
 
-    def decompose(self, request: dict[str, Any], per_level: int = 6) -> dict[str, Any]:
+    def decompose(
+        self,
+        request: dict[str, Any],
+        per_level: int = 6,
+        extra_context: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
         if not isinstance(request, dict):
             raise TypeError("request must be an object")
         kind = request.get("kind")
@@ -269,11 +248,10 @@ class CreationDecomposer:
             raise ValueError("request.kind must be a non-empty string")
         per_level = max(1, min(int(per_level), 50))
 
-        request_text, terms = self._request_text(request)
+        request_text, terms = self._request_text(request, extra_context=extra_context)
         records = self.registry.master_records()
         index = {str(record.get("id")): record for record in records if record.get("id")}
         candidates: dict[str, list[dict[str, Any]]] = {level: [] for level in LEVELS}
-
         for record in records:
             level = str(record.get("level", ""))
             if level not in candidates:
@@ -296,19 +274,20 @@ class CreationDecomposer:
 
         kernel_topology = self.topology.for_selected_anatomy(selected)
         master_dependency_hints = self._dependency_hints(selected, index)
-
         return {
             "type": "CREATION_DECOMPOSITION",
             "truth_status": "DETERMINISTIC_LEXICAL_BASELINE",
             "directional_outcome": request.get("direction") or request.get("purpose") or kind,
             "request_kind": kind,
             "request_terms": sorted(terms),
+            "explicit_planning_context": extra_context,
             "method": {
                 "matcher": "explicit token overlap plus exact registry-name phrase boost",
                 "field_weights": dict(FIELD_WEIGHTS),
                 "semantic_inference": False,
                 "learned_model": False,
                 "kernel_crosswalk": "only exact normalized name plus same level is traversable",
+                "extra_context_rule": "only caller-selected planning context may enrich lexical terms; suggestions alone never do",
                 "meaning": "candidate anatomy plus declared kernel dependencies; neither registry presence nor kernel presence proves a live implementation",
             },
             "live_capability_coverage": live_hits[:8],

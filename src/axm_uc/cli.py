@@ -32,7 +32,11 @@ def build_parser() -> argparse.ArgumentParser:
     executable_p.add_argument("--master-id", help="master anatomy id to inspect for live implementation bindings")
     executable_p.add_argument("--core-id", help="core-kernel id to inspect through exact master crosswalks")
 
-    plan_p = sub.add_parser("plan", help="decompose a creation request against the explicit registry")
+    directions_p = sub.add_parser("directions", help="inspect or deterministically suggest software direction profiles")
+    directions_p.add_argument("--id", dest="direction_id", help="inspect one explicit software direction profile")
+    directions_p.add_argument("--suggest", help="rank direction candidates for caller-supplied text; never auto-selects")
+
+    plan_p = sub.add_parser("plan", help="decompose a creation request against direction, anatomy, topology, and live coverage")
     plan_p.add_argument("request", help="JSON request file")
     plan_p.add_argument("--per-level", type=int, default=6, help="maximum matches returned per anatomy level")
 
@@ -73,6 +77,9 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if args.command == "executable":
         _print(machine.executable(master_id=args.master_id, core_id=args.core_id))
+        return 0
+    if args.command == "directions":
+        _print(machine.software_directions(direction_id=args.direction_id, suggest=args.suggest))
         return 0
     if args.command == "plan":
         request = json.loads(Path(args.request).read_text(encoding="utf-8"))
