@@ -16,9 +16,10 @@ class CompositeAndExecutableTests(unittest.TestCase):
         machine = UniversalCreationMachine(ROOT)
         summary = machine.executable()["summary"]
         self.assertEqual(summary["truth_status"], "EXPLICIT_LIVE_CAPABILITY_BINDINGS")
-        self.assertEqual(summary["implemented_master_records"], 2)
-        self.assertEqual(summary["implemented_master_by_level"], {"component": 2})
-        self.assertEqual(summary["live_capabilities"], 6)
+        self.assertEqual(summary["implemented_master_records"], 3)
+        self.assertEqual(summary["implemented_master_by_level"], {"component": 3})
+        self.assertEqual(summary["live_capabilities"], 8)
+        self.assertEqual(summary["resolved_bindings"], 9)
 
         project = machine.executable(master_id="AXM-24-WORKSPACE-COLLABORATION-C-010-project")["master"]
         self.assertEqual(project["status"], "live-backed")
@@ -27,6 +28,10 @@ class CompositeAndExecutableTests(unittest.TestCase):
         report = machine.executable(master_id="AXM-20-TESTING-OBSERVABILITY-C-015-validation-report")["master"]
         self.assertEqual(report["status"], "live-backed")
         self.assertIn("AXM-CAP-VERIFY-PROJECT", report["implemented_by"])
+
+        patch = machine.executable(master_id="AXM-05-CODE-GRAMMAR-C-029-code-patch")["master"]
+        self.assertEqual(patch["status"], "live-backed")
+        self.assertEqual(patch["implemented_by"], ["AXM-CAP-PATCH-PROJECT"])
 
     def test_planner_surfaces_explicit_live_anatomy_bindings(self):
         plan = UniversalCreationMachine(ROOT).plan({
