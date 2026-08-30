@@ -1,19 +1,21 @@
 {
   "id": "AXM-CAP-INSPECT-EXECUTABLE-ORGANS",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "status": "live",
-  "purpose": "List, filter, inspect, and exactly resolve installed executable software-organ packages without treating descriptive anatomy as implementation.",
+  "purpose": "List, filter, inspect, exactly resolve, and plan unique exact-interface assemblies from installed executable software-organ packages without treating descriptive anatomy as implementation.",
   "handles": [
     "inspect-executable-organs",
     "list-executable-organs",
-    "resolve-executable-organ"
+    "resolve-executable-organ",
+    "discover-organ-assembly"
   ],
   "input_contract": {
     "required": [],
     "properties": {
       "ref": "optional exact package reference in id@version form; returns the complete inspectable source package",
       "project_type": "optional exact project-type filter when listing",
-      "provides": "optional exact provided-interface filter when listing"
+      "provides": "optional exact provided-interface filter when listing",
+      "organ_goal": "optional exact axm.interface-organ-goal/v0.1 object; returns bounded interface-driven assembly READY or HOLD evidence without publishing files"
     }
   },
   "output_contract": {
@@ -21,7 +23,7 @@
     "contains": [
       "truth_status",
       "summary",
-      "packages or package"
+      "packages, package, or assembly_plan"
     ]
   },
   "dependencies": [],
@@ -29,6 +31,8 @@
     "loads only packages under executable-organs/",
     "validates exact package schema, identity, version, template parameters, interfaces, provenance, and project types",
     "resolves only exact installed id@version references",
+    "discovers a unique smallest complete package set only from exact required, provided, and transitive interface contracts",
+    "returns ambiguity, missing-interface contracts, binding gaps, cycles, collisions, and search bounds as explicit HOLD evidence",
     "keeps the 415 descriptive anatomy organ records separate from executable package truth"
   ],
   "anatomy_refs": [
@@ -46,10 +50,10 @@
   "implementation": {
     "kind": "DETERMINISTIC_SOURCE",
     "entrypoint": "builtin:inspect_executable_organs",
-    "source": "src/axm_uc/organ_library.py"
+    "source": "src/axm_uc/organ_library.py + src/axm_uc/organ_discovery.py"
   },
   "limitations": [
-    "installed packages are selected only by exact reference or exact filters; semantic and fuzzy selection are not implemented",
+    "installed packages are resolved by exact reference/filter or selected only through a unique complete exact-interface constraint solution; semantic and fuzzy selection are not implemented",
     "package schema validation does not prove source-level interface conformance or runtime behavior",
     "packages are local UTF-8 JSON source bodies; binary asset packages are not implemented",
     "descriptive anatomy records do not become executable by name or proximity"
@@ -62,7 +66,7 @@
     },
     "agency": {
       "fit": true,
-      "basis": "Humans or AIs explicitly choose exact packages and instance bindings; the resolver performs no hidden semantic selection."
+      "basis": "Humans or AIs explicitly choose required interfaces and instance values; only one uniquely smallest exact-contract assembly may be derived, while ambiguity remains a visible choice."
     },
     "continuity": {
       "fit": true,

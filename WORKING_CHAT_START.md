@@ -82,12 +82,12 @@ For a new experiment:
 4. run `plan`;
 5. inspect anatomy, topology, executable coverage, and the visible gap;
 6. use existing capabilities before inventing new source;
-7. inspect installed organs with `axm-uc organs`, then create through staged/project capabilities using exact package refs or explicit inline organs;
+7. inspect installed organs with `axm-uc organs`, then create through staged/project capabilities using exact package refs, exact required interfaces plus bindings, or explicit inline organs;
 8. verify;
 9. if something is wrong, repair the smallest affected portion instead of regenerating the whole project;
 10. report observed results separately from hypotheses and remaining gaps.
 
-When the smallest honest gap is new creation machinery rather than another end artifact, inspect the `gap_synthesis` field first. The current compiler can derive a narrow exact UTF-8 adapter proposal or search a bounded exact-contract project graph. Strict templates and executable organs can flow through independent verification and exact JSON reporting; raw files can reuse the shorter already-live verified composite. The bound is three steps. READY means a detached experiment is justified, not that meanings or general behavior are proven. Ambiguous, over-depth, missing-link, contract-drifted, and unsupported gaps remain HOLD.
+When the smallest honest gap is new creation machinery rather than another end artifact, inspect the `gap_synthesis` field first. The current compiler can derive a narrow exact UTF-8 adapter proposal or search a bounded exact-contract project graph. Strict templates, explicitly assembled executable organs, and interface-discovered organ closures can flow through independent verification and exact JSON reporting; raw files can reuse the shorter already-live verified composite. The bound is three steps. READY means a detached experiment is justified, not that meanings or general behavior are proven. Ambiguous, over-depth, missing-interface, binding, missing-link, contract-drifted, and unsupported gaps remain HOLD.
 
 For designs beyond that blueprint, use `spawn-creation-unit` with an explicit human, AI, recipe, or external-boundary proposal. The proposal may describe a hand, capability, organ, protocol, skill, specialist, recipe, or a new extension kind. Test the detached body, then let the candidate choose whether to request admission review. A request is not approval or installation.
 
@@ -109,8 +109,9 @@ At this handoff:
 - candidates can request merge checks, but whole-body adoption is not yet implemented;
 - software-organ dependencies and declared interface names are checked structurally, but source-level conformance and runtime wiring are not synthesized or proven;
 - installed executable-organ packages are exact local source packages, while the 415 anatomy organs remain descriptive until separately implemented;
+- exact-interface discovery can derive one unique minimum installed-organ closure, but it does not prove source semantics; missing providers emit candidate contracts and ambiguous alternatives remain HOLD;
 - the creation-unit forge materializes supplied designs deterministically, and the gap compiler can derive one narrow adapter or one bounded exact-contract project recipe from structural evidence; neither claims general semantic source invention;
-- gap synthesis currently covers only exact UTF-8 `path`+`content` routes and supported template, executable-organ, or raw-file project paths of at most three steps through verification and optional JSON reporting; one passing request fixture does not prove general format semantics, source-level organ conformance, or runtime behavior;
+- gap synthesis currently covers only exact UTF-8 `path`+`content` routes and supported template, explicit executable-organ, interface-discovered organ, or raw-file project paths of at most three steps through verification and optional JSON reporting; one passing request fixture does not prove general format semantics, source-level organ conformance, or runtime behavior;
 - capability/hand fixtures and organ package contracts have specialized tests; protocols, skills, specialists, recipes, and extension kinds currently have structural/file evidence only;
 - spawned recipes are detached candidates and are not yet automatically activated as forge builders;
 - software-direction suggestions do not choose a direction;

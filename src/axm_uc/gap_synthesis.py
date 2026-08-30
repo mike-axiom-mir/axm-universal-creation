@@ -9,6 +9,7 @@ from typing import Any
 
 from .capabilities import CapabilityStore
 from .organ_library import ExecutableOrganError, resolve_organ_assembly
+from .organ_discovery import OrganDiscoveryError, discover_interface_assembly
 from .organ_project import preview_organ_project
 from .project import ProjectError, preview_project_files
 from .spawn import SPAWN_PROPOSAL_SCHEMA, spawn_unit, test_spawned_unit, validate_spawn_proposal
@@ -22,6 +23,7 @@ EXACT_TEXT_ALIAS_BLUEPRINT = "axm.blueprint.exact-utf8-file-route-alias/v0.1"
 BOUNDED_PROJECT_RECIPE_GRAPH_BLUEPRINT = "axm.blueprint.bounded-project-recipe-graph/v0.1"
 TEMPLATE_CAPABILITY = ("AXM-CAP-INSTANTIATE-PROJECT-TEMPLATE", "0.2.0")
 ORGAN_CAPABILITY = ("AXM-CAP-ASSEMBLE-ORGAN-PROJECT", "0.3.0")
+COMPOSE_ORGAN_CAPABILITY = ("AXM-CAP-COMPOSE-ORGAN-PROJECT", "0.1.0")
 WRITE_PROJECT_CAPABILITY = ("AXM-CAP-WRITE-PROJECT", "0.6.0")
 VERIFIED_FILES_CAPABILITY = ("AXM-CAP-BUILD-VERIFY-PROJECT", "0.2.0")
 VERIFY_CAPABILITY = ("AXM-CAP-VERIFY-PROJECT", "0.5.0")
@@ -45,6 +47,16 @@ PROJECT_PRODUCER_PROFILES = (
         "entrypoint": "builtin:assemble_organ_project",
         "output_kind": "organ-assembled-project-result",
         "required_inputs": ("path", "assembly", "variables"),
+        "optional_inputs": ("checks", "replace"),
+        "already_verified": False,
+    },
+    {
+        "profile": "interface-discovered-organ-assembly",
+        "marker": "organ_goal",
+        "capability": COMPOSE_ORGAN_CAPABILITY,
+        "entrypoint": "builtin:compose_organ_project",
+        "output_kind": "interface-composed-organ-project-result",
+        "required_inputs": ("path", "organ_goal"),
         "optional_inputs": ("checks", "replace"),
         "already_verified": False,
     },
@@ -351,6 +363,24 @@ def _preview_project_producer(
                 "organ_assembly": preview["organ_assembly"],
             },
         }
+    if profile["profile"] == "interface-discovered-organ-assembly":
+        discovery = discover_interface_assembly(root, inputs["organ_goal"])
+        if discovery["status"] != "READY_EXACT_INTERFACE_ASSEMBLY":
+            raise GapSynthesisError(
+                "interface-driven organ discovery is on HOLD",
+                {"organ_discovery": discovery},
+            )
+        resolved, resolution = resolve_organ_assembly(root, discovery["assembly"])
+        preview = preview_organ_project(resolved, discovery["variables"])
+        return {
+            "project_type": preview["project_type"],
+            "files": preview["files"],
+            "evidence": {
+                "organ_discovery": discovery,
+                "executable_organ_resolution": resolution,
+                "organ_assembly": preview["organ_assembly"],
+            },
+        }
     if profile["marker"] == "files":
         preview = preview_project_files(inputs["files"], inputs.get("project_type", "generic"))
         if preview["project_type"] not in {"generic", "static-web", "python"}:
@@ -564,7 +594,20 @@ def _bounded_project_recipe_candidate(
     if not invalid:
         try:
             preview = _preview_project_producer(root, profile, inputs)
-        except (ProjectError, ExecutableOrganError, GapSynthesisError) as exc:
+        except (ProjectError, ExecutableOrganError, OrganDiscoveryError, GapSynthesisError) as exc:
+            discovery = getattr(exc, "details", {}).get("organ_discovery")
+            if isinstance(discovery, dict) and str(discovery.get("status", "")).startswith("HOLD_"):
+                return {
+                    "blueprint": BOUNDED_PROJECT_RECIPE_GRAPH_BLUEPRINT,
+                    "status": discovery["status"],
+                    "goal": "verified-project-with-json-report" if "report_path" in inputs else "verified-project",
+                    "organ_discovery": discovery,
+                    "dependencies": [],
+                    "missing_links": [],
+                    "ambiguous_links": [],
+                    "runtime_behavior_proven": False,
+                    "candidate_is_live_route_selection": False,
+                }, None
             invalid.append(f"project producer request is not deterministically previewable: {exc}")
     if invalid or preview is None:
         return None, "; ".join(invalid)
@@ -723,6 +766,25 @@ def analyze_creation_gap(root: Path, raw_request: Any) -> dict[str, Any]:
         truth_status = "DETERMINISTIC_BOUNDED_SEARCH_HOLD"
         selected = None
         hold_reason = "the shortest applicable exact recipe exceeds the explicit maximum step count"
+    elif composite_candidate is not None and composite_candidate["status"] in {
+        "HOLD_MISSING_ORGAN_INTERFACE",
+        "HOLD_AMBIGUOUS_ORGAN_ASSEMBLY",
+        "HOLD_ORGAN_BINDING_CONTRACT",
+        "HOLD_ORGAN_DISCOVERY_SEARCH_BOUND",
+        "HOLD_NO_COMPLETE_ORGAN_ASSEMBLY",
+    }:
+        status = composite_candidate["status"]
+        truth_status = str(
+            composite_candidate.get("organ_discovery", {}).get(
+                "truth_status", "DETERMINISTIC_ORGAN_DISCOVERY_HOLD"
+            )
+        )
+        selected = None
+        hold_reason = str(
+            composite_candidate.get("organ_discovery", {}).get(
+                "hold_reason", "interface-driven organ discovery remains on HOLD"
+            )
+        )
     elif composite_candidate is not None and composite_candidate["status"] == "HOLD_MISSING_COMPOSITE_LINK":
         status = "HOLD_MISSING_COMPOSITE_LINK"
         truth_status = "DETERMINISTIC_INCOMPLETE_CHAIN_HOLD"
@@ -934,7 +996,7 @@ def _compile_bounded_project_recipe_proposal(
 
     try:
         preview = _preview_project_producer(root, profile, inputs)
-    except (ProjectError, ExecutableOrganError, GapSynthesisError) as exc:
+    except (ProjectError, ExecutableOrganError, OrganDiscoveryError, GapSynthesisError) as exc:
         raise GapSynthesisError(
             "the project producer request changed or is no longer deterministically previewable; re-analyze before compiling",
             getattr(exc, "details", {}),
@@ -1082,6 +1144,9 @@ def _compile_bounded_project_recipe_proposal(
                         "production.published": True,
                         "production.creation_status": "VALIDATED_CREATION",
                         "verification.passed": True,
+                        **({
+                            "production.organ_discovery.status": "READY_EXACT_INTERFACE_ASSEMBLY"
+                        } if producer_name == "interface-discovered-organ-assembly" else {}),
                         **({"report.kind": "json"} if report_requested else {}),
                     },
                     **({

@@ -1,6 +1,6 @@
 {
   "id": "AXM-CAP-SYNTHESIZE-CREATION-GAP",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "status": "live",
   "purpose": "Turn a real unroutable creation request into an evidence-bound detached capability proposal by searching a bounded exact-contract graph, preferring the shortest complete reusable project recipe, and optionally materializing and testing that hypothesis without admitting it.",
   "handles": [
@@ -40,6 +40,7 @@
     "AXM-CAP-SPAWN-CREATION-UNIT",
     "AXM-CAP-INSTANTIATE-PROJECT-TEMPLATE",
     "AXM-CAP-ASSEMBLE-ORGAN-PROJECT",
+    "AXM-CAP-COMPOSE-ORGAN-PROJECT",
     "AXM-CAP-WRITE-PROJECT",
     "AXM-CAP-BUILD-VERIFY-PROJECT",
     "AXM-CAP-VERIFY-PROJECT",
@@ -49,7 +50,8 @@
     "begins only from an observed creation request and current live capability body",
     "surfaces an existing detached capability candidate before compiling duplicate machinery",
     "compiles one uniquely supported structural bridge into a detached experiment instead of silently adding a live route",
-    "searches supported template, executable-organ, raw-project, and existing verified-composite producer paths to a requested verified-project goal",
+    "searches supported template, exact executable-organ, interface-discovered organ, raw-project, and existing verified-composite producer paths to a requested verified-project goal",
+    "preserves missing organ interfaces, ambiguous minimum organ assemblies, incomplete explicit bindings, and discovery bounds as typed HOLD evidence",
     "prefers a shorter already-live verified composite over rebuilding the same raw-project steps",
     "optionally extends a verified-project path by persisting the exact verification object through the live JSON writer",
     "projects file receipts through one closed file-digest-map binding rather than an arbitrary expression language",
@@ -81,14 +83,14 @@
   },
   "limitations": [
     "the first blueprint covers only missing exact UTF-8 file routes with exactly path and content inputs",
-    "the second blueprint covers only strict templates, exact executable-organ assemblies, exact raw text-file projects, and their explicitly supported exact tested dependency versions",
+    "the second blueprint covers only strict templates, exact executable-organ assemblies, uniquely resolved exact-interface organ goals, exact raw text-file projects, and their explicitly supported exact tested dependency versions",
     "project recipe search is explicitly bounded to three steps",
     "composite wiring is limited to the closed file-digest-map projection and exact whole-object bindings; arbitrary dataflow expressions are not executed",
     "existing detached candidates are observed by exact handled request kind but are not automatically selected, admitted, or installed",
     "matching an input/output shape is a structural hypothesis and does not prove semantic equivalence",
     "a unique bridge selects only a detached experiment, not a live route or admission decision",
     "the request-shaped fixture proves one exact example and not general format semantics",
-    "ambiguous bridges or paths, over-depth recipes, missing or ambiguous composite links, and unsupported gaps remain on HOLD unless a supported exact bridge or separately supplied design is provided",
+    "ambiguous bridges, paths, or minimum organ assemblies; missing organ interfaces or bindings; over-depth recipes; missing or ambiguous composite links; and unsupported gaps remain on HOLD unless a supported exact bridge or separately supplied design is provided",
     "no operation installs, registers, admits, promotes, merges, changes CANON, or changes permissions"
   ],
   "persistent_state": "only caller-selected detached candidate packages persist; analysis and proposal operations are read-only",

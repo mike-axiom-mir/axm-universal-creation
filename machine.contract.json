@@ -71,6 +71,11 @@
     "exclusiveRenderedFileOwnership": true,
     "executableOrganPackageBodyAvailable": true,
     "exactVersionedOrganReferencesResolved": true,
+    "interfaceDrivenOrganDiscoveryAvailable": true,
+    "uniqueSmallestCompleteExactAssemblySelected": true,
+    "ambiguousMinimumAssemblyHeld": true,
+    "missingInterfaceOrganContractEmitted": true,
+    "organDiscoveryMaximumStates": 10000,
     "organInstanceScopedBindingsAvailable": true,
     "descriptiveOrgansAutomaticallyExecutable": false,
     "sourceInterfaceConformanceProven": false,
@@ -118,6 +123,7 @@
     "supportedProjectProducerProfiles": [
       "strict-project-template",
       "exact-executable-organ-assembly",
+      "interface-discovered-organ-assembly",
       "exact-project-files",
       "existing-verified-project-composite"
     ],

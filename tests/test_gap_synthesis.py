@@ -592,6 +592,7 @@ class GapSynthesisTests(unittest.TestCase):
             [
                 "strict-project-template",
                 "exact-executable-organ-assembly",
+                "interface-discovered-organ-assembly",
                 "exact-project-files",
                 "existing-verified-project-composite",
             ],
@@ -602,7 +603,7 @@ class GapSynthesisTests(unittest.TestCase):
         self.assertTrue(summary["reuse_precedes_new_embodiment"])
         self.assertFalse(summary["semantic_source_invention"])
         self.assertFalse(summary["automatic_admission"])
-        self.assertEqual(len(inspection["live_capabilities"]), 14)
+        self.assertEqual(len(inspection["live_capabilities"]), 15)
 
 
 if __name__ == "__main__":

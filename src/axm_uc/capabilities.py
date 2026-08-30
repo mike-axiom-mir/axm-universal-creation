@@ -8,6 +8,7 @@ from typing import Any, Callable
 from .atomic import atomic_write_json, atomic_write_text
 from .grammar import grammar_inventory
 from .organ_library import ExecutableOrganError, ExecutableOrganLibrary, resolve_organ_assembly
+from .organ_discovery import OrganDiscoveryError, discover_interface_assembly
 from .organ_project import assemble_organ_project
 from .project import ProjectError, build_project, validate_project
 from .registry import Registry
@@ -145,9 +146,47 @@ def builtin_assemble_organ_project(root: Path, inputs: dict[str, Any]) -> dict[s
         raise CapabilityError(str(exc), exc.details) from exc
 
 
+def builtin_compose_organ_project(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+    target = _resolve_output_path(root, str(inputs["path"]))
+    if _is_machine_body_path(root, target):
+        raise CapabilityError(
+            "interface-driven organ composition cannot rewrite the live machine body; use a self-workspace for whole-body experiments"
+        )
+    try:
+        discovery = discover_interface_assembly(root, inputs["organ_goal"])
+        if discovery["status"] != "READY_EXACT_INTERFACE_ASSEMBLY":
+            raise CapabilityError(
+                "interface-driven organ discovery is on HOLD",
+                {"organ_discovery": discovery},
+            )
+        resolved_assembly, resolution = resolve_organ_assembly(root, discovery["assembly"])
+        result = assemble_organ_project(
+            target=target,
+            assembly=resolved_assembly,
+            variables=discovery["variables"],
+            checks=inputs.get("checks") if isinstance(inputs.get("checks"), list) else None,
+            replace=bool(inputs.get("replace", False)),
+            publish_mode=str(inputs.get("publish_mode", "grounded-draft")),
+        )
+        result["organ_discovery"] = discovery
+        result["executable_organ_resolution"] = resolution
+        result["grammar_inventory"] = grammar_inventory(target)
+        return result
+    except CapabilityError:
+        raise
+    except (ProjectError, ExecutableOrganError, OrganDiscoveryError) as exc:
+        raise CapabilityError(str(exc), exc.details) from exc
+
+
 def builtin_inspect_executable_organs(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
     try:
         library = ExecutableOrganLibrary(root)
+        if "organ_goal" in inputs:
+            return {
+                "truth_status": "OBSERVED_INTERFACE_DRIVEN_ORGAN_DISCOVERY",
+                "summary": library.summary(),
+                "assembly_plan": discover_interface_assembly(root, inputs["organ_goal"]),
+            }
         ref = inputs.get("ref")
         if ref is not None:
             return {
@@ -163,7 +202,7 @@ def builtin_inspect_executable_organs(root: Path, inputs: dict[str, Any]) -> dic
                 provides=str(inputs["provides"]) if "provides" in inputs else None,
             ),
         }
-    except ExecutableOrganError as exc:
+    except (ExecutableOrganError, OrganDiscoveryError) as exc:
         raise CapabilityError(str(exc), exc.details) from exc
 
 
@@ -241,6 +280,7 @@ BUILTINS: dict[str, Callable[[Path, dict[str, Any]], dict[str, Any]]] = {
     "builtin:instantiate_project_template": builtin_instantiate_project_template,
     "builtin:self_workspace": builtin_self_workspace,
     "builtin:assemble_organ_project": builtin_assemble_organ_project,
+    "builtin:compose_organ_project": builtin_compose_organ_project,
     "builtin:inspect_executable_organs": builtin_inspect_executable_organs,
     "builtin:spawn_creation_unit": builtin_spawn_creation_unit,
     "builtin:gap_synthesis": builtin_synthesize_creation_gap,

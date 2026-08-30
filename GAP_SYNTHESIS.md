@@ -66,6 +66,7 @@ The current producer profiles are:
 | --- | --- | --- | --- |
 | `strict-project-template` | `AXM-CAP-INSTANTIATE-PROJECT-TEMPLATE@0.2.0` | `template` | strict placeholder and rendered-path resolution |
 | `exact-executable-organ-assembly` | `AXM-CAP-ASSEMBLE-ORGAN-PROJECT@0.3.0` | `assembly` | exact package refs, dependency graph, declared interfaces, bindings, and exclusive file ownership |
+| `interface-discovered-organ-assembly` | `AXM-CAP-COMPOSE-ORGAN-PROJECT@0.1.0` | `organ_goal` | one unique minimum exact-interface closure, explicit bindings, dependency reduction, and the same ownership preview |
 | `exact-project-files` | `AXM-CAP-WRITE-PROJECT@0.6.0` | `files` | exact safe relative paths, project type, and UTF-8 text |
 | `existing-verified-project-composite` | `AXM-CAP-BUILD-VERIFY-PROJECT@0.2.0` | `files` | the same exact file preview, with verification already present in the producer result |
 
@@ -109,6 +110,11 @@ The compiler refuses to guess when its blueprint cannot carry the gap:
 - `HOLD_RECIPE_DEPTH_EXCEEDED` — the applicable path exceeds the explicit three-step bound;
 - `HOLD_MISSING_COMPOSITE_LINK` — an applicable recipe is missing one of its exact tested live dependencies;
 - `HOLD_AMBIGUOUS_COMPOSITE_LINK` — more than one live manifest declares a required composite dependency identity.
+- `HOLD_MISSING_ORGAN_INTERFACE` — an interface goal has no installed compatible provider and emits a missing-organ contract rather than source;
+- `HOLD_AMBIGUOUS_ORGAN_ASSEMBLY` — more than one equally small complete exact-interface assembly exists;
+- `HOLD_ORGAN_BINDING_CONTRACT` — the unique package closure is known but the caller's explicit bindings do not exactly satisfy it;
+- `HOLD_ORGAN_DISCOVERY_SEARCH_BOUND` — exact-interface search reaches its explicit 10,000-state bound;
+- `HOLD_NO_COMPLETE_ORGAN_ASSEMBLY` — installed declarations cannot form an acyclic collision-free complete assembly.
 
 An explicit `bridge_capability_id` may resolve ambiguity only when it exactly names one candidate already present in the analysis. It cannot inject an unobserved dependency.
 
@@ -142,13 +148,16 @@ The same grammar can now discover and test an organ producer:
 ```bash
 PYTHONPATH=src python -m axm_uc create examples/requests/explore_verified_organ_gap.json
 PYTHONPATH=src python -m axm_uc create examples/requests/explore_verified_organ_report_gap.json
+PYTHONPATH=src python -m axm_uc create examples/requests/explore_interface_discovered_organ_report_gap.json
 ```
 
 The first organ example selects `AXM-CAP-ASSEMBLE-ORGAN-PROJECT@0.3.0` and `AXM-CAP-VERIFY-PROJECT@0.5.0`. The second adds `AXM-CAP-WRITE-JSON@0.1.0`, producing the full `produce -> verify -> report` path at the three-step bound. Both resolve three exact executable-organ packages, verify the dependency order `shell-organ -> theme-organ -> interaction-organ`, and independently recheck all emitted file digests. The report example additionally proves that the JSON artifact equals the returned verification object. Original destinations and live routes remain absent.
 
+The interface-discovered example asks only for `local-interaction` plus exact values. It derives the shell/theme/interaction package closure and the same three-step verified-report recipe without caller-authored package refs or dependency edges. Its generated candidate test requires `production.organ_discovery.status` to remain `READY_EXACT_INTERFACE_ASSEMBLY`; the original project and report destinations still remain absent.
+
 ## Current boundary and next multiplier
 
-The compiler currently knows one manifest-level alias recipe and one bounded linear project graph with four explicitly supported producer profiles, two closed edge forms, and a three-step maximum. Adding a profile still requires a deterministic preview adapter and exact contract tests. It does not yet synthesize:
+The compiler currently knows one manifest-level alias recipe and one bounded linear project graph with five explicitly supported producer profiles, two closed edge forms, and a three-step maximum. Adding a profile still requires a deterministic preview adapter and exact contract tests. It does not yet synthesize:
 
 - parser-aware or runtime-aware format implementations;
 - branching, loops, paths beyond three steps, arbitrary graph edges, or unbounded data transforms;

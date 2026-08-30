@@ -57,6 +57,8 @@ Reusable software organs may now carry source templates, explicit dependencies, 
 
 Working organs may also remain in the separate versioned `executable-organs/` body and be reused by exact reference. This lets capability accumulate as inspectable source packages without requiring a new top-level Python route for every combination.
 
+Creation may now start one level higher: an exact interface goal can name what the project body must provide without naming packages or dependency edges. A bounded search derives only a uniquely smallest complete installed-organ closure. Missing interfaces become explicit Forge-ready organ contracts; ambiguous closures and incomplete bindings remain HOLDs. This lets the installed organ body multiply combinations while preserving explicit caller values and the boundary between structural discovery and semantic invention.
+
 ## Spawn smaller creation machinery
 
 The deterministic Creation-Unit Forge now provides a smaller growth surface than a complete body clone. A human, AI, recipe, or explicit external boundary may supply one closed proposal for a hand, capability, organ, protocol, skill, specialist, recipe, or a newly named extension kind.
@@ -81,7 +83,7 @@ This establishes one working segment of:
 
 It still does not install the candidate, decide admission, or synthesize arbitrary source. See `GAP_SYNTHESIS.md`.
 
-A second blueprint composes existing abilities instead of wrapping only one. It searches an exact-contract project graph bounded to three steps. Strict template instantiation and exact executable-organ assembly can flow through independent digest verification and then persist that exact verification object as JSON. Raw project-file requests expose both a new writer→verifier path and the already-live verified composite; the shorter reusable path wins only when its exact contract is complete. Missing, duplicate, ambiguous, over-depth, or contract-drifted links remain explicit HOLD states. The result is a detached composite capability candidate, not a new live route.
+A second blueprint composes existing abilities instead of wrapping only one. It searches an exact-contract project graph bounded to three steps. Strict template instantiation, exact executable-organ assembly, and interface-discovered organ assembly can flow through independent digest verification and then persist that exact verification object as JSON. Raw project-file requests expose both a new writer→verifier path and the already-live verified composite; the shorter reusable path wins only when its exact contract is complete. Missing, duplicate, ambiguous, over-depth, or contract-drifted links remain explicit HOLD states. The result is a detached composite capability candidate, not a new live route.
 
 ## Non-hidden after change
 

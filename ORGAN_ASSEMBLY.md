@@ -32,6 +32,8 @@ The result exposes:
 
 The assembly logic also exposes a read-only deterministic preview seam. It performs exact package resolution, dependency/interface validation, rendering, and ownership checks without publishing a project. Gap synthesis uses that preview together with the live `AXM-CAP-ASSEMBLE-ORGAN-PROJECT@0.3.0` receipt contract to compile a detached `produce -> digest-verify` recipe and, when `report_path` is requested, extend it to `produce -> digest-verify -> exact JSON report`. The preview does not select packages, invent organs, wire runtime semantics, or grant admission authority.
 
+The separate interface-discovery seam can now derive that exact assembly first. A caller supplies required interface names and explicit bindings but no package refs or dependency edges. `AXM-CAP-COMPOSE-ORGAN-PROJECT@0.1.0` searches only installed `provides`/`requires` declarations, selects only one uniquely smallest complete set, reduces redundant dependency edges, and delegates the result back to this assembly machinery. Missing providers emit inspectable organ contracts; equally small alternatives and incomplete bindings HOLD.
+
 Try the included three-organ local site:
 
 ```bash
@@ -39,6 +41,7 @@ PYTHONPATH=src python -m axm_uc create examples/requests/create_organ_site.json
 PYTHONPATH=src python -m axm_uc create examples/requests/create_reusable_organ_site.json
 PYTHONPATH=src python -m axm_uc create examples/requests/explore_verified_organ_gap.json
 PYTHONPATH=src python -m axm_uc create examples/requests/explore_verified_organ_report_gap.json
+PYTHONPATH=src python -m axm_uc create examples/requests/explore_interface_discovered_organ_report_gap.json
 ```
 
 Its `shell-organ` owns `index.html`, `theme-organ` owns `style.css`, and `interaction-organ` owns `app.js`. The latter two depend on the shell, and the interaction organ also depends on the theme.
@@ -72,4 +75,4 @@ This live capability assembles organs whose source templates were supplied inlin
 
 Declared dependencies determine order and remain visible. Provided/required names validate the declared interface graph, but do not prove that source code conforms to those names. The capability does not invent imports, APIs, state flow, or runtime wiring. Those connections must be present in the organ source or proven by later explicit interface validators.
 
-Each file currently has one organ owner. Parser-aware shared-file composition, source-level interface conformance checking, binary assets, learned organ selection, and semantic discovery remain capability gaps. See `EXECUTABLE_ORGANS.md` for the installed package boundary.
+Each file currently has one organ owner. Parser-aware shared-file composition, source-level interface conformance checking, binary assets, learned organ selection, and semantic selection remain capability gaps. Exact declared-interface discovery is available, but it is not semantic proof. See `EXECUTABLE_ORGANS.md` for the installed package boundary.
