@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 import sys
 import tempfile
 import unittest
@@ -19,6 +18,7 @@ class CompositeAndExecutableTests(unittest.TestCase):
         self.assertEqual(summary["truth_status"], "EXPLICIT_LIVE_CAPABILITY_BINDINGS")
         self.assertEqual(summary["implemented_master_records"], 2)
         self.assertEqual(summary["implemented_master_by_level"], {"component": 2})
+        self.assertEqual(summary["live_capabilities"], 6)
 
         project = machine.executable(master_id="AXM-24-WORKSPACE-COLLABORATION-C-010-project")["master"]
         self.assertEqual(project["status"], "live-backed")
@@ -37,14 +37,33 @@ class CompositeAndExecutableTests(unittest.TestCase):
         coverage = plan["executable_anatomy"]["selected_records_with_declared_binding"]
         self.assertTrue(any(row["master_id"] == "AXM-24-WORKSPACE-COLLABORATION-C-010-project" for row in coverage))
 
-    def test_first_composite_candidate_runs_existing_live_capabilities(self):
-        machine = UniversalCreationMachine(ROOT)
-        candidate = ROOT / "capabilities/candidates/AXM-CAP-BUILD-VERIFY-PROJECT.json"
-        result = machine.test_candidate(candidate)
-        self.assertTrue(result["passed"], result)
-        self.assertTrue(result["build_debris_cleaned"])
-        self.assertTrue(result["tests"][0]["result"]["build"]["published"])
-        self.assertTrue(result["tests"][0]["result"]["verification"]["passed"])
+    def test_promoted_composite_routes_as_live_capability_without_new_source_function(self):
+        with tempfile.TemporaryDirectory() as td:
+            target = Path(td) / "composite-site"
+            machine = UniversalCreationMachine(ROOT)
+            result = machine.create({
+                "kind": "verified-static-web-project",
+                "direction": "create and independently verify a small local site",
+                "inputs": {
+                    "path": str(target),
+                    "project_type": "static-web",
+                    "files": {
+                        "index.html": "<!doctype html><html><body><main>Live composite</main></body></html>"
+                    },
+                    "checks": [
+                        {"type": "contains", "path": "index.html", "text": "Live composite"}
+                    ],
+                },
+            })
+            self.assertEqual(result["type"], "CREATION_RESULT", result)
+            self.assertEqual(result["capability"], "AXM-CAP-BUILD-VERIFY-PROJECT")
+            self.assertTrue(result["result"]["build"]["published"])
+            self.assertTrue(result["result"]["verification"]["passed"])
+            self.assertEqual((target / "index.html").read_text(encoding="utf-8"), "<!doctype html><html><body><main>Live composite</main></body></html>")
+
+            manifest = machine.capabilities.by_id("AXM-CAP-BUILD-VERIFY-PROJECT")
+            self.assertEqual(manifest["implementation"]["kind"], "DETERMINISTIC_COMPOSITE")
+            self.assertEqual(manifest["implementation"]["source"], "this manifest")
 
     def test_composite_cycle_is_rejected(self):
         machine = UniversalCreationMachine(ROOT)
@@ -56,7 +75,6 @@ class CompositeAndExecutableTests(unittest.TestCase):
                 "steps": [{"id": "again", "capability": "AXM-CAP-SELF-CYCLE", "inputs": {}}],
             },
         }
-        # A non-live self reference fails before any hidden recursion can occur.
         with self.assertRaisesRegex(Exception, "not live"):
             machine.capabilities.invoke(manifest, {})
 
