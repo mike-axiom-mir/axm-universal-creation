@@ -1,0 +1,31 @@
+{
+  "kind": "verified-static-web-repair",
+  "direction": "repair the existing verified composite site without regenerating untouched files",
+  "inputs": {
+    "path": "creations/verified-composite-site",
+    "project_type": "static-web",
+    "operations": [
+      {
+        "op": "update",
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"utf-8\">\n  <meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n  <title>AXM Repair Trial</title>\n  <link rel=\"stylesheet\" href=\"style.css\">\n</head>\n<body>\n  <main>\n    <h1>Persistent repair route is live</h1>\n    <button id=\"test\">Test interaction</button>\n    <p id=\"state\">waiting</p>\n  </main>\n  <script src=\"app.js\"></script>\n</body>\n</html>\n"
+      },
+      {
+        "op": "add",
+        "path": "repair-note.md",
+        "content": "# Repair trial\n\nThis file was added without regenerating style.css or app.js.\n"
+      }
+    ],
+    "checks": [
+      {
+        "type": "contains",
+        "path": "index.html",
+        "text": "Persistent repair route is live"
+      },
+      {
+        "type": "nonempty",
+        "path": "app.js"
+      }
+    ]
+  }
+}

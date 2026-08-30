@@ -1,0 +1,81 @@
+{
+  "id": "AXM-CAP-PATCH-PROJECT",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Apply explicit add, update, delete, and rename operations to an existing text project in staged state, validate the repaired body, and publish it transactionally only when checks pass.",
+  "handles": [
+    "patch-project",
+    "repair-project",
+    "patch-static-web-project",
+    "patch-python-project"
+  ],
+  "input_contract": {
+    "required": ["path", "operations"],
+    "properties": {
+      "path": "existing project directory",
+      "operations": "non-empty list of explicit add/update/delete/rename operations",
+      "project_type": "generic, static-web, or python",
+      "checks": "optional deterministic post-repair checks",
+      "expected_files": "optional exact text expectations for final files"
+    }
+  },
+  "output_contract": {
+    "kind": "transactional-project-repair-result",
+    "contains": [
+      "path",
+      "published",
+      "truth_status",
+      "intent",
+      "observed",
+      "validation",
+      "grammar_inventory"
+    ]
+  },
+  "dependencies": ["AXM-CAP-VERIFY-PROJECT"],
+  "relationships": [
+    "repairs an existing creation body without regenerating untouched files",
+    "stages the change before the original project is replaced",
+    "keeps the original body as rollback material until post-publish validation passes"
+  ],
+  "anatomy_refs": [
+    {
+      "id": "AXM-05-CODE-GRAMMAR-C-029-code-patch",
+      "role": "implements",
+      "basis": "The capability provides an explicit bounded text-project patch assembly with deterministic add/update/delete/rename operations, transactional publication, and validation; it does not claim semantic source-code transformation beyond those operations."
+    },
+    {
+      "id": "AXM-24-WORKSPACE-COLLABORATION-C-010-project",
+      "role": "uses",
+      "basis": "The patch is applied to an existing project body and preserves untouched project files."
+    }
+  ],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:patch_project",
+    "source": "src/axm_uc/repair.py"
+  },
+  "limitations": [
+    "current repair operations replace whole UTF-8 file contents rather than performing semantic AST edits",
+    "grammar identification does not imply parser validation for grammars without an explicit current validator",
+    "generated code is not executed by this capability"
+  ],
+  "persistent_state": null,
+  "root_fit": {
+    "truth": {
+      "fit": true,
+      "basis": "The result separates supplied repair intent from observed applied operations and deterministic validation, and does not promote grammar identification into semantic correctness."
+    },
+    "agency": {
+      "fit": true,
+      "basis": "The caller supplies the target, exact operations, and checks; the capability does not invent unrelated edits."
+    },
+    "continuity": {
+      "fit": true,
+      "basis": "Repair starts from the existing project, preserves untouched files, and retains the original body until the repaired body passes post-publish validation."
+    },
+    "wisdom-before-speed": {
+      "fit": true,
+      "basis": "The smallest explicit file operations can repair an existing creation instead of regenerating the complete project."
+    }
+  }
+}
