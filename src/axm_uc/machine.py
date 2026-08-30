@@ -278,6 +278,7 @@ class UniversalCreationMachine:
             pass
         else:
             candidate_path.unlink()
+        self.executable_anatomy = ExecutableAnatomy(self.registry, self.capabilities, self.decomposer.topology)
         return {
             "adopted": True,
             "capability": candidate["id"],
