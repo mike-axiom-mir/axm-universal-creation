@@ -1,0 +1,108 @@
+{
+  "id": "AXM-CAP-VERIFIED-PROJECT-REPAIR",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Compose transactional project patching and independent project verification into one inspectable repair route without adding a bespoke source implementation for the combination.",
+  "handles": [
+    "verified-project-repair",
+    "verified-static-web-repair",
+    "verified-python-repair"
+  ],
+  "input_contract": {
+    "required": ["path", "operations"],
+    "properties": {
+      "path": "existing project directory",
+      "operations": "explicit add/update/delete/rename operations",
+      "project_type": "generic, static-web, or python",
+      "checks": "optional deterministic verification checks",
+      "expected_files": "optional exact final file expectations"
+    }
+  },
+  "output_contract": {
+    "kind": "verified-project-repair-composite-result",
+    "contains": ["path", "repair", "verification", "grammar_inventory"]
+  },
+  "dependencies": [
+    "AXM-CAP-PATCH-PROJECT",
+    "AXM-CAP-VERIFY-PROJECT"
+  ],
+  "relationships": [
+    {
+      "type": "composes",
+      "targets": ["AXM-CAP-PATCH-PROJECT", "AXM-CAP-VERIFY-PROJECT"]
+    }
+  ],
+  "anatomy_refs": [
+    {
+      "id": "AXM-05-CODE-GRAMMAR-C-029-code-patch",
+      "role": "uses",
+      "basis": "The composite delegates the actual repair to the live capability that explicitly implements the code-patch component."
+    },
+    {
+      "id": "AXM-20-TESTING-OBSERVABILITY-C-015-validation-report",
+      "role": "uses",
+      "basis": "The composite delegates independent post-repair verification to the live verification capability."
+    },
+    {
+      "id": "AXM-24-WORKSPACE-COLLABORATION-C-010-project",
+      "role": "uses",
+      "basis": "The repair operates on a continuing project body rather than creating a disconnected replacement."
+    }
+  ],
+  "implementation": {
+    "kind": "DETERMINISTIC_COMPOSITE",
+    "source": "this manifest",
+    "steps": [
+      {
+        "id": "repair",
+        "capability": "AXM-CAP-PATCH-PROJECT",
+        "inputs": {
+          "path": {"from": "request.path"},
+          "operations": {"from": "request.operations"},
+          "project_type": {"from": "request.project_type", "default": "generic"},
+          "checks": {"from": "request.checks", "default": []},
+          "expected_files": {"from": "request.expected_files", "default": {}}
+        }
+      },
+      {
+        "id": "verify",
+        "capability": "AXM-CAP-VERIFY-PROJECT",
+        "inputs": {
+          "path": {"from": "steps.repair.path"},
+          "project_type": {"from": "request.project_type", "default": "generic"},
+          "checks": {"from": "request.checks", "default": []},
+          "expected_files": {"from": "request.expected_files", "default": {}}
+        }
+      }
+    ],
+    "outputs": {
+      "path": {"from": "steps.repair.path"},
+      "repair": {"from": "steps.repair"},
+      "verification": {"from": "steps.verify"},
+      "grammar_inventory": {"from": "steps.repair.grammar_inventory"}
+    }
+  },
+  "limitations": [
+    "the composite is deterministic and sequential in this milestone",
+    "verification proves configured deterministic properties, not full semantic intent or visual quality"
+  ],
+  "persistent_state": null,
+  "root_fit": {
+    "truth": {
+      "fit": true,
+      "basis": "Both repair and independent verification remain visible as separate delegated steps and return their observed results."
+    },
+    "agency": {
+      "fit": true,
+      "basis": "The caller supplies the repair operations and verification claims; the composite adds no hidden edit objective."
+    },
+    "continuity": {
+      "fit": true,
+      "basis": "The route repairs the existing project transactionally and verifies the resulting continuing body."
+    },
+    "wisdom-before-speed": {
+      "fit": true,
+      "basis": "It composes existing proven machinery instead of duplicating repair or verification implementations."
+    }
+  }
+}
