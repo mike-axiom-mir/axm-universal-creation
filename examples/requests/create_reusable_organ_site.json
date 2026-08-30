@@ -1,0 +1,45 @@
+{
+  "kind": "organ-static-web-project",
+  "direction": "reuse exact installed shell, theme, and interaction organ packages to create one local website",
+  "inputs": {
+    "path": "creations/reusable-organ-site",
+    "replace": true,
+    "assembly": {
+      "id": "axm.example.reusable-organ-site",
+      "version": "1.0.0",
+      "project_type": "static-web",
+      "organs": [
+        {
+          "instance_id": "interaction-organ",
+          "ref": "axm.web.interaction@1.0.0",
+          "depends_on": [
+            "theme-organ"
+          ],
+          "bindings": {
+            "active_label": "Reusable interaction awake",
+            "state": "awake"
+          }
+        },
+        {
+          "instance_id": "theme-organ",
+          "ref": "axm.web.theme@1.0.0",
+          "depends_on": [
+            "shell-organ"
+          ],
+          "bindings": {
+            "background": "radial-gradient(circle at top, #33418f 0%, #15172b 48%, #070812 100%)"
+          }
+        },
+        {
+          "instance_id": "shell-organ",
+          "ref": "axm.web.shell@1.0.0",
+          "bindings": {
+            "idle_label": "Wake reusable organ",
+            "title": "Working organs can remain in the body"
+          }
+        }
+      ]
+    },
+    "variables": {}
+  }
+}

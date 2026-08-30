@@ -1,0 +1,46 @@
+{
+  "kind": "explore-gap-candidate",
+  "direction": "derive, build, verify, and report one exact interface-driven organ composition without caller-authored package wiring",
+  "inputs": {
+    "operation": "materialize-and-test",
+    "path": "creations/spawned/generated-interface-organ-report-composite",
+    "request": {
+      "kind": "verified-interface-organ-project-with-json-report",
+      "direction": "create from required interfaces, independently verify every emitted digest, and preserve that evidence as exact JSON",
+      "inputs": {
+        "path": "creations/generated/interface-organ-report-site",
+        "report_path": "creations/generated/interface-organ-report.json",
+        "replace": false,
+        "checks": [
+          {
+            "type": "contains",
+            "path": "index.html",
+            "text": "Interfaces become creation"
+          }
+        ],
+        "organ_goal": {
+          "schema": "axm.interface-organ-goal/v0.1",
+          "id": "axm.example.interface-organ-report-site",
+          "version": "1.0.0",
+          "project_type": "static-web",
+          "required_interfaces": [
+            "local-interaction"
+          ],
+          "bindings": {
+            "document-shell": {
+              "idle_label": "Compose exact body",
+              "title": "Interfaces become creation"
+            },
+            "visual-theme": {
+              "background": "radial-gradient(circle at top, #315b89 0%, #10223b 50%, #06101d 100%)"
+            },
+            "local-interaction": {
+              "active_label": "Exact body created",
+              "state": "created"
+            }
+          }
+        }
+      }
+    }
+  }
+}

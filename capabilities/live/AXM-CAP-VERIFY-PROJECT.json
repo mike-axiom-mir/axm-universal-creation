@@ -1,8 +1,8 @@
 {
   "id": "AXM-CAP-VERIFY-PROJECT",
-  "version": "0.2.0",
+  "version": "0.5.0",
   "status": "live",
-  "purpose": "Independently inspect a created project body using deterministic structural and exact-content checks without executing generated code.",
+  "purpose": "Independently inspect a created project body using deterministic structural, exact-text, and earlier-receipt content-digest checks without executing generated code.",
   "handles": [
     "verify-project"
   ],
@@ -14,7 +14,8 @@
       "path": "existing project directory, absolute or relative to the machine root",
       "project_type": "generic, static-web, or python",
       "checks": "optional deterministic checks such as file-exists, contains, json-valid, python-compile, html-local-links",
-      "expected_files": "optional mapping of project-relative paths to exact expected UTF-8 text"
+      "expected_files": "optional mapping of project-relative paths to exact expected UTF-8 text",
+      "expected_file_digests": "optional mapping of project-relative paths to SHA-256 content digests from an earlier creation receipt"
     }
   },
   "output_contract": {
@@ -28,7 +29,8 @@
   },
   "dependencies": [],
   "relationships": [
-    "read-only counterpart to AXM-CAP-WRITE-PROJECT"
+    "read-only counterpart to AXM-CAP-WRITE-PROJECT",
+    "rechecks file SHA-256 observations emitted by direct, templated, or organ-based creation receipts"
   ],
   "anatomy_refs": [
     {
@@ -43,6 +45,9 @@
     "source": "src/axm_uc/project.py"
   },
   "limitations": [
+    "every project JSON file is parser-validated automatically, but schema and semantic correctness require separate checks",
+    "HTML verification checks local src/href resolution across project HTML/HTM pages but is not a complete HTML parser or browser test",
+    "content digests prove byte identity against the supplied earlier receipt, not semantic correctness",
     "does not execute generated code",
     "does not substitute for browser visual/interaction testing"
   ],

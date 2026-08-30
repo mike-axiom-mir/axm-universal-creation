@@ -1,0 +1,22 @@
+{
+  "kind": "templated-static-web-project",
+  "direction": "instantiate a reusable local website recipe without hidden rewriting",
+  "inputs": {
+    "path": "creations/templated-site",
+    "replace": true,
+    "template": {
+      "id": "axm.example.templated-site",
+      "version": "1.0.0",
+      "project_type": "static-web",
+      "files": {
+        "index.html": "<!doctype html>\n<html lang=\"en\"><head><meta charset=\"utf-8\"><title>[[AXM:title]]</title><link rel=\"stylesheet\" href=\"style.css\"></head><body><main><h1>[[AXM:title]]</h1><p>[[AXM:perspective]]</p></main></body></html>\n",
+        "style.css": ":root { color-scheme: dark; } body { font-family: system-ui; margin: 4rem; background: [[AXM:background]]; color: #f7f7fb; } main { max-width: 52rem; }\n"
+      }
+    },
+    "variables": {
+      "title": "Creation Has Room",
+      "perspective": "Humans and AI can bring different ideas into the same inspectable recipe.",
+      "background": "#121526"
+    }
+  }
+}

@@ -8,6 +8,29 @@ It is **not** defined as an autonomous AI agent. It is a persistent running comp
 
 The brain is deliberately **not predefined**. It may remain deterministic, become neural, become coupled/recurrent, contain several kinds of cognition, or evolve into something else. The architecture must not force the answer before the experiment has earned one.
 
+## Start here
+
+The current runtime needs Python 3.11 or newer and has no third-party runtime dependencies. From the repository root:
+
+```bash
+# Read the current machine body without changing it.
+PYTHONPATH=src python -m axm_uc inspect
+
+# Create and independently verify the included local website.
+PYTHONPATH=src python -m axm_uc trial examples/requests/create_real_site.json
+
+# Inspect the detached unit forge and bounded gap compiler.
+PYTHONPATH=src python -m axm_uc forge
+PYTHONPATH=src python -m axm_uc gap-forge
+
+# Run the complete repository verification suite.
+python tools/build.py
+```
+
+The website trial writes inspectable source under `creations/first-real-site/`; open its `index.html` locally to perform the separate human visual and interaction check. `inspect`, `forge`, and `gap-forge` are read-only. Passing a test does not automatically install, admit, promote, merge, or grant authority to a candidate.
+
+To see the newest growth loop, run `examples/requests/explore_missing_status_panel_organ_closure.json`. It starts from a real missing interface, tests one explicitly supplied organ in detached and disposable spaces, and leaves the live installed-organ body unchanged. See `ORGAN_GAP_CLOSURE.md` for the exact evidence boundary.
+
 ## Core rule
 
 > **Do not hide what the machine is.**
@@ -51,6 +74,24 @@ A normal pattern may be:
 The gap is important: the machine should be able to represent **what piece of itself is missing**, not merely that an output was bad.
 
 See `SELF_GROWTH.md`.
+
+For whole-body experiments, the live machine can now make a complete editable clone of its current source body. The candidate can diverge and run its own build without becoming the active machine. When the candidate or a future connected cognition believes it is ready, it may voluntarily request selected observations; the workspace manager neither schedules that request nor decides readiness for it.
+
+`clone body -> experiment freely -> choose when to request checks -> observe -> later explicit adoption choice`
+
+See `SELF_WORKSPACE.md`.
+
+The machine can also spawn smaller detached creation-unit bodies without cloning the whole source tree. One closed proposal path can materialize hands, capabilities, organs, protocols, skills, specialists, recipes, and openly named extension kinds. Exact rebuild lineage, bounded tests, and voluntary admission requests are separate from installation or merge.
+
+`gap/design -> spawn detached unit -> test exact body -> request review when chosen -> separate admission`
+
+See `CREATION_FORGE.md`.
+
+For two bounded classes of real gaps, the machine can now compile the missing design itself. An unroutable exact UTF-8 file request may expose one uniquely compatible live primitive. A project request can search a bounded exact-contract graph across strict templates, executable-organ assemblies, raw project files, independent verification, an existing verified composite, and exact JSON reporting. It preserves all candidate paths, prefers the shortest complete reusable path, and stops at three steps. The gap compiler turns the selected observation into a closed detached capability proposal and runs the exact request as its disposable fixture. Ambiguous, over-depth, incomplete, contract-drifted, or unsupported wiring remains a typed HOLD state.
+
+`unroutable request -> bounded exact-contract paths -> shortest complete recipe or HOLD -> detached full-chain test -> no automatic admission`
+
+See `GAP_SYNTHESIS.md`.
 
 ## No activity-log architecture
 
@@ -103,6 +144,15 @@ The small Python runtime currently provides:
 - direct inspection of the 2,165-record Universal Creation Map and 100-record implementation kernel;
 - inspectable live capability manifests;
 - creation routing through live deterministic capabilities;
+- grounded drafts that preserve observed gaps instead of erasing imperfect ordinary creations;
+- strict single-pass project recipes with inspectable variables and rendered paths;
+- dependency-aware software-organ assembly with declared interfaces, explicit order, and file ownership;
+- an exact local executable-organ package body that makes working organs reusable across creations;
+- bounded exact-interface organ discovery that derives one unique minimum installed package closure while preserving missing and ambiguous states as HOLDs;
+- a detached missing-organ closure experiment that Forge-tests explicit supplied source, re-runs discovery with a disposable candidate overlay, and validates the complete assembly without installation;
+- a deterministic detached creation-unit forge for hands, capabilities, organs, protocols, skills, specialists, recipes, and new extension kinds;
+- an evidence-bound gap compiler that can derive and test either the smallest supported UTF-8 file-route adapter or a bounded project recipe of up to three exact producer, verifier, existing-composite, and JSON-report steps from a real unroutable request;
+- complete editable self-workspace cloning, exact source comparison, independent build logs, and voluntary merge-check requests;
 - structured `CAPABILITY_GAP` results that preserve the directional outcome and distinguish current partial coverage;
 - candidate capability testing and direct adoption through the four-root fit declaration;
 - build-owned cleanup of candidate-test debris;
@@ -136,8 +186,29 @@ Current live project handles:
 - `static-web-project`
 - `python-project`
 - `verify-project`
+- `templated-software-project`
+- `templated-static-web-project`
+- `templated-python-project`
+- `self-candidate-project`
+- `organ-software-project`
+- `organ-static-web-project`
+- `organ-python-project`
+- `software-organ-assembly`
+- `inspect-executable-organs`
+- `list-executable-organs`
+- `resolve-executable-organ`
+- `discover-organ-assembly`
+- `interface-organ-project`
+- `explore-missing-organ-closure`
+- `spawn-creation-unit`
+- `inspect-spawned-unit`
+- `test-spawned-unit`
+- `request-unit-admission-check`
+- `analyze-creation-gap`
+- `propose-gap-candidate`
+- `explore-gap-candidate`
 
-Project creation is staged before publish. Project-relative file paths may not escape the project body. A failed deterministic validation does not publish the staged project.
+Project creation is staged before publish and project-relative file paths may not escape the project body. Plain project creation defaults to `grounded-draft`: exact publication integrity is required, while failed quality/grammar checks remain visible and the imperfect creation survives. Explicit `validated` mode and verified composite handles remain strict and do not publish a failed body.
 
 Current deterministic project checks:
 
@@ -148,7 +219,15 @@ Current deterministic project checks:
 - `python-compile`
 - `html-local-links`
 
-`static-web` automatically checks for `index.html` and verifies local `src`/`href` references from the entry page. `python` automatically compiles `.py` files for syntax without executing them.
+`static-web` automatically checks for `index.html` and verifies local `src`/`href` references from every `.html` and `.htm` page in the project. `python` automatically compiles `.py` files for syntax without executing them.
+
+Every `.json` file is automatically parsed for JSON validity in every project type.
+
+Reusable project templates use strict `[[AXM:name]]` placeholders in paths and contents. Substitution is exact, raw, single-pass, and non-recursive; missing, unused, malformed, colliding, and escaping inputs are rejected. See `PROJECT_TEMPLATES.md` and `GROUNDED_CREATION.md`.
+
+Software-organ assembly composes several versioned template organs through an explicit dependency graph. Organs may be supplied inline, resolved from the separate `executable-organs/` body through an exact `id@version` reference, or discovered from exact required interfaces plus caller-supplied bindings. Interface discovery selects only one uniquely smallest complete installed package closure; missing providers emit organ contracts and equally small alternatives HOLD. One explicit human/AI/recipe organ proposal can now be Forge-tested against such a missing contract, made visible only in a disposable exact library overlay, and required to participate in a validated full closure build. It remains detached afterward. Declared `provides`/`requires` interfaces must resolve through the graph, every rendered file has one visible organ owner, and missing dependencies, cycles, interface gaps, binding drift, package overrides, and ownership collisions are rejected before publication. Declared interface resolution does not yet prove source-level conformance. See `ORGAN_ASSEMBLY.md`, `EXECUTABLE_ORGANS.md`, and `ORGAN_GAP_CLOSURE.md`.
+
+Every project file receipt now includes its SHA-256 content digest. The independent `trial` pass rechecks those exact observed digests, so direct, templated, and organ-based creations receive the same second-body integrity observation. This is artifact evidence, not a required global machine hash baseline.
 
 The `trial` command ties the current loop together:
 
@@ -160,6 +239,17 @@ Run the included first real creation trial:
 PYTHONPATH=src python -m axm_uc plan examples/requests/create_real_site.json
 PYTHONPATH=src python -m axm_uc trial examples/requests/create_real_site.json
 PYTHONPATH=src python -m axm_uc create examples/requests/verify_real_site.json
+PYTHONPATH=src python -m axm_uc create examples/requests/create_templated_site.json
+PYTHONPATH=src python -m axm_uc create examples/requests/create_organ_site.json
+PYTHONPATH=src python -m axm_uc create examples/requests/create_reusable_organ_site.json
+PYTHONPATH=src python -m axm_uc create examples/requests/explore_interface_discovered_organ_report_gap.json
+PYTHONPATH=src python -m axm_uc create examples/requests/explore_missing_status_panel_organ_closure.json
+PYTHONPATH=src python -m axm_uc create examples/requests/spawn_creation_protocol.json
+PYTHONPATH=src python -m axm_uc create examples/requests/test_spawned_creation_protocol.json
+PYTHONPATH=src python -m axm_uc create examples/requests/analyze_note_route_gap.json
+PYTHONPATH=src python -m axm_uc create examples/requests/explore_note_route_gap.json
+PYTHONPATH=src python -m axm_uc create examples/requests/analyze_verified_template_gap.json
+PYTHONPATH=src python -m axm_uc create examples/requests/explore_verified_template_gap.json
 ```
 
 That creates `creations/first-real-site/` with `index.html`, `style.css`, and `app.js`. Open `index.html` in a browser for the separate human/host visual and interaction test.
@@ -167,6 +257,22 @@ That creates `creations/first-real-site/` with `index.html`, `style.css`, and `a
 A passing deterministic trial proves what it actually checked. It **does not** claim that generated code was executed, that browser interaction was automatically verified, that visual quality was judged, or that every semantic user requirement was satisfied.
 
 See `REAL_CREATION_TRIAL.md` for the working-chat protocol and exact truth boundary.
+
+## Editable self-creation body
+
+`AXM-CAP-SELF-WORKSPACE` can clone the complete current source body into an editable candidate outside the live body, inspect byte-exact differences, and run the candidate's own `tools/build.py` while returning the full captured build output.
+
+The candidate chooses if and when to emit `request-merge-check`. It may request any combination of source comparison, build, candidate-machine inspection, executable-anatomy inspection, planning probes, and real creation trials inside its cloned body. The request is explicitly `MERGE_CHECK_REQUESTED_NOT_APPROVED`: it performs no merge, grants no approval, creates no growth score, and imposes no per-edit checkpoint.
+
+This is source-body isolation, not OS containment. Candidate code runs with the current process user's host permissions. Automatic whole-body merge/adoption remains an explicit current gap.
+
+Create the first editable clone body:
+
+```bash
+PYTHONPATH=src python -m axm_uc create examples/requests/clone_self_workspace.json
+```
+
+See `SELF_WORKSPACE.md`.
 
 ## Anatomy / kernel topology bridge
 
@@ -187,6 +293,8 @@ Inspect the bridge directly:
 
 ```bash
 PYTHONPATH=src python -m axm_uc topology
+PYTHONPATH=src python -m axm_uc organs
+PYTHONPATH=src python -m axm_uc organs --ref axm.web.shell@1.0.0
 PYTHONPATH=src python -m axm_uc topology --master-id AXM-02-DATA-MATH-C-012-graph --depth 4
 PYTHONPATH=src python -m axm_uc plan examples/requests/plan_graph.json --per-level 8
 ```
@@ -201,6 +309,14 @@ PYTHONPATH=src python -m axm_uc topology
 PYTHONPATH=src python -m axm_uc plan examples/requests/plan_mesh.json
 PYTHONPATH=src python -m axm_uc create examples/requests/create_hello.json
 PYTHONPATH=src python -m axm_uc trial examples/requests/create_real_site.json
+PYTHONPATH=src python -m axm_uc create examples/requests/create_templated_site.json
+PYTHONPATH=src python -m axm_uc create examples/requests/create_organ_site.json
+PYTHONPATH=src python -m axm_uc create examples/requests/create_reusable_organ_site.json
+PYTHONPATH=src python -m axm_uc create examples/requests/clone_self_workspace.json
+PYTHONPATH=src python -m axm_uc forge
+PYTHONPATH=src python -m axm_uc create examples/requests/spawn_creation_protocol.json
+PYTHONPATH=src python -m axm_uc create examples/requests/test_spawned_creation_protocol.json
+PYTHONPATH=src python -m axm_uc create examples/requests/propose_verified_template_gap.json
 PYTHONPATH=src python -m axm_uc candidate test capabilities/candidates/AXM-CAP-WRITE-MARKDOWN.json
 python tools/build.py
 ```

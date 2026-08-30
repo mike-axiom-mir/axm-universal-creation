@@ -19,7 +19,7 @@ GRAMMAR_BY_SUFFIX: dict[str, dict[str, Any]] = {
     ".json": {
         "grammar_id": "json",
         "identification": "file-extension",
-        "validation": "available-explicit-check",
+        "validation": "parser-backed-automatic",
         "validator": "json-valid",
     },
     ".html": {

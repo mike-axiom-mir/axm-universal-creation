@@ -1,0 +1,100 @@
+{
+  "id": "AXM-CAP-COMPOSE-ORGAN-PROJECT",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Discover one uniquely smallest complete executable-organ assembly from explicit required interfaces and bindings, then publish it through the existing exact organ builder without fuzzy package selection or invented source.",
+  "handles": [
+    "interface-organ-project"
+  ],
+  "input_contract": {
+    "required": [
+      "path",
+      "organ_goal"
+    ],
+    "properties": {
+      "path": "target project directory",
+      "organ_goal": "exact axm.interface-organ-goal/v0.1 object with id, version, project_type, required_interfaces, and explicit bindings keyed by provided interface",
+      "checks": "optional deterministic grounding checks over the composed project",
+      "publish_mode": "grounded-draft by default; validated when failed checks must block publication",
+      "replace": "optional boolean; defaults false"
+    }
+  },
+  "output_contract": {
+    "kind": "interface-composed-organ-project-result",
+    "contains": [
+      "path",
+      "project_type",
+      "published",
+      "creation_status",
+      "files",
+      "grounding",
+      "organ_discovery",
+      "executable_organ_resolution",
+      "organ_assembly",
+      "validation",
+      "grammar_inventory"
+    ]
+  },
+  "dependencies": [
+    "AXM-CAP-INSPECT-EXECUTABLE-ORGANS",
+    "AXM-CAP-ASSEMBLE-ORGAN-PROJECT"
+  ],
+  "relationships": [
+    "starts from exact required interface names rather than package names",
+    "searches only installed executable-organ package provides/requires contracts compatible with the requested project type",
+    "selects only one uniquely smallest acyclic collision-free complete package set",
+    "derives dependency edges from exact transitive interface requirements",
+    "preserves explicit caller bindings and never invents package parameters or source",
+    "emits missing executable-organ contracts or ambiguity as typed HOLD evidence",
+    "delegates exact reference resolution, rendering, ownership, publication, and validation to existing organ machinery"
+  ],
+  "anatomy_refs": [
+    {
+      "id": "AXM-00-FOUNDATION-C-019-interface-contract",
+      "role": "implements",
+      "basis": "The planner treats exact provided and required interface names as bounded constraint edges and exposes every selected provider and dependency."
+    },
+    {
+      "id": "AXM-05-CODE-GRAMMAR-C-025-dependency-graph",
+      "role": "implements",
+      "basis": "The selected organ set becomes an acyclic dependency graph derived from provider requirements, with redundant direct edges removed deterministically."
+    },
+    {
+      "id": "AXM-23-PROCEDURAL-C-023-generator-recipe",
+      "role": "uses",
+      "basis": "One exact interface goal deterministically compiles into an inspectable organ assembly recipe before existing creation machinery executes it."
+    }
+  ],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:compose_organ_project",
+    "source": "src/axm_uc/organ_discovery.py"
+  },
+  "limitations": [
+    "interface names are exact declared contracts and do not prove source-level semantic conformance",
+    "a unique smallest complete package set selects only deterministic structural composition, not the best creative meaning",
+    "multiple equally small complete assemblies remain on HOLD rather than being ranked by hidden preferences",
+    "bindings must be supplied explicitly and exactly match the selected packages",
+    "missing interfaces emit contracts for later human, AI, recipe, or Forge work but do not synthesize source automatically",
+    "runtime imports, shared-file merging, browser behavior, and visual quality are not invented or proven"
+  ],
+  "persistent_state": null,
+  "root_fit": {
+    "truth": {
+      "fit": true,
+      "basis": "Compatible packages, search bound, candidates, selected refs, interface providers, dependencies, binding issues, missing contracts, and proof limits remain inspectable."
+    },
+    "agency": {
+      "fit": true,
+      "basis": "The caller supplies the required interfaces and every creative parameter value; ambiguity remains a choice rather than hidden automatic preference."
+    },
+    "continuity": {
+      "fit": true,
+      "basis": "The compiler reuses stable exact package refs and existing publication machinery without rewriting installed organ source."
+    },
+    "wisdom-before-speed": {
+      "fit": true,
+      "basis": "Only one complete unique minimal assembly may execute; missing, ambiguous, cyclic, colliding, or incompletely bound states remain typed HOLDs."
+    }
+  }
+}

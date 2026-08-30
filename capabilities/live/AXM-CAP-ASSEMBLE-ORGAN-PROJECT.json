@@ -1,0 +1,110 @@
+{
+  "id": "AXM-CAP-ASSEMBLE-ORGAN-PROJECT",
+  "version": "0.3.0",
+  "status": "live",
+  "purpose": "Assemble one software project from inline or exactly referenced executable template organs in deterministic declared-dependency order, validate declared provided/required interfaces, preserve exact package resolution and file ownership, and ground the resulting body without hiding structural or validation gaps.",
+  "handles": [
+    "organ-software-project",
+    "organ-static-web-project",
+    "organ-python-project",
+    "software-organ-assembly"
+  ],
+  "input_contract": {
+    "required": [
+      "path",
+      "assembly",
+      "variables"
+    ],
+    "properties": {
+      "path": "target project directory",
+      "assembly": "object with id, version, project_type, and a non-empty organs list; an organ is either explicit inline source or an exact installed package ref with instance_id, depends_on, and exact bindings",
+      "variables": "shared exact raw placeholder values for inline organs; every supplied value must be used by at least one assembly-scoped organ",
+      "checks": "optional deterministic grounding checks over the assembled project",
+      "publish_mode": "grounded-draft by default; validated when failed checks must block publication",
+      "replace": "optional boolean; defaults false"
+    }
+  },
+  "output_contract": {
+    "kind": "organ-assembled-project-result",
+    "contains": [
+      "path",
+      "project_type",
+      "published",
+      "creation_status",
+      "files",
+      "grounding",
+      "executable_organ_resolution",
+      "organ_assembly",
+      "validation",
+      "grammar_inventory"
+    ]
+  },
+  "dependencies": [
+    "AXM-CAP-INSPECT-EXECUTABLE-ORGANS",
+    "AXM-CAP-INSTANTIATE-PROJECT-TEMPLATE",
+    "AXM-CAP-WRITE-PROJECT",
+    "AXM-CAP-VERIFY-PROJECT"
+  ],
+  "relationships": [
+    "resolves installed organ packages only through exact id@version refs and rejects package source or contract overrides",
+    "resolves the declared software-organ dependency graph before rendering",
+    "requires every declared required interface to have one provider reachable through declared organ dependencies",
+    "gives each rendered file one explicit organ owner",
+    "publishes all rendered organ files as one grounded project body",
+    "preserves dependency and ownership receipts for later inspection and reuse"
+  ],
+  "anatomy_refs": [
+    {
+      "id": "AXM-05-CODE-GRAMMAR-C-025-dependency-graph",
+      "role": "implements",
+      "basis": "The capability validates unique organ nodes, rejects missing dependency targets and cycles, emits exact dependency edges, and resolves one stable assembly order without inference."
+    },
+    {
+      "id": "AXM-05-CODE-GRAMMAR-C-022-code-template",
+      "role": "uses",
+      "basis": "Each organ contributes a strict single-pass project-template fragment rendered by the existing live code-template implementation."
+    },
+    {
+      "id": "AXM-24-WORKSPACE-COLLABORATION-C-010-project",
+      "role": "uses",
+      "basis": "Disjoint rendered organ files are published together through the existing grounded multi-file project machinery."
+    },
+    {
+      "id": "AXM-00-FOUNDATION-C-019-interface-contract",
+      "role": "implements",
+      "basis": "The capability gives a bounded live meaning to declared organ interface contracts: exact interface names have one provider and every requirement must resolve through the requiring organ's explicit dependency closure; source conformance remains separately unproven."
+    }
+  ],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:assemble_organ_project",
+    "source": "src/axm_uc/organ_project.py"
+  },
+  "limitations": [
+    "declared interface contracts do not prove that organ source semantically implements the named interface",
+    "declared organ dependencies determine assembly order but do not invent semantic imports or runtime wiring",
+    "each rendered path has one organ owner; deterministic shared-file merge semantics are not implemented",
+    "organ contents are UTF-8 raw templates and remain subject to the current template and project validation limits",
+    "installed packages are selected by exact reference; semantic, fuzzy, or learned organ selection is not implemented",
+    "the capability assembles inline or installed executable source and never promotes a descriptive anatomy organ by name"
+  ],
+  "persistent_state": null,
+  "root_fit": {
+    "truth": {
+      "fit": true,
+      "basis": "Exact package refs and source paths, inline organs, dependencies, interface providers/requirements, resolved order, variable scopes, rendered paths, file owners, validation observations, and source-conformance limits remain explicit."
+    },
+    "agency": {
+      "fit": true,
+      "basis": "Humans or AIs choose exact installed package versions or inline organ source, instance relationships, bindings, shared variables, and desired grounding mode."
+    },
+    "continuity": {
+      "fit": true,
+      "basis": "Reusable organs retain stable identities and versions while the assembled project is published transactionally as one continuing body."
+    },
+    "wisdom-before-speed": {
+      "fit": true,
+      "basis": "The machine resolves and exposes the dependency graph and rejects ambiguous file ownership instead of silently guessing how organs should combine."
+    }
+  }
+}

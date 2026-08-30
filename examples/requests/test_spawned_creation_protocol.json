@@ -1,0 +1,8 @@
+{
+  "kind": "test-spawned-unit",
+  "direction": "independently recheck the exact spawned protocol body",
+  "inputs": {
+    "operation": "test",
+    "path": "creations/spawned/creation-request-protocol"
+  }
+}

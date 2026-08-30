@@ -1,0 +1,103 @@
+{
+  "kind": "spawn-creation-unit",
+  "direction": "spawn a reusable typed creation-request protocol without installing it",
+  "inputs": {
+    "operation": "spawn",
+    "path": "creations/spawned/creation-request-protocol",
+    "proposal": {
+      "schema": "axm.creation-unit-spawn-proposal/v0.1",
+      "id": "axm.protocol.creation-request",
+      "version": "1.0.0",
+      "kind": "protocol",
+      "purpose": "Carry one bounded software-creation request and one explicit result or capability-gap response between creation participants.",
+      "files": {
+        "protocol.json": "{\n  \"authority\": \"NONE\",\n  \"id\": \"axm.protocol.creation-request\",\n  \"request_schema\": \"request.schema.json\",\n  \"response_schema\": \"response.schema.json\",\n  \"schema\": \"axm.creation-request-protocol/v1\",\n  \"status\": \"candidate\",\n  \"version\": \"1.0.0\"\n}\n",
+        "request.schema.json": "{\n  \"$schema\": \"https://json-schema.org/draft/2020-12/schema\",\n  \"additionalProperties\": false,\n  \"properties\": {\n    \"constraints\": {\"type\": \"object\"},\n    \"kind\": {\"minLength\": 1, \"type\": \"string\"},\n    \"purpose\": {\"minLength\": 1, \"type\": \"string\"}\n  },\n  \"required\": [\"kind\", \"purpose\", \"constraints\"],\n  \"type\": \"object\"\n}\n",
+        "response.schema.json": "{\n  \"$schema\": \"https://json-schema.org/draft/2020-12/schema\",\n  \"additionalProperties\": false,\n  \"properties\": {\n    \"evidence\": {\"type\": \"object\"},\n    \"result\": {\"type\": [\"object\", \"null\"]},\n    \"state\": {\"enum\": [\"CREATED\", \"GAP\", \"HELD\"]}\n  },\n  \"required\": [\"state\", \"result\", \"evidence\"],\n  \"type\": \"object\"\n}\n"
+      },
+      "implementation": {
+        "kind": "DETERMINISTIC_CONTRACT",
+        "entrypoint": "protocol.json",
+        "source_files": [
+          "protocol.json",
+          "request.schema.json",
+          "response.schema.json"
+        ]
+      },
+      "contracts": {
+        "inputs": {
+          "schema": "request.schema.json"
+        },
+        "outputs": {
+          "schema": "response.schema.json"
+        },
+        "provides": [
+          "typed-creation-request-exchange"
+        ],
+        "requires": []
+      },
+      "dependencies": [],
+      "relationships": [
+        {
+          "type": "carries",
+          "target": "creation request -> creation result or visible gap"
+        }
+      ],
+      "verification": {
+        "checks": [
+          {
+            "type": "json-valid",
+            "path": "protocol.json"
+          },
+          {
+            "type": "json-valid",
+            "path": "request.schema.json"
+          },
+          {
+            "type": "json-valid",
+            "path": "response.schema.json"
+          }
+        ]
+      },
+      "provenance": {
+        "kind": "human-ai-collaboration",
+        "refs": [
+          "CREATION_FORGE.md",
+          "WALMI/Workshop detached capability-fabric pattern"
+        ],
+        "basis": "Mike supplied the direction; the standalone forge contract turns it into an exact detached candidate without importing Workshop runtime authority."
+      },
+      "limitations": [
+        "JSON parse checks do not prove full JSON Schema correctness or transport interoperability.",
+        "The protocol is detached and is not registered with a transport runtime."
+      ],
+      "authority": {
+        "execute": false,
+        "install": false,
+        "register": false,
+        "promote": false,
+        "merge": false,
+        "canon": false,
+        "permissions": false
+      },
+      "root_fit": {
+        "truth": {
+          "fit": true,
+          "basis": "The package distinguishes parseable contract files from unproven schema and transport semantics."
+        },
+        "agency": {
+          "fit": true,
+          "basis": "The candidate grants itself no execution, registration, promotion, merge, CANON, or permission authority."
+        },
+        "continuity": {
+          "fit": true,
+          "basis": "The protocol is emitted as a detached reusable body without rewriting the continuing machine."
+        },
+        "wisdom-before-speed": {
+          "fit": true,
+          "basis": "The request and response boundaries are made explicit before a transport or runtime is selected."
+        }
+      }
+    }
+  }
+}

@@ -66,7 +66,7 @@ The current small local inventory recognizes:
 | Extension | Grammar | Current validation truth |
 | --- | --- | --- |
 | `.py` | Python | parser-backed through Python compile validation |
-| `.json` | JSON | explicit `json-valid` check available |
+| `.json` | JSON | parser-backed automatic `json-valid` check |
 | `.html`, `.htm` | HTML | local-reference structural validation, not complete HTML validity |
 | `.js`, `.mjs` | JavaScript | identified only; no current parser validation |
 | `.css` | CSS | identified only; no current parser validation |

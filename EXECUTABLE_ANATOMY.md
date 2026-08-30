@@ -33,7 +33,14 @@ No lexical match, shared source key, similar name, kernel crosswalk, or planner 
 At this milestone the machine deliberately starts sparse:
 
 - `AXM-24-WORKSPACE-COLLABORATION-C-010-project` is explicitly implemented by `AXM-CAP-WRITE-PROJECT`;
-- `AXM-20-TESTING-OBSERVABILITY-C-015-validation-report` is explicitly implemented by `AXM-CAP-VERIFY-PROJECT`.
+- `AXM-20-TESTING-OBSERVABILITY-C-015-validation-report` is explicitly implemented by `AXM-CAP-VERIFY-PROJECT`;
+- `AXM-05-CODE-GRAMMAR-C-029-code-patch` is explicitly implemented by `AXM-CAP-PATCH-PROJECT`;
+- `AXM-05-CODE-GRAMMAR-C-022-code-template` is explicitly implemented by `AXM-CAP-INSTANTIATE-PROJECT-TEMPLATE`;
+- `AXM-24-WORKSPACE-COLLABORATION-C-011-workspace` is explicitly implemented by `AXM-CAP-SELF-WORKSPACE`;
+- `AXM-05-CODE-GRAMMAR-C-025-dependency-graph` and `AXM-00-FOUNDATION-C-019-interface-contract` are explicitly implemented for declared software-organ assembly by `AXM-CAP-ASSEMBLE-ORGAN-PROJECT`.
+- `AXM-06-BUILD-PACKAGE-C-001-package-manifest` is explicitly implemented for installed executable-organ packages by `AXM-CAP-INSPECT-EXECUTABLE-ORGANS`.
+- `AXM-06-BUILD-PACKAGE-O-004-artifact-builder` is explicitly implemented for detached typed creation-unit materialization by `AXM-CAP-SPAWN-CREATION-UNIT`.
+- `AXM-19-AI-ML-AGENTS-C-009-adapter` is explicitly implemented for evidence-bound gap-derived route proposals by `AXM-CAP-SYNTHESIZE-CREATION-GAP`.
 
 The runtime reports the current counts rather than hard-coding a claim:
 
@@ -100,7 +107,7 @@ Current composition is deliberately sequential and deterministic. It is not a hi
 
 Project creation now also guarantees more precise claims:
 
-- ordinary repo-local creation can write only under `creations/`; candidate tests use the short-lived `.axm-build/` area;
+- ordinary repo-local creation can write only under `creations/`; short-lived candidate manifest tests use `.axm-build/`, while persistent editable self-workspaces are explicit creations;
 - ordinary creation cannot overwrite root machine files such as `README.md`;
 - a generic project never passes with zero checks;
 - requested text files are re-opened and compared exactly before and after publication;
@@ -111,7 +118,7 @@ Generated code is still not silently executed, and browser visual or interaction
 
 ## What this does not mean
 
-Two live-backed components do not turn the remaining anatomy green.
+Nine live-backed anatomy records do not turn the remaining anatomy green.
 
 A `uses` relationship does not become `implements`.
 

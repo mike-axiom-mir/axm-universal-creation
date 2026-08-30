@@ -1,0 +1,14 @@
+{
+  "kind": "self-clone-body",
+  "direction": "create a complete editable experimental clone of the current machine source body",
+  "constraints": {
+    "keep_live_body_unchanged": true,
+    "capture_candidate_build_truth": true,
+    "automatic_adoption": false
+  },
+  "inputs": {
+    "operation": "clone",
+    "path": "creations/self-workspaces/first-candidate-body",
+    "replace": false
+  }
+}

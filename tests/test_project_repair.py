@@ -83,6 +83,35 @@ class ProjectRepairTests(unittest.TestCase):
             self.assertTrue(result["details"]["original_unchanged"])
             self.assertEqual((target / "index.html").read_text(encoding="utf-8"), original)
 
+    def test_nested_html_reference_failure_blocks_repair_and_preserves_project(self):
+        with tempfile.TemporaryDirectory() as td:
+            target = Path(td) / "site"
+            index = "<a href=\"pages/about.html\">About</a>"
+            original_about = "<main>About</main>"
+            machine = self._create(
+                target,
+                {"index.html": index, "pages/about.html": original_about},
+                project_type="static-web",
+            )
+            result = machine.create({
+                "kind": "patch-static-web-project",
+                "inputs": {
+                    "path": str(target),
+                    "project_type": "static-web",
+                    "operations": [
+                        {
+                            "op": "update",
+                            "path": "pages/about.html",
+                            "content": "<main>About</main><script src=\"missing.js\"></script>",
+                        }
+                    ],
+                },
+            })
+            self.assertEqual(result["type"], "CREATION_ERROR", result)
+            self.assertTrue(result["details"]["original_unchanged"])
+            self.assertEqual((target / "index.html").read_text(encoding="utf-8"), index)
+            self.assertEqual((target / "pages/about.html").read_text(encoding="utf-8"), original_about)
+
     def test_invalid_python_repair_is_blocked_by_existing_parser_validation(self):
         with tempfile.TemporaryDirectory() as td:
             target = Path(td) / "python-project"
@@ -101,6 +130,23 @@ class ProjectRepairTests(unittest.TestCase):
             self.assertEqual(result["type"], "CREATION_ERROR", result)
             self.assertEqual(result["details"]["phase"], "pre-publish")
             self.assertEqual((target / "app.py").read_text(encoding="utf-8"), original)
+
+    def test_invalid_json_repair_is_blocked_and_preserves_original(self):
+        with tempfile.TemporaryDirectory() as td:
+            target = Path(td) / "data-project"
+            original = '{"ready": true}\n'
+            machine = self._create(target, {"data.json": original})
+            result = machine.create({
+                "kind": "patch-project",
+                "inputs": {
+                    "path": str(target),
+                    "operations": [{"op": "update", "path": "data.json", "content": "{broken json}"}],
+                },
+            })
+            self.assertEqual(result["type"], "CREATION_ERROR", result)
+            self.assertEqual(result["details"]["phase"], "pre-publish")
+            self.assertTrue(result["details"]["original_unchanged"])
+            self.assertEqual((target / "data.json").read_text(encoding="utf-8"), original)
 
     def test_unsafe_repair_path_is_rejected_before_original_changes(self):
         with tempfile.TemporaryDirectory() as td:

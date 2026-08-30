@@ -9,7 +9,7 @@ AXM Universal Creation can now:
 1. decompose a structured creation request against the explicit 2,165-record anatomy;
 2. show relevant atoms, components, organs, dependency hints, and live capability coverage;
 3. create a multi-file UTF-8 project body through an inspectable deterministic capability;
-4. stage and validate that project before publishing it;
+4. stage and ground that project before publishing it, retaining an imperfect ordinary draft with its observed gaps or using explicit strict validation when requested;
 5. independently re-open and verify the published project;
 6. return a single `CREATION_TRIAL` result containing the plan, creation result, verification result, and pass/fail state.
 
@@ -22,9 +22,11 @@ The current project validator supports:
 - `python-compile`
 - `html-local-links`
 
-`static-web` projects automatically require `index.html` and verify local `src`/`href` references from that entry page.
+`static-web` projects automatically require `index.html` and verify local `src`/`href` references from every `.html` and `.htm` page in the project.
 
 `python` projects automatically compile every `.py` file for syntax without executing the generated program.
+
+Every `.json` file is automatically parsed for JSON validity in every project type.
 
 ## Important truth boundary
 
@@ -33,9 +35,12 @@ A passing deterministic project trial means:
 - the requested files were actually written;
 - project-relative paths stayed inside the project body;
 - configured deterministic checks passed;
-- local static-web references resolved when that project type was used;
+- every JSON file parsed successfully;
+- local static-web references in every HTML/HTM page resolved when that project type was used;
 - Python source parsed/compiled when that project type was used;
 - the published project matched what the verifier subsequently observed.
+
+An ordinary `create` result may instead be a retained `GROUNDED_DRAFT`. That means publication integrity passed but one or more explicit deterministic checks did not. The failed checks remain in the result and must not be described as passing. `trial` and verified composite routes remain strict when they report success.
 
 It does **not** mean:
 
@@ -78,7 +83,7 @@ For an ordinary first trial:
 2. choose `static-web-project`, `python-project`, or `software-project` when the current project builder is sufficient;
 3. put exact proposed file contents under `inputs.files`;
 4. add deterministic checks that reflect claims the chat intends to make;
-5. run `axm-uc trial`;
+5. run `axm-uc trial` for a strict independently verified result, or ordinary `create` when retaining an inspectable draft is the intended experiment;
 6. inspect the returned plan, creation result, verifier result, and limitations;
 7. only claim what was actually tested;
 8. if the current capability is insufficient, preserve the returned gap instead of hiding it with prose.

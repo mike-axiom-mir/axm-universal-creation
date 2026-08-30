@@ -52,11 +52,113 @@
     "activeMachineCopies": 1,
     "temporaryWorkspaceCloneRequired": false,
     "mergeBackWorkflowRequired": false,
+    "editableCandidateBodyCloneAvailable": true,
+    "candidateBodyIsActiveMachine": false,
+    "candidateAdoptionAutomatic": false,
+    "candidateChoosesWhenToRequestMergeCheck": true,
+    "perEditMergeCheckRequired": false,
+    "mergeReadinessScoreRequired": false,
     "buildOwnsAndRemovesItsDebris": true,
     "destructiveGlobalCleanIsNormalOperation": false
   },
   "directionalOutcomes": {
     "capabilityGapTargetsOutcomeNotExactPriorSolution": true
+  },
+  "creationComposition": {
+    "softwareOrganAssemblyAvailable": true,
+    "declaredDependencyGraphResolved": true,
+    "declaredInterfaceProvidersAndRequirementsResolved": true,
+    "exclusiveRenderedFileOwnership": true,
+    "executableOrganPackageBodyAvailable": true,
+    "exactVersionedOrganReferencesResolved": true,
+    "interfaceDrivenOrganDiscoveryAvailable": true,
+    "uniqueSmallestCompleteExactAssemblySelected": true,
+    "ambiguousMinimumAssemblyHeld": true,
+    "missingInterfaceOrganContractEmitted": true,
+    "organDiscoveryMaximumStates": 10000,
+    "suppliedMissingOrganClosureExperimentAvailable": true,
+    "detachedCandidateMayEnterEphemeralLibraryOverlay": true,
+    "ephemeralClosureRequiresCandidateSelectionAndValidatedBuild": true,
+    "closureExperimentInstallsCandidate": false,
+    "organInstanceScopedBindingsAvailable": true,
+    "descriptiveOrgansAutomaticallyExecutable": false,
+    "sourceInterfaceConformanceProven": false,
+    "semanticRuntimeWiringInvented": false
+  },
+  "organGapClosure": {
+    "startsFromObservedMissingInterfaceHold": true,
+    "explicitOrganForgeProposalRequired": true,
+    "proposalAndPackageInterfacesMustExactlyAgree": true,
+    "detachedForgeTestRequired": true,
+    "candidateBytesRehashedAtOverlayBoundary": true,
+    "ephemeralInstalledPlusCandidateDiscoveryAvailable": true,
+    "candidateMustParticipateInReadyClosure": true,
+    "ephemeralValidatedAssemblyBuildRequired": true,
+    "automaticSourceInvention": false,
+    "automaticAdmissionOrInstallation": false,
+    "runtimeBehaviorProven": false
+  },
+  "creationUnitForge": {
+    "detachedCandidateMaterializationAvailable": true,
+    "firstClassKinds": [
+      "hand",
+      "capability",
+      "organ",
+      "protocol",
+      "skill",
+      "specialist",
+      "recipe"
+    ],
+    "openExtensionKindsAllowed": true,
+    "sameProposalRebuildIsPathIndependent": true,
+    "capabilityAndHandDeclaredTestsExecutable": true,
+    "organPackageContractValidationAvailable": true,
+    "otherKindRuntimeSemanticsProven": false,
+    "candidateDesignInventedByDeterministicForge": false,
+    "automaticExecution": false,
+    "automaticInstallOrRegistration": false,
+    "automaticAdmissionOrMerge": false,
+    "candidateMayRequestAdmissionReview": true
+  },
+  "gapSynthesis": {
+    "evidenceBoundAnalysisAvailable": true,
+    "exactRequestDigestPreserved": true,
+    "implementedBlueprints": [
+      "axm.blueprint.exact-utf8-file-route-alias/v0.1",
+      "axm.blueprint.bounded-project-recipe-graph/v0.1"
+    ],
+    "existingDetachedCandidateReusePrecedesNewSynthesis": true,
+    "uniqueStructuralBridgeMaySelectDetachedExperiment": true,
+    "structuralBridgeIsSemanticEquivalenceProof": false,
+    "ambiguousBridgeAutoSelected": false,
+    "exactCompositeChainCompilationAvailable": true,
+    "maximumProjectRecipeSteps": 3,
+    "shortestReadyExactPathSelected": true,
+    "recipePathAmbiguityHeld": true,
+    "recipeDepthOverflowHeld": true,
+    "existingVerifiedCompositeReusePrecedesNewEmbodiment": true,
+    "supportedProjectProducerProfiles": [
+      "strict-project-template",
+      "exact-executable-organ-assembly",
+      "interface-discovered-organ-assembly",
+      "exact-project-files",
+      "existing-verified-project-composite"
+    ],
+    "compositeMissingOrAmbiguousLinkHeld": true,
+    "closedCompositeBindingTransforms": [
+      "file-digest-map"
+    ],
+    "closedCompositeBindingEdges": [
+      "file-digest-map",
+      "exact-whole-object"
+    ],
+    "exactVerificationJsonArtifactAvailable": true,
+    "arbitraryCompositeExpressionEvaluationAvailable": false,
+    "unsupportedGapHeld": true,
+    "requestShapedDisposableFixtureAvailable": true,
+    "originalRequestedDestinationUsedDuringExperiment": false,
+    "arbitrarySemanticSourceSynthesisAvailable": false,
+    "automaticAdmissionOrInstallation": false
   },
   "hostEmbedding": {
     "coreIntendedAsInnerBody": true,

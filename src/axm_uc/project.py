@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import shutil
@@ -8,6 +9,9 @@ from html.parser import HTMLParser
 from pathlib import Path, PurePosixPath
 from typing import Any
 from urllib.parse import unquote, urlsplit
+
+
+PUBLISH_MODES = {"validated", "grounded-draft"}
 
 
 class ProjectError(RuntimeError):
@@ -40,7 +44,12 @@ def _file_manifest(root: Path) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
     for path in sorted(p for p in root.rglob("*") if p.is_file()):
         rel = path.relative_to(root).as_posix()
-        rows.append({"path": rel, "bytes": path.stat().st_size})
+        content = path.read_bytes()
+        rows.append({
+            "path": rel,
+            "bytes": len(content),
+            "sha256": hashlib.sha256(content).hexdigest(),
+        })
     return rows
 
 
@@ -234,6 +243,62 @@ def _check_expected_files(root: Path, expected_files: dict[str, Any]) -> dict[st
     return {"type": "expected-files-exact", "passed": passed and bool(rows), "files": rows}
 
 
+def _check_expected_file_digests(root: Path, expected_digests: dict[str, Any]) -> dict[str, Any]:
+    rows: list[dict[str, Any]] = []
+    passed = True
+    for raw_path, raw_expected in expected_digests.items():
+        relative = str(raw_path)
+        expected = str(raw_expected).strip()
+        if len(expected) != 64 or any(character not in "0123456789abcdef" for character in expected):
+            rows.append({"path": relative, "passed": False, "error": "expected SHA-256 must be 64 lowercase hexadecimal characters"})
+            passed = False
+            continue
+        try:
+            path = _resolve_inside(root, relative)
+            content = path.read_bytes()
+        except (ProjectError, OSError) as exc:
+            rows.append({"path": relative, "passed": False, "error": str(exc)})
+            passed = False
+            continue
+        actual = hashlib.sha256(content).hexdigest()
+        match = actual == expected
+        rows.append({
+            "path": relative,
+            "passed": match,
+            "expected_sha256": expected,
+            "actual_sha256": actual,
+            "actual_bytes": len(content),
+        })
+        passed = passed and match
+    return {"type": "expected-file-digests", "passed": passed and bool(rows), "files": rows}
+
+
+def _publication_integrity(validation: dict[str, Any]) -> bool:
+    checks = validation.get("checks") if isinstance(validation.get("checks"), list) else []
+    required = {
+        row.get("type"): row.get("passed") is True
+        for row in checks
+        if row.get("type") in {"project-nonempty", "expected-files-exact"}
+    }
+    return required == {"project-nonempty": True, "expected-files-exact": True}
+
+
+def _grounding(validation: dict[str, Any], publish_mode: str) -> dict[str, Any]:
+    checks = validation.get("checks") if isinstance(validation.get("checks"), list) else []
+    gaps = [row for row in checks if row.get("passed") is not True]
+    validation_passed = validation.get("passed") is True
+    return {
+        "truth_status": "OBSERVED_DETERMINISTIC_PROJECT_VALIDATION",
+        "publish_mode": publish_mode,
+        "creation_status": "VALIDATED_CREATION" if validation_passed else "GROUNDED_DRAFT",
+        "validation_passed": validation_passed,
+        "creation_retained": True,
+        "observed_gap_count": len(gaps),
+        "observed_gaps": gaps,
+        "gap_meaning": "failed checks expose current creation or capability gaps; they are not automatically a prohibition on retaining the creation",
+    }
+
+
 CHECKS = {
     "project-nonempty": _check_project_nonempty,
     "file-exists": _check_file_exists,
@@ -250,6 +315,7 @@ def validate_project(
     project_type: str = "generic",
     checks: list[dict[str, Any]] | None = None,
     expected_files: dict[str, Any] | None = None,
+    expected_file_digests: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     root = Path(root).resolve()
     results: list[dict[str, Any]] = []
@@ -265,10 +331,22 @@ def validate_project(
         }
 
     results.append(_check_project_nonempty(root, {}))
+    json_files = sorted(
+        path.relative_to(root).as_posix()
+        for path in root.rglob("*")
+        if path.is_file() and path.suffix.casefold() == ".json"
+    )
+    for relative in json_files:
+        results.append(_check_json(root, {"path": relative}))
     if project_type in {"static-web", "web", "static-web-project"}:
         results.append(_check_file_exists(root, {"path": "index.html"}))
-        if (root / "index.html").is_file():
-            results.append(_check_html_links(root, {"path": "index.html"}))
+        html_files = sorted(
+            path.relative_to(root).as_posix()
+            for path in root.rglob("*")
+            if path.is_file() and path.suffix.casefold() in {".html", ".htm"}
+        )
+        for relative in html_files:
+            results.append(_check_html_links(root, {"path": relative}))
     if project_type in {"python", "python-project"}:
         results.append(_check_python(root, {}))
 
@@ -282,6 +360,8 @@ def validate_project(
 
     if expected_files is not None:
         results.append(_check_expected_files(root, expected_files))
+    if expected_file_digests is not None:
+        results.append(_check_expected_file_digests(root, expected_file_digests))
 
     return {
         "passed": bool(results) and all(row.get("passed") is True for row in results),
@@ -323,30 +403,42 @@ def _rollback_publish(target: Path, backup: Path | None) -> None:
         os.replace(backup, target)
 
 
+def preview_project_files(files: Any, project_type: Any = "generic") -> dict[str, Any]:
+    """Normalize one exact UTF-8 project file map without touching the filesystem."""
+    if not isinstance(files, dict) or not files:
+        raise ProjectError("files must be a non-empty object mapping relative paths to text content")
+
+    normalized_files: dict[str, str] = {}
+    for raw_path, raw_content in files.items():
+        rel = _safe_relative_path(str(raw_path))
+        key = rel.as_posix()
+        if key in normalized_files:
+            raise ProjectError(f"duplicate project file path: {key}")
+        if not isinstance(raw_content, str):
+            raise ProjectError(f"project file content must be text for the current milestone: {key}")
+        normalized_files[key] = raw_content
+    return {
+        "project_type": str(project_type or "generic").strip().casefold(),
+        "files": normalized_files,
+    }
+
+
 def build_project(
     target: Path,
     files: dict[str, Any],
     project_type: str = "generic",
     checks: list[dict[str, Any]] | None = None,
     replace: bool = False,
+    publish_mode: str = "validated",
 ) -> dict[str, Any]:
     target = Path(target).resolve()
-    if not isinstance(files, dict) or not files:
-        raise ProjectError("files must be a non-empty object mapping relative paths to text content")
-
-    normalized: list[tuple[PurePosixPath, str]] = []
-    seen: set[str] = set()
-    expected_files: dict[str, str] = {}
-    for raw_path, raw_content in files.items():
-        rel = _safe_relative_path(str(raw_path))
-        key = rel.as_posix()
-        if key in seen:
-            raise ProjectError(f"duplicate project file path: {key}")
-        seen.add(key)
-        if not isinstance(raw_content, str):
-            raise ProjectError(f"project file content must be text for the current milestone: {key}")
-        normalized.append((rel, raw_content))
-        expected_files[key] = raw_content
+    publish_mode = str(publish_mode).strip().casefold()
+    if publish_mode not in PUBLISH_MODES:
+        raise ProjectError("publish_mode must be validated or grounded-draft")
+    preview = preview_project_files(files, project_type)
+    project_type = preview["project_type"]
+    expected_files = preview["files"]
+    normalized = [(PurePosixPath(path), content) for path, content in expected_files.items()]
 
     target.parent.mkdir(parents=True, exist_ok=True)
     stage = target.with_name(f".{target.name}.axm-build-{uuid.uuid4().hex}")
@@ -363,13 +455,22 @@ def build_project(
             path.write_text(content, encoding="utf-8")
 
         validation = validate_project(stage, project_type=project_type, checks=checks, expected_files=expected_files)
-        if not validation["passed"]:
+        if not _publication_integrity(validation):
+            raise ProjectError("project publication integrity failed before publish", {"phase": "pre-publish", "validation": validation})
+        if publish_mode == "validated" and not validation["passed"]:
             raise ProjectError("project validation failed before publish", {"phase": "pre-publish", "validation": validation})
 
         backup = _begin_publish(stage, target, replace=replace)
         published = True
         published_validation = validate_project(target, project_type=project_type, checks=checks, expected_files=expected_files)
-        if not published_validation["passed"]:
+        if not _publication_integrity(published_validation):
+            _rollback_publish(target, backup)
+            published = False
+            raise ProjectError(
+                "project publication integrity failed after publish; previous body restored",
+                {"phase": "post-publish", "validation": published_validation, "rolled_back": True},
+            )
+        if publish_mode == "validated" and not published_validation["passed"]:
             _rollback_publish(target, backup)
             published = False
             raise ProjectError(
@@ -383,8 +484,11 @@ def build_project(
             "path": str(target),
             "project_type": str(project_type or "generic"),
             "published": True,
+            "publish_mode": publish_mode,
+            "creation_status": "VALIDATED_CREATION" if published_validation["passed"] else "GROUNDED_DRAFT",
             "files": _file_manifest(target),
             "validation": published_validation,
+            "grounding": _grounding(published_validation, publish_mode),
         }
     except Exception:
         if published and target.exists():

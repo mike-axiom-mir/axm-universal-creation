@@ -1,0 +1,15 @@
+{
+  "kind": "analyze-creation-gap",
+  "direction": "observe the smallest missing route for an exact portable note",
+  "inputs": {
+    "operation": "analyze",
+    "request": {
+      "kind": "portable-note-file",
+      "direction": "create an exact portable note",
+      "inputs": {
+        "path": "creations/generated/example.note",
+        "content": "# Gap-derived creation\n\nThe exact request becomes the candidate fixture.\n"
+      }
+    }
+  }
+}

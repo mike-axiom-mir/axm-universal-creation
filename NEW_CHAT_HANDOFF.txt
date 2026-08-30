@@ -23,7 +23,7 @@ Growth is an outcome, not a target, benchmark, reward, score, or fifth root.
 
 ONE ACTIVE MACHINE
 ------------------
-Work on the authoritative active tree. Do not create clone-and-merge-back safety workflows.
+There is one authoritative active tree. Do not impose clone-and-merge-back safety workflows on ordinary building. Complete clone bodies are allowed as explicit self-creation experiments; they remain non-active candidates until a later chosen adoption.
 
 A build is not complete until it has cleaned the temporary/intermediate debris that build itself created:
 
@@ -44,6 +44,26 @@ The included reference baseline contains 2,165 candidates (1,000 atoms, 750 comp
 STANDALONE INNER BODY
 ---------------------
 The same inner body is intended to connect later to different hosts through explicit adapters: software, AI, games, hardware, robots, fabrication systems, and other environments. Host ownership is not required to connect.
+
+SELF-CREATION WORKSPACE
+-----------------------
+The machine can clone its complete current source body into an editable candidate workspace, inspect differences, and run that candidate's own build. The candidate may experiment without changing the live body. It chooses when to request merge observations; no per-edit readiness gate or growth score is imposed. The current merge-check request does not approve or adopt the candidate. See SELF_WORKSPACE.md.
+
+SOFTWARE ORGANS
+---------------
+The live machine can assemble one project from versioned template organs with explicit dependencies, deterministic order, shared or instance-scoped exact variables, and one visible owner per rendered file. Organs may be inline experiments or exact references into the separate executable-organs/ source body. This does not pretend all 415 descriptive registry organs are implemented. See ORGAN_ASSEMBLY.md and EXECUTABLE_ORGANS.md.
+
+An interface goal may instead name only exact required interfaces and explicit values. The machine derives a package/dependency closure only when one uniquely smallest complete installed solution exists. Missing interfaces emit Forge-ready organ contracts; ambiguous alternatives, incomplete bindings, cycles, collisions, and the bounded search remain HOLD. This is structural discovery, not semantic source proof or automatic package admission.
+
+One explicitly supplied organ Forge proposal can be tested against a missing-interface contract through `explore-missing-organ-closure`. The candidate is materialized and tested detached, made visible only in a disposable installed-plus-candidate library, required to participate in the re-discovered READY closure, and exercised in a validated full assembly. The live package body remains unchanged and passing is not admission or installation. See ORGAN_GAP_CLOSURE.md.
+
+CREATION-UNIT FORGE
+-------------------
+The live machine can turn one closed supplied design into a detached hand, capability, organ, protocol, skill, specialist, recipe, or newly named extension kind. It preserves exact path-independent lineage, runs the strongest implemented evidence for that kind, and permits a voluntary admission-review request without installing or merging anything. Skills are bounded methods; specialists are temporary method overlays, not identities or authority. See CREATION_FORGE.md.
+
+EVIDENCE-BOUND GAP SYNTHESIS
+----------------------------
+Every unroutable create result now exposes whether an implemented deterministic blueprint can compile the observed gap. One blueprint creates an exact UTF-8 file-route alias from a uniquely compatible live primitive. A second searches a project recipe graph bounded to three steps across exact template, explicit executable-organ, interface-discovered organ, raw-file, existing verified-composite, verifier, and JSON-reporter contracts. It preserves candidate paths, prefers the shortest unique complete route, and uses only a closed digest-map projection or an exact whole-object binding. Unsupported, over-depth, incomplete, ambiguous, or contract-drifted wiring HOLD. This is structural proposal synthesis, not general semantic source invention, admission, or installation. See GAP_SYNTHESIS.md.
 
 RECOVERY
 --------

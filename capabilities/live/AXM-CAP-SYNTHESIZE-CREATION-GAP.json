@@ -1,0 +1,115 @@
+{
+  "id": "AXM-CAP-SYNTHESIZE-CREATION-GAP",
+  "version": "0.5.0",
+  "status": "live",
+  "purpose": "Turn a real unroutable creation request into an evidence-bound detached capability proposal by searching a bounded exact-contract graph, preferring the shortest complete reusable project recipe, and optionally materializing and testing that hypothesis without admitting it.",
+  "handles": [
+    "analyze-creation-gap",
+    "propose-gap-candidate",
+    "explore-gap-candidate"
+  ],
+  "input_contract": {
+    "required": [
+      "operation",
+      "request"
+    ],
+    "properties": {
+      "operation": "analyze, propose, or materialize-and-test",
+      "request": "one exact creation request whose current live route and reusable input/output shape will be observed",
+      "path": "materialize-and-test only; detached candidate directory under creations/ or outside the machine body",
+      "bridge_capability_id": "optional exact caller selection from the analysis candidate list; never accepts an unobserved bridge",
+      "candidate_id": "optional stable candidate identifier",
+      "version": "optional numeric semantic version; default 0.1.0",
+      "replace": "materialize-and-test only; optional explicit replacement of an existing detached candidate"
+    }
+  },
+  "output_contract": {
+    "kind": "typed-gap-analysis-or-detached-candidate-experiment",
+    "contains": [
+      "exact request and digest",
+      "observed live route state",
+      "supported structural bridge candidates",
+      "bounded exact-contract recipe paths, reuse decisions, and missing-link HOLD evidence",
+      "typed ready or HOLD status",
+      "closed forge proposal when supported",
+      "request-shaped disposable candidate test when materialized",
+      "explicit non-admission state"
+    ]
+  },
+  "dependencies": [
+    "AXM-CAP-SPAWN-CREATION-UNIT",
+    "AXM-CAP-INSTANTIATE-PROJECT-TEMPLATE",
+    "AXM-CAP-ASSEMBLE-ORGAN-PROJECT",
+    "AXM-CAP-COMPOSE-ORGAN-PROJECT",
+    "AXM-CAP-WRITE-PROJECT",
+    "AXM-CAP-BUILD-VERIFY-PROJECT",
+    "AXM-CAP-VERIFY-PROJECT",
+    "AXM-CAP-WRITE-JSON"
+  ],
+  "relationships": [
+    "begins only from an observed creation request and current live capability body",
+    "surfaces an existing detached capability candidate before compiling duplicate machinery",
+    "compiles one uniquely supported structural bridge into a detached experiment instead of silently adding a live route",
+    "searches supported template, exact executable-organ, interface-discovered organ, raw-project, and existing verified-composite producer paths to a requested verified-project goal",
+    "preserves missing organ interfaces, ambiguous minimum organ assemblies, incomplete explicit bindings, and discovery bounds as typed HOLD evidence",
+    "prefers a shorter already-live verified composite over rebuilding the same raw-project steps",
+    "optionally extends a verified-project path by persisting the exact verification object through the live JSON writer",
+    "projects file receipts through one closed file-digest-map binding rather than an arbitrary expression language",
+    "preserves ambiguity and unsupported semantics as typed HOLD states",
+    "uses the creation-unit forge for exact materialization and bounded testing",
+    "keeps proposal selection, semantic proof, admission, installation, merge, CANON, and permission change distinct"
+  ],
+  "anatomy_refs": [
+    {
+      "id": "AXM-19-AI-ML-AGENTS-C-009-adapter",
+      "role": "implements",
+      "basis": "The capability compiles one bounded interface-compatible route adapter and tests it independently before any admission choice."
+    },
+    {
+      "id": "AXM-23-PROCEDURAL-C-023-generator-recipe",
+      "role": "uses",
+      "basis": "Implemented recipes deterministically emit either an exact UTF-8 file-route alias or one bounded project recipe selected from observed request markers, preview evidence, exact live-manifest contracts, and shortest-complete-path evidence."
+    },
+    {
+      "id": "AXM-06-BUILD-PACKAGE-O-004-artifact-builder",
+      "role": "uses",
+      "basis": "Supported proposals are passed to the existing detached creation-unit package builder rather than installed directly."
+    }
+  ],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:gap_synthesis",
+    "source": "src/axm_uc/gap_synthesis.py"
+  },
+  "limitations": [
+    "the first blueprint covers only missing exact UTF-8 file routes with exactly path and content inputs",
+    "the second blueprint covers only strict templates, exact executable-organ assemblies, uniquely resolved exact-interface organ goals, exact raw text-file projects, and their explicitly supported exact tested dependency versions",
+    "project recipe search is explicitly bounded to three steps",
+    "composite wiring is limited to the closed file-digest-map projection and exact whole-object bindings; arbitrary dataflow expressions are not executed",
+    "existing detached candidates are observed by exact handled request kind but are not automatically selected, admitted, or installed",
+    "matching an input/output shape is a structural hypothesis and does not prove semantic equivalence",
+    "a unique bridge selects only a detached experiment, not a live route or admission decision",
+    "the request-shaped fixture proves one exact example and not general format semantics",
+    "ambiguous bridges, paths, or minimum organ assemblies; missing organ interfaces or bindings; over-depth recipes; missing or ambiguous composite links; and unsupported gaps remain on HOLD unless a supported exact bridge or separately supplied design is provided",
+    "no operation installs, registers, admits, promotes, merges, changes CANON, or changes permissions"
+  ],
+  "persistent_state": "only caller-selected detached candidate packages persist; analysis and proposal operations are read-only",
+  "root_fit": {
+    "truth": {
+      "fit": true,
+      "basis": "Observed route state, structural compatibility, semantic uncertainty, exact proposal lineage, fixture evidence, and HOLD reasons remain separate and inspectable."
+    },
+    "agency": {
+      "fit": true,
+      "basis": "Human or AI designs remain welcome, ambiguous choices are not hidden, and a compiled candidate grants itself no live-machine or admission authority."
+    },
+    "continuity": {
+      "fit": true,
+      "basis": "Experiments are materialized through the detached forge and do not replace or rewrite the continuing machine."
+    },
+    "wisdom-before-speed": {
+      "fit": true,
+      "basis": "The compiler reuses the smallest compatible live primitive, tests an exact real request fixture, and holds rather than inventing unsupported semantics."
+    }
+  }
+}

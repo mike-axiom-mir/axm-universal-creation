@@ -1,0 +1,100 @@
+{
+  "id": "AXM-CAP-EXPLORE-ORGAN-GAP",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Take an observed missing executable-organ interface plus one explicit human/AI/recipe-supplied organ proposal, materialize and test it through the detached Forge, then prove or hold its exact contribution through an ephemeral discovery and full assembly build without installing it.",
+  "handles": [
+    "explore-missing-organ-closure"
+  ],
+  "input_contract": {
+    "required": [
+      "path",
+      "organ_goal",
+      "proposal"
+    ],
+    "properties": {
+      "path": "detached candidate directory under creations/ or outside the live machine body",
+      "organ_goal": "exact axm.interface-organ-goal/v0.1 object that currently emits HOLD_MISSING_ORGAN_INTERFACE",
+      "proposal": "one explicit closed axm.creation-unit-spawn-proposal/v0.1 organ design whose entrypoint is a complete executable-organ package",
+      "checks": "optional deterministic checks applied to the ephemeral full closure project",
+      "replace": "optional boolean allowing explicit replacement of the detached candidate directory"
+    }
+  },
+  "output_contract": {
+    "kind": "detached-missing-organ-closure-experiment",
+    "contains": [
+      "initial missing-interface discovery and contracts",
+      "exact proposal/package interface alignment",
+      "detached Forge materialization and test evidence",
+      "ephemeral installed-plus-candidate library receipt",
+      "READY or typed HOLD closure discovery",
+      "ephemeral full assembly build receipt when READY",
+      "explicit non-installation and non-admission state"
+    ]
+  },
+  "dependencies": [
+    "AXM-CAP-INSPECT-EXECUTABLE-ORGANS",
+    "AXM-CAP-SPAWN-CREATION-UNIT",
+    "AXM-CAP-ASSEMBLE-ORGAN-PROJECT"
+  ],
+  "relationships": [
+    "starts only from a presently observed missing executable-organ interface",
+    "accepts supplied source rather than claiming the deterministic kernel invented semantic implementation",
+    "requires exact equality between Forge unit provides/requires and executable-organ package declarations",
+    "materializes and tests the candidate through the continuing detached Creation-Unit Forge",
+    "re-hashes the candidate bytes copied into the disposable overlay and holds if they differ from the Forge-tested source",
+    "makes the candidate visible only in a disposable exact library overlay together with installed package sources",
+    "re-runs the original interface goal and requires the candidate exact ref to participate in the selected READY closure",
+    "builds the complete closure in disposable validated project space before reporting success",
+    "keeps test success, admission request, approval, installation, registration, promotion, merge, and CANON distinct"
+  ],
+  "anatomy_refs": [
+    {
+      "id": "AXM-00-FOUNDATION-C-019-interface-contract",
+      "role": "implements",
+      "basis": "The experiment binds an observed missing exact interface contract to one supplied package declaration, then proves whether the same goal becomes an exact complete closure."
+    },
+    {
+      "id": "AXM-06-BUILD-PACKAGE-O-004-artifact-builder",
+      "role": "uses",
+      "basis": "Candidate source is materialized and tested through the existing detached Creation-Unit Forge rather than copied into the live package body."
+    },
+    {
+      "id": "AXM-23-PROCEDURAL-C-023-generator-recipe",
+      "role": "uses",
+      "basis": "The operation is a fixed evidence recipe: missing contract, supplied organ, Forge test, overlay discovery, exact resolution, and disposable validated assembly."
+    }
+  ],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:explore_organ_gap",
+    "source": "src/axm_uc/organ_gap.py"
+  },
+  "limitations": [
+    "the candidate organ design and source must be explicitly supplied by a human, AI, deterministic recipe, or labeled external boundary",
+    "a candidate that passes package validation and one closure build is not proven semantically correct for every future use",
+    "declared interface names remain structural contracts and source-level conformance is not proven",
+    "the ephemeral project validates files and caller checks but does not execute generated runtime behavior or judge visual quality",
+    "the candidate remains detached and is not installed into executable-organs/ or admitted by this operation",
+    "candidate ref collisions, proposal/package contract drift, unrelated proposals, failed Forge tests, post-test source drift, incomplete closure, and failed builds remain typed HOLDs"
+  ],
+  "persistent_state": "only the caller-selected detached Forge candidate persists; overlays and closure projects are disposed after each experiment",
+  "root_fit": {
+    "truth": {
+      "fit": true,
+      "basis": "The initial gap, supplied source, exact contract alignment, candidate test, overlay contents, final selection, build receipt, and proof limits remain distinct and inspectable."
+    },
+    "agency": {
+      "fit": true,
+      "basis": "Humans and AIs may supply different implementations, while ambiguity and failure HOLD and the experiment grants itself no admission or installation authority."
+    },
+    "continuity": {
+      "fit": true,
+      "basis": "The live executable-organ library remains unchanged; the tested candidate persists only in its detached package until a separate choice."
+    },
+    "wisdom-before-speed": {
+      "fit": true,
+      "basis": "A new organ must align with the observed gap, pass the existing Forge, become necessary in exact re-discovery, and complete a validated assembly before the closure claim is emitted."
+    }
+  }
+}

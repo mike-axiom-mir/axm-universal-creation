@@ -1,0 +1,31 @@
+{
+  "schema": "axm.executable-software-organ/v0.1",
+  "id": "axm.web.shell",
+  "version": "1.0.0",
+  "status": "executable",
+  "purpose": "Own a local HTML document shell and expose its document surface to dependent organs.",
+  "project_types": [
+    "static-web"
+  ],
+  "parameters": [
+    "idle_label",
+    "title"
+  ],
+  "provides": [
+    "document-shell"
+  ],
+  "requires": [],
+  "files": {
+    "index.html": "<!doctype html>\n<html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>[[AXM:title]]</title><link rel=\"stylesheet\" href=\"style.css\"></head><body><main><p>EXECUTABLE ORGAN BODY</p><h1>[[AXM:title]]</h1><button type=\"button\">[[AXM:idle_label]]</button></main><script src=\"app.js\"></script></body></html>\n"
+  },
+  "anatomy_refs": [
+    "AXM-09-UI-INTERACTION-O-011-ui-renderer"
+  ],
+  "provenance": {
+    "kind": "local-authored-source",
+    "basis": "Created and tested inside AXM Universal Creation as the first reusable document-shell organ package."
+  },
+  "limitations": [
+    "The shell structurally references style.css and app.js but does not itself prove which packages provide their runtime semantics."
+  ]
+}
