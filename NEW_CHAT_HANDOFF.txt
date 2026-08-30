@@ -53,6 +53,10 @@ SOFTWARE ORGANS
 ---------------
 The live machine can assemble one project from versioned template organs with explicit dependencies, deterministic order, shared or instance-scoped exact variables, and one visible owner per rendered file. Organs may be inline experiments or exact references into the separate executable-organs/ source body. This does not pretend all 415 descriptive registry organs are implemented. See ORGAN_ASSEMBLY.md and EXECUTABLE_ORGANS.md.
 
+CREATION-UNIT FORGE
+-------------------
+The live machine can turn one closed supplied design into a detached hand, capability, organ, protocol, skill, specialist, recipe, or newly named extension kind. It preserves exact path-independent lineage, runs the strongest implemented evidence for that kind, and permits a voluntary admission-review request without installing or merging anything. Skills are bounded methods; specialists are temporary method overlays, not identities or authority. See CREATION_FORGE.md.
+
 RECOVERY
 --------
 One complete restorable snapshot per day. If a day goes genuinely wrong, quarantine that state and restore an earlier known-good daily snapshot.

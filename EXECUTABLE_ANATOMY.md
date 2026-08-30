@@ -39,6 +39,7 @@ At this milestone the machine deliberately starts sparse:
 - `AXM-24-WORKSPACE-COLLABORATION-C-011-workspace` is explicitly implemented by `AXM-CAP-SELF-WORKSPACE`;
 - `AXM-05-CODE-GRAMMAR-C-025-dependency-graph` and `AXM-00-FOUNDATION-C-019-interface-contract` are explicitly implemented for declared software-organ assembly by `AXM-CAP-ASSEMBLE-ORGAN-PROJECT`.
 - `AXM-06-BUILD-PACKAGE-C-001-package-manifest` is explicitly implemented for installed executable-organ packages by `AXM-CAP-INSPECT-EXECUTABLE-ORGANS`.
+- `AXM-06-BUILD-PACKAGE-O-004-artifact-builder` is explicitly implemented for detached typed creation-unit materialization by `AXM-CAP-SPAWN-CREATION-UNIT`.
 
 The runtime reports the current counts rather than hard-coding a claim:
 
@@ -116,7 +117,7 @@ Generated code is still not silently executed, and browser visual or interaction
 
 ## What this does not mean
 
-Eight live-backed components do not turn the remaining anatomy green.
+Nine live-backed anatomy records do not turn the remaining anatomy green.
 
 A `uses` relationship does not become `implements`.
 

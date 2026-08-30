@@ -40,7 +40,11 @@ def _is_machine_body_path(root: Path, target: Path) -> bool:
     try:
         rel = target.resolve().relative_to(root)
     except ValueError:
-        return False
+        try:
+            root.relative_to(target.resolve())
+        except ValueError:
+            return False
+        return True
     if not rel.parts:
         return True
     return rel.parts[0] not in {"creations", ".axm-build"}
@@ -163,6 +167,20 @@ def builtin_inspect_executable_organs(root: Path, inputs: dict[str, Any]) -> dic
         raise CapabilityError(str(exc), exc.details) from exc
 
 
+def builtin_spawn_creation_unit(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+    from .spawn import SpawnError, operate_spawn_unit
+
+    target = _resolve_output_path(root, str(inputs.get("path", "")))
+    if _is_machine_body_path(root, target):
+        raise CapabilityError(
+            "creation-unit candidates must stay outside the live machine body; use creations/ or an external path"
+        )
+    try:
+        return operate_spawn_unit(root, inputs)
+    except (ProjectError, SpawnError) as exc:
+        raise CapabilityError(str(exc), exc.details) from exc
+
+
 def builtin_verify_project(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
     target = _resolve_output_path(root, str(inputs["path"]))
     if _is_machine_body_path(root, target):
@@ -207,6 +225,7 @@ BUILTINS: dict[str, Callable[[Path, dict[str, Any]], dict[str, Any]]] = {
     "builtin:self_workspace": builtin_self_workspace,
     "builtin:assemble_organ_project": builtin_assemble_organ_project,
     "builtin:inspect_executable_organs": builtin_inspect_executable_organs,
+    "builtin:spawn_creation_unit": builtin_spawn_creation_unit,
     "builtin:verify_project": builtin_verify_project,
     "builtin:patch_project": builtin_patch_project,
 }

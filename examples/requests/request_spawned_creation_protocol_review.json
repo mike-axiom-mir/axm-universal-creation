@@ -1,0 +1,10 @@
+{
+  "kind": "request-unit-admission-check",
+  "direction": "let the detached protocol candidate request an admission decision after its own test",
+  "inputs": {
+    "operation": "request-admission-check",
+    "path": "creations/spawned/creation-request-protocol",
+    "requested_by": "axm.protocol.creation-request@1.0.0 candidate",
+    "readiness_statement": "The exact detached package and its declared structural tests pass, so I choose to request a separate admission review without claiming approval."
+  }
+}

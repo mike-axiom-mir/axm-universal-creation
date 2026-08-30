@@ -16,10 +16,10 @@ class CompositeAndExecutableTests(unittest.TestCase):
         machine = UniversalCreationMachine(ROOT)
         summary = machine.executable()["summary"]
         self.assertEqual(summary["truth_status"], "EXPLICIT_LIVE_CAPABILITY_BINDINGS")
-        self.assertEqual(summary["implemented_master_records"], 8)
-        self.assertEqual(summary["implemented_master_by_level"], {"component": 8})
-        self.assertEqual(summary["live_capabilities"], 12)
-        self.assertEqual(summary["resolved_bindings"], 20)
+        self.assertEqual(summary["implemented_master_records"], 9)
+        self.assertEqual(summary["implemented_master_by_level"], {"component": 8, "organ": 1})
+        self.assertEqual(summary["live_capabilities"], 13)
+        self.assertEqual(summary["resolved_bindings"], 24)
 
         project = machine.executable(master_id="AXM-24-WORKSPACE-COLLABORATION-C-010-project")["master"]
         self.assertEqual(project["status"], "live-backed")
@@ -52,6 +52,10 @@ class CompositeAndExecutableTests(unittest.TestCase):
         package_manifest = machine.executable(master_id="AXM-06-BUILD-PACKAGE-C-001-package-manifest")["master"]
         self.assertEqual(package_manifest["status"], "live-backed")
         self.assertEqual(package_manifest["implemented_by"], ["AXM-CAP-INSPECT-EXECUTABLE-ORGANS"])
+
+        artifact_builder = machine.executable(master_id="AXM-06-BUILD-PACKAGE-O-004-artifact-builder")["master"]
+        self.assertEqual(artifact_builder["status"], "live-backed")
+        self.assertEqual(artifact_builder["implemented_by"], ["AXM-CAP-SPAWN-CREATION-UNIT"])
 
     def test_planner_surfaces_explicit_live_anatomy_bindings(self):
         plan = UniversalCreationMachine(ROOT).plan({

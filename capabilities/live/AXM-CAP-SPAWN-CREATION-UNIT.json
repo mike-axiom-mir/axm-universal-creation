@@ -1,0 +1,105 @@
+{
+  "id": "AXM-CAP-SPAWN-CREATION-UNIT",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Deterministically materialize, inspect, test, and voluntarily request admission review for detached creation-unit candidates, including hands, capabilities, organs, protocols, skills, specialists, recipes, and openly named extension kinds.",
+  "handles": [
+    "spawn-creation-unit",
+    "inspect-spawned-unit",
+    "test-spawned-unit",
+    "request-unit-admission-check"
+  ],
+  "input_contract": {
+    "required": [
+      "operation",
+      "path"
+    ],
+    "properties": {
+      "operation": "spawn, inspect, test, or request-admission-check",
+      "path": "detached candidate directory; repo-local paths must stay under creations/",
+      "proposal": "spawn only; one closed axm.creation-unit-spawn-proposal/v0.1 object with exact text payload, contracts, lineage, tests, limitations, zero authority, and four-root fit",
+      "replace": "spawn only; optional explicit replacement of an existing detached candidate",
+      "readiness_statement": "request-admission-check only; caller or candidate explanation for choosing review now",
+      "requested_by": "request-admission-check only; inspectable human, AI, or candidate identifier"
+    }
+  },
+  "output_contract": {
+    "kind": "detached-typed-creation-unit",
+    "contains": [
+      "operation",
+      "truth_status",
+      "path",
+      "unit identity and contracts",
+      "exact proposal/package/file lineage",
+      "bounded structural or candidate-runtime evidence",
+      "explicit non-installation and non-admission state"
+    ]
+  },
+  "dependencies": [
+    "AXM-CAP-WRITE-PROJECT",
+    "AXM-CAP-VERIFY-PROJECT"
+  ],
+  "relationships": [
+    "turns supplied human, AI, recipe, or explicit external designs into detached inspectable candidate bodies",
+    "tests capability and hand candidates through their declared disposable candidate tests",
+    "validates organ candidates against the installed executable-organ package grammar without installing them",
+    "keeps materialization, test evidence, admission request, approval, installation, registration, promotion, and merge as separate states",
+    "allows new extension kinds without claiming kind-specific runtime verification for them"
+  ],
+  "anatomy_refs": [
+    {
+      "id": "AXM-06-BUILD-PACKAGE-O-004-artifact-builder",
+      "role": "implements",
+      "basis": "The capability deterministically assembles a bounded multi-file candidate package, emits exact lineage and file digests, validates the staged and published body, and keeps that package detached from the live machine."
+    },
+    {
+      "id": "AXM-06-BUILD-PACKAGE-C-001-package-manifest",
+      "role": "uses",
+      "basis": "Every spawned unit contains a closed typed package manifest and a separate spawn receipt."
+    },
+    {
+      "id": "AXM-23-PROCEDURAL-C-023-generator-recipe",
+      "role": "uses",
+      "basis": "Recipe is a supported candidate kind, but recipe activation and a general recipe interpreter remain separate future capabilities."
+    },
+    {
+      "id": "AXM-19-AI-ML-AGENTS-C-035-specialist-profile",
+      "role": "uses",
+      "basis": "Specialist overlays can be materialized as typed candidates while remaining explicitly distinct from identity, authority, expertise proof, or independent evidence."
+    }
+  ],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:spawn_creation_unit",
+    "source": "src/axm_uc/spawn.py"
+  },
+  "limitations": [
+    "the forge deterministically materializes supplied designs; it does not claim that the deterministic kernel invented their semantic design",
+    "all payload is currently bounded UTF-8 text",
+    "capability and hand tests execute only declared candidate fixtures with current process permissions and do not prove general behavior",
+    "organ tests validate the executable-organ package contract but do not execute emitted runtime behavior",
+    "protocols, skills, specialists, recipes, and extension kinds currently receive structural and declared file checks rather than kind-specific runtime execution",
+    "a recipe candidate is not automatically activated as a forge builder",
+    "a specialist is only a temporary method overlay and is not an identity, permission grant, proof of expertise, or independent source of evidence",
+    "admission requests do not approve, install, register, promote, merge, change CANON, or change permissions"
+  ],
+  "persistent_state": "caller-selected detached candidate directories and their current admission-request artifact remain until deliberately removed",
+  "root_fit": {
+    "truth": {
+      "fit": true,
+      "basis": "Materialization, package integrity, declared tests, runtime evidence strength, missing semantic proof, and admission state remain separate and inspectable."
+    },
+    "agency": {
+      "fit": true,
+      "basis": "Humans and AIs can supply radically different unit designs, while no proposal grants itself execution, installation, merge, promotion, CANON, or permission authority."
+    },
+    "continuity": {
+      "fit": true,
+      "basis": "New machinery is first created in detached recoverable bodies and does not silently rewrite or replace the live machine."
+    },
+    "wisdom-before-speed": {
+      "fit": true,
+      "basis": "The forge reuses one closed admission-neutral pathway for many creation-unit kinds and requires exact evidence before any separately chosen adoption."
+    }
+  }
+}

@@ -41,6 +41,8 @@ def build_parser() -> argparse.ArgumentParser:
     organs_p.add_argument("--project-type", choices=["generic", "static-web", "python"], help="filter installed packages")
     organs_p.add_argument("--provides", help="filter by one exact provided interface")
 
+    sub.add_parser("forge", help="inspect the detached creation-unit spawning surface and truth boundary")
+
     plan_p = sub.add_parser("plan", help="decompose a creation request against direction, anatomy, topology, and live coverage")
     plan_p.add_argument("request", help="JSON request file")
     plan_p.add_argument("--per-level", type=int, default=6, help="maximum matches returned per anatomy level")
@@ -88,6 +90,9 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if args.command == "organs":
         _print(machine.executable_organs(ref=args.ref, project_type=args.project_type, provides=args.provides))
+        return 0
+    if args.command == "forge":
+        _print(machine.creation_forge())
         return 0
     if args.command == "plan":
         request = json.loads(Path(args.request).read_text(encoding="utf-8"))

@@ -76,6 +76,28 @@
     "sourceInterfaceConformanceProven": false,
     "semanticRuntimeWiringInvented": false
   },
+  "creationUnitForge": {
+    "detachedCandidateMaterializationAvailable": true,
+    "firstClassKinds": [
+      "hand",
+      "capability",
+      "organ",
+      "protocol",
+      "skill",
+      "specialist",
+      "recipe"
+    ],
+    "openExtensionKindsAllowed": true,
+    "sameProposalRebuildIsPathIndependent": true,
+    "capabilityAndHandDeclaredTestsExecutable": true,
+    "organPackageContractValidationAvailable": true,
+    "otherKindRuntimeSemanticsProven": false,
+    "candidateDesignInventedByDeterministicForge": false,
+    "automaticExecution": false,
+    "automaticInstallOrRegistration": false,
+    "automaticAdmissionOrMerge": false,
+    "candidateMayRequestAdmissionReview": true
+  },
   "hostEmbedding": {
     "coreIntendedAsInnerBody": true,
     "hostAdaptersExpected": true,

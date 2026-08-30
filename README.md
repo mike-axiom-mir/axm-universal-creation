@@ -58,6 +58,12 @@ For whole-body experiments, the live machine can now make a complete editable cl
 
 See `SELF_WORKSPACE.md`.
 
+The machine can also spawn smaller detached creation-unit bodies without cloning the whole source tree. One closed proposal path can materialize hands, capabilities, organs, protocols, skills, specialists, recipes, and openly named extension kinds. Exact rebuild lineage, bounded tests, and voluntary admission requests are separate from installation or merge.
+
+`gap/design -> spawn detached unit -> test exact body -> request review when chosen -> separate admission`
+
+See `CREATION_FORGE.md`.
+
 ## No activity-log architecture
 
 Inspectability means being able to inspect **what the machine is now**. It does not require surveillance of everything it ever did.
@@ -113,6 +119,7 @@ The small Python runtime currently provides:
 - strict single-pass project recipes with inspectable variables and rendered paths;
 - dependency-aware software-organ assembly with declared interfaces, explicit order, and file ownership;
 - an exact local executable-organ package body that makes working organs reusable across creations;
+- a deterministic detached creation-unit forge for hands, capabilities, organs, protocols, skills, specialists, recipes, and new extension kinds;
 - complete editable self-workspace cloning, exact source comparison, independent build logs, and voluntary merge-check requests;
 - structured `CAPABILITY_GAP` results that preserve the directional outcome and distinguish current partial coverage;
 - candidate capability testing and direct adoption through the four-root fit declaration;
@@ -158,6 +165,10 @@ Current live project handles:
 - `inspect-executable-organs`
 - `list-executable-organs`
 - `resolve-executable-organ`
+- `spawn-creation-unit`
+- `inspect-spawned-unit`
+- `test-spawned-unit`
+- `request-unit-admission-check`
 
 Project creation is staged before publish and project-relative file paths may not escape the project body. Plain project creation defaults to `grounded-draft`: exact publication integrity is required, while failed quality/grammar checks remain visible and the imperfect creation survives. Explicit `validated` mode and verified composite handles remain strict and do not publish a failed body.
 
@@ -193,6 +204,8 @@ PYTHONPATH=src python -m axm_uc create examples/requests/verify_real_site.json
 PYTHONPATH=src python -m axm_uc create examples/requests/create_templated_site.json
 PYTHONPATH=src python -m axm_uc create examples/requests/create_organ_site.json
 PYTHONPATH=src python -m axm_uc create examples/requests/create_reusable_organ_site.json
+PYTHONPATH=src python -m axm_uc create examples/requests/spawn_creation_protocol.json
+PYTHONPATH=src python -m axm_uc create examples/requests/test_spawned_creation_protocol.json
 ```
 
 That creates `creations/first-real-site/` with `index.html`, `style.css`, and `app.js`. Open `index.html` in a browser for the separate human/host visual and interaction test.
@@ -256,6 +269,9 @@ PYTHONPATH=src python -m axm_uc create examples/requests/create_templated_site.j
 PYTHONPATH=src python -m axm_uc create examples/requests/create_organ_site.json
 PYTHONPATH=src python -m axm_uc create examples/requests/create_reusable_organ_site.json
 PYTHONPATH=src python -m axm_uc create examples/requests/clone_self_workspace.json
+PYTHONPATH=src python -m axm_uc forge
+PYTHONPATH=src python -m axm_uc create examples/requests/spawn_creation_protocol.json
+PYTHONPATH=src python -m axm_uc create examples/requests/test_spawned_creation_protocol.json
 PYTHONPATH=src python -m axm_uc candidate test capabilities/candidates/AXM-CAP-WRITE-MARKDOWN.json
 python tools/build.py
 ```

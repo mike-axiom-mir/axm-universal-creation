@@ -48,6 +48,18 @@ class CreationBoundaryTests(unittest.TestCase):
             self.assertEqual(result["type"], "CREATION_RESULT")
             self.assertEqual(target.read_text(encoding="utf-8"), "outside\n")
 
+    def test_normal_creation_cannot_replace_a_directory_that_contains_the_machine(self):
+        result = UniversalCreationMachine(ROOT).create({
+            "kind": "software-project",
+            "inputs": {
+                "path": str(ROOT.parent),
+                "files": {"danger.txt": "must not replace the machine's parent"},
+                "replace": True,
+            },
+        })
+        self.assertEqual(result["type"], "CREATION_ERROR")
+        self.assertTrue((ROOT / "machine.contract.json").is_file())
+
 
 if __name__ == "__main__":
     unittest.main()

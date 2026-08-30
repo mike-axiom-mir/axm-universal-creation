@@ -22,6 +22,7 @@ GitHub collaboration uses one working branch and one PR lane per AI chat/instanc
 PYTHONPATH=src python -m axm_uc inspect
 PYTHONPATH=src python -m axm_uc topology
 PYTHONPATH=src python -m axm_uc executable
+PYTHONPATH=src python -m axm_uc forge
 ```
 
 The important distinction is:
@@ -85,6 +86,8 @@ For a new experiment:
 9. if something is wrong, repair the smallest affected portion instead of regenerating the whole project;
 10. report observed results separately from hypotheses and remaining gaps.
 
+When the smallest honest gap is new creation machinery rather than another end artifact, use `spawn-creation-unit`. The proposal may describe a hand, capability, organ, protocol, skill, specialist, recipe, or a new extension kind. Test the detached body, then let the candidate choose whether to request admission review. A request is not approval or installation.
+
 For a whole-body experiment, create one self-workspace clone and edit/test there for as long as the experiment needs. Do not force a readiness check after each step. When the candidate itself chooses that it is ready, it may request selected merge observations. That request does not merge or approve the body.
 
 ## Current truth boundary
@@ -103,6 +106,9 @@ At this handoff:
 - candidates can request merge checks, but whole-body adoption is not yet implemented;
 - software-organ dependencies and declared interface names are checked structurally, but source-level conformance and runtime wiring are not synthesized or proven;
 - installed executable-organ packages are exact local source packages, while the 415 anatomy organs remain descriptive until separately implemented;
+- the creation-unit forge materializes supplied designs deterministically but does not claim to invent their semantic source by itself;
+- capability/hand fixtures and organ package contracts have specialized tests; protocols, skills, specialists, recipes, and extension kinds currently have structural/file evidence only;
+- spawned recipes are detached candidates and are not yet automatically activated as forge builders;
 - software-direction suggestions do not choose a direction;
 - direction expectations do not prove capability;
 - the 2,165-record anatomy remains broader than the live executable body.

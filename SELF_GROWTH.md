@@ -57,6 +57,16 @@ Reusable software organs may now carry source templates, explicit dependencies, 
 
 Working organs may also remain in the separate versioned `executable-organs/` body and be reused by exact reference. This lets capability accumulate as inspectable source packages without requiring a new top-level Python route for every combination.
 
+## Spawn smaller creation machinery
+
+The deterministic Creation-Unit Forge now provides a smaller growth surface than a complete body clone. A human, AI, recipe, or explicit external boundary may supply one closed proposal for a hand, capability, organ, protocol, skill, specialist, recipe, or a newly named extension kind.
+
+The machine materializes the exact proposal as a detached package, preserves path-independent lineage, tests the strongest evidence it currently understands for that kind, and allows a voluntary admission-review request. Materialization, runtime evidence, admission request, approval, installation, registration, promotion, merge, CANON, and permission change remain separate states.
+
+This is the first direct answer to capability-count inflation: the live kernel remains small while its creation surface can emit new candidate machinery. The deterministic forge does not claim to invent the proposal's semantic design. Human and AI perspective can supply that design; later deterministic recipe interpreters and learned builders may produce proposals through the same visible boundary.
+
+Skills and specialists are supported without being anthropomorphized. A skill is a bounded portable method. A specialist is a temporary method overlay and is not identity, authority, expertise proof, or independent evidence. See `CREATION_FORGE.md`.
+
 ## Non-hidden after change
 
 If the machine changes what it is, the resulting source, structure, relationships, capability boundaries, configuration, and persistent learned state required to understand the live machine must remain inspectable.
