@@ -52,6 +52,12 @@
     "activeMachineCopies": 1,
     "temporaryWorkspaceCloneRequired": false,
     "mergeBackWorkflowRequired": false,
+    "editableCandidateBodyCloneAvailable": true,
+    "candidateBodyIsActiveMachine": false,
+    "candidateAdoptionAutomatic": false,
+    "candidateChoosesWhenToRequestMergeCheck": true,
+    "perEditMergeCheckRequired": false,
+    "mergeReadinessScoreRequired": false,
     "buildOwnsAndRemovesItsDebris": true,
     "destructiveGlobalCleanIsNormalOperation": false
   },

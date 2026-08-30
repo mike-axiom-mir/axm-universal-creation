@@ -23,7 +23,7 @@ Growth is an outcome, not a target, benchmark, reward, score, or fifth root.
 
 ONE ACTIVE MACHINE
 ------------------
-Work on the authoritative active tree. Do not create clone-and-merge-back safety workflows.
+There is one authoritative active tree. Do not impose clone-and-merge-back safety workflows on ordinary building. Complete clone bodies are allowed as explicit self-creation experiments; they remain non-active candidates until a later chosen adoption.
 
 A build is not complete until it has cleaned the temporary/intermediate debris that build itself created:
 
@@ -44,6 +44,10 @@ The included reference baseline contains 2,165 candidates (1,000 atoms, 750 comp
 STANDALONE INNER BODY
 ---------------------
 The same inner body is intended to connect later to different hosts through explicit adapters: software, AI, games, hardware, robots, fabrication systems, and other environments. Host ownership is not required to connect.
+
+SELF-CREATION WORKSPACE
+-----------------------
+The machine can clone its complete current source body into an editable candidate workspace, inspect differences, and run that candidate's own build. The candidate may experiment without changing the live body. It chooses when to request merge observations; no per-edit readiness gate or growth score is imposed. The current merge-check request does not approve or adopt the candidate. See SELF_WORKSPACE.md.
 
 RECOVERY
 --------

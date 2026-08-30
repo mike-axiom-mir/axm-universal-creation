@@ -1,6 +1,6 @@
 {
   "id": "AXM-CAP-BUILD-VERIFY-PROJECT",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "status": "live",
   "purpose": "Compose the existing project builder and project verifier into one inspectable build-and-verify route without adding a bespoke source implementation for this capability.",
   "handles": [
@@ -66,7 +66,8 @@
           "files": {"from": "request.files"},
           "project_type": {"from": "request.project_type", "default": "generic"},
           "checks": {"from": "request.checks", "default": []},
-          "replace": {"from": "request.replace", "default": false}
+          "replace": {"from": "request.replace", "default": false},
+          "publish_mode": "validated"
         }
       },
       {
@@ -88,6 +89,7 @@
   },
   "limitations": [
     "composition is sequential and deterministic in this milestone",
+    "this explicitly verified route uses validated publication and does not retain a failed build as its target project",
     "the project verifier still does not execute generated code or judge browser visuals"
   ],
   "persistent_state": null,

@@ -1,0 +1,94 @@
+{
+  "id": "AXM-CAP-SELF-WORKSPACE",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Clone the complete current source body into a separate editable candidate workspace, compare and exercise it, and let the candidate voluntarily request selected merge-readiness observations without changing or automatically approving the live body.",
+  "handles": [
+    "self-workspace",
+    "self-source-workspace",
+    "self-clone-body"
+  ],
+  "input_contract": {
+    "required": [
+      "operation",
+      "path"
+    ],
+    "properties": {
+      "operation": "clone, inspect, test, or request-merge-check",
+      "path": "candidate body directory; repo-local paths must be under creations/",
+      "replace": "clone only; optional explicit replacement of an existing candidate directory",
+      "timeout_seconds": "test/check operations; bounded timeout from 1 through 3600 seconds",
+      "readiness_statement": "request-merge-check only; the candidate's reason for choosing to request review now",
+      "requested_by": "request-merge-check only; inspectable identity or role making the request",
+      "requested_checks": "request-merge-check only; any of source-diff, build, machine-inspect, executable-anatomy, plan-probes, or creation-trials",
+      "probe_requests": "candidate-local JSON request paths used by selected planning probes or real creation trials"
+    }
+  },
+  "output_contract": {
+    "kind": "editable-self-workspace-result",
+    "contains": [
+      "operation",
+      "path",
+      "truth_status",
+      "live_body_modified",
+      "exact_copy_verified or comparison or build result"
+    ]
+  },
+  "dependencies": [],
+  "relationships": [
+    "clones the current inspectable source body without Git history or runtime output surfaces",
+    "keeps candidate edits outside the active machine body",
+    "runs the candidate body's own tools/build.py and returns its complete captured build output",
+    "lets the candidate choose when to request source, build, anatomy, planning, or creation-trial observations",
+    "leaves merge or adoption as a separate explicit choice"
+  ],
+  "anatomy_refs": [
+    {
+      "id": "AXM-24-WORKSPACE-COLLABORATION-C-011-workspace",
+      "role": "implements",
+      "basis": "The capability materializes a separately editable source workspace, verifies the copied bytes, compares candidate and live bodies, and exposes an independent build operation."
+    },
+    {
+      "id": "AXM-01-PROVENANCE-C-003-source-bundle",
+      "role": "uses",
+      "basis": "The candidate body is assembled from every included current source-body file while explicitly excluding Git history, runtime creations, caches, and short-lived build debris."
+    },
+    {
+      "id": "AXM-20-TESTING-OBSERVABILITY-O-001-test-runner",
+      "role": "uses",
+      "basis": "The test operation invokes the cloned body's fixed inspectable tools/build.py entrypoint and returns exit state, timeout state, standard output, and standard error."
+    }
+  ],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:self_workspace",
+    "source": "src/axm_uc/self_workspace.py"
+  },
+  "limitations": [
+    "this is a source-body clone, not an OS security sandbox; candidate tests run with the current process user's host permissions",
+    "Git history, runtime creations, snapshots, caches, and build debris are excluded from the cloned source body",
+    "included symbolic links are rejected because link-preserving clone semantics are not implemented",
+    "the current operation can clone, inspect, test, and request a merge check; it does not automatically merge, approve, or adopt a candidate body",
+    "readiness is candidate-declared and is not produced by a score, cadence, or workspace-manager decision",
+    "a passing build proves only the checks implemented by that candidate body's build"
+  ],
+  "persistent_state": "the caller-selected candidate workspace remains editable until deliberately removed or adopted",
+  "root_fit": {
+    "truth": {
+      "fit": true,
+      "basis": "The exact copy result, exclusions, source comparison, captured build output, execution boundary, and lack of automatic adoption are explicit."
+    },
+    "agency": {
+      "fit": true,
+      "basis": "The candidate is free to diverge in its separate body, while humans or AIs retain the explicit choice of what to edit, test, keep, or later adopt."
+    },
+    "continuity": {
+      "fit": true,
+      "basis": "Experiments accumulate in an editable candidate body without rewriting the continuing live body."
+    },
+    "wisdom-before-speed": {
+      "fit": true,
+      "basis": "The machine can run its real build on a complete candidate body and inspect the resulting differences before any separately chosen adoption."
+    }
+  }
+}

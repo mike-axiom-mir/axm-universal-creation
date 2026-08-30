@@ -52,6 +52,12 @@ The gap is important: the machine should be able to represent **what piece of it
 
 See `SELF_GROWTH.md`.
 
+For whole-body experiments, the live machine can now make a complete editable clone of its current source body. The candidate can diverge and run its own build without becoming the active machine. When the candidate or a future connected cognition believes it is ready, it may voluntarily request selected observations; the workspace manager neither schedules that request nor decides readiness for it.
+
+`clone body -> experiment freely -> choose when to request checks -> observe -> later explicit adoption choice`
+
+See `SELF_WORKSPACE.md`.
+
 ## No activity-log architecture
 
 Inspectability means being able to inspect **what the machine is now**. It does not require surveillance of everything it ever did.
@@ -103,6 +109,9 @@ The small Python runtime currently provides:
 - direct inspection of the 2,165-record Universal Creation Map and 100-record implementation kernel;
 - inspectable live capability manifests;
 - creation routing through live deterministic capabilities;
+- grounded drafts that preserve observed gaps instead of erasing imperfect ordinary creations;
+- strict single-pass project recipes with inspectable variables and rendered paths;
+- complete editable self-workspace cloning, exact source comparison, independent build logs, and voluntary merge-check requests;
 - structured `CAPABILITY_GAP` results that preserve the directional outcome and distinguish current partial coverage;
 - candidate capability testing and direct adoption through the four-root fit declaration;
 - build-owned cleanup of candidate-test debris;
@@ -136,8 +145,12 @@ Current live project handles:
 - `static-web-project`
 - `python-project`
 - `verify-project`
+- `templated-software-project`
+- `templated-static-web-project`
+- `templated-python-project`
+- `self-candidate-project`
 
-Project creation is staged before publish. Project-relative file paths may not escape the project body. A failed deterministic validation does not publish the staged project.
+Project creation is staged before publish and project-relative file paths may not escape the project body. Plain project creation defaults to `grounded-draft`: exact publication integrity is required, while failed quality/grammar checks remain visible and the imperfect creation survives. Explicit `validated` mode and verified composite handles remain strict and do not publish a failed body.
 
 Current deterministic project checks:
 
@@ -152,6 +165,8 @@ Current deterministic project checks:
 
 Every `.json` file is automatically parsed for JSON validity in every project type.
 
+Reusable project templates use strict `[[AXM:name]]` placeholders in paths and contents. Substitution is exact, raw, single-pass, and non-recursive; missing, unused, malformed, colliding, and escaping inputs are rejected. See `PROJECT_TEMPLATES.md` and `GROUNDED_CREATION.md`.
+
 The `trial` command ties the current loop together:
 
 `PLAN -> CREATE -> POST-CREATE VERIFY -> PASS / GAP`
@@ -162,6 +177,7 @@ Run the included first real creation trial:
 PYTHONPATH=src python -m axm_uc plan examples/requests/create_real_site.json
 PYTHONPATH=src python -m axm_uc trial examples/requests/create_real_site.json
 PYTHONPATH=src python -m axm_uc create examples/requests/verify_real_site.json
+PYTHONPATH=src python -m axm_uc create examples/requests/create_templated_site.json
 ```
 
 That creates `creations/first-real-site/` with `index.html`, `style.css`, and `app.js`. Open `index.html` in a browser for the separate human/host visual and interaction test.
@@ -169,6 +185,22 @@ That creates `creations/first-real-site/` with `index.html`, `style.css`, and `a
 A passing deterministic trial proves what it actually checked. It **does not** claim that generated code was executed, that browser interaction was automatically verified, that visual quality was judged, or that every semantic user requirement was satisfied.
 
 See `REAL_CREATION_TRIAL.md` for the working-chat protocol and exact truth boundary.
+
+## Editable self-creation body
+
+`AXM-CAP-SELF-WORKSPACE` can clone the complete current source body into an editable candidate outside the live body, inspect byte-exact differences, and run the candidate's own `tools/build.py` while returning the full captured build output.
+
+The candidate chooses if and when to emit `request-merge-check`. It may request any combination of source comparison, build, candidate-machine inspection, executable-anatomy inspection, planning probes, and real creation trials inside its cloned body. The request is explicitly `MERGE_CHECK_REQUESTED_NOT_APPROVED`: it performs no merge, grants no approval, creates no growth score, and imposes no per-edit checkpoint.
+
+This is source-body isolation, not OS containment. Candidate code runs with the current process user's host permissions. Automatic whole-body merge/adoption remains an explicit current gap.
+
+Create the first editable clone body:
+
+```bash
+PYTHONPATH=src python -m axm_uc create examples/requests/clone_self_workspace.json
+```
+
+See `SELF_WORKSPACE.md`.
 
 ## Anatomy / kernel topology bridge
 
@@ -203,6 +235,8 @@ PYTHONPATH=src python -m axm_uc topology
 PYTHONPATH=src python -m axm_uc plan examples/requests/plan_mesh.json
 PYTHONPATH=src python -m axm_uc create examples/requests/create_hello.json
 PYTHONPATH=src python -m axm_uc trial examples/requests/create_real_site.json
+PYTHONPATH=src python -m axm_uc create examples/requests/create_templated_site.json
+PYTHONPATH=src python -m axm_uc create examples/requests/clone_self_workspace.json
 PYTHONPATH=src python -m axm_uc candidate test capabilities/candidates/AXM-CAP-WRITE-MARKDOWN.json
 python tools/build.py
 ```

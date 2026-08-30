@@ -1,0 +1,100 @@
+{
+  "id": "AXM-CAP-INSTANTIATE-PROJECT-TEMPLATE",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Instantiate a reusable inspectable project recipe through strict single-pass placeholders, then retain and ground the resulting creation without inventing or silently rewriting the supplied perspective.",
+  "handles": [
+    "templated-software-project",
+    "templated-static-web-project",
+    "templated-python-project",
+    "self-candidate-project"
+  ],
+  "input_contract": {
+    "required": [
+      "path",
+      "template",
+      "variables"
+    ],
+    "properties": {
+      "path": "target project directory",
+      "template": "object with non-empty id, version, project_type, and files mapping; placeholders use [[AXM:name]]",
+      "variables": "object mapping every referenced placeholder name to exact raw text",
+      "checks": "optional deterministic grounding checks",
+      "publish_mode": "grounded-draft by default; validated when failed checks must block publication",
+      "replace": "optional boolean; defaults false"
+    }
+  },
+  "output_contract": {
+    "kind": "templated-project-result",
+    "contains": [
+      "path",
+      "published",
+      "creation_status",
+      "grounding",
+      "template_instance",
+      "validation",
+      "grammar_inventory"
+    ]
+  },
+  "dependencies": [
+    "AXM-CAP-WRITE-PROJECT",
+    "AXM-CAP-VERIFY-PROJECT"
+  ],
+  "relationships": [
+    {
+      "type": "instantiates",
+      "target": "AXM-05-CODE-GRAMMAR-C-022-code-template"
+    },
+    {
+      "type": "produces",
+      "target": "AXM-24-WORKSPACE-COLLABORATION-C-010-project"
+    },
+    {
+      "type": "may-produce",
+      "target": "inspectable candidate next-body source outside the active machine body"
+    }
+  ],
+  "anatomy_refs": [
+    {
+      "id": "AXM-05-CODE-GRAMMAR-C-022-code-template",
+      "role": "implements",
+      "basis": "This capability gives the code-template component a bounded live meaning: strict named placeholders in file paths and UTF-8 contents are instantiated once through exact raw text substitution, with missing, unused, malformed, colliding, and unsafe results rejected explicitly."
+    },
+    {
+      "id": "AXM-24-WORKSPACE-COLLABORATION-C-010-project",
+      "role": "uses",
+      "basis": "Rendered files are handed to the existing transactional project publication and grounding machinery."
+    }
+  ],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:instantiate_project_template",
+    "source": "src/axm_uc/template.py"
+  },
+  "limitations": [
+    "substitution is raw exact text and is not parser-aware",
+    "templates or callers must supply grammar-specific escaping",
+    "loops, conditionals, recursive expansion, binary assets, and semantic code generation are not implemented",
+    "self-candidate-project can create inspectable next-body source but does not silently adopt it into the live machine",
+    "grounding checks expose observed limits but do not prove runtime behavior or visual quality"
+  ],
+  "persistent_state": null,
+  "root_fit": {
+    "truth": {
+      "fit": true,
+      "basis": "The exact placeholder grammar, rendered paths, variables used, single-pass behavior, validation results, gaps, and limitations remain visible."
+    },
+    "agency": {
+      "fit": true,
+      "basis": "Humans or AIs supply the template, perspective, values, destination, checks, and strictness; the machine performs no hidden creative rewrite."
+    },
+    "continuity": {
+      "fit": true,
+      "basis": "Reusable recipes preserve prior creative structure, project replacement remains transactional, and imperfect new creations may remain available as grounded drafts."
+    },
+    "wisdom-before-speed": {
+      "fit": true,
+      "basis": "The capability adds one inspectable reusable primitive and reuses existing project machinery instead of claiming general code generation prematurely."
+    }
+  }
+}

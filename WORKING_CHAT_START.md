@@ -62,6 +62,8 @@ The direction catalog also contains engineering quality and risk axes, including
 
 The current machine can create, verify, and transactionally repair bounded UTF-8 text projects.
 
+Ordinary project creation retains imperfect results as grounded drafts with exact observed gaps. Verified routes remain strict. Reusable templates can instantiate complete multi-file recipes, and the self-workspace capability can clone the complete source body for open-ended experiments.
+
 A useful working-chat play loop is:
 
 ```bash
@@ -83,6 +85,8 @@ For a new experiment:
 9. if something is wrong, repair the smallest affected portion instead of regenerating the whole project;
 10. report observed results separately from hypotheses and remaining gaps.
 
+For a whole-body experiment, create one self-workspace clone and edit/test there for as long as the experiment needs. Do not force a readiness check after each step. When the candidate itself chooses that it is ready, it may request selected merge observations. That request does not merge or approve the body.
+
 ## Current truth boundary
 
 At this handoff:
@@ -95,6 +99,8 @@ At this handoff:
 - browser visual quality and interaction behavior are not automatically verified;
 - generated code is not automatically executed by the normal project validator;
 - a verification failure does not yet automatically synthesize its own patch operations;
+- self-workspaces are source clones, not OS containment boundaries;
+- candidates can request merge checks, but whole-body adoption is not yet implemented;
 - software-direction suggestions do not choose a direction;
 - direction expectations do not prove capability;
 - the 2,165-record anatomy remains broader than the live executable body.

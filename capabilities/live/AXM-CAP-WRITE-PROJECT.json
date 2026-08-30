@@ -1,8 +1,8 @@
 {
   "id": "AXM-CAP-WRITE-PROJECT",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "status": "live",
-  "purpose": "Create a deterministic multi-file text project, validate it before publish, then publish it as one project body.",
+  "purpose": "Create a deterministic multi-file text project, retain it as a grounded draft when checks expose gaps, or require complete deterministic validation when explicitly requested.",
   "handles": [
     "software-project",
     "static-web-project",
@@ -18,13 +18,14 @@
       "files": "object mapping project-relative file paths to exact UTF-8 text",
       "project_type": "generic, static-web, or python",
       "checks": "optional deterministic validation checks",
+      "publish_mode": "grounded-draft by default; validated when failed checks must block publication",
       "replace": "optional boolean; defaults false"
     }
   },
   "output_contract": {
     "kind": "directory",
     "encoding": "utf-8-text-files",
-    "validation": "deterministic pre-publish and post-publish project validation with exact requested-text recheck"
+    "validation": "deterministic pre-publish and post-publish grounding with exact requested-text integrity; ordinary creation retains visible gaps unless validated mode is explicitly selected"
   },
   "dependencies": [
     "AXM-CAP-WRITE-TEXT",
@@ -32,13 +33,14 @@
   ],
   "relationships": [
     "creates project bodies outside the protected machine body",
+    "retains imperfect ordinary creations with observed validation gaps instead of erasing them",
     "pairs with AXM-CAP-VERIFY-PROJECT for independent post-create verification"
   ],
   "anatomy_refs": [
     {
       "id": "AXM-24-WORKSPACE-COLLABORATION-C-010-project",
       "role": "implements",
-      "basis": "This live capability creates and publishes a bounded multi-file project assembly with an explicit input/output interface and deterministic validation."
+      "basis": "This live capability creates and publishes a bounded multi-file project assembly with explicit input/output, exact-content integrity, deterministic grounding, and caller-selected strict validation."
     }
   ],
   "implementation": {
@@ -48,6 +50,7 @@
   },
   "limitations": [
     "current milestone writes text files only",
+    "grounded-draft retains failed validation checks as visible gaps; it does not claim those checks passed",
     "JSON validation proves parseability, not schema or semantic correctness",
     "static-web validation checks local src/href resolution across project HTML/HTM pages but not complete HTML validity",
     "generated code is validated but not executed",

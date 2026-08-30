@@ -16,10 +16,10 @@ class CompositeAndExecutableTests(unittest.TestCase):
         machine = UniversalCreationMachine(ROOT)
         summary = machine.executable()["summary"]
         self.assertEqual(summary["truth_status"], "EXPLICIT_LIVE_CAPABILITY_BINDINGS")
-        self.assertEqual(summary["implemented_master_records"], 3)
-        self.assertEqual(summary["implemented_master_by_level"], {"component": 3})
-        self.assertEqual(summary["live_capabilities"], 8)
-        self.assertEqual(summary["resolved_bindings"], 9)
+        self.assertEqual(summary["implemented_master_records"], 5)
+        self.assertEqual(summary["implemented_master_by_level"], {"component": 5})
+        self.assertEqual(summary["live_capabilities"], 10)
+        self.assertEqual(summary["resolved_bindings"], 14)
 
         project = machine.executable(master_id="AXM-24-WORKSPACE-COLLABORATION-C-010-project")["master"]
         self.assertEqual(project["status"], "live-backed")
@@ -32,6 +32,14 @@ class CompositeAndExecutableTests(unittest.TestCase):
         patch = machine.executable(master_id="AXM-05-CODE-GRAMMAR-C-029-code-patch")["master"]
         self.assertEqual(patch["status"], "live-backed")
         self.assertEqual(patch["implemented_by"], ["AXM-CAP-PATCH-PROJECT"])
+
+        template = machine.executable(master_id="AXM-05-CODE-GRAMMAR-C-022-code-template")["master"]
+        self.assertEqual(template["status"], "live-backed")
+        self.assertEqual(template["implemented_by"], ["AXM-CAP-INSTANTIATE-PROJECT-TEMPLATE"])
+
+        workspace = machine.executable(master_id="AXM-24-WORKSPACE-COLLABORATION-C-011-workspace")["master"]
+        self.assertEqual(workspace["status"], "live-backed")
+        self.assertEqual(workspace["implemented_by"], ["AXM-CAP-SELF-WORKSPACE"])
 
     def test_planner_surfaces_explicit_live_anatomy_bindings(self):
         plan = UniversalCreationMachine(ROOT).plan({
@@ -69,6 +77,20 @@ class CompositeAndExecutableTests(unittest.TestCase):
             manifest = machine.capabilities.by_id("AXM-CAP-BUILD-VERIFY-PROJECT")
             self.assertEqual(manifest["implementation"]["kind"], "DETERMINISTIC_COMPOSITE")
             self.assertEqual(manifest["implementation"]["source"], "this manifest")
+
+    def test_verified_composite_keeps_failed_creation_out_of_target(self):
+        with tempfile.TemporaryDirectory() as td:
+            target = Path(td) / "strict-composite-site"
+            result = UniversalCreationMachine(ROOT).create({
+                "kind": "verified-static-web-project",
+                "inputs": {
+                    "path": str(target),
+                    "project_type": "static-web",
+                    "files": {"index.html": "<script src=\"missing.js\"></script>"},
+                },
+            })
+            self.assertEqual(result["type"], "CREATION_ERROR", result)
+            self.assertFalse(target.exists())
 
     def test_composite_cycle_is_rejected(self):
         machine = UniversalCreationMachine(ROOT)

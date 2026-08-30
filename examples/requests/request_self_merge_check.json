@@ -1,0 +1,20 @@
+{
+  "kind": "self-workspace",
+  "direction": "let the candidate body choose when to request observations for a later explicit adoption decision",
+  "inputs": {
+    "operation": "request-merge-check",
+    "path": "creations/self-workspaces/first-candidate-body",
+    "requested_by": "candidate-body",
+    "readiness_statement": "I have finished the current experiment and choose to request source, build, anatomy, and planning observations now.",
+    "requested_checks": [
+      "source-diff",
+      "build",
+      "executable-anatomy",
+      "plan-probes"
+    ],
+    "probe_requests": [
+      "examples/requests/plan_multiplayer_rts.json"
+    ],
+    "timeout_seconds": 900
+  }
+}

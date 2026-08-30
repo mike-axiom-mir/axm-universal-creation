@@ -10,6 +10,9 @@ from typing import Any
 from urllib.parse import unquote, urlsplit
 
 
+PUBLISH_MODES = {"validated", "grounded-draft"}
+
+
 class ProjectError(RuntimeError):
     def __init__(self, message: str, details: dict[str, Any] | None = None):
         super().__init__(message)
@@ -234,6 +237,32 @@ def _check_expected_files(root: Path, expected_files: dict[str, Any]) -> dict[st
     return {"type": "expected-files-exact", "passed": passed and bool(rows), "files": rows}
 
 
+def _publication_integrity(validation: dict[str, Any]) -> bool:
+    checks = validation.get("checks") if isinstance(validation.get("checks"), list) else []
+    required = {
+        row.get("type"): row.get("passed") is True
+        for row in checks
+        if row.get("type") in {"project-nonempty", "expected-files-exact"}
+    }
+    return required == {"project-nonempty": True, "expected-files-exact": True}
+
+
+def _grounding(validation: dict[str, Any], publish_mode: str) -> dict[str, Any]:
+    checks = validation.get("checks") if isinstance(validation.get("checks"), list) else []
+    gaps = [row for row in checks if row.get("passed") is not True]
+    validation_passed = validation.get("passed") is True
+    return {
+        "truth_status": "OBSERVED_DETERMINISTIC_PROJECT_VALIDATION",
+        "publish_mode": publish_mode,
+        "creation_status": "VALIDATED_CREATION" if validation_passed else "GROUNDED_DRAFT",
+        "validation_passed": validation_passed,
+        "creation_retained": True,
+        "observed_gap_count": len(gaps),
+        "observed_gaps": gaps,
+        "gap_meaning": "failed checks expose current creation or capability gaps; they are not automatically a prohibition on retaining the creation",
+    }
+
+
 CHECKS = {
     "project-nonempty": _check_project_nonempty,
     "file-exists": _check_file_exists,
@@ -341,8 +370,12 @@ def build_project(
     project_type: str = "generic",
     checks: list[dict[str, Any]] | None = None,
     replace: bool = False,
+    publish_mode: str = "validated",
 ) -> dict[str, Any]:
     target = Path(target).resolve()
+    publish_mode = str(publish_mode).strip().casefold()
+    if publish_mode not in PUBLISH_MODES:
+        raise ProjectError("publish_mode must be validated or grounded-draft")
     if not isinstance(files, dict) or not files:
         raise ProjectError("files must be a non-empty object mapping relative paths to text content")
 
@@ -375,13 +408,22 @@ def build_project(
             path.write_text(content, encoding="utf-8")
 
         validation = validate_project(stage, project_type=project_type, checks=checks, expected_files=expected_files)
-        if not validation["passed"]:
+        if not _publication_integrity(validation):
+            raise ProjectError("project publication integrity failed before publish", {"phase": "pre-publish", "validation": validation})
+        if publish_mode == "validated" and not validation["passed"]:
             raise ProjectError("project validation failed before publish", {"phase": "pre-publish", "validation": validation})
 
         backup = _begin_publish(stage, target, replace=replace)
         published = True
         published_validation = validate_project(target, project_type=project_type, checks=checks, expected_files=expected_files)
-        if not published_validation["passed"]:
+        if not _publication_integrity(published_validation):
+            _rollback_publish(target, backup)
+            published = False
+            raise ProjectError(
+                "project publication integrity failed after publish; previous body restored",
+                {"phase": "post-publish", "validation": published_validation, "rolled_back": True},
+            )
+        if publish_mode == "validated" and not published_validation["passed"]:
             _rollback_publish(target, backup)
             published = False
             raise ProjectError(
@@ -395,8 +437,11 @@ def build_project(
             "path": str(target),
             "project_type": str(project_type or "generic"),
             "published": True,
+            "publish_mode": publish_mode,
+            "creation_status": "VALIDATED_CREATION" if published_validation["passed"] else "GROUNDED_DRAFT",
             "files": _file_manifest(target),
             "validation": published_validation,
+            "grounding": _grounding(published_validation, publish_mode),
         }
     except Exception:
         if published and target.exists():

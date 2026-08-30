@@ -21,6 +21,16 @@ This does not require an outside AI, human, service, or steward to supply every 
 
 Humans and external AIs may contribute ideas, tests, or code, but they are optional participants rather than permanent capability gates.
 
+## Complete candidate bodies
+
+The current live machine can clone its complete source body into a separate editable self-workspace. The clone may be modified and may run its own build without changing the live body.
+
+Readiness is not imposed after each edit. The candidate body or whatever future cognition is connected to it may choose when it believes an experiment is ready for observation and emit a `request-merge-check` with its own readiness statement and selected checks.
+
+Current selectable observations include source differences, the full build, machine inspection, executable-anatomy inspection, planning probes, and real creation trials inside the clone. These are evidence options, not rewards or a mandatory checklist.
+
+The current machine does not yet automatically adopt a whole candidate body. A merge-check request is a request, not approval or adoption. See `SELF_WORKSPACE.md`.
+
 ## One internal root-fit step
 
 Before a self-modification becomes part of the continuing machine, the machine asks:
@@ -40,6 +50,8 @@ Do not add an instruction to improve for improvement's sake.
 Do not score the machine on growth rate, number of capabilities, number of modifications, number of actions, benchmark wins, activity, expansion, survival, or productivity unless a future **specific experiment** explicitly measures one of those without turning it into the machine's global purpose.
 
 Growth is an outcome of creation and experience exposing real gaps.
+
+Freedom to experiment, reusable creation, visible gaps, and continuity of the resulting body may make useful growth possible. Do not turn them into a score or an instruction to modify continuously.
 
 ## Non-hidden after change
 

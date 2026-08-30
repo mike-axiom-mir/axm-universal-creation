@@ -10,6 +10,8 @@ from .grammar import grammar_inventory
 from .project import ProjectError, build_project, validate_project
 from .registry import Registry
 from .repair import patch_project
+from .self_workspace import SelfWorkspaceError, operate_self_workspace
+from .template import instantiate_project_template
 
 
 class CapabilityError(RuntimeError):
@@ -82,10 +84,37 @@ def builtin_write_project(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
             project_type=str(inputs.get("project_type", "generic")),
             checks=inputs.get("checks") if isinstance(inputs.get("checks"), list) else None,
             replace=bool(inputs.get("replace", False)),
+            publish_mode=str(inputs.get("publish_mode", "grounded-draft")),
         )
         result["grammar_inventory"] = grammar_inventory(target)
         return result
     except ProjectError as exc:
+        raise CapabilityError(str(exc), exc.details) from exc
+
+
+def builtin_instantiate_project_template(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+    target = _resolve_output_path(root, str(inputs["path"]))
+    if _is_machine_body_path(root, target):
+        raise CapabilityError("normal template creation cannot rewrite the machine body; self-modification remains a separate future growth path")
+    try:
+        result = instantiate_project_template(
+            target=target,
+            template=inputs["template"],
+            variables=inputs["variables"],
+            checks=inputs.get("checks") if isinstance(inputs.get("checks"), list) else None,
+            replace=bool(inputs.get("replace", False)),
+            publish_mode=str(inputs.get("publish_mode", "grounded-draft")),
+        )
+        result["grammar_inventory"] = grammar_inventory(target)
+        return result
+    except ProjectError as exc:
+        raise CapabilityError(str(exc), exc.details) from exc
+
+
+def builtin_self_workspace(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+    try:
+        return operate_self_workspace(root, inputs)
+    except SelfWorkspaceError as exc:
         raise CapabilityError(str(exc), exc.details) from exc
 
 
@@ -128,6 +157,8 @@ BUILTINS: dict[str, Callable[[Path, dict[str, Any]], dict[str, Any]]] = {
     "builtin:write_json": builtin_write_json,
     "builtin:inspect_registry": builtin_inspect_registry,
     "builtin:write_project": builtin_write_project,
+    "builtin:instantiate_project_template": builtin_instantiate_project_template,
+    "builtin:self_workspace": builtin_self_workspace,
     "builtin:verify_project": builtin_verify_project,
     "builtin:patch_project": builtin_patch_project,
 }
