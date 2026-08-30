@@ -286,6 +286,7 @@ class InterfaceOrganDiscoveryTests(unittest.TestCase):
         )
         analysis = analyze_creation_gap(ROOT, request)
         self.assertEqual(analysis["status"], "HOLD_MISSING_ORGAN_INTERFACE")
+        self.assertIn("explore-missing-organ-closure", analysis["safe_next_step"])
         discovery = analysis["composite_candidates"][0]["organ_discovery"]
         self.assertEqual(
             discovery["missing_unit_contracts"][0]["must_provide"],

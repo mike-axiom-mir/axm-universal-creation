@@ -59,6 +59,8 @@ Working organs may also remain in the separate versioned `executable-organs/` bo
 
 Creation may now start one level higher: an exact interface goal can name what the project body must provide without naming packages or dependency edges. A bounded search derives only a uniquely smallest complete installed-organ closure. Missing interfaces become explicit Forge-ready organ contracts; ambiguous closures and incomplete bindings remain HOLDs. This lets the installed organ body multiply combinations while preserving explicit caller values and the boundary between structural discovery and semantic invention.
 
+An emitted missing-organ contract can now meet one explicitly supplied organ proposal in a detached closure experiment. The machine validates the source and declaration alignment, Forge-tests the candidate, temporarily combines it with installed packages, re-runs the original interface goal, requires the candidate to participate, and validates the resulting full project. This closes the evidence loop without automatically inventing, installing, admitting, or merging the organ. See `ORGAN_GAP_CLOSURE.md`.
+
 ## Spawn smaller creation machinery
 
 The deterministic Creation-Unit Forge now provides a smaller growth surface than a complete body clone. A human, AI, recipe, or explicit external boundary may supply one closed proposal for a hand, capability, organ, protocol, skill, specialist, recipe, or a newly named extension kind.

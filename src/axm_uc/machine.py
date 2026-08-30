@@ -13,6 +13,7 @@ from .executable import ExecutableAnatomy
 from .gap_synthesis import analyze_creation_gap, gap_synthesis_summary
 from .organ_library import ExecutableOrganLibrary
 from .organ_discovery import organ_discovery_summary
+from .organ_gap import organ_gap_summary
 from .registry import Registry
 from .spawn import creation_forge_summary
 
@@ -36,6 +37,7 @@ class UniversalCreationMachine:
             "software_directions": self.direction_model.summary(),
             "executable_organs": ExecutableOrganLibrary(self.root).summary(),
             "organ_discovery": organ_discovery_summary(),
+            "organ_gap_closure": organ_gap_summary(),
             "creation_forge": creation_forge_summary(),
             "gap_synthesis": gap_synthesis_summary(),
             "live_capabilities": self.capabilities.live(),

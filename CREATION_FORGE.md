@@ -101,11 +101,13 @@ PYTHONPATH=src python -m axm_uc create examples/requests/request_spawned_creatio
 
 The result remains under `creations/spawned/creation-request-protocol/`. Its admission request is evidence for a later decision, not the decision itself.
 
-## Current capability gap
+## From missing interface to tested detached organ
 
 The separate evidence-bound gap compiler can now produce two narrow classes of forge proposal from a real unroutable request: an exact UTF-8 file-route adapter backed by one observed compatible live primitive, or a bounded project recipe backed by exact template, explicitly assembled organ, interface-discovered organ, raw-file, existing verified-composite, verifier, and JSON-reporter contracts. It keeps every candidate path in evidence, selects one unique shortest complete route within three steps, and uses only a closed receipt-to-digest projection or exact whole-object binding. It embeds its gap analysis and runs a request-shaped fixture while leaving semantic equivalence and general behavior explicitly unproven. See `GAP_SYNTHESIS.md`.
 
 The installed organ body supplies one multiplier without pretending to invent semantics: an exact interface goal can derive a unique complete organ composition. Missing interfaces become Forge-ready organ contracts, and ambiguity stays visible. The Forge still requires a missing organ's actual source and tests before materializing that body.
+
+That closure can now be tested end to end when a human, AI, deterministic recipe, or labelled external boundary supplies the complete organ proposal. `explore-missing-organ-closure` first proves that the proposal/package declarations match the observed gap, then reuses this Forge for detached materialization and testing. A disposable package overlay must make the original goal READY with that candidate selected, and the full assembly must validate. The candidate remains detached and the live package body remains unchanged. See `ORGAN_GAP_CLOSURE.md`.
 
 The forge still does not autonomously synthesize arbitrary semantic source from a high-level gap, activate a newly spawned recipe as a general builder, prove arbitrary protocol semantics, run a generated organ end to end, or adopt every unit kind into a live registry.
 

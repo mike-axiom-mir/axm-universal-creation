@@ -55,6 +55,8 @@ The live machine can assemble one project from versioned template organs with ex
 
 An interface goal may instead name only exact required interfaces and explicit values. The machine derives a package/dependency closure only when one uniquely smallest complete installed solution exists. Missing interfaces emit Forge-ready organ contracts; ambiguous alternatives, incomplete bindings, cycles, collisions, and the bounded search remain HOLD. This is structural discovery, not semantic source proof or automatic package admission.
 
+One explicitly supplied organ Forge proposal can be tested against a missing-interface contract through `explore-missing-organ-closure`. The candidate is materialized and tested detached, made visible only in a disposable installed-plus-candidate library, required to participate in the re-discovered READY closure, and exercised in a validated full assembly. The live package body remains unchanged and passing is not admission or installation. See ORGAN_GAP_CLOSURE.md.
+
 CREATION-UNIT FORGE
 -------------------
 The live machine can turn one closed supplied design into a detached hand, capability, organ, protocol, skill, specialist, recipe, or newly named extension kind. It preserves exact path-independent lineage, runs the strongest implemented evidence for that kind, and permits a voluntary admission-review request without installing or merging anything. Skills are bounded methods; specialists are temporary method overlays, not identities or authority. See CREATION_FORGE.md.

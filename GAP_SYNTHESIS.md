@@ -116,6 +116,8 @@ The compiler refuses to guess when its blueprint cannot carry the gap:
 - `HOLD_ORGAN_DISCOVERY_SEARCH_BOUND` — exact-interface search reaches its explicit 10,000-state bound;
 - `HOLD_NO_COMPLETE_ORGAN_ASSEMBLY` — installed declarations cannot form an acyclic collision-free complete assembly.
 
+For `HOLD_MISSING_ORGAN_INTERFACE`, the analysis now names `explore-missing-organ-closure` as the concrete next seam. This is not automatic source synthesis: a complete explicit organ Forge proposal is still required. The closure experiment validates and tests that candidate, re-runs the exact goal in a disposable installed-plus-candidate library, and leaves the candidate detached. See `ORGAN_GAP_CLOSURE.md`.
+
 An explicit `bridge_capability_id` may resolve ambiguity only when it exactly names one candidate already present in the analysis. It cannot inject an unobserved dependency.
 
 Generated candidates also cannot shadow an existing live capability identity. Replacement or upgrade semantics require a separate explicit contract rather than being smuggled through this new-route compiler.

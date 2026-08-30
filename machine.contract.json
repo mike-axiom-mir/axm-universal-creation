@@ -76,10 +76,26 @@
     "ambiguousMinimumAssemblyHeld": true,
     "missingInterfaceOrganContractEmitted": true,
     "organDiscoveryMaximumStates": 10000,
+    "suppliedMissingOrganClosureExperimentAvailable": true,
+    "detachedCandidateMayEnterEphemeralLibraryOverlay": true,
+    "ephemeralClosureRequiresCandidateSelectionAndValidatedBuild": true,
+    "closureExperimentInstallsCandidate": false,
     "organInstanceScopedBindingsAvailable": true,
     "descriptiveOrgansAutomaticallyExecutable": false,
     "sourceInterfaceConformanceProven": false,
     "semanticRuntimeWiringInvented": false
+  },
+  "organGapClosure": {
+    "startsFromObservedMissingInterfaceHold": true,
+    "explicitOrganForgeProposalRequired": true,
+    "proposalAndPackageInterfacesMustExactlyAgree": true,
+    "detachedForgeTestRequired": true,
+    "ephemeralInstalledPlusCandidateDiscoveryAvailable": true,
+    "candidateMustParticipateInReadyClosure": true,
+    "ephemeralValidatedAssemblyBuildRequired": true,
+    "automaticSourceInvention": false,
+    "automaticAdmissionOrInstallation": false,
+    "runtimeBehaviorProven": false
   },
   "creationUnitForge": {
     "detachedCandidateMaterializationAvailable": true,

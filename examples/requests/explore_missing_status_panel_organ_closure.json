@@ -1,0 +1,133 @@
+{
+  "kind": "explore-missing-organ-closure",
+  "direction": "test whether one explicit detached organ design closes an observed interface gap without installing it",
+  "inputs": {
+    "path": "creations/spawned/status-panel-organ-candidate",
+    "replace": false,
+    "checks": [
+      {
+        "type": "contains",
+        "path": "status.html",
+        "text": "Candidate closes exact gap"
+      }
+    ],
+    "organ_goal": {
+      "schema": "axm.interface-organ-goal/v0.1",
+      "id": "axm.example.status-panel-site",
+      "version": "1.0.0",
+      "project_type": "static-web",
+      "required_interfaces": [
+        "status-panel"
+      ],
+      "bindings": {
+        "document-shell": {
+          "idle_label": "Create closure",
+          "title": "Detached organ closure"
+        },
+        "visual-theme": {
+          "background": "radial-gradient(circle at top, #315b89 0%, #10223b 50%, #06101d 100%)"
+        },
+        "local-interaction": {
+          "active_label": "Closure created",
+          "state": "created"
+        },
+        "status-panel": {
+          "message": "Candidate closes exact gap"
+        }
+      }
+    },
+    "proposal": {
+      "schema": "axm.creation-unit-spawn-proposal/v0.1",
+      "id": "axm.web.status-panel",
+      "version": "1.0.0",
+      "kind": "organ",
+      "purpose": "Supply one explicit status-panel organ for a detached missing-interface closure experiment.",
+      "files": {
+        "organ.json": "{\n  \"anatomy_refs\": [\n    \"AXM-09-UI-INTERACTION-C-001-ui-component\"\n  ],\n  \"files\": {\n    \"status.html\": \"<!doctype html><html><body><aside>[[AXM:message]]</aside></body></html>\\n\"\n  },\n  \"id\": \"axm.web.status-panel\",\n  \"limitations\": [\n    \"This exact fragment does not prove browser-rendered visual quality or runtime behavior.\"\n  ],\n  \"parameters\": [\n    \"message\"\n  ],\n  \"project_types\": [\n    \"static-web\"\n  ],\n  \"provenance\": {\n    \"basis\": \"Explicit human/AI example source supplied to test one observed missing-interface closure.\",\n    \"kind\": \"human-ai-supplied-example\"\n  },\n  \"provides\": [\n    \"status-panel\"\n  ],\n  \"purpose\": \"Own one exact status panel after local interaction.\",\n  \"requires\": [\n    \"local-interaction\"\n  ],\n  \"schema\": \"axm.executable-software-organ/v0.1\",\n  \"status\": \"executable\",\n  \"version\": \"1.0.0\"\n}\n"
+      },
+      "implementation": {
+        "kind": "DETERMINISTIC_SOURCE",
+        "entrypoint": "organ.json",
+        "source_files": [
+          "organ.json"
+        ]
+      },
+      "contracts": {
+        "inputs": {
+          "bindings": [
+            "message"
+          ]
+        },
+        "outputs": {
+          "files": [
+            "status.html"
+          ]
+        },
+        "provides": [
+          "status-panel"
+        ],
+        "requires": [
+          "local-interaction"
+        ]
+      },
+      "dependencies": [
+        {
+          "kind": "organ",
+          "ref": "axm.web.interaction@1.0.0",
+          "optional": false
+        }
+      ],
+      "relationships": [
+        {
+          "type": "closes-interface-gap",
+          "target": "status-panel"
+        }
+      ],
+      "verification": {
+        "checks": [
+          {
+            "type": "json-valid",
+            "path": "organ.json"
+          }
+        ]
+      },
+      "provenance": {
+        "kind": "human-ai-supplied-example",
+        "refs": [
+          "HOLD_MISSING_ORGAN_INTERFACE:status-panel"
+        ],
+        "basis": "The source is explicit; the closure experiment must test it without claiming automatic invention or admission."
+      },
+      "limitations": [
+        "This supplied candidate proves only its exact detached closure fixture."
+      ],
+      "authority": {
+        "execute": false,
+        "install": false,
+        "register": false,
+        "promote": false,
+        "merge": false,
+        "canon": false,
+        "permissions": false
+      },
+      "root_fit": {
+        "truth": {
+          "fit": true,
+          "basis": "The exact source, declarations, tests, and remaining proof boundary are explicit."
+        },
+        "agency": {
+          "fit": true,
+          "basis": "The candidate remains detached and grants itself no authority."
+        },
+        "continuity": {
+          "fit": true,
+          "basis": "The live executable-organ package body remains unchanged."
+        },
+        "wisdom-before-speed": {
+          "fit": true,
+          "basis": "The observed gap must close and build before any separate review decision."
+        }
+      }
+    }
+  }
+}

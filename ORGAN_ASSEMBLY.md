@@ -34,6 +34,8 @@ The assembly logic also exposes a read-only deterministic preview seam. It perfo
 
 The separate interface-discovery seam can now derive that exact assembly first. A caller supplies required interface names and explicit bindings but no package refs or dependency edges. `AXM-CAP-COMPOSE-ORGAN-PROJECT@0.1.0` searches only installed `provides`/`requires` declarations, selects only one uniquely smallest complete set, reduces redundant dependency edges, and delegates the result back to this assembly machinery. Missing providers emit inspectable organ contracts; equally small alternatives and incomplete bindings HOLD.
 
+When a provider is missing, `AXM-CAP-EXPLORE-ORGAN-GAP@0.1.0` may receive one explicit detached organ proposal. After Forge testing, it reuses this exact assembly path inside disposable project space with the candidate present only in an ephemeral package overlay. Success requires the candidate ref in the selected closure and validated full-project publication; it does not install the organ. See `ORGAN_GAP_CLOSURE.md`.
+
 Try the included three-organ local site:
 
 ```bash
@@ -42,6 +44,7 @@ PYTHONPATH=src python -m axm_uc create examples/requests/create_reusable_organ_s
 PYTHONPATH=src python -m axm_uc create examples/requests/explore_verified_organ_gap.json
 PYTHONPATH=src python -m axm_uc create examples/requests/explore_verified_organ_report_gap.json
 PYTHONPATH=src python -m axm_uc create examples/requests/explore_interface_discovered_organ_report_gap.json
+PYTHONPATH=src python -m axm_uc create examples/requests/explore_missing_status_panel_organ_closure.json
 ```
 
 Its `shell-organ` owns `index.html`, `theme-organ` owns `style.css`, and `interaction-organ` owns `app.js`. The latter two depend on the shell, and the interaction organ also depends on the theme.

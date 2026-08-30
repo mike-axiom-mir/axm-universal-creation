@@ -9,6 +9,7 @@ from .atomic import atomic_write_json, atomic_write_text
 from .grammar import grammar_inventory
 from .organ_library import ExecutableOrganError, ExecutableOrganLibrary, resolve_organ_assembly
 from .organ_discovery import OrganDiscoveryError, discover_interface_assembly
+from .organ_gap import OrganGapError, explore_missing_organ_closure
 from .organ_project import assemble_organ_project
 from .project import ProjectError, build_project, validate_project
 from .registry import Registry
@@ -206,6 +207,29 @@ def builtin_inspect_executable_organs(root: Path, inputs: dict[str, Any]) -> dic
         raise CapabilityError(str(exc), exc.details) from exc
 
 
+def builtin_explore_organ_gap(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+    target = _resolve_output_path(root, str(inputs["path"]))
+    if _is_machine_body_path(root, target):
+        raise CapabilityError(
+            "missing-organ closure candidates must stay detached from the live machine body; use creations/ or an external path"
+        )
+    if "checks" in inputs and not isinstance(inputs["checks"], list):
+        raise CapabilityError("missing-organ closure checks must be a list")
+    if "replace" in inputs and not isinstance(inputs["replace"], bool):
+        raise CapabilityError("missing-organ closure replace must be a boolean")
+    try:
+        return explore_missing_organ_closure(
+            root=root,
+            target=target,
+            raw_goal=inputs["organ_goal"],
+            raw_proposal=inputs["proposal"],
+            checks=inputs.get("checks"),
+            replace=inputs.get("replace", False),
+        )
+    except (OrganGapError, OrganDiscoveryError, ExecutableOrganError) as exc:
+        raise CapabilityError(str(exc), exc.details) from exc
+
+
 def builtin_spawn_creation_unit(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
     from .spawn import SpawnError, operate_spawn_unit
 
@@ -282,6 +306,7 @@ BUILTINS: dict[str, Callable[[Path, dict[str, Any]], dict[str, Any]]] = {
     "builtin:assemble_organ_project": builtin_assemble_organ_project,
     "builtin:compose_organ_project": builtin_compose_organ_project,
     "builtin:inspect_executable_organs": builtin_inspect_executable_organs,
+    "builtin:explore_organ_gap": builtin_explore_organ_gap,
     "builtin:spawn_creation_unit": builtin_spawn_creation_unit,
     "builtin:gap_synthesis": builtin_synthesize_creation_gap,
     "builtin:verify_project": builtin_verify_project,

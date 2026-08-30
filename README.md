@@ -126,6 +126,7 @@ The small Python runtime currently provides:
 - dependency-aware software-organ assembly with declared interfaces, explicit order, and file ownership;
 - an exact local executable-organ package body that makes working organs reusable across creations;
 - bounded exact-interface organ discovery that derives one unique minimum installed package closure while preserving missing and ambiguous states as HOLDs;
+- a detached missing-organ closure experiment that Forge-tests explicit supplied source, re-runs discovery with a disposable candidate overlay, and validates the complete assembly without installation;
 - a deterministic detached creation-unit forge for hands, capabilities, organs, protocols, skills, specialists, recipes, and new extension kinds;
 - an evidence-bound gap compiler that can derive and test either the smallest supported UTF-8 file-route adapter or a bounded project recipe of up to three exact producer, verifier, existing-composite, and JSON-report steps from a real unroutable request;
 - complete editable self-workspace cloning, exact source comparison, independent build logs, and voluntary merge-check requests;
@@ -175,6 +176,7 @@ Current live project handles:
 - `resolve-executable-organ`
 - `discover-organ-assembly`
 - `interface-organ-project`
+- `explore-missing-organ-closure`
 - `spawn-creation-unit`
 - `inspect-spawned-unit`
 - `test-spawned-unit`
@@ -200,7 +202,7 @@ Every `.json` file is automatically parsed for JSON validity in every project ty
 
 Reusable project templates use strict `[[AXM:name]]` placeholders in paths and contents. Substitution is exact, raw, single-pass, and non-recursive; missing, unused, malformed, colliding, and escaping inputs are rejected. See `PROJECT_TEMPLATES.md` and `GROUNDED_CREATION.md`.
 
-Software-organ assembly composes several versioned template organs through an explicit dependency graph. Organs may be supplied inline, resolved from the separate `executable-organs/` body through an exact `id@version` reference, or discovered from exact required interfaces plus caller-supplied bindings. Interface discovery selects only one uniquely smallest complete installed package closure; missing providers emit organ contracts and equally small alternatives HOLD. Declared `provides`/`requires` interfaces must resolve through the graph, every rendered file has one visible organ owner, and missing dependencies, cycles, interface gaps, binding drift, package overrides, and ownership collisions are rejected before publication. Declared interface resolution does not yet prove source-level conformance. See `ORGAN_ASSEMBLY.md` and `EXECUTABLE_ORGANS.md`.
+Software-organ assembly composes several versioned template organs through an explicit dependency graph. Organs may be supplied inline, resolved from the separate `executable-organs/` body through an exact `id@version` reference, or discovered from exact required interfaces plus caller-supplied bindings. Interface discovery selects only one uniquely smallest complete installed package closure; missing providers emit organ contracts and equally small alternatives HOLD. One explicit human/AI/recipe organ proposal can now be Forge-tested against such a missing contract, made visible only in a disposable exact library overlay, and required to participate in a validated full closure build. It remains detached afterward. Declared `provides`/`requires` interfaces must resolve through the graph, every rendered file has one visible organ owner, and missing dependencies, cycles, interface gaps, binding drift, package overrides, and ownership collisions are rejected before publication. Declared interface resolution does not yet prove source-level conformance. See `ORGAN_ASSEMBLY.md`, `EXECUTABLE_ORGANS.md`, and `ORGAN_GAP_CLOSURE.md`.
 
 Every project file receipt now includes its SHA-256 content digest. The independent `trial` pass rechecks those exact observed digests, so direct, templated, and organ-based creations receive the same second-body integrity observation. This is artifact evidence, not a required global machine hash baseline.
 
@@ -218,6 +220,7 @@ PYTHONPATH=src python -m axm_uc create examples/requests/create_templated_site.j
 PYTHONPATH=src python -m axm_uc create examples/requests/create_organ_site.json
 PYTHONPATH=src python -m axm_uc create examples/requests/create_reusable_organ_site.json
 PYTHONPATH=src python -m axm_uc create examples/requests/explore_interface_discovered_organ_report_gap.json
+PYTHONPATH=src python -m axm_uc create examples/requests/explore_missing_status_panel_organ_closure.json
 PYTHONPATH=src python -m axm_uc create examples/requests/spawn_creation_protocol.json
 PYTHONPATH=src python -m axm_uc create examples/requests/test_spawned_creation_protocol.json
 PYTHONPATH=src python -m axm_uc create examples/requests/analyze_note_route_gap.json

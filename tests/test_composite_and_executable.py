@@ -19,8 +19,8 @@ class CompositeAndExecutableTests(unittest.TestCase):
         self.assertEqual(summary["truth_status"], "EXPLICIT_LIVE_CAPABILITY_BINDINGS")
         self.assertEqual(summary["implemented_master_records"], 10)
         self.assertEqual(summary["implemented_master_by_level"], {"component": 9, "organ": 1})
-        self.assertEqual(summary["live_capabilities"], 15)
-        self.assertEqual(summary["resolved_bindings"], 30)
+        self.assertEqual(summary["live_capabilities"], 16)
+        self.assertEqual(summary["resolved_bindings"], 33)
 
         project = machine.executable(master_id="AXM-24-WORKSPACE-COLLABORATION-C-010-project")["master"]
         self.assertEqual(project["status"], "live-backed")
@@ -53,7 +53,11 @@ class CompositeAndExecutableTests(unittest.TestCase):
         self.assertEqual(interface_contract["status"], "live-backed")
         self.assertEqual(
             interface_contract["implemented_by"],
-            ["AXM-CAP-ASSEMBLE-ORGAN-PROJECT", "AXM-CAP-COMPOSE-ORGAN-PROJECT"],
+            [
+                "AXM-CAP-ASSEMBLE-ORGAN-PROJECT",
+                "AXM-CAP-COMPOSE-ORGAN-PROJECT",
+                "AXM-CAP-EXPLORE-ORGAN-GAP",
+            ],
         )
 
         package_manifest = machine.executable(master_id="AXM-06-BUILD-PACKAGE-C-001-package-manifest")["master"]

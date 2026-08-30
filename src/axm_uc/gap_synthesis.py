@@ -690,6 +690,8 @@ def gap_synthesis_summary() -> dict[str, Any]:
         "semantic_source_invention": False,
         "ambiguous_bridge_auto_selection": False,
         "missing_or_ambiguous_composite_link_is_hold": True,
+        "missing_organ_interface_can_route_to_supplied_detached_closure_experiment": True,
+        "missing_organ_closure_handle": "explore-missing-organ-closure",
         "closed_binding_transforms": ["file-digest-map"],
         "closed_binding_edges": ["file-digest-map", "exact-whole-object"],
         "unsupported_gap_is_hold": True,
@@ -846,7 +848,9 @@ def analyze_creation_gap(root: Path, raw_request: Any) -> dict[str, Any]:
         "semantic_equivalence_proven": False,
         "source_code_invented": False,
         "safe_next_step": (
-            "compile and test one detached composite recipe hypothesis"
+            "supply one explicit organ Forge proposal to explore-missing-organ-closure; the closure experiment will not install it"
+            if status == "HOLD_MISSING_ORGAN_INTERFACE"
+            else "compile and test one detached composite recipe hypothesis"
             if composite_candidate is not None and composite_candidate["status"] == "READY_EXACT_COMPOSITE_CHAIN"
             else "compile and test one detached adapter hypothesis"
             if selected

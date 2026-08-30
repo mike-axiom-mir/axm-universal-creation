@@ -102,6 +102,8 @@ For example, requesting only `local-interaction` discovers that the installed in
 
 `discover-organ-assembly` exposes the complete read-only plan. `interface-organ-project` publishes it. Multiple equally small complete assemblies produce `HOLD_AMBIGUOUS_ORGAN_ASSEMBLY`. An absent provider produces `HOLD_MISSING_ORGAN_INTERFACE` plus an `axm.missing-executable-organ-contract/v0.1` body suitable for later human, AI, recipe, or Forge design. Incomplete bindings, cycles, collisions, and the 10,000-state search bound remain typed HOLDs. No HOLD invents source, installs a package, or admits a candidate.
 
+`explore-missing-organ-closure` can test one explicitly supplied organ answer to that HOLD. It requires exact agreement between the Forge proposal and package interface declarations, materializes and tests the candidate detached, adds it only to a disposable installed-plus-candidate library, re-runs the original goal, requires the candidate to participate in the selected READY assembly, and validates the complete project in disposable space. The candidate is not copied into this live package body. See `ORGAN_GAP_CLOSURE.md`.
+
 ## Capability multiplier
 
 The top-level live-capability count measures routed machine operations. Executable-organ packages are a second, composable capability surface. Adding a valid package can expand what assemblies create without adding a new Python builtin or pretending the package is a top-level route.
