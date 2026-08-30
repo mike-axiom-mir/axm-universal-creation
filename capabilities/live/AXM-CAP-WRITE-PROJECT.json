@@ -1,6 +1,6 @@
 {
   "id": "AXM-CAP-WRITE-PROJECT",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "status": "live",
   "purpose": "Create a deterministic multi-file text project, validate it before publish, then publish it as one project body.",
   "handles": [
@@ -48,6 +48,7 @@
   },
   "limitations": [
     "current milestone writes text files only",
+    "JSON validation proves parseability, not schema or semantic correctness",
     "static-web validation checks local src/href resolution across project HTML/HTM pages but not complete HTML validity",
     "generated code is validated but not executed",
     "visual and interactive behavior still requires an authorized browser/host test"

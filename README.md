@@ -150,6 +150,8 @@ Current deterministic project checks:
 
 `static-web` automatically checks for `index.html` and verifies local `src`/`href` references from every `.html` and `.htm` page in the project. `python` automatically compiles `.py` files for syntax without executing them.
 
+Every `.json` file is automatically parsed for JSON validity in every project type.
+
 The `trial` command ties the current loop together:
 
 `PLAN -> CREATE -> POST-CREATE VERIFY -> PASS / GAP`

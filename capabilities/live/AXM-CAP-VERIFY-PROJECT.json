@@ -1,6 +1,6 @@
 {
   "id": "AXM-CAP-VERIFY-PROJECT",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "status": "live",
   "purpose": "Independently inspect a created project body using deterministic structural and exact-content checks without executing generated code.",
   "handles": [
@@ -43,6 +43,7 @@
     "source": "src/axm_uc/project.py"
   },
   "limitations": [
+    "every project JSON file is parser-validated automatically, but schema and semantic correctness require separate checks",
     "HTML verification checks local src/href resolution across project HTML/HTM pages but is not a complete HTML parser or browser test",
     "does not execute generated code",
     "does not substitute for browser visual/interaction testing"

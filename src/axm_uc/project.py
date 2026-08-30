@@ -265,6 +265,13 @@ def validate_project(
         }
 
     results.append(_check_project_nonempty(root, {}))
+    json_files = sorted(
+        path.relative_to(root).as_posix()
+        for path in root.rglob("*")
+        if path.is_file() and path.suffix.casefold() == ".json"
+    )
+    for relative in json_files:
+        results.append(_check_json(root, {"path": relative}))
     if project_type in {"static-web", "web", "static-web-project"}:
         results.append(_check_file_exists(root, {"path": "index.html"}))
         html_files = sorted(

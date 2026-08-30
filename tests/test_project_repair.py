@@ -131,6 +131,23 @@ class ProjectRepairTests(unittest.TestCase):
             self.assertEqual(result["details"]["phase"], "pre-publish")
             self.assertEqual((target / "app.py").read_text(encoding="utf-8"), original)
 
+    def test_invalid_json_repair_is_blocked_and_preserves_original(self):
+        with tempfile.TemporaryDirectory() as td:
+            target = Path(td) / "data-project"
+            original = '{"ready": true}\n'
+            machine = self._create(target, {"data.json": original})
+            result = machine.create({
+                "kind": "patch-project",
+                "inputs": {
+                    "path": str(target),
+                    "operations": [{"op": "update", "path": "data.json", "content": "{broken json}"}],
+                },
+            })
+            self.assertEqual(result["type"], "CREATION_ERROR", result)
+            self.assertEqual(result["details"]["phase"], "pre-publish")
+            self.assertTrue(result["details"]["original_unchanged"])
+            self.assertEqual((target / "data.json").read_text(encoding="utf-8"), original)
+
     def test_unsafe_repair_path_is_rejected_before_original_changes(self):
         with tempfile.TemporaryDirectory() as td:
             target = Path(td) / "project"

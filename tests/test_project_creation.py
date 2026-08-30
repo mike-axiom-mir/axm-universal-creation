@@ -170,6 +170,41 @@ class ProjectCreationTests(unittest.TestCase):
             self.assertTrue(any(row["type"] == "project-nonempty" for row in checks))
             self.assertTrue(any(row["type"] == "expected-files-exact" for row in checks))
 
+    def test_valid_json_file_is_automatically_parsed(self):
+        with tempfile.TemporaryDirectory() as td:
+            target = Path(td) / "data-project"
+            result = UniversalCreationMachine(ROOT).create({
+                "kind": "software-project",
+                "inputs": {"path": str(target), "files": {"nested/data.JSON": '{"ready": true}\n'}},
+            })
+            self.assertEqual(result["type"], "CREATION_RESULT", result)
+            json_check = next(
+                row for row in result["result"]["validation"]["checks"] if row["type"] == "json-valid"
+            )
+            self.assertTrue(json_check["passed"])
+            self.assertEqual(json_check["path"], "nested/data.JSON")
+            inventory_file = result["result"]["grammar_inventory"]["files"][0]
+            self.assertEqual(inventory_file["validation"], "parser-backed-automatic")
+
+    def test_invalid_json_file_blocks_project_publish(self):
+        with tempfile.TemporaryDirectory() as td:
+            target = Path(td) / "invalid-data-project"
+            result = UniversalCreationMachine(ROOT).create({
+                "kind": "static-web-project",
+                "inputs": {
+                    "path": str(target),
+                    "project_type": "static-web",
+                    "files": {"index.html": "<main>Data</main>", "data.json": "{broken json}"},
+                },
+            })
+            self.assertEqual(result["type"], "CREATION_ERROR", result)
+            json_check = next(
+                row for row in result["details"]["validation"]["checks"] if row["type"] == "json-valid"
+            )
+            self.assertFalse(json_check["passed"])
+            self.assertEqual(json_check["path"], "data.json")
+            self.assertFalse(target.exists())
+
     def test_expected_file_verification_detects_later_change(self):
         with tempfile.TemporaryDirectory() as td:
             target = Path(td) / "generic"

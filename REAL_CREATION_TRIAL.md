@@ -26,6 +26,8 @@ The current project validator supports:
 
 `python` projects automatically compile every `.py` file for syntax without executing the generated program.
 
+Every `.json` file is automatically parsed for JSON validity in every project type.
+
 ## Important truth boundary
 
 A passing deterministic project trial means:
@@ -33,6 +35,7 @@ A passing deterministic project trial means:
 - the requested files were actually written;
 - project-relative paths stayed inside the project body;
 - configured deterministic checks passed;
+- every JSON file parsed successfully;
 - local static-web references in every HTML/HTM page resolved when that project type was used;
 - Python source parsed/compiled when that project type was used;
 - the published project matched what the verifier subsequently observed.
