@@ -42,6 +42,7 @@
     "accepts supplied source rather than claiming the deterministic kernel invented semantic implementation",
     "requires exact equality between Forge unit provides/requires and executable-organ package declarations",
     "materializes and tests the candidate through the continuing detached Creation-Unit Forge",
+    "re-hashes the candidate bytes copied into the disposable overlay and holds if they differ from the Forge-tested source",
     "makes the candidate visible only in a disposable exact library overlay together with installed package sources",
     "re-runs the original interface goal and requires the candidate exact ref to participate in the selected READY closure",
     "builds the complete closure in disposable validated project space before reporting success",
@@ -75,7 +76,7 @@
     "declared interface names remain structural contracts and source-level conformance is not proven",
     "the ephemeral project validates files and caller checks but does not execute generated runtime behavior or judge visual quality",
     "the candidate remains detached and is not installed into executable-organs/ or admitted by this operation",
-    "candidate ref collisions, proposal/package contract drift, unrelated proposals, failed Forge tests, incomplete closure, and failed builds remain typed HOLDs"
+    "candidate ref collisions, proposal/package contract drift, unrelated proposals, failed Forge tests, post-test source drift, incomplete closure, and failed builds remain typed HOLDs"
   ],
   "persistent_state": "only the caller-selected detached Forge candidate persists; overlays and closure projects are disposed after each experiment",
   "root_fit": {

@@ -23,6 +23,10 @@ class OrganGapError(RuntimeError):
         self.details = details or {}
 
 
+class CandidateSourceDriftError(OrganGapError):
+    pass
+
+
 def _sha256_text(value: str) -> str:
     return f"sha256:{hashlib.sha256(value.encode('utf-8')).hexdigest()}"
 
@@ -154,6 +158,17 @@ def _overlay_sources(
             {"overlay_path": destination.relative_to(overlay_root).as_posix()},
         )
     shutil.copy2(candidate_entrypoint, destination)
+    copied_digest = f"sha256:{hashlib.sha256(destination.read_bytes()).hexdigest()}"
+    if copied_digest != candidate_digest:
+        raise CandidateSourceDriftError(
+            "candidate organ source changed after its detached Forge test",
+            {
+                "source_path": str(candidate_entrypoint),
+                "overlay_path": destination.relative_to(overlay_root).as_posix(),
+                "expected_sha256": candidate_digest,
+                "observed_sha256": copied_digest,
+            },
+        )
     receipts.append({
         "role": "detached-candidate-source",
         "source_path": str(candidate_entrypoint),
@@ -288,7 +303,16 @@ def explore_missing_organ_closure(
     candidate_digest = experiment_base["candidate_package_digest"]
     with tempfile.TemporaryDirectory(prefix="axm-organ-gap-overlay-") as overlay_dir:
         overlay_root = Path(overlay_dir)
-        sources = _overlay_sources(root, overlay_root, entrypoint, candidate_digest)
+        try:
+            sources = _overlay_sources(root, overlay_root, entrypoint, candidate_digest)
+        except CandidateSourceDriftError as exc:
+            return _hold(
+                experiment_base,
+                "HOLD_CANDIDATE_ORGAN_SOURCE_DRIFT",
+                "OBSERVED_DETACHED_CANDIDATE_SOURCE_DRIFT_HOLD",
+                "the candidate entrypoint bytes no longer match the source that passed the detached Forge test",
+                source_drift={"message": str(exc), "details": copy.deepcopy(exc.details)},
+            )
         overlay_library = ExecutableOrganLibrary(overlay_root)
         final_discovery = discover_interface_assembly(overlay_root, raw_goal)
         overlay_receipt = {

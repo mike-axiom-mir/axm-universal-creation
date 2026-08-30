@@ -90,6 +90,7 @@
     "explicitOrganForgeProposalRequired": true,
     "proposalAndPackageInterfacesMustExactlyAgree": true,
     "detachedForgeTestRequired": true,
+    "candidateBytesRehashedAtOverlayBoundary": true,
     "ephemeralInstalledPlusCandidateDiscoveryAvailable": true,
     "candidateMustParticipateInReadyClosure": true,
     "ephemeralValidatedAssemblyBuildRequired": true,

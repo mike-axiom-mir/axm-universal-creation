@@ -50,6 +50,8 @@ It re-runs the original interface goal against that overlay. Success requires:
 3. exact resolution and organ assembly succeed;
 4. the complete project passes validated publication and caller checks in disposable space.
 
+The candidate entrypoint is hashed again after it is copied into the overlay. If those bytes differ from the source that passed the Forge test, the experiment stops before discovery rather than attaching stale test evidence to changed source.
+
 The overlay and project are deleted after the experiment. Their source digests, package refs, selected assembly, file receipts, validation, and proof limits remain in the returned evidence.
 
 ## HOLD states
@@ -62,6 +64,7 @@ The overlay and project are deleted after the experiment. Their source digests, 
 - `HOLD_ORGAN_PROPOSAL_NOT_LINKED_TO_GAP`
 - `HOLD_CANDIDATE_ORGAN_REF_COLLISION`
 - `HOLD_CANDIDATE_ORGAN_TEST_FAILED`
+- `HOLD_CANDIDATE_ORGAN_SOURCE_DRIFT`
 - `HOLD_CANDIDATE_ORGAN_CLOSURE_INCOMPLETE`
 - `HOLD_CANDIDATE_ORGAN_NOT_SELECTED`
 - `HOLD_CANDIDATE_ORGAN_CLOSURE_BUILD_FAILED`

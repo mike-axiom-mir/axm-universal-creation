@@ -6,6 +6,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -251,6 +252,31 @@ class MissingOrganClosureTests(unittest.TestCase):
             self.assertEqual(held["status"], "HOLD_CANDIDATE_ORGAN_PACKAGE_INVALID")
             self.assertFalse(held["candidate_target_created"])
             self.assertFalse(target.exists())
+
+    def test_candidate_source_drift_after_forge_test_holds_before_overlay_discovery(self):
+        from axm_uc import spawn as spawn_module
+
+        original_test = spawn_module.test_spawned_unit
+
+        def test_then_mutate(root: Path, target: Path) -> dict:
+            result = original_test(root, target)
+            (target / "organ.json").write_text("{}\n", encoding="utf-8")
+            return result
+
+        before_refs = ExecutableOrganLibrary(ROOT).summary()["package_refs"]
+        with tempfile.TemporaryDirectory() as td:
+            target = Path(td) / "drifted-after-test"
+            with patch("axm_uc.spawn.test_spawned_unit", side_effect=test_then_mutate):
+                held = self._request(target, self._proposal())["result"]
+            self.assertEqual(held["status"], "HOLD_CANDIDATE_ORGAN_SOURCE_DRIFT")
+            self.assertTrue(held["candidate_test"]["passed"])
+            self.assertTrue(held["candidate_target_created"])
+            self.assertNotEqual(
+                held["source_drift"]["details"]["expected_sha256"],
+                held["source_drift"]["details"]["observed_sha256"],
+            )
+            self.assertNotIn("closure_discovery", held)
+        self.assertEqual(ExecutableOrganLibrary(ROOT).summary()["package_refs"], before_refs)
 
     def test_tested_candidate_can_still_hold_on_incomplete_closure_or_failed_build(self):
         with tempfile.TemporaryDirectory() as td:
