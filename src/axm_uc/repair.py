@@ -118,13 +118,7 @@ def patch_project(
     checks: list[dict[str, Any]] | None = None,
     expected_files: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """Patch an existing project transactionally and publish only verified state.
-
-    The project is copied into a temporary sibling, explicit operations are applied
-    there, and deterministic validation runs before the original is touched. The
-    original stays available as the rollback body until post-publish validation
-    passes.
-    """
+    """Patch an existing project transactionally and publish only verified state."""
     target = Path(target).resolve()
     if not target.is_dir():
         raise ProjectError(f"repair target project does not exist: {target}")
@@ -194,6 +188,7 @@ def patch_project(
                 "before_files": before_files,
                 "after_files": _file_manifest(target),
             },
+            "expected_files": combined_expected or {},
             "validation": post_validation,
             "grammar_inventory": grammar_inventory(target),
             "limitations": [
