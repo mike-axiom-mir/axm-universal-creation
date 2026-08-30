@@ -1,8 +1,8 @@
 {
   "id": "AXM-CAP-VERIFY-PROJECT",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "status": "live",
-  "purpose": "Independently inspect a created project body using deterministic structural checks without executing generated code.",
+  "purpose": "Independently inspect a created project body using deterministic structural and exact-content checks without executing generated code.",
   "handles": [
     "verify-project"
   ],
@@ -13,7 +13,8 @@
     "properties": {
       "path": "existing project directory, absolute or relative to the machine root",
       "project_type": "generic, static-web, or python",
-      "checks": "optional deterministic checks such as file-exists, contains, json-valid, python-compile, html-local-links"
+      "checks": "optional deterministic checks such as file-exists, contains, json-valid, python-compile, html-local-links",
+      "expected_files": "optional mapping of project-relative paths to exact expected UTF-8 text"
     }
   },
   "output_contract": {
@@ -28,6 +29,13 @@
   "dependencies": [],
   "relationships": [
     "read-only counterpart to AXM-CAP-WRITE-PROJECT"
+  ],
+  "anatomy_refs": [
+    {
+      "id": "AXM-20-TESTING-OBSERVABILITY-C-015-validation-report",
+      "role": "implements",
+      "basis": "This live capability emits a bounded deterministic validation report containing pass state, performed checks, observed files, and explicit limitations."
+    }
   ],
   "implementation": {
     "kind": "DETERMINISTIC_SOURCE",
