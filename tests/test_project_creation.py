@@ -4,11 +4,13 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from axm_uc.machine import UniversalCreationMachine
+from axm_uc.project import ProjectError, build_project
 
 
 class ProjectCreationTests(unittest.TestCase):
@@ -39,6 +41,7 @@ class ProjectCreationTests(unittest.TestCase):
             self.assertTrue((target / "index.html").is_file())
             self.assertTrue((target / "style.css").is_file())
             self.assertTrue((target / "app.js").is_file())
+            self.assertTrue(any(x["type"] == "expected-files-exact" for x in result["result"]["validation"]["checks"]))
 
             verify = machine.create({
                 "kind": "verify-project",
@@ -46,6 +49,7 @@ class ProjectCreationTests(unittest.TestCase):
                     "path": str(target),
                     "project_type": "static-web",
                     "checks": request["inputs"]["checks"],
+                    "expected_files": request["inputs"]["files"],
                 },
             })
             self.assertEqual(verify["type"], "CREATION_RESULT")
@@ -102,6 +106,51 @@ class ProjectCreationTests(unittest.TestCase):
             compile_checks = [x for x in result["result"]["validation"]["checks"] if x["type"] == "python-compile"]
             self.assertEqual(len(compile_checks), 1)
             self.assertTrue(compile_checks[0]["passed"])
+
+    def test_generic_project_never_passes_with_zero_checks(self):
+        with tempfile.TemporaryDirectory() as td:
+            target = Path(td) / "generic"
+            result = UniversalCreationMachine(ROOT).create({
+                "kind": "software-project",
+                "inputs": {"path": str(target), "files": {"note.txt": "hello"}},
+            })
+            self.assertEqual(result["type"], "CREATION_RESULT")
+            checks = result["result"]["validation"]["checks"]
+            self.assertTrue(any(row["type"] == "project-nonempty" for row in checks))
+            self.assertTrue(any(row["type"] == "expected-files-exact" for row in checks))
+
+    def test_expected_file_verification_detects_later_change(self):
+        with tempfile.TemporaryDirectory() as td:
+            target = Path(td) / "generic"
+            machine = UniversalCreationMachine(ROOT)
+            created = machine.create({
+                "kind": "software-project",
+                "inputs": {"path": str(target), "files": {"note.txt": "original"}},
+            })
+            self.assertEqual(created["type"], "CREATION_RESULT")
+            (target / "note.txt").write_text("changed", encoding="utf-8")
+            verify = machine.create({
+                "kind": "verify-project",
+                "inputs": {"path": str(target), "expected_files": {"note.txt": "original"}},
+            })
+            self.assertEqual(verify["type"], "CREATION_RESULT")
+            self.assertFalse(verify["result"]["passed"])
+            exact = next(row for row in verify["result"]["checks"] if row["type"] == "expected-files-exact")
+            self.assertFalse(exact["passed"])
+
+    def test_failed_post_publish_validation_restores_previous_project(self):
+        with tempfile.TemporaryDirectory() as td:
+            target = Path(td) / "replace-me"
+            target.mkdir()
+            (target / "old.txt").write_text("old", encoding="utf-8")
+            good = {"passed": True, "checks": [], "files": [], "limitations": []}
+            bad = {"passed": False, "checks": [{"type": "forced", "passed": False}], "files": [], "limitations": []}
+            with patch("axm_uc.project.validate_project", side_effect=[good, bad]):
+                with self.assertRaises(ProjectError):
+                    build_project(target, {"new.txt": "new"}, replace=True)
+            self.assertTrue((target / "old.txt").is_file())
+            self.assertEqual((target / "old.txt").read_text(encoding="utf-8"), "old")
+            self.assertFalse((target / "new.txt").exists())
 
     def test_trial_returns_plan_create_verify_in_one_result(self):
         with tempfile.TemporaryDirectory() as td:
