@@ -10,6 +10,7 @@ from typing import Any
 from .atomic import atomic_write_json
 from .capabilities import CapabilityError, CapabilityStore
 from .decompose import CreationDecomposer
+from .directions import SoftwareDirections
 from .executable import ExecutableAnatomy
 from .registry import Registry
 from .root_fit import evaluate_declared_root_fit
@@ -45,6 +46,7 @@ class UniversalCreationMachine:
         self.capabilities = CapabilityStore(self.root)
         self.decomposer = CreationDecomposer(self.registry, self.capabilities)
         self.executable_anatomy = ExecutableAnatomy(self.registry, self.capabilities, self.decomposer.topology)
+        self.direction_model = SoftwareDirections(self.root)
 
     def inspect(self, query: str = "", level: str | None = None, limit: int = 20) -> dict[str, Any]:
         contract = json.loads((self.root / "machine.contract.json").read_text(encoding="utf-8"))
@@ -53,9 +55,24 @@ class UniversalCreationMachine:
             "registry": self.registry.summary(),
             "topology": self.decomposer.topology.summary(),
             "executable_anatomy": self.executable_anatomy.summary(),
+            "software_directions": self.direction_model.summary(),
             "live_capabilities": self.capabilities.live(),
             "records": self.registry.search(query=query, level=level, limit=limit) if (query or level) else [],
         }
+
+    def software_directions(self, direction_id: str | None = None, suggest: str | None = None) -> dict[str, Any]:
+        result: dict[str, Any] = {
+            "type": "SOFTWARE_DIRECTIONS",
+            "summary": self.direction_model.summary(),
+        }
+        if direction_id:
+            profile = self.direction_model.profile(direction_id)
+            if profile is None:
+                raise KeyError(f"unknown software direction: {direction_id}")
+            result["profile"] = profile
+        if suggest:
+            result["suggestions"] = self.direction_model.suggest({"goals": [suggest]})
+        return result
 
     def topology(self, master_id: str | None = None, core_id: str | None = None, depth: int = 6) -> dict[str, Any]:
         bridge = self.decomposer.topology
@@ -86,8 +103,15 @@ class UniversalCreationMachine:
         return result
 
     def plan(self, request: dict[str, Any], per_level: int = 6) -> dict[str, Any]:
-        """Map a creation request onto explicit anatomy, topology, and live coverage."""
-        result = self.decomposer.decompose(request, per_level=per_level)
+        """Map a request onto software direction, anatomy, topology, and live coverage.
+
+        Direction suggestions never select themselves. Only an explicit
+        ``software_directions`` selection enriches anatomy matching.
+        """
+        direction_analysis = self.direction_model.analyze_request(request)
+        explicit_context = self.direction_model.planning_context(direction_analysis["stack"])
+        result = self.decomposer.decompose(request, per_level=per_level, extra_context=explicit_context)
+        result["software_direction"] = direction_analysis
         result["executable_anatomy"] = self.executable_anatomy.for_selected(result["registry_matches"])
         return result
 
