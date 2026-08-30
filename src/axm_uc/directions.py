@@ -9,30 +9,10 @@ from typing import Any
 TOKEN_RE = re.compile(r"[a-z0-9+#./-]+")
 AXES = ("runtime", "execution", "state", "quality", "risk", "verification", "distribution")
 OBSERVATION_FIELDS = ("goals", "requirements", "constraints", "capabilities", "risks", "notes")
-STOP = frozenset(
-    {
-        "a",
-        "an",
-        "as",
-        "in",
-        "is",
-        "of",
-        "on",
-        "or",
-        "to",
-        "the",
-        "and",
-        "for",
-        "with",
-        "from",
-        "into",
-        "software",
-        "system",
-        "application",
-        "tool",
-        "build",
-    }
-)
+STOP = frozenset({
+    "a", "an", "as", "in", "is", "of", "on", "or", "to", "the", "and", "for", "with", "from", "into",
+    "software", "system", "application", "tool", "build",
+})
 
 
 def _normalize(value: Any) -> str:
@@ -104,17 +84,27 @@ def _signal_score(signal: str, haystack: str, token_set: set[str]) -> int:
 class SoftwareDirections:
     """Deterministic software-direction knowledge above language grammar.
 
-    The data is harvested from the standalone 102-Grammar software-direction
-    work. Direction profiles describe what a software creation is trying to
-    become. They never select themselves, grant authority, or replace the four
-    AXM roots. Quality/risk axes are descriptive engineering context only.
+    Full Universal Creation ships the donor-derived 29-profile body. Deliberately
+    minimal machine roots used for focused tests or embedding may omit it; in that
+    case the direction layer reports itself unavailable instead of preventing the
+    rest of the machine from starting.
     """
 
     def __init__(self, root: Path):
         self.root = Path(root).resolve()
         data_root = self.root / "reference" / "software-directions"
-        self.catalog = json.loads((data_root / "direction-catalog.json").read_text(encoding="utf-8"))
-        self.axis_catalog = json.loads((data_root / "axis-catalog.json").read_text(encoding="utf-8"))
+        catalog_path = data_root / "direction-catalog.json"
+        axis_path = data_root / "axis-catalog.json"
+        self.available = catalog_path.is_file() and axis_path.is_file()
+        if not self.available:
+            self.catalog = {"profiles": []}
+            self.axis_catalog = {"axes": {axis: [] for axis in AXES}}
+            self.profiles: list[dict[str, Any]] = []
+            self.profile_index: dict[str, dict[str, Any]] = {}
+            return
+
+        self.catalog = json.loads(catalog_path.read_text(encoding="utf-8"))
+        self.axis_catalog = json.loads(axis_path.read_text(encoding="utf-8"))
         self.profiles = list(self.catalog.get("profiles", []))
         self.profile_index = {str(profile["id"]): profile for profile in self.profiles}
         if len(self.profiles) != 29 or len(self.profile_index) != 29:
@@ -124,6 +114,15 @@ class SoftwareDirections:
             raise ValueError("software direction axis catalog must contain the seven expected axes")
 
     def summary(self) -> dict[str, Any]:
+        if not self.available:
+            return {
+                "truth_status": "UNAVAILABLE_IN_THIS_MACHINE_BODY",
+                "profiles": 0,
+                "axes": {},
+                "automatic_selection": False,
+                "direction_is_authority": False,
+                "reason": "reference/software-directions is absent from this deliberately minimal machine root",
+            }
         families: dict[str, int] = {}
         for profile in self.profiles:
             family = str(profile.get("family", "unknown"))
@@ -153,84 +152,37 @@ class SoftwareDirections:
 
         out: list[dict[str, Any]] = []
         if has("execution", "hard-real-time") and has("state", "distributed-replicated"):
-            out.append({
-                "id": "REAL_TIME_DISTRIBUTED_STATE_TENSION",
-                "meaning": "Network and replicated-state uncertainty may conflict with hard real-time deadlines.",
-                "automatic_rejection": False,
-            })
+            out.append({"id": "REAL_TIME_DISTRIBUTED_STATE_TENSION", "meaning": "Network and replicated-state uncertainty may conflict with hard real-time deadlines.", "automatic_rejection": False})
         if has("risk", "safety-critical") and has("risk", "experimental"):
-            out.append({
-                "id": "SAFETY_EXPERIMENT_TENSION",
-                "meaning": "Experimental behavior and a safety-critical deployment create an engineering tension requiring explicit evidence boundaries.",
-                "automatic_rejection": False,
-            })
+            out.append({"id": "SAFETY_EXPERIMENT_TENSION", "meaning": "Experimental behavior and a safety-critical deployment create an engineering tension requiring explicit evidence boundaries.", "automatic_rejection": False})
         if has("runtime", "browser") and has("execution", "interrupt-driven"):
-            out.append({
-                "id": "BROWSER_INTERRUPT_MODEL_TENSION",
-                "meaning": "Browser code cannot directly own a hardware interrupt model without an external adapter/runtime.",
-                "automatic_rejection": False,
-            })
+            out.append({"id": "BROWSER_INTERRUPT_MODEL_TENSION", "meaning": "Browser code cannot directly own a hardware interrupt model without an external adapter/runtime.", "automatic_rejection": False})
         if has("risk", "irreversible-deployment") and not has("verification", "security-review"):
-            out.append({
-                "id": "IRREVERSIBLE_WITHOUT_SECURITY_REVIEW_TENSION",
-                "meaning": "The selected software direction describes irreversible deployment without security-review evidence in its verification context.",
-                "automatic_rejection": False,
-            })
+            out.append({"id": "IRREVERSIBLE_WITHOUT_SECURITY_REVIEW_TENSION", "meaning": "The selected software direction describes irreversible deployment without security-review evidence in its verification context.", "automatic_rejection": False})
         return out
 
     def compose(self, raw: dict[str, Any] | None) -> dict[str, Any]:
+        if not self.available:
+            return {"result": "DIRECTION_MODEL_UNAVAILABLE", "truth_status": "UNAVAILABLE_IN_THIS_MACHINE_BODY", "automatic_selection": False}
         if raw is None:
-            return {
-                "result": "NO_EXPLICIT_DIRECTION_SELECTION",
-                "truth_status": "NO_SELECTION",
-                "automatic_selection": False,
-            }
+            return {"result": "NO_EXPLICIT_DIRECTION_SELECTION", "truth_status": "NO_SELECTION", "automatic_selection": False}
         if not isinstance(raw, dict):
-            return {
-                "result": "INVALID_DIRECTION_INPUT",
-                "truth_status": "DETERMINISTIC_INPUT_VALIDATION",
-                "error": "software_directions must be an object",
-                "automatic_selection": False,
-            }
+            return {"result": "INVALID_DIRECTION_INPUT", "truth_status": "DETERMINISTIC_INPUT_VALIDATION", "error": "software_directions must be an object", "automatic_selection": False}
         try:
-            raw_ids = raw.get("direction_ids", raw.get("directionIds", []))
-            direction_ids = _strings(raw_ids)
+            direction_ids = _strings(raw.get("direction_ids", raw.get("directionIds", [])))
             explicit_axes = {axis: _strings(raw.get(axis, [])) for axis in AXES}
         except ValueError as exc:
-            return {
-                "result": "INVALID_DIRECTION_INPUT",
-                "truth_status": "DETERMINISTIC_INPUT_VALIDATION",
-                "error": str(exc),
-                "automatic_selection": False,
-            }
-
+            return {"result": "INVALID_DIRECTION_INPUT", "truth_status": "DETERMINISTIC_INPUT_VALIDATION", "error": str(exc), "automatic_selection": False}
         if not direction_ids and not any(explicit_axes.values()):
-            return {
-                "result": "DIRECTION_INPUT_REQUIRED",
-                "truth_status": "DETERMINISTIC_INPUT_VALIDATION",
-                "automatic_selection": False,
-            }
-
+            return {"result": "DIRECTION_INPUT_REQUIRED", "truth_status": "DETERMINISTIC_INPUT_VALIDATION", "automatic_selection": False}
         unknown = [item for item in direction_ids if item not in self.profile_index]
         if unknown:
-            return {
-                "result": "UNKNOWN_DIRECTION",
-                "truth_status": "DETERMINISTIC_INPUT_VALIDATION",
-                "unknown_directions": unknown,
-                "automatic_selection": False,
-            }
-
+            return {"result": "UNKNOWN_DIRECTION", "truth_status": "DETERMINISTIC_INPUT_VALIDATION", "unknown_directions": unknown, "automatic_selection": False}
         for axis in AXES:
             allowed = {str(item["id"]) for item in self.axis_catalog["axes"][axis]}
             unknown_values = [item for item in explicit_axes[axis] if item not in allowed]
             if unknown_values:
-                return {
-                    "result": "UNKNOWN_DIRECTION_AXIS_VALUE",
-                    "truth_status": "DETERMINISTIC_INPUT_VALIDATION",
-                    "axis": axis,
-                    "unknown_values": unknown_values,
-                    "automatic_selection": False,
-                }
+                return {"result": "UNKNOWN_DIRECTION_AXIS_VALUE", "truth_status": "DETERMINISTIC_INPUT_VALIDATION", "axis": axis, "unknown_values": unknown_values, "automatic_selection": False}
 
         unique_ids = list(dict.fromkeys(direction_ids))
         profiles = [self.profile_index[item] for item in unique_ids]
@@ -253,14 +205,7 @@ class SoftwareDirections:
             "truth_status": "EXPLICIT_SOFTWARE_DIRECTION_SELECTION",
             "direction_ids": unique_ids,
             "duplicate_direction_count": len(direction_ids) - len(unique_ids),
-            "selected_profiles": [
-                {
-                    "id": profile["id"],
-                    "display_name": profile["displayName"],
-                    "family": profile["family"],
-                }
-                for profile in profiles
-            ],
+            "selected_profiles": [{"id": profile["id"], "display_name": profile["displayName"], "family": profile["family"]} for profile in profiles],
             "axes": axes,
             "expectations": expectations,
             "tensions": self._tensions(axes),
@@ -271,47 +216,35 @@ class SoftwareDirections:
         }
 
     def suggest(self, observation: dict[str, Any], top_n: int = 8) -> dict[str, Any]:
+        if not self.available:
+            return {"result": "DIRECTION_MODEL_UNAVAILABLE", "truth_status": "UNAVAILABLE_IN_THIS_MACHINE_BODY", "candidates": [], "automatic_selection": False}
         if not isinstance(observation, dict):
-            return {
-                "result": "INVALID_DIRECTION_OBSERVATION",
-                "candidates": [],
-                "automatic_selection": False,
-            }
+            return {"result": "INVALID_DIRECTION_OBSERVATION", "candidates": [], "automatic_selection": False}
         fields: dict[str, list[str]] = {}
         try:
             for field in OBSERVATION_FIELDS:
                 fields[field] = _strings(observation.get(field, []))
         except ValueError as exc:
-            return {
-                "result": "INVALID_DIRECTION_OBSERVATION",
-                "error": str(exc),
-                "candidates": [],
-                "automatic_selection": False,
-            }
+            return {"result": "INVALID_DIRECTION_OBSERVATION", "error": str(exc), "candidates": [], "automatic_selection": False}
 
         text = " | ".join(item for field in OBSERVATION_FIELDS for item in fields[field])
         haystack = _normalize(text)
         token_set = set(_words(text))
         candidates: list[dict[str, Any]] = []
         for profile in self.profiles:
-            matches = [
-                {"signal": signal, "score": _signal_score(signal, haystack, token_set)}
-                for signal in profile.get("signals", [])
-            ]
+            matches = [{"signal": signal, "score": _signal_score(signal, haystack, token_set)} for signal in profile.get("signals", [])]
             matches = [match for match in matches if match["score"] > 0]
             if not matches:
                 continue
             matches.sort(key=lambda item: (-int(item["score"]), str(item["signal"])))
-            candidates.append(
-                {
-                    "direction_id": profile["id"],
-                    "display_name": profile["displayName"],
-                    "family": profile["family"],
-                    "score": sum(int(item["score"]) for item in matches),
-                    "matched_signals": matches,
-                    "candidate_is_selection": False,
-                }
-            )
+            candidates.append({
+                "direction_id": profile["id"],
+                "display_name": profile["displayName"],
+                "family": profile["family"],
+                "score": sum(int(item["score"]) for item in matches),
+                "matched_signals": matches,
+                "candidate_is_selection": False,
+            })
         candidates.sort(key=lambda item: (-int(item["score"]), str(item["direction_id"])))
         return {
             "result": "DIRECTION_CANDIDATES_READY_NO_SELECTION" if candidates else "NO_DIRECTION_CANDIDATE",
@@ -326,12 +259,7 @@ class SoftwareDirections:
         text = " ".join(_flatten(request))
         suggestions = self.suggest({"goals": [text]}, top_n=top_n)
         stack = self.compose(request.get("software_directions"))
-        return {
-            "summary": self.summary(),
-            "suggestions": suggestions,
-            "stack": stack,
-            "automatic_selection": False,
-        }
+        return {"summary": self.summary(), "suggestions": suggestions, "stack": stack, "automatic_selection": False}
 
     @staticmethod
     def planning_context(stack: dict[str, Any]) -> dict[str, Any] | None:
