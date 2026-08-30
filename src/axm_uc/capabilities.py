@@ -6,8 +6,10 @@ from pathlib import Path
 from typing import Any, Callable
 
 from .atomic import atomic_write_json, atomic_write_text
+from .grammar import grammar_inventory
 from .project import ProjectError, build_project, validate_project
 from .registry import Registry
+from .repair import patch_project
 
 
 class CapabilityError(RuntimeError):
@@ -74,13 +76,15 @@ def builtin_write_project(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
     if _is_machine_body_path(root, target):
         raise CapabilityError("normal project creation cannot rewrite the machine body; self-modification remains a separate root-fit path")
     try:
-        return build_project(
+        result = build_project(
             target=target,
             files=inputs["files"],
             project_type=str(inputs.get("project_type", "generic")),
             checks=inputs.get("checks") if isinstance(inputs.get("checks"), list) else None,
             replace=bool(inputs.get("replace", False)),
         )
+        result["grammar_inventory"] = grammar_inventory(target)
+        return result
     except ProjectError as exc:
         raise CapabilityError(str(exc), exc.details) from exc
 
@@ -89,12 +93,34 @@ def builtin_verify_project(root: Path, inputs: dict[str, Any]) -> dict[str, Any]
     target = _resolve_output_path(root, str(inputs["path"]))
     if _is_machine_body_path(root, target):
         raise CapabilityError("verify-project is for created project bodies; use inspect for the machine itself")
-    return validate_project(
+    report = validate_project(
         target,
         project_type=str(inputs.get("project_type", "generic")),
         checks=inputs.get("checks") if isinstance(inputs.get("checks"), list) else None,
         expected_files=inputs.get("expected_files") if isinstance(inputs.get("expected_files"), dict) else None,
     )
+    report["grammar_inventory"] = grammar_inventory(target) if target.is_dir() else {
+        "truth_status": "OBSERVED_EXTENSION_GRAMMAR_INVENTORY",
+        "counts": {},
+        "files": [],
+    }
+    return report
+
+
+def builtin_patch_project(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+    target = _resolve_output_path(root, str(inputs["path"]))
+    if _is_machine_body_path(root, target):
+        raise CapabilityError("normal project repair cannot rewrite the machine body; self-modification remains a separate root-fit path")
+    try:
+        return patch_project(
+            target=target,
+            operations=inputs["operations"],
+            project_type=str(inputs.get("project_type", "generic")),
+            checks=inputs.get("checks") if isinstance(inputs.get("checks"), list) else None,
+            expected_files=inputs.get("expected_files") if isinstance(inputs.get("expected_files"), dict) else None,
+        )
+    except ProjectError as exc:
+        raise CapabilityError(str(exc), exc.details) from exc
 
 
 BUILTINS: dict[str, Callable[[Path, dict[str, Any]], dict[str, Any]]] = {
@@ -103,6 +129,7 @@ BUILTINS: dict[str, Callable[[Path, dict[str, Any]], dict[str, Any]]] = {
     "builtin:inspect_registry": builtin_inspect_registry,
     "builtin:write_project": builtin_write_project,
     "builtin:verify_project": builtin_verify_project,
+    "builtin:patch_project": builtin_patch_project,
 }
 
 
