@@ -69,7 +69,7 @@ Skills and specialists are supported without being anthropomorphized. A skill is
 
 ## Compile a bounded proposal from a real gap
 
-The first deterministic gap-to-proposal compiler now connects an observed unroutable request to the Creation-Unit Forge without claiming general semantic invention.
+The deterministic gap-to-proposal compiler now connects two bounded classes of observed unroutable request to the Creation-Unit Forge without claiming general semantic invention.
 
 For exact UTF-8 file requests with `path` and `content`, it observes current live input/output contracts. One uniquely compatible live primitive can justify a detached adapter experiment. The compiler emits the full closed proposal, persists the exact gap analysis inside the candidate package, and runs the supplied request content through a disposable test path.
 
@@ -80,6 +80,8 @@ This establishes one working segment of:
 `real use -> explicit gap -> bounded proposal synthesis -> detached build -> request-shaped test -> later voluntary admission request`
 
 It still does not install the candidate, decide admission, or synthesize arbitrary source. See `GAP_SYNTHESIS.md`.
+
+A second blueprint composes existing abilities instead of wrapping only one. For a strict templated-project gap, it requires the exact tested template-instantiator and project-verifier versions, wires them in fixed order, converts the first step's file receipts into a digest map through one closed transform, and independently rechecks those digests. Missing or duplicate dependency identities remain explicit HOLD states. The result is a detached composite capability candidate, not a new live route.
 
 ## Non-hidden after change
 

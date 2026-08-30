@@ -1,0 +1,34 @@
+{
+  "kind": "propose-gap-candidate",
+  "direction": "compile an exact detached template build and verification composite",
+  "inputs": {
+    "operation": "propose",
+    "request": {
+      "kind": "verified-templated-static-web-project",
+      "direction": "create a strict templated site and independently verify its emitted digest receipt",
+      "inputs": {
+        "path": "creations/generated/verified-template-site",
+        "template": {
+          "id": "example.verified-template-site",
+          "version": "0.1.0",
+          "project_type": "static-web",
+          "files": {
+            "index.html": "<!doctype html><html><body><h1>[[AXM:title]]</h1><link rel=\"stylesheet\" href=\"style.css\"></body></html>\n",
+            "style.css": "body { color: [[AXM:color]]; }\n"
+          }
+        },
+        "variables": {
+          "title": "Composite creation",
+          "color": "#223344"
+        },
+        "checks": [
+          {
+            "type": "contains",
+            "path": "index.html",
+            "text": "Composite creation"
+          }
+        ]
+      }
+    }
+  }
+}

@@ -102,12 +102,19 @@
     "evidenceBoundAnalysisAvailable": true,
     "exactRequestDigestPreserved": true,
     "implementedBlueprints": [
-      "axm.blueprint.exact-utf8-file-route-alias/v0.1"
+      "axm.blueprint.exact-utf8-file-route-alias/v0.1",
+      "axm.blueprint.templated-project-build-verify-composite/v0.1"
     ],
     "existingDetachedCandidateReusePrecedesNewSynthesis": true,
     "uniqueStructuralBridgeMaySelectDetachedExperiment": true,
     "structuralBridgeIsSemanticEquivalenceProof": false,
     "ambiguousBridgeAutoSelected": false,
+    "exactCompositeChainCompilationAvailable": true,
+    "compositeMissingOrAmbiguousLinkHeld": true,
+    "closedCompositeBindingTransforms": [
+      "file-digest-map"
+    ],
+    "arbitraryCompositeExpressionEvaluationAvailable": false,
     "unsupportedGapHeld": true,
     "requestShapedDisposableFixtureAvailable": true,
     "originalRequestedDestinationUsedDuringExperiment": false,

@@ -25,6 +25,27 @@ class GapSynthesisTests(unittest.TestCase):
             "inputs": {"path": path, "content": "# Exact request\n\nOne observed fixture.\n"},
         }
 
+    @staticmethod
+    def _verified_template_request(path: str = "creations/requested-template-site") -> dict:
+        return {
+            "kind": "verified-templated-static-web-project",
+            "direction": "create an exact templated site and independently verify its emitted digest receipt",
+            "inputs": {
+                "path": path,
+                "template": {
+                    "id": "example.verified-template-site",
+                    "version": "0.1.0",
+                    "project_type": "static-web",
+                    "files": {
+                        "index.html": "<!doctype html><html><body><h1>[[AXM:title]]</h1><link rel=\"stylesheet\" href=\"style.css\"></body></html>\n",
+                        "style.css": "body { color: [[AXM:color]]; }\n",
+                    },
+                },
+                "variables": {"title": "Composite creation", "color": "#223344"},
+                "checks": [{"type": "contains", "path": "index.html", "text": "Composite creation"}],
+            },
+        }
+
     def test_unroutable_creation_exposes_ready_gap_synthesis_without_inflating_live_coverage(self):
         result = self.machine.create(self._note_request())
         self.assertEqual(result["type"], "CAPABILITY_GAP")
@@ -80,6 +101,122 @@ class GapSynthesisTests(unittest.TestCase):
 
         with self.assertRaises(GapSynthesisError):
             compile_gap_proposal(ROOT, request, candidate_id="AXM-CAP-WRITE-TEXT")
+
+    def test_template_gap_compiles_deterministic_two_capability_recipe(self):
+        request = self._verified_template_request()
+        analysis = analyze_creation_gap(ROOT, request)
+        self.assertEqual(analysis["status"], "SYNTHESIS_READY_EXACT_COMPOSITE_CHAIN")
+        self.assertEqual(
+            analysis["selected_blueprint"]["blueprint"],
+            "axm.blueprint.templated-project-build-verify-composite/v0.1",
+        )
+        self.assertEqual(
+            [row["ref"] for row in analysis["selected_blueprint"]["dependencies"]],
+            [
+                "AXM-CAP-INSTANTIATE-PROJECT-TEMPLATE@0.2.0",
+                "AXM-CAP-VERIFY-PROJECT@0.5.0",
+            ],
+        )
+
+        first = compile_gap_proposal(ROOT, request)
+        second = compile_gap_proposal(ROOT, request)
+        self.assertEqual(first["status"], "DETACHED_COMPOSITE_PROPOSAL_READY")
+        self.assertEqual(first["proposal_digest"], second["proposal_digest"])
+        manifest = json.loads(first["proposal"]["files"]["capability.json"])
+        self.assertEqual(manifest["implementation"]["kind"], "DETERMINISTIC_COMPOSITE")
+        self.assertEqual(
+            [step["capability"] for step in manifest["implementation"]["steps"]],
+            ["AXM-CAP-INSTANTIATE-PROJECT-TEMPLATE", "AXM-CAP-VERIFY-PROJECT"],
+        )
+        digest_binding = manifest["implementation"]["steps"][1]["inputs"]["expected_file_digests"]
+        self.assertEqual(digest_binding, {
+            "from": "steps.instantiate.files",
+            "transform": "file-digest-map",
+        })
+        self.assertTrue(manifest["tests"][0]["inputs"]["path"].startswith("${TEST_DIR}/"))
+        self.assertFalse(first["proposal"]["authority"]["execute"])
+
+        with self.assertRaises(GapSynthesisError):
+            compile_gap_proposal(ROOT, request, candidate_id="AXM-CAP-VERIFY-PROJECT")
+
+    def test_template_composite_materializes_and_tests_full_chain_without_original_destination(self):
+        with tempfile.TemporaryDirectory() as td:
+            parent = Path(td)
+            requested = parent / "original-must-not-exist"
+            target = parent / "detached-composite"
+            result = self.machine.create({
+                "kind": "explore-gap-candidate",
+                "inputs": {
+                    "operation": "materialize-and-test",
+                    "path": str(target),
+                    "request": self._verified_template_request(str(requested)),
+                },
+            })
+            self.assertEqual(result["type"], "CREATION_RESULT", result)
+            explored = result["result"]
+            self.assertTrue(explored["passed"], explored)
+            self.assertEqual(explored["status"], "TESTED_DETACHED_CANDIDATE")
+            self.assertFalse(requested.exists())
+            self.assertIsNone(explored["selected_bridge"])
+            self.assertEqual(
+                explored["selected_blueprint"]["blueprint"],
+                "axm.blueprint.templated-project-build-verify-composite/v0.1",
+            )
+            candidate_test = explored["test"]["kind_test"]["capability_test"]["tests"][0]
+            self.assertTrue(candidate_test["result"]["instantiate"]["published"])
+            self.assertTrue(candidate_test["result"]["verification"]["passed"])
+            digest_check = next(
+                row
+                for row in candidate_test["result"]["verification"]["checks"]
+                if row["type"] == "expected-file-digests"
+            )
+            self.assertTrue(digest_check["passed"])
+            self.assertTrue(all(row["passed"] for row in digest_check["files"]))
+            self.assertIsNone(self.machine.capabilities.route("verified-templated-static-web-project"))
+
+    def test_composite_blueprint_holds_when_exact_link_is_missing_or_ambiguous(self):
+        request = self._verified_template_request()
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            live = root / "capabilities/live"
+            live.mkdir(parents=True)
+            template = (ROOT / "capabilities/live/AXM-CAP-INSTANTIATE-PROJECT-TEMPLATE.json").read_text(encoding="utf-8")
+            (live / "template.json").write_text(template, encoding="utf-8")
+            missing = analyze_creation_gap(root, request)
+            self.assertEqual(missing["status"], "HOLD_MISSING_COMPOSITE_LINK")
+            self.assertEqual(
+                missing["composite_candidates"][0]["missing_links"][0]["expected_ref"],
+                "AXM-CAP-VERIFY-PROJECT@0.5.0",
+            )
+            self.assertIsNone(compile_gap_proposal(root, request)["proposal"])
+
+            verify = json.loads((ROOT / "capabilities/live/AXM-CAP-VERIFY-PROJECT.json").read_text(encoding="utf-8"))
+            (live / "verify-a.json").write_text(json.dumps(verify), encoding="utf-8")
+            self.assertEqual(
+                analyze_creation_gap(root, request)["status"],
+                "SYNTHESIS_READY_EXACT_COMPOSITE_CHAIN",
+            )
+
+            broken_verify = json.loads(json.dumps(verify))
+            del broken_verify["input_contract"]["properties"]["expected_file_digests"]
+            (live / "verify-a.json").write_text(json.dumps(broken_verify), encoding="utf-8")
+            broken = analyze_creation_gap(root, request)
+            self.assertEqual(broken["status"], "HOLD_MISSING_COMPOSITE_LINK")
+            self.assertIn("contract mismatch", broken["composite_candidates"][0]["missing_links"][0]["reason"])
+
+            (live / "verify-a.json").write_text(json.dumps(verify), encoding="utf-8")
+            (live / "verify-b.json").write_text(json.dumps(verify), encoding="utf-8")
+            ambiguous = analyze_creation_gap(root, request)
+            self.assertEqual(ambiguous["status"], "HOLD_AMBIGUOUS_COMPOSITE_LINK")
+            self.assertIsNone(ambiguous["selected_blueprint"])
+
+    def test_invalid_template_request_stays_on_unsupported_hold(self):
+        request = self._verified_template_request()
+        request["inputs"]["variables"] = {}
+        analysis = analyze_creation_gap(ROOT, request)
+        self.assertEqual(analysis["status"], "HOLD_NO_SUPPORTED_SYNTHESIS_BLUEPRINT")
+        self.assertIn("template variables are missing", analysis["composite_request_issue"])
+        self.assertIsNone(compile_gap_proposal(ROOT, request)["proposal"])
 
     def test_materialize_and_test_runs_request_shaped_fixture_without_using_requested_destination(self):
         with tempfile.TemporaryDirectory() as td:
@@ -161,6 +298,8 @@ class GapSynthesisTests(unittest.TestCase):
         inspection = self.machine.inspect()
         summary = inspection["gap_synthesis"]
         self.assertIn("axm.blueprint.exact-utf8-file-route-alias/v0.1", summary["implemented_blueprints"])
+        self.assertIn("axm.blueprint.templated-project-build-verify-composite/v0.1", summary["implemented_blueprints"])
+        self.assertEqual(summary["closed_binding_transforms"], ["file-digest-map"])
         self.assertFalse(summary["semantic_source_invention"])
         self.assertFalse(summary["automatic_admission"])
         self.assertEqual(len(inspection["live_capabilities"]), 14)

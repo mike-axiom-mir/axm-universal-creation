@@ -64,9 +64,9 @@ The machine can also spawn smaller detached creation-unit bodies without cloning
 
 See `CREATION_FORGE.md`.
 
-For one bounded class of real gaps, the machine can now compile the missing design itself. An unroutable exact UTF-8 file request may expose one uniquely compatible live primitive; the gap compiler turns that observation into a closed detached adapter proposal and runs the exact request content as its disposable fixture. Ambiguous or unsupported gaps remain typed HOLD states.
+For two bounded classes of real gaps, the machine can now compile the missing design itself. An unroutable exact UTF-8 file request may expose one uniquely compatible live primitive. A strict templated-project request may expose one exact template→build→digest-verify chain. The gap compiler turns either observation into a closed detached capability proposal and runs the exact request as its disposable fixture. Ambiguous, incomplete, or unsupported wiring remains a typed HOLD state.
 
-`unroutable request -> evidence-bound structural bridge -> proposal -> detached test -> no automatic admission`
+`unroutable request -> evidence-bound bridge or composite recipe -> proposal -> detached full-chain test -> no automatic admission`
 
 See `GAP_SYNTHESIS.md`.
 
@@ -126,7 +126,7 @@ The small Python runtime currently provides:
 - dependency-aware software-organ assembly with declared interfaces, explicit order, and file ownership;
 - an exact local executable-organ package body that makes working organs reusable across creations;
 - a deterministic detached creation-unit forge for hands, capabilities, organs, protocols, skills, specialists, recipes, and new extension kinds;
-- an evidence-bound gap compiler that can derive and test the smallest supported UTF-8 file-route adapter proposal from a real unroutable request;
+- an evidence-bound gap compiler that can derive and test either the smallest supported UTF-8 file-route adapter or one exact multi-capability template-build-verify proposal from a real unroutable request;
 - complete editable self-workspace cloning, exact source comparison, independent build logs, and voluntary merge-check requests;
 - structured `CAPABILITY_GAP` results that preserve the directional outcome and distinguish current partial coverage;
 - candidate capability testing and direct adoption through the four-root fit declaration;
@@ -218,6 +218,8 @@ PYTHONPATH=src python -m axm_uc create examples/requests/spawn_creation_protocol
 PYTHONPATH=src python -m axm_uc create examples/requests/test_spawned_creation_protocol.json
 PYTHONPATH=src python -m axm_uc create examples/requests/analyze_note_route_gap.json
 PYTHONPATH=src python -m axm_uc create examples/requests/explore_note_route_gap.json
+PYTHONPATH=src python -m axm_uc create examples/requests/analyze_verified_template_gap.json
+PYTHONPATH=src python -m axm_uc create examples/requests/explore_verified_template_gap.json
 ```
 
 That creates `creations/first-real-site/` with `index.html`, `style.css`, and `app.js`. Open `index.html` in a browser for the separate human/host visual and interaction test.
@@ -284,6 +286,7 @@ PYTHONPATH=src python -m axm_uc create examples/requests/clone_self_workspace.js
 PYTHONPATH=src python -m axm_uc forge
 PYTHONPATH=src python -m axm_uc create examples/requests/spawn_creation_protocol.json
 PYTHONPATH=src python -m axm_uc create examples/requests/test_spawned_creation_protocol.json
+PYTHONPATH=src python -m axm_uc create examples/requests/propose_verified_template_gap.json
 PYTHONPATH=src python -m axm_uc candidate test capabilities/candidates/AXM-CAP-WRITE-MARKDOWN.json
 python tools/build.py
 ```

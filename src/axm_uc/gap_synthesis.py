@@ -8,13 +8,18 @@ from pathlib import Path, PurePosixPath
 from typing import Any
 
 from .capabilities import CapabilityStore
+from .project import ProjectError
 from .spawn import SPAWN_PROPOSAL_SCHEMA, spawn_unit, test_spawned_unit, validate_spawn_proposal
+from .template import render_project_template
 
 
 GAP_ANALYSIS_SCHEMA = "axm.creation-gap-analysis/v0.1"
 GAP_PROPOSAL_RESULT_SCHEMA = "axm.creation-gap-proposal-result/v0.1"
 GAP_EXPLORATION_RESULT_SCHEMA = "axm.creation-gap-exploration-result/v0.1"
 EXACT_TEXT_ALIAS_BLUEPRINT = "axm.blueprint.exact-utf8-file-route-alias/v0.1"
+TEMPLATE_BUILD_VERIFY_BLUEPRINT = "axm.blueprint.templated-project-build-verify-composite/v0.1"
+TEMPLATE_CAPABILITY = ("AXM-CAP-INSTANTIATE-PROJECT-TEMPLATE", "0.2.0")
+VERIFY_CAPABILITY = ("AXM-CAP-VERIFY-PROJECT", "0.5.0")
 SUPPORTED_OPERATIONS = ("analyze", "propose", "materialize-and-test")
 SUPPORTED_IMPLEMENTATIONS = {
     "DETERMINISTIC_SOURCE",
@@ -165,6 +170,144 @@ def _existing_candidate(root: Path, manifest: dict[str, Any], request_kind: str)
     }
 
 
+def _composite_dependency_contract_issue(capability_id: str, manifest: dict[str, Any]) -> str | None:
+    implementation = manifest.get("implementation")
+    if not isinstance(implementation, dict) or implementation.get("kind") not in SUPPORTED_IMPLEMENTATIONS:
+        return "dependency has no supported deterministic implementation"
+    input_contract = manifest.get("input_contract")
+    output_contract = manifest.get("output_contract")
+    if not isinstance(input_contract, dict) or not isinstance(output_contract, dict):
+        return "dependency input/output contract is not an object"
+    required = input_contract.get("required")
+    properties = input_contract.get("properties")
+    contains = output_contract.get("contains")
+    if not isinstance(required, list) or not isinstance(properties, dict) or not isinstance(contains, list):
+        return "dependency contract does not expose required, properties, and contains fields"
+    if any(not isinstance(item, str) or not item for item in [*required, *contains]):
+        return "dependency contract required/contains entries must be non-empty text"
+    if capability_id == TEMPLATE_CAPABILITY[0]:
+        missing_inputs = sorted({"path", "template", "variables"} - set(required))
+        missing_outputs = sorted({"path", "project_type", "files"} - set(contains))
+        if output_contract.get("kind") != "templated-project-result" or missing_inputs or missing_outputs:
+            return f"template dependency contract mismatch; missing inputs={missing_inputs}, missing outputs={missing_outputs}"
+    elif capability_id == VERIFY_CAPABILITY[0]:
+        missing_inputs = sorted({"path"} - set(required))
+        missing_properties = sorted({"expected_file_digests"} - set(properties))
+        missing_outputs = sorted({"passed"} - set(contains))
+        if output_contract.get("kind") != "project-validation-report" or missing_inputs or missing_properties or missing_outputs:
+            return f"verifier dependency contract mismatch; missing inputs={missing_inputs}, missing properties={missing_properties}, missing outputs={missing_outputs}"
+    return None
+
+
+def _template_composite_candidate(
+    root: Path,
+    live_manifests: list[dict[str, Any]],
+    inputs: dict[str, Any],
+) -> tuple[dict[str, Any] | None, str | None]:
+    input_keys = set(inputs)
+    if not ({"template", "variables"} & input_keys):
+        return None, None
+    required = {"path", "template", "variables"}
+    allowed = required | {"checks", "replace"}
+    missing_inputs = sorted(required - input_keys)
+    unexpected_inputs = sorted(input_keys - allowed)
+    invalid: list[str] = []
+    if missing_inputs:
+        invalid.append(f"missing request inputs: {', '.join(missing_inputs)}")
+    if unexpected_inputs:
+        invalid.append(f"unsupported request inputs: {', '.join(unexpected_inputs)}")
+    if "path" in inputs and (not isinstance(inputs["path"], str) or not inputs["path"].strip()):
+        invalid.append("path must be non-empty text")
+    if "checks" in inputs and not isinstance(inputs["checks"], list):
+        invalid.append("checks must be a list when supplied")
+    if "replace" in inputs and not isinstance(inputs["replace"], bool):
+        invalid.append("replace must be boolean when supplied")
+    rendered: dict[str, Any] | None = None
+    if not invalid:
+        try:
+            rendered = render_project_template(inputs["template"], inputs["variables"])
+        except ProjectError as exc:
+            invalid.append(f"template request is not deterministically renderable: {exc}")
+    if invalid:
+        return None, "; ".join(invalid)
+
+    dependency_specs = (TEMPLATE_CAPABILITY, VERIFY_CAPABILITY)
+    dependencies: list[dict[str, Any]] = []
+    missing_links: list[dict[str, Any]] = []
+    ambiguous_links: list[dict[str, Any]] = []
+    for capability_id, expected_version in dependency_specs:
+        matches = [manifest for manifest in live_manifests if manifest.get("id") == capability_id]
+        expected_ref = f"{capability_id}@{expected_version}"
+        if not matches:
+            missing_links.append({
+                "capability_id": capability_id,
+                "expected_ref": expected_ref,
+                "reason": "required live capability ID is absent",
+            })
+            continue
+        if len(matches) > 1:
+            ambiguous_links.append({
+                "capability_id": capability_id,
+                "expected_ref": expected_ref,
+                "observed_manifests": sorted(str(item.get("_manifest_path")) for item in matches),
+                "reason": "more than one live manifest declares the required capability ID",
+            })
+            continue
+        manifest = matches[0]
+        if manifest.get("version") != expected_version:
+            missing_links.append({
+                "capability_id": capability_id,
+                "expected_ref": expected_ref,
+                "observed_version": manifest.get("version"),
+                "reason": "the implemented blueprint requires the exact tested dependency version",
+            })
+            continue
+        contract_issue = _composite_dependency_contract_issue(capability_id, manifest)
+        if contract_issue is not None:
+            missing_links.append({
+                "capability_id": capability_id,
+                "expected_ref": expected_ref,
+                "reason": contract_issue,
+            })
+            continue
+        dependencies.append({
+            "capability_id": capability_id,
+            "version": expected_version,
+            "ref": expected_ref,
+            "manifest": manifest.get("_manifest_path"),
+            "manifest_digest": _manifest_digest(root, manifest),
+            "implementation_kind": manifest.get("implementation", {}).get("kind"),
+        })
+
+    if ambiguous_links:
+        link_status = "HOLD_AMBIGUOUS_COMPOSITE_LINK"
+    elif missing_links:
+        link_status = "HOLD_MISSING_COMPOSITE_LINK"
+    else:
+        link_status = "READY_EXACT_COMPOSITE_CHAIN"
+    instance = rendered["template_instance"] if rendered is not None else {}
+    return {
+        "blueprint": TEMPLATE_BUILD_VERIFY_BLUEPRINT,
+        "status": link_status,
+        "required_inputs": ["path", "template", "variables"],
+        "optional_inputs": ["checks", "replace"],
+        "project_type": instance.get("project_type"),
+        "rendered_paths": [row["rendered_path"] for row in instance.get("rendered_paths", [])],
+        "step_order": ["instantiate", "verify"],
+        "dependencies": dependencies,
+        "missing_links": missing_links,
+        "ambiguous_links": ambiguous_links,
+        "wiring": {
+            "instantiate": "request path+template+variables -> exact validated project publication",
+            "receipt_projection": "steps.instantiate.files -> closed file-digest-map transform",
+            "verify": "created path+project type+checks+earlier file digests -> independent validation report",
+        },
+        "structural_basis": "the exact template instantiator emits path, project type, and file SHA-256 receipts accepted by the independent project verifier through one closed digest projection",
+        "runtime_behavior_proven": False,
+        "candidate_is_live_route_selection": False,
+    }, None
+
+
 def gap_synthesis_summary() -> dict[str, Any]:
     return {
         "truth_status": "BOUNDED_DETERMINISTIC_GAP_TO_PROPOSAL_COMPILER",
@@ -173,13 +316,16 @@ def gap_synthesis_summary() -> dict[str, Any]:
         "exploration_result_schema": GAP_EXPLORATION_RESULT_SCHEMA,
         "operations": list(SUPPORTED_OPERATIONS),
         "implemented_blueprints": {
-            EXACT_TEXT_ALIAS_BLUEPRINT: "Compile a missing exact UTF-8 file route into a detached alias-capability hypothesis when one compatible live primitive is uniquely visible."
+            EXACT_TEXT_ALIAS_BLUEPRINT: "Compile a missing exact UTF-8 file route into a detached alias-capability hypothesis when one compatible live primitive is uniquely visible.",
+            TEMPLATE_BUILD_VERIFY_BLUEPRINT: "Compile one exact template-instantiation and independent digest-verification chain into a detached composite-capability hypothesis when every tested live dependency and binding is present.",
         },
         "gap_trigger_required": True,
         "existing_candidate_reuse_precedes_new_synthesis": True,
         "detached_experiment_allowed": True,
         "semantic_source_invention": False,
         "ambiguous_bridge_auto_selection": False,
+        "missing_or_ambiguous_composite_link_is_hold": True,
+        "closed_binding_transforms": ["file-digest-map"],
         "unsupported_gap_is_hold": True,
         "automatic_admission": False,
         "automatic_install_or_registration": False,
@@ -208,6 +354,11 @@ def analyze_creation_gap(root: Path, raw_request: Any) -> dict[str, Any]:
             if row is not None:
                 candidates.append(row)
     candidates.sort(key=lambda item: str(item["capability_id"]))
+    composite_candidate: dict[str, Any] | None = None
+    composite_invalid_reason: str | None = None
+    if exact is None and not existing_candidates:
+        composite_candidate, composite_invalid_reason = _template_composite_candidate(root, live_manifests, inputs)
+    composite_candidates = [composite_candidate] if composite_candidate is not None else []
 
     if exact is not None:
         status = "COVERED_NO_SYNTHESIS_NEEDED"
@@ -224,6 +375,21 @@ def analyze_creation_gap(root: Path, raw_request: Any) -> dict[str, Any]:
         truth_status = "DETERMINISTIC_AMBIGUITY_HOLD"
         selected = None
         hold_reason = "multiple existing detached candidates handle this request kind; no candidate is silently selected"
+    elif composite_candidate is not None and composite_candidate["status"] == "READY_EXACT_COMPOSITE_CHAIN":
+        status = "SYNTHESIS_READY_EXACT_COMPOSITE_CHAIN"
+        truth_status = "DETERMINISTIC_COMPOSITE_CHAIN_HYPOTHESIS"
+        selected = None
+        hold_reason = None
+    elif composite_candidate is not None and composite_candidate["status"] == "HOLD_AMBIGUOUS_COMPOSITE_LINK":
+        status = "HOLD_AMBIGUOUS_COMPOSITE_LINK"
+        truth_status = "DETERMINISTIC_AMBIGUITY_HOLD"
+        selected = None
+        hold_reason = "the composite blueprint observed ambiguous required dependency identities; no link is silently selected"
+    elif composite_candidate is not None and composite_candidate["status"] == "HOLD_MISSING_COMPOSITE_LINK":
+        status = "HOLD_MISSING_COMPOSITE_LINK"
+        truth_status = "DETERMINISTIC_INCOMPLETE_CHAIN_HOLD"
+        selected = None
+        hold_reason = "the composite blueprint is applicable but one or more exact tested live dependency links are missing"
     elif len(candidates) == 1:
         status = "SYNTHESIS_READY_UNIQUE_STRUCTURAL_BRIDGE"
         truth_status = "DETERMINISTIC_STRUCTURAL_BRIDGE_HYPOTHESIS"
@@ -238,7 +404,7 @@ def analyze_creation_gap(root: Path, raw_request: Any) -> dict[str, Any]:
         status = "HOLD_NO_SUPPORTED_SYNTHESIS_BLUEPRINT"
         truth_status = "DETERMINISTIC_UNSUPPORTED_GAP_HOLD"
         selected = None
-        hold_reason = "no implemented deterministic blueprint can compile this gap without inventing missing semantics or source"
+        hold_reason = composite_invalid_reason or "no implemented deterministic blueprint can compile this gap without inventing missing semantics or source"
 
     exact_route = None
     if exact is not None:
@@ -257,16 +423,32 @@ def analyze_creation_gap(root: Path, raw_request: Any) -> dict[str, Any]:
         "request_kind": request["kind"],
         "observed_live_capability_count": len(live_manifests),
         "exact_live_route": exact_route,
-        "implemented_blueprint": EXACT_TEXT_ALIAS_BLUEPRINT,
+        "implemented_blueprints": [EXACT_TEXT_ALIAS_BLUEPRINT, TEMPLATE_BUILD_VERIFY_BLUEPRINT],
+        "implemented_blueprint": (
+            TEMPLATE_BUILD_VERIFY_BLUEPRINT
+            if composite_candidate is not None
+            else EXACT_TEXT_ALIAS_BLUEPRINT
+            if candidates
+            else None
+        ),
         "existing_candidates": existing_candidates,
         "candidate_bridges": candidates,
         "selected_bridge": selected,
+        "composite_candidates": composite_candidates,
+        "selected_blueprint": (
+            copy.deepcopy(composite_candidate)
+            if composite_candidate is not None and composite_candidate["status"] == "READY_EXACT_COMPOSITE_CHAIN"
+            else None
+        ),
+        "composite_request_issue": composite_invalid_reason,
         "hold_reason": hold_reason,
         "selection_authority": "NONE",
         "semantic_equivalence_proven": False,
         "source_code_invented": False,
         "safe_next_step": (
-            "compile and test one detached adapter hypothesis"
+            "compile and test one detached composite recipe hypothesis"
+            if composite_candidate is not None and composite_candidate["status"] == "READY_EXACT_COMPOSITE_CHAIN"
+            else "compile and test one detached adapter hypothesis"
             if selected
             else "test or inspect the existing detached candidate"
             if len(existing_candidates) == 1
@@ -274,7 +456,7 @@ def analyze_creation_gap(root: Path, raw_request: Any) -> dict[str, Any]:
         ),
         "limitations": [
             "matching one input/output shape does not prove that two creation meanings are equivalent",
-            "the implemented compiler creates only manifest-level aliases for exact UTF-8 file routes",
+            "the implemented compiler creates only exact UTF-8 aliases and one fixed template-build-verify composite grammar",
             "the request-shaped test proves one supplied example and not general semantic behavior",
             "analysis grants no execution, installation, registration, admission, merge, CANON, or permission authority",
         ],
@@ -311,6 +493,275 @@ def _fixture_path(raw_path: str) -> str:
     return f"${{TEST_DIR}}/request-example{suffix}"
 
 
+def _composite_root_fit(request_kind: str, dependency_refs: list[str]) -> dict[str, Any]:
+    joined = ", ".join(dependency_refs)
+    return {
+        "truth": {
+            "fit": True,
+            "basis": f"The {request_kind!r} candidate exposes its fixed two-step recipe, exact dependency refs, digest projection, request fixture, and evidence boundary without claiming general synthesis.",
+        },
+        "agency": {
+            "fit": True,
+            "basis": "The caller supplies the template, variables, checks, and destination; the detached proposal grants itself no execution, installation, admission, merge, CANON, or permission authority.",
+        },
+        "continuity": {
+            "fit": True,
+            "basis": f"The candidate composes the continuing live capabilities {joined} without replacing them or the active machine body.",
+        },
+        "wisdom-before-speed": {
+            "fit": True,
+            "basis": "The compiler reuses an exact build receipt for independent verification, rejects incomplete wiring, and tests the full chain in disposable space before any admission choice.",
+        },
+    }
+
+
+def _compile_template_composite_proposal(
+    root: Path,
+    analysis: dict[str, Any],
+    *,
+    candidate_id: Any,
+    version: Any,
+) -> dict[str, Any]:
+    selected = analysis["selected_blueprint"]
+    request = analysis["request"]
+    request_kind = request["kind"]
+    inputs = request["inputs"]
+    kind_slug = _slug(request_kind)
+    generated_id = f"axm.generated.capability.{kind_slug}"
+    unit_id = _required_text(candidate_id if candidate_id is not None else generated_id, "candidate_id", maximum=128)
+    unit_version = _required_text(version, "version", maximum=32)
+    direction = request.get("direction") or request.get("purpose") or request_kind
+    if not isinstance(direction, str) or not direction.strip():
+        direction = request_kind
+    direction = direction.strip()[:600]
+
+    current_live = CapabilityStore(root).live()
+    current_by_id: dict[str, list[dict[str, Any]]] = {}
+    for manifest in current_live:
+        capability_id = manifest.get("id")
+        if isinstance(capability_id, str):
+            current_by_id.setdefault(capability_id, []).append(manifest)
+    if unit_id in current_by_id:
+        raise GapSynthesisError(
+            "gap synthesis will not shadow an existing live capability identity",
+            {"candidate_id": unit_id},
+        )
+    dependency_refs: list[str] = []
+    dependency_digests: list[str] = []
+    dependency_ids: list[str] = []
+    for observed in selected["dependencies"]:
+        capability_id = str(observed["capability_id"])
+        current = current_by_id.get(capability_id, [])
+        if len(current) != 1:
+            raise GapSynthesisError(
+                "a required composite dependency disappeared or became ambiguous after analysis; re-analyze before compiling",
+                {"capability_id": capability_id, "observed_live_matches": len(current)},
+            )
+        manifest = current[0]
+        current_ref = f"{capability_id}@{manifest.get('version')}"
+        current_digest = _manifest_digest(root, manifest)
+        if current_ref != observed["ref"] or current_digest != observed["manifest_digest"]:
+            raise GapSynthesisError(
+                "a required composite dependency changed after gap analysis; re-analyze before compiling",
+                {
+                    "capability_id": capability_id,
+                    "analysis_ref": observed["ref"],
+                    "current_ref": current_ref,
+                    "analysis_manifest_digest": observed["manifest_digest"],
+                    "current_manifest_digest": current_digest,
+                },
+            )
+        dependency_ids.append(capability_id)
+        dependency_refs.append(current_ref)
+        dependency_digests.append(current_digest)
+
+    try:
+        rendered = render_project_template(inputs["template"], inputs["variables"])
+    except ProjectError as exc:
+        raise GapSynthesisError(
+            "the template request changed or is no longer deterministically renderable; re-analyze before compiling",
+            exc.details,
+        ) from exc
+    fixture_root = "${TEST_DIR}/request-example-project"
+    expected_fixture_files = {
+        f"{fixture_root}/{relative}": content
+        for relative, content in sorted(rendered["files"].items())
+    }
+    checks = copy.deepcopy(inputs.get("checks", []))
+    instantiate_id, _instantiate_version = TEMPLATE_CAPABILITY
+    verify_id, _verify_version = VERIFY_CAPABILITY
+    live_input_properties = current_by_id[instantiate_id][0].get("input_contract", {}).get("properties", {})
+    input_properties = {
+        key: copy.deepcopy(live_input_properties[key])
+        for key in ("path", "template", "variables", "checks", "replace")
+        if key in live_input_properties
+    }
+    output_contract = {
+        "kind": "verified-templated-project-result",
+        "contains": ["path", "instantiate", "verification"],
+    }
+    fit = _composite_root_fit(request_kind, dependency_refs)
+    candidate_manifest = {
+        "id": unit_id,
+        "version": unit_version,
+        "status": "candidate",
+        "purpose": f"Explore the missing route {request_kind!r} for the directional outcome {direction!r} by composing exact template instantiation with an independent verification of the emitted file-digest receipt.",
+        "handles": [request_kind],
+        "input_contract": {
+            "required": ["path", "template", "variables"],
+            "properties": input_properties,
+        },
+        "output_contract": output_contract,
+        "dependencies": dependency_ids,
+        "relationships": [
+            {"type": "composes", "target": instantiate_id},
+            {"type": "composes", "target": verify_id},
+            {"type": "explores-gap", "target": analysis["request_digest"]},
+        ],
+        "implementation": {
+            "kind": "DETERMINISTIC_COMPOSITE",
+            "source": "this generated manifest",
+            "steps": [
+                {
+                    "id": "instantiate",
+                    "capability": instantiate_id,
+                    "inputs": {
+                        "path": {"from": "request.path"},
+                        "template": {"from": "request.template"},
+                        "variables": {"from": "request.variables"},
+                        "checks": {"from": "request.checks", "default": []},
+                        "replace": {"from": "request.replace", "default": False},
+                        "publish_mode": "validated",
+                    },
+                },
+                {
+                    "id": "verify",
+                    "capability": verify_id,
+                    "inputs": {
+                        "path": {"from": "steps.instantiate.path"},
+                        "project_type": {"from": "steps.instantiate.project_type"},
+                        "checks": {"from": "request.checks", "default": []},
+                        "expected_file_digests": {
+                            "from": "steps.instantiate.files",
+                            "transform": "file-digest-map",
+                        },
+                    },
+                },
+            ],
+            "outputs": {
+                "path": {"from": "steps.instantiate.path"},
+                "instantiate": {"from": "steps.instantiate"},
+                "verification": {"from": "steps.verify"},
+            },
+        },
+        "limitations": [
+            "This detached candidate implements only the fixed template-instantiate then digest-verify recipe; it does not invent templates, variables, checks, or new semantic source.",
+            "The independent verifier proves deterministic structural checks and byte identity against the immediately preceding creation receipt; it does not execute generated code or prove visual quality.",
+            "The declared test covers only the exact request-shaped template fixture in disposable build space.",
+            "The original requested destination is not used during candidate testing.",
+        ],
+        "persistent_state": None,
+        "tests": [
+            {
+                "inputs": {
+                    "path": fixture_root,
+                    "template": copy.deepcopy(inputs["template"]),
+                    "variables": copy.deepcopy(inputs["variables"]),
+                    "checks": checks,
+                    "replace": False,
+                },
+                "expect": {
+                    "files": expected_fixture_files,
+                    "result_fields": {
+                        "instantiate.published": True,
+                        "instantiate.creation_status": "VALIDATED_CREATION",
+                        "verification.passed": True,
+                    },
+                },
+            }
+        ],
+        "root_fit": copy.deepcopy(fit),
+    }
+    gap_file = {
+        **copy.deepcopy(analysis),
+        "proposal_selection": {
+            "blueprint": TEMPLATE_BUILD_VERIFY_BLUEPRINT,
+            "dependency_refs": dependency_refs,
+            "selection_basis": "one implemented composite grammar matched the exact request and all of its exact tested live dependency links were uniquely present",
+            "selection_is_admission_authority": False,
+            "selection_is_general_semantic_proof": False,
+        },
+    }
+    files = {
+        "capability.json": _json_text(candidate_manifest),
+        "gap-analysis.json": _json_text(gap_file),
+    }
+    proposal = {
+        "schema": SPAWN_PROPOSAL_SCHEMA,
+        "id": unit_id,
+        "version": unit_version,
+        "kind": "capability",
+        "purpose": candidate_manifest["purpose"],
+        "files": files,
+        "implementation": {
+            "kind": "DETERMINISTIC_COMPOSITE",
+            "entrypoint": "capability.json",
+            "source_files": ["capability.json", "gap-analysis.json"],
+        },
+        "contracts": {
+            "inputs": copy.deepcopy(candidate_manifest["input_contract"]),
+            "outputs": copy.deepcopy(output_contract),
+            "provides": [f"creation.route.{kind_slug}"],
+            "requires": [f"live.capability.{_slug(item)}" for item in dependency_ids],
+        },
+        "dependencies": [
+            {"kind": "capability", "ref": ref, "optional": False}
+            for ref in dependency_refs
+        ],
+        "relationships": [
+            *({"type": "composes", "target": ref} for ref in dependency_refs),
+            {"type": "compiled-from-gap", "target": analysis["request_digest"]},
+            {"type": "uses-blueprint", "target": TEMPLATE_BUILD_VERIFY_BLUEPRINT},
+        ],
+        "verification": {
+            "checks": [
+                {"type": "json-valid", "path": "capability.json"},
+                {"type": "json-valid", "path": "gap-analysis.json"},
+            ]
+        },
+        "provenance": {
+            "kind": "deterministic-gap-synthesis",
+            "refs": [
+                analysis["request_digest"],
+                TEMPLATE_BUILD_VERIFY_BLUEPRINT,
+                *dependency_refs,
+                *dependency_digests,
+            ],
+            "basis": "A real unroutable templated-project request exposed a gap; the implemented blueprint composed exact live template creation and independent verification through a closed file-receipt digest projection.",
+        },
+        "limitations": copy.deepcopy(candidate_manifest["limitations"]),
+        "authority": copy.deepcopy(ZERO_AUTHORITY),
+        "root_fit": copy.deepcopy(fit),
+    }
+    normalized = validate_spawn_proposal(proposal)
+    return {
+        "schema": GAP_PROPOSAL_RESULT_SCHEMA,
+        "operation": "propose",
+        "status": "DETACHED_COMPOSITE_PROPOSAL_READY",
+        "truth_status": "DETERMINISTIC_GAP_DERIVED_COMPOSITE_PROPOSAL",
+        "analysis": analysis,
+        "selected_bridge": None,
+        "selected_blueprint": copy.deepcopy(selected),
+        "selection_basis": gap_file["proposal_selection"]["selection_basis"],
+        "proposal": normalized,
+        "proposal_digest": _digest(normalized),
+        "target_created": False,
+        "semantic_equivalence_proven": False,
+        "runtime_behavior_proven": False,
+        "admission_requested": False,
+    }
+
+
 def compile_gap_proposal(
     root: Path,
     raw_request: Any,
@@ -321,6 +772,18 @@ def compile_gap_proposal(
 ) -> dict[str, Any]:
     root = Path(root).resolve()
     analysis = analyze_creation_gap(root, raw_request)
+    if analysis["selected_blueprint"] is not None:
+        if bridge_capability_id is not None:
+            raise GapSynthesisError(
+                "bridge_capability_id applies only to observed single-bridge alias candidates, not fixed composite blueprints",
+                {"selected_blueprint": analysis["selected_blueprint"]["blueprint"]},
+            )
+        return _compile_template_composite_proposal(
+            root,
+            analysis,
+            candidate_id=candidate_id,
+            version=version,
+        )
     candidates = analysis["candidate_bridges"]
     selected: dict[str, Any] | None = None
     selection_basis: str | None = None
@@ -501,6 +964,7 @@ def compile_gap_proposal(
         "truth_status": "DETERMINISTIC_GAP_DERIVED_ADAPTER_PROPOSAL",
         "analysis": analysis,
         "selected_bridge": copy.deepcopy(selected),
+        "selected_blueprint": EXACT_TEXT_ALIAS_BLUEPRINT,
         "selection_basis": selection_basis,
         "proposal": normalized,
         "proposal_digest": _digest(normalized),
@@ -568,7 +1032,8 @@ def operate_gap_synthesis(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
         "path": str(target),
         "analysis": proposed["analysis"],
         "proposal_digest": proposed["proposal_digest"],
-        "selected_bridge": proposed["selected_bridge"],
+        "selected_bridge": proposed.get("selected_bridge"),
+        "selected_blueprint": proposed.get("selected_blueprint"),
         "spawn": spawned,
         "test": tested,
         "original_request_destination_used": False,

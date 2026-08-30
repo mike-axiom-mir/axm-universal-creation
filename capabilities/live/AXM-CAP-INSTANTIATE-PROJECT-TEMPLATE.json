@@ -1,6 +1,6 @@
 {
   "id": "AXM-CAP-INSTANTIATE-PROJECT-TEMPLATE",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "status": "live",
   "purpose": "Instantiate a reusable inspectable project recipe through strict single-pass placeholders, then retain and ground the resulting creation without inventing or silently rewriting the supplied perspective.",
   "handles": [
@@ -28,8 +28,10 @@
     "kind": "templated-project-result",
     "contains": [
       "path",
+      "project_type",
       "published",
       "creation_status",
+      "files",
       "grounding",
       "template_instance",
       "validation",

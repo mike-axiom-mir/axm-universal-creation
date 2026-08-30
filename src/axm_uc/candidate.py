@@ -34,18 +34,31 @@ def _result_field(result: Any, path: str) -> Any:
     return value
 
 
-def _unsafe_test_paths(value: Any, location: str = "inputs") -> list[dict[str, str]]:
+def _unsafe_test_paths(
+    value: Any,
+    location: str = "inputs",
+    inside_top_level_validation_checks: bool = False,
+) -> list[dict[str, str]]:
     unsafe: list[dict[str, str]] = []
     if isinstance(value, dict):
         for key, item in value.items():
             child = f"{location}.{key}"
-            if str(key).casefold() == "path":
+            if str(key).casefold() == "path" and not inside_top_level_validation_checks:
                 if not isinstance(item, str) or not item.startswith("${TEST_DIR}/"):
                     unsafe.append({"field": child, "value": repr(item)})
-            unsafe.extend(_unsafe_test_paths(item, child))
+            child_inside_checks = inside_top_level_validation_checks or (
+                location == "inputs" and str(key).casefold() == "checks" and isinstance(item, list)
+            )
+            unsafe.extend(_unsafe_test_paths(item, child, child_inside_checks))
     elif isinstance(value, list):
         for index, item in enumerate(value):
-            unsafe.extend(_unsafe_test_paths(item, f"{location}[{index}]"))
+            unsafe.extend(
+                _unsafe_test_paths(
+                    item,
+                    f"{location}[{index}]",
+                    inside_top_level_validation_checks,
+                )
+            )
     return unsafe
 
 

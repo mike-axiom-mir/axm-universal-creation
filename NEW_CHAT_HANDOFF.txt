@@ -59,7 +59,7 @@ The live machine can turn one closed supplied design into a detached hand, capab
 
 EVIDENCE-BOUND GAP SYNTHESIS
 ----------------------------
-Every unroutable create result now exposes whether one implemented deterministic blueprint can compile the observed gap. The first blueprint creates an exact UTF-8 file-route alias proposal from one uniquely compatible live primitive, spawns it detached, and runs the request content as a disposable fixture. Unsupported or ambiguous gaps HOLD. This is structural proposal synthesis, not general semantic source invention, admission, or installation. See GAP_SYNTHESIS.md.
+Every unroutable create result now exposes whether an implemented deterministic blueprint can compile the observed gap. One blueprint creates an exact UTF-8 file-route alias from a uniquely compatible live primitive. A second composes the exact tested template instantiator and independent project verifier, projects file receipts through a closed digest-map binding, and tests the full chain detached. Unsupported, incomplete, or ambiguous wiring HOLD. This is structural proposal synthesis, not general semantic source invention, admission, or installation. See GAP_SYNTHESIS.md.
 
 RECOVERY
 --------

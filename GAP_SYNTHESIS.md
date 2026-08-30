@@ -4,7 +4,7 @@ Universal Creation can now bridge one small part of the path between observing a
 
 The implemented loop is:
 
-`real unroutable request -> observe current live routes -> find supported structural bridges -> READY or HOLD -> compile closed proposal -> spawn detached candidate -> run request-shaped fixture -> stop before admission`
+`real unroutable request -> observe current live routes -> find a supported bridge or exact composite chain -> READY or HOLD -> compile closed proposal -> spawn detached candidate -> run request-shaped fixture -> stop before admission`
 
 This is a deterministic proposal compiler, not a claim that the machine understands every requested format or can invent arbitrary semantic source.
 
@@ -12,7 +12,7 @@ This is a deterministic proposal compiler, not a claim that the machine understa
 
 The planner already exposes `CAPABILITY_GAP` instead of silently weakening an output. The Creation-Unit Forge already materializes and tests a complete supplied design. The missing connection was a bounded way to turn some observed gaps into an exact proposal without requiring a human or AI to write every manifest field by hand.
 
-`AXM-CAP-SYNTHESIZE-CREATION-GAP` implements that connection for one narrow, testable blueprint.
+`AXM-CAP-SYNTHESIZE-CREATION-GAP` implements that connection for two narrow, testable blueprints.
 
 Every unroutable `create` result now includes a `gap_synthesis` analysis. This analysis is separate from lexical anatomy matching: it first checks whether an existing detached capability candidate already handles the request, then examines the exact request input shape and current live capability contracts. It reports whether reuse, an implemented proposal blueprint, or a HOLD is the smallest honest next step.
 
@@ -20,13 +20,13 @@ Every unroutable `create` result now includes a `gap_synthesis` analysis. This a
 
 | Operation | Effect | Persistent write |
 | --- | --- | --- |
-| `analyze` | Bind the exact request digest to current route coverage and supported structural bridge candidates | none |
+| `analyze` | Bind the exact request digest to current route coverage, reusable detached candidates, structural bridges, and exact composite links | none |
 | `propose` | Compile a complete closed `axm.creation-unit-spawn-proposal/v0.1` when one supported bridge is selected | none |
 | `materialize-and-test` | Pass the compiled proposal through the detached forge and execute its exact request-shaped fixture | detached candidate package only |
 
 No operation admits, installs, registers, promotes, merges, changes CANON, changes permissions, or rewrites the requested output destination.
 
-## First implemented blueprint
+## Blueprint 1: exact text route alias
 
 The first recipe is:
 
@@ -45,17 +45,42 @@ The compiler emits a candidate `DETERMINISTIC_ALIAS` manifest. It copies the cho
 
 The original output path is never used during the experiment. The fixture path is rewritten under `${TEST_DIR}/`, and the candidate tester removes its build space afterward.
 
+## Blueprint 2: template build and independent digest verification
+
+The second recipe is:
+
+`axm.blueprint.templated-project-build-verify-composite/v0.1`
+
+It applies only when:
+
+- the requested kind has no live route or existing detached candidate;
+- inputs contain `path`, `template`, and `variables`, plus only optional `checks` and `replace`;
+- the strict template renderer can resolve every placeholder without malformed, missing, unused, colliding, or unsafe values;
+- exactly one live `AXM-CAP-INSTANTIATE-PROJECT-TEMPLATE@0.2.0` exists;
+- exactly one live `AXM-CAP-VERIFY-PROJECT@0.5.0` exists.
+
+The compiler emits a candidate `DETERMINISTIC_COMPOSITE` manifest with two fixed steps:
+
+1. instantiate the caller's exact template with `publish_mode: validated`;
+2. independently verify the created path, project type, caller checks, and every SHA-256 receipt emitted by step one.
+
+The bridge between those steps is deliberately small. `file-digest-map` is a closed binding transform that accepts only a non-empty list of unique `{path, sha256}` file receipts with lowercase 64-character SHA-256 values. It produces the exact mapping already accepted by `AXM-CAP-VERIFY-PROJECT`. Unknown transforms, duplicate paths, malformed rows, and malformed digests fail; there is no arbitrary expression evaluator.
+
+The generated test instantiates the exact request template under `${TEST_DIR}/request-example-project`, verifies every rendered file byte, observes validated publication, and requires the independent verifier to pass its digest comparison. The requested destination remains untouched, and passing does not install or route the candidate.
+
 ## READY is not semantic proof
 
 An exact input/output shape can justify an experiment; it cannot prove that two meanings are equivalent.
 
 For example, an exact portable note can be written by the live UTF-8 text primitive. The generated adapter can prove that the exact supplied note bytes survive its route. That evidence does not prove parsing, rendering, links, accessibility, or every future note-format requirement.
 
-The analysis therefore remains:
+Alias analysis therefore remains:
 
 `DETERMINISTIC_STRUCTURAL_BRIDGE_HYPOTHESIS`
 
 The tested candidate remains detached even when its fixture passes.
+
+Composite analysis is similarly labeled `DETERMINISTIC_COMPOSITE_CHAIN_HYPOTHESIS`. A passing build→verify chain proves the observed fixture, closed dataflow, deterministic checks, and byte identity across the two receipts. It does not prove execution of generated software, browser behavior, visual quality, or that the fixed recipe is the best meaning for every future request carrying the same kind.
 
 ## HOLD states
 
@@ -65,7 +90,9 @@ The compiler refuses to guess when its blueprint cannot carry the gap:
 - `REUSE_EXISTING_CANDIDATE_BEFORE_SYNTHESIS` — one detached candidate already handles the request kind and should be inspected or tested before generating a duplicate;
 - `HOLD_AMBIGUOUS_EXISTING_CANDIDATES` — several detached candidates already claim the route and none is silently preferred;
 - `HOLD_NO_SUPPORTED_SYNTHESIS_BLUEPRINT` — the current compiler would need to invent source or semantics;
-- `HOLD_AMBIGUOUS_STRUCTURAL_BRIDGE` — several compatible primitives exist and none is silently selected.
+- `HOLD_AMBIGUOUS_STRUCTURAL_BRIDGE` — several compatible primitives exist and none is silently selected;
+- `HOLD_MISSING_COMPOSITE_LINK` — an applicable recipe is missing one of its exact tested live dependencies;
+- `HOLD_AMBIGUOUS_COMPOSITE_LINK` — more than one live manifest declares a required composite dependency identity.
 
 An explicit `bridge_capability_id` may resolve ambiguity only when it exactly names one candidate already present in the analysis. It cannot inject an unobserved dependency.
 
@@ -84,15 +111,27 @@ The final command creates `creations/spawned/generated-note-adapter/`, verifies 
 
 Measured on the current source body, the example selected `AXM-CAP-WRITE-TEXT@0.1.0`, produced package digest `sha256:2662c9dba54ff4005ad3bf346dd0b0066fad0bee29659fbe92c7b1545b24def5`, and passed the generated candidate test twice with that same digest. The original destination remained absent and the live route remained absent.
 
+## Try the composite recipe
+
+```bash
+PYTHONPATH=src python -m axm_uc create examples/requests/analyze_verified_template_gap.json
+PYTHONPATH=src python -m axm_uc create examples/requests/propose_verified_template_gap.json
+PYTHONPATH=src python -m axm_uc create examples/requests/explore_verified_template_gap.json
+```
+
+The final command materializes `creations/spawned/generated-template-composite/`, invokes the candidate manifest directly, renders the two request files only in disposable test space, and runs independent project validation against the emitted SHA-256 receipts. It does not create `creations/generated/verified-template-site`, add a live `verified-templated-static-web-project` route, or request admission.
+
+Measured on the current source body, the exact example selected `AXM-CAP-INSTANTIATE-PROJECT-TEMPLATE@0.2.0` and `AXM-CAP-VERIFY-PROJECT@0.5.0`, produced proposal digest `sha256:60f56e090c321d32fb85d72b42ba168ca102049c4c06cd8319a7725a6fb91ce9` and package digest `sha256:7722924274eb9956e1a7bfa5c97dc9dc00f9cd7e03b394faa4573f00dcad545e`, and reproduced both exact digests across two detached runs. Both file-digest comparisons passed; the original destination and live route remained absent, and candidate-test debris was removed.
+
 ## Current boundary and next multiplier
 
-The compiler currently knows one manifest-level alias recipe. It does not yet synthesize:
+The compiler currently knows one manifest-level alias recipe and one fixed two-capability composite recipe. It does not yet synthesize:
 
 - parser-aware or runtime-aware format implementations;
-- deterministic composites with several live capabilities;
+- arbitrary composite graphs, dynamic step search, branching, loops, or unbounded data transforms;
 - missing organ source or protocol semantics;
 - verifier code for a previously unsupported evidence type;
 - learned or AI-authored source without an explicitly labelled external cognition boundary;
 - admission decisions.
 
-The next useful growth should come from real creation gaps. Likely extensions are explicit composite-recipe compilation and verifier-aware proposals, but they should be added only with a concrete request and tests that expose why the new recipe is justified.
+The next useful growth should still come from real creation gaps. Likely extensions are reusable recipe matching across more exact capability contracts, composite organ proposals, and separately labeled runtime or visual evidence providers. Each should be added only with a concrete request and tests that expose why the new recipe is justified.

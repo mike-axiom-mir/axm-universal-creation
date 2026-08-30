@@ -8,6 +8,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
+from axm_uc.capabilities import CapabilityError, _resolve_binding
 from axm_uc.machine import UniversalCreationMachine
 
 
@@ -124,6 +125,37 @@ class CompositeAndExecutableTests(unittest.TestCase):
         }
         with self.assertRaisesRegex(Exception, "not live"):
             machine.capabilities.invoke(manifest, {})
+
+    def test_file_receipt_digest_projection_is_closed_and_deterministic(self):
+        digest_a = "a" * 64
+        digest_b = "b" * 64
+        binding = {
+            "from": "steps.build.files",
+            "transform": "file-digest-map",
+        }
+        result = _resolve_binding(
+            binding,
+            {},
+            {"build": {"files": [
+                {"path": "index.html", "bytes": 1, "sha256": digest_a},
+                {"path": "style.css", "bytes": 2, "sha256": digest_b},
+            ]}},
+        )
+        self.assertEqual(result, {"index.html": digest_a, "style.css": digest_b})
+
+        with self.assertRaisesRegex(CapabilityError, "unique"):
+            _resolve_binding(binding, {}, {"build": {"files": [
+                {"path": "same.txt", "sha256": digest_a},
+                {"path": "same.txt", "sha256": digest_b},
+            ]}})
+        with self.assertRaisesRegex(CapabilityError, "SHA-256"):
+            _resolve_binding(binding, {}, {"build": {"files": [{"path": "bad.txt", "sha256": "not-a-digest"}]}})
+        with self.assertRaisesRegex(CapabilityError, "unsupported"):
+            _resolve_binding(
+                {"from": "steps.build.files", "transform": "arbitrary-expression"},
+                {},
+                {"build": {"files": [{"path": "a.txt", "sha256": digest_a}]}},
+            )
 
 
 if __name__ == "__main__":

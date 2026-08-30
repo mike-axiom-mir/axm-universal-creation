@@ -250,6 +250,7 @@ BUILTINS: dict[str, Callable[[Path, dict[str, Any]], dict[str, Any]]] = {
 
 
 _MISSING = object()
+_BINDING_TRANSFORMS = {"file-digest-map"}
 
 
 def _lookup_binding(source: str, request_inputs: dict[str, Any], step_results: dict[str, Any]) -> Any:
@@ -273,14 +274,71 @@ def _lookup_binding(source: str, request_inputs: dict[str, Any], step_results: d
     return value
 
 
+def _transform_binding(name: Any, value: Any) -> Any:
+    transform = str(name).strip().casefold()
+    if transform not in _BINDING_TRANSFORMS:
+        raise CapabilityError(
+            f"unsupported composite binding transform: {transform or '<empty>'}",
+            {"supported_transforms": sorted(_BINDING_TRANSFORMS)},
+        )
+    if transform == "file-digest-map":
+        if not isinstance(value, list) or not value:
+            raise CapabilityError("file-digest-map requires a non-empty file receipt list")
+        result: dict[str, str] = {}
+        for index, row in enumerate(value):
+            if not isinstance(row, dict):
+                raise CapabilityError(
+                    "file-digest-map receipt rows must be objects",
+                    {"index": index},
+                )
+            path = row.get("path")
+            digest = row.get("sha256")
+            if not isinstance(path, str) or not path.strip():
+                raise CapabilityError(
+                    "file-digest-map receipt path must be non-empty text",
+                    {"index": index},
+                )
+            normalized_path = path.strip().replace("\\", "/")
+            if normalized_path in result:
+                raise CapabilityError(
+                    "file-digest-map receipt paths must be unique",
+                    {"index": index, "duplicate_path": normalized_path},
+                )
+            if (
+                not isinstance(digest, str)
+                or len(digest) != 64
+                or any(character not in "0123456789abcdef" for character in digest)
+            ):
+                raise CapabilityError(
+                    "file-digest-map receipt SHA-256 must be 64 lowercase hexadecimal characters",
+                    {"index": index, "path": normalized_path},
+                )
+            result[normalized_path] = digest
+        return result
+    raise AssertionError("unreachable binding transform")
+
+
 def _resolve_binding(spec: Any, request_inputs: dict[str, Any], step_results: dict[str, Any]) -> Any:
     if isinstance(spec, dict) and "from" in spec:
+        unexpected = sorted(set(spec) - {"from", "default", "transform"})
+        if unexpected:
+            raise CapabilityError(
+                "composite binding reference has unsupported fields",
+                {"unexpected_fields": unexpected},
+            )
+        if not isinstance(spec["from"], str) or not spec["from"].strip():
+            raise CapabilityError("composite binding from must be non-empty text")
         value = _lookup_binding(str(spec["from"]), request_inputs, step_results)
         if value is _MISSING:
             if "default" in spec:
-                return copy.deepcopy(spec["default"])
-            raise CapabilityError(f"composite binding could not resolve: {spec['from']}")
-        return copy.deepcopy(value)
+                value = copy.deepcopy(spec["default"])
+            else:
+                raise CapabilityError(f"composite binding could not resolve: {spec['from']}")
+        else:
+            value = copy.deepcopy(value)
+        if "transform" in spec:
+            return _transform_binding(spec["transform"], value)
+        return value
     if isinstance(spec, dict):
         return {key: _resolve_binding(value, request_inputs, step_results) for key, value in spec.items()}
     if isinstance(spec, list):
