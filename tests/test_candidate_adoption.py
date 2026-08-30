@@ -18,6 +18,7 @@ class CandidateAdoptionTests(unittest.TestCase):
         (root / "capabilities/live").mkdir(parents=True)
         (root / "capabilities/candidates").mkdir(parents=True)
         (root / "state").mkdir()
+        (root / "creations").mkdir()
         (root / "reference/AXM_Universal_Creation_Map_v0.1/registry").mkdir(parents=True)
         (root / "machine.contract.json").write_text('{"roots":["truth","agency","continuity","wisdom-before-speed"]}', encoding="utf-8")
         (root / "reference/AXM_Universal_Creation_Map_v0.1/registry/master_registry.json").write_text('{"records":[]}', encoding="utf-8")
@@ -37,7 +38,7 @@ class CandidateAdoptionTests(unittest.TestCase):
             self.assertTrue(result["adopted"])
             self.assertFalse(candidate.exists())
             self.assertTrue((root / "capabilities/live/AXM-CAP-WRITE-MARKDOWN.json").exists())
-            output = Path(td) / "made.md"
+            output = root / "creations" / "made.md"
             routed = machine.create({"kind": "markdown-file", "inputs": {"path": str(output), "content": "# made\n"}})
             self.assertEqual(routed["type"], "CREATION_RESULT")
             self.assertEqual(output.read_text(encoding="utf-8"), "# made\n")
