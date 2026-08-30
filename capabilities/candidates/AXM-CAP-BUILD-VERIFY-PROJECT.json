@@ -1,0 +1,135 @@
+{
+  "id": "AXM-CAP-BUILD-VERIFY-PROJECT",
+  "version": "0.1.0",
+  "status": "candidate",
+  "purpose": "Compose the existing project builder and project verifier into one inspectable build-and-verify route without adding a bespoke source implementation for this capability.",
+  "handles": [
+    "verified-software-project",
+    "verified-static-web-project",
+    "verified-python-project"
+  ],
+  "input_contract": {
+    "required": [
+      "path",
+      "files"
+    ],
+    "properties": {
+      "path": "target project directory",
+      "files": "object mapping project-relative file paths to exact UTF-8 text",
+      "project_type": "generic, static-web, or python",
+      "checks": "optional deterministic checks",
+      "replace": "optional boolean"
+    }
+  },
+  "output_contract": {
+    "kind": "verified-project-composite-result",
+    "contains": [
+      "path",
+      "build",
+      "verification"
+    ]
+  },
+  "dependencies": [
+    "AXM-CAP-WRITE-PROJECT",
+    "AXM-CAP-VERIFY-PROJECT"
+  ],
+  "relationships": [
+    {
+      "type": "composes",
+      "targets": [
+        "AXM-CAP-WRITE-PROJECT",
+        "AXM-CAP-VERIFY-PROJECT"
+      ]
+    }
+  ],
+  "anatomy_refs": [
+    {
+      "id": "AXM-24-WORKSPACE-COLLABORATION-C-010-project",
+      "role": "uses",
+      "basis": "The composite delegates project creation to the live capability that explicitly implements the project component."
+    },
+    {
+      "id": "AXM-20-TESTING-OBSERVABILITY-C-015-validation-report",
+      "role": "uses",
+      "basis": "The composite delegates independent verification to the live capability that explicitly implements the validation-report component."
+    }
+  ],
+  "implementation": {
+    "kind": "DETERMINISTIC_COMPOSITE",
+    "source": "this manifest",
+    "steps": [
+      {
+        "id": "build",
+        "capability": "AXM-CAP-WRITE-PROJECT",
+        "inputs": {
+          "path": {"from": "request.path"},
+          "files": {"from": "request.files"},
+          "project_type": {"from": "request.project_type", "default": "generic"},
+          "checks": {"from": "request.checks", "default": []},
+          "replace": {"from": "request.replace", "default": false}
+        }
+      },
+      {
+        "id": "verify",
+        "capability": "AXM-CAP-VERIFY-PROJECT",
+        "inputs": {
+          "path": {"from": "steps.build.path"},
+          "project_type": {"from": "request.project_type", "default": "generic"},
+          "checks": {"from": "request.checks", "default": []},
+          "expected_files": {"from": "request.files"}
+        }
+      }
+    ],
+    "outputs": {
+      "path": {"from": "steps.build.path"},
+      "build": {"from": "steps.build"},
+      "verification": {"from": "steps.verify"}
+    }
+  },
+  "limitations": [
+    "composition is sequential and deterministic in this milestone",
+    "the project verifier still does not execute generated code or judge browser visuals"
+  ],
+  "persistent_state": null,
+  "tests": [
+    {
+      "inputs": {
+        "path": "${TEST_DIR}/composite-site",
+        "project_type": "static-web",
+        "files": {
+          "index.html": "<!doctype html><html><body><main>Composite works</main></body></html>"
+        },
+        "checks": [
+          {"type": "contains", "path": "index.html", "text": "Composite works"}
+        ]
+      },
+      "expect": {
+        "files": {
+          "${TEST_DIR}/composite-site/index.html": "<!doctype html><html><body><main>Composite works</main></body></html>"
+        },
+        "result_fields": {
+          "build.published": true,
+          "verification.passed": true
+        }
+      }
+    }
+  ],
+  "root_fit": {
+    "truth": {
+      "fit": true,
+      "basis": "The manifest exposes every delegated step and claims only sequential composition of two already-live capabilities."
+    },
+    "agency": {
+      "fit": true,
+      "basis": "The caller supplies the project path, exact files, project type, checks, and replacement choice; the composite adds no hidden objective."
+    },
+    "continuity": {
+      "fit": true,
+      "basis": "It reuses existing live capabilities without replacing or silently rewriting them, and project replacement remains transactional."
+    },
+    "wisdom-before-speed": {
+      "fit": true,
+      "basis": "It composes proven machinery instead of adding a redundant bespoke implementation for the same build-and-verify sequence."
+    }
+  }
+}
