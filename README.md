@@ -8,6 +8,29 @@ It is **not** defined as an autonomous AI agent. It is a persistent running comp
 
 The brain is deliberately **not predefined**. It may remain deterministic, become neural, become coupled/recurrent, contain several kinds of cognition, or evolve into something else. The architecture must not force the answer before the experiment has earned one.
 
+## Start here
+
+The current runtime needs Python 3.11 or newer and has no third-party runtime dependencies. From the repository root:
+
+```bash
+# Read the current machine body without changing it.
+PYTHONPATH=src python -m axm_uc inspect
+
+# Create and independently verify the included local website.
+PYTHONPATH=src python -m axm_uc trial examples/requests/create_real_site.json
+
+# Inspect the detached unit forge and bounded gap compiler.
+PYTHONPATH=src python -m axm_uc forge
+PYTHONPATH=src python -m axm_uc gap-forge
+
+# Run the complete repository verification suite.
+python tools/build.py
+```
+
+The website trial writes inspectable source under `creations/first-real-site/`; open its `index.html` locally to perform the separate human visual and interaction check. `inspect`, `forge`, and `gap-forge` are read-only. Passing a test does not automatically install, admit, promote, merge, or grant authority to a candidate.
+
+To see the newest growth loop, run `examples/requests/explore_missing_status_panel_organ_closure.json`. It starts from a real missing interface, tests one explicitly supplied organ in detached and disposable spaces, and leaves the live installed-organ body unchanged. See `ORGAN_GAP_CLOSURE.md` for the exact evidence boundary.
+
 ## Core rule
 
 > **Do not hide what the machine is.**
