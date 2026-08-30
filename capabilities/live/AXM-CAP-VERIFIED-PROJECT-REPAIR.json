@@ -71,7 +71,7 @@
           "path": {"from": "steps.repair.path"},
           "project_type": {"from": "request.project_type", "default": "generic"},
           "checks": {"from": "request.checks", "default": []},
-          "expected_files": {"from": "request.expected_files", "default": {}}
+          "expected_files": {"from": "steps.repair.expected_files"}
         }
       }
     ],
