@@ -1,0 +1,24 @@
+{
+  "kind": "verified-static-web-project",
+  "direction": "create and independently verify a small local website through a manifest-only composite capability",
+  "inputs": {
+    "path": "creations/verified-composite-site",
+    "project_type": "static-web",
+    "files": {
+      "index.html": "<!doctype html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"utf-8\">\n  <meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n  <title>AXM Composite Trial</title>\n  <link rel=\"stylesheet\" href=\"style.css\">\n</head>\n<body>\n  <main>\n    <h1>Composite route is live</h1>\n    <button id=\"test\">Test interaction</button>\n    <p id=\"state\">waiting</p>\n  </main>\n  <script src=\"app.js\"></script>\n</body>\n</html>\n",
+      "style.css": "body { font-family: system-ui, sans-serif; max-width: 48rem; margin: 4rem auto; padding: 1rem; }\nbutton { padding: .7rem 1rem; }\n",
+      "app.js": "document.querySelector('#test').addEventListener('click', () => { document.querySelector('#state').textContent = 'clicked'; });\n"
+    },
+    "checks": [
+      {
+        "type": "contains",
+        "path": "index.html",
+        "text": "Composite route is live"
+      },
+      {
+        "type": "nonempty",
+        "path": "app.js"
+      }
+    ]
+  }
+}
