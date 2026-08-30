@@ -1,0 +1,29 @@
+{
+  "kind": "software-project",
+  "direction": "Build a local-first multiplayer RTS with deterministic world simulation and persistent save state.",
+  "software_directions": {
+    "direction_ids": [
+      "game",
+      "collaboration-multiplayer"
+    ],
+    "runtime": [
+      "desktop-os"
+    ],
+    "execution": [
+      "frame-loop"
+    ],
+    "state": [
+      "simulation-world",
+      "local-persistent"
+    ],
+    "verification": [
+      "deterministic-replay"
+    ],
+    "distribution": [
+      "local-file"
+    ]
+  },
+  "inputs": {
+    "path": "creations/multiplayer-rts"
+  }
+}
