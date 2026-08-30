@@ -186,14 +186,8 @@ def _resolve_interfaces(
     return providers, dependency_closure
 
 
-def assemble_organ_project(
-    target: Path,
-    assembly: Any,
-    variables: Any,
-    checks: list[dict[str, Any]] | None = None,
-    replace: bool = False,
-    publish_mode: str = "grounded-draft",
-) -> dict[str, Any]:
+def preview_organ_project(assembly: Any, variables: Any) -> dict[str, Any]:
+    """Resolve and render one organ assembly without publishing any files."""
     if not isinstance(assembly, dict):
         raise ProjectError("assembly must be an object")
     assembly_id = _required_text(assembly.get("id"), "assembly.id")
@@ -276,15 +270,7 @@ def assemble_organ_project(
             {"unused_variables": unused_variables},
         )
 
-    result = build_project(
-        target=target,
-        files=combined_files,
-        project_type=project_type,
-        checks=checks,
-        replace=replace,
-        publish_mode=publish_mode,
-    )
-    result["organ_assembly"] = {
+    organ_assembly = {
         "truth_status": "DETERMINISTIC_DEPENDENCY_ORDERED_SOFTWARE_ORGAN_ASSEMBLY",
         "assembly_id": assembly_id,
         "assembly_version": version,
@@ -320,4 +306,29 @@ def assemble_organ_project(
             "organ templates remain raw single-pass text substitution and are not parser-aware",
         ],
     }
+    return {
+        "project_type": project_type,
+        "files": combined_files,
+        "organ_assembly": organ_assembly,
+    }
+
+
+def assemble_organ_project(
+    target: Path,
+    assembly: Any,
+    variables: Any,
+    checks: list[dict[str, Any]] | None = None,
+    replace: bool = False,
+    publish_mode: str = "grounded-draft",
+) -> dict[str, Any]:
+    preview = preview_organ_project(assembly, variables)
+    result = build_project(
+        target=target,
+        files=preview["files"],
+        project_type=preview["project_type"],
+        checks=checks,
+        replace=replace,
+        publish_mode=publish_mode,
+    )
+    result["organ_assembly"] = preview["organ_assembly"]
     return result

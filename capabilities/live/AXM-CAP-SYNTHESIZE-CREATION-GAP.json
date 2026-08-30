@@ -1,8 +1,8 @@
 {
   "id": "AXM-CAP-SYNTHESIZE-CREATION-GAP",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "status": "live",
-  "purpose": "Turn a real unroutable creation request into an evidence-bound detached capability proposal when an implemented deterministic blueprint can reuse either one uniquely compatible live primitive or one exact multi-capability recipe, then optionally materialize and test that hypothesis without admitting it.",
+  "purpose": "Turn a real unroutable creation request into an evidence-bound detached capability proposal when an implemented deterministic blueprint can reuse either one uniquely compatible live primitive or one exact contract-discovered project-producer recipe, then optionally materialize and test that hypothesis without admitting it.",
   "handles": [
     "analyze-creation-gap",
     "propose-gap-candidate",
@@ -39,13 +39,14 @@
   "dependencies": [
     "AXM-CAP-SPAWN-CREATION-UNIT",
     "AXM-CAP-INSTANTIATE-PROJECT-TEMPLATE",
+    "AXM-CAP-ASSEMBLE-ORGAN-PROJECT",
     "AXM-CAP-VERIFY-PROJECT"
   ],
   "relationships": [
     "begins only from an observed creation request and current live capability body",
     "surfaces an existing detached capability candidate before compiling duplicate machinery",
     "compiles one uniquely supported structural bridge into a detached experiment instead of silently adding a live route",
-    "can compile exact template instantiation and independent digest verification into a detached deterministic composite",
+    "discovers a supported exact template or organ project producer from request markers and live receipt contracts before compiling independent digest verification into a detached deterministic composite",
     "projects file receipts through one closed file-digest-map binding rather than an arbitrary expression language",
     "preserves ambiguity and unsupported semantics as typed HOLD states",
     "uses the creation-unit forge for exact materialization and bounded testing",
@@ -60,7 +61,7 @@
     {
       "id": "AXM-23-PROCEDURAL-C-023-generator-recipe",
       "role": "uses",
-      "basis": "Implemented recipes deterministically emit either an exact UTF-8 file-route alias or one fixed template-build-verify composite from observed request and exact live-manifest evidence."
+      "basis": "Implemented recipes deterministically emit either an exact UTF-8 file-route alias or one project-producer-and-verifier composite selected from observed request markers, preview evidence, and exact live-manifest contracts."
     },
     {
       "id": "AXM-06-BUILD-PACKAGE-O-004-artifact-builder",
@@ -75,7 +76,7 @@
   },
   "limitations": [
     "the first blueprint covers only missing exact UTF-8 file routes with exactly path and content inputs",
-    "the second blueprint covers only strict project-template requests and the exact tested template-instantiator plus project-verifier dependency versions",
+    "the second blueprint covers only strict project-template or exact executable-organ assembly requests and their explicitly supported, exact tested producer plus verifier versions",
     "composite receipt projection is limited to the closed file-digest-map transform; arbitrary dataflow expressions are not executed",
     "existing detached candidates are observed by exact handled request kind but are not automatically selected, admitted, or installed",
     "matching an input/output shape is a structural hypothesis and does not prove semantic equivalence",

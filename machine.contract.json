@@ -103,13 +103,17 @@
     "exactRequestDigestPreserved": true,
     "implementedBlueprints": [
       "axm.blueprint.exact-utf8-file-route-alias/v0.1",
-      "axm.blueprint.templated-project-build-verify-composite/v0.1"
+      "axm.blueprint.receipted-project-producer-verify-composite/v0.1"
     ],
     "existingDetachedCandidateReusePrecedesNewSynthesis": true,
     "uniqueStructuralBridgeMaySelectDetachedExperiment": true,
     "structuralBridgeIsSemanticEquivalenceProof": false,
     "ambiguousBridgeAutoSelected": false,
     "exactCompositeChainCompilationAvailable": true,
+    "supportedProjectProducerProfiles": [
+      "strict-project-template",
+      "exact-executable-organ-assembly"
+    ],
     "compositeMissingOrAmbiguousLinkHeld": true,
     "closedCompositeBindingTransforms": [
       "file-digest-map"

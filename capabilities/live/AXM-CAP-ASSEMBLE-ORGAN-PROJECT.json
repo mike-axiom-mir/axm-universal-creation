@@ -1,6 +1,6 @@
 {
   "id": "AXM-CAP-ASSEMBLE-ORGAN-PROJECT",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "status": "live",
   "purpose": "Assemble one software project from inline or exactly referenced executable template organs in deterministic declared-dependency order, validate declared provided/required interfaces, preserve exact package resolution and file ownership, and ground the resulting body without hiding structural or validation gaps.",
   "handles": [
@@ -28,7 +28,10 @@
     "kind": "organ-assembled-project-result",
     "contains": [
       "path",
+      "project_type",
+      "published",
       "creation_status",
+      "files",
       "grounding",
       "executable_organ_resolution",
       "organ_assembly",

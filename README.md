@@ -64,7 +64,7 @@ The machine can also spawn smaller detached creation-unit bodies without cloning
 
 See `CREATION_FORGE.md`.
 
-For two bounded classes of real gaps, the machine can now compile the missing design itself. An unroutable exact UTF-8 file request may expose one uniquely compatible live primitive. A strict templated-project request may expose one exact template→build→digest-verify chain. The gap compiler turns either observation into a closed detached capability proposal and runs the exact request as its disposable fixture. Ambiguous, incomplete, or unsupported wiring remains a typed HOLD state.
+For two bounded classes of real gaps, the machine can now compile the missing design itself. An unroutable exact UTF-8 file request may expose one uniquely compatible live primitive. A project request may expose a supported exact producer whose file receipts can feed independent verification; the same grammar now works for strict templates and executable-organ assemblies. The gap compiler turns either observation into a closed detached capability proposal and runs the exact request as its disposable fixture. Ambiguous, incomplete, contract-drifted, or unsupported wiring remains a typed HOLD state.
 
 `unroutable request -> evidence-bound bridge or composite recipe -> proposal -> detached full-chain test -> no automatic admission`
 
@@ -126,7 +126,7 @@ The small Python runtime currently provides:
 - dependency-aware software-organ assembly with declared interfaces, explicit order, and file ownership;
 - an exact local executable-organ package body that makes working organs reusable across creations;
 - a deterministic detached creation-unit forge for hands, capabilities, organs, protocols, skills, specialists, recipes, and new extension kinds;
-- an evidence-bound gap compiler that can derive and test either the smallest supported UTF-8 file-route adapter or one exact multi-capability template-build-verify proposal from a real unroutable request;
+- an evidence-bound gap compiler that can derive and test either the smallest supported UTF-8 file-route adapter or a receipt-discovered template/organ producer plus verifier composite from a real unroutable request;
 - complete editable self-workspace cloning, exact source comparison, independent build logs, and voluntary merge-check requests;
 - structured `CAPABILITY_GAP` results that preserve the directional outcome and distinguish current partial coverage;
 - candidate capability testing and direct adoption through the four-root fit declaration;

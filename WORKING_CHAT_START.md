@@ -87,7 +87,7 @@ For a new experiment:
 9. if something is wrong, repair the smallest affected portion instead of regenerating the whole project;
 10. report observed results separately from hypotheses and remaining gaps.
 
-When the smallest honest gap is new creation machinery rather than another end artifact, inspect the `gap_synthesis` field first. The current compiler can derive a narrow exact UTF-8 adapter proposal from a compatible live primitive or one fixed template→build→digest-verify composite from exact tested live dependencies. READY means a detached experiment is justified, not that meanings or general behavior are proven. Ambiguous, missing-link, and unsupported gaps remain HOLD.
+When the smallest honest gap is new creation machinery rather than another end artifact, inspect the `gap_synthesis` field first. The current compiler can derive a narrow exact UTF-8 adapter proposal or discover one supported exact project producer and compile its receipts into an independently verified composite. Strict template and executable-organ producers currently share that grammar. READY means a detached experiment is justified, not that meanings or general behavior are proven. Ambiguous, missing-link, contract-drifted, and unsupported gaps remain HOLD.
 
 For designs beyond that blueprint, use `spawn-creation-unit` with an explicit human, AI, recipe, or external-boundary proposal. The proposal may describe a hand, capability, organ, protocol, skill, specialist, recipe, or a new extension kind. Test the detached body, then let the candidate choose whether to request admission review. A request is not approval or installation.
 
@@ -109,8 +109,8 @@ At this handoff:
 - candidates can request merge checks, but whole-body adoption is not yet implemented;
 - software-organ dependencies and declared interface names are checked structurally, but source-level conformance and runtime wiring are not synthesized or proven;
 - installed executable-organ packages are exact local source packages, while the 415 anatomy organs remain descriptive until separately implemented;
-- the creation-unit forge materializes supplied designs deterministically, and the gap compiler can derive one narrow adapter or fixed two-capability composite design from structural evidence; neither claims general semantic source invention;
-- gap synthesis currently covers only exact UTF-8 `path`+`content` routes and strict templated-project build→verify chains; one passing request fixture does not prove general format semantics or runtime behavior;
+- the creation-unit forge materializes supplied designs deterministically, and the gap compiler can derive one narrow adapter or one receipt-driven two-capability composite from structural evidence; neither claims general semantic source invention;
+- gap synthesis currently covers only exact UTF-8 `path`+`content` routes and strict template or exact executable-organ producer→verify chains; one passing request fixture does not prove general format semantics, source-level organ conformance, or runtime behavior;
 - capability/hand fixtures and organ package contracts have specialized tests; protocols, skills, specialists, recipes, and extension kinds currently have structural/file evidence only;
 - spawned recipes are detached candidates and are not yet automatically activated as forge builders;
 - software-direction suggestions do not choose a direction;

@@ -4,7 +4,7 @@ Universal Creation can now bridge one small part of the path between observing a
 
 The implemented loop is:
 
-`real unroutable request -> observe current live routes -> find a supported bridge or exact composite chain -> READY or HOLD -> compile closed proposal -> spawn detached candidate -> run request-shaped fixture -> stop before admission`
+`real unroutable request -> observe current live routes -> reuse an existing candidate or discover a supported exact recipe -> READY or HOLD -> compile closed proposal -> spawn detached candidate -> run request-shaped fixture -> stop before admission`
 
 This is a deterministic proposal compiler, not a claim that the machine understands every requested format or can invent arbitrary semantic source.
 
@@ -45,28 +45,36 @@ The compiler emits a candidate `DETERMINISTIC_ALIAS` manifest. It copies the cho
 
 The original output path is never used during the experiment. The fixture path is rewritten under `${TEST_DIR}/`, and the candidate tester removes its build space afterward.
 
-## Blueprint 2: template build and independent digest verification
+## Blueprint 2: receipt-discovered project production and independent verification
 
 The second recipe is:
 
-`axm.blueprint.templated-project-build-verify-composite/v0.1`
+`axm.blueprint.receipted-project-producer-verify-composite/v0.1`
 
 It applies only when:
 
 - the requested kind has no live route or existing detached candidate;
-- inputs contain `path`, `template`, and `variables`, plus only optional `checks` and `replace`;
-- the strict template renderer can resolve every placeholder without malformed, missing, unused, colliding, or unsafe values;
-- exactly one live `AXM-CAP-INSTANTIATE-PROJECT-TEMPLATE@0.2.0` exists;
+- exactly one supported producer profile matches the request markers;
+- inputs exactly satisfy that producer profile, plus only optional `checks` and `replace`;
+- a read-only deterministic preview resolves the complete creation recipe without publishing files;
+- the exact live producer contract declares `path`, `project_type`, `published`, `creation_status`, and `files` receipts;
 - exactly one live `AXM-CAP-VERIFY-PROJECT@0.5.0` exists.
 
-The compiler emits a candidate `DETERMINISTIC_COMPOSITE` manifest with two fixed steps:
+The current producer profiles are:
 
-1. instantiate the caller's exact template with `publish_mode: validated`;
-2. independently verify the created path, project type, caller checks, and every SHA-256 receipt emitted by step one.
+| Profile | Exact producer | Request marker | Preview proof |
+| --- | --- | --- | --- |
+| `strict-project-template` | `AXM-CAP-INSTANTIATE-PROJECT-TEMPLATE@0.2.0` | `template` | strict placeholder and rendered-path resolution |
+| `exact-executable-organ-assembly` | `AXM-CAP-ASSEMBLE-ORGAN-PROJECT@0.3.0` | `assembly` | exact package refs, dependency graph, declared interfaces, bindings, and exclusive file ownership |
+
+The compiler emits the same candidate `DETERMINISTIC_COMPOSITE` grammar for either producer:
+
+1. run the selected producer with the caller's exact inputs and `publish_mode: validated`;
+2. independently verify the produced path, project type, caller checks, and every SHA-256 receipt emitted by step one.
 
 The bridge between those steps is deliberately small. `file-digest-map` is a closed binding transform that accepts only a non-empty list of unique `{path, sha256}` file receipts with lowercase 64-character SHA-256 values. It produces the exact mapping already accepted by `AXM-CAP-VERIFY-PROJECT`. Unknown transforms, duplicate paths, malformed rows, and malformed digests fail; there is no arbitrary expression evaluator.
 
-The generated test instantiates the exact request template under `${TEST_DIR}/request-example-project`, verifies every rendered file byte, observes validated publication, and requires the independent verifier to pass its digest comparison. The requested destination remains untouched, and passing does not install or route the candidate.
+The generated test runs the exact request recipe under `${TEST_DIR}/request-example-project`, verifies every previewed file byte, observes validated publication, and requires the independent verifier to pass its digest comparison. For organs, the result also preserves exact package-resolution, dependency-order, interface, and ownership receipts. The requested destination remains untouched, and passing does not install or route the candidate.
 
 ## READY is not semantic proof
 
@@ -80,7 +88,7 @@ Alias analysis therefore remains:
 
 The tested candidate remains detached even when its fixture passes.
 
-Composite analysis is similarly labeled `DETERMINISTIC_COMPOSITE_CHAIN_HYPOTHESIS`. A passing build→verify chain proves the observed fixture, closed dataflow, deterministic checks, and byte identity across the two receipts. It does not prove execution of generated software, browser behavior, visual quality, or that the fixed recipe is the best meaning for every future request carrying the same kind.
+Composite analysis is similarly labeled `DETERMINISTIC_COMPOSITE_CHAIN_HYPOTHESIS`. A passing producer→verify chain proves the observed fixture, closed dataflow, deterministic checks, and byte identity across the two receipts. It does not prove execution of generated software, browser behavior, visual quality, organ source-level interface conformance, or that the discovered recipe is the best meaning for every future request carrying the same kind.
 
 ## HOLD states
 
@@ -91,6 +99,7 @@ The compiler refuses to guess when its blueprint cannot carry the gap:
 - `HOLD_AMBIGUOUS_EXISTING_CANDIDATES` — several detached candidates already claim the route and none is silently preferred;
 - `HOLD_NO_SUPPORTED_SYNTHESIS_BLUEPRINT` — the current compiler would need to invent source or semantics;
 - `HOLD_AMBIGUOUS_STRUCTURAL_BRIDGE` — several compatible primitives exist and none is silently selected;
+- `HOLD_AMBIGUOUS_COMPOSITE_RECIPE` — more than one supported producer profile matches the request markers and none is silently selected;
 - `HOLD_MISSING_COMPOSITE_LINK` — an applicable recipe is missing one of its exact tested live dependencies;
 - `HOLD_AMBIGUOUS_COMPOSITE_LINK` — more than one live manifest declares a required composite dependency identity.
 
@@ -121,17 +130,23 @@ PYTHONPATH=src python -m axm_uc create examples/requests/explore_verified_templa
 
 The final command materializes `creations/spawned/generated-template-composite/`, invokes the candidate manifest directly, renders the two request files only in disposable test space, and runs independent project validation against the emitted SHA-256 receipts. It does not create `creations/generated/verified-template-site`, add a live `verified-templated-static-web-project` route, or request admission.
 
-Measured on the current source body, the exact example selected `AXM-CAP-INSTANTIATE-PROJECT-TEMPLATE@0.2.0` and `AXM-CAP-VERIFY-PROJECT@0.5.0`, produced proposal digest `sha256:60f56e090c321d32fb85d72b42ba168ca102049c4c06cd8319a7725a6fb91ce9` and package digest `sha256:7722924274eb9956e1a7bfa5c97dc9dc00f9cd7e03b394faa4573f00dcad545e`, and reproduced both exact digests across two detached runs. Both file-digest comparisons passed; the original destination and live route remained absent, and candidate-test debris was removed.
+The same grammar can now discover and test an organ producer:
+
+```bash
+PYTHONPATH=src python -m axm_uc create examples/requests/explore_verified_organ_gap.json
+```
+
+The organ example selects `AXM-CAP-ASSEMBLE-ORGAN-PROJECT@0.3.0` and `AXM-CAP-VERIFY-PROJECT@0.5.0`, resolves three exact executable-organ packages, verifies the dependency order `shell-organ -> theme-organ -> interaction-organ`, and independently rechecks all emitted file digests. Two detached runs reproduced proposal digest `sha256:a930d86e9f464e11c39eee2d1123e5805a890101fc7a6c232d9cdf33bfcd187b` and package digest `sha256:8a66d47194862bc370ad1a47d840fc231b81d02d2f68919d295715ac4f5f2b1e`. The original destination and live route remained absent.
 
 ## Current boundary and next multiplier
 
-The compiler currently knows one manifest-level alias recipe and one fixed two-capability composite recipe. It does not yet synthesize:
+The compiler currently knows one manifest-level alias recipe and one general two-step receipt grammar with two explicitly supported producer profiles. Adding a profile still requires a deterministic preview adapter and exact contract tests. It does not yet synthesize:
 
 - parser-aware or runtime-aware format implementations;
 - arbitrary composite graphs, dynamic step search, branching, loops, or unbounded data transforms;
-- missing organ source or protocol semantics;
+- missing organ source, runtime wiring, or protocol semantics;
 - verifier code for a previously unsupported evidence type;
 - learned or AI-authored source without an explicitly labelled external cognition boundary;
 - admission decisions.
 
-The next useful growth should still come from real creation gaps. Likely extensions are reusable recipe matching across more exact capability contracts, composite organ proposals, and separately labeled runtime or visual evidence providers. Each should be added only with a concrete request and tests that expose why the new recipe is justified.
+The next useful growth should still come from real creation gaps. Likely extensions are more producer/verifier profiles, bounded multi-step recipe discovery, and separately labeled runtime or visual evidence providers. Each should be added only with a concrete request and tests that expose why the new recipe is justified.

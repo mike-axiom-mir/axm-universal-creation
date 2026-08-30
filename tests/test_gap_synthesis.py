@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import shutil
 import sys
 import tempfile
 import unittest
@@ -45,6 +46,17 @@ class GapSynthesisTests(unittest.TestCase):
                 "checks": [{"type": "contains", "path": "index.html", "text": "Composite creation"}],
             },
         }
+
+    @staticmethod
+    def _verified_organ_request(path: str = "creations/requested-organ-site") -> dict:
+        request = json.loads(
+            (ROOT / "examples/requests/create_reusable_organ_site.json").read_text(encoding="utf-8")
+        )
+        request["kind"] = "verified-reusable-organ-static-web-project"
+        request["direction"] = "assemble exact executable organs and independently verify their emitted digest receipt"
+        request["inputs"]["path"] = path
+        request["inputs"]["replace"] = False
+        return request
 
     def test_unroutable_creation_exposes_ready_gap_synthesis_without_inflating_live_coverage(self):
         result = self.machine.create(self._note_request())
@@ -108,7 +120,7 @@ class GapSynthesisTests(unittest.TestCase):
         self.assertEqual(analysis["status"], "SYNTHESIS_READY_EXACT_COMPOSITE_CHAIN")
         self.assertEqual(
             analysis["selected_blueprint"]["blueprint"],
-            "axm.blueprint.templated-project-build-verify-composite/v0.1",
+            "axm.blueprint.receipted-project-producer-verify-composite/v0.1",
         )
         self.assertEqual(
             [row["ref"] for row in analysis["selected_blueprint"]["dependencies"]],
@@ -130,7 +142,7 @@ class GapSynthesisTests(unittest.TestCase):
         )
         digest_binding = manifest["implementation"]["steps"][1]["inputs"]["expected_file_digests"]
         self.assertEqual(digest_binding, {
-            "from": "steps.instantiate.files",
+            "from": "steps.produce.files",
             "transform": "file-digest-map",
         })
         self.assertTrue(manifest["tests"][0]["inputs"]["path"].startswith("${TEST_DIR}/"))
@@ -160,10 +172,10 @@ class GapSynthesisTests(unittest.TestCase):
             self.assertIsNone(explored["selected_bridge"])
             self.assertEqual(
                 explored["selected_blueprint"]["blueprint"],
-                "axm.blueprint.templated-project-build-verify-composite/v0.1",
+                "axm.blueprint.receipted-project-producer-verify-composite/v0.1",
             )
             candidate_test = explored["test"]["kind_test"]["capability_test"]["tests"][0]
-            self.assertTrue(candidate_test["result"]["instantiate"]["published"])
+            self.assertTrue(candidate_test["result"]["production"]["published"])
             self.assertTrue(candidate_test["result"]["verification"]["passed"])
             digest_check = next(
                 row
@@ -173,6 +185,97 @@ class GapSynthesisTests(unittest.TestCase):
             self.assertTrue(digest_check["passed"])
             self.assertTrue(all(row["passed"] for row in digest_check["files"]))
             self.assertIsNone(self.machine.capabilities.route("verified-templated-static-web-project"))
+
+    def test_organ_gap_discovers_exact_producer_and_compiles_same_recipe(self):
+        request = self._verified_organ_request()
+        analysis = analyze_creation_gap(ROOT, request)
+        self.assertEqual(analysis["status"], "SYNTHESIS_READY_EXACT_COMPOSITE_CHAIN")
+        selected = analysis["selected_blueprint"]
+        self.assertEqual(selected["producer"]["profile"], "exact-executable-organ-assembly")
+        self.assertEqual(
+            [row["ref"] for row in selected["dependencies"]],
+            [
+                "AXM-CAP-ASSEMBLE-ORGAN-PROJECT@0.3.0",
+                "AXM-CAP-VERIFY-PROJECT@0.5.0",
+            ],
+        )
+        self.assertEqual(selected["producer_preview_evidence"]["executable_organ_resolution"]["referenced_package_count"], 3)
+
+        first = compile_gap_proposal(ROOT, request)
+        second = compile_gap_proposal(ROOT, request)
+        self.assertEqual(first["proposal_digest"], second["proposal_digest"])
+        self.assertEqual(first["proposal"], second["proposal"])
+        manifest = json.loads(first["proposal"]["files"]["capability.json"])
+        self.assertEqual(
+            [step["capability"] for step in manifest["implementation"]["steps"]],
+            ["AXM-CAP-ASSEMBLE-ORGAN-PROJECT", "AXM-CAP-VERIFY-PROJECT"],
+        )
+        self.assertEqual(manifest["implementation"]["steps"][0]["id"], "produce")
+        self.assertFalse(first["proposal"]["authority"]["install"])
+
+    def test_organ_composite_materializes_full_exact_chain_without_original_destination(self):
+        with tempfile.TemporaryDirectory() as td:
+            parent = Path(td)
+            requested = parent / "original-organ-must-not-exist"
+            target = parent / "detached-organ-composite"
+            result = self.machine.create({
+                "kind": "explore-gap-candidate",
+                "inputs": {
+                    "operation": "materialize-and-test",
+                    "path": str(target),
+                    "request": self._verified_organ_request(str(requested)),
+                },
+            })
+            explored = result["result"]
+            self.assertTrue(explored["passed"], explored)
+            self.assertFalse(requested.exists())
+            candidate_test = explored["test"]["kind_test"]["capability_test"]["tests"][0]
+            production = candidate_test["result"]["production"]
+            self.assertEqual(
+                production["organ_assembly"]["dependency_order"],
+                ["shell-organ", "theme-organ", "interaction-organ"],
+            )
+            self.assertEqual(production["executable_organ_resolution"]["referenced_package_count"], 3)
+            self.assertTrue(candidate_test["result"]["verification"]["passed"])
+            self.assertIsNone(self.machine.capabilities.route("verified-reusable-organ-static-web-project"))
+
+    def test_organ_recipe_holds_on_missing_or_drifted_receipt_contract(self):
+        request = self._verified_organ_request()
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            live = root / "capabilities/live"
+            live.mkdir(parents=True)
+            shutil.copytree(ROOT / "executable-organs", root / "executable-organs")
+            verify = (ROOT / "capabilities/live/AXM-CAP-VERIFY-PROJECT.json").read_text(encoding="utf-8")
+            (live / "verify.json").write_text(verify, encoding="utf-8")
+            missing = analyze_creation_gap(root, request)
+            self.assertEqual(missing["status"], "HOLD_MISSING_COMPOSITE_LINK")
+            self.assertEqual(
+                missing["composite_candidates"][0]["missing_links"][0]["expected_ref"],
+                "AXM-CAP-ASSEMBLE-ORGAN-PROJECT@0.3.0",
+            )
+
+            assembler = json.loads(
+                (ROOT / "capabilities/live/AXM-CAP-ASSEMBLE-ORGAN-PROJECT.json").read_text(encoding="utf-8")
+            )
+            assembler["output_contract"]["contains"].remove("files")
+            (live / "assembler.json").write_text(json.dumps(assembler), encoding="utf-8")
+            drifted = analyze_creation_gap(root, request)
+            self.assertEqual(drifted["status"], "HOLD_MISSING_COMPOSITE_LINK")
+            self.assertIn("contract mismatch", drifted["composite_candidates"][0]["missing_links"][0]["reason"])
+
+    def test_ambiguous_producer_markers_and_unknown_organ_refs_hold(self):
+        ambiguous = self._verified_template_request()
+        ambiguous["inputs"]["assembly"] = self._verified_organ_request()["inputs"]["assembly"]
+        analysis = analyze_creation_gap(ROOT, ambiguous)
+        self.assertEqual(analysis["status"], "HOLD_AMBIGUOUS_COMPOSITE_RECIPE")
+        self.assertIsNone(compile_gap_proposal(ROOT, ambiguous)["proposal"])
+
+        unknown = self._verified_organ_request()
+        unknown["inputs"]["assembly"]["organs"][0]["ref"] = "axm.web.missing@9.9.9"
+        held = analyze_creation_gap(ROOT, unknown)
+        self.assertEqual(held["status"], "HOLD_NO_SUPPORTED_SYNTHESIS_BLUEPRINT")
+        self.assertIn("not installed", held["composite_request_issue"])
 
     def test_composite_blueprint_holds_when_exact_link_is_missing_or_ambiguous(self):
         request = self._verified_template_request()
@@ -298,7 +401,11 @@ class GapSynthesisTests(unittest.TestCase):
         inspection = self.machine.inspect()
         summary = inspection["gap_synthesis"]
         self.assertIn("axm.blueprint.exact-utf8-file-route-alias/v0.1", summary["implemented_blueprints"])
-        self.assertIn("axm.blueprint.templated-project-build-verify-composite/v0.1", summary["implemented_blueprints"])
+        self.assertIn("axm.blueprint.receipted-project-producer-verify-composite/v0.1", summary["implemented_blueprints"])
+        self.assertEqual(
+            [row["profile"] for row in summary["project_producer_profiles"]],
+            ["strict-project-template", "exact-executable-organ-assembly"],
+        )
         self.assertEqual(summary["closed_binding_transforms"], ["file-digest-map"])
         self.assertFalse(summary["semantic_source_invention"])
         self.assertFalse(summary["automatic_admission"])

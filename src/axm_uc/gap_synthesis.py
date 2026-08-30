@@ -8,6 +8,8 @@ from pathlib import Path, PurePosixPath
 from typing import Any
 
 from .capabilities import CapabilityStore
+from .organ_library import ExecutableOrganError, resolve_organ_assembly
+from .organ_project import preview_organ_project
 from .project import ProjectError
 from .spawn import SPAWN_PROPOSAL_SCHEMA, spawn_unit, test_spawned_unit, validate_spawn_proposal
 from .template import render_project_template
@@ -17,9 +19,28 @@ GAP_ANALYSIS_SCHEMA = "axm.creation-gap-analysis/v0.1"
 GAP_PROPOSAL_RESULT_SCHEMA = "axm.creation-gap-proposal-result/v0.1"
 GAP_EXPLORATION_RESULT_SCHEMA = "axm.creation-gap-exploration-result/v0.1"
 EXACT_TEXT_ALIAS_BLUEPRINT = "axm.blueprint.exact-utf8-file-route-alias/v0.1"
-TEMPLATE_BUILD_VERIFY_BLUEPRINT = "axm.blueprint.templated-project-build-verify-composite/v0.1"
+PROJECT_RECEIPT_VERIFY_BLUEPRINT = "axm.blueprint.receipted-project-producer-verify-composite/v0.1"
 TEMPLATE_CAPABILITY = ("AXM-CAP-INSTANTIATE-PROJECT-TEMPLATE", "0.2.0")
+ORGAN_CAPABILITY = ("AXM-CAP-ASSEMBLE-ORGAN-PROJECT", "0.3.0")
 VERIFY_CAPABILITY = ("AXM-CAP-VERIFY-PROJECT", "0.5.0")
+PROJECT_PRODUCER_PROFILES = (
+    {
+        "profile": "strict-project-template",
+        "marker": "template",
+        "capability": TEMPLATE_CAPABILITY,
+        "entrypoint": "builtin:instantiate_project_template",
+        "output_kind": "templated-project-result",
+        "required_inputs": ("path", "template", "variables"),
+    },
+    {
+        "profile": "exact-executable-organ-assembly",
+        "marker": "assembly",
+        "capability": ORGAN_CAPABILITY,
+        "entrypoint": "builtin:assemble_organ_project",
+        "output_kind": "organ-assembled-project-result",
+        "required_inputs": ("path", "assembly", "variables"),
+    },
+)
 SUPPORTED_OPERATIONS = ("analyze", "propose", "materialize-and-test")
 SUPPORTED_IMPLEMENTATIONS = {
     "DETERMINISTIC_SOURCE",
@@ -170,7 +191,11 @@ def _existing_candidate(root: Path, manifest: dict[str, Any], request_kind: str)
     }
 
 
-def _composite_dependency_contract_issue(capability_id: str, manifest: dict[str, Any]) -> str | None:
+def _project_recipe_dependency_issue(
+    capability_id: str,
+    manifest: dict[str, Any],
+    producer_profile: dict[str, Any] | None = None,
+) -> str | None:
     implementation = manifest.get("implementation")
     if not isinstance(implementation, dict) or implementation.get("kind") not in SUPPORTED_IMPLEMENTATIONS:
         return "dependency has no supported deterministic implementation"
@@ -185,29 +210,108 @@ def _composite_dependency_contract_issue(capability_id: str, manifest: dict[str,
         return "dependency contract does not expose required, properties, and contains fields"
     if any(not isinstance(item, str) or not item for item in [*required, *contains]):
         return "dependency contract required/contains entries must be non-empty text"
-    if capability_id == TEMPLATE_CAPABILITY[0]:
-        missing_inputs = sorted({"path", "template", "variables"} - set(required))
-        missing_outputs = sorted({"path", "project_type", "files"} - set(contains))
-        if output_contract.get("kind") != "templated-project-result" or missing_inputs or missing_outputs:
-            return f"template dependency contract mismatch; missing inputs={missing_inputs}, missing outputs={missing_outputs}"
+    if producer_profile is not None:
+        supported_inputs = set(producer_profile["required_inputs"]) | {"checks", "replace", "publish_mode"}
+        missing_inputs = sorted(set(producer_profile["required_inputs"]) - set(required))
+        unsupported_required_inputs = sorted(set(required) - supported_inputs)
+        missing_properties = sorted(supported_inputs - set(properties))
+        missing_outputs = sorted({"path", "project_type", "published", "creation_status", "files"} - set(contains))
+        entrypoint = implementation.get("entrypoint")
+        if (
+            output_contract.get("kind") != producer_profile["output_kind"]
+            or entrypoint != producer_profile["entrypoint"]
+            or missing_inputs
+            or unsupported_required_inputs
+            or missing_properties
+            or missing_outputs
+        ):
+            return (
+                "project producer contract mismatch; "
+                f"entrypoint={entrypoint!r}, missing inputs={missing_inputs}, "
+                f"unsupported required inputs={unsupported_required_inputs}, "
+                f"missing properties={missing_properties}, missing outputs={missing_outputs}"
+            )
     elif capability_id == VERIFY_CAPABILITY[0]:
         missing_inputs = sorted({"path"} - set(required))
+        unsupported_required_inputs = sorted(
+            set(required) - {"path", "project_type", "checks", "expected_file_digests"}
+        )
         missing_properties = sorted({"expected_file_digests"} - set(properties))
         missing_outputs = sorted({"passed"} - set(contains))
-        if output_contract.get("kind") != "project-validation-report" or missing_inputs or missing_properties or missing_outputs:
-            return f"verifier dependency contract mismatch; missing inputs={missing_inputs}, missing properties={missing_properties}, missing outputs={missing_outputs}"
+        if (
+            output_contract.get("kind") != "project-validation-report"
+            or missing_inputs
+            or unsupported_required_inputs
+            or missing_properties
+            or missing_outputs
+        ):
+            return (
+                "verifier dependency contract mismatch; "
+                f"missing inputs={missing_inputs}, unsupported required inputs={unsupported_required_inputs}, "
+                f"missing properties={missing_properties}, missing outputs={missing_outputs}"
+            )
     return None
 
 
-def _template_composite_candidate(
+def _preview_project_producer(
+    root: Path,
+    profile: dict[str, Any],
+    inputs: dict[str, Any],
+) -> dict[str, Any]:
+    if profile["profile"] == "strict-project-template":
+        rendered = render_project_template(inputs["template"], inputs["variables"])
+        instance = rendered["template_instance"]
+        return {
+            "project_type": instance["project_type"],
+            "files": rendered["files"],
+            "evidence": {
+                "template_id": instance["template_id"],
+                "template_version": instance["template_version"],
+                "variables_used": instance["variables_used"],
+            },
+        }
+    if profile["profile"] == "exact-executable-organ-assembly":
+        resolved, resolution = resolve_organ_assembly(root, inputs["assembly"])
+        preview = preview_organ_project(resolved, inputs["variables"])
+        return {
+            "project_type": preview["project_type"],
+            "files": preview["files"],
+            "evidence": {
+                "executable_organ_resolution": resolution,
+                "organ_assembly": preview["organ_assembly"],
+            },
+        }
+    raise GapSynthesisError(
+        "project producer profile has no deterministic preview adapter",
+        {"profile": profile.get("profile")},
+    )
+
+
+def _project_receipt_composite_candidate(
     root: Path,
     live_manifests: list[dict[str, Any]],
     inputs: dict[str, Any],
 ) -> tuple[dict[str, Any] | None, str | None]:
     input_keys = set(inputs)
-    if not ({"template", "variables"} & input_keys):
+    applicable_profiles = [
+        profile for profile in PROJECT_PRODUCER_PROFILES if profile["marker"] in input_keys
+    ]
+    if not applicable_profiles:
         return None, None
-    required = {"path", "template", "variables"}
+    if len(applicable_profiles) > 1:
+        return {
+            "blueprint": PROJECT_RECEIPT_VERIFY_BLUEPRINT,
+            "status": "HOLD_AMBIGUOUS_COMPOSITE_RECIPE",
+            "applicable_producer_profiles": [profile["profile"] for profile in applicable_profiles],
+            "dependencies": [],
+            "missing_links": [],
+            "ambiguous_links": [],
+            "runtime_behavior_proven": False,
+            "candidate_is_live_route_selection": False,
+        }, None
+
+    profile = applicable_profiles[0]
+    required = set(profile["required_inputs"])
     allowed = required | {"checks", "replace"}
     missing_inputs = sorted(required - input_keys)
     unexpected_inputs = sorted(input_keys - allowed)
@@ -222,16 +326,16 @@ def _template_composite_candidate(
         invalid.append("checks must be a list when supplied")
     if "replace" in inputs and not isinstance(inputs["replace"], bool):
         invalid.append("replace must be boolean when supplied")
-    rendered: dict[str, Any] | None = None
+    preview: dict[str, Any] | None = None
     if not invalid:
         try:
-            rendered = render_project_template(inputs["template"], inputs["variables"])
-        except ProjectError as exc:
-            invalid.append(f"template request is not deterministically renderable: {exc}")
+            preview = _preview_project_producer(root, profile, inputs)
+        except (ProjectError, ExecutableOrganError, GapSynthesisError) as exc:
+            invalid.append(f"project producer request is not deterministically previewable: {exc}")
     if invalid:
         return None, "; ".join(invalid)
 
-    dependency_specs = (TEMPLATE_CAPABILITY, VERIFY_CAPABILITY)
+    dependency_specs = (profile["capability"], VERIFY_CAPABILITY)
     dependencies: list[dict[str, Any]] = []
     missing_links: list[dict[str, Any]] = []
     ambiguous_links: list[dict[str, Any]] = []
@@ -262,7 +366,11 @@ def _template_composite_candidate(
                 "reason": "the implemented blueprint requires the exact tested dependency version",
             })
             continue
-        contract_issue = _composite_dependency_contract_issue(capability_id, manifest)
+        contract_issue = _project_recipe_dependency_issue(
+            capability_id,
+            manifest,
+            profile if capability_id == profile["capability"][0] else None,
+        )
         if contract_issue is not None:
             missing_links.append({
                 "capability_id": capability_id,
@@ -285,24 +393,35 @@ def _template_composite_candidate(
         link_status = "HOLD_MISSING_COMPOSITE_LINK"
     else:
         link_status = "READY_EXACT_COMPOSITE_CHAIN"
-    instance = rendered["template_instance"] if rendered is not None else {}
+    preview = preview or {}
+    producer_id, producer_version = profile["capability"]
     return {
-        "blueprint": TEMPLATE_BUILD_VERIFY_BLUEPRINT,
+        "blueprint": PROJECT_RECEIPT_VERIFY_BLUEPRINT,
         "status": link_status,
-        "required_inputs": ["path", "template", "variables"],
+        "producer": {
+            "profile": profile["profile"],
+            "capability_id": producer_id,
+            "version": producer_version,
+            "ref": f"{producer_id}@{producer_version}",
+            "entrypoint": profile["entrypoint"],
+            "output_kind": profile["output_kind"],
+        },
+        "required_inputs": list(profile["required_inputs"]),
         "optional_inputs": ["checks", "replace"],
-        "project_type": instance.get("project_type"),
-        "rendered_paths": [row["rendered_path"] for row in instance.get("rendered_paths", [])],
-        "step_order": ["instantiate", "verify"],
+        "project_type": preview.get("project_type"),
+        "rendered_paths": sorted(preview.get("files", {})),
+        "producer_preview_evidence": copy.deepcopy(preview.get("evidence", {})),
+        "step_order": ["produce", "verify"],
         "dependencies": dependencies,
         "missing_links": missing_links,
         "ambiguous_links": ambiguous_links,
         "wiring": {
-            "instantiate": "request path+template+variables -> exact validated project publication",
-            "receipt_projection": "steps.instantiate.files -> closed file-digest-map transform",
+            "produce": "request fields declared by the selected exact producer profile -> validated project publication",
+            "receipt_projection": "steps.produce.files -> closed file-digest-map transform",
             "verify": "created path+project type+checks+earlier file digests -> independent validation report",
         },
-        "structural_basis": "the exact template instantiator emits path, project type, and file SHA-256 receipts accepted by the independent project verifier through one closed digest projection",
+        "structural_basis": "one exact supported project producer accepts the request, deterministically previews it, and declares path, project type, publication state, and file SHA-256 receipts accepted by the independent verifier through one closed digest projection",
+        "producer_selected_by_exact_request_and_contract": True,
         "runtime_behavior_proven": False,
         "candidate_is_live_route_selection": False,
     }, None
@@ -317,8 +436,17 @@ def gap_synthesis_summary() -> dict[str, Any]:
         "operations": list(SUPPORTED_OPERATIONS),
         "implemented_blueprints": {
             EXACT_TEXT_ALIAS_BLUEPRINT: "Compile a missing exact UTF-8 file route into a detached alias-capability hypothesis when one compatible live primitive is uniquely visible.",
-            TEMPLATE_BUILD_VERIFY_BLUEPRINT: "Compile one exact template-instantiation and independent digest-verification chain into a detached composite-capability hypothesis when every tested live dependency and binding is present.",
+            PROJECT_RECEIPT_VERIFY_BLUEPRINT: "Discover one supported exact project producer from request shape and declared receipts, then compile producer and independent digest verification into a detached composite-capability hypothesis.",
         },
+        "project_producer_profiles": [
+            {
+                "profile": profile["profile"],
+                "marker": profile["marker"],
+                "ref": f"{profile['capability'][0]}@{profile['capability'][1]}",
+                "output_kind": profile["output_kind"],
+            }
+            for profile in PROJECT_PRODUCER_PROFILES
+        ],
         "gap_trigger_required": True,
         "existing_candidate_reuse_precedes_new_synthesis": True,
         "detached_experiment_allowed": True,
@@ -357,7 +485,7 @@ def analyze_creation_gap(root: Path, raw_request: Any) -> dict[str, Any]:
     composite_candidate: dict[str, Any] | None = None
     composite_invalid_reason: str | None = None
     if exact is None and not existing_candidates:
-        composite_candidate, composite_invalid_reason = _template_composite_candidate(root, live_manifests, inputs)
+        composite_candidate, composite_invalid_reason = _project_receipt_composite_candidate(root, live_manifests, inputs)
     composite_candidates = [composite_candidate] if composite_candidate is not None else []
 
     if exact is not None:
@@ -385,6 +513,11 @@ def analyze_creation_gap(root: Path, raw_request: Any) -> dict[str, Any]:
         truth_status = "DETERMINISTIC_AMBIGUITY_HOLD"
         selected = None
         hold_reason = "the composite blueprint observed ambiguous required dependency identities; no link is silently selected"
+    elif composite_candidate is not None and composite_candidate["status"] == "HOLD_AMBIGUOUS_COMPOSITE_RECIPE":
+        status = "HOLD_AMBIGUOUS_COMPOSITE_RECIPE"
+        truth_status = "DETERMINISTIC_AMBIGUITY_HOLD"
+        selected = None
+        hold_reason = "more than one supported producer profile matches the request markers; no creation recipe is silently selected"
     elif composite_candidate is not None and composite_candidate["status"] == "HOLD_MISSING_COMPOSITE_LINK":
         status = "HOLD_MISSING_COMPOSITE_LINK"
         truth_status = "DETERMINISTIC_INCOMPLETE_CHAIN_HOLD"
@@ -423,9 +556,9 @@ def analyze_creation_gap(root: Path, raw_request: Any) -> dict[str, Any]:
         "request_kind": request["kind"],
         "observed_live_capability_count": len(live_manifests),
         "exact_live_route": exact_route,
-        "implemented_blueprints": [EXACT_TEXT_ALIAS_BLUEPRINT, TEMPLATE_BUILD_VERIFY_BLUEPRINT],
+        "implemented_blueprints": [EXACT_TEXT_ALIAS_BLUEPRINT, PROJECT_RECEIPT_VERIFY_BLUEPRINT],
         "implemented_blueprint": (
-            TEMPLATE_BUILD_VERIFY_BLUEPRINT
+            PROJECT_RECEIPT_VERIFY_BLUEPRINT
             if composite_candidate is not None
             else EXACT_TEXT_ALIAS_BLUEPRINT
             if candidates
@@ -456,7 +589,7 @@ def analyze_creation_gap(root: Path, raw_request: Any) -> dict[str, Any]:
         ),
         "limitations": [
             "matching one input/output shape does not prove that two creation meanings are equivalent",
-            "the implemented compiler creates only exact UTF-8 aliases and one fixed template-build-verify composite grammar",
+            "the implemented compiler creates only exact UTF-8 aliases and one receipt-driven project-producer then verifier grammar over explicitly supported producer profiles",
             "the request-shaped test proves one supplied example and not general semantic behavior",
             "analysis grants no execution, installation, registration, admission, merge, CANON, or permission authority",
         ],
@@ -498,11 +631,11 @@ def _composite_root_fit(request_kind: str, dependency_refs: list[str]) -> dict[s
     return {
         "truth": {
             "fit": True,
-            "basis": f"The {request_kind!r} candidate exposes its fixed two-step recipe, exact dependency refs, digest projection, request fixture, and evidence boundary without claiming general synthesis.",
+            "basis": f"The {request_kind!r} candidate exposes its discovered two-step producer recipe, exact dependency refs, digest projection, request fixture, and evidence boundary without claiming general synthesis.",
         },
         "agency": {
             "fit": True,
-            "basis": "The caller supplies the template, variables, checks, and destination; the detached proposal grants itself no execution, installation, admission, merge, CANON, or permission authority.",
+            "basis": "The caller supplies the exact producer inputs, checks, and destination; the detached proposal grants itself no execution, installation, admission, merge, CANON, or permission authority.",
         },
         "continuity": {
             "fit": True,
@@ -515,7 +648,7 @@ def _composite_root_fit(request_kind: str, dependency_refs: list[str]) -> dict[s
     }
 
 
-def _compile_template_composite_proposal(
+def _compile_project_receipt_composite_proposal(
     root: Path,
     analysis: dict[str, Any],
     *,
@@ -526,6 +659,18 @@ def _compile_template_composite_proposal(
     request = analysis["request"]
     request_kind = request["kind"]
     inputs = request["inputs"]
+    producer_name = selected["producer"]["profile"]
+    profile = next(
+        (item for item in PROJECT_PRODUCER_PROFILES if item["profile"] == producer_name),
+        None,
+    )
+    if profile is None:
+        raise GapSynthesisError(
+            "the selected project producer profile is no longer implemented; re-analyze before compiling",
+            {"profile": producer_name},
+        )
+    producer_id, _producer_version = profile["capability"]
+    verify_id, _verify_version = VERIFY_CAPABILITY
     kind_slug = _slug(request_kind)
     generated_id = f"axm.generated.capability.{kind_slug}"
     unit_id = _required_text(candidate_id if candidate_id is not None else generated_id, "candidate_id", maximum=128)
@@ -576,45 +721,57 @@ def _compile_template_composite_proposal(
         dependency_digests.append(current_digest)
 
     try:
-        rendered = render_project_template(inputs["template"], inputs["variables"])
-    except ProjectError as exc:
+        preview = _preview_project_producer(root, profile, inputs)
+    except (ProjectError, ExecutableOrganError, GapSynthesisError) as exc:
         raise GapSynthesisError(
-            "the template request changed or is no longer deterministically renderable; re-analyze before compiling",
-            exc.details,
+            "the project producer request changed or is no longer deterministically previewable; re-analyze before compiling",
+            getattr(exc, "details", {}),
         ) from exc
     fixture_root = "${TEST_DIR}/request-example-project"
     expected_fixture_files = {
         f"{fixture_root}/{relative}": content
-        for relative, content in sorted(rendered["files"].items())
+        for relative, content in sorted(preview["files"].items())
     }
     checks = copy.deepcopy(inputs.get("checks", []))
-    instantiate_id, _instantiate_version = TEMPLATE_CAPABILITY
-    verify_id, _verify_version = VERIFY_CAPABILITY
-    live_input_properties = current_by_id[instantiate_id][0].get("input_contract", {}).get("properties", {})
+    live_input_properties = current_by_id[producer_id][0].get("input_contract", {}).get("properties", {})
     input_properties = {
         key: copy.deepcopy(live_input_properties[key])
-        for key in ("path", "template", "variables", "checks", "replace")
+        for key in (*profile["required_inputs"], "checks", "replace")
         if key in live_input_properties
     }
+    producer_step_inputs = {
+        key: {"from": f"request.{key}"}
+        for key in profile["required_inputs"]
+    }
+    producer_step_inputs.update({
+        "checks": {"from": "request.checks", "default": []},
+        "replace": {"from": "request.replace", "default": False},
+        "publish_mode": "validated",
+    })
+    fixture_inputs = {
+        key: copy.deepcopy(inputs[key])
+        for key in profile["required_inputs"]
+    }
+    fixture_inputs.update({"path": fixture_root, "checks": checks, "replace": False})
     output_contract = {
-        "kind": "verified-templated-project-result",
-        "contains": ["path", "instantiate", "verification"],
+        "kind": "verified-receipted-project-result",
+        "contains": ["path", "production", "verification"],
     }
     fit = _composite_root_fit(request_kind, dependency_refs)
     candidate_manifest = {
         "id": unit_id,
         "version": unit_version,
         "status": "candidate",
-        "purpose": f"Explore the missing route {request_kind!r} for the directional outcome {direction!r} by composing exact template instantiation with an independent verification of the emitted file-digest receipt.",
+        "purpose": f"Explore the missing route {request_kind!r} for the directional outcome {direction!r} by composing exact {producer_name} production with independent verification of its emitted file-digest receipt.",
         "handles": [request_kind],
         "input_contract": {
-            "required": ["path", "template", "variables"],
+            "required": list(profile["required_inputs"]),
             "properties": input_properties,
         },
         "output_contract": output_contract,
         "dependencies": dependency_ids,
         "relationships": [
-            {"type": "composes", "target": instantiate_id},
+            {"type": "composes", "target": producer_id},
             {"type": "composes", "target": verify_id},
             {"type": "explores-gap", "target": analysis["request_digest"]},
         ],
@@ -623,58 +780,45 @@ def _compile_template_composite_proposal(
             "source": "this generated manifest",
             "steps": [
                 {
-                    "id": "instantiate",
-                    "capability": instantiate_id,
-                    "inputs": {
-                        "path": {"from": "request.path"},
-                        "template": {"from": "request.template"},
-                        "variables": {"from": "request.variables"},
-                        "checks": {"from": "request.checks", "default": []},
-                        "replace": {"from": "request.replace", "default": False},
-                        "publish_mode": "validated",
-                    },
+                    "id": "produce",
+                    "capability": producer_id,
+                    "inputs": producer_step_inputs,
                 },
                 {
                     "id": "verify",
                     "capability": verify_id,
                     "inputs": {
-                        "path": {"from": "steps.instantiate.path"},
-                        "project_type": {"from": "steps.instantiate.project_type"},
+                        "path": {"from": "steps.produce.path"},
+                        "project_type": {"from": "steps.produce.project_type"},
                         "checks": {"from": "request.checks", "default": []},
                         "expected_file_digests": {
-                            "from": "steps.instantiate.files",
+                            "from": "steps.produce.files",
                             "transform": "file-digest-map",
                         },
                     },
                 },
             ],
             "outputs": {
-                "path": {"from": "steps.instantiate.path"},
-                "instantiate": {"from": "steps.instantiate"},
+                "path": {"from": "steps.produce.path"},
+                "production": {"from": "steps.produce"},
                 "verification": {"from": "steps.verify"},
             },
         },
         "limitations": [
-            "This detached candidate implements only the fixed template-instantiate then digest-verify recipe; it does not invent templates, variables, checks, or new semantic source.",
+            f"This detached candidate implements only the selected {producer_name} then digest-verify recipe; it does not invent producer inputs, checks, organ wiring, or new semantic source.",
             "The independent verifier proves deterministic structural checks and byte identity against the immediately preceding creation receipt; it does not execute generated code or prove visual quality.",
-            "The declared test covers only the exact request-shaped template fixture in disposable build space.",
+            "The declared test covers only the exact request-shaped producer fixture in disposable build space.",
             "The original requested destination is not used during candidate testing.",
         ],
         "persistent_state": None,
         "tests": [
             {
-                "inputs": {
-                    "path": fixture_root,
-                    "template": copy.deepcopy(inputs["template"]),
-                    "variables": copy.deepcopy(inputs["variables"]),
-                    "checks": checks,
-                    "replace": False,
-                },
+                "inputs": fixture_inputs,
                 "expect": {
                     "files": expected_fixture_files,
                     "result_fields": {
-                        "instantiate.published": True,
-                        "instantiate.creation_status": "VALIDATED_CREATION",
+                        "production.published": True,
+                        "production.creation_status": "VALIDATED_CREATION",
                         "verification.passed": True,
                     },
                 },
@@ -685,9 +829,10 @@ def _compile_template_composite_proposal(
     gap_file = {
         **copy.deepcopy(analysis),
         "proposal_selection": {
-            "blueprint": TEMPLATE_BUILD_VERIFY_BLUEPRINT,
+            "blueprint": PROJECT_RECEIPT_VERIFY_BLUEPRINT,
+            "producer_profile": producer_name,
             "dependency_refs": dependency_refs,
-            "selection_basis": "one implemented composite grammar matched the exact request and all of its exact tested live dependency links were uniquely present",
+            "selection_basis": "one supported producer profile matched the exact request, its declared receipt contract fit the general recipe, and all exact tested live dependency links were uniquely present",
             "selection_is_admission_authority": False,
             "selection_is_general_semantic_proof": False,
         },
@@ -721,7 +866,7 @@ def _compile_template_composite_proposal(
         "relationships": [
             *({"type": "composes", "target": ref} for ref in dependency_refs),
             {"type": "compiled-from-gap", "target": analysis["request_digest"]},
-            {"type": "uses-blueprint", "target": TEMPLATE_BUILD_VERIFY_BLUEPRINT},
+            {"type": "uses-blueprint", "target": PROJECT_RECEIPT_VERIFY_BLUEPRINT},
         ],
         "verification": {
             "checks": [
@@ -733,11 +878,11 @@ def _compile_template_composite_proposal(
             "kind": "deterministic-gap-synthesis",
             "refs": [
                 analysis["request_digest"],
-                TEMPLATE_BUILD_VERIFY_BLUEPRINT,
+                PROJECT_RECEIPT_VERIFY_BLUEPRINT,
                 *dependency_refs,
                 *dependency_digests,
             ],
-            "basis": "A real unroutable templated-project request exposed a gap; the implemented blueprint composed exact live template creation and independent verification through a closed file-receipt digest projection.",
+            "basis": f"A real unroutable project request exposed a gap; the implemented receipt recipe selected the exact {producer_name} producer by request shape and live contract, then composed it with independent verification through a closed file-receipt digest projection.",
         },
         "limitations": copy.deepcopy(candidate_manifest["limitations"]),
         "authority": copy.deepcopy(ZERO_AUTHORITY),
@@ -775,10 +920,10 @@ def compile_gap_proposal(
     if analysis["selected_blueprint"] is not None:
         if bridge_capability_id is not None:
             raise GapSynthesisError(
-                "bridge_capability_id applies only to observed single-bridge alias candidates, not fixed composite blueprints",
+                "bridge_capability_id applies only to observed single-bridge alias candidates, not discovered composite blueprints",
                 {"selected_blueprint": analysis["selected_blueprint"]["blueprint"]},
             )
-        return _compile_template_composite_proposal(
+        return _compile_project_receipt_composite_proposal(
             root,
             analysis,
             candidate_id=candidate_id,
