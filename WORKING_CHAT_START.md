@@ -62,7 +62,7 @@ The direction catalog also contains engineering quality and risk axes, including
 
 The current machine can create, verify, and transactionally repair bounded UTF-8 text projects.
 
-Ordinary project creation retains imperfect results as grounded drafts with exact observed gaps. Verified routes remain strict. Reusable templates can instantiate complete multi-file recipes, and the self-workspace capability can clone the complete source body for open-ended experiments.
+Ordinary project creation retains imperfect results as grounded drafts with exact observed gaps. Verified routes remain strict. Reusable templates can instantiate complete multi-file recipes. Dependency-aware software organs can own and assemble disjoint parts of one project. The self-workspace capability can clone the complete source body for open-ended experiments.
 
 A useful working-chat play loop is:
 
@@ -80,7 +80,7 @@ For a new experiment:
 4. run `plan`;
 5. inspect anatomy, topology, executable coverage, and the visible gap;
 6. use existing capabilities before inventing new source;
-7. create through staged/project capabilities;
+7. create through staged/project capabilities, using explicit software organs when several reusable functional bodies contribute;
 8. verify;
 9. if something is wrong, repair the smallest affected portion instead of regenerating the whole project;
 10. report observed results separately from hypotheses and remaining gaps.
@@ -101,6 +101,7 @@ At this handoff:
 - a verification failure does not yet automatically synthesize its own patch operations;
 - self-workspaces are source clones, not OS containment boundaries;
 - candidates can request merge checks, but whole-body adoption is not yet implemented;
+- software-organ dependencies and declared interface names are checked structurally, but source-level conformance and runtime wiring are not synthesized or proven;
 - software-direction suggestions do not choose a direction;
 - direction expectations do not prove capability;
 - the 2,165-record anatomy remains broader than the live executable body.

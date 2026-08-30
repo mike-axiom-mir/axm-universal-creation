@@ -36,7 +36,8 @@ At this milestone the machine deliberately starts sparse:
 - `AXM-20-TESTING-OBSERVABILITY-C-015-validation-report` is explicitly implemented by `AXM-CAP-VERIFY-PROJECT`;
 - `AXM-05-CODE-GRAMMAR-C-029-code-patch` is explicitly implemented by `AXM-CAP-PATCH-PROJECT`;
 - `AXM-05-CODE-GRAMMAR-C-022-code-template` is explicitly implemented by `AXM-CAP-INSTANTIATE-PROJECT-TEMPLATE`;
-- `AXM-24-WORKSPACE-COLLABORATION-C-011-workspace` is explicitly implemented by `AXM-CAP-SELF-WORKSPACE`.
+- `AXM-24-WORKSPACE-COLLABORATION-C-011-workspace` is explicitly implemented by `AXM-CAP-SELF-WORKSPACE`;
+- `AXM-05-CODE-GRAMMAR-C-025-dependency-graph` and `AXM-00-FOUNDATION-C-019-interface-contract` are explicitly implemented for declared software-organ assembly by `AXM-CAP-ASSEMBLE-ORGAN-PROJECT`.
 
 The runtime reports the current counts rather than hard-coding a claim:
 
@@ -114,7 +115,7 @@ Generated code is still not silently executed, and browser visual or interaction
 
 ## What this does not mean
 
-Five live-backed components do not turn the remaining anatomy green.
+Seven live-backed components do not turn the remaining anatomy green.
 
 A `uses` relationship does not become `implements`.
 

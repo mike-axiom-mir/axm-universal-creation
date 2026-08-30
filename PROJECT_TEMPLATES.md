@@ -23,3 +23,5 @@ This is deterministic recipe instantiation, not a claim of semantic program synt
 The resulting body uses the same grounded publication contract as direct project creation. Ordinary template creation retains observed gaps as a grounded draft; `publish_mode: "validated"` makes failed checks block publication.
 
 The `self-candidate-project` handle can create inspectable source fragments, manifests, organs, or candidate projects for the machine itself outside the active body. For a complete independently buildable clone of the current machine, use `AXM-CAP-SELF-WORKSPACE` instead.
+
+For a project composed from several independently identified template organs, use `AXM-CAP-ASSEMBLE-ORGAN-PROJECT`. It reuses this same renderer while adding dependency resolution and exact file ownership. See `ORGAN_ASSEMBLY.md`.

@@ -7,6 +7,7 @@ from typing import Any, Callable
 
 from .atomic import atomic_write_json, atomic_write_text
 from .grammar import grammar_inventory
+from .organ_project import assemble_organ_project
 from .project import ProjectError, build_project, validate_project
 from .registry import Registry
 from .repair import patch_project
@@ -118,6 +119,25 @@ def builtin_self_workspace(root: Path, inputs: dict[str, Any]) -> dict[str, Any]
         raise CapabilityError(str(exc), exc.details) from exc
 
 
+def builtin_assemble_organ_project(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+    target = _resolve_output_path(root, str(inputs["path"]))
+    if _is_machine_body_path(root, target):
+        raise CapabilityError("normal organ assembly cannot rewrite the live machine body; use a self-workspace for whole-body experiments")
+    try:
+        result = assemble_organ_project(
+            target=target,
+            assembly=inputs["assembly"],
+            variables=inputs["variables"],
+            checks=inputs.get("checks") if isinstance(inputs.get("checks"), list) else None,
+            replace=bool(inputs.get("replace", False)),
+            publish_mode=str(inputs.get("publish_mode", "grounded-draft")),
+        )
+        result["grammar_inventory"] = grammar_inventory(target)
+        return result
+    except ProjectError as exc:
+        raise CapabilityError(str(exc), exc.details) from exc
+
+
 def builtin_verify_project(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
     target = _resolve_output_path(root, str(inputs["path"]))
     if _is_machine_body_path(root, target):
@@ -159,6 +179,7 @@ BUILTINS: dict[str, Callable[[Path, dict[str, Any]], dict[str, Any]]] = {
     "builtin:write_project": builtin_write_project,
     "builtin:instantiate_project_template": builtin_instantiate_project_template,
     "builtin:self_workspace": builtin_self_workspace,
+    "builtin:assemble_organ_project": builtin_assemble_organ_project,
     "builtin:verify_project": builtin_verify_project,
     "builtin:patch_project": builtin_patch_project,
 }

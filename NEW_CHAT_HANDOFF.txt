@@ -49,6 +49,10 @@ SELF-CREATION WORKSPACE
 -----------------------
 The machine can clone its complete current source body into an editable candidate workspace, inspect differences, and run that candidate's own build. The candidate may experiment without changing the live body. It chooses when to request merge observations; no per-edit readiness gate or growth score is imposed. The current merge-check request does not approve or adopt the candidate. See SELF_WORKSPACE.md.
 
+SOFTWARE ORGANS
+---------------
+The live machine can assemble one project from versioned template organs with explicit dependencies, deterministic order, shared exact variables, and one visible owner per rendered file. This executes supplied organ source; it does not pretend all 415 descriptive registry organs are implemented. See ORGAN_ASSEMBLY.md.
+
 RECOVERY
 --------
 One complete restorable snapshot per day. If a day goes genuinely wrong, quarantine that state and restore an earlier known-good daily snapshot.

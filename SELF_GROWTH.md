@@ -53,6 +53,8 @@ Growth is an outcome of creation and experience exposing real gaps.
 
 Freedom to experiment, reusable creation, visible gaps, and continuity of the resulting body may make useful growth possible. Do not turn them into a score or an instruction to modify continuously.
 
+Reusable software organs may now carry source templates, explicit dependencies, declared interface names, and exact file ownership into a larger project. This makes an organ a composable executable contribution when its implementation is actually supplied; it does not promote definition-only registry anatomy into working capability.
+
 ## Non-hidden after change
 
 If the machine changes what it is, the resulting source, structure, relationships, capability boundaries, configuration, and persistent learned state required to understand the live machine must remain inspectable.

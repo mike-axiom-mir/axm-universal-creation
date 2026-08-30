@@ -64,6 +64,14 @@
   "directionalOutcomes": {
     "capabilityGapTargetsOutcomeNotExactPriorSolution": true
   },
+  "creationComposition": {
+    "softwareOrganAssemblyAvailable": true,
+    "declaredDependencyGraphResolved": true,
+    "declaredInterfaceProvidersAndRequirementsResolved": true,
+    "exclusiveRenderedFileOwnership": true,
+    "sourceInterfaceConformanceProven": false,
+    "semanticRuntimeWiringInvented": false
+  },
   "hostEmbedding": {
     "coreIntendedAsInnerBody": true,
     "hostAdaptersExpected": true,

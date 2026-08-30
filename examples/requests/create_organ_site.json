@@ -1,0 +1,69 @@
+{
+  "kind": "organ-static-web-project",
+  "direction": "assemble one local interactive website from reusable shell, theme, and interaction organs",
+  "inputs": {
+    "path": "creations/organ-site",
+    "replace": true,
+    "assembly": {
+      "id": "axm.example.organ-site",
+      "version": "1.0.0",
+      "project_type": "static-web",
+      "organs": [
+        {
+          "id": "interaction-organ",
+          "version": "1.0.0",
+          "purpose": "Provide one local browser interaction",
+          "depends_on": [
+            "shell-organ",
+            "theme-organ"
+          ],
+          "provides": [
+            "local-interaction"
+          ],
+          "requires": [
+            "document-shell",
+            "visual-theme"
+          ],
+          "files": {
+            "app.js": "const button = document.querySelector('button');\nbutton.addEventListener('click', () => {\n  document.body.dataset.state = '[[AXM:state]]';\n  button.textContent = '[[AXM:active_label]]';\n});\n"
+          }
+        },
+        {
+          "id": "theme-organ",
+          "version": "1.0.0",
+          "purpose": "Own the visual surface",
+          "depends_on": [
+            "shell-organ"
+          ],
+          "provides": [
+            "visual-theme"
+          ],
+          "requires": [
+            "document-shell"
+          ],
+          "files": {
+            "style.css": ":root { color-scheme: dark; font-family: system-ui, sans-serif; }\nbody { min-height: 100vh; margin: 0; display: grid; place-items: center; background: [[AXM:background]]; color: #f7f8ff; }\nmain { width: min(42rem, calc(100% - 2rem)); }\nbutton { padding: .8rem 1rem; border: 0; border-radius: 999px; }\n"
+          }
+        },
+        {
+          "id": "shell-organ",
+          "version": "1.0.0",
+          "purpose": "Own the document shell and connect the other organ files",
+          "provides": [
+            "document-shell"
+          ],
+          "files": {
+            "index.html": "<!doctype html>\n<html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>[[AXM:title]]</title><link rel=\"stylesheet\" href=\"style.css\"></head><body><main><p>ORGAN ASSEMBLY</p><h1>[[AXM:title]]</h1><button type=\"button\">[[AXM:idle_label]]</button></main><script src=\"app.js\"></script></body></html>\n"
+          }
+        }
+      ]
+    },
+    "variables": {
+      "title": "Three organs, one creation",
+      "background": "#15172b",
+      "idle_label": "Wake interaction organ",
+      "active_label": "Interaction organ awake",
+      "state": "awake"
+    }
+  }
+}

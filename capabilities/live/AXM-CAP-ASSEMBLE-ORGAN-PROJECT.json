@@ -1,0 +1,103 @@
+{
+  "id": "AXM-CAP-ASSEMBLE-ORGAN-PROJECT",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Assemble one software project from several inspectable template organs in deterministic declared-dependency order, validate declared provided/required interfaces, preserve exact file ownership, and ground the resulting body without hiding structural or validation gaps.",
+  "handles": [
+    "organ-software-project",
+    "organ-static-web-project",
+    "organ-python-project",
+    "software-organ-assembly"
+  ],
+  "input_contract": {
+    "required": [
+      "path",
+      "assembly",
+      "variables"
+    ],
+    "properties": {
+      "path": "target project directory",
+      "assembly": "object with id, version, project_type, and a non-empty organs list; every organ has unique id, version, optional purpose/depends_on/provides/requires, and a files template mapping",
+      "variables": "shared exact raw placeholder values; every supplied value must be used by at least one organ",
+      "checks": "optional deterministic grounding checks over the assembled project",
+      "publish_mode": "grounded-draft by default; validated when failed checks must block publication",
+      "replace": "optional boolean; defaults false"
+    }
+  },
+  "output_contract": {
+    "kind": "organ-assembled-project-result",
+    "contains": [
+      "path",
+      "creation_status",
+      "grounding",
+      "organ_assembly",
+      "validation",
+      "grammar_inventory"
+    ]
+  },
+  "dependencies": [
+    "AXM-CAP-INSTANTIATE-PROJECT-TEMPLATE",
+    "AXM-CAP-WRITE-PROJECT",
+    "AXM-CAP-VERIFY-PROJECT"
+  ],
+  "relationships": [
+    "resolves the declared software-organ dependency graph before rendering",
+    "requires every declared required interface to have one provider reachable through declared organ dependencies",
+    "gives each rendered file one explicit organ owner",
+    "publishes all rendered organ files as one grounded project body",
+    "preserves dependency and ownership receipts for later inspection and reuse"
+  ],
+  "anatomy_refs": [
+    {
+      "id": "AXM-05-CODE-GRAMMAR-C-025-dependency-graph",
+      "role": "implements",
+      "basis": "The capability validates unique organ nodes, rejects missing dependency targets and cycles, emits exact dependency edges, and resolves one stable assembly order without inference."
+    },
+    {
+      "id": "AXM-05-CODE-GRAMMAR-C-022-code-template",
+      "role": "uses",
+      "basis": "Each organ contributes a strict single-pass project-template fragment rendered by the existing live code-template implementation."
+    },
+    {
+      "id": "AXM-24-WORKSPACE-COLLABORATION-C-010-project",
+      "role": "uses",
+      "basis": "Disjoint rendered organ files are published together through the existing grounded multi-file project machinery."
+    },
+    {
+      "id": "AXM-00-FOUNDATION-C-019-interface-contract",
+      "role": "implements",
+      "basis": "The capability gives a bounded live meaning to declared organ interface contracts: exact interface names have one provider and every requirement must resolve through the requiring organ's explicit dependency closure; source conformance remains separately unproven."
+    }
+  ],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:assemble_organ_project",
+    "source": "src/axm_uc/organ_project.py"
+  },
+  "limitations": [
+    "declared interface contracts do not prove that organ source semantically implements the named interface",
+    "declared organ dependencies determine assembly order but do not invent semantic imports or runtime wiring",
+    "each rendered path has one organ owner; deterministic shared-file merge semantics are not implemented",
+    "organ contents are UTF-8 raw templates and remain subject to the current template and project validation limits",
+    "the capability assembles supplied organs; it does not autonomously discover that a described registry organ has executable source"
+  ],
+  "persistent_state": null,
+  "root_fit": {
+    "truth": {
+      "fit": true,
+      "basis": "Declared organs, dependencies, interface providers/requirements, resolved order, variables, rendered paths, file owners, validation observations, and source-conformance limits remain explicit."
+    },
+    "agency": {
+      "fit": true,
+      "basis": "Humans or AIs choose the organs, their exact source templates, relationships, variables, and desired grounding mode."
+    },
+    "continuity": {
+      "fit": true,
+      "basis": "Reusable organs retain stable identities and versions while the assembled project is published transactionally as one continuing body."
+    },
+    "wisdom-before-speed": {
+      "fit": true,
+      "basis": "The machine resolves and exposes the dependency graph and rejects ambiguous file ownership instead of silently guessing how organs should combine."
+    }
+  }
+}

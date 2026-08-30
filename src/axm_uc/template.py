@@ -26,13 +26,10 @@ def _render(text: str, variables: dict[str, str]) -> str:
     return PLACEHOLDER_RE.sub(lambda match: variables[match.group(1)], text)
 
 
-def instantiate_project_template(
-    target: Path,
+def render_project_template(
     template: Any,
     variables: Any,
-    checks: list[dict[str, Any]] | None = None,
-    replace: bool = False,
-    publish_mode: str = "grounded-draft",
+    reject_unused_variables: bool = True,
 ) -> dict[str, Any]:
     if not isinstance(template, dict):
         raise ProjectError("template must be an object")
@@ -74,7 +71,7 @@ def instantiate_project_template(
     unused = sorted(provided - referenced)
     if missing:
         raise ProjectError("template variables are missing", {"missing_variables": missing})
-    if unused:
+    if unused and reject_unused_variables:
         raise ProjectError("template variables were supplied but not used", {"unused_variables": unused})
 
     rendered_files: dict[str, str] = {}
@@ -89,28 +86,44 @@ def instantiate_project_template(
         rendered_files[rendered_path] = _render(template_content, normalized_variables)
         path_receipts.append({"template_path": raw_path, "rendered_path": rendered_path})
 
+    return {
+        "files": rendered_files,
+        "template_instance": {
+            "truth_status": "DETERMINISTIC_SINGLE_PASS_TEMPLATE_INSTANTIATION",
+            "template_id": template_id.strip(),
+            "template_version": version.strip(),
+            "project_type": project_type,
+            "variables_used": sorted(referenced),
+            "rendered_paths": sorted(path_receipts, key=lambda row: row["rendered_path"]),
+            "substitution": "raw exact text",
+            "recursive_expansion": False,
+            "escaping_or_semantic_rewrite": False,
+            "limitations": [
+                "template substitution is not parser-aware",
+                "callers or templates must provide any grammar-specific escaping",
+                "loops, conditionals, and recursive placeholder expansion are not implemented",
+            ],
+        },
+    }
+
+
+def instantiate_project_template(
+    target: Path,
+    template: Any,
+    variables: Any,
+    checks: list[dict[str, Any]] | None = None,
+    replace: bool = False,
+    publish_mode: str = "grounded-draft",
+) -> dict[str, Any]:
+    rendered = render_project_template(template, variables)
+    instance = rendered["template_instance"]
     result = build_project(
         target=target,
-        files=rendered_files,
-        project_type=project_type,
+        files=rendered["files"],
+        project_type=instance["project_type"],
         checks=checks,
         replace=replace,
         publish_mode=publish_mode,
     )
-    result["template_instance"] = {
-        "truth_status": "DETERMINISTIC_SINGLE_PASS_TEMPLATE_INSTANTIATION",
-        "template_id": template_id.strip(),
-        "template_version": version.strip(),
-        "project_type": project_type,
-        "variables_used": sorted(referenced),
-        "rendered_paths": sorted(path_receipts, key=lambda row: row["rendered_path"]),
-        "substitution": "raw exact text",
-        "recursive_expansion": False,
-        "escaping_or_semantic_rewrite": False,
-        "limitations": [
-            "template substitution is not parser-aware",
-            "callers or templates must provide any grammar-specific escaping",
-            "loops, conditionals, and recursive placeholder expansion are not implemented",
-        ],
-    }
+    result["template_instance"] = instance
     return result

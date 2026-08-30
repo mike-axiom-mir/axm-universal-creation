@@ -16,10 +16,10 @@ class CompositeAndExecutableTests(unittest.TestCase):
         machine = UniversalCreationMachine(ROOT)
         summary = machine.executable()["summary"]
         self.assertEqual(summary["truth_status"], "EXPLICIT_LIVE_CAPABILITY_BINDINGS")
-        self.assertEqual(summary["implemented_master_records"], 5)
-        self.assertEqual(summary["implemented_master_by_level"], {"component": 5})
-        self.assertEqual(summary["live_capabilities"], 10)
-        self.assertEqual(summary["resolved_bindings"], 14)
+        self.assertEqual(summary["implemented_master_records"], 7)
+        self.assertEqual(summary["implemented_master_by_level"], {"component": 7})
+        self.assertEqual(summary["live_capabilities"], 11)
+        self.assertEqual(summary["resolved_bindings"], 18)
 
         project = machine.executable(master_id="AXM-24-WORKSPACE-COLLABORATION-C-010-project")["master"]
         self.assertEqual(project["status"], "live-backed")
@@ -40,6 +40,14 @@ class CompositeAndExecutableTests(unittest.TestCase):
         workspace = machine.executable(master_id="AXM-24-WORKSPACE-COLLABORATION-C-011-workspace")["master"]
         self.assertEqual(workspace["status"], "live-backed")
         self.assertEqual(workspace["implemented_by"], ["AXM-CAP-SELF-WORKSPACE"])
+
+        dependency_graph = machine.executable(master_id="AXM-05-CODE-GRAMMAR-C-025-dependency-graph")["master"]
+        self.assertEqual(dependency_graph["status"], "live-backed")
+        self.assertEqual(dependency_graph["implemented_by"], ["AXM-CAP-ASSEMBLE-ORGAN-PROJECT"])
+
+        interface_contract = machine.executable(master_id="AXM-00-FOUNDATION-C-019-interface-contract")["master"]
+        self.assertEqual(interface_contract["status"], "live-backed")
+        self.assertEqual(interface_contract["implemented_by"], ["AXM-CAP-ASSEMBLE-ORGAN-PROJECT"])
 
     def test_planner_surfaces_explicit_live_anatomy_bindings(self):
         plan = UniversalCreationMachine(ROOT).plan({
