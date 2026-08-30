@@ -148,7 +148,7 @@ Current deterministic project checks:
 - `python-compile`
 - `html-local-links`
 
-`static-web` automatically checks for `index.html` and verifies local `src`/`href` references from the entry page. `python` automatically compiles `.py` files for syntax without executing them.
+`static-web` automatically checks for `index.html` and verifies local `src`/`href` references from every `.html` and `.htm` page in the project. `python` automatically compiles `.py` files for syntax without executing them.
 
 The `trial` command ties the current loop together:
 

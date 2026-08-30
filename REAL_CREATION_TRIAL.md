@@ -22,7 +22,7 @@ The current project validator supports:
 - `python-compile`
 - `html-local-links`
 
-`static-web` projects automatically require `index.html` and verify local `src`/`href` references from that entry page.
+`static-web` projects automatically require `index.html` and verify local `src`/`href` references from every `.html` and `.htm` page in the project.
 
 `python` projects automatically compile every `.py` file for syntax without executing the generated program.
 
@@ -33,7 +33,7 @@ A passing deterministic project trial means:
 - the requested files were actually written;
 - project-relative paths stayed inside the project body;
 - configured deterministic checks passed;
-- local static-web references resolved when that project type was used;
+- local static-web references in every HTML/HTM page resolved when that project type was used;
 - Python source parsed/compiled when that project type was used;
 - the published project matched what the verifier subsequently observed.
 

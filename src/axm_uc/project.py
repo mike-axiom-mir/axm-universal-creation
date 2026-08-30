@@ -267,8 +267,13 @@ def validate_project(
     results.append(_check_project_nonempty(root, {}))
     if project_type in {"static-web", "web", "static-web-project"}:
         results.append(_check_file_exists(root, {"path": "index.html"}))
-        if (root / "index.html").is_file():
-            results.append(_check_html_links(root, {"path": "index.html"}))
+        html_files = sorted(
+            path.relative_to(root).as_posix()
+            for path in root.rglob("*")
+            if path.is_file() and path.suffix.casefold() in {".html", ".htm"}
+        )
+        for relative in html_files:
+            results.append(_check_html_links(root, {"path": relative}))
     if project_type in {"python", "python-project"}:
         results.append(_check_python(root, {}))
 

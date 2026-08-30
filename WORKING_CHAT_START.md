@@ -90,7 +90,7 @@ At this handoff:
 - project bodies are UTF-8 text only;
 - Python syntax can be compiled without executing generated code;
 - JSON can be parsed deterministically;
-- HTML local references can be checked structurally;
+- every HTML/HTM page in a static-web project has local `src`/`href` references checked structurally;
 - JavaScript, CSS, and Markdown can be identified but are not yet parser-validated;
 - browser visual quality and interaction behavior are not automatically verified;
 - generated code is not automatically executed by the normal project validator;

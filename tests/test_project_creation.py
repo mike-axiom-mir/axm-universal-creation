@@ -72,6 +72,57 @@ class ProjectCreationTests(unittest.TestCase):
             self.assertFalse(result["details"]["validation"]["passed"])
             self.assertFalse(target.exists())
 
+    def test_broken_local_reference_on_nested_html_page_blocks_publish(self):
+        with tempfile.TemporaryDirectory() as td:
+            target = Path(td) / "broken-multi-page-site"
+            result = UniversalCreationMachine(ROOT).create({
+                "kind": "static-web-project",
+                "inputs": {
+                    "path": str(target),
+                    "project_type": "static-web",
+                    "files": {
+                        "index.html": "<a href=\"pages/about.html\">About</a>",
+                        "pages/about.html": "<script src=\"missing.js\"></script>",
+                    },
+                },
+            })
+            self.assertEqual(result["type"], "CREATION_ERROR", result)
+            validation = result["details"]["validation"]
+            self.assertFalse(validation["passed"])
+            nested = next(
+                row
+                for row in validation["checks"]
+                if row["type"] == "html-local-links" and row.get("path") == "pages/about.html"
+            )
+            self.assertFalse(nested["passed"])
+            self.assertEqual(nested["unresolved"][0]["reference"], "missing.js")
+            self.assertFalse(target.exists())
+
+    def test_nested_html_reference_resolves_relative_to_that_page(self):
+        with tempfile.TemporaryDirectory() as td:
+            target = Path(td) / "valid-multi-page-site"
+            result = UniversalCreationMachine(ROOT).create({
+                "kind": "static-web-project",
+                "inputs": {
+                    "path": str(target),
+                    "project_type": "static-web",
+                    "files": {
+                        "index.html": "<a href=\"pages/about.htm\">About</a>",
+                        "pages/about.htm": "<script src=\"../app.js\"></script>",
+                        "app.js": "document.body.dataset.ready = 'yes';\n",
+                    },
+                },
+            })
+            self.assertEqual(result["type"], "CREATION_RESULT", result)
+            html_checks = {
+                row["path"]: row
+                for row in result["result"]["validation"]["checks"]
+                if row["type"] == "html-local-links"
+            }
+            self.assertEqual(set(html_checks), {"index.html", "pages/about.htm"})
+            self.assertTrue(html_checks["pages/about.htm"]["passed"])
+            self.assertEqual(html_checks["pages/about.htm"]["local_references"][0]["resolved"], "app.js")
+
     def test_project_file_cannot_escape_project_root(self):
         with tempfile.TemporaryDirectory() as td:
             target = Path(td) / "project"
