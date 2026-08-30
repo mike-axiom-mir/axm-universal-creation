@@ -116,6 +116,11 @@ def _validate_html_links(root: Path, html_path: Path) -> dict[str, Any]:
     }
 
 
+def _check_project_nonempty(root: Path, _check: dict[str, Any]) -> dict[str, Any]:
+    files = _file_manifest(root)
+    return {"type": "project-nonempty", "passed": bool(files), "file_count": len(files)}
+
+
 def _check_file_exists(root: Path, check: dict[str, Any]) -> dict[str, Any]:
     relative = str(check.get("path", ""))
     try:
@@ -202,7 +207,35 @@ def _check_html_links(root: Path, check: dict[str, Any]) -> dict[str, Any]:
         return {"type": "html-local-links", "path": relative, "passed": False, "error": str(exc)}
 
 
+def _check_expected_files(root: Path, expected_files: dict[str, Any]) -> dict[str, Any]:
+    rows: list[dict[str, Any]] = []
+    passed = True
+    for raw_path, expected in expected_files.items():
+        relative = str(raw_path)
+        if not isinstance(expected, str):
+            rows.append({"path": relative, "passed": False, "error": "expected text must be a string"})
+            passed = False
+            continue
+        try:
+            path = _resolve_inside(root, relative)
+            actual = path.read_text(encoding="utf-8")
+        except (ProjectError, OSError, UnicodeError) as exc:
+            rows.append({"path": relative, "passed": False, "error": str(exc)})
+            passed = False
+            continue
+        match = actual == expected
+        rows.append({
+            "path": relative,
+            "passed": match,
+            "expected_bytes": len(expected.encode("utf-8")),
+            "actual_bytes": len(actual.encode("utf-8")),
+        })
+        passed = passed and match
+    return {"type": "expected-files-exact", "passed": passed and bool(rows), "files": rows}
+
+
 CHECKS = {
+    "project-nonempty": _check_project_nonempty,
     "file-exists": _check_file_exists,
     "nonempty": _check_nonempty,
     "contains": _check_contains,
@@ -212,7 +245,12 @@ CHECKS = {
 }
 
 
-def validate_project(root: Path, project_type: str = "generic", checks: list[dict[str, Any]] | None = None) -> dict[str, Any]:
+def validate_project(
+    root: Path,
+    project_type: str = "generic",
+    checks: list[dict[str, Any]] | None = None,
+    expected_files: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     root = Path(root).resolve()
     results: list[dict[str, Any]] = []
     project_type = str(project_type or "generic").strip().casefold()
@@ -226,6 +264,7 @@ def validate_project(root: Path, project_type: str = "generic", checks: list[dic
             "limitations": ["validation does not execute generated code"],
         }
 
+    results.append(_check_project_nonempty(root, {}))
     if project_type in {"static-web", "web", "static-web-project"}:
         results.append(_check_file_exists(root, {"path": "index.html"}))
         if (root / "index.html").is_file():
@@ -241,8 +280,11 @@ def validate_project(root: Path, project_type: str = "generic", checks: list[dic
             continue
         results.append(fn(root, check))
 
+    if expected_files is not None:
+        results.append(_check_expected_files(root, expected_files))
+
     return {
-        "passed": all(row.get("passed") is True for row in results) if results else True,
+        "passed": bool(results) and all(row.get("passed") is True for row in results),
         "project_type": project_type,
         "checks": results,
         "files": _file_manifest(root),
@@ -253,7 +295,7 @@ def validate_project(root: Path, project_type: str = "generic", checks: list[dic
     }
 
 
-def _publish_directory(stage: Path, target: Path, replace: bool) -> None:
+def _begin_publish(stage: Path, target: Path, replace: bool) -> Path | None:
     backup: Path | None = None
     if target.exists():
         if not replace:
@@ -268,8 +310,17 @@ def _publish_directory(stage: Path, target: Path, replace: bool) -> None:
         if backup is not None and backup.exists() and not target.exists():
             os.replace(backup, target)
         raise
+    return backup
+
+
+def _rollback_publish(target: Path, backup: Path | None) -> None:
+    if target.exists():
+        if target.is_dir():
+            shutil.rmtree(target)
+        else:
+            target.unlink()
     if backup is not None and backup.exists():
-        shutil.rmtree(backup)
+        os.replace(backup, target)
 
 
 def build_project(
@@ -285,6 +336,7 @@ def build_project(
 
     normalized: list[tuple[PurePosixPath, str]] = []
     seen: set[str] = set()
+    expected_files: dict[str, str] = {}
     for raw_path, raw_content in files.items():
         rel = _safe_relative_path(str(raw_path))
         key = rel.as_posix()
@@ -294,6 +346,7 @@ def build_project(
         if not isinstance(raw_content, str):
             raise ProjectError(f"project file content must be text for the current milestone: {key}")
         normalized.append((rel, raw_content))
+        expected_files[key] = raw_content
 
     target.parent.mkdir(parents=True, exist_ok=True)
     stage = target.with_name(f".{target.name}.axm-build-{uuid.uuid4().hex}")
@@ -301,18 +354,31 @@ def build_project(
         raise ProjectError(f"unexpected staging collision: {stage}")
     stage.mkdir(parents=False)
 
+    backup: Path | None = None
+    published = False
     try:
         for rel, content in normalized:
             path = stage.joinpath(*rel.parts)
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text(content, encoding="utf-8")
 
-        validation = validate_project(stage, project_type=project_type, checks=checks)
+        validation = validate_project(stage, project_type=project_type, checks=checks, expected_files=expected_files)
         if not validation["passed"]:
-            raise ProjectError("project validation failed before publish", {"validation": validation})
+            raise ProjectError("project validation failed before publish", {"phase": "pre-publish", "validation": validation})
 
-        _publish_directory(stage, target, replace=replace)
-        published_validation = validate_project(target, project_type=project_type, checks=checks)
+        backup = _begin_publish(stage, target, replace=replace)
+        published = True
+        published_validation = validate_project(target, project_type=project_type, checks=checks, expected_files=expected_files)
+        if not published_validation["passed"]:
+            _rollback_publish(target, backup)
+            published = False
+            raise ProjectError(
+                "project validation failed after publish; previous body restored",
+                {"phase": "post-publish", "validation": published_validation, "rolled_back": True},
+            )
+
+        if backup is not None and backup.exists():
+            shutil.rmtree(backup)
         return {
             "path": str(target),
             "project_type": str(project_type or "generic"),
@@ -320,6 +386,10 @@ def build_project(
             "files": _file_manifest(target),
             "validation": published_validation,
         }
+    except Exception:
+        if published and target.exists():
+            _rollback_publish(target, backup)
+        raise
     finally:
         if stage.exists():
             shutil.rmtree(stage, ignore_errors=True)

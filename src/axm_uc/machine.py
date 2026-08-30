@@ -10,8 +10,32 @@ from typing import Any
 from .atomic import atomic_write_json
 from .capabilities import CapabilityError, CapabilityStore
 from .decompose import CreationDecomposer
+from .executable import ExecutableAnatomy
 from .registry import Registry
 from .root_fit import evaluate_declared_root_fit
+
+
+def _expand_test_value(value: Any, test_dir: str) -> Any:
+    if isinstance(value, str):
+        return value.replace("${TEST_DIR}", test_dir)
+    if isinstance(value, dict):
+        expanded: dict[Any, Any] = {}
+        for key, item in value.items():
+            expanded_key = key.replace("${TEST_DIR}", test_dir) if isinstance(key, str) else key
+            expanded[expanded_key] = _expand_test_value(item, test_dir)
+        return expanded
+    if isinstance(value, list):
+        return [_expand_test_value(item, test_dir) for item in value]
+    return copy.deepcopy(value)
+
+
+def _result_field(result: Any, path: str) -> Any:
+    value = result
+    for part in str(path).split("."):
+        if not isinstance(value, dict) or part not in value:
+            raise KeyError(path)
+        value = value[part]
+    return value
 
 
 class UniversalCreationMachine:
@@ -20,6 +44,7 @@ class UniversalCreationMachine:
         self.registry = Registry(self.root)
         self.capabilities = CapabilityStore(self.root)
         self.decomposer = CreationDecomposer(self.registry, self.capabilities)
+        self.executable_anatomy = ExecutableAnatomy(self.registry, self.capabilities, self.decomposer.topology)
 
     def inspect(self, query: str = "", level: str | None = None, limit: int = 20) -> dict[str, Any]:
         contract = json.loads((self.root / "machine.contract.json").read_text(encoding="utf-8"))
@@ -27,6 +52,7 @@ class UniversalCreationMachine:
             "machine": contract,
             "registry": self.registry.summary(),
             "topology": self.decomposer.topology.summary(),
+            "executable_anatomy": self.executable_anatomy.summary(),
             "live_capabilities": self.capabilities.live(),
             "records": self.registry.search(query=query, level=level, limit=limit) if (query or level) else [],
         }
@@ -48,9 +74,22 @@ class UniversalCreationMachine:
             result["traversal"] = bridge.traverse_core([str(core_id)], max_depth=depth)
         return result
 
+    def executable(self, master_id: str | None = None, core_id: str | None = None) -> dict[str, Any]:
+        result: dict[str, Any] = {
+            "type": "EXECUTABLE_ANATOMY",
+            "summary": self.executable_anatomy.summary(),
+        }
+        if master_id:
+            result["master"] = self.executable_anatomy.for_master(master_id)
+        if core_id:
+            result["core"] = self.executable_anatomy.for_core(core_id)
+        return result
+
     def plan(self, request: dict[str, Any], per_level: int = 6) -> dict[str, Any]:
-        """Map a creation request onto the explicit registry before inventing machinery."""
-        return self.decomposer.decompose(request, per_level=per_level)
+        """Map a creation request onto explicit anatomy, topology, and live coverage."""
+        result = self.decomposer.decompose(request, per_level=per_level)
+        result["executable_anatomy"] = self.executable_anatomy.for_selected(result["registry_matches"])
+        return result
 
     def _capability_gap(self, request: dict[str, Any]) -> dict[str, Any]:
         kind = str(request.get("kind", "unknown"))
@@ -67,7 +106,7 @@ class UniversalCreationMachine:
                     "covered_inputs": sorted(required),
                 })
         if partial:
-            smallest = "a routing/adapter capability may be enough because existing live machinery already accepts the required input shape"
+            smallest = "a routing/adapter or composite capability may be enough because existing live machinery already accepts the required input shape"
         else:
             smallest = f"a live capability able to reach creation kind '{kind}' from the supplied inputs"
         return {
@@ -110,12 +149,7 @@ class UniversalCreationMachine:
         }
 
     def trial(self, request: dict[str, Any], per_level: int = 6) -> dict[str, Any]:
-        """Plan, create, then independently re-verify a project-style creation.
-
-        The trial intentionally does not execute generated code. It proves that the
-        explicit plan, deterministic project builder, and post-create verification
-        agree on what was actually written.
-        """
+        """Plan, create, then independently re-verify a project-style creation."""
         plan = self.plan(request, per_level=per_level)
         creation = self.create(request)
         verification: dict[str, Any] | None = None
@@ -133,6 +167,7 @@ class UniversalCreationMachine:
                         "path": project_path,
                         "project_type": inputs.get("project_type", result.get("project_type", "generic")),
                         "checks": inputs.get("checks", []),
+                        "expected_files": inputs.get("files", {}),
                     },
                 })
                 passed = (
@@ -173,20 +208,45 @@ class UniversalCreationMachine:
             test_manifest = copy.deepcopy(candidate)
             test_manifest["status"] = "candidate-under-test"
             for index, test in enumerate(candidate.get("tests", []), start=1):
-                inputs = copy.deepcopy(test.get("inputs", {}))
-                for key, value in list(inputs.items()):
-                    if isinstance(value, str):
-                        inputs[key] = value.replace("${TEST_DIR}", str(build_root))
+                inputs = _expand_test_value(test.get("inputs", {}), str(build_root))
+                expected = _expand_test_value(test.get("expect", {}), str(build_root))
                 try:
                     result = self.capabilities.invoke(test_manifest, inputs)
-                    expected = test.get("expect", {})
                     passed_test = True
                     detail: dict[str, Any] = {"result": result}
                     if "file_text" in expected:
                         output_path = Path(result["path"])
                         actual = output_path.read_text(encoding="utf-8")
-                        passed_test = actual == expected["file_text"]
+                        match = actual == expected["file_text"]
+                        passed_test = passed_test and match
                         detail["actual_file_text"] = actual
+                    files_expected = expected.get("files")
+                    if isinstance(files_expected, dict):
+                        file_checks: list[dict[str, Any]] = []
+                        for raw_path, expected_text in files_expected.items():
+                            path = Path(str(raw_path))
+                            try:
+                                actual = path.read_text(encoding="utf-8")
+                                match = actual == expected_text
+                                file_checks.append({"path": str(path), "passed": match})
+                            except Exception as exc:
+                                match = False
+                                file_checks.append({"path": str(path), "passed": False, "error": str(exc)})
+                            passed_test = passed_test and match
+                        detail["file_checks"] = file_checks
+                    result_fields = expected.get("result_fields")
+                    if isinstance(result_fields, dict):
+                        field_checks: list[dict[str, Any]] = []
+                        for field_path, expected_value in result_fields.items():
+                            try:
+                                actual_value = _result_field(result, str(field_path))
+                                match = actual_value == expected_value
+                                field_checks.append({"field": field_path, "passed": match, "actual": actual_value})
+                            except KeyError:
+                                match = False
+                                field_checks.append({"field": field_path, "passed": False, "error": "field not found"})
+                            passed_test = passed_test and match
+                        detail["result_field_checks"] = field_checks
                     test_results.append({"index": index, "passed": passed_test, **detail})
                 except Exception as exc:
                     test_results.append({"index": index, "passed": False, "error": str(exc)})
@@ -218,6 +278,7 @@ class UniversalCreationMachine:
             pass
         else:
             candidate_path.unlink()
+        self.executable_anatomy = ExecutableAnatomy(self.registry, self.capabilities, self.decomposer.topology)
         return {
             "adopted": True,
             "capability": candidate["id"],
