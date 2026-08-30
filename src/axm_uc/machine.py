@@ -19,7 +19,11 @@ def _expand_test_value(value: Any, test_dir: str) -> Any:
     if isinstance(value, str):
         return value.replace("${TEST_DIR}", test_dir)
     if isinstance(value, dict):
-        return {key: _expand_test_value(item, test_dir) for key, item in value.items()}
+        expanded: dict[Any, Any] = {}
+        for key, item in value.items():
+            expanded_key = key.replace("${TEST_DIR}", test_dir) if isinstance(key, str) else key
+            expanded[expanded_key] = _expand_test_value(item, test_dir)
+        return expanded
     if isinstance(value, list):
         return [_expand_test_value(item, test_dir) for item in value]
     return copy.deepcopy(value)
