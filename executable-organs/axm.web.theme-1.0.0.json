@@ -1,0 +1,32 @@
+{
+  "schema": "axm.executable-software-organ/v0.1",
+  "id": "axm.web.theme",
+  "version": "1.0.0",
+  "status": "executable",
+  "purpose": "Own a reusable local visual theme for a document-shell organ.",
+  "project_types": [
+    "static-web"
+  ],
+  "parameters": [
+    "background"
+  ],
+  "provides": [
+    "visual-theme"
+  ],
+  "requires": [
+    "document-shell"
+  ],
+  "files": {
+    "style.css": ":root { color-scheme: dark; font-family: system-ui, sans-serif; }\nbody { min-height: 100vh; margin: 0; display: grid; place-items: center; background: [[AXM:background]]; color: #f7f8ff; }\nmain { width: min(42rem, calc(100% - 2rem)); }\nbutton { padding: .8rem 1rem; border: 0; border-radius: 999px; }\n"
+  },
+  "anatomy_refs": [
+    "AXM-09-UI-INTERACTION-O-003-style-engine"
+  ],
+  "provenance": {
+    "kind": "local-authored-source",
+    "basis": "Created and tested inside AXM Universal Creation as the first reusable visual-theme organ package."
+  },
+  "limitations": [
+    "The package owns exact CSS source but does not claim browser-rendered visual quality has been judged."
+  ]
+}

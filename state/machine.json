@@ -6,6 +6,7 @@
   "implementation_kernel": "reference/AXM_Universal_Creation_Map_v0.1/registry/core_build_seed.json",
   "capability_directory": "capabilities/live",
   "candidate_directory": "capabilities/candidates",
+  "executable_organ_directory": "executable-organs",
   "creation_output_directory": "creations",
   "brain_architecture": "unspecified-by-design"
 }

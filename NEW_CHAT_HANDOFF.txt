@@ -51,7 +51,7 @@ The machine can clone its complete current source body into an editable candidat
 
 SOFTWARE ORGANS
 ---------------
-The live machine can assemble one project from versioned template organs with explicit dependencies, deterministic order, shared exact variables, and one visible owner per rendered file. This executes supplied organ source; it does not pretend all 415 descriptive registry organs are implemented. See ORGAN_ASSEMBLY.md.
+The live machine can assemble one project from versioned template organs with explicit dependencies, deterministic order, shared or instance-scoped exact variables, and one visible owner per rendered file. Organs may be inline experiments or exact references into the separate executable-organs/ source body. This does not pretend all 415 descriptive registry organs are implemented. See ORGAN_ASSEMBLY.md and EXECUTABLE_ORGANS.md.
 
 RECOVERY
 --------

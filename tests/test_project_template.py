@@ -176,6 +176,28 @@ class ProjectTemplateTests(unittest.TestCase):
             )
             self.assertTrue(compile_check["passed"])
 
+    def test_template_trial_reverifies_rendered_file_digests(self):
+        with tempfile.TemporaryDirectory() as td:
+            result = UniversalCreationMachine(ROOT).trial({
+                "kind": "templated-static-web-project",
+                "direction": "verify a rendered template body independently",
+                "inputs": {
+                    "path": str(Path(td) / "template-trial"),
+                    "template": {
+                        "id": "axm.test.trial-template",
+                        "version": "1.0.0",
+                        "project_type": "static-web",
+                        "files": {"index.html": "<main>[[AXM:title]]</main>"},
+                    },
+                    "variables": {"title": "Verified Render"},
+                },
+            })
+            self.assertTrue(result["passed"], result)
+            checks = result["verification"]["result"]["checks"]
+            digest_check = next(row for row in checks if row["type"] == "expected-file-digests")
+            self.assertTrue(digest_check["passed"])
+            self.assertEqual(digest_check["files"][0]["path"], "index.html")
+
 
 if __name__ == "__main__":
     unittest.main()

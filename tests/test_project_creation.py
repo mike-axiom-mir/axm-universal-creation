@@ -248,6 +248,28 @@ class ProjectCreationTests(unittest.TestCase):
             exact = next(row for row in verify["result"]["checks"] if row["type"] == "expected-files-exact")
             self.assertFalse(exact["passed"])
 
+    def test_expected_file_digest_verification_detects_later_change(self):
+        with tempfile.TemporaryDirectory() as td:
+            target = Path(td) / "generic"
+            machine = UniversalCreationMachine(ROOT)
+            created = machine.create({
+                "kind": "software-project",
+                "inputs": {"path": str(target), "files": {"note.txt": "original"}},
+            })
+            receipt = created["result"]["files"][0]
+            self.assertEqual(len(receipt["sha256"]), 64)
+            (target / "note.txt").write_text("changed", encoding="utf-8")
+            verify = machine.create({
+                "kind": "verify-project",
+                "inputs": {
+                    "path": str(target),
+                    "expected_file_digests": {"note.txt": receipt["sha256"]},
+                },
+            })
+            self.assertEqual(verify["type"], "CREATION_RESULT")
+            digest = next(row for row in verify["result"]["checks"] if row["type"] == "expected-file-digests")
+            self.assertFalse(digest["passed"])
+
     def test_failed_post_publish_validation_restores_previous_project(self):
         with tempfile.TemporaryDirectory() as td:
             target = Path(td) / "replace-me"

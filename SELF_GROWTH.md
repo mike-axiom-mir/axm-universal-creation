@@ -55,6 +55,8 @@ Freedom to experiment, reusable creation, visible gaps, and continuity of the re
 
 Reusable software organs may now carry source templates, explicit dependencies, declared interface names, and exact file ownership into a larger project. This makes an organ a composable executable contribution when its implementation is actually supplied; it does not promote definition-only registry anatomy into working capability.
 
+Working organs may also remain in the separate versioned `executable-organs/` body and be reused by exact reference. This lets capability accumulate as inspectable source packages without requiring a new top-level Python route for every combination.
+
 ## Non-hidden after change
 
 If the machine changes what it is, the resulting source, structure, relationships, capability boundaries, configuration, and persistent learned state required to understand the live machine must remain inspectable.

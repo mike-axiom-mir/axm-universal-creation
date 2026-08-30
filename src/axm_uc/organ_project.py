@@ -67,6 +67,9 @@ def _prepare_organs(raw_organs: Any) -> tuple[list[dict[str, Any]], dict[str, in
                     {"organ_id": organ_id, "duplicate_dependency": dependency_id},
                 )
             dependencies.append(dependency_id)
+        bindings = raw.get("bindings")
+        if bindings is not None and not isinstance(bindings, dict):
+            raise ProjectError("software organ bindings must be an object when supplied", {"organ_id": organ_id})
         positions[organ_id] = position
         organs.append({
             "id": organ_id,
@@ -76,6 +79,10 @@ def _prepare_organs(raw_organs: Any) -> tuple[list[dict[str, Any]], dict[str, in
             "provides": _interface_names(raw.get("provides"), "provides", organ_id),
             "requires": _interface_names(raw.get("requires"), "requires", organ_id),
             "files": raw.get("files"),
+            "bindings": bindings,
+            "package_ref": raw.get("package_ref"),
+            "package_id": raw.get("package_id"),
+            "package_source_path": raw.get("package_source_path"),
         })
     return organs, positions
 
@@ -205,9 +212,11 @@ def assemble_organ_project(
     combined_files: dict[str, str] = {}
     owners: dict[str, str] = {}
     organ_receipts: list[dict[str, Any]] = []
-    all_variables_used: set[str] = set()
+    assembly_variables_used: set[str] = set()
     for organ_id in order:
         organ = by_id[organ_id]
+        uses_package_bindings = organ["bindings"] is not None
+        render_variables = organ["bindings"] if uses_package_bindings else variables
         try:
             rendered = render_project_template(
                 {
@@ -216,8 +225,8 @@ def assemble_organ_project(
                     "project_type": project_type,
                     "files": organ["files"],
                 },
-                variables,
-                reject_unused_variables=False,
+                render_variables,
+                reject_unused_variables=uses_package_bindings,
             )
         except ProjectError as exc:
             raise ProjectError(
@@ -226,7 +235,8 @@ def assemble_organ_project(
             ) from exc
 
         instance = rendered["template_instance"]
-        all_variables_used.update(instance["variables_used"])
+        if not uses_package_bindings:
+            assembly_variables_used.update(instance["variables_used"])
         for path, content in rendered["files"].items():
             if path in combined_files:
                 raise ProjectError(
@@ -239,7 +249,7 @@ def assemble_organ_project(
                 )
             combined_files[path] = content
             owners[path] = organ_id
-        organ_receipts.append({
+        receipt = {
             "id": organ_id,
             "version": organ["version"],
             "purpose": organ["purpose"],
@@ -248,10 +258,18 @@ def assemble_organ_project(
             "provides": organ["provides"],
             "requires": organ["requires"],
             "variables_used": instance["variables_used"],
+            "variable_scope": "organ-bindings" if uses_package_bindings else "assembly-variables",
             "rendered_paths": instance["rendered_paths"],
-        })
+        }
+        if organ["package_ref"] is not None:
+            receipt.update({
+                "package_ref": organ["package_ref"],
+                "package_id": organ["package_id"],
+                "package_source_path": organ["package_source_path"],
+            })
+        organ_receipts.append(receipt)
 
-    unused_variables = sorted(set(variables) - all_variables_used)
+    unused_variables = sorted(set(variables) - assembly_variables_used)
     if unused_variables:
         raise ProjectError(
             "organ assembly variables were supplied but not used",
@@ -287,7 +305,9 @@ def assemble_organ_project(
             {"path": path, "organ_id": owners[path]}
             for path in sorted(owners)
         ],
-        "variables_used": sorted(all_variables_used),
+        "variables_used": sorted(assembly_variables_used),
+        "assembly_variables_used": sorted(assembly_variables_used),
+        "organ_scoped_bindings_available": True,
         "composition": "disjoint rendered file ownership followed by one project publication",
         "recursive_template_expansion": False,
         "declared_interface_contracts_verified": True,

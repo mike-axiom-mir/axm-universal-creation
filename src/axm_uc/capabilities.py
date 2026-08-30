@@ -7,6 +7,7 @@ from typing import Any, Callable
 
 from .atomic import atomic_write_json, atomic_write_text
 from .grammar import grammar_inventory
+from .organ_library import ExecutableOrganError, ExecutableOrganLibrary, resolve_organ_assembly
 from .organ_project import assemble_organ_project
 from .project import ProjectError, build_project, validate_project
 from .registry import Registry
@@ -124,17 +125,41 @@ def builtin_assemble_organ_project(root: Path, inputs: dict[str, Any]) -> dict[s
     if _is_machine_body_path(root, target):
         raise CapabilityError("normal organ assembly cannot rewrite the live machine body; use a self-workspace for whole-body experiments")
     try:
+        resolved_assembly, resolution = resolve_organ_assembly(root, inputs["assembly"])
         result = assemble_organ_project(
             target=target,
-            assembly=inputs["assembly"],
+            assembly=resolved_assembly,
             variables=inputs["variables"],
             checks=inputs.get("checks") if isinstance(inputs.get("checks"), list) else None,
             replace=bool(inputs.get("replace", False)),
             publish_mode=str(inputs.get("publish_mode", "grounded-draft")),
         )
+        result["executable_organ_resolution"] = resolution
         result["grammar_inventory"] = grammar_inventory(target)
         return result
-    except ProjectError as exc:
+    except (ProjectError, ExecutableOrganError) as exc:
+        raise CapabilityError(str(exc), exc.details) from exc
+
+
+def builtin_inspect_executable_organs(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+    try:
+        library = ExecutableOrganLibrary(root)
+        ref = inputs.get("ref")
+        if ref is not None:
+            return {
+                "truth_status": "EXACT_LOCAL_EXECUTABLE_ORGAN_PACKAGE",
+                "summary": library.summary(),
+                "package": library.inspect(ref),
+            }
+        return {
+            "truth_status": "EXACT_LOCAL_EXECUTABLE_ORGAN_PACKAGES",
+            "summary": library.summary(),
+            "packages": library.list(
+                project_type=str(inputs["project_type"]) if "project_type" in inputs else None,
+                provides=str(inputs["provides"]) if "provides" in inputs else None,
+            ),
+        }
+    except ExecutableOrganError as exc:
         raise CapabilityError(str(exc), exc.details) from exc
 
 
@@ -147,6 +172,7 @@ def builtin_verify_project(root: Path, inputs: dict[str, Any]) -> dict[str, Any]
         project_type=str(inputs.get("project_type", "generic")),
         checks=inputs.get("checks") if isinstance(inputs.get("checks"), list) else None,
         expected_files=inputs.get("expected_files") if isinstance(inputs.get("expected_files"), dict) else None,
+        expected_file_digests=inputs.get("expected_file_digests") if isinstance(inputs.get("expected_file_digests"), dict) else None,
     )
     report["grammar_inventory"] = grammar_inventory(target) if target.is_dir() else {
         "truth_status": "OBSERVED_EXTENSION_GRAMMAR_INVENTORY",
@@ -180,6 +206,7 @@ BUILTINS: dict[str, Callable[[Path, dict[str, Any]], dict[str, Any]]] = {
     "builtin:instantiate_project_template": builtin_instantiate_project_template,
     "builtin:self_workspace": builtin_self_workspace,
     "builtin:assemble_organ_project": builtin_assemble_organ_project,
+    "builtin:inspect_executable_organs": builtin_inspect_executable_organs,
     "builtin:verify_project": builtin_verify_project,
     "builtin:patch_project": builtin_patch_project,
 }

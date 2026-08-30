@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import shutil
@@ -43,7 +44,12 @@ def _file_manifest(root: Path) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
     for path in sorted(p for p in root.rglob("*") if p.is_file()):
         rel = path.relative_to(root).as_posix()
-        rows.append({"path": rel, "bytes": path.stat().st_size})
+        content = path.read_bytes()
+        rows.append({
+            "path": rel,
+            "bytes": len(content),
+            "sha256": hashlib.sha256(content).hexdigest(),
+        })
     return rows
 
 
@@ -237,6 +243,36 @@ def _check_expected_files(root: Path, expected_files: dict[str, Any]) -> dict[st
     return {"type": "expected-files-exact", "passed": passed and bool(rows), "files": rows}
 
 
+def _check_expected_file_digests(root: Path, expected_digests: dict[str, Any]) -> dict[str, Any]:
+    rows: list[dict[str, Any]] = []
+    passed = True
+    for raw_path, raw_expected in expected_digests.items():
+        relative = str(raw_path)
+        expected = str(raw_expected).strip()
+        if len(expected) != 64 or any(character not in "0123456789abcdef" for character in expected):
+            rows.append({"path": relative, "passed": False, "error": "expected SHA-256 must be 64 lowercase hexadecimal characters"})
+            passed = False
+            continue
+        try:
+            path = _resolve_inside(root, relative)
+            content = path.read_bytes()
+        except (ProjectError, OSError) as exc:
+            rows.append({"path": relative, "passed": False, "error": str(exc)})
+            passed = False
+            continue
+        actual = hashlib.sha256(content).hexdigest()
+        match = actual == expected
+        rows.append({
+            "path": relative,
+            "passed": match,
+            "expected_sha256": expected,
+            "actual_sha256": actual,
+            "actual_bytes": len(content),
+        })
+        passed = passed and match
+    return {"type": "expected-file-digests", "passed": passed and bool(rows), "files": rows}
+
+
 def _publication_integrity(validation: dict[str, Any]) -> bool:
     checks = validation.get("checks") if isinstance(validation.get("checks"), list) else []
     required = {
@@ -279,6 +315,7 @@ def validate_project(
     project_type: str = "generic",
     checks: list[dict[str, Any]] | None = None,
     expected_files: dict[str, Any] | None = None,
+    expected_file_digests: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     root = Path(root).resolve()
     results: list[dict[str, Any]] = []
@@ -323,6 +360,8 @@ def validate_project(
 
     if expected_files is not None:
         results.append(_check_expected_files(root, expected_files))
+    if expected_file_digests is not None:
+        results.append(_check_expected_file_digests(root, expected_file_digests))
 
     return {
         "passed": bool(results) and all(row.get("passed") is True for row in results),

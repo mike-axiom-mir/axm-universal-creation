@@ -69,6 +69,10 @@
     "declaredDependencyGraphResolved": true,
     "declaredInterfaceProvidersAndRequirementsResolved": true,
     "exclusiveRenderedFileOwnership": true,
+    "executableOrganPackageBodyAvailable": true,
+    "exactVersionedOrganReferencesResolved": true,
+    "organInstanceScopedBindingsAvailable": true,
+    "descriptiveOrgansAutomaticallyExecutable": false,
     "sourceInterfaceConformanceProven": false,
     "semanticRuntimeWiringInvented": false
   },

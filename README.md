@@ -112,6 +112,7 @@ The small Python runtime currently provides:
 - grounded drafts that preserve observed gaps instead of erasing imperfect ordinary creations;
 - strict single-pass project recipes with inspectable variables and rendered paths;
 - dependency-aware software-organ assembly with declared interfaces, explicit order, and file ownership;
+- an exact local executable-organ package body that makes working organs reusable across creations;
 - complete editable self-workspace cloning, exact source comparison, independent build logs, and voluntary merge-check requests;
 - structured `CAPABILITY_GAP` results that preserve the directional outcome and distinguish current partial coverage;
 - candidate capability testing and direct adoption through the four-root fit declaration;
@@ -154,6 +155,9 @@ Current live project handles:
 - `organ-static-web-project`
 - `organ-python-project`
 - `software-organ-assembly`
+- `inspect-executable-organs`
+- `list-executable-organs`
+- `resolve-executable-organ`
 
 Project creation is staged before publish and project-relative file paths may not escape the project body. Plain project creation defaults to `grounded-draft`: exact publication integrity is required, while failed quality/grammar checks remain visible and the imperfect creation survives. Explicit `validated` mode and verified composite handles remain strict and do not publish a failed body.
 
@@ -172,7 +176,9 @@ Every `.json` file is automatically parsed for JSON validity in every project ty
 
 Reusable project templates use strict `[[AXM:name]]` placeholders in paths and contents. Substitution is exact, raw, single-pass, and non-recursive; missing, unused, malformed, colliding, and escaping inputs are rejected. See `PROJECT_TEMPLATES.md` and `GROUNDED_CREATION.md`.
 
-Software-organ assembly composes several versioned template organs through an explicit dependency graph. Declared `provides`/`requires` interfaces must resolve through that graph, every rendered file has one visible organ owner, and missing dependencies, cycles, interface gaps, and ownership collisions are rejected before publication. Declared interface resolution does not yet prove source-level conformance. See `ORGAN_ASSEMBLY.md`.
+Software-organ assembly composes several versioned template organs through an explicit dependency graph. Organs may be supplied inline or resolved from the separate `executable-organs/` body through an exact `id@version` reference. Declared `provides`/`requires` interfaces must resolve through the graph, every rendered file has one visible organ owner, and missing dependencies, cycles, interface gaps, binding drift, package overrides, and ownership collisions are rejected before publication. Declared interface resolution does not yet prove source-level conformance. See `ORGAN_ASSEMBLY.md` and `EXECUTABLE_ORGANS.md`.
+
+Every project file receipt now includes its SHA-256 content digest. The independent `trial` pass rechecks those exact observed digests, so direct, templated, and organ-based creations receive the same second-body integrity observation. This is artifact evidence, not a required global machine hash baseline.
 
 The `trial` command ties the current loop together:
 
@@ -186,6 +192,7 @@ PYTHONPATH=src python -m axm_uc trial examples/requests/create_real_site.json
 PYTHONPATH=src python -m axm_uc create examples/requests/verify_real_site.json
 PYTHONPATH=src python -m axm_uc create examples/requests/create_templated_site.json
 PYTHONPATH=src python -m axm_uc create examples/requests/create_organ_site.json
+PYTHONPATH=src python -m axm_uc create examples/requests/create_reusable_organ_site.json
 ```
 
 That creates `creations/first-real-site/` with `index.html`, `style.css`, and `app.js`. Open `index.html` in a browser for the separate human/host visual and interaction test.
@@ -229,6 +236,8 @@ Inspect the bridge directly:
 
 ```bash
 PYTHONPATH=src python -m axm_uc topology
+PYTHONPATH=src python -m axm_uc organs
+PYTHONPATH=src python -m axm_uc organs --ref axm.web.shell@1.0.0
 PYTHONPATH=src python -m axm_uc topology --master-id AXM-02-DATA-MATH-C-012-graph --depth 4
 PYTHONPATH=src python -m axm_uc plan examples/requests/plan_graph.json --per-level 8
 ```
@@ -245,6 +254,7 @@ PYTHONPATH=src python -m axm_uc create examples/requests/create_hello.json
 PYTHONPATH=src python -m axm_uc trial examples/requests/create_real_site.json
 PYTHONPATH=src python -m axm_uc create examples/requests/create_templated_site.json
 PYTHONPATH=src python -m axm_uc create examples/requests/create_organ_site.json
+PYTHONPATH=src python -m axm_uc create examples/requests/create_reusable_organ_site.json
 PYTHONPATH=src python -m axm_uc create examples/requests/clone_self_workspace.json
 PYTHONPATH=src python -m axm_uc candidate test capabilities/candidates/AXM-CAP-WRITE-MARKDOWN.json
 python tools/build.py

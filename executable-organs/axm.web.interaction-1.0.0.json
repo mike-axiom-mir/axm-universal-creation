@@ -1,0 +1,34 @@
+{
+  "schema": "axm.executable-software-organ/v0.1",
+  "id": "axm.web.interaction",
+  "version": "1.0.0",
+  "status": "executable",
+  "purpose": "Own one reusable local button interaction for a document shell with a visual theme.",
+  "project_types": [
+    "static-web"
+  ],
+  "parameters": [
+    "active_label",
+    "state"
+  ],
+  "provides": [
+    "local-interaction"
+  ],
+  "requires": [
+    "document-shell",
+    "visual-theme"
+  ],
+  "files": {
+    "app.js": "const button = document.querySelector('button');\nbutton.addEventListener('click', () => {\n  document.body.dataset.state = '[[AXM:state]]';\n  button.textContent = '[[AXM:active_label]]';\n});\n"
+  },
+  "anatomy_refs": [
+    "AXM-09-UI-INTERACTION-O-010-input-abstraction-organ"
+  ],
+  "provenance": {
+    "kind": "local-authored-source",
+    "basis": "Created and tested inside AXM Universal Creation as the first reusable local-interaction organ package."
+  },
+  "limitations": [
+    "The JavaScript is retained and structurally linked but is not executed by deterministic project validation."
+  ]
+}

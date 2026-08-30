@@ -12,6 +12,7 @@ from .capabilities import CapabilityError, CapabilityStore
 from .decompose import CreationDecomposer
 from .directions import SoftwareDirections
 from .executable import ExecutableAnatomy
+from .organ_library import ExecutableOrganLibrary
 from .registry import Registry
 from .root_fit import evaluate_declared_root_fit
 
@@ -56,6 +57,7 @@ class UniversalCreationMachine:
             "topology": self.decomposer.topology.summary(),
             "executable_anatomy": self.executable_anatomy.summary(),
             "software_directions": self.direction_model.summary(),
+            "executable_organs": ExecutableOrganLibrary(self.root).summary(),
             "live_capabilities": self.capabilities.live(),
             "records": self.registry.search(query=query, level=level, limit=limit) if (query or level) else [],
         }
@@ -72,6 +74,23 @@ class UniversalCreationMachine:
             result["profile"] = profile
         if suggest:
             result["suggestions"] = self.direction_model.suggest({"goals": [suggest]})
+        return result
+
+    def executable_organs(
+        self,
+        ref: str | None = None,
+        project_type: str | None = None,
+        provides: str | None = None,
+    ) -> dict[str, Any]:
+        library = ExecutableOrganLibrary(self.root)
+        result: dict[str, Any] = {
+            "type": "EXECUTABLE_ORGAN_LIBRARY",
+            "summary": library.summary(),
+        }
+        if ref:
+            result["package"] = library.inspect(ref)
+        else:
+            result["packages"] = library.list(project_type=project_type, provides=provides)
         return result
 
     def topology(self, master_id: str | None = None, core_id: str | None = None, depth: int = 6) -> dict[str, Any]:
@@ -184,6 +203,12 @@ class UniversalCreationMachine:
             project_path = result.get("path")
             inputs = request.get("inputs") if isinstance(request.get("inputs"), dict) else {}
             if project_path and isinstance(result.get("validation"), dict):
+                created_files = result.get("files") if isinstance(result.get("files"), list) else []
+                expected_file_digests = {
+                    str(row["path"]): str(row["sha256"])
+                    for row in created_files
+                    if isinstance(row, dict) and "path" in row and "sha256" in row
+                }
                 verification = self.create({
                     "kind": "verify-project",
                     "direction": f"verify creation trial for {request.get('kind')}",
@@ -191,7 +216,8 @@ class UniversalCreationMachine:
                         "path": project_path,
                         "project_type": inputs.get("project_type", result.get("project_type", "generic")),
                         "checks": inputs.get("checks", []),
-                        "expected_files": inputs.get("files", {}),
+                        "expected_files": inputs.get("files") if isinstance(inputs.get("files"), dict) else None,
+                        "expected_file_digests": expected_file_digests,
                     },
                 })
                 passed = (

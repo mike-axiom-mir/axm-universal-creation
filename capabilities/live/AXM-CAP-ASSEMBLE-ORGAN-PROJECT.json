@@ -1,8 +1,8 @@
 {
   "id": "AXM-CAP-ASSEMBLE-ORGAN-PROJECT",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "status": "live",
-  "purpose": "Assemble one software project from several inspectable template organs in deterministic declared-dependency order, validate declared provided/required interfaces, preserve exact file ownership, and ground the resulting body without hiding structural or validation gaps.",
+  "purpose": "Assemble one software project from inline or exactly referenced executable template organs in deterministic declared-dependency order, validate declared provided/required interfaces, preserve exact package resolution and file ownership, and ground the resulting body without hiding structural or validation gaps.",
   "handles": [
     "organ-software-project",
     "organ-static-web-project",
@@ -17,8 +17,8 @@
     ],
     "properties": {
       "path": "target project directory",
-      "assembly": "object with id, version, project_type, and a non-empty organs list; every organ has unique id, version, optional purpose/depends_on/provides/requires, and a files template mapping",
-      "variables": "shared exact raw placeholder values; every supplied value must be used by at least one organ",
+      "assembly": "object with id, version, project_type, and a non-empty organs list; an organ is either explicit inline source or an exact installed package ref with instance_id, depends_on, and exact bindings",
+      "variables": "shared exact raw placeholder values for inline organs; every supplied value must be used by at least one assembly-scoped organ",
       "checks": "optional deterministic grounding checks over the assembled project",
       "publish_mode": "grounded-draft by default; validated when failed checks must block publication",
       "replace": "optional boolean; defaults false"
@@ -30,17 +30,20 @@
       "path",
       "creation_status",
       "grounding",
+      "executable_organ_resolution",
       "organ_assembly",
       "validation",
       "grammar_inventory"
     ]
   },
   "dependencies": [
+    "AXM-CAP-INSPECT-EXECUTABLE-ORGANS",
     "AXM-CAP-INSTANTIATE-PROJECT-TEMPLATE",
     "AXM-CAP-WRITE-PROJECT",
     "AXM-CAP-VERIFY-PROJECT"
   ],
   "relationships": [
+    "resolves installed organ packages only through exact id@version refs and rejects package source or contract overrides",
     "resolves the declared software-organ dependency graph before rendering",
     "requires every declared required interface to have one provider reachable through declared organ dependencies",
     "gives each rendered file one explicit organ owner",
@@ -79,17 +82,18 @@
     "declared organ dependencies determine assembly order but do not invent semantic imports or runtime wiring",
     "each rendered path has one organ owner; deterministic shared-file merge semantics are not implemented",
     "organ contents are UTF-8 raw templates and remain subject to the current template and project validation limits",
-    "the capability assembles supplied organs; it does not autonomously discover that a described registry organ has executable source"
+    "installed packages are selected by exact reference; semantic, fuzzy, or learned organ selection is not implemented",
+    "the capability assembles inline or installed executable source and never promotes a descriptive anatomy organ by name"
   ],
   "persistent_state": null,
   "root_fit": {
     "truth": {
       "fit": true,
-      "basis": "Declared organs, dependencies, interface providers/requirements, resolved order, variables, rendered paths, file owners, validation observations, and source-conformance limits remain explicit."
+      "basis": "Exact package refs and source paths, inline organs, dependencies, interface providers/requirements, resolved order, variable scopes, rendered paths, file owners, validation observations, and source-conformance limits remain explicit."
     },
     "agency": {
       "fit": true,
-      "basis": "Humans or AIs choose the organs, their exact source templates, relationships, variables, and desired grounding mode."
+      "basis": "Humans or AIs choose exact installed package versions or inline organ source, instance relationships, bindings, shared variables, and desired grounding mode."
     },
     "continuity": {
       "fit": true,

@@ -10,13 +10,13 @@ At this milestone, an executable software organ is a versioned template fragment
 - declared interface names it `provides` and `requires`;
 - ownership of one or more templated project files.
 
-The assembly itself declares an ID, version, project type, organs, shared exact variables, and optional deterministic project checks.
+The assembly itself declares an ID, version, project type, organs, shared exact variables, and optional deterministic project checks. An organ may carry inline source or name an exact installed executable package through `ref` plus an assembly-local `instance_id` and `bindings`.
 
 ## Assembly sequence
 
 The live `AXM-CAP-ASSEMBLE-ORGAN-PROJECT` capability performs:
 
-`validate organ identities -> resolve dependency graph -> resolve declared interfaces -> render organs once -> verify exclusive file ownership -> publish one grounded project`
+`resolve exact package refs -> validate organ identities -> resolve dependency graph -> resolve declared interfaces -> render organs once -> verify exclusive file ownership -> publish one grounded project`
 
 Dependency order is deterministic. When several organs are ready at the same time, their declared list order is preserved.
 
@@ -27,12 +27,14 @@ The result exposes:
 - the resolved organ order;
 - each organ's version, purpose, dependencies, variables, and rendered paths;
 - exact file-to-organ ownership;
+- exact package refs, source paths, and instance-scoped parameter bindings when installed packages are used;
 - the final project validation and grounding receipt.
 
 Try the included three-organ local site:
 
 ```bash
 PYTHONPATH=src python -m axm_uc create examples/requests/create_organ_site.json
+PYTHONPATH=src python -m axm_uc create examples/requests/create_reusable_organ_site.json
 ```
 
 Its `shell-organ` owns `index.html`, `theme-organ` owns `style.css`, and `interaction-organ` owns `app.js`. The latter two depend on the shell, and the interaction organ also depends on the theme.
@@ -52,6 +54,7 @@ Assembly rejects:
 - malformed template placeholders;
 - rendered paths that escape the project;
 - two organs claiming the same rendered file path.
+- missing exact package references, package binding drift, unsupported package/project combinations, or attempted source/contract overrides on referenced instances.
 
 No partial project is published for these structural errors.
 
@@ -61,8 +64,8 @@ After structural assembly, ordinary `grounded-draft` publication retains a compl
 
 The 415 registry organ records describe candidate anatomy. A record does not become executable merely because its name appears in the map.
 
-This live capability assembles organs whose source templates were actually supplied. It creates a real joint between organ architecture and software creation without claiming that all described organs already have implementations.
+This live capability assembles organs whose source templates were supplied inline or resolved exactly from the separately validated `executable-organs/` body. It creates a real joint between organ architecture and software creation without claiming that all described organs already have implementations.
 
 Declared dependencies determine order and remain visible. Provided/required names validate the declared interface graph, but do not prove that source code conforms to those names. The capability does not invent imports, APIs, state flow, or runtime wiring. Those connections must be present in the organ source or proven by later explicit interface validators.
 
-Each file currently has one organ owner. Parser-aware shared-file composition, source-level interface conformance checking, binary assets, learned organ selection, and automatic organ discovery remain capability gaps.
+Each file currently has one organ owner. Parser-aware shared-file composition, source-level interface conformance checking, binary assets, learned organ selection, and semantic discovery remain capability gaps. See `EXECUTABLE_ORGANS.md` for the installed package boundary.
