@@ -41,6 +41,24 @@ def build_parser() -> argparse.ArgumentParser:
     organs_p.add_argument("--project-type", choices=["generic", "static-web", "python"], help="filter installed packages")
     organs_p.add_argument("--provides", help="filter by one exact provided interface")
 
+    organ_census_p = sub.add_parser(
+        "organ-census",
+        help="inspect all descriptive organs against installed executable packages and exact interface coverage",
+    )
+    organ_census_p.add_argument("--id", dest="anatomy_id", help="inspect one exact descriptive organ ID")
+    organ_census_p.add_argument("--domain", dest="domain_code", help="filter by one exact domain code")
+    organ_census_p.add_argument(
+        "--state",
+        choices=[
+            "CONNECTED_EXECUTABLE_PACKAGE",
+            "EXECUTABLE_PACKAGE_WITH_MISSING_INTERFACES",
+            "IMPLEMENTATION_REQUIRED",
+        ],
+        help="filter by observed materialization state",
+    )
+    organ_census_p.add_argument("--offset", type=int, default=0)
+    organ_census_p.add_argument("--limit", type=int, default=415)
+
     sub.add_parser("forge", help="inspect the detached creation-unit spawning surface and truth boundary")
     sub.add_parser("gap-forge", help="inspect the bounded gap-to-proposal synthesis surface and truth boundary")
 
@@ -91,6 +109,15 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if args.command == "organs":
         _print(machine.executable_organs(ref=args.ref, project_type=args.project_type, provides=args.provides))
+        return 0
+    if args.command == "organ-census":
+        _print(machine.organ_census(
+            anatomy_id=args.anatomy_id,
+            domain_code=args.domain_code,
+            state=args.state,
+            offset=args.offset,
+            limit=args.limit,
+        ))
         return 0
     if args.command == "forge":
         _print(machine.creation_forge())

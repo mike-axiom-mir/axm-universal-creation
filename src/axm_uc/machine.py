@@ -14,6 +14,7 @@ from .gap_synthesis import analyze_creation_gap, gap_synthesis_summary
 from .organ_library import ExecutableOrganLibrary
 from .organ_discovery import organ_discovery_summary
 from .organ_gap import organ_gap_summary
+from .organ_materialization import census_organs, organ_materialization_summary
 from .registry import Registry
 from .spawn import creation_forge_summary
 
@@ -40,6 +41,7 @@ class UniversalCreationMachine:
             "executable_organs": ExecutableOrganLibrary(self.root).summary(),
             "organ_discovery": organ_discovery_summary(),
             "organ_gap_closure": organ_gap_summary(),
+            "organ_materialization": organ_materialization_summary(self.root),
             "creation_forge": creation_forge_summary(),
             "gap_synthesis": gap_synthesis_summary(),
             "self_evolution": evolution_summary(),
@@ -83,6 +85,23 @@ class UniversalCreationMachine:
         else:
             result["packages"] = library.list(project_type=project_type, provides=provides)
         return result
+
+    def organ_census(
+        self,
+        anatomy_id: str | None = None,
+        domain_code: str | None = None,
+        state: str | None = None,
+        offset: int = 0,
+        limit: int = 415,
+    ) -> dict[str, Any]:
+        return census_organs(
+            self.root,
+            anatomy_id=anatomy_id,
+            domain_code=domain_code,
+            state=state,
+            offset=offset,
+            limit=limit,
+        )
 
     def topology(self, master_id: str | None = None, core_id: str | None = None, depth: int = 6) -> dict[str, Any]:
         bridge = self.decomposer.topology

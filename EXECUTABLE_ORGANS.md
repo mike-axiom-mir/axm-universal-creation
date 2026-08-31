@@ -104,6 +104,12 @@ For example, requesting only `local-interaction` discovers that the installed in
 
 `explore-missing-organ-closure` can test one explicitly supplied organ answer to that HOLD. It requires exact agreement between the Forge proposal and package interface declarations, materializes and tests the candidate detached, adds it only to a disposable installed-plus-candidate library, re-runs the original goal, requires the candidate to participate in the selected READY assembly, and validates the complete project in disposable space. The candidate is not copied into this live package body. See `ORGAN_GAP_CLOSURE.md`.
 
+## Complete anatomy-to-body census and compiler
+
+`organ-census` now accounts for all 415 descriptive organs against the installed package body. It verifies that each `organs/*.json` record exactly matches its canonical registry record, maps exact installed package anatomy refs, and reports structural interface coverage separately from semantic or runtime proof.
+
+The paired organ-materialization compiler accepts one complete explicitly supplied executable-organ package, checks its anatomy lineage, rejects installed-ref collisions, and converts it into the existing closed Forge proposal. It can then materialize and test that candidate while leaving installation and connection to the live library to the separate `adopt-organ` evolution transition. See `ORGAN_MATERIALIZATION.md`.
+
 ## Capability multiplier
 
 The top-level live-capability count measures routed machine operations. Executable-organ packages are a second, composable capability surface. Adding a valid package can expand what assemblies create without adding a new Python builtin or pretending the package is a top-level route.

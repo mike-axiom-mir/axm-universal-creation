@@ -17,10 +17,10 @@ class CompositeAndExecutableTests(unittest.TestCase):
         machine = UniversalCreationMachine(ROOT)
         summary = machine.executable()["summary"]
         self.assertEqual(summary["truth_status"], "EXPLICIT_LIVE_CAPABILITY_BINDINGS")
-        self.assertEqual(summary["implemented_master_records"], 26)
-        self.assertEqual(summary["implemented_master_by_level"], {"component": 19, "organ": 7})
-        self.assertEqual(summary["live_capabilities"], 20)
-        self.assertEqual(summary["resolved_bindings"], 56)
+        self.assertEqual(summary["implemented_master_records"], 28)
+        self.assertEqual(summary["implemented_master_by_level"], {"component": 19, "organ": 9})
+        self.assertEqual(summary["live_capabilities"], 21)
+        self.assertEqual(summary["resolved_bindings"], 59)
 
         project = machine.executable(master_id="AXM-24-WORKSPACE-COLLABORATION-C-010-project")["master"]
         self.assertEqual(project["status"], "live-backed")
@@ -67,6 +67,14 @@ class CompositeAndExecutableTests(unittest.TestCase):
         artifact_builder = machine.executable(master_id="AXM-06-BUILD-PACKAGE-O-004-artifact-builder")["master"]
         self.assertEqual(artifact_builder["status"], "live-backed")
         self.assertEqual(artifact_builder["implemented_by"], ["AXM-CAP-SPAWN-CREATION-UNIT"])
+
+        interface_validator = machine.executable(master_id="AXM-00-FOUNDATION-O-012-interface-validator")["master"]
+        self.assertEqual(interface_validator["status"], "live-backed")
+        self.assertEqual(interface_validator["implemented_by"], ["AXM-CAP-MATERIALIZE-ORGANS"])
+
+        evidence_collector = machine.executable(master_id="AXM-01-PROVENANCE-O-002-evidence-collector")["master"]
+        self.assertEqual(evidence_collector["status"], "live-backed")
+        self.assertEqual(evidence_collector["implemented_by"], ["AXM-CAP-MATERIALIZE-ORGANS"])
 
         adapter = machine.executable(master_id="AXM-19-AI-ML-AGENTS-C-009-adapter")["master"]
         self.assertEqual(adapter["status"], "live-backed")
