@@ -1,6 +1,6 @@
 {
   "id": "AXM-CAP-WRITE-PROJECT",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "status": "live",
   "purpose": "Create a deterministic multi-file text project, retain it as a grounded draft when checks expose gaps, or require complete deterministic validation when explicitly requested.",
   "handles": [
@@ -62,7 +62,8 @@
     "current milestone writes text files only",
     "grounded-draft retains failed validation checks as visible gaps; it does not claim those checks passed",
     "JSON validation proves parseability, not schema or semantic correctness",
-    "static-web validation checks local src/href resolution across project HTML/HTM pages but not complete HTML validity",
+    "static-web validation checks local HTML, CSS, and JavaScript module references but not complete language validity or browser behavior",
+    "project validation rejects symlinks rather than reading through them into a different filesystem body",
     "generated code is validated but not executed",
     "visual and interactive behavior still requires an authorized browser/host test"
   ],

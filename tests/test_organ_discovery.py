@@ -230,7 +230,7 @@ class InterfaceOrganDiscoveryTests(unittest.TestCase):
             [row["ref"] for row in selected["dependencies"]],
             [
                 "AXM-CAP-COMPOSE-ORGAN-PROJECT@0.1.0",
-                "AXM-CAP-VERIFY-PROJECT@0.5.0",
+                "AXM-CAP-VERIFY-PROJECT@0.6.0",
                 "AXM-CAP-WRITE-JSON@0.1.0",
             ],
         )

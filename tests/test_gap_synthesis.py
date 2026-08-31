@@ -157,7 +157,7 @@ class GapSynthesisTests(unittest.TestCase):
             [row["ref"] for row in analysis["selected_blueprint"]["dependencies"]],
             [
                 "AXM-CAP-INSTANTIATE-PROJECT-TEMPLATE@0.2.0",
-                "AXM-CAP-VERIFY-PROJECT@0.5.0",
+                "AXM-CAP-VERIFY-PROJECT@0.6.0",
             ],
         )
 
@@ -227,7 +227,7 @@ class GapSynthesisTests(unittest.TestCase):
             [row["ref"] for row in selected["dependencies"]],
             [
                 "AXM-CAP-ASSEMBLE-ORGAN-PROJECT@0.3.0",
-                "AXM-CAP-VERIFY-PROJECT@0.5.0",
+                "AXM-CAP-VERIFY-PROJECT@0.6.0",
             ],
         )
         self.assertEqual(selected["producer_preview_evidence"]["executable_organ_resolution"]["referenced_package_count"], 3)
@@ -283,7 +283,7 @@ class GapSynthesisTests(unittest.TestCase):
             [row["ref"] for row in selected["dependencies"]],
             [
                 "AXM-CAP-ASSEMBLE-ORGAN-PROJECT@0.3.0",
-                "AXM-CAP-VERIFY-PROJECT@0.5.0",
+                "AXM-CAP-VERIFY-PROJECT@0.6.0",
                 "AXM-CAP-WRITE-JSON@0.1.0",
             ],
         )
@@ -474,7 +474,7 @@ class GapSynthesisTests(unittest.TestCase):
             self.assertEqual(missing["status"], "HOLD_MISSING_COMPOSITE_LINK")
             self.assertEqual(
                 missing["composite_candidates"][0]["missing_links"][0]["expected_ref"],
-                "AXM-CAP-VERIFY-PROJECT@0.5.0",
+                "AXM-CAP-VERIFY-PROJECT@0.6.0",
             )
             self.assertIsNone(compile_gap_proposal(root, request)["proposal"])
 

@@ -64,6 +64,29 @@
   "directionalOutcomes": {
     "capabilityGapTargetsOutcomeNotExactPriorSolution": true
   },
+  "projectVerification": {
+    "symlinkBoundaryChecked": true,
+    "explicitCheckKinds": [
+      "file-exists",
+      "file-absent",
+      "nonempty",
+      "contains",
+      "not-contains",
+      "line-count",
+      "byte-size",
+      "sha256",
+      "json-valid",
+      "json-value",
+      "file-set",
+      "python-compile",
+      "html-local-links",
+      "css-local-links",
+      "javascript-local-imports"
+    ],
+    "staticWebLocalReferencesAutomatic": true,
+    "generatedCodeExecuted": false,
+    "browserBehaviorProven": false
+  },
   "creationComposition": {
     "softwareOrganAssemblyAvailable": true,
     "declaredDependencyGraphResolved": true,

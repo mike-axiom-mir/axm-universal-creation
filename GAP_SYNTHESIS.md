@@ -153,7 +153,7 @@ PYTHONPATH=src python -m axm_uc create examples/requests/explore_verified_organ_
 PYTHONPATH=src python -m axm_uc create examples/requests/explore_interface_discovered_organ_report_gap.json
 ```
 
-The first organ example selects `AXM-CAP-ASSEMBLE-ORGAN-PROJECT@0.3.0` and `AXM-CAP-VERIFY-PROJECT@0.5.0`. The second adds `AXM-CAP-WRITE-JSON@0.1.0`, producing the full `produce -> verify -> report` path at the three-step bound. Both resolve three exact executable-organ packages, verify the dependency order `shell-organ -> theme-organ -> interaction-organ`, and independently recheck all emitted file digests. The report example additionally proves that the JSON artifact equals the returned verification object. Original destinations and live routes remain absent.
+The first organ example selects `AXM-CAP-ASSEMBLE-ORGAN-PROJECT@0.3.0` and `AXM-CAP-VERIFY-PROJECT@0.6.0`. The second adds `AXM-CAP-WRITE-JSON@0.1.0`, producing the full `produce -> verify -> report` path at the three-step bound. Both resolve three exact executable-organ packages, verify the dependency order `shell-organ -> theme-organ -> interaction-organ`, and independently recheck all emitted file digests. The report example additionally proves that the JSON artifact equals the returned verification object. Original destinations and live routes remain absent.
 
 The interface-discovered example asks only for `local-interaction` plus exact values. It derives the shell/theme/interaction package closure and the same three-step verified-report recipe without caller-authored package refs or dependency edges. Its generated candidate test requires `production.organ_discovery.status` to remain `READY_EXACT_INTERFACE_ASSEMBLY`; the original project and report destinations still remain absent.
 

@@ -62,7 +62,8 @@ class ProjectRepairTests(unittest.TestCase):
             self.assertEqual(inventory["truth_status"], "OBSERVED_EXTENSION_GRAMMAR_INVENTORY")
             js = next(row for row in inventory["files"] if row["path"] == "script.js")
             self.assertEqual(js["grammar_id"], "javascript")
-            self.assertEqual(js["validation"], "identified-not-parser-validated")
+            self.assertEqual(js["validation"], "lexical-module-reference-check-available")
+            self.assertEqual(js["validator"], "javascript-local-imports")
 
     def test_invalid_static_web_repair_never_replaces_original(self):
         with tempfile.TemporaryDirectory() as td:
@@ -162,6 +163,28 @@ class ProjectRepairTests(unittest.TestCase):
             self.assertEqual(result["type"], "CREATION_ERROR", result)
             self.assertEqual((target / "safe.txt").read_text(encoding="utf-8"), "safe\n")
             self.assertFalse((Path(td) / "escape.txt").exists())
+
+    def test_repair_refuses_symlink_body_before_staging_dereferences_it(self):
+        with tempfile.TemporaryDirectory() as td:
+            base = Path(td)
+            target = base / "project"
+            target.mkdir()
+            (target / "safe.txt").write_text("safe\n", encoding="utf-8")
+            outside = base / "outside.txt"
+            outside.write_text("outside\n", encoding="utf-8")
+            (target / "linked.txt").symlink_to(outside)
+            result = UniversalCreationMachine(ROOT).create({
+                "kind": "patch-project",
+                "inputs": {
+                    "path": str(target),
+                    "operations": [{"op": "update", "path": "safe.txt", "content": "changed\n"}],
+                },
+            })
+            self.assertEqual(result["type"], "CREATION_ERROR", result)
+            self.assertEqual(result["details"]["phase"], "pre-stage")
+            self.assertTrue(result["details"]["original_unchanged"])
+            self.assertEqual((target / "safe.txt").read_text(encoding="utf-8"), "safe\n")
+            self.assertEqual(outside.read_text(encoding="utf-8"), "outside\n")
 
     def test_machine_body_cannot_be_repaired_as_normal_creation(self):
         result = UniversalCreationMachine(ROOT).create({
