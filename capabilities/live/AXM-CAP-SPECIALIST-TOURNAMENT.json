@@ -1,0 +1,99 @@
+{
+  "id": "AXM-CAP-SPECIALIST-TOURNAMENT",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Build a need-specific pool of detailed specialist working profiles, use contextual finalist-vote history to form best/middle/lowest-third/mixed and broad combination teams, issue isolated parallel challenge packets, rank only supplied independent judgements, show the top two, and persist an explicit +1 fit vote for every member of the chosen finalist team.",
+  "handles": [
+    "specialist-tournament",
+    "build-specialist-pool",
+    "prepare-specialist-tournament",
+    "rank-specialist-tournament",
+    "record-specialist-vote",
+    "inspect-specialist-fit"
+  ],
+  "input_contract": {
+    "required": [],
+    "properties": {
+      "operation": "prepare/build-pool, rank/select-finalists, record-vote, or inspect-fit; defaults to prepare",
+      "challenge": "prepare/inspect-fit: concrete challenge or need to inspect from many perspectives",
+      "criteria": "prepare: optional weighted judging criteria; defaults to evidence/correctness/gap discovery/feasibility/simplicity/consequence awareness",
+      "pool_size": "prepare: 8..40 specialist profiles",
+      "team_size": "prepare: 3..6 members per team",
+      "max_teams": "prepare: 4..512 generated teams; dedicated best/middle/lowest-third/mixed teams are preserved before combination sampling",
+      "seed": "prepare: optional deterministic RNG seed for the mixed-random team and combination sampling",
+      "tournament": "rank: exact digest-bound prepared tournament",
+      "judgements": "rank: independent evidence-backed criterion scores keyed by team_id",
+      "ranking": "record-vote: exact digest-bound complete ranking with two shown finalists",
+      "winner_team_id": "record-vote: explicit choice of one of the two shown finalists",
+      "limit": "inspect-fit: maximum fit-history rows"
+    }
+  },
+  "output_contract": {
+    "kind": "specialist-perspective-tournament",
+    "contains": [
+      "detailed universal and need-derived specialist profiles",
+      "contextual historical +1 fit evidence",
+      "best/middle/lowest-third/mixed and combination teams",
+      "parallel isolated challenge packets",
+      "complete or partial ranking state",
+      "two shown finalists when all teams are judged",
+      "explicit finalist vote receipt and +1 winning-member updates"
+    ]
+  },
+  "dependencies": [
+    "AXM-CAP-INSPECT-REGISTRY"
+  ],
+  "relationships": [
+    "turns the existing specialist-profile and specialist-summoner anatomy into a real local orchestration surface rather than pretending detached personalities are independent agents",
+    "universal perspective profiles are combined with challenge-matched master-registry specialists so the pool changes with the actual need",
+    "historical +1 votes are contextual fit evidence: a specialist can become highly ranked for one domain while remaining unproven elsewhere",
+    "best, middle, lowest-third and mixed-random teams remain present so accumulated winners are challenged by underexposed and differently composed teams",
+    "broad deterministic combination sampling explores as much of the team space as the explicit max_teams bound allows",
+    "team challenge packets are isolated from one another until judging so parallel competition does not leak the leading answer between teams",
+    "the engine never claims a team reasoned merely because a packet exists; a cognition provider, human, or other executor must actually produce the submission/evidence",
+    "only a complete independently judged field can expose two finalists, and only a separate finalist vote changes persistent fit history"
+  ],
+  "anatomy_refs": [
+    {
+      "id": "AXM-19-AI-ML-AGENTS-O-021-specialist-summoner",
+      "role": "implements",
+      "basis": "The live capability summons a bounded need-specific specialist pool, forms many team combinations, issues isolated challenge packets, and returns evidence-bearing tournament state."
+    },
+    {
+      "id": "AXM-19-AI-ML-AGENTS-C-035-specialist-profile",
+      "role": "implements",
+      "basis": "Every specialist is an inspectable bounded working profile with explicit temperament, strengths, blind spots, evidence preference, disagreement style, and domain focus."
+    }
+  ],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:specialist_tournament",
+    "source": "src/axm_uc/specialist_pool.py"
+  },
+  "limitations": [
+    "specialist personalities are method overlays, not independent identities, consciousness, expertise proof, or execution authority",
+    "the deterministic engine prepares and scores tournament structure but does not fake arbitrary reasoning; actual team submissions require an executor",
+    "+1 votes estimate observed contextual team fit and can be biased by exposure or judging quality; zero points can mean untested rather than bad",
+    "combination exploration is bounded to 512 teams per tournament and may sample rather than enumerate the full combinatorial space",
+    "historical votes influence future team construction but do not modify CANON, permissions, self-growth goals, or specialist authority"
+  ],
+  "persistent_state": "explicit finalist votes accumulate in state/specialist-fit.json; the ledger stores contextual/global points, tournament exposure, finalist exposure, and duplicate-safe vote receipts",
+  "root_fit": {
+    "truth": {
+      "fit": true,
+      "basis": "The capability distinguishes prepared perspective packets from actual reasoning, requires evidence-backed supplied judgements, exposes incomplete judging, and records exactly which finalist vote created each +1."
+    },
+    "agency": {
+      "fit": true,
+      "basis": "No historical winner becomes permanent authority; middle, low, mixed and combination teams continue to challenge the currently best-fit specialists, and the final top-two choice remains an explicit vote."
+    },
+    "continuity": {
+      "fit": true,
+      "basis": "Fit history persists as an inspectable local ledger while specialist definitions remain reconstructable from the live source and master registry."
+    },
+    "wisdom-before-speed": {
+      "fit": true,
+      "basis": "Many independent perspectives are explored before a finalist vote, while the team-space bound and explicit judging evidence prevent combinatorial exploration from being mistaken for knowledge."
+    }
+  }
+}
