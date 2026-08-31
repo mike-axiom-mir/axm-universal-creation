@@ -1,0 +1,49 @@
+{
+  "kind": "specialist-tournament",
+  "direction": "inspect one creation challenge through a large diverse specialist field before selecting a winning perspective mixture",
+  "inputs": {
+    "operation": "prepare",
+    "challenge": "Design a local creation system that can simulate multiple possible software designs, expose hidden gaps, stay understandable to humans, remain cheap to run, and improve its own creation capabilities without confusing simulation evidence with real-world proof.",
+    "pool_size": 40,
+    "team_size": 4,
+    "max_teams": 512,
+    "seed": "example-specialist-tournament-v1",
+    "criteria": [
+      {
+        "id": "evidence",
+        "weight": 1.2,
+        "description": "Claims are grounded in inspectable evidence and clearly label what remains unknown."
+      },
+      {
+        "id": "gap-discovery",
+        "weight": 1.2,
+        "description": "The team exposes important assumptions, missing capabilities, and failure seams that other teams may miss."
+      },
+      {
+        "id": "creation-multiplier",
+        "weight": 1.1,
+        "description": "The proposal increases reusable creation capability rather than adding only one narrow output."
+      },
+      {
+        "id": "feasibility",
+        "weight": 1.0,
+        "description": "The proposal can be implemented and tested with explicit interfaces, bounded resources, and inspectable state."
+      },
+      {
+        "id": "simplicity",
+        "weight": 0.7,
+        "description": "The proposal avoids unnecessary architecture while retaining the useful multiplier."
+      },
+      {
+        "id": "human-legibility",
+        "weight": 0.9,
+        "description": "A human can understand what the system is doing, what changed, and why the evidence supports the decision."
+      },
+      {
+        "id": "future-options",
+        "weight": 0.8,
+        "description": "The proposal avoids trapping future capability growth into one premature architecture."
+      }
+    ]
+  }
+}
