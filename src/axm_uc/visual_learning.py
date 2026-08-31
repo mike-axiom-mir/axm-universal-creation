@@ -12,7 +12,7 @@ from .atomic import atomic_write_json
 from .visual_creation_grammar import compile_visual_recipe
 
 
-PNG_SIGNATURE = b"\x89PNG\n\x1a\n"
+PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
 VISUAL_USE_PROFILE_SCHEMA = "axm.visual-use-profile/v0.1"
 VISUAL_USE_EVIDENCE_SCHEMA = "axm.visual-use-evidence/v0.1"
 MAX_CONTEXTS = 128
