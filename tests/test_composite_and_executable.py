@@ -17,10 +17,10 @@ class CompositeAndExecutableTests(unittest.TestCase):
         machine = UniversalCreationMachine(ROOT)
         summary = machine.executable()["summary"]
         self.assertEqual(summary["truth_status"], "EXPLICIT_LIVE_CAPABILITY_BINDINGS")
-        self.assertEqual(summary["implemented_master_records"], 14)
-        self.assertEqual(summary["implemented_master_by_level"], {"component": 12, "organ": 2})
-        self.assertEqual(summary["live_capabilities"], 19)
-        self.assertEqual(summary["resolved_bindings"], 41)
+        self.assertEqual(summary["implemented_master_records"], 16)
+        self.assertEqual(summary["implemented_master_by_level"], {"component": 13, "organ": 3})
+        self.assertEqual(summary["live_capabilities"], 20)
+        self.assertEqual(summary["resolved_bindings"], 43)
 
         project = machine.executable(master_id="AXM-24-WORKSPACE-COLLABORATION-C-010-project")["master"]
         self.assertEqual(project["status"], "live-backed")
@@ -87,6 +87,14 @@ class CompositeAndExecutableTests(unittest.TestCase):
         lod_group = machine.executable(master_id="AXM-11-3D-SPATIAL-C-028-level-of-detail-group")["master"]
         self.assertEqual(lod_group["status"], "live-backed")
         self.assertEqual(lod_group["implemented_by"], ["AXM-CAP-SIMULATE-CREATION"])
+
+        specialist_summoner = machine.executable(master_id="AXM-19-AI-ML-AGENTS-O-021-specialist-summoner")["master"]
+        self.assertEqual(specialist_summoner["status"], "live-backed")
+        self.assertEqual(specialist_summoner["implemented_by"], ["AXM-CAP-SPECIALIST-TOURNAMENT"])
+
+        specialist_profile = machine.executable(master_id="AXM-19-AI-ML-AGENTS-C-035-specialist-profile")["master"]
+        self.assertEqual(specialist_profile["status"], "live-backed")
+        self.assertEqual(specialist_profile["implemented_by"], ["AXM-CAP-SPECIALIST-TOURNAMENT"])
 
     def test_planner_surfaces_explicit_live_anatomy_bindings(self):
         plan = UniversalCreationMachine(ROOT).plan({
