@@ -5,13 +5,13 @@ import json
 import sys
 import tempfile
 import unittest
-from datetime import datetime, timedelta, timezone
+from datetime import date
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from axm_uc.evolution import adopt_organ, inspect_evolution, rollback_adoption
+from axm_uc.evolution import adopt_organ, inspect_evolution, restore_machine_snapshot, snapshot_machine
 from axm_uc.machine import UniversalCreationMachine
 from axm_uc.organ_library import ExecutableOrganError, ExecutableOrganLibrary
 from axm_uc.spawn import SPAWN_PROPOSAL_SCHEMA, spawn_unit
@@ -32,12 +32,14 @@ def roots(prefix: str) -> dict:
     return {
         "truth": {"fit": True, "basis": f"{prefix}: exact source, evidence, and state transitions remain inspectable."},
         "agency": {"fit": True, "basis": f"{prefix}: the continuing machine chooses the transition without a permanent outside gate."},
-        "continuity": {"fit": True, "basis": f"{prefix}: the change preserves an exact bounded rollback path."},
-        "wisdom-before-speed": {"fit": True, "basis": f"{prefix}: testing and root fit happen before the live-body mutation."},
+        "continuity": {"fit": True, "basis": f"{prefix}: the daily whole-machine snapshot provides the recovery floor."},
+        "wisdom-before-speed": {"fit": True, "basis": f"{prefix}: testing, root fit, and recovery readiness happen before live mutation."},
     }
 
 
 class SelfEvolutionTests(unittest.TestCase):
+    DAY = date(2026, 8, 31)
+
     def _proposal(self, unit_id: str = "axm.test.evolution.organ") -> dict:
         version = "1.0.0"
         entry = json.loads((ROOT / "executable-organs/axm.web.theme-1.0.0.json").read_text(encoding="utf-8"))
@@ -49,9 +51,7 @@ class SelfEvolutionTests(unittest.TestCase):
             "version": version,
             "kind": "organ",
             "purpose": "Provide one exact executable-organ fixture for self-evolution adoption tests.",
-            "files": {
-                entrypoint: json.dumps(entry, indent=2, sort_keys=True) + "\n",
-            },
+            "files": {entrypoint: json.dumps(entry, indent=2, sort_keys=True) + "\n"},
             "implementation": {
                 "kind": "DETERMINISTIC_SOURCE",
                 "entrypoint": entrypoint,
@@ -69,7 +69,7 @@ class SelfEvolutionTests(unittest.TestCase):
             "provenance": {
                 "kind": "test-fixture",
                 "refs": ["tests/test_self_evolution.py"],
-                "basis": "A deterministic local organ candidate used to prove adoption and rollback behavior.",
+                "basis": "A deterministic local organ candidate used to prove adoption and daily recovery behavior.",
             },
             "limitations": ["This fixture proves only the exact tested organ package and evolution transitions."],
             "authority": copy.deepcopy(ZERO_AUTHORITY),
@@ -79,34 +79,36 @@ class SelfEvolutionTests(unittest.TestCase):
     def _machine_root(self, parent: Path) -> Path:
         root = parent / "machine"
         (root / "executable-organs").mkdir(parents=True)
+        (root / "state").mkdir()
+        (root / "state" / "baseline.txt").write_text("known-good\n", encoding="utf-8")
         return root
 
     def _spawn_candidate(self, parent: Path, unit_id: str = "axm.test.evolution.organ") -> Path:
+        parent.mkdir(parents=True, exist_ok=True)
         candidate = parent / f"candidate-{unit_id.rsplit('.', 1)[-1]}"
         result = spawn_unit(candidate, self._proposal(unit_id))
         self.assertTrue(result["validation"]["passed"], result)
         return candidate
 
-    def test_live_machine_exposes_explicit_evolution_route(self):
+    def test_live_machine_exposes_explicit_evolution_routes(self):
         machine = UniversalCreationMachine(ROOT)
-        manifest = machine.capabilities.route("adopt-organ")
-        self.assertIsNotNone(manifest)
-        self.assertEqual(manifest["id"], "AXM-CAP-EVOLVE-MACHINE")
-        self.assertEqual(machine.capabilities.route("rollback-adoption")["id"], "AXM-CAP-EVOLVE-MACHINE")
+        for handle in ("adopt-organ", "inspect-evolution", "snapshot-machine", "restore-machine-snapshot"):
+            manifest = machine.capabilities.route(handle)
+            self.assertIsNotNone(manifest, handle)
+            self.assertEqual(manifest["id"], "AXM-CAP-EVOLVE-MACHINE")
 
-    def test_tested_organ_can_be_adopted_and_rolled_back_within_one_day(self):
-        fixed = datetime(2026, 8, 31, 2, 45, tzinfo=timezone.utc)
+    def test_adoption_creates_daily_recovery_then_installs_registers_and_promotes(self):
         with tempfile.TemporaryDirectory() as td:
             parent = Path(td)
             root = self._machine_root(parent)
-            candidate = self._spawn_candidate(parent)
+            candidate = self._spawn_candidate(parent / "candidates")
 
             adopted = adopt_organ(
                 root,
                 candidate,
-                reason="The observed creation gap needs this exact reusable organ.",
+                reason="A real creation gap needs this exact reusable organ.",
                 root_fit=roots("adoption"),
-                now=fixed,
+                today=self.DAY,
             )
             self.assertTrue(adopted["adopted"], adopted)
             self.assertTrue(adopted["live_machine_body_modified"])
@@ -114,118 +116,91 @@ class SelfEvolutionTests(unittest.TestCase):
             self.assertTrue(adopted["transition"]["registered"])
             self.assertTrue(adopted["transition"]["promoted_for_composition"])
             self.assertFalse(adopted["transition"]["merged"])
-            self.assertEqual(
-                adopted["rollback_until"],
-                (fixed + timedelta(days=1)).isoformat().replace("+00:00", "Z"),
-            )
+            self.assertFalse(adopted["transition"]["canon_changed"])
+            self.assertFalse(adopted["transition"]["permissions_changed"])
 
+            recovery = adopted["recovery_snapshot"]
+            self.assertTrue(recovery["created_now"])
+            self.assertTrue(Path(recovery["path"]).is_file())
             package = ExecutableOrganLibrary(root).inspect("axm.test.evolution.organ@1.0.0")
             self.assertEqual(package["id"], "axm.test.evolution.organ")
-            self.assertTrue(Path(adopted["adoption_receipt"]).is_file())
 
-            observed = inspect_evolution(root, adopted["adoption_id"], now=fixed + timedelta(hours=23))
-            self.assertEqual(observed["state"], "ACTIVE_ROLLBACK_WINDOW")
-            self.assertTrue(observed["rollback_available_now"])
-            self.assertTrue(observed["live_exact"])
+            observed = inspect_evolution(root, today=self.DAY)
+            self.assertTrue(observed["daily_recovery"]["exists"])
+            self.assertEqual(observed["executable_organs"]["packages"], 1)
 
-            rolled = rollback_adoption(
-                root,
-                adopted["adoption_id"],
-                reason="The post-adoption observation exposed a regression.",
-                now=fixed + timedelta(hours=23),
-            )
-            self.assertTrue(rolled["rolled_back"], rolled)
-            self.assertTrue(rolled["live_machine_body_modified"])
-            self.assertFalse(rolled["transition"]["installed"])
-            self.assertTrue(Path(rolled["rollback_receipt"]).is_file())
-            with self.assertRaises(ExecutableOrganError):
-                ExecutableOrganLibrary(root).inspect("axm.test.evolution.organ@1.0.0")
-
-            after = inspect_evolution(root, adopted["adoption_id"], now=fixed + timedelta(hours=23))
-            self.assertEqual(after["state"], "ROLLED_BACK")
-            self.assertFalse(after["rollback_available_now"])
-
-    def test_rollback_window_expires_without_reversing_the_live_adoption(self):
-        fixed = datetime(2026, 8, 31, 3, 0, tzinfo=timezone.utc)
+    def test_same_day_adoptions_reuse_one_snapshot_and_whole_body_restore_removes_both(self):
         with tempfile.TemporaryDirectory() as td:
             parent = Path(td)
             root = self._machine_root(parent)
-            candidate = self._spawn_candidate(parent, "axm.test.evolution.expiry")
-            adopted = adopt_organ(
+            first = self._spawn_candidate(parent / "candidates-1", "axm.test.evolution.first")
+            second = self._spawn_candidate(parent / "candidates-2", "axm.test.evolution.second")
+
+            adopted_first = adopt_organ(
                 root,
-                candidate,
-                reason="Exercise the one-day continuity boundary.",
+                first,
+                reason="First same-day organ.",
                 root_fit=roots("adoption"),
-                now=fixed,
+                today=self.DAY,
             )
-            observed = inspect_evolution(root, adopted["adoption_id"], now=fixed + timedelta(hours=25))
-            self.assertEqual(observed["state"], "ACTIVE_ROLLBACK_WINDOW_EXPIRED")
-            self.assertFalse(observed["rollback_available_now"])
-
-            rolled = rollback_adoption(
+            adopted_second = adopt_organ(
                 root,
-                adopted["adoption_id"],
-                reason="This request is deliberately outside the bounded rollback window.",
-                now=fixed + timedelta(hours=25),
-            )
-            self.assertFalse(rolled["rolled_back"])
-            self.assertEqual(rolled["truth_status"], "HOLD_ROLLBACK_WINDOW_EXPIRED")
-            self.assertIsNotNone(ExecutableOrganLibrary(root).inspect("axm.test.evolution.expiry@1.0.0"))
-
-    def test_live_drift_holds_rollback_instead_of_erasing_later_change(self):
-        fixed = datetime(2026, 8, 31, 3, 15, tzinfo=timezone.utc)
-        with tempfile.TemporaryDirectory() as td:
-            parent = Path(td)
-            root = self._machine_root(parent)
-            candidate = self._spawn_candidate(parent, "axm.test.evolution.drift")
-            adopted = adopt_organ(
-                root,
-                candidate,
-                reason="Exercise exact rollback drift protection.",
+                second,
+                reason="Second same-day organ.",
                 root_fit=roots("adoption"),
-                now=fixed,
+                today=self.DAY,
             )
-            destination = Path(adopted["destination"])
-            destination.write_text(destination.read_text(encoding="utf-8") + "\n", encoding="utf-8")
+            self.assertTrue(adopted_first["recovery_snapshot"]["created_now"])
+            self.assertFalse(adopted_second["recovery_snapshot"]["created_now"])
+            self.assertTrue(adopted_second["recovery_snapshot"]["already_existed"])
+            self.assertEqual(
+                adopted_first["recovery_snapshot"]["path"],
+                adopted_second["recovery_snapshot"]["path"],
+            )
+            self.assertEqual(ExecutableOrganLibrary(root).summary()["packages"], 2)
 
-            rolled = rollback_adoption(
+            restored = restore_machine_snapshot(
                 root,
-                adopted["adoption_id"],
-                reason="A later observation asks for rollback after the organ bytes have changed.",
-                now=fixed + timedelta(hours=1),
+                Path(adopted_first["recovery_snapshot"]["path"]),
+                confirm=True,
+                reason="The later same-day machine state proved unwanted.",
             )
-            self.assertFalse(rolled["rolled_back"])
-            self.assertEqual(rolled["truth_status"], "HOLD_ROLLBACK_REQUIRES_EXACT_ADOPTED_BODY")
-            self.assertTrue(destination.is_file())
+            self.assertTrue(restored["restored"])
+            self.assertTrue(restored["live_machine_body_modified"])
+            self.assertEqual(ExecutableOrganLibrary(root).summary()["packages"], 0)
+            self.assertEqual((root / "state/baseline.txt").read_text(encoding="utf-8"), "known-good\n")
+
+            quarantine = Path(restored["quarantine"])
+            self.assertTrue((quarantine / "executable-organs/axm.test.evolution.first-1.0.0.json").is_file())
+            self.assertTrue((quarantine / "executable-organs/axm.test.evolution.second-1.0.0.json").is_file())
 
     def test_collision_and_candidate_mutation_hold_before_live_mutation(self):
-        fixed = datetime(2026, 8, 31, 3, 30, tzinfo=timezone.utc)
         with tempfile.TemporaryDirectory() as td:
             parent = Path(td)
             root = self._machine_root(parent)
-            candidate = self._spawn_candidate(parent, "axm.test.evolution.collision")
+            candidate = self._spawn_candidate(parent / "candidates-1", "axm.test.evolution.collision")
             adopted = adopt_organ(
                 root,
                 candidate,
                 reason="Install the first exact ref.",
                 root_fit=roots("adoption"),
-                now=fixed,
+                today=self.DAY,
             )
             self.assertTrue(adopted["adopted"])
 
-            duplicate = self._spawn_candidate(parent / "other", "axm.test.evolution.collision")
+            duplicate = self._spawn_candidate(parent / "candidates-2", "axm.test.evolution.collision")
             held = adopt_organ(
                 root,
                 duplicate,
                 reason="Attempt the same exact ref again.",
                 root_fit=roots("adoption"),
-                now=fixed + timedelta(minutes=1),
+                today=self.DAY,
             )
             self.assertFalse(held["adopted"])
             self.assertEqual(held["truth_status"], "HOLD_EXECUTABLE_ORGAN_REF_COLLISION")
             self.assertFalse(held["live_machine_body_modified"])
 
-            mutated = self._spawn_candidate(parent, "axm.test.evolution.mutated")
+            mutated = self._spawn_candidate(parent / "candidates-3", "axm.test.evolution.mutated")
             organ_path = mutated / "organ.json"
             organ_path.write_text(organ_path.read_text(encoding="utf-8") + "\n", encoding="utf-8")
             rejected = adopt_organ(
@@ -233,11 +208,23 @@ class SelfEvolutionTests(unittest.TestCase):
                 mutated,
                 reason="A mutated candidate must be re-established rather than silently trusted.",
                 root_fit=roots("adoption"),
-                now=fixed + timedelta(minutes=2),
+                today=self.DAY,
             )
             self.assertFalse(rejected["adopted"])
             self.assertEqual(rejected["truth_status"], "HOLD_CANDIDATE_TESTS_FAILED")
             self.assertFalse((root / "executable-organs/axm.test.evolution.mutated-1.0.0.json").exists())
+
+    def test_snapshot_operation_is_one_per_day_without_replace(self):
+        with tempfile.TemporaryDirectory() as td:
+            parent = Path(td)
+            root = self._machine_root(parent)
+            out = parent / "manual-snapshots"
+            first = snapshot_machine(root, output_dir=out, today=self.DAY)
+            second = snapshot_machine(root, output_dir=out, today=self.DAY)
+            self.assertTrue(first["created"])
+            self.assertFalse(second["created"])
+            self.assertEqual(first["path"], second["path"])
+            self.assertTrue(Path(first["path"]).is_file())
 
 
 if __name__ == "__main__":
