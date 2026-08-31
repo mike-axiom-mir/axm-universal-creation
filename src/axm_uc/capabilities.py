@@ -230,6 +230,25 @@ def builtin_explore_organ_gap(root: Path, inputs: dict[str, Any]) -> dict[str, A
         raise CapabilityError(str(exc), exc.details) from exc
 
 
+def builtin_organ_materialization(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+    from .organ_materialization import OrganMaterializationError, operate_organ_materialization
+    from .spawn import SpawnError
+
+    operation = str(inputs.get("operation", "")).strip().casefold()
+    normalized_inputs = copy.deepcopy(inputs)
+    if operation == "materialize-and-test":
+        target = _resolve_output_path(root, str(inputs.get("path", "")))
+        if _is_machine_body_path(root, target):
+            raise CapabilityError(
+                "organ materialization candidates must stay outside the live machine body; use creations/ or an external path"
+            )
+        normalized_inputs["path"] = str(target)
+    try:
+        return operate_organ_materialization(root, normalized_inputs)
+    except (OrganMaterializationError, ProjectError, SpawnError) as exc:
+        raise CapabilityError(str(exc), getattr(exc, "details", {})) from exc
+
+
 def builtin_spawn_creation_unit(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
     from .spawn import SpawnError, operate_spawn_unit
 
@@ -339,6 +358,7 @@ BUILTINS: dict[str, Callable[[Path, dict[str, Any]], dict[str, Any]]] = {
     "builtin:compose_organ_project": builtin_compose_organ_project,
     "builtin:inspect_executable_organs": builtin_inspect_executable_organs,
     "builtin:explore_organ_gap": builtin_explore_organ_gap,
+    "builtin:organ_materialization": builtin_organ_materialization,
     "builtin:spawn_creation_unit": builtin_spawn_creation_unit,
     "builtin:evolve_machine": builtin_evolve_machine,
     "builtin:simulate_creation": builtin_simulate_creation,

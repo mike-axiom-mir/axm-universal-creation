@@ -104,6 +104,12 @@
     "ephemeralClosureRequiresCandidateSelectionAndValidatedBuild": true,
     "closureExperimentInstallsCandidate": false,
     "organInstanceScopedBindingsAvailable": true,
+    "completeOrganMaterializationCensusAvailable": true,
+    "organStandaloneSourceEqualityChecked": true,
+    "explicitPackageToForgeProposalCompilerAvailable": true,
+    "detachedOrganMaterializeAndTestAvailable": true,
+    "organImplementationSourceInventedAutomatically": false,
+    "organMaterializationAutomaticallyInstalls": false,
     "descriptiveOrgansAutomaticallyExecutable": false,
     "sourceInterfaceConformanceProven": false,
     "semanticRuntimeWiringInvented": false

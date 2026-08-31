@@ -1,0 +1,39 @@
+{
+  "kind": "materialize-organ-candidate",
+  "direction": "build one explicit bounded implementation body for a descriptive organ without installing it",
+  "inputs": {
+    "operation": "materialize-and-test",
+    "path": "creations/spawned/identity-registry-document-organ",
+    "anatomy_id": "AXM-00-FOUNDATION-O-001-identity-registry",
+    "package": {
+      "schema": "axm.executable-software-organ/v0.1",
+      "id": "axm.foundation.identity-registry.document",
+      "version": "1.0.0",
+      "status": "executable",
+      "purpose": "Render a deterministic initial identity-registry JSON document for one explicit namespace.",
+      "project_types": [
+        "generic"
+      ],
+      "parameters": [
+        "namespace"
+      ],
+      "provides": [
+        "identity-registry-document"
+      ],
+      "requires": [],
+      "files": {
+        "identity-registry.json": "{\n  \"schema\": \"axm.identity-registry/v0.1\",\n  \"namespace\": \"[[AXM:namespace]]\",\n  \"identities\": []\n}\n"
+      },
+      "anatomy_refs": [
+        "AXM-00-FOUNDATION-O-001-identity-registry"
+      ],
+      "provenance": {
+        "kind": "local-authored-source",
+        "basis": "A bounded deterministic implementation supplied explicitly for the organ-materialization example."
+      },
+      "limitations": [
+        "This package renders an initial registry document; it does not implement persistence, authentication, or concurrent identity management."
+      ]
+    }
+  }
+}

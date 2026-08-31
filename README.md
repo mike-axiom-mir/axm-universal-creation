@@ -23,6 +23,9 @@ PYTHONPATH=src python -m axm_uc trial examples/requests/create_real_site.json
 PYTHONPATH=src python -m axm_uc forge
 PYTHONPATH=src python -m axm_uc gap-forge
 
+# Inspect all 415 descriptive organs against exact executable-package evidence.
+PYTHONPATH=src python -m axm_uc organ-census
+
 # Run the complete repository verification suite.
 python tools/build.py
 ```
@@ -30,6 +33,8 @@ python tools/build.py
 The website trial writes inspectable source under `creations/first-real-site/`; open its `index.html` locally to perform the separate human visual and interaction check. `inspect`, `forge`, and `gap-forge` are read-only. Passing a test does not automatically install, admit, promote, merge, or grant authority to a candidate.
 
 To see the newest growth loop, run `examples/requests/explore_missing_status_panel_organ_closure.json`. It starts from a real missing interface, tests one explicitly supplied organ in detached and disposable spaces, and leaves the live installed-organ body unchanged. See `ORGAN_GAP_CLOSURE.md` for the exact evidence boundary.
+
+To inspect the complete organ implementation queue, run `organ-census`. It currently reports three structurally connected installed package mappings and 412 anatomy records that still require implementation. `examples/requests/materialize_identity_registry_organ.json` shows the new explicit-source path from one anatomy record to a detached, Forge-tested candidate. See `ORGAN_MATERIALIZATION.md`.
 
 ## Core rule
 
@@ -200,6 +205,9 @@ Current live project handles:
 - `discover-organ-assembly`
 - `interface-organ-project`
 - `explore-missing-organ-closure`
+- `inspect-organ-materialization`
+- `prepare-organ-materialization`
+- `materialize-organ-candidate`
 - `spawn-creation-unit`
 - `inspect-spawned-unit`
 - `test-spawned-unit`
