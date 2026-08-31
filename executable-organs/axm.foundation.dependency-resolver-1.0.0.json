@@ -1,0 +1,36 @@
+{
+  "schema": "axm.executable-software-organ/v0.2",
+  "id": "axm.foundation.dependency-resolver",
+  "version": "1.0.0",
+  "status": "executable",
+  "purpose": "Render one deterministic empty dependency-plan document for an explicit root reference.",
+  "project_types": ["generic"],
+  "parameters": ["root_ref"],
+  "provides": ["foundation-dependency-plan"],
+  "requires": ["foundation-capability-registry"],
+  "files": {
+    "axm/foundation/dependency-plan.json": "{\n  \"schema\": \"axm.foundation.dependency-plan/v1\",\n  \"root_ref\": \"[[AXM:root_ref]]\",\n  \"resolved\": [],\n  \"conflicts\": []\n}\n"
+  },
+  "anatomy_refs": ["AXM-00-FOUNDATION-O-006-dependency-resolver"],
+  "provenance": {
+    "kind": "local-authored-source",
+    "basis": "Bounded Foundation-pack source authored and fixture-tested inside AXM Universal Creation."
+  },
+  "limitations": [
+    "This package emits an empty dependency-plan envelope; it does not traverse registries, solve constraints, fetch packages, or detect real conflicts.",
+    "Its capability-registry requirement is a structural assembly contract, not proof of resolution semantics."
+  ],
+  "fixtures": [{
+    "id": "foundation-default",
+    "project_type": "generic",
+    "bindings": {"root_ref": "foundation-root@1.0.0"},
+    "expected_files": {
+      "axm/foundation/dependency-plan.json": "{\n  \"schema\": \"axm.foundation.dependency-plan/v1\",\n  \"root_ref\": \"foundation-root@1.0.0\",\n  \"resolved\": [],\n  \"conflicts\": []\n}\n"
+    },
+    "checks": [
+      {"type": "json-valid", "path": "axm/foundation/dependency-plan.json"},
+      {"type": "json-value", "path": "axm/foundation/dependency-plan.json", "json_path": ["root_ref"], "equals": "foundation-root@1.0.0"},
+      {"type": "file-set", "mode": "exact", "files": ["axm/foundation/dependency-plan.json"]}
+    ]
+  }]
+}

@@ -34,7 +34,7 @@ The website trial writes inspectable source under `creations/first-real-site/`; 
 
 To see the newest growth loop, run `examples/requests/explore_missing_status_panel_organ_closure.json`. It starts from a real missing interface, tests one explicitly supplied organ in detached and disposable spaces, and leaves the live installed-organ body unchanged. See `ORGAN_GAP_CLOSURE.md` for the exact evidence boundary.
 
-To inspect the complete organ implementation queue, run `organ-census`. It currently reports three structurally connected installed package mappings and 412 anatomy records that still require implementation. `examples/requests/materialize_identity_registry_organ.json` shows the new explicit-source path from one anatomy record to a detached, Forge-tested candidate. See `ORGAN_MATERIALIZATION.md`.
+To inspect the complete organ implementation queue, run `organ-census`. It currently reports 15 structurally connected installed package mappings and 400 anatomy records that still require implementation. Twelve connected mappings come from the fixture-tested Foundation pack; `examples/requests/create_foundation_organ_pack.json` composes them into one validated generic project. `examples/requests/materialize_identity_registry_organ.json` still shows the separate explicit-source path from one anatomy record to a detached Forge-tested candidate. See `ORGAN_MATERIALIZATION.md` and `FOUNDATION_ORGAN_PACK.md`.
 
 ## Core rule
 
@@ -202,6 +202,7 @@ Current live project handles:
 - `inspect-executable-organs`
 - `list-executable-organs`
 - `resolve-executable-organ`
+- `test-executable-organ`
 - `discover-organ-assembly`
 - `interface-organ-project`
 - `explore-missing-organ-closure`

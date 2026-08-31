@@ -1,0 +1,36 @@
+{
+  "schema": "axm.executable-software-organ/v0.2",
+  "id": "axm.foundation.schema-registry",
+  "version": "1.0.0",
+  "status": "executable",
+  "purpose": "Render one deterministic empty schema-registry document with an explicit registry identity.",
+  "project_types": ["generic"],
+  "parameters": ["registry_id"],
+  "provides": ["foundation-schema-registry"],
+  "requires": [],
+  "files": {
+    "axm/foundation/schema-registry.json": "{\n  \"schema\": \"axm.foundation.schema-registry/v1\",\n  \"registry_id\": \"[[AXM:registry_id]]\",\n  \"schemas\": {}\n}\n"
+  },
+  "anatomy_refs": ["AXM-00-FOUNDATION-O-002-schema-registry"],
+  "provenance": {
+    "kind": "local-authored-source",
+    "basis": "Bounded Foundation-pack source authored and fixture-tested inside AXM Universal Creation."
+  },
+  "limitations": [
+    "This package emits an empty registry document; it does not fetch, validate, version, or publish external schemas.",
+    "Bindings are inserted as raw exact text and must already be valid JSON string content."
+  ],
+  "fixtures": [{
+    "id": "foundation-default",
+    "project_type": "generic",
+    "bindings": {"registry_id": "foundation-schemas"},
+    "expected_files": {
+      "axm/foundation/schema-registry.json": "{\n  \"schema\": \"axm.foundation.schema-registry/v1\",\n  \"registry_id\": \"foundation-schemas\",\n  \"schemas\": {}\n}\n"
+    },
+    "checks": [
+      {"type": "json-valid", "path": "axm/foundation/schema-registry.json"},
+      {"type": "json-value", "path": "axm/foundation/schema-registry.json", "json_path": ["registry_id"], "equals": "foundation-schemas"},
+      {"type": "file-set", "mode": "exact", "files": ["axm/foundation/schema-registry.json"]}
+    ]
+  }]
+}

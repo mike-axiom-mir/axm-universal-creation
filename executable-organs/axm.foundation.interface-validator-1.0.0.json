@@ -1,0 +1,36 @@
+{
+  "schema": "axm.executable-software-organ/v0.2",
+  "id": "axm.foundation.interface-validator",
+  "version": "1.0.0",
+  "status": "executable",
+  "purpose": "Render one deterministic interface-validation policy document with explicit required contract fields.",
+  "project_types": ["generic"],
+  "parameters": ["contract_version"],
+  "provides": ["foundation-interface-validation"],
+  "requires": ["foundation-schema-registry", "foundation-compatibility-policy", "foundation-capability-registry"],
+  "files": {
+    "axm/foundation/interface-validation.json": "{\n  \"schema\": \"axm.foundation.interface-validation/v1\",\n  \"contract_version\": \"[[AXM:contract_version]]\",\n  \"required_fields\": [\"provides\", \"requires\"]\n}\n"
+  },
+  "anatomy_refs": ["AXM-00-FOUNDATION-O-012-interface-validator"],
+  "provenance": {
+    "kind": "local-authored-source",
+    "basis": "Bounded Foundation-pack source authored and fixture-tested inside AXM Universal Creation."
+  },
+  "limitations": [
+    "This package emits policy data; it does not inspect packages, validate runtime calls, prove semantic compatibility, or issue attestations.",
+    "Its required interfaces are structural assembly contracts, not proof of validator integration."
+  ],
+  "fixtures": [{
+    "id": "foundation-default",
+    "project_type": "generic",
+    "bindings": {"contract_version": "1"},
+    "expected_files": {
+      "axm/foundation/interface-validation.json": "{\n  \"schema\": \"axm.foundation.interface-validation/v1\",\n  \"contract_version\": \"1\",\n  \"required_fields\": [\"provides\", \"requires\"]\n}\n"
+    },
+    "checks": [
+      {"type": "json-valid", "path": "axm/foundation/interface-validation.json"},
+      {"type": "json-value", "path": "axm/foundation/interface-validation.json", "json_path": ["required_fields", 0], "equals": "provides"},
+      {"type": "file-set", "mode": "exact", "files": ["axm/foundation/interface-validation.json"]}
+    ]
+  }]
+}

@@ -1,0 +1,36 @@
+{
+  "schema": "axm.executable-software-organ/v0.2",
+  "id": "axm.foundation.identity-registry",
+  "version": "1.0.0",
+  "status": "executable",
+  "purpose": "Render one deterministic empty identity-registry document for an explicit namespace.",
+  "project_types": ["generic"],
+  "parameters": ["namespace"],
+  "provides": ["foundation-identity-registry"],
+  "requires": [],
+  "files": {
+    "axm/foundation/identity-registry.json": "{\n  \"schema\": \"axm.foundation.identity-registry/v1\",\n  \"namespace\": \"[[AXM:namespace]]\",\n  \"identities\": []\n}\n"
+  },
+  "anatomy_refs": ["AXM-00-FOUNDATION-O-001-identity-registry"],
+  "provenance": {
+    "kind": "local-authored-source",
+    "basis": "Bounded Foundation-pack source authored and fixture-tested inside AXM Universal Creation."
+  },
+  "limitations": [
+    "This package emits an initial registry document; it does not implement persistence, authentication, uniqueness enforcement, or concurrent identity mutation.",
+    "Bindings are inserted as raw exact text and must already be valid JSON string content."
+  ],
+  "fixtures": [{
+    "id": "foundation-default",
+    "project_type": "generic",
+    "bindings": {"namespace": "foundation"},
+    "expected_files": {
+      "axm/foundation/identity-registry.json": "{\n  \"schema\": \"axm.foundation.identity-registry/v1\",\n  \"namespace\": \"foundation\",\n  \"identities\": []\n}\n"
+    },
+    "checks": [
+      {"type": "json-valid", "path": "axm/foundation/identity-registry.json"},
+      {"type": "json-value", "path": "axm/foundation/identity-registry.json", "json_path": ["namespace"], "equals": "foundation"},
+      {"type": "file-set", "mode": "exact", "files": ["axm/foundation/identity-registry.json"]}
+    ]
+  }]
+}

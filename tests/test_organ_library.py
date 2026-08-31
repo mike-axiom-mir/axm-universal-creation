@@ -14,6 +14,33 @@ from axm_uc.organ_library import EXECUTABLE_ORGAN_SCHEMA, ExecutableOrganError, 
 
 
 class ExecutableOrganLibraryTests(unittest.TestCase):
+    def _fixture_package(self, expected_name: str = "Foundation") -> dict:
+        return {
+            "schema": EXECUTABLE_ORGAN_SCHEMA,
+            "id": "axm.test.fixture-organ",
+            "version": "1.0.0",
+            "status": "executable",
+            "purpose": "Render one deterministic JSON fixture document.",
+            "project_types": ["generic"],
+            "parameters": ["name"],
+            "provides": ["fixture-document"],
+            "requires": [],
+            "files": {"fixture.json": "{\n  \"name\": \"[[AXM:name]]\"\n}\n"},
+            "anatomy_refs": [],
+            "provenance": {"kind": "test-fixture", "basis": "Exercises the v0.2 fixture contract."},
+            "limitations": ["This package proves only one exact fixture."],
+            "fixtures": [{
+                "id": "foundation",
+                "project_type": "generic",
+                "bindings": {"name": "Foundation"},
+                "expected_files": {"fixture.json": f"{{\n  \"name\": \"{expected_name}\"\n}}\n"},
+                "checks": [
+                    {"type": "json-valid", "path": "fixture.json"},
+                    {"type": "json-value", "path": "fixture.json", "json_path": ["name"], "equals": "Foundation"},
+                ],
+            }],
+        }
+
     def _request(self, target: Path, title: str, background: str) -> dict:
         return {
             "kind": "organ-static-web-project",
@@ -53,7 +80,7 @@ class ExecutableOrganLibraryTests(unittest.TestCase):
         summary = library.summary()
         self.assertEqual(summary["truth_status"], "EXACT_LOCAL_EXECUTABLE_ORGAN_PACKAGES")
         self.assertEqual(summary["schema"], EXECUTABLE_ORGAN_SCHEMA)
-        self.assertEqual(summary["packages"], 3)
+        self.assertEqual(summary["packages"], 15)
         self.assertFalse(summary["descriptive_anatomy_organs_automatically_executable"])
 
         rows = library.list(project_type="static-web", provides="visual-theme")
@@ -88,9 +115,45 @@ class ExecutableOrganLibraryTests(unittest.TestCase):
                 ExecutableOrganLibrary(root)
             self.assertEqual(raised.exception.details["unexpected_fields"], ["hidden_magic"])
 
+    def test_v02_declared_fixture_renders_and_checks_without_runtime_execution(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            folder = root / "executable-organs"
+            folder.mkdir()
+            (folder / "fixture.json").write_text(json.dumps(self._fixture_package()), encoding="utf-8")
+            library = ExecutableOrganLibrary(root)
+            result = library.test("axm.test.fixture-organ@1.0.0")
+            self.assertTrue(result["passed"], result)
+            self.assertEqual(result["truth_status"], "DECLARED_EXECUTABLE_ORGAN_FIXTURES_EXECUTED")
+            self.assertEqual(result["fixture_count"], 1)
+            self.assertTrue(result["fixtures"][0]["exact_file_set"]["passed"])
+            self.assertFalse(result["runtime_executed"])
+
+    def test_v02_fixture_drift_fails_and_malformed_fixture_contract_is_rejected(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            folder = root / "executable-organs"
+            folder.mkdir()
+            path = folder / "fixture.json"
+            path.write_text(json.dumps(self._fixture_package(expected_name="Drifted")), encoding="utf-8")
+            result = ExecutableOrganLibrary(root).test("axm.test.fixture-organ@1.0.0")
+            self.assertFalse(result["passed"])
+            expected_check = next(
+                row for row in result["fixtures"][0]["validation"]["checks"]
+                if row["type"] == "expected-files-exact"
+            )
+            self.assertFalse(expected_check["passed"])
+
+            malformed = self._fixture_package()
+            malformed["fixtures"][0]["checks"] = [{"type": "shell", "command": "echo nope"}]
+            path.write_text(json.dumps(malformed), encoding="utf-8")
+            with self.assertRaises(ExecutableOrganError) as raised:
+                ExecutableOrganLibrary(root)
+            self.assertEqual(raised.exception.details["check_type"], "shell")
+
     def test_machine_exposes_package_summary_and_complete_exact_inspection(self):
         machine = UniversalCreationMachine(ROOT)
-        self.assertEqual(machine.inspect()["executable_organs"]["packages"], 3)
+        self.assertEqual(machine.inspect()["executable_organs"]["packages"], 15)
         listed = machine.create({
             "kind": "list-executable-organs",
             "inputs": {"project_type": "static-web"},
@@ -104,6 +167,14 @@ class ExecutableOrganLibraryTests(unittest.TestCase):
         })
         self.assertEqual(inspected["type"], "CREATION_RESULT", inspected)
         self.assertIn("index.html", inspected["result"]["package"]["files"])
+
+        tested = machine.create({
+            "kind": "test-executable-organ",
+            "inputs": {"test_ref": "axm.foundation.identity-registry@1.0.0"},
+        })
+        self.assertEqual(tested["type"], "CREATION_RESULT", tested)
+        self.assertTrue(tested["result"]["test"]["passed"], tested)
+        self.assertFalse(tested["result"]["test"]["runtime_executed"])
 
     def test_same_installed_organs_create_distinct_bodies_from_distinct_bindings(self):
         with tempfile.TemporaryDirectory() as td:

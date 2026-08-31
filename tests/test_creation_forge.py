@@ -163,6 +163,32 @@ class CreationForgeTests(unittest.TestCase):
             self.assertEqual(strengths["protocol"], "STRUCTURAL_ENTRYPOINT_AND_DECLARED_FILE_CHECKS")
             self.assertEqual(strengths["specialist"], "STRUCTURAL_ENTRYPOINT_AND_DECLARED_FILE_CHECKS")
 
+    def test_v02_organ_candidate_executes_declared_fixtures_as_stronger_bounded_evidence(self):
+        with tempfile.TemporaryDirectory() as td:
+            proposal = self._proposal("organ", unit_id="axm.test.fixture-organ-v2")
+            package = json.loads(
+                (ROOT / "executable-organs/axm.foundation.identity-registry-1.0.0.json").read_text(
+                    encoding="utf-8"
+                )
+            )
+            package.update({"id": proposal["id"], "version": proposal["version"]})
+            proposal["files"]["organ.json"] = json.dumps(package, indent=2, sort_keys=True) + "\n"
+            target = Path(td) / "organ-v2"
+            spawned = self._spawn(target, proposal)
+            self.assertEqual(spawned["type"], "CREATION_RESULT", spawned)
+            tested = self._operate(target, "test")
+            self.assertTrue(tested["result"]["passed"], tested)
+            kind_test = tested["result"]["kind_test"]
+            self.assertEqual(
+                kind_test["evidence_strength"],
+                "EXECUTABLE_ORGAN_DECLARED_FIXTURES_EXECUTED",
+            )
+            self.assertEqual(
+                kind_test["organ_package_validation"]["fixture_test"]["fixture_count"],
+                1,
+            )
+            self.assertFalse(kind_test["runtime_executed"])
+
     def test_extension_kind_is_open_but_reports_generic_evidence_only(self):
         with tempfile.TemporaryDirectory() as td:
             target = Path(td) / "new-kind"

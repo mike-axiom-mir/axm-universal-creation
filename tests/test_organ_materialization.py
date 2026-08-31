@@ -68,15 +68,15 @@ class OrganMaterializationTests(unittest.TestCase):
         self.assertEqual(summary["standalone_organ_source_files"], 415)
         self.assertEqual(summary["source_record_states"]["EXACT"], 415)
         self.assertTrue(summary["source_records_exact"])
-        self.assertEqual(summary["installed_executable_packages"], 3)
-        self.assertEqual(summary["anatomy_with_installed_packages"], 3)
-        self.assertEqual(summary["anatomy_requiring_implementation"], 412)
+        self.assertEqual(summary["installed_executable_packages"], 15)
+        self.assertEqual(summary["anatomy_with_installed_packages"], 15)
+        self.assertEqual(summary["anatomy_requiring_implementation"], 400)
         self.assertEqual(
             summary["anatomy_materialization_states"],
             {
-                "CONNECTED_EXECUTABLE_PACKAGE": 3,
+                "CONNECTED_EXECUTABLE_PACKAGE": 15,
                 "EXECUTABLE_PACKAGE_WITH_MISSING_INTERFACES": 0,
-                "IMPLEMENTATION_REQUIRED": 412,
+                "IMPLEMENTATION_REQUIRED": 400,
             },
         )
         self.assertFalse(summary["all_descriptive_organs_executable"])
@@ -91,7 +91,7 @@ class OrganMaterializationTests(unittest.TestCase):
         })
         self.assertEqual(connected["type"], "CREATION_RESULT", connected)
         page = connected["result"]
-        self.assertEqual(page["pagination"]["matched"], 3)
+        self.assertEqual(page["pagination"]["matched"], 15)
         self.assertEqual(page["pagination"]["returned"], 2)
         self.assertTrue(page["pagination"]["has_more"])
         self.assertTrue(all(
@@ -101,7 +101,7 @@ class OrganMaterializationTests(unittest.TestCase):
 
         selected = self.machine.organ_census(anatomy_id=ANATOMY_ID)
         self.assertEqual(selected["pagination"]["matched"], 1)
-        self.assertEqual(selected["organs"][0]["materialization"]["state"], "IMPLEMENTATION_REQUIRED")
+        self.assertEqual(selected["organs"][0]["materialization"]["state"], "CONNECTED_EXECUTABLE_PACKAGE")
 
     def test_connectivity_requires_a_finite_transitive_provider_chain(self):
         packages = [

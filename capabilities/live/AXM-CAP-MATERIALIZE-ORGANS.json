@@ -1,6 +1,6 @@
 {
   "id": "AXM-CAP-MATERIALIZE-ORGANS",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "status": "live",
   "purpose": "Census every descriptive organ against exact installed executable-package evidence and compile an explicitly supplied implementation package into a detached Forge-ready or materialized-and-tested organ candidate without inventing source or installing it.",
   "handles": [
@@ -19,7 +19,7 @@
       "state": "census only; optional CONNECTED_EXECUTABLE_PACKAGE, EXECUTABLE_PACKAGE_WITH_MISSING_INTERFACES, or IMPLEMENTATION_REQUIRED filter",
       "offset": "census only; optional zero-based offset",
       "limit": "census only; optional result bound from 1 through 415",
-      "package": "prepare/materialize only; complete explicit axm.executable-software-organ/v0.1 package source that cites the selected anatomy ID",
+      "package": "prepare/materialize only; complete explicit supported axm.executable-software-organ/v0.1 or v0.2 package source that cites the selected anatomy ID",
       "path": "materialize-and-test only; detached candidate directory under creations/ or outside the live machine body",
       "replace": "materialize-and-test only; optional explicit detached-target replacement boolean"
     }
@@ -69,7 +69,7 @@
     "source": "src/axm_uc/organ_materialization.py"
   },
   "limitations": [
-    "the current census observes three installed executable packages and does not relabel the remaining descriptive anatomy records as executable",
+    "the current census observes 15 connected installed executable-package mappings and does not relabel the remaining 400 descriptive anatomy records as executable",
     "a package implementation must be supplied explicitly by a human, AI, recipe, or labelled external source; arbitrary semantic source synthesis is not implemented",
     "exact interface coverage proves structural provider availability, not semantic interface conformance or runtime behavior",
     "materialize-and-test validates the executable-organ package and deterministic file evidence but does not execute emitted project runtime behavior",
@@ -91,7 +91,7 @@
     },
     "wisdom-before-speed": {
       "fit": true,
-      "basis": "The complete census makes the 412 real implementation gaps visible, while exact package validation and bounded tests precede connection to the live library."
+      "basis": "The complete census makes the 400 real implementation gaps visible, while exact package validation and bounded tests precede connection to the live library."
     }
   }
 }

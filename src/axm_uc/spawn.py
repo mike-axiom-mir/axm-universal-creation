@@ -391,6 +391,7 @@ def creation_forge_summary() -> dict[str, Any]:
         "automatic_merge_or_promotion": False,
         "capability_and_hand_candidates_receive_declared_test_execution": True,
         "organ_candidates_receive_executable_package_schema_validation": True,
+        "organ_v02_candidates_receive_declared_fixture_testing": True,
         "other_kinds_currently_receive_structural_and_declared_file_checks": True,
         "candidate_design_source": "supplied by a human, AI, deterministic recipe, bounded gap compiler, or explicitly labelled external boundary; the forge does not claim to invent semantic design by itself",
     }
@@ -652,12 +653,24 @@ def _test_kind(root: Path, candidate: Path, unit: dict[str, Any]) -> dict[str, A
                 folder.mkdir()
                 (folder / "candidate.json").write_text(entrypoint.read_text(encoding="utf-8"), encoding="utf-8")
                 library = ExecutableOrganLibrary(organ_root)
-                organ_result = {"passed": True, "package": library.inspect(f"{unit['id']}@{unit['version']}")}
-        except ExecutableOrganError as exc:
+                ref = f"{unit['id']}@{unit['version']}"
+                package = library.inspect(ref)
+                fixture_test = library.test(ref)
+                organ_result = {
+                    "passed": fixture_test["passed"],
+                    "package": package,
+                    "fixture_test": fixture_test,
+                }
+        except (ExecutableOrganError, ProjectError) as exc:
             organ_result = {"passed": False, "error": str(exc), "details": exc.details}
+        fixture_count = organ_result.get("fixture_test", {}).get("fixture_count", 0)
         return {
             "kind": kind,
-            "evidence_strength": "EXECUTABLE_ORGAN_PACKAGE_SCHEMA_VALIDATION",
+            "evidence_strength": (
+                "EXECUTABLE_ORGAN_DECLARED_FIXTURES_EXECUTED"
+                if fixture_count
+                else "EXECUTABLE_ORGAN_PACKAGE_SCHEMA_VALIDATION"
+            ),
             "passed": identity["passed"] and organ_result["passed"],
             "identity": identity,
             "organ_package_validation": organ_result,

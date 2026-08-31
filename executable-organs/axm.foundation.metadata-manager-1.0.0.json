@@ -1,0 +1,36 @@
+{
+  "schema": "axm.executable-software-organ/v0.2",
+  "id": "axm.foundation.metadata-manager",
+  "version": "1.0.0",
+  "status": "executable",
+  "purpose": "Render one deterministic metadata envelope with an explicit owner and empty annotations.",
+  "project_types": ["generic"],
+  "parameters": ["owner"],
+  "provides": ["foundation-metadata"],
+  "requires": ["foundation-identity-registry", "foundation-schema-registry"],
+  "files": {
+    "axm/foundation/metadata.json": "{\n  \"schema\": \"axm.foundation.metadata/v1\",\n  \"owner\": \"[[AXM:owner]]\",\n  \"annotations\": {}\n}\n"
+  },
+  "anatomy_refs": ["AXM-00-FOUNDATION-O-003-metadata-manager"],
+  "provenance": {
+    "kind": "local-authored-source",
+    "basis": "Bounded Foundation-pack source authored and fixture-tested inside AXM Universal Creation."
+  },
+  "limitations": [
+    "This package emits a metadata envelope; it does not resolve identities, validate schemas, merge annotations, or persist changes.",
+    "Its required interfaces are structural assembly contracts, not proof of runtime calls."
+  ],
+  "fixtures": [{
+    "id": "foundation-default",
+    "project_type": "generic",
+    "bindings": {"owner": "foundation"},
+    "expected_files": {
+      "axm/foundation/metadata.json": "{\n  \"schema\": \"axm.foundation.metadata/v1\",\n  \"owner\": \"foundation\",\n  \"annotations\": {}\n}\n"
+    },
+    "checks": [
+      {"type": "json-valid", "path": "axm/foundation/metadata.json"},
+      {"type": "json-value", "path": "axm/foundation/metadata.json", "json_path": ["owner"], "equals": "foundation"},
+      {"type": "file-set", "mode": "exact", "files": ["axm/foundation/metadata.json"]}
+    ]
+  }]
+}

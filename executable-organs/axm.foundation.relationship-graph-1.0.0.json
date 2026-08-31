@@ -1,0 +1,36 @@
+{
+  "schema": "axm.executable-software-organ/v0.2",
+  "id": "axm.foundation.relationship-graph",
+  "version": "1.0.0",
+  "status": "executable",
+  "purpose": "Render one deterministic empty relationship-graph document with an explicit graph identity.",
+  "project_types": ["generic"],
+  "parameters": ["graph_id"],
+  "provides": ["foundation-relationship-graph"],
+  "requires": ["foundation-identity-registry", "foundation-canonicalization-policy"],
+  "files": {
+    "axm/foundation/relationship-graph.json": "{\n  \"schema\": \"axm.foundation.relationship-graph/v1\",\n  \"graph_id\": \"[[AXM:graph_id]]\",\n  \"nodes\": [],\n  \"edges\": []\n}\n"
+  },
+  "anatomy_refs": ["AXM-00-FOUNDATION-O-011-relationship-graph-manager"],
+  "provenance": {
+    "kind": "local-authored-source",
+    "basis": "Bounded Foundation-pack source authored and fixture-tested inside AXM Universal Creation."
+  },
+  "limitations": [
+    "This package emits an empty graph document; it does not resolve identities, canonicalize nodes, query edges, enforce graph constraints, or persist mutations.",
+    "Its required interfaces are structural assembly contracts, not proof of graph runtime integration."
+  ],
+  "fixtures": [{
+    "id": "foundation-default",
+    "project_type": "generic",
+    "bindings": {"graph_id": "foundation-relationships"},
+    "expected_files": {
+      "axm/foundation/relationship-graph.json": "{\n  \"schema\": \"axm.foundation.relationship-graph/v1\",\n  \"graph_id\": \"foundation-relationships\",\n  \"nodes\": [],\n  \"edges\": []\n}\n"
+    },
+    "checks": [
+      {"type": "json-valid", "path": "axm/foundation/relationship-graph.json"},
+      {"type": "json-value", "path": "axm/foundation/relationship-graph.json", "json_path": ["graph_id"], "equals": "foundation-relationships"},
+      {"type": "file-set", "mode": "exact", "files": ["axm/foundation/relationship-graph.json"]}
+    ]
+  }]
+}

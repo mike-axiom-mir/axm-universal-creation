@@ -35,7 +35,7 @@ Unknown proposal fields are rejected. Paths may not escape the candidate body. P
 | --- | --- | --- |
 | `hand` | Bounded callable adapter or actuator candidate | Executes the candidate capability manifest's declared disposable tests |
 | `capability` | Callable creation-ability candidate | Executes the candidate capability manifest's declared disposable tests |
-| `organ` | Reusable subsystem package candidate | Validates the exact executable-organ package grammar |
+| `organ` | Reusable subsystem package candidate | Validates the exact package grammar; `v0.2` also renders and checks every declared deterministic fixture |
 | `protocol` | Typed exchange-contract candidate | Identity, JSON parsing, package integrity, and declared file checks |
 | `skill` | Portable bounded method/instruction package | Package integrity and declared file checks |
 | `specialist` | Temporary method overlay composed from declared skills | Identity, package integrity, and declared file checks |

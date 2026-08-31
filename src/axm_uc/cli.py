@@ -37,7 +37,9 @@ def build_parser() -> argparse.ArgumentParser:
     directions_p.add_argument("--suggest", help="rank direction candidates for caller-supplied text; never auto-selects")
 
     organs_p = sub.add_parser("organs", help="list or inspect installed executable software-organ packages")
-    organs_p.add_argument("--ref", help="inspect one exact installed id@version package including source")
+    organ_action = organs_p.add_mutually_exclusive_group()
+    organ_action.add_argument("--ref", help="inspect one exact installed id@version package including source")
+    organ_action.add_argument("--test-ref", help="run one installed package's declared deterministic fixtures")
     organs_p.add_argument("--project-type", choices=["generic", "static-web", "python"], help="filter installed packages")
     organs_p.add_argument("--provides", help="filter by one exact provided interface")
 
@@ -108,7 +110,12 @@ def main(argv: list[str] | None = None) -> int:
         _print(machine.software_directions(direction_id=args.direction_id, suggest=args.suggest))
         return 0
     if args.command == "organs":
-        _print(machine.executable_organs(ref=args.ref, project_type=args.project_type, provides=args.provides))
+        _print(machine.executable_organs(
+            ref=args.ref,
+            test_ref=args.test_ref,
+            project_type=args.project_type,
+            provides=args.provides,
+        ))
         return 0
     if args.command == "organ-census":
         _print(machine.organ_census(

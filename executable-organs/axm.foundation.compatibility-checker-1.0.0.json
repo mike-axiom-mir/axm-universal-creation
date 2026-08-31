@@ -1,0 +1,36 @@
+{
+  "schema": "axm.executable-software-organ/v0.2",
+  "id": "axm.foundation.compatibility-checker",
+  "version": "1.0.0",
+  "status": "executable",
+  "purpose": "Render one deterministic compatibility-policy document with explicit bounded decision rules.",
+  "project_types": ["generic"],
+  "parameters": ["policy_version"],
+  "provides": ["foundation-compatibility-policy"],
+  "requires": ["foundation-version-policy", "foundation-dependency-plan"],
+  "files": {
+    "axm/foundation/compatibility-policy.json": "{\n  \"schema\": \"axm.foundation.compatibility-policy/v1\",\n  \"policy_version\": \"[[AXM:policy_version]]\",\n  \"decision_rules\": [\"exact-version\", \"declared-dependencies\"]\n}\n"
+  },
+  "anatomy_refs": ["AXM-00-FOUNDATION-O-008-compatibility-checker"],
+  "provenance": {
+    "kind": "local-authored-source",
+    "basis": "Bounded Foundation-pack source authored and fixture-tested inside AXM Universal Creation."
+  },
+  "limitations": [
+    "This package emits two rule labels; it does not compare artifacts, interpret semantic version ranges, or issue compatibility verdicts.",
+    "Its required interfaces are structural assembly contracts, not proof of runtime checks."
+  ],
+  "fixtures": [{
+    "id": "foundation-default",
+    "project_type": "generic",
+    "bindings": {"policy_version": "1"},
+    "expected_files": {
+      "axm/foundation/compatibility-policy.json": "{\n  \"schema\": \"axm.foundation.compatibility-policy/v1\",\n  \"policy_version\": \"1\",\n  \"decision_rules\": [\"exact-version\", \"declared-dependencies\"]\n}\n"
+    },
+    "checks": [
+      {"type": "json-valid", "path": "axm/foundation/compatibility-policy.json"},
+      {"type": "json-value", "path": "axm/foundation/compatibility-policy.json", "json_path": ["policy_version"], "equals": "1"},
+      {"type": "file-set", "mode": "exact", "files": ["axm/foundation/compatibility-policy.json"]}
+    ]
+  }]
+}
