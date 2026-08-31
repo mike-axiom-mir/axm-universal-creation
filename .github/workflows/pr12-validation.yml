@@ -1,16 +1,16 @@
 name: PR12 validation
 
 on:
-  push:
+  pull_request:
     branches:
-      - axm/chatgpt-bounded-organ-adoption
+      - main
   workflow_dispatch:
 
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout exact branch state
+      - name: Checkout exact PR state
         uses: actions/checkout@v4
       - name: Set up Python 3.11
         uses: actions/setup-python@v5
