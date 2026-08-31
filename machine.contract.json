@@ -24,7 +24,11 @@
     "allowed": true,
     "outsideBuilderRequired": false,
     "rootFitRequiredBeforeContinuingAdoption": true,
-    "currentResultMustRemainInspectable": true
+    "currentResultMustRemainInspectable": true,
+    "testedWholeBodyCandidateAdoptionAvailable": true,
+    "wholeBodyAdoptionExplicitConfirmRequired": true,
+    "wholeBodyAdoptionPreservesGitAndRuntimeSurfaces": true,
+    "wholeBodyAdoptionIsGitMerge": false
   },
   "inspectability": {
     "machineStructureMustBeNonHidden": true,
@@ -62,7 +66,35 @@
     "destructiveGlobalCleanIsNormalOperation": false
   },
   "directionalOutcomes": {
-    "capabilityGapTargetsOutcomeNotExactPriorSolution": true
+    "capabilityGapTargetsOutcomeNotExactPriorSolution": true,
+    "exactRouteNameAloneCountsAsCoverage": false,
+    "requiredInputsMustBePresentForReadyCoverage": true,
+    "operationSpecificRequiredInputsSupported": true
+  },
+  "localCreationProvider": {
+    "available": true,
+    "modelIndependent": true,
+    "transport": "OpenAI-compatible loopback HTTP",
+    "knownCompatibleProvider": "AXM Local Workshop native WALDO bridge",
+    "explicitCallConsentRequired": true,
+    "cloudControlPlaneAllowed": false,
+    "providerOutputIsProposalOnly": true,
+    "strictResponseSchemaRequired": true,
+    "textProjectFilesOnly": true,
+    "deterministicProjectValidationAfterMaterialization": true,
+    "boundedSpecialistCheckpointExecutionAvailable": true,
+    "specialistProfilesExecutedByOneProviderClaimIndependentIdentities": false,
+    "providerOutputProvesRuntimeBrowserVisualOrSemanticBehavior": false,
+    "providerMayMutateMachineBody": false
+  },
+  "hostEvidence": {
+    "runtimeBrowserVisualGameplayAccessibilityEvidenceCanBeBound": true,
+    "completeExactProjectDigestMapRequired": true,
+    "freshnessRequiredForEffectiveStatus": true,
+    "externalObserverClaimPreserved": true,
+    "externalObservationIndependentlyReperformedByCore": false,
+    "evidenceGrantsExecutionOrEvolutionAuthority": false,
+    "automaticActivityLog": false
   },
   "projectVerification": {
     "symlinkBoundaryChecked": true,
@@ -187,6 +219,14 @@
     "coreIntendedAsInnerBody": true,
     "hostAdaptersExpected": true,
     "hostOwnershipRequired": false
+  },
+  "rootFitDecision": {
+    "candidateDeclarationIsIndependentSemanticProof": false,
+    "continuingAdoptionRequiresAttributedDecision": true,
+    "decisionSourceRequired": true,
+    "decidedByRequired": true,
+    "evidenceReferencesPreserved": true,
+    "deterministicCoreProvesMoralOrSemanticCorrectness": false
   },
   "workshop": {
     "status": "paused",

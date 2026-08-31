@@ -1,0 +1,111 @@
+{
+  "id": "AXM-CAP-LOCAL-CREATION-PROVIDER",
+  "version": "0.2.0",
+  "status": "live",
+  "purpose": "Prepare, invoke, validate, and optionally materialize a bounded UTF-8 software-project proposal or execute one prepared stepwise perspective checkpoint through an explicitly selected OpenAI-compatible loopback provider such as AXM Local Workshop/WALDO, while keeping provider cognition, host authority, deterministic validation, runtime evidence, and machine evolution separate.",
+  "handles": [
+    "inspect-local-creation-provider",
+    "prepare-local-creation-provider",
+    "invoke-local-creation-provider",
+    "provider-backed-project",
+    "local-ai-project",
+    "local-specialist-checkpoint",
+    "local-perspective-analysis"
+  ],
+  "input_contract": {
+    "required": ["operation"],
+    "required_by_operation": {
+      "prepare": ["goal"],
+      "invoke": ["goal", "provider"],
+      "create": ["goal", "path", "provider"],
+      "analyze-checkpoint": ["workflow", "checkpoint", "provider"]
+    },
+    "properties": {
+      "operation": "inspect, prepare, invoke, create, or analyze-checkpoint",
+      "goal": "prepare/invoke/create; exact semantic creation goal",
+      "path": "create only; caller-selected destination project path",
+      "project_type": "generic, static-web, or python",
+      "constraints": "optional inspectable goal constraints",
+      "context": "optional inspectable structural context; never hidden authority",
+      "provider": "loopback OpenAI-compatible provider configuration; allow_call=true is required before network invocation",
+      "checks": "optional deterministic project checks selected by the caller",
+      "publish_mode": "validated by default; grounded-draft remains explicit",
+      "replace": "optional boolean; defaults false",
+      "workflow": "analyze-checkpoint only; exact digest-bound stepwise workflow awaiting analysis",
+      "checkpoint": "analyze-checkpoint only; exact digest-bound prepared perspective checkpoint"
+    }
+  },
+  "output_contract": {
+    "kind": "local-creation-provider-boundary",
+    "contains": [
+      "operation",
+      "truth_status",
+      "request or provider_receipt",
+      "authority boundary",
+      "creation and verification when operation=create",
+      "host evidence needs",
+      "validated provider-supplied perspective analyses and updated workflow when operation=analyze-checkpoint"
+    ]
+  },
+  "implementation": {
+    "kind": "LOCAL_PROVIDER_BOUNDARY",
+    "entrypoint": "builtin:local_creation_provider",
+    "source": "src/axm_uc/local_provider.py"
+  },
+  "dependencies": [
+    "AXM-CAP-WRITE-PROJECT",
+    "AXM-CAP-VERIFY-PROJECT",
+    "AXM-CAP-SPECIALIST-TOURNAMENT"
+  ],
+  "anatomy_refs": [
+    {
+      "id": "AXM-19-AI-ML-AGENTS-C-009-adapter",
+      "role": "implements",
+      "basis": "The live boundary adapts one explicit loopback OpenAI-compatible provider request and response into a strict AXM project-proposal contract without granting the provider destination, installation, adoption, or machine-body authority."
+    },
+    {
+      "id": "AXM-24-WORKSPACE-COLLABORATION-C-010-project",
+      "role": "uses",
+      "basis": "Validated provider files enter the existing transactional project builder rather than a second publication implementation."
+    },
+    {
+      "id": "AXM-20-TESTING-OBSERVABILITY-C-015-validation-report",
+      "role": "uses",
+      "basis": "Materialized provider proposals receive the existing independent structural and digest verification report."
+    }
+  ],
+  "relationships": [
+    "connects to AXM Local Workshop native WALDO bridge at the same OpenAI-compatible shape used by other local models",
+    "fills a missing files input only when the caller explicitly supplies a provider with allow_call=true",
+    "keeps semantic proposal generation outside the deterministic core while keeping validation and authority inside",
+    "leaves runtime, browser, visual, gameplay, and semantic claims for separately bound host evidence",
+    "can execute prepared perspective method overlays through one explicitly selected local cognition provider without pretending they are separate identities or independent evidence sources"
+  ],
+  "limitations": [
+    "v0.2 accepts UTF-8 text project files only",
+    "the provider endpoint must be explicit loopback HTTP; no cloud control plane is accepted",
+    "provider output is not semantic, runtime, browser, visual, gameplay, or root-fit proof",
+    "the capability does not install organs, adopt candidates, mutate CANON, grant permissions, or rewrite the machine body",
+    "model output may vary even when the request packet is identical; both request and response digests remain visible",
+    "one provider executing several specialist profiles is one cognition applying several methods, not several independent specialist identities"
+  ],
+  "persistent_state": null,
+  "root_fit": {
+    "truth": {
+      "fit": true,
+      "basis": "Provider identity, loopback endpoint, request contract, raw-response digest, normalized proposal or perspective analyses, structural verification, and unproven evidence classes remain explicit."
+    },
+    "agency": {
+      "fit": true,
+      "basis": "The caller selects the provider, model, destination, goal, constraints, checks, publication mode, replacement choice, and explicitly enables each local call."
+    },
+    "continuity": {
+      "fit": true,
+      "basis": "Provider files enter the existing transactional project body and do not alter Universal Creation or the Local Workshop architecture."
+    },
+    "wisdom-before-speed": {
+      "fit": true,
+      "basis": "A provider proposal is schema-bounded and independently structurally verified before publication; unsupported paths, file types, endpoints, and claims stop visibly."
+    }
+  }
+}

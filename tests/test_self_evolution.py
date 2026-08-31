@@ -11,7 +11,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from axm_uc.evolution import adopt_organ, inspect_evolution, restore_machine_snapshot, snapshot_machine
+from axm_uc.evolution import EvolutionError, adopt_organ, inspect_evolution, restore_machine_snapshot, snapshot_machine
 from axm_uc.machine import UniversalCreationMachine
 from axm_uc.organ_library import ExecutableOrganError, ExecutableOrganLibrary
 from axm_uc.spawn import SPAWN_PROPOSAL_SCHEMA, spawn_unit
@@ -34,6 +34,15 @@ def roots(prefix: str) -> dict:
         "agency": {"fit": True, "basis": f"{prefix}: the continuing machine chooses the transition without a permanent outside gate."},
         "continuity": {"fit": True, "basis": f"{prefix}: the daily whole-machine snapshot provides the recovery floor."},
         "wisdom-before-speed": {"fit": True, "basis": f"{prefix}: testing, root fit, and recovery readiness happen before live mutation."},
+    }
+
+
+def root_fit_decision(prefix: str) -> dict:
+    return {
+        "decision_source": "bounded-test-fixture",
+        "decided_by": prefix,
+        "evidence_refs": ["tests/test_self_evolution.py"],
+        "roots": roots(prefix),
     }
 
 
@@ -92,7 +101,13 @@ class SelfEvolutionTests(unittest.TestCase):
 
     def test_live_machine_exposes_explicit_evolution_routes(self):
         machine = UniversalCreationMachine(ROOT)
-        for handle in ("adopt-organ", "inspect-evolution", "snapshot-machine", "restore-machine-snapshot"):
+        for handle in (
+            "adopt-organ",
+            "adopt-whole-body-candidate",
+            "inspect-evolution",
+            "snapshot-machine",
+            "restore-machine-snapshot",
+        ):
             manifest = machine.capabilities.route(handle)
             self.assertIsNotNone(manifest, handle)
             self.assertEqual(manifest["id"], "AXM-CAP-EVOLVE-MACHINE")
@@ -107,7 +122,7 @@ class SelfEvolutionTests(unittest.TestCase):
                 root,
                 candidate,
                 reason="A real creation gap needs this exact reusable organ.",
-                root_fit=roots("adoption"),
+                root_fit=root_fit_decision("adoption"),
                 today=self.DAY,
             )
             self.assertTrue(adopted["adopted"], adopted)
@@ -140,14 +155,14 @@ class SelfEvolutionTests(unittest.TestCase):
                 root,
                 first,
                 reason="First same-day organ.",
-                root_fit=roots("adoption"),
+                root_fit=root_fit_decision("adoption"),
                 today=self.DAY,
             )
             adopted_second = adopt_organ(
                 root,
                 second,
                 reason="Second same-day organ.",
-                root_fit=roots("adoption"),
+                root_fit=root_fit_decision("adoption"),
                 today=self.DAY,
             )
             self.assertTrue(adopted_first["recovery_snapshot"]["created_now"])
@@ -183,7 +198,7 @@ class SelfEvolutionTests(unittest.TestCase):
                 root,
                 candidate,
                 reason="Install the first exact ref.",
-                root_fit=roots("adoption"),
+                root_fit=root_fit_decision("adoption"),
                 today=self.DAY,
             )
             self.assertTrue(adopted["adopted"])
@@ -193,7 +208,7 @@ class SelfEvolutionTests(unittest.TestCase):
                 root,
                 duplicate,
                 reason="Attempt the same exact ref again.",
-                root_fit=roots("adoption"),
+                root_fit=root_fit_decision("adoption"),
                 today=self.DAY,
             )
             self.assertFalse(held["adopted"])
@@ -207,12 +222,27 @@ class SelfEvolutionTests(unittest.TestCase):
                 root,
                 mutated,
                 reason="A mutated candidate must be re-established rather than silently trusted.",
-                root_fit=roots("adoption"),
+                root_fit=root_fit_decision("adoption"),
                 today=self.DAY,
             )
             self.assertFalse(rejected["adopted"])
             self.assertEqual(rejected["truth_status"], "HOLD_CANDIDATE_TESTS_FAILED")
             self.assertFalse((root / "executable-organs/axm.test.evolution.mutated-1.0.0.json").exists())
+
+    def test_adoption_requires_an_attributed_current_root_fit_decision(self):
+        with tempfile.TemporaryDirectory() as td:
+            parent = Path(td)
+            root = self._machine_root(parent)
+            candidate = self._spawn_candidate(parent / "candidates")
+            with self.assertRaisesRegex(EvolutionError, "missing attribution"):
+                adopt_organ(
+                    root,
+                    candidate,
+                    reason="An unattributed declaration must not be promoted to a decision.",
+                    root_fit=roots("unattributed"),
+                    today=self.DAY,
+                )
+            self.assertEqual(ExecutableOrganLibrary(root).summary()["packages"], 0)
 
     def test_snapshot_operation_is_one_per_day_without_replace(self):
         with tempfile.TemporaryDirectory() as td:

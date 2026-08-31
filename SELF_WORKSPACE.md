@@ -4,7 +4,7 @@ AXM Universal Creation can clone its complete current source body into a separat
 
 This is the machine's experimental self-creation lane:
 
-`live source body -> exact candidate clone -> free edits -> candidate build/test -> inspect differences -> separately choose whether to adopt`
+`live source body -> exact candidate clone -> free edits -> candidate build/test -> inspect differences -> separately confirmed root-fit adoption`
 
 The candidate is not the continuing machine. It can diverge, fail, remain unfinished, or accumulate a radically different implementation without changing the live body.
 
@@ -26,7 +26,7 @@ Symbolic-link source semantics are not implemented. A source body containing an 
 
 ## Operations
 
-The live `AXM-CAP-SELF-WORKSPACE` capability accepts `clone`, `inspect`, `test`, and `request-merge-check`.
+The live `AXM-CAP-SELF-WORKSPACE` capability accepts `clone`, `inspect`, `test`, and `request-merge-check`. The separate `AXM-CAP-EVOLVE-MACHINE` capability accepts the explicit `adopt-whole-body-candidate` transition.
 
 Create a candidate body:
 
@@ -94,4 +94,6 @@ This is source-body isolation, not an OS security sandbox. Code run by the candi
 
 A passing candidate build proves only what that candidate's build currently checks. It does not make the candidate live and does not prove the wider creation direction has been achieved.
 
-Automatic whole-body merge/adoption is not implemented at this milestone. That separation is intentional and visible: the candidate can create, test, inspect, and request observation of itself now; making it the continuing body remains a later explicit choice, to be connected to root fit and daily snapshot recovery without turning experimentation into a guarded permission system.
+The merge-check request still never approves or adopts anything. Whole-body adoption is now a separate explicit operation requiring `confirm: true`, a concrete reason, and an attributed four-root decision. It re-runs the candidate build, copies the included candidate source to an external staging body, verifies exact digests, ensures the daily recovery snapshot, preserves `.git` and runtime surfaces such as `creations/`, replaces the included source body, and verifies the installed digests. The immediate prior included source body is retained in transition quarantine.
+
+This source adoption is not a Git merge, CANON change, permission change, or claim that the candidate is semantically better. The currently executing Python process finishes using the modules already loaded; the adopted source becomes authoritative on the next invocation.

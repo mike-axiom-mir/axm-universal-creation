@@ -36,6 +36,21 @@ class MachineTests(unittest.TestCase):
         self.assertEqual(result["truth_status"], "HYPOTHESIS")
         self.assertTrue(result["existing_partial_coverage"])
 
+    def test_exact_route_missing_files_exposes_explicit_local_provider_bridge(self):
+        result = UniversalCreationMachine(ROOT).create({
+            "kind": "software-project",
+            "direction": "create a playable local RTS prototype",
+            "inputs": {"path": "creations/rts"},
+        })
+        self.assertEqual(result["type"], "CAPABILITY_INPUT_GAP")
+        self.assertEqual(result["truth_status"], "ROUTE_PRESENT_REQUIRED_INPUTS_MISSING")
+        self.assertEqual(result["route"], "AXM-CAP-WRITE-PROJECT")
+        self.assertEqual(result["missing_required_inputs"], ["files"])
+        bridge = result["local_provider_bridge"]
+        self.assertEqual(bridge["status"], "READY_FOR_EXPLICIT_LOCAL_PROVIDER_SELECTION")
+        self.assertFalse(bridge["automatic_call_made"])
+        self.assertEqual(bridge["request"]["kind"], "provider-backed-project")
+
     def test_candidate_can_be_tested_and_build_debris_is_cleaned(self):
         candidate = ROOT / "capabilities/candidates/AXM-CAP-WRITE-MARKDOWN.json"
         result = UniversalCreationMachine(ROOT).test_candidate(candidate)

@@ -2,13 +2,25 @@ from __future__ import annotations
 
 import datetime as dt
 import hashlib
+import os
+import shutil
+import uuid
 from pathlib import Path, PurePosixPath
 from typing import Any
 
 from .atomic import atomic_write_text
 from .organ_library import ExecutableOrganError, ExecutableOrganLibrary
-from .root_fit import evaluate_declared_root_fit
+from .root_fit import evaluate_declared_root_fit, evaluate_root_fit_decision
 from .snapshot import create_daily_snapshot, restore_snapshot
+from .self_workspace import (
+    EXCLUDED_ANYWHERE,
+    EXCLUDED_TOP_LEVEL,
+    SelfWorkspaceError,
+    _body_files,
+    _validate_workspace_body,
+    _validate_workspace_target,
+    test_self_workspace,
+)
 from .spawn import test_spawned_unit
 
 
@@ -39,11 +51,12 @@ def _resolve_path(root: Path, raw: Any, label: str) -> Path:
 
 
 def _adoption_root_fit(raw: Any) -> dict[str, Any]:
-    if not isinstance(raw, dict):
-        raise EvolutionError("root_fit must be an inspectable four-root decision object")
-    evaluated = evaluate_declared_root_fit({"root_fit": raw})
+    evaluated = evaluate_root_fit_decision(raw)
     if evaluated.get("fit") is not True:
-        raise EvolutionError("self-evolution root-fit decision is not positive", {"root_fit": evaluated})
+        raise EvolutionError(
+            "self-evolution root-fit decision is missing attribution or is not positive",
+            {"root_fit_decision": evaluated},
+        )
     return evaluated
 
 
@@ -252,6 +265,155 @@ def adopt_organ(
     }
 
 
+def _body_digest_map(root: Path) -> dict[str, str]:
+    return {
+        relative: _digest_bytes(path.read_bytes())
+        for relative, path in _body_files(Path(root).resolve()).items()
+    }
+
+
+def adopt_whole_body_candidate(
+    root: Path,
+    candidate: Path,
+    reason: Any,
+    root_fit: Any,
+    *,
+    confirm: Any,
+    timeout_seconds: int = 900,
+    today: dt.date | None = None,
+    snapshot_output_dir: Path | None = None,
+) -> dict[str, Any]:
+    """Adopt one tested complete source candidate while preserving Git/runtime surfaces.
+
+    This is an explicit continuing-machine transition, not a Git merge. The
+    current imported Python process still finishes from its old module image;
+    the adopted body becomes authoritative for the next process invocation.
+    """
+    if confirm is not True:
+        raise EvolutionError("adopt-whole-body-candidate requires confirm=true")
+    root = Path(root).resolve()
+    candidate = Path(candidate).resolve()
+    reason_text = _required_text(reason, "reason")
+    adoption_fit = _adoption_root_fit(root_fit)
+    try:
+        _validate_workspace_target(root, candidate)
+        _validate_workspace_body(candidate)
+        candidate_test = test_self_workspace(root, candidate, timeout_seconds=timeout_seconds)
+    except SelfWorkspaceError as exc:
+        raise EvolutionError(str(exc), exc.details) from exc
+    if candidate_test.get("passed") is not True:
+        return {
+            "operation": "adopt-whole-body-candidate",
+            "truth_status": "HOLD_WHOLE_BODY_CANDIDATE_BUILD_FAILED",
+            "adopted": False,
+            "candidate_path": str(candidate),
+            "candidate_test": candidate_test,
+            "live_machine_body_modified": False,
+        }
+
+    candidate_manifest = _body_digest_map(candidate)
+    live_manifest_before = _body_digest_map(root)
+    if candidate_manifest == live_manifest_before:
+        return {
+            "operation": "adopt-whole-body-candidate",
+            "truth_status": "HOLD_WHOLE_BODY_CANDIDATE_HAS_NO_SOURCE_CHANGE",
+            "adopted": False,
+            "candidate_path": str(candidate),
+            "candidate_test": candidate_test,
+            "live_machine_body_modified": False,
+        }
+
+    stage = root.parent / f".{root.name}.axm-whole-body-stage-{uuid.uuid4().hex}"
+    quarantine = root.parent / (
+        f"{root.name}.whole-body-quarantine-"
+        f"{dt.datetime.now(dt.timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')}-{uuid.uuid4().hex[:8]}"
+    )
+    try:
+        stage.mkdir(parents=False, exist_ok=False)
+        for relative, source in _body_files(candidate).items():
+            destination = stage.joinpath(*PurePosixPath(relative).parts)
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(source, destination)
+        staged_manifest = _body_digest_map(stage)
+        if staged_manifest != candidate_manifest:
+            raise EvolutionError(
+                "staged whole-body candidate bytes differ from the tested candidate",
+                {"candidate_files": candidate_manifest, "staged_files": staged_manifest},
+            )
+
+        recovery = ensure_daily_recovery_snapshot(
+            root,
+            today=today,
+            output_dir=snapshot_output_dir,
+        )
+        quarantine.mkdir(parents=False, exist_ok=False)
+        moved_live: list[str] = []
+        installed: list[str] = []
+        try:
+            for child in sorted(root.iterdir(), key=lambda path: path.name):
+                relative = PurePosixPath(child.name)
+                if (
+                    child.name in EXCLUDED_TOP_LEVEL
+                    or child.name in EXCLUDED_ANYWHERE
+                    or relative.suffix == ".pyc"
+                ):
+                    continue
+                shutil.move(str(child), str(quarantine / child.name))
+                moved_live.append(child.name)
+            for child in sorted(stage.iterdir(), key=lambda path: path.name):
+                os.replace(child, root / child.name)
+                installed.append(child.name)
+            installed_manifest = _body_digest_map(root)
+            if installed_manifest != candidate_manifest:
+                raise EvolutionError(
+                    "adopted whole-body bytes differ from the tested candidate",
+                    {"candidate_files": candidate_manifest, "installed_files": installed_manifest},
+                )
+        except Exception:
+            for name in installed:
+                path = root / name
+                if path.is_dir():
+                    shutil.rmtree(path)
+                elif path.exists():
+                    path.unlink()
+            for child in sorted(quarantine.iterdir(), key=lambda path: path.name):
+                os.replace(child, root / child.name)
+            quarantine.rmdir()
+            raise
+    finally:
+        if stage.exists():
+            shutil.rmtree(stage, ignore_errors=True)
+
+    return {
+        "operation": "adopt-whole-body-candidate",
+        "truth_status": "ADOPTED_TESTED_WHOLE_MACHINE_SOURCE_BODY",
+        "adopted": True,
+        "reason": reason_text,
+        "candidate_path": str(candidate),
+        "candidate_test": candidate_test,
+        "adoption_root_fit": adoption_fit,
+        "source_files_before": len(live_manifest_before),
+        "source_files_after": len(candidate_manifest),
+        "replaced_top_level": moved_live,
+        "candidate_body_digest": _digest_bytes(
+            "\n".join(f"{path}\0{digest}" for path, digest in sorted(candidate_manifest.items())).encode("utf-8")
+        ),
+        "recovery_snapshot": recovery,
+        "transition_quarantine": str(quarantine),
+        "preserved_live_surfaces": sorted(EXCLUDED_TOP_LEVEL | EXCLUDED_ANYWHERE | {"*.pyc"}),
+        "git_history_preserved_in_place": True,
+        "git_merge_performed": False,
+        "live_machine_body_modified": True,
+        "continuing_machine": "the tested candidate source body is installed for the next machine process invocation",
+        "limitations": [
+            "candidate build execution uses the current process user's host permissions and is not OS-contained",
+            "a passing build proves only the checks implemented by that candidate body",
+            "Git history and runtime creation surfaces are preserved rather than replaced by candidate copies",
+            "recovery remains the one-per-day whole-machine snapshot; the immediate prior source body is also retained in transition quarantine",
+        ],
+    }
+
+
 def inspect_evolution(root: Path, *, today: dt.date | None = None) -> dict[str, Any]:
     root = Path(root).resolve()
     day = today or dt.date.today()
@@ -275,7 +437,8 @@ def inspect_evolution(root: Path, *, today: dt.date | None = None) -> dict[str, 
             "candidate_capability_adoption": "already available through UniversalCreationMachine.adopt_candidate",
             "snapshot_create": "live",
             "snapshot_restore": "live with explicit confirm",
-            "whole_body_candidate_merge": "not yet automatically adopted",
+            "whole_body_candidate_adoption": "live with candidate re-test, attributed root fit, explicit confirm, daily recovery, and byte verification",
+            "git_merge": "not performed by whole-body source adoption",
             "canon_change": "not bundled into organ adoption",
             "permission_change": "not bundled into organ adoption",
         },
@@ -335,6 +498,7 @@ def evolution_summary() -> dict[str, Any]:
         "truth_status": "EXPLICIT_SELF_EVOLUTION_WITH_DAILY_RECOVERY",
         "operations": [
             "adopt-organ",
+            "adopt-whole-body-candidate",
             "inspect-evolution",
             "snapshot-machine",
             "restore-machine-snapshot",
@@ -342,14 +506,19 @@ def evolution_summary() -> dict[str, Any]:
         "current_adoptable_creation_unit_kinds": ["organ"],
         "outside_approval_required": False,
         "root_fit_required_before_adoption": True,
+        "root_fit_decision_attribution_required": True,
+        "root_fit_is_objective_proof": False,
+        "root_fit_truth_boundary": "the core validates an attributed positive four-root decision and its explicit bases; it does not independently prove moral or semantic correctness",
         "candidate_test_rechecked_before_adoption": True,
+        "whole_body_candidate_adoption_available": True,
+        "whole_body_adoption_requires_explicit_confirm": True,
+        "whole_body_adoption_preserves_git_and_runtime_surfaces": True,
         "daily_snapshot_ensured_before_organ_mutation": True,
         "silent_overwrite": False,
         "state_transitions_are_capabilities": True,
         "recovery_boundary": "one complete restorable snapshot per day",
         "future_transition_surface": [
             "replace-organ",
-            "merge-whole-body-candidate",
             "canon-change",
             "permission-change",
         ],
@@ -368,6 +537,20 @@ def operate_evolution(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
             candidate,
             reason=inputs.get("reason"),
             root_fit=inputs.get("root_fit"),
+            snapshot_output_dir=snapshot_output_dir,
+        )
+    if operation == "adopt-whole-body-candidate":
+        candidate = _resolve_path(root, inputs.get("path"), "path")
+        snapshot_output_dir = None
+        if inputs.get("snapshot_output_dir") is not None:
+            snapshot_output_dir = _resolve_path(root, inputs.get("snapshot_output_dir"), "snapshot_output_dir")
+        return adopt_whole_body_candidate(
+            root,
+            candidate,
+            reason=inputs.get("reason"),
+            root_fit=inputs.get("root_fit"),
+            confirm=inputs.get("confirm"),
+            timeout_seconds=inputs.get("timeout_seconds", 900),
             snapshot_output_dir=snapshot_output_dir,
         )
     if operation == "inspect-evolution":

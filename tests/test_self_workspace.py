@@ -3,12 +3,14 @@ from __future__ import annotations
 import sys
 import tempfile
 import unittest
+from datetime import date
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from axm_uc.machine import UniversalCreationMachine
+from axm_uc.evolution import EvolutionError, adopt_whole_body_candidate
 from axm_uc.self_workspace import (
     SelfWorkspaceError,
     clone_self_workspace,
@@ -19,6 +21,20 @@ from axm_uc.self_workspace import (
 
 
 class SelfWorkspaceTests(unittest.TestCase):
+    @staticmethod
+    def _root_fit_decision() -> dict:
+        return {
+            "decision_source": "bounded-test-fixture",
+            "decided_by": "tests/test_self_workspace.py",
+            "evidence_refs": ["candidate build and exact staged byte comparison"],
+            "roots": {
+                "truth": {"fit": True, "basis": "The candidate build, bytes, and transition are explicit."},
+                "agency": {"fit": True, "basis": "The test makes a separate explicit confirmed adoption choice."},
+                "continuity": {"fit": True, "basis": "Daily recovery and prior-body quarantine are established."},
+                "wisdom-before-speed": {"fit": True, "basis": "Build and staging checks precede live replacement."},
+            },
+        }
+
     def _mini_body(self, root: Path) -> Path:
         (root / "src/axm_uc").mkdir(parents=True)
         (root / "tests").mkdir()
@@ -153,6 +169,53 @@ class SelfWorkspaceTests(unittest.TestCase):
                 clone_self_workspace(live, live)
             with self.assertRaises(SelfWorkspaceError):
                 clone_self_workspace(live, Path(td))
+
+    def test_whole_body_adoption_retests_stages_and_preserves_git_and_runtime_surfaces(self):
+        with tempfile.TemporaryDirectory() as td:
+            parent = Path(td)
+            live = self._mini_body(parent / "live")
+            candidate = parent / "candidate"
+            clone_self_workspace(live, candidate)
+            (candidate / "src/axm_uc/body.py").write_text("VALUE = 'adopted'\n", encoding="utf-8")
+            (candidate / "src/axm_uc/new_body.py").write_text("ADOPTED = True\n", encoding="utf-8")
+
+            adopted = adopt_whole_body_candidate(
+                live,
+                candidate,
+                reason="Adopt the exact tested candidate body.",
+                root_fit=self._root_fit_decision(),
+                confirm=True,
+                timeout_seconds=30,
+                today=date(2026, 8, 31),
+                snapshot_output_dir=parent / "snapshots",
+            )
+            self.assertTrue(adopted["adopted"], adopted)
+            self.assertTrue(adopted["candidate_test"]["passed"])
+            self.assertEqual((live / "src/axm_uc/body.py").read_text(encoding="utf-8"), "VALUE = 'adopted'\n")
+            self.assertTrue((live / "src/axm_uc/new_body.py").is_file())
+            self.assertEqual((live / ".git/config").read_text(encoding="utf-8"), "history\n")
+            self.assertEqual((live / "creations/old-output/result.txt").read_text(encoding="utf-8"), "runtime\n")
+            self.assertTrue(Path(adopted["recovery_snapshot"]["path"]).is_file())
+            self.assertTrue(Path(adopted["transition_quarantine"]).is_dir())
+            self.assertFalse(adopted["git_merge_performed"])
+
+    def test_whole_body_adoption_requires_explicit_confirmation_before_testing_or_mutation(self):
+        with tempfile.TemporaryDirectory() as td:
+            parent = Path(td)
+            live = self._mini_body(parent / "live")
+            candidate = parent / "candidate"
+            clone_self_workspace(live, candidate)
+            (candidate / "src/axm_uc/body.py").write_text("VALUE = 'candidate'\n", encoding="utf-8")
+            with self.assertRaisesRegex(EvolutionError, "confirm=true"):
+                adopt_whole_body_candidate(
+                    live,
+                    candidate,
+                    reason="No confirmation means no mutation.",
+                    root_fit=self._root_fit_decision(),
+                    confirm=False,
+                    timeout_seconds=30,
+                )
+            self.assertEqual((live / "src/axm_uc/body.py").read_text(encoding="utf-8"), "VALUE = 'live'\n")
 
 
 if __name__ == "__main__":

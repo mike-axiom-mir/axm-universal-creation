@@ -328,6 +328,36 @@ def builtin_patch_project(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
         raise CapabilityError(str(exc), exc.details) from exc
 
 
+def builtin_local_creation_provider(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+    from .local_provider import LocalProviderError, operate_local_provider
+
+    operation = str(inputs.get("operation", "inspect")).strip().casefold()
+    if operation == "create":
+        target = _resolve_output_path(root, str(inputs.get("path", "")))
+        if _is_machine_body_path(root, target):
+            raise CapabilityError(
+                "local provider creation cannot rewrite the live machine body; provider output must enter an ordinary creation surface"
+            )
+    try:
+        return operate_local_provider(root, inputs)
+    except LocalProviderError as exc:
+        raise CapabilityError(str(exc), exc.details) from exc
+
+
+def builtin_host_evidence(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+    from .host_evidence import HostEvidenceError, operate_host_evidence
+
+    operation = str(inputs.get("operation", "inspect")).strip().casefold()
+    if operation == "bind":
+        target = _resolve_output_path(root, str(inputs.get("path", "")))
+        if _is_machine_body_path(root, target):
+            raise CapabilityError("creation host evidence binds to created project bodies, not the live machine body")
+    try:
+        return operate_host_evidence(root, inputs)
+    except HostEvidenceError as exc:
+        raise CapabilityError(str(exc), exc.details) from exc
+
+
 BUILTINS: dict[str, Callable[[Path, dict[str, Any]], dict[str, Any]]] = {
     "builtin:write_text": builtin_write_text,
     "builtin:write_json": builtin_write_json,
@@ -346,6 +376,8 @@ BUILTINS: dict[str, Callable[[Path, dict[str, Any]], dict[str, Any]]] = {
     "builtin:gap_synthesis": builtin_synthesize_creation_gap,
     "builtin:verify_project": builtin_verify_project,
     "builtin:patch_project": builtin_patch_project,
+    "builtin:local_creation_provider": builtin_local_creation_provider,
+    "builtin:host_evidence": builtin_host_evidence,
 }
 
 
@@ -460,9 +492,25 @@ class CapabilityStore:
     def route(self, creation_kind: str) -> dict[str, Any] | None:
         return next((c for c in self.live() if creation_kind in c.get("handles", [])), None)
 
+    @staticmethod
+    def required_inputs(manifest: dict[str, Any], inputs: dict[str, Any]) -> list[str]:
+        contract = manifest.get("input_contract", {})
+        required = list(contract.get("required", []))
+        operation = inputs.get("operation")
+        by_operation = contract.get("required_by_operation", {})
+        if isinstance(operation, str) and isinstance(by_operation, dict):
+            conditional = by_operation.get(operation.strip().casefold(), [])
+            if isinstance(conditional, list):
+                required.extend(conditional)
+        return sorted({str(key) for key in required})
+
+    @staticmethod
+    def missing_required_inputs(manifest: dict[str, Any], inputs: dict[str, Any]) -> list[str]:
+        required = CapabilityStore.required_inputs(manifest, inputs)
+        return sorted(key for key in required if key not in inputs)
+
     def invoke(self, manifest: dict[str, Any], inputs: dict[str, Any], _seen: set[str] | None = None) -> dict[str, Any]:
-        required = manifest.get("input_contract", {}).get("required", [])
-        missing = [key for key in required if key not in inputs]
+        missing = self.missing_required_inputs(manifest, inputs)
         if missing:
             raise CapabilityError(f"missing required inputs: {', '.join(missing)}")
         impl = manifest.get("implementation", {})
@@ -472,6 +520,12 @@ class CapabilityStore:
             fn = BUILTINS.get(entry)
             if fn is None:
                 raise CapabilityError(f"unknown builtin entrypoint: {entry}")
+            return fn(self.root, inputs)
+        if kind in {"LOCAL_PROVIDER_BOUNDARY", "EXTERNAL_EVIDENCE_BOUNDARY"}:
+            entry = impl.get("entrypoint")
+            fn = BUILTINS.get(entry)
+            if fn is None:
+                raise CapabilityError(f"unknown boundary entrypoint: {entry}")
             return fn(self.root, inputs)
         if kind == "DETERMINISTIC_ALIAS":
             delegate_id = impl.get("delegate")

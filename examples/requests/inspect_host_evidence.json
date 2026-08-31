@@ -1,0 +1,7 @@
+{
+  "kind": "inspect-host-evidence",
+  "direction": "inspect the runtime browser visual and gameplay evidence boundary",
+  "inputs": {
+    "operation": "inspect"
+  }
+}

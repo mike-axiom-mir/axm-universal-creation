@@ -12,3 +12,5 @@ Current order:
 4. only then allow a separate, contained attempt to repair the old Workshop using capabilities that already work outside it.
 
 A Workshop repair must not endanger, replace, contaminate, or become a dependency of the standalone machine.
+
+This does not prohibit a narrow, inspectable adapter to a separately running local provider. The existing AXM Local Workshop runtime in `waldo-axm-mirror-research` exposes a native WALDO/OpenAI-compatible loopback bridge. Universal Creation may call that bridge only through its model-independent local-provider contract, with explicit per-request consent and strict response validation. It does not inherit or copy the Workshop body, make the Workshop its control plane, or treat model output as implementation proof.

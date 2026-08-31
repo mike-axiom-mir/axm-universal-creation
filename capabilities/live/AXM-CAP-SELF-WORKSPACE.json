@@ -40,7 +40,7 @@
     "keeps candidate edits outside the active machine body",
     "runs the candidate body's own tools/build.py and returns its complete captured build output",
     "lets the candidate choose when to request source, build, anatomy, planning, or creation-trial observations",
-    "leaves merge or adoption as a separate explicit choice"
+    "leaves adoption to the separate explicit AXM-CAP-EVOLVE-MACHINE state transition"
   ],
   "anatomy_refs": [
     {
@@ -68,7 +68,7 @@
     "this is a source-body clone, not an OS security sandbox; candidate tests run with the current process user's host permissions",
     "Git history, runtime creations, snapshots, caches, and build debris are excluded from the cloned source body",
     "included symbolic links are rejected because link-preserving clone semantics are not implemented",
-    "the current operation can clone, inspect, test, and request a merge check; it does not automatically merge, approve, or adopt a candidate body",
+    "the current operation can clone, inspect, test, and request a merge check; explicit adoption is a separate confirmed AXM-CAP-EVOLVE-MACHINE operation",
     "readiness is candidate-declared and is not produced by a score, cadence, or workspace-manager decision",
     "a passing build proves only the checks implemented by that candidate body's build"
   ],

@@ -70,7 +70,8 @@
     "broad work can be recursively split into smaller dependency-ordered steps whenever a supplied checkpoint identifies unresolved independent work",
     "a step may invoke an already live creation capability without bypassing that capability's own boundaries",
     "fast wall-clock execution never removes logical chronology from the workflow receipt",
-    "the engine never claims prepared specialist packets reasoned until a cognition provider, human or other executor supplies actual analysis/evidence"
+    "the engine never claims prepared specialist packets reasoned until a cognition provider, human or other executor supplies actual analysis/evidence",
+    "AXM-CAP-LOCAL-CREATION-PROVIDER can explicitly execute a prepared stepwise checkpoint through one loopback cognition provider and return it to this capability's existing deterministic validator"
   ],
   "anatomy_refs": [
     {
@@ -106,7 +107,7 @@
   },
   "limitations": [
     "specialist personalities are method overlays, not independent identities, consciousness, expertise proof or execution authority",
-    "the deterministic orchestration engine prepares perspective work but does not fake arbitrary semantic reasoning; actual analyses/submissions require an executor",
+    "the deterministic orchestration engine prepares perspective work but does not fake arbitrary semantic reasoning; actual analyses/submissions require an executor, with one explicit local-provider path now available for stepwise checkpoints",
     "+1 votes estimate observed contextual team fit and can be biased by exposure or judging quality; zero points can mean untested rather than bad",
     "combination exploration is bounded to 512 teams per tournament and may sample rather than enumerate the full combinatorial space",
     "recursive step splitting is bounded to depth 8 and 128 total steps",

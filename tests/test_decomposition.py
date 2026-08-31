@@ -43,8 +43,27 @@ class CreationDecompositionTests(unittest.TestCase):
         exact = [hit for hit in plan["live_capability_coverage"] if hit["exact_handle_match"]]
         self.assertTrue(exact)
         self.assertEqual(exact[0]["id"], "AXM-CAP-WRITE-JSON")
+        self.assertTrue(exact[0]["ready_with_supplied_inputs"])
+        self.assertEqual(exact[0]["missing_required_inputs"], [])
         self.assertEqual(plan["gap"]["status"], "covered")
         self.assertIsNone(plan["gap"]["smallest_visible_gap"])
+
+    def test_exact_project_route_with_missing_files_is_an_input_gap_not_coverage(self):
+        plan = self.machine.plan(
+            {
+                "kind": "software-project",
+                "direction": "create a playable local RTS prototype",
+                "inputs": {"path": "creations/rts"},
+            }
+        )
+        exact = next(hit for hit in plan["live_capability_coverage"] if hit["exact_handle_match"])
+        self.assertEqual(exact["id"], "AXM-CAP-WRITE-PROJECT")
+        self.assertFalse(exact["ready_with_supplied_inputs"])
+        self.assertEqual(exact["missing_required_inputs"], ["files"])
+        self.assertEqual(exact["route_status"], "EXACT_ROUTE_INPUTS_INCOMPLETE")
+        self.assertEqual(plan["gap"]["status"], "input-gap")
+        self.assertEqual(plan["gap"]["truth_status"], "EXACT_ROUTE_PRESENT_REQUIRED_INPUTS_MISSING")
+        self.assertEqual(plan["gap"]["smallest_visible_gap"]["kind"], "missing-required-inputs")
 
     def test_mesh_request_uses_existing_component_and_organ_anatomy(self):
         plan = self.machine.plan(

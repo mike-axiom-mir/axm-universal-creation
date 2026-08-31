@@ -23,6 +23,9 @@ PYTHONPATH=src python -m axm_uc trial examples/requests/create_real_site.json
 PYTHONPATH=src python -m axm_uc forge
 PYTHONPATH=src python -m axm_uc gap-forge
 
+# Prepare (but do not send) a request for the existing local creation provider.
+PYTHONPATH=src python -m axm_uc create examples/requests/prepare_local_creation_provider.json
+
 # Run the complete repository verification suite.
 python tools/build.py
 ```
@@ -144,6 +147,10 @@ The small Python runtime currently provides:
 - direct inspection of the 2,165-record Universal Creation Map and 100-record implementation kernel;
 - inspectable live capability manifests;
 - creation routing through live deterministic capabilities;
+- route-readiness reporting that distinguishes an exact handle from the required inputs needed to invoke it;
+- an explicit model-independent loopback provider boundary compatible with AXM Local Workshop/WALDO and other caller-selected OpenAI-compatible local providers;
+- local execution of prepared stepwise specialist checkpoints through that same explicit provider boundary, labeled as one cognition applying several methods rather than fake independent specialist identities;
+- digest-bound, freshness-aware intake for external runtime, browser, visual, gameplay, and accessibility evidence without pretending the deterministic core re-performed those observations;
 - grounded drafts that preserve observed gaps instead of erasing imperfect ordinary creations;
 - strict single-pass project recipes with inspectable variables and rendered paths;
 - dependency-aware software-organ assembly with declared interfaces, explicit order, and file ownership;
@@ -153,8 +160,9 @@ The small Python runtime currently provides:
 - a deterministic detached creation-unit forge for hands, capabilities, organs, protocols, skills, specialists, recipes, and new extension kinds;
 - an evidence-bound gap compiler that can derive and test either the smallest supported UTF-8 file-route adapter or a bounded project recipe of up to three exact producer, verifier, existing-composite, and JSON-report steps from a real unroutable request;
 - complete editable self-workspace cloning, exact source comparison, independent build logs, and voluntary merge-check requests;
+- explicit whole-body candidate adoption with candidate re-test, attributed root fit, caller confirmation, staged byte verification, daily recovery, and preserved Git/runtime surfaces;
 - structured `CAPABILITY_GAP` results that preserve the directional outcome and distinguish current partial coverage;
-- candidate capability testing and direct adoption through the four-root fit declaration;
+- candidate capability testing and direct adoption through a separately attributed current-machine four-root decision;
 - build-owned cleanup of candidate-test debris;
 - one complete daily snapshot export and explicit restore with the current body moved to quarantine;
 - no autonomous-agent requirement and no selected final brain architecture.
@@ -207,6 +215,15 @@ Current live project handles:
 - `analyze-creation-gap`
 - `propose-gap-candidate`
 - `explore-gap-candidate`
+- `inspect-local-creation-provider`
+- `prepare-local-creation-provider`
+- `invoke-local-creation-provider`
+- `provider-backed-project`
+- `creation-host-evidence`
+- `runtime-evidence`
+- `browser-evidence`
+- `visual-evidence`
+- `gameplay-evidence`
 
 Project creation is staged before publish and project-relative file paths may not escape the project body. Plain project creation defaults to `grounded-draft`: exact publication integrity is required, while failed quality/grammar checks remain visible and the imperfect creation survives. Explicit `validated` mode and verified composite handles remain strict and do not publish a failed body.
 
@@ -267,13 +284,17 @@ A passing deterministic trial proves what it actually checked. It **does not** c
 
 See `REAL_CREATION_TRIAL.md` for the working-chat protocol and exact truth boundary.
 
+When exact project files are missing, the planner now reports an input gap instead of false coverage. An explicitly selected local provider can propose those files through the existing AXM Local Workshop/WALDO loopback bridge; Universal Creation then schema-validates, stages, publishes, and independently re-verifies the project. The provider is never called without `allow_call: true`, cannot select the destination, and cannot write the machine body. See `LOCAL_CREATION_PROVIDER.md`.
+
+Runtime, browser, visual, gameplay, and accessibility observations remain a separate host responsibility. They can now return a typed receipt bound to the complete exact project digest map and an explicit freshness lifetime. Stale evidence becomes effectively `UNKNOWN`; changed project bytes reject the receipt. See `HOST_EVIDENCE.md`.
+
 ## Editable self-creation body
 
 `AXM-CAP-SELF-WORKSPACE` can clone the complete current source body into an editable candidate outside the live body, inspect byte-exact differences, and run the candidate's own `tools/build.py` while returning the full captured build output.
 
 The candidate chooses if and when to emit `request-merge-check`. It may request any combination of source comparison, build, candidate-machine inspection, executable-anatomy inspection, planning probes, and real creation trials inside its cloned body. The request is explicitly `MERGE_CHECK_REQUESTED_NOT_APPROVED`: it performs no merge, grants no approval, creates no growth score, and imposes no per-edit checkpoint.
 
-This is source-body isolation, not OS containment. Candidate code runs with the current process user's host permissions. Automatic whole-body merge/adoption remains an explicit current gap.
+This is source-body isolation, not OS containment. Candidate code runs with the current process user's host permissions. A separate `adopt-whole-body-candidate` evolution operation can now make a tested candidate the continuing source body, but only with explicit confirmation, attributed root fit, daily recovery, exact staged/installed byte verification, and preserved Git/runtime surfaces. It is not a Git merge or automatic approval.
 
 Create the first editable clone body:
 
@@ -323,6 +344,8 @@ PYTHONPATH=src python -m axm_uc create examples/requests/create_organ_site.json
 PYTHONPATH=src python -m axm_uc create examples/requests/create_reusable_organ_site.json
 PYTHONPATH=src python -m axm_uc create examples/requests/clone_self_workspace.json
 PYTHONPATH=src python -m axm_uc forge
+PYTHONPATH=src python -m axm_uc create examples/requests/prepare_local_creation_provider.json
+PYTHONPATH=src python -m axm_uc create examples/requests/inspect_host_evidence.json
 PYTHONPATH=src python -m axm_uc create examples/requests/spawn_creation_protocol.json
 PYTHONPATH=src python -m axm_uc create examples/requests/test_spawned_creation_protocol.json
 PYTHONPATH=src python -m axm_uc create examples/requests/propose_verified_template_gap.json

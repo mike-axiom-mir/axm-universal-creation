@@ -17,10 +17,10 @@ class CompositeAndExecutableTests(unittest.TestCase):
         machine = UniversalCreationMachine(ROOT)
         summary = machine.executable()["summary"]
         self.assertEqual(summary["truth_status"], "EXPLICIT_LIVE_CAPABILITY_BINDINGS")
-        self.assertEqual(summary["implemented_master_records"], 26)
-        self.assertEqual(summary["implemented_master_by_level"], {"component": 19, "organ": 7})
-        self.assertEqual(summary["live_capabilities"], 20)
-        self.assertEqual(summary["resolved_bindings"], 56)
+        self.assertEqual(summary["implemented_master_records"], 27)
+        self.assertEqual(summary["implemented_master_by_level"], {"atom": 1, "component": 19, "organ": 7})
+        self.assertEqual(summary["live_capabilities"], 22)
+        self.assertEqual(summary["resolved_bindings"], 61)
 
         project = machine.executable(master_id="AXM-24-WORKSPACE-COLLABORATION-C-010-project")["master"]
         self.assertEqual(project["status"], "live-backed")
@@ -70,7 +70,14 @@ class CompositeAndExecutableTests(unittest.TestCase):
 
         adapter = machine.executable(master_id="AXM-19-AI-ML-AGENTS-C-009-adapter")["master"]
         self.assertEqual(adapter["status"], "live-backed")
-        self.assertEqual(adapter["implemented_by"], ["AXM-CAP-SYNTHESIZE-CREATION-GAP"])
+        self.assertEqual(
+            adapter["implemented_by"],
+            ["AXM-CAP-LOCAL-CREATION-PROVIDER", "AXM-CAP-SYNTHESIZE-CREATION-GAP"],
+        )
+
+        observation = machine.executable(master_id="AXM-01-PROVENANCE-A-012-observation")["master"]
+        self.assertEqual(observation["status"], "live-backed")
+        self.assertEqual(observation["implemented_by"], ["AXM-CAP-BIND-HOST-EVIDENCE"])
 
         rollback = machine.executable(master_id="AXM-01-PROVENANCE-C-014-rollback-snapshot")["master"]
         self.assertEqual(rollback["status"], "live-backed")

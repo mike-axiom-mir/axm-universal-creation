@@ -57,9 +57,15 @@ def build_parser() -> argparse.ArgumentParser:
 
     candidate_p = sub.add_parser("candidate", help="test or adopt a candidate capability")
     candidate_sub = candidate_p.add_subparsers(dest="candidate_command", required=True)
-    for name in ("test", "adopt"):
-        cp = candidate_sub.add_parser(name)
-        cp.add_argument("manifest")
+    candidate_test = candidate_sub.add_parser("test")
+    candidate_test.add_argument("manifest")
+    candidate_adopt = candidate_sub.add_parser("adopt")
+    candidate_adopt.add_argument("manifest")
+    candidate_adopt.add_argument(
+        "--root-fit-decision",
+        required=True,
+        help="JSON file containing decision_source, decided_by, evidence_refs, and four roots",
+    )
 
     snapshot_p = sub.add_parser("snapshot", help="daily snapshot export/restore")
     snapshot_sub = snapshot_p.add_subparsers(dest="snapshot_command", required=True)
@@ -113,7 +119,11 @@ def main(argv: list[str] | None = None) -> int:
         return 0 if result.get("passed") is True else 2
     if args.command == "candidate":
         manifest = Path(args.manifest)
-        result = machine.test_candidate(manifest) if args.candidate_command == "test" else machine.adopt_candidate(manifest)
+        if args.candidate_command == "test":
+            result = machine.test_candidate(manifest)
+        else:
+            root_fit = json.loads(Path(args.root_fit_decision).read_text(encoding="utf-8"))
+            result = machine.adopt_candidate(manifest, root_fit=root_fit)
         _print(result)
         return 0 if result.get("passed", result.get("adopted", False)) else 2
     if args.command == "snapshot":
