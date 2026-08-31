@@ -1,0 +1,161 @@
+{
+  "id": "AXM-CAP-CHAMELEON-FABRIC",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Extend adaptive Vector Cells with continuous morphing, richer material-graph truth, explicit environmental sensor fusion, and bounded simulation-to-reality discrepancy calibration while reusing the existing Vector Cell, simulation, Paintgun, provenance, and recovery machinery.",
+  "handles": [
+    "chameleon-fabric",
+    "morph-thoughts",
+    "continuous-morph",
+    "morph-vector-cells",
+    "morph-cells",
+    "chameleon-morph",
+    "compile-material-graph",
+    "compile-material",
+    "rich-material",
+    "apply-material-graph",
+    "apply-material",
+    "adapt-environment",
+    "sensor-adapt",
+    "environment-adapt",
+    "compare-reality",
+    "reality-feedback",
+    "simulation-reality-feedback",
+    "recalibrate-simulation",
+    "reopen-from-reality",
+    "re-simulate-reality-gap",
+    "record-calibration",
+    "learn-exact-context",
+    "inspect-calibrations",
+    "calibration-history"
+  ],
+  "input_contract": {
+    "required": [],
+    "properties": {
+      "operation": "explicit chameleon operation",
+      "from_thought": "continuous morph source Paintgun thought",
+      "to_thought": "continuous morph target Paintgun thought",
+      "factor": "continuous morph factor 0..1",
+      "fabric": "existing Vector Cell Fabric body for vector-state morphing or environmental adaptation",
+      "from_state": "vector endpoint with observation_scale and optional choice",
+      "to_state": "vector endpoint with observation_scale and optional choice",
+      "material_graph": "bounded rich surface graph including metallic, roughness, transmission, IOR, clearcoat, anisotropy, subsurface, normal, displacement and procedural microstructure declarations",
+      "thought": "Paintgun thought receiving a compiled material graph",
+      "object_id": "exact Paintgun object id receiving the material graph",
+      "readings": "explicit externally supplied numeric environmental/sensor readings",
+      "policy": "sensor-fusion drivers plus from_state/to_state defining the adaptive range",
+      "simulation": "exact completed simulation receipt for reality comparison or recalibration",
+      "observation": "external reality observation with source, executor and measured object channel fields",
+      "context_key": "explicit condition/context binding for calibration evidence",
+      "feedback": "exact simulation-reality feedback receipt"
+    }
+  },
+  "output_contract": {
+    "kind": "adaptive-chameleon-visual-state-or-calibration-receipt",
+    "contains": [
+      "typed operation and truth status",
+      "exact morph/material/environment/reality inputs and digests",
+      "Paintgun-compatible thought and cinematic projection when applicable",
+      "explicit approximation boundaries for rich materials",
+      "explicit supplied sensor evidence and fusion trace",
+      "simulation-reality discrepancies and exact-condition correction evidence",
+      "no silent universal generalization from one observation"
+    ]
+  },
+  "dependencies": [
+    "AXM-CAP-SIMULATE-CREATION",
+    "AXM-CAP-PAINTGUN-SPECIALIST"
+  ],
+  "relationships": [
+    "continuous morphing operates between exact Paintgun or resolved Vector Cell states rather than replacing Vector Cell identity",
+    "compatible shapes interpolate geometry and channels while incompatible topology crossfades rather than claiming impossible deformation",
+    "rich material fields remain inspectable even when the current SVG renderer only approximates a subset",
+    "environment adaptation fuses explicit supplied readings into one inspectable continuous state factor and never pretends a hardware sensor was sampled",
+    "reality feedback is externally supplied evidence that may reopen simulation; one mismatch remains exact-context evidence rather than becoming a universal rule",
+    "recorded calibration history is evidence for future simulator-rule design and never becomes authority or hidden self-modification"
+  ],
+  "anatomy_refs": [
+    {
+      "id": "AXM-11-3D-SPATIAL-C-018-morph-target",
+      "role": "implements",
+      "basis": "The chameleon fabric accepts two exact visual endpoints and produces a bounded deterministic intermediate state with explicit factor and topology handling."
+    },
+    {
+      "id": "AXM-13-ANIMATION-VIDEO-C-005-morph-animation",
+      "role": "implements",
+      "basis": "Morph factor drives continuous visual interpolation/crossfade across a reproducible 0..1 transition."
+    },
+    {
+      "id": "AXM-12-RENDERING-MATERIALS-C-007-material-graph",
+      "role": "implements",
+      "basis": "Rich material properties are normalized as one inspectable graph and compiled into Paintgun-compatible channels plus retained material truth."
+    },
+    {
+      "id": "AXM-23-PROCEDURAL-C-013-procedural-material-graph",
+      "role": "implements",
+      "basis": "Bounded microstructure modes such as fibers, stripes, checker, noise and scales compile deterministically to current renderer approximations while preserving source parameters."
+    },
+    {
+      "id": "AXM-12-RENDERING-MATERIALS-O-001-material-compiler",
+      "role": "implements",
+      "basis": "The material graph compiler validates rich material declarations and emits exact Paintgun material/color/skin/light/shade channels plus approximation evidence."
+    },
+    {
+      "id": "AXM-15-SIMULATION-XR-C-019-sensor-model",
+      "role": "implements",
+      "basis": "Explicit numeric sensor readings are normalized against declared ranges and retained with their contribution to adaptation."
+    },
+    {
+      "id": "AXM-15-SIMULATION-XR-O-011-sensor-fusion-organ",
+      "role": "implements",
+      "basis": "Multiple explicit readings are fused through declared weights into one continuous adaptation factor that drives the chameleon morph."
+    },
+    {
+      "id": "AXM-10-2D-IMAGING-C-021-normal-map",
+      "role": "uses",
+      "basis": "Rich materials retain an explicit procedural normal descriptor, while the current SVG generation honestly marks it as metadata rather than claiming full normal-map rendering."
+    },
+    {
+      "id": "AXM-01-PROVENANCE-A-012-observation",
+      "role": "uses",
+      "basis": "Reality feedback requires an explicit external observation source, executor, measurements and digest-bound comparison against the simulated thought."
+    },
+    {
+      "id": "AXM-13-ANIMATION-VIDEO-A-013-morph-weight",
+      "role": "uses",
+      "basis": "The explicit 0..1 factor is the bounded morph weight for every intermediate state."
+    }
+  ],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:chameleon_fabric",
+    "source": "src/axm_uc/chameleon.py"
+  },
+  "limitations": [
+    "continuous compatible geometry interpolation is currently bounded to Paintgun rect/circle/ellipse/polygon shapes; incompatible shapes and changed topology use continuous crossfade",
+    "rich material truth exceeds the current SVG renderer: normal, displacement, refraction/IOR, anisotropy and subsurface remain explicit descriptors or bounded visual approximations rather than physically accurate rendering",
+    "environment readings are supplied observations; no hardware or browser sensor sampling is claimed",
+    "sensor fusion is currently a transparent weighted normalized policy rather than learned hidden control",
+    "reality recalibration is first-order numeric exact-condition correction and may still be wrong on the next observation",
+    "one or repeated calibration observations are not silently generalized into global simulator laws"
+  ],
+  "persistent_state": "state/simulation-calibration.json only when record-calibration is explicitly invoked",
+  "root_fit": {
+    "truth": {
+      "fit": true,
+      "basis": "Morph endpoints, factor, rich material truth, approximation choices, sensor readings, fusion weights, external observations, discrepancies and calibration evidence all remain inspectable."
+    },
+    "agency": {
+      "fit": true,
+      "basis": "Adaptation policy and readings are explicit caller state, and persistent calibration requires an explicit record operation rather than silent learning."
+    },
+    "continuity": {
+      "fit": true,
+      "basis": "Vector/Paintgun identity is preserved across compatible morphs; topology changes are represented as bounded crossfades and calibration evidence does not rewrite the live machine body."
+    },
+    "wisdom-before-speed": {
+      "fit": true,
+      "basis": "The fabric preserves simulation before materialization, distinguishes rich truth from renderer approximation, and lets observed reality reopen the simulator instead of protecting an earlier simulated story."
+    }
+  }
+}
