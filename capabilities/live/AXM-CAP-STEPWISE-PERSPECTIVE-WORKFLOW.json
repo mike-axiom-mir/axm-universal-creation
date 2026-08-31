@@ -1,0 +1,110 @@
+{
+  "id": "AXM-CAP-STEPWISE-PERSPECTIVE-WORKFLOW",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Turn broad creation work into an explicit microstep workflow whose logical chronology remains plan -> pre-step perspective analysis -> bounded action/result -> post-step perspective analysis -> revise/split/replan/advance, even when the entire workflow executes inside one fast call.",
+  "handles": [
+    "stepwise-workflow",
+    "microstep-workflow",
+    "perspective-step-run",
+    "instant-staged-workflow"
+  ],
+  "input_contract": {
+    "required": [],
+    "properties": {
+      "operation": "prepare, start, checkpoint, record-analysis, execute, record-result, split, replan, instant, or inspect",
+      "goal": "explicit workflow goal",
+      "request": "optional ordinary machine request used only to attach deterministic anatomy/direction decomposition to planning",
+      "plan": "selected axm.stepwise-perspective-plan/v0.1 plan",
+      "workflow": "exact digest-bound axm.stepwise-perspective-workflow/v0.1 state",
+      "checkpoint": "exact checkpoint prepared for the current workflow digest and step",
+      "analyses": "executor-supplied perspective analyses keyed by the exact prepared specialist ids",
+      "result": "external JSON-serializable result for analysis-only or externally executed steps",
+      "evidence": "explicit evidence references for a recorded external result",
+      "substeps": "two or more smaller replacement steps when a checkpoint requires SPLIT",
+      "replacement_steps": "replacement remaining plan when a checkpoint requires REPLAN",
+      "step_records": "instant mode chronological per-step pre analyses, optional result, and post analyses",
+      "pool_size": "planning/perspective specialist pool bound",
+      "team_size": "planning tournament team size",
+      "max_teams": "planning tournament team bound",
+      "seed": "optional deterministic exploration seed"
+    }
+  },
+  "output_contract": {
+    "kind": "stepwise-perspective-workflow",
+    "contains": [
+      "parallel planning tournament before plan selection",
+      "digest-bound explicit step plan",
+      "current workflow cursor and per-step state",
+      "best/middle/low/random perspective checkpoint before each action",
+      "exact action/result receipt",
+      "best/middle/low/random perspective checkpoint after each result",
+      "typed PROCEED/SPLIT/REPLAN/HOLD transition",
+      "recursive bounded step splitting",
+      "chronological timeline proving logical stages even for instant execution"
+    ]
+  },
+  "dependencies": [
+    "AXM-CAP-SPECIALIST-TOURNAMENT"
+  ],
+  "relationships": [
+    "uses the specialist pool as a changing set of eyes before and after each meaningful step rather than only once at the beginning",
+    "keeps historical best-fit perspectives in the panel while deliberately retaining middle, low-ranked and deterministic-random challengers",
+    "can invoke any already live creation capability as an action step without bypassing that capability's own boundaries",
+    "does not pretend that prepared perspective packets analyzed anything until a human/model/cognition provider supplies their actual analyses",
+    "allows broad work to be recursively split into smaller steps when any supplied checkpoint identifies unresolved independent work"
+  ],
+  "anatomy_refs": [
+    {
+      "id": "AXM-24-WORKSPACE-COLLABORATION-O-006-project-planner",
+      "role": "implements",
+      "basis": "Preparation runs a multi-perspective planning tournament and validates the selected explicit dependency-ordered step plan."
+    },
+    {
+      "id": "AXM-03-TIME-STATE-EVENT-O-007-workflow-engine",
+      "role": "implements",
+      "basis": "The runtime advances through typed workflow states and bounded transitions, including split, replan, hold and completion."
+    },
+    {
+      "id": "AXM-03-TIME-STATE-EVENT-C-015-workflow-step",
+      "role": "implements",
+      "basis": "Every unit of work is an explicit step with one purpose, expected evidence, stop condition, dependencies and result state."
+    },
+    {
+      "id": "AXM-19-AI-ML-AGENTS-C-035-specialist-profile",
+      "role": "uses",
+      "basis": "Pre/post checkpoints reuse detailed contextual specialist profiles rather than a single undifferentiated analysis voice."
+    }
+  ],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:stepwise_perspective_workflow",
+    "source": "src/axm_uc/stepwise_workflow.py"
+  },
+  "limitations": [
+    "the deterministic workflow engine orchestrates planning, checkpoints and live capability calls but does not itself supply semantic specialist reasoning",
+    "the most conservative checkpoint transition is a control rule over supplied analyses, not proof that the strictest perspective is objectively correct",
+    "recursive splitting is bounded to depth 8 and 128 total steps to prevent unbounded decomposition",
+    "instant staged execution preserves logical chronology in receipts but does not imply wall-clock delay between stages",
+    "a step with no live capability route holds rather than inventing execution"
+  ],
+  "persistent_state": "none in v0; the caller carries digest-bound workflow state, while specialist fit history remains owned by the specialist-tournament ledger",
+  "root_fit": {
+    "truth": {
+      "fit": true,
+      "basis": "Every plan, checkpoint, result, split and transition is explicit; no analysis or execution is claimed when only a packet was prepared."
+    },
+    "agency": {
+      "fit": true,
+      "basis": "Plans remain selectable and revisable, perspective disagreements stay visible, and no checkpoint gains authority beyond controlling the declared workflow transition."
+    },
+    "continuity": {
+      "fit": true,
+      "basis": "Each workflow state is digest-bound and contains a chronological timeline plus retired/replanned step evidence."
+    },
+    "wisdom-before-speed": {
+      "fit": true,
+      "basis": "Fast execution cannot skip the logical pre-analysis and post-analysis boundaries; broad work can be split before continuing."
+    }
+  }
+}
