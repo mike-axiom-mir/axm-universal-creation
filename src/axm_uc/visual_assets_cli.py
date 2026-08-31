@@ -15,6 +15,7 @@ from .visual_3d import (
     compile_adaptive_3d_request,
     forge_3d_asset,
     inspect_glb,
+    provision_blender,
     record_3d_review,
 )
 
@@ -57,6 +58,8 @@ def build_parser() -> argparse.ArgumentParser:
     learning.add_argument("--state-root", default=".")
     learning.add_argument("--context")
     sub.add_parser("3d-catalog", help="show engine-ready 3D forge assets, outputs, and runtime contract")
+    runtime_3d = sub.add_parser("3d-runtime", help="provision and verify AXM's pinned portable 3D runtime")
+    runtime_3d.add_argument("--cache-root", help="optional explicit managed runtime cache")
     plan_3d = sub.add_parser("3d-plan", help="compile a validated engine-ready 3D request")
     plan_3d.add_argument("request", help="path to a UTF-8 JSON 3D request")
     adaptive_3d = sub.add_parser("3d-plan-adaptive", help="replay exact-context lessons into a 3D request")
@@ -75,6 +78,7 @@ def build_parser() -> argparse.ArgumentParser:
     forge_3d.add_argument("request", help="path to a UTF-8 JSON 3D request")
     forge_3d.add_argument("output", help="explicit output directory")
     forge_3d.add_argument("--blender", help="Blender executable; otherwise AXM_BLENDER or PATH")
+    forge_3d.add_argument("--no-runtime-bootstrap", action="store_true", help="fail instead of provisioning the pinned runtime")
 
     generate = sub.add_parser("generate", help="generate one real asset, material, pigment, sprite, mesh, or vector part")
     generate.add_argument("category", choices=BASE_CATEGORIES + EXPANDED_CATEGORIES)
@@ -132,6 +136,8 @@ def main(argv: list[str] | None = None) -> int:
         result = inspect_visual_learning(args.state_root, context_key=args.context)
     elif args.command == "3d-catalog":
         result = catalog_3d()
+    elif args.command == "3d-runtime":
+        result = provision_blender(args.cache_root)
     elif args.command == "3d-plan":
         result = compile_3d_request(json.loads(Path(args.request).read_text(encoding="utf-8")))
     elif args.command == "3d-plan-adaptive":
@@ -149,7 +155,10 @@ def main(argv: list[str] | None = None) -> int:
         result = inspect_glb(args.path)
     elif args.command == "3d-forge":
         request = json.loads(Path(args.request).read_text(encoding="utf-8"))
-        result = forge_3d_asset(Path.cwd(), request, args.output, blender=args.blender)
+        result = forge_3d_asset(
+            Path.cwd(), request, args.output, blender=args.blender,
+            auto_provision_runtime=not args.no_runtime_bootstrap,
+        )
     elif args.command == "kit":
         result = generate_kit(args.path, profile=args.profile, seed=args.seed, size=args.size, replace=args.replace)
     elif args.command == "expansion-kit":
@@ -173,3 +182,4 @@ def main(argv: list[str] | None = None) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+

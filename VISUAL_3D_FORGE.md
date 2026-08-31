@@ -18,6 +18,15 @@ The GLB inspector parses the container and JSON chunk directly. It reports real
 node, mesh, primitive, triangle, material, image, and texture counts; it does not
 infer them from filenames or Blender logs.
 
+## Authored material stage
+
+Hero builders can consume retained `basecolor`, `roughness`, `metallic`, and
+`normal` source maps from `assets/materials`. The forge validates every channel,
+packs it into the editable source file, preserves the maps in GLB exports, and
+applies deterministic object-scale UV transforms so one material family does not
+repeat at one visibly uniform scale. Missing authored sets fail the build instead
+of silently reverting to flat color.
+
 ## Runtime bootstrap
 
 The catalog pins Blender 5.2.1 LTS for Windows x64:
@@ -25,16 +34,21 @@ The catalog pins Blender 5.2.1 LTS for Windows x64:
 - URL: `https://mirror.blender.org/release/Blender5.2/blender-5.2.1-windows-x64.zip`
 - SHA-256: `0e631dad7d0cad6d5d18abdd2e2550f6c0213215334eda00ddbd3d22b96ecb2c`
 
-Set `AXM_BLENDER` to the verified executable or pass `--blender`. The runtime is
-replaceable; the machine's contracts do not depend on a manually edited Blender
-session.
+No manual Blender installation is required. `3d-forge` first checks an explicit
+`--blender`, `AXM_BLENDER`, `PATH`, and AXM's managed runtime cache. When none is
+available it downloads the pinned portable archive, verifies the complete
+archive against the retained SHA-256, and installs it in the per-user AXM
+runtime cache. `AXM_RUNTIME_CACHE` can relocate that cache. The runtime remains
+replaceable; the machine owns provisioning, requests, modeling programs, export
+policy, verification, evidence, and learning.
 
 ## Commands
 
 ```text
 axm-assets 3d-catalog
+axm-assets 3d-runtime
 axm-assets 3d-plan request.json
-axm-assets 3d-forge request.json output/asset --blender path/to/blender
+axm-assets 3d-forge request.json output/asset
 axm-assets inspect-glb output/asset/asset_LOD0.glb
 ```
 
@@ -94,3 +108,4 @@ Every forge receipt contains two deliberately separate outcomes:
 Passing the technical gates never promotes an asset to AAA. The receipt says
 `AAA_ACCEPTED` only when every technical gate and every required visual
 criterion passes against a render proof from that exact forge run.
+

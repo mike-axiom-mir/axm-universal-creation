@@ -3,27 +3,27 @@
     "3d/axiom-bastion-frame/hero": {
       "criteria": {
         "aaa-form-hierarchy": {
-          "fail": 3,
+          "fail": 5,
           "pass": 0,
           "unknown": 0
         },
         "faction-silhouette": {
           "fail": 0,
-          "pass": 3,
+          "pass": 5,
           "unknown": 0
         },
         "functional-topology-all-angles": {
           "fail": 0,
-          "pass": 2,
+          "pass": 4,
           "unknown": 1
         },
         "material-authenticity": {
           "fail": 2,
-          "pass": 1,
+          "pass": 3,
           "unknown": 0
         },
         "non-toy-proportions": {
-          "fail": 3,
+          "fail": 5,
           "pass": 0,
           "unknown": 0
         }
@@ -31,7 +31,9 @@
       "dedup_digests": [
         "9a2ac6cc5b645315dcd86c0bc93d8fc682562dd0a08a061d4ece4412ae44d6ad",
         "2c26df32c816991b9938a782dd2c5080674bdb37e46228cbdce749b2dc73384e",
-        "1fc62229aa4ef2aba7262182cd15ec59969d005fb094f701f5f2561b937d9d6d"
+        "1fc62229aa4ef2aba7262182cd15ec59969d005fb094f701f5f2561b937d9d6d",
+        "48b44cfb977dc03fa8e3df46f05846c08101beea1b11089bfed0ee9209d4b034",
+        "d6dd3d680b7b937810217cd7ee8cc1d032816c1a32b962aee3349b89c94ca6d0"
       ],
       "lessons": {
         "author-rear-and-weapon-secondary-forms": {
@@ -66,6 +68,23 @@
             ],
             "criteria_add": [
               "hero silhouette has a broad grounded stance and asymmetrical overlapping primary masses"
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        },
+        "replace-box-dominant-torso-and-backpack": {
+          "confirmations": 1,
+          "last_evidence": "The full turntable confirms functional topology and stronger materials, but side and rear views are still dominated by one deep rectangular torso and one flat backpack plane.",
+          "last_evidence_digest": "d6dd3d680b7b937810217cd7ee8cc1d032816c1a32b962aee3349b89c94ca6d0",
+          "patch": {
+            "avoid_add": [
+              "single deep box defining torso and backpack silhouette"
+            ],
+            "constraints_add": [
+              "split the torso depth into offset rib cage, reactor, shoulder yoke, waist frame, and rear power modules with visible negative space"
+            ],
+            "criteria_add": [
+              "torso and rear power plant preserve tapered interlocking silhouette in side and rear views"
             ]
           },
           "status": "ACTIVE_EXACT_CONTEXT"
@@ -161,45 +180,81 @@
             ]
           },
           "status": "ACTIVE_EXACT_CONTEXT"
+        },
+        "surface-pass-does-not-replace-silhouette-sculpt": {
+          "confirmations": 1,
+          "last_evidence": "Authored ceramic and gunmetal maps now read coherently, but the upright narrow stance, compact limbs, oversized weapon projection, and cable-like rear accents still reveal a procedural assembly.",
+          "last_evidence_digest": "48b44cfb977dc03fa8e3df46f05846c08101beea1b11089bfed0ee9209d4b034",
+          "patch": {
+            "avoid_add": [
+              "treating PBR detail as a substitute for authored silhouette and secondary geometry"
+            ],
+            "constraints_add": [
+              "broaden load-bearing stance, enlarge feet and forearms, integrate the railgun into the shoulder mass, and terminate rear conduits in visible hardware"
+            ],
+            "criteria_add": [
+              "match approved turnaround proportions before adding tertiary accents"
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
         }
       },
       "technical": {},
-      "use_count": 3
+      "use_count": 5
     },
     "3d/mir-sanctuary-keeper/hero": {
       "criteria": {
         "aaa-form-hierarchy": {
-          "fail": 3,
+          "fail": 5,
           "pass": 0,
           "unknown": 0
         },
         "faction-silhouette": {
           "fail": 1,
-          "pass": 2,
+          "pass": 4,
           "unknown": 0
         },
         "functional-topology-all-angles": {
           "fail": 0,
-          "pass": 3,
+          "pass": 5,
           "unknown": 0
         },
         "material-authenticity": {
           "fail": 3,
-          "pass": 0,
+          "pass": 2,
           "unknown": 0
         },
         "non-toy-proportions": {
           "fail": 2,
-          "pass": 1,
+          "pass": 3,
           "unknown": 0
         }
       },
       "dedup_digests": [
         "152997e712aa78781878c5c1e8e147c97dbee4f37d7beaeb14a06b04d8625f42",
         "9ce1214fd1989834b06b4c07f50e971a09684e05591fb276713ea48a32cbcb96",
-        "c1882cf8f0778684534c60820f123e7e908d2d32fb77ccd3d676fe13d8336011"
+        "c1882cf8f0778684534c60820f123e7e908d2d32fb77ccd3d676fe13d8336011",
+        "1bf10077574e68e133c934f986e96dea52bf46b8d2df2317caf72ed10f22d13e",
+        "d14c79bd1de363fe63fac873e9effd419bad5b651e7e87db65fc0cfd7a642cd9"
       ],
       "lessons": {
+        "aged-material-pass-needs-deeper-petal-sculpt": {
+          "confirmations": 1,
+          "last_evidence": "The authored aged-ivory response removes the clean-plastic read, while the armor remains too uniformly thin and repeated to match the target depth, overlap, and sculpted edge hierarchy.",
+          "last_evidence_digest": "1bf10077574e68e133c934f986e96dea52bf46b8d2df2317caf72ed10f22d13e",
+          "patch": {
+            "avoid_add": [
+              "uniformly extruded repeated petal plates"
+            ],
+            "constraints_add": [
+              "vary petal thickness, curvature, overlap, recess depth, and edge damage by anatomical role"
+            ],
+            "criteria_add": [
+              "petal armor carries distinct crown, root, inset, and chipped-edge depths"
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        },
         "extend-radial-cage-through-pelvis": {
           "confirmations": 1,
           "last_evidence": "The learned trunk fix works at the front, but the rear proof still exposes a single block-backed pelvis and central housing.",
@@ -325,11 +380,29 @@
             ]
           },
           "status": "ACTIVE_EXACT_CONTEXT"
+        },
+        "root-petals-into-volumetric-rib-cage": {
+          "confirmations": 1,
+          "last_evidence": "Name-driven petal variation improves repetition, but side views still expose parallel thin plates around a sparse tubular trunk rather than armor grown from a volumetric rib cage.",
+          "last_evidence_digest": "d14c79bd1de363fe63fac873e9effd419bad5b651e7e87db65fc0cfd7a642cd9",
+          "patch": {
+            "avoid_add": [
+              "parallel thin plates floating around a tubular torso"
+            ],
+            "constraints_add": [
+              "curve major shells across depth and build nested root sockets before adding floating edge ornaments"
+            ],
+            "criteria_add": [
+              "each major petal overlaps and roots into a visible three-dimensional rib, hinge, or socket"
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
         }
       },
       "technical": {},
-      "use_count": 3
+      "use_count": 5
     }
   },
   "schema": "axm.visual-use-profile/v0.1"
 }
+

@@ -3,9 +3,13 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import platform
 import shutil
 import struct
 import subprocess
+import tempfile
+import urllib.request
+import zipfile
 from pathlib import Path
 from typing import Any
 
@@ -79,9 +83,83 @@ def catalog_3d() -> dict[str, Any]:
         "aaa_quality_gates": AAA_QUALITY_GATES,
         "truth": {
             "rendererIsExternalRuntime": True,
+            "runtimeIsMachineProvisioned": True,
             "generatorAndVerificationLiveInMachine": True,
             "visualTasteRequiresRenderedReview": True,
         },
+    }
+
+
+def _default_runtime_cache() -> Path:
+    configured = os.environ.get("AXM_RUNTIME_CACHE")
+    if configured:
+        return Path(configured).expanduser().resolve()
+    local_app_data = os.environ.get("LOCALAPPDATA")
+    if local_app_data:
+        return (Path(local_app_data) / "AXM Universal Creation" / "runtimes").resolve()
+    return (Path(tempfile.gettempdir()) / "axm-universal-creation" / "runtimes").resolve()
+
+
+def provision_blender(
+    cache_root: str | Path | None = None,
+    *,
+    bootstrap: dict[str, str] | None = None,
+) -> dict[str, Any]:
+    """Install the pinned portable Blender runtime into AXM's managed cache.
+
+    The archive is admitted only after its bytes match the pinned SHA-256.  The
+    result is idempotent: an existing executable is reused without a download.
+    ``bootstrap`` is injectable so the verifier can be tested with a tiny local
+    archive instead of trusting a network fixture.
+    """
+    if platform.system() != "Windows":
+        raise RuntimeError("the retained bootstrap currently supports Windows x64 only")
+    spec = dict(BLENDER_BOOTSTRAP if bootstrap is None else bootstrap)
+    version = _text(spec.get("version"), "bootstrap.version", 80)
+    url = _text(spec.get("windows_x64_url"), "bootstrap.windows_x64_url", 1000)
+    expected_sha = _text(spec.get("windows_x64_sha256"), "bootstrap.windows_x64_sha256", 64).casefold()
+    if len(expected_sha) != 64 or any(char not in "0123456789abcdef" for char in expected_sha):
+        raise ValueError("bootstrap.windows_x64_sha256 must be a 64-character hexadecimal digest")
+
+    root = Path(cache_root).expanduser().resolve() if cache_root else _default_runtime_cache()
+    runtime_dir = root / f"blender-{version.replace(' ', '-').casefold()}-windows-x64"
+    executable = runtime_dir / "blender.exe"
+    if executable.is_file():
+        return {
+            "schema": "axm.3d-runtime-provision/v0.1",
+            "status": "REUSED_MACHINE_MANAGED_RUNTIME",
+            "runtime": "blender",
+            "version": version,
+            "executable": str(executable),
+            "archive_sha256": expected_sha,
+        }
+
+    root.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix="axm-blender-bootstrap-", dir=str(root)) as temporary:
+        staging = Path(temporary)
+        archive = staging / "runtime.zip"
+        urllib.request.urlretrieve(url, archive)
+        actual_sha = _sha256(archive)
+        if actual_sha.casefold() != expected_sha:
+            raise RuntimeError(
+                f"Blender bootstrap digest mismatch: expected {expected_sha}, received {actual_sha}"
+            )
+        extracted = staging / "extracted"
+        with zipfile.ZipFile(archive) as bundle:
+            bundle.extractall(extracted)
+        candidates = sorted(extracted.rglob("blender.exe"))
+        if len(candidates) != 1:
+            raise RuntimeError("verified Blender archive did not contain exactly one blender.exe")
+        source_root = candidates[0].parent
+        shutil.copytree(source_root, runtime_dir)
+
+    return {
+        "schema": "axm.3d-runtime-provision/v0.1",
+        "status": "INSTALLED_VERIFIED_MACHINE_MANAGED_RUNTIME",
+        "runtime": "blender",
+        "version": version,
+        "executable": str(executable),
+        "archive_sha256": expected_sha,
     }
 
 
@@ -242,13 +320,32 @@ def find_blender(explicit: str | Path | None = None) -> Path:
     discovered = shutil.which("blender")
     if discovered:
         candidates.append(Path(discovered))
+    managed_root = _default_runtime_cache()
+    if managed_root.is_dir():
+        candidates.extend(sorted(managed_root.glob("blender-*-windows-x64/blender.exe"), reverse=True))
     for candidate in candidates:
         resolved = candidate.expanduser().resolve()
         if resolved.is_file():
             return resolved
     raise FileNotFoundError(
-        "Blender was not found. Set AXM_BLENDER or use --blender after running the verified bootstrap."
+        "Blender was not found in an explicit path, AXM_BLENDER, PATH, or the AXM managed runtime cache."
     )
+
+
+def resolve_blender(explicit: str | Path | None = None, *, auto_provision: bool = True) -> tuple[Path, dict[str, Any]]:
+    try:
+        executable = find_blender(explicit)
+        return executable, {
+            "schema": "axm.3d-runtime-provision/v0.1",
+            "status": "FOUND_EXISTING_RUNTIME",
+            "runtime": "blender",
+            "executable": str(executable),
+        }
+    except FileNotFoundError:
+        if explicit or not auto_provision:
+            raise
+    receipt = provision_blender()
+    return Path(receipt["executable"]), receipt
 
 
 def _sha256(path: Path) -> str:
@@ -309,6 +406,7 @@ def forge_3d_asset(
     output: str | Path,
     *,
     blender: str | Path | None = None,
+    auto_provision_runtime: bool = True,
     timeout_seconds: int = 1800,
 ) -> dict[str, Any]:
     machine_root = Path(root).resolve()
@@ -319,7 +417,7 @@ def forge_3d_asset(
     target.mkdir(parents=True, exist_ok=True)
     request_path = target / "forge-request.json"
     request_path.write_text(json.dumps(normalized, indent=2) + "\n", encoding="utf-8", newline="\n")
-    executable = find_blender(blender)
+    executable, runtime_receipt = resolve_blender(blender, auto_provision=auto_provision_runtime)
     script = machine_root / "tools" / "blender" / "axm_blender_forge.py"
     if not script.is_file():
         raise FileNotFoundError(f"machine 3D forge script is missing: {script}")
@@ -345,6 +443,7 @@ def forge_3d_asset(
         "truth_status": "BLENDER_FORGE_EXECUTED_AND_GLB_DECODED",
         "asset_id": normalized["asset_id"],
         "blender": str(executable),
+        "runtime_provision": runtime_receipt,
         "request": str(request_path),
         "manifest": str(manifest_path),
         "inspections": inspections,
@@ -354,3 +453,4 @@ def forge_3d_asset(
     receipt_path = target / "forge-receipt.json"
     receipt_path.write_text(json.dumps(receipt, indent=2) + "\n", encoding="utf-8", newline="\n")
     return receipt
+

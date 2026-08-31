@@ -5,13 +5,16 @@ import struct
 import sys
 import tempfile
 import unittest
+import hashlib
+import zipfile
+from unittest.mock import patch
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from axm_uc.visual_3d import assess_3d_output, catalog_3d, compile_3d_request, compile_adaptive_3d_request, inspect_glb, record_3d_review
+from axm_uc.visual_3d import assess_3d_output, catalog_3d, compile_3d_request, compile_adaptive_3d_request, inspect_glb, provision_blender, record_3d_review
 from axm_uc.visual_assets_bridge import operate_visual_expansion
 
 
@@ -38,6 +41,7 @@ class Visual3DForgeTests(unittest.TestCase):
         self.assertEqual(set(catalog["assets"]), {"axiom-bastion-frame", "mir-sanctuary-keeper"})
         self.assertIn("glb", catalog["outputs"])
         self.assertTrue(catalog["truth"]["generatorAndVerificationLiveInMachine"])
+        self.assertTrue(catalog["truth"]["runtimeIsMachineProvisioned"])
         self.assertTrue(catalog["truth"]["visualTasteRequiresRenderedReview"])
 
     def test_request_is_faction_bound_and_has_lod_collision_requirements(self):
@@ -59,6 +63,27 @@ class Visual3DForgeTests(unittest.TestCase):
         self.assertEqual(result["triangles"], 3)
         self.assertEqual(result["node_names"], ["AXM_TEST_LOD0"])
         self.assertEqual(result["materials"], ["AX_Gunmetal"])
+
+    @patch("axm_uc.visual_3d.platform.system", return_value="Windows")
+    def test_runtime_provisioner_verifies_and_reuses_portable_archive(self, _system):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            source = root / "fixture.zip"
+            with zipfile.ZipFile(source, "w") as bundle:
+                bundle.writestr("blender-fixture/blender.exe", b"fixture-runtime")
+                bundle.writestr("blender-fixture/license.txt", b"fixture")
+            digest = hashlib.sha256(source.read_bytes()).hexdigest()
+            spec = {
+                "version": "test",
+                "windows_x64_url": source.as_uri(),
+                "windows_x64_sha256": digest,
+            }
+            cache = root / "managed"
+            installed = provision_blender(cache, bootstrap=spec)
+            reused = provision_blender(cache, bootstrap=spec)
+        self.assertEqual(installed["status"], "INSTALLED_VERIFIED_MACHINE_MANAGED_RUNTIME")
+        self.assertEqual(reused["status"], "REUSED_MACHINE_MANAGED_RUNTIME")
+        self.assertTrue(installed["executable"].endswith("blender.exe"))
 
     def test_bridge_routes_3d_planning_without_starting_renderer(self):
         result = operate_visual_expansion(Path("."), {
@@ -114,3 +139,4 @@ class Visual3DForgeTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+

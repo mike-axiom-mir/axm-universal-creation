@@ -52,7 +52,7 @@ def clear_scene() -> None:
 def material(name: str, color: tuple[float, float, float, float], *, metallic: float = 0.0,
              roughness: float = 0.45, emission: tuple[float, float, float, float] | None = None,
              emission_strength: float = 0.0, texture_dir: Path | None = None,
-             texture_size: int = 512) -> bpy.types.Material:
+             texture_size: int = 512, source_maps: dict[str, Path] | None = None) -> bpy.types.Material:
     mat = bpy.data.materials.new(name)
     mat.diffuse_color = color
     mat.use_nodes = True
@@ -61,7 +61,28 @@ def material(name: str, color: tuple[float, float, float, float], *, metallic: f
     node.inputs["Metallic"].default_value = metallic
     node.inputs["Roughness"].default_value = roughness
     embedded_maps: dict[str, bpy.types.Node] = {}
-    if texture_dir is not None:
+    if source_maps:
+        required = {"basecolor", "roughness", "metallic", "normal"}
+        missing = sorted(required - set(source_maps))
+        if missing:
+            raise ValueError(f"{name} source map set is missing: {', '.join(missing)}")
+        for role in ("basecolor", "roughness", "metallic", "normal"):
+            source = Path(source_maps[role]).resolve()
+            if not source.is_file():
+                raise FileNotFoundError(f"missing authored PBR source map: {source}")
+            image = bpy.data.images.load(str(source), check_existing=False)
+            image.name = f"{name}_{role.title()}"
+            image.colorspace_settings.name = "sRGB" if role == "basecolor" else "Non-Color"
+            image.pack()
+            texture = mat.node_tree.nodes.new("ShaderNodeTexImage")
+            texture.name = f"{name}_Authored{role.title()}"
+            texture.image = image
+            texture.extension = "REPEAT"
+            if role == "basecolor":
+                mat.node_tree.links.new(texture.outputs["Color"], node.inputs["Base Color"])
+            else:
+                embedded_maps[role] = texture
+    elif texture_dir is not None:
         # A retained, deterministic material compiler. The generated texture is
         # intentionally subtle: it gives the GLB a real embedded PBR image path
         # while the shader's micro-normal/roughness machinery stays procedural.
@@ -272,11 +293,17 @@ def sacred_blade_plate(name: str, location: tuple[float, float, float], dimensio
     share the same manufactured petal language without sharing identical forms.
     """
     hx, hy, hz = (value / 2 for value in dimensions)
+    # Preserve one faction grammar while varying anatomical roots, crowns and
+    # shoulders. The object name makes this deterministic across rebuilds.
+    signature = int(hashlib.sha256(name.encode("utf-8")).hexdigest()[:8], 16)
+    crown = .94 + ((signature >> 4) % 13) / 100.0
+    root = .91 + ((signature >> 9) % 11) / 100.0
+    shoulder = .93 + ((signature >> 14) % 15) / 100.0
     outline = [
-        (0, -hz), (hx * .58, -hz * .64), (hx, -hz * .06),
-        (hx * .82, hz * .46), (hx * .20 + sweep * hx, hz),
+        (0, -hz * root), (hx * .58, -hz * .64), (hx * shoulder, -hz * .06),
+        (hx * .82, hz * .46), (hx * .20 + sweep * hx, hz * crown),
         (-hx * .24 + sweep * hx, hz * .78), (-hx * .72, hz * .28),
-        (-hx * .88, -hz * .24), (-hx * .46, -hz * .72),
+        (-hx * .88 * shoulder, -hz * .24), (-hx * .46, -hz * .72),
     ]
 
     def ring(y: float, sx: float, sz: float, x_bias: float = 0.0) -> list[tuple[float, float, float]]:
@@ -873,30 +900,30 @@ def add_axiom_hero_v4(objects: list[bpy.types.Object], mats: dict[str, bpy.types
     # Grounded feet and legs: separated frame, shell, hinge and actuator layers.
     for side in (-1, 1):
         p = "L" if side < 0 else "R"
-        x = side * .73
+        x = side * .82
         stance_y = -.17 if side < 0 else .13
-        objects.append(wedge(f"AX4_{p}_HEEL_FRAME", (x, stance_y + .13, .18), (.74, .66, .30), dark,
+        objects.append(wedge(f"AX4_{p}_HEEL_FRAME", (x, stance_y + .13, .18), (.84, .70, .32), dark,
                              front_scale=(.62, .58), bevel=.035))
-        objects.append(wedge(f"AX4_{p}_SOLE", (x, stance_y - .16, .13), (.74, .78, .18), dark,
+        objects.append(wedge(f"AX4_{p}_SOLE", (x, stance_y - .16, .13), (.84, .82, .20), dark,
                              front_scale=(.70, .62), bevel=.026))
         for toe in (-1, 1):
             objects.append(sculpted_shell(f"AX4_{p}_TOE_{toe}",
                                          (x + toe * .18, stance_y - .49, .19),
-                                         (.29, .70, .24), pale if toe < 0 else gm,
+                                         (.33, .74, .27), pale if toe < 0 else gm,
                                          front_scale=(.46, .52), rotation=(0, 0, toe * math.radians(3)), bevel=.022))
         objects.append(sculpted_shell(f"AX4_{p}_FOOT_COWL", (x, stance_y - .20, .29), (.62, .50, .24), gm,
                                      front_scale=(.50, .56), bevel=.024))
         ankle = (x, stance_y, .48)
-        knee = (side * .89, stance_y * .42, 1.56)
-        hip = (side * .72, .02, 2.60)
+        knee = (side * .98, stance_y * .42, 1.56)
+        hip = (side * .80, .02, 2.60)
         hinge(f"AX4_{p}_ANKLE", ankle, .55, .17)
         hinge(f"AX4_{p}_KNEE", knee, .72, .25)
         hinge(f"AX4_{p}_HIP", hip, .66, .26)
         objects.append(beam(f"AX4_{p}_SHIN_SPINE", ankle, knee, .12, dark, vertices=20))
         objects.append(beam(f"AX4_{p}_THIGH_SPINE", knee, hip, .14, dark, vertices=20))
-        limb_shell(f"AX4_{p}_SHIN", (side * .925, (ankle[1] + knee[1]) * .5, 1.02), (.58, .66, .88), side)
-        limb_shell(f"AX4_{p}_THIGH", (side * .80, (knee[1] + hip[1]) * .5, 2.08), (.66, .72, .82), side)
-        objects.append(sculpted_shell(f"AX4_{p}_KNEE_GUARD", (side * .89, knee[1] - .35, 1.57), (.54, .20, .50), pale,
+        limb_shell(f"AX4_{p}_SHIN", (side * 1.00, (ankle[1] + knee[1]) * .5, 1.02), (.66, .70, .92), side)
+        limb_shell(f"AX4_{p}_THIGH", (side * .89, (knee[1] + hip[1]) * .5, 2.08), (.74, .76, .86), side)
+        objects.append(sculpted_shell(f"AX4_{p}_KNEE_GUARD", (side * .98, knee[1] - .37, 1.57), (.62, .22, .54), pale,
                              front_scale=(.48, .52), bevel=.028))
         for channel in (-1, 1):
             objects.append(beam(f"AX4_{p}_SHIN_ACTUATOR_{channel}",
@@ -961,7 +988,7 @@ def add_axiom_hero_v4(objects: list[bpy.types.Object], mats: dict[str, bpy.types
     # Arms and layered shoulder assemblies with visible gaps between plates.
     for side in (-1, 1):
         p = "L" if side < 0 else "R"
-        shoulder, elbow, wrist = (side * 1.52, .00, 4.40), (side * 1.62, -.02, 3.48), (side * 1.58, -.10, 2.78)
+        shoulder, elbow, wrist = (side * 1.65, .00, 4.40), (side * 1.82, -.02, 3.48), (side * 1.78, -.10, 2.78)
         objects.append(beam(f"AX4_{p}_CLAVICLE", (side * 1.00, .02, 4.42), shoulder, .15, dark, vertices=20))
         hinge(f"AX4_{p}_SHOULDER", shoulder, .58, .25)
         hinge(f"AX4_{p}_ELBOW", elbow, .58, .21)
@@ -979,28 +1006,28 @@ def add_axiom_hero_v4(objects: list[bpy.types.Object], mats: dict[str, bpy.types
         ], .025, cyan))
         objects.append(beam(f"AX4_{p}_UPPER_ARM_SPINE", shoulder, elbow, .12, dark, vertices=20))
         objects.append(beam(f"AX4_{p}_FOREARM_SPINE", elbow, wrist, .11, dark, vertices=20))
-        limb_shell(f"AX4_{p}_BICEP", (side * 1.59, -.01, 3.93), (.52, .58, .62), side)
-        limb_shell(f"AX4_{p}_FOREARM", (side * 1.60, -.06, 3.12), (.50, .58, .56), side)
-        objects.append(wedge(f"AX4_{p}_HAND", wrist, (.42, .44, .28), dark, front_scale=(.46, .52), bevel=.025))
+        limb_shell(f"AX4_{p}_BICEP", (side * 1.74, -.01, 3.93), (.62, .62, .68), side)
+        limb_shell(f"AX4_{p}_FOREARM", (side * 1.80, -.06, 3.12), (.60, .62, .64), side)
+        objects.append(wedge(f"AX4_{p}_HAND", wrist, (.50, .48, .32), dark, front_scale=(.46, .52), bevel=.025))
 
     # Shoulder-mounted railgun: frame, separated rails, barrel and open coil cage.
-    gx, gz = -1.63, 4.58
-    objects.append(wedge("AX4_RAIL_FRAME", (gx, -.54, gz), (.56, 2.22, .48), dark,
+    gx, gz = -1.52, 4.58
+    objects.append(wedge("AX4_RAIL_FRAME", (gx, -.43, gz), (.58, 1.72, .50), dark,
                          front_scale=(.50, .58), rotation=(0, 0, math.radians(-2)), bevel=.038))
     for rail in (-1, 1):
         objects.append(box(f"AX4_RAIL_LONGERON_{rail}", (gx + rail * .25, -.96, gz),
-                           (.075, 2.30, .11), pale, bevel=.018))
-    objects.append(wedge("AX4_RAIL_TOP_SHELL", (gx, -.55, gz + .34), (.48, 1.82, .22), gm,
+                           (.075, 1.82, .11), pale, bevel=.018))
+    objects.append(wedge("AX4_RAIL_TOP_SHELL", (gx, -.43, gz + .34), (.50, 1.44, .22), gm,
                          front_scale=(.42, .52), bevel=.025))
     objects.append(cylinder("AX4_RAIL_RECOIL_TUBE", (gx, .54, gz), .14, .68, dark,
                             rotation=(math.pi / 2, 0, 0), vertices=24, bevel=.018))
     for side in (-1, 1):
         objects.append(beam(f"AX4_RAIL_RECOIL_PISTON_{side}", (gx + side * .19, .56, gz - .10),
                             (gx + side * .19, .08, gz - .10), .030, amber, vertices=14))
-    objects.append(cylinder("AX4_RAIL_BARREL", (gx, -1.55, gz), .105, 1.96, gm,
+    objects.append(cylinder("AX4_RAIL_BARREL", (gx, -1.30, gz), .105, 1.42, gm,
                             rotation=(math.pi / 2, 0, 0), vertices=28, bevel=.018))
     for cage in range(5):
-        y = -.42 - cage * .30
+        y = -.32 - cage * .24
         # Angular field cage around the barrel. The rejected v8 luminous hoops
         # read as arcade geometry; these separated structural ribs retain gaps.
         for side in (-1, 1):
@@ -1012,12 +1039,12 @@ def add_axiom_hero_v4(objects: list[bpy.types.Object], mats: dict[str, bpy.types
                            (.44, .055, .045), dark, bevel=.010))
         objects.append(box(f"AX4_RAIL_FIELD_CORE_{cage}", (gx, y - .035, gz),
                            (.085, .045, .085), cyan, bevel=.014))
-    objects.append(cone("AX4_RAIL_MUZZLE_SHROUD", (gx, -2.58, gz), .24, .19, .28, gm,
+    objects.append(cone("AX4_RAIL_MUZZLE_SHROUD", (gx, -2.05, gz), .24, .19, .28, gm,
                         rotation=(math.pi / 2, 0, 0), vertices=12, bevel=.020))
-    objects.append(cylinder("AX4_RAIL_MUZZLE_BORE", (gx, -2.73, gz), .115, .12, dark,
+    objects.append(cylinder("AX4_RAIL_MUZZLE_BORE", (gx, -2.20, gz), .115, .12, dark,
                             rotation=(math.pi / 2, 0, 0), vertices=20, bevel=.012))
     for side in (-1, 1):
-        objects.append(wedge(f"AX4_RAIL_FLASH_HIDER_{side}", (gx + side * .19, -2.70, gz),
+        objects.append(wedge(f"AX4_RAIL_FLASH_HIDER_{side}", (gx + side * .19, -2.17, gz),
                              (.08, .30, .22), pale, front_scale=(.42, .48), bevel=.010))
     for side in (-1, 1):
         objects.append(beam(f"AX4_RAIL_MOUNT_{side}", (side * .10 + gx, .15, gz - .08),
@@ -1056,7 +1083,10 @@ def add_axiom_hero_v4(objects: list[bpy.types.Object], mats: dict[str, bpy.types
                                (.07, .14, .34), pale if vent == 0 else dark, bevel=.008))
         objects.append(cable(f"AX4_POWER_CABLE_{side}", [(side * .42, .48, 4.46),
                                                           (side * .92, .66, 4.08),
-                                                          (side * 1.28, .38, 3.52)], .028, amber))
+                                                          (side * 1.28, .38, 3.52)], .032, dark))
+        for terminal, position in enumerate(((side * .42, .48, 4.46), (side * 1.28, .38, 3.52))):
+            objects.append(cylinder(f"AX4_POWER_TERMINAL_{side}_{terminal}", position, .065, .08, gm,
+                                    rotation=(math.pi / 2, 0, 0), vertices=16, bevel=.010))
         for fin in range(5):
             objects.append(box(f"AX4_HEAT_EXCHANGER_{side}_{fin}",
                                (side * (.39 + fin * .115), 1.00, 4.17 + (fin % 2) * .06),
@@ -1596,6 +1626,19 @@ def apply_modifiers_and_convert(objects: list[bpy.types.Object]) -> list[bpy.typ
             bpy.ops.mesh.select_all(action="SELECT")
             bpy.ops.uv.smart_project(angle_limit=math.radians(66), island_margin=.025)
             bpy.ops.object.mode_set(mode="OBJECT")
+        # Preserve a roughly world-consistent material scale. Small service
+        # parts sample a compact portion of the seamless atlas while torso and
+        # limb armor can traverse multiple panels instead of every object
+        # stretching one full texture over its complete surface.
+        if obj.data.uv_layers:
+            extent = max(float(value) for value in obj.dimensions)
+            tile_scale = max(.16, min(2.8, extent / .72))
+            salt = int(hashlib.sha256(obj.name.encode("utf-8")).hexdigest()[:8], 16)
+            offset_u = ((salt & 0xffff) / 0xffff) * .71
+            offset_v = (((salt >> 16) & 0xffff) / 0xffff) * .71
+            for item in obj.data.uv_layers.active.data:
+                item.uv.x = item.uv.x * tile_scale + offset_u
+                item.uv.y = item.uv.y * tile_scale + offset_v
         obj.select_set(False)
         result.append(obj)
     return result
@@ -1758,17 +1801,26 @@ def main() -> None:
 
     texture_size = int(request.get("technical_requirements", {}).get("texture_resolution", 1024))
     texture_root = output / "textures"
+    authored_root = Path(__file__).resolve().parents[2] / "assets" / "materials"
+
+    def authored(prefix: str) -> dict[str, Path]:
+        return {role: authored_root / f"{prefix}_{role}.png"
+                for role in ("basecolor", "roughness", "metallic", "normal")}
+
     mats = {
         "dark": material("AXM_DarkMechanism", (.018, .024, .032, 1), metallic=.76, roughness=.36,
-                         texture_dir=texture_root, texture_size=texture_size),
+                         texture_dir=texture_root, texture_size=texture_size,
+                         source_maps=authored("axiom-dark-frame-aaa") if asset_id.startswith("axiom") else None),
         "collision": material("AXM_CollisionDebug", (.80, .02, .02, .35), metallic=0, roughness=1),
     }
     if asset_id.startswith("axiom"):
         mats.update({
             "gunmetal": material("AX_Gunmetal", (.075, .105, .135, 1), metallic=.95, roughness=.27,
-                                  texture_dir=texture_root, texture_size=texture_size),
+                                  texture_dir=texture_root, texture_size=texture_size,
+                                  source_maps=authored("axiom-dark-gunmetal-aaa")),
             "pale": material("AX_PaleCeramicArmor", (.46, .52, .55, 1), metallic=.66, roughness=.25,
-                              texture_dir=texture_root, texture_size=texture_size),
+                              texture_dir=texture_root, texture_size=texture_size,
+                              source_maps=authored("axiom-pale-ceramic-aaa")),
             "cyan": material("AX_ElectricCyan", (.006, .12, .18, 1), metallic=.20, roughness=.20,
                              emission=(.00, .48, .72, 1), emission_strength=3.2,
                              texture_dir=texture_root, texture_size=texture_size),
@@ -1779,7 +1831,8 @@ def main() -> None:
     else:
         mats.update({
             "ivory": material("MIR_IvoryCeramic", (.63, .56, .46, 1), metallic=.05, roughness=.38,
-                              texture_dir=texture_root, texture_size=texture_size),
+                              texture_dir=texture_root, texture_size=texture_size,
+                              source_maps=authored("mir-aged-ivory-aaa")),
             "brass": material("MIR_Brass", (.34, .15, .035, 1), metallic=.94, roughness=.30,
                               texture_dir=texture_root, texture_size=texture_size),
             "rose": material("MIR_RoseGold", (.36, .11, .09, 1), metallic=.86, roughness=.33,
@@ -1853,3 +1906,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
