@@ -244,6 +244,15 @@ def builtin_spawn_creation_unit(root: Path, inputs: dict[str, Any]) -> dict[str,
         raise CapabilityError(str(exc), exc.details) from exc
 
 
+def builtin_evolve_machine(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+    from .evolution import EvolutionError, operate_evolution
+
+    try:
+        return operate_evolution(root, inputs)
+    except EvolutionError as exc:
+        raise CapabilityError(str(exc), exc.details) from exc
+
+
 def builtin_synthesize_creation_gap(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
     from .gap_synthesis import GapSynthesisError, operate_gap_synthesis
     from .spawn import SpawnError
@@ -308,6 +317,7 @@ BUILTINS: dict[str, Callable[[Path, dict[str, Any]], dict[str, Any]]] = {
     "builtin:inspect_executable_organs": builtin_inspect_executable_organs,
     "builtin:explore_organ_gap": builtin_explore_organ_gap,
     "builtin:spawn_creation_unit": builtin_spawn_creation_unit,
+    "builtin:evolve_machine": builtin_evolve_machine,
     "builtin:gap_synthesis": builtin_synthesize_creation_gap,
     "builtin:verify_project": builtin_verify_project,
     "builtin:patch_project": builtin_patch_project,
