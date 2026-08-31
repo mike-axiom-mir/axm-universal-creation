@@ -213,13 +213,22 @@ Project creation is staged before publish and project-relative file paths may no
 Current deterministic project checks:
 
 - `file-exists`
+- `file-absent`
 - `nonempty`
 - `contains`
+- `not-contains`
+- `line-count`
+- `byte-size`
+- `sha256`
 - `json-valid`
+- `json-value`
+- `file-set`
 - `python-compile`
 - `html-local-links`
+- `css-local-links`
+- `javascript-local-imports`
 
-`static-web` automatically checks for `index.html` and verifies local `src`/`href` references from every `.html` and `.htm` page in the project. `python` automatically compiles `.py` files for syntax without executing them.
+Every project automatically receives a no-symlink boundary check so validation cannot silently read through a project link into an outside file. `static-web` automatically checks for `index.html`, verifies local `src`/`href` references from every `.html` and `.htm` page, resolves CSS `url(...)` and `@import` references, and resolves local static/dynamic JavaScript module imports. Bare JavaScript package imports and explicit external URLs remain labeled external rather than being claimed as locally verified. `python` automatically compiles `.py` files for syntax without executing them.
 
 Every `.json` file is automatically parsed for JSON validity in every project type.
 

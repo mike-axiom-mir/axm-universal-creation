@@ -1,6 +1,6 @@
 {
   "id": "AXM-CAP-SYNTHESIZE-CREATION-GAP",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "status": "live",
   "purpose": "Turn a real unroutable creation request into an evidence-bound detached capability proposal by searching a bounded exact-contract graph, preferring the shortest complete reusable project recipe, and optionally materializing and testing that hypothesis without admitting it.",
   "handles": [

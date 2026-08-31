@@ -37,20 +37,20 @@ GRAMMAR_BY_SUFFIX: dict[str, dict[str, Any]] = {
     ".js": {
         "grammar_id": "javascript",
         "identification": "file-extension",
-        "validation": "identified-not-parser-validated",
-        "validator": None,
+        "validation": "lexical-module-reference-check-available",
+        "validator": "javascript-local-imports",
     },
     ".mjs": {
         "grammar_id": "javascript",
         "identification": "file-extension",
-        "validation": "identified-not-parser-validated",
-        "validator": None,
+        "validation": "lexical-module-reference-check-available",
+        "validator": "javascript-local-imports",
     },
     ".css": {
         "grammar_id": "css",
         "identification": "file-extension",
-        "validation": "identified-not-parser-validated",
-        "validator": None,
+        "validation": "lexical-local-reference-check-available",
+        "validator": "css-local-links",
     },
     ".md": {
         "grammar_id": "markdown",

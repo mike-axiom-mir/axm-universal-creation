@@ -16,13 +16,22 @@ AXM Universal Creation can now:
 The current project validator supports:
 
 - `file-exists`
+- `file-absent`
 - `nonempty`
 - `contains`
+- `not-contains`
+- `line-count`
+- `byte-size`
+- `sha256`
 - `json-valid`
+- `json-value`
+- `file-set`
 - `python-compile`
 - `html-local-links`
+- `css-local-links`
+- `javascript-local-imports`
 
-`static-web` projects automatically require `index.html` and verify local `src`/`href` references from every `.html` and `.htm` page in the project.
+All projects automatically reject symlinked files or directories as a deterministic validation gap. `static-web` projects automatically require `index.html`, verify local `src`/`href` references from every `.html` and `.htm` page, resolve local CSS `url(...)`/`@import` references, and resolve local static or dynamic JavaScript module imports. These CSS/JavaScript checks are lexical reference checks, not language execution.
 
 `python` projects automatically compile every `.py` file for syntax without executing the generated program.
 
@@ -35,8 +44,9 @@ A passing deterministic project trial means:
 - the requested files were actually written;
 - project-relative paths stayed inside the project body;
 - configured deterministic checks passed;
+- no symlink crossed from the project into another filesystem body;
 - every JSON file parsed successfully;
-- local static-web references in every HTML/HTM page resolved when that project type was used;
+- local HTML, CSS, and JavaScript module references resolved when the static-web project type was used;
 - Python source parsed/compiled when that project type was used;
 - the published project matched what the verifier subsequently observed.
 

@@ -10,6 +10,7 @@ from .grammar import grammar_inventory
 from .project import (
     ProjectError,
     _begin_publish,
+    _check_no_symlinks,
     _file_manifest,
     _resolve_inside,
     _rollback_publish,
@@ -122,6 +123,12 @@ def patch_project(
     target = Path(target).resolve()
     if not target.is_dir():
         raise ProjectError(f"repair target project does not exist: {target}")
+    symlink_check = _check_no_symlinks(target, {})
+    if not symlink_check["passed"]:
+        raise ProjectError(
+            "project repair refuses a body containing symlinks",
+            {"phase": "pre-stage", "validation": symlink_check, "original_unchanged": True},
+        )
 
     normalized = _normalize_operations(operations)
     before_files = _file_manifest(target)

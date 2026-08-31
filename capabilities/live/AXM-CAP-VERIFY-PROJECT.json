@@ -1,6 +1,6 @@
 {
   "id": "AXM-CAP-VERIFY-PROJECT",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "status": "live",
   "purpose": "Independently inspect a created project body using deterministic structural, exact-text, and earlier-receipt content-digest checks without executing generated code.",
   "handles": [
@@ -13,7 +13,7 @@
     "properties": {
       "path": "existing project directory, absolute or relative to the machine root",
       "project_type": "generic, static-web, or python",
-      "checks": "optional deterministic checks such as file-exists, contains, json-valid, python-compile, html-local-links",
+      "checks": "optional deterministic checks: file-exists, file-absent, nonempty, contains, not-contains, line-count, byte-size, sha256, json-valid, json-value, file-set, python-compile, html-local-links, css-local-links, javascript-local-imports",
       "expected_files": "optional mapping of project-relative paths to exact expected UTF-8 text",
       "expected_file_digests": "optional mapping of project-relative paths to SHA-256 content digests from an earlier creation receipt"
     }
@@ -46,7 +46,9 @@
   },
   "limitations": [
     "every project JSON file is parser-validated automatically, but schema and semantic correctness require separate checks",
-    "HTML verification checks local src/href resolution across project HTML/HTM pages but is not a complete HTML parser or browser test",
+    "every project receives a no-symlink boundary check before its regular file body is read",
+    "static-web verification checks local HTML src/href, CSS url/import, and JavaScript module references but is not a complete parser or browser test",
+    "bare JavaScript package imports and explicit external URLs are labeled external and are not fetched or claimed as verified",
     "content digests prove byte identity against the supplied earlier receipt, not semantic correctness",
     "does not execute generated code",
     "does not substitute for browser visual/interaction testing"

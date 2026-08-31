@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import sys
 import tempfile
 import unittest
@@ -10,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from axm_uc.machine import UniversalCreationMachine
-from axm_uc.project import ProjectError, build_project
+from axm_uc.project import ProjectError, build_project, validate_project
 
 
 class ProjectCreationTests(unittest.TestCase):
@@ -309,6 +310,95 @@ class ProjectCreationTests(unittest.TestCase):
             self.assertEqual(result["verification"]["type"], "CREATION_RESULT")
             self.assertEqual(result["truth_status"], "OBSERVED_DETERMINISTIC_PROJECT_VALIDATION")
             self.assertEqual(result["plan"]["type"], "CREATION_DECOMPOSITION")
+
+    def test_expanded_deterministic_checks_cover_absence_bounds_digest_json_and_file_set(self):
+        with tempfile.TemporaryDirectory() as td:
+            target = Path(td) / "verified"
+            target.mkdir()
+            note = "alpha\nbeta\n"
+            (target / "note.txt").write_text(note, encoding="utf-8")
+            (target / "data.json").write_text('{"state": {"ready": true, "count": 2}}\n', encoding="utf-8")
+            digest = hashlib.sha256(note.encode("utf-8")).hexdigest()
+            checks = [
+                {"type": "file-absent", "path": "secret.env"},
+                {"type": "not-contains", "path": "note.txt", "text": "password"},
+                {"type": "line-count", "path": "note.txt", "minimum": 2, "maximum": 2},
+                {"type": "byte-size", "path": "note.txt", "minimum": 5, "maximum": 20},
+                {"type": "sha256", "path": "note.txt", "sha256": digest.upper()},
+                {"type": "json-value", "path": "data.json", "json_path": ["state", "ready"], "equals": True},
+                {"type": "file-set", "mode": "exact", "files": ["note.txt", "data.json"]},
+            ]
+            report = validate_project(target, checks=checks)
+            self.assertTrue(report["passed"], report)
+            observed = {row["type"]: row for row in report["checks"]}
+            for kind in {"file-absent", "not-contains", "line-count", "byte-size", "sha256", "json-value", "file-set"}:
+                self.assertTrue(observed[kind]["passed"], observed[kind])
+
+    def test_static_web_automatically_checks_css_urls_and_javascript_imports(self):
+        with tempfile.TemporaryDirectory() as td:
+            target = Path(td) / "site"
+            files = {
+                "index.html": '<link rel="stylesheet" href="css/app.css"><script type="module" src="js/app.js"></script>',
+                "css/app.css": '@import "theme.css"; body { background: url("../assets/bg.svg"); }',
+                "css/theme.css": ":root { color: black; }",
+                "assets/bg.svg": "<svg xmlns=\"http://www.w3.org/2000/svg\"></svg>",
+                "js/app.js": 'import { ready } from "./helper.js"; export { feature } from "./feature.js"; import("./lazy.js");',
+                "js/helper.js": "export const ready = true;",
+                "js/feature.js": "export const feature = true;",
+                "js/lazy.js": "export default true;",
+            }
+            result = UniversalCreationMachine(ROOT).create({
+                "kind": "static-web-project",
+                "inputs": {"path": str(target), "project_type": "static-web", "files": files},
+            })
+            self.assertEqual(result["type"], "CREATION_RESULT", result)
+            self.assertTrue(result["result"]["validation"]["passed"], result)
+            checks = result["result"]["validation"]["checks"]
+            css = [row for row in checks if row["type"] == "css-local-links"]
+            scripts = [row for row in checks if row["type"] == "javascript-local-imports"]
+            self.assertEqual(len(css), 2)
+            self.assertEqual(len(scripts), 4)
+            self.assertTrue(all(row["passed"] for row in [*css, *scripts]))
+
+    def test_broken_css_and_javascript_references_remain_visible_gaps(self):
+        with tempfile.TemporaryDirectory() as td:
+            target = Path(td) / "broken-site"
+            result = UniversalCreationMachine(ROOT).create({
+                "kind": "static-web-project",
+                "inputs": {
+                    "path": str(target),
+                    "project_type": "static-web",
+                    "files": {
+                        "index.html": '<link rel="stylesheet" href="app.css"><script type="module" src="app.js"></script>',
+                        "app.css": 'body { background: url("missing.png"); }',
+                        "app.js": 'import "./missing.js";',
+                    },
+                },
+            })
+            self.assertEqual(result["type"], "CREATION_RESULT", result)
+            self.assertEqual(result["result"]["creation_status"], "GROUNDED_DRAFT")
+            failed = {
+                row["type"] for row in result["result"]["validation"]["checks"] if row.get("passed") is not True
+            }
+            self.assertIn("css-local-links", failed)
+            self.assertIn("javascript-local-imports", failed)
+
+    def test_symlinks_and_malformed_check_inputs_fail_closed_without_external_reads(self):
+        with tempfile.TemporaryDirectory() as td:
+            base = Path(td)
+            target = base / "project"
+            target.mkdir()
+            (target / "note.txt").write_text("inside", encoding="utf-8")
+            outside = base / "outside.txt"
+            outside.write_text("outside", encoding="utf-8")
+            (target / "escape.txt").symlink_to(outside)
+            report = validate_project(target, checks=["not-an-object"])  # type: ignore[list-item]
+            self.assertFalse(report["passed"])
+            no_links = next(row for row in report["checks"] if row["type"] == "project-no-symlinks")
+            invalid = next(row for row in report["checks"] if row["type"] == "invalid-check")
+            self.assertEqual(no_links["symlinks"], ["escape.txt"])
+            self.assertFalse(invalid["passed"])
+            self.assertEqual([row["path"] for row in report["files"]], ["note.txt"])
 
 
 if __name__ == "__main__":
