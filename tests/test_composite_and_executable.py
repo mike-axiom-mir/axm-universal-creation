@@ -17,10 +17,10 @@ class CompositeAndExecutableTests(unittest.TestCase):
         machine = UniversalCreationMachine(ROOT)
         summary = machine.executable()["summary"]
         self.assertEqual(summary["truth_status"], "EXPLICIT_LIVE_CAPABILITY_BINDINGS")
-        self.assertEqual(summary["implemented_master_records"], 19)
-        self.assertEqual(summary["implemented_master_by_level"], {"component": 14, "organ": 5})
+        self.assertEqual(summary["implemented_master_records"], 26)
+        self.assertEqual(summary["implemented_master_by_level"], {"component": 19, "organ": 7})
         self.assertEqual(summary["live_capabilities"], 20)
-        self.assertEqual(summary["resolved_bindings"], 46)
+        self.assertEqual(summary["resolved_bindings"], 56)
 
         project = machine.executable(master_id="AXM-24-WORKSPACE-COLLABORATION-C-010-project")["master"]
         self.assertEqual(project["status"], "live-backed")
@@ -107,6 +107,20 @@ class CompositeAndExecutableTests(unittest.TestCase):
         workflow_step = machine.executable(master_id="AXM-03-TIME-STATE-EVENT-C-015-workflow-step")["master"]
         self.assertEqual(workflow_step["status"], "live-backed")
         self.assertEqual(workflow_step["implemented_by"], ["AXM-CAP-SPECIALIST-TOURNAMENT"])
+
+        chameleon_records = [
+            "AXM-11-3D-SPATIAL-C-018-morph-target",
+            "AXM-13-ANIMATION-VIDEO-C-005-morph-animation",
+            "AXM-12-RENDERING-MATERIALS-C-007-material-graph",
+            "AXM-23-PROCEDURAL-C-013-procedural-material-graph",
+            "AXM-12-RENDERING-MATERIALS-O-001-material-compiler",
+            "AXM-15-SIMULATION-XR-C-019-sensor-model",
+            "AXM-15-SIMULATION-XR-O-011-sensor-fusion-organ",
+        ]
+        for master_id in chameleon_records:
+            view = machine.executable(master_id=master_id)["master"]
+            self.assertEqual(view["status"], "live-backed", master_id)
+            self.assertEqual(view["implemented_by"], ["AXM-CAP-SIMULATE-CREATION"], master_id)
 
     def test_planner_surfaces_explicit_live_anatomy_bindings(self):
         plan = UniversalCreationMachine(ROOT).plan({
