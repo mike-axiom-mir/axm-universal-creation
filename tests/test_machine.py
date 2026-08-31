@@ -14,6 +14,15 @@ from axm_uc.machine import UniversalCreationMachine
 
 
 class MachineTests(unittest.TestCase):
+    def test_inspection_exposes_new_standalone_capability_growth_without_inflated_proof(self):
+        growth = UniversalCreationMachine(ROOT).inspect()["standalone_capability_growth"]
+        self.assertEqual(growth["mixed_project"]["maximum_files"], 256)
+        self.assertFalse(growth["mixed_project"]["runtime_or_semantic_behavior_proven"])
+        self.assertEqual(growth["portable_bundle"]["operations"], ["pack", "inspect", "unpack"])
+        self.assertFalse(growth["portable_bundle"]["runtime_compatibility_proven"])
+        self.assertEqual(growth["state_machine"]["missing_transition_behavior"], "HOLD_NO_DECLARED_TRANSITION")
+        self.assertFalse(growth["state_machine"]["effects_executed"])
+
     def test_live_creation_routes_and_writes(self):
         with tempfile.TemporaryDirectory() as td:
             target = Path(td) / "hello.txt"

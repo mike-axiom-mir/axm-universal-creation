@@ -1,0 +1,17 @@
+{
+  "kind": "game-rule-state-machine",
+  "inputs": {
+    "operation": "replay",
+    "machine": {
+      "schema": "axm.deterministic-state-machine/v0.1",
+      "id": "demo-round",
+      "states": ["lobby", "playing", "finished"],
+      "initial_state": "lobby",
+      "transitions": [
+        {"from": "lobby", "event": "start", "to": "playing", "effects": [{"type": "round-started"}]},
+        {"from": "playing", "event": "win", "to": "finished", "effects": [{"type": "winner-required"}]}
+      ]
+    },
+    "events": ["start", "win"]
+  }
+}

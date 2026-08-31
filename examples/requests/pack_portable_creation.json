@@ -1,0 +1,10 @@
+{
+  "kind": "portable-creation-bundle",
+  "inputs": {
+    "operation": "pack",
+    "source": "creations/mixed-media-demo",
+    "path": "creations/mixed-media-demo.axmcreation.zip",
+    "project_type": "static-web",
+    "name": "Mixed Media Demo"
+  }
+}

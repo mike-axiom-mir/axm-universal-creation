@@ -13,11 +13,14 @@ from .executable import ExecutableAnatomy
 from .gap_synthesis import analyze_creation_gap, gap_synthesis_summary
 from .host_evidence import host_evidence_summary
 from .local_provider import provider_summary
+from .mixed_project import mixed_project_summary
 from .organ_library import ExecutableOrganLibrary
 from .organ_discovery import organ_discovery_summary
 from .organ_gap import organ_gap_summary
 from .registry import Registry
+from .portable_bundle import portable_bundle_summary
 from .spawn import creation_forge_summary
+from .state_machine import state_machine_summary
 
 
 class UniversalCreationMachine:
@@ -46,6 +49,11 @@ class UniversalCreationMachine:
             "gap_synthesis": gap_synthesis_summary(),
             "local_creation_provider": provider_summary(),
             "host_evidence": host_evidence_summary(),
+            "standalone_capability_growth": {
+                "mixed_project": mixed_project_summary(),
+                "portable_bundle": portable_bundle_summary(),
+                "state_machine": state_machine_summary(),
+            },
             "self_evolution": evolution_summary(),
             "live_capabilities": self.capabilities.live(),
             "records": self.registry.search(query=query, level=level, limit=limit) if (query or level) else [],

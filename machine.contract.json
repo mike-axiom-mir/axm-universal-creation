@@ -107,6 +107,8 @@
       "line-count",
       "byte-size",
       "sha256",
+      "media-signature",
+      "utf8-valid",
       "json-valid",
       "json-value",
       "file-set",
@@ -118,6 +120,35 @@
     "staticWebLocalReferencesAutomatic": true,
     "generatedCodeExecuted": false,
     "browserBehaviorProven": false
+  },
+  "mixedProjectCreation": {
+    "available": true,
+    "textAndBinaryFilesSupported": true,
+    "binaryInputEncoding": "strict-base64",
+    "exactDigestVerificationBeforeAndAfterPublish": true,
+    "declaredMediaTypeIsVerified": false,
+    "maximumFiles": 256,
+    "maximumFileBytes": 16777216,
+    "maximumProjectBytes": 67108864,
+    "runtimeOrSemanticBehaviorProven": false
+  },
+  "portableCreationBundle": {
+    "available": true,
+    "schema": "axm.portable-creation-bundle/v0.1",
+    "operations": ["pack", "inspect", "unpack"],
+    "canonicalManifestAndExactFileDigestsRequired": true,
+    "symlinksAndUnsafePathsAllowed": false,
+    "archiveMetadataPreserved": false,
+    "bundleValidityProvesRuntimeCompatibility": false
+  },
+  "deterministicStateMachine": {
+    "available": true,
+    "schema": "axm.deterministic-state-machine/v0.1",
+    "operations": ["compile", "step", "replay"],
+    "duplicateStateEventTransitionsAllowed": false,
+    "undeclaredTransitionsInvented": false,
+    "effectsReturnedAsInertData": true,
+    "effectsExecuted": false
   },
   "creationComposition": {
     "softwareOrganAssemblyAvailable": true,

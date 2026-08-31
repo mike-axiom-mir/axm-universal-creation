@@ -358,6 +358,70 @@ def builtin_host_evidence(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
         raise CapabilityError(str(exc), exc.details) from exc
 
 
+def builtin_write_mixed_project(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+    from .mixed_project import build_mixed_project
+
+    target = _resolve_output_path(root, str(inputs["path"]))
+    if _is_machine_body_path(root, target):
+        raise CapabilityError("mixed-media project creation cannot rewrite the live machine body")
+    if "checks" in inputs and not isinstance(inputs["checks"], list):
+        raise CapabilityError("mixed-project checks must be a list")
+    if "replace" in inputs and not isinstance(inputs["replace"], bool):
+        raise CapabilityError("mixed-project replace must be a boolean")
+    try:
+        result = build_mixed_project(
+            target,
+            text_files=inputs.get("text_files"),
+            binary_files=inputs.get("binary_files"),
+            project_type=str(inputs.get("project_type", "generic")),
+            checks=inputs.get("checks") if isinstance(inputs.get("checks"), list) else None,
+            replace=bool(inputs.get("replace", False)),
+            publish_mode=str(inputs.get("publish_mode", "validated")),
+        )
+        result["grammar_inventory"] = grammar_inventory(target)
+        return result
+    except ProjectError as exc:
+        raise CapabilityError(str(exc), exc.details) from exc
+
+
+def builtin_portable_creation_bundle(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+    from .portable_bundle import PortableBundleError, operate_portable_bundle
+
+    operation = str(inputs.get("operation", "inspect")).strip().casefold()
+    normalized = dict(inputs)
+    if "replace" in inputs and not isinstance(inputs["replace"], bool):
+        raise CapabilityError("portable bundle replace must be a boolean")
+    if "path" in inputs:
+        normalized["path"] = str(_resolve_output_path(root, str(inputs["path"])))
+    if operation == "pack":
+        source = _resolve_output_path(root, str(inputs.get("source", "")))
+        output = _resolve_output_path(root, str(inputs.get("path", "")))
+        if _is_machine_body_path(root, source) or _is_machine_body_path(root, output):
+            raise CapabilityError("portable bundle packing is limited to ordinary creation surfaces")
+        normalized["source"] = str(source)
+    if operation == "unpack":
+        target = _resolve_output_path(root, str(inputs.get("target", "")))
+        if _is_machine_body_path(root, target):
+            raise CapabilityError("portable bundle unpacking cannot rewrite the live machine body")
+        normalized["target"] = str(target)
+    try:
+        return operate_portable_bundle(normalized)
+    except PortableBundleError as exc:
+        raise CapabilityError(str(exc), exc.details) from exc
+
+
+def builtin_deterministic_state_machine(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+    del root
+    from .state_machine import StateMachineError, operate_state_machine
+
+    if "stop_on_hold" in inputs and not isinstance(inputs["stop_on_hold"], bool):
+        raise CapabilityError("state-machine stop_on_hold must be a boolean")
+    try:
+        return operate_state_machine(inputs)
+    except StateMachineError as exc:
+        raise CapabilityError(str(exc), exc.details) from exc
+
+
 BUILTINS: dict[str, Callable[[Path, dict[str, Any]], dict[str, Any]]] = {
     "builtin:write_text": builtin_write_text,
     "builtin:write_json": builtin_write_json,
@@ -378,6 +442,9 @@ BUILTINS: dict[str, Callable[[Path, dict[str, Any]], dict[str, Any]]] = {
     "builtin:patch_project": builtin_patch_project,
     "builtin:local_creation_provider": builtin_local_creation_provider,
     "builtin:host_evidence": builtin_host_evidence,
+    "builtin:write_mixed_project": builtin_write_mixed_project,
+    "builtin:portable_creation_bundle": builtin_portable_creation_bundle,
+    "builtin:deterministic_state_machine": builtin_deterministic_state_machine,
 }
 
 
