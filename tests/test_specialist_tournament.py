@@ -217,14 +217,14 @@ class SpecialistTournamentTests(unittest.TestCase):
                 root,
                 "render adaptive materials and lighting",
                 criteria=self._single_criterion(),
-                pool_size=8,
+                pool_size=32,
                 team_size=3,
                 max_teams=4,
             )
             ranking = rank_tournament(rendering, self._judgements(rendering))
             record_finalist_vote(root, ranking, ranking["finalists"][0]["team_id"])
 
-            unrelated = build_specialist_pool(root, "design a database transaction log", pool_size=8)
+            unrelated = build_specialist_pool(root, "design a database transaction log", pool_size=32)
             self.assertNotEqual(unrelated["context_key"], rendering["context_key"])
             self.assertTrue(all(row["fit"]["context_points"] == 0 for row in unrelated["specialists"]))
             self.assertTrue(any(row["fit"]["global_points"] > 0 for row in unrelated["specialists"]))
