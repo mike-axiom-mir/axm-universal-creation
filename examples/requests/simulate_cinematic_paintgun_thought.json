@@ -1,0 +1,50 @@
+{
+  "kind": "simulate-creation",
+  "direction": "simulate a visual creation until no currently known improvement remains before materializing it",
+  "inputs": {
+    "thought": {
+      "intent": "A luminous glass-metal control panel that becomes a real local artifact from the exact final simulated thought.",
+      "canvas": {
+        "width": 960,
+        "height": 540,
+        "background": "#070A12"
+      },
+      "objects": [
+        {
+          "id": "panel",
+          "z": 1,
+          "shape": {
+            "kind": "rect",
+            "x": -30,
+            "y": 70,
+            "width": 1020,
+            "height": 400,
+            "rx": 42
+          },
+          "material": {
+            "name": "glass-metal-composite",
+            "metallic": 1.2,
+            "roughness": 0.08,
+            "opacity": 0.94,
+            "emission": 0.15
+          },
+          "color": {
+            "fill": "#111827",
+            "stroke": "#111827",
+            "stroke_width": 3
+          }
+        }
+      ]
+    },
+    "palette": [
+      "#111827",
+      "#55E6FF",
+      "#FFFFFF"
+    ],
+    "criteria": {
+      "fit_canvas": true,
+      "minimum_contrast": 4.5
+    },
+    "max_iterations": 8
+  }
+}
