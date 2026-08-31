@@ -1,49 +1,90 @@
 {
   "id": "AXM-CAP-SIMULATE-CREATION",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "status": "live",
-  "purpose": "Improve inspectable visual creation states in simulation and resolve adaptive vector-cell fabrics whose stable cells may deliberately merge child detail at one observation scale or split back into child cells at another, while keeping every selected state explicit and refusing to call current knowledge perfect.",
+  "purpose": "Improve inspectable visual creation states in simulation; resolve adaptive Vector Cell fabrics; continuously morph exact visual states; compile richer material truth; adapt from explicit sensor readings; and compare simulation against externally supplied reality evidence without calling current knowledge perfect or turning one discrepancy into a universal rule.",
   "handles": [
     "simulate-creation",
     "simulate-visual-thought",
     "cinematic-thought",
     "resolve-vector-cells",
     "vector-cell-thought",
-    "adaptive-vector-scene"
+    "adaptive-vector-scene",
+    "chameleon-fabric",
+    "morph-thoughts",
+    "continuous-morph",
+    "morph-vector-cells",
+    "morph-cells",
+    "chameleon-morph",
+    "compile-material-graph",
+    "compile-material",
+    "rich-material",
+    "apply-material-graph",
+    "apply-material",
+    "adapt-environment",
+    "sensor-adapt",
+    "environment-adapt",
+    "compare-reality",
+    "reality-feedback",
+    "simulation-reality-feedback",
+    "recalibrate-simulation",
+    "reopen-from-reality",
+    "re-simulate-reality-gap",
+    "record-calibration",
+    "learn-exact-context",
+    "inspect-calibrations",
+    "calibration-history"
   ],
   "input_contract": {
     "required": [],
     "properties": {
-      "operation": "optional explicit operation; resolve-vector-cells selects Vector Cell Fabric resolution, otherwise normal creation simulation runs",
-      "thought": "simulation path: inspectable visual scene state with canvas and objects; objects may begin with incomplete Paintgun channels",
-      "defaults": "simulation path: optional caller-visible channel defaults available to the simulator",
-      "alternatives": "simulation path: optional per-object known alternative channel values available to improvement rules",
-      "palette": "simulation path: optional known color candidates used for missing color and contrast improvement",
+      "operation": "explicit simulation, Vector Cell or Chameleon operation",
+      "thought": "simulation/material path: inspectable visual scene state",
+      "defaults": "simulation path: optional caller-visible channel defaults",
+      "alternatives": "simulation path: optional per-object known alternatives",
+      "palette": "simulation path: optional known color candidates",
       "criteria": "simulation path: optional deterministic criteria such as minimum_contrast and fit_canvas",
-      "max_iterations": "simulation path: optional explicit simulation bound from 1 to 32",
-      "fabric": "vector-cell path: hierarchical axm.vector-cell-fabric/v0.1 body with stable cell ids and explicit representations",
-      "observation_scale": "vector-cell path: positive scale used to select each cell representation",
-      "choice": "vector-cell path: explicit named chameleon choice; exact choice representations override generic ones"
+      "max_iterations": "simulation path: optional explicit bound from 1 to 32",
+      "fabric": "Vector Cell or chameleon path: hierarchical axm.vector-cell-fabric/v0.1 body",
+      "observation_scale": "Vector Cell path: positive representation-selection scale",
+      "choice": "Vector Cell path: explicit named choice",
+      "from_thought": "morph path: exact source Paintgun thought",
+      "to_thought": "morph path: exact target Paintgun thought",
+      "factor": "morph path: explicit continuous factor 0..1",
+      "from_state": "Vector Cell morph/environment path: source state with observation_scale and optional choice",
+      "to_state": "Vector Cell morph/environment path: target state with observation_scale and optional choice",
+      "material_graph": "rich material declaration containing current Paintgun fields plus transmission, IOR, clearcoat, anisotropy, subsurface, normal, displacement and bounded microstructure",
+      "object_id": "apply-material path: exact target Paintgun object id",
+      "readings": "environment path: explicit supplied numeric sensor readings",
+      "policy": "environment path: inspectable sensor-fusion drivers and endpoint states",
+      "simulation": "reality path: exact completed NO_KNOWN_IMPROVEMENTS simulation",
+      "observation": "reality path: externally supplied source, executor and measured object fields",
+      "context_key": "reality/calibration path: explicit exact-condition binding",
+      "feedback": "reality path: digest-bound simulation-reality feedback receipt"
     }
   },
   "output_contract": {
-    "kind": "simulated-or-adaptive-visual-thought",
+    "kind": "simulated-adaptive-or-calibrated-visual-state",
     "contains": [
       "typed operation and status",
-      "exact thought and digest",
+      "exact thoughts and digests",
       "cinematic SVG projection when renderable",
-      "simulation iteration history or vector-cell resolution trace",
-      "known improvement/gap evidence or merge/split evidence",
-      "truthful limitations"
+      "simulation history or Vector Cell/morph/sensor trace",
+      "rich material truth plus explicit renderer approximations",
+      "external observation provenance and discrepancy evidence when reality is compared",
+      "truthful limitations and no silent universal calibration"
     ]
   },
   "dependencies": [],
   "relationships": [
     "simulation happens before reality materialization rather than only testing after a draft is built",
-    "the stopping state NO_KNOWN_IMPROVEMENTS means no currently registered improvement rule can identify another change, not perfection",
-    "Vector Cell Fabric stores stable visual identities whose explicit representation may merge child cells for a coarse view or split into child cells when finer detail is requested",
-    "vector-cell choice is explicit rather than hidden adaptation: a named choice may select a different representation while the cell id remains stable",
-    "resolved vector cells become ordinary Paintgun thought and can therefore enter the existing simulate -> NO_KNOWN_IMPROVEMENTS -> Paintgun materialize loop"
+    "NO_KNOWN_IMPROVEMENTS means no currently registered improvement rule can identify another change, not perfection",
+    "Vector Cells keep stable visual identity while explicit scale/choice selects merge or split representations",
+    "continuous morphing interpolates compatible geometry and channels while incompatible topology crossfades instead of claiming impossible deformation",
+    "rich material fields stay inspectable even when the current SVG renderer only approximates a subset",
+    "environment adaptation uses explicit supplied readings and transparent weighted fusion rather than hidden learned control",
+    "externally supplied reality observations may reopen simulation; discrepancy evidence remains exact-context unless a later rule is explicitly justified",
+    "recorded calibration history is evidence for future simulator-rule design and never becomes authority or hidden self-modification"
   ],
   "anatomy_refs": [
     {
@@ -54,49 +95,102 @@
     {
       "id": "AXM-03-TIME-STATE-EVENT-C-004-state-machine",
       "role": "implements",
-      "basis": "Simulation advances through explicit state transitions and terminates in a typed NO_KNOWN_IMPROVEMENTS or HOLD state."
+      "basis": "Simulation advances through explicit state transitions and terminates in typed stop or HOLD states."
     },
     {
       "id": "AXM-11-3D-SPATIAL-C-028-level-of-detail-group",
       "role": "implements",
-      "basis": "Vector cells select one exact scale-bound representation and can collapse child cells into a parent expression or expand the same parent identity into child cells."
+      "basis": "Vector Cells select one exact scale-bound representation and can collapse or expand child detail."
     },
     {
       "id": "AXM-11-3D-SPATIAL-C-021-scene-graph",
       "role": "uses",
-      "basis": "Nested vector cells retain explicit parent/child paths and resolve them into one inspectable scene graph before Paintgun rendering."
+      "basis": "Nested cells retain explicit parent/child paths and resolve into an inspectable scene graph."
+    },
+    {
+      "id": "AXM-11-3D-SPATIAL-C-018-morph-target",
+      "role": "implements",
+      "basis": "Two exact visual endpoints produce a bounded deterministic intermediate state with explicit factor and topology handling."
+    },
+    {
+      "id": "AXM-13-ANIMATION-VIDEO-C-005-morph-animation",
+      "role": "implements",
+      "basis": "Morph factor drives continuous visual interpolation/crossfade across a reproducible 0..1 transition."
+    },
+    {
+      "id": "AXM-12-RENDERING-MATERIALS-C-007-material-graph",
+      "role": "implements",
+      "basis": "Rich material properties are normalized as one inspectable graph and compiled into Paintgun-compatible channels plus retained truth."
+    },
+    {
+      "id": "AXM-23-PROCEDURAL-C-013-procedural-material-graph",
+      "role": "implements",
+      "basis": "Bounded microstructure modes compile deterministically to current renderer approximations while source parameters remain explicit."
+    },
+    {
+      "id": "AXM-12-RENDERING-MATERIALS-O-001-material-compiler",
+      "role": "implements",
+      "basis": "The compiler validates rich material declarations and emits exact Paintgun material/color/skin/light/shade channels plus approximation evidence."
+    },
+    {
+      "id": "AXM-15-SIMULATION-XR-C-019-sensor-model",
+      "role": "implements",
+      "basis": "Explicit numeric sensor readings are normalized against declared ranges and retained with their adaptation contribution."
+    },
+    {
+      "id": "AXM-15-SIMULATION-XR-O-011-sensor-fusion-organ",
+      "role": "implements",
+      "basis": "Multiple explicit readings are fused through declared weights into a continuous adaptation factor driving a chameleon morph."
+    },
+    {
+      "id": "AXM-10-2D-IMAGING-C-021-normal-map",
+      "role": "uses",
+      "basis": "Rich materials retain a procedural normal descriptor while the current SVG generation marks it as metadata rather than claiming full normal-map rendering."
+    },
+    {
+      "id": "AXM-01-PROVENANCE-A-012-observation",
+      "role": "uses",
+      "basis": "Reality feedback requires explicit observation source, executor, measurements and a digest-bound comparison against simulated state."
+    },
+    {
+      "id": "AXM-13-ANIMATION-VIDEO-A-013-morph-weight",
+      "role": "uses",
+      "basis": "The explicit 0..1 factor is the bounded weight of every intermediate morph state."
     }
   ],
   "implementation": {
     "kind": "DETERMINISTIC_SOURCE",
     "entrypoint": "builtin:simulate_creation",
-    "source": "src/axm_uc/simulation.py + src/axm_uc/vector_cells.py"
+    "source": "src/axm_uc/simulation.py + src/axm_uc/vector_cells.py + src/axm_uc/chameleon.py"
   },
   "limitations": [
-    "simulation improvement rules remain bounded to the explicitly implemented rules",
-    "NO_KNOWN_IMPROVEMENTS is not optimality, perfection, semantic correctness, or aesthetic proof",
-    "Vector Cell Fabric v0 selects only explicitly supplied representations and never invents missing close-up detail",
-    "merged and split cell forms preserve structural identity but do not prove physical equivalence",
-    "vector geometry remains resolution-independent until rasterization at an observation/output boundary; raster effects and physical detail still have their own limits",
-    "v0 cell transforms intentionally do not rewrite SVG path data"
+    "simulation improvement rules remain bounded to explicitly implemented rules",
+    "NO_KNOWN_IMPROVEMENTS is not optimality, perfection, semantic correctness or aesthetic proof",
+    "Vector Cells select only supplied representations and never invent missing close-up detail",
+    "compatible morph geometry is currently bounded to Paintgun rect/circle/ellipse/polygon shapes; incompatible shapes/topology crossfade",
+    "rich material truth exceeds current SVG rendering: normal, displacement, refraction/IOR, anisotropy and subsurface are descriptors or labeled approximations rather than physical rendering",
+    "environment readings are supplied observations; no hardware/browser sensor sampling is claimed",
+    "sensor fusion is a transparent weighted normalized policy, not hidden learned control",
+    "reality recalibration is first-order numeric exact-condition correction and may still be wrong on the next observation",
+    "one or repeated observations are not silently generalized into universal simulator laws"
   ],
-  "persistent_state": null,
+  "persistent_state": "state/simulation-calibration.json only when record-calibration is explicitly invoked",
   "root_fit": {
     "truth": {
       "fit": true,
-      "basis": "Every adaptive representation, observation scale, choice, merge/split transition and resulting thought digest stays inspectable; the system does not claim infinite detail or perfection."
+      "basis": "Adaptive representations, morph endpoints/factor, rich material truth, renderer approximations, sensor readings/weights, external observations, discrepancies and calibration receipts all remain inspectable."
     },
     "agency": {
       "fit": true,
-      "basis": "Scale and chameleon choice are explicit caller state, and choice-specific representations override generic ones without silently changing cell identity."
+      "basis": "Scale, choice, morph factor, material graph, sensor policy and calibration recording are explicit caller-visible state rather than hidden adaptation."
     },
     "continuity": {
       "fit": true,
-      "basis": "A cell keeps one stable identity while its selected expression changes; resolving cells is read-only and produces a normal thought before any materialization."
+      "basis": "Cell identity and exact thought lineage are preserved where possible; topology changes use bounded crossfade and calibration evidence does not rewrite the machine body."
     },
     "wisdom-before-speed": {
       "fit": true,
-      "basis": "Adaptive detail is selected from known representations and may enter the existing simulation evidence loop before the result is pulled into reality."
+      "basis": "Simulation stays before materialization, richer truth is separated from current renderer approximation, and observed reality can reopen the simulator instead of protecting an earlier story."
     }
   }
 }

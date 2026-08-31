@@ -1,0 +1,166 @@
+{
+  "kind": "adapt-environment",
+  "direction": "continuously adapt one stable Vector Cell body from explicit environmental readings",
+  "inputs": {
+    "operation": "adapt-environment",
+    "fabric": {
+      "schema": "axm.vector-cell-fabric/v0.1",
+      "intent": "One adaptive panel changes geometry, surface color, light response and material state from calm to alert without losing its cell identity.",
+      "canvas": {
+        "width": 360,
+        "height": 180,
+        "background": "#080B10"
+      },
+      "cells": [
+        {
+          "id": "adaptive-panel",
+          "role": "environment-responsive-chameleon-cell",
+          "representations": [
+            {
+              "id": "calm",
+              "min_scale": 0,
+              "mode": "expression",
+              "objects": [
+                {
+                  "id": "body",
+                  "shape": {
+                    "kind": "rect",
+                    "x": 55,
+                    "y": 45,
+                    "width": 250,
+                    "height": 90,
+                    "rx": 18
+                  },
+                  "material": {
+                    "name": "calm-adaptive-surface",
+                    "metallic": 0.3,
+                    "roughness": 0.65,
+                    "opacity": 1,
+                    "emission": 0.05
+                  },
+                  "color": {
+                    "fill": "#1565C0",
+                    "stroke": "#90CAF9",
+                    "stroke_width": 2
+                  },
+                  "light": {
+                    "color": "#90CAF9",
+                    "intensity": 0.25,
+                    "x": 180,
+                    "y": 70,
+                    "radius": 120
+                  },
+                  "shade": {
+                    "color": "#000000",
+                    "dx": 3,
+                    "dy": 5,
+                    "blur": 10,
+                    "opacity": 0.35
+                  },
+                  "skin": {
+                    "kind": "linear-gradient",
+                    "colors": [
+                      "#1565C0",
+                      "#263238"
+                    ],
+                    "angle": 20
+                  }
+                }
+              ]
+            },
+            {
+              "id": "alert",
+              "min_scale": 0,
+              "choices": [
+                "alert"
+              ],
+              "mode": "expression",
+              "objects": [
+                {
+                  "id": "body",
+                  "shape": {
+                    "kind": "rect",
+                    "x": 35,
+                    "y": 30,
+                    "width": 290,
+                    "height": 120,
+                    "rx": 34
+                  },
+                  "material": {
+                    "name": "alert-adaptive-surface",
+                    "metallic": 0.75,
+                    "roughness": 0.2,
+                    "opacity": 1,
+                    "emission": 0.8
+                  },
+                  "color": {
+                    "fill": "#FF6D00",
+                    "stroke": "#FFD180",
+                    "stroke_width": 4
+                  },
+                  "light": {
+                    "color": "#FFD180",
+                    "intensity": 1.6,
+                    "x": 180,
+                    "y": 65,
+                    "radius": 165
+                  },
+                  "shade": {
+                    "color": "#000000",
+                    "dx": 7,
+                    "dy": 10,
+                    "blur": 20,
+                    "opacity": 0.55
+                  },
+                  "skin": {
+                    "kind": "linear-gradient",
+                    "colors": [
+                      "#FF6D00",
+                      "#4E342E"
+                    ],
+                    "angle": 65
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "readings": {
+      "temperature": 26,
+      "ambient_light": 72,
+      "interaction_intensity": 0.6
+    },
+    "policy": {
+      "drivers": [
+        {
+          "sensor": "temperature",
+          "min": 0,
+          "max": 40,
+          "weight": 1
+        },
+        {
+          "sensor": "ambient_light",
+          "min": 0,
+          "max": 100,
+          "weight": 0.8
+        },
+        {
+          "sensor": "interaction_intensity",
+          "min": 0,
+          "max": 1,
+          "weight": 1.2
+        }
+      ],
+      "from_state": {
+        "observation_scale": 1,
+        "choice": "default"
+      },
+      "to_state": {
+        "observation_scale": 1,
+        "choice": "alert"
+      }
+    }
+  }
+}

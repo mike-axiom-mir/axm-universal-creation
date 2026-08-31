@@ -7,6 +7,8 @@ def _register_extension_builtins() -> None:
     """Register small runtime extensions without giving proposals self-authority."""
     from . import capabilities as _capabilities
     from . import specialist_pool as _specialist_pool
+    from .chameleon import ChameleonError, operate_chameleon
+    from .simulation import SimulationError, operate_simulation
     from .specialist_pool_extension import build_specialist_pool as _contextual_pool_builder
     from .stepwise_workflow import StepwiseWorkflowError, operate_stepwise_workflow
 
@@ -43,6 +45,31 @@ def _register_extension_builtins() -> None:
         "prepare-workflow",
         "plan-tournament",
     }
+    chameleon_operations = {
+        "morph-thoughts",
+        "continuous-morph",
+        "morph-vector-cells",
+        "morph-cells",
+        "chameleon-morph",
+        "compile-material-graph",
+        "compile-material",
+        "rich-material",
+        "apply-material-graph",
+        "apply-material",
+        "adapt-environment",
+        "sensor-adapt",
+        "environment-adapt",
+        "compare-reality",
+        "reality-feedback",
+        "simulation-reality-feedback",
+        "recalibrate-simulation",
+        "reopen-from-reality",
+        "re-simulate-reality-gap",
+        "record-calibration",
+        "learn-exact-context",
+        "inspect-calibrations",
+        "calibration-history",
+    }
 
     def multi_perspective_orchestration(root, inputs):
         operation = str(inputs.get("operation", "prepare")).strip().casefold()
@@ -57,7 +84,18 @@ def _register_extension_builtins() -> None:
             details = getattr(exc, "details", {})
             raise _capabilities.CapabilityError(str(exc), details) from exc
 
+    def adaptive_simulation_surface(root, inputs):
+        operation = str(inputs.get("operation", "simulate-creation")).strip().casefold()
+        try:
+            if operation in chameleon_operations:
+                return operate_chameleon(root, inputs)
+            return operate_simulation(root, inputs)
+        except (ChameleonError, SimulationError, ValueError, TypeError) as exc:
+            details = getattr(exc, "details", {})
+            raise _capabilities.CapabilityError(str(exc), details) from exc
+
     _capabilities.BUILTINS["builtin:specialist_tournament"] = multi_perspective_orchestration
+    _capabilities.BUILTINS["builtin:simulate_creation"] = adaptive_simulation_surface
 
 
 _register_extension_builtins()
