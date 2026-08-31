@@ -8,9 +8,11 @@ The important measure is not how many top-level routes exist today. It is whethe
 
 ## Growth path
 
-The implemented path is:
+The Forge path is:
 
-`proposal -> closed-contract validation -> detached materialization -> exact lineage -> bounded test -> voluntary admission request -> separate admission choice`
+`proposal -> closed-contract validation -> detached materialization -> exact lineage -> bounded test -> optional review request`
+
+A separate machine-evolution path may then carry a supported tested candidate into the continuing body. The review request is an observation surface, not a mandatory human approval gate.
 
 The forge accepts `axm.creation-unit-spawn-proposal/v0.1`. A proposal contains:
 
@@ -22,6 +24,8 @@ The forge accepts `axm.creation-unit-spawn-proposal/v0.1`. A proposal contains:
 - deterministic file checks;
 - provenance, limitations, and a four-root fit declaration;
 - an authority object in which execution, installation, registration, promotion, merge, CANON, and permission change are all explicitly false.
+
+Those false proposal-authority fields mean **the detached candidate cannot grant itself machine authority**. They do not globally forbid the continuing machine from installing, registering, promoting, merging, changing CANON, changing permissions, replacing, or recovering when an explicit self-evolution transition exists and is justified.
 
 Unknown proposal fields are rejected. Paths may not escape the candidate body. Payloads are currently bounded to 128 files and 2 MiB of exact UTF-8 text.
 
@@ -61,19 +65,35 @@ The package digest is independent of the chosen output path. Spawning the same n
 
 Package integrity and runtime behavior are separate evidence planes. The receipt explicitly says generated code was not executed during materialization.
 
-## Test and admission states
+## Test and optional review state
 
 The separate `test` operation reopens the candidate, reconstructs the expected manifest from the stored proposal, verifies the exact file set and every payload digest, runs the declared deterministic checks, and then applies the strongest currently implemented kind-specific test. Spawned capability/hand fixture paths must remain under their expanded `${TEST_DIR}/` directory. The test process still uses the current host user's permissions; this is a bounded path contract, not an OS sandbox.
 
-The candidate or a connected cognition may later choose `request-admission-check` with its own readiness statement. A passing candidate becomes:
+The candidate or a connected cognition may choose `request-admission-check` with its own readiness statement. A passing candidate currently records:
 
 `READY_FOR_HUMAN_ADMISSION_REVIEW`
 
-A failing or mutated candidate becomes:
+A failing or mutated candidate records:
 
 `HELD_FAILED_TESTS`
 
-Neither state performs admission. The request does not install, register, route, promote, merge, change CANON, or change permissions. It records one current review request rather than an automatic activity history.
+The legacy state name describes that review artifact only. It is **not** a declaration that a human is required before all self-modification. The request operation itself performs no admission or machine mutation.
+
+For supported self-evolution transitions, the running machine can separately re-test the candidate, apply its internal four-root fit, establish the daily recovery boundary, and continue from the changed state without a permanent outside approver.
+
+## Self-evolution after Forge
+
+`AXM-CAP-EVOLVE-MACHINE` now supports the first direct Creation-Unit adoption transition: executable organs.
+
+The current path is:
+
+`tested detached organ -> current four-root fit -> ensure today's complete machine snapshot -> write exact tested organ into executable-organs/ -> reload/register exact ref -> expose it to normal interface-driven composition`
+
+Successful adoption therefore makes installation, registration, and promotion-for-composition real machine transitions rather than merely proposal fields.
+
+Recovery uses the existing daily whole-machine snapshot model. The machine preserves one complete restorable state per day. If later evolution proves unwanted, the current body can be quarantined and a known-good daily snapshot restored. This deliberately avoids constructing a per-change event-history bureaucracy.
+
+The older direct candidate-capability adoption path also establishes the daily snapshot before making a passing capability live.
 
 ## WALMI and Workshop donor knowledge
 
@@ -99,7 +119,7 @@ PYTHONPATH=src python -m axm_uc create examples/requests/test_spawned_creation_p
 PYTHONPATH=src python -m axm_uc create examples/requests/request_spawned_creation_protocol_review.json
 ```
 
-The result remains under `creations/spawned/creation-request-protocol/`. Its admission request is evidence for a later decision, not the decision itself.
+The result remains under `creations/spawned/creation-request-protocol/`. Its review request is evidence for a later transition, not the transition itself.
 
 ## From missing interface to tested detached organ
 
@@ -107,8 +127,8 @@ The separate evidence-bound gap compiler can now produce two narrow classes of f
 
 The installed organ body supplies one multiplier without pretending to invent semantics: an exact interface goal can derive a unique complete organ composition. Missing interfaces become Forge-ready organ contracts, and ambiguity stays visible. The Forge still requires a missing organ's actual source and tests before materializing that body.
 
-That closure can now be tested end to end when a human, AI, deterministic recipe, or labelled external boundary supplies the complete organ proposal. `explore-missing-organ-closure` first proves that the proposal/package declarations match the observed gap, then reuses this Forge for detached materialization and testing. A disposable package overlay must make the original goal READY with that candidate selected, and the full assembly must validate. The candidate remains detached and the live package body remains unchanged. See `ORGAN_GAP_CLOSURE.md`.
+That closure can now be tested end to end when a human, AI, deterministic recipe, or labelled external boundary supplies the complete organ proposal. `explore-missing-organ-closure` first proves that the proposal/package declarations match the observed gap, then reuses this Forge for detached materialization and testing. A disposable package overlay must make the original goal READY with that candidate selected, and the full assembly must validate. The closure experiment itself remains detached. A separately justified `adopt-organ` evolution transition can now carry that exact tested organ into the live executable-organ library.
 
-The forge still does not autonomously synthesize arbitrary semantic source from a high-level gap, activate a newly spawned recipe as a general builder, prove arbitrary protocol semantics, run a generated organ end to end, or adopt every unit kind into a live registry.
+The forge still does not autonomously synthesize arbitrary semantic source from a high-level gap, activate a newly spawned recipe as a general builder, prove arbitrary protocol semantics, or run a generated organ end to end.
 
-Those are now visible next layers rather than reasons to inflate the live capability count.
+Those remain visible capability gaps. They are not reasons to block the machine from using the self-evolution transitions it actually has.
