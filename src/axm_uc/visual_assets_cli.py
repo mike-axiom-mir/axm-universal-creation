@@ -7,6 +7,7 @@ from pathlib import Path
 from .visual_assets import catalog as base_catalog, generate_asset, generate_kit
 from .visual_creation_grammar import compile_visual_recipe, grammar_catalog
 from .visual_expanded import expansion_catalog, generate_expanded_asset, generate_expansion_kit
+from .visual_learning import compile_adaptive_visual_recipe, inspect_png, inspect_visual_learning, record_visual_use
 
 BASE_CATEGORIES = ["texture", "gradient", "material", "fixture", "decal", "palette"]
 EXPANDED_CATEGORIES = ["surface", "pigment", "sprite", "mesh", "vector-part"]
@@ -34,6 +35,17 @@ def build_parser() -> argparse.ArgumentParser:
     sub.add_parser("grammar-catalog", help="show the composable visual-intent grammar")
     plan = sub.add_parser("plan", help="compile one structured visual request into a deterministic recipe")
     plan.add_argument("request", help="path to a UTF-8 JSON visual request")
+    adaptive = sub.add_parser("plan-adaptive", help="compile a request with exact-context lessons from prior use")
+    adaptive.add_argument("request", help="path to a UTF-8 JSON visual request")
+    adaptive.add_argument("--state-root", default=".")
+    png = sub.add_parser("inspect-png", help="verify PNG structure and real alpha pixels")
+    png.add_argument("path")
+    learn = sub.add_parser("learn-use", help="record one evidence-bound visual-use observation")
+    learn.add_argument("observation", help="path to a UTF-8 JSON observation")
+    learn.add_argument("--state-root", default=".")
+    learning = sub.add_parser("learning", help="inspect the compact current visual-use profile")
+    learning.add_argument("--state-root", default=".")
+    learning.add_argument("--context")
 
     generate = sub.add_parser("generate", help="generate one real asset, material, pigment, sprite, mesh, or vector part")
     generate.add_argument("category", choices=BASE_CATEGORIES + EXPANDED_CATEGORIES)
@@ -79,6 +91,16 @@ def main(argv: list[str] | None = None) -> int:
     elif args.command == "plan":
         request = json.loads(Path(args.request).read_text(encoding="utf-8"))
         result = compile_visual_recipe(request)
+    elif args.command == "plan-adaptive":
+        request = json.loads(Path(args.request).read_text(encoding="utf-8"))
+        result = compile_adaptive_visual_recipe(args.state_root, request)
+    elif args.command == "inspect-png":
+        result = inspect_png(args.path)
+    elif args.command == "learn-use":
+        observation = json.loads(Path(args.observation).read_text(encoding="utf-8"))
+        result = record_visual_use(args.state_root, observation)
+    elif args.command == "learning":
+        result = inspect_visual_learning(args.state_root, context_key=args.context)
     elif args.command == "kit":
         result = generate_kit(args.path, profile=args.profile, seed=args.seed, size=args.size, replace=args.replace)
     elif args.command == "expansion-kit":

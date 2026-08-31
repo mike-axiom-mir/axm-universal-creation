@@ -5,6 +5,12 @@ from typing import Any
 
 from .visual_creation_grammar import compile_visual_recipe, grammar_catalog
 from .visual_expanded import expansion_catalog, generate_expanded_asset, generate_expansion_kit
+from .visual_learning import (
+    compile_adaptive_visual_recipe,
+    inspect_png,
+    inspect_visual_learning,
+    record_visual_use,
+)
 
 
 def operate_visual_expansion(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
@@ -26,6 +32,20 @@ def operate_visual_expansion(root: Path, inputs: dict[str, Any]) -> dict[str, An
         if not isinstance(request, dict):
             raise TypeError("visual plan operation requires request object")
         return compile_visual_recipe(request)
+    if operation == "plan-adaptive":
+        return compile_adaptive_visual_recipe(root, inputs.get("request"))
+    if operation == "inspect-png":
+        raw_artifact = str(inputs.get("artifact_path", "")).strip()
+        if not raw_artifact:
+            raise ValueError("inspect-png requires artifact_path")
+        artifact = Path(raw_artifact).expanduser()
+        if not artifact.is_absolute():
+            artifact = (Path(root) / artifact).resolve()
+        return inspect_png(artifact)
+    if operation == "record-use":
+        return record_visual_use(root, inputs.get("observation"))
+    if operation == "inspect-learning":
+        return inspect_visual_learning(root, context_key=inputs.get("context_key"))
 
     raw_path = str(inputs.get("path", "")).strip()
     if not raw_path:
