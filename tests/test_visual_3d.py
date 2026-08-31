@@ -96,7 +96,7 @@ class Visual3DForgeTests(unittest.TestCase):
     def test_aaa_assessment_requires_technical_and_bound_visual_pass(self):
         proof_sha = "a" * 64
         receipt = {"inspections": {
-            "lod0": {"triangles": 100000, "materials": list("abcdef"), "images": 5, "textures": 5},
+            "lod0": {"triangles": 100000, "materials": list("abcdef"), "images": 15, "textures": 15},
             "lod1": {"triangles": 48000}, "lod2": {"triangles": 18000}, "collision": {"meshes": 5},
         }}
         manifest = {

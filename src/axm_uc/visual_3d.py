@@ -38,8 +38,8 @@ BLENDER_BOOTSTRAP = {
 AAA_QUALITY_GATES = {
     "minimum_lod0_triangles": 80000,
     "minimum_materials": 5,
-    "minimum_embedded_images": 4,
-    "minimum_embedded_textures": 4,
+    "minimum_embedded_images": 15,
+    "minimum_embedded_textures": 15,
     "minimum_render_angles": 4,
     "required_visual_criteria": [
         "aaa-form-hierarchy",

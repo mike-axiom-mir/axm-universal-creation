@@ -3,36 +3,73 @@
     "3d/axiom-bastion-frame/hero": {
       "criteria": {
         "aaa-form-hierarchy": {
-          "fail": 2,
+          "fail": 3,
           "pass": 0,
           "unknown": 0
         },
         "faction-silhouette": {
           "fail": 0,
-          "pass": 2,
+          "pass": 3,
           "unknown": 0
         },
         "functional-topology-all-angles": {
           "fail": 0,
-          "pass": 1,
+          "pass": 2,
           "unknown": 1
         },
         "material-authenticity": {
           "fail": 2,
-          "pass": 0,
+          "pass": 1,
           "unknown": 0
         },
         "non-toy-proportions": {
-          "fail": 2,
+          "fail": 3,
           "pass": 0,
           "unknown": 0
         }
       },
       "dedup_digests": [
         "9a2ac6cc5b645315dcd86c0bc93d8fc682562dd0a08a061d4ece4412ae44d6ad",
-        "2c26df32c816991b9938a782dd2c5080674bdb37e46228cbdce749b2dc73384e"
+        "2c26df32c816991b9938a782dd2c5080674bdb37e46228cbdce749b2dc73384e",
+        "1fc62229aa4ef2aba7262182cd15ec59969d005fb094f701f5f2561b937d9d6d"
       ],
       "lessons": {
+        "author-rear-and-weapon-secondary-forms": {
+          "confirmations": 1,
+          "last_evidence": "Rear views are structurally valid but visually sparse, while the railgun extends beyond the hero framing and dominates the silhouette.",
+          "last_evidence_digest": "1fc62229aa4ef2aba7262182cd15ec59969d005fb094f701f5f2561b937d9d6d",
+          "patch": {
+            "avoid_add": [
+              "plain backpack facade",
+              "weapon cropped by proof camera"
+            ],
+            "constraints_add": [
+              "add layered rear armor cable routing heat exchangers and a shorter nested rail assembly"
+            ],
+            "criteria_add": [
+              "rear power plant and weapon each sustain large medium and small form hierarchy"
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        },
+        "break-rigid-box-torso-and-stance": {
+          "confirmations": 1,
+          "last_evidence": "The PBR and joint language are now coherent, but the front view remains a centered rectangular torso over straight narrow legs.",
+          "last_evidence_digest": "1fc62229aa4ef2aba7262182cd15ec59969d005fb094f701f5f2561b937d9d6d",
+          "patch": {
+            "avoid_add": [
+              "upright mannequin stance",
+              "rectangular torso silhouette"
+            ],
+            "constraints_add": [
+              "taper and cant the torso shells and offset the hips knees and feet into a load-bearing combat stance"
+            ],
+            "criteria_add": [
+              "hero silhouette has a broad grounded stance and asymmetrical overlapping primary masses"
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        },
         "replace-bulbous-joint-masses": {
           "confirmations": 1,
           "last_evidence": "The four-angle proof retains topology but repeated spherical limb masses and the round torso core create a toy-like inflated anatomy.",
@@ -127,7 +164,7 @@
         }
       },
       "technical": {},
-      "use_count": 2
+      "use_count": 3
     }
   },
   "schema": "axm.visual-use-profile/v0.1"

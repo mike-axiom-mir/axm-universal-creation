@@ -5,11 +5,31 @@ import hashlib
 import json
 import math
 import random
+import struct
 import sys
+import zlib
 from pathlib import Path
 
 import bpy
 from mathutils import Vector
+
+
+def write_rgba_png(path: Path, width: int, height: int, rgba: bytes) -> None:
+    """Write an 8-bit RGBA PNG without relying on Blender's image save state."""
+    if len(rgba) != width * height * 4:
+        raise ValueError("RGBA byte count does not match texture dimensions")
+
+    def chunk(kind: bytes, payload: bytes) -> bytes:
+        return struct.pack(">I", len(payload)) + kind + payload + struct.pack(">I", zlib.crc32(kind + payload) & 0xffffffff)
+
+    stride = width * 4
+    scanlines = b"".join(b"\x00" + rgba[y * stride:(y + 1) * stride] for y in range(height))
+    path.write_bytes(
+        b"\x89PNG\r\n\x1a\n"
+        + chunk(b"IHDR", struct.pack(">IIBBBBB", width, height, 8, 6, 0, 0, 0))
+        + chunk(b"IDAT", zlib.compress(scanlines, 9))
+        + chunk(b"IEND", b"")
+    )
 
 
 def parse_args() -> argparse.Namespace:
@@ -39,35 +59,72 @@ def material(name: str, color: tuple[float, float, float, float], *, metallic: f
     node.inputs["Base Color"].default_value = color
     node.inputs["Metallic"].default_value = metallic
     node.inputs["Roughness"].default_value = roughness
+    embedded_maps: dict[str, bpy.types.Node] = {}
     if texture_dir is not None:
         # A retained, deterministic material compiler. The generated texture is
         # intentionally subtle: it gives the GLB a real embedded PBR image path
         # while the shader's micro-normal/roughness machinery stays procedural.
         texture_dir.mkdir(parents=True, exist_ok=True)
         size = 512
-        image = bpy.data.images.new(f"{name}_BaseColor", width=size, height=size, alpha=True)
-        pixels: list[float] = []
+        pixels = bytearray()
+        roughness_pixels = bytearray()
+        metallic_pixels = bytearray()
+        normal_pixels = bytearray()
         salt = int(hashlib.sha256(name.encode("utf-8")).hexdigest()[:8], 16)
+        # Blender's image pixels are encoded values once tagged sRGB. Convert
+        # the authored linear palette before writing or mid-value metals become
+        # almost black after color management.
+        encoded_color = tuple(pow(max(0.0, min(1.0, channel)), 1.0 / 2.2) for channel in color[:3])
         for y in range(size):
             for x in range(size):
-                grain = math.sin((x * 0.173 + y * 0.091 + salt % 97) * .71) * .018
+                grain = (
+                    math.sin(x * .071 + salt % 37)
+                    + math.sin(y * .053 + salt % 53)
+                    + math.sin((x + y) * .019 + salt % 71)
+                ) * .0022
                 seam = -.075 if (x + salt) % 173 in (0, 1) or (y + salt // 7) % 211 == 0 else 0.0
                 wear = .045 if ((x * 37 + y * 19 + salt) % 997) < 3 else 0.0
-                pixels.extend((
-                    max(0.0, min(1.0, color[0] + grain + seam + wear)),
-                    max(0.0, min(1.0, color[1] + grain + seam + wear)),
-                    max(0.0, min(1.0, color[2] + grain + seam + wear)),
+                pixels.extend(int(round(max(0.0, min(1.0, value)) * 255)) for value in (
+                    encoded_color[0] + grain + seam + wear,
+                    encoded_color[1] + grain + seam + wear,
+                    encoded_color[2] + grain + seam + wear,
                     color[3],
                 ))
-        image.pixels.foreach_set(pixels)
+                rough_value = max(.04, min(.98, roughness + grain * 1.4 - wear * .45 - seam * .35))
+                metal_value = max(0.0, min(1.0, metallic - wear * 1.4 + seam * .2))
+                nx = max(0, min(255, int(128 + math.sin((x + salt % 31) * .11) * 2 + seam * 42)))
+                ny = max(0, min(255, int(128 + math.cos((y + salt % 43) * .09) * 2 + seam * 36)))
+                nz = 250
+                rough_byte = int(round(rough_value * 255))
+                metal_byte = int(round(metal_value * 255))
+                roughness_pixels.extend((rough_byte, rough_byte, rough_byte, 255))
+                metallic_pixels.extend((metal_byte, metal_byte, metal_byte, 255))
+                normal_pixels.extend((nx, ny, nz, 255))
+        texture_path = texture_dir / f"{name}_basecolor.png"
+        write_rgba_png(texture_path, size, size, bytes(pixels))
+        image = bpy.data.images.load(str(texture_path), check_existing=False)
+        image.name = f"{name}_BaseColor"
         image.colorspace_settings.name = "sRGB"
-        image.filepath_raw = str(texture_dir / f"{name}_basecolor.png")
-        image.file_format = "PNG"
-        image.save()
+        image.pack()
         texture = mat.node_tree.nodes.new("ShaderNodeTexImage")
         texture.name = f"{name}_EmbeddedBaseColor"
         texture.image = image
         mat.node_tree.links.new(texture.outputs["Color"], node.inputs["Base Color"])
+        for role, suffix, payload in (
+            ("roughness", "roughness", roughness_pixels),
+            ("metallic", "metallic", metallic_pixels),
+            ("normal", "normal", normal_pixels),
+        ):
+            map_path = texture_dir / f"{name}_{suffix}.png"
+            write_rgba_png(map_path, size, size, bytes(payload))
+            map_image = bpy.data.images.load(str(map_path), check_existing=False)
+            map_image.name = f"{name}_{suffix.title()}"
+            map_image.colorspace_settings.name = "Non-Color"
+            map_image.pack()
+            map_node = mat.node_tree.nodes.new("ShaderNodeTexImage")
+            map_node.name = f"{name}_Embedded{suffix.title()}"
+            map_node.image = map_image
+            embedded_maps[role] = map_node
     if not emission:
         noise = mat.node_tree.nodes.new("ShaderNodeTexNoise")
         noise.inputs["Scale"].default_value = 18.0 if metallic > .5 else 9.0
@@ -95,6 +152,13 @@ def material(name: str, color: tuple[float, float, float, float], *, metallic: f
         mat.node_tree.links.new(rough_map.outputs["Result"], node.inputs["Roughness"])
         mat.node_tree.links.new(noise.outputs["Fac"], bump.inputs["Height"])
         mat.node_tree.links.new(bump.outputs["Normal"], node.inputs["Normal"])
+    if embedded_maps:
+        mat.node_tree.links.new(embedded_maps["roughness"].outputs["Color"], node.inputs["Roughness"])
+        mat.node_tree.links.new(embedded_maps["metallic"].outputs["Color"], node.inputs["Metallic"])
+        normal_map = mat.node_tree.nodes.new("ShaderNodeNormalMap")
+        normal_map.inputs["Strength"].default_value = .10
+        mat.node_tree.links.new(embedded_maps["normal"].outputs["Color"], normal_map.inputs["Color"])
+        mat.node_tree.links.new(normal_map.outputs["Normal"], node.inputs["Normal"])
     if emission:
         socket = node.inputs.get("Emission Color") or node.inputs.get("Emission")
         if socket:
@@ -132,6 +196,30 @@ def wedge(name: str, location: tuple[float, float, float], dimensions: tuple[flo
     obj.rotation_euler = rotation
     assign(obj, mat)
     return finish_mesh(obj, bevel=bevel * .62, segments=3, smooth=False)
+
+
+def tapered_chassis(name: str, location: tuple[float, float, float], dimensions: tuple[float, float, float],
+                    mat: bpy.types.Material, *, lower_scale: float = .70, front_scale: float = .82,
+                    rotation: tuple[float, float, float] = (0, 0, 0), bevel: float = .05) -> bpy.types.Object:
+    """A vertically tapered load-bearing volume for torso/pelvis silhouettes."""
+    hx, hy, hz = (value / 2 for value in dimensions)
+    vertices = [
+        (-hx * lower_scale, -hy * front_scale, -hz), (hx * lower_scale, -hy * front_scale, -hz),
+        (hx, -hy * front_scale, hz), (-hx, -hy * front_scale, hz),
+        (-hx * lower_scale, hy, -hz), (hx * lower_scale, hy, -hz),
+        (hx, hy, hz), (-hx, hy, hz),
+    ]
+    faces = [(0, 1, 2, 3), (4, 7, 6, 5), (0, 4, 5, 1), (1, 5, 6, 2),
+             (2, 6, 7, 3), (3, 7, 4, 0)]
+    mesh = bpy.data.meshes.new(f"{name}_Mesh")
+    mesh.from_pydata(vertices, [], faces)
+    mesh.update()
+    obj = bpy.data.objects.new(name, mesh)
+    bpy.context.collection.objects.link(obj)
+    obj.location = location
+    obj.rotation_euler = rotation
+    assign(obj, mat)
+    return finish_mesh(obj, bevel=bevel, segments=4, smooth=False)
 
 
 def assign(obj: bpy.types.Object, mat: bpy.types.Material) -> bpy.types.Object:
@@ -436,7 +524,7 @@ def add_axiom_hero_v3(objects: list[bpy.types.Object], mats: dict[str, bpy.types
     # Feet and legs: wide armored stance, separate toes, visible ankle/knee mechanics.
     for side in (-1, 1):
         p = "L" if side < 0 else "R"
-        x = side * .73
+        x = side * .96
         for toe in (-1, 0, 1):
             objects.append(wedge(f"AX3_{p}_TOE_{toe}", (x + toe * .18, -.50, .15), (.18, .80, .22),
                                  pale if toe == 0 else gm, front_scale=(.58, .52),
@@ -643,6 +731,258 @@ def add_axiom_hero_v3(objects: list[bpy.types.Object], mats: dict[str, bpy.types
                            (.055, .025, .10), cyan if i % 3 else amber, bevel=.008))
 
 
+def add_axiom_hero_v4(objects: list[bpy.types.Object], mats: dict[str, bpy.types.Material], rng: random.Random) -> None:
+    """Authored hard-surface rebuild driven by the rejected v6/v7 evidence.
+
+    Large spheres and monolithic slabs are deliberately absent. Every major
+    silhouette mass exposes a dark load-bearing frame, offset armor shells,
+    constrained hinge axes, and negative space.
+    """
+    gm, pale, cyan, amber, dark = (mats[k] for k in ("gunmetal", "pale", "cyan", "amber", "dark"))
+
+    def hinge(name: str, center: tuple[float, float, float], width: float, radius: float) -> None:
+        objects.append(cylinder(f"{name}_AXLE", center, radius, width, dark,
+                                rotation=(0, math.pi / 2, 0), vertices=24, bevel=.022))
+        for side in (-1, 1):
+            cap = (center[0] + side * width * .52, center[1], center[2])
+            objects.append(cylinder(f"{name}_CAP_{side}", cap, radius * .78, .075, gm,
+                                    rotation=(0, math.pi / 2, 0), vertices=20, bevel=.018))
+
+    def limb_shell(name: str, center: tuple[float, float, float], dims: tuple[float, float, float], side: int) -> None:
+        x, y, z = center
+        dx, dy, dz = dims
+        objects.append(wedge(f"{name}_FRAME", center, (dx * .62, dy * .72, dz), dark,
+                             front_scale=(.66, .72), rotation=(0, side * math.radians(3), 0), bevel=.028))
+        objects.append(wedge(f"{name}_FRONT_SHELL", (x, y - dy * .43, z + dz * .03),
+                             (dx * .88, dy * .20, dz * .76), pale, front_scale=(.58, .68),
+                             rotation=(math.radians(3), side * math.radians(5), side * math.radians(2)), bevel=.034))
+        objects.append(wedge(f"{name}_OUTER_SHELL", (x + side * dx * .46, y + dy * .02, z),
+                             (dx * .24, dy * .72, dz * .70), gm, front_scale=(.54, .64),
+                             rotation=(0, side * math.radians(8), side * math.radians(3)), bevel=.026))
+        objects.append(box(f"{name}_RECESS", (x - side * dx * .25, y - dy * .52, z),
+                           (dx * .13, .035, dz * .40), dark, bevel=.008))
+
+    # Grounded feet and legs: separated frame, shell, hinge and actuator layers.
+    for side in (-1, 1):
+        p = "L" if side < 0 else "R"
+        x = side * .73
+        objects.append(wedge(f"AX4_{p}_HEEL_FRAME", (x, .08, .18), (.58, .58, .27), dark,
+                             front_scale=(.62, .58), bevel=.035))
+        for toe in (-1, 0, 1):
+            objects.append(wedge(f"AX4_{p}_TOE_{toe}", (x + toe * .17, -.51 - abs(toe) * .025, .13),
+                                 (.15, .78, .18), pale if toe == 0 else gm,
+                                 front_scale=(.42, .48), rotation=(0, 0, toe * math.radians(4)), bevel=.018))
+        ankle, knee, hip = (x, -.02, .48), (side * .89, -.02, 1.56), (side * .72, .02, 2.60)
+        hinge(f"AX4_{p}_ANKLE", ankle, .55, .17)
+        hinge(f"AX4_{p}_KNEE", knee, .72, .25)
+        hinge(f"AX4_{p}_HIP", hip, .66, .26)
+        objects.append(beam(f"AX4_{p}_SHIN_SPINE", ankle, knee, .12, dark, vertices=20))
+        objects.append(beam(f"AX4_{p}_THIGH_SPINE", knee, hip, .14, dark, vertices=20))
+        limb_shell(f"AX4_{p}_SHIN", (side * .925, -.04, 1.02), (.58, .66, .88), side)
+        limb_shell(f"AX4_{p}_THIGH", (side * .80, .00, 2.08), (.66, .72, .82), side)
+        objects.append(wedge(f"AX4_{p}_KNEE_GUARD", (side * .89, -.37, 1.57), (.54, .20, .50), pale,
+                             front_scale=(.48, .52), bevel=.028))
+        for channel in (-1, 1):
+            objects.append(beam(f"AX4_{p}_SHIN_ACTUATOR_{channel}",
+                                (x + channel * .12, .20, .59), (side * .89 + channel * .10, .18, 1.38),
+                                .025, amber if channel < 0 else pale, vertices=14))
+            objects.append(beam(f"AX4_{p}_THIGH_ACTUATOR_{channel}",
+                                (side * .63 + channel * .09, .18, 1.72),
+                                (side * .66 + channel * .09, .16, 2.43), .029, pale, vertices=14))
+
+    # Pelvis and torso use overlapping, offset shells over a narrower frame.
+    objects.append(tapered_chassis("AX4_PELVIS_FRAME", (0, .03, 2.70), (1.72, .80, .52), dark,
+                                   lower_scale=.72, front_scale=.78, bevel=.040))
+    for side in (-1, 1):
+        objects.append(wedge(f"AX4_PELVIS_SHELL_{side}", (side * .52, -.43, 2.73), (.74, .16, .44), gm,
+                             front_scale=(.54, .60), rotation=(0, side * math.radians(5), side * math.radians(4)), bevel=.030))
+    objects.append(wedge("AX4_PELVIS_KEEL", (0, -.53, 2.65), (.34, .17, .52), pale,
+                         front_scale=(.48, .58), bevel=.022))
+    objects.append(cylinder("AX4_WAIST_BEARING", (0, .01, 3.04), .50, .24, dark, vertices=48, bevel=.025))
+    objects.append(torus("AX4_WAIST_TRACK", (0, .01, 3.04), .51, .055, gm, major_segments=48, minor_segments=10))
+    for level, (z, width) in enumerate(((3.20, 1.12), (3.39, 1.36), (3.58, 1.62))):
+        objects.append(wedge(f"AX4_AB_FRAME_{level}", (0, -.02, z), (width, .64, .24), dark,
+                             front_scale=(.62, .62), bevel=.026))
+        objects.append(wedge(f"AX4_AB_SHELL_{level}", (0, -.38, z), (width * .76, .10, .17), gm,
+                             front_scale=(.56, .56), bevel=.016))
+
+    objects.append(tapered_chassis("AX4_TORSO_FRAME", (0, .03, 4.08), (2.48, .92, 1.34), dark,
+                                   lower_scale=.67, front_scale=.76, rotation=(0, 0, math.radians(-1.5)), bevel=.058))
+    for side in (-1, 1):
+        objects.append(wedge(f"AX4_CHEST_LOAD_{side}", (side * .58, -.40, 4.05), (1.08, .42, 1.08), gm,
+                             front_scale=(.55, .67), rotation=(math.radians(3), side * math.radians(7), side * math.radians(4)), bevel=.046))
+        objects.append(wedge(f"AX4_CHEST_ARMOR_{side}", (side * .61, -.67, 4.07), (.82, .13, .76), pale,
+                             front_scale=(.48, .58), rotation=(math.radians(3), side * math.radians(7), side * math.radians(4)), bevel=.028))
+        objects.append(wedge(f"AX4_COLLAR_{side}", (side * .65, -.12, 4.78), (1.10, .66, .30), gm,
+                             front_scale=(.54, .54), rotation=(0, side * math.radians(5), side * math.radians(6)), bevel=.032))
+        objects.append(wedge(f"AX4_FLANK_SHELL_{side}", (side * 1.18, .01, 3.98), (.34, .76, .88), dark,
+                             front_scale=(.45, .60), rotation=(0, side * math.radians(8), 0), bevel=.030))
+        for vent in range(4):
+            objects.append(box(f"AX4_FLANK_VENT_{side}_{vent}", (side * 1.24, -.42, 3.72 + vent * .18),
+                               (.10, .035, .08), amber if vent == 0 else dark, bevel=.007))
+    objects.append(wedge("AX4_REACTOR_FRAME", (0, -.70, 4.03), (.56, .16, .88), gm,
+                         front_scale=(.48, .60), bevel=.022))
+    objects.append(wedge("AX4_REACTOR_CORE", (0, -.80, 4.03), (.34, .07, .62), cyan,
+                         front_scale=(.42, .54), bevel=.014))
+
+    # Compact sensor head: one guarded visor avoids the v7 googly-eye read.
+    objects.append(cylinder("AX4_NECK", (0, .00, 4.93), .25, .28, dark, vertices=28, bevel=.02))
+    objects.append(wedge("AX4_HEAD_FRAME", (0, -.02, 5.20), (.70, .62, .42), dark,
+                         front_scale=(.54, .58), bevel=.035))
+    objects.append(wedge("AX4_HEAD_COWL", (0, -.16, 5.30), (.76, .42, .24), gm,
+                         front_scale=(.50, .54), bevel=.025))
+    objects.append(box("AX4_VISOR", (0, -.37, 5.18), (.42, .045, .075), cyan, bevel=.015))
+    objects.append(box("AX4_VISOR_BROW", (0, -.40, 5.31), (.58, .055, .055), pale, bevel=.010))
+    objects.append(cylinder("AX4_COMMS_MAST", (.23, .04, 5.67), .026, .74, dark, vertices=12, bevel=.006))
+    objects.append(box("AX4_MAST_TIP", (.23, .04, 6.04), (.08, .08, .12), amber, bevel=.012))
+
+    # Arms and layered shoulder assemblies with visible gaps between plates.
+    for side in (-1, 1):
+        p = "L" if side < 0 else "R"
+        shoulder, elbow, wrist = (side * 1.52, .00, 4.40), (side * 1.62, -.02, 3.48), (side * 1.58, -.10, 2.78)
+        objects.append(beam(f"AX4_{p}_CLAVICLE", (side * 1.00, .02, 4.42), shoulder, .15, dark, vertices=20))
+        hinge(f"AX4_{p}_SHOULDER", shoulder, .58, .25)
+        hinge(f"AX4_{p}_ELBOW", elbow, .58, .21)
+        for layer, (ox, oy, oz, sx) in enumerate(((.10, .00, .12, 1.0), (.24, .05, .02, .78), (.36, .10, -.08, .58))):
+            objects.append(wedge(f"AX4_{p}_PAULDRON_{layer}",
+                                 (side * (1.52 + ox), -.22 + oy, 4.48 + oz),
+                                 (.72 * sx, .70, .34), pale if layer == 1 else gm,
+                                 front_scale=(.44, .54), rotation=(0, side * math.radians(8 + layer * 3), side * math.radians(6)), bevel=.026))
+        objects.append(beam(f"AX4_{p}_UPPER_ARM_SPINE", shoulder, elbow, .12, dark, vertices=20))
+        objects.append(beam(f"AX4_{p}_FOREARM_SPINE", elbow, wrist, .11, dark, vertices=20))
+        limb_shell(f"AX4_{p}_BICEP", (side * 1.59, -.01, 3.93), (.52, .58, .62), side)
+        limb_shell(f"AX4_{p}_FOREARM", (side * 1.60, -.06, 3.12), (.50, .58, .56), side)
+        objects.append(wedge(f"AX4_{p}_HAND", wrist, (.42, .44, .28), dark, front_scale=(.46, .52), bevel=.025))
+
+    # Shoulder-mounted railgun: frame, separated rails, barrel and open coil cage.
+    gx, gz = -1.63, 4.58
+    objects.append(wedge("AX4_RAIL_FRAME", (gx, -.54, gz), (.56, 2.22, .48), dark,
+                         front_scale=(.50, .58), rotation=(0, 0, math.radians(-2)), bevel=.038))
+    for rail in (-1, 1):
+        objects.append(box(f"AX4_RAIL_LONGERON_{rail}", (gx + rail * .25, -.96, gz),
+                           (.075, 2.30, .11), pale, bevel=.018))
+    objects.append(wedge("AX4_RAIL_TOP_SHELL", (gx, -.55, gz + .34), (.48, 1.82, .22), gm,
+                         front_scale=(.42, .52), bevel=.025))
+    objects.append(cylinder("AX4_RAIL_BARREL", (gx, -1.55, gz), .105, 1.96, gm,
+                            rotation=(math.pi / 2, 0, 0), vertices=28, bevel=.018))
+    for cage in range(5):
+        y = -.42 - cage * .30
+        # Angular field cage around the barrel. The rejected v8 luminous hoops
+        # read as arcade geometry; these separated structural ribs retain gaps.
+        for side in (-1, 1):
+            objects.append(box(f"AX4_RAIL_CAGE_SIDE_{cage}_{side}", (gx + side * .205, y, gz),
+                               (.045, .055, .34), pale if cage % 2 else gm, bevel=.010))
+        objects.append(box(f"AX4_RAIL_CAGE_TOP_{cage}", (gx, y, gz + .17),
+                           (.44, .055, .045), gm, bevel=.010))
+        objects.append(box(f"AX4_RAIL_CAGE_BOTTOM_{cage}", (gx, y, gz - .17),
+                           (.44, .055, .045), dark, bevel=.010))
+        objects.append(box(f"AX4_RAIL_FIELD_CORE_{cage}", (gx, y - .035, gz),
+                           (.085, .045, .085), cyan, bevel=.014))
+    objects.append(torus("AX4_RAIL_MUZZLE", (gx, -2.58, gz), .25, .055, gm,
+                         rotation=(math.pi / 2, 0, 0), major_segments=32, minor_segments=10))
+    for side in (-1, 1):
+        objects.append(beam(f"AX4_RAIL_MOUNT_{side}", (side * .10 + gx, .15, gz - .08),
+                            (side * .12 - .85, .18, 4.40), .055, dark, vertices=16))
+
+    # Forearm shield with a true frame and negative space around the energy lens.
+    sx, sy, sz = 2.05, -.53, 3.23
+    top, bottom = sz + .82, sz - .82
+    points = [(sx, sy, top), (sx + .42, sy, sz + .52), (sx + .42, sy, sz - .52),
+              (sx, sy, bottom), (sx - .42, sy, sz - .52), (sx - .42, sy, sz + .52)]
+    for i in range(len(points)):
+        objects.append(beam(f"AX4_SHIELD_FRAME_{i}", points[i], points[(i + 1) % len(points)], .055, gm, vertices=16))
+    objects.append(wedge("AX4_SHIELD_LENS", (sx, sy - .05, sz), (.54, .05, 1.12), cyan,
+                         front_scale=(.48, .62), bevel=.018))
+    for z in (sz - .58, sz + .58):
+        objects.append(box(f"AX4_SHIELD_EMITTER_{z}", (sx, sy - .08, z), (.22, .08, .10), amber, bevel=.012))
+    objects.append(beam("AX4_SHIELD_MOUNT", (1.57, -.04, 3.13), (sx - .30, sy + .10, sz), .09, dark, vertices=20))
+
+    # Rear power plant is a layered assembly, not a smooth backpack facade.
+    for side in (-1, 1):
+        objects.append(wedge(f"AX4_BACK_FRAME_{side}", (side * .62, .57, 4.08), (.62, .38, .96), dark,
+                             front_scale=(.48, .60), bevel=.030))
+        objects.append(wedge(f"AX4_BACK_SHELL_{side}", (side * .62, .79, 4.13), (.46, .16, .72), gm,
+                             front_scale=(.42, .54), bevel=.022))
+        objects.append(cylinder(f"AX4_THRUSTER_{side}", (side * .62, .91, 3.88), .16, .30, dark,
+                                rotation=(math.pi / 2, 0, 0), vertices=24, bevel=.018))
+        objects.append(torus(f"AX4_THRUSTER_GLOW_{side}", (side * .62, 1.07, 3.88), .14, .028, cyan,
+                             rotation=(math.pi / 2, 0, 0), major_segments=24, minor_segments=8))
+        for vent in range(4):
+            objects.append(box(f"AX4_BACK_VENT_{side}_{vent}", (side * (.43 + vent * .12), .91, 4.48),
+                               (.07, .14, .34), pale if vent == 0 else dark, bevel=.008))
+        objects.append(cable(f"AX4_POWER_CABLE_{side}", [(side * .42, .48, 4.46),
+                                                          (side * .92, .66, 4.08),
+                                                          (side * 1.28, .38, 3.52)], .028, amber))
+        for fin in range(5):
+            objects.append(box(f"AX4_HEAT_EXCHANGER_{side}_{fin}",
+                               (side * (.39 + fin * .115), 1.00, 4.17 + (fin % 2) * .06),
+                               (.055, .18, .52), pale if fin == 2 else gm,
+                               rotation=(side * math.radians(-3), 0, side * math.radians(2)), bevel=.007))
+        objects.append(cable(f"AX4_COOLANT_LOOP_{side}", [
+            (side * .34, .72, 4.62), (side * .76, 1.04, 4.50),
+            (side * .92, 1.02, 4.00), (side * .62, .74, 3.75),
+        ], .022, cyan))
+
+    # Small-form cadence along chest and limbs.
+    for row in range(4):
+        for side in (-1, 1):
+            objects.append(cylinder(f"AX4_CHEST_FASTENER_{side}_{row}",
+                                    (side * (.48 + row * .12), -.765, 3.82 + row * .16),
+                                    .015, .025, dark, rotation=(math.pi / 2, 0, 0), vertices=10, bevel=.004))
+    for i in range(10):
+        side = -1 if i % 2 == 0 else 1
+        objects.append(box(f"AX4_EDGE_MARK_{i}", (side * rng.uniform(.50, 1.24), -.77, rng.uniform(3.72, 4.62)),
+                           (.045, .022, .085), cyan if i % 3 else amber, bevel=.006))
+
+    # Authored secondary/tertiary pass. Offset tiles, rails and fasteners break
+    # broad surfaces without hiding the load-bearing silhouette.
+    for side in (-1, 1):
+        p = "L" if side < 0 else "R"
+        for row in range(3):
+            objects.append(wedge(f"AX4_{p}_CHEST_SECONDARY_{row}",
+                                 (side * (.48 + row * .18), -.765, 3.82 + row * .22),
+                                 (.22, .045, .16), pale if row == 1 else gm,
+                                 front_scale=(.45, .50), rotation=(0, 0, side * math.radians(4)), bevel=.010))
+            objects.append(cylinder(f"AX4_{p}_CHEST_BOLT_{row}",
+                                    (side * (.47 + row * .18), -.795, 3.73 + row * .22),
+                                    .012, .020, amber if row == 0 else dark,
+                                    rotation=(math.pi / 2, 0, 0), vertices=10, bevel=.003))
+        for section, z0 in (("THIGH", 1.84), ("SHIN", .78)):
+            for row in range(3):
+                objects.append(wedge(f"AX4_{p}_{section}_TILE_{row}",
+                                     (side * (.68 + row * .07), -.405, z0 + row * .22),
+                                     (.18, .035, .15), pale if row == 1 else gm,
+                                     front_scale=(.42, .48), rotation=(0, 0, side * math.radians(3)), bevel=.009))
+                objects.append(box(f"AX4_{p}_{section}_SEAM_{row}",
+                                   (side * (.68 + row * .07), -.435, z0 + row * .22),
+                                   (.08, .018, .018), dark, bevel=.004))
+        for section, z0 in (("BICEP", 3.78), ("FOREARM", 2.96)):
+            for row in range(2):
+                objects.append(wedge(f"AX4_{p}_{section}_TILE_{row}",
+                                     (side * 1.60, -.39, z0 + row * .25),
+                                     (.26, .035, .18), pale if row == 0 else gm,
+                                     front_scale=(.44, .50), bevel=.010))
+        for rib in range(4):
+            objects.append(box(f"AX4_{p}_PAULDRON_RIB_{rib}",
+                               (side * (1.53 + rib * .12), -.61, 4.48 + (rib % 2) * .05),
+                               (.055, .035, .30), pale if rib == 1 else dark,
+                               rotation=(0, 0, side * math.radians(5)), bevel=.007))
+
+    for side in (-1, 1):
+        for row in range(4):
+            objects.append(box(f"AX4_CHEST_TRIM_{side}_{row}",
+                               (side * (.31 + row * .18), -.775, 4.42 - row * .12),
+                               (.13, .022, .022), pale if row < 2 else dark,
+                               rotation=(0, 0, side * math.radians(4)), bevel=.004))
+    for panel in range(5):
+        y = -.42 - panel * .38
+        objects.append(wedge(f"AX4_RAIL_SIDE_PANEL_{panel}", (gx - .31, y, gz + .02),
+                             (.11, .24, .28), gm if panel % 2 else pale,
+                             front_scale=(.42, .50), rotation=(0, 0, math.radians(-2)), bevel=.012))
+        objects.append(cylinder(f"AX4_RAIL_PANEL_BOLT_{panel}", (gx - .375, y - .08, gz + .02),
+                                .012, .025, amber, rotation=(0, math.pi / 2, 0), vertices=10, bevel=.003))
+
+
 def add_mir_details(objects: list[bpy.types.Object], mats: dict[str, bpy.types.Material], rng: random.Random) -> None:
     ivory, brass, rose, cyan, magenta, dark = (mats[k] for k in ("ivory", "brass", "rose", "cyan", "magenta", "dark"))
     # Slender biomechanical legs with nested ceramic shells.
@@ -760,6 +1100,16 @@ def apply_modifiers_and_convert(objects: list[bpy.types.Object]) -> list[bpy.typ
                 bpy.ops.object.modifier_apply(modifier=modifier.name)
             except RuntimeError:
                 pass
+        if not obj.data.uv_layers:
+            # Custom from_pydata armor shells do not inherit primitive UVs.
+            # Generate deterministic UV islands so embedded PBR images map to
+            # real surfaces instead of silently sampling an undefined origin.
+            bpy.context.view_layer.objects.active = obj
+            obj.select_set(True)
+            bpy.ops.object.mode_set(mode="EDIT")
+            bpy.ops.mesh.select_all(action="SELECT")
+            bpy.ops.uv.smart_project(angle_limit=math.radians(66), island_margin=.025)
+            bpy.ops.object.mode_set(mode="OBJECT")
         obj.select_set(False)
         result.append(obj)
     return result
@@ -855,12 +1205,13 @@ def setup_render(resolution: int, transparent: bool) -> tuple[bpy.types.Object, 
     scene.render.film_transparent = transparent
     scene.render.image_settings.color_depth = "8"
     scene.render.image_settings.compression = 32
+    scene.view_settings.exposure = .65
     scene.world.color = (.004, .007, .013)
     world = scene.world
     world.use_nodes = True
     background = world.node_tree.nodes.get("Background")
     background.inputs["Color"].default_value = (.004, .008, .018, 1)
-    background.inputs["Strength"].default_value = .22
+    background.inputs["Strength"].default_value = .36
 
     ground_mat = material("ENV_Ground", (.012, .019, .030, 1), metallic=.22, roughness=.30)
     bpy.ops.mesh.primitive_plane_add(size=30, location=(0, 0, -.01))
@@ -875,9 +1226,9 @@ def setup_render(resolution: int, transparent: bool) -> tuple[bpy.types.Object, 
     scene.camera = camera
 
     light_specs = [
-        ("KEY", (5.5, -5.5, 8.5), (0.62, 0.82, 1.0), 1550, 5.5),
-        ("RIM", (-5.5, 1.5, 6.5), (0.1, 0.72, 1.0), 1250, 4.0),
-        ("FILL", (2.5, 4.5, 4.0), (1.0, 0.40, 0.16), 900, 3.5),
+        ("KEY", (5.5, -5.5, 8.5), (0.72, 0.86, 1.0), 2050, 5.5),
+        ("RIM", (-5.5, 1.5, 6.5), (0.16, 0.76, 1.0), 1500, 4.0),
+        ("FILL", (2.5, 4.5, 4.0), (1.0, 0.48, 0.22), 1150, 3.5),
         ("TOP", (0, 0, 10.5), (0.68, 0.76, 1.0), 1000, 3.0),
     ]
     for name, location, color, energy, size in light_specs:
@@ -894,7 +1245,7 @@ def setup_render(resolution: int, transparent: bool) -> tuple[bpy.types.Object, 
     return camera, ground
 
 
-def point_camera(camera: bpy.types.Object, degrees: float, *, radius: float = 10.2, height: float = 5.2) -> None:
+def point_camera(camera: bpy.types.Object, degrees: float, *, radius: float = 11.6, height: float = 5.4) -> None:
     angle = math.radians(degrees)
     camera.location = (math.sin(angle) * radius, -math.cos(angle) * radius, height)
     target = Vector((0, 0, 2.65))
@@ -920,8 +1271,8 @@ def main() -> None:
     clear_scene()
 
     mats = {
-        "gunmetal": material("AX_Gunmetal", (.025, .038, .050, 1), metallic=.95, roughness=.31, texture_dir=output / "textures"),
-        "pale": material("AX_PaleCeramicArmor", (.34, .39, .41, 1), metallic=.66, roughness=.28, texture_dir=output / "textures"),
+        "gunmetal": material("AX_Gunmetal", (.075, .105, .135, 1), metallic=.95, roughness=.27, texture_dir=output / "textures"),
+        "pale": material("AX_PaleCeramicArmor", (.46, .52, .55, 1), metallic=.66, roughness=.25, texture_dir=output / "textures"),
         "cyan": material("AX_ElectricCyan", (.006, .12, .18, 1), metallic=.20, roughness=.20,
                          emission=(.00, .48, .72, 1), emission_strength=3.2, texture_dir=output / "textures"),
         "amber": material("AX_SignalAmber", (.22, .055, .004, 1), metallic=.20, roughness=.25,
@@ -936,7 +1287,7 @@ def main() -> None:
     }
     objects: list[bpy.types.Object] = []
     if asset_id == "axiom-bastion-frame":
-        add_axiom_hero_v3(objects, mats, rng)
+        add_axiom_hero_v4(objects, mats, rng)
     elif asset_id == "mir-sanctuary-keeper":
         add_mir_details(objects, mats, rng)
     else:
