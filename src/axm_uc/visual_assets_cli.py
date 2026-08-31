@@ -2,8 +2,10 @@ from __future__ import annotations
 
 import argparse
 import json
+from pathlib import Path
 
 from .visual_assets import catalog as base_catalog, generate_asset, generate_kit
+from .visual_creation_grammar import compile_visual_recipe, grammar_catalog
 from .visual_expanded import expansion_catalog, generate_expanded_asset, generate_expansion_kit
 
 BASE_CATEGORIES = ["texture", "gradient", "material", "fixture", "decal", "palette"]
@@ -21,6 +23,7 @@ def combined_catalog() -> dict:
         "deterministic": True,
         "dependencies": [],
         "outputs": outputs,
+        "visual_grammar": grammar_catalog(),
     }
 
 
@@ -28,6 +31,10 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="axm-assets", description="AXM deterministic procedural visual asset forge")
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("catalog", help="show every executable generator family")
+    sub.add_parser("grammar-catalog", help="show the composable visual-intent grammar")
+    plan = sub.add_parser("plan", help="compile one structured visual request into a deterministic recipe")
+    plan.add_argument("request", help="path to a UTF-8 JSON visual request")
+
     generate = sub.add_parser("generate", help="generate one real asset, material, pigment, sprite, mesh, or vector part")
     generate.add_argument("category", choices=BASE_CATEGORIES + EXPANDED_CATEGORIES)
     generate.add_argument("kind")
@@ -46,12 +53,14 @@ def build_parser() -> argparse.ArgumentParser:
     generate.add_argument("--frames", type=int, default=4)
     generate.add_argument("--columns", type=int)
     generate.add_argument("--replace", action="store_true")
+
     kit = sub.add_parser("kit", help="generate the original reusable visual asset kit plus provenance manifest")
     kit.add_argument("path")
     kit.add_argument("--profile", choices=["starter", "full"], default="starter")
     kit.add_argument("--seed", type=int, default=0)
     kit.add_argument("--size", type=int, default=96)
     kit.add_argument("--replace", action="store_true")
+
     ex = sub.add_parser("expansion-kit", help="generate smart pigments, surfaces, sprites, meshes, and vector parts as one kit")
     ex.add_argument("path")
     ex.add_argument("--profile", choices=["starter", "full"], default="starter")
@@ -65,6 +74,11 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     if args.command == "catalog":
         result = combined_catalog()
+    elif args.command == "grammar-catalog":
+        result = grammar_catalog()
+    elif args.command == "plan":
+        request = json.loads(Path(args.request).read_text(encoding="utf-8"))
+        result = compile_visual_recipe(request)
     elif args.command == "kit":
         result = generate_kit(args.path, profile=args.profile, seed=args.seed, size=args.size, replace=args.replace)
     elif args.command == "expansion-kit":
