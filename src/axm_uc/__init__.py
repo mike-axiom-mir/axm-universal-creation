@@ -8,6 +8,7 @@ def _register_extension_builtins() -> None:
     from . import capabilities as _capabilities
     from . import specialist_pool as _specialist_pool
     from .specialist_pool_extension import build_specialist_pool as _contextual_pool_builder
+    from .stepwise_workflow import StepwiseWorkflowError, operate_stepwise_workflow
 
     # The universal body contains twenty reusable lenses. Allow up to twenty
     # challenge-derived registry specialists so the declared 40-person maximum
@@ -25,7 +26,15 @@ def _register_extension_builtins() -> None:
         except (ValueError, TypeError) as exc:
             raise _capabilities.CapabilityError(str(exc)) from exc
 
+    def stepwise_perspective_workflow(root, inputs):
+        try:
+            return operate_stepwise_workflow(root, inputs)
+        except (StepwiseWorkflowError, ValueError, TypeError) as exc:
+            details = getattr(exc, "details", {})
+            raise _capabilities.CapabilityError(str(exc), details) from exc
+
     _capabilities.BUILTINS["builtin:specialist_tournament"] = specialist_tournament
+    _capabilities.BUILTINS["builtin:stepwise_perspective_workflow"] = stepwise_perspective_workflow
 
 
 _register_extension_builtins()
