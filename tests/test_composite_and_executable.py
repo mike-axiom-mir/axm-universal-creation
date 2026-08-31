@@ -17,10 +17,10 @@ class CompositeAndExecutableTests(unittest.TestCase):
         machine = UniversalCreationMachine(ROOT)
         summary = machine.executable()["summary"]
         self.assertEqual(summary["truth_status"], "EXPLICIT_LIVE_CAPABILITY_BINDINGS")
-        self.assertEqual(summary["implemented_master_records"], 13)
-        self.assertEqual(summary["implemented_master_by_level"], {"component": 11, "organ": 2})
+        self.assertEqual(summary["implemented_master_records"], 14)
+        self.assertEqual(summary["implemented_master_by_level"], {"component": 12, "organ": 2})
         self.assertEqual(summary["live_capabilities"], 19)
-        self.assertEqual(summary["resolved_bindings"], 39)
+        self.assertEqual(summary["resolved_bindings"], 41)
 
         project = machine.executable(master_id="AXM-24-WORKSPACE-COLLABORATION-C-010-project")["master"]
         self.assertEqual(project["status"], "live-backed")
@@ -83,6 +83,10 @@ class CompositeAndExecutableTests(unittest.TestCase):
         state_machine = machine.executable(master_id="AXM-03-TIME-STATE-EVENT-C-004-state-machine")["master"]
         self.assertEqual(state_machine["status"], "live-backed")
         self.assertEqual(state_machine["implemented_by"], ["AXM-CAP-SIMULATE-CREATION"])
+
+        lod_group = machine.executable(master_id="AXM-11-3D-SPATIAL-C-028-level-of-detail-group")["master"]
+        self.assertEqual(lod_group["status"], "live-backed")
+        self.assertEqual(lod_group["implemented_by"], ["AXM-CAP-SIMULATE-CREATION"])
 
     def test_planner_surfaces_explicit_live_anatomy_bindings(self):
         plan = UniversalCreationMachine(ROOT).plan({
