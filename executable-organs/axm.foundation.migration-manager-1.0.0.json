@@ -1,0 +1,36 @@
+{
+  "schema": "axm.executable-software-organ/v0.2",
+  "id": "axm.foundation.migration-manager",
+  "version": "1.0.0",
+  "status": "executable",
+  "purpose": "Render one deterministic empty migration-plan document with rollback required.",
+  "project_types": ["generic"],
+  "parameters": ["migration_id"],
+  "provides": ["foundation-migration-plan"],
+  "requires": ["foundation-compatibility-policy"],
+  "files": {
+    "axm/foundation/migration-plan.json": "{\n  \"schema\": \"axm.foundation.migration-plan/v1\",\n  \"migration_id\": \"[[AXM:migration_id]]\",\n  \"steps\": [],\n  \"rollback_required\": true\n}\n"
+  },
+  "anatomy_refs": ["AXM-00-FOUNDATION-O-009-migration-manager"],
+  "provenance": {
+    "kind": "local-authored-source",
+    "basis": "Bounded Foundation-pack source authored and fixture-tested inside AXM Universal Creation."
+  },
+  "limitations": [
+    "This package emits an empty plan envelope; it does not derive, execute, reverse, or verify migrations.",
+    "Its compatibility requirement is a structural assembly contract, not a safety verdict."
+  ],
+  "fixtures": [{
+    "id": "foundation-default",
+    "project_type": "generic",
+    "bindings": {"migration_id": "foundation-initial"},
+    "expected_files": {
+      "axm/foundation/migration-plan.json": "{\n  \"schema\": \"axm.foundation.migration-plan/v1\",\n  \"migration_id\": \"foundation-initial\",\n  \"steps\": [],\n  \"rollback_required\": true\n}\n"
+    },
+    "checks": [
+      {"type": "json-valid", "path": "axm/foundation/migration-plan.json"},
+      {"type": "json-value", "path": "axm/foundation/migration-plan.json", "json_path": ["rollback_required"], "equals": true},
+      {"type": "file-set", "mode": "exact", "files": ["axm/foundation/migration-plan.json"]}
+    ]
+  }]
+}

@@ -1,18 +1,20 @@
 {
   "id": "AXM-CAP-INSPECT-EXECUTABLE-ORGANS",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "status": "live",
-  "purpose": "List, filter, inspect, exactly resolve, and plan unique exact-interface assemblies from installed executable software-organ packages without treating descriptive anatomy as implementation.",
+  "purpose": "List, filter, inspect, fixture-test, exactly resolve, and plan unique exact-interface assemblies from installed executable software-organ packages without treating descriptive anatomy as implementation.",
   "handles": [
     "inspect-executable-organs",
     "list-executable-organs",
     "resolve-executable-organ",
+    "test-executable-organ",
     "discover-organ-assembly"
   ],
   "input_contract": {
     "required": [],
     "properties": {
       "ref": "optional exact package reference in id@version form; returns the complete inspectable source package",
+      "test_ref": "optional exact package reference in id@version form; renders and deterministically checks its declared v0.2 fixtures in disposable project space",
       "project_type": "optional exact project-type filter when listing",
       "provides": "optional exact provided-interface filter when listing",
       "organ_goal": "optional exact axm.interface-organ-goal/v0.1 object; returns bounded interface-driven assembly READY or HOLD evidence without publishing files"
@@ -23,13 +25,14 @@
     "contains": [
       "truth_status",
       "summary",
-      "packages, package, or assembly_plan"
+      "packages, package, test, or assembly_plan"
     ]
   },
   "dependencies": [],
   "relationships": [
     "loads only packages under executable-organs/",
     "validates exact package schema, identity, version, template parameters, interfaces, provenance, and project types",
+    "runs only declared v0.2 deterministic fixtures in disposable project space and labels v0.1 packages as schema-only evidence",
     "resolves only exact installed id@version references",
     "discovers a unique smallest complete package set only from exact required, provided, and transitive interface contracts",
     "returns ambiguity, missing-interface contracts, binding gaps, cycles, collisions, and search bounds as explicit HOLD evidence",
@@ -50,11 +53,11 @@
   "implementation": {
     "kind": "DETERMINISTIC_SOURCE",
     "entrypoint": "builtin:inspect_executable_organs",
-    "source": "src/axm_uc/organ_library.py + src/axm_uc/organ_discovery.py"
+    "source": "src/axm_uc/organ_library.py + src/axm_uc/organ_discovery.py + src/axm_uc/project.py"
   },
   "limitations": [
     "installed packages are resolved by exact reference/filter or selected only through a unique complete exact-interface constraint solution; semantic and fuzzy selection are not implemented",
-    "package schema validation does not prove source-level interface conformance or runtime behavior",
+    "package schema and declared fixture validation do not prove source-level interface conformance, untested bindings, or runtime behavior",
     "packages are local UTF-8 JSON source bodies; binary asset packages are not implemented",
     "descriptive anatomy records do not become executable by name or proximity"
   ],

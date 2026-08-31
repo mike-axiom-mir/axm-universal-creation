@@ -72,6 +72,7 @@ class UniversalCreationMachine:
     def executable_organs(
         self,
         ref: str | None = None,
+        test_ref: str | None = None,
         project_type: str | None = None,
         provides: str | None = None,
     ) -> dict[str, Any]:
@@ -80,7 +81,9 @@ class UniversalCreationMachine:
             "type": "EXECUTABLE_ORGAN_LIBRARY",
             "summary": library.summary(),
         }
-        if ref:
+        if test_ref:
+            result["test"] = library.test(test_ref)
+        elif ref:
             result["package"] = library.inspect(ref)
         else:
             result["packages"] = library.list(project_type=project_type, provides=provides)

@@ -1,0 +1,107 @@
+{
+  "kind": "software-organ-assembly",
+  "direction": "compose the twelve installed Foundation organs into one exact dependency-connected generic project pack",
+  "inputs": {
+    "path": "creations/foundation-organ-pack",
+    "replace": true,
+    "publish_mode": "validated",
+    "assembly": {
+      "id": "axm.foundation.pack",
+      "version": "1.0.0",
+      "project_type": "generic",
+      "organs": [
+        {
+          "instance_id": "identity-registry",
+          "ref": "axm.foundation.identity-registry@1.0.0",
+          "bindings": {"namespace": "foundation"}
+        },
+        {
+          "instance_id": "schema-registry",
+          "ref": "axm.foundation.schema-registry@1.0.0",
+          "bindings": {"registry_id": "foundation-schemas"}
+        },
+        {
+          "instance_id": "metadata-manager",
+          "ref": "axm.foundation.metadata-manager@1.0.0",
+          "depends_on": ["identity-registry", "schema-registry"],
+          "bindings": {"owner": "foundation"}
+        },
+        {
+          "instance_id": "version-manager",
+          "ref": "axm.foundation.version-manager@1.0.0",
+          "depends_on": ["metadata-manager"],
+          "bindings": {"current_version": "1.0.0"}
+        },
+        {
+          "instance_id": "capability-registry",
+          "ref": "axm.foundation.capability-registry@1.0.0",
+          "depends_on": ["identity-registry", "schema-registry"],
+          "bindings": {"registry_id": "foundation-capabilities"}
+        },
+        {
+          "instance_id": "dependency-resolver",
+          "ref": "axm.foundation.dependency-resolver@1.0.0",
+          "depends_on": ["capability-registry"],
+          "bindings": {"root_ref": "foundation-root@1.0.0"}
+        },
+        {
+          "instance_id": "extension-manager",
+          "ref": "axm.foundation.extension-manager@1.0.0",
+          "depends_on": ["capability-registry", "dependency-resolver"],
+          "bindings": {"extension_namespace": "foundation.extensions"}
+        },
+        {
+          "instance_id": "compatibility-checker",
+          "ref": "axm.foundation.compatibility-checker@1.0.0",
+          "depends_on": ["version-manager", "dependency-resolver"],
+          "bindings": {"policy_version": "1"}
+        },
+        {
+          "instance_id": "migration-manager",
+          "ref": "axm.foundation.migration-manager@1.0.0",
+          "depends_on": ["compatibility-checker"],
+          "bindings": {"migration_id": "foundation-initial"}
+        },
+        {
+          "instance_id": "canonicalization",
+          "ref": "axm.foundation.canonicalization@1.0.0",
+          "depends_on": ["schema-registry"],
+          "bindings": {"profile": "axm-json-v1"}
+        },
+        {
+          "instance_id": "relationship-graph",
+          "ref": "axm.foundation.relationship-graph@1.0.0",
+          "depends_on": ["identity-registry", "canonicalization"],
+          "bindings": {"graph_id": "foundation-relationships"}
+        },
+        {
+          "instance_id": "interface-validator",
+          "ref": "axm.foundation.interface-validator@1.0.0",
+          "depends_on": ["schema-registry", "compatibility-checker", "capability-registry"],
+          "bindings": {"contract_version": "1"}
+        }
+      ]
+    },
+    "variables": {},
+    "checks": [
+      {
+        "type": "file-set",
+        "mode": "exact",
+        "files": [
+          "axm/foundation/identity-registry.json",
+          "axm/foundation/schema-registry.json",
+          "axm/foundation/metadata.json",
+          "axm/foundation/version-policy.json",
+          "axm/foundation/capability-registry.json",
+          "axm/foundation/dependency-plan.json",
+          "axm/foundation/extension-policy.json",
+          "axm/foundation/compatibility-policy.json",
+          "axm/foundation/migration-plan.json",
+          "axm/foundation/canonicalization-policy.json",
+          "axm/foundation/relationship-graph.json",
+          "axm/foundation/interface-validation.json"
+        ]
+      }
+    ]
+  }
+}

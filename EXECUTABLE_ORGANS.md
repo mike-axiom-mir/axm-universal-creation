@@ -13,9 +13,10 @@ An anatomy name never becomes executable merely because a similarly named packag
 
 ## Package contract
 
-Every installed package uses the exact schema:
+Every installed package uses one of two exact schemas:
 
-`axm.executable-software-organ/v0.1`
+- `axm.executable-software-organ/v0.1` — legacy package grammar with schema-only package evidence;
+- `axm.executable-software-organ/v0.2` — the same package grammar plus mandatory deterministic fixtures.
 
 A package declares:
 
@@ -29,6 +30,8 @@ A package declares:
 - explicit limitations.
 
 Loading the library validates that package parameters exactly match its template placeholders. Missing, unused, malformed, duplicated, or unsupported declarations fail package loading instead of being silently repaired.
+
+Each `v0.2` fixture declares an exact project type, complete string bindings, expected UTF-8 file contents, and non-empty deterministic checks from the existing project validator. Testing renders and publishes the fixture only in disposable space, compares the exact output, runs the declared checks, and reports that generated runtime was not executed.
 
 ## Exact reference resolution
 
@@ -53,11 +56,12 @@ A referenced instance cannot override the package's files, version, provided int
 
 ## Current installed packages
 
-The first body contains three reusable local-web packages:
+The body contains fifteen packages:
 
 - `axm.web.shell@1.0.0`;
 - `axm.web.theme@1.0.0`;
-- `axm.web.interaction@1.0.0`.
+- `axm.web.interaction@1.0.0`;
+- twelve `axm.foundation.*@1.0.0` packages forming the dependency-connected Foundation pack.
 
 Inspect them:
 
@@ -65,6 +69,7 @@ Inspect them:
 PYTHONPATH=src python -m axm_uc organs
 PYTHONPATH=src python -m axm_uc organs --provides visual-theme
 PYTHONPATH=src python -m axm_uc organs --ref axm.web.shell@1.0.0
+PYTHONPATH=src python -m axm_uc organs --test-ref axm.foundation.identity-registry@1.0.0
 ```
 
 Create a project by reference:
@@ -72,6 +77,14 @@ Create a project by reference:
 ```bash
 PYTHONPATH=src python -m axm_uc create examples/requests/create_reusable_organ_site.json
 ```
+
+Assemble the complete Foundation pack:
+
+```bash
+PYTHONPATH=src python -m axm_uc create examples/requests/create_foundation_organ_pack.json
+```
+
+The Foundation request resolves twelve exact package refs, verifies all required interfaces through declared dependency closures, gives each organ one disjoint JSON file, and publishes one validated generic project. These are bounded manifests and policy/envelope documents—not registry servers, solvers, migrators, or runtime validators. See `FOUNDATION_ORGAN_PACK.md`.
 
 The resolution receipt preserves every instance, exact package ref, package source path, bound parameter name, interface, dependency, and rendered file owner.
 
@@ -120,8 +133,8 @@ This is the intended multiplier:
 
 ## Truth boundary
 
-Package validation proves structure, exact identity, template/parameter agreement, and inspectable source presence.
+Package validation proves structure, exact identity, template/parameter agreement, and inspectable source presence. A passing `v0.2` fixture additionally proves the exact declared bindings, output bytes, and deterministic checks in disposable project space.
 
-It does not yet prove that source semantically implements its declared interfaces, execute JavaScript, judge browser visuals, invent runtime wiring, or select the best organ for an ambiguous request. Discovery proves only that exact declared contracts have one bounded structural solution.
+It does not prove that source semantically implements its declared interfaces, execute generated code, judge browser visuals, cover untested bindings, invent runtime wiring, or select the best organ for an ambiguous request. Discovery proves only that exact declared contracts have one bounded structural solution.
 
 Semantic interface validators, runtime linkers, simulation, and learned or explicitly guided creative selection remain later milestones.

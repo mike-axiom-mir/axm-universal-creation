@@ -182,6 +182,13 @@ def builtin_compose_organ_project(root: Path, inputs: dict[str, Any]) -> dict[st
 def builtin_inspect_executable_organs(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
     try:
         library = ExecutableOrganLibrary(root)
+        test_ref = inputs.get("test_ref")
+        if test_ref is not None:
+            return {
+                "truth_status": "DECLARED_EXECUTABLE_ORGAN_FIXTURE_EVIDENCE",
+                "summary": library.summary(),
+                "test": library.test(test_ref),
+            }
         if "organ_goal" in inputs:
             return {
                 "truth_status": "OBSERVED_INTERFACE_DRIVEN_ORGAN_DISCOVERY",

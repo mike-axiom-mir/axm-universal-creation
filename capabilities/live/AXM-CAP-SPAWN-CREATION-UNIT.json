@@ -1,6 +1,6 @@
 {
   "id": "AXM-CAP-SPAWN-CREATION-UNIT",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "status": "live",
   "purpose": "Deterministically materialize, inspect, test, and voluntarily request admission review for detached creation-unit candidates, including hands, capabilities, organs, protocols, skills, specialists, recipes, and openly named extension kinds.",
   "handles": [
@@ -42,7 +42,7 @@
   "relationships": [
     "turns supplied human, AI, recipe, or explicit external designs into detached inspectable candidate bodies",
     "tests capability and hand candidates through their declared disposable candidate tests",
-    "validates organ candidates against the installed executable-organ package grammar without installing them",
+    "validates organ candidates against the installed executable-organ package grammar and runs declared v0.2 fixtures without installing them",
     "keeps materialization, test evidence, admission request, approval, installation, registration, promotion, and merge as separate states",
     "allows new extension kinds without claiming kind-specific runtime verification for them"
   ],
@@ -77,7 +77,7 @@
     "the forge deterministically materializes supplied designs; it does not claim that the deterministic kernel invented their semantic design",
     "all payload is currently bounded UTF-8 text",
     "capability and hand tests execute only declared candidate fixtures with current process permissions and do not prove general behavior",
-    "organ tests validate the executable-organ package contract but do not execute emitted runtime behavior",
+    "organ tests validate the executable-organ package contract and run declared v0.2 deterministic fixtures, but do not execute emitted runtime behavior",
     "protocols, skills, specialists, recipes, and extension kinds currently receive structural and declared file checks rather than kind-specific runtime execution",
     "a recipe candidate is not automatically activated as a forge builder",
     "a specialist is only a temporary method overlay and is not an identity, permission grant, proof of expertise, or independent source of evidence",

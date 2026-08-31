@@ -1,0 +1,36 @@
+{
+  "schema": "axm.executable-software-organ/v0.2",
+  "id": "axm.foundation.version-manager",
+  "version": "1.0.0",
+  "status": "executable",
+  "purpose": "Render one deterministic explicit-version policy document.",
+  "project_types": ["generic"],
+  "parameters": ["current_version"],
+  "provides": ["foundation-version-policy"],
+  "requires": ["foundation-metadata"],
+  "files": {
+    "axm/foundation/version-policy.json": "{\n  \"schema\": \"axm.foundation.version-policy/v1\",\n  \"current_version\": \"[[AXM:current_version]]\",\n  \"strategy\": \"explicit\"\n}\n"
+  },
+  "anatomy_refs": ["AXM-00-FOUNDATION-O-004-version-manager"],
+  "provenance": {
+    "kind": "local-authored-source",
+    "basis": "Bounded Foundation-pack source authored and fixture-tested inside AXM Universal Creation."
+  },
+  "limitations": [
+    "This package emits policy data; it does not compare versions, select upgrades, publish releases, or mutate metadata.",
+    "Its metadata requirement is a structural assembly contract, not proof of runtime integration."
+  ],
+  "fixtures": [{
+    "id": "foundation-default",
+    "project_type": "generic",
+    "bindings": {"current_version": "1.0.0"},
+    "expected_files": {
+      "axm/foundation/version-policy.json": "{\n  \"schema\": \"axm.foundation.version-policy/v1\",\n  \"current_version\": \"1.0.0\",\n  \"strategy\": \"explicit\"\n}\n"
+    },
+    "checks": [
+      {"type": "json-valid", "path": "axm/foundation/version-policy.json"},
+      {"type": "json-value", "path": "axm/foundation/version-policy.json", "json_path": ["current_version"], "equals": "1.0.0"},
+      {"type": "file-set", "mode": "exact", "files": ["axm/foundation/version-policy.json"]}
+    ]
+  }]
+}

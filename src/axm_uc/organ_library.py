@@ -3,17 +3,38 @@ from __future__ import annotations
 import copy
 import json
 import re
+import tempfile
 from pathlib import Path
 from typing import Any
 
-from .project import ProjectError
+from .project import CHECKS, ProjectError, build_project, preview_project_files, validate_project
 from .template import PROJECT_TYPES, VARIABLE_NAME_RE, render_project_template
 
 
-EXECUTABLE_ORGAN_SCHEMA = "axm.executable-software-organ/v0.1"
+EXECUTABLE_ORGAN_SCHEMA_V1 = "axm.executable-software-organ/v0.1"
+EXECUTABLE_ORGAN_SCHEMA = "axm.executable-software-organ/v0.2"
+EXECUTABLE_ORGAN_SCHEMAS = {EXECUTABLE_ORGAN_SCHEMA_V1, EXECUTABLE_ORGAN_SCHEMA}
 ORGAN_ID_RE = re.compile(r"[A-Za-z][A-Za-z0-9_.:-]{0,127}")
 VERSION_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]{0,63}")
 INTERFACE_NAME_RE = re.compile(r"[A-Za-z][A-Za-z0-9_.:-]{0,127}")
+FIXTURE_CHECK_FIELDS = {
+    "project-nonempty": {"type"},
+    "file-exists": {"type", "path"},
+    "file-absent": {"type", "path"},
+    "nonempty": {"type", "path"},
+    "contains": {"type", "path", "text"},
+    "not-contains": {"type", "path", "text"},
+    "line-count": {"type", "path", "minimum", "maximum"},
+    "byte-size": {"type", "path", "minimum", "maximum"},
+    "sha256": {"type", "path", "sha256"},
+    "json-valid": {"type", "path"},
+    "json-value": {"type", "path", "json_path", "equals"},
+    "file-set": {"type", "files", "mode"},
+    "python-compile": {"type", "path"},
+    "html-local-links": {"type", "path"},
+    "css-local-links": {"type", "path"},
+    "javascript-local-imports": {"type", "path"},
+}
 
 
 class ExecutableOrganError(RuntimeError):
@@ -47,9 +68,151 @@ def _public_package(package: dict[str, Any], include_source: bool) -> dict[str, 
     visible = {key: copy.deepcopy(value) for key, value in package.items() if not key.startswith("_")}
     if not include_source:
         visible.pop("files", None)
+        if "fixtures" in visible:
+            visible["fixtures"] = [
+                {
+                    "id": fixture["id"],
+                    "project_type": fixture["project_type"],
+                    "check_count": len(fixture["checks"]),
+                    "expected_paths": sorted(fixture["expected_files"]),
+                }
+                for fixture in visible["fixtures"]
+            ]
     visible["ref"] = package["_ref"]
     visible["source_path"] = package["_source_path"]
     return visible
+
+
+def _validate_fixtures(
+    value: Any,
+    *,
+    organ_id: str,
+    version: str,
+    project_types: list[str],
+    parameters: list[str],
+    files: Any,
+) -> list[dict[str, Any]]:
+    if not isinstance(value, list) or not value:
+        raise ExecutableOrganError("v0.2 package.fixtures must be a non-empty list")
+    fixtures: list[dict[str, Any]] = []
+    fixture_ids: set[str] = set()
+    for position, raw in enumerate(value):
+        label = f"package.fixtures[{position}]"
+        if not isinstance(raw, dict):
+            raise ExecutableOrganError(f"{label} must be an object")
+        unexpected = sorted(set(raw) - {"id", "project_type", "bindings", "expected_files", "checks"})
+        if unexpected:
+            raise ExecutableOrganError(
+                f"{label} has unsupported fields",
+                {"fixture_position": position, "unexpected_fixture_fields": unexpected},
+            )
+        fixture_id = _required_text(raw.get("id"), f"{label}.id")
+        if ORGAN_ID_RE.fullmatch(fixture_id) is None:
+            raise ExecutableOrganError(f"{label}.id is invalid", {"fixture_id": fixture_id})
+        if fixture_id in fixture_ids:
+            raise ExecutableOrganError("package fixture IDs must be unique", {"duplicate_fixture_id": fixture_id})
+        fixture_ids.add(fixture_id)
+
+        project_type = _required_text(raw.get("project_type"), f"{label}.project_type").casefold()
+        if project_type not in project_types:
+            raise ExecutableOrganError(
+                f"{label}.project_type is not supported by the package",
+                {"fixture_id": fixture_id, "project_type": project_type, "package_project_types": project_types},
+            )
+        bindings = raw.get("bindings")
+        if not isinstance(bindings, dict):
+            raise ExecutableOrganError(f"{label}.bindings must be an object")
+        invalid_binding_names = sorted(
+            str(name)
+            for name in bindings
+            if not isinstance(name, str) or VARIABLE_NAME_RE.fullmatch(name) is None
+        )
+        if invalid_binding_names:
+            raise ExecutableOrganError(
+                f"{label}.bindings has invalid names",
+                {"fixture_id": fixture_id, "invalid_binding_names": invalid_binding_names},
+            )
+        non_text_bindings = sorted(name for name, binding in bindings.items() if not isinstance(binding, str))
+        if non_text_bindings:
+            raise ExecutableOrganError(
+                f"{label}.bindings values must be exact text",
+                {"fixture_id": fixture_id, "non_text_bindings": non_text_bindings},
+            )
+        supplied = set(bindings)
+        declared = set(parameters)
+        if supplied != declared:
+            raise ExecutableOrganError(
+                f"{label}.bindings must exactly match package parameters",
+                {
+                    "fixture_id": fixture_id,
+                    "missing_parameters": sorted(declared - supplied),
+                    "unexpected_parameters": sorted(supplied - declared),
+                },
+            )
+        try:
+            fixture_rendered = render_project_template(
+                {
+                    "id": organ_id,
+                    "version": version,
+                    "project_type": project_type,
+                    "files": files,
+                },
+                bindings,
+            )
+            preview_project_files(fixture_rendered["files"], project_type=project_type)
+        except ProjectError as exc:
+            raise ExecutableOrganError(
+                f"{label} cannot render a safe project file map: {exc}",
+                {"fixture_id": fixture_id, **exc.details},
+            ) from exc
+
+        expected_files = raw.get("expected_files")
+        try:
+            normalized_expected = preview_project_files(expected_files, project_type=project_type)["files"]
+        except ProjectError as exc:
+            raise ExecutableOrganError(
+                f"{label}.expected_files is invalid: {exc}",
+                {"fixture_id": fixture_id, **exc.details},
+            ) from exc
+
+        checks = raw.get("checks")
+        if not isinstance(checks, list) or not checks:
+            raise ExecutableOrganError(f"{label}.checks must be a non-empty list")
+        normalized_checks: list[dict[str, Any]] = []
+        for check_position, check in enumerate(checks):
+            if not isinstance(check, dict):
+                raise ExecutableOrganError(
+                    f"{label}.checks[{check_position}] must be an object",
+                    {"fixture_id": fixture_id},
+                )
+            check_type = str(check.get("type", "")).strip().casefold()
+            if check_type not in CHECKS or check_type not in FIXTURE_CHECK_FIELDS:
+                raise ExecutableOrganError(
+                    f"{label}.checks[{check_position}] has an unsupported deterministic check",
+                    {"fixture_id": fixture_id, "check_type": check_type or None},
+                )
+            unexpected_check_fields = sorted(set(check) - FIXTURE_CHECK_FIELDS[check_type])
+            if unexpected_check_fields:
+                raise ExecutableOrganError(
+                    f"{label}.checks[{check_position}] has unsupported fields",
+                    {
+                        "fixture_id": fixture_id,
+                        "check_type": check_type,
+                        "unexpected_check_fields": unexpected_check_fields,
+                    },
+                )
+            normalized_check = copy.deepcopy(check)
+            normalized_check["type"] = check_type
+            normalized_checks.append(normalized_check)
+
+        fixtures.append({
+            "id": fixture_id,
+            "project_type": project_type,
+            "bindings": copy.deepcopy(bindings),
+            "expected_files": normalized_expected,
+            "checks": normalized_checks,
+        })
+    return fixtures
 
 
 class ExecutableOrganLibrary:
@@ -99,6 +262,12 @@ class ExecutableOrganLibrary:
     def _validate(self, raw: Any, path: Path) -> dict[str, Any]:
         if not isinstance(raw, dict):
             raise ExecutableOrganError("package must be an object")
+        schema = raw.get("schema")
+        if schema not in EXECUTABLE_ORGAN_SCHEMAS:
+            raise ExecutableOrganError(
+                "package schema is unsupported",
+                {"expected_schemas": sorted(EXECUTABLE_ORGAN_SCHEMAS), "actual_schema": schema},
+            )
         allowed_fields = {
             "schema",
             "id",
@@ -114,14 +283,11 @@ class ExecutableOrganLibrary:
             "provenance",
             "limitations",
         }
+        if schema == EXECUTABLE_ORGAN_SCHEMA:
+            allowed_fields.add("fixtures")
         unexpected_fields = sorted(set(raw) - allowed_fields)
         if unexpected_fields:
             raise ExecutableOrganError("package has unsupported fields", {"unexpected_fields": unexpected_fields})
-        if raw.get("schema") != EXECUTABLE_ORGAN_SCHEMA:
-            raise ExecutableOrganError(
-                "package schema is unsupported",
-                {"expected_schema": EXECUTABLE_ORGAN_SCHEMA, "actual_schema": raw.get("schema")},
-            )
         organ_id = _required_text(raw.get("id"), "package.id")
         version = _required_text(raw.get("version"), "package.version")
         if ORGAN_ID_RE.fullmatch(organ_id) is None:
@@ -181,8 +347,22 @@ class ExecutableOrganLibrary:
                 {"declared_parameters": sorted(parameters), "template_parameters": referenced},
             )
 
+        fixtures = (
+            _validate_fixtures(
+                raw.get("fixtures"),
+                organ_id=organ_id,
+                version=version,
+                project_types=project_types,
+                parameters=parameters,
+                files=raw.get("files"),
+            )
+            if schema == EXECUTABLE_ORGAN_SCHEMA
+            else []
+        )
+
         package = copy.deepcopy(raw)
         package.update({
+            "schema": schema,
             "id": organ_id,
             "version": version,
             "purpose": purpose,
@@ -194,7 +374,10 @@ class ExecutableOrganLibrary:
             "limitations": limitations,
             "_ref": f"{organ_id}@{version}",
             "_source_path": path.relative_to(self.root).as_posix(),
+            "_fixtures": fixtures,
         })
+        if schema == EXECUTABLE_ORGAN_SCHEMA:
+            package["fixtures"] = fixtures
         return package
 
     def summary(self) -> dict[str, Any]:
@@ -202,7 +385,14 @@ class ExecutableOrganLibrary:
         return {
             "truth_status": "EXACT_LOCAL_EXECUTABLE_ORGAN_PACKAGES",
             "schema": EXECUTABLE_ORGAN_SCHEMA,
+            "supported_schemas": sorted(EXECUTABLE_ORGAN_SCHEMAS),
             "packages": len(packages),
+            "packages_by_schema": {
+                schema: sum(package["schema"] == schema for package in packages)
+                for schema in sorted(EXECUTABLE_ORGAN_SCHEMAS)
+            },
+            "packages_with_declared_fixtures": sum(bool(package["_fixtures"]) for package in packages),
+            "declared_fixtures": sum(len(package["_fixtures"]) for package in packages),
             "package_refs": sorted(self._packages),
             "project_types": sorted({project_type for package in packages for project_type in package["project_types"]}),
             "provided_interfaces": sorted({interface for package in packages for interface in package["provides"]}),
@@ -244,6 +434,86 @@ class ExecutableOrganLibrary:
 
     def inspect(self, ref: Any) -> dict[str, Any]:
         return _public_package(self.resolve(ref), include_source=True)
+
+    def test(self, ref: Any) -> dict[str, Any]:
+        package = self.resolve(ref)
+        if not package["_fixtures"]:
+            return {
+                "truth_status": "EXECUTABLE_ORGAN_SCHEMA_ONLY_EVIDENCE",
+                "ref": package["_ref"],
+                "schema": package["schema"],
+                "passed": True,
+                "fixture_count": 0,
+                "fixtures": [],
+                "runtime_executed": False,
+                "limitations": [
+                    "The v0.1 package has no declared fixture contract; only package structure was validated.",
+                    "Generated source and runtime behavior were not executed.",
+                ],
+            }
+
+        fixture_results: list[dict[str, Any]] = []
+        for fixture in package["_fixtures"]:
+            rendered = render_project_template(
+                {
+                    "id": package["id"],
+                    "version": package["version"],
+                    "project_type": fixture["project_type"],
+                    "files": package["files"],
+                },
+                fixture["bindings"],
+            )
+            rendered_files = rendered["files"]
+            with tempfile.TemporaryDirectory(prefix="axm-organ-fixture-") as temp_dir:
+                target = Path(temp_dir) / "project"
+                build = build_project(
+                    target=target,
+                    files=rendered_files,
+                    project_type=fixture["project_type"],
+                    checks=fixture["checks"],
+                    publish_mode="grounded-draft",
+                )
+                validation = validate_project(
+                    target,
+                    project_type=fixture["project_type"],
+                    checks=fixture["checks"],
+                    expected_files=fixture["expected_files"],
+                )
+                expected_paths = sorted(fixture["expected_files"])
+                rendered_paths = sorted(rendered_files)
+                exact_file_set = {
+                    "type": "fixture-exact-file-set",
+                    "passed": rendered_paths == expected_paths,
+                    "expected": expected_paths,
+                    "actual": rendered_paths,
+                    "missing": sorted(set(expected_paths) - set(rendered_paths)),
+                    "unexpected": sorted(set(rendered_paths) - set(expected_paths)),
+                }
+                fixture_results.append({
+                    "id": fixture["id"],
+                    "project_type": fixture["project_type"],
+                    "passed": validation["passed"] and exact_file_set["passed"],
+                    "bindings": copy.deepcopy(fixture["bindings"]),
+                    "template_instance": rendered["template_instance"],
+                    "exact_file_set": exact_file_set,
+                    "validation": validation,
+                    "build_creation_status": build["creation_status"],
+                    "runtime_executed": False,
+                })
+        return {
+            "truth_status": "DECLARED_EXECUTABLE_ORGAN_FIXTURES_EXECUTED",
+            "ref": package["_ref"],
+            "schema": package["schema"],
+            "passed": all(fixture["passed"] for fixture in fixture_results),
+            "fixture_count": len(fixture_results),
+            "fixtures": fixture_results,
+            "runtime_executed": False,
+            "limitations": [
+                "Only declared deterministic fixtures were rendered and checked in disposable project space.",
+                "Generated source and runtime behavior were not executed.",
+                "A passing fixture does not prove semantic conformance for untested bindings or environments.",
+            ],
+        }
 
 
 def resolve_organ_assembly(root: Path, assembly: Any) -> tuple[dict[str, Any], dict[str, Any]]:

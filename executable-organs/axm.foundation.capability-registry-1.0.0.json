@@ -1,0 +1,36 @@
+{
+  "schema": "axm.executable-software-organ/v0.2",
+  "id": "axm.foundation.capability-registry",
+  "version": "1.0.0",
+  "status": "executable",
+  "purpose": "Render one deterministic empty capability-registry document with an explicit registry identity.",
+  "project_types": ["generic"],
+  "parameters": ["registry_id"],
+  "provides": ["foundation-capability-registry"],
+  "requires": ["foundation-identity-registry", "foundation-schema-registry"],
+  "files": {
+    "axm/foundation/capability-registry.json": "{\n  \"schema\": \"axm.foundation.capability-registry/v1\",\n  \"registry_id\": \"[[AXM:registry_id]]\",\n  \"capabilities\": []\n}\n"
+  },
+  "anatomy_refs": ["AXM-00-FOUNDATION-O-005-capability-registry"],
+  "provenance": {
+    "kind": "local-authored-source",
+    "basis": "Bounded Foundation-pack source authored and fixture-tested inside AXM Universal Creation."
+  },
+  "limitations": [
+    "This package emits an empty registry document; it does not discover, route, execute, authorize, or attest capabilities.",
+    "Its required interfaces are structural assembly contracts, not proof of runtime calls."
+  ],
+  "fixtures": [{
+    "id": "foundation-default",
+    "project_type": "generic",
+    "bindings": {"registry_id": "foundation-capabilities"},
+    "expected_files": {
+      "axm/foundation/capability-registry.json": "{\n  \"schema\": \"axm.foundation.capability-registry/v1\",\n  \"registry_id\": \"foundation-capabilities\",\n  \"capabilities\": []\n}\n"
+    },
+    "checks": [
+      {"type": "json-valid", "path": "axm/foundation/capability-registry.json"},
+      {"type": "json-value", "path": "axm/foundation/capability-registry.json", "json_path": ["registry_id"], "equals": "foundation-capabilities"},
+      {"type": "file-set", "mode": "exact", "files": ["axm/foundation/capability-registry.json"]}
+    ]
+  }]
+}
