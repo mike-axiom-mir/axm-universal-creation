@@ -131,6 +131,7 @@ def compile_3d_request(raw: Any) -> dict[str, Any]:
         "avoid": list(raw.get("avoid", [])),
         "technical_requirements": {
             **AAA_QUALITY_GATES,
+            "texture_resolution": 1024 if quality == "hero" else 512,
             **(raw.get("technical_requirements", {}) if isinstance(raw.get("technical_requirements"), dict) else {}),
         },
     }
