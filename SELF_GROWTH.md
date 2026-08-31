@@ -93,6 +93,28 @@ Current Creation-Unit adoption supports a new executable-organ ref. Replacement 
 
 A successful organ adoption proves that the exact tested package entered the executable-organ library and became available to composition. It does not upgrade structural package evidence into browser, runtime, visual, or general semantic proof.
 
+## Simulate before spending reality
+
+Universal Creation can now put an inspectable simulated creation state between intent and materialization.
+
+The current visual loop is:
+
+`intent -> simulated thought -> known improvements -> cinematic projections -> NO_KNOWN_IMPROVEMENTS -> freeze exact thought digest -> Paintgun specialist -> real local artifact`
+
+`NO_KNOWN_IMPROVEMENTS` is a current-knowledge state, not a perfection claim. It means no currently registered deterministic simulation rule can identify another change to the exact thought. New evidence or a newly installed improvement rule may reopen the same creation later.
+
+The cinematic projection is not a separate picture loosely inspired by the state. For the current SVG grammar it is a deterministic rendering of the exact scene graph. The final Paintgun specialist rehashes the thought, re-renders it, and refuses materialization unless that SVG is byte-identical to the final cinematic projection.
+
+Every current visual object is composed from six explicit channels: shape, material, color, light, shade, and skin. The vocabulary can remain open while the current evidence stays closed. A new material name may be represented without pretending that the machine already knows every physical behavior of that material.
+
+This is the first concrete form of building **from a simulated thought** rather than simulating, describing the result again in prose, and asking a second builder to guess what was meant.
+
+Reality remains able to correct simulation. If the materialized result later exposes a new gap, that evidence may become another improvement rule or simulated change. The long-term multiplier is therefore the reversible loop:
+
+`simulation -> reality -> new evidence -> simulation`
+
+The current simulator is a bounded deterministic SVG/static-web milestone, not a claim of general physical, game, 3D, semantic, or aesthetic simulation. See `SIMULATION_TO_REALITY.md`.
+
 ## Compile a bounded proposal from a real gap
 
 The deterministic gap-to-proposal compiler now connects two bounded classes of observed unroutable request to the Creation-Unit Forge without claiming general semantic invention.
