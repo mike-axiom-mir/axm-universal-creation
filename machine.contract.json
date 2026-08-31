@@ -150,6 +150,30 @@
     "effectsReturnedAsInertData": true,
     "effectsExecuted": false
   },
+  "proceduralMediaGeneration": {
+    "available": true,
+    "operations": ["png", "wav"],
+    "pngGrammar": ["background", "rectangle", "circle"],
+    "wavGrammar": ["mono-pcm16", "square-tone", "silence"],
+    "maximumRasterSide": 2048,
+    "maximumRasterPixels": 4194304,
+    "maximumShapes": 512,
+    "maximumTones": 128,
+    "maximumAudioMilliseconds": 30000,
+    "containerAndPayloadReverifiedAfterPublish": true,
+    "appearanceOrAudioQualityProven": false
+  },
+  "offlineBrowserGame": {
+    "available": true,
+    "schema": "axm.browser-arena/v0.1",
+    "projectType": "static-web",
+    "runtimeDependencies": [],
+    "generatedMedia": ["rgba8-png-target-icon", "mono-pcm16-wav-fire-cue"],
+    "generatedSystems": ["canvas-renderer", "game-loop", "input-map", "hud", "arena-rules", "session-state-machine"],
+    "maximumEnemies": 64,
+    "sourceAndAssetBytesReverifiedAfterPublish": true,
+    "browserExecutionObservedByCore": false
+  },
   "creationComposition": {
     "softwareOrganAssemblyAvailable": true,
     "declaredDependencyGraphResolved": true,

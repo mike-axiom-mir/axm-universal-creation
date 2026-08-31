@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Any
 
 from .atomic import atomic_write_json
+from .browser_game import browser_game_summary
 from .candidate import test_capability_candidate
 from .capabilities import CapabilityError, CapabilityStore
 from .decompose import CreationDecomposer
@@ -19,6 +20,7 @@ from .organ_discovery import organ_discovery_summary
 from .organ_gap import organ_gap_summary
 from .registry import Registry
 from .portable_bundle import portable_bundle_summary
+from .procedural_media import procedural_media_summary
 from .spawn import creation_forge_summary
 from .state_machine import state_machine_summary
 
@@ -50,8 +52,10 @@ class UniversalCreationMachine:
             "local_creation_provider": provider_summary(),
             "host_evidence": host_evidence_summary(),
             "standalone_capability_growth": {
+                "browser_game": browser_game_summary(),
                 "mixed_project": mixed_project_summary(),
                 "portable_bundle": portable_bundle_summary(),
+                "procedural_media": procedural_media_summary(),
                 "state_machine": state_machine_summary(),
             },
             "self_evolution": evolution_summary(),

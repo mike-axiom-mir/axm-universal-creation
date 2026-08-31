@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#05090F">
+  <title>Command Tower: Hostile Parent</title>
+  <link rel="icon" type="image/png" href="assets/target.png">
+  <link rel="preload" href="assets/fire.wav" as="audio" type="audio/wav">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="hud" aria-live="polite">
+      <div class="brand"><img src="assets/target.png" alt=""><span>Command Tower: Hostile Parent</span></div>
+      <div><span class="label">Target</span><strong id="targetName">Scanning…</strong><meter id="targetHealth" min="0" max="100" value="100"></meter></div>
+      <div><span class="label">Tower</span><strong id="towerValue">100%</strong></div>
+      <div><span class="label">Credits</span><strong id="scoreValue">0</strong></div>
+      <div><span class="label">Ammo</span><strong id="ammoValue">0 / 0</strong></div>
+    </header>
+    <section class="arena" aria-label="Offline tactical arena">
+      <canvas id="game" width="960" height="540" tabindex="0" aria-label="Playable arena canvas. Move with WASD or arrows and fire by clicking or tapping.">Canvas is unavailable.</canvas>
+      <div id="status" class="status">Ready — start when you choose.</div>
+    </section>
+    <nav class="controls" aria-label="Game controls">
+      <button id="sessionButton" type="button">Start</button>
+      <button id="reloadButton" type="button">Reload</button>
+      <button id="resetButton" type="button">Reset</button>
+      <span class="hint">Move: WASD / arrows · Aim + fire: click or tap · Pause: P</span>
+    </nav>
+    <div class="touch" aria-label="Touch movement controls">
+      <button type="button" data-key="ArrowUp" aria-label="Move up">↑</button>
+      <button type="button" data-key="ArrowLeft" aria-label="Move left">←</button>
+      <button type="button" data-key="ArrowDown" aria-label="Move down">↓</button>
+      <button type="button" data-key="ArrowRight" aria-label="Move right">→</button>
+    </div>
+  </main>
+  <script src="game.js"></script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+{
+  "schema": "axm.creation-trial-receipt/v0.1",
+  "recorded_at": "2026-08-31T10:48:58Z",
+  "creation": "creations/command-tower-arena",
+  "request": "examples/requests/create_command_tower_arena.json",
+  "capability": "AXM-CAP-BUILD-OFFLINE-BROWSER-GAME",
+  "reference_observation": {
+    "source": "user-supplied 1000041046.jpg",
+    "claim": "the reference visibly supports a dark tactical game direction with a target, characters, tower, and HUD cues",
+    "visible_cues_used": [
+      "dark tactical play surface",
+      "block-like characters",
+      "selected hostile target",
+      "command tower",
+      "health-style indicator",
+      "credits or score",
+      "ammunition count"
+    ],
+    "verdict": "PASS",
+    "not_observed": [
+      "motion",
+      "controls",
+      "source code",
+      "asset files",
+      "game rules",
+      "runtime behavior"
+    ]
+  },
+  "deterministic_trial": {
+    "passed": true,
+    "game_specification_sha256": "9f71028a271c43801d212dc557fe878cf1607dd174ce627008e4f2425abbf95f",
+    "session_machine_sha256": "582d7ff32aecfe2893dcaee6c83d6533af50b0c1b699bf32fc1e83e107c1573e",
+    "independent_project_digest_check_passed": true,
+    "file_count": 8,
+    "files": {
+      "README.md": "b804c99d494cf654f01a6c72e5a90727c47e97d141006e417e6a387e0f0748f4",
+      "assets/fire.wav": "746656b197eccc30b63f1a2c1fa8d2e530206b61e3bdf35e092de17b0331ed1c",
+      "assets/target.png": "925666576ce1923846fde263adf52030dcaeadeeab032551330622f3f6e6c18d",
+      "game.js": "ca74d519512276ae97b61247eb1316832e39a5465d63cb76ff41044356f05410",
+      "game.json": "65949d32b08f233b13c7a469c428ecad296b60be694381e4253c4bfb18acccb3",
+      "index.html": "8996fa16b1b2a205fd8265030882a9c3e2ef6adfed57e5dd12b9cc69e719a567",
+      "state-machine.json": "b98cfa06b6dde7fff8ae8726a816cbf686944ec95ee8003ab801d74c83511181",
+      "style.css": "693f7aaaf8e6c7d037f0cc7b45521e3b86c58332b8a941f4bb1c907a723c9496"
+    }
+  },
+  "javascript_syntax_observation": {
+    "command": "node --check creations/command-tower-arena/game.js",
+    "node_version": "v24.19.0",
+    "passed": true,
+    "execution_proven": false
+  },
+  "portable_bundle": {
+    "path": "creations/command-tower-arena.axm.zip",
+    "schema": "axm.portable-creation-bundle/v0.1",
+    "bytes": 25397,
+    "sha256": "c8fbdcccbb5d7bd3f86dbbed0781d848f96262510dec3a23534d66759c6a3b04",
+    "file_count": 8,
+    "staged_bundle_inspection_passed": true,
+    "runtime_compatibility_proven": false
+  },
+  "live_browser_observation": {
+    "visual_backend": "BROWSER_PRIMARY",
+    "target": "local command-tower-arena index.html",
+    "capture_capability_available": true,
+    "baseline_captured": false,
+    "authorized_action_performed": false,
+    "verdict": "UNKNOWN",
+    "named_seam": "the available cloud browser rejected the loopback URL with net::ERR_BLOCKED_BY_CLIENT",
+    "browser_rendering_proven": false,
+    "input_or_state_change_proven": false,
+    "temporary_capture_paths_created": false,
+    "cleanup_complete": true
+  }
+}

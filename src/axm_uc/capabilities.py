@@ -422,6 +422,48 @@ def builtin_deterministic_state_machine(root: Path, inputs: dict[str, Any]) -> d
         raise CapabilityError(str(exc), exc.details) from exc
 
 
+def builtin_procedural_media(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+    from .procedural_media import ProceduralMediaError, publish_media_asset
+
+    target = _resolve_output_path(root, str(inputs["path"]))
+    if _is_machine_body_path(root, target):
+        raise CapabilityError("procedural media generation cannot rewrite the live machine body")
+    if "replace" in inputs and not isinstance(inputs["replace"], bool):
+        raise CapabilityError("procedural media replace must be a boolean")
+    try:
+        return publish_media_asset(
+            target,
+            operation=inputs["operation"],
+            specification=inputs["specification"],
+            replace=inputs.get("replace", False),
+        )
+    except ProceduralMediaError as exc:
+        raise CapabilityError(str(exc), exc.details) from exc
+
+
+def builtin_browser_game(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+    from .browser_game import BrowserGameError, build_browser_game
+
+    target = _resolve_output_path(root, str(inputs["path"]))
+    if _is_machine_body_path(root, target):
+        raise CapabilityError("browser-game creation cannot rewrite the live machine body")
+    if "checks" in inputs and not isinstance(inputs["checks"], list):
+        raise CapabilityError("browser-game checks must be a list")
+    if "replace" in inputs and not isinstance(inputs["replace"], bool):
+        raise CapabilityError("browser-game replace must be a boolean")
+    try:
+        result = build_browser_game(
+            target,
+            specification=inputs["specification"],
+            checks=inputs.get("checks"),
+            replace=inputs.get("replace", False),
+        )
+        result["grammar_inventory"] = grammar_inventory(target)
+        return result
+    except BrowserGameError as exc:
+        raise CapabilityError(str(exc), exc.details) from exc
+
+
 BUILTINS: dict[str, Callable[[Path, dict[str, Any]], dict[str, Any]]] = {
     "builtin:write_text": builtin_write_text,
     "builtin:write_json": builtin_write_json,
@@ -445,6 +487,8 @@ BUILTINS: dict[str, Callable[[Path, dict[str, Any]], dict[str, Any]]] = {
     "builtin:write_mixed_project": builtin_write_mixed_project,
     "builtin:portable_creation_bundle": builtin_portable_creation_bundle,
     "builtin:deterministic_state_machine": builtin_deterministic_state_machine,
+    "builtin:procedural_media": builtin_procedural_media,
+    "builtin:browser_game": builtin_browser_game,
 }
 
 

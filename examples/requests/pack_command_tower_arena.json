@@ -1,0 +1,12 @@
+{
+  "kind": "axm-creation-export",
+  "direction": "pack the validated offline command-tower arena into one deterministic portable creation bundle",
+  "inputs": {
+    "operation": "pack",
+    "path": "creations/command-tower-arena.axm.zip",
+    "source": "creations/command-tower-arena",
+    "project_type": "static-web",
+    "name": "Command Tower Arena",
+    "replace": true
+  }
+}

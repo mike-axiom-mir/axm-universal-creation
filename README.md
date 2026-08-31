@@ -30,6 +30,12 @@ PYTHONPATH=src python -m axm_uc create examples/requests/prepare_local_creation_
 PYTHONPATH=src python -m axm_uc create examples/requests/create_mixed_media_project.json
 PYTHONPATH=src python -m axm_uc create examples/requests/replay_game_state_machine.json
 
+# Generate media locally and build an independently reverified offline browser game.
+PYTHONPATH=src python -m axm_uc create examples/requests/generate_target_icon.json
+PYTHONPATH=src python -m axm_uc create examples/requests/generate_fire_sound.json
+PYTHONPATH=src python -m axm_uc trial examples/requests/create_command_tower_arena.json
+PYTHONPATH=src python -m axm_uc create examples/requests/pack_command_tower_arena.json
+
 # Run the complete repository verification suite.
 python tools/build.py
 ```
@@ -157,6 +163,8 @@ The small Python runtime currently provides:
 - digest-bound, freshness-aware intake for external runtime, browser, visual, gameplay, and accessibility evidence without pretending the deterministic core re-performed those observations;
 - exact mixed text/binary project creation with strict-base64 intake and pre/post-publication digest verification;
 - deterministic state-machine compile, step, and replay routes whose effects remain inert data;
+- deterministic RGBA8 PNG and mono PCM16 WAV generation whose complete payloads are reparsed after publication;
+- dependency-free offline tactical browser-game assembly with generated local media, explicit game/session JSON, Canvas source, keyboard/pointer/touch controls, HUD, and exact project validation;
 - reproducible portable creation bundles with canonical manifests, safe unpacking, and exact byte receipts;
 - grounded drafts that preserve observed gaps instead of erasing imperfect ordinary creations;
 - strict single-pass project recipes with inspectable variables and rendered paths;
@@ -242,6 +250,14 @@ Current live project handles:
 - `portable-creation-bundle`
 - `axm-creation-export`
 - `axm-creation-import`
+- `procedural-media-asset`
+- `procedural-png-asset`
+- `procedural-wav-asset`
+- `generated-game-asset`
+- `offline-browser-game`
+- `browser-arena-game`
+- `playable-game-project`
+- `browser-game-project`
 
 Project creation is staged before publish and project-relative file paths may not escape the project body. Plain project creation defaults to `grounded-draft`: exact publication integrity is required, while failed quality/grammar checks remain visible and the imperfect creation survives. Explicit `validated` mode and verified composite handles remain strict and do not publish a failed body.
 
@@ -269,7 +285,7 @@ Every project automatically receives a no-symlink boundary check so validation c
 
 Every `.json` file is automatically parsed for JSON validity in every project type.
 
-Mixed projects may now contain exact text and binary files. Binary descriptors are strict base64 and the complete emitted body is verified by digest before and after publication. Portable creation bundles can then carry a validated project to another standalone machine or host without turning archive validity into a runtime claim. Explicit deterministic state machines provide a separate reusable rule core for games, workflows, interfaces, and simulations. See `CAPABILITY_GROWTH.md`.
+Mixed projects may now contain exact text and binary files. Binary descriptors are strict base64 and the complete emitted body is verified by digest before and after publication. Procedural media generation can originate bounded PNG and WAV assets locally, and offline browser-game assembly combines those assets with an explicit session graph and inspectable game source. Portable creation bundles can then carry a validated project to another standalone machine or host without turning archive validity into a runtime claim. Explicit deterministic state machines provide a separate reusable rule core for games, workflows, interfaces, and simulations. See `CAPABILITY_GROWTH.md`.
 
 Reusable project templates use strict `[[AXM:name]]` placeholders in paths and contents. Substitution is exact, raw, single-pass, and non-recursive; missing, unused, malformed, colliding, and escaping inputs are rejected. See `PROJECT_TEMPLATES.md` and `GROUNDED_CREATION.md`.
 
@@ -301,6 +317,9 @@ PYTHONPATH=src python -m axm_uc create examples/requests/explore_verified_templa
 PYTHONPATH=src python -m axm_uc create examples/requests/create_mixed_media_project.json
 PYTHONPATH=src python -m axm_uc create examples/requests/replay_game_state_machine.json
 PYTHONPATH=src python -m axm_uc create examples/requests/pack_portable_creation.json
+PYTHONPATH=src python -m axm_uc create examples/requests/generate_target_icon.json
+PYTHONPATH=src python -m axm_uc create examples/requests/generate_fire_sound.json
+PYTHONPATH=src python -m axm_uc trial examples/requests/create_command_tower_arena.json
 ```
 
 That creates `creations/first-real-site/` with `index.html`, `style.css`, and `app.js`. Open `index.html` in a browser for the separate human/host visual and interaction test.
@@ -373,6 +392,7 @@ PYTHONPATH=src python -m axm_uc create examples/requests/prepare_local_creation_
 PYTHONPATH=src python -m axm_uc create examples/requests/inspect_host_evidence.json
 PYTHONPATH=src python -m axm_uc create examples/requests/create_mixed_media_project.json
 PYTHONPATH=src python -m axm_uc create examples/requests/replay_game_state_machine.json
+PYTHONPATH=src python -m axm_uc trial examples/requests/create_command_tower_arena.json
 PYTHONPATH=src python -m axm_uc create examples/requests/spawn_creation_protocol.json
 PYTHONPATH=src python -m axm_uc create examples/requests/test_spawned_creation_protocol.json
 PYTHONPATH=src python -m axm_uc create examples/requests/propose_verified_template_gap.json

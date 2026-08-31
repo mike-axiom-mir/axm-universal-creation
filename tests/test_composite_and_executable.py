@@ -17,10 +17,10 @@ class CompositeAndExecutableTests(unittest.TestCase):
         machine = UniversalCreationMachine(ROOT)
         summary = machine.executable()["summary"]
         self.assertEqual(summary["truth_status"], "EXPLICIT_LIVE_CAPABILITY_BINDINGS")
-        self.assertEqual(summary["implemented_master_records"], 28)
-        self.assertEqual(summary["implemented_master_by_level"], {"atom": 1, "component": 19, "organ": 8})
-        self.assertEqual(summary["live_capabilities"], 25)
-        self.assertEqual(summary["resolved_bindings"], 67)
+        self.assertEqual(summary["implemented_master_records"], 34)
+        self.assertEqual(summary["implemented_master_by_level"], {"atom": 1, "component": 19, "organ": 14})
+        self.assertEqual(summary["live_capabilities"], 27)
+        self.assertEqual(summary["resolved_bindings"], 75)
 
         project = machine.executable(master_id="AXM-24-WORKSPACE-COLLABORATION-C-010-project")["master"]
         self.assertEqual(project["status"], "live-backed")
@@ -96,6 +96,24 @@ class CompositeAndExecutableTests(unittest.TestCase):
             state_machine["implemented_by"],
             ["AXM-CAP-DETERMINISTIC-STATE-MACHINE", "AXM-CAP-SIMULATE-CREATION"],
         )
+
+        rasterizer = machine.executable(master_id="AXM-10-2D-IMAGING-O-001-rasterizer")["master"]
+        self.assertEqual(rasterizer["status"], "live-backed")
+        self.assertEqual(rasterizer["implemented_by"], ["AXM-CAP-GENERATE-PROCEDURAL-MEDIA"])
+
+        synthesizer = machine.executable(master_id="AXM-14-AUDIO-MUSIC-SPEECH-O-003-synthesizer")["master"]
+        self.assertEqual(synthesizer["status"], "live-backed")
+        self.assertEqual(synthesizer["implemented_by"], ["AXM-CAP-GENERATE-PROCEDURAL-MEDIA"])
+
+        for master_id in [
+            "AXM-16-GAMES-O-001-game-loop-runtime",
+            "AXM-16-GAMES-O-003-gameplay-rule-engine",
+            "AXM-16-GAMES-O-009-input-system",
+            "AXM-16-GAMES-O-014-game-ui-and-hud-organ",
+        ]:
+            game_system = machine.executable(master_id=master_id)["master"]
+            self.assertEqual(game_system["status"], "live-backed", master_id)
+            self.assertEqual(game_system["implemented_by"], ["AXM-CAP-BUILD-OFFLINE-BROWSER-GAME"], master_id)
 
         lod_group = machine.executable(master_id="AXM-11-3D-SPATIAL-C-028-level-of-detail-group")["master"]
         self.assertEqual(lod_group["status"], "live-backed")

@@ -22,6 +22,12 @@ class MachineTests(unittest.TestCase):
         self.assertFalse(growth["portable_bundle"]["runtime_compatibility_proven"])
         self.assertEqual(growth["state_machine"]["missing_transition_behavior"], "HOLD_NO_DECLARED_TRANSITION")
         self.assertFalse(growth["state_machine"]["effects_executed"])
+        self.assertEqual(growth["procedural_media"]["operations"], ["png", "wav"])
+        self.assertTrue(growth["procedural_media"]["container_and_payload_reverified_after_publish"])
+        self.assertFalse(growth["procedural_media"]["appearance_or_audio_quality_proven"])
+        self.assertEqual(growth["browser_game"]["schema"], "axm.browser-arena/v0.1")
+        self.assertEqual(growth["browser_game"]["runtime_dependencies"], [])
+        self.assertFalse(growth["browser_game"]["browser_execution_observed"])
 
     def test_live_creation_routes_and_writes(self):
         with tempfile.TemporaryDirectory() as td:

@@ -1,0 +1,96 @@
+{
+  "id": "command-tower-arena.session",
+  "initial_state": "ready",
+  "schema": "axm.deterministic-state-machine/v0.1",
+  "states": [
+    "ready",
+    "playing",
+    "paused",
+    "won",
+    "lost"
+  ],
+  "transitions": [
+    {
+      "effects": [
+        {
+          "type": "reset-session"
+        }
+      ],
+      "event": "reset",
+      "from": "lost",
+      "to": "ready"
+    },
+    {
+      "effects": [
+        {
+          "type": "reset-session"
+        }
+      ],
+      "event": "reset",
+      "from": "paused",
+      "to": "ready"
+    },
+    {
+      "effects": [],
+      "event": "resume",
+      "from": "paused",
+      "to": "playing"
+    },
+    {
+      "effects": [
+        {
+          "type": "freeze-arena"
+        }
+      ],
+      "event": "lose",
+      "from": "playing",
+      "to": "lost"
+    },
+    {
+      "effects": [],
+      "event": "pause",
+      "from": "playing",
+      "to": "paused"
+    },
+    {
+      "effects": [
+        {
+          "type": "reset-session"
+        }
+      ],
+      "event": "reset",
+      "from": "playing",
+      "to": "ready"
+    },
+    {
+      "effects": [
+        {
+          "type": "freeze-arena"
+        }
+      ],
+      "event": "win",
+      "from": "playing",
+      "to": "won"
+    },
+    {
+      "effects": [
+        {
+          "type": "begin-session"
+        }
+      ],
+      "event": "start",
+      "from": "ready",
+      "to": "playing"
+    },
+    {
+      "effects": [
+        {
+          "type": "reset-session"
+        }
+      ],
+      "event": "reset",
+      "from": "won",
+      "to": "ready"
+    }
+  ]
+}

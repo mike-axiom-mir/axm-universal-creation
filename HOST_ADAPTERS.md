@@ -22,5 +22,6 @@ Two live boundaries now make that separation executable:
 - `AXM-CAP-BIND-HOST-EVIDENCE` accepts attributed runtime, browser, visual, gameplay, accessibility, or host-specific observations only when they bind to the complete current project digest map. It checks structure, consistency, and freshness but does not relabel an external observation as one performed by the deterministic core.
 - `AXM-CAP-PORTABLE-CREATION-BUNDLE` carries a validated regular-file project body through a canonical digest manifest. A receiving host can inspect or unpack the exact bytes, but the bundle does not grant that host execution authority or prove host compatibility.
 - `AXM-CAP-DETERMINISTIC-STATE-MACHINE` can supply a small host-neutral rule core. Transition effects are inert data until an adapter explicitly interprets them, so the standalone machine does not silently acquire game, OS, robot, or application authority.
+- `AXM-CAP-BUILD-OFFLINE-BROWSER-GAME` can produce a complete dependency-free local game source body on its own. The browser remains a host: rendering, input, audio, timing, accessibility, and gameplay observations become evidence only through a separate attributed host receipt.
 
 See `LOCAL_CREATION_PROVIDER.md`, `HOST_EVIDENCE.md`, and `CAPABILITY_GROWTH.md`.

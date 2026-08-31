@@ -1,0 +1,90 @@
+{
+  "kind": "offline-browser-game",
+  "direction": "create a dependency-free local tactical arena from the visible command-tower, hostile-target, character, health, ammo, and score cues in the supplied reference photo",
+  "constraints": {
+    "standalone": true,
+    "offline": true,
+    "no_external_dependencies": true,
+    "reference_is_visual_direction_not_hidden_implementation_evidence": true
+  },
+  "inputs": {
+    "path": "creations/command-tower-arena",
+    "replace": true,
+    "specification": {
+      "schema": "axm.browser-arena/v0.1",
+      "id": "command-tower-arena",
+      "title": "Command Tower: Hostile Parent",
+      "viewport": {"width": 960, "height": 540},
+      "theme": {
+        "background": "#05090F",
+        "ground": "#12383B",
+        "panel": "#07151A",
+        "accent": "#37E4D5",
+        "danger": "#FF365E",
+        "text": "#F4F7F8"
+      },
+      "player": {
+        "x": 480,
+        "y": 450,
+        "size": 18,
+        "color": "#FFC857",
+        "speed": 250,
+        "max_health": 100
+      },
+      "tower": {
+        "x": 405,
+        "y": 245,
+        "width": 150,
+        "height": 105,
+        "color": "#19A7A1",
+        "max_health": 300
+      },
+      "enemies": [
+        {
+          "id": "hostile-parent",
+          "label": "Hostile Parent",
+          "x": 480,
+          "y": 105,
+          "size": 42,
+          "color": "#FF365E",
+          "health": 120,
+          "speed": 24,
+          "damage": 18,
+          "reward": 500
+        },
+        {
+          "id": "scout-left",
+          "label": "Left Scout",
+          "x": 180,
+          "y": 170,
+          "size": 28,
+          "color": "#F05D7A",
+          "health": 50,
+          "speed": 34,
+          "damage": 8,
+          "reward": 100
+        },
+        {
+          "id": "scout-right",
+          "label": "Right Scout",
+          "x": 780,
+          "y": 170,
+          "size": 28,
+          "color": "#F05D7A",
+          "health": 50,
+          "speed": 34,
+          "damage": 8,
+          "reward": 100
+        }
+      ],
+      "rules": {
+        "projectile_speed": 620,
+        "projectile_damage": 25,
+        "fire_cooldown_ms": 180,
+        "ammo_capacity": 30,
+        "reload_ms": 1400,
+        "contact_distance": 72
+      }
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "kind": "procedural-wav-asset",
+  "direction": "generate one deterministic local fire cue without an external audio provider",
+  "inputs": {
+    "operation": "wav",
+    "path": "creations/generated-assets/fire.wav",
+    "replace": true,
+    "specification": {
+      "sample_rate": 16000,
+      "tones": [
+        {"frequency_hz": 880, "duration_ms": 45, "amplitude": 5000},
+        {"frequency_hz": 440, "duration_ms": 35, "amplitude": 3200}
+      ]
+    }
+  }
+}

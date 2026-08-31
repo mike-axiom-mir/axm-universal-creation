@@ -1,0 +1,79 @@
+{
+  "enemies": [
+    {
+      "color": "#FF365E",
+      "damage": 18,
+      "health": 120,
+      "id": "hostile-parent",
+      "label": "Hostile Parent",
+      "reward": 500,
+      "size": 42,
+      "speed": 24,
+      "x": 480,
+      "y": 105
+    },
+    {
+      "color": "#F05D7A",
+      "damage": 8,
+      "health": 50,
+      "id": "scout-left",
+      "label": "Left Scout",
+      "reward": 100,
+      "size": 28,
+      "speed": 34,
+      "x": 180,
+      "y": 170
+    },
+    {
+      "color": "#F05D7A",
+      "damage": 8,
+      "health": 50,
+      "id": "scout-right",
+      "label": "Right Scout",
+      "reward": 100,
+      "size": 28,
+      "speed": 34,
+      "x": 780,
+      "y": 170
+    }
+  ],
+  "id": "command-tower-arena",
+  "player": {
+    "color": "#FFC857",
+    "max_health": 100,
+    "size": 18,
+    "speed": 250,
+    "x": 480,
+    "y": 450
+  },
+  "rules": {
+    "ammo_capacity": 30,
+    "contact_distance": 72,
+    "fire_cooldown_ms": 180,
+    "projectile_damage": 25,
+    "projectile_speed": 620,
+    "reload_ms": 1400
+  },
+  "schema": "axm.browser-arena/v0.1",
+  "theme": {
+    "accent": "#37E4D5",
+    "background": "#05090F",
+    "danger": "#FF365E",
+    "ground": "#12383B",
+    "panel": "#07151A",
+    "text": "#F4F7F8"
+  },
+  "title": "Command Tower: Hostile Parent",
+  "tower": {
+    "color": "#19A7A1",
+    "height": 105,
+    "max_health": 300,
+    "width": 150,
+    "x": 405,
+    "y": 245
+  },
+  "viewport": {
+    "height": 540,
+    "width": 960
+  }
+}
