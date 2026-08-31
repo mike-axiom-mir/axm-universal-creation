@@ -453,6 +453,19 @@ def simulate_until_no_known_improvements(
 
 
 def operate_simulation(root: Any, inputs: dict[str, Any]) -> dict[str, Any]:
+    operation = str(inputs.get("operation", "simulate-creation")).strip().casefold()
+    if operation in {"resolve-vector-cells", "vector-cell-thought", "adaptive-vector-scene"} or "fabric" in inputs:
+        from .vector_cells import VectorCellError, resolve_vector_cells
+
+        try:
+            return resolve_vector_cells(
+                inputs.get("fabric"),
+                observation_scale=inputs.get("observation_scale"),
+                choice=inputs.get("choice", "default"),
+            )
+        except VectorCellError as exc:
+            raise SimulationError(str(exc), exc.details) from exc
+
     del root
     return simulate_until_no_known_improvements(
         inputs.get("thought"),
