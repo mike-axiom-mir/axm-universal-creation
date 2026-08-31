@@ -76,3 +76,21 @@ neural or procedural backend produced it.
 
 The rejected result is not an engine-ready asset. Its Windows short-path and CPU
 marching-cubes findings may inform a future bounded proposal backend.
+
+## Self-improvement loop
+
+`3d-review` records compact, artifact-bound criteria and lessons for one exact
+asset/quality context. `3d-plan-adaptive` shows the retained changes, and every
+`3d-forge` run replays them automatically. Rejected images are not stored in the
+machine profile and one asset's lesson never becomes a global style law.
+
+Every forge receipt contains two deliberately separate outcomes:
+
+- technical gates: decoded GLB, real LOD descent, collision, source blend,
+  embedded PBR images/textures, material roles, and four-angle proof;
+- visual gates: an artifact SHA-bound review of form hierarchy, proportions,
+  topology, faction silhouette, and material authenticity.
+
+Passing the technical gates never promotes an asset to AAA. The receipt says
+`AAA_ACCEPTED` only when every technical gate and every required visual
+criterion passes against a render proof from that exact forge run.

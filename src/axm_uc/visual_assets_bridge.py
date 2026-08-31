@@ -11,7 +11,7 @@ from .visual_learning import (
     inspect_visual_learning,
     record_visual_use,
 )
-from .visual_3d import catalog_3d, compile_3d_request, forge_3d_asset, inspect_glb
+from .visual_3d import assess_3d_output, catalog_3d, compile_3d_request, compile_adaptive_3d_request, forge_3d_asset, inspect_glb, record_3d_review
 
 
 def operate_visual_expansion(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
@@ -51,6 +51,12 @@ def operate_visual_expansion(root: Path, inputs: dict[str, Any]) -> dict[str, An
         return catalog_3d()
     if operation == "3d-plan":
         return compile_3d_request(inputs.get("request"))
+    if operation == "3d-plan-adaptive":
+        return compile_adaptive_3d_request(root, inputs.get("request"))
+    if operation == "3d-review":
+        return record_3d_review(root, inputs.get("review"))
+    if operation == "3d-assess":
+        return assess_3d_output(inputs.get("receipt", {}), inputs.get("manifest", {}), inputs.get("visual_review"))
     if operation == "inspect-glb":
         raw_artifact = str(inputs.get("artifact_path", "")).strip()
         if not raw_artifact:

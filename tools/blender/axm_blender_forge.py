@@ -31,7 +31,7 @@ def clear_scene() -> None:
 
 def material(name: str, color: tuple[float, float, float, float], *, metallic: float = 0.0,
              roughness: float = 0.45, emission: tuple[float, float, float, float] | None = None,
-             emission_strength: float = 0.0) -> bpy.types.Material:
+             emission_strength: float = 0.0, texture_dir: Path | None = None) -> bpy.types.Material:
     mat = bpy.data.materials.new(name)
     mat.diffuse_color = color
     mat.use_nodes = True
@@ -39,6 +39,35 @@ def material(name: str, color: tuple[float, float, float, float], *, metallic: f
     node.inputs["Base Color"].default_value = color
     node.inputs["Metallic"].default_value = metallic
     node.inputs["Roughness"].default_value = roughness
+    if texture_dir is not None:
+        # A retained, deterministic material compiler. The generated texture is
+        # intentionally subtle: it gives the GLB a real embedded PBR image path
+        # while the shader's micro-normal/roughness machinery stays procedural.
+        texture_dir.mkdir(parents=True, exist_ok=True)
+        size = 512
+        image = bpy.data.images.new(f"{name}_BaseColor", width=size, height=size, alpha=True)
+        pixels: list[float] = []
+        salt = int(hashlib.sha256(name.encode("utf-8")).hexdigest()[:8], 16)
+        for y in range(size):
+            for x in range(size):
+                grain = math.sin((x * 0.173 + y * 0.091 + salt % 97) * .71) * .018
+                seam = -.075 if (x + salt) % 173 in (0, 1) or (y + salt // 7) % 211 == 0 else 0.0
+                wear = .045 if ((x * 37 + y * 19 + salt) % 997) < 3 else 0.0
+                pixels.extend((
+                    max(0.0, min(1.0, color[0] + grain + seam + wear)),
+                    max(0.0, min(1.0, color[1] + grain + seam + wear)),
+                    max(0.0, min(1.0, color[2] + grain + seam + wear)),
+                    color[3],
+                ))
+        image.pixels.foreach_set(pixels)
+        image.colorspace_settings.name = "sRGB"
+        image.filepath_raw = str(texture_dir / f"{name}_basecolor.png")
+        image.file_format = "PNG"
+        image.save()
+        texture = mat.node_tree.nodes.new("ShaderNodeTexImage")
+        texture.name = f"{name}_EmbeddedBaseColor"
+        texture.image = image
+        mat.node_tree.links.new(texture.outputs["Color"], node.inputs["Base Color"])
     if not emission:
         noise = mat.node_tree.nodes.new("ShaderNodeTexNoise")
         noise.inputs["Scale"].default_value = 18.0 if metallic > .5 else 9.0
@@ -60,7 +89,8 @@ def material(name: str, color: tuple[float, float, float, float], *, metallic: f
         bump.inputs["Strength"].default_value = .055 if metallic > .5 else .035
         bump.inputs["Distance"].default_value = .018
         mat.node_tree.links.new(noise.outputs["Fac"], color_ramp.inputs["Fac"])
-        mat.node_tree.links.new(color_ramp.outputs["Color"], node.inputs["Base Color"])
+        if texture_dir is None:
+            mat.node_tree.links.new(color_ramp.outputs["Color"], node.inputs["Base Color"])
         mat.node_tree.links.new(noise.outputs["Fac"], rough_map.inputs["Value"])
         mat.node_tree.links.new(rough_map.outputs["Result"], node.inputs["Roughness"])
         mat.node_tree.links.new(noise.outputs["Fac"], bump.inputs["Height"])
@@ -890,18 +920,18 @@ def main() -> None:
     clear_scene()
 
     mats = {
-        "gunmetal": material("AX_Gunmetal", (.025, .038, .050, 1), metallic=.95, roughness=.31),
-        "pale": material("AX_PaleCeramicArmor", (.34, .39, .41, 1), metallic=.66, roughness=.28),
+        "gunmetal": material("AX_Gunmetal", (.025, .038, .050, 1), metallic=.95, roughness=.31, texture_dir=output / "textures"),
+        "pale": material("AX_PaleCeramicArmor", (.34, .39, .41, 1), metallic=.66, roughness=.28, texture_dir=output / "textures"),
         "cyan": material("AX_ElectricCyan", (.006, .12, .18, 1), metallic=.20, roughness=.20,
-                         emission=(.00, .48, .72, 1), emission_strength=3.2),
+                         emission=(.00, .48, .72, 1), emission_strength=3.2, texture_dir=output / "textures"),
         "amber": material("AX_SignalAmber", (.22, .055, .004, 1), metallic=.20, roughness=.25,
-                          emission=(.72, .11, .008, 1), emission_strength=2.5),
-        "ivory": material("MIR_IvoryCeramic", (.86, .79, .66, 1), metallic=.08, roughness=.20),
-        "brass": material("MIR_Brass", (.42, .21, .055, 1), metallic=.97, roughness=.21),
-        "rose": material("MIR_RoseGold", (.54, .19, .17, 1), metallic=.90, roughness=.24),
+                          emission=(.72, .11, .008, 1), emission_strength=2.5, texture_dir=output / "textures"),
+        "ivory": material("MIR_IvoryCeramic", (.86, .79, .66, 1), metallic=.08, roughness=.20, texture_dir=output / "textures"),
+        "brass": material("MIR_Brass", (.42, .21, .055, 1), metallic=.97, roughness=.21, texture_dir=output / "textures"),
+        "rose": material("MIR_RoseGold", (.54, .19, .17, 1), metallic=.90, roughness=.24, texture_dir=output / "textures"),
         "magenta": material("MIR_ResonanceMagenta", (.30, .008, .19, 1), metallic=.12, roughness=.16,
-                            emission=(1.0, .015, .46, 1), emission_strength=5.5),
-        "dark": material("AXM_DarkMechanism", (.018, .024, .032, 1), metallic=.76, roughness=.36),
+                            emission=(1.0, .015, .46, 1), emission_strength=5.5, texture_dir=output / "textures"),
+        "dark": material("AXM_DarkMechanism", (.018, .024, .032, 1), metallic=.76, roughness=.36, texture_dir=output / "textures"),
         "collision": material("AXM_CollisionDebug", (.80, .02, .02, .35), metallic=0, roughness=1),
     }
     objects: list[bpy.types.Object] = []

@@ -11,7 +11,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from axm_uc.visual_3d import catalog_3d, compile_3d_request, inspect_glb
+from axm_uc.visual_3d import assess_3d_output, catalog_3d, compile_3d_request, compile_adaptive_3d_request, inspect_glb, record_3d_review
 from axm_uc.visual_assets_bridge import operate_visual_expansion
 
 
@@ -45,6 +45,8 @@ class Visual3DForgeTests(unittest.TestCase):
         self.assertEqual(request["faction"], "axiom")
         self.assertEqual(request["lod_ratios"], {"lod0": 1.0, "lod1": .48, "lod2": .18})
         self.assertTrue(request["requirements"]["separate_collision_export"])
+        self.assertEqual(request["context_key"], "3d/axiom-bastion-frame/hero")
+        self.assertTrue(request["requirements"]["artifact_bound_visual_acceptance"])
         with self.assertRaises(ValueError):
             compile_3d_request({"asset_id": "invented-asset"})
 
@@ -65,6 +67,49 @@ class Visual3DForgeTests(unittest.TestCase):
         })
         self.assertEqual(result["faction"], "mir")
         self.assertEqual(result["quality"], "production")
+
+    def test_failed_review_replays_only_in_exact_3d_context(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            png = root / "proof.png"
+            import zlib
+            raw = b"\x00" + bytes((10, 20, 30, 255))
+            def chunk(kind, payload):
+                return struct.pack(">I", len(payload)) + kind + payload + struct.pack(">I", zlib.crc32(kind + payload) & 0xffffffff)
+            png.write_bytes(b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", struct.pack(">IIBBBBB", 1, 1, 8, 6, 0, 0, 0)) + chunk(b"IDAT", zlib.compress(raw)) + chunk(b"IEND", b""))
+            record_3d_review(root, {
+                "context_key": "3d/axiom-bastion-frame/hero",
+                "artifact_path": str(png),
+                "criteria": {"aaa-form-hierarchy": "FAIL"},
+                "lessons": [{
+                    "id": "replace-primitive-masses",
+                    "evidence": "Large blocks read as toy construction.",
+                    "patch": {"avoid_add": ["visible primitive-block construction"]},
+                }],
+            })
+            adapted = compile_adaptive_3d_request(root, {"asset_id": "axiom-bastion-frame"})
+            untouched = compile_adaptive_3d_request(root, {"asset_id": "mir-sanctuary-keeper"})
+        self.assertEqual(adapted["applied_lesson_ids"], ["replace-primitive-masses"])
+        self.assertIn("visible primitive-block construction", adapted["request"]["avoid"])
+        self.assertEqual(untouched["applied_lesson_ids"], [])
+
+    def test_aaa_assessment_requires_technical_and_bound_visual_pass(self):
+        proof_sha = "a" * 64
+        receipt = {"inspections": {
+            "lod0": {"triangles": 100000, "materials": list("abcdef"), "images": 5, "textures": 5},
+            "lod1": {"triangles": 48000}, "lod2": {"triangles": 18000}, "collision": {"meshes": 5},
+        }}
+        manifest = {
+            "source": {"sha256": "b" * 64},
+            "exports": {name: {} for name in ("lod0", "lod1", "lod2", "collision")},
+            "render_proofs": [{"sha256": proof_sha} for _ in range(4)],
+        }
+        pending = assess_3d_output(receipt, manifest)
+        self.assertTrue(pending["technical_pass"])
+        self.assertFalse(pending["visual_pass"])
+        criteria = {name: "PASS" for name in catalog_3d()["aaa_quality_gates"]["required_visual_criteria"]}
+        accepted = assess_3d_output(receipt, manifest, {"artifact_sha256": proof_sha, "criteria": criteria})
+        self.assertEqual(accepted["status"], "AAA_ACCEPTED")
 
 
 if __name__ == "__main__":

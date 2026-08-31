@@ -8,7 +8,15 @@ from .visual_assets import catalog as base_catalog, generate_asset, generate_kit
 from .visual_creation_grammar import compile_visual_recipe, grammar_catalog
 from .visual_expanded import expansion_catalog, generate_expanded_asset, generate_expansion_kit
 from .visual_learning import compile_adaptive_visual_recipe, inspect_png, inspect_visual_learning, record_visual_use
-from .visual_3d import catalog_3d, compile_3d_request, forge_3d_asset, inspect_glb
+from .visual_3d import (
+    assess_3d_output,
+    catalog_3d,
+    compile_3d_request,
+    compile_adaptive_3d_request,
+    forge_3d_asset,
+    inspect_glb,
+    record_3d_review,
+)
 
 BASE_CATEGORIES = ["texture", "gradient", "material", "fixture", "decal", "palette"]
 EXPANDED_CATEGORIES = ["surface", "pigment", "sprite", "mesh", "vector-part"]
@@ -51,6 +59,16 @@ def build_parser() -> argparse.ArgumentParser:
     sub.add_parser("3d-catalog", help="show engine-ready 3D forge assets, outputs, and runtime contract")
     plan_3d = sub.add_parser("3d-plan", help="compile a validated engine-ready 3D request")
     plan_3d.add_argument("request", help="path to a UTF-8 JSON 3D request")
+    adaptive_3d = sub.add_parser("3d-plan-adaptive", help="replay exact-context lessons into a 3D request")
+    adaptive_3d.add_argument("request", help="path to a UTF-8 JSON 3D request")
+    adaptive_3d.add_argument("--state-root", default=".")
+    review_3d = sub.add_parser("3d-review", help="record one artifact-bound 3D render review")
+    review_3d.add_argument("review", help="path to a UTF-8 JSON 3D review")
+    review_3d.add_argument("--state-root", default=".")
+    assess_3d = sub.add_parser("3d-assess", help="apply technical and artifact-bound visual AAA gates")
+    assess_3d.add_argument("receipt")
+    assess_3d.add_argument("manifest")
+    assess_3d.add_argument("--visual-review")
     inspect_3d = sub.add_parser("inspect-glb", help="decode GLB structure and report meshes, triangles, and materials")
     inspect_3d.add_argument("path")
     forge_3d = sub.add_parser("3d-forge", help="generate LODs, collisions, GLBs, source blend, and render proofs")
@@ -116,6 +134,17 @@ def main(argv: list[str] | None = None) -> int:
         result = catalog_3d()
     elif args.command == "3d-plan":
         result = compile_3d_request(json.loads(Path(args.request).read_text(encoding="utf-8")))
+    elif args.command == "3d-plan-adaptive":
+        result = compile_adaptive_3d_request(args.state_root, json.loads(Path(args.request).read_text(encoding="utf-8")))
+    elif args.command == "3d-review":
+        result = record_3d_review(args.state_root, json.loads(Path(args.review).read_text(encoding="utf-8")))
+    elif args.command == "3d-assess":
+        review = json.loads(Path(args.visual_review).read_text(encoding="utf-8")) if args.visual_review else None
+        result = assess_3d_output(
+            json.loads(Path(args.receipt).read_text(encoding="utf-8")),
+            json.loads(Path(args.manifest).read_text(encoding="utf-8")),
+            review,
+        )
     elif args.command == "inspect-glb":
         result = inspect_glb(args.path)
     elif args.command == "3d-forge":

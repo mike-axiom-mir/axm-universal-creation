@@ -1,0 +1,134 @@
+{
+  "contexts": {
+    "3d/axiom-bastion-frame/hero": {
+      "criteria": {
+        "aaa-form-hierarchy": {
+          "fail": 2,
+          "pass": 0,
+          "unknown": 0
+        },
+        "faction-silhouette": {
+          "fail": 0,
+          "pass": 2,
+          "unknown": 0
+        },
+        "functional-topology-all-angles": {
+          "fail": 0,
+          "pass": 1,
+          "unknown": 1
+        },
+        "material-authenticity": {
+          "fail": 2,
+          "pass": 0,
+          "unknown": 0
+        },
+        "non-toy-proportions": {
+          "fail": 2,
+          "pass": 0,
+          "unknown": 0
+        }
+      },
+      "dedup_digests": [
+        "9a2ac6cc5b645315dcd86c0bc93d8fc682562dd0a08a061d4ece4412ae44d6ad",
+        "2c26df32c816991b9938a782dd2c5080674bdb37e46228cbdce749b2dc73384e"
+      ],
+      "lessons": {
+        "replace-bulbous-joint-masses": {
+          "confirmations": 1,
+          "last_evidence": "The four-angle proof retains topology but repeated spherical limb masses and the round torso core create a toy-like inflated anatomy.",
+          "last_evidence_digest": "2c26df32c816991b9938a782dd2c5080674bdb37e46228cbdce749b2dc73384e",
+          "patch": {
+            "avoid_add": [
+              "bulbous repeated limb volumes",
+              "inflated torso anatomy"
+            ],
+            "constraints_add": [
+              "use small joint cores inside angular overlapping shells with visible load paths"
+            ],
+            "criteria_add": [
+              "mechanical joints read as constrained bearings actuators and armor interfaces"
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        },
+        "replace-primitive-masses-with-interlocking-shells": {
+          "confirmations": 1,
+          "last_evidence": "The silhouette reads, but the torso, shoulders, limbs, weapon, and shield still expose large primitive-looking masses.",
+          "last_evidence_digest": "9a2ac6cc5b645315dcd86c0bc93d8fc682562dd0a08a061d4ece4412ae44d6ad",
+          "patch": {
+            "avoid_add": [
+              "visible primitive-block construction",
+              "featureless armor slabs"
+            ],
+            "constraints_add": [
+              "construct every hero mass from interlocking functional shells with recessed mechanisms"
+            ],
+            "criteria_add": [
+              "large-medium-small authored form hierarchy"
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        },
+        "replace-slab-weapon-and-pauldrons": {
+          "confirmations": 1,
+          "last_evidence": "The rail weapon and shoulder masses remain broad dark slabs with insufficient negative space and functional substructure.",
+          "last_evidence_digest": "2c26df32c816991b9938a782dd2c5080674bdb37e46228cbdce749b2dc73384e",
+          "patch": {
+            "avoid_add": [
+              "oversized shoulder boxes",
+              "solid rectangular weapon slab"
+            ],
+            "constraints_add": [
+              "split large silhouette masses into a load-bearing frame plus offset armor shells"
+            ],
+            "criteria_add": [
+              "weapon and shoulders contain readable nested frames vents rails and negative space"
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        },
+        "require-authored-pbr-surface-breakup": {
+          "confirmations": 1,
+          "last_evidence": "Flat procedural values make the render read as a prototype rather than a production hero asset.",
+          "last_evidence_digest": "9a2ac6cc5b645315dcd86c0bc93d8fc682562dd0a08a061d4ece4412ae44d6ad",
+          "patch": {
+            "avoid_add": [
+              "uniform plastic response"
+            ],
+            "constraints_add": [
+              "embed PBR texture images and preserve readable material separation"
+            ],
+            "criteria_add": [
+              "authored material breakup at hero-camera distance"
+            ],
+            "technical_requirements": {
+              "minimum_embedded_images": 4,
+              "minimum_embedded_textures": 4
+            }
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        },
+        "retain-functional-topology-across-turntable": {
+          "confirmations": 1,
+          "last_evidence": "Single-view reconstruction experiments collapsed the weapon, shield, and rear assembly into facade geometry.",
+          "last_evidence_digest": "9a2ac6cc5b645315dcd86c0bc93d8fc682562dd0a08a061d4ece4412ae44d6ad",
+          "patch": {
+            "avoid_add": [
+              "single-view facade geometry"
+            ],
+            "constraints_add": [
+              "review at least four separated turntable angles before acceptance"
+            ],
+            "criteria_add": [
+              "weapon shield limbs and rear power plant remain coherent in every proof angle"
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        }
+      },
+      "technical": {},
+      "use_count": 2
+    }
+  },
+  "schema": "axm.visual-use-profile/v0.1"
+}
