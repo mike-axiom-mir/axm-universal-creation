@@ -1,0 +1,136 @@
+{
+  "id": "AXM-CAP-SPECIALIST-TOURNAMENT",
+  "version": "0.2.0",
+  "status": "live",
+  "purpose": "Provide one multi-perspective orchestration surface for both specialist tournaments and stepwise creation: build need-specific specialist pools, learn contextual finalist-vote fit, form broad team combinations, and advance selected work through explicit microsteps with perspective analysis before and after every meaningful result even when the whole run is fast.",
+  "handles": [
+    "specialist-tournament",
+    "build-specialist-pool",
+    "prepare-specialist-tournament",
+    "rank-specialist-tournament",
+    "record-specialist-vote",
+    "inspect-specialist-fit",
+    "stepwise-workflow",
+    "microstep-workflow",
+    "perspective-step-run",
+    "instant-staged-workflow"
+  ],
+  "input_contract": {
+    "required": [],
+    "properties": {
+      "operation": "specialist operations: prepare/build-pool, rank/select-finalists, record-vote, inspect-fit; stepwise operations: prepare, start, checkpoint, record-analysis, execute, record-result, split, replan, instant, inspect",
+      "challenge": "specialist path: concrete challenge or need to inspect from many perspectives",
+      "criteria": "specialist path: optional weighted judging criteria",
+      "pool_size": "specialist or stepwise path: specialist profile bound",
+      "team_size": "specialist planning path: 3..6 members per team",
+      "max_teams": "specialist/planning path: bounded team field up to 512",
+      "seed": "optional deterministic exploration seed",
+      "tournament": "specialist rank path: exact digest-bound prepared tournament",
+      "judgements": "specialist rank path: independent evidence-backed scores keyed by team_id",
+      "ranking": "specialist vote path: exact digest-bound complete ranking with two shown finalists",
+      "winner_team_id": "specialist vote path: explicit choice of one shown finalist",
+      "limit": "specialist fit path: maximum history rows",
+      "goal": "stepwise path: explicit workflow goal",
+      "request": "stepwise prepare path: optional ordinary machine request used to attach deterministic anatomy/direction decomposition",
+      "plan": "stepwise path: selected axm.stepwise-perspective-plan/v0.1 plan",
+      "workflow": "stepwise path: exact digest-bound axm.stepwise-perspective-workflow/v0.1 state",
+      "checkpoint": "stepwise path: exact prepared pre/post checkpoint",
+      "analyses": "stepwise path: executor-supplied perspective analyses keyed by prepared specialist ids",
+      "result": "stepwise path: external JSON-serializable result for analysis-only or externally executed steps",
+      "evidence": "stepwise path: explicit evidence references for an external result",
+      "substeps": "stepwise split path: two or more smaller replacement steps",
+      "replacement_steps": "stepwise replan path: replacement remaining plan",
+      "step_records": "stepwise instant path: chronological pre analyses, result and post analyses per step",
+      "perspective_pool_size": "stepwise instant path: checkpoint perspective bound"
+    }
+  },
+  "output_contract": {
+    "kind": "multi-perspective-orchestration",
+    "contains": [
+      "detailed universal and need-derived specialist profiles",
+      "contextual historical +1 fit evidence",
+      "best/middle/lowest-third/mixed and combination teams",
+      "isolated parallel challenge packets and exact top-two finalist state",
+      "digest-bound explicit step plans and workflow cursor",
+      "best/middle/low/random perspective checkpoints before and after meaningful steps",
+      "typed PROCEED/SPLIT/REPLAN/HOLD transitions",
+      "recursive bounded step splitting",
+      "chronological receipts that preserve plan -> pre-analysis -> action/result -> post-analysis -> advance even for instant execution"
+    ]
+  },
+  "dependencies": [
+    "AXM-CAP-INSPECT-REGISTRY"
+  ],
+  "relationships": [
+    "keeps specialist competition and stepwise perspective cadence in one orchestration body instead of growing duplicate top-level coordination systems",
+    "universal perspective profiles combine with challenge-matched master-registry specialists so the eyes change with the need",
+    "historical +1 votes are contextual fit evidence, not universal intelligence or authority",
+    "best, middle, lowest-third and mixed-random perspectives continue to challenge accumulated winners",
+    "the stepwise path uses those different eyes before and after each meaningful step rather than only once at the beginning",
+    "broad work can be recursively split into smaller dependency-ordered steps whenever a supplied checkpoint identifies unresolved independent work",
+    "a step may invoke an already live creation capability without bypassing that capability's own boundaries",
+    "fast wall-clock execution never removes logical chronology from the workflow receipt",
+    "the engine never claims prepared specialist packets reasoned until a cognition provider, human or other executor supplies actual analysis/evidence"
+  ],
+  "anatomy_refs": [
+    {
+      "id": "AXM-19-AI-ML-AGENTS-O-021-specialist-summoner",
+      "role": "implements",
+      "basis": "The live capability summons bounded need-specific specialist pools, forms many combinations and emits evidence-bearing orchestration state."
+    },
+    {
+      "id": "AXM-19-AI-ML-AGENTS-C-035-specialist-profile",
+      "role": "implements",
+      "basis": "Every specialist is an inspectable bounded working profile with explicit temperament, strengths, blind spots, evidence preference, disagreement style and domain focus."
+    },
+    {
+      "id": "AXM-24-WORKSPACE-COLLABORATION-O-006-project-planner",
+      "role": "implements",
+      "basis": "Stepwise preparation runs multi-perspective planning and validates the selected explicit dependency-ordered step plan before execution."
+    },
+    {
+      "id": "AXM-03-TIME-STATE-EVENT-O-007-workflow-engine",
+      "role": "implements",
+      "basis": "The stepwise runtime advances through typed workflow states and bounded transitions including split, replan, hold and completion."
+    },
+    {
+      "id": "AXM-03-TIME-STATE-EVENT-C-015-workflow-step",
+      "role": "implements",
+      "basis": "Every unit of work is an explicit step with one purpose, expected evidence, stop condition, dependencies and result state."
+    }
+  ],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:specialist_tournament",
+    "source": "src/axm_uc/__init__.py"
+  },
+  "limitations": [
+    "specialist personalities are method overlays, not independent identities, consciousness, expertise proof or execution authority",
+    "the deterministic orchestration engine prepares perspective work but does not fake arbitrary semantic reasoning; actual analyses/submissions require an executor",
+    "+1 votes estimate observed contextual team fit and can be biased by exposure or judging quality; zero points can mean untested rather than bad",
+    "combination exploration is bounded to 512 teams per tournament and may sample rather than enumerate the full combinatorial space",
+    "recursive step splitting is bounded to depth 8 and 128 total steps",
+    "instant staged execution preserves logical chronology in receipts but does not imply wall-clock delay between stages",
+    "a step with no live capability route holds rather than inventing execution",
+    "historical votes and workflow checkpoints do not modify CANON, permissions or execution authority"
+  ],
+  "persistent_state": "specialist finalist votes accumulate in state/specialist-fit.json; stepwise workflow state is carried explicitly by the caller in v0",
+  "root_fit": {
+    "truth": {
+      "fit": true,
+      "basis": "Prepared perspective packets are separated from actual analysis, incomplete tournament judging remains visible, and every step/checkpoint/result/transition stays explicit and digest-bound."
+    },
+    "agency": {
+      "fit": true,
+      "basis": "Historical winners never become permanent authority; plans remain selectable/revisable and middle/low/mixed perspectives continue challenging current best-fit views."
+    },
+    "continuity": {
+      "fit": true,
+      "basis": "Fit history persists as an inspectable local ledger while stepwise workflow state preserves a chronological timeline, completed steps and retired/replanned evidence."
+    },
+    "wisdom-before-speed": {
+      "fit": true,
+      "basis": "Different perspectives are explored before selection and around each meaningful action; fast execution cannot silently skip logical pre-analysis or post-analysis boundaries."
+    }
+  }
+}

@@ -1,0 +1,96 @@
+{
+  "id": "AXM-CAP-EVOLVE-MACHINE",
+  "version": "0.2.0",
+  "status": "live",
+  "purpose": "Let the running machine deliberately continue from a changed state: re-test and adopt an exact executable-organ candidate into the live organ library, inspect the current evolution surface, create the existing one-per-day whole-machine recovery snapshot, or restore a known-good daily snapshot while quarantining the later body.",
+  "handles": [
+    "evolve-machine",
+    "adopt-organ",
+    "inspect-evolution",
+    "snapshot-machine",
+    "restore-machine-snapshot"
+  ],
+  "input_contract": {
+    "required": [
+      "operation"
+    ],
+    "properties": {
+      "operation": "adopt-organ, inspect-evolution, snapshot-machine, or restore-machine-snapshot",
+      "path": "adopt-organ only; detached spawned organ candidate directory",
+      "reason": "adopt-organ or restore-machine-snapshot; concrete inspectable reason for the state transition",
+      "root_fit": "adopt-organ only; explicit current-machine fit decision for Truth, Agency, Continuity, and Wisdom Before Speed",
+      "snapshot_output_dir": "adopt-organ only; optional explicit directory for the one-per-day pre-mutation recovery snapshot",
+      "output_dir": "snapshot-machine only; optional snapshot directory",
+      "replace": "snapshot-machine only; optional explicit replacement of today's snapshot",
+      "snapshot": "restore-machine-snapshot only; exact known-good snapshot archive",
+      "confirm": "restore-machine-snapshot only; must be true because whole-body restore is destructive to the current active state"
+    }
+  },
+  "output_contract": {
+    "kind": "machine-evolution-state-transition",
+    "contains": [
+      "operation",
+      "truth_status",
+      "exact candidate and live-body digests when applicable",
+      "explicit transition state",
+      "daily recovery snapshot state",
+      "quarantine location after whole-body restore"
+    ]
+  },
+  "dependencies": [
+    "AXM-CAP-SPAWN-CREATION-UNIT",
+    "AXM-CAP-INSPECT-EXECUTABLE-ORGANS"
+  ],
+  "relationships": [
+    "turns detached Forge evidence into a deliberate continuing-machine state transition instead of a permanent outside approval gate",
+    "re-runs candidate tests immediately before organ adoption and checks a separate current four-root fit decision",
+    "ensures the existing complete daily recovery snapshot before mutating the live organ library",
+    "installs and registers an adopted organ by placing its exact tested package in executable-organs/",
+    "promotes the adopted organ for normal interface-driven composition as a consequence of successful live-library registration",
+    "can invoke the existing daily whole-body restore path, which quarantines the later current state instead of silently deleting it",
+    "keeps installation, registration, promotion, merge, CANON, and permission changes distinguishable because they are different evolution operations, not globally forbidden actions"
+  ],
+  "anatomy_refs": [
+    {
+      "id": "AXM-01-PROVENANCE-C-014-rollback-snapshot",
+      "role": "implements",
+      "basis": "Before organ mutation the capability ensures the existing once-per-day whole-machine recovery snapshot, and whole-body restore uses that known-good snapshot while quarantining the later state."
+    },
+    {
+      "id": "AXM-20-TESTING-OBSERVABILITY-C-015-validation-report",
+      "role": "uses",
+      "basis": "Organ adoption reuses exact detached candidate test evidence and rechecks the installed source digest and live-library registration."
+    }
+  ],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:evolve_machine",
+    "source": "src/axm_uc/evolution.py"
+  },
+  "limitations": [
+    "v0.2 Creation-Unit adoption supports new executable-organ refs only; replacement and in-place organ upgrade semantics remain a later explicit transition",
+    "organ candidate tests currently prove executable-organ package structure, not emitted browser or runtime behavior",
+    "whole-machine recovery is intentionally daily rather than a per-change event history; several same-day changes may roll back together to the known-good daily snapshot",
+    "whole-body candidate merge, CANON change, and permission change are valid evolution directions but are not bundled into organ adoption",
+    "there is no global instruction or score to grow continuously; evolution remains driven by concrete capability needs"
+  ],
+  "persistent_state": "successful organ adoption changes executable-organs/; recovery uses the existing external daily snapshot archive and quarantine body rather than a new per-adoption history ledger",
+  "root_fit": {
+    "truth": {
+      "fit": true,
+      "basis": "The capability records which state transition occurred, rechecks exact candidate/source evidence, and does not relabel structural organ validation as runtime proof."
+    },
+    "agency": {
+      "fit": true,
+      "basis": "The running machine can choose and perform its own inspectable adoption or recovery transition without requiring a permanent human or outside AI approval gate."
+    },
+    "continuity": {
+      "fit": true,
+      "basis": "Live mutation is preceded by the machine's existing daily whole-body snapshot, and restore quarantines the later state instead of destroying it silently."
+    },
+    "wisdom-before-speed": {
+      "fit": true,
+      "basis": "Candidate re-test, current root fit, daily recovery readiness, exact write verification, and live-library reload occur around adoption without turning growth into a target."
+    }
+  }
+}

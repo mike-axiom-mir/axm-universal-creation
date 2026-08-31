@@ -67,9 +67,53 @@ The deterministic Creation-Unit Forge now provides a smaller growth surface than
 
 The machine materializes the exact proposal as a detached package, preserves path-independent lineage, tests the strongest evidence it currently understands for that kind, and allows a voluntary admission-review request. Materialization, runtime evidence, admission request, approval, installation, registration, promotion, merge, CANON, and permission change remain separate states.
 
+Separate does **not** mean forbidden. Those names distinguish what happened so the machine can tell the truth about its own evolution. Installation, registration, promotion, merge, CANON change, permission change, replacement, and recovery may all become machine actions when the particular transition has an explicit implementation and a genuine reason.
+
+The Forge itself still does not let a detached proposal grant itself those transitions. The continuing machine owns the evolution decision.
+
 This is the first direct answer to capability-count inflation: the live kernel remains small while its creation surface can emit new candidate machinery. The deterministic forge does not claim to invent the proposal's semantic design. Human and AI perspective can supply that design; later deterministic recipe interpreters and learned builders may produce proposals through the same visible boundary.
 
 Skills and specialists are supported without being anthropomorphized. A skill is a bounded portable method. A specialist is a temporary method overlay and is not identity, authority, expertise proof, or independent evidence. See `CREATION_FORGE.md`.
+
+## Continue from a changed machine
+
+`AXM-CAP-EVOLVE-MACHINE` now closes the first Creation-Unit adoption seam for executable organs.
+
+The live path is:
+
+`real capability need -> detached organ candidate -> exact re-test -> current four-root fit -> ensure today's complete machine snapshot -> install exact organ -> reload/register executable-organ library -> expose it to normal interface-driven composition -> continue from the changed state`
+
+This is self-evolution, not a human admission gate. The root-fit decision is part of the inspectable machine. A permanent outside approver is not required.
+
+The older direct candidate-capability adoption path follows the same recovery floor: a passing capability candidate may become live, but the daily whole-machine snapshot is established before that mutation.
+
+The recovery model stays intentionally small. Once per day the machine preserves one complete restorable snapshot. If later same-day evolution proves unwanted, the current body can be quarantined and the known-good daily snapshot restored. Several same-day changes may therefore roll back together. The daily snapshot is the recovery boundary, not a per-change event history or an incentive to modify.
+
+Current Creation-Unit adoption supports a new executable-organ ref. Replacement or in-place organ upgrades, whole-body candidate merge, CANON mutation, and permission mutation remain future explicit evolution transitions. They are not prohibited categories; they simply do not yet have this transition's implementation and evidence contract.
+
+A successful organ adoption proves that the exact tested package entered the executable-organ library and became available to composition. It does not upgrade structural package evidence into browser, runtime, visual, or general semantic proof.
+
+## Simulate before spending reality
+
+Universal Creation can now put an inspectable simulated creation state between intent and materialization.
+
+The current visual loop is:
+
+`intent -> simulated thought -> known improvements -> cinematic projections -> NO_KNOWN_IMPROVEMENTS -> freeze exact thought digest -> Paintgun specialist -> real local artifact`
+
+`NO_KNOWN_IMPROVEMENTS` is a current-knowledge state, not a perfection claim. It means no currently registered deterministic simulation rule can identify another change to the exact thought. New evidence or a newly installed improvement rule may reopen the same creation later.
+
+The cinematic projection is not a separate picture loosely inspired by the state. For the current SVG grammar it is a deterministic rendering of the exact scene graph. The final Paintgun specialist rehashes the thought, re-renders it, and refuses materialization unless that SVG is byte-identical to the final cinematic projection.
+
+Every current visual object is composed from six explicit channels: shape, material, color, light, shade, and skin. The vocabulary can remain open while the current evidence stays closed. A new material name may be represented without pretending that the machine already knows every physical behavior of that material.
+
+This is the first concrete form of building **from a simulated thought** rather than simulating, describing the result again in prose, and asking a second builder to guess what was meant.
+
+Reality remains able to correct simulation. If the materialized result later exposes a new gap, that evidence may become another improvement rule or simulated change. The long-term multiplier is therefore the reversible loop:
+
+`simulation -> reality -> new evidence -> simulation`
+
+The current simulator is a bounded deterministic SVG/static-web milestone, not a claim of general physical, game, 3D, semantic, or aesthetic simulation. See `SIMULATION_TO_REALITY.md`.
 
 ## Compile a bounded proposal from a real gap
 
@@ -81,9 +125,9 @@ Uniqueness is not semantic proof. It selects only the smallest supported experim
 
 This establishes one working segment of:
 
-`real use -> explicit gap -> bounded proposal synthesis -> detached build -> request-shaped test -> later voluntary admission request`
+`real use -> explicit gap -> bounded proposal synthesis -> detached build -> request-shaped test -> machine evolution when a justified adoption transition exists`
 
-It still does not install the candidate, decide admission, or synthesize arbitrary source. See `GAP_SYNTHESIS.md`.
+Gap synthesis itself does not install the candidate or synthesize arbitrary source. The continuing machine may separately adopt a supported candidate through its evolution capability. See `GAP_SYNTHESIS.md`.
 
 A second blueprint composes existing abilities instead of wrapping only one. It searches an exact-contract project graph bounded to three steps. Strict template instantiation, exact executable-organ assembly, and interface-discovered organ assembly can flow through independent digest verification and then persist that exact verification object as JSON. Raw project-file requests expose both a new writer→verifier path and the already-live verified composite; the shorter reusable path wins only when its exact contract is complete. Missing, duplicate, ambiguous, over-depth, or contract-drifted links remain explicit HOLD states. The result is a detached composite capability candidate, not a new live route.
 

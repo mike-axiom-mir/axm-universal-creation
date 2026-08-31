@@ -17,10 +17,10 @@ class CompositeAndExecutableTests(unittest.TestCase):
         machine = UniversalCreationMachine(ROOT)
         summary = machine.executable()["summary"]
         self.assertEqual(summary["truth_status"], "EXPLICIT_LIVE_CAPABILITY_BINDINGS")
-        self.assertEqual(summary["implemented_master_records"], 10)
-        self.assertEqual(summary["implemented_master_by_level"], {"component": 9, "organ": 1})
-        self.assertEqual(summary["live_capabilities"], 16)
-        self.assertEqual(summary["resolved_bindings"], 33)
+        self.assertEqual(summary["implemented_master_records"], 19)
+        self.assertEqual(summary["implemented_master_by_level"], {"component": 14, "organ": 5})
+        self.assertEqual(summary["live_capabilities"], 20)
+        self.assertEqual(summary["resolved_bindings"], 46)
 
         project = machine.executable(master_id="AXM-24-WORKSPACE-COLLABORATION-C-010-project")["master"]
         self.assertEqual(project["status"], "live-backed")
@@ -71,6 +71,42 @@ class CompositeAndExecutableTests(unittest.TestCase):
         adapter = machine.executable(master_id="AXM-19-AI-ML-AGENTS-C-009-adapter")["master"]
         self.assertEqual(adapter["status"], "live-backed")
         self.assertEqual(adapter["implemented_by"], ["AXM-CAP-SYNTHESIZE-CREATION-GAP"])
+
+        rollback = machine.executable(master_id="AXM-01-PROVENANCE-C-014-rollback-snapshot")["master"]
+        self.assertEqual(rollback["status"], "live-backed")
+        self.assertEqual(rollback["implemented_by"], ["AXM-CAP-EVOLVE-MACHINE"])
+
+        renderer = machine.executable(master_id="AXM-12-RENDERING-MATERIALS-O-012-renderer")["master"]
+        self.assertEqual(renderer["status"], "live-backed")
+        self.assertEqual(renderer["implemented_by"], ["AXM-CAP-PAINTGUN-SPECIALIST"])
+
+        state_machine = machine.executable(master_id="AXM-03-TIME-STATE-EVENT-C-004-state-machine")["master"]
+        self.assertEqual(state_machine["status"], "live-backed")
+        self.assertEqual(state_machine["implemented_by"], ["AXM-CAP-SIMULATE-CREATION"])
+
+        lod_group = machine.executable(master_id="AXM-11-3D-SPATIAL-C-028-level-of-detail-group")["master"]
+        self.assertEqual(lod_group["status"], "live-backed")
+        self.assertEqual(lod_group["implemented_by"], ["AXM-CAP-SIMULATE-CREATION"])
+
+        specialist_summoner = machine.executable(master_id="AXM-19-AI-ML-AGENTS-O-021-specialist-summoner")["master"]
+        self.assertEqual(specialist_summoner["status"], "live-backed")
+        self.assertEqual(specialist_summoner["implemented_by"], ["AXM-CAP-SPECIALIST-TOURNAMENT"])
+
+        specialist_profile = machine.executable(master_id="AXM-19-AI-ML-AGENTS-C-035-specialist-profile")["master"]
+        self.assertEqual(specialist_profile["status"], "live-backed")
+        self.assertEqual(specialist_profile["implemented_by"], ["AXM-CAP-SPECIALIST-TOURNAMENT"])
+
+        project_planner = machine.executable(master_id="AXM-24-WORKSPACE-COLLABORATION-O-006-project-planner")["master"]
+        self.assertEqual(project_planner["status"], "live-backed")
+        self.assertEqual(project_planner["implemented_by"], ["AXM-CAP-SPECIALIST-TOURNAMENT"])
+
+        workflow_engine = machine.executable(master_id="AXM-03-TIME-STATE-EVENT-O-007-workflow-engine")["master"]
+        self.assertEqual(workflow_engine["status"], "live-backed")
+        self.assertEqual(workflow_engine["implemented_by"], ["AXM-CAP-SPECIALIST-TOURNAMENT"])
+
+        workflow_step = machine.executable(master_id="AXM-03-TIME-STATE-EVENT-C-015-workflow-step")["master"]
+        self.assertEqual(workflow_step["status"], "live-backed")
+        self.assertEqual(workflow_step["implemented_by"], ["AXM-CAP-SPECIALIST-TOURNAMENT"])
 
     def test_planner_surfaces_explicit_live_anatomy_bindings(self):
         plan = UniversalCreationMachine(ROOT).plan({

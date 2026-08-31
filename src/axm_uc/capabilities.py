@@ -244,6 +244,38 @@ def builtin_spawn_creation_unit(root: Path, inputs: dict[str, Any]) -> dict[str,
         raise CapabilityError(str(exc), exc.details) from exc
 
 
+def builtin_evolve_machine(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+    from .evolution import EvolutionError, operate_evolution
+
+    try:
+        return operate_evolution(root, inputs)
+    except EvolutionError as exc:
+        raise CapabilityError(str(exc), exc.details) from exc
+
+
+def builtin_simulate_creation(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+    from .simulation import SimulationError, operate_simulation
+
+    try:
+        return operate_simulation(root, inputs)
+    except SimulationError as exc:
+        raise CapabilityError(str(exc), exc.details) from exc
+
+
+def builtin_paintgun_specialist(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+    from .paintgun import PaintgunError, operate_paintgun
+
+    target = _resolve_output_path(root, str(inputs.get("path", "")))
+    if _is_machine_body_path(root, target):
+        raise CapabilityError(
+            "paintgun materialization is an ordinary creation and cannot rewrite the live machine body"
+        )
+    try:
+        return operate_paintgun(root, inputs)
+    except PaintgunError as exc:
+        raise CapabilityError(str(exc), exc.details) from exc
+
+
 def builtin_synthesize_creation_gap(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
     from .gap_synthesis import GapSynthesisError, operate_gap_synthesis
     from .spawn import SpawnError
@@ -308,6 +340,9 @@ BUILTINS: dict[str, Callable[[Path, dict[str, Any]], dict[str, Any]]] = {
     "builtin:inspect_executable_organs": builtin_inspect_executable_organs,
     "builtin:explore_organ_gap": builtin_explore_organ_gap,
     "builtin:spawn_creation_unit": builtin_spawn_creation_unit,
+    "builtin:evolve_machine": builtin_evolve_machine,
+    "builtin:simulate_creation": builtin_simulate_creation,
+    "builtin:paintgun_specialist": builtin_paintgun_specialist,
     "builtin:gap_synthesis": builtin_synthesize_creation_gap,
     "builtin:verify_project": builtin_verify_project,
     "builtin:patch_project": builtin_patch_project,

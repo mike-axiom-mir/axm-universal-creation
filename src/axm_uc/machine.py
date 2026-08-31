@@ -28,6 +28,8 @@ class UniversalCreationMachine:
         self.direction_model = SoftwareDirections(self.root)
 
     def inspect(self, query: str = "", level: str | None = None, limit: int = 20) -> dict[str, Any]:
+        from .evolution import evolution_summary
+
         contract = json.loads((self.root / "machine.contract.json").read_text(encoding="utf-8"))
         return {
             "machine": contract,
@@ -40,6 +42,7 @@ class UniversalCreationMachine:
             "organ_gap_closure": organ_gap_summary(),
             "creation_forge": creation_forge_summary(),
             "gap_synthesis": gap_synthesis_summary(),
+            "self_evolution": evolution_summary(),
             "live_capabilities": self.capabilities.live(),
             "records": self.registry.search(query=query, level=level, limit=limit) if (query or level) else [],
         }
@@ -232,13 +235,24 @@ class UniversalCreationMachine:
         return test_capability_candidate(self.root, candidate_path)
 
     def adopt_candidate(self, candidate_path: Path) -> dict[str, Any]:
+        from .evolution import ensure_daily_recovery_snapshot
+
         candidate_path = Path(candidate_path).resolve()
         test = self.test_candidate(candidate_path)
         if not test.get("passed"):
             return {"adopted": False, "test": test}
         candidate = json.loads(candidate_path.read_text(encoding="utf-8"))
-        candidate["status"] = "live"
         target = self.root / "capabilities/live" / f"{candidate['id']}.json"
+        if target.exists():
+            return {
+                "adopted": False,
+                "truth_status": "HOLD_LIVE_CAPABILITY_ID_COLLISION",
+                "capability": candidate.get("id"),
+                "manifest": str(target.relative_to(self.root)),
+                "test": test,
+            }
+        recovery = ensure_daily_recovery_snapshot(self.root)
+        candidate["status"] = "live"
         atomic_write_json(target, candidate)
         candidates_dir = (self.root / "capabilities/candidates").resolve()
         try:
@@ -250,7 +264,14 @@ class UniversalCreationMachine:
         self.executable_anatomy = ExecutableAnatomy(self.registry, self.capabilities, self.decomposer.topology)
         return {
             "adopted": True,
+            "truth_status": "ADOPTED_LIVE_CAPABILITY_WITH_DAILY_RECOVERY",
             "capability": candidate["id"],
             "manifest": str(target.relative_to(self.root)),
+            "recovery_snapshot": recovery,
+            "transition": {
+                "installed": True,
+                "registered": True,
+                "routed": True,
+            },
             "test": test,
         }

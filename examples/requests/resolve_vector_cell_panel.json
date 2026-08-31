@@ -1,0 +1,97 @@
+{
+  "kind": "resolve-vector-cells",
+  "direction": "resolve one adaptive panel cell into the exact visual thought appropriate for this observation scale",
+  "inputs": {
+    "operation": "resolve-vector-cells",
+    "observation_scale": 0.5,
+    "choice": "default",
+    "fabric": {
+      "schema": "axm.vector-cell-fabric/v0.1",
+      "intent": "One panel identity merges its internal modules when distant and unfolds those modules when observed closely.",
+      "canvas": {
+        "width": 360,
+        "height": 180,
+        "background": "#080B10"
+      },
+      "cells": [
+        {
+          "id": "panel",
+          "role": "adaptive-control-panel",
+          "transform": {"x": 40, "y": 30, "scale": 1},
+          "representations": [
+            {
+              "id": "far-merged",
+              "min_scale": 0,
+              "max_scale": 1,
+              "mode": "expression",
+              "objects": [
+                {
+                  "id": "merged",
+                  "shape": {"kind": "rect", "x": 0, "y": 0, "width": 260, "height": 110, "rx": 20},
+                  "material": {"name": "adaptive-metal", "metallic": 0.7, "roughness": 0.2, "opacity": 1, "emission": 0.15},
+                  "color": {"fill": "#1565C0", "stroke": "#E0F7FA", "stroke_width": 2},
+                  "light": {"color": "#80DEEA", "intensity": 0.8, "x": 40, "y": 20, "radius": 100},
+                  "shade": {"color": "#000000", "dx": 4, "dy": 6, "blur": 10, "opacity": 0.45},
+                  "skin": {"kind": "linear-gradient", "colors": ["#1565C0", "#263238"], "angle": 35}
+                }
+              ]
+            },
+            {
+              "id": "close-split",
+              "min_scale": 1,
+              "mode": "children"
+            }
+          ],
+          "children": [
+            {
+              "id": "left-module",
+              "role": "detail-cell",
+              "transform": {"x": 10, "y": 12, "scale": 1},
+              "representations": [
+                {
+                  "id": "detail",
+                  "min_scale": 0,
+                  "mode": "expression",
+                  "objects": [
+                    {
+                      "id": "left",
+                      "shape": {"kind": "rect", "x": 0, "y": 0, "width": 105, "height": 82, "rx": 12},
+                      "material": {"name": "adaptive-metal", "metallic": 0.7, "roughness": 0.2, "opacity": 1, "emission": 0.15},
+                      "color": {"fill": "#00ACC1", "stroke": "#E0F7FA", "stroke_width": 2},
+                      "light": {"color": "#80DEEA", "intensity": 0.8, "x": 40, "y": 20, "radius": 100},
+                      "shade": {"color": "#000000", "dx": 4, "dy": 6, "blur": 10, "opacity": 0.45},
+                      "skin": {"kind": "linear-gradient", "colors": ["#00ACC1", "#263238"], "angle": 35}
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "right-module",
+              "role": "detail-cell",
+              "transform": {"x": 140, "y": 12, "scale": 1},
+              "representations": [
+                {
+                  "id": "detail",
+                  "min_scale": 0,
+                  "mode": "expression",
+                  "objects": [
+                    {
+                      "id": "right",
+                      "shape": {"kind": "rect", "x": 0, "y": 0, "width": 105, "height": 82, "rx": 12},
+                      "material": {"name": "adaptive-metal", "metallic": 0.7, "roughness": 0.2, "opacity": 1, "emission": 0.15},
+                      "color": {"fill": "#26A69A", "stroke": "#E0F7FA", "stroke_width": 2},
+                      "light": {"color": "#80DEEA", "intensity": 0.8, "x": 40, "y": 20, "radius": 100},
+                      "shade": {"color": "#000000", "dx": 4, "dy": 6, "blur": 10, "opacity": 0.45},
+                      "skin": {"kind": "linear-gradient", "colors": ["#26A69A", "#263238"], "angle": 35}
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

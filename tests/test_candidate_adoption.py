@@ -36,6 +36,11 @@ class CandidateAdoptionTests(unittest.TestCase):
             machine = UniversalCreationMachine(root)
             result = machine.adopt_candidate(candidate)
             self.assertTrue(result["adopted"])
+            self.assertEqual(result["truth_status"], "ADOPTED_LIVE_CAPABILITY_WITH_DAILY_RECOVERY")
+            self.assertTrue(result["transition"]["installed"])
+            self.assertTrue(result["transition"]["registered"])
+            self.assertTrue(result["transition"]["routed"])
+            self.assertTrue(Path(result["recovery_snapshot"]["path"]).is_file())
             self.assertFalse(candidate.exists())
             self.assertTrue((root / "capabilities/live/AXM-CAP-WRITE-MARKDOWN.json").exists())
             output = root / "creations" / "made.md"
