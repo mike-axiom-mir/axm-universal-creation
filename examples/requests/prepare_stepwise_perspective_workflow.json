@@ -1,0 +1,20 @@
+{
+  "kind": "stepwise-workflow",
+  "direction": "prepare a multi-perspective microstep workflow before acting",
+  "inputs": {
+    "operation": "prepare",
+    "goal": "Create and verify one small local text artifact while keeping planning, pre-step analysis, execution, post-step analysis, and any required splitting visible as separate logical states.",
+    "request": {
+      "kind": "text-file",
+      "direction": "write one exact local file",
+      "inputs": {
+        "path": "creations/stepwise-example.txt",
+        "content": "Stepwise perspective workflow example\n"
+      }
+    },
+    "pool_size": 32,
+    "team_size": 4,
+    "max_teams": 64,
+    "seed": "stepwise-example-v1"
+  }
+}
