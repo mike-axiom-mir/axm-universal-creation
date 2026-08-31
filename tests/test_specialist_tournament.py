@@ -64,6 +64,7 @@ class SpecialistTournamentTests(unittest.TestCase):
         self.assertEqual(prepared["status"], "READY_FOR_PARALLEL_SPECIALIST_CHALLENGE")
         self.assertIn("no specialist reasoning is claimed", prepared["execution_claim"])
         self.assertEqual(prepared["team_generation"]["generated_team_count"], 4)
+        self.assertNotEqual(prepared["context_key"], "general-unmatched")
 
     def test_pool_profiles_are_detailed_and_need_specific(self):
         with tempfile.TemporaryDirectory() as td:
@@ -84,6 +85,29 @@ class SpecialistTournamentTests(unittest.TestCase):
             }
             self.assertTrue(required.issubset(pool["specialists"][0]))
             self.assertTrue(any("render" in str(row.get("domain", "")).casefold() or "shader" in str(row.get("focus", "")).casefold() for row in derived))
+
+    def test_small_universal_only_pool_keeps_registry_context_without_forcing_derived_profiles(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = self._root(Path(td))
+            pool = build_specialist_pool(root, "render adaptive materials and lighting", pool_size=8)
+            self.assertEqual(pool["pool_size"], 8)
+            self.assertTrue(all(row["kind"] == "universal-perspective" for row in pool["specialists"]))
+            self.assertNotEqual(pool["context_key"], "general-unmatched")
+            self.assertEqual(pool["context_probe"]["kind"], "registry-domain-probe-without-forcing-derived-specialists-into-small-pool")
+
+    def test_declared_maximum_pool_can_reach_full_forty_profiles(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = self._root(Path(td))
+            pool = build_specialist_pool(
+                root,
+                "render shader material texture scene animation geometry mesh layout interface state runtime testing validation data network security performance package project",
+                pool_size=40,
+            )
+            self.assertEqual(pool["pool_size"], 40)
+            universal = [row for row in pool["specialists"] if row["kind"] == "universal-perspective"]
+            derived = [row for row in pool["specialists"] if row["kind"] == "need-derived-registry-specialist"]
+            self.assertEqual(len(universal), 20)
+            self.assertEqual(len(derived), 20)
 
     def test_team_generation_preserves_best_middle_low_mixed_and_many_combinations(self):
         with tempfile.TemporaryDirectory() as td:
