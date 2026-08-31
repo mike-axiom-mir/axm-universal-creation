@@ -20,21 +20,44 @@ def _register_extension_builtins() -> None:
     # while contextual +1 history still binds to the actual matched domains.
     _specialist_pool.build_specialist_pool = _contextual_pool_builder
 
-    def specialist_tournament(root, inputs):
-        try:
-            return _specialist_pool.operate_specialist_tournament(root, inputs)
-        except (ValueError, TypeError) as exc:
-            raise _capabilities.CapabilityError(str(exc)) from exc
+    stepwise_operations = {
+        "start",
+        "start-workflow",
+        "checkpoint",
+        "prepare-checkpoint",
+        "record-analysis",
+        "record-checkpoint",
+        "execute",
+        "execute-step",
+        "record-result",
+        "result",
+        "split",
+        "split-step",
+        "replan",
+        "replan-remaining",
+        "instant",
+        "run-instant",
+        "instant-staged",
+        "inspect",
+        "summary",
+        "prepare-workflow",
+        "plan-tournament",
+    }
 
-    def stepwise_perspective_workflow(root, inputs):
+    def multi_perspective_orchestration(root, inputs):
+        operation = str(inputs.get("operation", "prepare")).strip().casefold()
+        is_stepwise = operation in stepwise_operations or (
+            operation == "prepare" and ("goal" in inputs or "request" in inputs)
+        )
         try:
-            return operate_stepwise_workflow(root, inputs)
+            if is_stepwise:
+                return operate_stepwise_workflow(root, inputs)
+            return _specialist_pool.operate_specialist_tournament(root, inputs)
         except (StepwiseWorkflowError, ValueError, TypeError) as exc:
             details = getattr(exc, "details", {})
             raise _capabilities.CapabilityError(str(exc), details) from exc
 
-    _capabilities.BUILTINS["builtin:specialist_tournament"] = specialist_tournament
-    _capabilities.BUILTINS["builtin:stepwise_perspective_workflow"] = stepwise_perspective_workflow
+    _capabilities.BUILTINS["builtin:specialist_tournament"] = multi_perspective_orchestration
 
 
 _register_extension_builtins()
