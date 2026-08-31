@@ -1,0 +1,85 @@
+{
+  "id": "AXM-CAP-SIMULATE-CREATION",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Iteratively improve an inspectable visual creation state inside a deterministic simulated world until no currently registered improvement rule can identify another change, while preserving every simulated cinematic frame and explicitly refusing to call that state perfect.",
+  "handles": [
+    "simulate-creation",
+    "simulate-visual-thought",
+    "cinematic-thought"
+  ],
+  "input_contract": {
+    "required": [
+      "thought"
+    ],
+    "properties": {
+      "thought": "inspectable visual scene state with canvas and objects; objects may begin with incomplete Paintgun channels",
+      "defaults": "optional caller-visible channel defaults available to the simulator",
+      "alternatives": "optional per-object known alternative channel values available to improvement rules",
+      "palette": "optional known color candidates used for missing color and contrast improvement",
+      "criteria": "optional deterministic criteria such as minimum_contrast and fit_canvas",
+      "max_iterations": "optional explicit simulation bound from 1 to 32"
+    }
+  },
+  "output_contract": {
+    "kind": "simulated-creation-thought",
+    "contains": [
+      "status",
+      "exact final thought and digest",
+      "iteration history",
+      "known improvements and gaps",
+      "cinematic SVG frame per iteration when renderable",
+      "explicit materialization readiness",
+      "truthful stop meaning"
+    ]
+  },
+  "dependencies": [],
+  "relationships": [
+    "simulation happens before reality materialization rather than only testing after a draft is built",
+    "the stopping state NO_KNOWN_IMPROVEMENTS means no currently registered improvement rule can identify another change, not perfection",
+    "each simulation iteration preserves a cinematic projection of the exact state when the Paintgun grammar can render it",
+    "the final simulated thought can be consumed by AXM-CAP-PAINTGUN-SPECIALIST without reinterpreting its scene graph"
+  ],
+  "anatomy_refs": [
+    {
+      "id": "AXM-12-RENDERING-MATERIALS-C-006-shader-graph",
+      "role": "uses",
+      "basis": "The simulated visual thought keeps shape, surface, color, light, shade and skin parameters as an inspectable compositional graph before rendering."
+    },
+    {
+      "id": "AXM-05-STATE-DATA-O-006-state-machine",
+      "role": "implements",
+      "basis": "Simulation advances through explicit state transitions and terminates in a typed NO_KNOWN_IMPROVEMENTS or HOLD state."
+    }
+  ],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:simulate_creation",
+    "source": "src/axm_uc/simulation.py"
+  },
+  "limitations": [
+    "v0 improvement rules cover structural Paintgun-channel completion, bounded parameter repair, known-shape canvas fit, and contrast improvement from supplied known alternatives or palette",
+    "NO_KNOWN_IMPROVEMENTS is not optimality, perfection, semantic correctness, or aesthetic proof",
+    "new evidence or a newly installed improvement rule may reopen a previously stopped simulation",
+    "the cinematic projection currently uses the bounded local SVG Paintgun grammar rather than a photoreal physical renderer"
+  ],
+  "persistent_state": null,
+  "root_fit": {
+    "truth": {
+      "fit": true,
+      "basis": "The stop condition says only that currently registered rules see no further improvement; all known gaps, iterations, frames and limitations remain visible."
+    },
+    "agency": {
+      "fit": true,
+      "basis": "Callers may provide open visual intent, defaults, alternatives and criteria without the simulator silently replacing the requested creation direction."
+    },
+    "continuity": {
+      "fit": true,
+      "basis": "Simulation changes only an in-memory candidate state; reality is touched only by the separate explicit materialization capability."
+    },
+    "wisdom-before-speed": {
+      "fit": true,
+      "basis": "Known improvements are explored before materialization and the final thought remains digest-bound to the cinematic state that was actually simulated."
+    }
+  }
+}
