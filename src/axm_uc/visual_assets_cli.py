@@ -8,6 +8,7 @@ from .visual_assets import catalog as base_catalog, generate_asset, generate_kit
 from .visual_creation_grammar import compile_visual_recipe, grammar_catalog
 from .visual_expanded import expansion_catalog, generate_expanded_asset, generate_expansion_kit
 from .visual_learning import compile_adaptive_visual_recipe, inspect_png, inspect_visual_learning, record_visual_use
+from .visual_3d import catalog_3d, compile_3d_request, forge_3d_asset, inspect_glb
 
 BASE_CATEGORIES = ["texture", "gradient", "material", "fixture", "decal", "palette"]
 EXPANDED_CATEGORIES = ["surface", "pigment", "sprite", "mesh", "vector-part"]
@@ -25,6 +26,7 @@ def combined_catalog() -> dict:
         "dependencies": [],
         "outputs": outputs,
         "visual_grammar": grammar_catalog(),
+        "three_d_forge": catalog_3d(),
     }
 
 
@@ -46,6 +48,15 @@ def build_parser() -> argparse.ArgumentParser:
     learning = sub.add_parser("learning", help="inspect the compact current visual-use profile")
     learning.add_argument("--state-root", default=".")
     learning.add_argument("--context")
+    sub.add_parser("3d-catalog", help="show engine-ready 3D forge assets, outputs, and runtime contract")
+    plan_3d = sub.add_parser("3d-plan", help="compile a validated engine-ready 3D request")
+    plan_3d.add_argument("request", help="path to a UTF-8 JSON 3D request")
+    inspect_3d = sub.add_parser("inspect-glb", help="decode GLB structure and report meshes, triangles, and materials")
+    inspect_3d.add_argument("path")
+    forge_3d = sub.add_parser("3d-forge", help="generate LODs, collisions, GLBs, source blend, and render proofs")
+    forge_3d.add_argument("request", help="path to a UTF-8 JSON 3D request")
+    forge_3d.add_argument("output", help="explicit output directory")
+    forge_3d.add_argument("--blender", help="Blender executable; otherwise AXM_BLENDER or PATH")
 
     generate = sub.add_parser("generate", help="generate one real asset, material, pigment, sprite, mesh, or vector part")
     generate.add_argument("category", choices=BASE_CATEGORIES + EXPANDED_CATEGORIES)
@@ -101,6 +112,15 @@ def main(argv: list[str] | None = None) -> int:
         result = record_visual_use(args.state_root, observation)
     elif args.command == "learning":
         result = inspect_visual_learning(args.state_root, context_key=args.context)
+    elif args.command == "3d-catalog":
+        result = catalog_3d()
+    elif args.command == "3d-plan":
+        result = compile_3d_request(json.loads(Path(args.request).read_text(encoding="utf-8")))
+    elif args.command == "inspect-glb":
+        result = inspect_glb(args.path)
+    elif args.command == "3d-forge":
+        request = json.loads(Path(args.request).read_text(encoding="utf-8"))
+        result = forge_3d_asset(Path.cwd(), request, args.output, blender=args.blender)
     elif args.command == "kit":
         result = generate_kit(args.path, profile=args.profile, seed=args.seed, size=args.size, replace=args.replace)
     elif args.command == "expansion-kit":
