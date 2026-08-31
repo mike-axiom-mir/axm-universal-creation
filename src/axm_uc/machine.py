@@ -11,11 +11,16 @@ from .decompose import CreationDecomposer
 from .directions import SoftwareDirections
 from .executable import ExecutableAnatomy
 from .gap_synthesis import analyze_creation_gap, gap_synthesis_summary
+from .host_evidence import host_evidence_summary
+from .local_provider import provider_summary
+from .mixed_project import mixed_project_summary
 from .organ_library import ExecutableOrganLibrary
 from .organ_discovery import organ_discovery_summary
 from .organ_gap import organ_gap_summary
 from .registry import Registry
+from .portable_bundle import portable_bundle_summary
 from .spawn import creation_forge_summary
+from .state_machine import state_machine_summary
 
 
 class UniversalCreationMachine:
@@ -42,6 +47,13 @@ class UniversalCreationMachine:
             "organ_gap_closure": organ_gap_summary(),
             "creation_forge": creation_forge_summary(),
             "gap_synthesis": gap_synthesis_summary(),
+            "local_creation_provider": provider_summary(),
+            "host_evidence": host_evidence_summary(),
+            "standalone_capability_growth": {
+                "mixed_project": mixed_project_summary(),
+                "portable_bundle": portable_bundle_summary(),
+                "state_machine": state_machine_summary(),
+            },
             "self_evolution": evolution_summary(),
             "live_capabilities": self.capabilities.live(),
             "records": self.registry.search(query=query, level=level, limit=limit) if (query or level) else [],
@@ -156,6 +168,122 @@ class UniversalCreationMachine:
             "gap_synthesis": analyze_creation_gap(self.root, request),
         }
 
+    @staticmethod
+    def _provider_bridge_request(request: dict[str, Any], missing: list[str]) -> dict[str, Any] | None:
+        kind = str(request.get("kind", ""))
+        inputs = request.get("inputs") if isinstance(request.get("inputs"), dict) else {}
+        if missing != ["files"] or kind not in {
+            "software-project",
+            "static-web-project",
+            "python-project",
+            "verified-software-project",
+            "verified-static-web-project",
+            "verified-python-project",
+        }:
+            return None
+        path = inputs.get("path")
+        if not isinstance(path, str) or not path.strip():
+            return None
+        if "static-web" in kind:
+            project_type = "static-web"
+        elif "python" in kind:
+            project_type = "python"
+        else:
+            project_type = str(inputs.get("project_type", "generic"))
+        provider_inputs: dict[str, Any] = {
+            "operation": "create",
+            "goal": request.get("direction") or request.get("purpose") or kind,
+            "path": path,
+            "project_type": project_type,
+            "constraints": request.get("constraints", {}),
+            "context": {
+                "original_request_kind": kind,
+                "software_directions": request.get("software_directions", {}),
+            },
+            "publish_mode": inputs.get("publish_mode", "validated"),
+            "replace": inputs.get("replace", False),
+        }
+        if isinstance(inputs.get("checks"), list):
+            provider_inputs["checks"] = inputs["checks"]
+        return {"kind": "provider-backed-project", "inputs": provider_inputs}
+
+    def _capability_input_gap(
+        self,
+        request: dict[str, Any],
+        manifest: dict[str, Any],
+        missing: list[str],
+    ) -> dict[str, Any]:
+        bridge = self._provider_bridge_request(request, missing)
+        return {
+            "type": "CAPABILITY_INPUT_GAP",
+            "truth_status": "ROUTE_PRESENT_REQUIRED_INPUTS_MISSING",
+            "request_kind": request.get("kind"),
+            "directional_outcome": request.get("direction") or request.get("purpose") or request.get("kind"),
+            "route": manifest.get("id"),
+            "required_inputs": self.capabilities.required_inputs(
+                manifest,
+                request.get("inputs") if isinstance(request.get("inputs"), dict) else {},
+            ),
+            "supplied_inputs": sorted((request.get("inputs") or {}).keys()),
+            "missing_required_inputs": missing,
+            "decomposition": self.plan(request, per_level=4),
+            "local_provider_bridge": (
+                {
+                    "status": "READY_FOR_EXPLICIT_LOCAL_PROVIDER_SELECTION",
+                    "request": bridge,
+                    "next_action": "add an explicit provider object with allow_call=true, or invoke the provider-backed-project route separately",
+                    "automatic_call_made": False,
+                }
+                if bridge is not None
+                else {
+                    "status": "NO_CURRENT_PROVIDER_BRIDGE_FOR_INPUT_SHAPE",
+                    "automatic_call_made": False,
+                }
+            ),
+        }
+
+    def _try_explicit_provider_bridge(
+        self,
+        request: dict[str, Any],
+        missing: list[str],
+    ) -> dict[str, Any] | None:
+        provider = request.get("provider")
+        bridge = self._provider_bridge_request(request, missing)
+        if not isinstance(provider, dict) or bridge is None:
+            return None
+        bridge["inputs"]["provider"] = provider
+        provider_manifest = self.capabilities.route("provider-backed-project")
+        if provider_manifest is None:
+            return {
+                "type": "CAPABILITY_GAP",
+                "truth_status": "LOCAL_PROVIDER_BRIDGE_NOT_LIVE",
+                "request_kind": request.get("kind"),
+                "directional_outcome": request.get("direction") or request.get("purpose") or request.get("kind"),
+            }
+        try:
+            result = self.capabilities.invoke(provider_manifest, bridge["inputs"])
+        except CapabilityError as exc:
+            error = {
+                "type": "CREATION_ERROR",
+                "capability": provider_manifest.get("id"),
+                "message": str(exc),
+            }
+            if exc.details:
+                error["details"] = exc.details
+            return error
+        return {
+            "type": "CREATION_RESULT",
+            "capability": provider_manifest.get("id"),
+            "directional_outcome": request.get("direction") or request.get("purpose") or request.get("kind"),
+            "filled_missing_inputs": missing,
+            "original_route": (
+                original.get("id")
+                if (original := self.capabilities.route(str(request.get("kind", "")))) is not None
+                else None
+            ),
+            "result": result,
+        }
+
     def create(self, request: dict[str, Any]) -> dict[str, Any]:
         if not isinstance(request, dict):
             raise TypeError("request must be an object")
@@ -165,8 +293,21 @@ class UniversalCreationMachine:
         manifest = self.capabilities.route(kind)
         if manifest is None:
             return self._capability_gap(request)
+        inputs = request.get("inputs", {})
+        if not isinstance(inputs, dict):
+            return {
+                "type": "CREATION_ERROR",
+                "capability": manifest.get("id"),
+                "message": "request.inputs must be an object",
+            }
+        missing = self.capabilities.missing_required_inputs(manifest, inputs)
+        if missing:
+            bridged = self._try_explicit_provider_bridge(request, missing)
+            if bridged is not None:
+                return bridged
+            return self._capability_input_gap(request, manifest, missing)
         try:
-            result = self.capabilities.invoke(manifest, request.get("inputs", {}))
+            result = self.capabilities.invoke(manifest, inputs)
         except CapabilityError as exc:
             error = {
                 "type": "CREATION_ERROR",
@@ -194,21 +335,53 @@ class UniversalCreationMachine:
             result = creation.get("result") if isinstance(creation.get("result"), dict) else {}
             project_path = result.get("path")
             inputs = request.get("inputs") if isinstance(request.get("inputs"), dict) else {}
-            if project_path and isinstance(result.get("validation"), dict):
-                created_files = result.get("files") if isinstance(result.get("files"), list) else []
+            provider_creation = result.get("creation") if isinstance(result.get("creation"), dict) else {}
+            observed_validation = (
+                result.get("validation")
+                if isinstance(result.get("validation"), dict)
+                else provider_creation.get("validation")
+            )
+            if project_path and isinstance(observed_validation, dict):
+                created_files = (
+                    result.get("files")
+                    if isinstance(result.get("files"), list)
+                    else provider_creation.get("files")
+                    if isinstance(provider_creation.get("files"), list)
+                    else []
+                )
                 expected_file_digests = {
                     str(row["path"]): str(row["sha256"])
                     for row in created_files
                     if isinstance(row, dict) and "path" in row and "sha256" in row
                 }
+                provider_receipt = (
+                    result.get("provider_receipt")
+                    if isinstance(result.get("provider_receipt"), dict)
+                    else {}
+                )
+                provider_proposal = (
+                    provider_receipt.get("proposal")
+                    if isinstance(provider_receipt.get("proposal"), dict)
+                    else {}
+                )
+                expected_files = (
+                    inputs.get("files")
+                    if isinstance(inputs.get("files"), dict)
+                    else provider_proposal.get("files")
+                    if isinstance(provider_proposal.get("files"), dict)
+                    else None
+                )
                 verification = self.create({
                     "kind": "verify-project",
                     "direction": f"verify creation trial for {request.get('kind')}",
                     "inputs": {
                         "path": project_path,
-                        "project_type": inputs.get("project_type", result.get("project_type", "generic")),
+                        "project_type": inputs.get(
+                            "project_type",
+                            result.get("project_type", provider_creation.get("project_type", "generic")),
+                        ),
                         "checks": inputs.get("checks", []),
-                        "expected_files": inputs.get("files") if isinstance(inputs.get("files"), dict) else None,
+                        "expected_files": expected_files,
                         "expected_file_digests": expected_file_digests,
                     },
                 })
@@ -234,10 +407,19 @@ class UniversalCreationMachine:
     def test_candidate(self, candidate_path: Path) -> dict[str, Any]:
         return test_capability_candidate(self.root, candidate_path)
 
-    def adopt_candidate(self, candidate_path: Path) -> dict[str, Any]:
+    def adopt_candidate(self, candidate_path: Path, root_fit: Any = None) -> dict[str, Any]:
         from .evolution import ensure_daily_recovery_snapshot
+        from .root_fit import evaluate_root_fit_decision
 
         candidate_path = Path(candidate_path).resolve()
+        adoption_fit = evaluate_root_fit_decision(root_fit)
+        if adoption_fit.get("fit") is not True:
+            return {
+                "adopted": False,
+                "truth_status": "HOLD_CURRENT_ROOT_FIT_DECISION",
+                "root_fit_decision": adoption_fit,
+                "live_machine_body_modified": False,
+            }
         test = self.test_candidate(candidate_path)
         if not test.get("passed"):
             return {"adopted": False, "test": test}
@@ -268,6 +450,7 @@ class UniversalCreationMachine:
             "capability": candidate["id"],
             "manifest": str(target.relative_to(self.root)),
             "recovery_snapshot": recovery,
+            "adoption_root_fit": adoption_fit,
             "transition": {
                 "installed": True,
                 "registered": True,

@@ -13,6 +13,20 @@ from axm_uc.machine import UniversalCreationMachine
 
 
 class CandidateAdoptionTests(unittest.TestCase):
+    @staticmethod
+    def _root_fit_decision() -> dict:
+        return {
+            "decision_source": "bounded-test-fixture",
+            "decided_by": "tests/test_candidate_adoption.py",
+            "evidence_refs": ["candidate test result"],
+            "roots": {
+                "truth": {"fit": True, "basis": "Candidate evidence and transition remain inspectable."},
+                "agency": {"fit": True, "basis": "Adoption is an explicit separate choice."},
+                "continuity": {"fit": True, "basis": "Daily recovery is established before mutation."},
+                "wisdom-before-speed": {"fit": True, "basis": "The candidate is tested before adoption."},
+            },
+        }
+
     def _mini_machine(self, td: str) -> Path:
         root = Path(td)
         (root / "capabilities/live").mkdir(parents=True)
@@ -34,7 +48,7 @@ class CandidateAdoptionTests(unittest.TestCase):
             root = self._mini_machine(td)
             candidate = root / "capabilities/candidates/AXM-CAP-WRITE-MARKDOWN.json"
             machine = UniversalCreationMachine(root)
-            result = machine.adopt_candidate(candidate)
+            result = machine.adopt_candidate(candidate, root_fit=self._root_fit_decision())
             self.assertTrue(result["adopted"])
             self.assertEqual(result["truth_status"], "ADOPTED_LIVE_CAPABILITY_WITH_DAILY_RECOVERY")
             self.assertTrue(result["transition"]["installed"])
@@ -47,6 +61,17 @@ class CandidateAdoptionTests(unittest.TestCase):
             routed = machine.create({"kind": "markdown-file", "inputs": {"path": str(output), "content": "# made\n"}})
             self.assertEqual(routed["type"], "CREATION_RESULT")
             self.assertEqual(output.read_text(encoding="utf-8"), "# made\n")
+
+    def test_adoption_without_attributed_current_decision_holds_before_candidate_testing(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = self._mini_machine(td)
+            candidate = root / "capabilities/candidates/AXM-CAP-WRITE-MARKDOWN.json"
+            result = UniversalCreationMachine(root).adopt_candidate(candidate)
+            self.assertFalse(result["adopted"])
+            self.assertEqual(result["truth_status"], "HOLD_CURRENT_ROOT_FIT_DECISION")
+            self.assertFalse(result["live_machine_body_modified"])
+            self.assertTrue(candidate.is_file())
+            self.assertFalse((root / ".axm-build").exists())
 
 
 if __name__ == "__main__":

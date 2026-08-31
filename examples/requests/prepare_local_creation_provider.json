@@ -1,0 +1,18 @@
+{
+  "kind": "prepare-local-creation-provider",
+  "direction": "prepare a local provider request without making a call",
+  "inputs": {
+    "operation": "prepare",
+    "goal": "Create a playable local static-web strategy prototype with explicit controls and no external network dependencies.",
+    "project_type": "static-web",
+    "constraints": {
+      "local_only": true,
+      "runtime_browser_visual_and_gameplay_claims_require_separate_host_evidence": true
+    },
+    "provider": {
+      "endpoint": "http://127.0.0.1:7789/v1",
+      "model": "waldo",
+      "allow_call": false
+    }
+  }
+}

@@ -42,3 +42,5 @@ The machine is not instructed to maximize growth. Growth is only meaningful when
 The roots do not prescribe a closed list of things the machine may create. They guide how the machine changes what it is.
 
 The root-fit mechanism itself must remain inspectable.
+
+For continuing-machine adoption, a candidate's own four-root declaration is not enough by itself. The current machine must receive a separately attributed decision envelope containing `decision_source`, `decided_by`, optional `evidence_refs`, and the four explicit root bases. The deterministic core validates that structure and attribution. It does not claim to have objectively proven moral or semantic correctness.

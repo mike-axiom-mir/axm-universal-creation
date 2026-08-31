@@ -1,0 +1,66 @@
+{
+  "id": "AXM-CAP-DETERMINISTIC-STATE-MACHINE",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Compile, step, and replay an explicit deterministic state/event graph for games, workflows, interfaces, tools, or simulations without evaluating code or inventing missing transitions.",
+  "handles": [
+    "deterministic-state-machine",
+    "workflow-state-machine",
+    "game-rule-state-machine",
+    "interaction-state-machine"
+  ],
+  "input_contract": {
+    "required": ["machine"],
+    "required_by_operation": {
+      "step": ["state", "event"],
+      "replay": ["events"]
+    },
+    "properties": {
+      "operation": "compile by default, step, or replay",
+      "machine": "axm.deterministic-state-machine/v0.1 object with explicit states and unique state/event transitions",
+      "state": "current state for step or optional replay start override",
+      "event": "one event for step",
+      "events": "ordered event array for replay",
+      "stop_on_hold": "optional boolean; defaults true"
+    }
+  },
+  "output_contract": {
+    "kind": "deterministic-state-result",
+    "contains": ["machine_digest", "transition or transcript", "truth_status", "effects_executed"]
+  },
+  "dependencies": [],
+  "relationships": [
+    "returns explicit transition effects as inert JSON data",
+    "holds on an undeclared state/event pair instead of guessing a rule"
+  ],
+  "anatomy_refs": [
+    {
+      "id": "AXM-03-TIME-STATE-EVENT-C-004-state-machine",
+      "role": "implements",
+      "basis": "Compiles and executes a closed deterministic state/event transition component."
+    },
+    {
+      "id": "AXM-03-TIME-STATE-EVENT-O-004-state-machine-runtime",
+      "role": "implements",
+      "basis": "Provides bounded compile, single-step, and replay runtime operations without arbitrary code evaluation."
+    }
+  ],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:deterministic_state_machine",
+    "source": "src/axm_uc/state_machine.py"
+  },
+  "limitations": [
+    "transition effects are inert JSON outputs and are never executed as host actions",
+    "guards, timers, parallel state regions, hierarchy, nondeterminism, and arbitrary expressions are not supported",
+    "a replay proves the declared transition path only; it does not prove gameplay balance, user experience, or external side effects",
+    "maximum 256 states, 4096 transitions, and 10000 replay events"
+  ],
+  "persistent_state": null,
+  "root_fit": {
+    "truth": {"fit": true, "basis": "Only explicitly declared state/event transitions are applied; missing transitions HOLD and returned effects are labeled unexecuted."},
+    "agency": {"fit": true, "basis": "The caller supplies the complete graph, current state, events, replay choice, and any later host interpretation of inert effects."},
+    "continuity": {"fit": true, "basis": "The normalized machine and digest accompany compile, step, and replay results, preserving the exact rule body used."},
+    "wisdom-before-speed": {"fit": true, "basis": "Nondeterministic transition collisions, unknown states, malformed JSON effects, and excessive graphs or replays are rejected instead of guessed through."}
+  }
+}

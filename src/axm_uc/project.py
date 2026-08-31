@@ -331,6 +331,60 @@ def _check_sha256(root: Path, check: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+MEDIA_SIGNATURES = {
+    "gif": lambda content: content.startswith((b"GIF87a", b"GIF89a")),
+    "glb": lambda content: content.startswith(b"glTF"),
+    "jpeg": lambda content: content.startswith(b"\xff\xd8\xff"),
+    "ogg": lambda content: content.startswith(b"OggS"),
+    "pdf": lambda content: content.startswith(b"%PDF-"),
+    "png": lambda content: content.startswith(b"\x89PNG\r\n\x1a\n"),
+    "wav": lambda content: len(content) >= 12 and content[:4] == b"RIFF" and content[8:12] == b"WAVE",
+    "webp": lambda content: len(content) >= 12 and content[:4] == b"RIFF" and content[8:12] == b"WEBP",
+    "zip": lambda content: content.startswith((b"PK\x03\x04", b"PK\x05\x06", b"PK\x07\x08")),
+}
+
+
+def _check_media_signature(root: Path, check: dict[str, Any]) -> dict[str, Any]:
+    relative = str(check.get("path", ""))
+    expected = str(check.get("format", "")).strip().casefold()
+    if expected not in MEDIA_SIGNATURES:
+        return {
+            "type": "media-signature",
+            "path": relative,
+            "format": expected,
+            "passed": False,
+            "error": "format must be one of: " + ", ".join(sorted(MEDIA_SIGNATURES)),
+        }
+    try:
+        content = _resolve_inside(root, relative).read_bytes()
+    except (ProjectError, OSError) as exc:
+        return {
+            "type": "media-signature",
+            "path": relative,
+            "format": expected,
+            "passed": False,
+            "error": str(exc),
+        }
+    return {
+        "type": "media-signature",
+        "path": relative,
+        "format": expected,
+        "passed": bool(MEDIA_SIGNATURES[expected](content)),
+        "bytes": len(content),
+        "proof_scope": "container/file signature only; content decoding and semantic quality are not proven",
+    }
+
+
+def _check_utf8_valid(root: Path, check: dict[str, Any]) -> dict[str, Any]:
+    relative = str(check.get("path", ""))
+    try:
+        content = _resolve_inside(root, relative).read_bytes()
+        content.decode("utf-8", errors="strict")
+    except (ProjectError, OSError, UnicodeError) as exc:
+        return {"type": "utf8-valid", "path": relative, "passed": False, "error": str(exc)}
+    return {"type": "utf8-valid", "path": relative, "passed": True, "bytes": len(content)}
+
+
 def _check_json_value(root: Path, check: dict[str, Any]) -> dict[str, Any]:
     relative = str(check.get("path", ""))
     json_path = check.get("json_path")
@@ -546,12 +600,18 @@ def _check_expected_file_digests(root: Path, expected_digests: dict[str, Any]) -
 
 def _publication_integrity(validation: dict[str, Any]) -> bool:
     checks = validation.get("checks") if isinstance(validation.get("checks"), list) else []
-    required = {
-        row.get("type"): row.get("passed") is True
+    nonempty = next((row for row in checks if row.get("type") == "project-nonempty"), None)
+    integrity = [
+        row
         for row in checks
-        if row.get("type") in {"project-nonempty", "expected-files-exact"}
-    }
-    return required == {"project-nonempty": True, "expected-files-exact": True}
+        if row.get("type") in {"expected-files-exact", "expected-file-digests"}
+    ]
+    return (
+        isinstance(nonempty, dict)
+        and nonempty.get("passed") is True
+        and bool(integrity)
+        and all(row.get("passed") is True for row in integrity)
+    )
 
 
 def _grounding(validation: dict[str, Any], publish_mode: str) -> dict[str, Any]:
@@ -580,6 +640,8 @@ CHECKS = {
     "line-count": _check_line_count,
     "byte-size": _check_byte_size,
     "sha256": _check_sha256,
+    "media-signature": _check_media_signature,
+    "utf8-valid": _check_utf8_valid,
     "json-valid": _check_json,
     "json-value": _check_json_value,
     "file-set": _check_file_set,

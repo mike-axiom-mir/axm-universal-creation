@@ -1,0 +1,22 @@
+{
+  "kind": "mixed-media-project",
+  "direction": "create one local static-web project containing exact text and binary asset bytes",
+  "inputs": {
+    "path": "creations/mixed-media-demo",
+    "project_type": "static-web",
+    "text_files": {
+      "index.html": "<!doctype html><html><body><img src=\"assets/pixel.png\" alt=\"one pixel\"></body></html>"
+    },
+    "binary_files": {
+      "assets/pixel.png": {
+        "encoding": "base64",
+        "content": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=",
+        "media_type": "image/png"
+      }
+    },
+    "checks": [
+      {"type": "media-signature", "path": "assets/pixel.png", "format": "png"}
+    ],
+    "publish_mode": "validated"
+  }
+}

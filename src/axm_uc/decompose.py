@@ -109,7 +109,12 @@ class CreationDecomposer:
         }
 
     @staticmethod
-    def _capability_hit(capability: dict[str, Any], terms: set[str], kind: str) -> dict[str, Any] | None:
+    def _capability_hit(
+        capability: dict[str, Any],
+        terms: set[str],
+        kind: str,
+        supplied_inputs: dict[str, Any],
+    ) -> dict[str, Any] | None:
         handles = [str(handle) for handle in capability.get("handles", [])]
         exact = kind in handles
         searchable = " ".join([str(capability.get("id", "")), str(capability.get("purpose", "")), *handles])
@@ -117,6 +122,9 @@ class CreationDecomposer:
         if not exact and not matched:
             return None
         score = (50 if exact else 0) + (8 * len(matched))
+        supplied_input_keys = set(supplied_inputs)
+        required_inputs = CapabilityStore.required_inputs(capability, supplied_inputs)
+        missing_required_inputs = CapabilityStore.missing_required_inputs(capability, supplied_inputs)
         return {
             "id": capability.get("id"),
             "purpose": capability.get("purpose"),
@@ -124,7 +132,17 @@ class CreationDecomposer:
             "exact_handle_match": exact,
             "matched_terms": matched,
             "score": score,
-            "required_inputs": sorted(capability.get("input_contract", {}).get("required", [])),
+            "required_inputs": required_inputs,
+            "supplied_inputs": sorted(supplied_input_keys),
+            "missing_required_inputs": missing_required_inputs,
+            "ready_with_supplied_inputs": not missing_required_inputs,
+            "route_status": (
+                "EXACT_ROUTE_READY"
+                if exact and not missing_required_inputs
+                else "EXACT_ROUTE_INPUTS_INCOMPLETE"
+                if exact
+                else "RELATED_CAPABILITY"
+            ),
             "manifest": capability.get("_manifest_path"),
         }
 
@@ -165,12 +183,26 @@ class CreationDecomposer:
         kernel_topology: dict[str, Any],
     ) -> dict[str, Any]:
         exact = next((hit for hit in live_hits if hit["exact_handle_match"]), None)
-        if exact:
+        if exact and exact["ready_with_supplied_inputs"]:
             return {
                 "status": "covered",
-                "truth_status": "DETERMINISTIC_ROUTE_MATCH",
+                "truth_status": "EXACT_ROUTE_AND_REQUIRED_INPUTS_READY",
                 "smallest_visible_gap": None,
                 "covered_by": exact["id"],
+            }
+
+        if exact:
+            return {
+                "status": "input-gap",
+                "truth_status": "EXACT_ROUTE_PRESENT_REQUIRED_INPUTS_MISSING",
+                "covered_by": None,
+                "route": exact["id"],
+                "smallest_visible_gap": {
+                    "kind": "missing-required-inputs",
+                    "capability": exact["id"],
+                    "missing_required_inputs": exact["missing_required_inputs"],
+                    "reason": "a route name exists, but the supplied request cannot invoke it until every required input is present",
+                },
             }
 
         inputs = request.get("inputs") if isinstance(request.get("inputs"), dict) else {}
@@ -265,10 +297,11 @@ class CreationDecomposer:
             candidates[level].sort(key=lambda item: (-int(item["score"]), str(item["id"])))
             selected[level] = candidates[level][:per_level]
 
+        request_inputs = request.get("inputs") if isinstance(request.get("inputs"), dict) else {}
         live_hits = [
             hit
             for capability in self.capabilities.live()
-            if (hit := self._capability_hit(capability, terms, kind)) is not None
+            if (hit := self._capability_hit(capability, terms, kind, request_inputs)) is not None
         ]
         live_hits.sort(key=lambda item: (-int(item["score"]), str(item["id"])))
 

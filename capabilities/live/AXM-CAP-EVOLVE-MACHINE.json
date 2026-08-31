@@ -1,11 +1,12 @@
 {
   "id": "AXM-CAP-EVOLVE-MACHINE",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "status": "live",
-  "purpose": "Let the running machine deliberately continue from a changed state: re-test and adopt an exact executable-organ candidate into the live organ library, inspect the current evolution surface, create the existing one-per-day whole-machine recovery snapshot, or restore a known-good daily snapshot while quarantining the later body.",
+  "purpose": "Let the running machine deliberately continue from a changed state: re-test and adopt an exact executable-organ candidate, re-test and explicitly adopt a complete self-workspace source body, inspect the evolution surface, create the one-per-day whole-machine recovery snapshot, or restore a known-good daily snapshot while quarantining the later body.",
   "handles": [
     "evolve-machine",
     "adopt-organ",
+    "adopt-whole-body-candidate",
     "inspect-evolution",
     "snapshot-machine",
     "restore-machine-snapshot"
@@ -14,16 +15,22 @@
     "required": [
       "operation"
     ],
+    "required_by_operation": {
+      "adopt-organ": ["path", "reason", "root_fit"],
+      "adopt-whole-body-candidate": ["path", "reason", "root_fit", "confirm"],
+      "restore-machine-snapshot": ["snapshot", "confirm", "reason"]
+    },
     "properties": {
-      "operation": "adopt-organ, inspect-evolution, snapshot-machine, or restore-machine-snapshot",
-      "path": "adopt-organ only; detached spawned organ candidate directory",
-      "reason": "adopt-organ or restore-machine-snapshot; concrete inspectable reason for the state transition",
-      "root_fit": "adopt-organ only; explicit current-machine fit decision for Truth, Agency, Continuity, and Wisdom Before Speed",
-      "snapshot_output_dir": "adopt-organ only; optional explicit directory for the one-per-day pre-mutation recovery snapshot",
+      "operation": "adopt-organ, adopt-whole-body-candidate, inspect-evolution, snapshot-machine, or restore-machine-snapshot",
+      "path": "adoption operations; detached spawned organ directory or complete self-workspace candidate body",
+      "reason": "adoption or restore-machine-snapshot; concrete inspectable reason for the state transition",
+      "root_fit": "adoption only; attributed decision envelope with decision_source, decided_by, evidence_refs, and explicit current-machine fit for Truth, Agency, Continuity, and Wisdom Before Speed",
+      "snapshot_output_dir": "adoption only; optional explicit directory for the one-per-day pre-mutation recovery snapshot",
+      "timeout_seconds": "whole-body adoption only; bounded candidate build timeout from 1 through 3600 seconds",
       "output_dir": "snapshot-machine only; optional snapshot directory",
       "replace": "snapshot-machine only; optional explicit replacement of today's snapshot",
       "snapshot": "restore-machine-snapshot only; exact known-good snapshot archive",
-      "confirm": "restore-machine-snapshot only; must be true because whole-body restore is destructive to the current active state"
+      "confirm": "whole-body adoption or restore; must be true because either transition replaces the current active source body"
     }
   },
   "output_contract": {
@@ -43,7 +50,8 @@
   ],
   "relationships": [
     "turns detached Forge evidence into a deliberate continuing-machine state transition instead of a permanent outside approval gate",
-    "re-runs candidate tests immediately before organ adoption and checks a separate current four-root fit decision",
+    "re-runs candidate tests immediately before organ adoption and checks a separate attributed current four-root fit decision without relabeling it objective proof",
+    "re-runs a complete self-workspace build, stages and rehashes its included source bytes, ensures daily recovery, preserves Git and runtime surfaces, and installs the candidate source body only with explicit confirm",
     "ensures the existing complete daily recovery snapshot before mutating the live organ library",
     "installs and registers an adopted organ by placing its exact tested package in executable-organs/",
     "promotes the adopted organ for normal interface-driven composition as a consequence of successful live-library registration",
@@ -68,13 +76,14 @@
     "source": "src/axm_uc/evolution.py"
   },
   "limitations": [
-    "v0.2 Creation-Unit adoption supports new executable-organ refs only; replacement and in-place organ upgrade semantics remain a later explicit transition",
+    "Creation-Unit adoption supports new executable-organ refs only; replacement and in-place organ upgrade semantics remain a later explicit transition",
+    "root-fit decision structure and attribution are validated, but semantic or moral correctness is not independently proven by the deterministic core",
     "organ candidate tests currently prove executable-organ package structure, not emitted browser or runtime behavior",
     "whole-machine recovery is intentionally daily rather than a per-change event history; several same-day changes may roll back together to the known-good daily snapshot",
-    "whole-body candidate merge, CANON change, and permission change are valid evolution directions but are not bundled into organ adoption",
+    "whole-body source adoption is not a Git merge and does not change CANON or permissions; those remain distinct transitions",
     "there is no global instruction or score to grow continuously; evolution remains driven by concrete capability needs"
   ],
-  "persistent_state": "successful organ adoption changes executable-organs/; recovery uses the existing external daily snapshot archive and quarantine body rather than a new per-adoption history ledger",
+  "persistent_state": "successful organ adoption changes executable-organs/; successful whole-body adoption replaces included source-body files while preserving Git/runtime surfaces and retains the immediate prior source body in transition quarantine; recovery uses the external daily snapshot archive",
   "root_fit": {
     "truth": {
       "fit": true,

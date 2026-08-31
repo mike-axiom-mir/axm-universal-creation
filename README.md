@@ -23,6 +23,13 @@ PYTHONPATH=src python -m axm_uc trial examples/requests/create_real_site.json
 PYTHONPATH=src python -m axm_uc forge
 PYTHONPATH=src python -m axm_uc gap-forge
 
+# Prepare (but do not send) a request for the existing local creation provider.
+PYTHONPATH=src python -m axm_uc create examples/requests/prepare_local_creation_provider.json
+
+# Build exact text plus binary assets, then run a deterministic game-state replay.
+PYTHONPATH=src python -m axm_uc create examples/requests/create_mixed_media_project.json
+PYTHONPATH=src python -m axm_uc create examples/requests/replay_game_state_machine.json
+
 # Run the complete repository verification suite.
 python tools/build.py
 ```
@@ -144,6 +151,13 @@ The small Python runtime currently provides:
 - direct inspection of the 2,165-record Universal Creation Map and 100-record implementation kernel;
 - inspectable live capability manifests;
 - creation routing through live deterministic capabilities;
+- route-readiness reporting that distinguishes an exact handle from the required inputs needed to invoke it;
+- an explicit model-independent loopback provider boundary compatible with AXM Local Workshop/WALDO and other caller-selected OpenAI-compatible local providers;
+- local execution of prepared stepwise specialist checkpoints through that same explicit provider boundary, labeled as one cognition applying several methods rather than fake independent specialist identities;
+- digest-bound, freshness-aware intake for external runtime, browser, visual, gameplay, and accessibility evidence without pretending the deterministic core re-performed those observations;
+- exact mixed text/binary project creation with strict-base64 intake and pre/post-publication digest verification;
+- deterministic state-machine compile, step, and replay routes whose effects remain inert data;
+- reproducible portable creation bundles with canonical manifests, safe unpacking, and exact byte receipts;
 - grounded drafts that preserve observed gaps instead of erasing imperfect ordinary creations;
 - strict single-pass project recipes with inspectable variables and rendered paths;
 - dependency-aware software-organ assembly with declared interfaces, explicit order, and file ownership;
@@ -153,8 +167,9 @@ The small Python runtime currently provides:
 - a deterministic detached creation-unit forge for hands, capabilities, organs, protocols, skills, specialists, recipes, and new extension kinds;
 - an evidence-bound gap compiler that can derive and test either the smallest supported UTF-8 file-route adapter or a bounded project recipe of up to three exact producer, verifier, existing-composite, and JSON-report steps from a real unroutable request;
 - complete editable self-workspace cloning, exact source comparison, independent build logs, and voluntary merge-check requests;
+- explicit whole-body candidate adoption with candidate re-test, attributed root fit, caller confirmation, staged byte verification, daily recovery, and preserved Git/runtime surfaces;
 - structured `CAPABILITY_GAP` results that preserve the directional outcome and distinguish current partial coverage;
-- candidate capability testing and direct adoption through the four-root fit declaration;
+- candidate capability testing and direct adoption through a separately attributed current-machine four-root decision;
 - build-owned cleanup of candidate-test debris;
 - one complete daily snapshot export and explicit restore with the current body moved to quarantine;
 - no autonomous-agent requirement and no selected final brain architecture.
@@ -207,6 +222,26 @@ Current live project handles:
 - `analyze-creation-gap`
 - `propose-gap-candidate`
 - `explore-gap-candidate`
+- `inspect-local-creation-provider`
+- `prepare-local-creation-provider`
+- `invoke-local-creation-provider`
+- `provider-backed-project`
+- `creation-host-evidence`
+- `runtime-evidence`
+- `browser-evidence`
+- `visual-evidence`
+- `gameplay-evidence`
+- `mixed-media-project`
+- `asset-project`
+- `binary-asset-project`
+- `game-asset-project`
+- `deterministic-state-machine`
+- `workflow-state-machine`
+- `game-rule-state-machine`
+- `interaction-state-machine`
+- `portable-creation-bundle`
+- `axm-creation-export`
+- `axm-creation-import`
 
 Project creation is staged before publish and project-relative file paths may not escape the project body. Plain project creation defaults to `grounded-draft`: exact publication integrity is required, while failed quality/grammar checks remain visible and the imperfect creation survives. Explicit `validated` mode and verified composite handles remain strict and do not publish a failed body.
 
@@ -220,6 +255,8 @@ Current deterministic project checks:
 - `line-count`
 - `byte-size`
 - `sha256`
+- `media-signature`
+- `utf8-valid`
 - `json-valid`
 - `json-value`
 - `file-set`
@@ -231,6 +268,8 @@ Current deterministic project checks:
 Every project automatically receives a no-symlink boundary check so validation cannot silently read through a project link into an outside file. `static-web` automatically checks for `index.html`, verifies local `src`/`href` references from every `.html` and `.htm` page, resolves CSS `url(...)` and `@import` references, and resolves local static/dynamic JavaScript module imports. Bare JavaScript package imports and explicit external URLs remain labeled external rather than being claimed as locally verified. `python` automatically compiles `.py` files for syntax without executing them.
 
 Every `.json` file is automatically parsed for JSON validity in every project type.
+
+Mixed projects may now contain exact text and binary files. Binary descriptors are strict base64 and the complete emitted body is verified by digest before and after publication. Portable creation bundles can then carry a validated project to another standalone machine or host without turning archive validity into a runtime claim. Explicit deterministic state machines provide a separate reusable rule core for games, workflows, interfaces, and simulations. See `CAPABILITY_GROWTH.md`.
 
 Reusable project templates use strict `[[AXM:name]]` placeholders in paths and contents. Substitution is exact, raw, single-pass, and non-recursive; missing, unused, malformed, colliding, and escaping inputs are rejected. See `PROJECT_TEMPLATES.md` and `GROUNDED_CREATION.md`.
 
@@ -259,6 +298,9 @@ PYTHONPATH=src python -m axm_uc create examples/requests/analyze_note_route_gap.
 PYTHONPATH=src python -m axm_uc create examples/requests/explore_note_route_gap.json
 PYTHONPATH=src python -m axm_uc create examples/requests/analyze_verified_template_gap.json
 PYTHONPATH=src python -m axm_uc create examples/requests/explore_verified_template_gap.json
+PYTHONPATH=src python -m axm_uc create examples/requests/create_mixed_media_project.json
+PYTHONPATH=src python -m axm_uc create examples/requests/replay_game_state_machine.json
+PYTHONPATH=src python -m axm_uc create examples/requests/pack_portable_creation.json
 ```
 
 That creates `creations/first-real-site/` with `index.html`, `style.css`, and `app.js`. Open `index.html` in a browser for the separate human/host visual and interaction test.
@@ -267,13 +309,17 @@ A passing deterministic trial proves what it actually checked. It **does not** c
 
 See `REAL_CREATION_TRIAL.md` for the working-chat protocol and exact truth boundary.
 
+When exact project files are missing, the planner now reports an input gap instead of false coverage. An explicitly selected local provider can propose those files through the existing AXM Local Workshop/WALDO loopback bridge; Universal Creation then schema-validates, stages, publishes, and independently re-verifies the project. The provider is never called without `allow_call: true`, cannot select the destination, and cannot write the machine body. See `LOCAL_CREATION_PROVIDER.md`.
+
+Runtime, browser, visual, gameplay, and accessibility observations remain a separate host responsibility. They can now return a typed receipt bound to the complete exact project digest map and an explicit freshness lifetime. Stale evidence becomes effectively `UNKNOWN`; changed project bytes reject the receipt. See `HOST_EVIDENCE.md`.
+
 ## Editable self-creation body
 
 `AXM-CAP-SELF-WORKSPACE` can clone the complete current source body into an editable candidate outside the live body, inspect byte-exact differences, and run the candidate's own `tools/build.py` while returning the full captured build output.
 
 The candidate chooses if and when to emit `request-merge-check`. It may request any combination of source comparison, build, candidate-machine inspection, executable-anatomy inspection, planning probes, and real creation trials inside its cloned body. The request is explicitly `MERGE_CHECK_REQUESTED_NOT_APPROVED`: it performs no merge, grants no approval, creates no growth score, and imposes no per-edit checkpoint.
 
-This is source-body isolation, not OS containment. Candidate code runs with the current process user's host permissions. Automatic whole-body merge/adoption remains an explicit current gap.
+This is source-body isolation, not OS containment. Candidate code runs with the current process user's host permissions. A separate `adopt-whole-body-candidate` evolution operation can now make a tested candidate the continuing source body, but only with explicit confirmation, attributed root fit, daily recovery, exact staged/installed byte verification, and preserved Git/runtime surfaces. It is not a Git merge or automatic approval.
 
 Create the first editable clone body:
 
@@ -323,6 +369,10 @@ PYTHONPATH=src python -m axm_uc create examples/requests/create_organ_site.json
 PYTHONPATH=src python -m axm_uc create examples/requests/create_reusable_organ_site.json
 PYTHONPATH=src python -m axm_uc create examples/requests/clone_self_workspace.json
 PYTHONPATH=src python -m axm_uc forge
+PYTHONPATH=src python -m axm_uc create examples/requests/prepare_local_creation_provider.json
+PYTHONPATH=src python -m axm_uc create examples/requests/inspect_host_evidence.json
+PYTHONPATH=src python -m axm_uc create examples/requests/create_mixed_media_project.json
+PYTHONPATH=src python -m axm_uc create examples/requests/replay_game_state_machine.json
 PYTHONPATH=src python -m axm_uc create examples/requests/spawn_creation_protocol.json
 PYTHONPATH=src python -m axm_uc create examples/requests/test_spawned_creation_protocol.json
 PYTHONPATH=src python -m axm_uc create examples/requests/propose_verified_template_gap.json

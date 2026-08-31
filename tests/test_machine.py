@@ -14,6 +14,15 @@ from axm_uc.machine import UniversalCreationMachine
 
 
 class MachineTests(unittest.TestCase):
+    def test_inspection_exposes_new_standalone_capability_growth_without_inflated_proof(self):
+        growth = UniversalCreationMachine(ROOT).inspect()["standalone_capability_growth"]
+        self.assertEqual(growth["mixed_project"]["maximum_files"], 256)
+        self.assertFalse(growth["mixed_project"]["runtime_or_semantic_behavior_proven"])
+        self.assertEqual(growth["portable_bundle"]["operations"], ["pack", "inspect", "unpack"])
+        self.assertFalse(growth["portable_bundle"]["runtime_compatibility_proven"])
+        self.assertEqual(growth["state_machine"]["missing_transition_behavior"], "HOLD_NO_DECLARED_TRANSITION")
+        self.assertFalse(growth["state_machine"]["effects_executed"])
+
     def test_live_creation_routes_and_writes(self):
         with tempfile.TemporaryDirectory() as td:
             target = Path(td) / "hello.txt"
@@ -35,6 +44,21 @@ class MachineTests(unittest.TestCase):
         self.assertEqual(result["directional_outcome"], "create editable Markdown")
         self.assertEqual(result["truth_status"], "HYPOTHESIS")
         self.assertTrue(result["existing_partial_coverage"])
+
+    def test_exact_route_missing_files_exposes_explicit_local_provider_bridge(self):
+        result = UniversalCreationMachine(ROOT).create({
+            "kind": "software-project",
+            "direction": "create a playable local RTS prototype",
+            "inputs": {"path": "creations/rts"},
+        })
+        self.assertEqual(result["type"], "CAPABILITY_INPUT_GAP")
+        self.assertEqual(result["truth_status"], "ROUTE_PRESENT_REQUIRED_INPUTS_MISSING")
+        self.assertEqual(result["route"], "AXM-CAP-WRITE-PROJECT")
+        self.assertEqual(result["missing_required_inputs"], ["files"])
+        bridge = result["local_provider_bridge"]
+        self.assertEqual(bridge["status"], "READY_FOR_EXPLICIT_LOCAL_PROVIDER_SELECTION")
+        self.assertFalse(bridge["automatic_call_made"])
+        self.assertEqual(bridge["request"]["kind"], "provider-backed-project")
 
     def test_candidate_can_be_tested_and_build_debris_is_cleaned(self):
         candidate = ROOT / "capabilities/candidates/AXM-CAP-WRITE-MARKDOWN.json"

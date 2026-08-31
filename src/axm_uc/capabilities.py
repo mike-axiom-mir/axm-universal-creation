@@ -328,6 +328,100 @@ def builtin_patch_project(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
         raise CapabilityError(str(exc), exc.details) from exc
 
 
+def builtin_local_creation_provider(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+    from .local_provider import LocalProviderError, operate_local_provider
+
+    operation = str(inputs.get("operation", "inspect")).strip().casefold()
+    if operation == "create":
+        target = _resolve_output_path(root, str(inputs.get("path", "")))
+        if _is_machine_body_path(root, target):
+            raise CapabilityError(
+                "local provider creation cannot rewrite the live machine body; provider output must enter an ordinary creation surface"
+            )
+    try:
+        return operate_local_provider(root, inputs)
+    except LocalProviderError as exc:
+        raise CapabilityError(str(exc), exc.details) from exc
+
+
+def builtin_host_evidence(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+    from .host_evidence import HostEvidenceError, operate_host_evidence
+
+    operation = str(inputs.get("operation", "inspect")).strip().casefold()
+    if operation == "bind":
+        target = _resolve_output_path(root, str(inputs.get("path", "")))
+        if _is_machine_body_path(root, target):
+            raise CapabilityError("creation host evidence binds to created project bodies, not the live machine body")
+    try:
+        return operate_host_evidence(root, inputs)
+    except HostEvidenceError as exc:
+        raise CapabilityError(str(exc), exc.details) from exc
+
+
+def builtin_write_mixed_project(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+    from .mixed_project import build_mixed_project
+
+    target = _resolve_output_path(root, str(inputs["path"]))
+    if _is_machine_body_path(root, target):
+        raise CapabilityError("mixed-media project creation cannot rewrite the live machine body")
+    if "checks" in inputs and not isinstance(inputs["checks"], list):
+        raise CapabilityError("mixed-project checks must be a list")
+    if "replace" in inputs and not isinstance(inputs["replace"], bool):
+        raise CapabilityError("mixed-project replace must be a boolean")
+    try:
+        result = build_mixed_project(
+            target,
+            text_files=inputs.get("text_files"),
+            binary_files=inputs.get("binary_files"),
+            project_type=str(inputs.get("project_type", "generic")),
+            checks=inputs.get("checks") if isinstance(inputs.get("checks"), list) else None,
+            replace=bool(inputs.get("replace", False)),
+            publish_mode=str(inputs.get("publish_mode", "validated")),
+        )
+        result["grammar_inventory"] = grammar_inventory(target)
+        return result
+    except ProjectError as exc:
+        raise CapabilityError(str(exc), exc.details) from exc
+
+
+def builtin_portable_creation_bundle(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+    from .portable_bundle import PortableBundleError, operate_portable_bundle
+
+    operation = str(inputs.get("operation", "inspect")).strip().casefold()
+    normalized = dict(inputs)
+    if "replace" in inputs and not isinstance(inputs["replace"], bool):
+        raise CapabilityError("portable bundle replace must be a boolean")
+    if "path" in inputs:
+        normalized["path"] = str(_resolve_output_path(root, str(inputs["path"])))
+    if operation == "pack":
+        source = _resolve_output_path(root, str(inputs.get("source", "")))
+        output = _resolve_output_path(root, str(inputs.get("path", "")))
+        if _is_machine_body_path(root, source) or _is_machine_body_path(root, output):
+            raise CapabilityError("portable bundle packing is limited to ordinary creation surfaces")
+        normalized["source"] = str(source)
+    if operation == "unpack":
+        target = _resolve_output_path(root, str(inputs.get("target", "")))
+        if _is_machine_body_path(root, target):
+            raise CapabilityError("portable bundle unpacking cannot rewrite the live machine body")
+        normalized["target"] = str(target)
+    try:
+        return operate_portable_bundle(normalized)
+    except PortableBundleError as exc:
+        raise CapabilityError(str(exc), exc.details) from exc
+
+
+def builtin_deterministic_state_machine(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+    del root
+    from .state_machine import StateMachineError, operate_state_machine
+
+    if "stop_on_hold" in inputs and not isinstance(inputs["stop_on_hold"], bool):
+        raise CapabilityError("state-machine stop_on_hold must be a boolean")
+    try:
+        return operate_state_machine(inputs)
+    except StateMachineError as exc:
+        raise CapabilityError(str(exc), exc.details) from exc
+
+
 BUILTINS: dict[str, Callable[[Path, dict[str, Any]], dict[str, Any]]] = {
     "builtin:write_text": builtin_write_text,
     "builtin:write_json": builtin_write_json,
@@ -346,6 +440,11 @@ BUILTINS: dict[str, Callable[[Path, dict[str, Any]], dict[str, Any]]] = {
     "builtin:gap_synthesis": builtin_synthesize_creation_gap,
     "builtin:verify_project": builtin_verify_project,
     "builtin:patch_project": builtin_patch_project,
+    "builtin:local_creation_provider": builtin_local_creation_provider,
+    "builtin:host_evidence": builtin_host_evidence,
+    "builtin:write_mixed_project": builtin_write_mixed_project,
+    "builtin:portable_creation_bundle": builtin_portable_creation_bundle,
+    "builtin:deterministic_state_machine": builtin_deterministic_state_machine,
 }
 
 
@@ -460,9 +559,25 @@ class CapabilityStore:
     def route(self, creation_kind: str) -> dict[str, Any] | None:
         return next((c for c in self.live() if creation_kind in c.get("handles", [])), None)
 
+    @staticmethod
+    def required_inputs(manifest: dict[str, Any], inputs: dict[str, Any]) -> list[str]:
+        contract = manifest.get("input_contract", {})
+        required = list(contract.get("required", []))
+        operation = inputs.get("operation")
+        by_operation = contract.get("required_by_operation", {})
+        if isinstance(operation, str) and isinstance(by_operation, dict):
+            conditional = by_operation.get(operation.strip().casefold(), [])
+            if isinstance(conditional, list):
+                required.extend(conditional)
+        return sorted({str(key) for key in required})
+
+    @staticmethod
+    def missing_required_inputs(manifest: dict[str, Any], inputs: dict[str, Any]) -> list[str]:
+        required = CapabilityStore.required_inputs(manifest, inputs)
+        return sorted(key for key in required if key not in inputs)
+
     def invoke(self, manifest: dict[str, Any], inputs: dict[str, Any], _seen: set[str] | None = None) -> dict[str, Any]:
-        required = manifest.get("input_contract", {}).get("required", [])
-        missing = [key for key in required if key not in inputs]
+        missing = self.missing_required_inputs(manifest, inputs)
         if missing:
             raise CapabilityError(f"missing required inputs: {', '.join(missing)}")
         impl = manifest.get("implementation", {})
@@ -472,6 +587,12 @@ class CapabilityStore:
             fn = BUILTINS.get(entry)
             if fn is None:
                 raise CapabilityError(f"unknown builtin entrypoint: {entry}")
+            return fn(self.root, inputs)
+        if kind in {"LOCAL_PROVIDER_BOUNDARY", "EXTERNAL_EVIDENCE_BOUNDARY"}:
+            entry = impl.get("entrypoint")
+            fn = BUILTINS.get(entry)
+            if fn is None:
+                raise CapabilityError(f"unknown boundary entrypoint: {entry}")
             return fn(self.root, inputs)
         if kind == "DETERMINISTIC_ALIAS":
             delegate_id = impl.get("delegate")
