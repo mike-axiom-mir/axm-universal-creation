@@ -1,0 +1,90 @@
+{
+  "id": "AXM-CAP-EVOLVE-MACHINE",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Carry one exact, already-tested creation-unit organ candidate into the continuing executable-organ body through an explicit internal root-fit decision, expose the adopted organ to normal composition, observe the resulting evolution state, and roll that exact adoption back during a one-day continuity window.",
+  "handles": [
+    "evolve-machine",
+    "adopt-organ",
+    "inspect-evolution",
+    "rollback-adoption"
+  ],
+  "input_contract": {
+    "required": [
+      "operation"
+    ],
+    "properties": {
+      "operation": "adopt-organ, inspect-evolution, or rollback-adoption",
+      "path": "adopt-organ only; detached spawned organ candidate directory",
+      "reason": "adopt-organ or rollback-adoption; concrete inspectable reason for the state transition",
+      "root_fit": "adopt-organ only; explicit current-machine fit decision for Truth, Agency, Continuity, and Wisdom Before Speed",
+      "adoption_id": "inspect-evolution optionally or rollback-adoption necessarily; exact adoption receipt identity"
+    }
+  },
+  "output_contract": {
+    "kind": "machine-evolution-state-transition",
+    "contains": [
+      "operation",
+      "truth_status",
+      "exact candidate and live-body digests when applicable",
+      "explicit transition state",
+      "one-day rollback boundary",
+      "inspectable adoption or rollback receipt"
+    ]
+  },
+  "dependencies": [
+    "AXM-CAP-SPAWN-CREATION-UNIT",
+    "AXM-CAP-INSPECT-EXECUTABLE-ORGANS"
+  ],
+  "relationships": [
+    "turns detached Forge evidence into a deliberate continuing-machine state transition instead of a permanent outside approval gate",
+    "re-runs candidate tests immediately before adoption and checks a separate current root-fit decision",
+    "installs and registers an adopted organ by placing its exact tested package in the live executable-organ library",
+    "promotes the adopted organ for normal interface-driven composition as a consequence of successful live-library registration",
+    "keeps installation, registration, promotion, merge, CANON, and permission changes distinguishable so later evolution can use those transitions without conflating them",
+    "retains an exact adoption receipt and one-day rollback capability for the newly installed organ"
+  ],
+  "anatomy_refs": [
+    {
+      "id": "AXM-05-STATE-DATA-O-006-state-machine",
+      "role": "implements",
+      "basis": "Self-evolution is represented as explicit inspectable state transitions rather than an implicit mutation flag."
+    },
+    {
+      "id": "AXM-20-TESTING-OBSERVABILITY-C-015-validation-report",
+      "role": "uses",
+      "basis": "Adoption reuses exact candidate test evidence and records the resulting live-body observation and rollback boundary."
+    }
+  ],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:evolve_machine",
+    "source": "src/axm_uc/evolution.py"
+  },
+  "limitations": [
+    "v0 adoption supports new executable-organ refs only; replacement and in-place upgrade semantics remain a later explicit transition",
+    "organ candidate tests currently prove executable-organ package structure, not emitted browser or runtime behavior",
+    "the one-day rollback removes the exact adopted organ only while its live bytes still match the adoption receipt; drift becomes HOLD rather than deleting unknown later change",
+    "merge, CANON change, and permission change are valid future evolution transitions but are not performed by the organ-adoption operation",
+    "there is no global instruction or score to grow continuously; evolution remains driven by concrete capability needs"
+  ],
+  "persistent_state": "successful adoptions persist the exact organ under executable-organs/ and immutable adoption/rollback receipts under evolution/adoptions/",
+  "root_fit": {
+    "truth": {
+      "fit": true,
+      "basis": "The capability records which exact transition occurred, preserves candidate/test/source digests, distinguishes evidence types, and HOLDs on drift or collision."
+    },
+    "agency": {
+      "fit": true,
+      "basis": "The running machine can make its own inspectable root-fit decision and evolve without requiring a permanent human or outside AI approval gate."
+    },
+    "continuity": {
+      "fit": true,
+      "basis": "Every successful organ adoption retains exact recovery source and a one-day rollback path, while rollback refuses to erase later drift silently."
+    },
+    "wisdom-before-speed": {
+      "fit": true,
+      "basis": "Candidate testing, exact source binding, current root-fit, live-library reload, and rollback evidence occur around the state transition rather than being skipped for faster growth."
+    }
+  }
+}
