@@ -234,9 +234,11 @@ def _improve_contrast(thought: dict[str, Any], alternatives: Any, palette: Any, 
         scored.sort(key=lambda row: (-row[0], row[1]))
         best_ratio, best = scored[0]
         color["fill"] = best
-        if color.get("stroke") == obj.get("skin", {}).get("colors", [color.get("stroke")])[0]:
-            color["stroke"] = best
         skin = obj.get("skin")
+        skin_colors = skin.get("colors") if isinstance(skin, dict) else None
+        first_skin_color = skin_colors[0] if isinstance(skin_colors, list) and skin_colors else None
+        if first_skin_color is not None and color.get("stroke") == first_skin_color:
+            color["stroke"] = best
         if isinstance(skin, dict) and skin.get("kind") == "solid":
             skin["colors"] = [best]
         changes.append({
