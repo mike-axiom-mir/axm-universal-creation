@@ -47,7 +47,7 @@
       "basis": "The simulated visual thought keeps shape, surface, color, light, shade and skin parameters as an inspectable compositional graph before rendering."
     },
     {
-      "id": "AXM-05-STATE-DATA-O-006-state-machine",
+      "id": "AXM-03-TIME-STATE-EVENT-C-004-state-machine",
       "role": "implements",
       "basis": "Simulation advances through explicit state transitions and terminates in a typed NO_KNOWN_IMPROVEMENTS or HOLD state."
     }
