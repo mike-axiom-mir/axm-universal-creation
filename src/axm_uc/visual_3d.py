@@ -176,9 +176,19 @@ def compile_3d_request(raw: Any) -> dict[str, Any]:
     quality = str(raw.get("quality", "hero")).strip().casefold()
     if quality not in {"hero", "production"}:
         raise ValueError("quality must be hero or production")
+    loadout = str(raw.get("loadout", "reference")).strip().casefold()
+    if loadout not in {"reference", "equipped"}:
+        raise ValueError("loadout must be reference or equipped")
     context_key = str(raw.get("context_key") or f"3d/{asset_id}/{quality}").strip()
     if not context_key:
         raise ValueError("context_key must be non-empty")
+    # Accept both the compact public input and this function's normalized
+    # output. Iteration commonly feeds forge-request.json back into the machine,
+    # and that round trip must preserve proof quality exactly.
+    render = raw.get("render") if isinstance(raw.get("render"), dict) else {}
+    render_resolution = int(raw.get("render_resolution", render.get("resolution", 768)))
+    angles_degrees = list(raw.get("angles_degrees", render.get("angles_degrees", [32, 122, 212, 302])))
+    transparent = bool(raw.get("transparent", render.get("transparent", False)))
     return {
         "schema": FORGE_REQUEST_SCHEMA,
         "asset_id": asset_id,
@@ -188,12 +198,13 @@ def compile_3d_request(raw: Any) -> dict[str, Any]:
         "palette": list(profile["palette"]),
         "seed": seed,
         "quality": quality,
+        "loadout": loadout,
         "context_key": context_key,
         "lod_ratios": dict(LOD_TARGETS),
         "render": {
-            "resolution": int(raw.get("render_resolution", 768)),
-            "angles_degrees": list(raw.get("angles_degrees", [32, 122, 212, 302])),
-            "transparent": bool(raw.get("transparent", False)),
+            "resolution": render_resolution,
+            "angles_degrees": angles_degrees,
+            "transparent": transparent,
         },
         "requirements": {
             "meters_per_unit": 1.0,

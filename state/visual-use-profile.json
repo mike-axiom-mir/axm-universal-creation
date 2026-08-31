@@ -3,28 +3,28 @@
     "3d/axiom-bastion-frame/hero": {
       "criteria": {
         "aaa-form-hierarchy": {
-          "fail": 5,
+          "fail": 8,
           "pass": 0,
           "unknown": 0
         },
         "faction-silhouette": {
           "fail": 0,
-          "pass": 5,
+          "pass": 8,
           "unknown": 0
         },
         "functional-topology-all-angles": {
           "fail": 0,
-          "pass": 4,
+          "pass": 7,
           "unknown": 1
         },
         "material-authenticity": {
           "fail": 2,
-          "pass": 3,
+          "pass": 6,
           "unknown": 0
         },
         "non-toy-proportions": {
           "fail": 5,
-          "pass": 0,
+          "pass": 3,
           "unknown": 0
         }
       },
@@ -33,7 +33,10 @@
         "2c26df32c816991b9938a782dd2c5080674bdb37e46228cbdce749b2dc73384e",
         "1fc62229aa4ef2aba7262182cd15ec59969d005fb094f701f5f2561b937d9d6d",
         "48b44cfb977dc03fa8e3df46f05846c08101beea1b11089bfed0ee9209d4b034",
-        "d6dd3d680b7b937810217cd7ee8cc1d032816c1a32b962aee3349b89c94ca6d0"
+        "d6dd3d680b7b937810217cd7ee8cc1d032816c1a32b962aee3349b89c94ca6d0",
+        "dfa393c864757210fc9696315ba910d60c18d048206c2cfaa01b41328d4f43bc",
+        "c82af80f72488dc0b70a1a67f3833fe456eeb31f27dc55f8e0f24551c0d42374",
+        "3edd32655108c887c33b5a6667e9c90b220c606c23cd4a187b1fc880b9d6430b"
       ],
       "lessons": {
         "author-rear-and-weapon-secondary-forms": {
@@ -107,6 +110,24 @@
           },
           "status": "ACTIVE_EXACT_CONTEXT"
         },
+        "replace-flat-chest-with-nested-reactor-cage": {
+          "confirmations": 1,
+          "last_evidence": "The reference-loadout turntable has stronger shoulders, arms, hands, and negative space, but the front chest remains two flat rectangular plates around a thin core while rear conduits cross broad uniform modules.",
+          "last_evidence_digest": "dfa393c864757210fc9696315ba910d60c18d048206c2cfaa01b41328d4f43bc",
+          "patch": {
+            "avoid_add": [
+              "flat split chest facade",
+              "unterminated rear tubing over uniform modules"
+            ],
+            "constraints_add": [
+              "wrap the thorax in offset curved load shells around a deep protected reactor and terminate every rear conduit in visible service hardware"
+            ],
+            "criteria_add": [
+              "chest and rear reactor read as nested load-bearing volumes from front side and rear"
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        },
         "replace-primitive-masses-with-interlocking-shells": {
           "confirmations": 1,
           "last_evidence": "The silhouette reads, but the torso, shoulders, limbs, weapon, and shield still expose large primitive-looking masses.",
@@ -121,6 +142,24 @@
             ],
             "criteria_add": [
               "large-medium-small authored form hierarchy"
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        },
+        "replace-repeated-rectilinear-anatomy-with-articulated-cowls": {
+          "confirmations": 2,
+          "last_evidence": "The v24 reference turntable has a protected reactor and valid rear service connections, but repeated rectangular armor tiles still define the chest, limbs, pelvis, and back instead of secondary cowls conforming to articulated primary masses.",
+          "last_evidence_digest": "3edd32655108c887c33b5a6667e9c90b220c606c23cd4a187b1fc880b9d6430b",
+          "patch": {
+            "avoid_add": [
+              "repeated rectangular tiles defining every anatomical mass",
+              "flat luminous reactor insert"
+            ],
+            "constraints_add": [
+              "make tapered articulated cowls carry each primary limb and torso silhouette while tiles become sparse local secondary detail around a recessed reactor lens"
+            ],
+            "criteria_add": [
+              "chest limbs pelvis and back read as distinct articulated primary volumes before surface tiles are visible"
             ]
           },
           "status": "ACTIVE_EXACT_CONTEXT"
@@ -200,33 +239,33 @@
         }
       },
       "technical": {},
-      "use_count": 5
+      "use_count": 8
     },
     "3d/mir-sanctuary-keeper/hero": {
       "criteria": {
         "aaa-form-hierarchy": {
-          "fail": 5,
+          "fail": 8,
           "pass": 0,
           "unknown": 0
         },
         "faction-silhouette": {
           "fail": 1,
-          "pass": 4,
+          "pass": 7,
           "unknown": 0
         },
         "functional-topology-all-angles": {
-          "fail": 0,
-          "pass": 5,
+          "fail": 1,
+          "pass": 7,
           "unknown": 0
         },
         "material-authenticity": {
           "fail": 3,
-          "pass": 2,
+          "pass": 5,
           "unknown": 0
         },
         "non-toy-proportions": {
           "fail": 2,
-          "pass": 3,
+          "pass": 6,
           "unknown": 0
         }
       },
@@ -235,7 +274,10 @@
         "9ce1214fd1989834b06b4c07f50e971a09684e05591fb276713ea48a32cbcb96",
         "c1882cf8f0778684534c60820f123e7e908d2d32fb77ccd3d676fe13d8336011",
         "1bf10077574e68e133c934f986e96dea52bf46b8d2df2317caf72ed10f22d13e",
-        "d14c79bd1de363fe63fac873e9effd419bad5b651e7e87db65fc0cfd7a642cd9"
+        "d14c79bd1de363fe63fac873e9effd419bad5b651e7e87db65fc0cfd7a642cd9",
+        "7531e483a15cde0a7c1e2726c34d06d970d527406fcfacf2ad6cb7d6df41e340",
+        "9529ff2d8a8a6d990a443f01e33a2a656b2ecbc3d9f362042bec04f6ea59d63f",
+        "e9c6682f957fa9f5c460fbdc43f7622e796a17371b12eea4535b438e6572d75f"
       ],
       "lessons": {
         "aged-material-pass-needs-deeper-petal-sculpt": {
@@ -251,6 +293,43 @@
             ],
             "criteria_add": [
               "petal armor carries distinct crown, root, inset, and chipped-edge depths"
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        },
+        "build-continuous-anatomy-before-petal-ornament": {
+          "confirmations": 1,
+          "last_evidence": "The four-angle reference proof remains a tube mannequin carrying repeated plate clusters; oversized shoulder petals and a disconnected halo overpower the thin forearms, shins, pelvis, and torso roots.",
+          "last_evidence_digest": "7531e483a15cde0a7c1e2726c34d06d970d527406fcfacf2ad6cb7d6df41e340",
+          "patch": {
+            "avoid_add": [
+              "tube mannequin anatomy",
+              "oversized ornamental shoulder petals",
+              "unsupported halo arc"
+            ],
+            "constraints_add": [
+              "build continuous nested torso pelvis forearm shin and shoulder shells before any ornament and connect a smaller halo through visible load braces"
+            ],
+            "criteria_add": [
+              "armor shells create a continuous sacred-machine anatomy and every halo segment has a visible structural mount"
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        },
+        "close-v-shaped-torso-and-build-armored-hooves": {
+          "confirmations": 2,
+          "last_evidence": "The v12 four-angle proof now has continuous faction-shaped limb roots and supported halo braces, but the upper torso remains a broad pair of repeated petals over an open waist and the feet still read as thin blade toes on black rails.",
+          "last_evidence_digest": "e9c6682f957fa9f5c460fbdc43f7622e796a17371b12eea4535b438e6572d75f",
+          "patch": {
+            "avoid_add": [
+              "two oversized chest petals dominating the torso",
+              "thin blade toes mounted on visible rails"
+            ],
+            "constraints_add": [
+              "close the torso with a nested descending V-shell stack and build compact armored hoof bodies around articulated toes heels and ankles"
+            ],
+            "criteria_add": [
+              "torso flows continuously into pelvis and planted armored feet without presentation-stand silhouettes"
             ]
           },
           "status": "ACTIVE_EXACT_CONTEXT"
@@ -400,7 +479,7 @@
         }
       },
       "technical": {},
-      "use_count": 5
+      "use_count": 8
     }
   },
   "schema": "axm.visual-use-profile/v0.1"

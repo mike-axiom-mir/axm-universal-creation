@@ -50,9 +50,22 @@ class Visual3DForgeTests(unittest.TestCase):
         self.assertEqual(request["lod_ratios"], {"lod0": 1.0, "lod1": .48, "lod2": .18})
         self.assertTrue(request["requirements"]["separate_collision_export"])
         self.assertEqual(request["context_key"], "3d/axiom-bastion-frame/hero")
+        self.assertEqual(request["loadout"], "reference")
         self.assertTrue(request["requirements"]["artifact_bound_visual_acceptance"])
         with self.assertRaises(ValueError):
             compile_3d_request({"asset_id": "invented-asset"})
+        with self.assertRaises(ValueError):
+            compile_3d_request({"asset_id": "axiom-bastion-frame", "loadout": "invented"})
+
+    def test_normalized_request_round_trip_preserves_render_quality(self):
+        first = compile_3d_request({
+            "asset_id": "axiom-bastion-frame",
+            "render_resolution": 1024,
+            "angles_degrees": [0, 90, 180, 270],
+            "transparent": True,
+        })
+        second = compile_3d_request(first)
+        self.assertEqual(second["render"], first["render"])
 
     def test_inspector_decodes_real_glb_structure_and_triangles(self):
         with tempfile.TemporaryDirectory() as temporary:

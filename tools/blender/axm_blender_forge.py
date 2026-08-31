@@ -955,24 +955,39 @@ def add_axiom_hero_v4(objects: list[bpy.types.Object], mats: dict[str, bpy.types
         objects.append(wedge(f"AX4_AB_SHELL_{level}", (0, -.38, z), (width * .76, .10, .17), gm,
                              front_scale=(.56, .56), bevel=.016))
 
-    objects.append(tapered_chassis("AX4_TORSO_FRAME", (0, .03, 4.08), (2.48, .92, 1.34), dark,
-                                   lower_scale=.67, front_scale=.76, rotation=(0, 0, math.radians(-1.5)), bevel=.058))
+    # A compact central thorax plus separated shoulder yokes replaces the old
+    # single deep cuboid. Side and rear views now expose negative space and load
+    # paths instead of one box defining the complete upper body.
+    objects.append(sculpted_shell("AX4_TORSO_CORE", (0, .02, 4.08), (1.38, .70, 1.18), dark,
+                                  front_scale=(.54, .68), rotation=(0, 0, math.radians(-1.5)), bevel=.052))
+    objects.append(beam("AX4_TORSO_SPINE", (0, .34, 3.56), (0, .38, 4.66), .095, gm, vertices=24))
     for side in (-1, 1):
-        objects.append(sculpted_shell(f"AX4_CHEST_LOAD_{side}", (side * .58, -.40, 4.05), (1.08, .42, 1.08), gm,
-                             front_scale=(.55, .67), rotation=(math.radians(3), side * math.radians(7), side * math.radians(4)), bevel=.046))
-        objects.append(sculpted_shell(f"AX4_CHEST_ARMOR_{side}", (side * .61, -.67, 4.07), (.82, .13, .76), pale,
-                             front_scale=(.48, .58), rotation=(math.radians(3), side * math.radians(7), side * math.radians(4)), bevel=.028))
-        objects.append(wedge(f"AX4_COLLAR_{side}", (side * .65, -.12, 4.78), (1.10, .66, .30), gm,
+        objects.append(sculpted_shell(f"AX4_SHOULDER_YOKE_{side}", (side * .91, .01, 4.34), (.76, .68, .76), dark,
+                                     front_scale=(.48, .62), rotation=(0, side * math.radians(8), side * math.radians(5)), bevel=.040))
+        objects.append(beam(f"AX4_YOKE_BRACE_{side}", (side * .42, .18, 4.30),
+                            (side * 1.30, .16, 4.43), .085, gm, vertices=20))
+        objects.append(sculpted_shell(f"AX4_CHEST_LOAD_{side}", (side * .55, -.28, 4.07), (1.02, .62, 1.10), gm,
+                             front_scale=(.52, .66), rotation=(math.radians(3), side * math.radians(11), side * math.radians(5)), bevel=.052))
+        objects.append(sculpted_shell(f"AX4_CHEST_ARMOR_{side}", (side * .62, -.64, 4.08), (.82, .24, .78), pale,
+                             front_scale=(.46, .56), rotation=(math.radians(3), side * math.radians(13), side * math.radians(5)), bevel=.034))
+        objects.append(sculpted_shell(f"AX4_CHEST_INNER_{side}", (side * .27, -.54, 4.03), (.38, .30, .94), dark,
+                             front_scale=(.42, .60), rotation=(math.radians(2), side * math.radians(16), side * math.radians(3)), bevel=.026))
+        objects.append(wedge(f"AX4_COLLAR_{side}", (side * .61, -.10, 4.75), (.94, .58, .28), gm,
                              front_scale=(.54, .54), rotation=(0, side * math.radians(5), side * math.radians(6)), bevel=.032))
-        objects.append(wedge(f"AX4_FLANK_SHELL_{side}", (side * 1.18, .01, 3.98), (.34, .76, .88), dark,
+        objects.append(wedge(f"AX4_FLANK_SHELL_{side}", (side * 1.18, .01, 3.98), (.28, .62, .78), dark,
                              front_scale=(.45, .60), rotation=(0, side * math.radians(8), 0), bevel=.030))
         for vent in range(4):
             objects.append(box(f"AX4_FLANK_VENT_{side}_{vent}", (side * 1.24, -.42, 3.72 + vent * .18),
                                (.10, .035, .08), amber if vent == 0 else dark, bevel=.007))
-    objects.append(wedge("AX4_REACTOR_FRAME", (0, -.70, 4.03), (.56, .16, .88), gm,
-                         front_scale=(.48, .60), bevel=.022))
-    objects.append(wedge("AX4_REACTOR_CORE", (0, -.80, 4.03), (.34, .07, .62), cyan,
-                         front_scale=(.42, .54), bevel=.014))
+    for side in (-1, 1):
+        objects.append(beam(f"AX4_REACTOR_CAGE_UPPER_{side}", (side * .13, -.78, 4.34),
+                            (side * .46, -.68, 4.55), .042, gm, vertices=16))
+        objects.append(beam(f"AX4_REACTOR_CAGE_LOWER_{side}", (side * .13, -.78, 3.72),
+                            (side * .48, -.68, 3.57), .042, gm, vertices=16))
+    objects.append(sculpted_shell("AX4_REACTOR_FRAME", (0, -.72, 4.03), (.62, .30, .94), gm,
+                                  front_scale=(.44, .58), bevel=.028))
+    objects.append(sculpted_shell("AX4_REACTOR_CORE", (0, -.91, 4.03), (.34, .10, .64), cyan,
+                                  front_scale=(.38, .50), bevel=.016))
 
     # Compact sensor head: one guarded visor avoids the v7 googly-eye read.
     objects.append(cylinder("AX4_NECK", (0, .00, 4.93), .25, .28, dark, vertices=28, bevel=.02))
@@ -992,6 +1007,9 @@ def add_axiom_hero_v4(objects: list[bpy.types.Object], mats: dict[str, bpy.types
         objects.append(beam(f"AX4_{p}_CLAVICLE", (side * 1.00, .02, 4.42), shoulder, .15, dark, vertices=20))
         hinge(f"AX4_{p}_SHOULDER", shoulder, .58, .25)
         hinge(f"AX4_{p}_ELBOW", elbow, .58, .21)
+        objects.append(sculpted_shell(f"AX4_{p}_SHOULDER_COWL", (side * 1.66, -.08, 4.43),
+                                     (.88, .78, .76), gm, front_scale=(.48, .62),
+                                     rotation=(0, side * math.radians(10), side * math.radians(7)), bevel=.038))
         for layer, (ox, oy, oz, sx) in enumerate(((.10, .00, .12, 1.0), (.24, .05, .02, .78), (.36, .10, -.08, .58))):
             objects.append(sculpted_shell(f"AX4_{p}_PAULDRON_{layer}",
                                  (side * (1.52 + ox), -.22 + oy, 4.48 + oz),
@@ -1006,9 +1024,15 @@ def add_axiom_hero_v4(objects: list[bpy.types.Object], mats: dict[str, bpy.types
         ], .025, cyan))
         objects.append(beam(f"AX4_{p}_UPPER_ARM_SPINE", shoulder, elbow, .12, dark, vertices=20))
         objects.append(beam(f"AX4_{p}_FOREARM_SPINE", elbow, wrist, .11, dark, vertices=20))
-        limb_shell(f"AX4_{p}_BICEP", (side * 1.74, -.01, 3.93), (.62, .62, .68), side)
-        limb_shell(f"AX4_{p}_FOREARM", (side * 1.80, -.06, 3.12), (.60, .62, .64), side)
-        objects.append(wedge(f"AX4_{p}_HAND", wrist, (.50, .48, .32), dark, front_scale=(.46, .52), bevel=.025))
+        limb_shell(f"AX4_{p}_BICEP", (side * 1.74, -.01, 3.93), (.72, .70, .84), side)
+        limb_shell(f"AX4_{p}_FOREARM", (side * 1.80, -.06, 3.08), (.72, .72, .84), side)
+        objects.append(sculpted_shell(f"AX4_{p}_PALM", wrist, (.52, .46, .38), dark,
+                                     front_scale=(.48, .56), bevel=.026))
+        for finger in range(3):
+            fx = side * (1.65 + finger * .09)
+            objects.append(beam(f"AX4_{p}_FINGER_{finger}", (fx, -.21, 2.70),
+                                (fx + side * .025, -.27, 2.43 - finger * .025),
+                                .035, pale if finger == 1 else gm, vertices=14))
 
     # Shoulder-mounted railgun: frame, separated rails, barrel and open coil cage.
     gx, gz = -1.52, 4.58
@@ -1068,23 +1092,27 @@ def add_axiom_hero_v4(objects: list[bpy.types.Object], mats: dict[str, bpy.types
         objects.append(box(f"AX4_SHIELD_EMITTER_{z}", (sx, sy - .08, z), (.22, .08, .10), amber, bevel=.012))
     objects.append(beam("AX4_SHIELD_MOUNT", (1.57, -.04, 3.13), (sx - .30, sy + .10, sz), .09, dark, vertices=20))
 
-    # Rear power plant is a layered assembly, not a smooth backpack facade.
+    # Rear power plant is split around a visible spine and leaves air between
+    # the thorax, service modules and shoulder yokes.
+    objects.append(sculpted_shell("AX4_BACK_REACTOR_CAGE", (0, .48, 4.02), (.46, .28, .82), dark,
+                                  front_scale=(.48, .62), rotation=(math.pi, 0, 0), bevel=.026))
+    objects.append(beam("AX4_BACK_REACTOR_SPINE", (0, .64, 3.62), (0, .68, 4.48), .070, pale, vertices=18))
     for side in (-1, 1):
-        objects.append(wedge(f"AX4_BACK_FRAME_{side}", (side * .62, .57, 4.08), (.62, .38, .96), dark,
+        objects.append(wedge(f"AX4_BACK_FRAME_{side}", (side * .69, .52, 4.10), (.48, .28, .76), dark,
                              front_scale=(.48, .60), bevel=.030))
-        objects.append(wedge(f"AX4_BACK_SHELL_{side}", (side * .62, .79, 4.13), (.46, .16, .72), gm,
-                             front_scale=(.42, .54), bevel=.022))
-        objects.append(cylinder(f"AX4_THRUSTER_{side}", (side * .62, .91, 3.88), .16, .30, dark,
+        objects.append(sculpted_shell(f"AX4_BACK_SHELL_{side}", (side * .69, .72, 4.13), (.44, .22, .64), pale,
+                                      front_scale=(.40, .52), rotation=(math.pi, side * math.radians(7), 0), bevel=.026))
+        objects.append(cylinder(f"AX4_THRUSTER_{side}", (side * .69, .87, 3.91), .15, .26, dark,
                                 rotation=(math.pi / 2, 0, 0), vertices=24, bevel=.018))
-        objects.append(torus(f"AX4_THRUSTER_GLOW_{side}", (side * .62, 1.07, 3.88), .14, .028, cyan,
+        objects.append(torus(f"AX4_THRUSTER_GLOW_{side}", (side * .69, 1.01, 3.91), .13, .026, cyan,
                              rotation=(math.pi / 2, 0, 0), major_segments=24, minor_segments=8))
         for vent in range(4):
             objects.append(box(f"AX4_BACK_VENT_{side}_{vent}", (side * (.43 + vent * .12), .91, 4.48),
                                (.07, .14, .34), pale if vent == 0 else dark, bevel=.008))
-        objects.append(cable(f"AX4_POWER_CABLE_{side}", [(side * .42, .48, 4.46),
-                                                          (side * .92, .66, 4.08),
-                                                          (side * 1.28, .38, 3.52)], .032, dark))
-        for terminal, position in enumerate(((side * .42, .48, 4.46), (side * 1.28, .38, 3.52))):
+        objects.append(cable(f"AX4_POWER_CABLE_{side}", [(side * .42, .55, 4.43),
+                                                          (side * .72, .72, 4.16),
+                                                          (side * .88, .62, 3.88)], .018, dark))
+        for terminal, position in enumerate(((side * .42, .55, 4.43), (side * .88, .62, 3.88))):
             objects.append(cylinder(f"AX4_POWER_TERMINAL_{side}_{terminal}", position, .065, .08, gm,
                                     rotation=(math.pi / 2, 0, 0), vertices=16, bevel=.010))
         for fin in range(5):
@@ -1093,9 +1121,12 @@ def add_axiom_hero_v4(objects: list[bpy.types.Object], mats: dict[str, bpy.types
                                (.055, .18, .52), pale if fin == 2 else gm,
                                rotation=(side * math.radians(-3), 0, side * math.radians(2)), bevel=.007))
         objects.append(cable(f"AX4_COOLANT_LOOP_{side}", [
-            (side * .34, .72, 4.62), (side * .76, 1.04, 4.50),
-            (side * .92, 1.02, 4.00), (side * .62, .74, 3.75),
-        ], .022, cyan))
+            (side * .38, .78, 4.49), (side * .69, .96, 4.40),
+            (side * .78, .94, 4.08), (side * .58, .78, 3.91),
+        ], .012, cyan))
+        for terminal, position in enumerate(((side * .38, .78, 4.49), (side * .58, .78, 3.91))):
+            objects.append(cylinder(f"AX4_COOLANT_TERMINAL_{side}_{terminal}", position, .038, .055, gm,
+                                    rotation=(math.pi / 2, 0, 0), vertices=14, bevel=.007))
 
     # Small-form cadence along chest and limbs.
     for row in range(4):
@@ -1199,12 +1230,16 @@ def add_mir_hero_v3(objects: list[bpy.types.Object], mats: dict[str, bpy.types.M
         x, y, z = center
         objects.append(beam(f"{name}_TENDON", (x, y + .10, z - length * .48),
                             (x, y + .06, z + length * .48), width * .20, dark, vertices=24))
+        objects.append(sacred_blade_plate(f"{name}_LOAD_SHELL", (x, y + .03, z),
+                                          (width * .84, .42, length * .96), dark,
+                                          rotation=(0, side * math.radians(6), side * math.radians(3)),
+                                          sweep=side * .12, bevel=.026))
         objects.append(sacred_blade_plate(f"{name}_FRONT_PETAL", (x, y - .18, z),
-                                          (width, .13, length * 1.10), ivory,
+                                          (width, .22, length * 1.08), ivory,
                                           rotation=(math.radians(3), side * math.radians(5), side * math.radians(4)),
                                           sweep=side * .18, bevel=.022))
-        objects.append(sacred_blade_plate(f"{name}_OUTER_PETAL", (x + side * width * .34, y + .01, z + .06),
-                                          (width * .52, .25, length * .94), rose,
+        objects.append(sacred_blade_plate(f"{name}_OUTER_PETAL", (x + side * width * .30, y + .00, z + .06),
+                                          (width * .46, .32, length * .88), rose,
                                           rotation=(0, side * math.radians(17), side * math.radians(8)),
                                           sweep=side * .32, bevel=.018))
         objects.append(sacred_blade_plate(f"{name}_INNER_PETAL", (x - side * width * .22, y - .12, z - .08),
@@ -1259,7 +1294,7 @@ def add_mir_hero_v3(objects: list[bpy.types.Object], mats: dict[str, bpy.types.M
                                 brass if channel < 0 else rose, vertices=14))
 
     # Pelvis, narrow waist and layered chest altar.
-    objects.append(sculpted_shell("M2_PELVIS_CORE", (0, .03, 2.58), (.54, .46, .52), dark,
+    objects.append(sculpted_shell("M2_PELVIS_CORE", (0, .03, 2.58), (.70, .56, .58), dark,
                                   front_scale=(.42, .58), bevel=.026))
     for side in (-1, 1):
         objects.append(beam(f"M2_PELVIS_YOKE_{side}", (0, .02, 2.64),
@@ -1274,14 +1309,23 @@ def add_mir_hero_v3(objects: list[bpy.types.Object], mats: dict[str, bpy.types.M
         objects.append(sacred_blade_plate(f"M2_HIP_INLAY_{side}", (side * .47, -.34, 2.53), (.26, .055, .54), rose,
                                           rotation=(0, side * math.radians(8), side * math.radians(8)),
                                           sweep=side * .18, bevel=.011))
-        objects.append(sacred_blade_plate(f"M2_REAR_HIP_PETAL_{side}", (side * .47, .27, 2.58), (.54, .12, .78), rose,
+        objects.append(sacred_blade_plate(f"M2_REAR_HIP_PETAL_{side}", (side * .45, .31, 2.58), (.60, .24, .84), ivory,
                                           rotation=(math.pi, side * math.radians(11), side * math.radians(8)),
                                           sweep=-side * .22, bevel=.017))
     objects.append(sacred_blade_plate("M2_PELVIS_KEEL", (0, -.34, 2.39), (.42, .12, .88), ivory,
                                       rotation=(0, 0, math.pi), sweep=.05, bevel=.018))
     objects.append(cylinder("M2_WAIST_CORE", (0, .02, 2.95), .42, .28, dark, vertices=48, bevel=.025))
-    objects.append(torus("M2_WAIST_HALO", (0, .02, 2.95), .48, .055, brass, major_segments=56, minor_segments=12))
+    objects.append(torus("M2_WAIST_HALO", (0, .02, 2.95), .42, .038, brass, major_segments=48, minor_segments=10))
     objects.append(beam("M2_TORSO_CORE_SPINE", (0, .08, 3.16), (0, .08, 4.48), .105, dark, vertices=28))
+    for side in (-1, 1):
+        objects.append(sacred_blade_plate(f"M2_TORSO_LOAD_SHELL_{side}", (side * .33, .02, 3.82),
+                                          (.64, .62, 1.42), dark,
+                                          rotation=(0, side * math.radians(12), side * math.radians(4)),
+                                          sweep=side * .18, bevel=.034))
+        objects.append(sacred_blade_plate(f"M2_TORSO_ROOT_ARMOR_{side}", (side * .38, -.31, 3.86),
+                                          (.50, .24, 1.18), ivory,
+                                          rotation=(math.radians(2), side * math.radians(15), side * math.radians(7)),
+                                          sweep=side * .24, bevel=.022))
     for station, z in enumerate((3.34, 3.70, 4.06, 4.38)):
         objects.append(torus(f"M2_TORSO_SPINE_RING_{station}", (0, .08, z),
                              .16 - station * .012, .022, brass,
@@ -1294,16 +1338,30 @@ def add_mir_hero_v3(objects: list[bpy.types.Object], mats: dict[str, bpy.types.M
                             (side * .83, .04, 4.34), .072, dark, vertices=20))
         objects.append(beam(f"M2_TORSO_YOKE_INLAY_{side}", (side * .06, -.08, 3.24),
                             (side * .75, -.09, 4.28), .026, brass, vertices=16))
+        # Volumetric rib arcs run from the front sternum around the side to the
+        # rear spine. Major petals attach to the outer sockets below instead of
+        # floating as parallel plates around a tubular centerline.
+        for rib, z in enumerate((3.38, 3.68, 3.98, 4.28)):
+            reach = .48 + rib * .07
+            objects.append(cable(f"M2_RIB_CAGE_{side}_{rib}", [
+                (side * .08, -.25, z),
+                (side * reach, -.14, z + .09),
+                (side * (reach + .10), .16, z + .06),
+                (side * .26, .42, z - .02),
+            ], .050 - rib * .004, dark if rib % 2 else brass))
+            objects.append(cylinder(f"M2_RIB_SOCKET_{side}_{rib}",
+                                    (side * (reach + .09), -.02, z + .07), .070, .12,
+                                    brass, rotation=(math.pi / 2, 0, 0), vertices=18, bevel=.010))
     # A visible load-bearing spine and rib roots keep the petals from reading as
     # stickers on a box. The collar blades carry the shoulder mass instead.
     objects.append(beam("M2_FRONT_SPINE", (0, -.28, 3.10), (0, -.31, 4.52), .075, brass, vertices=24))
     for side in (-1, 1):
         objects.append(sacred_blade_plate(f"M2_COLLAR_BLADE_{side}",
-                                          (side * .68, -.20, 4.25), (.92, .22, 1.16), ivory,
-                                          rotation=(math.radians(-3), side * math.radians(22), side * math.radians(26)),
-                                          sweep=side * .42, bevel=.024))
+                                          (side * .54, -.18, 4.27), (.68, .28, .94), ivory,
+                                          rotation=(math.radians(-3), side * math.radians(19), side * math.radians(19)),
+                                          sweep=side * .34, bevel=.024))
         objects.append(sacred_blade_plate(f"M2_COLLAR_INLAY_{side}",
-                                          (side * .55, -.34, 4.18), (.38, .08, .82), rose,
+                                          (side * .46, -.36, 4.17), (.30, .09, .66), rose,
                                           rotation=(0, side * math.radians(15), side * math.radians(18)),
                                           sweep=side * .24, bevel=.014))
     for layer, z in enumerate((3.12, 3.35, 3.58)):
@@ -1314,13 +1372,13 @@ def add_mir_hero_v3(objects: list[bpy.types.Object], mats: dict[str, bpy.types.M
 
     # Six overlapping chest petals define the sacred-machine silhouette.
     chest_specs = [
-        (-.52, 4.10, -.16, .78, 1.18), (.52, 4.10, .16, .78, 1.18),
-        (-.30, 3.72, -.08, .62, 1.02), (.30, 3.72, .08, .62, 1.02),
-        (-.17, 4.42, -.11, .48, .86), (.17, 4.42, .11, .48, .86),
+        (-.50, 4.10, -.20, .72, 1.12, .31), (.50, 4.10, .20, .72, 1.12, .31),
+        (-.29, 3.72, -.12, .58, .96, .26), (.29, 3.72, .12, .58, .96, .26),
+        (-.16, 4.42, -.15, .44, .82, .22), (.16, 4.42, .15, .44, .82, .22),
     ]
-    for index, (x, z, tilt, width, height) in enumerate(chest_specs):
-        objects.append(sacred_blade_plate(f"M2_CHEST_PETAL_{index}", (x, -.34 - index * .008, z),
-                                          (width, .15, height), ivory if index < 4 else rose,
+    for index, (x, z, tilt, width, height, depth) in enumerate(chest_specs):
+        objects.append(sacred_blade_plate(f"M2_CHEST_PETAL_{index}", (x, -.27 - index * .010, z),
+                                          (width, depth, height), ivory if index < 4 else rose,
                                           rotation=(math.radians(2), tilt, math.radians(x * 10)),
                                           sweep=(-.26 if x < 0 else .26), bevel=.024))
     objects.append(sacred_blade_plate("M2_STERNUM_FRAME", (0, -.48, 3.90), (.42, .12, 1.22), brass,
@@ -1370,18 +1428,18 @@ def add_mir_hero_v3(objects: list[bpy.types.Object], mats: dict[str, bpy.types.M
 
     # Elongated head and articulated crown, no oval mascot shell.
     objects.append(cylinder("M2_NECK", (0, .02, 4.71), .16, .34, dark, vertices=32, bevel=.018))
-    objects.append(sculpted_shell("M2_HEAD_FRAME", (0, -.01, 5.07), (.46, .42, .86), dark,
+    objects.append(sculpted_shell("M2_HEAD_FRAME", (0, -.01, 5.04), (.44, .40, .70), dark,
                                   front_scale=(.34, .52), bevel=.026))
-    objects.append(sacred_blade_plate("M2_FACE_PLATE", (0, -.28, 5.05), (.40, .11, .98), ivory,
+    objects.append(sacred_blade_plate("M2_FACE_PLATE", (0, -.27, 5.04), (.38, .16, .80), ivory,
                                       rotation=(math.radians(2), 0, 0), sweep=.06, bevel=.018))
-    objects.append(sacred_blade_plate("M2_FACE_INLAY", (0, -.36, 5.04), (.15, .035, .57), magenta,
+    objects.append(sacred_blade_plate("M2_FACE_INLAY", (0, -.36, 5.04), (.14, .040, .48), magenta,
                                       sweep=.04, bevel=.009))
     objects.append(box("M2_FACE_SLIT", (0, -.39, 5.16), (.035, .018, .24), cyan, bevel=.006))
     for crown in range(7):
         angle = math.radians(-72 + crown * 24)
-        x = math.sin(angle) * .47
-        z = 5.39 + math.cos(angle) * .43
-        objects.append(sacred_blade_plate(f"M2_CROWN_PETAL_{crown}", (x, .01, z), (.16, .11, .68),
+        x = math.sin(angle) * .40
+        z = 5.31 + math.cos(angle) * .36
+        objects.append(sacred_blade_plate(f"M2_CROWN_PETAL_{crown}", (x, .01, z), (.15, .13, .56),
                                           rose if crown % 2 else ivory,
                                           rotation=(0, -angle, angle * .22), sweep=math.sin(angle) * .32,
                                           bevel=.012))
@@ -1396,28 +1454,32 @@ def add_mir_hero_v3(objects: list[bpy.types.Object], mats: dict[str, bpy.types.M
     # Shoulder blossoms and articulated arms.
     for side in (-1, 1):
         p = "L" if side < 0 else "R"
-        shoulder = (side * 1.02, .00, 4.18)
-        elbow = (side * (1.36 if side < 0 else 1.18), -.03, 3.34)
-        wrist = (side * (1.52 if side < 0 else 1.32), -.18, 2.62)
+        shoulder = (side * .98, .00, 4.18)
+        elbow = (side * 1.20, -.03, 3.36)
+        wrist = (side * 1.28, -.16, 2.56)
         joint(f"M2_{p}_SHOULDER", shoulder, .46, .21)
         joint(f"M2_{p}_ELBOW", elbow, .42, .17)
-        for layer in range(4):
+        objects.append(sacred_blade_plate(f"M2_{p}_SHOULDER_COWL", (side * 1.00, .01, 4.18),
+                                          (.64, .48, .62), dark,
+                                          rotation=(0, side * math.radians(14), side * math.radians(8)),
+                                          sweep=side * .20, bevel=.030))
+        for layer in range(2):
             objects.append(sacred_blade_plate(f"M2_{p}_SHOULDER_PETAL_{layer}",
-                                              (side * (1.10 + layer * .15), -.02 + layer * .045, 4.26 + (2 - layer) * .12),
-                                              (.70 - layer * .07, .25, 1.10 - layer * .09),
-                                              ivory if layer != 2 else rose,
-                                              rotation=(0, side * math.radians(22 + layer * 8), side * math.radians(18 + layer * 2)),
-                                              sweep=side * (.42 + layer * .08), bevel=.021))
+                                              (side * (1.03 + layer * .10), -.15 + layer * .055, 4.25 + (1 - layer) * .08),
+                                              (.44 - layer * .05, .30, .66 - layer * .05),
+                                              ivory if layer == 0 else rose,
+                                              rotation=(0, side * math.radians(18 + layer * 7), side * math.radians(14 + layer * 2)),
+                                              sweep=side * (.30 + layer * .06), bevel=.021))
         objects.append(beam(f"M2_{p}_UPPER_TENDON", shoulder, elbow, .105, dark, vertices=24))
         objects.append(beam(f"M2_{p}_FOREARM_TENDON", elbow, wrist, .090, dark, vertices=24))
-        limb_petals(f"M2_{p}_BICEP", ((shoulder[0] + elbow[0]) * .5, -.01, 3.75), side, .72, .42)
-        limb_petals(f"M2_{p}_FOREARM", ((elbow[0] + wrist[0]) * .5, -.10, 2.96), side, .66, .40)
-        objects.append(sculpted_shell(f"M2_{p}_HAND", wrist, (.30, .30, .24), dark,
+        limb_petals(f"M2_{p}_BICEP", ((shoulder[0] + elbow[0]) * .5, -.01, 3.77), side, .88, .50)
+        limb_petals(f"M2_{p}_FOREARM", ((elbow[0] + wrist[0]) * .5, -.10, 2.96), side, .84, .48)
+        objects.append(sculpted_shell(f"M2_{p}_HAND", wrist, (.34, .32, .28), dark,
                                       front_scale=(.50, .56), bevel=.022))
         for finger in range(3):
             objects.append(beam(f"M2_{p}_FINGER_{finger}",
-                                (side * (1.39 + finger * .05), -.30, 2.54),
-                                (side * (1.40 + finger * .05), -.43, 2.45 - finger * .025),
+                                (wrist[0] + side * (-.07 + finger * .07), -.28, wrist[2] - .06),
+                                (wrist[0] + side * (-.07 + finger * .07), -.40, wrist[2] - .24 - finger * .025),
                                 .025, brass, vertices=12))
 
     # Left-hand resonance spear with nested blade petals and recessed cores.
@@ -1471,9 +1533,14 @@ def add_mir_hero_v3(objects: list[bpy.types.Object], mats: dict[str, bpy.types.M
     halo_points = []
     for step in range(13):
         angle = math.radians(-55 + step * 17)
-        halo_points.append((math.sin(angle) * 1.38, .66, 4.30 + math.cos(angle) * 1.20))
-    objects.append(cable("M2_BACK_HALO_FRAME", halo_points, .045, brass))
-    for index in (1, 3, 5, 7, 9, 11):
+        halo_points.append((math.sin(angle) * 1.12, .54, 4.27 + math.cos(angle) * .98))
+    objects.append(cable("M2_BACK_HALO_FRAME", halo_points, .038, brass))
+    for side in (-1, 1):
+        objects.append(beam(f"M2_HALO_BRACE_UPPER_{side}", (side * .48, .46, 4.38),
+                            (side * .83, .54, 4.91), .045, dark, vertices=18))
+        objects.append(beam(f"M2_HALO_BRACE_LOWER_{side}", (side * .55, .44, 3.86),
+                            (side * 1.02, .54, 4.27), .040, brass, vertices=18))
+    for index in (1, 4, 7, 10):
         x, y, z = halo_points[index]
         objects.append(sacred_blade_plate(f"M2_HALO_EMITTER_{index}", (x, y, z), (.24, .16, .66),
                                           ivory if index % 4 else rose,
@@ -1644,6 +1711,30 @@ def apply_modifiers_and_convert(objects: list[bpy.types.Object]) -> list[bpy.typ
     return result
 
 
+def apply_loadout(objects: list[bpy.types.Object], asset_id: str, loadout: str) -> list[bpy.types.Object]:
+    """Keep identity review separate from optional gameplay equipment.
+
+    Equipment is still authored by the retained faction builder and can be
+    exported with ``loadout=equipped``. Reference mode removes it before LOD,
+    proof and source export so the character silhouette can be judged against
+    the approved unarmed turnaround without weapon/shield occlusion.
+    """
+    if loadout == "equipped":
+        return objects
+    prefixes = (
+        ("AX4_RAIL_", "AX4_SHIELD_", "AX4_EDGE_MARK_", "AX4_SHOULDER_CABLE_")
+        if asset_id.startswith("axiom")
+        else ("M2_SPEAR_", "M2_SHIELD_", "M2_TORSO_CONDUIT_", "M2_EDGE_GLYPH_")
+    )
+    kept: list[bpy.types.Object] = []
+    for obj in objects:
+        if obj.name.startswith(prefixes):
+            bpy.data.objects.remove(obj, do_unlink=True)
+        else:
+            kept.append(obj)
+    return kept
+
+
 def select_only(objects: list[bpy.types.Object]) -> None:
     bpy.ops.object.select_all(action="DESELECT")
     for obj in objects:
@@ -1699,23 +1790,27 @@ def mesh_stats(objects: list[bpy.types.Object]) -> dict[str, int]:
     return {"objects": len(objects), "vertices": vertices, "triangles": triangles}
 
 
-def collisions(asset_id: str, mats: dict[str, bpy.types.Material]) -> list[bpy.types.Object]:
+def collisions(asset_id: str, mats: dict[str, bpy.types.Material], loadout: str) -> list[bpy.types.Object]:
     collision = mats["collision"]
     if asset_id.startswith("axiom"):
-        return [
+        result = [
             box("UCX_AXIOM_TORSO", (0, 0, 3.55), (2.45, 1.18, 1.75), collision, bevel=0),
             box("UCX_AXIOM_PELVIS", (0, 0, 2.55), (1.95, 1.05, .75), collision, bevel=0),
             box("UCX_AXIOM_LEFT_LEG", (-.92, 0, 1.25), (.72, .74, 2.35), collision, bevel=0),
             box("UCX_AXIOM_RIGHT_LEG", (.92, 0, 1.25), (.72, .74, 2.35), collision, bevel=0),
-            box("UCX_AXIOM_WEAPON", (2.04, -.95, 2.82), (.78, 2.65, .62), collision, bevel=0),
         ]
-    return [
+        if loadout == "equipped":
+            result.append(box("UCX_AXIOM_WEAPON", (-1.52, -.75, 4.58), (.78, 2.10, .62), collision, bevel=0))
+        return result
+    result = [
         box("UCX_MIR_TORSO", (0, 0, 3.55), (2.30, 1.25, 2.20), collision, bevel=0),
         box("UCX_MIR_PELVIS", (0, 0, 2.48), (1.75, 1.12, .75), collision, bevel=0),
         box("UCX_MIR_LEFT_LEG", (-.68, 0, 1.20), (.58, .62, 2.25), collision, bevel=0),
         box("UCX_MIR_RIGHT_LEG", (.68, 0, 1.20), (.58, .62, 2.25), collision, bevel=0),
-        box("UCX_MIR_SPEAR", (1.58, -.30, 2.50), (.40, .40, 4.50), collision, bevel=0),
     ]
+    if loadout == "equipped":
+        result.append(box("UCX_MIR_SPEAR", (-1.78, -.35, 2.50), (.40, .40, 4.50), collision, bevel=0))
+    return result
 
 
 def setup_render(resolution: int, transparent: bool) -> tuple[bpy.types.Object, bpy.types.Object]:
@@ -1851,6 +1946,8 @@ def main() -> None:
         add_mir_hero_v3(objects, mats, rng)
     else:
         raise ValueError(f"unsupported asset_id: {asset_id}")
+    loadout = str(request.get("loadout", "reference"))
+    objects = apply_loadout(objects, asset_id, loadout)
     objects = apply_modifiers_and_convert(objects)
 
     exports: dict[str, dict] = {}
@@ -1865,7 +1962,7 @@ def main() -> None:
         exports[lod_name] = {"path": path.name, **mesh_stats(duplicated), "sha256": sha(path), "bytes": path.stat().st_size}
         remove_objects(duplicated)
 
-    collision_objects = collisions(asset_id, mats)
+    collision_objects = collisions(asset_id, mats, loadout)
     collision_path = output / f"{asset_id}_COLLISION.glb"
     export_glb(collision_path, collision_objects)
     exports["collision"] = {"path": collision_path.name, **mesh_stats(collision_objects), "sha256": sha(collision_path), "bytes": collision_path.stat().st_size}
@@ -1892,6 +1989,7 @@ def main() -> None:
         "asset_id": asset_id,
         "faction": request["faction"],
         "archetype": request["archetype"],
+        "loadout": loadout,
         "meters_per_unit": 1.0,
         "source": {"path": blend_path.name, "sha256": sha(blend_path), "bytes": blend_path.stat().st_size},
         "exports": exports,
