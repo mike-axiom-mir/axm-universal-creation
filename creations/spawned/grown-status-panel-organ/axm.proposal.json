@@ -1,0 +1,131 @@
+{
+  "authority": {
+    "canon": false,
+    "execute": false,
+    "install": false,
+    "merge": false,
+    "permissions": false,
+    "promote": false,
+    "register": false
+  },
+  "contracts": {
+    "inputs": {
+      "parameters": [
+        "message"
+      ],
+      "project_types": [
+        "static-web"
+      ]
+    },
+    "outputs": {
+      "project_types": [
+        "static-web"
+      ],
+      "template_files": [
+        "status.html"
+      ]
+    },
+    "provides": [
+      "status-panel"
+    ],
+    "requires": [
+      "local-interaction"
+    ]
+  },
+  "dependencies": [],
+  "files": {
+    "organ.json": "{\n  \"anatomy_refs\": [\n    \"AXM-09-UI-INTERACTION-O-015-notification-manager\"\n  ],\n  \"files\": {\n    \"status.html\": \"<!doctype html><html><body><aside>[[AXM:message]]</aside></body></html>\\n\"\n  },\n  \"id\": \"axm.web.grown-status-panel\",\n  \"limitations\": [\n    \"This fragment does not prove browser-rendered visual quality, accessibility, or runtime behavior.\"\n  ],\n  \"parameters\": [\n    \"message\"\n  ],\n  \"project_types\": [\n    \"static-web\"\n  ],\n  \"provenance\": {\n    \"basis\": \"Explicit bounded example source supplied to connect the materialization census to one observed creation gap.\",\n    \"kind\": \"local-authored-source\"\n  },\n  \"provides\": [\n    \"status-panel\"\n  ],\n  \"purpose\": \"Render one explicit status-panel fragment for the bounded creation-growth experiment.\",\n  \"requires\": [\n    \"local-interaction\"\n  ],\n  \"schema\": \"axm.executable-software-organ/v0.1\",\n  \"status\": \"executable\",\n  \"version\": \"1.0.0\"\n}\n"
+  },
+  "id": "axm.web.grown-status-panel",
+  "implementation": {
+    "entrypoint": "organ.json",
+    "kind": "DETERMINISTIC_SOURCE",
+    "source_files": [
+      "organ.json"
+    ]
+  },
+  "kind": "organ",
+  "limitations": [
+    "This fragment does not prove browser-rendered visual quality, accessibility, or runtime behavior.",
+    "This candidate proves exact package structure and declared deterministic file checks; semantic interface conformance and emitted runtime behavior require separate evidence."
+  ],
+  "provenance": {
+    "basis": "Compiled only from the explicitly supplied executable-organ package and exact cited anatomy records. Supplied package basis: Explicit bounded example source supplied to connect the materialization census to one observed creation gap.",
+    "kind": "compiled-explicit-organ-package",
+    "refs": [
+      "organs/AXM-09-UI-INTERACTION-O-015-notification-manager.json"
+    ]
+  },
+  "purpose": "Render one explicit status-panel fragment for the bounded creation-growth experiment.",
+  "relationships": [
+    {
+      "target": "AXM-09-UI-INTERACTION-O-015-notification-manager",
+      "type": "materializes-anatomy"
+    }
+  ],
+  "root_fit": {
+    "agency": {
+      "basis": "The caller chooses the implementation source and target anatomy; the detached proposal grants itself no authority.",
+      "fit": true
+    },
+    "continuity": {
+      "basis": "Compilation produces a detached candidate and does not replace or install into the continuing machine.",
+      "fit": true
+    },
+    "truth": {
+      "basis": "The exact supplied package, anatomy references, compiler checks, and unproven runtime boundary remain visible.",
+      "fit": true
+    },
+    "wisdom-before-speed": {
+      "basis": "Exact package validation and bounded tests precede any separate adoption decision.",
+      "fit": true
+    }
+  },
+  "schema": "axm.creation-unit-spawn-proposal/v0.1",
+  "verification": {
+    "checks": [
+      {
+        "path": "organ.json",
+        "type": "json-valid"
+      },
+      {
+        "equals": "axm.executable-software-organ/v0.1",
+        "json_path": [
+          "schema"
+        ],
+        "path": "organ.json",
+        "type": "json-value"
+      },
+      {
+        "equals": "axm.web.grown-status-panel",
+        "json_path": [
+          "id"
+        ],
+        "path": "organ.json",
+        "type": "json-value"
+      },
+      {
+        "equals": "1.0.0",
+        "json_path": [
+          "version"
+        ],
+        "path": "organ.json",
+        "type": "json-value"
+      },
+      {
+        "equals": "executable",
+        "json_path": [
+          "status"
+        ],
+        "path": "organ.json",
+        "type": "json-value"
+      },
+      {
+        "path": "organ.json",
+        "sha256": "5cf45e5a67b4ab921819d47188faedf01dca8caf98d02557870e5ccd03e9cb33",
+        "type": "sha256"
+      }
+    ]
+  },
+  "version": "1.0.0"
+}

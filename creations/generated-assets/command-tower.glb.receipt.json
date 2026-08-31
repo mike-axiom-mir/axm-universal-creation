@@ -1,0 +1,177 @@
+{
+  "capability": "AXM-CAP-GENERATE-PROCEDURAL-3D",
+  "directional_outcome": "generate one exact bounded 3D command tower as a portable glTF 2.0 binary asset",
+  "result": {
+    "bytes": 22960,
+    "host_import_compatibility_observed": false,
+    "operation": "glb",
+    "path": "/workspace/scratch/f8e7c45e04d8/axm-universal-creation/creations/generated-assets/command-tower.glb",
+    "post_publish_validation": {
+      "accessors": 18,
+      "buffer_bytes": 17556,
+      "buffer_views": 18,
+      "chunks": [
+        "JSON",
+        "BIN"
+      ],
+      "format": "glb",
+      "materials": 6,
+      "nodes": 6,
+      "passed": true,
+      "primitives": 6,
+      "specification_sha256": "9ce86c3021f2e073ae79a610a0b3f3bf0885bf9e43ca2b908a686691caab81e0",
+      "triangles": 270,
+      "version": 2
+    },
+    "pre_publish_validation": {
+      "accessors": 18,
+      "buffer_bytes": 17556,
+      "buffer_views": 18,
+      "chunks": [
+        "JSON",
+        "BIN"
+      ],
+      "format": "glb",
+      "materials": 6,
+      "nodes": 6,
+      "passed": true,
+      "primitives": 6,
+      "specification_sha256": "9ce86c3021f2e073ae79a610a0b3f3bf0885bf9e43ca2b908a686691caab81e0",
+      "triangles": 270,
+      "version": 2
+    },
+    "published": true,
+    "rendered_appearance_observed": false,
+    "replaced": false,
+    "sha256": "3f46c6f543beca10fb6c05015fd0e4db92abc757213d6051f5b61858418462d2",
+    "specification": {
+      "name": "AXM Command Tower",
+      "primitives": [
+        {
+          "id": "foundation",
+          "material": {
+            "color": "#122D3BFF",
+            "metallic": 0.7,
+            "roughness": 0.32
+          },
+          "segments": null,
+          "size": [
+            4.8,
+            0.8,
+            4.8
+          ],
+          "translation": [
+            0.0,
+            0.4,
+            0.0
+          ],
+          "type": "box"
+        },
+        {
+          "id": "lower-ring",
+          "material": {
+            "color": "#20CFC4FF",
+            "metallic": 0.45,
+            "roughness": 0.25
+          },
+          "segments": 24,
+          "size": [
+            3.4,
+            0.7,
+            3.4
+          ],
+          "translation": [
+            0.0,
+            1.15,
+            0.0
+          ],
+          "type": "cylinder"
+        },
+        {
+          "id": "tower-core",
+          "material": {
+            "color": "#284D5DFF",
+            "metallic": 0.62,
+            "roughness": 0.3
+          },
+          "segments": 24,
+          "size": [
+            2.5,
+            5.2,
+            2.5
+          ],
+          "translation": [
+            0.0,
+            4.1,
+            0.0
+          ],
+          "type": "cylinder"
+        },
+        {
+          "id": "command-deck",
+          "material": {
+            "color": "#E8F7F6FF",
+            "metallic": 0.18,
+            "roughness": 0.42
+          },
+          "segments": null,
+          "size": [
+            4.1,
+            1.25,
+            4.1
+          ],
+          "translation": [
+            0.0,
+            6.9,
+            0.0
+          ],
+          "type": "box"
+        },
+        {
+          "id": "signal-roof",
+          "material": {
+            "color": "#FFB547FF",
+            "metallic": 0.28,
+            "roughness": 0.48
+          },
+          "segments": null,
+          "size": [
+            4.8,
+            2.6,
+            4.8
+          ],
+          "translation": [
+            0.0,
+            8.75,
+            0.0
+          ],
+          "type": "pyramid"
+        },
+        {
+          "id": "signal-mast",
+          "material": {
+            "color": "#FF315CFF",
+            "metallic": 0.55,
+            "roughness": 0.22
+          },
+          "segments": 12,
+          "size": [
+            0.32,
+            2.8,
+            0.32
+          ],
+          "translation": [
+            0.0,
+            11.15,
+            0.0
+          ],
+          "type": "cylinder"
+        }
+      ],
+      "schema": "axm.procedural-3d/v0.1"
+    },
+    "specification_sha256": "9ce86c3021f2e073ae79a610a0b3f3bf0885bf9e43ca2b908a686691caab81e0",
+    "truth_status": "VALIDATED_DETERMINISTIC_GLB_ASSET"
+  },
+  "type": "CREATION_RESULT"
+}

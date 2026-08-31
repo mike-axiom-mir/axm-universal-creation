@@ -1,0 +1,1912 @@
+{
+  "capability": "AXM-CAP-GROW-CREATION-WITH-ORGAN",
+  "directional_outcome": "connect one exact descriptive organ and explicit implementation source to an observed missing creation interface, then prove one complete ephemeral creation closure without installation",
+  "result": {
+    "anatomy_id": "AXM-09-UI-INTERACTION-O-015-notification-manager",
+    "anatomy_materialization_before": {
+      "connected_package_refs": [],
+      "installed_package_count": 0,
+      "package_connectivity": [],
+      "package_refs": [],
+      "package_refs_with_missing_interfaces": [],
+      "provided_interfaces": [],
+      "required_interfaces": [],
+      "state": "IMPLEMENTATION_REQUIRED",
+      "unresolved_required_interfaces": []
+    },
+    "candidate_installed": false,
+    "candidate_merged": false,
+    "candidate_promoted": false,
+    "candidate_registered": false,
+    "closure": {
+      "addressed_missing_interfaces": [
+        "status-panel"
+      ],
+      "admission_authority": "NONE",
+      "automatic_source_invention": false,
+      "candidate_admission_requested": false,
+      "candidate_design_supplied_to_operation": true,
+      "candidate_installed": false,
+      "candidate_package": {
+        "anatomy_refs": [
+          "AXM-09-UI-INTERACTION-O-015-notification-manager"
+        ],
+        "files": {
+          "status.html": "<!doctype html><html><body><aside>[[AXM:message]]</aside></body></html>\n"
+        },
+        "id": "axm.web.grown-status-panel",
+        "limitations": [
+          "This fragment does not prove browser-rendered visual quality, accessibility, or runtime behavior."
+        ],
+        "parameters": [
+          "message"
+        ],
+        "project_types": [
+          "static-web"
+        ],
+        "provenance": {
+          "basis": "Explicit bounded example source supplied to connect the materialization census to one observed creation gap.",
+          "kind": "local-authored-source"
+        },
+        "provides": [
+          "status-panel"
+        ],
+        "purpose": "Render one explicit status-panel fragment for the bounded creation-growth experiment.",
+        "ref": "axm.web.grown-status-panel@1.0.0",
+        "requires": [
+          "local-interaction"
+        ],
+        "schema": "axm.executable-software-organ/v0.1",
+        "source_context": "supplied Forge proposal entrypoint validated in a disposable package library",
+        "source_path": "organ.json",
+        "status": "executable",
+        "version": "1.0.0"
+      },
+      "candidate_package_digest": "sha256:5cf45e5a67b4ab921819d47188faedf01dca8caf98d02557870e5ccd03e9cb33",
+      "candidate_ref": "axm.web.grown-status-panel@1.0.0",
+      "candidate_selected_in_closure": true,
+      "candidate_still_detached": true,
+      "candidate_target_created": true,
+      "candidate_test": {
+        "inspection": {
+          "admission_request": null,
+          "checks": {
+            "authority_closed": true,
+            "file_set": true,
+            "manifest_digest": true,
+            "manifest_exact": true,
+            "package_digest": true,
+            "payload_digests": true,
+            "proposal_digest": true,
+            "receipt_digest": true,
+            "root_fit": true
+          },
+          "live_machine_body_modified": false,
+          "missing_files": [],
+          "operation": "inspect",
+          "passed": true,
+          "path": "/workspace/scratch/f8e7c45e04d8/axm-universal-creation/creations/spawned/grown-status-panel-organ",
+          "payload_checks": [
+            {
+              "actual_digest": "sha256:5cf45e5a67b4ab921819d47188faedf01dca8caf98d02557870e5ccd03e9cb33",
+              "expected_digest": "sha256:5cf45e5a67b4ab921819d47188faedf01dca8caf98d02557870e5ccd03e9cb33",
+              "passed": true,
+              "path": "organ.json"
+            }
+          ],
+          "spawn_receipt": {
+            "body_files": [
+              {
+                "bytes": 4499,
+                "digest": "sha256:0a648e4e6ae691c893d257b3f71b6a86d9f007c419f917c578edaab17c0d815a",
+                "path": "axm.proposal.json"
+              },
+              {
+                "bytes": 4085,
+                "digest": "sha256:c341c130289d9bc77da4c1bcd71c0e4f7ee51efc382a1a48594b82a53cbe661f",
+                "path": "axm.unit.json"
+              },
+              {
+                "bytes": 911,
+                "digest": "sha256:5cf45e5a67b4ab921819d47188faedf01dca8caf98d02557870e5ccd03e9cb33",
+                "path": "organ.json"
+              }
+            ],
+            "canon_changed": false,
+            "generated_code_executed": false,
+            "installed": false,
+            "kind": "organ",
+            "kind_contract": "FIRST_CLASS",
+            "manifest_digest": "sha256:c341c130289d9bc77da4c1bcd71c0e4f7ee51efc382a1a48594b82a53cbe661f",
+            "merged": false,
+            "package_digest": "sha256:57b0b014c7db6697faedfbd6225adeb162c90340193e2b233ac2e1dd3d785814",
+            "permissions_changed": false,
+            "project_type": "generic",
+            "promoted": false,
+            "proposal_digest": "sha256:91f829edff5a1f5bf3a166c535672422b2018851005bd51f953db721cf4446c6",
+            "receipt_digest": "sha256:aa30d5e6b28ed72a9d527dbd9675262f9f7dadc7a4bf7c829f8ff8025c837831",
+            "registered": false,
+            "runtime_evidence": "NOT_YET_OBSERVED; use the separate test operation",
+            "schema": "axm.creation-unit-spawn-receipt/v0.1",
+            "staged_check_count": 14,
+            "staged_validation_passed": true,
+            "status": "MATERIALIZED",
+            "unit_ref": "axm.web.grown-status-panel@1.0.0"
+          },
+          "truth_status": "OBSERVED_SPAWNED_UNIT_INTEGRITY",
+          "unexpected_files": [],
+          "unit": {
+            "authority": {
+              "canon": false,
+              "execute": false,
+              "install": false,
+              "merge": false,
+              "permissions": false,
+              "promote": false,
+              "register": false
+            },
+            "contracts": {
+              "inputs": {
+                "parameters": [
+                  "message"
+                ],
+                "project_types": [
+                  "static-web"
+                ]
+              },
+              "outputs": {
+                "project_types": [
+                  "static-web"
+                ],
+                "template_files": [
+                  "status.html"
+                ]
+              },
+              "provides": [
+                "status-panel"
+              ],
+              "requires": [
+                "local-interaction"
+              ]
+            },
+            "dependencies": [],
+            "id": "axm.web.grown-status-panel",
+            "implementation": {
+              "entrypoint": "organ.json",
+              "kind": "DETERMINISTIC_SOURCE",
+              "source_files": [
+                "organ.json"
+              ]
+            },
+            "kind": "organ",
+            "kind_contract": "FIRST_CLASS",
+            "limitations": [
+              "This fragment does not prove browser-rendered visual quality, accessibility, or runtime behavior.",
+              "This candidate proves exact package structure and declared deterministic file checks; semantic interface conformance and emitted runtime behavior require separate evidence."
+            ],
+            "payload_files": [
+              {
+                "bytes": 911,
+                "digest": "sha256:5cf45e5a67b4ab921819d47188faedf01dca8caf98d02557870e5ccd03e9cb33",
+                "path": "organ.json"
+              }
+            ],
+            "proposal_digest": "sha256:91f829edff5a1f5bf3a166c535672422b2018851005bd51f953db721cf4446c6",
+            "provenance": {
+              "basis": "Compiled only from the explicitly supplied executable-organ package and exact cited anatomy records. Supplied package basis: Explicit bounded example source supplied to connect the materialization census to one observed creation gap.",
+              "kind": "compiled-explicit-organ-package",
+              "refs": [
+                "organs/AXM-09-UI-INTERACTION-O-015-notification-manager.json"
+              ]
+            },
+            "purpose": "Render one explicit status-panel fragment for the bounded creation-growth experiment.",
+            "ref": "axm.web.grown-status-panel@1.0.0",
+            "relationships": [
+              {
+                "target": "AXM-09-UI-INTERACTION-O-015-notification-manager",
+                "type": "materializes-anatomy"
+              }
+            ],
+            "root_fit": {
+              "agency": {
+                "basis": "The caller chooses the implementation source and target anatomy; the detached proposal grants itself no authority.",
+                "fit": true
+              },
+              "continuity": {
+                "basis": "Compilation produces a detached candidate and does not replace or install into the continuing machine.",
+                "fit": true
+              },
+              "truth": {
+                "basis": "The exact supplied package, anatomy references, compiler checks, and unproven runtime boundary remain visible.",
+                "fit": true
+              },
+              "wisdom-before-speed": {
+                "basis": "Exact package validation and bounded tests precede any separate adoption decision.",
+                "fit": true
+              }
+            },
+            "schema": "axm.spawned-creation-unit/v0.1",
+            "status": "DETACHED_CANDIDATE",
+            "truth_boundaries": {
+              "capability_is_not_authority": true,
+              "materialized_is_not_installed": true,
+              "materialized_is_not_merge_approval": true,
+              "materialized_is_not_registered": true,
+              "materialized_is_not_runtime_proof": true
+            },
+            "verification": {
+              "checks": [
+                {
+                  "path": "organ.json",
+                  "type": "json-valid"
+                },
+                {
+                  "equals": "axm.executable-software-organ/v0.1",
+                  "json_path": [
+                    "schema"
+                  ],
+                  "path": "organ.json",
+                  "type": "json-value"
+                },
+                {
+                  "equals": "axm.web.grown-status-panel",
+                  "json_path": [
+                    "id"
+                  ],
+                  "path": "organ.json",
+                  "type": "json-value"
+                },
+                {
+                  "equals": "1.0.0",
+                  "json_path": [
+                    "version"
+                  ],
+                  "path": "organ.json",
+                  "type": "json-value"
+                },
+                {
+                  "equals": "executable",
+                  "json_path": [
+                    "status"
+                  ],
+                  "path": "organ.json",
+                  "type": "json-value"
+                },
+                {
+                  "path": "organ.json",
+                  "sha256": "5cf45e5a67b4ab921819d47188faedf01dca8caf98d02557870e5ccd03e9cb33",
+                  "type": "sha256"
+                }
+              ]
+            },
+            "version": "1.0.0"
+          }
+        },
+        "installed": false,
+        "kind": "organ",
+        "kind_test": {
+          "evidence_strength": "EXECUTABLE_ORGAN_PACKAGE_SCHEMA_VALIDATION",
+          "identity": {
+            "actual": {
+              "id": "axm.web.grown-status-panel",
+              "version": "1.0.0"
+            },
+            "expected": {
+              "id": "axm.web.grown-status-panel",
+              "version": "1.0.0"
+            },
+            "passed": true
+          },
+          "kind": "organ",
+          "organ_package_validation": {
+            "package": {
+              "anatomy_refs": [
+                "AXM-09-UI-INTERACTION-O-015-notification-manager"
+              ],
+              "files": {
+                "status.html": "<!doctype html><html><body><aside>[[AXM:message]]</aside></body></html>\n"
+              },
+              "id": "axm.web.grown-status-panel",
+              "limitations": [
+                "This fragment does not prove browser-rendered visual quality, accessibility, or runtime behavior."
+              ],
+              "parameters": [
+                "message"
+              ],
+              "project_types": [
+                "static-web"
+              ],
+              "provenance": {
+                "basis": "Explicit bounded example source supplied to connect the materialization census to one observed creation gap.",
+                "kind": "local-authored-source"
+              },
+              "provides": [
+                "status-panel"
+              ],
+              "purpose": "Render one explicit status-panel fragment for the bounded creation-growth experiment.",
+              "ref": "axm.web.grown-status-panel@1.0.0",
+              "requires": [
+                "local-interaction"
+              ],
+              "schema": "axm.executable-software-organ/v0.1",
+              "source_path": "executable-organs/candidate.json",
+              "status": "executable",
+              "version": "1.0.0"
+            },
+            "passed": true
+          },
+          "passed": true,
+          "runtime_executed": false
+        },
+        "limitations": [
+          "a passing result covers only the exact deterministic checks shown",
+          "materialization and package integrity do not by themselves prove semantic behavior",
+          "visual, network, external-system, and physical effects require separate authorized evidence"
+        ],
+        "live_machine_body_modified": false,
+        "merged": false,
+        "operation": "test",
+        "passed": true,
+        "path": "/workspace/scratch/f8e7c45e04d8/axm-universal-creation/creations/spawned/grown-status-panel-organ",
+        "promoted": false,
+        "registered": false,
+        "structural_validation": {
+          "checks": [
+            {
+              "file_count": 4,
+              "passed": true,
+              "type": "project-nonempty"
+            },
+            {
+              "passed": true,
+              "symlinks": [],
+              "type": "project-no-symlinks"
+            },
+            {
+              "passed": true,
+              "path": "axm.proposal.json",
+              "type": "json-valid"
+            },
+            {
+              "passed": true,
+              "path": "axm.spawn-receipt.json",
+              "type": "json-valid"
+            },
+            {
+              "passed": true,
+              "path": "axm.unit.json",
+              "type": "json-valid"
+            },
+            {
+              "passed": true,
+              "path": "organ.json",
+              "type": "json-valid"
+            },
+            {
+              "passed": true,
+              "path": "organ.json",
+              "type": "file-exists"
+            },
+            {
+              "bytes": 911,
+              "passed": true,
+              "path": "organ.json",
+              "type": "nonempty"
+            },
+            {
+              "passed": true,
+              "path": "organ.json",
+              "type": "json-valid"
+            },
+            {
+              "actual": "axm.executable-software-organ/v0.1",
+              "expected": "axm.executable-software-organ/v0.1",
+              "json_path": [
+                "schema"
+              ],
+              "passed": true,
+              "path": "organ.json",
+              "type": "json-value"
+            },
+            {
+              "actual": "axm.web.grown-status-panel",
+              "expected": "axm.web.grown-status-panel",
+              "json_path": [
+                "id"
+              ],
+              "passed": true,
+              "path": "organ.json",
+              "type": "json-value"
+            },
+            {
+              "actual": "1.0.0",
+              "expected": "1.0.0",
+              "json_path": [
+                "version"
+              ],
+              "passed": true,
+              "path": "organ.json",
+              "type": "json-value"
+            },
+            {
+              "actual": "executable",
+              "expected": "executable",
+              "json_path": [
+                "status"
+              ],
+              "passed": true,
+              "path": "organ.json",
+              "type": "json-value"
+            },
+            {
+              "actual_bytes": 911,
+              "actual_sha256": "5cf45e5a67b4ab921819d47188faedf01dca8caf98d02557870e5ccd03e9cb33",
+              "expected_sha256": "5cf45e5a67b4ab921819d47188faedf01dca8caf98d02557870e5ccd03e9cb33",
+              "passed": true,
+              "path": "organ.json",
+              "type": "sha256"
+            },
+            {
+              "files": [
+                {
+                  "actual_bytes": 4499,
+                  "actual_sha256": "0a648e4e6ae691c893d257b3f71b6a86d9f007c419f917c578edaab17c0d815a",
+                  "expected_sha256": "0a648e4e6ae691c893d257b3f71b6a86d9f007c419f917c578edaab17c0d815a",
+                  "passed": true,
+                  "path": "axm.proposal.json"
+                },
+                {
+                  "actual_bytes": 4085,
+                  "actual_sha256": "c341c130289d9bc77da4c1bcd71c0e4f7ee51efc382a1a48594b82a53cbe661f",
+                  "expected_sha256": "c341c130289d9bc77da4c1bcd71c0e4f7ee51efc382a1a48594b82a53cbe661f",
+                  "passed": true,
+                  "path": "axm.unit.json"
+                },
+                {
+                  "actual_bytes": 911,
+                  "actual_sha256": "5cf45e5a67b4ab921819d47188faedf01dca8caf98d02557870e5ccd03e9cb33",
+                  "expected_sha256": "5cf45e5a67b4ab921819d47188faedf01dca8caf98d02557870e5ccd03e9cb33",
+                  "passed": true,
+                  "path": "organ.json"
+                }
+              ],
+              "passed": true,
+              "type": "expected-file-digests"
+            }
+          ],
+          "files": [
+            {
+              "bytes": 4499,
+              "path": "axm.proposal.json",
+              "sha256": "0a648e4e6ae691c893d257b3f71b6a86d9f007c419f917c578edaab17c0d815a"
+            },
+            {
+              "bytes": 1402,
+              "path": "axm.spawn-receipt.json",
+              "sha256": "349cfe7f49db5229b04ff4f6b0cd8e1153915995f4dc5d84cb81e0a1a9b35f6d"
+            },
+            {
+              "bytes": 4085,
+              "path": "axm.unit.json",
+              "sha256": "c341c130289d9bc77da4c1bcd71c0e4f7ee51efc382a1a48594b82a53cbe661f"
+            },
+            {
+              "bytes": 911,
+              "path": "organ.json",
+              "sha256": "5cf45e5a67b4ab921819d47188faedf01dca8caf98d02557870e5ccd03e9cb33"
+            }
+          ],
+          "limitations": [
+            "generated code is not executed by deterministic project validation",
+            "visual appearance and interactive browser behavior require a browser/user/authorized host to test",
+            "CSS and JavaScript local-reference checks are bounded lexical checks, not full browser or language execution"
+          ],
+          "passed": true,
+          "project_type": "generic"
+        },
+        "truth_status": "OBSERVED_BOUNDED_SPAWNED_UNIT_TEST",
+        "unit_ref": "axm.web.grown-status-panel@1.0.0"
+      },
+      "canon_changed": false,
+      "closure_build": {
+        "creation_status": "VALIDATED_CREATION",
+        "ephemeral_project_disposed": true,
+        "files": [
+          {
+            "bytes": 171,
+            "path": "app.js",
+            "sha256": "752ba8dd09630a0e6e752deeffa69abfaf019a76ffff90af20fa5bc826522d53"
+          },
+          {
+            "bytes": 374,
+            "path": "index.html",
+            "sha256": "55b54cd0bb448418549eb269554d40fbf45d539fe4ada8d11e1ec5e10dcc5e68"
+          },
+          {
+            "bytes": 93,
+            "path": "status.html",
+            "sha256": "6bdd3b966b5a3e846d9faf7fce08c2cc831cfc7beae6da6ab67386300c990b44"
+          },
+          {
+            "bytes": 290,
+            "path": "style.css",
+            "sha256": "07d452f3a4eeddcc5633967c72c3a24c8e647f8c42621d17801412a4e49fd65d"
+          }
+        ],
+        "grounding": {
+          "creation_retained": true,
+          "creation_status": "VALIDATED_CREATION",
+          "gap_meaning": "failed checks expose current creation or capability gaps; they are not automatically a prohibition on retaining the creation",
+          "observed_gap_count": 0,
+          "observed_gaps": [],
+          "publish_mode": "validated",
+          "truth_status": "OBSERVED_DETERMINISTIC_PROJECT_VALIDATION",
+          "validation_passed": true
+        },
+        "organ_assembly": {
+          "assembly_id": "axm.example.grown-status-panel-site",
+          "assembly_variables_used": [],
+          "assembly_version": "1.0.0",
+          "composition": "disjoint rendered file ownership followed by one project publication",
+          "declared_interface_contracts_verified": true,
+          "declared_organ_count": 4,
+          "dependency_edges": [
+            {
+              "from": "shell-organ",
+              "to": "theme-organ"
+            },
+            {
+              "from": "theme-organ",
+              "to": "interaction-organ"
+            },
+            {
+              "from": "interaction-organ",
+              "to": "grown-status-panel-organ"
+            }
+          ],
+          "dependency_order": [
+            "shell-organ",
+            "theme-organ",
+            "interaction-organ",
+            "grown-status-panel-organ"
+          ],
+          "file_ownership": [
+            {
+              "organ_id": "interaction-organ",
+              "path": "app.js"
+            },
+            {
+              "organ_id": "shell-organ",
+              "path": "index.html"
+            },
+            {
+              "organ_id": "grown-status-panel-organ",
+              "path": "status.html"
+            },
+            {
+              "organ_id": "theme-organ",
+              "path": "style.css"
+            }
+          ],
+          "interface_providers": [
+            {
+              "interface": "document-shell",
+              "organ_id": "shell-organ"
+            },
+            {
+              "interface": "local-interaction",
+              "organ_id": "interaction-organ"
+            },
+            {
+              "interface": "status-panel",
+              "organ_id": "grown-status-panel-organ"
+            },
+            {
+              "interface": "visual-theme",
+              "organ_id": "theme-organ"
+            }
+          ],
+          "limitations": [
+            "provided/required interface names validate declared organ relationships but do not prove source-level interface conformance",
+            "organ dependencies determine deterministic assembly order but do not invent imports or runtime wiring",
+            "each rendered file has exactly one organ owner; shared-file merge semantics are not implemented",
+            "organ templates remain raw single-pass text substitution and are not parser-aware"
+          ],
+          "organ_scoped_bindings_available": true,
+          "organs": [
+            {
+              "dependency_closure": [],
+              "depends_on": [],
+              "id": "shell-organ",
+              "package_id": "axm.web.shell",
+              "package_ref": "axm.web.shell@1.0.0",
+              "package_source_path": "executable-organs/axm.web.shell-1.0.0.json",
+              "provides": [
+                "document-shell"
+              ],
+              "purpose": "Own a local HTML document shell and expose its document surface to dependent organs.",
+              "rendered_paths": [
+                {
+                  "rendered_path": "index.html",
+                  "template_path": "index.html"
+                }
+              ],
+              "requires": [],
+              "variable_scope": "organ-bindings",
+              "variables_used": [
+                "idle_label",
+                "title"
+              ],
+              "version": "1.0.0"
+            },
+            {
+              "dependency_closure": [
+                "shell-organ"
+              ],
+              "depends_on": [
+                "shell-organ"
+              ],
+              "id": "theme-organ",
+              "package_id": "axm.web.theme",
+              "package_ref": "axm.web.theme@1.0.0",
+              "package_source_path": "executable-organs/axm.web.theme-1.0.0.json",
+              "provides": [
+                "visual-theme"
+              ],
+              "purpose": "Own a reusable local visual theme for a document-shell organ.",
+              "rendered_paths": [
+                {
+                  "rendered_path": "style.css",
+                  "template_path": "style.css"
+                }
+              ],
+              "requires": [
+                "document-shell"
+              ],
+              "variable_scope": "organ-bindings",
+              "variables_used": [
+                "background"
+              ],
+              "version": "1.0.0"
+            },
+            {
+              "dependency_closure": [
+                "shell-organ",
+                "theme-organ"
+              ],
+              "depends_on": [
+                "theme-organ"
+              ],
+              "id": "interaction-organ",
+              "package_id": "axm.web.interaction",
+              "package_ref": "axm.web.interaction@1.0.0",
+              "package_source_path": "executable-organs/axm.web.interaction-1.0.0.json",
+              "provides": [
+                "local-interaction"
+              ],
+              "purpose": "Own one reusable local button interaction for a document shell with a visual theme.",
+              "rendered_paths": [
+                {
+                  "rendered_path": "app.js",
+                  "template_path": "app.js"
+                }
+              ],
+              "requires": [
+                "document-shell",
+                "visual-theme"
+              ],
+              "variable_scope": "organ-bindings",
+              "variables_used": [
+                "active_label",
+                "state"
+              ],
+              "version": "1.0.0"
+            },
+            {
+              "dependency_closure": [
+                "interaction-organ",
+                "shell-organ",
+                "theme-organ"
+              ],
+              "depends_on": [
+                "interaction-organ"
+              ],
+              "id": "grown-status-panel-organ",
+              "package_id": "axm.web.grown-status-panel",
+              "package_ref": "axm.web.grown-status-panel@1.0.0",
+              "package_source_path": "executable-organs/candidate-5cf45e5a67b4ab92.json",
+              "provides": [
+                "status-panel"
+              ],
+              "purpose": "Render one explicit status-panel fragment for the bounded creation-growth experiment.",
+              "rendered_paths": [
+                {
+                  "rendered_path": "status.html",
+                  "template_path": "status.html"
+                }
+              ],
+              "requires": [
+                "local-interaction"
+              ],
+              "variable_scope": "organ-bindings",
+              "variables_used": [
+                "message"
+              ],
+              "version": "1.0.0"
+            }
+          ],
+          "project_type": "static-web",
+          "recursive_template_expansion": false,
+          "semantic_dependency_wiring": false,
+          "source_interface_conformance_verified": false,
+          "truth_status": "DETERMINISTIC_DEPENDENCY_ORDERED_SOFTWARE_ORGAN_ASSEMBLY",
+          "variables_used": []
+        },
+        "project_persisted_outside_candidate": false,
+        "project_type": "static-web",
+        "publish_mode": "validated",
+        "published": true,
+        "runtime_behavior_executed": false,
+        "validation": {
+          "checks": [
+            {
+              "file_count": 4,
+              "passed": true,
+              "type": "project-nonempty"
+            },
+            {
+              "passed": true,
+              "symlinks": [],
+              "type": "project-no-symlinks"
+            },
+            {
+              "passed": true,
+              "path": "index.html",
+              "type": "file-exists"
+            },
+            {
+              "external_references": [],
+              "local_references": [
+                {
+                  "attribute": "href",
+                  "exists": true,
+                  "reference": "style.css",
+                  "resolved": "style.css",
+                  "tag": "link"
+                },
+                {
+                  "attribute": "src",
+                  "exists": true,
+                  "reference": "app.js",
+                  "resolved": "app.js",
+                  "tag": "script"
+                }
+              ],
+              "passed": true,
+              "path": "index.html",
+              "type": "html-local-links",
+              "unresolved": []
+            },
+            {
+              "external_references": [],
+              "local_references": [],
+              "passed": true,
+              "path": "status.html",
+              "type": "html-local-links",
+              "unresolved": []
+            },
+            {
+              "external_references": [],
+              "local_references": [],
+              "passed": true,
+              "path": "style.css",
+              "type": "css-local-links",
+              "unresolved": []
+            },
+            {
+              "external_references": [],
+              "local_references": [],
+              "passed": true,
+              "path": "app.js",
+              "type": "javascript-local-imports",
+              "unresolved": []
+            },
+            {
+              "passed": true,
+              "path": "status.html",
+              "text": "Created through bounded organ growth",
+              "type": "contains"
+            },
+            {
+              "files": [
+                {
+                  "actual_bytes": 374,
+                  "expected_bytes": 374,
+                  "passed": true,
+                  "path": "index.html"
+                },
+                {
+                  "actual_bytes": 290,
+                  "expected_bytes": 290,
+                  "passed": true,
+                  "path": "style.css"
+                },
+                {
+                  "actual_bytes": 171,
+                  "expected_bytes": 171,
+                  "passed": true,
+                  "path": "app.js"
+                },
+                {
+                  "actual_bytes": 93,
+                  "expected_bytes": 93,
+                  "passed": true,
+                  "path": "status.html"
+                }
+              ],
+              "passed": true,
+              "type": "expected-files-exact"
+            }
+          ],
+          "files": [
+            {
+              "bytes": 171,
+              "path": "app.js",
+              "sha256": "752ba8dd09630a0e6e752deeffa69abfaf019a76ffff90af20fa5bc826522d53"
+            },
+            {
+              "bytes": 374,
+              "path": "index.html",
+              "sha256": "55b54cd0bb448418549eb269554d40fbf45d539fe4ada8d11e1ec5e10dcc5e68"
+            },
+            {
+              "bytes": 93,
+              "path": "status.html",
+              "sha256": "6bdd3b966b5a3e846d9faf7fce08c2cc831cfc7beae6da6ab67386300c990b44"
+            },
+            {
+              "bytes": 290,
+              "path": "style.css",
+              "sha256": "07d452f3a4eeddcc5633967c72c3a24c8e647f8c42621d17801412a4e49fd65d"
+            }
+          ],
+          "limitations": [
+            "generated code is not executed by deterministic project validation",
+            "visual appearance and interactive browser behavior require a browser/user/authorized host to test",
+            "CSS and JavaScript local-reference checks are bounded lexical checks, not full browser or language execution"
+          ],
+          "passed": true,
+          "project_type": "static-web"
+        }
+      },
+      "closure_discovery": {
+        "admission_authority": "NONE",
+        "assembly": {
+          "id": "axm.example.grown-status-panel-site",
+          "organs": [
+            {
+              "bindings": {
+                "idle_label": "Create",
+                "title": "Bounded creation growth"
+              },
+              "depends_on": [],
+              "instance_id": "shell-organ",
+              "ref": "axm.web.shell@1.0.0"
+            },
+            {
+              "bindings": {
+                "background": "#07131c"
+              },
+              "depends_on": [
+                "shell-organ"
+              ],
+              "instance_id": "theme-organ",
+              "ref": "axm.web.theme@1.0.0"
+            },
+            {
+              "bindings": {
+                "active_label": "Created",
+                "state": "created"
+              },
+              "depends_on": [
+                "theme-organ"
+              ],
+              "instance_id": "interaction-organ",
+              "ref": "axm.web.interaction@1.0.0"
+            },
+            {
+              "bindings": {
+                "message": "Created through bounded organ growth"
+              },
+              "depends_on": [
+                "interaction-organ"
+              ],
+              "instance_id": "grown-status-panel-organ",
+              "ref": "axm.web.grown-status-panel@1.0.0"
+            }
+          ],
+          "project_type": "static-web",
+          "version": "1.0.0"
+        },
+        "automatic_or_fuzzy_selection": false,
+        "candidate_assemblies": [
+          {
+            "dependency_edges": [
+              {
+                "from": "axm.web.shell@1.0.0",
+                "to": "axm.web.theme@1.0.0"
+              },
+              {
+                "from": "axm.web.theme@1.0.0",
+                "to": "axm.web.interaction@1.0.0"
+              },
+              {
+                "from": "axm.web.interaction@1.0.0",
+                "to": "axm.web.grown-status-panel@1.0.0"
+              }
+            ],
+            "package_count": 4,
+            "package_refs": [
+              "axm.web.shell@1.0.0",
+              "axm.web.theme@1.0.0",
+              "axm.web.interaction@1.0.0",
+              "axm.web.grown-status-panel@1.0.0"
+            ],
+            "provided_interfaces": [
+              "document-shell",
+              "local-interaction",
+              "status-panel",
+              "visual-theme"
+            ]
+          }
+        ],
+        "compatible_package_count": 4,
+        "compatible_package_refs": [
+          "axm.web.grown-status-panel@1.0.0",
+          "axm.web.interaction@1.0.0",
+          "axm.web.shell@1.0.0",
+          "axm.web.theme@1.0.0"
+        ],
+        "goal": {
+          "bindings": {
+            "document-shell": {
+              "idle_label": "Create",
+              "title": "Bounded creation growth"
+            },
+            "local-interaction": {
+              "active_label": "Created",
+              "state": "created"
+            },
+            "status-panel": {
+              "message": "Created through bounded organ growth"
+            },
+            "visual-theme": {
+              "background": "#07131c"
+            }
+          },
+          "id": "axm.example.grown-status-panel-site",
+          "project_type": "static-web",
+          "required_interfaces": [
+            "status-panel"
+          ],
+          "schema": "axm.interface-organ-goal/v0.1",
+          "version": "1.0.0"
+        },
+        "hold_reason": null,
+        "project_type": "static-web",
+        "required_interfaces": [
+          "status-panel"
+        ],
+        "runtime_wiring_invented": false,
+        "schema": "axm.interface-organ-discovery/v0.1",
+        "search": {
+          "maximum_states": 10000,
+          "rejected_dependency_cycles": 0,
+          "rejected_provider_collisions": 0,
+          "search_bound_reached": false,
+          "states_observed": 5,
+          "strategy": "bounded exact interface-provider constraint search"
+        },
+        "selected_candidate": {
+          "dependency_edges": [
+            {
+              "from": "axm.web.shell@1.0.0",
+              "to": "axm.web.theme@1.0.0"
+            },
+            {
+              "from": "axm.web.theme@1.0.0",
+              "to": "axm.web.interaction@1.0.0"
+            },
+            {
+              "from": "axm.web.interaction@1.0.0",
+              "to": "axm.web.grown-status-panel@1.0.0"
+            }
+          ],
+          "package_count": 4,
+          "package_refs": [
+            "axm.web.shell@1.0.0",
+            "axm.web.theme@1.0.0",
+            "axm.web.interaction@1.0.0",
+            "axm.web.grown-status-panel@1.0.0"
+          ],
+          "provided_interfaces": [
+            "document-shell",
+            "local-interaction",
+            "status-panel",
+            "visual-theme"
+          ]
+        },
+        "selection_authority": "NONE",
+        "selection_basis": "one uniquely smallest acyclic collision-free package set satisfies the requested and transitive exact interface contracts",
+        "selection_is_semantic_proof": false,
+        "semantic_source_invented": false,
+        "source_interface_conformance_proven": false,
+        "status": "READY_EXACT_INTERFACE_ASSEMBLY",
+        "truth_status": "DETERMINISTIC_EXACT_INTERFACE_ASSEMBLY",
+        "variables": {}
+      },
+      "closure_resolution": {
+        "automatic_or_fuzzy_selection": false,
+        "descriptive_anatomy_organs_promoted": false,
+        "inline_instance_ids": [],
+        "inline_organs_remain_explicit_request_source": true,
+        "referenced_package_count": 4,
+        "referenced_packages": [
+          {
+            "instance_id": "shell-organ",
+            "package_id": "axm.web.shell",
+            "parameters_bound": [
+              "idle_label",
+              "title"
+            ],
+            "provides": [
+              "document-shell"
+            ],
+            "ref": "axm.web.shell@1.0.0",
+            "requires": [],
+            "source_path": "executable-organs/axm.web.shell-1.0.0.json",
+            "version": "1.0.0"
+          },
+          {
+            "instance_id": "theme-organ",
+            "package_id": "axm.web.theme",
+            "parameters_bound": [
+              "background"
+            ],
+            "provides": [
+              "visual-theme"
+            ],
+            "ref": "axm.web.theme@1.0.0",
+            "requires": [
+              "document-shell"
+            ],
+            "source_path": "executable-organs/axm.web.theme-1.0.0.json",
+            "version": "1.0.0"
+          },
+          {
+            "instance_id": "interaction-organ",
+            "package_id": "axm.web.interaction",
+            "parameters_bound": [
+              "active_label",
+              "state"
+            ],
+            "provides": [
+              "local-interaction"
+            ],
+            "ref": "axm.web.interaction@1.0.0",
+            "requires": [
+              "document-shell",
+              "visual-theme"
+            ],
+            "source_path": "executable-organs/axm.web.interaction-1.0.0.json",
+            "version": "1.0.0"
+          },
+          {
+            "instance_id": "grown-status-panel-organ",
+            "package_id": "axm.web.grown-status-panel",
+            "parameters_bound": [
+              "message"
+            ],
+            "provides": [
+              "status-panel"
+            ],
+            "ref": "axm.web.grown-status-panel@1.0.0",
+            "requires": [
+              "local-interaction"
+            ],
+            "source_path": "executable-organs/candidate-5cf45e5a67b4ab92.json",
+            "version": "1.0.0"
+          }
+        ],
+        "schema": "axm.executable-software-organ/v0.1",
+        "truth_status": "EXACT_EXECUTABLE_ORGAN_REFERENCE_RESOLUTION"
+      },
+      "contract_alignment": {
+        "comparison": "exact set equality between Forge unit contracts and executable-organ package declarations",
+        "missing_provides_in_proposal": [],
+        "missing_requires_in_proposal": [],
+        "package_provides": [
+          "status-panel"
+        ],
+        "package_requires": [
+          "local-interaction"
+        ],
+        "passed": true,
+        "proposal_provides": [
+          "status-panel"
+        ],
+        "proposal_requires": [
+          "local-interaction"
+        ],
+        "unexpected_provides_in_proposal": [],
+        "unexpected_requires_in_proposal": []
+      },
+      "hold_reason": null,
+      "initial_discovery": {
+        "admission_authority": "NONE",
+        "assembly": null,
+        "automatic_or_fuzzy_selection": false,
+        "candidate_assemblies": [],
+        "compatible_package_count": 3,
+        "compatible_package_refs": [
+          "axm.web.interaction@1.0.0",
+          "axm.web.shell@1.0.0",
+          "axm.web.theme@1.0.0"
+        ],
+        "goal": {
+          "bindings": {
+            "document-shell": {
+              "idle_label": "Create",
+              "title": "Bounded creation growth"
+            },
+            "local-interaction": {
+              "active_label": "Created",
+              "state": "created"
+            },
+            "status-panel": {
+              "message": "Created through bounded organ growth"
+            },
+            "visual-theme": {
+              "background": "#07131c"
+            }
+          },
+          "id": "axm.example.grown-status-panel-site",
+          "project_type": "static-web",
+          "required_interfaces": [
+            "status-panel"
+          ],
+          "schema": "axm.interface-organ-goal/v0.1",
+          "version": "1.0.0"
+        },
+        "hold_reason": "one or more required interfaces have no compatible executable-organ provider",
+        "missing_interfaces": [
+          "status-panel"
+        ],
+        "missing_unit_contracts": [
+          {
+            "admission_authority": "NONE",
+            "automatic_source_invention": false,
+            "kind": "organ",
+            "must_provide": [
+              "status-panel"
+            ],
+            "project_type": "static-web",
+            "required_by": [
+              "creation-goal"
+            ],
+            "schema": "axm.missing-executable-organ-contract/v0.1",
+            "source_and_tests_required": true,
+            "suggested_forge_kind": "organ"
+          }
+        ],
+        "project_type": "static-web",
+        "required_interfaces": [
+          "status-panel"
+        ],
+        "runtime_wiring_invented": false,
+        "schema": "axm.interface-organ-discovery/v0.1",
+        "search": {
+          "maximum_states": 10000,
+          "rejected_dependency_cycles": 0,
+          "rejected_provider_collisions": 0,
+          "search_bound_reached": false,
+          "states_observed": 1,
+          "strategy": "bounded exact interface-provider constraint search"
+        },
+        "selection_authority": "NONE",
+        "semantic_source_invented": false,
+        "source_interface_conformance_proven": false,
+        "status": "HOLD_MISSING_ORGAN_INTERFACE",
+        "truth_status": "DETERMINISTIC_MISSING_INTERFACE_HOLD"
+      },
+      "installed": false,
+      "limitations": [
+        "the closure build proves one exact request-shaped structural assembly and validation receipt",
+        "declared interface names and a passing rendered build do not prove source-level semantic conformance or runtime behavior",
+        "the candidate exists only in its detached Forge package; the live executable-organ library remains unchanged"
+      ],
+      "live_machine_body_modified": false,
+      "merged": false,
+      "missing_unit_contracts": [
+        {
+          "admission_authority": "NONE",
+          "automatic_source_invention": false,
+          "kind": "organ",
+          "must_provide": [
+            "status-panel"
+          ],
+          "project_type": "static-web",
+          "required_by": [
+            "creation-goal"
+          ],
+          "schema": "axm.missing-executable-organ-contract/v0.1",
+          "source_and_tests_required": true,
+          "suggested_forge_kind": "organ"
+        }
+      ],
+      "next_decision": "inspect the detached evidence and separately choose whether to request admission review; this experiment does not install the organ",
+      "operation": "explore-missing-organ-closure",
+      "original_goal_became_ready": true,
+      "overlay": {
+        "candidate_present_only_for_experiment": true,
+        "candidate_ref": "axm.web.grown-status-panel@1.0.0",
+        "live_library_modified": false,
+        "overlay_disposed_after_experiment": true,
+        "package_refs": [
+          "axm.web.grown-status-panel@1.0.0",
+          "axm.web.interaction@1.0.0",
+          "axm.web.shell@1.0.0",
+          "axm.web.theme@1.0.0"
+        ],
+        "source_files": [
+          {
+            "overlay_path": "executable-organs/axm.web.interaction-1.0.0.json",
+            "role": "installed-live-source",
+            "sha256": "sha256:cdd2f6c14e25ef3bcad0ab002911344ab9de2ad69f4adb09aac2422f5ab6818c",
+            "source_path": "executable-organs/axm.web.interaction-1.0.0.json"
+          },
+          {
+            "overlay_path": "executable-organs/axm.web.shell-1.0.0.json",
+            "role": "installed-live-source",
+            "sha256": "sha256:8afce3df907d13fdb79e5f3d4a37320dfeab2cae4892e0c53577fb71b0b7cd36",
+            "source_path": "executable-organs/axm.web.shell-1.0.0.json"
+          },
+          {
+            "overlay_path": "executable-organs/axm.web.theme-1.0.0.json",
+            "role": "installed-live-source",
+            "sha256": "sha256:05f92a109ce69d035040c46f302e0e4863faf3375de7ebdc89f69fd52a18d024",
+            "source_path": "executable-organs/axm.web.theme-1.0.0.json"
+          },
+          {
+            "overlay_path": "executable-organs/candidate-5cf45e5a67b4ab92.json",
+            "role": "detached-candidate-source",
+            "sha256": "sha256:5cf45e5a67b4ab921819d47188faedf01dca8caf98d02557870e5ccd03e9cb33",
+            "source_path": "/workspace/scratch/f8e7c45e04d8/axm-universal-creation/creations/spawned/grown-status-panel-organ/organ.json"
+          }
+        ],
+        "truth_status": "EPHEMERAL_EXACT_ORGAN_LIBRARY_OVERLAY"
+      },
+      "passed": true,
+      "path": "/workspace/scratch/f8e7c45e04d8/axm-universal-creation/creations/spawned/grown-status-panel-organ",
+      "permissions_changed": false,
+      "promoted": false,
+      "registered": false,
+      "schema": "axm.missing-organ-closure-experiment/v0.1",
+      "selection_authority": "NONE",
+      "spawn": {
+        "creation_status": "VALIDATED_CREATION",
+        "files": [
+          {
+            "bytes": 4499,
+            "path": "axm.proposal.json",
+            "sha256": "0a648e4e6ae691c893d257b3f71b6a86d9f007c419f917c578edaab17c0d815a"
+          },
+          {
+            "bytes": 1402,
+            "path": "axm.spawn-receipt.json",
+            "sha256": "349cfe7f49db5229b04ff4f6b0cd8e1153915995f4dc5d84cb81e0a1a9b35f6d"
+          },
+          {
+            "bytes": 4085,
+            "path": "axm.unit.json",
+            "sha256": "c341c130289d9bc77da4c1bcd71c0e4f7ee51efc382a1a48594b82a53cbe661f"
+          },
+          {
+            "bytes": 911,
+            "path": "organ.json",
+            "sha256": "5cf45e5a67b4ab921819d47188faedf01dca8caf98d02557870e5ccd03e9cb33"
+          }
+        ],
+        "grounding": {
+          "creation_retained": true,
+          "creation_status": "VALIDATED_CREATION",
+          "gap_meaning": "failed checks expose current creation or capability gaps; they are not automatically a prohibition on retaining the creation",
+          "observed_gap_count": 0,
+          "observed_gaps": [],
+          "publish_mode": "validated",
+          "truth_status": "OBSERVED_DETERMINISTIC_PROJECT_VALIDATION",
+          "validation_passed": true
+        },
+        "live_machine_body_modified": false,
+        "next_operation": "test",
+        "operation": "spawn",
+        "path": "/workspace/scratch/f8e7c45e04d8/axm-universal-creation/creations/spawned/grown-status-panel-organ",
+        "project_type": "generic",
+        "publish_mode": "validated",
+        "published": true,
+        "spawn_receipt": {
+          "body_files": [
+            {
+              "bytes": 4499,
+              "digest": "sha256:0a648e4e6ae691c893d257b3f71b6a86d9f007c419f917c578edaab17c0d815a",
+              "path": "axm.proposal.json"
+            },
+            {
+              "bytes": 4085,
+              "digest": "sha256:c341c130289d9bc77da4c1bcd71c0e4f7ee51efc382a1a48594b82a53cbe661f",
+              "path": "axm.unit.json"
+            },
+            {
+              "bytes": 911,
+              "digest": "sha256:5cf45e5a67b4ab921819d47188faedf01dca8caf98d02557870e5ccd03e9cb33",
+              "path": "organ.json"
+            }
+          ],
+          "canon_changed": false,
+          "generated_code_executed": false,
+          "installed": false,
+          "kind": "organ",
+          "kind_contract": "FIRST_CLASS",
+          "manifest_digest": "sha256:c341c130289d9bc77da4c1bcd71c0e4f7ee51efc382a1a48594b82a53cbe661f",
+          "merged": false,
+          "package_digest": "sha256:57b0b014c7db6697faedfbd6225adeb162c90340193e2b233ac2e1dd3d785814",
+          "permissions_changed": false,
+          "project_type": "generic",
+          "promoted": false,
+          "proposal_digest": "sha256:91f829edff5a1f5bf3a166c535672422b2018851005bd51f953db721cf4446c6",
+          "receipt_digest": "sha256:aa30d5e6b28ed72a9d527dbd9675262f9f7dadc7a4bf7c829f8ff8025c837831",
+          "registered": false,
+          "runtime_evidence": "NOT_YET_OBSERVED; use the separate test operation",
+          "schema": "axm.creation-unit-spawn-receipt/v0.1",
+          "staged_check_count": 14,
+          "staged_validation_passed": true,
+          "status": "MATERIALIZED",
+          "unit_ref": "axm.web.grown-status-panel@1.0.0"
+        },
+        "truth_status": "MATERIALIZED_DETACHED_CREATION_UNIT",
+        "unit": {
+          "authority": {
+            "canon": false,
+            "execute": false,
+            "install": false,
+            "merge": false,
+            "permissions": false,
+            "promote": false,
+            "register": false
+          },
+          "contracts": {
+            "inputs": {
+              "parameters": [
+                "message"
+              ],
+              "project_types": [
+                "static-web"
+              ]
+            },
+            "outputs": {
+              "project_types": [
+                "static-web"
+              ],
+              "template_files": [
+                "status.html"
+              ]
+            },
+            "provides": [
+              "status-panel"
+            ],
+            "requires": [
+              "local-interaction"
+            ]
+          },
+          "dependencies": [],
+          "id": "axm.web.grown-status-panel",
+          "implementation": {
+            "entrypoint": "organ.json",
+            "kind": "DETERMINISTIC_SOURCE",
+            "source_files": [
+              "organ.json"
+            ]
+          },
+          "kind": "organ",
+          "kind_contract": "FIRST_CLASS",
+          "limitations": [
+            "This fragment does not prove browser-rendered visual quality, accessibility, or runtime behavior.",
+            "This candidate proves exact package structure and declared deterministic file checks; semantic interface conformance and emitted runtime behavior require separate evidence."
+          ],
+          "payload_files": [
+            {
+              "bytes": 911,
+              "digest": "sha256:5cf45e5a67b4ab921819d47188faedf01dca8caf98d02557870e5ccd03e9cb33",
+              "path": "organ.json"
+            }
+          ],
+          "proposal_digest": "sha256:91f829edff5a1f5bf3a166c535672422b2018851005bd51f953db721cf4446c6",
+          "provenance": {
+            "basis": "Compiled only from the explicitly supplied executable-organ package and exact cited anatomy records. Supplied package basis: Explicit bounded example source supplied to connect the materialization census to one observed creation gap.",
+            "kind": "compiled-explicit-organ-package",
+            "refs": [
+              "organs/AXM-09-UI-INTERACTION-O-015-notification-manager.json"
+            ]
+          },
+          "purpose": "Render one explicit status-panel fragment for the bounded creation-growth experiment.",
+          "ref": "axm.web.grown-status-panel@1.0.0",
+          "relationships": [
+            {
+              "target": "AXM-09-UI-INTERACTION-O-015-notification-manager",
+              "type": "materializes-anatomy"
+            }
+          ],
+          "root_fit": {
+            "agency": {
+              "basis": "The caller chooses the implementation source and target anatomy; the detached proposal grants itself no authority.",
+              "fit": true
+            },
+            "continuity": {
+              "basis": "Compilation produces a detached candidate and does not replace or install into the continuing machine.",
+              "fit": true
+            },
+            "truth": {
+              "basis": "The exact supplied package, anatomy references, compiler checks, and unproven runtime boundary remain visible.",
+              "fit": true
+            },
+            "wisdom-before-speed": {
+              "basis": "Exact package validation and bounded tests precede any separate adoption decision.",
+              "fit": true
+            }
+          },
+          "schema": "axm.spawned-creation-unit/v0.1",
+          "status": "DETACHED_CANDIDATE",
+          "truth_boundaries": {
+            "capability_is_not_authority": true,
+            "materialized_is_not_installed": true,
+            "materialized_is_not_merge_approval": true,
+            "materialized_is_not_registered": true,
+            "materialized_is_not_runtime_proof": true
+          },
+          "verification": {
+            "checks": [
+              {
+                "path": "organ.json",
+                "type": "json-valid"
+              },
+              {
+                "equals": "axm.executable-software-organ/v0.1",
+                "json_path": [
+                  "schema"
+                ],
+                "path": "organ.json",
+                "type": "json-value"
+              },
+              {
+                "equals": "axm.web.grown-status-panel",
+                "json_path": [
+                  "id"
+                ],
+                "path": "organ.json",
+                "type": "json-value"
+              },
+              {
+                "equals": "1.0.0",
+                "json_path": [
+                  "version"
+                ],
+                "path": "organ.json",
+                "type": "json-value"
+              },
+              {
+                "equals": "executable",
+                "json_path": [
+                  "status"
+                ],
+                "path": "organ.json",
+                "type": "json-value"
+              },
+              {
+                "path": "organ.json",
+                "sha256": "5cf45e5a67b4ab921819d47188faedf01dca8caf98d02557870e5ccd03e9cb33",
+                "type": "sha256"
+              }
+            ]
+          },
+          "version": "1.0.0"
+        },
+        "validation": {
+          "checks": [
+            {
+              "file_count": 4,
+              "passed": true,
+              "type": "project-nonempty"
+            },
+            {
+              "passed": true,
+              "symlinks": [],
+              "type": "project-no-symlinks"
+            },
+            {
+              "passed": true,
+              "path": "axm.proposal.json",
+              "type": "json-valid"
+            },
+            {
+              "passed": true,
+              "path": "axm.spawn-receipt.json",
+              "type": "json-valid"
+            },
+            {
+              "passed": true,
+              "path": "axm.unit.json",
+              "type": "json-valid"
+            },
+            {
+              "passed": true,
+              "path": "organ.json",
+              "type": "json-valid"
+            },
+            {
+              "passed": true,
+              "path": "organ.json",
+              "type": "file-exists"
+            },
+            {
+              "bytes": 911,
+              "passed": true,
+              "path": "organ.json",
+              "type": "nonempty"
+            },
+            {
+              "passed": true,
+              "path": "organ.json",
+              "type": "json-valid"
+            },
+            {
+              "actual": "axm.executable-software-organ/v0.1",
+              "expected": "axm.executable-software-organ/v0.1",
+              "json_path": [
+                "schema"
+              ],
+              "passed": true,
+              "path": "organ.json",
+              "type": "json-value"
+            },
+            {
+              "actual": "axm.web.grown-status-panel",
+              "expected": "axm.web.grown-status-panel",
+              "json_path": [
+                "id"
+              ],
+              "passed": true,
+              "path": "organ.json",
+              "type": "json-value"
+            },
+            {
+              "actual": "1.0.0",
+              "expected": "1.0.0",
+              "json_path": [
+                "version"
+              ],
+              "passed": true,
+              "path": "organ.json",
+              "type": "json-value"
+            },
+            {
+              "actual": "executable",
+              "expected": "executable",
+              "json_path": [
+                "status"
+              ],
+              "passed": true,
+              "path": "organ.json",
+              "type": "json-value"
+            },
+            {
+              "actual_bytes": 911,
+              "actual_sha256": "5cf45e5a67b4ab921819d47188faedf01dca8caf98d02557870e5ccd03e9cb33",
+              "expected_sha256": "5cf45e5a67b4ab921819d47188faedf01dca8caf98d02557870e5ccd03e9cb33",
+              "passed": true,
+              "path": "organ.json",
+              "type": "sha256"
+            },
+            {
+              "files": [
+                {
+                  "actual_bytes": 911,
+                  "expected_bytes": 911,
+                  "passed": true,
+                  "path": "organ.json"
+                },
+                {
+                  "actual_bytes": 4499,
+                  "expected_bytes": 4499,
+                  "passed": true,
+                  "path": "axm.proposal.json"
+                },
+                {
+                  "actual_bytes": 4085,
+                  "expected_bytes": 4085,
+                  "passed": true,
+                  "path": "axm.unit.json"
+                },
+                {
+                  "actual_bytes": 1402,
+                  "expected_bytes": 1402,
+                  "passed": true,
+                  "path": "axm.spawn-receipt.json"
+                }
+              ],
+              "passed": true,
+              "type": "expected-files-exact"
+            }
+          ],
+          "files": [
+            {
+              "bytes": 4499,
+              "path": "axm.proposal.json",
+              "sha256": "0a648e4e6ae691c893d257b3f71b6a86d9f007c419f917c578edaab17c0d815a"
+            },
+            {
+              "bytes": 1402,
+              "path": "axm.spawn-receipt.json",
+              "sha256": "349cfe7f49db5229b04ff4f6b0cd8e1153915995f4dc5d84cb81e0a1a9b35f6d"
+            },
+            {
+              "bytes": 4085,
+              "path": "axm.unit.json",
+              "sha256": "c341c130289d9bc77da4c1bcd71c0e4f7ee51efc382a1a48594b82a53cbe661f"
+            },
+            {
+              "bytes": 911,
+              "path": "organ.json",
+              "sha256": "5cf45e5a67b4ab921819d47188faedf01dca8caf98d02557870e5ccd03e9cb33"
+            }
+          ],
+          "limitations": [
+            "generated code is not executed by deterministic project validation",
+            "visual appearance and interactive browser behavior require a browser/user/authorized host to test",
+            "CSS and JavaScript local-reference checks are bounded lexical checks, not full browser or language execution"
+          ],
+          "passed": true,
+          "project_type": "generic"
+        }
+      },
+      "status": "TESTED_DETACHED_ORGAN_CLOSES_INTERFACE_GAP",
+      "truth_status": "OBSERVED_EPHEMERAL_EXACT_ORGAN_CLOSURE_BUILD"
+    },
+    "gap_analysis_digest": "sha256:15fb41cf67187a096bc535adc97d547a43d63396b369d1ca02cab9b3a54d636b",
+    "gap_status": "HOLD_MISSING_ORGAN_INTERFACE",
+    "generic_compose_capability_expansion_observed_in_ephemeral_space": true,
+    "limitations": [
+      "one passing request-shaped closure does not prove universal semantic interface conformance",
+      "the candidate remains detached; descriptive anatomy, candidate materialization, installation, registration, promotion, merge, and CANON remain separate states",
+      "runtime, browser, visual, accessibility, and host behavior require separate evidence"
+    ],
+    "live_machine_body_modified": false,
+    "live_route_after_test": null,
+    "materialized": true,
+    "missing_interface": "status-panel",
+    "next_decision": "inspect the exact detached evidence and separately decide whether to adopt the organ",
+    "operation": "materialize-and-test",
+    "organ_goal": {
+      "bindings": {
+        "document-shell": {
+          "idle_label": "Create",
+          "title": "Bounded creation growth"
+        },
+        "local-interaction": {
+          "active_label": "Created",
+          "state": "created"
+        },
+        "status-panel": {
+          "message": "Created through bounded organ growth"
+        },
+        "visual-theme": {
+          "background": "#07131c"
+        }
+      },
+      "id": "axm.example.grown-status-panel-site",
+      "project_type": "static-web",
+      "required_interfaces": [
+        "status-panel"
+      ],
+      "schema": "axm.interface-organ-goal/v0.1",
+      "version": "1.0.0"
+    },
+    "package_provides": [
+      "status-panel"
+    ],
+    "package_ref": "axm.web.grown-status-panel@1.0.0",
+    "package_requires": [
+      "local-interaction"
+    ],
+    "passed": true,
+    "path": "/workspace/scratch/f8e7c45e04d8/axm-universal-creation/creations/spawned/grown-status-panel-organ",
+    "plan_digest": "7fa83334bd563543be5ba29ab5a54c509ea7aef561c52d4525b3b8e0f7cea6d0",
+    "proposal": {
+      "authority": {
+        "canon": false,
+        "execute": false,
+        "install": false,
+        "merge": false,
+        "permissions": false,
+        "promote": false,
+        "register": false
+      },
+      "contracts": {
+        "inputs": {
+          "parameters": [
+            "message"
+          ],
+          "project_types": [
+            "static-web"
+          ]
+        },
+        "outputs": {
+          "project_types": [
+            "static-web"
+          ],
+          "template_files": [
+            "status.html"
+          ]
+        },
+        "provides": [
+          "status-panel"
+        ],
+        "requires": [
+          "local-interaction"
+        ]
+      },
+      "dependencies": [],
+      "files": {
+        "organ.json": "{\n  \"anatomy_refs\": [\n    \"AXM-09-UI-INTERACTION-O-015-notification-manager\"\n  ],\n  \"files\": {\n    \"status.html\": \"<!doctype html><html><body><aside>[[AXM:message]]</aside></body></html>\\n\"\n  },\n  \"id\": \"axm.web.grown-status-panel\",\n  \"limitations\": [\n    \"This fragment does not prove browser-rendered visual quality, accessibility, or runtime behavior.\"\n  ],\n  \"parameters\": [\n    \"message\"\n  ],\n  \"project_types\": [\n    \"static-web\"\n  ],\n  \"provenance\": {\n    \"basis\": \"Explicit bounded example source supplied to connect the materialization census to one observed creation gap.\",\n    \"kind\": \"local-authored-source\"\n  },\n  \"provides\": [\n    \"status-panel\"\n  ],\n  \"purpose\": \"Render one explicit status-panel fragment for the bounded creation-growth experiment.\",\n  \"requires\": [\n    \"local-interaction\"\n  ],\n  \"schema\": \"axm.executable-software-organ/v0.1\",\n  \"status\": \"executable\",\n  \"version\": \"1.0.0\"\n}\n"
+      },
+      "id": "axm.web.grown-status-panel",
+      "implementation": {
+        "entrypoint": "organ.json",
+        "kind": "DETERMINISTIC_SOURCE",
+        "source_files": [
+          "organ.json"
+        ]
+      },
+      "kind": "organ",
+      "limitations": [
+        "This fragment does not prove browser-rendered visual quality, accessibility, or runtime behavior.",
+        "This candidate proves exact package structure and declared deterministic file checks; semantic interface conformance and emitted runtime behavior require separate evidence."
+      ],
+      "provenance": {
+        "basis": "Compiled only from the explicitly supplied executable-organ package and exact cited anatomy records. Supplied package basis: Explicit bounded example source supplied to connect the materialization census to one observed creation gap.",
+        "kind": "compiled-explicit-organ-package",
+        "refs": [
+          "organs/AXM-09-UI-INTERACTION-O-015-notification-manager.json"
+        ]
+      },
+      "purpose": "Render one explicit status-panel fragment for the bounded creation-growth experiment.",
+      "relationships": [
+        {
+          "target": "AXM-09-UI-INTERACTION-O-015-notification-manager",
+          "type": "materializes-anatomy"
+        }
+      ],
+      "root_fit": {
+        "agency": {
+          "basis": "The caller chooses the implementation source and target anatomy; the detached proposal grants itself no authority.",
+          "fit": true
+        },
+        "continuity": {
+          "basis": "Compilation produces a detached candidate and does not replace or install into the continuing machine.",
+          "fit": true
+        },
+        "truth": {
+          "basis": "The exact supplied package, anatomy references, compiler checks, and unproven runtime boundary remain visible.",
+          "fit": true
+        },
+        "wisdom-before-speed": {
+          "basis": "Exact package validation and bounded tests precede any separate adoption decision.",
+          "fit": true
+        }
+      },
+      "schema": "axm.creation-unit-spawn-proposal/v0.1",
+      "verification": {
+        "checks": [
+          {
+            "path": "organ.json",
+            "type": "json-valid"
+          },
+          {
+            "equals": "axm.executable-software-organ/v0.1",
+            "json_path": [
+              "schema"
+            ],
+            "path": "organ.json",
+            "type": "json-value"
+          },
+          {
+            "equals": "axm.web.grown-status-panel",
+            "json_path": [
+              "id"
+            ],
+            "path": "organ.json",
+            "type": "json-value"
+          },
+          {
+            "equals": "1.0.0",
+            "json_path": [
+              "version"
+            ],
+            "path": "organ.json",
+            "type": "json-value"
+          },
+          {
+            "equals": "executable",
+            "json_path": [
+              "status"
+            ],
+            "path": "organ.json",
+            "type": "json-value"
+          },
+          {
+            "path": "organ.json",
+            "sha256": "5cf45e5a67b4ab921819d47188faedf01dca8caf98d02557870e5ccd03e9cb33",
+            "type": "sha256"
+          }
+        ]
+      },
+      "version": "1.0.0"
+    },
+    "proposal_digest": "91f829edff5a1f5bf3a166c535672422b2018851005bd51f953db721cf4446c6",
+    "request": {
+      "inputs": {
+        "checks": [
+          {
+            "path": "status.html",
+            "text": "Created through bounded organ growth",
+            "type": "contains"
+          }
+        ],
+        "organ_goal": {
+          "bindings": {
+            "document-shell": {
+              "idle_label": "Create",
+              "title": "Bounded creation growth"
+            },
+            "local-interaction": {
+              "active_label": "Created",
+              "state": "created"
+            },
+            "status-panel": {
+              "message": "Created through bounded organ growth"
+            },
+            "visual-theme": {
+              "background": "#07131c"
+            }
+          },
+          "id": "axm.example.grown-status-panel-site",
+          "project_type": "static-web",
+          "required_interfaces": [
+            "status-panel"
+          ],
+          "schema": "axm.interface-organ-goal/v0.1",
+          "version": "1.0.0"
+        },
+        "path": "creations/grown-status-panel"
+      },
+      "kind": "status-panel-site"
+    },
+    "request_digest": "sha256:c23b0d6987d36320ef5ea2bb309859a59a026fb5ca98b9e0c4decee6fc42daba",
+    "schema": "axm.creation-organ-growth/v0.1",
+    "selection_authority": "CALLER_EXPLICIT",
+    "source_invented": false,
+    "status": "TESTED_CREATION_GROWTH_CANDIDATE",
+    "tested": true,
+    "truth_status": "OBSERVED_EXPLICIT_ORGAN_CLOSES_ONE_CREATION_GAP"
+  },
+  "type": "CREATION_RESULT"
+}

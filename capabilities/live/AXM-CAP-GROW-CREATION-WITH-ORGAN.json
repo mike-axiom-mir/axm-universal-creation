@@ -1,0 +1,100 @@
+{
+  "id": "AXM-CAP-GROW-CREATION-WITH-ORGAN",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Connect one observed missing creation interface to one exact descriptive organ and one explicitly supplied executable package, then compile, materialize, test, and exercise that package in a complete ephemeral request-shaped organ assembly without silently installing it.",
+  "handles": [
+    "creation-organ-growth",
+    "organ-grown-creation-capability",
+    "materialized-creation-growth"
+  ],
+  "input_contract": {
+    "required": ["operation", "request"],
+    "required_by_operation": {
+      "prepare": ["anatomy_id", "package"],
+      "materialize-and-test": ["anatomy_id", "package", "path"]
+    },
+    "properties": {
+      "operation": "analyze, prepare, or materialize-and-test",
+      "request": "one normalized creation request that currently reaches exactly one HOLD_MISSING_ORGAN_INTERFACE",
+      "anatomy_id": "prepare/materialize only; exact descriptive organ ID chosen explicitly by the caller",
+      "package": "prepare/materialize only; complete explicit axm.executable-software-organ/v0.1 source that cites the anatomy ID and provides the exact missing interface",
+      "path": "materialize-and-test only; detached candidate directory under creations/ or outside the machine body",
+      "checks": "materialize-and-test only; optional deterministic checks over the ephemeral complete creation",
+      "replace": "materialize-and-test only; optional boolean"
+    }
+  },
+  "output_contract": {
+    "kind": "creation-organ-growth-evidence",
+    "contains": [
+      "exact request and creation-gap digests",
+      "one observed missing interface",
+      "exact descriptive anatomy census state",
+      "explicit package and compiled Forge proposal",
+      "detached package tests and full ephemeral closure build",
+      "separate candidate, installation, registration, promotion, merge, and live-route states"
+    ]
+  },
+  "dependencies": [
+    "AXM-CAP-SYNTHESIZE-CREATION-GAP",
+    "AXM-CAP-MATERIALIZE-ORGANS",
+    "AXM-CAP-EXPLORE-ORGAN-GAP",
+    "AXM-CAP-COMPOSE-ORGAN-PROJECT"
+  ],
+  "relationships": [
+    "starts only from a typed creation gap with exactly one missing executable-organ interface",
+    "requires the caller to select one exact anatomy record and supply its complete implementation source",
+    "requires the supplied package to provide the exact observed missing interface",
+    "reuses the organ materialization compiler, detached Creation-Unit Forge test, ephemeral installed-plus-candidate overlay, interface discovery, and validated full assembly",
+    "shows when the generic organ-compose capability would gain one request-shaped creation after a separate adoption decision",
+    "does not invent source, adopt the candidate, change the live route table, merge, or establish CANON"
+  ],
+  "anatomy_refs": [
+    {
+      "id": "AXM-05-CODE-GRAMMAR-O-008-compiler",
+      "role": "implements",
+      "basis": "Compiles one exact missing-interface hold, caller-selected anatomy record, and explicit package body into a digest-linked bounded growth plan and existing Forge proposal."
+    },
+    {
+      "id": "AXM-01-PROVENANCE-O-002-evidence-collector",
+      "role": "uses",
+      "basis": "Carries request, gap, census, proposal, package, detached test, and full closure evidence without collapsing their meanings."
+    },
+    {
+      "id": "AXM-06-BUILD-PACKAGE-O-004-artifact-builder",
+      "role": "uses",
+      "basis": "Reuses the existing detached package materializer and validated ephemeral assembly builder."
+    }
+  ],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:creation_growth",
+    "source": "src/axm_uc/creation_growth.py"
+  },
+  "limitations": [
+    "this version handles exactly one missing interface and one explicit organ package per growth experiment",
+    "a passing request-shaped closure proves one exact structural assembly and deterministic validation result, not universal semantic conformance",
+    "the capability does not autonomously generate package source or choose an anatomy record",
+    "runtime, browser, visual, accessibility, host, and human-quality claims require separate evidence",
+    "the tested candidate remains detached and is not installed, registered, promoted, merged, connected to the live library, or made CANON"
+  ],
+  "persistent_state": "analyze and prepare are read-only; materialize-and-test writes only the caller-selected detached candidate directory",
+  "root_fit": {
+    "truth": {
+      "fit": true,
+      "basis": "The exact unsupported request, typed gap, selected anatomy, supplied source, structural tests, full closure result, and unproven behavior remain separately visible."
+    },
+    "agency": {
+      "fit": true,
+      "basis": "The caller selects the anatomy and source; no source, admission, installation, promotion, merge, or CANON choice is silently made."
+    },
+    "continuity": {
+      "fit": true,
+      "basis": "The live machine and executable-organ library remain unchanged while the candidate and complete closure are tested in detached and disposable spaces."
+    },
+    "wisdom-before-speed": {
+      "fit": true,
+      "basis": "One exact gap must be observed, one exact source must validate, and one full request-shaped closure must pass before adoption can even be considered separately."
+    }
+  }
+}

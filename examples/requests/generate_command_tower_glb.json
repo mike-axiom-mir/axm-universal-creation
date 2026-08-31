@@ -1,0 +1,59 @@
+{
+  "kind": "procedural-glb-asset",
+  "direction": "generate one exact bounded 3D command tower as a portable glTF 2.0 binary asset",
+  "inputs": {
+    "path": "creations/generated-assets/command-tower.glb",
+    "replace": true,
+    "specification": {
+      "schema": "axm.procedural-3d/v0.1",
+      "name": "AXM Command Tower",
+      "primitives": [
+        {
+          "id": "foundation",
+          "type": "box",
+          "size": [4.8, 0.8, 4.8],
+          "translation": [0, 0.4, 0],
+          "material": {"color": "#122D3BFF", "metallic": 0.7, "roughness": 0.32}
+        },
+        {
+          "id": "lower-ring",
+          "type": "cylinder",
+          "size": [3.4, 0.7, 3.4],
+          "translation": [0, 1.15, 0],
+          "segments": 24,
+          "material": {"color": "#20CFC4FF", "metallic": 0.45, "roughness": 0.25}
+        },
+        {
+          "id": "tower-core",
+          "type": "cylinder",
+          "size": [2.5, 5.2, 2.5],
+          "translation": [0, 4.1, 0],
+          "segments": 24,
+          "material": {"color": "#284D5DFF", "metallic": 0.62, "roughness": 0.3}
+        },
+        {
+          "id": "command-deck",
+          "type": "box",
+          "size": [4.1, 1.25, 4.1],
+          "translation": [0, 6.9, 0],
+          "material": {"color": "#E8F7F6FF", "metallic": 0.18, "roughness": 0.42}
+        },
+        {
+          "id": "signal-roof",
+          "type": "pyramid",
+          "size": [4.8, 2.6, 4.8],
+          "translation": [0, 8.75, 0],
+          "material": {"color": "#FFB547FF", "metallic": 0.28, "roughness": 0.48}
+        },
+        {
+          "id": "signal-mast",
+          "type": "cylinder",
+          "size": [0.32, 2.8, 0.32],
+          "translation": [0, 11.15, 0],
+          "segments": 12,
+          "material": {"color": "#FF315CFF", "metallic": 0.55, "roughness": 0.22}
+        }
+      ]
+    }
+  }
+}

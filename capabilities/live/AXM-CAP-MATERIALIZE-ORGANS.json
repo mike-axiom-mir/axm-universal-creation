@@ -1,0 +1,97 @@
+{
+  "id": "AXM-CAP-MATERIALIZE-ORGANS",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Census every descriptive organ against exact installed executable-package evidence and compile an explicitly supplied implementation package into a detached Forge-ready or materialized-and-tested organ candidate without inventing source or installing it.",
+  "handles": [
+    "inspect-organ-materialization",
+    "prepare-organ-materialization",
+    "materialize-organ-candidate"
+  ],
+  "input_contract": {
+    "required": [
+      "operation"
+    ],
+    "properties": {
+      "operation": "census, prepare, or materialize-and-test",
+      "anatomy_id": "prepare/materialize: one exact ID from the 415 descriptive organ records; census: optional exact filter",
+      "domain_code": "census only; optional exact domain filter",
+      "state": "census only; optional CONNECTED_EXECUTABLE_PACKAGE, EXECUTABLE_PACKAGE_WITH_MISSING_INTERFACES, or IMPLEMENTATION_REQUIRED filter",
+      "offset": "census only; optional zero-based offset",
+      "limit": "census only; optional result bound from 1 through 415",
+      "package": "prepare/materialize only; complete explicit axm.executable-software-organ/v0.1 package source that cites the selected anatomy ID",
+      "path": "materialize-and-test only; detached candidate directory under creations/ or outside the live machine body",
+      "replace": "materialize-and-test only; optional explicit detached-target replacement boolean"
+    }
+  },
+  "output_contract": {
+    "kind": "organ-materialization-evidence-or-detached-candidate",
+    "contains": [
+      "separate descriptive, executable-package, interface-coverage, detached-test, and installation states",
+      "all 415 exact anatomy rows or an explicit filtered page for census",
+      "closed Forge proposal compiled only from caller-supplied implementation source for prepare",
+      "spawn and bounded organ-package test evidence for materialize-and-test"
+    ]
+  },
+  "dependencies": [
+    "AXM-CAP-INSPECT-REGISTRY",
+    "AXM-CAP-INSPECT-EXECUTABLE-ORGANS",
+    "AXM-CAP-SPAWN-CREATION-UNIT"
+  ],
+  "relationships": [
+    "connects every descriptive organ record to an explicit observed materialization state",
+    "verifies that each standalone organs/ record exactly matches the canonical registry record",
+    "measures installed package connectivity only through exact declared interfaces and shared project types",
+    "requires complete explicit package source instead of generating arbitrary semantic implementation",
+    "compiles package identity, interfaces, template files, anatomy lineage, deterministic checks, limitations, zero authority, and four-root fit into the existing Forge contract",
+    "keeps detached materialization and test separate from installation, registration, promotion, semantic runtime proof, and live-machine connection"
+  ],
+  "anatomy_refs": [
+    {
+      "id": "AXM-00-FOUNDATION-O-012-interface-validator",
+      "role": "implements",
+      "basis": "The census resolves each installed organ's required interfaces only against exact compatible installed providers and exposes unresolved edges."
+    },
+    {
+      "id": "AXM-06-BUILD-PACKAGE-O-004-artifact-builder",
+      "role": "uses",
+      "basis": "The compiler delegates exact detached package materialization and bounded testing to the existing Creation-Unit Forge."
+    },
+    {
+      "id": "AXM-01-PROVENANCE-O-002-evidence-collector",
+      "role": "implements",
+      "basis": "Canonical registry records, standalone source equality, installed refs, exact interfaces, supplied source, and test receipts remain separate visible evidence."
+    }
+  ],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:organ_materialization",
+    "source": "src/axm_uc/organ_materialization.py"
+  },
+  "limitations": [
+    "the current census observes three installed executable packages and does not relabel the remaining descriptive anatomy records as executable",
+    "a package implementation must be supplied explicitly by a human, AI, recipe, or labelled external source; arbitrary semantic source synthesis is not implemented",
+    "exact interface coverage proves structural provider availability, not semantic interface conformance or runtime behavior",
+    "materialize-and-test validates the executable-organ package and deterministic file evidence but does not execute emitted project runtime behavior",
+    "detached candidates are not installed, registered, promoted, merged, connected to the live library, or granted authority by this capability"
+  ],
+  "persistent_state": "census and prepare are read-only; materialize-and-test writes only the caller-selected detached candidate directory",
+  "root_fit": {
+    "truth": {
+      "fit": true,
+      "basis": "All 415 descriptions, exact source equality, installed package mappings, structural connectivity, missing implementations, supplied source, and unproven behavior remain separately visible."
+    },
+    "agency": {
+      "fit": true,
+      "basis": "A caller chooses each implementation and target anatomy; the compiler does not invent source, install candidates, or grant them authority."
+    },
+    "continuity": {
+      "fit": true,
+      "basis": "New organ bodies remain detached and recoverable until the existing separately justified adoption transition is chosen."
+    },
+    "wisdom-before-speed": {
+      "fit": true,
+      "basis": "The complete census makes the 412 real implementation gaps visible, while exact package validation and bounded tests precede connection to the live library."
+    }
+  }
+}

@@ -1,6 +1,6 @@
 # Standalone Capability Growth
 
-The current machine has five additional executable creation routes. They widen what the standalone body can actually do without redefining the 2,165-record research map as implemented machinery.
+The current machine has seven additional executable creation routes. They widen what the standalone body can actually do without redefining the 2,165-record research map as implemented machinery.
 
 ## Mixed projects
 
@@ -64,10 +64,40 @@ PYTHONPATH=src python -m axm_uc create examples/requests/pack_command_tower_aren
 
 Open `creations/command-tower-arena/index.html` for the separate browser observation. A deterministic trial validates source, JSON, local links, media containers, and exact bytes; it does not claim the browser actually rendered, accepted input, played audio, or delivered good gameplay.
 
+## Procedural 3D
+
+`AXM-CAP-GENERATE-PROCEDURAL-3D` originates deterministic glTF 2.0 binary assets through the `procedural-glb-asset` route.
+
+The bounded grammar composes boxes, pyramids, and cylinders with explicit translation, scale, color, metallic, and roughness values. Generation writes indexed triangle positions and normals, then reparses the complete GLB header, JSON and BIN chunks, buffer ranges, accessors, meshes, materials, and nodes after atomic publication. The same specification produces the same bytes.
+
+```bash
+PYTHONPATH=src python -m axm_uc create examples/requests/generate_command_tower_glb.json
+```
+
+The structural receipt does not claim rendered appearance, good geometry, manifold topology, physics behavior, or import compatibility with an untested host.
+
+## Creation growth through one organ
+
+`AXM-CAP-GROW-CREATION-WITH-ORGAN` connects a real creation gap to the 415-organ materialization queue through `creation-organ-growth`.
+
+The operation begins at exactly one `HOLD_MISSING_ORGAN_INTERFACE`, requires the caller to name the exact anatomy record and supply one complete executable organ package, compiles that package into a detached Forge proposal, and tests it. It then creates a disposable installed-plus-candidate overlay and requires the candidate to participate in a complete request-shaped assembly.
+
+```bash
+PYTHONPATH=src python -m axm_uc create examples/requests/grow_status_panel_creation.json
+```
+
+Success proves that the explicit candidate closed the selected structural gap in that bounded experiment. It does not invent source, install the package, register a route, promote a capability, merge code, or prove runtime semantics.
+
+## Phone creation console
+
+The [AXM Universal Creation Console](https://axm-universal-creation-console.miketobi90.chatgpt.site) is a mobile-first browser surface for five portable creation classes: website, browser game, device-local tool, GLB model, and WAV cue. It generates files entirely in the browser, computes SHA-256 digests, adds a truth-boundary receipt, and downloads a standalone ZIP.
+
+The console is deliberately a smaller browser runtime, not a hosted copy of the Python machine. Its receipts state that the full machine did not execute and that runtime, visual, and quality behavior remains unproven. See `CREATION_CONSOLE.md`.
+
 ## Truth boundary
 
 These routes implement three real pieces of the larger direction:
 
-`generated media -> mixed bytes -> explicit state behavior -> offline game source -> portable verified body`
+`explicit organ source -> one closed creation gap` and `generated media/3D -> mixed bytes -> explicit state behavior -> offline game source -> portable verified body`
 
 They do not establish arbitrary media generation, arbitrary game genres, observed browser behavior, arbitrary task correctness, automatic capability invention, autonomous promotion, or universal host compatibility. New domains still need versioned capabilities or adapters and direct evidence.

@@ -1,0 +1,32 @@
+{
+  "anatomy_refs": [
+    "AXM-09-UI-INTERACTION-O-015-notification-manager"
+  ],
+  "files": {
+    "status.html": "<!doctype html><html><body><aside>[[AXM:message]]</aside></body></html>\n"
+  },
+  "id": "axm.web.grown-status-panel",
+  "limitations": [
+    "This fragment does not prove browser-rendered visual quality, accessibility, or runtime behavior."
+  ],
+  "parameters": [
+    "message"
+  ],
+  "project_types": [
+    "static-web"
+  ],
+  "provenance": {
+    "basis": "Explicit bounded example source supplied to connect the materialization census to one observed creation gap.",
+    "kind": "local-authored-source"
+  },
+  "provides": [
+    "status-panel"
+  ],
+  "purpose": "Render one explicit status-panel fragment for the bounded creation-growth experiment.",
+  "requires": [
+    "local-interaction"
+  ],
+  "schema": "axm.executable-software-organ/v0.1",
+  "status": "executable",
+  "version": "1.0.0"
+}

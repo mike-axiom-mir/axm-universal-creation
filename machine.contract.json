@@ -163,6 +163,31 @@
     "containerAndPayloadReverifiedAfterPublish": true,
     "appearanceOrAudioQualityProven": false
   },
+  "procedural3DGeneration": {
+    "available": true,
+    "schema": "axm.procedural-3d/v0.1",
+    "operations": ["glb"],
+    "primitiveGrammar": ["box", "pyramid", "cylinder"],
+    "maximumPrimitives": 128,
+    "maximumCylinderSegments": 64,
+    "indexedTrianglePositionsAndNormals": true,
+    "completeGlbStructureReverifiedAfterPublish": true,
+    "renderedAppearanceOrGeometryQualityProven": false,
+    "hostImportCompatibilityProven": false
+  },
+  "creationOrganGrowth": {
+    "available": true,
+    "schema": "axm.creation-organ-growth/v0.1",
+    "operations": ["analyze", "prepare", "materialize-and-test"],
+    "startsFromExactlyOneMissingInterfaceHold": true,
+    "exactAnatomyRecordRequired": true,
+    "explicitCompleteOrganPackageRequired": true,
+    "detachedForgeTestRequired": true,
+    "ephemeralInstalledPlusCandidateAssemblyRequired": true,
+    "automaticSourceInvention": false,
+    "automaticInstallRegisterPromoteOrMerge": false,
+    "runtimeSemanticsProven": false
+  },
   "offlineBrowserGame": {
     "available": true,
     "schema": "axm.browser-arena/v0.1",
@@ -191,6 +216,12 @@
     "ephemeralClosureRequiresCandidateSelectionAndValidatedBuild": true,
     "closureExperimentInstallsCandidate": false,
     "organInstanceScopedBindingsAvailable": true,
+    "completeOrganMaterializationCensusAvailable": true,
+    "organStandaloneSourceEqualityChecked": true,
+    "explicitPackageToForgeProposalCompilerAvailable": true,
+    "detachedOrganMaterializeAndTestAvailable": true,
+    "organImplementationSourceInventedAutomatically": false,
+    "organMaterializationAutomaticallyInstalls": false,
     "descriptiveOrgansAutomaticallyExecutable": false,
     "sourceInterfaceConformanceProven": false,
     "semanticRuntimeWiringInvented": false

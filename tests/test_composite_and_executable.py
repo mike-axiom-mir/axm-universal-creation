@@ -17,10 +17,10 @@ class CompositeAndExecutableTests(unittest.TestCase):
         machine = UniversalCreationMachine(ROOT)
         summary = machine.executable()["summary"]
         self.assertEqual(summary["truth_status"], "EXPLICIT_LIVE_CAPABILITY_BINDINGS")
-        self.assertEqual(summary["implemented_master_records"], 34)
-        self.assertEqual(summary["implemented_master_by_level"], {"atom": 1, "component": 19, "organ": 14})
-        self.assertEqual(summary["live_capabilities"], 27)
-        self.assertEqual(summary["resolved_bindings"], 75)
+        self.assertEqual(summary["implemented_master_records"], 41)
+        self.assertEqual(summary["implemented_master_by_level"], {"atom": 1, "component": 19, "organ": 21})
+        self.assertEqual(summary["live_capabilities"], 30)
+        self.assertEqual(summary["resolved_bindings"], 85)
 
         project = machine.executable(master_id="AXM-24-WORKSPACE-COLLABORATION-C-010-project")["master"]
         self.assertEqual(project["status"], "live-backed")
@@ -70,6 +70,14 @@ class CompositeAndExecutableTests(unittest.TestCase):
             artifact_builder["implemented_by"],
             ["AXM-CAP-PORTABLE-CREATION-BUNDLE", "AXM-CAP-SPAWN-CREATION-UNIT"],
         )
+
+        interface_validator = machine.executable(master_id="AXM-00-FOUNDATION-O-012-interface-validator")["master"]
+        self.assertEqual(interface_validator["status"], "live-backed")
+        self.assertEqual(interface_validator["implemented_by"], ["AXM-CAP-MATERIALIZE-ORGANS"])
+
+        evidence_collector = machine.executable(master_id="AXM-01-PROVENANCE-O-002-evidence-collector")["master"]
+        self.assertEqual(evidence_collector["status"], "live-backed")
+        self.assertEqual(evidence_collector["implemented_by"], ["AXM-CAP-MATERIALIZE-ORGANS"])
 
         adapter = machine.executable(master_id="AXM-19-AI-ML-AGENTS-C-009-adapter")["master"]
         self.assertEqual(adapter["status"], "live-backed")

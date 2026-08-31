@@ -230,6 +230,25 @@ def builtin_explore_organ_gap(root: Path, inputs: dict[str, Any]) -> dict[str, A
         raise CapabilityError(str(exc), exc.details) from exc
 
 
+def builtin_organ_materialization(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+    from .organ_materialization import OrganMaterializationError, operate_organ_materialization
+    from .spawn import SpawnError
+
+    operation = str(inputs.get("operation", "")).strip().casefold()
+    normalized_inputs = copy.deepcopy(inputs)
+    if operation == "materialize-and-test":
+        target = _resolve_output_path(root, str(inputs.get("path", "")))
+        if _is_machine_body_path(root, target):
+            raise CapabilityError(
+                "organ materialization candidates must stay outside the live machine body; use creations/ or an external path"
+            )
+        normalized_inputs["path"] = str(target)
+    try:
+        return operate_organ_materialization(root, normalized_inputs)
+    except (OrganMaterializationError, ProjectError, SpawnError) as exc:
+        raise CapabilityError(str(exc), getattr(exc, "details", {})) from exc
+
+
 def builtin_spawn_creation_unit(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
     from .spawn import SpawnError, operate_spawn_unit
 
@@ -464,6 +483,38 @@ def builtin_browser_game(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
         raise CapabilityError(str(exc), exc.details) from exc
 
 
+def builtin_creation_growth(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+    from .creation_growth import CreationGrowthError, operate_creation_growth
+
+    normalized = copy.deepcopy(inputs)
+    operation = str(inputs.get("operation", "")).strip().casefold()
+    if operation == "materialize-and-test":
+        target = _resolve_output_path(root, str(inputs.get("path", "")))
+        if _is_machine_body_path(root, target):
+            raise CapabilityError(
+                "creation-growth candidates must stay detached from the live machine body; use creations/ or an external path"
+            )
+        normalized["path"] = str(target)
+    try:
+        return operate_creation_growth(root, normalized)
+    except CreationGrowthError as exc:
+        raise CapabilityError(str(exc), exc.details) from exc
+
+
+def builtin_procedural_3d(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+    from .procedural_3d import Procedural3DError, publish_glb
+
+    target = _resolve_output_path(root, str(inputs["path"]))
+    if _is_machine_body_path(root, target):
+        raise CapabilityError("procedural 3D generation cannot rewrite the live machine body")
+    if "replace" in inputs and not isinstance(inputs["replace"], bool):
+        raise CapabilityError("procedural 3D replace must be a boolean")
+    try:
+        return publish_glb(target, inputs["specification"], replace=inputs.get("replace", False))
+    except Procedural3DError as exc:
+        raise CapabilityError(str(exc), exc.details) from exc
+
+
 BUILTINS: dict[str, Callable[[Path, dict[str, Any]], dict[str, Any]]] = {
     "builtin:write_text": builtin_write_text,
     "builtin:write_json": builtin_write_json,
@@ -475,6 +526,7 @@ BUILTINS: dict[str, Callable[[Path, dict[str, Any]], dict[str, Any]]] = {
     "builtin:compose_organ_project": builtin_compose_organ_project,
     "builtin:inspect_executable_organs": builtin_inspect_executable_organs,
     "builtin:explore_organ_gap": builtin_explore_organ_gap,
+    "builtin:organ_materialization": builtin_organ_materialization,
     "builtin:spawn_creation_unit": builtin_spawn_creation_unit,
     "builtin:evolve_machine": builtin_evolve_machine,
     "builtin:simulate_creation": builtin_simulate_creation,
@@ -489,6 +541,8 @@ BUILTINS: dict[str, Callable[[Path, dict[str, Any]], dict[str, Any]]] = {
     "builtin:deterministic_state_machine": builtin_deterministic_state_machine,
     "builtin:procedural_media": builtin_procedural_media,
     "builtin:browser_game": builtin_browser_game,
+    "builtin:creation_growth": builtin_creation_growth,
+    "builtin:procedural_3d": builtin_procedural_3d,
 }
 
 

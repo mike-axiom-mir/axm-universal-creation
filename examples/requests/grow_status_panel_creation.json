@@ -1,0 +1,57 @@
+{
+  "kind": "creation-organ-growth",
+  "direction": "connect one exact descriptive organ and explicit implementation source to an observed missing creation interface, then prove one complete ephemeral creation closure without installation",
+  "inputs": {
+    "operation": "materialize-and-test",
+    "path": "creations/spawned/grown-status-panel-organ",
+    "replace": true,
+    "request": {
+      "kind": "status-panel-site",
+      "inputs": {
+        "path": "creations/grown-status-panel",
+        "organ_goal": {
+          "schema": "axm.interface-organ-goal/v0.1",
+          "id": "axm.example.grown-status-panel-site",
+          "version": "1.0.0",
+          "project_type": "static-web",
+          "required_interfaces": ["status-panel"],
+          "bindings": {
+            "document-shell": {"idle_label": "Create", "title": "Bounded creation growth"},
+            "visual-theme": {"background": "#07131c"},
+            "local-interaction": {"active_label": "Created", "state": "created"},
+            "status-panel": {"message": "Created through bounded organ growth"}
+          }
+        },
+        "checks": [
+          {"type": "contains", "path": "status.html", "text": "Created through bounded organ growth"}
+        ]
+      }
+    },
+    "anatomy_id": "AXM-09-UI-INTERACTION-O-015-notification-manager",
+    "package": {
+      "schema": "axm.executable-software-organ/v0.1",
+      "id": "axm.web.grown-status-panel",
+      "version": "1.0.0",
+      "status": "executable",
+      "purpose": "Render one explicit status-panel fragment for the bounded creation-growth experiment.",
+      "project_types": ["static-web"],
+      "parameters": ["message"],
+      "provides": ["status-panel"],
+      "requires": ["local-interaction"],
+      "files": {
+        "status.html": "<!doctype html><html><body><aside>[[AXM:message]]</aside></body></html>\n"
+      },
+      "anatomy_refs": ["AXM-09-UI-INTERACTION-O-015-notification-manager"],
+      "provenance": {
+        "kind": "local-authored-source",
+        "basis": "Explicit bounded example source supplied to connect the materialization census to one observed creation gap."
+      },
+      "limitations": [
+        "This fragment does not prove browser-rendered visual quality, accessibility, or runtime behavior."
+      ]
+    },
+    "checks": [
+      {"type": "contains", "path": "status.html", "text": "Created through bounded organ growth"}
+    ]
+  }
+}

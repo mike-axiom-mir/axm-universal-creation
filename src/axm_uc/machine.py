@@ -6,6 +6,7 @@ from typing import Any
 
 from .atomic import atomic_write_json
 from .browser_game import browser_game_summary
+from .creation_growth import creation_growth_summary
 from .candidate import test_capability_candidate
 from .capabilities import CapabilityError, CapabilityStore
 from .decompose import CreationDecomposer
@@ -18,9 +19,11 @@ from .mixed_project import mixed_project_summary
 from .organ_library import ExecutableOrganLibrary
 from .organ_discovery import organ_discovery_summary
 from .organ_gap import organ_gap_summary
+from .organ_materialization import census_organs, organ_materialization_summary
 from .registry import Registry
 from .portable_bundle import portable_bundle_summary
 from .procedural_media import procedural_media_summary
+from .procedural_3d import procedural_3d_summary
 from .spawn import creation_forge_summary
 from .state_machine import state_machine_summary
 
@@ -47,14 +50,17 @@ class UniversalCreationMachine:
             "executable_organs": ExecutableOrganLibrary(self.root).summary(),
             "organ_discovery": organ_discovery_summary(),
             "organ_gap_closure": organ_gap_summary(),
+            "organ_materialization": organ_materialization_summary(self.root),
             "creation_forge": creation_forge_summary(),
             "gap_synthesis": gap_synthesis_summary(),
             "local_creation_provider": provider_summary(),
             "host_evidence": host_evidence_summary(),
             "standalone_capability_growth": {
                 "browser_game": browser_game_summary(),
+                "creation_growth": creation_growth_summary(),
                 "mixed_project": mixed_project_summary(),
                 "portable_bundle": portable_bundle_summary(),
+                "procedural_3d": procedural_3d_summary(),
                 "procedural_media": procedural_media_summary(),
                 "state_machine": state_machine_summary(),
             },
@@ -99,6 +105,23 @@ class UniversalCreationMachine:
         else:
             result["packages"] = library.list(project_type=project_type, provides=provides)
         return result
+
+    def organ_census(
+        self,
+        anatomy_id: str | None = None,
+        domain_code: str | None = None,
+        state: str | None = None,
+        offset: int = 0,
+        limit: int = 415,
+    ) -> dict[str, Any]:
+        return census_organs(
+            self.root,
+            anatomy_id=anatomy_id,
+            domain_code=domain_code,
+            state=state,
+            offset=offset,
+            limit=limit,
+        )
 
     def topology(self, master_id: str | None = None, core_id: str | None = None, depth: int = 6) -> dict[str, Any]:
         bridge = self.decomposer.topology

@@ -1,0 +1,39 @@
+{
+  "body_files": [
+    {
+      "bytes": 4499,
+      "digest": "sha256:0a648e4e6ae691c893d257b3f71b6a86d9f007c419f917c578edaab17c0d815a",
+      "path": "axm.proposal.json"
+    },
+    {
+      "bytes": 4085,
+      "digest": "sha256:c341c130289d9bc77da4c1bcd71c0e4f7ee51efc382a1a48594b82a53cbe661f",
+      "path": "axm.unit.json"
+    },
+    {
+      "bytes": 911,
+      "digest": "sha256:5cf45e5a67b4ab921819d47188faedf01dca8caf98d02557870e5ccd03e9cb33",
+      "path": "organ.json"
+    }
+  ],
+  "canon_changed": false,
+  "generated_code_executed": false,
+  "installed": false,
+  "kind": "organ",
+  "kind_contract": "FIRST_CLASS",
+  "manifest_digest": "sha256:c341c130289d9bc77da4c1bcd71c0e4f7ee51efc382a1a48594b82a53cbe661f",
+  "merged": false,
+  "package_digest": "sha256:57b0b014c7db6697faedfbd6225adeb162c90340193e2b233ac2e1dd3d785814",
+  "permissions_changed": false,
+  "project_type": "generic",
+  "promoted": false,
+  "proposal_digest": "sha256:91f829edff5a1f5bf3a166c535672422b2018851005bd51f953db721cf4446c6",
+  "receipt_digest": "sha256:aa30d5e6b28ed72a9d527dbd9675262f9f7dadc7a4bf7c829f8ff8025c837831",
+  "registered": false,
+  "runtime_evidence": "NOT_YET_OBSERVED; use the separate test operation",
+  "schema": "axm.creation-unit-spawn-receipt/v0.1",
+  "staged_check_count": 14,
+  "staged_validation_passed": true,
+  "status": "MATERIALIZED",
+  "unit_ref": "axm.web.grown-status-panel@1.0.0"
+}

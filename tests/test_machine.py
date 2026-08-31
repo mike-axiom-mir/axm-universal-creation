@@ -28,6 +28,10 @@ class MachineTests(unittest.TestCase):
         self.assertEqual(growth["browser_game"]["schema"], "axm.browser-arena/v0.1")
         self.assertEqual(growth["browser_game"]["runtime_dependencies"], [])
         self.assertFalse(growth["browser_game"]["browser_execution_observed"])
+        self.assertTrue(growth["creation_growth"]["uses_415_organ_census"])
+        self.assertFalse(growth["creation_growth"]["automatic_source_invention"])
+        self.assertEqual(growth["procedural_3d"]["container"], "glTF 2.0 binary GLB")
+        self.assertFalse(growth["procedural_3d"]["rendered_appearance_or_host_compatibility_proven"])
 
     def test_live_creation_routes_and_writes(self):
         with tempfile.TemporaryDirectory() as td:

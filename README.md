@@ -23,6 +23,9 @@ PYTHONPATH=src python -m axm_uc trial examples/requests/create_real_site.json
 PYTHONPATH=src python -m axm_uc forge
 PYTHONPATH=src python -m axm_uc gap-forge
 
+# Inspect all 415 descriptive organs against exact executable-package evidence.
+PYTHONPATH=src python -m axm_uc organ-census
+
 # Prepare (but do not send) a request for the existing local creation provider.
 PYTHONPATH=src python -m axm_uc create examples/requests/prepare_local_creation_provider.json
 
@@ -33,8 +36,12 @@ PYTHONPATH=src python -m axm_uc create examples/requests/replay_game_state_machi
 # Generate media locally and build an independently reverified offline browser game.
 PYTHONPATH=src python -m axm_uc create examples/requests/generate_target_icon.json
 PYTHONPATH=src python -m axm_uc create examples/requests/generate_fire_sound.json
+PYTHONPATH=src python -m axm_uc create examples/requests/generate_command_tower_glb.json
 PYTHONPATH=src python -m axm_uc trial examples/requests/create_command_tower_arena.json
 PYTHONPATH=src python -m axm_uc create examples/requests/pack_command_tower_arena.json
+
+# Start at one observed creation gap and test one explicit organ body against it.
+PYTHONPATH=src python -m axm_uc create examples/requests/grow_status_panel_creation.json
 
 # Run the complete repository verification suite.
 python tools/build.py
@@ -43,6 +50,12 @@ python tools/build.py
 The website trial writes inspectable source under `creations/first-real-site/`; open its `index.html` locally to perform the separate human visual and interaction check. `inspect`, `forge`, and `gap-forge` are read-only. Passing a test does not automatically install, admit, promote, merge, or grant authority to a candidate.
 
 To see the newest growth loop, run `examples/requests/explore_missing_status_panel_organ_closure.json`. It starts from a real missing interface, tests one explicitly supplied organ in detached and disposable spaces, and leaves the live installed-organ body unchanged. See `ORGAN_GAP_CLOSURE.md` for the exact evidence boundary.
+
+To inspect the complete organ implementation queue, run `organ-census`. It currently reports three structurally connected installed package mappings and 412 anatomy records that still require implementation. `examples/requests/materialize_identity_registry_organ.json` shows the new explicit-source path from one anatomy record to a detached, Forge-tested candidate. See `ORGAN_MATERIALIZATION.md`.
+
+`grow_status_panel_creation.json` joins that materialization fabric to an actual creation request. It identifies exactly one missing interface, validates one caller-supplied executable organ package for the selected anatomy record, Forge-tests it detached, and observes a full request-shaped assembly only in an ephemeral installed-plus-candidate overlay. It never installs or promotes the organ.
+
+The phone-ready [Creation Console](https://axm-universal-creation-console.miketobi90.chatgpt.site) can emit standalone website, browser-game, local-tool, GLB, and WAV packages directly in a browser. Its receipt explicitly distinguishes browser-side file hashing from the stronger Python-machine validation routes. See `CREATION_CONSOLE.md`.
 
 ## Core rule
 
@@ -164,6 +177,7 @@ The small Python runtime currently provides:
 - exact mixed text/binary project creation with strict-base64 intake and pre/post-publication digest verification;
 - deterministic state-machine compile, step, and replay routes whose effects remain inert data;
 - deterministic RGBA8 PNG and mono PCM16 WAV generation whose complete payloads are reparsed after publication;
+- deterministic glTF 2.0 GLB generation from bounded box, pyramid, and cylinder grammars, with complete structural reparse after publication;
 - dependency-free offline tactical browser-game assembly with generated local media, explicit game/session JSON, Canvas source, keyboard/pointer/touch controls, HUD, and exact project validation;
 - reproducible portable creation bundles with canonical manifests, safe unpacking, and exact byte receipts;
 - grounded drafts that preserve observed gaps instead of erasing imperfect ordinary creations;
@@ -172,6 +186,7 @@ The small Python runtime currently provides:
 - an exact local executable-organ package body that makes working organs reusable across creations;
 - bounded exact-interface organ discovery that derives one unique minimum installed package closure while preserving missing and ambiguous states as HOLDs;
 - a detached missing-organ closure experiment that Forge-tests explicit supplied source, re-runs discovery with a disposable candidate overlay, and validates the complete assembly without installation;
+- a request-shaped creation-growth bridge that selects one exact missing interface and anatomy record, compiles explicit organ source, and tests the resulting full assembly without changing the installed body;
 - a deterministic detached creation-unit forge for hands, capabilities, organs, protocols, skills, specialists, recipes, and new extension kinds;
 - an evidence-bound gap compiler that can derive and test either the smallest supported UTF-8 file-route adapter or a bounded project recipe of up to three exact producer, verifier, existing-composite, and JSON-report steps from a real unroutable request;
 - complete editable self-workspace cloning, exact source comparison, independent build logs, and voluntary merge-check requests;
@@ -223,6 +238,10 @@ Current live project handles:
 - `discover-organ-assembly`
 - `interface-organ-project`
 - `explore-missing-organ-closure`
+- `inspect-organ-materialization`
+- `prepare-organ-materialization`
+- `materialize-organ-candidate`
+- `creation-organ-growth`
 - `spawn-creation-unit`
 - `inspect-spawned-unit`
 - `test-spawned-unit`
@@ -253,6 +272,7 @@ Current live project handles:
 - `procedural-media-asset`
 - `procedural-png-asset`
 - `procedural-wav-asset`
+- `procedural-glb-asset`
 - `generated-game-asset`
 - `offline-browser-game`
 - `browser-arena-game`

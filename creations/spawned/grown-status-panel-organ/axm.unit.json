@@ -1,0 +1,146 @@
+{
+  "authority": {
+    "canon": false,
+    "execute": false,
+    "install": false,
+    "merge": false,
+    "permissions": false,
+    "promote": false,
+    "register": false
+  },
+  "contracts": {
+    "inputs": {
+      "parameters": [
+        "message"
+      ],
+      "project_types": [
+        "static-web"
+      ]
+    },
+    "outputs": {
+      "project_types": [
+        "static-web"
+      ],
+      "template_files": [
+        "status.html"
+      ]
+    },
+    "provides": [
+      "status-panel"
+    ],
+    "requires": [
+      "local-interaction"
+    ]
+  },
+  "dependencies": [],
+  "id": "axm.web.grown-status-panel",
+  "implementation": {
+    "entrypoint": "organ.json",
+    "kind": "DETERMINISTIC_SOURCE",
+    "source_files": [
+      "organ.json"
+    ]
+  },
+  "kind": "organ",
+  "kind_contract": "FIRST_CLASS",
+  "limitations": [
+    "This fragment does not prove browser-rendered visual quality, accessibility, or runtime behavior.",
+    "This candidate proves exact package structure and declared deterministic file checks; semantic interface conformance and emitted runtime behavior require separate evidence."
+  ],
+  "payload_files": [
+    {
+      "bytes": 911,
+      "digest": "sha256:5cf45e5a67b4ab921819d47188faedf01dca8caf98d02557870e5ccd03e9cb33",
+      "path": "organ.json"
+    }
+  ],
+  "proposal_digest": "sha256:91f829edff5a1f5bf3a166c535672422b2018851005bd51f953db721cf4446c6",
+  "provenance": {
+    "basis": "Compiled only from the explicitly supplied executable-organ package and exact cited anatomy records. Supplied package basis: Explicit bounded example source supplied to connect the materialization census to one observed creation gap.",
+    "kind": "compiled-explicit-organ-package",
+    "refs": [
+      "organs/AXM-09-UI-INTERACTION-O-015-notification-manager.json"
+    ]
+  },
+  "purpose": "Render one explicit status-panel fragment for the bounded creation-growth experiment.",
+  "ref": "axm.web.grown-status-panel@1.0.0",
+  "relationships": [
+    {
+      "target": "AXM-09-UI-INTERACTION-O-015-notification-manager",
+      "type": "materializes-anatomy"
+    }
+  ],
+  "root_fit": {
+    "agency": {
+      "basis": "The caller chooses the implementation source and target anatomy; the detached proposal grants itself no authority.",
+      "fit": true
+    },
+    "continuity": {
+      "basis": "Compilation produces a detached candidate and does not replace or install into the continuing machine.",
+      "fit": true
+    },
+    "truth": {
+      "basis": "The exact supplied package, anatomy references, compiler checks, and unproven runtime boundary remain visible.",
+      "fit": true
+    },
+    "wisdom-before-speed": {
+      "basis": "Exact package validation and bounded tests precede any separate adoption decision.",
+      "fit": true
+    }
+  },
+  "schema": "axm.spawned-creation-unit/v0.1",
+  "status": "DETACHED_CANDIDATE",
+  "truth_boundaries": {
+    "capability_is_not_authority": true,
+    "materialized_is_not_installed": true,
+    "materialized_is_not_merge_approval": true,
+    "materialized_is_not_registered": true,
+    "materialized_is_not_runtime_proof": true
+  },
+  "verification": {
+    "checks": [
+      {
+        "path": "organ.json",
+        "type": "json-valid"
+      },
+      {
+        "equals": "axm.executable-software-organ/v0.1",
+        "json_path": [
+          "schema"
+        ],
+        "path": "organ.json",
+        "type": "json-value"
+      },
+      {
+        "equals": "axm.web.grown-status-panel",
+        "json_path": [
+          "id"
+        ],
+        "path": "organ.json",
+        "type": "json-value"
+      },
+      {
+        "equals": "1.0.0",
+        "json_path": [
+          "version"
+        ],
+        "path": "organ.json",
+        "type": "json-value"
+      },
+      {
+        "equals": "executable",
+        "json_path": [
+          "status"
+        ],
+        "path": "organ.json",
+        "type": "json-value"
+      },
+      {
+        "path": "organ.json",
+        "sha256": "5cf45e5a67b4ab921819d47188faedf01dca8caf98d02557870e5ccd03e9cb33",
+        "type": "sha256"
+      }
+    ]
+  },
+  "version": "1.0.0"
+}
