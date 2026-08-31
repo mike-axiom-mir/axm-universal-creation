@@ -19,4 +19,19 @@ jobs:
       - name: Compile source and tests
         run: python -m compileall -q src tests
       - name: Run full unittest suite
-        run: python -m unittest discover -s tests -p 'test_*.py' -v
+        id: tests
+        shell: bash
+        run: |
+          set +e
+          python -m unittest discover -s tests -p 'test_*.py' -v 2>&1 | tee pr12-test-output.txt
+          status=${PIPESTATUS[0]}
+          echo "exit_code=$status" >> "$GITHUB_OUTPUT"
+          exit 0
+      - name: Upload exact test output
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr12-test-output
+          path: pr12-test-output.txt
+      - name: Fail job when tests failed
+        if: steps.tests.outputs.exit_code != '0'
+        run: exit 1
