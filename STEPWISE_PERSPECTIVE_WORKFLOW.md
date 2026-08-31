@@ -2,9 +2,9 @@
 
 ## Purpose
 
-Universal Creation can now preserve a deliberate thinking cadence even when the entire operation finishes quickly.
+Universal Creation preserves a deliberate internal work cadence even when an entire operation finishes very quickly.
 
-The core rule is:
+The rule is:
 
 ```text
 goal
@@ -17,193 +17,165 @@ goal
 -> next step
 ```
 
-Wall-clock speed does not remove logical chronology.
+Wall-clock speed does not erase logical chronology.
 
-An operation may finish in one call or in milliseconds and still retain an inspectable sequence proving that planning, pre-analysis, execution/result, and post-analysis happened as separate states.
+A workflow may complete inside one call while its receipt still proves that planning, pre-analysis, action/result, post-analysis, and advancement happened as separate states.
 
-This is not a requirement to make software artificially slow. It is a requirement not to confuse fast execution with one opaque leap.
+## Shared orchestration body
 
-## Why small steps matter
+Stepwise workflow is not a second top-level coordination system.
 
-A large goal can contain several independent unknowns. Treating them as one action hides where an assumption entered and makes failure harder to localize.
+The live handle `stepwise-workflow` is owned by `AXM-CAP-SPECIALIST-TOURNAMENT@0.2.0`, the same multi-perspective orchestration body that owns specialist tournaments and contextual specialist-fit history.
 
-Stepwise Perspective Workflow therefore makes step size revisable.
+The shared body dispatches to:
 
-An initial plan may contain up to 64 steps. During execution a perspective checkpoint may decide a step is still too broad and return `SPLIT`.
+- `src/axm_uc/specialist_pool.py` for specialist pools, tournaments, ranking, finalist voting, and fit history;
+- `src/axm_uc/stepwise_workflow.py` for explicit plans, checkpoints, step execution, splitting, replanning, and chronological receipts.
 
-The current step can then be replaced by two or more smaller steps. The replacement is bounded by:
+This keeps one perspective/orchestration surface while allowing two different modes:
+
+```text
+many teams inspect one challenge
+```
+
+and
+
+```text
+many perspectives repeatedly inspect one evolving workflow
+```
+
+## Smallness is revisable
+
+A large goal can hide several independent unknowns inside one attractive-looking action.
+
+A valid step therefore declares:
+
+- one stable id;
+- one purpose;
+- mode `action` or `analysis`;
+- expected evidence;
+- stop condition;
+- dependencies on earlier steps;
+- perspective focus;
+- split depth.
+
+Initial plans may contain up to 64 steps.
+
+If a checkpoint concludes that the current step still contains separable work, `SPLIT` can replace it with two or more smaller steps.
+
+Current bounds:
 
 - maximum split depth: 8;
 - maximum total workflow steps after splitting: 128.
 
-The retired broad step, its analyses, and the reason for splitting remain visible.
+The retired broad step and the reason for replacement remain in evidence.
 
-Small does not mean trivial. It means one step has one inspectable purpose, one expected-evidence contract, and one stop condition.
+Small does not mean trivial. It means the next unit has one inspectable purpose and one observable stopping boundary.
 
 ## Planning from different perspectives
 
-`prepare` does not silently invent a plan.
+`prepare` does not silently invent a semantic plan.
 
-It prepares a Specialist Tournament whose challenge is to propose the smallest truthful executable plan for the supplied goal.
+It prepares a Specialist Tournament whose challenge is to propose a truthful small-step plan for the goal. The normal deterministic machine/anatomy plan can also be attached as structural context when an ordinary creation request is supplied.
 
-The same Specialist Tournament machinery already provides:
+Prepared packets are not claimed to have reasoned. A human, local model, connected model, future cognition organ, or another explicit executor must produce the semantic plan proposals.
 
-- detailed universal working perspectives;
-- challenge-derived registry specialists;
-- best, middle, lowest-third, mixed-random, and combination teams;
-- isolated team challenge packets;
-- evidence-backed judging;
-- finalist voting and contextual fit history when that voting process is explicitly used.
+A selected plan is validated as `axm.stepwise-perspective-plan/v0.1` before execution.
 
-A planning packet existing is not evidence that a specialist or model reasoned over it. An executor must produce actual plan proposals.
+## Perspective checkpoints
 
-The selected plan is then validated into `axm.stepwise-perspective-plan/v0.1`.
-
-If an ordinary machine request is supplied during preparation, the normal deterministic software-direction/anatomy/topology plan is attached as structural context. This gives semantic planning teams the machine's already-observed structure without pretending that structural matching is itself reasoning.
-
-## Step contract
-
-Every step declares:
-
-- stable step id;
-- purpose;
-- mode: `action` or `analysis`;
-- expected evidence;
-- stop condition;
-- dependencies;
-- perspective focus;
-- split depth.
-
-An `action` step also declares exactly one action:
-
-```json
-{
-  "kind": "some-live-creation-kind",
-  "inputs": {},
-  "direction": "optional visible direction"
-}
-```
-
-Dependencies may reference only earlier steps. This keeps the initial selected plan acyclic and chronologically inspectable.
-
-## Pre-step checkpoint
-
-Before an action/result, the engine selects a small contextual panel from the specialist pool.
-
-The panel deliberately includes different historical positions:
+Before and after every meaningful result, the engine selects a contextual panel from different historical positions:
 
 1. current best-fit perspective;
 2. middle-fit perspective;
 3. lowest-third challenger;
-4. deterministic-random challenger when a fourth unique profile is available.
+4. deterministic-random challenger when available.
 
-Historical winners therefore influence attention without becoming the only eyes allowed to inspect the workflow.
+Historical specialist voting therefore influences attention without turning previous winners into the only allowed viewpoint.
 
-The pre-step checkpoint asks questions such as:
-
-- Which assumption could make this step too large or incorrectly ordered?
-- What evidence should exist before execution?
-- Should this step `PROCEED`, `SPLIT`, `REPLAN`, or `HOLD`?
-
-The deterministic engine only prepares these prompts. It does not claim the perspectives answered them until an executor supplies analyses for the exact prepared specialist ids.
-
-## One bounded action or analysis result
-
-### Action step
-
-After a successful pre-checkpoint, an action step can invoke an already-live Universal Creation capability.
-
-The workflow engine does not bypass that capability's own contracts, truth boundaries, permissions, or errors.
-
-If no live route exists, the workflow becomes:
-
-`HOLD_NO_LIVE_STEP_ROUTE`
-
-It does not invent execution.
-
-If the live capability returns an error, the workflow becomes:
-
-`HOLD_STEP_EXECUTION_ERROR`
-
-### Analysis step
-
-An analysis-only step is deliberately not treated as executable deterministic cognition.
-
-A human, local model, connected model, future cognition organ, or another explicit executor must supply the result plus evidence.
-
-The result receipt records the executor and exact result digest.
-
-## Post-step checkpoint
-
-After a result exists, a new contextual perspective panel inspects what reality actually produced.
-
-The post checkpoint asks questions such as:
-
-- Does the observed result satisfy the declared evidence and stop condition?
-- What gap or contradiction appeared only after this result existed?
-- Should the workflow `PROCEED`, `SPLIT`, `REPLAN`, or `HOLD` before the next step?
-
-This makes analysis an inter-step activity rather than a one-time ceremony at the start.
-
-## Transition rule
-
-Each supplied perspective chooses one transition:
+A checkpoint asks whether the exact current step should:
 
 - `PROCEED`
 - `REPLAN`
 - `SPLIT`
 - `HOLD`
 
-The current deterministic aggregation rule is conservative:
+The deterministic engine prepares the checkpoint. It does not claim the selected specialists answered it until executor-supplied analyses exist for the exact prepared specialist ids.
+
+## Step execution
+
+### Action step
+
+An action step invokes an already-live Universal Creation capability through its existing contract.
+
+No route produces:
+
+`HOLD_NO_LIVE_STEP_ROUTE`
+
+A live capability error produces:
+
+`HOLD_STEP_EXECUTION_ERROR`
+
+The workflow does not invent execution to keep moving.
+
+### Analysis step
+
+An analysis-only step requires an explicit external result, evidence references, and executor identity.
+
+The deterministic workflow engine records and orders that result but does not relabel semantic reasoning as deterministic computation.
+
+## Post-result analysis
+
+After a result exists, a new perspective checkpoint inspects the changed state.
+
+This matters because some useful questions only become visible after an action has produced evidence.
+
+The workflow therefore behaves as:
+
+```text
+look
+-> act or observe once
+-> look again from the changed state
+-> choose the next smallest justified move
+```
+
+## Transition policy
+
+Current checkpoint aggregation is explicitly conservative:
 
 ```text
 HOLD > SPLIT > REPLAN > PROCEED
 ```
 
-This is a workflow-control rule, not a claim that the strictest perspective is objectively correct.
+This is a named workflow-control policy, not a claim that the strictest perspective is objectively correct.
 
-It intentionally makes one serious dissent sufficient to stop an opaque continuation.
-
-A future evolution may support other explicit aggregation policies if evidence shows they are useful. Such a policy should remain named and inspectable rather than silently changing the meaning of a checkpoint.
+Different aggregation policies may be added later, but their meaning must remain explicit and testable.
 
 ## SPLIT
 
-When the aggregate transition is `SPLIT`, the current step is retired and replaced by two or more smaller steps.
+`SPLIT` retires the current broad step and inserts smaller replacements.
 
-The first child inherits the old dependencies.
+The first replacement inherits the old dependencies. Later children are dependency-ordered, and downstream steps that depended on the retired parent are rebound to the final replacement.
 
-Later children form a dependency chain.
-
-Any later step that depended on the retired parent is rebound to the final child.
-
-The retired step remains in workflow evidence with:
-
-- old step body;
-- old state;
-- reason for splitting;
-- replacement ids.
-
-This allows recursive decomposition without rewriting history.
+History is not rewritten.
 
 ## REPLAN
 
-`REPLAN` preserves completed work and replaces only the remaining plan tail.
+`REPLAN` preserves completed work and replaces only the remaining future plan.
 
-The previous remaining plan is retained as retired evidence with the replanning reason.
-
-This lets new observations change the future without pretending the earlier plan never existed.
+The old remaining tail and the replanning reason stay visible.
 
 ## HOLD
 
-`HOLD` stops progression while preserving the exact current state.
+`HOLD` preserves the exact current workflow state when evidence or capability is insufficient to justify continuation.
 
-A HOLD is not failure-by-default. It means the workflow has reached a point where its current evidence or capabilities do not justify automatic continuation.
+A HOLD is a truth state, not automatically a failure.
 
 ## Instant staged mode
 
-`instant-staged` exists for work where all required executor analyses/results are already available in one call.
+`instant-staged` exists for cases where all required executor analyses/results are already available in one call.
 
-It still processes every step in chronological order:
+The logical sequence still remains:
 
 ```text
 step 1 pre
@@ -215,11 +187,9 @@ step 2 post
 ...
 ```
 
-If any checkpoint produces `SPLIT`, `REPLAN`, or `HOLD`, the instant run stops in that state.
+If a checkpoint reaches `SPLIT`, `REPLAN`, or `HOLD`, the instant run stops there.
 
-It does not skip intermediate reasoning states simply because the caller provided all inputs up front.
-
-This distinction is important:
+Therefore:
 
 ```text
 instant wall-clock completion != one-step logical completion
@@ -227,60 +197,30 @@ instant wall-clock completion != one-step logical completion
 
 ## Digest-bound continuity
 
-Workflow states are digest-bound.
+Workflow states and checkpoints are digest-bound.
 
-A checkpoint is tied to:
+A checkpoint is tied to the exact workflow state, current step, and checkpoint phase. An old checkpoint cannot be silently replayed after the workflow changes.
 
-- the exact workflow digest;
-- the exact current step;
-- the checkpoint phase.
-
-A checkpoint prepared for an earlier workflow state cannot be silently replayed after the workflow changes.
-
-The timeline records:
-
-- perspective checkpoints;
-- exact results;
-- execution HOLDs;
-- split events;
-- replanning events.
+The timeline retains perspective checkpoints, results, execution HOLDs, split events, and replanning events.
 
 ## Existing anatomy made executable
 
-This capability deliberately reuses the existing Universal Creation Map instead of adding duplicate terminology.
+The shared `AXM-CAP-SPECIALIST-TOURNAMENT@0.2.0` orchestration body explicitly live-backs:
 
-`AXM-CAP-STEPWISE-PERSPECTIVE-WORKFLOW@0.1.0` explicitly implements:
-
+- `AXM-19-AI-ML-AGENTS-O-021-specialist-summoner`;
+- `AXM-19-AI-ML-AGENTS-C-035-specialist-profile`;
 - `AXM-24-WORKSPACE-COLLABORATION-O-006-project-planner`;
 - `AXM-03-TIME-STATE-EVENT-O-007-workflow-engine`;
 - `AXM-03-TIME-STATE-EVENT-C-015-workflow-step`.
 
-It also uses the already-live specialist profile component.
+No duplicate stepwise capability manifest is required.
 
 ## Truth boundary
 
-The current implementation proves that Universal Creation can:
+The implementation proves that Universal Creation can prepare multi-perspective planning work, validate explicit small-step plans, maintain digest-bound workflow state, inspect each meaningful step before and after its result, invoke existing live capabilities, record external semantic results truthfully, split broad steps, replan only the future, HOLD when continuation is unjustified, and preserve chronology even in one fast call.
 
-- prepare competing perspective-based planning packets;
-- validate an explicit small-step plan;
-- maintain digest-bound workflow state;
-- prepare different contextual perspectives before and after each step;
-- execute already-live deterministic action capabilities;
-- record externally executed analysis results without relabeling them as deterministic cognition;
-- recursively split broad steps;
-- replan only the remaining future;
-- HOLD when execution or evidence does not justify continuation;
-- preserve pre/result/post chronology even in one fast call.
+It does not prove that prepared perspective packets reasoned without an executor, that the current transition policy is universally optimal, that every real-world goal can be automatically decomposed into semantically correct steps, that more steps are always better, or that completing a workflow proves the overall goal was correct.
 
-It does **not** prove that:
-
-- prepared specialist packets actually reasoned without an executor;
-- the conservative checkpoint policy is universally optimal;
-- every broad real-world problem can be decomposed automatically into correct semantic steps;
-- more steps are always better;
-- completing many steps implies the overall goal is correct;
-- wall-clock speed corresponds to reasoning depth.
-
-The useful rule is narrower:
+The narrower reusable rule is:
 
 > Make the next thing small enough to inspect, look at it through different eyes, act or observe once, then decide again from the new state.
