@@ -1,44 +1,49 @@
 {
   "id": "AXM-CAP-SIMULATE-CREATION",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "status": "live",
-  "purpose": "Iteratively improve an inspectable visual creation state inside a deterministic simulated world until no currently registered improvement rule can identify another change, while preserving every simulated cinematic frame and explicitly refusing to call that state perfect.",
+  "purpose": "Improve inspectable visual creation states in simulation and resolve adaptive vector-cell fabrics whose stable cells may deliberately merge child detail at one observation scale or split back into child cells at another, while keeping every selected state explicit and refusing to call current knowledge perfect.",
   "handles": [
     "simulate-creation",
     "simulate-visual-thought",
-    "cinematic-thought"
+    "cinematic-thought",
+    "resolve-vector-cells",
+    "vector-cell-thought",
+    "adaptive-vector-scene"
   ],
   "input_contract": {
-    "required": [
-      "thought"
-    ],
+    "required": [],
     "properties": {
-      "thought": "inspectable visual scene state with canvas and objects; objects may begin with incomplete Paintgun channels",
-      "defaults": "optional caller-visible channel defaults available to the simulator",
-      "alternatives": "optional per-object known alternative channel values available to improvement rules",
-      "palette": "optional known color candidates used for missing color and contrast improvement",
-      "criteria": "optional deterministic criteria such as minimum_contrast and fit_canvas",
-      "max_iterations": "optional explicit simulation bound from 1 to 32"
+      "operation": "optional explicit operation; resolve-vector-cells selects Vector Cell Fabric resolution, otherwise normal creation simulation runs",
+      "thought": "simulation path: inspectable visual scene state with canvas and objects; objects may begin with incomplete Paintgun channels",
+      "defaults": "simulation path: optional caller-visible channel defaults available to the simulator",
+      "alternatives": "simulation path: optional per-object known alternative channel values available to improvement rules",
+      "palette": "simulation path: optional known color candidates used for missing color and contrast improvement",
+      "criteria": "simulation path: optional deterministic criteria such as minimum_contrast and fit_canvas",
+      "max_iterations": "simulation path: optional explicit simulation bound from 1 to 32",
+      "fabric": "vector-cell path: hierarchical axm.vector-cell-fabric/v0.1 body with stable cell ids and explicit representations",
+      "observation_scale": "vector-cell path: positive scale used to select each cell representation",
+      "choice": "vector-cell path: explicit named chameleon choice; exact choice representations override generic ones"
     }
   },
   "output_contract": {
-    "kind": "simulated-creation-thought",
+    "kind": "simulated-or-adaptive-visual-thought",
     "contains": [
-      "status",
-      "exact final thought and digest",
-      "iteration history",
-      "known improvements and gaps",
-      "cinematic SVG frame per iteration when renderable",
-      "explicit materialization readiness",
-      "truthful stop meaning"
+      "typed operation and status",
+      "exact thought and digest",
+      "cinematic SVG projection when renderable",
+      "simulation iteration history or vector-cell resolution trace",
+      "known improvement/gap evidence or merge/split evidence",
+      "truthful limitations"
     ]
   },
   "dependencies": [],
   "relationships": [
     "simulation happens before reality materialization rather than only testing after a draft is built",
     "the stopping state NO_KNOWN_IMPROVEMENTS means no currently registered improvement rule can identify another change, not perfection",
-    "each simulation iteration preserves a cinematic projection of the exact state when the Paintgun grammar can render it",
-    "the final simulated thought can be consumed by AXM-CAP-PAINTGUN-SPECIALIST without reinterpreting its scene graph"
+    "Vector Cell Fabric stores stable visual identities whose explicit representation may merge child cells for a coarse view or split into child cells when finer detail is requested",
+    "vector-cell choice is explicit rather than hidden adaptation: a named choice may select a different representation while the cell id remains stable",
+    "resolved vector cells become ordinary Paintgun thought and can therefore enter the existing simulate -> NO_KNOWN_IMPROVEMENTS -> Paintgun materialize loop"
   ],
   "anatomy_refs": [
     {
@@ -50,36 +55,48 @@
       "id": "AXM-03-TIME-STATE-EVENT-C-004-state-machine",
       "role": "implements",
       "basis": "Simulation advances through explicit state transitions and terminates in a typed NO_KNOWN_IMPROVEMENTS or HOLD state."
+    },
+    {
+      "id": "AXM-11-3D-SPATIAL-C-028-level-of-detail-group",
+      "role": "implements",
+      "basis": "Vector cells select one exact scale-bound representation and can collapse child cells into a parent expression or expand the same parent identity into child cells."
+    },
+    {
+      "id": "AXM-11-3D-SPATIAL-C-021-scene-graph",
+      "role": "uses",
+      "basis": "Nested vector cells retain explicit parent/child paths and resolve them into one inspectable scene graph before Paintgun rendering."
     }
   ],
   "implementation": {
     "kind": "DETERMINISTIC_SOURCE",
     "entrypoint": "builtin:simulate_creation",
-    "source": "src/axm_uc/simulation.py"
+    "source": "src/axm_uc/simulation.py + src/axm_uc/vector_cells.py"
   },
   "limitations": [
-    "v0 improvement rules cover structural Paintgun-channel completion, bounded parameter repair, known-shape canvas fit, and contrast improvement from supplied known alternatives or palette",
+    "simulation improvement rules remain bounded to the explicitly implemented rules",
     "NO_KNOWN_IMPROVEMENTS is not optimality, perfection, semantic correctness, or aesthetic proof",
-    "new evidence or a newly installed improvement rule may reopen a previously stopped simulation",
-    "the cinematic projection currently uses the bounded local SVG Paintgun grammar rather than a photoreal physical renderer"
+    "Vector Cell Fabric v0 selects only explicitly supplied representations and never invents missing close-up detail",
+    "merged and split cell forms preserve structural identity but do not prove physical equivalence",
+    "vector geometry remains resolution-independent until rasterization at an observation/output boundary; raster effects and physical detail still have their own limits",
+    "v0 cell transforms intentionally do not rewrite SVG path data"
   ],
   "persistent_state": null,
   "root_fit": {
     "truth": {
       "fit": true,
-      "basis": "The stop condition says only that currently registered rules see no further improvement; all known gaps, iterations, frames and limitations remain visible."
+      "basis": "Every adaptive representation, observation scale, choice, merge/split transition and resulting thought digest stays inspectable; the system does not claim infinite detail or perfection."
     },
     "agency": {
       "fit": true,
-      "basis": "Callers may provide open visual intent, defaults, alternatives and criteria without the simulator silently replacing the requested creation direction."
+      "basis": "Scale and chameleon choice are explicit caller state, and choice-specific representations override generic ones without silently changing cell identity."
     },
     "continuity": {
       "fit": true,
-      "basis": "Simulation changes only an in-memory candidate state; reality is touched only by the separate explicit materialization capability."
+      "basis": "A cell keeps one stable identity while its selected expression changes; resolving cells is read-only and produces a normal thought before any materialization."
     },
     "wisdom-before-speed": {
       "fit": true,
-      "basis": "Known improvements are explored before materialization and the final thought remains digest-bound to the cinematic state that was actually simulated."
+      "basis": "Adaptive detail is selected from known representations and may enter the existing simulation evidence loop before the result is pulled into reality."
     }
   }
 }
