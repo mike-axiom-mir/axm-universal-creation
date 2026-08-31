@@ -46,9 +46,9 @@
   ],
   "anatomy_refs": [
     {
-      "id": "AXM-05-STATE-DATA-O-006-state-machine",
+      "id": "AXM-01-PROVENANCE-C-014-rollback-snapshot",
       "role": "implements",
-      "basis": "Self-evolution is represented as explicit inspectable state transitions rather than an implicit mutation flag."
+      "basis": "Every successful adoption records the exact adopted source, prior library refs, source digest, rollback deadline, and the inverse transition needed to restore the prior organ-library state."
     },
     {
       "id": "AXM-20-TESTING-OBSERVABILITY-C-015-validation-report",
