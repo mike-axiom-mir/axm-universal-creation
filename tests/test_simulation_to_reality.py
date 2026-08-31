@@ -158,6 +158,18 @@ class SimulationToRealityTests(unittest.TestCase):
         self.assertEqual(simulation["thought"]["objects"][0]["material"]["name"], "liquid-starship-ceramic")
         self.assertIn('data-material="liquid-starship-ceramic"', simulation["cinematic_projection"]["svg"])
 
+    def test_malformed_empty_skin_stays_on_typed_hold(self):
+        thought = self._rough_thought()
+        thought["objects"][0]["color"] = {"fill": "#FFFFFF", "stroke": "#FFFFFF", "stroke_width": 2}
+        thought["objects"][0]["skin"] = {"kind": "solid", "colors": [], "angle": 0}
+        simulation = self._simulate(thought)
+        self.assertEqual(simulation["status"], "HOLD_SIMULATION_STATE_NOT_MATERIALIZABLE")
+        self.assertFalse(simulation["materialization_ready"])
+        self.assertTrue(any(
+            gap["type"] == "paintgun-validation"
+            for gap in simulation["known_gaps"]
+        ))
+
     def test_fake_complete_simulation_with_missing_channel_is_rejected_by_specialist(self):
         simulation = self._simulate()
         fake = copy.deepcopy(simulation)
