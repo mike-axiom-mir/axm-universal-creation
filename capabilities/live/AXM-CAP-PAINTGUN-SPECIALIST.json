@@ -1,0 +1,84 @@
+{
+  "id": "AXM-CAP-PAINTGUN-SPECIALIST",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Materialize one exact simulated visual thought into a local static-web artifact using separate but mutually required shape, material, color, light, shade and skin channels, so the specialist builds from the same scene state that produced the cinematic simulation.",
+  "handles": [
+    "materialize-simulated-thought",
+    "paintgun-visual-project"
+  ],
+  "input_contract": {
+    "required": [
+      "path",
+      "simulation"
+    ],
+    "properties": {
+      "path": "output project directory outside the live machine body or under creations/",
+      "simulation": "exact AXM simulation result with status NO_KNOWN_IMPROVEMENTS, thought, thought_digest and matching cinematic projection",
+      "replace": "optional explicit replacement of an existing creation target"
+    }
+  },
+  "output_contract": {
+    "kind": "paintgun-visual-project",
+    "contains": [
+      "exact simulated thought digest",
+      "materialized scene.svg",
+      "thought.json",
+      "local index.html",
+      "validated project receipts",
+      "proof that the cinematic projection equals the materialized SVG scene"
+    ]
+  },
+  "dependencies": [
+    "AXM-CAP-SIMULATE-CREATION",
+    "AXM-CAP-WRITE-PROJECT"
+  ],
+  "relationships": [
+    "acts as the specialist that pulls an inspectable simulated thought into a real project artifact",
+    "requires shape, material, color, light, shade and skin as distinct composition channels for every visual object",
+    "uses the same deterministic renderer for simulation projection and materialization instead of asking a second builder to reinterpret the idea",
+    "accepts open material names while rendering the currently declared metallic, roughness, opacity, emission, light, shade and skin parameters"
+  ],
+  "anatomy_refs": [
+    {
+      "id": "AXM-12-RENDERING-MATERIALS-O-012-renderer",
+      "role": "implements",
+      "basis": "The specialist renders the exact visual scene state into an inspectable SVG body and local project."
+    },
+    {
+      "id": "AXM-12-RENDERING-MATERIALS-C-006-shader-graph",
+      "role": "uses",
+      "basis": "Surface, light, shade, skin and color remain separate compositional inputs rather than being flattened into one opaque style string."
+    }
+  ],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:paintgun_specialist",
+    "source": "src/axm_uc/paintgun.py"
+  },
+  "limitations": [
+    "the current materializer is an SVG/static-web renderer, not a physically accurate 3D or ray-traced renderer",
+    "open material names do not prove physical material behavior; only the explicitly rendered parameters are carried into reality",
+    "matching simulation and materialized SVG proves exact transfer for the current scene grammar, not perfect prediction of browser, physical or human-perception outcomes",
+    "animation, texture files, external assets and arbitrary shader code are not part of this v0 Paintgun grammar"
+  ],
+  "persistent_state": "only the caller-selected materialized creation directory persists",
+  "root_fit": {
+    "truth": {
+      "fit": true,
+      "basis": "The specialist rechecks the exact thought digest and requires the final cinematic SVG to equal the materialized SVG source."
+    },
+    "agency": {
+      "fit": true,
+      "basis": "Visual channels remain explicit and independently changeable; the specialist does not hide or reinterpret the simulated design."
+    },
+    "continuity": {
+      "fit": true,
+      "basis": "Materialization creates an ordinary inspectable project and does not modify the live machine body."
+    },
+    "wisdom-before-speed": {
+      "fit": true,
+      "basis": "Reality materialization is allowed only after the simulator reaches its explicit current stop state and the exact thought/projection binding still holds."
+    }
+  }
+}
