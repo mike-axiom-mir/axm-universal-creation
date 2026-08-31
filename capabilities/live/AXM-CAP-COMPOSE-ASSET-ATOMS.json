@@ -1,0 +1,85 @@
+{
+  "id": "AXM-CAP-COMPOSE-ASSET-ATOMS",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Validate, inspect, deterministically compile, and materialize renderer-neutral visual asset packages made from exact reusable atoms for shape, parts, textures, materials, palettes, gradients, masks, overlays, shaders, animations, states, behavior, LOD, collision, sockets, and metadata.",
+  "handles": [
+    "inspect-asset-atom-schema",
+    "list-asset-packages",
+    "inspect-asset-package",
+    "validate-asset-package",
+    "compile-asset-package",
+    "materialize-asset-package"
+  ],
+  "input_contract": {
+    "required": ["operation"],
+    "properties": {
+      "operation": "one of inspect-schema, list, inspect, validate, compile, or materialize",
+      "ref": "optional exact installed asset package id@version; required for inspect and mutually exclusive with package for validate, compile, and materialize",
+      "package": "optional inline axm.asset-atom-package/v0.1 object; mutually exclusive with ref",
+      "asset_class": "optional exact list filter",
+      "atom_kind": "optional exact list filter from the closed v0.1 atom-kind set",
+      "observation_distance": "optional finite non-negative distance used for exact LOD selection",
+      "state": "optional exact state atom id",
+      "animation": "optional exact animation atom id",
+      "palette_overrides": "optional palette-id to existing-role to color map",
+      "path": "required materialization directory outside the live machine body or under creations/",
+      "replace": "optional explicit boolean replacement of an existing creation target"
+    }
+  },
+  "output_contract": {
+    "kind": "validated-asset-descriptor-or-instance",
+    "contains": [
+      "closed schema and installed-library evidence",
+      "normalized package and dependency order",
+      "exact reference and reference-kind validation",
+      "cycle rejection",
+      "deterministic package and instance digests",
+      "distance-selected LOD",
+      "exact state and animation selection",
+      "resolved palette roles",
+      "socket descriptors",
+      "external resource evidence boundary",
+      "optional validated two-file descriptor project"
+    ]
+  },
+  "dependencies": ["AXM-CAP-WRITE-PROJECT"],
+  "relationships": [
+    "binds previously separate visual concepts into one exact reusable package grammar",
+    "lets finished assets be deterministic dependency graphs of smaller reusable visual atoms",
+    "keeps external media, runtime shader behavior, animation playback, and physics execution distinct from descriptor validation",
+    "coexists with Paintgun and Chameleon without claiming the current SVG renderer is a 3D runtime"
+  ],
+  "anatomy_refs": [
+    {"id": "AXM-10-2D-IMAGING-C-020-texture-map", "role": "uses", "basis": "Texture atoms declare bounded channel and resource descriptors."},
+    {"id": "AXM-10-2D-IMAGING-C-013-mask", "role": "uses", "basis": "Mask atoms attach explicit meanings to texture components."},
+    {"id": "AXM-10-2D-IMAGING-C-014-gradient", "role": "uses", "basis": "Gradient atoms carry exact stops and optional palette roles."},
+    {"id": "AXM-11-3D-SPATIAL-C-002-mesh", "role": "uses", "basis": "Shape atoms can describe external mesh resources while leaving their bytes unclaimed."},
+    {"id": "AXM-11-3D-SPATIAL-C-020-transform-hierarchy", "role": "uses", "basis": "Part children and socket transforms form explicit attachment topology."},
+    {"id": "AXM-11-3D-SPATIAL-C-027-collision-shape", "role": "uses", "basis": "Collision atoms stay separate from visible geometry."},
+    {"id": "AXM-11-3D-SPATIAL-C-028-level-of-detail-group", "role": "uses", "basis": "LOD atoms enforce continuous non-overlapping distance coverage."},
+    {"id": "AXM-12-RENDERING-MATERIALS-C-007-material-graph", "role": "uses", "basis": "Material atoms bind scalar, color, texture, shader, palette, mask, gradient, and overlay inputs."},
+    {"id": "AXM-13-ANIMATION-VIDEO-C-003-animation-clip", "role": "uses", "basis": "Animation atoms declare bounded tracks and strictly ordered keyframes."},
+    {"id": "AXM-13-ANIMATION-VIDEO-C-007-animation-state-machine", "role": "uses", "basis": "State and behavior atoms declare exact transitions and selections without executing them."}
+  ],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:asset_atoms",
+    "source": "src/axm_uc/asset_atoms.py"
+  },
+  "limitations": [
+    "the capability validates and compiles renderer-neutral JSON descriptors; it does not render mesh, sprite, vector, or texture content",
+    "shader instructions are not executed and custom runtime source is not trusted or run",
+    "animation clips and behaviors are selected but not played",
+    "collision shapes are validated but no collision or physics simulation is run",
+    "external resource bytes are not fetched or verified; supplied digests remain declared evidence only",
+    "the installed modular tank is a complete schema demonstrator, not a claim that its referenced media bytes exist"
+  ],
+  "persistent_state": "the installed read-only asset-packages body plus only caller-selected materialized creation directories",
+  "root_fit": {
+    "truth": {"fit": true, "basis": "Closed fields, exact references, kind checks, cycle rejection, deterministic digests, and explicit resource/runtime limits prevent descriptor claims from becoming runtime claims."},
+    "agency": {"fit": true, "basis": "Every atom, dependency, variant, palette role, socket, and selection stays inspectable and independently replaceable."},
+    "continuity": {"fit": true, "basis": "Installed packages are versioned local source and materialization writes ordinary validated creations without changing the live machine body."},
+    "wisdom-before-speed": {"fit": true, "basis": "Invalid, ambiguous, cyclic, discontinuous, or wrongly typed compositions fail closed before materialization."}
+  }
+}

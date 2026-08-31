@@ -1,0 +1,17 @@
+{
+  "kind": "compile-asset-package",
+  "direction": "compile one deterministic modular tank visual-asset instance",
+  "inputs": {
+    "operation": "compile",
+    "ref": "axm.example.modular-tank@1.0.0",
+    "observation_distance": 50,
+    "state": "damaged-state",
+    "animation": "turret-idle",
+    "palette_overrides": {
+      "faction-palette": {
+        "primary": "#7C3AED",
+        "emissive-edge": "#F0ABFC"
+      }
+    }
+  }
+}

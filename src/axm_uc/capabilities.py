@@ -302,6 +302,83 @@ def builtin_paintgun_specialist(root: Path, inputs: dict[str, Any]) -> dict[str,
         raise CapabilityError(str(exc), exc.details) from exc
 
 
+def builtin_asset_atoms(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+    from .asset_atoms import (
+        AssetAtomError,
+        AssetPackageLibrary,
+        asset_atom_schema_summary,
+        compile_asset_package,
+        materialize_asset_package,
+        validate_asset_package,
+    )
+
+    operation = str(inputs.get("operation", "")).strip().casefold()
+    supported = {"inspect-schema", "list", "inspect", "validate", "compile", "materialize"}
+    if operation not in supported:
+        raise CapabilityError(
+            "asset atom operation is unsupported",
+            {"operation": operation, "supported_operations": sorted(supported)},
+        )
+    try:
+        library = AssetPackageLibrary(root)
+        if operation == "inspect-schema":
+            return {
+                "truth_status": "DECLARED_CLOSED_ASSET_ATOM_SCHEMA",
+                "schema": asset_atom_schema_summary(),
+                "library": library.summary(),
+            }
+        if operation == "list":
+            return {
+                "truth_status": "EXACT_LOCAL_ASSET_PACKAGE_LIST",
+                "summary": library.summary(),
+                "packages": library.list(
+                    asset_class=str(inputs["asset_class"]) if "asset_class" in inputs else None,
+                    atom_kind=str(inputs["atom_kind"]) if "atom_kind" in inputs else None,
+                ),
+            }
+        if operation == "inspect":
+            return {
+                "truth_status": "EXACT_LOCAL_ASSET_PACKAGE",
+                "summary": library.summary(),
+                "package": library.inspect(inputs.get("ref")),
+            }
+
+        has_ref = "ref" in inputs
+        has_package = "package" in inputs
+        if has_ref == has_package:
+            raise AssetAtomError(f"asset atom {operation} requires exactly one of ref or package")
+        package = library.resolve(inputs["ref"]) if has_ref else inputs["package"]
+        if operation == "validate":
+            normalized = validate_asset_package(package)
+            return {
+                "truth_status": "DETERMINISTIC_ASSET_ATOM_PACKAGE_VALIDATION",
+                "package": {key: value for key, value in normalized.items() if key != "validation"},
+                "validation": normalized["validation"],
+            }
+        selection = {
+            "observation_distance": inputs.get("observation_distance", 0),
+            "state": inputs.get("state"),
+            "animation": inputs.get("animation"),
+            "palette_overrides": inputs.get("palette_overrides"),
+        }
+        if operation == "compile":
+            return compile_asset_package(package, **selection)
+
+        target = _resolve_output_path(root, str(inputs.get("path", "")))
+        if _is_machine_body_path(root, target):
+            raise CapabilityError(
+                "asset descriptor materialization is an ordinary creation and cannot rewrite the live machine body"
+            )
+        replace = inputs.get("replace", False)
+        if not isinstance(replace, bool):
+            raise AssetAtomError("asset atom materialize replace must be boolean")
+        return materialize_asset_package(target, package, replace=replace, **selection)
+    except CapabilityError:
+        raise
+    except (AssetAtomError, ProjectError) as exc:
+        raise CapabilityError(str(exc), getattr(exc, "details", {})) from exc
+
+
 def builtin_synthesize_creation_gap(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
     from .gap_synthesis import GapSynthesisError, operate_gap_synthesis
     from .spawn import SpawnError
@@ -370,6 +447,7 @@ BUILTINS: dict[str, Callable[[Path, dict[str, Any]], dict[str, Any]]] = {
     "builtin:evolve_machine": builtin_evolve_machine,
     "builtin:simulate_creation": builtin_simulate_creation,
     "builtin:paintgun_specialist": builtin_paintgun_specialist,
+    "builtin:asset_atoms": builtin_asset_atoms,
     "builtin:gap_synthesis": builtin_synthesize_creation_gap,
     "builtin:verify_project": builtin_verify_project,
     "builtin:patch_project": builtin_patch_project,

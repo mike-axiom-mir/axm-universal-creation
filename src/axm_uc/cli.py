@@ -4,6 +4,7 @@ import argparse
 import json
 from pathlib import Path
 
+from .asset_atoms import ATOM_KINDS
 from .machine import UniversalCreationMachine
 from .paths import find_machine_root
 from .snapshot import create_daily_snapshot, restore_snapshot
@@ -42,6 +43,11 @@ def build_parser() -> argparse.ArgumentParser:
     organ_action.add_argument("--test-ref", help="run one installed package's declared deterministic fixtures")
     organs_p.add_argument("--project-type", choices=["generic", "static-web", "python"], help="filter installed packages")
     organs_p.add_argument("--provides", help="filter by one exact provided interface")
+
+    assets_p = sub.add_parser("assets", help="list or inspect installed deterministic Asset Atom packages")
+    assets_p.add_argument("--ref", help="inspect one exact installed id@version package")
+    assets_p.add_argument("--asset-class", help="filter by one exact asset class")
+    assets_p.add_argument("--atom-kind", choices=sorted(ATOM_KINDS), help="require one supported atom kind")
 
     organ_census_p = sub.add_parser(
         "organ-census",
@@ -115,6 +121,13 @@ def main(argv: list[str] | None = None) -> int:
             test_ref=args.test_ref,
             project_type=args.project_type,
             provides=args.provides,
+        ))
+        return 0
+    if args.command == "assets":
+        _print(machine.asset_packages(
+            ref=args.ref,
+            asset_class=args.asset_class,
+            atom_kind=args.atom_kind,
         ))
         return 0
     if args.command == "organ-census":

@@ -19,8 +19,8 @@ class CompositeAndExecutableTests(unittest.TestCase):
         self.assertEqual(summary["truth_status"], "EXPLICIT_LIVE_CAPABILITY_BINDINGS")
         self.assertEqual(summary["implemented_master_records"], 28)
         self.assertEqual(summary["implemented_master_by_level"], {"component": 19, "organ": 9})
-        self.assertEqual(summary["live_capabilities"], 21)
-        self.assertEqual(summary["resolved_bindings"], 59)
+        self.assertEqual(summary["live_capabilities"], 22)
+        self.assertEqual(summary["resolved_bindings"], 69)
 
         project = machine.executable(master_id="AXM-24-WORKSPACE-COLLABORATION-C-010-project")["master"]
         self.assertEqual(project["status"], "live-backed")

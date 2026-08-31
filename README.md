@@ -26,6 +26,9 @@ PYTHONPATH=src python -m axm_uc gap-forge
 # Inspect all 415 descriptive organs against exact executable-package evidence.
 PYTHONPATH=src python -m axm_uc organ-census
 
+# Inspect the installed renderer-neutral Asset Atom package library.
+PYTHONPATH=src python -m axm_uc assets
+
 # Run the complete repository verification suite.
 python tools/build.py
 ```
@@ -158,6 +161,7 @@ The small Python runtime currently provides:
 - a deterministic detached creation-unit forge for hands, capabilities, organs, protocols, skills, specialists, recipes, and new extension kinds;
 - an evidence-bound gap compiler that can derive and test either the smallest supported UTF-8 file-route adapter or a bounded project recipe of up to three exact producer, verifier, existing-composite, and JSON-report steps from a real unroutable request;
 - complete editable self-workspace cloning, exact source comparison, independent build logs, and voluntary merge-check requests;
+- a closed 16-kind Asset Atom package fabric with exact dependency validation, deterministic LOD/state/animation/palette selection, sockets, collision descriptors, metadata, and validated descriptor materialization;
 - structured `CAPABILITY_GAP` results that preserve the directional outcome and distinguish current partial coverage;
 - candidate capability testing and direct adoption through the four-root fit declaration;
 - build-owned cleanup of candidate-test debris;
@@ -216,6 +220,12 @@ Current live project handles:
 - `analyze-creation-gap`
 - `propose-gap-candidate`
 - `explore-gap-candidate`
+- `inspect-asset-atom-schema`
+- `list-asset-packages`
+- `inspect-asset-package`
+- `validate-asset-package`
+- `compile-asset-package`
+- `materialize-asset-package`
 
 Project creation is staged before publish and project-relative file paths may not escape the project body. Plain project creation defaults to `grounded-draft`: exact publication integrity is required, while failed quality/grammar checks remain visible and the imperfect creation survives. Explicit `validated` mode and verified composite handles remain strict and do not publish a failed body.
 
@@ -275,6 +285,19 @@ That creates `creations/first-real-site/` with `index.html`, `style.css`, and `a
 A passing deterministic trial proves what it actually checked. It **does not** claim that generated code was executed, that browser interaction was automatically verified, that visual quality was judged, or that every semantic user requirement was satisfied.
 
 See `REAL_CREATION_TRIAL.md` for the working-chat protocol and exact truth boundary.
+
+## Deterministic visual Asset Atoms
+
+AXM now has one versioned renderer-neutral contract for building a reusable visual asset from smaller exact pieces. `axm.asset-atom-package/v0.1` closes 16 atom kinds: shape, part, texture, material, palette, gradient, mask, overlay, shader, animation, state, behavior, LOD, collision, socket, and metadata.
+
+Every atom's declared `uses` edges must exactly match the references in its kind-specific payload. The validator rejects unsupported fields, missing or extra edges, unresolved IDs, wrong target kinds, cycles, discontinuous LOD ranges, invalid keyframes, and undeclared palette roles. The compiler deterministically selects LOD/state/animation/palette inputs and produces package and instance digests. Materialization writes only validated `asset.package.json` and `asset.instance.json` artifacts.
+
+The installed `axm.example.modular-tank@1.0.0` package exercises every kind. Its external mesh and texture URIs remain declared references: this capability does not fetch media, render 3D content, execute shaders or animations, or run physics. See `ASSET_ATOM_FABRIC.md` for the full audit and truth boundary.
+
+```bash
+PYTHONPATH=src python -m axm_uc assets --ref axm.example.modular-tank@1.0.0
+PYTHONPATH=src python -m axm_uc create examples/requests/compile_modular_tank_asset.json
+```
 
 ## Editable self-creation body
 
