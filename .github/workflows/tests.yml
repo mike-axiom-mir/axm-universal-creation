@@ -4,9 +4,6 @@ on:
   pull_request:
     branches:
       - main
-  push:
-    branches:
-      - axm/codex-game-asset-learning-v1
   workflow_dispatch:
 
 jobs:
