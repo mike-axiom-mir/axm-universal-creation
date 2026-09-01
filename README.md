@@ -282,94 +282,97 @@ PYTHONPATH=src python -m axm_uc create examples/requests/explore_verified_templa
 
 That creates `creations/first-real-site/` with `index.html`, `style.css`, and `app.js`. Open `index.html` in a browser for the separate human/host visual and interaction test.
 
-A passing deterministic trial proves what it actually checked. It **does not** claim that generated code was executed, that browser interaction was automatically verified, that visual quality was judged, or that every semantic user requirement was satisfied.
+A passing deterministic trial proves what it actually checked. It **does not** claim that generated code was executed, that browser interaction was automatically observed, or that a created project is excellent. Those remain separate evidence layers.
 
-See `REAL_CREATION_TRIAL.md` for the working-chat protocol and exact truth boundary.
+## First missing-part build loop
 
-## Deterministic visual Asset Atoms
+Candidate capability manifests live under `capabilities/candidates/` and declare both their implementation and their tests.
 
-AXM now has one versioned renderer-neutral contract for building a reusable visual asset from smaller exact pieces. `axm.asset-atom-package/v0.1` closes 16 atom kinds: shape, part, texture, material, palette, gradient, mask, overlay, shader, animation, state, behavior, LOD, collision, socket, and metadata.
+The first included candidate adds deterministic slug/identifier creation. It is not counted as live until:
 
-Every atom's declared `uses` edges must exactly match the references in its kind-specific payload. The validator rejects unsupported fields, missing or extra edges, unresolved IDs, wrong target kinds, cycles, discontinuous LOD ranges, invalid keyframes, and undeclared palette roles. The compiler deterministically selects LOD/state/animation/palette inputs and produces package and instance digests. Materialization writes only validated `asset.package.json` and `asset.instance.json` artifacts.
-
-The installed `axm.example.modular-tank@1.0.0` package exercises every kind. Its external mesh and texture URIs remain declared references: this capability does not fetch media, render 3D content, execute shaders or animations, or run physics. See `ASSET_ATOM_FABRIC.md` for the full audit and truth boundary.
-
-```bash
-PYTHONPATH=src python -m axm_uc assets --ref axm.example.modular-tank@1.0.0
-PYTHONPATH=src python -m axm_uc create examples/requests/compile_modular_tank_asset.json
-```
-
-## Editable self-creation body
-
-`AXM-CAP-SELF-WORKSPACE` can clone the complete current source body into an editable candidate outside the live body, inspect byte-exact differences, and run the candidate's own `tools/build.py` while returning the full captured build output.
-
-The candidate chooses if and when to emit `request-merge-check`. It may request any combination of source comparison, build, candidate-machine inspection, executable-anatomy inspection, planning probes, and real creation trials inside its cloned body. The request is explicitly `MERGE_CHECK_REQUESTED_NOT_APPROVED`: it performs no merge, grants no approval, creates no growth score, and imposes no per-edit checkpoint.
-
-This is source-body isolation, not OS containment. Candidate code runs with the current process user's host permissions. Automatic whole-body merge/adoption remains an explicit current gap.
-
-Create the first editable clone body:
+1. the candidate is tested;
+2. the four-root declaration is reviewed;
+3. the user explicitly adopts it.
 
 ```bash
-PYTHONPATH=src python -m axm_uc create examples/requests/clone_self_workspace.json
+PYTHONPATH=src python -m axm_uc test-candidate capabilities/candidates/AXM-CAP-CREATE-IDENTIFIER.json
+PYTHONPATH=src python -m axm_uc adopt capabilities/candidates/AXM-CAP-CREATE-IDENTIFIER.json
 ```
 
-See `SELF_WORKSPACE.md`.
+Testing writes into a temporary directory and removes it in the same operation. Adoption is direct after a passing test and four-root fit declaration; it first ensures the day's recovery snapshot exists, then installs/registers the capability. It does not create a benchmark, reward loop, global merge gate, or automatic self-approval system.
 
-## Anatomy / kernel topology bridge
+## Self-modification loop
 
-The 2,165-record master anatomy is broad but currently flat: it contains zero dependency edges and zero relationships. The separate 100-record implementation kernel contains 175 declared dependency edges, all of which resolve internally.
+The machine may evolve one exact deterministic candidate through explicit operations:
 
-The runtime now connects the two conservatively without editing the master map or inventing edges. A master record becomes a traversable kernel seed only when its normalized name exactly matches one unique kernel record at the same anatomy level. Weaker correspondences remain visible suggestions and are never traversed as facts.
+- inspect a candidate's exact source and declared tests;
+- modify that exact source with a bounded replacement;
+- run the candidate's declared tests;
+- create or reuse the day's whole-body recovery snapshot;
+- adopt the tested candidate only if its tested content digest still matches;
+- restore a whole prior machine body while quarantining the current body first.
 
-Current measured bridge coverage:
+Live handles:
 
-- 104 master records have a traversable exact crosswalk;
-- those exact mappings reach 94 of the 100 kernel records;
-- 0 exact mappings are ambiguous;
-- 2,061 master records remain explicitly unresolved.
+- `inspect-self-candidate`
+- `modify-self-candidate`
+- `test-self-candidate`
+- `adopt-self-candidate`
+- `restore-self-snapshot`
 
-The planner keeps its top-level truth label `DETERMINISTIC_LEXICAL_BASELINE`; kernel topology is reported separately so attaching a dependency graph does not pretend the lexical matcher became semantic intelligence.
+A passing test is evidence, not authority. The machine does not choose a global growth target and does not automatically install every passing candidate. See `SELF_GROWTH.md`, `DAILY_SNAPSHOT.md`, and the capability manifests under `capabilities/live/`.
 
-Inspect the bridge directly:
+## Daily snapshots
 
 ```bash
-PYTHONPATH=src python -m axm_uc topology
-PYTHONPATH=src python -m axm_uc organs
-PYTHONPATH=src python -m axm_uc organs --ref axm.web.shell@1.0.0
-PYTHONPATH=src python -m axm_uc topology --master-id AXM-02-DATA-MATH-C-012-graph --depth 4
-PYTHONPATH=src python -m axm_uc plan examples/requests/plan_graph.json --per-level 8
+PYTHONPATH=src python -m axm_uc snapshot --reason "manual checkpoint"
+PYTHONPATH=src python -m axm_uc snapshots
+PYTHONPATH=src python -m axm_uc restore snapshots/2026-08-29 --reason "restore known-good body"
 ```
 
-See `TOPOLOGY.md` for the measured baseline, crosswalk rule, truth boundary, and graph example.
+At most one snapshot is made for a UTC day, it is never silently replaced, and restore moves the current body into `quarantine/` before replacement. Snapshot management ignores runtime output surfaces such as `snapshots/`, `quarantine/`, `candidate-tests/`, `creations/`, `.git/`, and cache directories.
 
-### Core commands
+## Current truth boundary
 
-```bash
-PYTHONPATH=src python -m axm_uc inspect
-PYTHONPATH=src python -m axm_uc topology
-PYTHONPATH=src python -m axm_uc plan examples/requests/plan_mesh.json
-PYTHONPATH=src python -m axm_uc create examples/requests/create_hello.json
-PYTHONPATH=src python -m axm_uc trial examples/requests/create_real_site.json
-PYTHONPATH=src python -m axm_uc create examples/requests/create_templated_site.json
-PYTHONPATH=src python -m axm_uc create examples/requests/create_organ_site.json
-PYTHONPATH=src python -m axm_uc create examples/requests/create_reusable_organ_site.json
-PYTHONPATH=src python -m axm_uc create examples/requests/clone_self_workspace.json
-PYTHONPATH=src python -m axm_uc forge
-PYTHONPATH=src python -m axm_uc create examples/requests/spawn_creation_protocol.json
-PYTHONPATH=src python -m axm_uc create examples/requests/test_spawned_creation_protocol.json
-PYTHONPATH=src python -m axm_uc create examples/requests/propose_verified_template_gap.json
-PYTHONPATH=src python -m axm_uc candidate test capabilities/candidates/AXM-CAP-WRITE-MARKDOWN.json
-python tools/build.py
-```
+Implemented now:
 
-The Markdown example intentionally begins as a gap. The candidate demonstrates the smallest justified growth in this case: reuse the exact text writer and add an inspectable Markdown route rather than inventing a duplicate writer.
+- persistent standalone machine state;
+- inspectable exact structure;
+- exact deterministic registry decomposition baseline;
+- dependency-aware creation topology;
+- real deterministic project creation with configurable strict or grounded-draft publication;
+- strict reusable project templates;
+- reusable versioned executable-organ packages with exact reference resolution;
+- exact-interface organ discovery with unique-minimum selection and explicit missing/ambiguous HOLDs;
+- explicit supplied-organ gap closure through detached Forge test, ephemeral discovery, and disposable full assembly;
+- explicit organ materialization census plus an exact-source package-to-Forge compiler;
+- independently rechecked exact created-file digests;
+- symlink-safe project validation;
+- CSS and JavaScript local-reference validation;
+- direct tested-candidate adoption after a daily recovery snapshot;
+- full editable candidate-body clones with independent builds and voluntary check requests;
+- detached creation-unit materialization for known and future unit kinds;
+- bounded gap synthesis for exact UTF-8 route aliases and short exact-contract project recipes;
+- closed renderer-neutral Asset Atom packages with deterministic compile/materialize behavior;
+- one daily whole-body recovery snapshot;
+- explicit self-modification operations;
+- inspectable current truth and gaps;
+- build-owned cleanup;
+- no required agent architecture.
 
-GitHub collaboration uses one branch/PR lane per AI chat or instance by default; see `AGENTS.md`. That convention is repository hygiene, not machine architecture.
+Not claimed:
 
-## Status
+- universal creation ability;
+- autonomous semantic understanding;
+- autonomous arbitrary code invention from a name;
+- arbitrary semantic or computational gap synthesis;
+- proof that a structurally compiled adapter has correct new-kind semantics;
+- browser behavior from static validation;
+- generated-code execution from Python compilation;
+- automatic admission of candidates;
+- a final brain design;
+- self-improvement as an incentive or permanent objective.
 
-**SEED / EXPERIMENTAL**
+## Current factual limitation
 
-No claim of universal creation is made. The name describes the direction of the experiment, not a completed capability.
-
-Mike - Axiom/Mir
+The machine is still small relative to its recovered map. Most registry records describe potential structure, not implemented capability. The point of the current foundation is to preserve that distinction while making the gap between the two explicit and buildable.
