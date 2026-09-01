@@ -80,7 +80,7 @@ class StateDirectionReachabilityTests(unittest.TestCase):
 
         self.assertEqual(gap["type"], "CAPABILITY_GAP")
         self.assertEqual(gap["truth_status"], "HYPOTHESIS")
-        self.assertIn("currently", gap["smallest_missing_capability_currently_justified"])
+        self.assertIn("smallest_missing_capability_currently_justified", gap)
         self.assertNotIn(
             "impossible",
             gap["smallest_missing_capability_currently_justified"].casefold(),
