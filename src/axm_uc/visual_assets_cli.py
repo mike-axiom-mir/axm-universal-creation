@@ -7,6 +7,7 @@ from pathlib import Path
 from .visual_assets import catalog as base_catalog, generate_asset, generate_kit
 from .visual_creation_grammar import compile_visual_recipe, grammar_catalog
 from .visual_expanded import expansion_catalog, generate_expanded_asset, generate_expansion_kit
+from .visual_state_prompt_atlas import compile_visual_state, visual_state_catalog
 
 BASE_CATEGORIES = ["texture", "gradient", "material", "fixture", "decal", "palette"]
 EXPANDED_CATEGORIES = ["surface", "pigment", "sprite", "mesh", "vector-part"]
@@ -24,6 +25,7 @@ def combined_catalog() -> dict:
         "dependencies": [],
         "outputs": outputs,
         "visual_grammar": grammar_catalog(),
+        "visual_state_atlas": visual_state_catalog(),
     }
 
 
@@ -34,6 +36,14 @@ def build_parser() -> argparse.ArgumentParser:
     sub.add_parser("grammar-catalog", help="show the composable visual-intent grammar")
     plan = sub.add_parser("plan", help="compile one structured visual request into a deterministic recipe")
     plan.add_argument("request", help="path to a UTF-8 JSON visual request")
+
+    state_catalog = sub.add_parser("state-catalog", help="show the source-backed 99-command visual state atlas")
+    state_catalog.add_argument("--include-aliases", action="store_true")
+    state_compile = sub.add_parser(
+        "state-compile",
+        help="compile visual slash-command shorthand into renderer-neutral state",
+    )
+    state_compile.add_argument("request", help="path to a UTF-8 JSON visual state request")
 
     generate = sub.add_parser("generate", help="generate one real asset, material, pigment, sprite, mesh, or vector part")
     generate.add_argument("category", choices=BASE_CATEGORIES + EXPANDED_CATEGORIES)
@@ -79,6 +89,11 @@ def main(argv: list[str] | None = None) -> int:
     elif args.command == "plan":
         request = json.loads(Path(args.request).read_text(encoding="utf-8"))
         result = compile_visual_recipe(request)
+    elif args.command == "state-catalog":
+        result = visual_state_catalog(include_aliases=args.include_aliases)
+    elif args.command == "state-compile":
+        request = json.loads(Path(args.request).read_text(encoding="utf-8"))
+        result = compile_visual_state(request)
     elif args.command == "kit":
         result = generate_kit(args.path, profile=args.profile, seed=args.seed, size=args.size, replace=args.replace)
     elif args.command == "expansion-kit":

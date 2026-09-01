@@ -1,0 +1,9 @@
+{
+  "commands": "/3drender /isometric /miniature /goldenhour /rimlight",
+  "mode": "single-frame",
+  "overrides": {
+    "appearance.composition_density": 0.45
+  },
+  "resolutions": {},
+  "subject": "miniature robotic planet"
+}
