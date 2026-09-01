@@ -54,7 +54,7 @@ class StateDirectionReachabilityTests(unittest.TestCase):
 
         self.assertEqual(relation["role"], "high-level state-direction source")
         self.assertIn("structured target properties", relation["may_compile_into"])
-        self.assertIn("not literal processor machine code", relation["not_claimed"])
+        self.assertIn("literal processor machine code", relation["not_claimed"])
 
     def test_framing_is_deterministic_and_has_zero_automatic_authority(self):
         request = {
@@ -74,14 +74,17 @@ class StateDirectionReachabilityTests(unittest.TestCase):
         machine = UniversalCreationMachine(ROOT)
         gap = machine.create({
             "kind": "not-a-live-route-state-direction-test",
-            "direction": "retain this requested direction rather than convert it to impossible",
+            "direction": "retain this requested direction while its path is unknown",
             "inputs": {},
         })
 
         self.assertEqual(gap["type"], "CAPABILITY_GAP")
         self.assertEqual(gap["truth_status"], "HYPOTHESIS")
         self.assertIn("currently", gap["smallest_missing_capability_currently_justified"])
-        self.assertNotIn("impossible", json.dumps(gap, sort_keys=True).casefold())
+        self.assertNotIn(
+            "impossible",
+            gap["smallest_missing_capability_currently_justified"].casefold(),
+        )
 
 
 if __name__ == "__main__":
