@@ -24,6 +24,7 @@ PYTHONPATH=src python -m axm_uc topology
 PYTHONPATH=src python -m axm_uc executable
 PYTHONPATH=src python -m axm_uc forge
 PYTHONPATH=src python -m axm_uc gap-forge
+PYTHONPATH=src python -m axm_uc assets
 ```
 
 The important distinction is:
@@ -65,6 +66,8 @@ The direction catalog also contains engineering quality and risk axes, including
 The current machine can create, verify, and transactionally repair bounded UTF-8 text projects.
 
 Ordinary project creation retains imperfect results as grounded drafts with exact observed gaps. Verified routes remain strict. Reusable templates can instantiate complete multi-file recipes. Dependency-aware software organs can own and assemble disjoint parts of one project, and installed executable-organ packages can now remain in the body for exact reuse across creations. The self-workspace capability can clone the complete source body for open-ended experiments.
+
+Renderer-neutral visual assets can also be inspected, compiled, and materialized as exact Asset Atom packages. The installed modular tank package exercises all 16 current atom kinds and deterministic LOD/state/animation/palette selection. It is descriptor evidence, not evidence that referenced media was fetched, rendered, animated, or simulated. See `ASSET_ATOM_FABRIC.md`.
 
 A useful working-chat play loop is:
 
@@ -119,6 +122,7 @@ At this handoff:
 - spawned recipes are detached candidates and are not yet automatically activated as forge builders;
 - software-direction suggestions do not choose a direction;
 - direction expectations do not prove capability;
+- Asset Atom packages validate and compile exact descriptors, but this capability does not fetch external media, render 3D assets, execute shaders or animation, run behavior events, or simulate collision physics;
 - the 2,165-record anatomy remains broader than the live executable body.
 
 These are capability gaps, not hidden features.

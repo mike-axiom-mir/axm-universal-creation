@@ -318,7 +318,7 @@ class CreationForgeTests(unittest.TestCase):
         self.assertTrue(forge["extension_kinds_allowed"])
         self.assertFalse(forge["automatic_execution"])
         self.assertFalse(forge["automatic_install_or_registration"])
-        self.assertEqual(len(inspection["live_capabilities"]), 21)
+        self.assertEqual(len(inspection["live_capabilities"]), 22)
 
 
 if __name__ == "__main__":

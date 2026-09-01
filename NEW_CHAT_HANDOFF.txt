@@ -65,6 +65,10 @@ EVIDENCE-BOUND GAP SYNTHESIS
 ----------------------------
 Every unroutable create result now exposes whether an implemented deterministic blueprint can compile the observed gap. One blueprint creates an exact UTF-8 file-route alias from a uniquely compatible live primitive. A second searches a project recipe graph bounded to three steps across exact template, explicit executable-organ, interface-discovered organ, raw-file, existing verified-composite, verifier, and JSON-reporter contracts. It preserves candidate paths, prefers the shortest unique complete route, and uses only a closed digest-map projection or an exact whole-object binding. Unsupported, over-depth, incomplete, ambiguous, or contract-drifted wiring HOLD. This is structural proposal synthesis, not general semantic source invention, admission, or installation. See GAP_SYNTHESIS.md.
 
+ASSET ATOM FABRIC
+-----------------
+The live machine has a closed renderer-neutral `axm.asset-atom-package/v0.1` contract for shape, part, texture, material, palette, gradient, mask, overlay, shader, animation, state, behavior, LOD, collision, socket, and metadata atoms. Exact payload references must equal declared `uses` edges; wrong kinds, unresolved refs, cycles, LOD gaps, invalid keyframes, and undeclared palette roles fail closed. Compilation deterministically selects LOD/state/animation/palette inputs and hashes the normalized package and instance. The installed modular tank exercises every kind. External media is not fetched or rendered, shaders/animations are not run, and collision physics is not simulated. See ASSET_ATOM_FABRIC.md.
+
 RECOVERY
 --------
 One complete restorable snapshot per day. If a day goes genuinely wrong, quarantine that state and restore an earlier known-good daily snapshot.

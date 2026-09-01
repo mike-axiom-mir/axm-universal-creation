@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Any
 
 from .atomic import atomic_write_json
+from .asset_atoms import AssetPackageLibrary, asset_atom_schema_summary
 from .candidate import test_capability_candidate
 from .capabilities import CapabilityError, CapabilityStore
 from .decompose import CreationDecomposer
@@ -39,6 +40,8 @@ class UniversalCreationMachine:
             "executable_anatomy": self.executable_anatomy.summary(),
             "software_directions": self.direction_model.summary(),
             "executable_organs": ExecutableOrganLibrary(self.root).summary(),
+            "asset_atom_schema": asset_atom_schema_summary(),
+            "asset_packages": AssetPackageLibrary(self.root).summary(),
             "organ_discovery": organ_discovery_summary(),
             "organ_gap_closure": organ_gap_summary(),
             "organ_materialization": organ_materialization_summary(self.root),
@@ -87,6 +90,24 @@ class UniversalCreationMachine:
             result["package"] = library.inspect(ref)
         else:
             result["packages"] = library.list(project_type=project_type, provides=provides)
+        return result
+
+    def asset_packages(
+        self,
+        ref: str | None = None,
+        asset_class: str | None = None,
+        atom_kind: str | None = None,
+    ) -> dict[str, Any]:
+        library = AssetPackageLibrary(self.root)
+        result: dict[str, Any] = {
+            "type": "ASSET_ATOM_PACKAGE_LIBRARY",
+            "schema": asset_atom_schema_summary(),
+            "summary": library.summary(),
+        }
+        if ref:
+            result["package"] = library.inspect(ref)
+        else:
+            result["packages"] = library.list(asset_class=asset_class, atom_kind=atom_kind)
         return result
 
     def organ_census(

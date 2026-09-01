@@ -1,0 +1,420 @@
+{
+  "schema": "axm.asset-atom-package/v0.1",
+  "id": "axm.example.modular-tank",
+  "version": "1.0.0",
+  "asset_class": "vehicle.tank",
+  "root_atoms": [
+    "tank-lod",
+    "weapon-mount",
+    "turret-idle",
+    "damaged-state",
+    "fire-behavior",
+    "tank-metadata"
+  ],
+  "atoms": [
+    {
+      "id": "hull-shape-high",
+      "kind": "shape",
+      "purpose": "Close-view tank hull mesh descriptor.",
+      "uses": [],
+      "payload": {
+        "dimension": "3d",
+        "representation": "mesh",
+        "source": {
+          "uri": "asset://axm-example/modular-tank/hull-high.glb",
+          "mime_type": "model/gltf-binary",
+          "color_space": "not-applicable"
+        },
+        "bounds": {"width": 3.4, "height": 1.7, "depth": 6.2, "unit": "meter"}
+      }
+    },
+    {
+      "id": "hull-shape-medium",
+      "kind": "shape",
+      "purpose": "Medium-distance simplified tank hull mesh descriptor.",
+      "uses": [],
+      "payload": {
+        "dimension": "3d",
+        "representation": "mesh",
+        "source": {
+          "uri": "asset://axm-example/modular-tank/hull-medium.glb",
+          "mime_type": "model/gltf-binary",
+          "color_space": "not-applicable"
+        },
+        "bounds": {"width": 3.4, "height": 1.7, "depth": 6.2, "unit": "meter"}
+      }
+    },
+    {
+      "id": "hull-shape-low",
+      "kind": "shape",
+      "purpose": "Far-distance tank impostor descriptor.",
+      "uses": [],
+      "payload": {
+        "dimension": "3d",
+        "representation": "impostor",
+        "source": {
+          "uri": "asset://axm-example/modular-tank/hull-impostor.webp",
+          "mime_type": "image/webp",
+          "color_space": "srgb"
+        },
+        "bounds": {"width": 3.4, "height": 2.4, "depth": 6.2, "unit": "meter"}
+      }
+    },
+    {
+      "id": "turret-shape",
+      "kind": "shape",
+      "purpose": "Reusable turret silhouette primitive.",
+      "uses": [],
+      "payload": {
+        "dimension": "3d",
+        "representation": "primitive",
+        "primitive": "box",
+        "bounds": {"width": 2.2, "height": 0.9, "depth": 2.6, "unit": "meter"}
+      }
+    },
+    {
+      "id": "armor-base-texture",
+      "kind": "texture",
+      "purpose": "Authored base-color surface markings.",
+      "uses": [],
+      "payload": {
+        "channel": "base-color",
+        "resource": {"uri": "asset://axm-example/modular-tank/armor-base.webp", "mime_type": "image/webp", "color_space": "srgb"},
+        "uv_set": 0,
+        "tiling": [1, 1],
+        "offset": [0, 0],
+        "strength": 1
+      }
+    },
+    {
+      "id": "armor-normal-texture",
+      "kind": "texture",
+      "purpose": "Authored armor surface normal detail.",
+      "uses": [],
+      "payload": {
+        "channel": "normal",
+        "resource": {"uri": "asset://axm-example/modular-tank/armor-normal.webp", "mime_type": "image/webp", "color_space": "normal-data"},
+        "uv_set": 0,
+        "tiling": [1, 1],
+        "offset": [0, 0],
+        "strength": 0.8
+      }
+    },
+    {
+      "id": "armor-roughness-texture",
+      "kind": "texture",
+      "purpose": "Authored roughness variation for painted armor.",
+      "uses": [],
+      "payload": {
+        "channel": "roughness",
+        "resource": {"uri": "asset://axm-example/modular-tank/armor-roughness.webp", "mime_type": "image/webp", "color_space": "scalar-data"},
+        "uv_set": 0,
+        "tiling": [1, 1],
+        "offset": [0, 0],
+        "strength": 1
+      }
+    },
+    {
+      "id": "faction-mask-texture",
+      "kind": "texture",
+      "purpose": "Color-mask pixels identifying faction-editable armor regions.",
+      "uses": [],
+      "payload": {
+        "channel": "color-mask",
+        "resource": {"uri": "asset://axm-example/modular-tank/faction-mask.webp", "mime_type": "image/webp", "color_space": "scalar-data"},
+        "uv_set": 0,
+        "tiling": [1, 1],
+        "offset": [0, 0],
+        "strength": 1
+      }
+    },
+    {
+      "id": "dirt-decal-texture",
+      "kind": "texture",
+      "purpose": "Reusable dirt and wear decal image.",
+      "uses": [],
+      "payload": {
+        "channel": "decal",
+        "resource": {"uri": "asset://axm-example/modular-tank/dirt-decal.webp", "mime_type": "image/webp", "color_space": "srgb"},
+        "uv_set": 0,
+        "tiling": [2, 2],
+        "offset": [0, 0],
+        "strength": 1
+      }
+    },
+    {
+      "id": "faction-palette",
+      "kind": "palette",
+      "purpose": "Named faction colors reusable across armor, glow, flags, and UI.",
+      "uses": [],
+      "payload": {
+        "colors": {
+          "deep-shadow": "#111827",
+          "primary": "#2563EB",
+          "highlight": "#93C5FD",
+          "emissive-edge": "#67E8F9"
+        }
+      }
+    },
+    {
+      "id": "energy-gradient",
+      "kind": "gradient",
+      "purpose": "Palette-linked shadow-to-emissive energy ramp.",
+      "uses": ["faction-palette"],
+      "payload": {
+        "kind": "ramp",
+        "space": "oklab",
+        "angle": 0,
+        "palette": "faction-palette",
+        "stops": [
+          {"position": 0, "palette_role": "deep-shadow"},
+          {"position": 0.45, "palette_role": "primary"},
+          {"position": 0.8, "palette_role": "highlight"},
+          {"position": 1, "palette_role": "emissive-edge"}
+        ]
+      }
+    },
+    {
+      "id": "faction-color-mask",
+      "kind": "mask",
+      "purpose": "Declares which hull pixels accept faction recoloring.",
+      "uses": ["faction-mask-texture"],
+      "payload": {
+        "source": "faction-mask-texture",
+        "component": "r",
+        "meaning": "Faction-editable painted armor region",
+        "invert": false,
+        "threshold": 0.5
+      }
+    },
+    {
+      "id": "dirt-overlay",
+      "kind": "overlay",
+      "purpose": "State-aware dirt and wear layer without modifying the base mesh.",
+      "uses": ["dirt-decal-texture", "faction-color-mask"],
+      "payload": {
+        "source": "dirt-decal-texture",
+        "mask": "faction-color-mask",
+        "blend_mode": "multiply",
+        "opacity": 0.7,
+        "order": 20,
+        "states": ["damaged"]
+      }
+    },
+    {
+      "id": "armor-shader",
+      "kind": "shader",
+      "purpose": "Renderer-neutral PBR and emissive-pulse instructions.",
+      "uses": [],
+      "payload": {
+        "model": "pbr-metallic-roughness",
+        "parameters": {"emission-pulse": 0.25},
+        "animated_parameters": ["emission-pulse"]
+      }
+    },
+    {
+      "id": "armor-material",
+      "kind": "material",
+      "purpose": "Complete reusable armor surface descriptor.",
+      "uses": [
+        "armor-base-texture",
+        "armor-normal-texture",
+        "armor-roughness-texture",
+        "armor-shader",
+        "dirt-overlay",
+        "energy-gradient",
+        "faction-color-mask",
+        "faction-palette"
+      ],
+      "payload": {
+        "scalars": {"metallic": 0.72, "roughness": 0.48, "normal-strength": 0.8, "emission": 0.2},
+        "colors": {"base-color": "#6B7280", "emissive-color": "#67E8F9"},
+        "texture_bindings": {
+          "base-color": "armor-base-texture",
+          "normal": "armor-normal-texture",
+          "roughness": "armor-roughness-texture"
+        },
+        "shader": "armor-shader",
+        "palette": "faction-palette",
+        "gradient": "energy-gradient",
+        "masks": ["faction-color-mask"],
+        "overlays": ["dirt-overlay"]
+      }
+    },
+    {
+      "id": "hull-collision",
+      "kind": "collision",
+      "purpose": "Simplified gameplay collision volume distinct from rendered hull detail.",
+      "uses": ["hull-shape-high"],
+      "payload": {
+        "shape": "convex-hull",
+        "dimensions": {"width": 3.2, "height": 1.6, "depth": 6, "unit": "meter"},
+        "source_shape": "hull-shape-high",
+        "layers": ["vehicle", "world-solid"],
+        "is_trigger": false
+      }
+    },
+    {
+      "id": "turret-part",
+      "kind": "part",
+      "purpose": "Reusable turret part attached to the close-view hull.",
+      "uses": ["armor-material", "turret-shape"],
+      "payload": {
+        "role": "rotating turret",
+        "shape": "turret-shape",
+        "material": "armor-material",
+        "children": [],
+        "transform": {"position": [0, 1.35, -0.2], "rotation_euler": [0, 0, 0], "scale": [1, 1, 1]},
+        "tags": ["turret", "weapon-platform"]
+      }
+    },
+    {
+      "id": "hull-high-part",
+      "kind": "part",
+      "purpose": "Close-view assembled hull with turret and collision.",
+      "uses": ["armor-material", "hull-collision", "hull-shape-high", "turret-part"],
+      "payload": {
+        "role": "high-detail hull assembly",
+        "shape": "hull-shape-high",
+        "material": "armor-material",
+        "children": ["turret-part"],
+        "collision": "hull-collision",
+        "transform": {"position": [0, 0, 0], "rotation_euler": [0, 0, 0], "scale": [1, 1, 1]},
+        "tags": ["hull", "lod-high"]
+      }
+    },
+    {
+      "id": "hull-medium-part",
+      "kind": "part",
+      "purpose": "Medium-distance hull assembly.",
+      "uses": ["armor-material", "hull-shape-medium"],
+      "payload": {
+        "role": "medium-detail hull assembly",
+        "shape": "hull-shape-medium",
+        "material": "armor-material",
+        "children": [],
+        "transform": {"position": [0, 0, 0], "rotation_euler": [0, 0, 0], "scale": [1, 1, 1]},
+        "tags": ["hull", "lod-medium"]
+      }
+    },
+    {
+      "id": "hull-low-part",
+      "kind": "part",
+      "purpose": "Far-distance impostor hull assembly.",
+      "uses": ["armor-material", "hull-shape-low"],
+      "payload": {
+        "role": "low-detail hull impostor",
+        "shape": "hull-shape-low",
+        "material": "armor-material",
+        "children": [],
+        "transform": {"position": [0, 0, 0], "rotation_euler": [0, 0, 0], "scale": [1, 1, 1]},
+        "tags": ["hull", "lod-low"]
+      }
+    },
+    {
+      "id": "weapon-mount",
+      "kind": "socket",
+      "purpose": "Deterministic barrel or weapon attachment point on the turret.",
+      "uses": ["turret-part"],
+      "payload": {
+        "owner": "turret-part",
+        "name": "weapon_mount",
+        "transform": {"position": [0, 0.2, 1.25], "rotation_euler": [0, 0, 0], "scale": [1, 1, 1]},
+        "accepts": ["cannon", "energy-weapon", "sensor"],
+        "required": true
+      }
+    },
+    {
+      "id": "tank-lod",
+      "kind": "lod",
+      "purpose": "Distance-bounded representation selection from mesh to impostor.",
+      "uses": ["hull-high-part", "hull-medium-part", "hull-low-part"],
+      "payload": {
+        "metric": "distance",
+        "representations": [
+          {"id": "close", "min_distance": 0, "max_distance": 25, "atom": "hull-high-part"},
+          {"id": "medium", "min_distance": 25, "max_distance": 100, "atom": "hull-medium-part"},
+          {"id": "far", "min_distance": 100, "max_distance": null, "atom": "hull-low-part"}
+        ]
+      }
+    },
+    {
+      "id": "turret-idle",
+      "kind": "animation",
+      "purpose": "Reusable deterministic turret scanning clip.",
+      "uses": ["turret-part"],
+      "payload": {
+        "name": "idle turret scan",
+        "duration_seconds": 4,
+        "loop": true,
+        "tracks": [
+          {
+            "target": "turret-part",
+            "property": "transform.rotation_euler.y",
+            "interpolation": "linear",
+            "keyframes": [
+              {"time": 0, "value": -18},
+              {"time": 2, "value": 18},
+              {"time": 4, "value": -18}
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "damaged-state",
+      "kind": "state",
+      "purpose": "Activates wear and reduces pristine material response.",
+      "uses": ["armor-material", "dirt-overlay"],
+      "payload": {
+        "name": "damaged",
+        "activates": ["dirt-overlay"],
+        "deactivates": [],
+        "overrides": {"armor-material": {"scalars": {"roughness": 0.82, "metallic": 0.5}}}
+      }
+    },
+    {
+      "id": "fire-behavior",
+      "kind": "behavior",
+      "purpose": "Connects an exact fire trigger to a target, clip, and resulting state.",
+      "uses": ["damaged-state", "turret-idle", "turret-part"],
+      "payload": {
+        "name": "fire and recoil demonstration",
+        "target": "turret-part",
+        "trigger": "fire",
+        "animation": "turret-idle",
+        "to_state": "damaged-state",
+        "conditions": {"powered": true, "ammo_minimum": 1}
+      }
+    },
+    {
+      "id": "tank-metadata",
+      "kind": "metadata",
+      "purpose": "Search, compatibility, cost, technology, and provenance-facing classification.",
+      "uses": [],
+      "payload": {
+        "name": "AXM Modular Demonstrator Tank",
+        "category": "vehicle.tank",
+        "dimensions": {"width": 3.4, "height": 2.4, "depth": 6.2, "unit": "meter"},
+        "era": "near-future",
+        "factions": ["palette-compatible"],
+        "cost": {"amount": 1250, "currency": "build-credit"},
+        "rarity": "demonstrator",
+        "tech_requirements": ["tracked-vehicle", "pbr-renderer"],
+        "tags": ["modular", "deterministic", "socketed", "lod-ready"]
+      }
+    }
+  ],
+  "provenance": {
+    "kind": "local-authored-source",
+    "basis": "Bounded demonstrator authored to exercise every v0.1 Asset Atom kind and deterministic compiler selection without claiming the referenced media bytes exist.",
+    "creator": "Mike Axiom / mir with OpenAI Codex",
+    "source_uri": "local://asset-packages/axm.example.modular-tank-1.0.0.json",
+    "license": "Apache-2.0"
+  },
+  "limitations": [
+    "asset:// resources are declarative references; this package does not contain or verify their mesh and texture bytes",
+    "the package exercises the schema and compiler but is not a rendered or gameplay-tested tank",
+    "shader, animation, behavior, collision, and socket instructions require a future host runtime"
+  ]
+}
