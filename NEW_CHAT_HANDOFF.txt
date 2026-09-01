@@ -78,3 +78,42 @@ TRUTH STATUS
 Experimental architecture. Do not claim universal creation, emergence, intelligence, AGI, safety, or successful self-improvement before measurement supports it.
 
 Mike - Axiom/Mir
+
+
+APPENDED HANDOFF — 2026-09-01 — PR #21 VISUAL LANE
+===================================================
+
+work line / turn / seat:
+PR #21 exact-context 3D visual continuation / Axiom v26 + Mir v14 / Codex Work
+
+verified facts with age and source:
+- Current PR head is bb0233db5acd4bbd823d9ec61648c3ed1d134243; verified from GitHub PR #21 at turn end.
+- Workflow run 33536097915 forged both assets successfully from source commit e31d7036a5aab6695a1aeb03119ac5442d6f0517; verified this turn from GitHub job state and artifact digest bd8f94d7638f1a01bf551817d087b010ca28b9c1f458e39ef02a0de92decaadc.
+- Axiom v26 technical gates pass at 110,412 / 53,192 / 20,436 LOD triangles, 5 materials, 15 embedded images/textures, and 4 collision meshes; verified this turn from the decoded forge receipt.
+- Mir v14 technical gates pass at 157,632 / 76,050 / 29,726 LOD triangles, 6 materials, 18 embedded images/textures, and 4 collision meshes; verified this turn from the decoded forge receipt.
+- Full-frame inspection found Mir's requested closed descending V-shell torso and compact armored hooves visibly pass. Axiom's cowls improved, but rectangular rear/side masses and a flat cyan reactor insert leave its requested correction partial. Exact PNG hashes and observations are in VISUAL_3D_V26_V14_REVIEW.md.
+- Artifact-bound assessment keeps both assets REJECTED_OR_REVIEW_REQUIRED with technical_pass true and visual aaa-form-hierarchy failed; verified this turn with assess_3d_output against manifest-member PNG hashes.
+- The complete local suite passed 223/223 at the source head preceding the evidence-only handoff commits.
+
+assumptions:
+- Blender 4.0.2 software-OpenGL proofs are visually suitable for this bounded comparison, but they do not replace the retained Windows Blender 5.2.1 bootstrap contract.
+
+open holds:
+- Axiom: cowls must control the full front/side/rear outer contour and the reactor must become a recessed protected lens.
+- Mir: the exact requested torso/hoof fix is complete, but rear sanctuary shells and halo mounts still lack one dominant primary load hierarchy.
+- Neither asset has artifact-bound AAA acceptance.
+
+decisions as state:
+- Technical readiness and rendered visual acceptance remain separate.
+- The heavy exact proof workflow is manual-only after the successful run.
+- New visual lessons remain exact-context state, not global style rules.
+
+access reread: yes
+
+next cheapest step:
+Run one Axiom-only builder pass that replaces the rear frame slabs and flat reactor insert, then forge a new four-angle proof before changing any acceptance label.
+
+continuity seam:
+none; PR, commit, run, artifact digest, proof hashes, receipt metrics, and next holds are retained.
+
+raw sense material carried: false
