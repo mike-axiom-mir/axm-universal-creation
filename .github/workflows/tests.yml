@@ -36,12 +36,16 @@ jobs:
         with:
           python-version: "3.11"
       - name: Install AXM forge and Blender renderer
+        env:
+          LIBGL_ALWAYS_SOFTWARE: "1"
         run: |
           python -m pip install -e .
           sudo apt-get update
-          sudo apt-get install -y blender python3-numpy
+          sudo apt-get install -y blender python3-numpy libegl1
           blender --version
       - name: Forge Axiom v26 exact-context proof
+        env:
+          LIBGL_ALWAYS_SOFTWARE: "1"
         run: |
           set +e
           axm-assets 3d-forge examples/3d/axiom-v26.json output/axiom-bastion-frame-v26 --blender "$(command -v blender)" --no-runtime-bootstrap
@@ -53,6 +57,8 @@ jobs:
           done
           exit "$status"
       - name: Forge Mir v14 exact-context proof
+        env:
+          LIBGL_ALWAYS_SOFTWARE: "1"
         run: |
           set +e
           axm-assets 3d-forge examples/3d/mir-v14.json output/mir-sanctuary-keeper-v14 --blender "$(command -v blender)" --no-runtime-bootstrap
