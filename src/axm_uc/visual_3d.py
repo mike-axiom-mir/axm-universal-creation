@@ -433,7 +433,8 @@ def forge_3d_asset(
     if not script.is_file():
         raise FileNotFoundError(f"machine 3D forge script is missing: {script}")
     command = [
-        str(executable), "--background", "--factory-startup", "--python", str(script), "--",
+        str(executable), "--background", "--factory-startup", "--python-exit-code", "1",
+        "--python", str(script), "--",
         "--request", str(request_path), "--output", str(target),
     ]
     completed = subprocess.run(command, capture_output=True, text=True, timeout=timeout_seconds, check=False)

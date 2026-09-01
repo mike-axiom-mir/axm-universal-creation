@@ -7,7 +7,7 @@ import tempfile
 import unittest
 import hashlib
 import zipfile
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 from pathlib import Path
 
 
@@ -159,6 +159,22 @@ class Visual3DForgeTests(unittest.TestCase):
         self.assertIn('M2_TORSO_V_SHELL_', source)
         self.assertIn('M2_{p}_HOOF_BODY', source)
         self.assertNotIn('M2_{p}_TOE_BLADE_', source)
+
+    @patch("axm_uc.visual_3d.subprocess.run")
+    @patch("axm_uc.visual_3d.resolve_blender")
+    def test_forge_makes_blender_python_failures_process_failures(self, resolve, run):
+        resolve.return_value = (Path("/runtime/blender"), {"status": "TEST_RUNTIME"})
+        run.return_value = MagicMock(returncode=1, stdout="", stderr="python failed")
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            script = root / "tools" / "blender" / "axm_blender_forge.py"
+            script.parent.mkdir(parents=True)
+            script.write_text("# fixture\n", encoding="utf-8")
+            with self.assertRaisesRegex(RuntimeError, "Blender forge failed with code 1"):
+                from axm_uc.visual_3d import forge_3d_asset
+                forge_3d_asset(root, {"asset_id": "axiom-bastion-frame"}, root / "output")
+        command = run.call_args.args[0]
+        self.assertEqual(command[command.index("--python-exit-code") + 1], "1")
 
 
 if __name__ == "__main__":

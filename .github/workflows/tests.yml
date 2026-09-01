@@ -42,10 +42,29 @@ jobs:
           sudo apt-get install -y blender
           blender --version
       - name: Forge Axiom v26 exact-context proof
-        run: axm-assets 3d-forge examples/3d/axiom-v26.json output/axiom-bastion-frame-v26 --blender "$(command -v blender)" --no-runtime-bootstrap
+        run: |
+          set +e
+          axm-assets 3d-forge examples/3d/axiom-v26.json output/axiom-bastion-frame-v26 --blender "$(command -v blender)" --no-runtime-bootstrap
+          status=$?
+          for log in output/axiom-bastion-frame-v26/blender.std*.txt; do
+            if [ -f "$log" ]; then
+              sed -n '1,240p' "$log"
+            fi
+          done
+          exit "$status"
       - name: Forge Mir v14 exact-context proof
-        run: axm-assets 3d-forge examples/3d/mir-v14.json output/mir-sanctuary-keeper-v14 --blender "$(command -v blender)" --no-runtime-bootstrap
+        run: |
+          set +e
+          axm-assets 3d-forge examples/3d/mir-v14.json output/mir-sanctuary-keeper-v14 --blender "$(command -v blender)" --no-runtime-bootstrap
+          status=$?
+          for log in output/mir-sanctuary-keeper-v14/blender.std*.txt; do
+            if [ -f "$log" ]; then
+              sed -n '1,240p' "$log"
+            fi
+          done
+          exit "$status"
       - name: Upload exact artifacts and receipts
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: axiom-v26-mir-v14-exact-context-proof
