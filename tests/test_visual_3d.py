@@ -149,6 +149,17 @@ class Visual3DForgeTests(unittest.TestCase):
         accepted = assess_3d_output(receipt, manifest, {"artifact_sha256": proof_sha, "criteria": criteria})
         self.assertEqual(accepted["status"], "AAA_ACCEPTED")
 
+    def test_latest_anatomy_pass_preserves_exact_retained_visual_fixes(self):
+        source = (ROOT / "tools" / "blender" / "axm_blender_forge.py").read_text(encoding="utf-8")
+        self.assertIn('def articulated_cowl(', source)
+        self.assertIn('AX4_CHEST_PRIMARY_COWL_', source)
+        self.assertIn('AX4_{p}_{section}_COWL_SEAM', source)
+        self.assertNotIn('AX4_{p}_{section}_TILE_', source)
+        self.assertIn('def descending_v_shell(', source)
+        self.assertIn('M2_TORSO_V_SHELL_', source)
+        self.assertIn('M2_{p}_HOOF_BODY', source)
+        self.assertNotIn('M2_{p}_TOE_BLADE_', source)
+
 
 if __name__ == "__main__":
     unittest.main()
