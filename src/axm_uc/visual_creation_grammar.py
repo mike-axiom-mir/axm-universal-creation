@@ -4,9 +4,9 @@ import hashlib
 import json
 from typing import Any, Iterable
 
-VISUAL_GRAMMAR_SCHEMA = "axm.visual-creation-grammar/v0.1"
-VISUAL_RECIPE_SCHEMA = "axm.visual-creation-recipe/v0.1"
-VISUAL_QUALITY_LOOP_SCHEMA = "axm.visual-quality-loop/v0.1"
+VISUAL_GRAMMAR_SCHEMA = "axm.visual-creation-grammar/v0.2"
+VISUAL_RECIPE_SCHEMA = "axm.visual-creation-recipe/v0.2"
+VISUAL_QUALITY_LOOP_SCHEMA = "axm.visual-quality-loop/v0.2"
 
 DECOMPOSITION_MODES = (
     "assembled",
@@ -320,6 +320,11 @@ def compile_visual_recipe(request: dict[str, Any]) -> dict[str, Any]:
 
     references = _stable_unique(_tokens(request.get("references")))
     criteria = _stable_unique(_tokens(request.get("criteria")))
+    constraints = _stable_unique(_tokens(request.get("constraints")))
+    avoid = _stable_unique(_tokens(request.get("avoid")))
+    technical_requirements = request.get("technical_requirements") or {}
+    if not isinstance(technical_requirements, dict):
+        raise TypeError("technical_requirements must be an object")
     scene = request.get("scene") or {}
     if not isinstance(scene, dict):
         raise TypeError("scene must be an object")
@@ -375,6 +380,9 @@ def compile_visual_recipe(request: dict[str, Any]) -> dict[str, Any]:
             "timeline": timeline,
         },
         "generator_hints": _generator_hints(axes, temporal_enabled),
+        "constraints": constraints,
+        "avoid": avoid,
+        "technical_requirements": technical_requirements,
         "quality_loop": quality_loop,
         "truth": {
             "structuredRequestRequired": True,

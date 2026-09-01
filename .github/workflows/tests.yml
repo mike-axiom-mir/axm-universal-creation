@@ -20,3 +20,57 @@ jobs:
         run: python -m compileall -q src tests
       - name: Run full unittest suite
         run: python -m unittest discover -s tests -p 'test_*.py' -v
+
+  exact-context-visual-proof:
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Checkout exact lane state
+        uses: actions/checkout@v4
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install AXM forge and Blender renderer
+        env:
+          LIBGL_ALWAYS_SOFTWARE: "1"
+        run: |
+          python -m pip install -e .
+          sudo apt-get update
+          sudo apt-get install -y blender python3-numpy libegl1
+          blender --version
+      - name: Forge Axiom v26 exact-context proof
+        env:
+          LIBGL_ALWAYS_SOFTWARE: "1"
+        run: |
+          set +e
+          axm-assets 3d-forge examples/3d/axiom-v26.json output/axiom-bastion-frame-v26 --blender "$(command -v blender)" --no-runtime-bootstrap
+          status=$?
+          for log in output/axiom-bastion-frame-v26/blender.std*.txt; do
+            if [ -f "$log" ]; then
+              sed -n '1,240p' "$log"
+            fi
+          done
+          exit "$status"
+      - name: Forge Mir v14 exact-context proof
+        env:
+          LIBGL_ALWAYS_SOFTWARE: "1"
+        run: |
+          set +e
+          axm-assets 3d-forge examples/3d/mir-v14.json output/mir-sanctuary-keeper-v14 --blender "$(command -v blender)" --no-runtime-bootstrap
+          status=$?
+          for log in output/mir-sanctuary-keeper-v14/blender.std*.txt; do
+            if [ -f "$log" ]; then
+              sed -n '1,240p' "$log"
+            fi
+          done
+          exit "$status"
+      - name: Upload exact artifacts and receipts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: axiom-v26-mir-v14-exact-context-proof
+          path: output/
+          if-no-files-found: error
+          retention-days: 14
