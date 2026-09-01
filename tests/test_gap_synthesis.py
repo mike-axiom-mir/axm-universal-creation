@@ -603,7 +603,7 @@ class GapSynthesisTests(unittest.TestCase):
         self.assertTrue(summary["reuse_precedes_new_embodiment"])
         self.assertFalse(summary["semantic_source_invention"])
         self.assertFalse(summary["automatic_admission"])
-        self.assertEqual(len(inspection["live_capabilities"]), 21)
+        self.assertEqual(len(inspection["live_capabilities"]), 22)
 
 
 if __name__ == "__main__":

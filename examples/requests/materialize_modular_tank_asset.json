@@ -1,0 +1,19 @@
+{
+  "kind": "materialize-asset-package",
+  "direction": "materialize a validated renderer-neutral modular tank descriptor project",
+  "inputs": {
+    "operation": "materialize",
+    "ref": "axm.example.modular-tank@1.0.0",
+    "path": "creations/modular-tank-asset",
+    "observation_distance": 12,
+    "state": "damaged-state",
+    "animation": "turret-idle",
+    "palette_overrides": {
+      "faction-palette": {
+        "primary": "#DC2626",
+        "highlight": "#FCA5A5"
+      }
+    },
+    "replace": true
+  }
+}
