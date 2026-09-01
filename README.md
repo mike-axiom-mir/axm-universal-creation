@@ -29,10 +29,6 @@ PYTHONPATH=src python -m axm_uc organ-census
 # Inspect the installed renderer-neutral Asset Atom package library.
 PYTHONPATH=src python -m axm_uc assets
 
-# Inspect and compile the source-backed 99-command visual state atlas.
-PYTHONPATH=src python -m axm_uc.visual_assets_cli state-catalog
-PYTHONPATH=src python -m axm_uc.visual_assets_cli state-compile examples/visual-state-request.json
-
 # Run the complete repository verification suite.
 python tools/build.py
 ```
@@ -105,28 +101,6 @@ For two bounded classes of real gaps, the machine can now compile the missing de
 
 See `GAP_SYNTHESIS.md`.
 
-## Current-boundary reachability
-
-A missing path in the current machine is not silently promoted into proof that no path can exist. The machine distinguishes:
-
-- `CURRENT_PATH_AVAILABLE`;
-- `PATH_UNKNOWN_CURRENTLY`;
-- `BLOCKED_BY_CURRENT_CONSTRAINT`.
-
-The target direction remains explicit while the machine identifies missing representation, knowledge, constraint handling, transition machinery, or verification. Friction is evidence about the current path, not automatic proof of fundamental impossibility. Discovering a path still grants no automatic permission, admission, promotion, merge, or CANON authority.
-
-See `STATE_DIRECTION_REACHABILITY.md`.
-
-## Visual prompt state atlas
-
-The source-backed visual atlas turns 99 user-supplied prompt aliases into inspectable renderer-neutral state contributions covering camera, framing, environment, weather, lighting, materials, style, post-processing, temporal capture, and presentation.
-
-The aliases are not treated as magic commands. They compile through a 39-path state schema, deterministic order-independent blend rules, and 13 explicit conflict rules. Unknown commands and state paths fail closed. Contradictory single-frame directions hold instead of silently overwriting each other, while layered or sequence modes can preserve explicit multi-state intent.
-
-The same visual direction may contribute to image, animation, or 3D work. It does not prove a rendered image, uniquely recover hidden geometry from appearance, or uniquely infer motion from a static frame.
-
-See `VISUAL_PROMPT_STATE_ATLAS.md` and `VISUAL_STATE_COMPILATION.md`.
-
 ## No activity-log architecture
 
 Inspectability means being able to inspect **what the machine is now**. It does not require surveillance of everything it ever did.
@@ -188,8 +162,6 @@ The small Python runtime currently provides:
 - an evidence-bound gap compiler that can derive and test either the smallest supported UTF-8 file-route adapter or a bounded project recipe of up to three exact producer, verifier, existing-composite, and JSON-report steps from a real unroutable request;
 - complete editable self-workspace cloning, exact source comparison, independent build logs, and voluntary merge-check requests;
 - a closed 16-kind Asset Atom package fabric with exact dependency validation, deterministic LOD/state/animation/palette selection, sockets, collision descriptors, metadata, and validated descriptor materialization;
-- current-boundary reachability framing that distinguishes an available path, an unknown current path, and an observed current constraint without turning ordinary gaps into universal impossibility claims;
-- a source-backed 99-alias visual state atlas with 39 renderer-neutral state paths, deterministic blending, 13 explicit conflict rules, and cross-media truth boundaries;
 - structured `CAPABILITY_GAP` results that preserve the directional outcome and distinguish current partial coverage;
 - candidate capability testing and direct adoption through the four-root fit declaration;
 - build-owned cleanup of candidate-test debris;
@@ -217,6 +189,187 @@ Unroutable `create` requests carry this decomposition inside their `CAPABILITY_G
 
 The runtime can now create and deterministically verify small real multi-file software projects.
 
-Current live project handles include software projects, static websites, Python projects, executable-organ assemblies, verified composites, project repair, detached creation units, organ gap closure, Asset Atom compilation and materialization, procedural visual generation, visual-state catalog/compilation, Chameleon state transfer, vector cells, stepwise perspective workflows, specialist tournaments, and bounded self-workspace experiments.
+Current live project handles:
 
-Exact capability manifests remain the source of truth for route names and contracts. A passing test or named handle does not prove perceptual quality, host compatibility, unrestricted semantic coverage, or authority beyond its declared boundary.
+- `software-project`
+- `static-web-project`
+- `python-project`
+- `verify-project`
+- `templated-software-project`
+- `templated-static-web-project`
+- `templated-python-project`
+- `self-candidate-project`
+- `organ-software-project`
+- `organ-static-web-project`
+- `organ-python-project`
+- `software-organ-assembly`
+- `inspect-executable-organs`
+- `list-executable-organs`
+- `resolve-executable-organ`
+- `test-executable-organ`
+- `discover-organ-assembly`
+- `interface-organ-project`
+- `explore-missing-organ-closure`
+- `inspect-organ-materialization`
+- `prepare-organ-materialization`
+- `materialize-organ-candidate`
+- `spawn-creation-unit`
+- `inspect-spawned-unit`
+- `test-spawned-unit`
+- `request-unit-admission-check`
+- `analyze-creation-gap`
+- `propose-gap-candidate`
+- `explore-gap-candidate`
+- `inspect-asset-atom-schema`
+- `list-asset-packages`
+- `inspect-asset-package`
+- `validate-asset-package`
+- `compile-asset-package`
+- `materialize-asset-package`
+
+Project creation is staged before publish and project-relative file paths may not escape the project body. Plain project creation defaults to `grounded-draft`: exact publication integrity is required, while failed quality/grammar checks remain visible and the imperfect creation survives. Explicit `validated` mode and verified composite handles remain strict and do not publish a failed body.
+
+Current deterministic project checks:
+
+- `file-exists`
+- `file-absent`
+- `nonempty`
+- `contains`
+- `not-contains`
+- `line-count`
+- `byte-size`
+- `sha256`
+- `json-valid`
+- `json-value`
+- `file-set`
+- `python-compile`
+- `html-local-links`
+- `css-local-links`
+- `javascript-local-imports`
+
+Every project automatically receives a no-symlink boundary check so validation cannot silently read through a project link into an outside file. `static-web` automatically checks for `index.html`, verifies local `src`/`href` references from every `.html` and `.htm` page, resolves CSS `url(...)` and `@import` references, and resolves local static/dynamic JavaScript module imports. Bare JavaScript package imports and explicit external URLs remain labeled external rather than being claimed as locally verified. `python` automatically compiles `.py` files for syntax without executing them.
+
+Every `.json` file is automatically parsed for JSON validity in every project type.
+
+Reusable project templates use strict `[[AXM:name]]` placeholders in paths and contents. Substitution is exact, raw, single-pass, and non-recursive; missing, unused, malformed, colliding, and escaping inputs are rejected. See `PROJECT_TEMPLATES.md` and `GROUNDED_CREATION.md`.
+
+Software-organ assembly composes several versioned template organs through an explicit dependency graph. Organs may be supplied inline, resolved from the separate `executable-organs/` body through an exact `id@version` reference, or discovered from exact required interfaces plus caller-supplied bindings. Interface discovery selects only one uniquely smallest complete installed package closure; missing providers emit organ contracts and equally small alternatives HOLD. One explicit human/AI/recipe organ proposal can now be Forge-tested against such a missing contract, made visible only in a disposable exact library overlay, and required to participate in a validated full closure build. It remains detached afterward. Declared `provides`/`requires` interfaces must resolve through the graph, every rendered file has one visible organ owner, and missing dependencies, cycles, interface gaps, binding drift, package overrides, and ownership collisions are rejected before publication. Declared interface resolution does not yet prove source-level conformance. See `ORGAN_ASSEMBLY.md`, `EXECUTABLE_ORGANS.md`, and `ORGAN_GAP_CLOSURE.md`.
+
+Every project file receipt now includes its SHA-256 content digest. The independent `trial` pass rechecks those exact observed digests, so direct, templated, and organ-based creations receive the same second-body integrity observation. This is artifact evidence, not a required global machine hash baseline.
+
+The `trial` command ties the current loop together:
+
+`PLAN -> CREATE -> POST-CREATE VERIFY -> PASS / GAP`
+
+Run the included first real creation trial:
+
+```bash
+PYTHONPATH=src python -m axm_uc plan examples/requests/create_real_site.json
+PYTHONPATH=src python -m axm_uc trial examples/requests/create_real_site.json
+PYTHONPATH=src python -m axm_uc create examples/requests/verify_real_site.json
+PYTHONPATH=src python -m axm_uc create examples/requests/create_templated_site.json
+PYTHONPATH=src python -m axm_uc create examples/requests/create_organ_site.json
+PYTHONPATH=src python -m axm_uc create examples/requests/create_reusable_organ_site.json
+PYTHONPATH=src python -m axm_uc create examples/requests/explore_interface_discovered_organ_report_gap.json
+PYTHONPATH=src python -m axm_uc create examples/requests/explore_missing_status_panel_organ_closure.json
+PYTHONPATH=src python -m axm_uc create examples/requests/spawn_creation_protocol.json
+PYTHONPATH=src python -m axm_uc create examples/requests/test_spawned_creation_protocol.json
+PYTHONPATH=src python -m axm_uc create examples/requests/analyze_note_route_gap.json
+PYTHONPATH=src python -m axm_uc create examples/requests/explore_note_route_gap.json
+PYTHONPATH=src python -m axm_uc create examples/requests/analyze_verified_template_gap.json
+PYTHONPATH=src python -m axm_uc create examples/requests/explore_verified_template_gap.json
+```
+
+That creates `creations/first-real-site/` with `index.html`, `style.css`, and `app.js`. Open `index.html` in a browser for the separate human/host visual and interaction test.
+
+A passing deterministic trial proves what it actually checked. It **does not** claim that generated code was executed, that browser interaction was automatically verified, that visual quality was judged, or that every semantic user requirement was satisfied.
+
+See `REAL_CREATION_TRIAL.md` for the working-chat protocol and exact truth boundary.
+
+## Deterministic visual Asset Atoms
+
+AXM now has one versioned renderer-neutral contract for building a reusable visual asset from smaller exact pieces. `axm.asset-atom-package/v0.1` closes 16 atom kinds: shape, part, texture, material, palette, gradient, mask, overlay, shader, animation, state, behavior, LOD, collision, socket, and metadata.
+
+Every atom's declared `uses` edges must exactly match the references in its kind-specific payload. The validator rejects unsupported fields, missing or extra edges, unresolved IDs, wrong target kinds, cycles, discontinuous LOD ranges, invalid keyframes, and undeclared palette roles. The compiler deterministically selects LOD/state/animation/palette inputs and produces package and instance digests. Materialization writes only validated `asset.package.json` and `asset.instance.json` artifacts.
+
+The installed `axm.example.modular-tank@1.0.0` package exercises every kind. Its external mesh and texture URIs remain declared references: this capability does not fetch media, render 3D content, execute shaders or animations, or run physics. See `ASSET_ATOM_FABRIC.md` for the full audit and truth boundary.
+
+```bash
+PYTHONPATH=src python -m axm_uc assets --ref axm.example.modular-tank@1.0.0
+PYTHONPATH=src python -m axm_uc create examples/requests/compile_modular_tank_asset.json
+```
+
+## Editable self-creation body
+
+`AXM-CAP-SELF-WORKSPACE` can clone the complete current source body into an editable candidate outside the live body, inspect byte-exact differences, and run the candidate's own `tools/build.py` while returning the full captured build output.
+
+The candidate chooses if and when to emit `request-merge-check`. It may request any combination of source comparison, build, candidate-machine inspection, executable-anatomy inspection, planning probes, and real creation trials inside its cloned body. The request is explicitly `MERGE_CHECK_REQUESTED_NOT_APPROVED`: it performs no merge, grants no approval, creates no growth score, and imposes no per-edit checkpoint.
+
+This is source-body isolation, not OS containment. Candidate code runs with the current process user's host permissions. Automatic whole-body merge/adoption remains an explicit current gap.
+
+Create the first editable clone body:
+
+```bash
+PYTHONPATH=src python -m axm_uc create examples/requests/clone_self_workspace.json
+```
+
+See `SELF_WORKSPACE.md`.
+
+## Anatomy / kernel topology bridge
+
+The 2,165-record master anatomy is broad but currently flat: it contains zero dependency edges and zero relationships. The separate 100-record implementation kernel contains 175 declared dependency edges, all of which resolve internally.
+
+The runtime now connects the two conservatively without editing the master map or inventing edges. A master record becomes a traversable kernel seed only when its normalized name exactly matches one unique kernel record at the same anatomy level. Weaker correspondences remain visible suggestions and are never traversed as facts.
+
+Current measured bridge coverage:
+
+- 104 master records have a traversable exact crosswalk;
+- those exact mappings reach 94 of the 100 kernel records;
+- 0 exact mappings are ambiguous;
+- 2,061 master records remain explicitly unresolved.
+
+The planner keeps its top-level truth label `DETERMINISTIC_LEXICAL_BASELINE`; kernel topology is reported separately so attaching a dependency graph does not pretend the lexical matcher became semantic intelligence.
+
+Inspect the bridge directly:
+
+```bash
+PYTHONPATH=src python -m axm_uc topology
+PYTHONPATH=src python -m axm_uc organs
+PYTHONPATH=src python -m axm_uc organs --ref axm.web.shell@1.0.0
+PYTHONPATH=src python -m axm_uc topology --master-id AXM-02-DATA-MATH-C-012-graph --depth 4
+PYTHONPATH=src python -m axm_uc plan examples/requests/plan_graph.json --per-level 8
+```
+
+See `TOPOLOGY.md` for the measured baseline, crosswalk rule, truth boundary, and graph example.
+
+### Core commands
+
+```bash
+PYTHONPATH=src python -m axm_uc inspect
+PYTHONPATH=src python -m axm_uc topology
+PYTHONPATH=src python -m axm_uc plan examples/requests/plan_mesh.json
+PYTHONPATH=src python -m axm_uc create examples/requests/create_hello.json
+PYTHONPATH=src python -m axm_uc trial examples/requests/create_real_site.json
+PYTHONPATH=src python -m axm_uc create examples/requests/create_templated_site.json
+PYTHONPATH=src python -m axm_uc create examples/requests/create_organ_site.json
+PYTHONPATH=src python -m axm_uc create examples/requests/create_reusable_organ_site.json
+PYTHONPATH=src python -m axm_uc create examples/requests/clone_self_workspace.json
+PYTHONPATH=src python -m axm_uc forge
+PYTHONPATH=src python -m axm_uc create examples/requests/spawn_creation_protocol.json
+PYTHONPATH=src python -m axm_uc create examples/requests/test_spawned_creation_protocol.json
+PYTHONPATH=src python -m axm_uc create examples/requests/propose_verified_template_gap.json
+PYTHONPATH=src python -m axm_uc candidate test capabilities/candidates/AXM-CAP-WRITE-MARKDOWN.json
+python tools/build.py
+```
+
+The Markdown example intentionally begins as a gap. The candidate demonstrates the smallest justified growth in this case: reuse the exact text writer and add an inspectable Markdown route rather than inventing a duplicate writer.
+
+GitHub collaboration uses one branch/PR lane per AI chat or instance by default; see `AGENTS.md`. That convention is repository hygiene, not machine architecture.
+
+## Status
+
+**SEED / EXPERIMENTAL**
+
+No claim of universal creation is made. The name describes the direction of the experiment, not a completed capability.
+
+Mike - Axiom/Mir
