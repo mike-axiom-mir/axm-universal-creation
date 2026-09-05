@@ -21,7 +21,7 @@ def xyz(p):return (p[0],-p[2],p[1])
 
 def bevel(obj,width,segments=1):
     if width:
-        mod=obj.modifiers.new('Armor edge','BEVEL');mod.width=width;mod.segments=segments
+        mod=obj.modifiers.new('Armor edge','BEVEL');mod.width=f.bevel_width(obj,width);mod.segments=segments
         bpy.context.view_layer.objects.active=obj;bpy.ops.object.modifier_apply(modifier=mod.name)
     return obj
 
