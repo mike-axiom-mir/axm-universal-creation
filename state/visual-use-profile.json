@@ -1,0 +1,887 @@
+{
+  "contexts": {
+    "3d/axiom-bastion-frame/hero": {
+      "criteria": {
+        "aaa-form-hierarchy": {
+          "fail": 9,
+          "pass": 0,
+          "unknown": 0
+        },
+        "faction-silhouette": {
+          "fail": 0,
+          "pass": 9,
+          "unknown": 0
+        },
+        "functional-topology-all-angles": {
+          "fail": 0,
+          "pass": 8,
+          "unknown": 1
+        },
+        "material-authenticity": {
+          "fail": 2,
+          "pass": 7,
+          "unknown": 0
+        },
+        "non-toy-proportions": {
+          "fail": 5,
+          "pass": 4,
+          "unknown": 0
+        }
+      },
+      "dedup_digests": [
+        "9a2ac6cc5b645315dcd86c0bc93d8fc682562dd0a08a061d4ece4412ae44d6ad",
+        "2c26df32c816991b9938a782dd2c5080674bdb37e46228cbdce749b2dc73384e",
+        "1fc62229aa4ef2aba7262182cd15ec59969d005fb094f701f5f2561b937d9d6d",
+        "48b44cfb977dc03fa8e3df46f05846c08101beea1b11089bfed0ee9209d4b034",
+        "d6dd3d680b7b937810217cd7ee8cc1d032816c1a32b962aee3349b89c94ca6d0",
+        "dfa393c864757210fc9696315ba910d60c18d048206c2cfaa01b41328d4f43bc",
+        "c82af80f72488dc0b70a1a67f3833fe456eeb31f27dc55f8e0f24551c0d42374",
+        "3edd32655108c887c33b5a6667e9c90b220c606c23cd4a187b1fc880b9d6430b",
+        "2cff6b1034ed99e6405a2ed868dce33183c5736c9e5e095bdac3268181be9ab7"
+      ],
+      "lessons": {
+        "author-rear-and-weapon-secondary-forms": {
+          "confirmations": 1,
+          "last_evidence": "Rear views are structurally valid but visually sparse, while the railgun extends beyond the hero framing and dominates the silhouette.",
+          "last_evidence_digest": "1fc62229aa4ef2aba7262182cd15ec59969d005fb094f701f5f2561b937d9d6d",
+          "patch": {
+            "avoid_add": [
+              "plain backpack facade",
+              "weapon cropped by proof camera"
+            ],
+            "constraints_add": [
+              "add layered rear armor cable routing heat exchangers and a shorter nested rail assembly"
+            ],
+            "criteria_add": [
+              "rear power plant and weapon each sustain large medium and small form hierarchy"
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        },
+        "break-rigid-box-torso-and-stance": {
+          "confirmations": 1,
+          "last_evidence": "The PBR and joint language are now coherent, but the front view remains a centered rectangular torso over straight narrow legs.",
+          "last_evidence_digest": "1fc62229aa4ef2aba7262182cd15ec59969d005fb094f701f5f2561b937d9d6d",
+          "patch": {
+            "avoid_add": [
+              "upright mannequin stance",
+              "rectangular torso silhouette"
+            ],
+            "constraints_add": [
+              "taper and cant the torso shells and offset the hips knees and feet into a load-bearing combat stance"
+            ],
+            "criteria_add": [
+              "hero silhouette has a broad grounded stance and asymmetrical overlapping primary masses"
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        },
+        "carry-primary-cowl-hierarchy-through-rear-and-pelvis": {
+          "confirmations": 1,
+          "last_evidence": "The v27 four-angle proof shows the new tapered limb cowls and pale rear pressure cowl work, but the rear pelvis, lower torso, and back-facing limbs remain dominated by broad brown service slabs while the front reactor is still a flat luminous insert.",
+          "last_evidence_digest": "2cff6b1034ed99e6405a2ed868dce33183c5736c9e5e095bdac3268181be9ab7",
+          "patch": {
+            "avoid_add": [
+              "brown service slabs defining rear primary anatomy",
+              "flat luminous reactor insert at hero scale"
+            ],
+            "constraints_add": [
+              "continue pale articulated cowls through the rear pelvis and back-facing limb masses and recess the reactor behind a deep framed lens"
+            ],
+            "criteria_add": [
+              "front and rear share one primary cowl hierarchy and the reactor has readable protected depth from oblique views"
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        },
+        "replace-box-dominant-torso-and-backpack": {
+          "confirmations": 1,
+          "last_evidence": "The full turntable confirms functional topology and stronger materials, but side and rear views are still dominated by one deep rectangular torso and one flat backpack plane.",
+          "last_evidence_digest": "d6dd3d680b7b937810217cd7ee8cc1d032816c1a32b962aee3349b89c94ca6d0",
+          "patch": {
+            "avoid_add": [
+              "single deep box defining torso and backpack silhouette"
+            ],
+            "constraints_add": [
+              "split the torso depth into offset rib cage, reactor, shoulder yoke, waist frame, and rear power modules with visible negative space"
+            ],
+            "criteria_add": [
+              "torso and rear power plant preserve tapered interlocking silhouette in side and rear views"
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        },
+        "replace-bulbous-joint-masses": {
+          "confirmations": 1,
+          "last_evidence": "The four-angle proof retains topology but repeated spherical limb masses and the round torso core create a toy-like inflated anatomy.",
+          "last_evidence_digest": "2c26df32c816991b9938a782dd2c5080674bdb37e46228cbdce749b2dc73384e",
+          "patch": {
+            "avoid_add": [
+              "bulbous repeated limb volumes",
+              "inflated torso anatomy"
+            ],
+            "constraints_add": [
+              "use small joint cores inside angular overlapping shells with visible load paths"
+            ],
+            "criteria_add": [
+              "mechanical joints read as constrained bearings actuators and armor interfaces"
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        },
+        "replace-flat-chest-with-nested-reactor-cage": {
+          "confirmations": 1,
+          "last_evidence": "The reference-loadout turntable has stronger shoulders, arms, hands, and negative space, but the front chest remains two flat rectangular plates around a thin core while rear conduits cross broad uniform modules.",
+          "last_evidence_digest": "dfa393c864757210fc9696315ba910d60c18d048206c2cfaa01b41328d4f43bc",
+          "patch": {
+            "avoid_add": [
+              "flat split chest facade",
+              "unterminated rear tubing over uniform modules"
+            ],
+            "constraints_add": [
+              "wrap the thorax in offset curved load shells around a deep protected reactor and terminate every rear conduit in visible service hardware"
+            ],
+            "criteria_add": [
+              "chest and rear reactor read as nested load-bearing volumes from front side and rear"
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        },
+        "replace-primitive-masses-with-interlocking-shells": {
+          "confirmations": 1,
+          "last_evidence": "The silhouette reads, but the torso, shoulders, limbs, weapon, and shield still expose large primitive-looking masses.",
+          "last_evidence_digest": "9a2ac6cc5b645315dcd86c0bc93d8fc682562dd0a08a061d4ece4412ae44d6ad",
+          "patch": {
+            "avoid_add": [
+              "visible primitive-block construction",
+              "featureless armor slabs"
+            ],
+            "constraints_add": [
+              "construct every hero mass from interlocking functional shells with recessed mechanisms"
+            ],
+            "criteria_add": [
+              "large-medium-small authored form hierarchy"
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        },
+        "replace-repeated-rectilinear-anatomy-with-articulated-cowls": {
+          "confirmations": 2,
+          "last_evidence": "The v24 reference turntable has a protected reactor and valid rear service connections, but repeated rectangular armor tiles still define the chest, limbs, pelvis, and back instead of secondary cowls conforming to articulated primary masses.",
+          "last_evidence_digest": "3edd32655108c887c33b5a6667e9c90b220c606c23cd4a187b1fc880b9d6430b",
+          "patch": {
+            "avoid_add": [
+              "repeated rectangular tiles defining every anatomical mass",
+              "flat luminous reactor insert"
+            ],
+            "constraints_add": [
+              "make tapered articulated cowls carry each primary limb and torso silhouette while tiles become sparse local secondary detail around a recessed reactor lens"
+            ],
+            "criteria_add": [
+              "chest limbs pelvis and back read as distinct articulated primary volumes before surface tiles are visible"
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        },
+        "replace-slab-weapon-and-pauldrons": {
+          "confirmations": 1,
+          "last_evidence": "The rail weapon and shoulder masses remain broad dark slabs with insufficient negative space and functional substructure.",
+          "last_evidence_digest": "2c26df32c816991b9938a782dd2c5080674bdb37e46228cbdce749b2dc73384e",
+          "patch": {
+            "avoid_add": [
+              "oversized shoulder boxes",
+              "solid rectangular weapon slab"
+            ],
+            "constraints_add": [
+              "split large silhouette masses into a load-bearing frame plus offset armor shells"
+            ],
+            "criteria_add": [
+              "weapon and shoulders contain readable nested frames vents rails and negative space"
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        },
+        "require-authored-pbr-surface-breakup": {
+          "confirmations": 1,
+          "last_evidence": "Flat procedural values make the render read as a prototype rather than a production hero asset.",
+          "last_evidence_digest": "9a2ac6cc5b645315dcd86c0bc93d8fc682562dd0a08a061d4ece4412ae44d6ad",
+          "patch": {
+            "avoid_add": [
+              "uniform plastic response"
+            ],
+            "constraints_add": [
+              "embed PBR texture images and preserve readable material separation"
+            ],
+            "criteria_add": [
+              "authored material breakup at hero-camera distance"
+            ],
+            "technical_requirements": {
+              "minimum_embedded_images": 4,
+              "minimum_embedded_textures": 4
+            }
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        },
+        "retain-functional-topology-across-turntable": {
+          "confirmations": 1,
+          "last_evidence": "Single-view reconstruction experiments collapsed the weapon, shield, and rear assembly into facade geometry.",
+          "last_evidence_digest": "9a2ac6cc5b645315dcd86c0bc93d8fc682562dd0a08a061d4ece4412ae44d6ad",
+          "patch": {
+            "avoid_add": [
+              "single-view facade geometry"
+            ],
+            "constraints_add": [
+              "review at least four separated turntable angles before acceptance"
+            ],
+            "criteria_add": [
+              "weapon shield limbs and rear power plant remain coherent in every proof angle"
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        },
+        "surface-pass-does-not-replace-silhouette-sculpt": {
+          "confirmations": 1,
+          "last_evidence": "Authored ceramic and gunmetal maps now read coherently, but the upright narrow stance, compact limbs, oversized weapon projection, and cable-like rear accents still reveal a procedural assembly.",
+          "last_evidence_digest": "48b44cfb977dc03fa8e3df46f05846c08101beea1b11089bfed0ee9209d4b034",
+          "patch": {
+            "avoid_add": [
+              "treating PBR detail as a substitute for authored silhouette and secondary geometry"
+            ],
+            "constraints_add": [
+              "broaden load-bearing stance, enlarge feet and forearms, integrate the railgun into the shoulder mass, and terminate rear conduits in visible hardware"
+            ],
+            "criteria_add": [
+              "match approved turnaround proportions before adding tertiary accents"
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        }
+      },
+      "technical": {},
+      "use_count": 9
+    },
+    "3d/axm-oops/rigged-v1": {
+      "criteria": {
+        "character-identity": {
+          "fail": 0,
+          "pass": 3,
+          "unknown": 0
+        },
+        "manufactured-surface-normals": {
+          "fail": 1,
+          "pass": 3,
+          "unknown": 0
+        },
+        "material-identity": {
+          "fail": 1,
+          "pass": 1,
+          "unknown": 0
+        },
+        "seam-attachment": {
+          "fail": 2,
+          "pass": 1,
+          "unknown": 0
+        },
+        "surface-wear-restraint": {
+          "fail": 1,
+          "pass": 1,
+          "unknown": 0
+        },
+        "walk-ground-contact": {
+          "fail": 1,
+          "pass": 1,
+          "unknown": 0
+        },
+        "wave-pose-clearance": {
+          "fail": 1,
+          "pass": 0,
+          "unknown": 0
+        }
+      },
+      "dedup_digests": [
+        "71738feea62902aeaa73db4681616809a19a8f5277a5c7adc2d0a38fc625fe21",
+        "c61697c6569331fc8e7ba50c47b2b59ffc01cf36280e7b296b898594f4a5b732",
+        "88122e561f530abd6ee03e76b9381c63facdd2fd061c50630b7bf2a55ab78687",
+        "d289f85d055b8d5887c0e88f56383db18bd705535986311ff688b319b9c35a09",
+        "619717083800f5c75096b8e103d6d02717376b45251f1dc63c770ba8624cd1e8",
+        "267a64fabf150ebea11e6e9cadd7c5bac2c7c3adb3cb51d402f909ad564e8271"
+      ],
+      "lessons": {
+        "oops-freeze-triangles-before-normal-bake-v1": {
+          "confirmations": 1,
+          "last_evidence": "The v11 exporter warned that tangents could not be calculated from ngons and omitted TANGENT despite export_tangents=True. The v14 GLBs include explicit tangents and all required PBR maps after triangulation before baking.",
+          "last_evidence_digest": "267a64fabf150ebea11e6e9cadd7c5bac2c7c3adb3cb51d402f909ad564e8271",
+          "patch": {
+            "constraints_add": [
+              "Freeze and validate triangle topology before normal-map baking; explicitly calculate tangents and inspect exported TANGENT attributes instead of trusting an export option."
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        },
+        "oops-preserve-material-indices-before-slot-replacement-v1": {
+          "confirmations": 1,
+          "last_evidence": "The v7 bake rendered every component ivory although the joined source had eight intended material regions. Clearing Blender material slots also reset polygon material indices.",
+          "last_evidence_digest": "619717083800f5c75096b8e103d6d02717376b45251f1dc63c770ba8624cd1e8",
+          "patch": {
+            "constraints_add": [
+              "Preserve polygon material indices before replacing material slots, restore them afterward, and reject a bake when any required palette region is missing."
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        },
+        "oops-project-complete-seam-path-v1": {
+          "confirmations": 1,
+          "last_evidence": "The v7 side seam bowed away from the pear shell; projecting only sparse Bezier controls did not keep the curve between those controls on the evaluated surface.",
+          "last_evidence_digest": "619717083800f5c75096b8e103d6d02717376b45251f1dc63c770ba8624cd1e8",
+          "patch": {
+            "constraints_add": [
+              "Densely sample manufactured seam paths and project those samples onto the evaluated surface; do not assume a sparse Bezier stays attached."
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        },
+        "oops-seat-controls-on-evaluated-shell-v1": {
+          "confirmations": 1,
+          "last_evidence": "Side-angle reviews showed the four chest vents floating away from the curved shell when their depth used one guessed Y coordinate. The v14 builder seats each control assembly using an evaluated-shell ray cast.",
+          "last_evidence_digest": "267a64fabf150ebea11e6e9cadd7c5bac2c7c3adb3cb51d402f909ad564e8271",
+          "patch": {
+            "constraints_add": [
+              "Seat service controls and their associated labels on the evaluated casing surface; inspect side views, not only the front view."
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        },
+        "oops-solve-deformed-sole-height-v1": {
+          "confirmations": 1,
+          "last_evidence": "The exported v5 walk render at a quarter-cycle shows both magnetic boots above the ground; rest-pose grounding alone did not detect this.",
+          "last_evidence_digest": "88122e561f530abd6ee03e76b9381c63facdd2fd061c50630b7bf2a55ab78687",
+          "patch": {
+            "constraints_add": [
+              "Solve walking pelvis height from actual deformed boot-sole vertices and inspect mid-stride ground contact, not just neutral-pose bounds."
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        },
+        "oops-verify-translating-pelvis-after-fbx-import-v1": {
+          "confirmations": 1,
+          "last_evidence": "The v9 roundtrip-verification.json measured 0.050000041 m stance-height error in FBX but not GLB. Inspection showed the FBX importer automatically connected Pelvis to Root and ignored its translation. The stable ground socket prevents that single-child inference; v14's unchanged fresh imports pass every-frame stance checks.",
+          "last_evidence_digest": "267a64fabf150ebea11e6e9cadd7c5bac2c7c3adb3cb51d402f909ad564e8271",
+          "patch": {
+            "constraints_add": [
+              "Verify translation-bearing bones after actual FBX import, including use_connect behavior. Keep a stable ground attachment in the crafted rig and compare every-frame stance height and displacement in all exports."
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        },
+        "oops-weighted-cowl-normals-v1": {
+          "confirmations": 1,
+          "last_evidence": "Actual v2 four-angle renders show faceted bands on head and boot bevels; the side seam projects away from the pear shell in rear views.",
+          "last_evidence_digest": "71738feea62902aeaa73db4681616809a19a8f5277a5c7adc2d0a38fc625fe21",
+          "patch": {
+            "avoid_add": [
+              "hard faceted strips around soft head and boot bevels",
+              "decorative seams floating off the shell"
+            ],
+            "constraints_add": [
+              "Use weighted smooth normals for OOPS manufactured bevels and attach side seams to the actual pear-shell surface."
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        },
+        "oops-world-space-limb-aim-v1": {
+          "confirmations": 1,
+          "last_evidence": "A rendered middle frame from the exported v3 GLB Wave action shows the hand crossing the face despite successful skin and playback checks.",
+          "last_evidence_digest": "c61697c6569331fc8e7ba50c47b2b59ffc01cf36280e7b296b898594f4a5b732",
+          "patch": {
+            "constraints_add": [
+              "Aim OOPS gesture limbs in world space and inspect peak-motion frames for face/body clearance; do not assume local Euler bend axes match a conventional humanoid."
+            ],
+            "criteria_add": [
+              "gesture clearance checked in rendered mid-action frames"
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        }
+      },
+      "technical": {},
+      "use_count": 6
+    },
+    "3d/fortress-detail/corner-bastion": {
+      "criteria": {
+        "authored-structure": {
+          "fail": 1,
+          "pass": 1,
+          "unknown": 0
+        },
+        "in-game-acceptance": {
+          "fail": 0,
+          "pass": 0,
+          "unknown": 2
+        }
+      },
+      "dedup_digests": [
+        "9bad86d9eec534bc9b2fff8871a6fc92616d9a8393fcc1a8733a2043074dbd32",
+        "9721b21fecd6c4844084e7c2b10da8691274e7fd71b370cc77bb171c732ed15f"
+      ],
+      "lessons": {
+        "thin-panel-convexity": {
+          "confirmations": 2,
+          "last_evidence": "After the geometry correction, vent frames and borders remain continuous without the earlier crossing triangles. Broad sloped armor and inset vents read clearly. Surface wear remains absent.",
+          "last_evidence_digest": "9721b21fecd6c4844084e7c2b10da8691274e7fd71b370cc77bb171c732ed15f",
+          "patch": {
+            "constraints_add": [
+              "Clamp chamfers below half of both panel dimensions; preserve strict convexity for thin panels."
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        }
+      },
+      "technical": {},
+      "use_count": 2
+    },
+    "3d/fortress-detail/north-gate": {
+      "criteria": {
+        "authored-structure": {
+          "fail": 0,
+          "pass": 1,
+          "unknown": 0
+        },
+        "in-game-acceptance": {
+          "fail": 0,
+          "pass": 0,
+          "unknown": 1
+        }
+      },
+      "dedup_digests": [
+        "c24dafc5e6243c2a28922d1246dd92d260a4d51f18830e331dbf254428bd6e6d"
+      ],
+      "lessons": {
+        "inspect-functional-forms": {
+          "confirmations": 1,
+          "last_evidence": "Rear ribbing and header cooling fins provide structure on the player-facing side. The rear still uses broad plain surfaces and needs game-lighting review.",
+          "last_evidence_digest": "c24dafc5e6243c2a28922d1246dd92d260a4d51f18830e331dbf254428bd6e6d",
+          "patch": {
+            "constraints_add": [
+              "Inspect both fortress-facing and approach-facing gate surfaces; preserve the separate shutter."
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        }
+      },
+      "technical": {},
+      "use_count": 1
+    },
+    "3d/fortress-detail/rebounder": {
+      "criteria": {
+        "authored-structure": {
+          "fail": 0,
+          "pass": 1,
+          "unknown": 0
+        },
+        "in-game-acceptance": {
+          "fail": 0,
+          "pass": 0,
+          "unknown": 1
+        }
+      },
+      "dedup_digests": [
+        "5e9b025a72df463b1160fe380bf18118c283f24a5ad05284863011761f7dfa4f"
+      ],
+      "lessons": {
+        "inspect-functional-forms": {
+          "confirmations": 1,
+          "last_evidence": "Exposed coin rotor, open accelerator fork, offset power cell, grip and rear sight are readable. First-person placement and apparent screen size remain untested here.",
+          "last_evidence_digest": "5e9b025a72df463b1160fe380bf18118c283f24a5ad05284863011761f7dfa4f",
+          "patch": {
+            "constraints_add": [
+              "Preserve coin-feed silhouette and separate mount, recoil, rotor and muzzle transforms."
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        }
+      },
+      "technical": {},
+      "use_count": 1
+    },
+    "3d/fortress/assault-drone": {
+      "criteria": {
+        "industrial-secondary-forms": {
+          "fail": 0,
+          "pass": 1,
+          "unknown": 0
+        },
+        "prototype-silhouette": {
+          "fail": 0,
+          "pass": 1,
+          "unknown": 0
+        },
+        "target-game-performance": {
+          "fail": 0,
+          "pass": 0,
+          "unknown": 1
+        }
+      },
+      "dedup_digests": [
+        "dd117df5d1420c9019b46e45a99c97a6ad98fc9f3b8ab125d4aae2e90fc19603"
+      ],
+      "lessons": {
+        "preserve-articulation-while-batching": {
+          "confirmations": 1,
+          "last_evidence": "The reimported rear preview preserves the assembled silhouette. GLB inspection confirms grouped meshes while named articulation pivots remain. Vent and heat-fin details provide secondary structure; surfaces remain intentionally simple.",
+          "last_evidence_digest": "dd117df5d1420c9019b46e45a99c97a6ad98fc9f3b8ab125d4aae2e90fc19603",
+          "patch": {
+            "constraints_add": [
+              "Batch static parts only within the same articulation parent and material. Preserve named aiming and leg pivots."
+            ],
+            "criteria_add": [
+              "Validate fresh GLB bounds and pivot names before delivering."
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        }
+      },
+      "technical": {},
+      "use_count": 1
+    },
+    "3d/fortress/reactor": {
+      "criteria": {
+        "industrial-secondary-forms": {
+          "fail": 0,
+          "pass": 1,
+          "unknown": 0
+        },
+        "prototype-silhouette": {
+          "fail": 0,
+          "pass": 1,
+          "unknown": 0
+        },
+        "target-game-performance": {
+          "fail": 0,
+          "pass": 0,
+          "unknown": 1
+        }
+      },
+      "dedup_digests": [
+        "a92bbdc0a0abd2fea2e4d7487ea65e2664e6749c073705e6a8b71f276402b674"
+      ],
+      "lessons": {
+        "preserve-articulation-while-batching": {
+          "confirmations": 1,
+          "last_evidence": "The reimported rear preview preserves the assembled silhouette. GLB inspection confirms grouped meshes while named articulation pivots remain. Vent and heat-fin details provide secondary structure; surfaces remain intentionally simple.",
+          "last_evidence_digest": "a92bbdc0a0abd2fea2e4d7487ea65e2664e6749c073705e6a8b71f276402b674",
+          "patch": {
+            "constraints_add": [
+              "Batch static parts only within the same articulation parent and material. Preserve named aiming and leg pivots."
+            ],
+            "criteria_add": [
+              "Validate fresh GLB bounds and pivot names before delivering."
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        }
+      },
+      "technical": {},
+      "use_count": 1
+    },
+    "3d/fortress/turret": {
+      "criteria": {
+        "industrial-secondary-forms": {
+          "fail": 0,
+          "pass": 1,
+          "unknown": 0
+        },
+        "prototype-silhouette": {
+          "fail": 0,
+          "pass": 1,
+          "unknown": 0
+        },
+        "target-game-performance": {
+          "fail": 0,
+          "pass": 0,
+          "unknown": 1
+        }
+      },
+      "dedup_digests": [
+        "8d57ab4f183cd4d7640b6378bcab9bfa40baad2f800e14e9d4adf7a8ac29b76b"
+      ],
+      "lessons": {
+        "preserve-articulation-while-batching": {
+          "confirmations": 1,
+          "last_evidence": "The reimported rear preview preserves the assembled silhouette. GLB inspection confirms grouped meshes while named articulation pivots remain. Vent and heat-fin details provide secondary structure; surfaces remain intentionally simple.",
+          "last_evidence_digest": "8d57ab4f183cd4d7640b6378bcab9bfa40baad2f800e14e9d4adf7a8ac29b76b",
+          "patch": {
+            "constraints_add": [
+              "Batch static parts only within the same articulation parent and material. Preserve named aiming and leg pivots."
+            ],
+            "criteria_add": [
+              "Validate fresh GLB bounds and pivot names before delivering."
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        }
+      },
+      "technical": {},
+      "use_count": 1
+    },
+    "3d/mir-sanctuary-keeper/hero": {
+      "criteria": {
+        "aaa-form-hierarchy": {
+          "fail": 9,
+          "pass": 0,
+          "unknown": 0
+        },
+        "faction-silhouette": {
+          "fail": 1,
+          "pass": 8,
+          "unknown": 0
+        },
+        "functional-topology-all-angles": {
+          "fail": 1,
+          "pass": 8,
+          "unknown": 0
+        },
+        "material-authenticity": {
+          "fail": 3,
+          "pass": 6,
+          "unknown": 0
+        },
+        "non-toy-proportions": {
+          "fail": 2,
+          "pass": 7,
+          "unknown": 0
+        }
+      },
+      "dedup_digests": [
+        "152997e712aa78781878c5c1e8e147c97dbee4f37d7beaeb14a06b04d8625f42",
+        "9ce1214fd1989834b06b4c07f50e971a09684e05591fb276713ea48a32cbcb96",
+        "c1882cf8f0778684534c60820f123e7e908d2d32fb77ccd3d676fe13d8336011",
+        "1bf10077574e68e133c934f986e96dea52bf46b8d2df2317caf72ed10f22d13e",
+        "d14c79bd1de363fe63fac873e9effd419bad5b651e7e87db65fc0cfd7a642cd9",
+        "7531e483a15cde0a7c1e2726c34d06d970d527406fcfacf2ad6cb7d6df41e340",
+        "9529ff2d8a8a6d990a443f01e33a2a656b2ecbc3d9f362042bec04f6ea59d63f",
+        "e9c6682f957fa9f5c460fbdc43f7622e796a17371b12eea4535b438e6572d75f",
+        "89898131ff49ba16203ab25b7f12286f077fed8f7d1a0b48e091ed05898bb291"
+      ],
+      "lessons": {
+        "aged-material-pass-needs-deeper-petal-sculpt": {
+          "confirmations": 1,
+          "last_evidence": "The authored aged-ivory response removes the clean-plastic read, while the armor remains too uniformly thin and repeated to match the target depth, overlap, and sculpted edge hierarchy.",
+          "last_evidence_digest": "1bf10077574e68e133c934f986e96dea52bf46b8d2df2317caf72ed10f22d13e",
+          "patch": {
+            "avoid_add": [
+              "uniformly extruded repeated petal plates"
+            ],
+            "constraints_add": [
+              "vary petal thickness, curvature, overlap, recess depth, and edge damage by anatomical role"
+            ],
+            "criteria_add": [
+              "petal armor carries distinct crown, root, inset, and chipped-edge depths"
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        },
+        "build-continuous-anatomy-before-petal-ornament": {
+          "confirmations": 1,
+          "last_evidence": "The four-angle reference proof remains a tube mannequin carrying repeated plate clusters; oversized shoulder petals and a disconnected halo overpower the thin forearms, shins, pelvis, and torso roots.",
+          "last_evidence_digest": "7531e483a15cde0a7c1e2726c34d06d970d527406fcfacf2ad6cb7d6df41e340",
+          "patch": {
+            "avoid_add": [
+              "tube mannequin anatomy",
+              "oversized ornamental shoulder petals",
+              "unsupported halo arc"
+            ],
+            "constraints_add": [
+              "build continuous nested torso pelvis forearm shin and shoulder shells before any ornament and connect a smaller halo through visible load braces"
+            ],
+            "criteria_add": [
+              "armor shells create a continuous sacred-machine anatomy and every halo segment has a visible structural mount"
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        },
+        "close-v-shaped-torso-and-build-armored-hooves": {
+          "confirmations": 2,
+          "last_evidence": "The v12 four-angle proof now has continuous faction-shaped limb roots and supported halo braces, but the upper torso remains a broad pair of repeated petals over an open waist and the feet still read as thin blade toes on black rails.",
+          "last_evidence_digest": "e9c6682f957fa9f5c460fbdc43f7622e796a17371b12eea4535b438e6572d75f",
+          "patch": {
+            "avoid_add": [
+              "two oversized chest petals dominating the torso",
+              "thin blade toes mounted on visible rails"
+            ],
+            "constraints_add": [
+              "close the torso with a nested descending V-shell stack and build compact armored hoof bodies around articulated toes heels and ankles"
+            ],
+            "criteria_add": [
+              "torso flows continuously into pelvis and planted armored feet without presentation-stand silhouettes"
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        },
+        "extend-radial-cage-through-pelvis": {
+          "confirmations": 1,
+          "last_evidence": "The learned trunk fix works at the front, but the rear proof still exposes a single block-backed pelvis and central housing.",
+          "last_evidence_digest": "c1882cf8f0778684534c60820f123e7e908d2d32fb77ccd3d676fe13d8336011",
+          "patch": {
+            "avoid_add": [
+              "single block-backed pelvis",
+              "large central trunk housing visible from rear"
+            ],
+            "constraints_add": [
+              "replace hidden trunk and pelvis housings with spine stations hip yokes rear shell roots and compact protected cores"
+            ],
+            "criteria_add": [
+              "radial spine yoke and shell-root logic continues through torso waist and pelvis"
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        },
+        "mir-aged-sacred-materials": {
+          "confirmations": 1,
+          "last_evidence": "Uniform clean ivory and bright emissions read as plastic; the target requires aged ceramic, brushed metals, dark tendons, and restrained energy.",
+          "last_evidence_digest": "152997e712aa78781878c5c1e8e147c97dbee4f37d7beaeb14a06b04d8625f42",
+          "patch": {
+            "avoid_add": [
+              "uniform glossy plastic",
+              "large flat emissive discs"
+            ],
+            "constraints_add": [
+              "embed full PBR channels and keep emission sparse inside recessed cores"
+            ],
+            "criteria_add": [
+              "aged ceramic brushed rose-gold brass and carbon-dark mechanisms remain materially distinct"
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        },
+        "replace-ellipsoid-mascot-anatomy": {
+          "confirmations": 1,
+          "last_evidence": "The torso, head, shoulders, limbs and feet are inflated ellipsoids, producing a glossy mascot instead of a sacred guardian mech.",
+          "last_evidence_digest": "152997e712aa78781878c5c1e8e147c97dbee4f37d7beaeb14a06b04d8625f42",
+          "patch": {
+            "avoid_add": [
+              "inflated ellipsoid anatomy",
+              "glossy mascot proportions",
+              "featureless white torso"
+            ],
+            "constraints_add": [
+              "replace every large ellipsoid with interlocking petal armor over visible dark load paths"
+            ],
+            "criteria_add": [
+              "slender nonhuman sacred-machine anatomy built from layered pointed shells"
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        },
+        "replace-flat-upper-petal-facade-with-nested-thorax": {
+          "confirmations": 1,
+          "last_evidence": "The v15 proof confirms compact armored hooves and a cleaner abdomen bridge, but two broad upper petals and a surface-mounted sternum still define the chest as a front facade rather than a nested three-dimensional thorax.",
+          "last_evidence_digest": "89898131ff49ba16203ab25b7f12286f077fed8f7d1a0b48e091ed05898bb291",
+          "patch": {
+            "avoid_add": [
+              "two broad flat petals defining the entire upper chest",
+              "surface-mounted sternum core"
+            ],
+            "constraints_add": [
+              "split the upper chest into smaller overlapping collar ribs, deep side roots, and a recessed sternum chamber with visible negative space between layers"
+            ],
+            "criteria_add": [
+              "upper thorax preserves layered depth and distinct collar rib sternum and side-root volumes in every proof angle"
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        },
+        "replace-hidden-box-with-radial-torso-cage": {
+          "confirmations": 1,
+          "last_evidence": "The front silhouette improved, but side and rear angles expose a rectangular torso block behind the petals.",
+          "last_evidence_digest": "9ce1214fd1989834b06b4c07f50e971a09684e05591fb276713ea48a32cbcb96",
+          "patch": {
+            "avoid_add": [
+              "rectangular internal torso visible from side or rear"
+            ],
+            "constraints_add": [
+              "build the trunk from a narrow spine, rib arcs, and interlocking shell roots rather than one cuboid backing volume"
+            ],
+            "criteria_add": [
+              "torso remains tapered skeletal and layered from every proof angle"
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        },
+        "replace-rail-feet-with-articulated-hooves": {
+          "confirmations": 1,
+          "last_evidence": "Long black sole bars and small block heels read as display rails instead of load-bearing sacred-machine feet.",
+          "last_evidence_digest": "9ce1214fd1989834b06b4c07f50e971a09684e05591fb276713ea48a32cbcb96",
+          "patch": {
+            "avoid_add": [
+              "rectangular rail soles",
+              "single-piece slipper feet"
+            ],
+            "constraints_add": [
+              "use split pointed toes, heel talons, ankle yokes, and compact undersole pads"
+            ],
+            "criteria_add": [
+              "feet show articulated toe heel ankle and ground-contact logic"
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        },
+        "require-functional-petal-hierarchy": {
+          "confirmations": 1,
+          "last_evidence": "Petals and rings are attached as decoration rather than forming armor, articulation, shield structure, and back machinery.",
+          "last_evidence_digest": "152997e712aa78781878c5c1e8e147c97dbee4f37d7beaeb14a06b04d8625f42",
+          "patch": {
+            "avoid_add": [
+              "random floating rings",
+              "decorative petals without load paths"
+            ],
+            "constraints_add": [
+              "anchor every halo petal and energy element to a visible mechanical emitter or frame"
+            ],
+            "criteria_add": [
+              "petal language forms functional armor shield crown and joint protection at large medium and small scales"
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        },
+        "require-tertiary-manufacturing-density": {
+          "confirmations": 1,
+          "last_evidence": "Large armor surfaces remain clean and graphically simple compared with the AAA target's seams, recesses, fasteners, edge damage, actuators, and cable terminations.",
+          "last_evidence_digest": "9ce1214fd1989834b06b4c07f50e971a09684e05591fb276713ea48a32cbcb96",
+          "patch": {
+            "avoid_add": [
+              "large unbroken clean armor faces",
+              "detail supplied only by floating glowing bars"
+            ],
+            "constraints_add": [
+              "add inset seams edge guards recessed vents fasteners and tendon attachment hardware at local armor scale"
+            ],
+            "criteria_add": [
+              "hero surfaces carry coherent primary secondary and tertiary manufacturing detail"
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        },
+        "root-petals-into-volumetric-rib-cage": {
+          "confirmations": 1,
+          "last_evidence": "Name-driven petal variation improves repetition, but side views still expose parallel thin plates around a sparse tubular trunk rather than armor grown from a volumetric rib cage.",
+          "last_evidence_digest": "d14c79bd1de363fe63fac873e9effd419bad5b651e7e87db65fc0cfd7a642cd9",
+          "patch": {
+            "avoid_add": [
+              "parallel thin plates floating around a tubular torso"
+            ],
+            "constraints_add": [
+              "curve major shells across depth and build nested root sockets before adding floating edge ornaments"
+            ],
+            "criteria_add": [
+              "each major petal overlaps and roots into a visible three-dimensional rib, hinge, or socket"
+            ]
+          },
+          "status": "ACTIVE_EXACT_CONTEXT"
+        }
+      },
+      "technical": {},
+      "use_count": 9
+    }
+  },
+  "schema": "axm.visual-use-profile/v0.1"
+}

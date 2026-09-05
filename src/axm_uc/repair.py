@@ -65,7 +65,7 @@ def _apply_operations(stage: Path, operations: list[dict[str, Any]]) -> tuple[li
             if path.exists():
                 raise ProjectError(f"add target already exists: {operation['path']}")
             path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(operation["content"], encoding="utf-8")
+            path.write_bytes(operation["content"].encode("utf-8"))
             expected_changed_text[operation["path"]] = operation["content"]
             observed.append({"op": "add", "path": operation["path"], "bytes": path.stat().st_size})
             continue
@@ -75,7 +75,7 @@ def _apply_operations(stage: Path, operations: list[dict[str, Any]]) -> tuple[li
             if not path.is_file():
                 raise ProjectError(f"update target is not an existing file: {operation['path']}")
             before_bytes = path.stat().st_size
-            path.write_text(operation["content"], encoding="utf-8")
+            path.write_bytes(operation["content"].encode("utf-8"))
             expected_changed_text[operation["path"]] = operation["content"]
             observed.append({
                 "op": "update",

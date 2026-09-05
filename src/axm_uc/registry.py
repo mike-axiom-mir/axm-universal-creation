@@ -35,7 +35,7 @@ class Registry:
                 continue
             for path in sorted(folder.glob("*.json")):
                 item = json.loads(path.read_text(encoding="utf-8"))
-                item["_manifest_path"] = str(path.relative_to(self.root))
+                item["_manifest_path"] = path.relative_to(self.root).as_posix()
                 result.append(item)
         return result
 

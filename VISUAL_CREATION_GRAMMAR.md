@@ -72,6 +72,8 @@ Important boundaries:
 
 This makes the "largest remaining prototype gap" pattern explicit without pretending the compiler itself can see or judge a rendered result.
 
+The optional `VISUAL_USE_LEARNING.md` layer now closes the exact-context replay seam: technical or supplied host observations can update a compact current profile, and `plan-adaptive` adds those verified constraints to the next request in the same context. It does not turn one observation into a global law.
+
 ## Generator hints
 
 The compiler maps each recipe to reusable forge families such as:

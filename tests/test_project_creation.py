@@ -15,6 +15,22 @@ from axm_uc.project import ProjectError, build_project, validate_project
 
 
 class ProjectCreationTests(unittest.TestCase):
+    def test_project_preserves_utf8_and_explicit_line_endings_and_detects_byte_drift(self):
+        with tempfile.TemporaryDirectory() as td:
+            target = Path(td) / "exact"
+            files = {"lf.txt": "caf\u00e9\nsecond\n", "crlf.txt": "first\r\nsecond\r\n"}
+            report = build_project(target, files)
+            self.assertTrue(report["validation"]["passed"])
+            for name, content in files.items():
+                self.assertEqual((target / name).read_bytes(), content.encode("utf-8"))
+            # Universal-newline text reads used to hide this exact-body drift.
+            (target / "lf.txt").write_bytes(files["lf.txt"].replace("\n", "\r\n").encode("utf-8"))
+            check = validate_project(target, expected_files=files)
+            exact = next(c for c in check["checks"] if c["type"] == "expected-files-exact")
+            self.assertFalse(exact["passed"])
+            self.assertFalse(exact["files"][0]["passed"])
+            self.assertTrue(exact["files"][1]["passed"])
+
     def test_static_web_project_is_built_and_reverified(self):
         with tempfile.TemporaryDirectory() as td:
             target = Path(td) / "site"
@@ -316,7 +332,7 @@ class ProjectCreationTests(unittest.TestCase):
             target = Path(td) / "verified"
             target.mkdir()
             note = "alpha\nbeta\n"
-            (target / "note.txt").write_text(note, encoding="utf-8")
+            (target / "note.txt").write_bytes(note.encode("utf-8"))
             (target / "data.json").write_text('{"state": {"ready": true, "count": 2}}\n', encoding="utf-8")
             digest = hashlib.sha256(note.encode("utf-8")).hexdigest()
             checks = [
@@ -391,7 +407,12 @@ class ProjectCreationTests(unittest.TestCase):
             (target / "note.txt").write_text("inside", encoding="utf-8")
             outside = base / "outside.txt"
             outside.write_text("outside", encoding="utf-8")
-            (target / "escape.txt").symlink_to(outside)
+            try:
+                (target / "escape.txt").symlink_to(outside)
+            except OSError as exc:
+                if getattr(exc, "winerror", None) == 1314:
+                    self.skipTest("Windows host lacks symlink creation privilege")
+                raise
             report = validate_project(target, checks=["not-an-object"])  # type: ignore[list-item]
             self.assertFalse(report["passed"])
             no_links = next(row for row in report["checks"] if row["type"] == "project-no-symlinks")

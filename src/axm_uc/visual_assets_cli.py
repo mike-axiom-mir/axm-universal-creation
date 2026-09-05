@@ -2,11 +2,31 @@ from __future__ import annotations
 
 import argparse
 import json
+import subprocess
+import sys
 from pathlib import Path
 
+from .asset_geometry import review_static_glb
 from .visual_assets import catalog as base_catalog, generate_asset, generate_kit
 from .visual_creation_grammar import compile_visual_recipe, grammar_catalog
 from .visual_expanded import expansion_catalog, generate_expanded_asset, generate_expansion_kit
+from .visual_learning import compile_adaptive_visual_recipe, inspect_png, inspect_visual_learning, record_visual_use
+from .visual_3d import (
+    assess_3d_output,
+    catalog_3d,
+    compile_3d_request,
+    compile_adaptive_3d_request,
+    forge_3d_asset,
+    inspect_glb,
+    provision_blender,
+    record_3d_review,
+    find_blender,
+)
+from .visual_3d_iteration import (
+    forge_3d_iteration, inspect_3d_iteration, plan_3d_iteration,
+    reject_3d_iteration, review_3d_iteration, start_3d_iteration,
+)
+from .rigged_characters import character_catalog, forge_rigged_character, inspect_rigged_character
 
 BASE_CATEGORIES = ["texture", "gradient", "material", "fixture", "decal", "palette"]
 EXPANDED_CATEGORIES = ["surface", "pigment", "sprite", "mesh", "vector-part"]
@@ -24,6 +44,8 @@ def combined_catalog() -> dict:
         "dependencies": [],
         "outputs": outputs,
         "visual_grammar": grammar_catalog(),
+        "three_d_forge": catalog_3d(),
+        "rigged_characters": character_catalog(),
     }
 
 
@@ -34,6 +56,70 @@ def build_parser() -> argparse.ArgumentParser:
     sub.add_parser("grammar-catalog", help="show the composable visual-intent grammar")
     plan = sub.add_parser("plan", help="compile one structured visual request into a deterministic recipe")
     plan.add_argument("request", help="path to a UTF-8 JSON visual request")
+    adaptive = sub.add_parser("plan-adaptive", help="compile a request with exact-context lessons from prior use")
+    adaptive.add_argument("request", help="path to a UTF-8 JSON visual request")
+    adaptive.add_argument("--state-root", default=".")
+    png = sub.add_parser("inspect-png", help="verify PNG structure and real alpha pixels")
+    png.add_argument("path")
+    learn = sub.add_parser("learn-use", help="record one evidence-bound visual-use observation")
+    learn.add_argument("observation", help="path to a UTF-8 JSON observation")
+    learn.add_argument("--state-root", default=".")
+    learning = sub.add_parser("learning", help="inspect the compact current visual-use profile")
+    learning.add_argument("--state-root", default=".")
+    learning.add_argument("--context")
+    sub.add_parser("3d-catalog", help="show engine-ready 3D forge assets, outputs, and runtime contract")
+    sub.add_parser("character-catalog", help="show portable rigged character adapters")
+    fortress = sub.add_parser("fortress-forge", help="forge original low-poly reactor, articulated turret and assault drone")
+    fortress.add_argument("output")
+    fortress.add_argument("--blender")
+    fortress.add_argument("--kit", choices=["starter", "detail"], default="starter")
+    fortress.add_argument("--timeout-seconds", type=int, default=600)
+    character = sub.add_parser("character-forge", help="build a rigged original AXM character with starter motion clips")
+    character.add_argument("request")
+    character.add_argument("output")
+    character.add_argument("--state-root", default=".")
+    character.add_argument("--blender")
+    character.add_argument("--timeout-seconds", type=int, default=2400)
+    character_check = sub.add_parser("character-inspect", help="inspect GLB skeleton, skin attributes and animation clips")
+    character_check.add_argument("path")
+    runtime_3d = sub.add_parser("3d-runtime", help="provision and verify AXM's pinned portable 3D runtime")
+    runtime_3d.add_argument("--cache-root", help="optional explicit managed runtime cache")
+    plan_3d = sub.add_parser("3d-plan", help="compile a validated engine-ready 3D request")
+    plan_3d.add_argument("request", help="path to a UTF-8 JSON 3D request")
+    adaptive_3d = sub.add_parser("3d-plan-adaptive", help="replay exact-context lessons into a 3D request")
+    adaptive_3d.add_argument("request", help="path to a UTF-8 JSON 3D request")
+    adaptive_3d.add_argument("--state-root", default=".")
+    review_3d = sub.add_parser("3d-review", help="record one artifact-bound 3D render review")
+    review_3d.add_argument("review", help="path to a UTF-8 JSON 3D review")
+    review_3d.add_argument("--state-root", default=".")
+    assess_3d = sub.add_parser("3d-assess", help="apply technical and artifact-bound visual AAA gates")
+    assess_3d.add_argument("receipt")
+    assess_3d.add_argument("manifest")
+    assess_3d.add_argument("--visual-review")
+    inspect_3d = sub.add_parser("inspect-glb", help="decode GLB structure and report meshes, triangles, and materials")
+    inspect_3d.add_argument("path")
+    contract_3d = sub.add_parser("3d-contract-review", help="check actual static GLB triangles against an explicit spatial contract")
+    contract_3d.add_argument("path", help="local GLB; no external buffers are fetched")
+    contract_3d.add_argument("contract", help="path to a static-asset-contract JSON file")
+    forge_3d = sub.add_parser("3d-forge", help="generate LODs, collisions, GLBs, source blend, and render proofs")
+    forge_3d.add_argument("request", help="path to a UTF-8 JSON 3D request")
+    forge_3d.add_argument("output", help="explicit output directory")
+    forge_3d.add_argument("--blender", help="Blender executable; otherwise AXM_BLENDER or PATH")
+    forge_3d.add_argument("--spatial-contract", help="optional explicit static GLB geometry contract")
+    forge_3d.add_argument("--no-runtime-bootstrap", action="store_true", help="fail instead of provisioning the pinned runtime")
+    for operation in ("start", "status", "next", "forge", "review", "reject"):
+        iteration = sub.add_parser(f"3d-iteration-{operation}", help=f"{operation} a persistent staged 3D iteration run")
+        iteration.add_argument("--state-root", default=".", help="machine root containing state and forge tools")
+        iteration.add_argument("spec" if operation == "start" else "run_id")
+        if operation == "forge":
+            iteration.add_argument("--change-summary", required=True)
+            iteration.add_argument("--blender")
+            iteration.add_argument("--no-runtime-bootstrap", action="store_true")
+            iteration.add_argument("--timeout-seconds", type=int, default=1800)
+        elif operation == "review":
+            iteration.add_argument("review", help="JSON with notes, per-view hashes/criteria, and optional lessons")
+        elif operation == "reject":
+            iteration.add_argument("--reason", required=True)
 
     generate = sub.add_parser("generate", help="generate one real asset, material, pigment, sprite, mesh, or vector part")
     generate.add_argument("category", choices=BASE_CATEGORIES + EXPANDED_CATEGORIES)
@@ -79,6 +165,75 @@ def main(argv: list[str] | None = None) -> int:
     elif args.command == "plan":
         request = json.loads(Path(args.request).read_text(encoding="utf-8"))
         result = compile_visual_recipe(request)
+    elif args.command == "plan-adaptive":
+        request = json.loads(Path(args.request).read_text(encoding="utf-8"))
+        result = compile_adaptive_visual_recipe(args.state_root, request)
+    elif args.command == "inspect-png":
+        result = inspect_png(args.path)
+    elif args.command == "learn-use":
+        observation = json.loads(Path(args.observation).read_text(encoding="utf-8"))
+        result = record_visual_use(args.state_root, observation)
+    elif args.command == "learning":
+        result = inspect_visual_learning(args.state_root, context_key=args.context)
+    elif args.command == "3d-catalog":
+        result = catalog_3d()
+    elif args.command == "character-catalog":
+        result = character_catalog()
+    elif args.command == "fortress-forge":
+        root = Path(__file__).resolve().parents[2]
+        output = Path(args.output).resolve()
+        script = root / "tools" / "blender" / ("axm_fortress_detail.py" if args.kit == "detail" else "axm_fortress_pack.py")
+        subprocess.run([str(find_blender(args.blender)), "--background", "--factory-startup",
+                        "--python-exit-code", "1", "--python", str(script), "--", "--output", str(output)],
+                       check=True, timeout=args.timeout_seconds, stdout=sys.stderr)
+        result = json.loads((output / "manifest.json").read_text(encoding="utf-8"))
+        result["inspections"] = {p.stem: inspect_glb(p) for p in output.glob("*/*.glb")}
+        (output / "verification.json").write_text(json.dumps(result, indent=2), encoding="utf-8")
+    elif args.command == "character-forge":
+        result = forge_rigged_character(args.state_root, json.loads(Path(args.request).read_text(encoding="utf-8")),
+                                       args.output, blender=args.blender, timeout_seconds=args.timeout_seconds)
+    elif args.command == "character-inspect":
+        result = inspect_rigged_character(args.path)
+    elif args.command == "3d-runtime":
+        result = provision_blender(args.cache_root)
+    elif args.command == "3d-plan":
+        result = compile_3d_request(json.loads(Path(args.request).read_text(encoding="utf-8")))
+    elif args.command == "3d-plan-adaptive":
+        result = compile_adaptive_3d_request(args.state_root, json.loads(Path(args.request).read_text(encoding="utf-8")))
+    elif args.command == "3d-review":
+        result = record_3d_review(args.state_root, json.loads(Path(args.review).read_text(encoding="utf-8")))
+    elif args.command == "3d-assess":
+        review = json.loads(Path(args.visual_review).read_text(encoding="utf-8")) if args.visual_review else None
+        result = assess_3d_output(
+            json.loads(Path(args.receipt).read_text(encoding="utf-8")),
+            json.loads(Path(args.manifest).read_text(encoding="utf-8")),
+            review,
+        )
+    elif args.command == "inspect-glb":
+        result = inspect_glb(args.path)
+    elif args.command == "3d-contract-review":
+        result = review_static_glb(args.path, json.loads(Path(args.contract).read_text(encoding="utf-8")))
+    elif args.command == "3d-forge":
+        request = json.loads(Path(args.request).read_text(encoding="utf-8"))
+        result = forge_3d_asset(
+            Path.cwd(), request, args.output, blender=args.blender,
+            auto_provision_runtime=not args.no_runtime_bootstrap,
+            spatial_contract=json.loads(Path(args.spatial_contract).read_text(encoding="utf-8")) if args.spatial_contract else None,
+        )
+    elif args.command == "3d-iteration-start":
+        result = start_3d_iteration(args.state_root, json.loads(Path(args.spec).read_text(encoding="utf-8")))
+    elif args.command == "3d-iteration-status":
+        result = inspect_3d_iteration(args.state_root, args.run_id)
+    elif args.command == "3d-iteration-next":
+        result = plan_3d_iteration(args.state_root, args.run_id)
+    elif args.command == "3d-iteration-forge":
+        result = forge_3d_iteration(args.state_root, args.run_id, change_summary=args.change_summary,
+                                    blender=args.blender, auto_provision_runtime=not args.no_runtime_bootstrap,
+                                    timeout_seconds=args.timeout_seconds)
+    elif args.command == "3d-iteration-review":
+        result = review_3d_iteration(args.state_root, args.run_id, json.loads(Path(args.review).read_text(encoding="utf-8")))
+    elif args.command == "3d-iteration-reject":
+        result = reject_3d_iteration(args.state_root, args.run_id, args.reason)
     elif args.command == "kit":
         result = generate_kit(args.path, profile=args.profile, seed=args.seed, size=args.size, replace=args.replace)
     elif args.command == "expansion-kit":
@@ -97,6 +252,10 @@ def main(argv: list[str] | None = None) -> int:
             count=args.count, colors=args.colors, replace=args.replace,
         )
     print(json.dumps(result, indent=2, sort_keys=True))
+    if args.command == "3d-contract-review" and result["status"] != "PASS":
+        return 2
+    if args.command == "3d-forge" and result.get("spatial_contract_review", {}).get("status", "PASS") != "PASS":
+        return 2
     return 0
 
 

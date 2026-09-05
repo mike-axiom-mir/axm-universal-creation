@@ -41,7 +41,7 @@ class ProjectRepairTests(unittest.TestCase):
                     "path": str(target),
                     "operations": [
                         {"op": "update", "path": "update.txt", "content": "after\n"},
-                        {"op": "add", "path": "added.md", "content": "# added\n"},
+                        {"op": "add", "path": "added.md", "content": "# added\r\n"},
                         {"op": "delete", "path": "delete.txt"},
                         {"op": "rename", "from": "rename.txt", "to": "renamed.txt"},
                     ],
@@ -54,10 +54,12 @@ class ProjectRepairTests(unittest.TestCase):
             self.assertEqual((target / "keep.txt").read_text(encoding="utf-8"), "keep\n")
             self.assertEqual((target / "update.txt").read_text(encoding="utf-8"), "after\n")
             self.assertEqual((target / "added.md").read_text(encoding="utf-8"), "# added\n")
+            self.assertEqual((target / "added.md").read_bytes(), b"# added\r\n")
+            self.assertEqual((target / "update.txt").read_bytes(), b"after\n")
             self.assertFalse((target / "delete.txt").exists())
             self.assertFalse((target / "rename.txt").exists())
             self.assertEqual((target / "renamed.txt").read_text(encoding="utf-8"), "rename me\n")
-            self.assertEqual(repair["expected_files"], {"update.txt": "after\n", "added.md": "# added\n"})
+            self.assertEqual(repair["expected_files"], {"update.txt": "after\n", "added.md": "# added\r\n"})
             inventory = repair["grammar_inventory"]
             self.assertEqual(inventory["truth_status"], "OBSERVED_EXTENSION_GRAMMAR_INVENTORY")
             js = next(row for row in inventory["files"] if row["path"] == "script.js")
@@ -172,7 +174,12 @@ class ProjectRepairTests(unittest.TestCase):
             (target / "safe.txt").write_text("safe\n", encoding="utf-8")
             outside = base / "outside.txt"
             outside.write_text("outside\n", encoding="utf-8")
-            (target / "linked.txt").symlink_to(outside)
+            try:
+                (target / "linked.txt").symlink_to(outside)
+            except OSError as exc:
+                if getattr(exc, "winerror", None) == 1314:
+                    self.skipTest("Windows host lacks symlink creation privilege")
+                raise
             result = UniversalCreationMachine(ROOT).create({
                 "kind": "patch-project",
                 "inputs": {

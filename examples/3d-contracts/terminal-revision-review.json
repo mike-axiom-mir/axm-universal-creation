@@ -1,0 +1,79 @@
+{
+  "status": "PASS",
+  "previous_pack": "reactor-fortress-terminals-v1",
+  "current_pack": "reactor-fortress-terminals-v2",
+  "correction": "Cap Blender bevel width at 0.45 times the smallest part dimension; retain a real central face instead of half-thickness collapse.",
+  "degenerate_definition": "length((b-a) cross (c-a)) <= 1e-12 square metres, using actual GLB float32 POSITION values composed through the scene node transforms.",
+  "previous_degenerates": 496,
+  "current_degenerates": 0,
+  "collision_contract_semantically_identical": true,
+  "assets": [
+    {
+      "asset": "armory-relay",
+      "previous_sha256": "23ddde733faad48d7ef13e103290a5cec6c87008cc369558566243b9bd3c1cbe",
+      "sha256": "37c998ffece0cfb2580213f21a5f77a434510eff245c0d4d84b1f4726f5d7de5",
+      "triangles": 2896,
+      "primitives": 10,
+      "previous_degenerate_triangles": 80,
+      "degenerate_triangles": 0,
+      "bounds_unchanged": true,
+      "markers_unchanged": true
+    },
+    {
+      "asset": "armory-foldback",
+      "previous_sha256": "9c33576c2fffb65ff69cb9142cb81f00255b786c9ae67d166cd0c39af836b2a1",
+      "sha256": "cef3310d1b5b1ff87120f97d3fab5a997c661bc5ea1f2b8f62e5c8456fff5338",
+      "triangles": 3004,
+      "primitives": 10,
+      "previous_degenerate_triangles": 80,
+      "degenerate_triangles": 0,
+      "bounds_unchanged": true,
+      "markers_unchanged": true
+    },
+    {
+      "asset": "armory-slopcaster",
+      "previous_sha256": "875dde31dcebcd4ceb131fc6689419d42aa91b8190871019caab5f28a7d60b83",
+      "sha256": "77d454d4c1b81db67fd3a1969b4fab4d8e0574ad8be787a31e3a9c2248a8c6c6",
+      "triangles": 3252,
+      "primitives": 10,
+      "previous_degenerate_triangles": 96,
+      "degenerate_triangles": 0,
+      "bounds_unchanged": true,
+      "markers_unchanged": true
+    },
+    {
+      "asset": "armory-ghostline",
+      "previous_sha256": "f9a7907aba8cc04b636cd330d5206bc0a4998a072c3502ac46de7b952d1adf12",
+      "sha256": "93096667c75a31e633ac3b3956cc021b4bec982da45d626484a5308ce31e0789",
+      "triangles": 2670,
+      "primitives": 10,
+      "previous_degenerate_triangles": 80,
+      "degenerate_triangles": 0,
+      "bounds_unchanged": true,
+      "markers_unchanged": true
+    },
+    {
+      "asset": "utility-refill",
+      "previous_sha256": "62e661ebc959d65c8aab2b9ee25ef9311fbcb93b55091a0dcc8b61c405491f56",
+      "sha256": "63b8aec6b46e9a76408a5d7e7926331f096bbdaa81be54e3a0a36ce4b43c1ad9",
+      "triangles": 3606,
+      "primitives": 9,
+      "previous_degenerate_triangles": 80,
+      "degenerate_triangles": 0,
+      "bounds_unchanged": true,
+      "markers_unchanged": true
+    },
+    {
+      "asset": "turret-overcharge",
+      "previous_sha256": "1cc53148a08118e5ee2b15762749ba1f8ca80819f38158a3204b49d876828604",
+      "sha256": "7e311db25ec6d4679124a8bcccbd7d470ac8f3a27a1178e23f286694eccc871d",
+      "triangles": 4042,
+      "primitives": 10,
+      "previous_degenerate_triangles": 80,
+      "degenerate_triangles": 0,
+      "bounds_unchanged": true,
+      "markers_unchanged": true
+    }
+  ],
+  "scope": "Source and exported-geometry correction. Not a game integration, controller, frame-rate or aesthetic acceptance claim."
+}

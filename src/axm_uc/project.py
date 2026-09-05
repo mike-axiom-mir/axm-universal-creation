@@ -498,17 +498,18 @@ def _check_expected_files(root: Path, expected_files: dict[str, Any]) -> dict[st
             continue
         try:
             path = _resolve_inside(root, relative)
-            actual = path.read_text(encoding="utf-8")
+            actual = path.read_bytes()
         except (ProjectError, OSError, UnicodeError) as exc:
             rows.append({"path": relative, "passed": False, "error": str(exc)})
             passed = False
             continue
-        match = actual == expected
+        expected_bytes = expected.encode("utf-8")
+        match = actual == expected_bytes
         rows.append({
             "path": relative,
             "passed": match,
-            "expected_bytes": len(expected.encode("utf-8")),
-            "actual_bytes": len(actual.encode("utf-8")),
+            "expected_bytes": len(expected_bytes),
+            "actual_bytes": len(actual),
         })
         passed = passed and match
     return {"type": "expected-files-exact", "passed": passed and bool(rows), "files": rows}
@@ -751,7 +752,9 @@ def build_project(
         for rel, content in normalized:
             path = stage.joinpath(*rel.parts)
             path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(content, encoding="utf-8")
+            # Preserve the caller's UTF-8 bytes, including explicit line endings.
+            # Host text translation would invalidate the forge's source digests.
+            path.write_bytes(content.encode("utf-8"))
 
         validation = validate_project(stage, project_type=project_type, checks=checks, expected_files=expected_files)
         if not _publication_integrity(validation):
