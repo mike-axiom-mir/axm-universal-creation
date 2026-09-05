@@ -38,7 +38,12 @@ def finish(o, name, mat, parent, bevel=0):
     o.data.materials.append(M[mat])
     if bevel:
         mod = o.modifiers.new('Machined edge', 'BEVEL')
-        mod.width = bevel
+        # Thin cylinders and lofts can reach Blender's overlap clamp before
+        # half their bounding dimension. Respect the shortest source edge so
+        # bevel faces retain real area instead of collapsing at the clamp.
+        shortest = min((o.data.vertices[e.vertices[0]].co - o.data.vertices[e.vertices[1]].co).length
+                       for e in o.data.edges)
+        mod.width = min(bevel, shortest * .45)
         mod.segments = 2
         bpy.context.view_layer.objects.active = o
         bpy.ops.object.modifier_apply(modifier=mod.name)

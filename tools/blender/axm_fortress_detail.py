@@ -185,12 +185,27 @@ def bounds():
     return [[min(p[i] for p in pts),max(p[i] for p in pts)] for i in range(3)]
 
 
+def frame_meshes(camera, margin=1.12):
+    """Fit the actual posed mesh projection, including an underground shutter."""
+    bpy.context.view_layer.update()
+    q=camera.rotation_euler.to_quaternion()
+    pts=[q.inverted()@(o.matrix_world@v.co) for o in bpy.context.scene.objects if o.type=='MESH' for v in o.data.vertices]
+    lo=[min(p[i] for p in pts) for i in (0,1)];hi=[max(p[i] for p in pts) for i in (0,1)]
+    eye=q.inverted()@camera.location
+    camera.location+=q@Vector(((lo[0]+hi[0])/2-eye.x,(lo[1]+hi[1])/2-eye.y,0))
+    render=bpy.context.scene.render
+    camera.data.ortho_scale=max(hi[0]-lo[0],(hi[1]-lo[1])*render.resolution_x/render.resolution_y)*margin
+
+
 def main():
     p=argparse.ArgumentParser();p.add_argument('--output',required=True)
     p.add_argument('--sector-variants',action='store_true',help='only E/02, S/03, W/04 gates; identical architecture')
+    p.add_argument('--architecture-repair',action='store_true',help='all four sector gates and bastion with the current geometry fixes')
     args=p.parse_args(sys.argv[sys.argv.index('--')+1:]);out=Path(args.output).resolve();out.mkdir(parents=True,exist_ok=False)
     report=[]
     builders=[('east-gate',lambda:gate('E / 02')),('south-gate',lambda:gate('S / 03')),('west-gate',lambda:gate('W / 04'))] if args.sector_variants else [('north-gate',gate),('corner-bastion',bastion),('rebounder',rebounder)]
+    if args.architecture_repair:
+        builders=[('north-gate',gate),('east-gate',lambda:gate('E / 02')),('south-gate',lambda:gate('S / 03')),('west-gate',lambda:gate('W / 04')),('corner-bastion',bastion)]
     for name,builder in builders:
         bpy.ops.wm.read_factory_settings(use_empty=True);materials()
         root,contract,_=builder();bpy.context.view_layer.update();f.batch_static_meshes()
@@ -227,6 +242,7 @@ def main():
             bpy.data.objects['Shutter'].location.z=-5.15
             a=math.radians(25);cam.location=center+Vector((math.sin(a),-math.cos(a),.4))*span*1.7
             cam.rotation_euler=(center-cam.location).to_track_quat('-Z','Y').to_euler()
+            frame_meshes(cam)
             scene.render.filepath=str(target/'preview-open.png');bpy.ops.render.render(write_still=True)
     (out/'manifest.json').write_text(json.dumps({'assets':report,'truth':'fresh-import structure verified; in-game quality review pending'},indent=2))
 

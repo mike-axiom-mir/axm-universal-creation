@@ -1,0 +1,572 @@
+{
+  "status": "PASS",
+  "threshold_m2": 1e-12,
+  "previous_collapsed": 3216,
+  "current_collapsed": 0,
+  "shutter_pose_checks": 68,
+  "assets": [
+    {
+      "asset": "north-gate",
+      "before_sha256": "03282ab0671391c4056f5559d3ea46f7fdb22372092025fff7f18c70ba48a498",
+      "after_sha256": "8af540260a13130e2597f00cc5be3a1b7e7e44a45670ee0c431696015b131982",
+      "before_blend_sha256": "b76c8af2a49e895299e2ad13aeff1e611d02fca7c6a1fd504f803516e69c7957",
+      "after_blend_sha256": "905b18b60f1c8dd50f523d2ac83497675601d394b0425502c413f709312eb100",
+      "triangles_before": 20540,
+      "triangles_after": 20540,
+      "collapsed_before": 584,
+      "collapsed_after": 0,
+      "bounds_before": [
+        -6,
+        0,
+        -1.0499999523162842,
+        6,
+        7,
+        1.0499999523162842
+      ],
+      "bounds_after": [
+        -6,
+        0,
+        -1.0499999523162842,
+        6,
+        7,
+        1.0499999523162842
+      ],
+      "semantic_nodes_identical": true,
+      "material_definitions_identical": true,
+      "shutter_states": [
+        {
+          "local_y": 0,
+          "triangles": 20540,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -0.321875,
+          "triangles": 20540,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -0.64375,
+          "triangles": 20540,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -0.9656250000000001,
+          "triangles": 20540,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -1.2875,
+          "triangles": 20540,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -1.609375,
+          "triangles": 20540,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -1.9312500000000001,
+          "triangles": 20540,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -2.2531250000000003,
+          "triangles": 20540,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -2.575,
+          "triangles": 20540,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -2.896875,
+          "triangles": 20540,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -3.21875,
+          "triangles": 20540,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -3.5406250000000004,
+          "triangles": 20540,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -3.8625000000000003,
+          "triangles": 20540,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -4.184375,
+          "triangles": 20540,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -4.5062500000000005,
+          "triangles": 20540,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -4.828125,
+          "triangles": 20540,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -5.15,
+          "triangles": 20540,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        }
+      ]
+    },
+    {
+      "asset": "east-gate",
+      "before_sha256": "529a5f7f5467da4cc0a31336c77887353fe9be1ec529ea5204729e5b21ba4d30",
+      "after_sha256": "94b1c0be4f4fff49fd299500af61ed69d77d93f4ed7bfa7c74eee293cf2362ec",
+      "before_blend_sha256": "d506f233798ca50cdae0956eaf6f9123b73365993d2d7e36863b1e914d7ffb38",
+      "after_blend_sha256": "33aaadccd4894ad53b1ff88732cc039cb1ec7527ff3431834a5ca589e0119421",
+      "triangles_before": 21236,
+      "triangles_after": 21236,
+      "collapsed_before": 584,
+      "collapsed_after": 0,
+      "bounds_before": [
+        -6,
+        0,
+        -1.0499999523162842,
+        6,
+        7,
+        1.0499999523162842
+      ],
+      "bounds_after": [
+        -6,
+        0,
+        -1.0499999523162842,
+        6,
+        7,
+        1.0499999523162842
+      ],
+      "semantic_nodes_identical": true,
+      "material_definitions_identical": true,
+      "shutter_states": [
+        {
+          "local_y": 0,
+          "triangles": 21236,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -0.321875,
+          "triangles": 21236,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -0.64375,
+          "triangles": 21236,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -0.9656250000000001,
+          "triangles": 21236,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -1.2875,
+          "triangles": 21236,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -1.609375,
+          "triangles": 21236,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -1.9312500000000001,
+          "triangles": 21236,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -2.2531250000000003,
+          "triangles": 21236,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -2.575,
+          "triangles": 21236,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -2.896875,
+          "triangles": 21236,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -3.21875,
+          "triangles": 21236,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -3.5406250000000004,
+          "triangles": 21236,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -3.8625000000000003,
+          "triangles": 21236,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -4.184375,
+          "triangles": 21236,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -4.5062500000000005,
+          "triangles": 21236,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -4.828125,
+          "triangles": 21236,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -5.15,
+          "triangles": 21236,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        }
+      ]
+    },
+    {
+      "asset": "south-gate",
+      "before_sha256": "2d8bcee0242dc37ed01fd899f1ff7628443793aad6c6d6bb9d336628d21cc0f8",
+      "after_sha256": "f70205215d4b31906b9a16b0aad2f4b6c746288bee70f8dc6de3288f1ff26683",
+      "before_blend_sha256": "5ef8af9620f159cd832b9d5f8586b39de02ccd981f71b2331f35ad2cd932bfa6",
+      "after_blend_sha256": "4c5e400230680d9a758cabd7d8134866ef6c88b342e7dc3a02e775ef953062fc",
+      "triangles_before": 22580,
+      "triangles_after": 22580,
+      "collapsed_before": 584,
+      "collapsed_after": 0,
+      "bounds_before": [
+        -6,
+        0,
+        -1.0499999523162842,
+        6,
+        7,
+        1.0499999523162842
+      ],
+      "bounds_after": [
+        -6,
+        0,
+        -1.0499999523162842,
+        6,
+        7,
+        1.0499999523162842
+      ],
+      "semantic_nodes_identical": true,
+      "material_definitions_identical": true,
+      "shutter_states": [
+        {
+          "local_y": 0,
+          "triangles": 22580,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -0.321875,
+          "triangles": 22580,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -0.64375,
+          "triangles": 22580,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -0.9656250000000001,
+          "triangles": 22580,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -1.2875,
+          "triangles": 22580,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -1.609375,
+          "triangles": 22580,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -1.9312500000000001,
+          "triangles": 22580,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -2.2531250000000003,
+          "triangles": 22580,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -2.575,
+          "triangles": 22580,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -2.896875,
+          "triangles": 22580,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -3.21875,
+          "triangles": 22580,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -3.5406250000000004,
+          "triangles": 22580,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -3.8625000000000003,
+          "triangles": 22580,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -4.184375,
+          "triangles": 22580,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -4.5062500000000005,
+          "triangles": 22580,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -4.828125,
+          "triangles": 22580,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -5.15,
+          "triangles": 22580,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        }
+      ]
+    },
+    {
+      "asset": "west-gate",
+      "before_sha256": "a41c73c8023548bb583b50c62b6bf4ca51b4940b5eec53d259d3c976d3b0a4a4",
+      "after_sha256": "5fb7b1c65785079b3256213d62ca2597dbfdd3d443bb5caa6b99266ce1876a4e",
+      "before_blend_sha256": "57c90350e32596f69aa5b2f420367f670abd62cb6fc98404b88570a6df7b1125",
+      "after_blend_sha256": "6f75e9c67843e86f687c1b0070be74be6b64acb228ff56cf2ea26d47bd419bea",
+      "triangles_before": 20660,
+      "triangles_after": 20660,
+      "collapsed_before": 584,
+      "collapsed_after": 0,
+      "bounds_before": [
+        -6,
+        0,
+        -1.0499999523162842,
+        6,
+        7,
+        1.0499999523162842
+      ],
+      "bounds_after": [
+        -6,
+        0,
+        -1.0499999523162842,
+        6,
+        7,
+        1.0499999523162842
+      ],
+      "semantic_nodes_identical": true,
+      "material_definitions_identical": true,
+      "shutter_states": [
+        {
+          "local_y": 0,
+          "triangles": 20660,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -0.321875,
+          "triangles": 20660,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -0.64375,
+          "triangles": 20660,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -0.9656250000000001,
+          "triangles": 20660,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -1.2875,
+          "triangles": 20660,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -1.609375,
+          "triangles": 20660,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -1.9312500000000001,
+          "triangles": 20660,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -2.2531250000000003,
+          "triangles": 20660,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -2.575,
+          "triangles": 20660,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -2.896875,
+          "triangles": 20660,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -3.21875,
+          "triangles": 20660,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -3.5406250000000004,
+          "triangles": 20660,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -3.8625000000000003,
+          "triangles": 20660,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -4.184375,
+          "triangles": 20660,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -4.5062500000000005,
+          "triangles": 20660,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -4.828125,
+          "triangles": 20660,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_y": -5.15,
+          "triangles": 20660,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        }
+      ]
+    },
+    {
+      "asset": "corner-bastion",
+      "before_sha256": "a34469f29f5cb22ede9dc9dcc114abd2a1b454ec0d800d0b2af563f74199aab9",
+      "after_sha256": "62e7c76f27b5321db7e26acc05b92387d54de3fb6991db40faef78893923141f",
+      "before_blend_sha256": "f7b9be331f7c58b58a7304c5ad58c351cc1061be1053cfd663668f25bcc1d396",
+      "after_blend_sha256": "7135eb3d10c746b12e0ca4f80da788a3cd8aeea60995dd6cb5ec0bc7b376292e",
+      "triangles_before": 21692,
+      "triangles_after": 21692,
+      "collapsed_before": 880,
+      "collapsed_after": 0,
+      "bounds_before": [
+        -3.0625,
+        0,
+        -3.062500238418579,
+        3.0625,
+        3.9600000977516174,
+        3.0625
+      ],
+      "bounds_after": [
+        -3.0625,
+        0,
+        -3.062500238418579,
+        3.0625,
+        3.9600000977516174,
+        3.0625
+      ],
+      "semantic_nodes_identical": true,
+      "material_definitions_identical": true,
+      "shutter_states": []
+    }
+  ],
+  "scope": "Game Three.js GLTFLoader: actual source geometry, exact node hierarchy/local transforms/material definitions and 17 local shutter positions per gate. Does not prove placed Float32 batching, gameplay or current game collision adoption."
+}
