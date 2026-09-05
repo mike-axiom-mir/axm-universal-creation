@@ -26,7 +26,7 @@ def box(name, p, size, mat, parent, bevel=.025):
     # Millimeter surface marks do not need rounded volume; small chamfers use one segment.
     obj=f.box(name, xyz(p), (size[0], size[2], size[1]), mat, parent, bevel if bevel>.018 else 0)
     if .005<bevel<=.018:
-        mod=obj.modifiers.new('Small machined chamfer','BEVEL');mod.width=bevel;mod.segments=1
+        mod=obj.modifiers.new('Small machined chamfer','BEVEL');mod.width=f.bevel_width(obj,bevel);mod.segments=1
         bpy.context.view_layer.objects.active=obj;bpy.ops.object.modifier_apply(modifier=mod.name)
     return obj
 
@@ -39,7 +39,7 @@ def cylinder(name, p, radius, length, mat, parent, axis='Y', sides=12, bevel=.01
     bpy.ops.mesh.primitive_cylinder_add(vertices=sides, radius=radius, depth=length, location=xyz(p))
     obj = f.finish(bpy.context.object, name, mat, parent, 0)
     if bevel>.006:
-        mod=obj.modifiers.new('Turned rim','BEVEL');mod.width=bevel;mod.segments=1
+        mod=obj.modifiers.new('Turned rim','BEVEL');mod.width=f.bevel_width(obj,bevel);mod.segments=1
         bpy.context.view_layer.objects.active=obj;bpy.ops.object.modifier_apply(modifier=mod.name)
     if axis == 'X':
         obj.rotation_euler.y = math.pi / 2

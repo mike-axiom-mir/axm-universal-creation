@@ -33,6 +33,13 @@ def empty(name, loc=(0, 0, 0), parent=None):
     return o
 
 
+def bevel_width(o, requested):
+    """Leave margin before opposing bevels meet on the shortest source edge."""
+    shortest = min((o.data.vertices[e.vertices[0]].co - o.data.vertices[e.vertices[1]].co).length
+                   for e in o.data.edges)
+    return min(requested, shortest * .45)
+
+
 def finish(o, name, mat, parent, bevel=0):
     o.name = name
     o.data.materials.append(M[mat])
@@ -41,9 +48,7 @@ def finish(o, name, mat, parent, bevel=0):
         # Thin cylinders and lofts can reach Blender's overlap clamp before
         # half their bounding dimension. Respect the shortest source edge so
         # bevel faces retain real area instead of collapsing at the clamp.
-        shortest = min((o.data.vertices[e.vertices[0]].co - o.data.vertices[e.vertices[1]].co).length
-                       for e in o.data.edges)
-        mod.width = min(bevel, shortest * .45)
+        mod.width = bevel_width(o, bevel)
         mod.segments = 2
         bpy.context.view_layer.objects.active = o
         bpy.ops.object.modifier_apply(modifier=mod.name)

@@ -1,0 +1,203 @@
+{
+  "status": "PASS",
+  "threshold_m2": 1e-12,
+  "previous_collapsed": 192,
+  "current_collapsed": 0,
+  "deck_pose_checks": 21,
+  "collision_contract_sha256": "3131d8161e32fd66c3592a33d8b69521c5d59418d6b1d0d4480fd2e4d17b9d9e",
+  "collision_contract_identical": true,
+  "scope": "Game Three.js GLTFLoader: actual source geometry, exact node hierarchy/local transforms/material definitions and 21 local Deck positions, full collision contract continuity. Does not prove placed Float32 batching, gameplay or current game collision adoption.",
+  "assets": [
+    {
+      "asset": "east-bridge",
+      "original_sha256": "43877f026939e570c567215529da1c8fd6498a32923fc3e7caf338cfe5ee45f1",
+      "sha256": "25514cdd8659ed35ea949a4f500c7a2268f8a40e746a554549a4d6b2dbfecb78",
+      "original_blend_sha256": "2b14468a134055e4c92c6adae2f2a5564b7beecba4ba618a60e61eacb1edcd26",
+      "blend_sha256": "efc431ebab9fb10c7f68ba537325cea98916faaf74e57e06e34dad445a66e081",
+      "semantic_nodes_identical": true,
+      "material_definitions_identical": true,
+      "exact_bounds_identical": true,
+      "max_bounds_delta": 0,
+      "deck_states": [
+        {
+          "local_x": 0,
+          "triangles": 15784,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_x": 0.6,
+          "triangles": 15784,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_x": 1.2,
+          "triangles": 15784,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_x": 1.8,
+          "triangles": 15784,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_x": 2.4,
+          "triangles": 15784,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_x": 3,
+          "triangles": 15784,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_x": 3.6,
+          "triangles": 15784,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_x": 4.2,
+          "triangles": 15784,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_x": 4.8,
+          "triangles": 15784,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_x": 5.4,
+          "triangles": 15784,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_x": 6,
+          "triangles": 15784,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_x": 6.6,
+          "triangles": 15784,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_x": 7.2,
+          "triangles": 15784,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_x": 7.8,
+          "triangles": 15784,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_x": 8.4,
+          "triangles": 15784,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_x": 9,
+          "triangles": 15784,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_x": 9.6,
+          "triangles": 15784,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_x": 10.2,
+          "triangles": 15784,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_x": 10.8,
+          "triangles": 15784,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_x": 11.4,
+          "triangles": 15784,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        },
+        {
+          "local_x": 12,
+          "triangles": 15784,
+          "collapsed": 0,
+          "max_bounds_delta": 0
+        }
+      ],
+      "triangles_before": 15784,
+      "triangles_after": 15784,
+      "collapsed_before": 36,
+      "collapsed_after": 0,
+      "bounds_before": [
+        -6.000000134110451,
+        -1.5350001342594624,
+        -6.604999899864197,
+        9.949999809265137,
+        1.1499999277293682,
+        6.604999542236328
+      ],
+      "bounds_after": [
+        -6.000000134110451,
+        -1.5350001342594624,
+        -6.604999899864197,
+        9.949999809265137,
+        1.1499999277293682,
+        6.604999542236328
+      ]
+    },
+    {
+      "asset": "north-relay-station",
+      "original_sha256": "cd46feafa1d0553e48c22aef83402ec67d17c25ff67c884efb24c25df025e882",
+      "sha256": "ff3d5e548f6e47341be88df9b8923bb1c4167f1aa855371835c16482f4afb0cd",
+      "original_blend_sha256": "552923e17f1adc459e9b7c9e44502c33c82b20e1091d8a006593b50c4cd396ad",
+      "blend_sha256": "4528d485f1d6b014a293cab25dc7f13d73212677a1d28ed4aa144b55642dbbfd",
+      "semantic_nodes_identical": true,
+      "material_definitions_identical": true,
+      "exact_bounds_identical": true,
+      "max_bounds_delta": 0,
+      "deck_states": [],
+      "triangles_before": 11488,
+      "triangles_after": 11488,
+      "collapsed_before": 156,
+      "collapsed_after": 0,
+      "bounds_before": [
+        -4.5,
+        0,
+        -4,
+        4.5,
+        5.25,
+        4
+      ],
+      "bounds_after": [
+        -4.5,
+        0,
+        -4,
+        4.5,
+        5.25,
+        4
+      ]
+    }
+  ]
+}
