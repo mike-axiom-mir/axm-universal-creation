@@ -72,3 +72,18 @@ This change fits the four roots by making geometry claims inspectable, leaving s
 The query computes intersections from a fixed origin using Python float arithmetic. Coincident shared-edge hits are deduplicated at numerical roundoff; separate crossings closer than the declared tolerance and disagreeing ray parity return hold. It never advances a float32 BVH ray origin in tiny increments. This helper does not extend the static GLB contract's accepted feature set or prove continuous motion, complete mesh clearance, anatomical quality or runtime admission.
 
 A real rotated receiver exposed why this matters: advancing a BVH origin by 1e-7m repeatedly hit the same face and falsely classified eight glove vertices as inside. Fixed-origin triangle intersections classify all eight outside; each point is below the receiver's local bottom plane. An independent oriented-solid-angle calculation also classifies all eight outside. The original coordinates and failing ray counts are retained in `tests/fixtures/containment_rehit.json`, alongside a positive inside control. Tests also cover rigid transforms, scale, winding reversal, boundary tolerance, unresolved thin passages and invalid/open input. Existing archived review receipts remain unchanged; this finding does not silently reclassify their other contacts.
+
+## Two-bone entry feasibility
+
+`axm_uc.limb_geometry.two_bone_entry_range(shoulder, wrist, upper_length_m, forearm_length_m, entry_axis)` computes the range of `dot(elbow - wrist, unit(entry_axis))` over every elbow position permitted by the two segment lengths. Points and lengths must share one coordinate frame and metric. The returned immutable result includes the elbow locus and minimum/maximum entry in metres. Its `classify_minimum(required_m)` method returns `possible`, `impossible`, `boundary`, `unreachable`, or `hold`; the default boundary tolerance is 1e-9m and can be supplied explicitly.
+
+```python
+from axm_uc.limb_geometry import two_bone_entry_range
+
+entry = two_bone_entry_range((0, 0, 0), (0, 0, .36), .30, .30, (0, 1, 0))
+assert entry.classify_minimum(.06) == "possible"
+```
+
+Unreachable wrists are not projected inward and impossible entry targets are not silently clamped. A straight or fully folded chain has a point locus; coincident equal-length endpoints have a sphere. Invalid/nonfinite inputs raise `ValueError`; unrepresentable endpoint/locus calculations return `hold`. The boundary tolerance classifies uncertainty near the requested entry and does not enlarge the locus. The query chooses no pose and imposes no joint limits, twist constraints, anatomy or obstacles.
+
+The weapon experiment exposed an impossible 60mm entry request: a standing steep-down Relay pose permitted at most -208.9mm. Five exported pose fixtures preserve actual shoulder/wrist/axis data and independently calculated extrema. Two other fixtures are surface-clear even though their maxima (57.9mm and 59.7mm) miss the construction preference. Thus `possible` is only axial-entry feasibility, and `impossible` is not a collision finding. Actual posed-mesh, movement and visual reviews remain separate. Additional tests cover analytic circles, rigid transforms and scale, unreachable targets, singular loci, numerical boundaries, nearly coincident endpoints and malformed input.
