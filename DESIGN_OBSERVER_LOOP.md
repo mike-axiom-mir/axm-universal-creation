@@ -1,8 +1,8 @@
 # Design Fabric Rendered Observer Loop
 
-Design Fabric v0.8 keeps one evidence loop inside AXM Universal Creation:
+Design Fabric v0.9 keeps one evidence loop inside AXM Universal Creation:
 
-`Design Genome -> design plan -> browser render -> runtime/pixel/interaction observation -> integrated judgment -> repair direction -> explicit transactional repair -> fresh render/judgment -> bound before/after comparison -> repair-cycle receipt`
+`Design Genome -> design plan -> browser render -> runtime/pixel/interaction/CDP observation -> integrated judgment -> repair direction -> explicit transactional repair -> fresh render/judgment -> bound before/after comparison -> repair-cycle receipt`
 
 This remains inside `AXM-CAP-DESIGN-FABRIC`. It is an observer/evidence layer, not another general creation machine.
 
@@ -12,7 +12,7 @@ Schema:
 
 `axm.design-render-observation/v0.1`
 
-Every observation is bound to one exact `plan_digest` and one attributed observer. Screenshot, DOM, runtime, interaction, pixel, model, and human evidence can meet in one judgment flow without becoming one undifferentiated truth claim.
+Every observation is bound to one exact `plan_digest` and one attributed observer. Screenshot, DOM, runtime, interaction, accessibility-tree, keyboard, pixel, model, and human evidence can meet in one judgment flow without becoming one undifferentiated truth claim.
 
 ## Browser runtime probe
 
@@ -35,7 +35,7 @@ Every browser invocation receives a fresh temporary user-data directory. This pr
 
 ### Runtime truth boundary
 
-Programmatic focus is not complete keyboard/tab-order proof. The accessibility findings are DOM heuristics, not a browser accessibility tree. Complex composited contrast remains unproven.
+Programmatic focus is not complete keyboard/tab-order proof. The DOM accessibility findings are heuristics, not the browser accessibility tree. Complex composited contrast remains unproven.
 
 Reduced-motion evidence is conservative. PASS is emitted only when no motion is observed or an actual duration reduction is observed during the reduced-motion run. Equal duration stays unproven because motion may instead be reduced by travel distance or another mechanism.
 
@@ -49,7 +49,7 @@ Schema:
 
 The browser observer can execute caller-authored recipes instead of inventing an autonomous interaction crawl.
 
-A recipe contains an id and bounded steps. v0.8 supports:
+A recipe contains an id and bounded steps. v0.9 supports:
 
 - `focus` on an exact CSS selector;
 - `activate` on an exact CSS selector only when `allow_synthetic_activation=true` is explicitly supplied.
@@ -60,9 +60,59 @@ For each step the evidence can retain the selector, action, status, bounded befo
 
 ### Interaction truth boundary
 
-This is **not** real keyboard traversal and does not create trusted human input events. `HTMLElement.click()` is synthetic browser execution. A PASS means only that the exact requested recipes completed without recorded probe errors for the exact selectors and viewport.
+This does not create trusted human input events. `HTMLElement.click()` is synthetic browser execution. A PASS means only that the exact requested recipes completed without recorded probe errors for the exact selectors and viewport.
 
 It does not prove discoverability, usability, correct tab order, assistive-technology behavior, or that the requested product behavior was semantically the right behavior.
+
+## CDP semantic observer
+
+Schema:
+
+`axm.design-cdp-semantics/v0.1`
+
+v0.9 adds a second, stronger browser evidence path through Chrome DevTools Protocol. It launches a caller-selected local Chromium-compatible executable with:
+
+- a fresh temporary browser profile;
+- loopback-only remote debugging;
+- a local `file://` target only;
+- bounded viewport and timeout inputs;
+- no third-party Python dependency.
+
+The adapter implements the small WebSocket/CDP transport it needs with the Python standard library rather than adding another permanent browser framework dependency.
+
+### Browser accessibility tree
+
+The CDP observer calls:
+
+`Accessibility.getFullAXTree`
+
+and materializes the raw returned tree as a digest-bound `accessibility-tree` artifact.
+
+It also derives a deterministic summary containing:
+
+- node count;
+- ignored-node count;
+- role counts;
+- focusable-node count;
+- focusable nodes with no observed accessible name.
+
+This is materially stronger than the earlier DOM heuristics because it uses the browser accessibility domain itself.
+
+It still does not become a WCAG verdict. A captured AX tree proves that the browser exposed those accessibility semantics for the observed page state. It does not prove every WCAG criterion, real screen-reader output, user comprehension, or accessibility quality.
+
+### Bounded Tab traversal
+
+The same CDP observer can execute up to 64 explicit Tab steps with:
+
+`Input.dispatchKeyEvent`
+
+After every Tab step it reads `document.activeElement` and bounded computed focus-style state. The evidence retains the exact sequence, element identity fields, visibility, focus-visible signal, and element rectangle.
+
+This closes an important gap from v0.8: the browser's Tab-navigation machinery is now actually invoked instead of merely calling `.focus()` on chosen controls.
+
+But the claim stays narrow. A CDP-dispatched Tab is still browser-synthetic input. It is not a physical keyboard event, trusted human input, proof of discoverability, proof that tab order is semantically good, or proof of assistive-technology behavior.
+
+The CDP observer never activates controls while doing Tab traversal.
 
 ## Screenshot observer
 
@@ -111,7 +161,7 @@ The rule stays simple:
 
 `otherwise -> PASS`
 
-Real browser measurements can move overflow, focus, reduced-motion, rendered-contrast, and explicit interaction-error gates out of HOLD when their own evidence exists. Perceptual gates stay separate until an attributed observer supplies them.
+Real browser measurements can move overflow, focus, reduced-motion, rendered-contrast, and explicit interaction-error gates out of HOLD when their own evidence exists. CDP accessibility and keyboard artifacts can be required as explicit attributed assessments without being silently promoted to default aesthetic authority. Perceptual gates stay separate until an attributed observer supplies them.
 
 A PASS is narrow evidence for one exact plan and observation set, not a universal claim of beauty, originality, accessibility, or correctness.
 
@@ -129,7 +179,7 @@ Schema:
 
 `axm.design-repair-cycle-receipt/v0.1`
 
-v0.8 can now bind a complete observed repair lane without performing or approving the repair itself. The receipt requires:
+The cycle receipt binds:
 
 1. the exact pre-repair integrated judgment;
 2. the Design Fabric repair plan whose `source_judgment_digest` matches it;
@@ -142,16 +192,16 @@ Every link is digest-checked. A mismatch fails closed.
 
 The cycle records overall FAIL/HOLD/PASS movement and per-gate transitions such as `TOWARD_PASS`, `UNCHANGED`, or `AWAY_FROM_PASS`. That is evidence-state movement only. Even a post-repair PASS does not become an automatic claim that the interface is beautiful, semantically correct, accepted by a human, or finished.
 
-The repair-cycle recorder does not rewrite source. It consumes the evidence emitted by the already-existing transactional repair boundary and gives the whole loop one deterministic continuity digest.
-
 ## Current frontier
 
-The next useful observer growth is:
+The two largest mechanical gaps from v0.8 are now partly closed: browser accessibility-tree capture is real, and Tab navigation now goes through the browser input domain rather than programmatic focus.
 
-1. real keyboard traversal evidence rather than programmatic focus;
-2. browser accessibility-tree capture;
-3. richer non-destructive interaction state assertions while keeping recipes explicit;
-4. an attributed model or human visual observer for hierarchy/spacing/coherence;
-5. eventually using accumulated repair-cycle receipts as evidence for which repair strategies worked in which context, without silently turning history into policy or taste.
+The next useful observer growth is therefore less about adding another camera and more about **semantic perception**:
 
-The camera now has pixel sensing, runtime reflexes, explicit bounded interaction probes, repair-delta memory, and an end-to-end continuity receipt. The remaining work is deeper semantics and stronger attributed perception, not pretending every measurable signal is taste.
+1. merge screenshot/browser/CDP evidence into one provenance-preserving viewport observation without upgrading weaker evidence classes;
+2. richer accessibility-tree checks with explicit rule provenance rather than a generic accessibility score;
+3. richer non-destructive state assertions while keeping interaction recipes explicit;
+4. an attributed model or human visual observer for hierarchy, spacing, balance, readability, component coherence, and visual intent;
+5. use accumulated repair-cycle receipts to learn which repair strategies work in which context, while keeping history as evidence rather than silent policy or taste.
+
+The camera now has pixel sensing, runtime reflexes, explicit interaction probes, browser accessibility semantics, browser-level Tab traversal, repair-delta memory, and an end-to-end continuity receipt. The remaining frontier is increasingly **understanding what was seen**, not merely collecting more pixels.
