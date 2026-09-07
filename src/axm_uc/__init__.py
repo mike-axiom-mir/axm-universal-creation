@@ -9,6 +9,7 @@ def _register_extension_builtins() -> None:
     from . import specialist_pool as _specialist_pool
     from .chameleon import ChameleonError, operate_chameleon
     from .design_browser import DesignBrowserError, operate_design_browser
+    from .design_cdp import DesignCdpError, operate_design_cdp
     from .design_compare import DesignCompareError, operate_design_compare
     from .design_cycle import DesignCycleError, operate_design_cycle
     from .design_fabric import DesignFabricError, operate_design_fabric
@@ -83,6 +84,10 @@ def _register_extension_builtins() -> None:
         "propose-repair",
     }
     design_browser_operations = {"capture-browser"}
+    design_cdp_operations = {
+        "inspect-cdp-observer",
+        "capture-cdp-semantics",
+    }
     design_visual_operations = {
         "inspect-visual-observer",
         "observe-screenshot",
@@ -126,6 +131,8 @@ def _register_extension_builtins() -> None:
         try:
             if operation in design_browser_operations:
                 return operate_design_browser(root, inputs)
+            if operation in design_cdp_operations:
+                return operate_design_cdp(root, inputs)
             if operation in design_observer_operations:
                 return operate_design_observer(inputs)
             if operation in design_visual_operations:
@@ -137,6 +144,7 @@ def _register_extension_builtins() -> None:
             return operate_design_fabric(root, inputs)
         except (
             DesignBrowserError,
+            DesignCdpError,
             DesignCompareError,
             DesignCycleError,
             DesignFabricError,
