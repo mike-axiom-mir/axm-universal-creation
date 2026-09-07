@@ -11,6 +11,7 @@ def _register_extension_builtins() -> None:
     from .design_browser import DesignBrowserError, operate_design_browser
     from .design_fabric import DesignFabricError, operate_design_fabric
     from .design_observer import DesignObserverError, operate_design_observer
+    from .design_visual import DesignVisualError, operate_design_visual
     from .simulation import SimulationError, operate_simulation
     from .specialist_pool_extension import build_specialist_pool as _contextual_pool_builder
     from .stepwise_workflow import StepwiseWorkflowError, operate_stepwise_workflow
@@ -80,6 +81,12 @@ def _register_extension_builtins() -> None:
         "propose-repair",
     }
     design_browser_operations = {"capture-browser"}
+    design_visual_operations = {
+        "inspect-visual-observer",
+        "observe-screenshot",
+        "derive-screenshot-genome",
+        "observe-render-screenshot",
+    }
 
     def multi_perspective_orchestration(root, inputs):
         operation = str(inputs.get("operation", "prepare")).strip().casefold()
@@ -111,8 +118,10 @@ def _register_extension_builtins() -> None:
                 return operate_design_browser(root, inputs)
             if operation in design_observer_operations:
                 return operate_design_observer(inputs)
+            if operation in design_visual_operations:
+                return operate_design_visual(root, inputs)
             return operate_design_fabric(root, inputs)
-        except (DesignBrowserError, DesignFabricError, DesignObserverError, ValueError, TypeError) as exc:
+        except (DesignBrowserError, DesignFabricError, DesignObserverError, DesignVisualError, ValueError, TypeError) as exc:
             details = getattr(exc, "details", {})
             raise _capabilities.CapabilityError(str(exc), details) from exc
 
