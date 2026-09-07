@@ -8,6 +8,7 @@ def _register_extension_builtins() -> None:
     from . import capabilities as _capabilities
     from . import specialist_pool as _specialist_pool
     from .chameleon import ChameleonError, operate_chameleon
+    from .design_browser import DesignBrowserError, operate_design_browser
     from .design_fabric import DesignFabricError, operate_design_fabric
     from .design_observer import DesignObserverError, operate_design_observer
     from .simulation import SimulationError, operate_simulation
@@ -78,6 +79,7 @@ def _register_extension_builtins() -> None:
         "judge-rendered",
         "propose-repair",
     }
+    design_browser_operations = {"capture-browser"}
 
     def multi_perspective_orchestration(root, inputs):
         operation = str(inputs.get("operation", "prepare")).strip().casefold()
@@ -105,10 +107,12 @@ def _register_extension_builtins() -> None:
     def design_fabric_surface(root, inputs):
         operation = str(inputs.get("operation", "")).strip().casefold()
         try:
+            if operation in design_browser_operations:
+                return operate_design_browser(root, inputs)
             if operation in design_observer_operations:
                 return operate_design_observer(inputs)
             return operate_design_fabric(root, inputs)
-        except (DesignFabricError, DesignObserverError, ValueError, TypeError) as exc:
+        except (DesignBrowserError, DesignFabricError, DesignObserverError, ValueError, TypeError) as exc:
             details = getattr(exc, "details", {})
             raise _capabilities.CapabilityError(str(exc), details) from exc
 
