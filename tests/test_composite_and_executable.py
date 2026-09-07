@@ -20,7 +20,7 @@ class CompositeAndExecutableTests(unittest.TestCase):
         self.assertEqual(summary["implemented_master_records"], 28)
         self.assertEqual(summary["implemented_master_by_level"], {"component": 19, "organ": 9})
         self.assertEqual(summary["live_capabilities"], 23)
-        self.assertEqual(summary["resolved_bindings"], 72)
+        self.assertEqual(summary["resolved_bindings"], 73)
 
         project = machine.executable(master_id="AXM-24-WORKSPACE-COLLABORATION-C-010-project")["master"]
         self.assertEqual(project["status"], "live-backed")
@@ -222,7 +222,7 @@ class CompositeAndExecutableTests(unittest.TestCase):
             _resolve_binding(
                 {"from": "steps.build.files", "transform": "arbitrary-expression"},
                 {},
-                {"build": {"files": [{"path": "a.txt", "sha256": digest_a}]}},
+                {"build": {"files": [{"path": "a.txt", "sha256": digest_a}]},
             )
 
 
