@@ -8,6 +8,7 @@ def _register_extension_builtins() -> None:
     from . import capabilities as _capabilities
     from . import specialist_pool as _specialist_pool
     from .chameleon import ChameleonError, operate_chameleon
+    from .design_fabric import DesignFabricError, operate_design_fabric
     from .simulation import SimulationError, operate_simulation
     from .specialist_pool_extension import build_specialist_pool as _contextual_pool_builder
     from .stepwise_workflow import StepwiseWorkflowError, operate_stepwise_workflow
@@ -94,8 +95,16 @@ def _register_extension_builtins() -> None:
             details = getattr(exc, "details", {})
             raise _capabilities.CapabilityError(str(exc), details) from exc
 
+    def design_fabric_surface(root, inputs):
+        try:
+            return operate_design_fabric(root, inputs)
+        except (DesignFabricError, ValueError, TypeError) as exc:
+            details = getattr(exc, "details", {})
+            raise _capabilities.CapabilityError(str(exc), details) from exc
+
     _capabilities.BUILTINS["builtin:specialist_tournament"] = multi_perspective_orchestration
     _capabilities.BUILTINS["builtin:simulate_creation"] = adaptive_simulation_surface
+    _capabilities.BUILTINS["builtin:design_fabric"] = design_fabric_surface
 
 
 _register_extension_builtins()
