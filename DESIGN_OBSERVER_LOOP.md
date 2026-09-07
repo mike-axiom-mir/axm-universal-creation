@@ -1,8 +1,8 @@
 # Design Fabric Rendered Observer Loop
 
-Design Fabric v0.7 keeps one evidence loop inside AXM Universal Creation:
+Design Fabric v0.8 keeps one evidence loop inside AXM Universal Creation:
 
-`Design Genome -> design plan -> browser render -> runtime/pixel/interaction observation -> integrated judgment -> repair direction -> explicit repair -> render again -> bound before/after comparison`
+`Design Genome -> design plan -> browser render -> runtime/pixel/interaction observation -> integrated judgment -> repair direction -> explicit transactional repair -> fresh render/judgment -> bound before/after comparison -> repair-cycle receipt`
 
 This remains inside `AXM-CAP-DESIGN-FABRIC`. It is an observer/evidence layer, not another general creation machine.
 
@@ -47,9 +47,9 @@ Schema:
 
 `axm.browser-interaction-probe/v0.1`
 
-The browser observer can now execute caller-authored recipes instead of inventing an autonomous interaction crawl.
+The browser observer can execute caller-authored recipes instead of inventing an autonomous interaction crawl.
 
-A recipe contains an id and bounded steps. v0.7 supports:
+A recipe contains an id and bounded steps. v0.8 supports:
 
 - `focus` on an exact CSS selector;
 - `activate` on an exact CSS selector only when `allow_synthetic_activation=true` is explicitly supplied.
@@ -76,7 +76,7 @@ Schema:
 
 `axm.design-render-comparison/v0.1`
 
-A repair cycle can now compare one exact before screenshot with one exact after screenshot.
+A repair cycle can compare one exact before screenshot with one exact after screenshot.
 
 Before comparison, Design Fabric re-reads both PNG files and verifies that each byte digest matches the screenshot artifact declared by its corresponding render-observation receipt. Only then does it measure:
 
@@ -117,11 +117,32 @@ A PASS is narrow evidence for one exact plan and observation set, not a universa
 
 ## Repair direction
 
-Failed or held gates still produce bounded repair direction instead of silent source rewriting:
+Failed or held gates produce bounded repair direction instead of silent source rewriting:
 
-`evidence -> repair direction -> explicit bounded patch -> existing verification -> browser render -> fresh evidence -> before/after comparison`
+`evidence -> repair direction -> explicit bounded patch -> existing transactional repair/verification -> browser render -> fresh evidence -> before/after comparison`
 
-No layer accepts its own repair.
+No Design Fabric layer accepts its own repair.
+
+## Repair-cycle continuity receipt
+
+Schema:
+
+`axm.design-repair-cycle-receipt/v0.1`
+
+v0.8 can now bind a complete observed repair lane without performing or approving the repair itself. The receipt requires:
+
+1. the exact pre-repair integrated judgment;
+2. the Design Fabric repair plan whose `source_judgment_digest` matches it;
+3. a published, validation-passed `OBSERVED_TRANSACTIONAL_PROJECT_REPAIR` result from existing Universal Creation repair machinery;
+4. the exact pre-repair and post-repair render-observation receipts;
+5. the bound before/after render comparison;
+6. the exact post-repair integrated judgment.
+
+Every link is digest-checked. A mismatch fails closed.
+
+The cycle records overall FAIL/HOLD/PASS movement and per-gate transitions such as `TOWARD_PASS`, `UNCHANGED`, or `AWAY_FROM_PASS`. That is evidence-state movement only. Even a post-repair PASS does not become an automatic claim that the interface is beautiful, semantically correct, accepted by a human, or finished.
+
+The repair-cycle recorder does not rewrite source. It consumes the evidence emitted by the already-existing transactional repair boundary and gives the whole loop one deterministic continuity digest.
 
 ## Current frontier
 
@@ -131,6 +152,6 @@ The next useful observer growth is:
 2. browser accessibility-tree capture;
 3. richer non-destructive interaction state assertions while keeping recipes explicit;
 4. an attributed model or human visual observer for hierarchy/spacing/coherence;
-5. a repair-cycle receipt that links judgment -> repair plan -> source patch -> new plan/render -> comparison without granting automatic acceptance.
+5. eventually using accumulated repair-cycle receipts as evidence for which repair strategies worked in which context, without silently turning history into policy or taste.
 
-The camera now has pixel sensing, runtime reflexes, explicit bounded interaction probes, and repair-delta memory. The remaining work is deeper semantics and stronger attributed perception, not pretending every measurable signal is taste.
+The camera now has pixel sensing, runtime reflexes, explicit bounded interaction probes, repair-delta memory, and an end-to-end continuity receipt. The remaining work is deeper semantics and stronger attributed perception, not pretending every measurable signal is taste.
