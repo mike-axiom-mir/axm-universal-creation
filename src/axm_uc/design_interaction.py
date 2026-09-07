@@ -44,7 +44,8 @@ def normalize_interaction_recipes(raw: Any, allow_synthetic_activation: Any = Fa
         return []
     if not isinstance(raw, list) or len(raw) > MAX_RECIPES:
         raise DesignInteractionError(f"interaction_recipes must be a list with at most {MAX_RECIPES} entries")
-    result = []
+
+    result: list[dict[str, Any]] = []
     ids: set[str] = set()
     for recipe_index, recipe in enumerate(raw):
         label = f"interaction_recipes[{recipe_index}]"
@@ -54,6 +55,7 @@ def normalize_interaction_recipes(raw: Any, allow_synthetic_activation: Any = Fa
         if recipe_id in ids:
             raise DesignInteractionError("interaction recipe ids must be unique", {"id": recipe_id})
         ids.add(recipe_id)
+
         steps_raw = recipe["steps"]
         if not isinstance(steps_raw, list) or not 1 <= len(steps_raw) <= MAX_STEPS_PER_RECIPE:
             raise DesignInteractionError(f"{label}.steps must contain 1..{MAX_STEPS_PER_RECIPE} entries")
@@ -73,8 +75,10 @@ def normalize_interaction_recipes(raw: Any, allow_synthetic_activation: Any = Fa
                     "synthetic activation is disabled unless explicitly authorized",
                     {"recipe": recipe_id, "step": step_index},
                 )
-            selector = _text(step["selector"], f"{step_label}.selector", 500)
-            steps.append({"action": action, "selector": selector})
+            steps.append({
+                "action": action,
+                "selector": _text(step["selector"], f"{step_label}.selector", 500),
+            })
         result.append({"id": recipe_id, "steps": steps})
     return result
 
@@ -90,124 +94,162 @@ def _safe_json_for_script(value: Any) -> str:
     )
 
 
+_INTERACTION_SCRIPT_TEMPLATE = r"""
+(() => {
+  const schema = __AXM_SCHEMA__;
+  const markerId = __AXM_MARKER_ID__;
+  const recipes = __AXM_RECIPES__;
+  const activationAuthorized = __AXM_ACTIVATION__;
+  const blocked = [];
+
+  const visible = (element) => {
+    if (!(element instanceof Element)) return false;
+    const style = getComputedStyle(element);
+    const rect = element.getBoundingClientRect();
+    return style.display !== "none" && style.visibility !== "hidden" && Number(style.opacity) !== 0 && rect.width > 0 && rect.height > 0;
+  };
+  const state = (element) => {
+    const style = getComputedStyle(element);
+    return {
+      tag:String(element.tagName || "").toLowerCase(),
+      id:String(element.id || "").slice(0,120),
+      role:String(element.getAttribute("role") || "").slice(0,120),
+      aria_expanded:element.getAttribute("aria-expanded"),
+      aria_pressed:element.getAttribute("aria-pressed"),
+      checked:"checked" in element ? Boolean(element.checked) : null,
+      disabled:"disabled" in element ? Boolean(element.disabled) : element.hasAttribute("aria-disabled"),
+      hidden:!visible(element),
+      class_name:String(element.className || "").slice(0,300),
+      text:String(element.textContent || "").trim().slice(0,300),
+      outline_style:String(style.outlineStyle || ""),
+      outline_width:String(style.outlineWidth || ""),
+      box_shadow:String(style.boxShadow || "").slice(0,300),
+    };
+  };
+  const focusVisible = (element) => {
+    const style = getComputedStyle(element);
+    const outline = style.outlineStyle !== "none" && (Number.parseFloat(style.outlineWidth || "0") || 0) > 0;
+    const shadow = Boolean(style.boxShadow && style.boxShadow !== "none");
+    return document.activeElement === element && (outline || shadow);
+  };
+  const activationAllowedFor = (element) => {
+    const tag = String(element.tagName || "").toLowerCase();
+    const type = String(element.getAttribute("type") || "").toLowerCase();
+    const role = String(element.getAttribute("role") || "").toLowerCase();
+    return tag === "button" || tag === "summary" || role === "button" || (tag === "input" && ["checkbox","radio","button"].includes(type));
+  };
+
+  addEventListener("submit", (event) => {
+    event.preventDefault();
+    if (blocked.length < 128) blocked.push({kind:"blocked-form-submit",message:"form submission blocked during temporary interaction probe"});
+  }, true);
+
+  const finish = () => {
+    const recipeResults = [];
+    let interactionErrorCount = 0;
+    for (const recipe of recipes) {
+      const steps = [];
+      let recipeFailed = false;
+      for (let index = 0; index < recipe.steps.length; index += 1) {
+        const step = recipe.steps[index];
+        const row = {index,action:step.action,selector:step.selector,status:"HOLD"};
+        try {
+          const element = document.querySelector(step.selector);
+          if (!element) {
+            row.status = "FAIL";
+            row.reason = "selector-not-found";
+            recipeFailed = true;
+            interactionErrorCount += 1;
+            steps.push(row);
+            continue;
+          }
+          row.before = state(element);
+          if (step.action === "focus") {
+            if (!(element instanceof HTMLElement) || !visible(element)) {
+              row.status = "FAIL";
+              row.reason = "target-not-visible-focusable-html-element";
+              recipeFailed = true;
+              interactionErrorCount += 1;
+            } else {
+              element.focus({preventScroll:true});
+              row.focus_active = document.activeElement === element;
+              row.focus_visible = focusVisible(element);
+              row.status = row.focus_active ? "PASS" : "FAIL";
+              if (row.status === "FAIL") {
+                recipeFailed = true;
+                interactionErrorCount += 1;
+              }
+            }
+          } else if (step.action === "activate") {
+            if (!activationAuthorized) {
+              row.status = "FAIL";
+              row.reason = "activation-not-authorized";
+              recipeFailed = true;
+              interactionErrorCount += 1;
+            } else if (!(element instanceof HTMLElement) || !visible(element) || !activationAllowedFor(element)) {
+              row.status = "FAIL";
+              row.reason = "activation-target-outside-bounded-control-contract";
+              recipeFailed = true;
+              interactionErrorCount += 1;
+            } else {
+              element.click();
+              row.status = "PASS";
+              row.synthetic_activation = true;
+            }
+          }
+          row.after = state(element);
+          row.state_change_detected = JSON.stringify(row.before) !== JSON.stringify(row.after);
+        } catch (error) {
+          row.status = "FAIL";
+          row.reason = "exception";
+          row.error = String(error).slice(0,500);
+          recipeFailed = true;
+          interactionErrorCount += 1;
+        }
+        steps.push(row);
+      }
+      recipeResults.push({id:recipe.id,status:recipeFailed ? "FAIL" : "PASS",steps});
+    }
+
+    const probe = {
+      schema,
+      method:"explicit-programmatic-focus-and-bounded-synthetic-activation-on-temporary-local-copy",
+      activation_authorized:activationAuthorized,
+      requested_recipe_count:recipes.length,
+      completed_recipe_count:recipeResults.filter((row) => row.status === "PASS").length,
+      interaction_error_count:interactionErrorCount,
+      blocked_or_probe_errors:blocked.slice(0,128),
+      recipes:recipeResults,
+      truth_boundary:{
+        real_keyboard_tab_traversal:false,
+        trusted_user_input_events:false,
+        form_submission_allowed:false,
+        arbitrary_link_navigation_allowed:false,
+        original_source_modified:false,
+      },
+    };
+    const marker = document.createElement("script");
+    marker.id = markerId;
+    marker.type = "application/json";
+    marker.textContent = JSON.stringify(probe);
+    (document.body || document.documentElement).appendChild(marker);
+  };
+
+  const schedule = () => requestAnimationFrame(() => requestAnimationFrame(finish));
+  if (document.readyState === "complete") schedule();
+  else addEventListener("load", schedule, {once:true});
+})();
+"""
+
+
 def _interaction_script(recipes: list[dict[str, Any]], allow_synthetic_activation: bool) -> str:
-    payload = _safe_json_for_script(recipes)
-    allowed = "true" if allow_synthetic_activation else "false"
-    return rf"""
-+(() => {{
-+  const schema = "{INTERACTION_PROBE_SCHEMA}";
-+  const recipes = {payload};
-+  const activationAuthorized = {allowed};
-+  const probeErrors = [];
-+  const visible = (element) => {{
-+    if (!(element instanceof Element)) return false;
-+    const style = getComputedStyle(element);
-+    const rect = element.getBoundingClientRect();
-+    return style.display !== "none" && style.visibility !== "hidden" && Number(style.opacity) !== 0 && rect.width > 0 && rect.height > 0;
-+  }};
-+  const state = (element) => {{
-+    const style = getComputedStyle(element);
-+    return {{
-+      tag:String(element.tagName || "").toLowerCase(),
-+      id:String(element.id || "").slice(0,120),
-+      role:String(element.getAttribute("role") || "").slice(0,120),
-+      aria_expanded:element.getAttribute("aria-expanded"),
-+      aria_pressed:element.getAttribute("aria-pressed"),
-+      checked:"checked" in element ? Boolean(element.checked) : null,
-+      disabled:"disabled" in element ? Boolean(element.disabled) : element.hasAttribute("aria-disabled"),
-+      hidden:!visible(element),
-+      class_name:String(element.className || "").slice(0,300),
-+      text:String(element.textContent || "").trim().slice(0,300),
-+      outline_style:String(style.outlineStyle || ""),
-+      outline_width:String(style.outlineWidth || ""),
-+      box_shadow:String(style.boxShadow || "").slice(0,300),
-+    }};
-+  }};
-+  const focusVisible = (element) => {{
-+    const style = getComputedStyle(element);
-+    const outline = style.outlineStyle !== "none" && (Number.parseFloat(style.outlineWidth || "0") || 0) > 0;
-+    const shadow = Boolean(style.boxShadow && style.boxShadow !== "none");
-+    return document.activeElement === element && (outline || shadow);
-+  }};
-+  const activationAllowedFor = (element) => {{
-+    const tag = String(element.tagName || "").toLowerCase();
-+    const type = String(element.getAttribute("type") || "").toLowerCase();
-+    const role = String(element.getAttribute("role") || "").toLowerCase();
-+    return tag === "button" || tag === "summary" || role === "button" || (tag === "input" && ["checkbox","radio","button"].includes(type));
-+  }};
-+  addEventListener("submit", (event) => {{ event.preventDefault(); probeErrors.push({{kind:"blocked-form-submit",message:"form submission blocked during temporary interaction probe"}}); }}, true);
-+  const finish = () => {{
-+    const recipeResults = [];
-+    let interactionErrorCount = 0;
-+    for (const recipe of recipes) {{
-+      const steps = [];
-+      let recipeFailed = false;
-+      for (let index = 0; index < recipe.steps.length; index += 1) {{
-+        const step = recipe.steps[index];
-+        const row = {{index,action:step.action,selector:step.selector,status:"HOLD"}};
-+        try {{
-+          const element = document.querySelector(step.selector);
-+          if (!element) {{
-+            row.status = "FAIL"; row.reason = "selector-not-found"; recipeFailed = true; interactionErrorCount += 1; steps.push(row); continue;
-+          }}
-+          row.before = state(element);
-+          if (step.action === "focus") {{
-+            if (!(element instanceof HTMLElement) || !visible(element)) {{
-+              row.status = "FAIL"; row.reason = "target-not-visible-focusable-html-element"; recipeFailed = true; interactionErrorCount += 1;
-+            }} else {{
-+              element.focus({{preventScroll:true}});
-+              row.focus_active = document.activeElement === element;
-+              row.focus_visible = focusVisible(element);
-+              row.status = row.focus_active ? "PASS" : "FAIL";
-+              if (row.status === "FAIL") {{ recipeFailed = true; interactionErrorCount += 1; }}
-+            }}
-+          }} else if (step.action === "activate") {{
-+            if (!activationAuthorized) {{
-+              row.status = "FAIL"; row.reason = "activation-not-authorized"; recipeFailed = true; interactionErrorCount += 1;
-+            }} else if (!(element instanceof HTMLElement) || !visible(element) || !activationAllowedFor(element)) {{
-+              row.status = "FAIL"; row.reason = "activation-target-outside-bounded-control-contract"; recipeFailed = true; interactionErrorCount += 1;
-+            }} else {{
-+              element.click();
-+              row.status = "PASS";
-+              row.synthetic_activation = true;
-+            }}
-+          }}
-+          row.after = state(element);
-+          row.state_change_detected = JSON.stringify(row.before) !== JSON.stringify(row.after);
-+        }} catch (error) {{
-+          row.status = "FAIL"; row.reason = "exception"; row.error = String(error).slice(0,500); recipeFailed = true; interactionErrorCount += 1;
-+        }}
-+        steps.push(row);
-+      }}
-+      recipeResults.push({{id:recipe.id,status:recipeFailed ? "FAIL" : "PASS",steps}});
-+    }}
-+    const probe = {{
-+      schema,
-+      method:"explicit-programmatic-focus-and-bounded-synthetic-activation-on-temporary-local-copy",
-+      activation_authorized:activationAuthorized,
-+      requested_recipe_count:recipes.length,
-+      completed_recipe_count:recipeResults.filter((row) => row.status === "PASS").length,
-+      interaction_error_count:interactionErrorCount,
-+      blocked_or_probe_errors:probeErrors.slice(0,128),
-+      recipes:recipeResults,
-+      truth_boundary:{{
-+        real_keyboard_tab_traversal:false,
-+        trusted_user_input_events:false,
-+        form_submission_allowed:false,
-+        arbitrary_link_navigation_allowed:false,
-+        original_source_modified:false,
-+      }},
-+    }};
-+    const marker = document.createElement("script");
-+    marker.id = "{INTERACTION_PROBE_ELEMENT_ID}";
-+    marker.type = "application/json";
-+    marker.textContent = JSON.stringify(probe);
-+    (document.body || document.documentElement).appendChild(marker);
-+  }};
-+  const schedule = () => requestAnimationFrame(() => requestAnimationFrame(finish));
-+  if (document.readyState === "complete") schedule(); else addEventListener("load", schedule, {{once:true}});
-+}})();
-+"""
+    return (
+        _INTERACTION_SCRIPT_TEMPLATE
+        .replace("__AXM_SCHEMA__", _safe_json_for_script(INTERACTION_PROBE_SCHEMA))
+        .replace("__AXM_MARKER_ID__", _safe_json_for_script(INTERACTION_PROBE_ELEMENT_ID))
+        .replace("__AXM_RECIPES__", _safe_json_for_script(recipes))
+        .replace("__AXM_ACTIVATION__", "true" if allow_synthetic_activation else "false")
+    )
 
 
 _BODY_END_RE = re.compile(r"</body\s*>", re.I)
@@ -229,6 +271,7 @@ def instrument_interaction_html(
             "instrumented": False,
             "activation_authorized": bool(allow_synthetic_activation),
         }
+
     script = f'<script data-axm-interaction-probe="v0.1">{_interaction_script(recipes, bool(allow_synthetic_activation))}</script>\n'
     body_match = _BODY_END_RE.search(html_text)
     if body_match:
@@ -282,7 +325,14 @@ def interaction_measurements(probe: dict[str, Any] | None) -> dict[str, Any]:
         return {}
     requested = probe.get("requested_recipe_count")
     errors = probe.get("interaction_error_count")
-    if isinstance(requested, int) and not isinstance(requested, bool) and requested > 0 and isinstance(errors, int) and not isinstance(errors, bool) and errors >= 0:
+    if (
+        isinstance(requested, int)
+        and not isinstance(requested, bool)
+        and requested > 0
+        and isinstance(errors, int)
+        and not isinstance(errors, bool)
+        and errors >= 0
+    ):
         return {"interaction_error_count": errors}
     return {}
 
