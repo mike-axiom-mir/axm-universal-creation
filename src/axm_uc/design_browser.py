@@ -52,6 +52,12 @@ def _text(value: Any, label: str, maximum: int = 2000) -> str:
     return result
 
 
+def _path_text(value: Any, label: str, maximum: int = 2000) -> str:
+    if isinstance(value, os.PathLike):
+        value = os.fspath(value)
+    return _text(value, label, maximum)
+
+
 def _integer(value: Any, label: str, minimum: int, maximum: int) -> int:
     if isinstance(value, bool) or not isinstance(value, int) or not minimum <= value <= maximum:
         raise DesignBrowserError(f"{label} must be an integer between {minimum} and {maximum}")
@@ -82,7 +88,7 @@ def _is_machine_body_path(root: Path, target: Path) -> bool:
 
 
 def _resolve_browser(value: Any) -> Path:
-    requested = _text(value, "browser_executable", 1000)
+    requested = _path_text(value, "browser_executable", 1000)
     direct = Path(requested).expanduser()
     if direct.is_file():
         resolved = direct.resolve()
@@ -100,7 +106,7 @@ def _resolve_browser(value: Any) -> Path:
 
 
 def _target_html(root: Path, value: Any) -> Path:
-    text = _text(value, "target", 1000)
+    text = _path_text(value, "target", 1000)
     if "://" in text:
         raise DesignBrowserError(
             "browser capture v0.1 accepts local paths only; URL/network capture is unsupported",
@@ -114,7 +120,7 @@ def _target_html(root: Path, value: Any) -> Path:
     return target.resolve()
 
 
-def _viewport_sizes(plan: dict[str, Any], raw: Any) -> list[dict[str, int]]:
+def _viewport_sizes(plan: dict[str, Any], raw: Any) -> list[dict[str, Any]]:
     required = plan.get("viewports")
     if not isinstance(required, list) or not required or len(required) > MAX_VIEWPORTS:
         raise DesignBrowserError("design plan must declare 1..16 viewport ids")
@@ -123,12 +129,12 @@ def _viewport_sizes(plan: dict[str, Any], raw: Any) -> list[dict[str, int]]:
             "viewport_sizes must define exactly every design-plan viewport",
             {"required": required, "supplied": sorted(raw) if isinstance(raw, dict) else None},
         )
-    rows = []
+    rows: list[dict[str, Any]] = []
     for viewport_id in required:
         size = raw[viewport_id]
         if not isinstance(size, dict) or not {"width", "height"}.issubset(size) or set(size) - {"width", "height", "device_pixel_ratio"}:
             raise DesignBrowserError(f"viewport_sizes.{viewport_id} is invalid")
-        row = {
+        row: dict[str, Any] = {
             "id": str(viewport_id),
             "width": _integer(size["width"], f"viewport_sizes.{viewport_id}.width", 1, 100_000),
             "height": _integer(size["height"], f"viewport_sizes.{viewport_id}.height", 1, 100_000),
@@ -191,7 +197,7 @@ def capture_local_browser(
         raise DesignBrowserError("capture-browser requires an axm.design-plan/v0.1 plan with plan_digest")
     plan = json.loads(json.dumps(plan_raw))
     target = _target_html(root, target_value)
-    output = _resolve_path(root, _text(output_value, "path", 1000))
+    output = _resolve_path(root, _path_text(output_value, "path", 1000))
     if _is_machine_body_path(root, output):
         raise DesignBrowserError("browser capture is an ordinary creation and cannot write into the live machine body")
     if output.exists():
@@ -208,7 +214,9 @@ def capture_local_browser(
 
     staging_parent = output.parent
     with tempfile.TemporaryDirectory(prefix=".axm-design-browser-", dir=staging_parent) as temporary:
-        staging = Path(temporary)
+        temporary_root = Path(temporary)
+        staging = temporary_root / "capture"
+        staging.mkdir()
         captures = []
         executions = []
         for viewport in viewports:
@@ -305,7 +313,9 @@ def capture_local_browser(
         for capture in observation["captures"]:
             for artifact in capture["artifacts"]:
                 artifact["bytes_verified_or_fetched_by_design_fabric"] = True
-        observation["observation_digest"] = _digest({key: value for key, value in observation.items() if key != "observation_digest"})
+        observation["observation_digest"] = _digest(
+            {key: value for key, value in observation.items() if key != "observation_digest"}
+        )
 
         receipt = {
             "schema": BROWSER_CAPTURE_SCHEMA,
@@ -326,6 +336,7 @@ def capture_local_browser(
             "limitations": [
                 "v0.1 browser bridge captures screenshot and DOM bytes but does not yet extract computed-style, accessibility-tree, interaction, or perceptual measurements",
                 "local page JavaScript may execute inside the supplied browser; external host resolution is blocked by the command contract",
+                "host-resolution blocking is not claimed to be a complete operating-system network sandbox",
                 "the browser executable is caller-selected and therefore part of the evidence provenance",
                 "a successful capture is not a visual-quality PASS; missing runtime/perceptual measurements remain HOLD in the integrated judge",
             ],
@@ -352,7 +363,7 @@ def design_browser_summary() -> dict[str, Any]:
         "capture_schema": BROWSER_CAPTURE_SCHEMA,
         "operation": "capture-browser",
         "browser_contract": "caller-selected Chromium-compatible headless executable",
-        "network_policy": "local file target only; external host resolution blocked",
+        "network_policy": "local file target only; external host resolution blocked; not a complete OS network sandbox",
         "third_party_python_dependency_required": False,
         "real_screenshot_bytes_captured_when_executor_available": True,
         "real_dom_bytes_captured_when_executor_available": True,
