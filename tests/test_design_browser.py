@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-import os
 import stat
 import sys
 import tempfile
@@ -190,57 +189,58 @@ class DesignBrowserTests(unittest.TestCase):
 
     def test_url_machine_body_existing_output_and_missing_browser_fail_closed(self):
         plan = self.plan()
-        with tempfile.TemporaryDirectory() as td:
-            parent = Path(td)
-            target = parent / "index.html"
-            target.write_text("<!doctype html><html><body>AXM</body></html>", encoding="utf-8")
-            browser = parent / "chromium-fixture"
-            self.write_browser(browser)
-
-            with self.assertRaises(DesignBrowserError):
-                capture_local_browser(
-                    ROOT,
-                    plan,
-                    "https://example.com",
-                    parent / "url-capture",
-                    browser,
-                    self.viewport_sizes(),
-                )
-
-            existing = parent / "existing"
-            existing.mkdir()
-            with self.assertRaises(DesignBrowserError):
-                capture_local_browser(
-                    ROOT,
-                    plan,
-                    target,
-                    existing,
-                    browser,
-                    self.viewport_sizes(),
-                )
-
-            with self.assertRaises(DesignBrowserError) as missing:
-                capture_local_browser(
-                    ROOT,
-                    plan,
-                    target,
-                    parent / "missing-browser",
-                    "axm-browser-that-does-not-exist",
-                    self.viewport_sizes(),
-                )
-            self.assertEqual(missing.exception.details["status"], "HOLD_BROWSER_EXECUTOR_UNAVAILABLE")
-
         blocked = ROOT / "src" / "should-not-write-browser-evidence"
+        self.assertFalse(blocked.exists())
         try:
-            with self.assertRaises(DesignBrowserError):
-                capture_local_browser(
-                    ROOT,
-                    plan,
-                    ROOT / "README.md",
-                    blocked,
-                    sys.executable,
-                    self.viewport_sizes(),
-                )
+            with tempfile.TemporaryDirectory() as td:
+                parent = Path(td)
+                target = parent / "index.html"
+                target.write_text("<!doctype html><html><body>AXM</body></html>", encoding="utf-8")
+                browser = parent / "chromium-fixture"
+                self.write_browser(browser)
+
+                with self.assertRaises(DesignBrowserError):
+                    capture_local_browser(
+                        ROOT,
+                        plan,
+                        "https://example.com",
+                        parent / "url-capture",
+                        browser,
+                        self.viewport_sizes(),
+                    )
+
+                existing = parent / "existing"
+                existing.mkdir()
+                with self.assertRaises(DesignBrowserError):
+                    capture_local_browser(
+                        ROOT,
+                        plan,
+                        target,
+                        existing,
+                        browser,
+                        self.viewport_sizes(),
+                    )
+
+                with self.assertRaises(DesignBrowserError) as missing:
+                    capture_local_browser(
+                        ROOT,
+                        plan,
+                        target,
+                        parent / "missing-browser",
+                        "axm-browser-that-does-not-exist",
+                        self.viewport_sizes(),
+                    )
+                self.assertEqual(missing.exception.details["status"], "HOLD_BROWSER_EXECUTOR_UNAVAILABLE")
+
+                with self.assertRaisesRegex(DesignBrowserError, "live machine body"):
+                    capture_local_browser(
+                        ROOT,
+                        plan,
+                        target,
+                        blocked,
+                        browser,
+                        self.viewport_sizes(),
+                    )
         finally:
             self.assertFalse(blocked.exists())
 
