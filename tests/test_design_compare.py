@@ -80,8 +80,8 @@ class DesignCompareTests(unittest.TestCase):
             after.write_bytes(after_bytes)
             result = compare_render_screenshots(
                 ROOT,
-                before,
-                after,
+                str(before),
+                str(after),
                 before_observation,
                 after_observation,
                 "mobile",
@@ -107,8 +107,8 @@ class DesignCompareTests(unittest.TestCase):
             b = parent / "b.png"
             a.write_bytes(image)
             b.write_bytes(image)
-            first = compare_render_screenshots(ROOT, a, b, observation, observation, "desktop")
-            second = compare_render_screenshots(ROOT, a, b, observation, observation, "desktop")
+            first = compare_render_screenshots(ROOT, str(a), str(b), observation, observation, "desktop")
+            second = compare_render_screenshots(ROOT, str(a), str(b), observation, observation, "desktop")
 
         self.assertEqual(first["change"]["changed_pixel_count"], 0)
         self.assertEqual(first["change"]["changed_fraction"], 0.0)
@@ -125,14 +125,14 @@ class DesignCompareTests(unittest.TestCase):
             after = parent / "after.png"
             before.write_bytes(before_bytes)
             after.write_bytes(after_bytes)
-            held = compare_render_screenshots(ROOT, before, after, before_observation, after_observation, "desktop")
+            held = compare_render_screenshots(ROOT, str(before), str(after), before_observation, after_observation, "desktop")
             self.assertEqual(held["status"], "HOLD")
             self.assertEqual(held["truth_status"], "HOLD_RENDER_COMPARISON_DIMENSION_MISMATCH")
             self.assertIsNone(held["change"])
 
             before.write_bytes(png_rgba(1, 1, [(255, 255, 255, 255)]))
             with self.assertRaises(DesignCompareError):
-                compare_render_screenshots(ROOT, before, after, before_observation, after_observation, "desktop")
+                compare_render_screenshots(ROOT, str(before), str(after), before_observation, after_observation, "desktop")
 
     def test_live_machine_routes_render_comparison_through_design_fabric(self):
         image = png_rgba(1, 1, [(0, 0, 0, 255)])
