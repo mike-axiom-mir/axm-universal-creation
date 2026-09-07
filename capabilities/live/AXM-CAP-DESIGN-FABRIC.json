@@ -1,1 +1,190 @@
-{}
+{
+  "id": "AXM-CAP-DESIGN-FABRIC",
+  "version": "0.11.0",
+  "status": "live",
+  "purpose": "Keep visual design inside the Universal Creation evidence loop: observe bounded source, screenshot pixels, browser runtime state, explicit caller-authored interactions, exact before/after render change, browser accessibility-tree semantics, bounded CDP Tab traversal, bounded CDP layout/text geometry, and provenance-preserving same-viewport evidence bundles; normalize reusable Design Genome state; compose and judge plans; derive bounded repair direction; and bind executed transactional repairs into continuity receipts without granting automatic acceptance or turning measured geometry, raster change, or observer agreement into aesthetic truth.",
+  "handles": [
+    "inspect-design-fabric",
+    "observe-design-reference",
+    "derive-design-genome",
+    "validate-design-genome",
+    "compose-design-plan",
+    "judge-design-plan",
+    "materialize-design-plan",
+    "inspect-design-observer",
+    "record-design-render-observation",
+    "judge-rendered-design",
+    "propose-design-repair",
+    "capture-design-browser-observation",
+    "inspect-design-render-comparison",
+    "compare-design-render-screenshots",
+    "inspect-design-repair-cycle",
+    "record-design-repair-cycle",
+    "inspect-design-cdp-observer",
+    "capture-design-cdp-semantics",
+    "inspect-design-cdp-geometry",
+    "capture-design-cdp-geometry",
+    "inspect-design-evidence-bundle",
+    "consolidate-design-viewport-evidence",
+    "project-design-consensus-render-observation"
+  ],
+  "input_contract": {
+    "required": ["operation"],
+    "properties": {
+      "operation": "one of inspect-schema, observe-project, derive-genome, validate-genome, compose-plan, judge-plan, materialize, inspect-observer, record-render-observation, judge-rendered, propose-repair, capture-browser, inspect-visual-observer, observe-screenshot, derive-screenshot-genome, observe-render-screenshot, inspect-render-comparison, compare-render-screenshots, inspect-repair-cycle, record-repair-cycle, inspect-cdp-observer, capture-cdp-semantics, inspect-cdp-geometry, capture-cdp-geometry, inspect-evidence-bundle, consolidate-viewport-evidence, or project-consensus-render-observation",
+      "path": "materialize target path, browser/CDP evidence output directory, or local PNG screenshot path; relative paths resolve from the machine root",
+      "target": "capture-browser, capture-cdp-semantics, or capture-cdp-geometry local HTML file or directory containing index.html; URLs are rejected",
+      "browser_executable": "caller-selected Chromium-compatible executable path or explicit PATH name",
+      "viewport_sizes": "capture-browser exact map from every design-plan viewport id to width/height and optional device_pixel_ratio",
+      "interaction_recipes": "capture-browser optional bounded explicit list of recipe ids and focus/activate CSS-selector steps; no interaction crawl is inferred",
+      "allow_synthetic_activation": "capture-browser optional boolean; defaults false and must be true before any activate step is admitted",
+      "viewport": "observe-render-screenshot viewport descriptor, compare-render-screenshots exact viewport id, capture-cdp-semantics/capture-cdp-geometry exact declared viewport descriptor, or consolidate-viewport-evidence exact viewport descriptor shared by every source observation",
+      "keyboard_tab_steps": "capture-cdp-semantics optional bounded integer from 0 through 64; Tab is dispatched through Chrome DevTools Protocol and is not claimed as trusted human input",
+      "timeout_seconds": "bounded browser/CDP timeout from 1 through 120 seconds",
+      "observation": "derive-genome input using axm.design-observation/v0.1, derive-screenshot-genome input using axm.design-screenshot-observation/v0.1, or judge-rendered input using axm.design-render-observation/v0.1",
+      "observations": "consolidate-viewport-evidence bounded list of 1..16 digest-valid axm.design-render-observation/v0.1 bodies for the exact same plan and viewport",
+      "bundle": "project-consensus-render-observation axm.design-viewport-evidence-bundle/v0.1 body whose bundle digest must match its contents",
+      "genome_id": "derive-genome or derive-screenshot-genome stable identifier",
+      "version": "derive-genome or derive-screenshot-genome version, defaults to 0.1.0",
+      "purpose": "derive-genome or derive-screenshot-genome human-readable design purpose",
+      "genome": "validate, compose, or materialize axm.design-genome/v0.1 body",
+      "request": "compose/materialize design request with goal, exact role/component requirements, viewports, and explicit contrast pairs",
+      "plan": "judge-plan, judge-rendered, capture-browser, capture-cdp-semantics, or capture-cdp-geometry axm.design-plan/v0.1 body",
+      "plan_digest": "record-render-observation, observe-render-screenshot, or consolidate-viewport-evidence exact design-plan digest",
+      "observer": "record-render-observation attributed observer descriptor: human, browser-tool, model, test-fixture, or other",
+      "captures": "record-render-observation bounded viewport captures with declared artifacts, measurements, and attributed assessments",
+      "required_assessments": "judge-rendered optional exact assessment ids; defaults to visual-hierarchy, spacing-consistency, and component-coherence",
+      "judgment": "propose-repair axm.design-integrated-judgment/v0.1 body",
+      "before_path": "compare-render-screenshots local PNG bytes for the before state",
+      "after_path": "compare-render-screenshots local PNG bytes for the after state",
+      "before_judgment": "record-repair-cycle exact pre-repair axm.design-integrated-judgment/v0.1 body",
+      "repair_plan": "record-repair-cycle axm.design-repair-plan/v0.1 body whose source judgment digest must match before_judgment",
+      "repair_result": "record-repair-cycle published OBSERVED_TRANSACTIONAL_PROJECT_REPAIR result from existing project-repair machinery",
+      "before_observation": "compare-render-screenshots or record-repair-cycle exact pre-repair render-observation receipt",
+      "after_observation": "compare-render-screenshots or record-repair-cycle exact post-repair render-observation receipt",
+      "comparison": "record-repair-cycle axm.design-render-comparison/v0.1 body bound to before/after observations",
+      "after_judgment": "record-repair-cycle exact post-repair axm.design-integrated-judgment/v0.1 body",
+      "replace": "materialize only; optional explicit boolean replacement of an existing creation target"
+    }
+  },
+  "output_contract": {
+    "kind": "design-observation-genome-plan-judgment-render-evidence-browser-runtime-interaction-cdp-accessibility-keyboard-layout-geometry-viewport-evidence-bundle-screenshot-comparison-repair-cycle-or-descriptor-project",
+    "contains": [
+      "bounded local source evidence without external fetching",
+      "deterministic reusable design tokens, layout grammar, component semantics, state signals, motion grammar, and material/surface signals",
+      "WCAG-style deterministic contrast calculations and responsive/focus/reduced-motion/interaction/coverage gates when required evidence exists",
+      "optional local Chromium-compatible capture of real screenshot and DOM bytes using caller-selected browser provenance and fresh temporary browser profiles",
+      "temporary runtime instrumentation preserving the original project file and original relative-resource base",
+      "browser-observed horizontal overflow, programmatic focus-outline evidence, opaque rendered text contrast, runtime errors, bounded DOM accessibility heuristics, motion timing, and conservative reduced-motion evidence",
+      "caller-authored bounded interaction recipes with focus steps and optional explicitly authorized synthetic activation of visible button-like controls only",
+      "interaction-log artifacts retaining exact selectors, bounded before/after state, step status, blocked form submissions, and interaction error count",
+      "loopback-only Chrome DevTools Protocol observers using fresh temporary browser profiles and no third-party Python dependency",
+      "Accessibility.getFullAXTree artifact plus deterministic role, ignored-node, focusable-node, and unnamed-focusable summaries without a WCAG conformance claim",
+      "bounded CDP Input.dispatchKeyEvent Tab traversal with activeElement and focus-style evidence after each exact step, explicitly labeled browser-synthetic rather than trusted human or OS keyboard input",
+      "bounded CDP layout geometry artifact containing visible element rectangles, client/scroll geometry, ancestor-overflow clipping evidence, raw non-ancestor overlap intersections and area fractions, horizontal viewport escape counts, and direct-text line boxes/font metrics without retaining raw text content",
+      "same-viewport screenshot bytes bound to the exact CDP layout-geometry observation so geometry evidence enters the existing render-observation/judgment lineage without generating a geometry-quality verdict",
+      "bounded standard-library PNG decoding with verified structure/chunk CRC and measured dimensions, color/luminance/alpha distributions, and neighboring RGB deltas",
+      "provenance-preserving same-plan/same-viewport evidence bundle that re-verifies every source observation digest, retains each observer and capture lineage, inventories artifact/measurement/assessment coverage, and exposes contradictions explicitly",
+      "deterministic consensus render-observation projection that forwards only non-conflicting measurements and assessment statuses while omitting contradictions so the existing judge receives missing evidence and can HOLD rather than inventing a winner",
+      "before/after screenshot comparison that re-verifies both raster byte digests against their exact render-observation receipts before measuring changed-pixel fraction, RGB/alpha/luminance deltas, and a bounded regional change grid",
+      "repair-cycle continuity receipt binding before judgment -> repair plan -> observed transactional project repair -> fresh after observation/judgment -> exact render comparison",
+      "gate status transition evidence labeled only as FAIL/HOLD/PASS movement rather than visual-quality improvement",
+      "attributed perceptual PASS/FAIL/HOLD assessments with confidence and basis when supplied by an identified observer",
+      "deterministic repair direction from failed or held gates without automatic source rewrite",
+      "provenance separating source signals, browser facts, explicit interaction execution, CDP semantics, accessibility-tree data, browser-synthetic keyboard traversal, layout/text geometry, evidence-bundle consensus/conflict state, pixel facts, repair execution, raster deltas, attributed perception, and AXM policy",
+      "optional validated design descriptor project"
+    ]
+  },
+  "dependencies": ["AXM-CAP-WRITE-PROJECT"],
+  "relationships": [
+    "upgrades Universal Creation with design knowledge rather than creating a second general creation machine",
+    "sits above Asset Atom ingredients and beside Paintgun, Vector Cell, Chameleon, simulation, project repair, and renderer/browser adapters",
+    "keeps structure/style grammar reusable so a reference contributes bounded grammar rather than silently becoming copied page composition",
+    "can turn a caller-authorized local Chromium-compatible executable into screenshot/DOM/runtime evidence without adding a mandatory Python/browser dependency",
+    "can separately launch the same class of local browser with loopback CDP to obtain browser accessibility-tree semantics, bounded native Tab-navigation behavior, or bounded layout/text geometry without pretending measurements imply design intent",
+    "keeps exact rectangles, clipping observations, overlap intersections, and text line boxes as render-instance evidence rather than silently rewriting the reusable Design Genome with one page composition",
+    "can consolidate browser, CDP, geometry, screenshot, model, human, or other render-observation receipts only when their exact plan digest and viewport geometry agree, while retaining every source observer instead of collapsing them into an anonymous truth claim",
+    "does not choose between contradictory evidence; conflicts stay explicit in the bundle and are omitted from the derived consensus projection so downstream gates remain HOLD",
+    "requires separate explicit permission before synthetic activation and confines activation to visible button-like controls while blocking form submission and arbitrary link navigation",
+    "can compare exact before and after screenshots only after both byte digests match bound observation receipts",
+    "can consume an already-published transactional project-repair result but does not execute that repair itself through the repair-cycle recorder",
+    "binds repair-plan lineage, repair execution evidence, post-repair render evidence, post-repair gate status, and raster comparison into one deterministic cycle receipt",
+    "keeps browser measurements, explicit interaction execution, CDP accessibility semantics, browser-synthetic keyboard traversal, geometry facts, evidence agreement/conflict, pixel facts, repair execution, gate movement, perceptual assessments, and AXM policy as separate truth classes",
+    "no layer automatically accepts its own repair or promotes measured geometry, evidence agreement, or raster change into aesthetic truth"
+  ],
+  "anatomy_refs": [
+    {
+      "id": "AXM-24-WORKSPACE-COLLABORATION-C-010-project",
+      "role": "uses",
+      "basis": "Design Fabric can observe bounded local project state and materialize design/browser/CDP evidence outside the live machine body while evidence bundles and repair-cycle receipts preserve cross-observer and cross-repair continuity."
+    },
+    {
+      "id": "AXM-12-RENDERING-MATERIALS-C-007-material-graph",
+      "role": "uses",
+      "basis": "Material/surface grammar stays explicit while renderer, browser-computed, accessibility-tree, layout-geometry, screenshot-pixel, evidence-bundle, interaction, and repair-delta truth remain separate."
+    },
+    {
+      "id": "AXM-13-ANIMATION-VIDEO-C-007-animation-state-machine",
+      "role": "uses",
+      "basis": "Motion and interaction state stay explicit design state; bounded browser and CDP observations do not silently redefine the underlying grammar."
+    },
+    {
+      "id": "AXM-01-PROVENANCE-A-012-observation",
+      "role": "uses",
+      "basis": "Source, screenshot, browser runtime, explicit interaction, CDP accessibility/tree, keyboard, layout/text geometry, same-viewport evidence bundles, repair execution, before/after comparison, and external perception remain digest-bound observations rather than collapsed truth claims."
+    }
+  ],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:design_fabric",
+    "source": "src/axm_uc/design_fabric.py + src/axm_uc/design_observer.py + src/axm_uc/design_browser.py + src/axm_uc/design_runtime_probe.py + src/axm_uc/design_interaction.py + src/axm_uc/design_cdp.py + src/axm_uc/design_geometry.py + src/axm_uc/design_evidence_bundle.py + src/axm_uc/design_visual.py + src/axm_uc/design_compare.py + src/axm_uc/design_cycle.py via src/axm_uc/__init__.py registration"
+  },
+  "limitations": [
+    "local source observation is lexical/structural source inspection and remains distinct from rendered perception",
+    "browser/CDP capture requires a caller-selected Chromium-compatible executable and never installs or downloads one automatically",
+    "browser and CDP capture accept local HTML targets only; host-resolution blocking, loopback remote debugging, and fresh temporary profiles are not claimed as complete operating-system isolation",
+    "runtime and interaction probes run only in temporary instrumented copies and missing markers remain HOLD rather than becoming invented evidence",
+    "programmatic focus and synthetic HTMLElement.click are not real keyboard traversal or trusted user input",
+    "CDP Tab traversal invokes the browser's Tab navigation through Input.dispatchKeyEvent and reads actual activeElement state, but remains browser-synthetic and does not prove physical keyboard input, user intent, discoverability, assistive-technology behavior, or semantic usability",
+    "Accessibility.getFullAXTree is real browser accessibility-tree evidence, but AX node counts, names, and roles are not a WCAG conformance verdict or proof of real assistive-technology output",
+    "CDP layout geometry is bounded to the first 128 visible elements, first 64 direct-text runs, first 64 elements considered for pairwise overlap, and first 128 returned overlap pairs; truncation stays explicit",
+    "overlap, ancestor clipping, own scroll overflow, and viewport escape are geometric facts that may be intentional and therefore do not become automatic quality failures",
+    "text geometry records line boxes, text length, font size, and line height without retaining raw text content and does not infer readability, hierarchy, or spacing quality",
+    "viewport evidence consolidation requires every source receipt to retain a valid observation digest, the exact same plan digest, and exactly matching viewport width, height, and device-pixel ratio; mismatch, duplicate receipt, or digest drift fails closed",
+    "measurement or assessment disagreement is retained as CONFLICT and is not automatically ranked by observer kind, confidence, recency, or implementation; the consensus projection simply omits conflicting claims",
+    "consistent attributed perceptual assessments may be projected for compatibility with the existing judge, but observer agreement remains attributed evidence and is never promoted to objective aesthetic truth",
+    "activate steps are synthetic HTMLElement.click operations, disabled by default, allowed only after explicit authorization, limited to visible button-like controls, and prevented from submitting forms or arbitrarily activating links",
+    "interaction PASS proves only that exact caller-supplied recipes completed without recorded probe errors for the exact selectors and viewport; it is not a usability or product-intent claim",
+    "rendered contrast is bounded to resolvable opaque computed text/background pairs; complex compositing remains unproven",
+    "legacy runtime accessibility findings are bounded DOM heuristics and remain distinct from the newer CDP accessibility-tree artifact",
+    "reduced-motion PASS is conservative and does not infer unmeasured mechanisms",
+    "the minimal visual observer accepts bounded local 8-bit non-interlaced PNG only and pixel statistics do not prove semantics, hierarchy, spacing quality, beauty, originality, accessibility, or intent",
+    "before/after comparison measures exact same-dimension raster change only; dimension mismatch produces HOLD rather than silent resampling",
+    "repair-cycle recording requires a published, validation-passed OBSERVED_TRANSACTIONAL_PROJECT_REPAIR result and does not itself apply or approve a source patch",
+    "FAIL/HOLD/PASS movement after repair is evidence-gate movement only and is not automatically equivalent to visual-quality improvement or semantic correctness",
+    "external perceptual assessments stay attributed observations and are not promoted to objective aesthetic truth",
+    "default rendered-quality judgment still requires explicit visual-hierarchy, spacing-consistency, and component-coherence assessments; browser, interaction, CDP semantics, geometry, evidence bundling, repair, and pixel facts alone cannot manufacture perceptual PASS",
+    "a passing integrated judgment or closed repair-cycle receipt applies only to exact supplied plans, artifacts, measurements, recipes, assessments, and viewports and does not grant human acceptance",
+    "repair plans are deterministic directions only; no layer silently rewrites source or accepts its own repair",
+    "derived genomes retain reference grammar signals without reproducing source page composition by default"
+  ],
+  "persistent_state": "none required; optional design descriptors, browser/CDP capture directories, runtime/interaction/accessibility/keyboard/layout-geometry JSON, viewport evidence bundles, screenshot observations, render comparisons, repair-cycle receipts, and external observations are caller-selected state",
+  "root_fit": {
+    "truth": {
+      "fit": true,
+      "basis": "Source signals, browser facts, synthetic interaction receipts, CDP accessibility semantics, browser-synthetic keyboard evidence, layout/text geometry, evidence-bundle agreement/conflict, pixel facts, repair execution, gate transitions, raster deltas, attributed assessments, policy gates, and still-unobserved reality remain separately labeled and digest-bound."
+    },
+    "agency": {
+      "fit": true,
+      "basis": "Tokens, browser executable, viewports, source observation sets, CDP tab-step bounds, geometry limits, interaction recipes, activation authority, repair plans, repair execution evidence, comparisons, observers, assessments, gates, provenance, and final acceptance remain inspectable and externally controllable."
+    },
+    "continuity": {
+      "fit": true,
+      "basis": "Design Genome, plan digests, browser/CDP observation digests, geometry artifact digests, viewport bundle digest, judgment digests, repair-plan lineage, repair result digest, comparison digest, and cycle digest create explicit continuity across observation and repair without replacing prior meaning."
+    },
+    "wisdom-before-speed": {
+      "fit": true,
+      "basis": "Unauthorized activation fails before evidence output, CDP targets stay local, missing endpoints/probes hold or error explicitly, accessibility-tree capture does not self-grant conformance, geometry does not self-classify overlap/clipping as defects, contradictory observer evidence is retained rather than silently ranked, keyboard dispatch does not masquerade as human input, digest/lineage mismatches fail closed, and even a post-repair PASS does not self-grant acceptance."
+    }
+  }
+}
