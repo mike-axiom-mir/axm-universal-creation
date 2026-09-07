@@ -119,6 +119,36 @@ class StaticGeometryTests(unittest.TestCase):
             with self.subTest(code=code):
                 r=self.review(*fixture(**args));self.assertEqual(r["status"],"FAIL");self.assertIn(code,[f["code"] for f in r["findings"]])
 
+    def test_distinct_indices_collinear_export_has_repair_coordinates(self):
+        # Export triangulation can collapse a face without repeating any index.
+        doc, binary = fixture(positions=[(0,0,0),(1,0,0),(2,0,0),(0,1,0)],
+                              indices=[0,1,2,0,1,3])
+        doc["nodes"][1]["translation"] = [3,4,5]
+        r = self.review(doc, binary, {"schema": CONTRACT_SCHEMA})
+        self.assertEqual(r["status"], "FAIL")
+        self.assertEqual(r["measurements"]["degenerate_triangles"], 1)
+        f = r["findings"][0]
+        self.assertEqual((f["name"], f["primitive"], f["triangle"]), ("Body", 0, 0))
+        self.assertEqual(f["vertex_indices"], [0,1,2])
+        self.assertEqual(f["world_positions"], [[3,4,5],[4,4,5],[5,4,5]])
+        self.assertEqual(f["twice_area_m2"], 0)
+        self.assertEqual(f["threshold_m2"], 1e-12)
+        # Removing just that triangle leaves the ordinary face admissible.
+        doc, binary = fixture(positions=[(0,0,0),(1,0,0),(2,0,0),(0,1,0)],
+                              indices=[0,1,3])
+        self.assertEqual(self.review(doc, binary, {"schema": CONTRACT_SCHEMA})["status"], "PASS")
+
+    def test_degenerate_threshold_applies_after_node_scale(self):
+        doc, binary = fixture(positions=[(0,0,0),(1,0,0),(0,1,0)], indices=[0,1,2])
+        for scale, status in [(5e-7,"FAIL"),(2e-6,"PASS")]:
+            with self.subTest(scale=scale):
+                doc["nodes"][1]["scale"] = [scale,scale,scale]
+                r = self.review(doc, binary, {"schema": CONTRACT_SCHEMA})
+                self.assertEqual(r["status"], status)
+                self.assertEqual(r["measurements"]["degenerate_twice_area_threshold_m2"], 1e-12)
+                if status == "FAIL":
+                    self.assertAlmostEqual(r["findings"][0]["twice_area_m2"], scale*scale, delta=1e-25)
+
     def test_declared_count_cannot_read_adjacent_buffer_data(self):
         doc,binary=fixture();doc["accessors"][0]["count"]=5
         r=self.review(doc,binary);self.assertEqual(r["status"],"FAIL");self.assertEqual(r["findings"][0]["code"],"INVALID_ACCESSOR_RANGE")

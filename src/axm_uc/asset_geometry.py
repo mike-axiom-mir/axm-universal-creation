@@ -19,6 +19,7 @@ MAX_BYTES = 128 * 1024 * 1024
 MAX_ELEMENTS = 2_000_000
 MAX_TRIANGLES = 1_000_000
 MAX_COVERAGE_PAIRS = 5_000_000
+MIN_TWICE_AREA_M2 = 1e-12
 IDENTITY = [[float(i == j) for j in range(4)] for i in range(4)]
 
 
@@ -268,8 +269,13 @@ def review_static_glb(path: str | Path, contract: Any) -> dict[str, Any]:
                     cross = [u[1]*v[2]-u[2]*v[1], u[2]*v[0]-u[0]*v[2], u[0]*v[1]-u[1]*v[0]]
                     if not all(math.isfinite(x) for x in cross):
                         raise GeometryIssue("NONFINITE_GEOMETRY", "triangle arithmetic overflow")
-                    if math.hypot(*cross) <= 1e-12:
-                        degenerate += 1; finding("DEGENERATE_TRIANGLE", **context)
+                    twice_area = math.hypot(*cross)
+                    if twice_area <= MIN_TWICE_AREA_M2:
+                        degenerate += 1
+                        finding("DEGENERATE_TRIANGLE", **context,
+                                vertex_indices=indices[offset:offset+3],
+                                world_positions=tri, twice_area_m2=twice_area,
+                                threshold_m2=MIN_TWICE_AREA_M2)
                     if "bounds" in spec and not all(_inside(p, spec["bounds"], tolerance) for p in tri):
                         outside += 1; finding("OUTSIDE_ENVELOPE", **context)
                     if boxes and not any(all(_inside(p, b, tolerance) for p in tri) for b in boxes):
@@ -291,6 +297,7 @@ def review_static_glb(path: str | Path, contract: Any) -> dict[str, Any]:
                 finding("MARKER_POSITION", name=name, actual=matches[0], expected=expected, error_m=error)
         result["measurements"] = {"bounds": bounds, "triangles": total, "primitives": primitives,
                                   "nodes": len(seen), "markers": markers, "degenerate_triangles": degenerate,
+                                  "degenerate_twice_area_threshold_m2": MIN_TWICE_AREA_M2,
                                   "outside_envelope_triangles": outside,
                                   "collision_triangles_tested": total if boxes else 0, "collision_triangles_unproven": uncovered}
         result["status"] = "FAIL" if result["finding_count"] else "PASS"

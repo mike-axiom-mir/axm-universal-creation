@@ -87,3 +87,33 @@ assert entry.classify_minimum(.06) == "possible"
 Unreachable wrists are not projected inward and impossible entry targets are not silently clamped. A straight or fully folded chain has a point locus; coincident equal-length endpoints have a sphere. Invalid/nonfinite inputs raise `ValueError`; unrepresentable endpoint/locus calculations return `hold`. The boundary tolerance classifies uncertainty near the requested entry and does not enlarge the locus. The query chooses no pose and imposes no joint limits, twist constraints, anatomy or obstacles.
 
 The weapon experiment exposed an impossible 60mm entry request: a standing steep-down Relay pose permitted at most -208.9mm. Five exported pose fixtures preserve actual shoulder/wrist/axis data and independently calculated extrema. Two other fixtures are surface-clear even though their maxima (57.9mm and 59.7mm) miss the construction preference. Thus `possible` is only axial-entry feasibility, and `impossible` is not a collision finding. Actual posed-mesh, movement and visual reviews remain separate. Additional tests cover analytic circles, rigid transforms and scale, unreachable targets, singular loci, numerical boundaries, nearly coincident endpoints and malformed input.
+
+
+## Diagnosing collapsed export faces
+
+A `DEGENERATE_TRIANGLE` finding includes node/name, primitive and triangle
+indices, the three accessor vertex indices, their transformed world positions,
+and `twice_area_m2` / `threshold_m2`. The threshold is 1e-12 square metres after
+node transforms. This detects both repeated-index and distinct-index collinear
+faces. The report retains at most 32 finding examples; counts remain complete.
+It diagnoses the exported bytes and does not remove geometry automatically.
+
+Custom builders must invoke this review too: a successful Blender export or
+socket/animation check does not establish nondegenerate triangles. With
+PYTHONPATH pointing to `src`, run:
+
+```text
+python -m axm_uc.visual_assets_cli 3d-contract-review candidate.glb contract.json
+```
+
+A FAIL or HOLD exits with code 2. Run this before the separate rendering and
+animation checks. Regenerate the report after every geometry change.
+
+The Breacher69 integration exposed exactly this omitted check: the custom
+candidate retained two zero-area faces, although its socket/weak-point checks
+passed. The existing reviewer detected both. Source repair removed two faces,
+3,048 to 3,046 triangles, and the reviewed rebuilt export has zero collapsed
+triangles. The local workflow now invokes this reviewer before its loaded-pose
+checks. Remaining foot penetration is a separate animation issue. Compact
+before/after static evidence is in `reference/breacher69-export-review.json`;
+it does not establish visual or runtime acceptance.
