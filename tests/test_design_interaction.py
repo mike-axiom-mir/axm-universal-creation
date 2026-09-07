@@ -98,7 +98,7 @@ class DesignInteractionTests(unittest.TestCase):
                 "states": ["default", "focus", "active"],
                 "source_status": "explicit-test-semantics",
             }],
-            "motion": {"durations": [], "easings": [], "reduced_motion_strategy": "not-required"},
+            "motion": {"durations": [], "easings": [], "reduced_motion_strategy": "disable-nonessential"},
             "materials": {"signals": [], "principles": []},
             "quality_gates": {
                 "minimum_text_contrast": 4.5,
@@ -199,7 +199,10 @@ class DesignInteractionTests(unittest.TestCase):
             self.assertFalse(interaction_receipt["trusted_user_input_claimed"])
             self.assertFalse(interaction_receipt["form_submission_allowed"])
             self.assertFalse(interaction_receipt["arbitrary_link_navigation_allowed"])
-            self.assertEqual(result["receipt"]["browser"]["profile_policy"], "fresh temporary user-data directory for every normal/reduced viewport run")
+            self.assertEqual(
+                result["receipt"]["browser"]["profile_policy"],
+                "fresh temporary user-data directory for every normal/reduced viewport run",
+            )
 
             judgment = judge_rendered_design(plan, result["observation"], required_assessments=[])
             by_gate = {row["gate"]: row for row in judgment["gates"]}
@@ -213,7 +216,10 @@ class DesignInteractionTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             parent = Path(td)
             target = parent / "index.html"
-            target.write_text("<!doctype html><html><body><button id='toggle'>Toggle</button></body></html>", encoding="utf-8")
+            target.write_text(
+                "<!doctype html><html><body><button id='toggle'>Toggle</button></body></html>",
+                encoding="utf-8",
+            )
             browser = parent / "chromium-interaction-fixture"
             self.write_browser(browser)
             output = parent / "must-not-exist"
