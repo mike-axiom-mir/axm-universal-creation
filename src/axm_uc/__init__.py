@@ -12,6 +12,7 @@ def _register_extension_builtins() -> None:
     from .design_cdp import DesignCdpError, operate_design_cdp
     from .design_compare import DesignCompareError, operate_design_compare
     from .design_cycle import DesignCycleError, operate_design_cycle
+    from .design_evidence_bundle import DesignEvidenceBundleError, operate_design_evidence_bundle
     from .design_fabric import DesignFabricError, operate_design_fabric
     from .design_geometry import DesignGeometryError, operate_design_geometry
     from .design_observer import DesignObserverError, operate_design_observer
@@ -93,6 +94,11 @@ def _register_extension_builtins() -> None:
         "inspect-cdp-geometry",
         "capture-cdp-geometry",
     }
+    design_evidence_bundle_operations = {
+        "inspect-evidence-bundle",
+        "consolidate-viewport-evidence",
+        "project-consensus-render-observation",
+    }
     design_visual_operations = {
         "inspect-visual-observer",
         "observe-screenshot",
@@ -140,6 +146,8 @@ def _register_extension_builtins() -> None:
                 return operate_design_cdp(root, inputs)
             if operation in design_geometry_operations:
                 return operate_design_geometry(root, inputs)
+            if operation in design_evidence_bundle_operations:
+                return operate_design_evidence_bundle(inputs)
             if operation in design_observer_operations:
                 return operate_design_observer(inputs)
             if operation in design_visual_operations:
@@ -154,6 +162,7 @@ def _register_extension_builtins() -> None:
             DesignCdpError,
             DesignCompareError,
             DesignCycleError,
+            DesignEvidenceBundleError,
             DesignFabricError,
             DesignGeometryError,
             DesignObserverError,
