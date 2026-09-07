@@ -16,6 +16,7 @@ from axm_uc.design_evidence_bundle import (
     project_consensus_render_observation,
 )
 from axm_uc.design_observer import record_render_observation
+from axm_uc.machine import UniversalCreationMachine
 
 
 PLAN_DIGEST = "sha256:" + "a" * 64
@@ -252,6 +253,47 @@ class DesignEvidenceBundleTests(unittest.TestCase):
         self.assertEqual(replay["coverage"]["source_observation_count"], 1)
         self.assertEqual(replay["resolution"]["measurements"]["horizontal_overflow"]["consensus_value"], False)
         self.assertTrue(projection["observation_digest"].startswith("sha256:"))
+
+    def test_live_machine_routes_bundle_and_consensus_projection_through_design_fabric(self):
+        source = observation(
+            observer_kind="test-fixture",
+            observer_id="live-source",
+            artifacts=[{
+                "kind": "screenshot",
+                "digest": digest_bytes(b"live-image"),
+                "mime_type": "image/png",
+                "bytes": 10,
+            }],
+            measurements={"horizontal_overflow": False},
+        )
+        machine = UniversalCreationMachine(ROOT)
+        bundled = machine.create({
+            "kind": "consolidate-design-viewport-evidence",
+            "inputs": {
+                "operation": "consolidate-viewport-evidence",
+                "plan_digest": PLAN_DIGEST,
+                "viewport": VIEWPORT,
+                "observations": [source],
+            },
+        })
+        self.assertEqual(bundled["type"], "CREATION_RESULT", bundled)
+        self.assertEqual(bundled["capability"], "AXM-CAP-DESIGN-FABRIC")
+        self.assertEqual(bundled["result"]["schema"], VIEWPORT_EVIDENCE_BUNDLE_SCHEMA)
+
+        projected = machine.create({
+            "kind": "project-design-consensus-render-observation",
+            "inputs": {
+                "operation": "project-consensus-render-observation",
+                "bundle": bundled["result"],
+            },
+        })
+        self.assertEqual(projected["type"], "CREATION_RESULT", projected)
+        self.assertEqual(projected["capability"], "AXM-CAP-DESIGN-FABRIC")
+        self.assertEqual(
+            projected["result"]["observation"]["captures"][0]["measurements"]["horizontal_overflow"],
+            False,
+        )
+        self.assertFalse(projected["result"]["claim_boundary"]["automatic_acceptance"])
 
 
 if __name__ == "__main__":
