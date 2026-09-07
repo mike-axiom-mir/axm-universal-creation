@@ -1,0 +1,103 @@
+{
+  "id": "AXM-CAP-DESIGN-FABRIC",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Observe local design-source signals, normalize them into an inspectable reusable Design Genome, compose design plans from explicit component semantics and tokens, apply deterministic quality gates, and materialize design descriptors without pretending that source parsing is visual perception.",
+  "handles": [
+    "inspect-design-fabric",
+    "observe-design-reference",
+    "derive-design-genome",
+    "validate-design-genome",
+    "compose-design-plan",
+    "judge-design-plan",
+    "materialize-design-plan"
+  ],
+  "input_contract": {
+    "required": ["operation"],
+    "properties": {
+      "operation": "one of inspect-schema, observe-project, derive-genome, validate-genome, compose-plan, judge-plan, or materialize",
+      "path": "observe-project source path or materialize target path; relative paths resolve from the machine root",
+      "observation": "derive-genome input using axm.design-observation/v0.1",
+      "genome_id": "derive-genome stable identifier",
+      "version": "derive-genome version, defaults to 0.1.0",
+      "purpose": "derive-genome human-readable design purpose",
+      "genome": "validate, compose, or materialize axm.design-genome/v0.1 body",
+      "request": "compose/materialize design request with goal, exact role/component requirements, viewports, and explicit contrast pairs",
+      "plan": "judge-plan axm.design-plan/v0.1 body",
+      "replace": "materialize only; optional explicit boolean replacement of an existing creation target"
+    }
+  },
+  "output_contract": {
+    "kind": "design-observation-genome-plan-judgment-or-descriptor-project",
+    "contains": [
+      "bounded local source evidence without external fetching",
+      "deterministic reusable design tokens",
+      "layout breakpoint grammar",
+      "component selector/state signals with semantic uncertainty preserved",
+      "explicit component roles and tags when actually supplied",
+      "motion grammar and reduced-motion policy state",
+      "material/surface signals",
+      "WCAG-style deterministic contrast calculations for explicit color-token pairs",
+      "responsive, focus, reduced-motion, contrast, and coverage gate evidence",
+      "provenance separating observed reference signals from AXM quality policy",
+      "optional validated three-file design descriptor project"
+    ]
+  },
+  "dependencies": ["AXM-CAP-WRITE-PROJECT"],
+  "relationships": [
+    "upgrades Universal Creation with design knowledge instead of creating a second general creation machine",
+    "sits above Asset Atom ingredients and beside Paintgun, Vector Cell, and Chameleon visual-state machinery",
+    "keeps structure/style grammar reusable so page composition does not need to be copied",
+    "lets future screenshot, Figma, browser, image, or learned observers plug into the same genome without making them mandatory",
+    "keeps design judgment inside the creation loop as explicit evidence rather than a final make-pretty pass"
+  ],
+  "anatomy_refs": [
+    {
+      "id": "AXM-24-WORKSPACE-COLLABORATION-C-010-project",
+      "role": "uses",
+      "basis": "Design Fabric can observe bounded local project source and materialize a validated descriptor project without rewriting the live machine body."
+    },
+    {
+      "id": "AXM-12-RENDERING-MATERIALS-C-007-material-graph",
+      "role": "uses",
+      "basis": "The genome retains material and surface signals as structured design ingredients while keeping renderer truth separate."
+    },
+    {
+      "id": "AXM-13-ANIMATION-VIDEO-C-007-animation-state-machine",
+      "role": "uses",
+      "basis": "Component interaction states and motion policy remain explicit design state rather than being hidden in a rendered reference."
+    }
+  ],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:design_fabric",
+    "source": "src/axm_uc/design_fabric.py"
+  },
+  "limitations": [
+    "v0.1 reference observation is lexical/structural source inspection, not screenshot or rendered visual perception",
+    "v0.1 does not fetch URLs, Figma files, proprietary libraries, or external design services",
+    "CSS selectors are component signals only and do not prove component semantics; roles must come from explicit evidence",
+    "a passing deterministic plan gate is not a claim of aesthetic excellence",
+    "browser interaction, rendered hierarchy, screenshot comparison, animation smoothness, and subjective quality remain unobserved until an authorized observer adapter supplies evidence",
+    "derived genomes intentionally retain reference grammar signals without reproducing source page composition by default"
+  ],
+  "persistent_state": "none required; optional design descriptor projects are ordinary creations selected by the caller",
+  "root_fit": {
+    "truth": {
+      "fit": true,
+      "basis": "Observed source signals, inferred-none semantics, quality policy, and unobserved visual/runtime evidence are kept separate and labeled."
+    },
+    "agency": {
+      "fit": true,
+      "basis": "Tokens, components, states, roles, gates, provenance, and source adapters remain inspectable and replaceable rather than hidden behind one vendor or model."
+    },
+    "continuity": {
+      "fit": true,
+      "basis": "Design Genome is a versioned canonical representation that can accept future observers and renderers without discarding the current source-state meaning."
+    },
+    "wisdom-before-speed": {
+      "fit": true,
+      "basis": "Missing contrast, responsive, focus, or motion evidence produces FAIL/HOLD instead of being promoted to visual-quality claims."
+    }
+  }
+}
