@@ -1,8 +1,8 @@
 # Design Fabric Rendered Observer Loop
 
-Design Fabric v0.5 keeps one evidence loop inside AXM Universal Creation:
+Design Fabric v0.7 keeps one evidence loop inside AXM Universal Creation:
 
-`Design Genome -> design plan -> browser render -> runtime/pixel observation -> integrated judgment -> repair direction -> explicit repair -> render again`
+`Design Genome -> design plan -> browser render -> runtime/pixel/interaction observation -> integrated judgment -> repair direction -> explicit repair -> render again -> bound before/after comparison`
 
 This remains inside `AXM-CAP-DESIGN-FABRIC`. It is an observer/evidence layer, not another general creation machine.
 
@@ -12,7 +12,7 @@ Schema:
 
 `axm.design-render-observation/v0.1`
 
-Every observation is bound to one exact `plan_digest` and one attributed observer. Screenshot, DOM, runtime-probe, pixel, model, and human evidence can therefore meet in one judgment flow without becoming one undifferentiated truth claim.
+Every observation is bound to one exact `plan_digest` and one attributed observer. Screenshot, DOM, runtime, interaction, pixel, model, and human evidence can meet in one judgment flow without becoming one undifferentiated truth claim.
 
 ## Browser runtime probe
 
@@ -20,7 +20,7 @@ Schema:
 
 `axm.browser-runtime-probe/v0.1`
 
-The optional local Chromium-compatible browser bridge still captures real screenshot and DOM bytes. v0.5 additionally attempts a bounded nonvisual runtime probe on a temporary instrumented copy of the requested local HTML. The original project file is not rewritten.
+The optional local Chromium-compatible browser bridge captures real screenshot and DOM bytes and attempts a bounded nonvisual runtime probe on a temporary instrumented copy of the requested local HTML. The original project file is not rewritten.
 
 When the browser actually emits the runtime marker, the capture can retain:
 
@@ -31,23 +31,64 @@ When the browser actually emits the runtime marker, the capture can retain:
 - runtime JavaScript/console error receipts;
 - bounded DOM accessibility heuristics such as missing `alt`, missing observed control names, duplicate ids, landmark counts, heading counts, and control counts.
 
-The runtime JSON is materialized beside screenshot and DOM evidence and receives an exact digest.
+Every browser invocation receives a fresh temporary user-data directory. This prevents the observer from intentionally sharing the caller's ordinary cookies/localStorage/session state, but is not claimed as an operating-system sandbox.
 
 ### Runtime truth boundary
 
-This is not a full browser automation or accessibility suite.
-
-Programmatic focus is not complete keyboard/tab-order proof. The accessibility findings are DOM heuristics, not a browser accessibility tree. The probe does not click controls, submit forms, perform destructive actions, or claim broad interaction coverage. Complex composited contrast remains unproven.
+Programmatic focus is not complete keyboard/tab-order proof. The accessibility findings are DOM heuristics, not a browser accessibility tree. Complex composited contrast remains unproven.
 
 Reduced-motion evidence is conservative. PASS is emitted only when no motion is observed or an actual duration reduction is observed during the reduced-motion run. Equal duration stays unproven because motion may instead be reduced by travel distance or another mechanism.
 
 If the browser/page prevents the probe marker from appearing, runtime evidence stays HOLD rather than being invented.
+
+## Explicit bounded interaction recipes
+
+Schema:
+
+`axm.browser-interaction-probe/v0.1`
+
+The browser observer can now execute caller-authored recipes instead of inventing an autonomous interaction crawl.
+
+A recipe contains an id and bounded steps. v0.7 supports:
+
+- `focus` on an exact CSS selector;
+- `activate` on an exact CSS selector only when `allow_synthetic_activation=true` is explicitly supplied.
+
+Synthetic activation is restricted to visible button-like controls: `button`, `summary`, `role=button`, checkbox/radio inputs, and button inputs. Arbitrary links are outside the activation contract. Form submission is intercepted and blocked by the temporary probe.
+
+For each step the evidence can retain the selector, action, status, bounded before/after control state, whether state changed, and any probe error. When at least one recipe was requested and the marker is observed, `interaction_error_count` enters the existing integrated judgment.
+
+### Interaction truth boundary
+
+This is **not** real keyboard traversal and does not create trusted human input events. `HTMLElement.click()` is synthetic browser execution. A PASS means only that the exact requested recipes completed without recorded probe errors for the exact selectors and viewport.
+
+It does not prove discoverability, usability, correct tab order, assistive-technology behavior, or that the requested product behavior was semantically the right behavior.
 
 ## Screenshot observer
 
 The deterministic PNG observer remains a separate evidence class. It verifies bounded PNG structure and measures dimensions, colors, luminance, alpha, and neighboring RGB variation. Those pixel facts can feed Design Genome provenance and exact viewport-integrity checks.
 
 Pixel statistics do not become component semantics, text identity, layout quality, or aesthetic truth.
+
+## Before/after repair comparison
+
+Schema:
+
+`axm.design-render-comparison/v0.1`
+
+A repair cycle can now compare one exact before screenshot with one exact after screenshot.
+
+Before comparison, Design Fabric re-reads both PNG files and verifies that each byte digest matches the screenshot artifact declared by its corresponding render-observation receipt. Only then does it measure:
+
+- changed-pixel count and fraction;
+- mean and maximum RGB L1 delta;
+- mean alpha delta;
+- mean encoded-luminance delta;
+- an up-to-8x8 regional change grid.
+
+Different raster dimensions produce HOLD rather than silent resampling.
+
+The comparison deliberately does **not** say the new image is better. Pixel change, visual improvement, semantic correctness, and regression are different truth classes.
 
 ## Attributed visual assessment
 
@@ -70,7 +111,7 @@ The rule stays simple:
 
 `otherwise -> PASS`
 
-Real browser measurements can now move overflow, focus, reduced-motion, and rendered-contrast gates out of HOLD when evidence exists. Interaction and perceptual gates stay HOLD until their own evidence exists.
+Real browser measurements can move overflow, focus, reduced-motion, rendered-contrast, and explicit interaction-error gates out of HOLD when their own evidence exists. Perceptual gates stay separate until an attributed observer supplies them.
 
 A PASS is narrow evidence for one exact plan and observation set, not a universal claim of beauty, originality, accessibility, or correctness.
 
@@ -78,7 +119,7 @@ A PASS is narrow evidence for one exact plan and observation set, not a universa
 
 Failed or held gates still produce bounded repair direction instead of silent source rewriting:
 
-`evidence -> repair direction -> explicit bounded patch -> existing verification -> browser render -> fresh evidence`
+`evidence -> repair direction -> explicit bounded patch -> existing verification -> browser render -> fresh evidence -> before/after comparison`
 
 No layer accepts its own repair.
 
@@ -86,10 +127,10 @@ No layer accepts its own repair.
 
 The next useful observer growth is:
 
-1. bounded keyboard traversal and non-destructive interaction recipes;
-2. real browser accessibility-tree capture;
-3. explicit interaction/runtime error receipts tied to those recipes;
+1. real keyboard traversal evidence rather than programmatic focus;
+2. browser accessibility-tree capture;
+3. richer non-destructive interaction state assertions while keeping recipes explicit;
 4. an attributed model or human visual observer for hierarchy/spacing/coherence;
-5. before/after repair-comparison receipts.
+5. a repair-cycle receipt that links judgment -> repair plan -> source patch -> new plan/render -> comparison without granting automatic acceptance.
 
-That turns the current camera plus reflexes into a fuller optic nerve while keeping measurement, preference, execution, and acceptance separate.
+The camera now has pixel sensing, runtime reflexes, explicit bounded interaction probes, and repair-delta memory. The remaining work is deeper semantics and stronger attributed perception, not pretending every measurable signal is taste.
