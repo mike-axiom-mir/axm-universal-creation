@@ -10,6 +10,7 @@ def _register_extension_builtins() -> None:
     from .chameleon import ChameleonError, operate_chameleon
     from .design_browser import DesignBrowserError, operate_design_browser
     from .design_compare import DesignCompareError, operate_design_compare
+    from .design_cycle import DesignCycleError, operate_design_cycle
     from .design_fabric import DesignFabricError, operate_design_fabric
     from .design_observer import DesignObserverError, operate_design_observer
     from .design_visual import DesignVisualError, operate_design_visual
@@ -92,6 +93,10 @@ def _register_extension_builtins() -> None:
         "inspect-render-comparison",
         "compare-render-screenshots",
     }
+    design_cycle_operations = {
+        "inspect-repair-cycle",
+        "record-repair-cycle",
+    }
 
     def multi_perspective_orchestration(root, inputs):
         operation = str(inputs.get("operation", "prepare")).strip().casefold()
@@ -127,10 +132,13 @@ def _register_extension_builtins() -> None:
                 return operate_design_visual(root, inputs)
             if operation in design_compare_operations:
                 return operate_design_compare(root, inputs)
+            if operation in design_cycle_operations:
+                return operate_design_cycle(inputs)
             return operate_design_fabric(root, inputs)
         except (
             DesignBrowserError,
             DesignCompareError,
+            DesignCycleError,
             DesignFabricError,
             DesignObserverError,
             DesignVisualError,
