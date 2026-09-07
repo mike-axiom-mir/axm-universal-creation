@@ -9,6 +9,7 @@ def _register_extension_builtins() -> None:
     from . import specialist_pool as _specialist_pool
     from .chameleon import ChameleonError, operate_chameleon
     from .design_fabric import DesignFabricError, operate_design_fabric
+    from .design_observer import DesignObserverError, operate_design_observer
     from .simulation import SimulationError, operate_simulation
     from .specialist_pool_extension import build_specialist_pool as _contextual_pool_builder
     from .stepwise_workflow import StepwiseWorkflowError, operate_stepwise_workflow
@@ -71,6 +72,12 @@ def _register_extension_builtins() -> None:
         "inspect-calibrations",
         "calibration-history",
     }
+    design_observer_operations = {
+        "inspect-observer",
+        "record-render-observation",
+        "judge-rendered",
+        "propose-repair",
+    }
 
     def multi_perspective_orchestration(root, inputs):
         operation = str(inputs.get("operation", "prepare")).strip().casefold()
@@ -96,9 +103,12 @@ def _register_extension_builtins() -> None:
             raise _capabilities.CapabilityError(str(exc), details) from exc
 
     def design_fabric_surface(root, inputs):
+        operation = str(inputs.get("operation", "")).strip().casefold()
         try:
+            if operation in design_observer_operations:
+                return operate_design_observer(inputs)
             return operate_design_fabric(root, inputs)
-        except (DesignFabricError, ValueError, TypeError) as exc:
+        except (DesignFabricError, DesignObserverError, ValueError, TypeError) as exc:
             details = getattr(exc, "details", {})
             raise _capabilities.CapabilityError(str(exc), details) from exc
 
