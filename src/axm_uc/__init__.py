@@ -13,6 +13,7 @@ def _register_extension_builtins() -> None:
     from .design_compare import DesignCompareError, operate_design_compare
     from .design_cycle import DesignCycleError, operate_design_cycle
     from .design_fabric import DesignFabricError, operate_design_fabric
+    from .design_geometry import DesignGeometryError, operate_design_geometry
     from .design_observer import DesignObserverError, operate_design_observer
     from .design_visual import DesignVisualError, operate_design_visual
     from .simulation import SimulationError, operate_simulation
@@ -88,6 +89,10 @@ def _register_extension_builtins() -> None:
         "inspect-cdp-observer",
         "capture-cdp-semantics",
     }
+    design_geometry_operations = {
+        "inspect-cdp-geometry",
+        "capture-cdp-geometry",
+    }
     design_visual_operations = {
         "inspect-visual-observer",
         "observe-screenshot",
@@ -133,6 +138,8 @@ def _register_extension_builtins() -> None:
                 return operate_design_browser(root, inputs)
             if operation in design_cdp_operations:
                 return operate_design_cdp(root, inputs)
+            if operation in design_geometry_operations:
+                return operate_design_geometry(root, inputs)
             if operation in design_observer_operations:
                 return operate_design_observer(inputs)
             if operation in design_visual_operations:
@@ -148,6 +155,7 @@ def _register_extension_builtins() -> None:
             DesignCompareError,
             DesignCycleError,
             DesignFabricError,
+            DesignGeometryError,
             DesignObserverError,
             DesignVisualError,
             ValueError,
