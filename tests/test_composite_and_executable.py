@@ -222,7 +222,7 @@ class CompositeAndExecutableTests(unittest.TestCase):
             _resolve_binding(
                 {"from": "steps.build.files", "transform": "arbitrary-expression"},
                 {},
-                {"build": {"files": [{"path": "a.txt", "sha256": digest_a}]},
+                {"build": {"files": [{"path": "a.txt", "sha256": digest_a}]}},
             )
 
 
