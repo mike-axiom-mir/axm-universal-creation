@@ -1,8 +1,8 @@
 {
   "id": "AXM-CAP-DESIGN-FABRIC",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "status": "live",
-  "purpose": "Observe local design-source signals and bounded local PNG screenshot pixels, normalize reusable evidence into an inspectable Design Genome, compose design plans from explicit component semantics and tokens, apply deterministic structural gates, optionally invoke a caller-selected local Chromium-compatible headless browser to capture real screenshot/DOM bytes, accept attributed render observations, integrate those observations without promoting aesthetic preference to objective truth, and derive bounded repair direction from failed or held evidence.",
+  "purpose": "Observe local design-source signals, bounded local PNG screenshot pixels, and bounded local browser runtime evidence; normalize reusable evidence into an inspectable Design Genome; compose design plans from explicit component semantics and tokens; apply deterministic structural gates; optionally invoke a caller-selected local Chromium-compatible headless browser to capture real screenshot/DOM bytes and attempt runtime measurements on a temporary instrumented copy; accept attributed render observations without promoting aesthetic preference to objective truth; and derive bounded repair direction from failed or held evidence.",
   "handles": [
     "inspect-design-fabric",
     "observe-design-reference",
@@ -43,7 +43,7 @@
     }
   },
   "output_contract": {
-    "kind": "design-observation-genome-plan-judgment-render-evidence-browser-capture-screenshot-pixel-evidence-repair-plan-or-descriptor-project",
+    "kind": "design-observation-genome-plan-judgment-render-evidence-browser-runtime-capture-screenshot-pixel-evidence-repair-plan-or-descriptor-project",
     "contains": [
       "bounded local source evidence without external fetching",
       "deterministic reusable design tokens",
@@ -56,6 +56,10 @@
       "responsive, focus, reduced-motion, contrast, and coverage structural gate evidence",
       "optional local headless browser capture materializing real screenshot and DOM bytes for every declared viewport",
       "browser executable/version, local target digest, viewport sizes, offline host-resolution policy, artifact digests, and capture receipt",
+      "temporary nonvisual runtime instrumentation that preserves the original source file and original relative-resource base",
+      "browser-observed horizontal overflow, programmatic focus-outline evidence, opaque rendered text contrast, runtime errors, bounded DOM accessibility heuristics, and motion duration signals when the probe is actually observed",
+      "a second reduced-motion browser observation when required, with reduced-motion PASS emitted only for directly observed duration reduction or zero observed motion",
+      "runtime probe JSON artifacts retained beside screenshot and DOM evidence without claiming a full accessibility tree, keyboard traversal, click crawl, or perceptual judgment",
       "bounded local PNG parsing with signature/chunk/CRC verification and decoded 8-bit non-interlaced pixel facts",
       "decoded screenshot dimensions, pixel count, quantized color occurrence buckets, channel means, alpha coverage, luminance distribution, and neighboring RGB delta means",
       "screenshot-derived color signals that can enter the existing Design Genome path with screenshot-specific provenance and no inferred semantic roles",
@@ -65,7 +69,7 @@
       "attributed perceptual PASS/FAIL/HOLD assessments with confidence and basis",
       "integrated render judgment bound to one exact plan digest",
       "deterministic repair direction derived from failed or held gates without automatic source rewrite",
-      "provenance separating observed source signals, observed screenshot pixels, browser execution, external observer claims, and AXM quality policy",
+      "provenance separating observed source signals, screenshot pixels, browser runtime evidence, external observer claims, and AXM quality policy",
       "optional validated three-file design descriptor project"
     ]
   },
@@ -75,10 +79,11 @@
     "sits above Asset Atom ingredients and beside Paintgun, Vector Cell, and Chameleon visual-state machinery",
     "keeps structure/style grammar reusable so page composition does not need to be copied",
     "can turn a caller-authorized local Chromium-compatible executable into a real screenshot/DOM observer without adding a mandatory Python/browser dependency",
+    "can deterministically inject a bounded nonvisual runtime probe into a temporary HTML copy so actual browser state can feed overflow, focus, opaque contrast, runtime-error, DOM-accessibility, and reduced-motion evidence without rewriting the original project",
     "can deterministically decode bounded local PNG screenshots with Python standard-library code and feed measured color evidence into the existing Design Genome flow",
     "lets screenshot, browser, human, image-model, or other authorized observers feed one provider-neutral evidence contract",
     "binds every render observation to one exact design-plan digest before it can affect judgment",
-    "keeps pixel facts, evidence-integrity assessments, perceptual assessments, and AXM policy as separate truth classes",
+    "keeps browser measurements, pixel facts, evidence-integrity assessments, perceptual assessments, and AXM policy as separate truth classes",
     "turns failed and held structural/render evidence into explicit repair direction while leaving actual source modification to existing creation/repair machinery",
     "keeps design judgment inside the creation loop rather than as a final make-pretty pass"
   ],
@@ -86,61 +91,66 @@
     {
       "id": "AXM-24-WORKSPACE-COLLABORATION-C-010-project",
       "role": "uses",
-      "basis": "Design Fabric can observe bounded local project source and local PNG screenshots and can materialize validated descriptors or browser evidence outside the live machine body."
+      "basis": "Design Fabric can observe bounded local project source and local PNG screenshots and can materialize validated descriptors or browser/runtime evidence outside the live machine body."
     },
     {
       "id": "AXM-12-RENDERING-MATERIALS-C-007-material-graph",
       "role": "uses",
-      "basis": "The genome retains material and surface signals as structured design ingredients while keeping renderer and screenshot-pixel truth separate from semantic or aesthetic claims."
+      "basis": "The genome retains material and surface signals as structured design ingredients while keeping renderer, browser-computed, and screenshot-pixel truth separate from semantic or aesthetic claims."
     },
     {
       "id": "AXM-13-ANIMATION-VIDEO-C-007-animation-state-machine",
       "role": "uses",
-      "basis": "Component interaction states and motion policy remain explicit design state rather than being hidden in a rendered reference."
+      "basis": "Component interaction states and motion policy remain explicit design state; browser runtime evidence can observe bounded timing response without silently redefining the animation grammar."
     },
     {
       "id": "AXM-01-PROVENANCE-A-012-observation",
       "role": "uses",
-      "basis": "Source, screenshot-pixel, browser, and external render evidence remains attributed and digest-bound; deterministic pixel measurements do not become semantic or aesthetic truth."
+      "basis": "Source, screenshot-pixel, browser-runtime, and external render evidence remains attributed and digest-bound; deterministic measurements do not become semantic or aesthetic truth."
     }
   ],
   "implementation": {
     "kind": "DETERMINISTIC_SOURCE",
     "entrypoint": "builtin:design_fabric",
-    "source": "src/axm_uc/design_fabric.py + src/axm_uc/design_observer.py + src/axm_uc/design_browser.py + src/axm_uc/design_visual.py via src/axm_uc/__init__.py registration"
+    "source": "src/axm_uc/design_fabric.py + src/axm_uc/design_observer.py + src/axm_uc/design_browser.py + src/axm_uc/design_runtime_probe.py + src/axm_uc/design_visual.py via src/axm_uc/__init__.py registration"
   },
   "limitations": [
     "local source observation remains lexical/structural source inspection and is distinct from rendered perception",
     "browser capture requires a caller-selected Chromium-compatible executable and never installs or downloads a browser automatically",
     "browser capture accepts local HTML targets only and blocks external host resolution; remote URL capture is unsupported",
-    "the browser bridge captures real screenshot and DOM bytes but does not automatically extract computed-style, accessibility-tree, interaction, or perceptual measurements",
+    "the runtime probe runs only in a temporary instrumented copy; if the browser or page prevents the marker from being observed, runtime fields remain HOLD rather than being invented",
+    "focus evidence is programmatic focus plus computed outline/shadow evidence, not complete keyboard-navigation or tab-order proof",
+    "rendered contrast is measured only for observed opaque computed text on an opaque ancestor background; transparency, gradients, images, blending, and more complex compositing remain unproven",
+    "accessibility issue counts are bounded DOM heuristics for missing alt text, missing observed control names, duplicate ids, and simple structure counts; they are not a browser accessibility-tree audit",
+    "reduced-motion PASS is emitted only for zero observed motion or directly observed duration reduction under a reduced-motion browser run; equal duration remains unproven because motion may be reduced by another mechanism",
+    "the browser runtime probe does not click controls, submit forms, perform destructive actions, or claim broad interaction coverage; interaction-error gates remain separate unless explicit interaction evidence is supplied",
     "the minimal visual observer accepts bounded local 8-bit non-interlaced PNG files only and intentionally has no third-party image-model dependency",
     "PNG pixel statistics and quantized color buckets are measurements, not proof of component semantics, text identity, spacing quality, visual hierarchy, component coherence, beauty, originality, accessibility, or intent",
     "CSS selectors are component signals only and do not prove component semantics; roles must come from explicit evidence",
     "external perceptual assessments stay attributed observations and are not promoted to objective aesthetic truth",
-    "default rendered-quality judgment still requires explicit visual-hierarchy, spacing-consistency, and component-coherence assessments; pixel facts alone cannot create a visual-quality PASS",
+    "default rendered-quality judgment still requires explicit visual-hierarchy, spacing-consistency, and component-coherence assessments; browser facts and pixel facts alone cannot create a perceptual visual-quality PASS",
     "a passing integrated judgment proves only that declared gates passed for the exact plan, observer, artifacts, measurements, assessments, and viewports supplied",
     "visual universality, subjective beauty, originality, complete accessibility, runtime correctness, and behavior outside observed conditions remain unproven",
     "repair plans are deterministic directions only; they do not silently rewrite source or accept their own repairs",
     "derived genomes intentionally retain reference grammar signals without reproducing source page composition by default"
   ],
-  "persistent_state": "none required; optional design descriptor projects, browser capture directories, screenshot observations, and external observation receipts are caller-selected creation state",
+  "persistent_state": "none required; optional design descriptor projects, browser capture directories, runtime-probe JSON files, screenshot observations, and external observation receipts are caller-selected creation state",
   "root_fit": {
     "truth": {
       "fit": true,
-      "basis": "Source signals, decoded screenshot pixel facts, browser-captured bytes, merely declared external artifacts, evidence-integrity checks, observer assessments, policy gates, and still-unobserved reality remain separately labeled."
+      "basis": "Source signals, browser-computed runtime facts, runtime-probe gaps, decoded screenshot pixel facts, browser-captured bytes, merely declared external artifacts, evidence-integrity checks, observer assessments, policy gates, and still-unobserved reality remain separately labeled."
     },
     "agency": {
       "fit": true,
-      "basis": "Tokens, components, states, screenshot evidence, browser executable, viewport contract, observers, artifacts, measurements, assessments, gates, provenance, and repair directions remain inspectable and replaceable."
+      "basis": "Tokens, components, states, screenshot evidence, browser executable, viewport contract, runtime probe, observers, artifacts, measurements, assessments, gates, provenance, and repair directions remain inspectable and replaceable."
     },
     "continuity": {
       "fit": true,
-      "basis": "The existing Design Genome, render-observation, and plan-digest contracts remain stable anchors while the screenshot observer adds a bounded evidence adapter rather than replacing prior meaning."
+      "basis": "The existing Design Genome, render-observation, and plan-digest contracts remain stable anchors while browser runtime and screenshot observers add bounded evidence adapters rather than replacing prior meaning."
     },
     "wisdom-before-speed": {
       "fit": true,
-      "basis": "Invalid or unsupported PNGs fail closed, dimension mismatch holds, and missing runtime or perceptual evidence remains HOLD rather than being converted into a synthetic visual-quality claim."
+      "basis": "Invalid or unsupported PNGs fail closed, dimension mismatch holds, absent runtime probes hold, ambiguous reduced-motion behavior stays unproven, and missing interaction or perceptual evidence remains HOLD rather than being converted into a synthetic visual-quality claim."
     }
   }
 }
