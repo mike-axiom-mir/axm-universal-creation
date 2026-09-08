@@ -46,3 +46,20 @@ Quality is often the accumulated result of many small correct details, not one l
 - Do not fragment working systems merely for ideology. Add granularity where it creates useful control, reuse, diagnosis, repair, or quality.
 
 **Working rule:** thousands of small good details and capabilities in the right places can improve a result more than one simple big upgrade.
+
+## Canonical state and adaptive realization principle
+
+When useful, separate **what exists** from **how it is expressed on a particular machine**.
+
+- Universal Creation's canonical creation state and semantic intent should remain independent from any one renderer, UI, export target, device class, or preview path.
+- Preserve expression intent separately where needed: meaning, material character, motion weight, atmosphere, hierarchy, sound intent, readability, semantic detail, and other qualities that should survive changes in realization cost.
+- Prefer one creation body with multiple bounded realization contracts over divergent mobile/desktop/browser/ultra editions when the same canonical state can support them.
+- Select realization from canonical state + expression intent + measured machine capabilities + user policy; adaptation may happen at launch or dynamically as available resources change.
+- A weak device should normally receive a cheaper expression, **not a weaker creation truth**. Rich logical/design detail can remain even when preview or output realization is simplified.
+- Define non-degradable invariants explicitly: content identity, project data integrity, user intent, privacy, core function, causal/timing meaning, and authoritative project state as applicable.
+- Never let a lossy preview/export/cache overwrite richer canonical source state merely because it was produced on a weaker machine. A realization is not source authority.
+- Richer realization may expose more of existing intent/state but must not invent canonical facts just to appear higher quality.
+- Build alternative realization paths where they create value: geometry, textures, lighting, particles, simulation passes, UI density, preview fidelity, audio richness, or domain equivalents.
+- Do not force this split where representation itself is the canonical truth.
+
+**Working rule:** degrade expression, never truth; upgrade expression, never invent truth. One creation body may wake up differently on different machines while remaining the same creation.
