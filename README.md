@@ -39,6 +39,17 @@ To see the newest growth loop, run `examples/requests/explore_missing_status_pan
 
 To inspect the complete organ implementation queue, run `organ-census`. It currently reports 15 structurally connected installed package mappings and 400 anatomy records that still require implementation. Twelve connected mappings come from the fixture-tested Foundation pack; `examples/requests/create_foundation_organ_pack.json` composes them into one validated generic project. `examples/requests/materialize_identity_registry_organ.json` still shows the separate explicit-source path from one anatomy record to a detached Forge-tested candidate. See `ORGAN_MATERIALIZATION.md` and `FOUNDATION_ORGAN_PACK.md`.
 
+For the machine's versioned, review-driven Axiom/Mir 3D workflow, see
+[3D_ITERATION.md](3D_ITERATION.md). It retains exact-context lessons between
+passes and keeps export success separate from multi-angle visual acceptance.
+
+For original skinned characters with portable motion clips, see
+[RIGGED_CHARACTERS.md](RIGGED_CHARACTERS.md), beginning with AXM OOPS.
+
+For checking actual exported static triangles against footprint, floor,
+attachment-marker and collision requirements, see
+[STATIC_ASSET_CONTRACTS.md](STATIC_ASSET_CONTRACTS.md).
+
 ## Core rule
 
 > **Do not hide what the machine is.**
@@ -365,6 +376,10 @@ python tools/build.py
 The Markdown example intentionally begins as a gap. The candidate demonstrates the smallest justified growth in this case: reuse the exact text writer and add an inspectable Markdown route rather than inventing a duplicate writer.
 
 GitHub collaboration uses one branch/PR lane per AI chat or instance by default; see `AGENTS.md`. That convention is repository hygiene, not machine architecture.
+
+## Portable creation bytes
+
+Project creation and repair preserve the caller's exact UTF-8 bytes, including explicit LF or CRLF line endings. Exact-file validation compares bytes rather than normalizing text. This keeps Forge payload digests consistent on Windows and detects line-ending drift. Registry manifest paths use forward slashes on every host so existing detached candidates are found before duplicate synthesis. Symlink-specific tests report a skip only when Windows denies the privilege needed to construct their fixture.
 
 ## Status
 

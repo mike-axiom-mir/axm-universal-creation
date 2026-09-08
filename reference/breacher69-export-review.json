@@ -1,0 +1,208 @@
+{
+  "rejected": {
+    "schema": "axm.static-asset-review/v0.1",
+    "status": "FAIL",
+    "artifact_sha256": "2d01637882179ac51c90a15a9f8c24a878e1e6dad8a3a5f9dc72766689a7a48d",
+    "contract_sha256": "3ff3d1c6870515246f2ae1a43efa12fe2db579bfb594059f92540e384448e3b1",
+    "contract": {
+      "schema": "axm.static-asset-contract/v0.1",
+      "max_triangles": 3046,
+      "max_primitives": 10,
+      "markers": {
+        "Muzzle": [
+          -0.8399999737739563,
+          0.9700000286102295,
+          0.6000000238418579
+        ],
+        "WeakPoint": [
+          0,
+          1.600000023841858,
+          0.5099999904632568
+        ]
+      }
+    },
+    "measurements": {
+      "bounds": {
+        "min": [
+          -0.9263626337051392,
+          0.0,
+          -0.5242993235588074
+        ],
+        "max": [
+          0.9263626337051392,
+          2.1415321826934814,
+          0.7390000224113464
+        ]
+      },
+      "triangles": 3048,
+      "primitives": 10,
+      "nodes": 16,
+      "markers": {
+        "Muzzle": {
+          "actual": [
+            -0.8399999737739563,
+            0.9700000286102295,
+            0.6000000238418579
+          ],
+          "error_m": 0.0
+        },
+        "WeakPoint": {
+          "actual": [
+            0.0,
+            1.600000023841858,
+            0.5099999904632568
+          ],
+          "error_m": 0.0
+        }
+      },
+      "degenerate_triangles": 2,
+      "degenerate_twice_area_threshold_m2": 1e-12,
+      "outside_envelope_triangles": 0,
+      "collision_triangles_tested": 0,
+      "collision_triangles_unproven": 0
+    },
+    "findings": [
+      {
+        "code": "DEGENERATE_TRIANGLE",
+        "node": 2,
+        "name": "Body_Breacher69_Recess",
+        "primitive": 0,
+        "triangle": 444,
+        "vertex_indices": [
+          635,
+          631,
+          580
+        ],
+        "world_positions": [
+          [
+            -0.39159998297691345,
+            1.611199975013733,
+            0.4759005308151245
+          ],
+          [
+            -0.39159998297691345,
+            1.611199975013733,
+            0.475898414850235
+          ],
+          [
+            -0.39159998297691345,
+            1.611199975013733,
+            0.4749656021595001
+          ]
+        ],
+        "twice_area_m2": 0.0,
+        "threshold_m2": 1e-12
+      },
+      {
+        "code": "DEGENERATE_TRIANGLE",
+        "node": 2,
+        "name": "Body_Breacher69_Recess",
+        "primitive": 0,
+        "triangle": 515,
+        "vertex_indices": [
+          820,
+          873,
+          875
+        ],
+        "world_positions": [
+          [
+            0.39159998297691345,
+            1.611199975013733,
+            0.4749656021595001
+          ],
+          [
+            0.39159998297691345,
+            1.611199975013733,
+            0.475898414850235
+          ],
+          [
+            0.39159998297691345,
+            1.611199975013733,
+            0.4759005308151245
+          ]
+        ],
+        "twice_area_m2": 0.0,
+        "threshold_m2": 1e-12
+      },
+      {
+        "code": "BUDGET_EXCEEDED",
+        "field": "max_triangles",
+        "actual": 3048,
+        "maximum": 3046
+      }
+    ],
+    "finding_count": 3,
+    "finding_counts": {
+      "DEGENERATE_TRIANGLE": 2,
+      "BUDGET_EXCEEDED": 1
+    },
+    "scope": "Actual default-scene static GLB positions/indices/transforms. No renderer import, visual-quality, topology, animation, self-collision, gameplay, or automatic adoption proof."
+  },
+  "rebuilt": {
+    "schema": "axm.static-asset-review/v0.1",
+    "status": "PASS",
+    "artifact_sha256": "452f80ba7bf84598d5eccde517133098e2d9ebc1699021ff1eec2f2580ac053f",
+    "contract_sha256": "3ff3d1c6870515246f2ae1a43efa12fe2db579bfb594059f92540e384448e3b1",
+    "contract": {
+      "schema": "axm.static-asset-contract/v0.1",
+      "max_triangles": 3046,
+      "max_primitives": 10,
+      "markers": {
+        "Muzzle": [
+          -0.8399999737739563,
+          0.9700000286102295,
+          0.6000000238418579
+        ],
+        "WeakPoint": [
+          0,
+          1.600000023841858,
+          0.5099999904632568
+        ]
+      }
+    },
+    "measurements": {
+      "bounds": {
+        "min": [
+          -0.9263626337051392,
+          0.0,
+          -0.5242993235588074
+        ],
+        "max": [
+          0.9263626337051392,
+          2.1415321826934814,
+          0.7390000224113464
+        ]
+      },
+      "triangles": 3046,
+      "primitives": 10,
+      "nodes": 16,
+      "markers": {
+        "Muzzle": {
+          "actual": [
+            -0.8399999737739563,
+            0.9700000286102295,
+            0.6000000238418579
+          ],
+          "error_m": 0.0
+        },
+        "WeakPoint": {
+          "actual": [
+            0.0,
+            1.600000023841858,
+            0.5099999904632568
+          ],
+          "error_m": 0.0
+        }
+      },
+      "degenerate_triangles": 0,
+      "degenerate_twice_area_threshold_m2": 1e-12,
+      "outside_envelope_triangles": 0,
+      "collision_triangles_tested": 0,
+      "collision_triangles_unproven": 0
+    },
+    "findings": [],
+    "finding_count": 0,
+    "finding_counts": {},
+    "scope": "Actual default-scene static GLB positions/indices/transforms. No renderer import, visual-quality, topology, animation, self-collision, gameplay, or automatic adoption proof."
+  }
+}

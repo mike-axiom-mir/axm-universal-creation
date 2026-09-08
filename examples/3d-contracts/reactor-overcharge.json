@@ -1,0 +1,21 @@
+{
+  "schema": "axm.static-asset-contract/v0.1",
+  "bounds": {"min": [-1, 0, -0.5], "max": [1, 2.2, 0.5]},
+  "floor_y": 0,
+  "tolerance_m": 0.00002,
+  "require_root_identity": true,
+  "max_triangles": 5000,
+  "max_primitives": 12,
+  "markers": {
+    "Contact": [0, 0, 0],
+    "InteractOrigin": [0, 0, 0],
+    "ServiceFront": [0, 1, 0.5],
+    "ServiceRear": [0, 1, -0.5]
+  },
+  "collision_boxes": [
+    {"name": "Cabinet", "min": [-1, 0, -0.5], "max": [1, 1.267501, 0.5]},
+    {"name": "Coil_and_guard", "min": [-0.35, 1.265, -0.35], "max": [0.35, 1.970501, 0.35]},
+    {"name": "Left_capacitor", "min": [-0.845001, 1.284999, -0.285], "max": [-0.246199, 1.534501, 0.285]},
+    {"name": "Right_capacitor", "min": [0.246199, 1.284999, -0.285], "max": [0.845001, 1.534501, 0.285]}
+  ]
+}

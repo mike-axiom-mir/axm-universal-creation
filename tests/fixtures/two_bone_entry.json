@@ -1,0 +1,142 @@
+{
+  "scope": "Actual exported Fortress joint frames independently measured by the game owner. Entry range constrains pole feasibility only; surface findings are separate observations.",
+  "source": "Independent game-owner entry-feasibility review,2026-09-06; authored layout versions3,4,6",
+  "units": "metres",
+  "cases": [
+    {
+      "version": 3,
+      "name": "relay-rifle-height1.8-pitch-1.25-recoil0",
+      "shoulder": [
+        -0.32481440971925557,
+        1.4265492784858849,
+        0.07482794898274016
+      ],
+      "wrist": [
+        -0.22717021172881038,
+        1.4426685503878007,
+        0.6056818140159794
+      ],
+      "entry_axis": [
+        1.5221385853761375e-16,
+        0.315322362395268,
+        0.9489846193555864
+      ],
+      "segment_lengths": [
+        0.30000007152557373,
+        0.2799999713897705
+      ],
+      "expected_minimum": -0.27970343388492086,
+      "expected_maximum": -0.20890887246108264,
+      "expected_sixty_mm": "impossible",
+      "surface_pairs": 2
+    },
+    {
+      "version": 3,
+      "name": "relay-rifle-height1.05-pitch1.25-recoil0",
+      "shoulder": [
+        -0.32481440971925557,
+        0.6892886315010609,
+        -0.12323593431369882
+      ],
+      "wrist": [
+        -0.06688468555775315,
+        0.7526887333714536,
+        0.3469265172127586
+      ],
+      "entry_axis": [
+        6.360959908389596e-16,
+        0.31532236239526856,
+        -0.9489846193555863
+      ],
+      "segment_lengths": [
+        0.30000007152557373,
+        0.2799999713897705
+      ],
+      "expected_minimum": 0.13967065514010263,
+      "expected_maximum": 0.2695608466550168,
+      "expected_sixty_mm": "possible",
+      "surface_pairs": 0
+    },
+    {
+      "version": 4,
+      "name": "relay-rifle-height1.8-pitch-0.5-recoil0",
+      "shoulder": [
+        -0.32481440971925557,
+        1.4200000333786011,
+        -0.10047687132171806
+      ],
+      "wrist": [
+        -0.12415953012506561,
+        1.4480905810003755,
+        0.40007141483849185
+      ],
+      "entry_axis": [
+        -0.587785252292473,
+        0.7099792065364157,
+        0.3878634082681626
+      ],
+      "segment_lengths": [
+        0.30000007152557373,
+        0.2799999713897705
+      ],
+      "expected_minimum": -0.15022829088420897,
+      "expected_maximum": 0.057906961326235004,
+      "expected_sixty_mm": "impossible",
+      "surface_pairs": 0
+    },
+    {
+      "version": 4,
+      "name": "relay-rifle-height1.6125-pitch-0.5-recoil0",
+      "shoulder": [
+        -0.32481440971925557,
+        1.2346744037931545,
+        -0.10654452115436099
+      ],
+      "wrist": [
+        -0.1241373993397365,
+        1.2576985025325975,
+        0.3942535167121506
+      ],
+      "entry_axis": [
+        -0.587785252292473,
+        0.7099792065364159,
+        0.38786340826816235
+      ],
+      "segment_lengths": [
+        0.30000007152557373,
+        0.2799999713897705
+      ],
+      "expected_minimum": -0.1486637134877115,
+      "expected_maximum": 0.05971583779750171,
+      "expected_sixty_mm": "impossible",
+      "surface_pairs": 0
+    },
+    {
+      "version": 6,
+      "name": "relay-rifle-height1.8-pitch-0.5-recoil0",
+      "shoulder": [
+        -0.32481440971925557,
+        1.4200000333786011,
+        -0.10047687132171806
+      ],
+      "wrist": [
+        -0.2286834034312044,
+        1.4618662825074038,
+        0.4292457855115584
+      ],
+      "entry_axis": [
+        -0.5877852522924731,
+        0.7099792065364156,
+        0.38786340826816273
+      ],
+      "segment_lengths": [
+        0.30000007152557373,
+        0.2799999713897705
+      ],
+      "expected_minimum": -0.18558601381023274,
+      "expected_maximum": 0.014014211252090847,
+      "expected_sixty_mm": "impossible",
+      "surface_pairs": 1
+    }
+  ]
+}

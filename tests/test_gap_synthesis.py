@@ -105,6 +105,7 @@ class GapSynthesisTests(unittest.TestCase):
         })
         self.assertEqual(analysis["status"], "REUSE_EXISTING_CANDIDATE_BEFORE_SYNTHESIS")
         self.assertEqual(analysis["existing_candidates"][0]["capability_id"], "AXM-CAP-WRITE-MARKDOWN")
+        self.assertTrue(analysis["existing_candidates"][0]["manifest"].startswith("capabilities/candidates/"))
         proposed = compile_gap_proposal(ROOT, analysis["request"])
         self.assertIsNone(proposed["proposal"])
 

@@ -1,0 +1,8 @@
+{
+  "asset_id": "axm-oops",
+  "render_resolution": 1200,
+  "detail_pass": 3,
+  "texture_resolution": 4096,
+  "verify_roundtrip": true,
+  "auto_provision_runtime": true
+}
