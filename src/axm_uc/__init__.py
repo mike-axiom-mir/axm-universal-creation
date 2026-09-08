@@ -8,6 +8,15 @@ def _register_extension_builtins() -> None:
     from . import capabilities as _capabilities
     from . import specialist_pool as _specialist_pool
     from .chameleon import ChameleonError, operate_chameleon
+    from .design_browser import DesignBrowserError, operate_design_browser
+    from .design_cdp import DesignCdpError, operate_design_cdp
+    from .design_compare import DesignCompareError, operate_design_compare
+    from .design_cycle import DesignCycleError, operate_design_cycle
+    from .design_evidence_bundle import DesignEvidenceBundleError, operate_design_evidence_bundle
+    from .design_fabric import DesignFabricError, operate_design_fabric
+    from .design_geometry import DesignGeometryError, operate_design_geometry
+    from .design_observer import DesignObserverError, operate_design_observer
+    from .design_visual import DesignVisualError, operate_design_visual
     from .simulation import SimulationError, operate_simulation
     from .specialist_pool_extension import build_specialist_pool as _contextual_pool_builder
     from .stepwise_workflow import StepwiseWorkflowError, operate_stepwise_workflow
@@ -70,6 +79,40 @@ def _register_extension_builtins() -> None:
         "inspect-calibrations",
         "calibration-history",
     }
+    design_observer_operations = {
+        "inspect-observer",
+        "record-render-observation",
+        "judge-rendered",
+        "propose-repair",
+    }
+    design_browser_operations = {"capture-browser"}
+    design_cdp_operations = {
+        "inspect-cdp-observer",
+        "capture-cdp-semantics",
+    }
+    design_geometry_operations = {
+        "inspect-cdp-geometry",
+        "capture-cdp-geometry",
+    }
+    design_evidence_bundle_operations = {
+        "inspect-evidence-bundle",
+        "consolidate-viewport-evidence",
+        "project-consensus-render-observation",
+    }
+    design_visual_operations = {
+        "inspect-visual-observer",
+        "observe-screenshot",
+        "derive-screenshot-genome",
+        "observe-render-screenshot",
+    }
+    design_compare_operations = {
+        "inspect-render-comparison",
+        "compare-render-screenshots",
+    }
+    design_cycle_operations = {
+        "inspect-repair-cycle",
+        "record-repair-cycle",
+    }
 
     def multi_perspective_orchestration(root, inputs):
         operation = str(inputs.get("operation", "prepare")).strip().casefold()
@@ -94,8 +137,45 @@ def _register_extension_builtins() -> None:
             details = getattr(exc, "details", {})
             raise _capabilities.CapabilityError(str(exc), details) from exc
 
+    def design_fabric_surface(root, inputs):
+        operation = str(inputs.get("operation", "")).strip().casefold()
+        try:
+            if operation in design_browser_operations:
+                return operate_design_browser(root, inputs)
+            if operation in design_cdp_operations:
+                return operate_design_cdp(root, inputs)
+            if operation in design_geometry_operations:
+                return operate_design_geometry(root, inputs)
+            if operation in design_evidence_bundle_operations:
+                return operate_design_evidence_bundle(inputs)
+            if operation in design_observer_operations:
+                return operate_design_observer(inputs)
+            if operation in design_visual_operations:
+                return operate_design_visual(root, inputs)
+            if operation in design_compare_operations:
+                return operate_design_compare(root, inputs)
+            if operation in design_cycle_operations:
+                return operate_design_cycle(inputs)
+            return operate_design_fabric(root, inputs)
+        except (
+            DesignBrowserError,
+            DesignCdpError,
+            DesignCompareError,
+            DesignCycleError,
+            DesignEvidenceBundleError,
+            DesignFabricError,
+            DesignGeometryError,
+            DesignObserverError,
+            DesignVisualError,
+            ValueError,
+            TypeError,
+        ) as exc:
+            details = getattr(exc, "details", {})
+            raise _capabilities.CapabilityError(str(exc), details) from exc
+
     _capabilities.BUILTINS["builtin:specialist_tournament"] = multi_perspective_orchestration
     _capabilities.BUILTINS["builtin:simulate_creation"] = adaptive_simulation_surface
+    _capabilities.BUILTINS["builtin:design_fabric"] = design_fabric_surface
 
 
 _register_extension_builtins()
