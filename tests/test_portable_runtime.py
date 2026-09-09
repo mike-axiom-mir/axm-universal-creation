@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -152,6 +153,7 @@ class PortableRuntimeTests(unittest.TestCase):
             check=False,
             capture_output=True,
             text=True,
+            env={**os.environ, "PYTHONPATH": str(ROOT / "src")},
         )
         self.assertEqual(completed.returncode, 2)
         result = json.loads(completed.stdout)
