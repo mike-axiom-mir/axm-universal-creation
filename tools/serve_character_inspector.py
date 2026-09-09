@@ -12,7 +12,8 @@ def create_handler(directory: Path):
     static=Path(__file__).resolve().parent/"character_inspector"
     routes={"/":(static/"index.html","text/html; charset=utf-8"),
             "/index.html":(static/"index.html","text/html; charset=utf-8"),
-            "/viewer.js":(static/"viewer.js","text/javascript; charset=utf-8")}
+            "/viewer.js":(static/"viewer.js","text/javascript; charset=utf-8"),
+            "/inspection_controls.js":(static/"inspection_controls.js","text/javascript; charset=utf-8")}
     for lod in range(3):
         path=(directory/f"AXM_OOPS_LOD{lod}.glb").resolve(strict=True)
         if not path.is_relative_to(directory):
