@@ -58,7 +58,7 @@ jobs:
           PY
       - name: Verify capsule through installed wheel command
         run: |
-          python -m pip wheel --no-deps --no-build-isolation \
+          python -m pip wheel --no-deps \
             --wheel-dir "$RUNNER_TEMP/wheel" .
           python -m venv "$RUNNER_TEMP/venv"
           "$RUNNER_TEMP/venv/bin/python" -m pip install --no-deps \
