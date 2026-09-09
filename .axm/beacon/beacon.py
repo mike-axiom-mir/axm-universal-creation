@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""AXM Organ Beacon v0.1 command line for Game Asset Forge."""
+"""AXM Organ Beacon v0.1 command line for Universal Creation."""
 from __future__ import annotations
 
 import argparse
