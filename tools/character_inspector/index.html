@@ -1,40 +1,53 @@
 <!doctype html>
-<html lang="en">
+<html lang="en">">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="referrer" content="no-referrer">
   <title>AXM · OOPS workshop</title>
   <style>
     *{box-sizing:border-box}body{margin:0;background:#111e25;color:#ebeee8;font:14px/1.5 system-ui,sans-serif}
-    main{display:grid;grid-template-columns:minmax(0,1fr) 284px;height:100vh}#viewport{min-height:380px;position:relative;overflow:hidden}
-    canvas{display:block;width:100%;height:100%;outline:none}aside{min-height:0;padding:28px 22px;background:#172730;border-left:1px solid #30434b;overflow:auto}
+    main{display:grid;grid-template-columns:minmax(0,1fr) 300px;height:100vh}#viewport{min-height:380px;position:relative;overflow:hidden}
+    canvas{display:block;width:100%;height:100%;outline:none}canvas:focus-visible{outline:2px solid #ffb58e;outline-offset:-4px}
+    aside{min-height:0;padding:28px 22px;background:#172730;border-left:1px solid #30434b;overflow:auto}
     h1{font-size:42px;line-height:1;margin:8px 0 15px;font-weight:750;letter-spacing:-2px}h1 span{color:#f78b62}
     .eyebrow{font-size:10px;letter-spacing:2px;color:#a3c5c5}.description{color:#c1cece;font-size:13px;margin-bottom:24px}
     label{display:block;margin:18px 0 6px;font-size:12px;color:#b9cccd}select,button,input[type=range]{width:100%}
     button,select{background:#223b45;color:#f2f6ef;border:1px solid #47646e;border-radius:6px;padding:10px;font:inherit}
     button{cursor:pointer}button:hover{background:#335661}button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid #ffb58e;outline-offset:3px}
-    .row{display:flex;gap:8px;margin-top:10px}.row button{padding:8px;font-size:12px}input{accent-color:#f78b62}
-    .check{display:flex;gap:8px;align-items:center}.check input{margin:0}.check label{margin:0}
-    #status{font-size:12px;color:#8de1c9;margin:22px 0 8px}#stats{font:11px/1.8 ui-monospace,monospace;color:#b7cacd;white-space:pre-wrap;overflow-wrap:anywhere}
+    .row{display:flex;gap:8px;margin-top:10px}.row button{padding:8px;font-size:12px}.row.three button{min-width:0}
+    input{accent-color:#f78b62}.check{display:flex;gap:8px;align-items:center}.check input{margin:0}.check label{margin:0}
+    #status{font-size:12px;color:#8de1c9;margin:22px 0 8px}#inputStatus{min-height:1.5em;margin:6px 0 0;color:#d7b985;font-size:11px}
+    #stats{font:11px/1.8 ui-monospace,monospace;color:#b7cacd;white-space:pre-wrap;overflow-wrap:anywhere}
     .note{font-size:10px;color:#9fb6bf;border-top:1px solid #30434b;padding-top:16px;margin-top:20px}
-    .caption{position:absolute;left:24px;bottom:20px;font-size:11px;color:#a8c0c5;pointer-events:none}
-    #time{font:11px ui-monospace,monospace;color:#bcd1d4}.tag{position:absolute;top:22px;left:24px;font-size:11px;letter-spacing:1px;color:#abd4cf}
-    @media(max-width:700px){main{grid-template-columns:1fr;height:auto}#viewport{height:68vh}aside{border:0}h1{font-size:32px}.description{margin-bottom:10px}}
+    .caption{position:absolute;left:24px;bottom:20px;max-width:min(720px,calc(100% - 48px));font-size:11px;color:#a8c0c5;pointer-events:none;text-shadow:0 1px 2px #0b151a}
+    #time{font:11px ui-monospace,monospace;color:#bcd1d4}.tag{position:absolute;top:22px;left:24px;font-size:11px;letter-spacing:1px;color:#abd4cf;pointer-events:none}
+    .telemetry{position:absolute;top:20px;right:22px;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;max-width:60%;pointer-events:none}
+    .telemetry span{padding:5px 8px;border:1px solid #42606a;border-radius:999px;background:rgba(12,27,34,.78);backdrop-filter:blur(4px);font:10px/1.2 ui-monospace,monospace;color:#c7dddd}
+    .shortcuts{margin:14px 0 0;padding:10px 12px;border:1px solid #30434b;border-radius:8px;background:#132129;color:#aac0c4;font-size:10px;line-height:1.55}
+    .shortcuts strong{color:#e9f0eb;font-weight:650}
+    @media(max-width:700px){main{grid-template-columns:1fr;height:auto}#viewport{height:66vh}aside{border:0}h1{font-size:32px}.description{margin-bottom:10px}.telemetry{top:48px;left:18px;right:18px;max-width:none;justify-content:flex-start}.caption{left:18px;bottom:14px;max-width:calc(100% - 36px)}}
+    @media(prefers-reduced-motion:reduce){.telemetry span{backdrop-filter:none}}
   </style>
   <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"}}</script>
 </head>
 <body><main>
-  <section id="viewport" aria-label="Interactive 3D character"><div class="tag">AXM / CHARACTER WORKSHOP</div><div class="caption">Drag to orbit · Scroll to inspect · Right-drag to pan</div></section>
+  <section id="viewport" aria-label="Interactive 3D character">
+    <div class="tag">AXM / CHARACTER WORKSHOP</div>
+    <div class="telemetry" aria-hidden="true"><span id="viewState">VIEW · 3/4</span><span id="motionState">MOTION · BIND</span><span id="inputMode">INPUT · POINTER</span></div>
+    <div class="caption">Drag to orbit · Scroll to inspect · Keys: Space play · [ ] clip · 1–3 LOD · F/B/V view · ←/→ orbit · ↑/↓ zoom</div>
+  </section>
   <aside><div class="eyebrow">OVERCONFIDENT ONBOARD PATCH SPECIALIST</div><h1>O<span>OPS</span>.</h1><p class="description">Fix first. Panic later.<br>Original AXM repair courier.</p>
     <label for="clip">Animation</label><select id="clip"><option value="">Bind pose</option></select>
-    <div class="row"><button id="play" type="button">Play</button><button id="restart" type="button">Restart clip</button></div>
+    <div class="row three"><button id="prevClip" type="button">Previous</button><button id="play" type="button">Play</button><button id="nextClip" type="button">Next</button></div>
+    <button id="restart" type="button" style="margin-top:8px">Restart clip</button>
     <label for="scrub">Pose / time</label><input id="scrub" type="range" min="0" max="1" step="0.001" value="0"><output id="time">0.000 s</output>
     <label for="lod">Geometry level</label><select id="lod"><option value="0">LOD 0 · close-up</option><option value="1">LOD 1 · gameplay</option><option value="2">LOD 2 · distance</option></select>
     <label for="lighting">Lighting</label><select id="lighting"><option value="studio">Workshop studio</option><option value="neutral">Neutral inspection</option></select>
     <div class="row"><button id="front" type="button">Front</button><button id="back" type="button">Back</button><button id="reset" type="button">3/4 view</button></div>
     <div class="check" style="margin-top:18px"><input id="wire" type="checkbox"><label for="wire">Wireframe</label></div>
     <div class="check" style="margin-top:10px"><input id="rig" type="checkbox"><label for="rig">Show skeleton</label></div>
-    <p id="status" role="status">Loading exported GLB…</p><div id="stats"></div>
+    <p class="shortcuts"><strong>Keyboard / gamepad inspection</strong><br>W toggles wireframe · K toggles skeleton · A/Cross play/pause · X/Square restart · shoulders change LOD · D-pad changes view/clip · left stick orbits/zooms.</p>
+    <p id="status" role="status">Loading exported GLB…</p><p id="inputStatus" role="status" aria-live="polite"></p><div id="stats"></div>
     <p class="note">Real-time rendering of the actual export. This viewer is not a game-controller integration or AAA certificate. Models stay on this local server; Three.js runtime loads from jsDelivr.</p>
   </aside>
 </main><script type="module" src="viewer.js"></script></body></html>
