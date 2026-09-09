@@ -154,7 +154,9 @@ async function load(){
     model.traverse(node=>{
       if(node.isBone)bones++;
       if(!node.isMesh)return;
-      node.castShadow=true;node.receiveShadow=true;node.frustumCulled=false;
+      node.castShadow=true;node.receiveShadow=true;
+      // Skinned bounds change with animation; never cull against stale bind-pose bounds.
+      node.frustumCulled=false;
       triangles+=(node.geometry.index?.count || node.geometry.attributes.position.count)/3;
       vertices+=node.geometry.attributes.position.count;
       for(const mat of Array.isArray(node.material)?node.material:[node.material]){
@@ -180,8 +182,9 @@ ui.wire.addEventListener('change',()=>model?.traverse(node=>{for(const mat of Ar
 ui.rig.addEventListener('change',()=>{if(skeleton)skeleton.visible=ui.rig.checked;});
 ui.lighting.addEventListener('change',()=>{const neutral=ui.lighting.value==='neutral';scene.background.set(neutral?'#777b7c':'#172a32');scene.fog.color.copy(scene.background);ground.material.color.set(neutral?'#777b7c':'#203941');key.color.set(neutral?0xffffff:0xffe5cc);fill.color.set(neutral?0xffffff:0xa1e0ff);scene.environmentIntensity=neutral?1:.7;key.intensity=neutral?2:3.2;feedback(`${neutral?'Neutral':'Workshop'} lighting.`);});
 ui.front.addEventListener('click',()=>fitView('front'));ui.back.addEventListener('click',()=>fitView('back'));ui.reset.addEventListener('click',()=>fitView('three-quarter'));
-renderer.domElement.addEventListener('pointerdown',()=>setInputMode('pointer'));
-renderer.domElement.addEventListener('wheel',()=>setInputMode('pointer'),{passive:true});
+function markPointerView(){setInputMode('pointer');currentView='free';syncViewState();}
+renderer.domElement.addEventListener('pointerdown',markPointerView);
+renderer.domElement.addEventListener('wheel',markPointerView,{passive:true});
 new InspectionInputRouter({onAction:performAction,onInputMode:setInputMode}).start();
 
 renderer.setAnimationLoop(now=>{
