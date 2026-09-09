@@ -184,7 +184,7 @@ class SoftwareDirections:
             if unknown_values:
                 return {"result": "UNKNOWN_DIRECTION_AXIS_VALUE", "truth_status": "DETERMINISTIC_INPUT_VALIDATION", "axis": axis, "unknown_values": unknown_values, "automatic_selection": False}
 
-        unique_ids = list(dict.fromkeys(direction_ids))
+        unique_ids = sorted(dict.fromkeys(direction_ids))
         profiles = [self.profile_index[item] for item in unique_ids]
         axes = {
             "runtime": _source_union(profiles, "typicalRuntimes", explicit_axes["runtime"]),
