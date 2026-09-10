@@ -129,7 +129,8 @@ def test_capability_candidate(root: Path, candidate_path: Path) -> dict[str, Any
             result["unsafe_test_paths"] = unsafe_paths
         return result
 
-    build_root = root / ".axm-build" / f"candidate-{uuid.uuid4().hex}"
+    build_parent = root / ".axm-build"
+    build_root = build_parent / f"candidate-{uuid.uuid4().hex}"
     build_root.mkdir(parents=True, exist_ok=False)
     test_results: list[dict[str, Any]] = []
     capabilities = CapabilityStore(root)
@@ -204,7 +205,13 @@ def test_capability_candidate(root: Path, candidate_path: Path) -> dict[str, Any
             except Exception as exc:
                 test_results.append({"index": index, "passed": False, "error": str(exc)})
     finally:
-        shutil.rmtree(root / ".axm-build", ignore_errors=True)
+        shutil.rmtree(build_root, ignore_errors=True)
+        try:
+            build_parent.rmdir()
+        except OSError:
+            # Another candidate workspace (or other build owner) still occupies
+            # the shared parent. Its lifetime is not ours to end.
+            pass
 
     passed = bool(test_results) and all(item.get("passed") for item in test_results) and root_fit.get("fit") is True
     return {
@@ -212,7 +219,7 @@ def test_capability_candidate(root: Path, candidate_path: Path) -> dict[str, Any
         "candidate": candidate.get("id"),
         "tests": test_results,
         "root_fit": root_fit,
-        "build_debris_cleaned": not (root / ".axm-build").exists(),
+        "build_debris_cleaned": not build_root.exists(),
         "installed": False,
         "registered": False,
         "routed": False,

@@ -1,0 +1,25 @@
+name: Candidate workspace isolation
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  candidate-workspace-isolation:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.13"]
+    steps:
+      - name: Checkout exact PR state
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Compile candidate tester and regression
+        run: python -m compileall -q src/axm_uc/candidate.py tests/test_candidate_workspace_isolation.py
+      - name: Prove candidate workspace isolation
+        run: python -m unittest -v tests.test_candidate_workspace_isolation
