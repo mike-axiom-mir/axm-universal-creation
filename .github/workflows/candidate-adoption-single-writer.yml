@@ -22,7 +22,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Compile adoption boundary and regression
-        run: python -m compileall -q src/axm_uc/machine.py tests/test_candidate_adoption_single_writer.py
+        run: python -m compileall -q src/axm_uc/adoption_lock.py src/axm_uc/machine.py tests/test_candidate_adoption_single_writer.py
       - name: Reproduce and guard the live-adoption writer race
         run: python -m unittest -v tests.test_candidate_adoption_single_writer
       - name: Run complete repository unittest suite
