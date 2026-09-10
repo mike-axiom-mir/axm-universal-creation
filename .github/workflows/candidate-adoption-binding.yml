@@ -1,0 +1,26 @@
+name: Candidate adoption binding
+
+on:
+  pull_request:
+    branches:
+      - main
+      - automation/truth-sentinel-candidate-workspace-isolation-20260910
+  workflow_dispatch:
+
+jobs:
+  candidate-adoption-binding:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.13"]
+    steps:
+      - name: Checkout exact PR state
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Compile adoption boundary and regression
+        run: python -m compileall -q src/axm_uc/candidate.py src/axm_uc/machine.py tests/test_candidate_adoption_binding.py
+      - name: Prove adoption is bound to tested candidate bytes
+        run: python -m unittest -v tests.test_candidate_adoption_binding
