@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import json
 import shutil
 import uuid
@@ -66,11 +67,14 @@ def test_capability_candidate(root: Path, candidate_path: Path) -> dict[str, Any
     """Exercise one detached capability manifest against the current live dependencies.
 
     The candidate is invoked directly and never routed, installed, or registered.
-    Its declared tests run in short-lived machine-owned build space.
+    Its declared tests run in short-lived machine-owned build space. The returned
+    source digest binds the evidence to the exact manifest bytes parsed here.
     """
     root = Path(root).resolve()
     candidate_path = Path(candidate_path).resolve()
-    candidate = json.loads(candidate_path.read_text(encoding="utf-8"))
+    candidate_bytes = candidate_path.read_bytes()
+    candidate_source_sha256 = f"sha256:{hashlib.sha256(candidate_bytes).hexdigest()}"
+    candidate = json.loads(candidate_bytes.decode("utf-8"))
     errors: list[str] = []
     required_fields = ("id", "purpose", "handles", "implementation", "input_contract", "tests", "root_fit")
     for field in required_fields:
@@ -124,7 +128,13 @@ def test_capability_candidate(root: Path, candidate_path: Path) -> dict[str, Any
             errors.append("json_file_equals_result requires a ${TEST_DIR}/ path and one non-empty result_field")
     root_fit = evaluate_declared_root_fit(candidate)
     if errors:
-        result = {"passed": False, "errors": errors, "root_fit": root_fit, "tests": []}
+        result = {
+            "passed": False,
+            "errors": errors,
+            "root_fit": root_fit,
+            "tests": [],
+            "candidate_source_sha256": candidate_source_sha256,
+        }
         if "unsafe_paths" in locals() and unsafe_paths:
             result["unsafe_test_paths"] = unsafe_paths
         return result
@@ -219,6 +229,7 @@ def test_capability_candidate(root: Path, candidate_path: Path) -> dict[str, Any
         "candidate": candidate.get("id"),
         "tests": test_results,
         "root_fit": root_fit,
+        "candidate_source_sha256": candidate_source_sha256,
         "build_debris_cleaned": not build_root.exists(),
         "installed": False,
         "registered": False,
