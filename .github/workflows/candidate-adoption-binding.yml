@@ -24,3 +24,6 @@ jobs:
         run: python -m compileall -q src/axm_uc/candidate.py src/axm_uc/machine.py tests/test_candidate_adoption_binding.py
       - name: Prove adoption is bound to tested candidate bytes
         run: python -m unittest -v tests.test_candidate_adoption_binding
+      - name: Run complete repository unittest suite
+        if: matrix.python-version == '3.11'
+        run: python -m unittest discover -s tests -p 'test_*.py' -v
