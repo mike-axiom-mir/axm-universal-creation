@@ -1,0 +1,30 @@
+name: Candidate adoption single writer
+
+on:
+  pull_request:
+    branches:
+      - automation/truth-sentinel-candidate-adoption-binding-20260910
+  workflow_dispatch:
+
+jobs:
+  candidate-adoption-single-writer:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ["3.11", "3.13"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout exact PR state
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Compile adoption boundary and regression
+        run: python -m compileall -q src/axm_uc/machine.py tests/test_candidate_adoption_single_writer.py
+      - name: Reproduce and guard the live-adoption writer race
+        run: python -m unittest -v tests.test_candidate_adoption_single_writer
+      - name: Run complete repository unittest suite
+        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.11'
+        run: python -m unittest discover -s tests -p 'test_*.py' -v
