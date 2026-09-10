@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 from typing import Any
@@ -284,7 +285,46 @@ class UniversalCreationMachine:
         test = self.test_candidate(candidate_path)
         if not test.get("passed"):
             return {"adopted": False, "test": test}
-        candidate = json.loads(candidate_path.read_text(encoding="utf-8"))
+
+        expected_digest = test.get("candidate_source_sha256")
+        if not isinstance(expected_digest, str) or not expected_digest.startswith("sha256:"):
+            return {
+                "adopted": False,
+                "truth_status": "HOLD_CANDIDATE_TEST_EVIDENCE_INCOMPLETE",
+                "test": test,
+            }
+
+        try:
+            candidate_bytes = candidate_path.read_bytes()
+        except OSError as exc:
+            return {
+                "adopted": False,
+                "truth_status": "HOLD_CANDIDATE_SOURCE_UNAVAILABLE_AFTER_TEST",
+                "expected_candidate_source_sha256": expected_digest,
+                "source_error": str(exc),
+                "test": test,
+            }
+        observed_digest = f"sha256:{hashlib.sha256(candidate_bytes).hexdigest()}"
+        if observed_digest != expected_digest:
+            return {
+                "adopted": False,
+                "truth_status": "HOLD_CANDIDATE_SOURCE_DRIFT",
+                "expected_candidate_source_sha256": expected_digest,
+                "observed_candidate_source_sha256": observed_digest,
+                "test": test,
+            }
+
+        try:
+            candidate = json.loads(candidate_bytes.decode("utf-8"))
+        except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+            return {
+                "adopted": False,
+                "truth_status": "HOLD_CANDIDATE_SOURCE_UNREADABLE_AFTER_TEST",
+                "candidate_source_sha256": observed_digest,
+                "source_error": str(exc),
+                "test": test,
+            }
+
         target = self.root / "capabilities/live" / f"{candidate['id']}.json"
         if target.exists():
             return {
@@ -292,6 +332,7 @@ class UniversalCreationMachine:
                 "truth_status": "HOLD_LIVE_CAPABILITY_ID_COLLISION",
                 "capability": candidate.get("id"),
                 "manifest": str(target.relative_to(self.root)),
+                "candidate_source_sha256": observed_digest,
                 "test": test,
             }
         recovery = ensure_daily_recovery_snapshot(self.root)
@@ -310,6 +351,7 @@ class UniversalCreationMachine:
             "truth_status": "ADOPTED_LIVE_CAPABILITY_WITH_DAILY_RECOVERY",
             "capability": candidate["id"],
             "manifest": str(target.relative_to(self.root)),
+            "candidate_source_sha256": observed_digest,
             "recovery_snapshot": recovery,
             "transition": {
                 "installed": True,
