@@ -25,6 +25,6 @@ jobs:
         run: python -m compileall -q src/axm_uc/adoption_lock.py src/axm_uc/machine.py tests/test_candidate_adoption_single_writer.py
       - name: Reproduce and guard the live-adoption writer race
         run: python -m unittest -v tests.test_candidate_adoption_single_writer
-      - name: Run complete repository unittest suite
+      - name: Run complete repository build verification
         if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.11'
-        run: python -m unittest discover -s tests -p 'test_*.py' -v
+        run: python tools/build.py
