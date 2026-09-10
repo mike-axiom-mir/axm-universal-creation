@@ -35,6 +35,22 @@ class CandidateAdoptionBindingTests(unittest.TestCase):
             self.assertTrue(result["passed"])
             self.assertEqual(result["candidate_source_sha256"], expected_digest)
 
+    def test_adoption_refuses_success_without_source_identity_evidence(self):
+        with tempfile.TemporaryDirectory() as td:
+            candidate_path = self._candidate_copy(Path(td))
+            machine = UniversalCreationMachine(ROOT)
+            machine.test_candidate = lambda _path: {"passed": True}  # type: ignore[method-assign]
+
+            with patch("axm_uc.evolution.ensure_daily_recovery_snapshot") as snapshot, patch(
+                "axm_uc.machine.atomic_write_json"
+            ) as install:
+                result = machine.adopt_candidate(candidate_path)
+
+            self.assertFalse(result["adopted"])
+            self.assertEqual(result["truth_status"], "HOLD_CANDIDATE_TEST_EVIDENCE_INCOMPLETE")
+            snapshot.assert_not_called()
+            install.assert_not_called()
+
     def test_adoption_refuses_candidate_changed_after_successful_test(self):
         with tempfile.TemporaryDirectory() as td:
             candidate_path = self._candidate_copy(Path(td))
@@ -65,6 +81,34 @@ class CandidateAdoptionBindingTests(unittest.TestCase):
             self.assertNotEqual(
                 result["expected_candidate_source_sha256"],
                 result["observed_candidate_source_sha256"],
+            )
+            snapshot.assert_not_called()
+            install.assert_not_called()
+
+    def test_adoption_refuses_candidate_removed_after_successful_test(self):
+        with tempfile.TemporaryDirectory() as td:
+            candidate_path = self._candidate_copy(Path(td))
+            machine = UniversalCreationMachine(ROOT)
+            original_test_candidate = machine.test_candidate
+
+            def test_then_remove(path: Path) -> dict:
+                result = original_test_candidate(path)
+                self.assertTrue(result["passed"])
+                path.unlink()
+                return result
+
+            machine.test_candidate = test_then_remove  # type: ignore[method-assign]
+
+            with patch("axm_uc.evolution.ensure_daily_recovery_snapshot") as snapshot, patch(
+                "axm_uc.machine.atomic_write_json"
+            ) as install:
+                result = machine.adopt_candidate(candidate_path)
+
+            self.assertFalse(result["adopted"])
+            self.assertEqual(result["truth_status"], "HOLD_CANDIDATE_SOURCE_UNAVAILABLE_AFTER_TEST")
+            self.assertEqual(
+                result["expected_candidate_source_sha256"],
+                result["test"]["candidate_source_sha256"],
             )
             snapshot.assert_not_called()
             install.assert_not_called()
