@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 from typing import Any
 
+from .adoption_lock import CandidateAdoptionBusy, CandidateAdoptionLockError, candidate_adoption_lock
 from .atomic import atomic_write_json
 from .asset_atoms import AssetPackageLibrary, asset_atom_schema_summary
 from .candidate import test_capability_candidate
@@ -279,9 +280,31 @@ class UniversalCreationMachine:
         return test_capability_candidate(self.root, candidate_path)
 
     def adopt_candidate(self, candidate_path: Path) -> dict[str, Any]:
+        candidate_path = Path(candidate_path).resolve()
+        try:
+            with candidate_adoption_lock(self.root):
+                return self._adopt_candidate_owned(candidate_path)
+        except CandidateAdoptionBusy:
+            return {
+                "adopted": False,
+                "truth_status": "HOLD_CANDIDATE_ADOPTION_BUSY",
+                "candidate_path": str(candidate_path),
+                "coordination_scope": "host-local-cooperating-processes",
+                "live_machine_body_modified": False,
+            }
+        except CandidateAdoptionLockError as exc:
+            return {
+                "adopted": False,
+                "truth_status": "HOLD_CANDIDATE_ADOPTION_LOCK_UNAVAILABLE",
+                "candidate_path": str(candidate_path),
+                "coordination_scope": "host-local-cooperating-processes",
+                "lock_error": str(exc),
+                "live_machine_body_modified": False,
+            }
+
+    def _adopt_candidate_owned(self, candidate_path: Path) -> dict[str, Any]:
         from .evolution import ensure_daily_recovery_snapshot
 
-        candidate_path = Path(candidate_path).resolve()
         test = self.test_candidate(candidate_path)
         if not test.get("passed"):
             return {"adopted": False, "test": test}
