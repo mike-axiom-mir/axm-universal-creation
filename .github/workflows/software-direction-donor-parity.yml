@@ -1,0 +1,63 @@
+name: Software Direction Donor Parity
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "src/axm_uc/directions.py"
+      - "reference/software-directions/**"
+      - "tools/verify_software_direction_donor.py"
+      - "tests/test_software_direction_donor_parity.py"
+      - ".github/workflows/software-direction-donor-parity.yml"
+  workflow_dispatch:
+
+jobs:
+  parity:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.13"]
+    env:
+      PROVIDER_REVISION: 9a108de0365a6f9c747bc9227897da28f438aad3
+    steps:
+      - name: Checkout Universal Creation
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Run focused consumer regressions
+        run: |
+          python -m compileall -q src tools/verify_software_direction_donor.py tests/test_software_direction_donor_parity.py
+          python -m unittest -v tests.test_software_directions tests.test_software_direction_donor_parity
+
+      - name: Checkout exact axm-102-grammer provider head
+        uses: actions/checkout@v4
+        with:
+          repository: mike-axiom-mir/axm-102-grammer
+          ref: ${{ env.PROVIDER_REVISION }}
+          path: .donor/axm-102-grammer
+
+      - name: Verify exact provider checkout identity
+        shell: bash
+        run: |
+          test "$(git -C .donor/axm-102-grammer rev-parse HEAD)" = "$PROVIDER_REVISION"
+
+      - name: Run provider direction-stack selftest
+        run: node .donor/axm-102-grammer/software-directions/selftest-direction-stack.js
+
+      - name: Verify donor catalog semantic parity
+        run: |
+          python tools/verify_software_direction_donor.py \
+            --provider-root .donor/axm-102-grammer \
+            --provider-revision "$PROVIDER_REVISION" \
+            --json
