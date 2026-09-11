@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import datetime as dt
+import stat
 import sys
 import tempfile
 import unittest
@@ -103,6 +104,67 @@ class SnapshotTests(unittest.TestCase):
                 target.writestr("undeclared.txt", "not in manifest")
             with self.assertRaisesRegex(ValueError, "manifest file set"):
                 verify_snapshot(expanded)
+
+    def test_snapshot_refuses_links_and_output_inside_machine_root(self):
+        with tempfile.TemporaryDirectory() as td:
+            parent = Path(td)
+            root = parent / "machine"
+            root.mkdir()
+            outside = parent / "private.txt"
+            outside.write_text("must remain outside", encoding="utf-8")
+            link = root / "linked-private.txt"
+            try:
+                link.symlink_to(outside)
+            except OSError as error:
+                self.skipTest(f"symlink creation unavailable: {error}")
+
+            output = parent / "snapshots"
+            with self.assertRaisesRegex(ValueError, "unsafe snapshot symlink"):
+                create_daily_snapshot(root, output)
+            self.assertEqual(list(output.iterdir()), [])
+
+            link.unlink()
+            with self.assertRaisesRegex(ValueError, "outside the machine root"):
+                create_daily_snapshot(root, root / "snapshots")
+
+    def test_restore_rejects_symlink_and_case_colliding_entries_before_moving_body(self):
+        with tempfile.TemporaryDirectory() as td:
+            parent = Path(td)
+            root = parent / "machine"
+            root.mkdir()
+            (root / "body.txt").write_text("current", encoding="utf-8")
+
+            linked = parent / "linked.zip"
+            link_info = zipfile.ZipInfo("linked-private.txt")
+            link_info.create_system = 3
+            link_info.external_attr = (stat.S_IFLNK | 0o777) << 16
+            with zipfile.ZipFile(linked, "w") as archive:
+                archive.writestr(link_info, "../private.txt")
+            with self.assertRaisesRegex(ValueError, "symlink entry"):
+                restore_snapshot(root, linked, confirm=True)
+            self.assertEqual((root / "body.txt").read_text(encoding="utf-8"), "current")
+            self.assertEqual(list(parent.glob("machine.quarantine-*")), [])
+
+            colliding = parent / "colliding.zip"
+            with zipfile.ZipFile(colliding, "w") as archive:
+                archive.writestr("State/Body.txt", "one")
+                archive.writestr("state/body.txt", "two")
+            with self.assertRaisesRegex(ValueError, "duplicate snapshot path"):
+                restore_snapshot(root, colliding, confirm=True)
+            self.assertEqual((root / "body.txt").read_text(encoding="utf-8"), "current")
+            self.assertEqual(list(parent.glob("machine.quarantine-*")), [])
+
+    def test_restore_refuses_snapshot_archive_inside_machine_root(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td) / "machine"
+            root.mkdir()
+            (root / "body.txt").write_text("current", encoding="utf-8")
+            inside = root / "restore.zip"
+            with zipfile.ZipFile(inside, "w") as archive:
+                archive.writestr("body.txt", "older")
+            with self.assertRaisesRegex(ValueError, "outside the machine root"):
+                restore_snapshot(root, inside, confirm=True)
+            self.assertEqual((root / "body.txt").read_text(encoding="utf-8"), "current")
 
 
 if __name__ == "__main__":
