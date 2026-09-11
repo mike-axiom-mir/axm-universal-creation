@@ -5,6 +5,7 @@ from typing import Any
 
 from .visual_creation_grammar import compile_visual_recipe, grammar_catalog
 from .visual_expanded import expansion_catalog, generate_expanded_asset, generate_expansion_kit
+from .visual_state_prompt_atlas import compile_visual_state, visual_state_catalog
 from .visual_learning import (
     compile_adaptive_visual_recipe,
     inspect_png,
@@ -21,7 +22,7 @@ from .rigged_characters import character_catalog, forge_rigged_character, inspec
 
 
 def operate_visual_expansion(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
-    """Path-explicit bridge for the expanded visual forge and visual grammar.
+    """Path-explicit bridge for the expanded visual forge and visual grammars.
 
     Generation callers choose the output path. Planning operations are read-only
     and do not invent a final local filemap, renderer, or visual-quality claim.
@@ -30,15 +31,23 @@ def operate_visual_expansion(root: Path, inputs: dict[str, Any]) -> dict[str, An
     if operation == "catalog":
         return {
             **expansion_catalog(),
+            "visual_state_atlas": visual_state_catalog(),
             "layout_status": "CALLER_SELECTED_PATH_NO_FINAL_LOCAL_FILEMAP_ASSUMED",
         }
     if operation == "grammar-catalog":
         return grammar_catalog()
+    if operation == "state-catalog":
+        return visual_state_catalog(include_aliases=bool(inputs.get("include_aliases", False)))
     if operation == "plan":
         request = inputs.get("request")
         if not isinstance(request, dict):
             raise TypeError("visual plan operation requires request object")
         return compile_visual_recipe(request)
+    if operation == "state-compile":
+        request = inputs.get("request")
+        if not isinstance(request, dict):
+            raise TypeError("visual state compile operation requires request object")
+        return compile_visual_state(request)
     if operation == "plan-adaptive":
         return compile_adaptive_visual_recipe(root, inputs.get("request"))
     if operation == "inspect-png":
