@@ -1,0 +1,65 @@
+{
+  "protocol": "axm-beacon/0.1",
+  "repo": "mike-axiom-mir/axm-universal-creation",
+  "interests": [
+    "composable capabilities organs",
+    "canonical creation state",
+    "recipes deterministic transforms",
+    "validation repair loops",
+    "provenance receipts source identity",
+    "realization contracts rendering export",
+    "asset animation audio visual detail",
+    "portability offline operation"
+  ],
+  "publish": {
+    "include": [
+      "src/**/*.py",
+      "tools/*.py",
+      "tests/*.py",
+      "tests/fixtures/*.json",
+      "capabilities/**/*.json",
+      "executable-organs/*.json",
+      "organs/*.json",
+      "components/*.json",
+      "atoms/*.json",
+      "recipes/**/*.json",
+      "schemas/**/*.json",
+      "examples/requests/*.json",
+      "*.md",
+      "docs/*.md",
+      ".axm/beacon.json",
+      ".axm/beacon/*.py",
+      ".github/workflows/axm-beacon-*.yml"
+    ],
+    "exclude": [
+      ".git/**",
+      ".axm/beacon/feed/**",
+      ".axm/beacon/inbox/**",
+      "creations/**",
+      "daily-snapshots/**",
+      "snapshots/**",
+      "reference/**",
+      "build/**",
+      "dist/**",
+      "private/**",
+      "quarantine/**",
+      "**/private/**",
+      "**/quarantine/**",
+      "**/__pycache__/**",
+      "**/*.pyc",
+      ".env*",
+      "**/.env*",
+      "**/*credential*",
+      "**/*secret*",
+      "**/*.key",
+      "**/*.pem"
+    ],
+    "max_capsules": 200,
+    "tags": ["axm", "universal-creation", "creation-machine", "standalone"]
+  },
+  "peer_discovery": {
+    "github_owner": "mike-axiom-mir",
+    "repo_prefixes": ["axm-", "Axm-"],
+    "feed_branch": "axm-beacon-feed"
+  }
+}
