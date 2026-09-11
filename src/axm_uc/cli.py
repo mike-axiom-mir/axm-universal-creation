@@ -7,7 +7,7 @@ from pathlib import Path
 from .asset_atoms import ATOM_KINDS
 from .machine import UniversalCreationMachine
 from .paths import find_machine_root
-from .snapshot import create_daily_snapshot, restore_snapshot
+from .snapshot import create_daily_snapshot, restore_snapshot, verify_snapshot
 
 
 def _print(value) -> None:
@@ -87,11 +87,13 @@ def build_parser() -> argparse.ArgumentParser:
         cp = candidate_sub.add_parser(name)
         cp.add_argument("manifest")
 
-    snapshot_p = sub.add_parser("snapshot", help="daily snapshot export/restore")
+    snapshot_p = sub.add_parser("snapshot", help="daily snapshot create/verify/restore")
     snapshot_sub = snapshot_p.add_subparsers(dest="snapshot_command", required=True)
     sc = snapshot_sub.add_parser("create")
     sc.add_argument("--output-dir")
     sc.add_argument("--replace", action="store_true")
+    sv = snapshot_sub.add_parser("verify")
+    sv.add_argument("snapshot")
     sr = snapshot_sub.add_parser("restore")
     sr.add_argument("snapshot")
     sr.add_argument("--confirm", action="store_true", help="required for destructive current-body restore")
@@ -166,6 +168,9 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "snapshot":
         if args.snapshot_command == "create":
             _print(create_daily_snapshot(root, Path(args.output_dir) if args.output_dir else None, args.replace))
+            return 0
+        if args.snapshot_command == "verify":
+            _print(verify_snapshot(Path(args.snapshot)))
             return 0
         _print(restore_snapshot(root, Path(args.snapshot), confirm=args.confirm))
         return 0
