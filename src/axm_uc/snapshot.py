@@ -5,21 +5,29 @@ import hashlib
 import json
 import os
 import shutil
+import stat
 import zipfile
 from pathlib import Path, PurePosixPath
 from typing import Any
 
 EXCLUDED_DIRS = {".git", "__pycache__", ".pytest_cache", ".axm-build", "snapshots"}
+EXCLUDED_DIRS_FOLDED = {name.casefold() for name in EXCLUDED_DIRS}
 SNAPSHOT_MANIFEST = ".axm-snapshot-manifest.json"
 SNAPSHOT_SCHEMA = "axm.universal-creation.snapshot/v1"
 
 
+def _has_excluded_part(parts: tuple[str, ...]) -> bool:
+    return any(part.casefold() in EXCLUDED_DIRS_FOLDED for part in parts)
+
+
 def _iter_snapshot_files(root: Path):
     for path in sorted(root.rglob("*")):
-        if not path.is_file():
-            continue
         rel = path.relative_to(root)
-        if any(part in EXCLUDED_DIRS for part in rel.parts):
+        if _has_excluded_part(rel.parts):
+            continue
+        if path.is_symlink():
+            raise ValueError(f"unsafe snapshot symlink: {rel.as_posix()}")
+        if not path.is_file():
             continue
         if path.suffix == ".pyc":
             continue
@@ -57,6 +65,8 @@ def create_daily_snapshot(root: Path, output_dir: Path | None = None, replace: b
     root = Path(root).resolve()
     day = today or dt.date.today()
     out_dir = Path(output_dir).resolve() if output_dir else root.parent / "axm-universal-creation-snapshots"
+    if out_dir == root or root in out_dir.parents:
+        raise ValueError("snapshot output directory must be outside the machine root")
     out_dir.mkdir(parents=True, exist_ok=True)
     target = out_dir / f"AXM_Universal_Creation_{day.isoformat()}.zip"
     if target.exists() and not replace:
@@ -103,20 +113,26 @@ def _validate_archive(archive: zipfile.ZipFile) -> list[zipfile.ZipInfo]:
             raise ValueError(f"snapshot contains directory entry: {info.filename}")
         path = _canonical_member_path(info.filename)
         name = path.as_posix()
-        if name in seen:
+        folded = name.casefold()
+        if folded in seen:
             raise ValueError(f"duplicate snapshot path: {name}")
-        seen.add(name)
-        if name == SNAPSHOT_MANIFEST:
+        seen.add(folded)
+        unix_mode = info.external_attr >> 16
+        if unix_mode and stat.S_ISLNK(unix_mode):
+            raise ValueError(f"unsafe snapshot symlink entry: {name}")
+        if folded == SNAPSHOT_MANIFEST.casefold():
+            if name != SNAPSHOT_MANIFEST:
+                raise ValueError(f"non-canonical snapshot manifest path: {name}")
             continue
-        if any(part in EXCLUDED_DIRS for part in path.parts):
+        if _has_excluded_part(path.parts):
             raise ValueError(f"forbidden snapshot path: {name}")
         payload.append(info)
-    payload_names = {info.filename for info in payload}
-    for name in payload_names:
-        parts = PurePosixPath(name).parts
+    payload_names = {info.filename.casefold() for info in payload}
+    for info in payload:
+        parts = PurePosixPath(info.filename).parts
         for index in range(1, len(parts)):
-            if PurePosixPath(*parts[:index]).as_posix() in payload_names:
-                raise ValueError(f"snapshot file/directory collision: {name}")
+            if PurePosixPath(*parts[:index]).as_posix().casefold() in payload_names:
+                raise ValueError(f"snapshot file/directory collision: {info.filename}")
     bad = archive.testzip()
     if bad is not None:
         raise ValueError(f"snapshot CRC check failed: {bad}")
@@ -141,16 +157,20 @@ def _verify_manifest(archive: zipfile.ZipFile, payload: list[zipfile.ZipInfo]) -
     if not isinstance(files, list):
         raise ValueError("invalid snapshot manifest files")
     declared: dict[str, dict[str, Any]] = {}
+    declared_folded: set[str] = set()
     for item in files:
         if not isinstance(item, dict) or set(item) != {"path", "bytes", "sha256"}:
             raise ValueError("invalid snapshot manifest file entry")
         path = item["path"]
         if not isinstance(path, str) or _canonical_member_path(path).as_posix() != path:
             raise ValueError("invalid snapshot manifest file path")
-        if path == SNAPSHOT_MANIFEST or any(part in EXCLUDED_DIRS for part in PurePosixPath(path).parts):
+        pure_path = PurePosixPath(path)
+        folded = path.casefold()
+        if folded == SNAPSHOT_MANIFEST.casefold() or _has_excluded_part(pure_path.parts):
             raise ValueError(f"forbidden snapshot manifest path: {path}")
-        if path in declared:
+        if folded in declared_folded:
             raise ValueError(f"duplicate snapshot manifest path: {path}")
+        declared_folded.add(folded)
         size = item["bytes"]
         sha256 = item["sha256"]
         if not isinstance(size, int) or isinstance(size, bool) or size < 0:
@@ -214,6 +234,8 @@ def restore_snapshot(root: Path, snapshot: Path, confirm: bool = False) -> dict[
         raise ValueError("restore requires explicit confirm=True")
     root = Path(root).resolve()
     snapshot = Path(snapshot).resolve()
+    if snapshot == root or root in snapshot.parents:
+        raise ValueError("snapshot archive must be outside the machine root")
     stamp = dt.datetime.now().strftime("%Y%m%dT%H%M%S")
     quarantine = root.parent / f"{root.name}.quarantine-{stamp}"
 
