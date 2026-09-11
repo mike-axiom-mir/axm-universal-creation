@@ -1,0 +1,83 @@
+{
+  "id": "AXM-CAP-GENERATE-PROCEDURAL-MEDIA",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Generate one bounded deterministic PNG raster or mono PCM16 WAV asset from an explicit closed specification, then re-parse the complete emitted container and payload after atomic publication.",
+  "handles": [
+    "procedural-media-asset",
+    "procedural-png-asset",
+    "procedural-wav-asset",
+    "generated-game-asset"
+  ],
+  "input_contract": {
+    "required": ["operation", "path", "specification"],
+    "properties": {
+      "operation": "png or wav",
+      "path": "target .png or .wav file outside the protected live machine body",
+      "specification": "closed bounded operation-specific JSON grammar",
+      "replace": "optional boolean; defaults false"
+    }
+  },
+  "output_contract": {
+    "kind": "validated-procedural-media-asset",
+    "contains": [
+      "path",
+      "operation",
+      "normalized specification and digest",
+      "exact byte count and SHA-256",
+      "post-publication format validation"
+    ]
+  },
+  "dependencies": [],
+  "relationships": [
+    "creates media bytes instead of requiring the caller to supply pre-existing base64 content",
+    "provides reusable deterministic binary assets to mixed projects and browser games"
+  ],
+  "anatomy_refs": [
+    {
+      "id": "AXM-10-2D-IMAGING-O-001-rasterizer",
+      "role": "implements",
+      "basis": "Rasterizes ordered rectangle and circle primitives into an exact bounded RGBA8 pixel plane and deterministic PNG container."
+    },
+    {
+      "id": "AXM-14-AUDIO-MUSIC-SPEECH-O-003-synthesizer",
+      "role": "implements",
+      "basis": "Synthesizes explicit square-tone and silence segments into a deterministic bounded mono PCM16 WAV body."
+    },
+    {
+      "id": "AXM-23-PROCEDURAL-O-001-procedural-generator",
+      "role": "uses",
+      "basis": "Applies a closed parameter grammar to originate exact output bytes without random or hidden generation state."
+    }
+  ],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:procedural_media",
+    "source": "src/axm_uc/procedural_media.py"
+  },
+  "limitations": [
+    "PNG generation is limited to a flat ordered grammar of background, filled rectangles, and filled circles; it is not a general image editor or learned image generator",
+    "WAV generation is limited to mono PCM16 square tones and silence; it does not synthesize speech, music semantics, or arbitrary timbres",
+    "format validation proves container structure and complete payload shape, not visual appeal, perceptual audio quality, meaning, or suitability",
+    "maximum raster side is 2048 pixels, raster area is 4194304 pixels, shape count is 512, tone count is 128, and audio duration is 30000 milliseconds"
+  ],
+  "persistent_state": null,
+  "root_fit": {
+    "truth": {
+      "fit": true,
+      "basis": "The normalized specification, specification digest, exact content digest, complete PNG CRC/decompression receipt or WAV structure receipt, and unproven perceptual qualities remain explicit."
+    },
+    "agency": {
+      "fit": true,
+      "basis": "The caller chooses the operation, every bounded media parameter, destination, and replacement behavior."
+    },
+    "continuity": {
+      "fit": true,
+      "basis": "Publication is atomic, replacement retains a bounded rollback body until post-publication byte and format verification succeeds, and no machine state is changed."
+    },
+    "wisdom-before-speed": {
+      "fit": true,
+      "basis": "Strict fields, dimensions, duration, paths, output suffixes, CRCs, decompression, and payload sizes are checked before the result is called validated."
+    }
+  }
+}

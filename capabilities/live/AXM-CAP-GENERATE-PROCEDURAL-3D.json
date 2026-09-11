@@ -1,0 +1,89 @@
+{
+  "id": "AXM-CAP-GENERATE-PROCEDURAL-3D",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Generate one bounded deterministic glTF 2.0 binary scene from explicit box, pyramid, and cylinder primitives with fixed transforms and metallic-roughness materials, then re-parse its container, references, ranges, and exact bytes after atomic publication.",
+  "handles": [
+    "procedural-3d-asset",
+    "procedural-glb-asset",
+    "deterministic-3d-model",
+    "glb-scene-asset"
+  ],
+  "input_contract": {
+    "required": ["path", "specification"],
+    "properties": {
+      "path": "target .glb file outside the protected live machine body",
+      "specification": "closed axm.procedural-3d/v0.1 scene with 1 through 128 explicit primitives",
+      "replace": "optional boolean; defaults false"
+    }
+  },
+  "output_contract": {
+    "kind": "validated-deterministic-glb-asset",
+    "contains": [
+      "normalized scene specification and digest",
+      "exact GLB byte count and SHA-256",
+      "JSON and BIN chunk validation",
+      "bufferView and accessor range validation",
+      "node, mesh, material, primitive, and triangle counts",
+      "explicit unobserved render and host-import boundaries"
+    ]
+  },
+  "dependencies": [],
+  "relationships": [
+    "originates exact binary 3D assets without requiring caller-supplied base64 bytes",
+    "uses one deterministic glTF scene, node, mesh, material, accessor, bufferView, and buffer grammar",
+    "provides reusable GLB bytes to mixed projects, games, websites, viewers, and portable bundles"
+  ],
+  "anatomy_refs": [
+    {
+      "id": "AXM-11-3D-SPATIAL-O-001-geometry-generator",
+      "role": "implements",
+      "basis": "Generates indexed triangle geometry and normals for a closed bounded box, pyramid, and cylinder grammar."
+    },
+    {
+      "id": "AXM-11-3D-SPATIAL-O-003-topology-validator",
+      "role": "implements",
+      "basis": "Re-parses every emitted mesh reference, accessor, bufferView, component type, range, count, and draw mode after publication."
+    },
+    {
+      "id": "AXM-11-3D-SPATIAL-O-004-scene-composer",
+      "role": "implements",
+      "basis": "Composes explicit named nodes, per-primitive transforms, meshes, and materials into one deterministic scene."
+    },
+    {
+      "id": "AXM-11-3D-SPATIAL-O-013-scene-exporter",
+      "role": "implements",
+      "basis": "Emits a complete glTF 2.0 GLB container with JSON and BIN chunks and verifies its exact published bytes."
+    }
+  ],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:procedural_3d",
+    "source": "src/axm_uc/procedural_3d.py"
+  },
+  "limitations": [
+    "the first grammar supports only boxes, square pyramids, and straight cylinders with translation and scale; rotation, animation, skins, cameras, lights, textures, UVs, morphs, LODs, physics, and arbitrary mesh import are not implemented",
+    "materials contain only one base color plus metallic and roughness factors",
+    "container validation proves exact bounded glTF structure and buffer ranges, not rendered appearance, artistic quality, manifold topology, physical correctness, or compatibility with a particular engine or viewer",
+    "the maximum is 128 primitives and 64 radial segments per cylinder"
+  ],
+  "persistent_state": null,
+  "root_fit": {
+    "truth": {
+      "fit": true,
+      "basis": "The normalized primitive grammar, specification digest, exact asset digest, complete structural receipt, and unobserved rendering/import qualities remain explicit."
+    },
+    "agency": {
+      "fit": true,
+      "basis": "The caller chooses every primitive, dimension, translation, material, destination, and replacement decision."
+    },
+    "continuity": {
+      "fit": true,
+      "basis": "Publication is atomic, bounded replacement is recoverable if post-publication verification fails, and no machine state is changed."
+    },
+    "wisdom-before-speed": {
+      "fit": true,
+      "basis": "Strict fields and bounds, glTF chunk structure, references, byte ranges, and exact post-publication bytes are checked before the asset is called validated."
+    }
+  }
+}
