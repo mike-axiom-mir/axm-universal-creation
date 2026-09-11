@@ -375,6 +375,8 @@ python tools/build.py
 
 The Markdown example intentionally begins as a gap. The candidate demonstrates the smallest justified growth in this case: reuse the exact text writer and add an inspectable Markdown route rather than inventing a duplicate writer.
 
+Candidate adoption treats the canonical live manifest as the commit point. If a process stops after publishing that exact canonical manifest but before consuming its internal candidate, retrying the same tested candidate reconstructs the committed result and completes cleanup. A different, non-regular, or differently encoded live target remains a collision; the live manifest proves content identity, not the earlier recovery-snapshot receipt or authorship.
+
 GitHub collaboration uses one branch/PR lane per AI chat or instance by default; see `AGENTS.md`. That convention is repository hygiene, not machine architecture.
 
 ## Portable creation bytes

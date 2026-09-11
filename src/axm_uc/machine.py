@@ -349,7 +349,55 @@ class UniversalCreationMachine:
             }
 
         target = self.root / "capabilities/live" / f"{candidate['id']}.json"
+        live_candidate = dict(candidate)
+        live_candidate["status"] = "live"
         if target.exists():
+            expected_live_bytes = (
+                json.dumps(live_candidate, indent=2, ensure_ascii=False, sort_keys=True) + "\n"
+            ).encode("utf-8")
+            try:
+                observed_live_bytes = (
+                    target.read_bytes()
+                    if target.is_file() and not target.is_symlink()
+                    else None
+                )
+            except OSError:
+                observed_live_bytes = None
+            if observed_live_bytes == expected_live_bytes:
+                candidates_dir = (self.root / "capabilities/candidates").resolve()
+                candidate_consumed = False
+                try:
+                    candidate_path.relative_to(candidates_dir)
+                except ValueError:
+                    pass
+                else:
+                    candidate_path.unlink()
+                    candidate_consumed = True
+                self.executable_anatomy = ExecutableAnatomy(
+                    self.registry,
+                    self.capabilities,
+                    self.decomposer.topology,
+                )
+                return {
+                    "adopted": True,
+                    "truth_status": "RESUMED_COMMITTED_CANDIDATE_ADOPTION",
+                    "capability": candidate["id"],
+                    "manifest": str(target.relative_to(self.root)),
+                    "candidate_source_sha256": observed_digest,
+                    "live_manifest_sha256": f"sha256:{hashlib.sha256(observed_live_bytes).hexdigest()}",
+                    "transition": {
+                        "installed_now": False,
+                        "registered": True,
+                        "routed": True,
+                        "candidate_cleanup_completed": candidate_consumed,
+                        "reconstructed_from_canonical_state": True,
+                    },
+                    "test": test,
+                    "limitations": [
+                        "exact canonical live-manifest bytes prove the installation commit, not authorship",
+                        "the earlier recovery-snapshot receipt cannot be reconstructed from the live manifest",
+                    ],
+                }
             return {
                 "adopted": False,
                 "truth_status": "HOLD_LIVE_CAPABILITY_ID_COLLISION",
@@ -359,8 +407,7 @@ class UniversalCreationMachine:
                 "test": test,
             }
         recovery = ensure_daily_recovery_snapshot(self.root)
-        candidate["status"] = "live"
-        atomic_write_json(target, candidate)
+        atomic_write_json(target, live_candidate)
         candidates_dir = (self.root / "capabilities/candidates").resolve()
         try:
             candidate_path.relative_to(candidates_dir)
