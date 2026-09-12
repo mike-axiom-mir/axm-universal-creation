@@ -163,11 +163,14 @@ function draw() {
   const W=WORLD.width,H=WORLD.height;
   ctx.save();ctx.setTransform(renderScale,0,0,renderScale,0,0);
   drawDeck();
+  drawConstructionGrid();
   // World depth controls overlap; raised geometry does not change collision coordinates.
   const objects=[{depth:project(state.tower.x+state.tower.width/2,state.tower.y+state.tower.height/2).y,paint:drawRelay},
     {depth:project(state.player.x,state.player.y).y,paint:drawPlayer},
+    ...(state.construction?state.construction.buildings.map(b=>({depth:project((b.col+.5)*SPEC.construction.cell_size,(b.row+.5)*SPEC.construction.cell_size).y,paint:()=>drawSupportBuilding(b)})):[]),
     ...state.enemies.filter(e=>e.alive).map(e=>({depth:project(e.x,e.y).y,paint:()=>drawDrone(e)}))];
   objects.sort((a,b)=>a.depth-b.depth).forEach(o=>o.paint());
+  for(const b of state.supportBeams){beam(b.x,b.y,26,b.tx,b.ty,21,'#fff0a4',2.5);}
   for(const b of state.bullets){beam(b.x-b.vx*.022,b.y-b.vy*.022,21,b.x,b.y,21,'#80ffe3',3);glow(b.x,b.y,21,10,'#72ffde88');}
   for(const f of state.fx){const p=project(f.x,f.y,f.z);ctx.globalAlpha=Math.max(0,f.life/f.maxLife);ctx.fillStyle=f.color;ctx.fillRect(p.x,p.y,2,2);}ctx.globalAlpha=1;
   // Edge vignette keeps the active play area brighter than the surroundings.

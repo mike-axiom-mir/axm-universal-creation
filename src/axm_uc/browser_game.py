@@ -11,6 +11,7 @@ from typing import Any
 
 from .mixed_project import build_mixed_project
 from .browser_arena_visuals import ARENA_VISUALS_JS
+from .browser_construction import validate_construction, CONSTRUCTION_JS, CONSTRUCTION_UI_JS
 from .visual_surface import surface_rows
 from .visual_base import png_bytes
 from .procedural_media import generate_media
@@ -108,8 +109,9 @@ def _color(value: Any, label: str) -> str:
 
 
 def validate_browser_game_spec(raw: Any) -> dict[str, Any]:
+    has_construction = isinstance(raw, dict) and "construction" in raw
     spec = _object(
-        raw,
+        {k:v for k,v in raw.items() if k!="construction"} if has_construction else raw,
         "specification",
         {
             "schema",
@@ -226,6 +228,7 @@ def validate_browser_game_spec(raw: Any) -> dict[str, Any]:
         "tower": normalized_tower,
         "enemies": normalized_enemies,
         "rules": normalized_rules,
+        **({"construction": validate_construction(raw["construction"], {"width":width,"height":height}, normalized_tower, normalized_player)} if has_construction else {}),
     }
 
 
@@ -269,6 +272,7 @@ INDEX_TEMPLATE = """<!doctype html>
       <div><span class="label">Credits</span><strong id="scoreValue">0</strong></div>
       <div><span class="label">Magazine</span><strong id="ammoValue">0 / 0</strong></div>
     </header>
+    __AXM_CONSTRUCTION_PANEL__
     <section class="arena" aria-label="Offline tactical arena">
       <canvas id="game" width="__AXM_WIDTH__" height="__AXM_HEIGHT__" tabindex="0" aria-label="Playable arena canvas. Move with WASD or arrows and fire by clicking, tapping, or pressing Space. Q selects the next target.">Canvas is unavailable.</canvas>
       <div id="status" class="status" role="status">Ready — start when you choose.</div>
@@ -300,6 +304,7 @@ STYLE_TEMPLATE = """:root{color-scheme:dark;font-family:Inter,ui-sans-serif,syst
 
 GAME_JS_TEMPLATE = r'''"use strict";
 const SPEC = Object.freeze(__AXM_SPEC__);
+__AXM_CONSTRUCTION_CORE__
 const SESSION = Object.freeze(__AXM_SESSION__);
 const SPEC_DIGEST = "__AXM_SPEC_DIGEST__";
 const SESSION_DIGEST = "__AXM_SESSION_DIGEST__";
@@ -342,6 +347,7 @@ function freshState() {
   return {
     phase: SESSION.initial_state,
     time: 0, fx: [], fxSerial: 0,
+    construction:SPEC.construction?Construction.create(SPEC.construction):null, supportBeams:[],
     player: {...SPEC.player, health: SPEC.player.max_health},
     tower: {...SPEC.tower, health: SPEC.tower.max_health},
     enemies: SPEC.enemies.map(enemy => ({...enemy, maxHealth: enemy.health, alive: true, contactCooldown: 0})),
@@ -351,7 +357,7 @@ function freshState() {
 }
 
 function reset() {
-  clearInputs();
+  clearInputs(); resetConstructionUI();
   pointerAim = null;
   state = freshState();
   lastFrame = 0;
@@ -396,6 +402,7 @@ function updateHud() {
   reloadButton.disabled = state.phase !== "playing" || state.reloadRemaining > 0 || state.ammo === SPEC.rules.ammo_capacity;
   targetButton.disabled = !target;
   setStatus();
+  updateConstructionHud();
 }
 
 function startReload() {
@@ -405,7 +412,7 @@ function startReload() {
 }
 
 function fireAt(x, y) {
-  if (state.phase !== "playing" || state.fireCooldown > 0 || state.reloadRemaining > 0) return;
+  if (buildKind || state.phase !== "playing" || state.fireCooldown > 0 || state.reloadRemaining > 0) return;
   if (state.ammo <= 0) { startReload(); return; }
   const dx = x - state.player.x;
   const dy = y - state.player.y;
@@ -457,19 +464,19 @@ function update(dt) {
     for (const enemy of state.enemies) {
       if (!enemy.alive || bullet.hit || Math.hypot(bullet.x-enemy.x,bullet.y-enemy.y) > enemy.size/2+bullet.r) continue;
       bullet.hit = true;
-      burst(enemy.x,enemy.y,enemy.color,10);
-      enemy.health -= SPEC.rules.projectile_damage;
-      if (enemy.health <= 0) { enemy.alive = false; state.score += enemy.reward; burst(enemy.x,enemy.y,"#ffcd83",24); }
+      applyEnemyDamage(enemy,SPEC.rules.projectile_damage);
       break;
     }
   }
   state.bullets = state.bullets.filter(b => !b.hit && b.x>=0 && b.x<=SPEC.viewport.width && b.y>=0 && b.y<=SPEC.viewport.height);
+  updateConstruction(dt);
   if (state.tower.health <= 0) transition("lose");
   else if (!state.enemies.some(enemy => enemy.alive)) transition("win");
   updateHud();
 }
 
 __AXM_VISUALS__
+__AXM_CONSTRUCTION_UI__
 
 function frame(timestamp) {
   const dt = lastFrame ? Math.min((timestamp-lastFrame)/1000,0.05) : 0;
@@ -483,12 +490,13 @@ function pointerPosition(event) {
 }
 canvas.addEventListener("pointerdown", event => {
   if (event.button !== 0) return;
+  if(attemptConstruction(event)){event.preventDefault();return;}
   pointerAim = pointerPosition(event);
   const nearest = state.enemies.filter(e=>e.alive).sort((a,b)=>Math.hypot(a.x-pointerAim.x,a.y-pointerAim.y)-Math.hypot(b.x-pointerAim.x,b.y-pointerAim.y))[0];
   if (nearest) state.selectedId = nearest.id;
   pointerHeld = state.phase === "playing";
   canvas.setPointerCapture(event.pointerId);
-  fireAt(pointerAim.x,pointerAim.y); canvas.focus(); updateHud();
+  fireAt(pointerAim.x,pointerAim.y); canvas.focus({preventScroll:true}); updateHud();
 });
 canvas.addEventListener("pointermove", event => { pointerAim = pointerPosition(event); });
 for (const name of ["pointerup","pointercancel","lostpointercapture"]) canvas.addEventListener(name,()=>{pointerHeld=false;});
@@ -521,7 +529,7 @@ fireButton.addEventListener("pointerdown",event=>{if(event.button!==0)return;eve
 for(const name of ["pointerup","pointercancel","lostpointercapture"])fireButton.addEventListener(name,()=>{targetHeld=false;});
 fireButton.addEventListener("click",event=>{if(event.detail===0)fireSelected();});
 targetButton.addEventListener("click",()=>{nextTarget();canvas.focus({preventScroll:true});});
-sessionButton.addEventListener("click",()=>{if(state.phase==="ready")transition("start");else if(state.phase==="playing")transition("pause");else if(state.phase==="paused")transition("resume");else{reset();transition("start");}updateHud();canvas.focus();});
+sessionButton.addEventListener("click",()=>{if(state.phase==="ready")transition("start");else if(state.phase==="playing")transition("pause");else if(state.phase==="paused")transition("resume");else{reset();transition("start");}updateHud();canvas.focus({preventScroll:true});});
 reloadButton.addEventListener("click",()=>{startReload();canvas.focus({preventScroll:true});});
 resetButton.addEventListener("click",()=>{if(state.phase!=="ready")transition("reset");reset();});
 reset(); requestAnimationFrame(frame);
@@ -556,8 +564,16 @@ def _render_project(spec: dict[str, Any], compiled: dict[str, Any]) -> tuple[dic
         .replace("__AXM_WIDTH__", str(spec["viewport"]["width"]))
         .replace("__AXM_HEIGHT__", str(spec["viewport"]["height"]))
     )
+    panel = ""
+    if "construction" in spec:
+        index=index.replace('<span class="label">Credits</span>','<span class="label">Combat score</span>')
+        c=spec["construction"]
+        descriptions={"generator":f'Earns {c["catalog"]["generator"]["rate"]} credits/sec',"turret":f'{c["catalog"]["turret"]["rate"]} damage/sec to nearby enemies',"repair":f'Heals core {c["catalog"]["repair"]["rate"]}/sec when nearby'}
+        buttons="".join(f'<button type="button" data-build="{kind}" aria-pressed="false">{html.escape(e["label"])} · {e["cost"]}<small>{html.escape(descriptions[kind])}</small></button>' for kind,e in c["catalog"].items())
+        panel='<section class="construction" aria-label="Outpost construction"><div class="build-summary">BUILD YOUR OUTPOST · <strong id="constructionBalance">0</strong> credits · +<strong id="constructionIncome">0</strong>/sec · <strong id="constructionCount">0</strong> buildings</div><div class="build-buttons">'+buttons+'<button id="cancelBuild" type="button">Return to combat</button></div><p id="buildMessage" role="status">Place support buildings, then press Start. Income and support run only while playing.</p></section>'
+    index=index.replace("__AXM_CONSTRUCTION_PANEL__",panel)
     game_js = (
-        GAME_JS_TEMPLATE.replace("__AXM_VISUALS__", ARENA_VISUALS_JS).replace("__AXM_SPEC__", json.dumps(spec, ensure_ascii=True, sort_keys=True, separators=(",", ":")))
+        GAME_JS_TEMPLATE.replace("__AXM_CONSTRUCTION_CORE__", CONSTRUCTION_JS).replace("__AXM_CONSTRUCTION_UI__", CONSTRUCTION_UI_JS).replace("__AXM_VISUALS__", ARENA_VISUALS_JS).replace("__AXM_SPEC__", json.dumps(spec, ensure_ascii=True, sort_keys=True, separators=(",", ":")))
         .replace("__AXM_SESSION__", json.dumps(session, ensure_ascii=True, sort_keys=True, separators=(",", ":")))
         .replace("__AXM_SPEC_DIGEST__", spec_digest)
         .replace("__AXM_SESSION_DIGEST__", session_digest)
@@ -568,6 +584,7 @@ def _render_project(spec: dict[str, Any], compiled: dict[str, Any]) -> tuple[dic
         .replace("__AXM_ACCENT__", spec["theme"]["accent"])
         .replace("__AXM_TEXT__", spec["theme"]["text"])
     )
+    style += ".construction{order:1;border:1px solid #58757555;background:#11252d;padding:16px;border-radius:4px}.build-summary{font-size:12px;letter-spacing:.04em;color:#bed5d4}.build-summary strong{color:#ffe1a0}.build-buttons{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.build-buttons button{background:#233c45;border:1px solid #75928e;color:#e1ede8;padding:12px;cursor:pointer;touch-action:manipulation}.build-buttons small{display:block;font-size:10px;color:#b2cec5;margin-top:5px}.build-buttons button[aria-pressed=true]{background:#466757;border-color:#b6efd2}.build-buttons button:focus-visible{outline:2px solid #b6efd2}.build-buttons button:disabled{opacity:.4}#buildMessage{font-size:12px;color:#acc5c5;margin:12px 0 0}"
     game_json = json.dumps(spec, ensure_ascii=False, indent=2, sort_keys=True) + "\n"
     session_json = json.dumps(session, ensure_ascii=False, indent=2, sort_keys=True) + "\n"
     readme = (

@@ -8,7 +8,7 @@ function node() {
     emit(name,event={}){for(const fn of handlers[name]||[])fn({target:this,button:0,pointerId:1,detail:1,preventDefault(){},...event});},
     focus(){},setPointerCapture(){},getBoundingClientRect(){return {left:0,top:0,width:960,height:540};}};
 }
-const ids = ['game','status','sessionButton','reloadButton','resetButton','fireButton','targetButton','targetName','targetHealth','towerValue','scoreValue','ammoValue'];
+const ids = ['game','status','sessionButton','reloadButton','resetButton','fireButton','targetButton','targetName','targetHealth','towerValue','scoreValue','ammoValue','constructionBalance','constructionIncome','constructionCount','cancelBuild','buildMessage'];
 const nodes = Object.fromEntries(ids.map(id=>[id,node()]));
 const drawCalls={};
 const context = new Proxy({}, {get:(o,k)=>o[k]??((...args)=>{drawCalls[k]=(drawCalls[k]||0)+1;if(['createRadialGradient','createLinearGradient'].includes(k))return {addColorStop(){}};}),set:(o,k,v)=>(o[k]=v,true)});
@@ -19,7 +19,8 @@ function createCacheCanvas(){cacheAllocations++;return {width:0,height:0,getCont
 
 nodes.game.tagName='CANVAS';nodes.game.width=960;nodes.game.height=540;nodes.game.getContext=()=>context;
 const touch = ['ArrowUp','ArrowLeft','ArrowDown','ArrowRight'].map(key=>Object.assign(node(),{dataset:{key}}));
-const doc = Object.assign(node(),{hidden:false,createElement:createCacheCanvas,querySelector:s=>nodes[s.slice(1)],querySelectorAll:()=>touch});
+const buildButtons=['generator','turret','repair'].map(kind=>Object.assign(node(),{dataset:{build:kind},setAttribute(){}}));
+const doc = Object.assign(node(),{hidden:false,createElement:createCacheCanvas,querySelector:s=>nodes[s.slice(1)],querySelectorAll:s=>s==='[data-build]'?buildButtons:touch});
 const win = node();
 win.devicePixelRatio=2;
 let statusTool;
@@ -108,4 +109,12 @@ nodes.sessionButton.emit('click');doc.hidden=true;doc.emit('visibilitychange');a
 nodes.sessionButton.emit('click');key(' ');read('state.tower.health=0; update(0.01)');assert.equal(read('state.phase'),'lost');assert.equal(read('keys.size'),0);
 nodes.sessionButton.emit('click');assert.equal(read('state.phase'),'playing');assert.equal(read('state.score'),0);assert.equal(read('state.ammo'),read('SPEC.rules.ammo_capacity'));
 read('state.enemies.forEach(e=>e.alive=false);update(0.01)');assert.equal(read('state.phase'),'won');assert.equal(nodes.targetButton.disabled,true);
+if(read('Boolean(SPEC.construction)')){
+  read('reset();transition("start")');
+  for(const [kind,col,row] of [['generator',1,1],['turret',2,1],['repair',6,3]])assert.equal(read(`Construction.place(SPEC.construction,state.construction,'${kind}',${col},${row}).ok`),true);
+  read('state.enemies.forEach(e=>e.alive=false);Object.assign(state.enemies[0],{alive:true,x:150,y:150,health:1000,speed:0,damage:0});state.tower.health=state.tower.max_health-20;update(1)');
+  assert.equal(read('state.construction.credits'),6);assert.equal(read('state.enemies[0].health'),975);assert.equal(read('state.tower.health'),read('state.tower.max_health-15'));
+  read('transition("pause")');const before=read('JSON.stringify(state)');read('update(10)');assert.equal(read('JSON.stringify(state)'),before);
+  read('reset()');assert.equal(read('state.construction.buildings.length'),0);assert.equal(read('state.construction.credits'),200);
+}
 setImmediate(()=>console.log('GENERATED_GAME_LOGIC_OK (DOM/canvas doubles; no visual/browser claim)'));
