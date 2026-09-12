@@ -1,0 +1,81 @@
+{
+  "format": "axm-material-capability-pack",
+  "version": "0.18.0",
+  "id": "material-capability-pack-55c82b2d",
+  "name": "AXM Cross Repo Consumer Fixture",
+  "fingerprint": "55c82b2d",
+  "producer": {
+    "system": "AXM Material / Surface Fabric",
+    "repository": "mike-axiom-mir/axm-material-surface-fabric"
+  },
+  "capabilities": [
+    {
+      "id": "cap-material-entry-a2c5429f",
+      "kind": "material-entry",
+      "sourceId": "surface-base",
+      "payload": {
+        "name": "Cross Repo Painted Base",
+        "kind": "texture",
+        "mime": "image/png",
+        "width": 1,
+        "height": 1,
+        "bytes": 70,
+        "dataUrl": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAFgwJ/lXgZ/wAAAABJRU5ErkJggg==",
+        "payload": {"portable": true, "length": 118, "hash": "fixture"},
+        "usage": {"channelHint": "base-color", "channelBasis": "operator-declared", "note": "cross-repo fixture"},
+        "tags": ["cross-repo", "painted-metal"]
+      },
+      "provenance": {
+        "sourceFormat": "axm-material-library",
+        "sourceVersion": "0.4.0",
+        "sourceLibraryId": "fixture-library",
+        "source": {"method": "cross-repo-fixture"}
+      },
+      "refs": {},
+      "evidence": {"portableBytesPresent": true, "channelHintIsPhysicalTruth": false},
+      "fingerprint": "d0256e46"
+    },
+    {
+      "id": "cap-material-family-2d93291f",
+      "kind": "material-family",
+      "sourceId": "painted-metal-family",
+      "payload": {
+        "name": "Cross Repo Painted Metal",
+        "purpose": "first v0.18 use loop",
+        "entryIds": ["surface-base"],
+        "tags": ["cross-repo"]
+      },
+      "provenance": {
+        "sourceFormat": "axm-material-library",
+        "sourceVersion": "0.4.0",
+        "sourceLibraryId": "fixture-library"
+      },
+      "refs": {"materialEntrySourceIds": ["surface-base"]},
+      "evidence": {"familyIsDeclaredGrouping": true, "physicalMaterialClaim": false},
+      "fingerprint": "54a314e0"
+    },
+    {
+      "id": "cap-pattern-4445f3c4",
+      "kind": "pattern",
+      "sourceId": "pattern-fixture",
+      "payload": {
+        "pattern": {
+          "id": "pattern-fixture",
+          "slots": [{"order": 0, "role": "base", "kind": "globe-atlas", "category": "globes/material"}]
+        },
+        "support": 2
+      },
+      "provenance": {
+        "sourceFormat": "axm-premade-pattern-library",
+        "sourceVersion": "0.15.0",
+        "sourceLibraryId": "fixture-pattern-library",
+        "sourcePackIds": ["keepers"]
+      },
+      "refs": {},
+      "evidence": {"supportIsRecurrenceOnly": true, "preferenceClaim": false, "qualityClaim": false},
+      "fingerprint": "46be3d4a"
+    }
+  ],
+  "summary": {"total": 3, "kinds": {"material-entry": 1, "material-family": 1, "pattern": 1}},
+  "truthBoundary": {"export": "fixture generated using v0.18 identity contract"}
+}
