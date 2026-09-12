@@ -1,0 +1,65 @@
+[
+  {
+    "repo": "axm-102-grammer",
+    "commit": "ff58375b65a4033041e6de957263d4146aa7429e",
+    "source": "npm pack --ignore-scripts (declared package files)",
+    "destination": "grammar-102.tgz",
+    "sha256": "99999808ccc12915c47149296da1039a0a7555a77713516fd82c28c6315d2781"
+  },
+  {
+    "repo": "axm-grammer-glass",
+    "commit": "e046b7adb5873b666c79182c90d46438116eef03",
+    "source": "tools/grammar-glass/state-ripple-core.js",
+    "destination": "state-ripple-core.js",
+    "sha256": "87ffdbe4d0ee8f554b0711247e4db00074bbf851a1f742ce6ec6686693fa884b"
+  },
+  {
+    "repo": "axm-grammer-glass",
+    "commit": "e046b7adb5873b666c79182c90d46438116eef03",
+    "source": "tools/grammar-glass/construction-program-core.js",
+    "destination": "construction-program-core.js",
+    "sha256": "41de6440026fd4dbfbd37472da632c72fb88a303d2c01cffa2cd3f2b155e81db"
+  },
+  {
+    "repo": "axm-grammer-glass",
+    "commit": "e046b7adb5873b666c79182c90d46438116eef03",
+    "source": "tools/grammar-glass/playground-core.js",
+    "destination": "playground-core.js",
+    "sha256": "652cfaa621e769804a489cd300133d67c787a0f2e7a060b38ff347b1c14f5efa"
+  },
+  {
+    "repo": "axm-grammer-glass",
+    "commit": "e046b7adb5873b666c79182c90d46438116eef03",
+    "source": "tools/grammar-glass/render-budget-core.js",
+    "destination": "render-budget-core.js",
+    "sha256": "60b60e2ab231f5726a9df8d7dc77e5e5b6a3cdc9d31d707ffc3a18e65d0c8e82"
+  },
+  {
+    "repo": "axm-grammer-glass",
+    "commit": "e046b7adb5873b666c79182c90d46438116eef03",
+    "source": "tools/grammar-glass/selftest-state-ripple.js",
+    "destination": "selftest-state-ripple.js",
+    "sha256": "31698a672e225041e98c8312112325f95e67ded36e12943c0c9f5a240e84faa4"
+  },
+  {
+    "repo": "axm-grammer-glass",
+    "commit": "e046b7adb5873b666c79182c90d46438116eef03",
+    "source": "tools/grammar-glass/selftest-state-ripple-validation.js",
+    "destination": "selftest-state-ripple-validation.js",
+    "sha256": "9e0bf0ce975c50d858b3c4ba4bc3b99d04e440a083b6a495d95af53d32009516"
+  },
+  {
+    "repo": "axm-grammer-glass",
+    "commit": "e046b7adb5873b666c79182c90d46438116eef03",
+    "source": "tools/grammar-glass/selftest-state-ripple-baseline-admission.js",
+    "destination": "selftest-state-ripple-baseline-admission.js",
+    "sha256": "05ef330d82db178672435e9aa7b8bcc88d9a8e9ff0411c1983cb95e11d7b8516"
+  },
+  {
+    "repo": "axm-grammer-glass",
+    "commit": "e046b7adb5873b666c79182c90d46438116eef03",
+    "source": "tools/grammar-glass/selftest-render-budget.js",
+    "destination": "selftest-render-budget.js",
+    "sha256": "99736a7e32d3092ff312f5daaa7b5e52077faf568f82271c8dc4ce1e4febbadb"
+  }
+]

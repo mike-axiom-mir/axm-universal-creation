@@ -139,3 +139,13 @@ four explicit media request builders. It uses selected pinned Monolith graph
 helpers with a UC-owned bounded search. See `PIPELINE_MAP.md` and
 `third_party/pipeline-provenance.json`. This connects discovery to local contracts;
 it does not execute chains or replace the existing organ resolver.
+
+## Grammar 102 and Grammar Glass pass
+
+Inspected newer standalone capsule, placement/edit/recovery and polyglot lanes in
+Grammar 102 (`ff58375b65a4033041e6de957263d4146aa7429e`) and construction,
+state-ripple and projection-budget lanes in Grammar Glass
+(`e046b7adb5873b666c79182c90d46438116eef03`). Installed the upstream packaged
+read-only Grammar 102 capsule and Glass's exact sparse-state/projection dependency
+closure with UC JSON/CLI adapters. See `GRAMMAR_WORKBENCH.md` for actual callable
+scope, provenance and deferred candidates. Existing direction imports stay intact.

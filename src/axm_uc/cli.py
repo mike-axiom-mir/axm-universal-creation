@@ -19,6 +19,12 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--root", help="machine root; normally auto-detected")
     sub = parser.add_subparsers(dest="command", required=True)
 
+    for name, help_text in [('grammar-capsule','compose a standalone Grammar 102 language capability capsule'),
+                            ('state-ripple','compare sparse and full evaluation of an explicit state graph'),
+                            ('render-budget','select a bounded visual projection without changing source state')]:
+        gp = sub.add_parser(name, help=help_text)
+        gp.add_argument('request', help='JSON request file; at most 1 MiB')
+
     pipelines = sub.add_parser('pipelines', help='map installed capability connections without executing them')
     pipelines.add_argument('--goal', help='exact output token or namespace prefix')
     pipelines.add_argument('--max-hops', type=int, default=4)
@@ -150,6 +156,17 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     root = find_machine_root(args.root) if args.root else find_machine_root()
     machine = UniversalCreationMachine(root)
+
+    if args.command in ('grammar-capsule', 'state-ripple', 'render-budget'):
+        from .grammar_workbench import run_grammar_tool
+        try:
+            with Path(args.request).open('rb') as source:
+                data = source.read(1048577)
+            if len(data) > 1048576: raise ValueError('request exceeds 1 MiB')
+            _print(run_grammar_tool(root, args.command, json.loads(data)))
+        except (ValueError, OSError) as exc:
+            raise SystemExit(str(exc)) from exc
+        return 0
 
     if args.command == 'pipelines':
         from .pipeline_map import map_capabilities
