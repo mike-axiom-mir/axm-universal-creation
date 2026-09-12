@@ -45,7 +45,7 @@ The player can still move and shoot using the existing controls.
 
 Buildings currently occupy one grid cell for placement. They are support fixtures:
 they do not obstruct unit movement or take damage. There is no navigation grid,
-wave progression, selling, upgrades, repair of other buildings or saved session
+selling, upgrades, repair of other buildings or saved session
 yet. A lost core cannot be resurrected by a repair tick. This is the agreed first
 placement/resources stage, not a completed RTS or tycoon generator.
 
@@ -70,3 +70,20 @@ Truth keeps supplied design, pure operations, generator validation and browser
 observations distinct. Agency preserves explicit start/pause and building choices.
 Continuity keeps the arena path and older demo. Wisdom before speed limits this
 pass to the working placement/economy/support contract and names missing systems.
+
+## Three-wave pass — 2026-09-12
+
+The optional validated `waves` plan adds three explicitly launched waves to Signal
+Outpost. Each clear grants 60 credits; between waves the simulation pauses for
+building. Launch preserves structures, credits, score, player position and core
+health, replenishes ammunition, and recreates enemies from the original roster.
+Health rises 25% and speed 10% of base per wave. Original enemy arrival cells
+remain unavailable for construction. The third clear ends in victory.
+
+Full build: 458 tests passed, BUILD_OK (25.227 seconds). Runtime tests cover
+carryover, duplicate-clear rejection, paused income, explicit launch, enemy
+scaling, arrival reservations, final victory, simultaneous core loss and reset.
+Chrome completed all three waves through visible controls in a temporary generated
+one-enemy, low-health fixture: 270, 340, then 410 credits including kill rewards.
+This verifies browser transitions, not the full outpost's difficulty or a physical
+phone. The fixture is excluded from the published site.

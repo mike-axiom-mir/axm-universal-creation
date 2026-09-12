@@ -48,6 +48,7 @@ function placementCheck(kind,col,row){
   if(!result.ok)return result;
   const x=col*c.cell_size,y=row*c.cell_size;
   if([state.player,...state.enemies.filter(e=>e.alive)].some(u=>u.x+u.size/2>x&&u.x-u.size/2<x+c.cell_size&&u.y+u.size/2>y&&u.y-u.size/2<y+c.cell_size))return {ok:false,reason:'A unit occupies that cell.'};
+  if(SPEC.waves&&SPEC.enemies.some(u=>u.x+u.size/2>x&&u.x-u.size/2<x+c.cell_size&&u.y+u.size/2>y&&u.y-u.size/2<y+c.cell_size))return {ok:false,reason:'Enemy arrival zone — choose another cell.'};
   return result;
 }
 function attemptConstruction(event){

@@ -8,7 +8,7 @@ function node() {
     emit(name,event={}){for(const fn of handlers[name]||[])fn({target:this,button:0,pointerId:1,detail:1,preventDefault(){},...event});},
     focus(){},setPointerCapture(){},getBoundingClientRect(){return {left:0,top:0,width:960,height:540};}};
 }
-const ids = ['game','status','sessionButton','reloadButton','resetButton','fireButton','targetButton','targetName','targetHealth','towerValue','scoreValue','ammoValue','constructionBalance','constructionIncome','constructionCount','cancelBuild','buildMessage'];
+const ids = ['game','status','sessionButton','reloadButton','resetButton','fireButton','targetButton','targetName','targetHealth','towerValue','scoreValue','ammoValue','constructionBalance','constructionIncome','constructionCount','cancelBuild','buildMessage','waveValue'];
 const nodes = Object.fromEntries(ids.map(id=>[id,node()]));
 const drawCalls={};
 const context = new Proxy({}, {get:(o,k)=>o[k]??((...args)=>{drawCalls[k]=(drawCalls[k]||0)+1;if(['createRadialGradient','createLinearGradient'].includes(k))return {addColorStop(){}};}),set:(o,k,v)=>(o[k]=v,true)});
@@ -108,7 +108,7 @@ nodes.sessionButton.emit('click');doc.hidden=true;doc.emit('visibilitychange');a
 // Terminal states clear shooting and replay starts from fresh score/ammunition.
 nodes.sessionButton.emit('click');key(' ');read('state.tower.health=0; update(0.01)');assert.equal(read('state.phase'),'lost');assert.equal(read('keys.size'),0);
 nodes.sessionButton.emit('click');assert.equal(read('state.phase'),'playing');assert.equal(read('state.score'),0);assert.equal(read('state.ammo'),read('SPEC.rules.ammo_capacity'));
-read('state.enemies.forEach(e=>e.alive=false);update(0.01)');assert.equal(read('state.phase'),'won');assert.equal(nodes.targetButton.disabled,true);
+read('if(SPEC.waves)state.waveIndex=SPEC.waves.count-1;state.enemies.forEach(e=>e.alive=false);update(0.01)');assert.equal(read('state.phase'),'won');assert.equal(nodes.targetButton.disabled,true);
 if(read('Boolean(SPEC.construction)')){
   read('reset();transition("start")');
   for(const [kind,col,row] of [['generator',1,1],['turret',2,1],['repair',6,3]])assert.equal(read(`Construction.place(SPEC.construction,state.construction,'${kind}',${col},${row}).ok`),true);
@@ -116,5 +116,21 @@ if(read('Boolean(SPEC.construction)')){
   assert.equal(read('state.construction.credits'),6);assert.equal(read('state.enemies[0].health'),975);assert.equal(read('state.tower.health'),read('state.tower.max_health-15'));
   read('transition("pause")');const before=read('JSON.stringify(state)');read('update(10)');assert.equal(read('JSON.stringify(state)'),before);
   read('reset()');assert.equal(read('state.construction.buildings.length'),0);assert.equal(read('state.construction.credits'),200);
+}
+if(read('Boolean(SPEC.waves)')){
+  read('reset();transition("start");Construction.place(SPEC.construction,state.construction,"generator",1,1);state.tower.health-=25;state.player.x=300;state.ammo=2;state.enemies.forEach(e=>e.alive=false);update(0)');
+  assert.equal(read('state.phase'),'paused');assert.equal(read('state.betweenWaves'),true);assert.equal(nodes.sessionButton.textContent,'Launch wave 2');
+  assert.equal(read('state.construction.credits'),200);
+  const intermission=read('JSON.stringify(state)');read('completeWave();update(10)');key('p');win.emit('keyup',{key:'p'});
+  assert.equal(read('JSON.stringify(state)'),intermission);
+  assert.equal(read('placementCheck("turret",Math.floor(SPEC.enemies[0].x/SPEC.construction.cell_size),Math.floor(SPEC.enemies[0].y/SPEC.construction.cell_size)).ok'),false);
+  nodes.sessionButton.emit('click');assert.equal(read('state.waveIndex'),1);assert.equal(read('state.phase'),'playing');
+  assert.equal(read('state.construction.buildings.length'),1);assert.equal(read('state.player.x'),300);assert.equal(read('state.tower.health'),read('SPEC.tower.max_health-25'));
+  assert.equal(read('state.ammo'),read('SPEC.rules.ammo_capacity'));assert.equal(read('state.enemies[0].maxHealth'),read('Math.round(SPEC.enemies[0].health*1.25)'));
+  read('state.enemies.forEach(e=>e.alive=false);update(0)');nodes.sessionButton.emit('click');assert.equal(read('state.waveIndex'),2);
+  read('state.enemies.forEach(e=>e.alive=false);update(0)');assert.equal(read('state.phase'),'won');assert.equal(read('state.wavesCleared'),3);assert.equal(read('state.construction.credits'),320);
+  const won=read('JSON.stringify(state)');read('completeWave();update(1)');assert.equal(read('JSON.stringify(state)'),won);
+  read('reset();transition("start");state.tower.health=0;state.enemies.forEach(e=>e.alive=false);update(0)');assert.equal(read('state.phase'),'lost');assert.equal(read('state.wavesCleared'),0);
+  read('reset()');assert.equal(read('state.waveIndex'),0);assert.equal(read('state.betweenWaves'),false);
 }
 setImmediate(()=>console.log('GENERATED_GAME_LOGIC_OK (DOM/canvas doubles; no visual/browser claim)'));

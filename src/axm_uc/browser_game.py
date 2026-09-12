@@ -12,6 +12,7 @@ from typing import Any
 from .mixed_project import build_mixed_project
 from .browser_arena_visuals import ARENA_VISUALS_JS
 from .browser_construction import validate_construction, CONSTRUCTION_JS, CONSTRUCTION_UI_JS
+from .browser_waves import validate_waves, WAVES_JS
 from .visual_surface import surface_rows
 from .visual_base import png_bytes
 from .procedural_media import generate_media
@@ -110,8 +111,9 @@ def _color(value: Any, label: str) -> str:
 
 def validate_browser_game_spec(raw: Any) -> dict[str, Any]:
     has_construction = isinstance(raw, dict) and "construction" in raw
+    has_waves = isinstance(raw, dict) and "waves" in raw
     spec = _object(
-        {k:v for k,v in raw.items() if k!="construction"} if has_construction else raw,
+        {k:v for k,v in raw.items() if k not in {"construction","waves"}} if has_construction or has_waves else raw,
         "specification",
         {
             "schema",
@@ -228,6 +230,7 @@ def validate_browser_game_spec(raw: Any) -> dict[str, Any]:
         "tower": normalized_tower,
         "enemies": normalized_enemies,
         "rules": normalized_rules,
+        **({"waves":validate_waves(raw["waves"])} if has_waves else {}),
         **({"construction": validate_construction(raw["construction"], {"width":width,"height":height}, normalized_tower, normalized_player)} if has_construction else {}),
     }
 
@@ -347,10 +350,11 @@ function freshState() {
   return {
     phase: SESSION.initial_state,
     time: 0, fx: [], fxSerial: 0,
+    waveIndex:0,wavesCleared:0,betweenWaves:false,
     construction:SPEC.construction?Construction.create(SPEC.construction):null, supportBeams:[],
     player: {...SPEC.player, health: SPEC.player.max_health},
     tower: {...SPEC.tower, health: SPEC.tower.max_health},
-    enemies: SPEC.enemies.map(enemy => ({...enemy, maxHealth: enemy.health, alive: true, contactCooldown: 0})),
+    enemies: WaveCycle.enemies(SPEC.enemies,SPEC.waves,0),
     bullets: [], ammo: SPEC.rules.ammo_capacity, reloadRemaining: 0,
     fireCooldown: 0, score: 0, selectedId: SPEC.enemies[0].id,
   };
@@ -403,6 +407,7 @@ function updateHud() {
   targetButton.disabled = !target;
   setStatus();
   updateConstructionHud();
+  updateWaveHud();
 }
 
 function startReload() {
@@ -471,12 +476,13 @@ function update(dt) {
   state.bullets = state.bullets.filter(b => !b.hit && b.x>=0 && b.x<=SPEC.viewport.width && b.y>=0 && b.y<=SPEC.viewport.height);
   updateConstruction(dt);
   if (state.tower.health <= 0) transition("lose");
-  else if (!state.enemies.some(enemy => enemy.alive)) transition("win");
+  else if (!state.enemies.some(enemy => enemy.alive)) completeWave();
   updateHud();
 }
 
 __AXM_VISUALS__
 __AXM_CONSTRUCTION_UI__
+__AXM_WAVES__
 
 function frame(timestamp) {
   const dt = lastFrame ? Math.min((timestamp-lastFrame)/1000,0.05) : 0;
@@ -510,7 +516,7 @@ window.addEventListener("keydown", event => {
   if (["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"," "].includes(key)) event.preventDefault();
   keys.add(key);
   if (!event.repeat) {
-    if(key==="p") { if(state.phase==="playing") transition("pause"); else if(state.phase==="paused") transition("resume"); updateHud(); }
+    if(key==="p" && !state.betweenWaves) { if(state.phase==="playing") transition("pause"); else if(state.phase==="paused") transition("resume"); updateHud(); }
     if(key===" ") fireSelected();
     if(key==="q") nextTarget();
     if(key==="r") startReload();
@@ -529,7 +535,7 @@ fireButton.addEventListener("pointerdown",event=>{if(event.button!==0)return;eve
 for(const name of ["pointerup","pointercancel","lostpointercapture"])fireButton.addEventListener(name,()=>{targetHeld=false;});
 fireButton.addEventListener("click",event=>{if(event.detail===0)fireSelected();});
 targetButton.addEventListener("click",()=>{nextTarget();canvas.focus({preventScroll:true});});
-sessionButton.addEventListener("click",()=>{if(state.phase==="ready")transition("start");else if(state.phase==="playing")transition("pause");else if(state.phase==="paused")transition("resume");else{reset();transition("start");}updateHud();canvas.focus({preventScroll:true});});
+sessionButton.addEventListener("click",()=>{if(state.betweenWaves)launchNextWave();else if(state.phase==="ready")transition("start");else if(state.phase==="playing")transition("pause");else if(state.phase==="paused")transition("resume");else{reset();transition("start");}updateHud();canvas.focus({preventScroll:true});});
 reloadButton.addEventListener("click",()=>{startReload();canvas.focus({preventScroll:true});});
 resetButton.addEventListener("click",()=>{if(state.phase!=="ready")transition("reset");reset();});
 reset(); requestAnimationFrame(frame);
@@ -571,9 +577,11 @@ def _render_project(spec: dict[str, Any], compiled: dict[str, Any]) -> tuple[dic
         descriptions={"generator":f'Earns {c["catalog"]["generator"]["rate"]} credits/sec',"turret":f'{c["catalog"]["turret"]["rate"]} damage/sec to nearby enemies',"repair":f'Heals core {c["catalog"]["repair"]["rate"]}/sec when nearby'}
         buttons="".join(f'<button type="button" data-build="{kind}" aria-pressed="false">{html.escape(e["label"])} · {e["cost"]}<small>{html.escape(descriptions[kind])}</small></button>' for kind,e in c["catalog"].items())
         panel='<section class="construction" aria-label="Outpost construction"><div class="build-summary">BUILD YOUR OUTPOST · <strong id="constructionBalance">0</strong> credits · +<strong id="constructionIncome">0</strong>/sec · <strong id="constructionCount">0</strong> buildings</div><div class="build-buttons">'+buttons+'<button id="cancelBuild" type="button">Return to combat</button></div><p id="buildMessage" role="status">Place support buildings, then press Start. Income and support run only while playing.</p></section>'
+    if "waves" in spec:
+        panel+=f'<p class="wave-summary" style="order:1;color:#cfdfcd;font-size:12px;margin:12px 0 0"><strong id="waveValue">Wave 1</strong> · {spec["waves"]["clear_bonus"]} credits per clear · You launch each wave</p>'
     index=index.replace("__AXM_CONSTRUCTION_PANEL__",panel)
     game_js = (
-        GAME_JS_TEMPLATE.replace("__AXM_CONSTRUCTION_CORE__", CONSTRUCTION_JS).replace("__AXM_CONSTRUCTION_UI__", CONSTRUCTION_UI_JS).replace("__AXM_VISUALS__", ARENA_VISUALS_JS).replace("__AXM_SPEC__", json.dumps(spec, ensure_ascii=True, sort_keys=True, separators=(",", ":")))
+        GAME_JS_TEMPLATE.replace("__AXM_WAVES__", WAVES_JS).replace("__AXM_CONSTRUCTION_CORE__", CONSTRUCTION_JS).replace("__AXM_CONSTRUCTION_UI__", CONSTRUCTION_UI_JS).replace("__AXM_VISUALS__", ARENA_VISUALS_JS).replace("__AXM_SPEC__", json.dumps(spec, ensure_ascii=True, sort_keys=True, separators=(",", ":")))
         .replace("__AXM_SESSION__", json.dumps(session, ensure_ascii=True, sort_keys=True, separators=(",", ":")))
         .replace("__AXM_SPEC_DIGEST__", spec_digest)
         .replace("__AXM_SESSION_DIGEST__", session_digest)

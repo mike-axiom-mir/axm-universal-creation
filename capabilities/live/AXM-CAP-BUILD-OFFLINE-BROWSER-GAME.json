@@ -1,6 +1,6 @@
 {
   "id": "AXM-CAP-BUILD-OFFLINE-BROWSER-GAME",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "status": "live",
   "purpose": "Assemble one dependency-free offline tactical browser arena from a closed game specification, deterministic session state machine, generated PNG and WAV assets, inspectable HTML/CSS/JavaScript, and exact project validation.",
   "handles": [
@@ -44,7 +44,8 @@
     "Hold-to-fire, explicit target cycling, focus-loss pause and reset input cleanup share the same generated game state; optional read-only WebMCP reports the visible HUD.",
     "Reuses visual_surface hull generation for a local metal deck; renders depth-sorted oblique geometry, contact shadows, light cues and bounded particles while preserving the canonical world plane and inverse-projected picking.",
     "Caches only the static scenery layer at the existing bounded backing resolution, invalidates when the local texture becomes available, and falls back to direct drawing if a cache cannot be allocated. Player and tower material shades derive from their canonical colors.",
-    "Optional construction contract composes strict grid placement, integer credits, per-second generator income, ranged turret support and bounded core repair with the existing arena. Construction operations are independent of Canvas."
+    "Optional construction contract composes strict grid placement, integer credits, per-second generator income, ranged turret support and bounded core repair with the existing arena. Construction operations are independent of Canvas.",
+    "Optional finite wave plans preserve the outpost between explicit player-launched waves, award clear bonuses once, and freeze simulation during building breaks."
   ],
   "anatomy_refs": [
     {
@@ -84,7 +85,7 @@
     "browser rendering, input behavior, audio permission/playback, frame pacing, responsive layout, accessibility, fun, and balance require later browser, user, or authorized host evidence",
     "maximum enemy count is 64 and the project intentionally has no third-party runtime dependencies",
     "Oblique geometry and light cues are stylized 2.5D presentation, not physical lighting or collision geometry; decorative structures do not block movement.",
-    "Construction is single-cell support placement; buildings do not obstruct movement or take damage. No waves, upgrades, selling or persistence are implemented by this contract."
+    "Construction is single-cell support placement; buildings do not obstruct movement or take damage. No upgrades, selling or persistence are implemented by this contract."
   ],
   "persistent_state": null,
   "root_fit": {

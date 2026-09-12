@@ -250,6 +250,12 @@
             "range": 230
           }
         }
+      },
+      "waves": {
+        "count": 3,
+        "health_step": 0.25,
+        "speed_step": 0.1,
+        "clear_bonus": 60
       }
     }
   }

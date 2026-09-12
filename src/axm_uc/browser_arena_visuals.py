@@ -176,7 +176,7 @@ function draw() {
   // Edge vignette keeps the active play area brighter than the surroundings.
   const vignette=ctx.createRadialGradient(W*.5,H*.5,H*.28,W*.5,H*.5,W*.64);vignette.addColorStop(0,'#00000000');vignette.addColorStop(1,'#02081299');ctx.fillStyle=vignette;ctx.fillRect(0,0,W,H);
   ctx.textAlign='left';ctx.font='600 10px system-ui';ctx.fillStyle='#9db6c3';ctx.fillText('HOSTILES REMAINING',24,H-32);ctx.font='600 18px ui-monospace,monospace';ctx.fillStyle='#e5eeee';ctx.fillText(String(state.enemies.filter(e=>e.alive).length).padStart(2,'0')+' / '+String(state.enemies.length).padStart(2,'0'),24,H-12);
-  if(state.phase==='ready'||state.phase==='paused') {ctx.textAlign='right';ctx.font='12px system-ui';ctx.fillStyle='#b6cbd3';ctx.fillText(state.phase==='ready'?'Start the defense when you’re ready.':'Session paused — your tower is safe.',W-24,H-22);}
+  if(state.phase==='ready'||state.phase==='paused') {ctx.textAlign='right';ctx.font='12px system-ui';ctx.fillStyle='#b6cbd3';ctx.fillText(state.phase==='ready'?'Start the defense when you’re ready.':state.betweenWaves?'Wave cleared — build, then launch when ready.':'Session paused — your tower is safe.',W-24,H-22);}
   if(state.phase==='won'||state.phase==='lost'){ctx.fillStyle='#06121bcb';ctx.fillRect(0,0,W,H);ctx.textAlign='center';ctx.font='600 12px system-ui';ctx.fillStyle=SPEC.theme.accent;ctx.fillText(SPEC.title.toUpperCase()+' / SESSION COMPLETE',W/2,H/2-44);ctx.font='600 40px system-ui';ctx.fillStyle='#e5f3ee';ctx.fillText(state.phase==='won'?'RELAY SECURED':'SIGNAL LOST',W/2,H/2+6);ctx.font='14px system-ui';ctx.fillStyle='#aabcc7';ctx.fillText('Credits earned: '+state.score,W/2,H/2+38);}
   ctx.restore();
 }
