@@ -12,7 +12,7 @@ ROOT=Path(__file__).resolve().parents[2]
 sys.path.insert(0,str(ROOT/'src'))
 from axm_uc.rts_foundry import catalog
 from verify_rts_batch import verify
-SOURCE_HASHES={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in [Path(__file__),Path(architecture.__file__)]}
+SOURCE_HASHES={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in [Path(__file__),Path(architecture.__file__),*[Path(__file__).with_name(n) for n in ['axm_rts_vehicle_forge.py','axm_blender_forge.py','axm_rts_workshop.py','axm_salvage_construction.py','axm_salvage_surfaces.py']]]}
 
 
 def build(a,out,resolution):

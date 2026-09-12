@@ -559,14 +559,18 @@ def crew(key,m):
         sphere('work glove',hand,(.13,.105,.13),leather,segments=24,rings=14)
         sphere('gloved thumb',hand+Vector((-s*.08,-.04,.04)),(.055,.065,.075),leather,segments=18,rings=10)
     if key in ['scavenger','mercenary-free-agent']:
-        # Hood follows back and side of head, with face aperture left open.
-        verts=[];faces=[];N=32
-        for z,rx,ry in [(1.82,.31,.26),(2.03,.37,.32),(2.31,.31,.27),(2.43,.13,.13)]:
-            for j in range(N):
-                a=-.20+j/(N-1)*(math.pi+0.4);verts.append((rx*math.cos(a),.02+ry*math.sin(a),z))
-        for k in range(3):
-            for j in range(N-1):faces.append((k*N+j,k*N+j+1,(k+1)*N+j+1,(k+1)*N+j))
-        mesh('open fabric hood',verts,faces,fabric if key=='scavenger' else leather)
+        # A rounded cloth hood with a genuine face aperture and covered crown.
+        import bmesh
+        hood=sphere('rounded fabric hood',(0,.035,2.13),(.368,.326,.42),fabric if key=='scavenger' else leather,segments=40,rings=24)
+        bm=bmesh.new();bm.from_mesh(hood.data)
+        remove=[]
+        for face in bm.faces:
+            c=hood.matrix_world@face.calc_center_median()
+            if c.y < -.09 and 1.90 < c.z < 2.34:remove.append(face)
+        bmesh.ops.delete(bm,geom=remove,context='FACES');bm.to_mesh(hood.data);bm.free();hood.data.update()
+        mod=hood.modifiers.new('hood fabric thickness','SOLIDIFY');mod.thickness=.012
+        cable('hood face hem',[(-.27,-.16,1.91),(-.31,-.18,2.08),(-.25,-.22,2.30),(0,-.25,2.36),(.25,-.22,2.30),(.31,-.18,2.08),(.27,-.16,1.91)],.018,fabric if key=='scavenger' else leather)
+
     else:
         hat=m['yellow'] if key=='crew-worker' else m['ivory'] if key=='field-medic' else fabric
         if key=='citizen-harvester':
