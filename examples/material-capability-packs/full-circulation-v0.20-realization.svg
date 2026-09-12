@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+<metadata>{"capabilityIds":{"material-entry":"cap-material-entry-8fba7d60","material-family":"cap-material-family-0f94735e","pattern":"cap-pattern-bfe14cc0","recipe":"cap-recipe-642024ae","sprite-candidate":"cap-sprite-candidate-bfd4a164"},"id":"uc-material-creation-a80d9ff46d31057e1aa5","nativeUse":{"material-entry":"hash-derived native palette seed; producer image pixels are not sampled","material-family":"material grouping participates in native palette/creation identity","pattern":"ordered slots, categories and support drive motif structure/density","recipe":"canvas, layer order, transforms, opacity and blend structure drive the SVG composition","sprite-candidate":"normalized alpha bounds constrain the matching native motif region"},"schema":"axm.uc.material-capability-realization/v0.1","sourcePackFingerprint":"756825c8","sourcePackId":"material-capability-pack-756825c8","truthBoundary":{"physicalMaterialTruth":false,"producerPixelsRendered":false,"rasterRenderVerified":false,"semanticRecognition":false,"sourceAtlasBytesInstalled":false},"version":"0.20.0"}</metadata>
+<defs>
+<linearGradient id="axm-base" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#A49A44"/><stop offset="0.52" stop-color="#C57B31"/><stop offset="1" stop-color="#CF656C"/></linearGradient>
+<clipPath id="axm-sprite-window"><rect x="235.52" y="281.6" width="184.32" height="207.36" rx="14.7456"/></clipPath>
+</defs>
+<ellipse data-layer="base-globe" data-asset="material-globes" cx="512" cy="512" rx="399.36" ry="399.36" fill="url(#axm-base)" opacity="1" transform="rotate(0 512 512)" />
+<g data-layer="rust-window" data-asset="rust-corrosion" data-pattern-category="overlays/corrosion" opacity="0.52" style="mix-blend-mode:overlay" transform="rotate(-8 512 512)" clip-path="url(#axm-sprite-window)">
+<ellipse cx="687.9201" cy="375.0966" rx="17.4696" ry="30.2011" fill="#CF656C" opacity="0.4565" />
+<ellipse cx="211.7561" cy="322.946" rx="20.6254" ry="40.0059" fill="#C57B31" opacity="0.2571" />
+<ellipse cx="412.4383" cy="529.2307" rx="47.9897" ry="29.4155" fill="#CF656C" opacity="0.2138" />
+<ellipse cx="294.7672" cy="607.795" rx="33.3515" ry="29.5268" fill="#CF656C" opacity="0.5128" />
+<ellipse cx="614.4002" cy="464.3544" rx="41.0551" ry="8.9398" fill="#CF656C" opacity="0.5704" />
+<ellipse cx="862.5971" cy="181.7055" rx="12.8813" ry="21.5237" fill="#B738B1" opacity="0.2653" />
+<ellipse cx="866.6191" cy="251.9072" rx="41.5781" ry="33.9936" fill="#CF656C" opacity="0.2817" />
+<ellipse cx="396.0828" cy="547.5891" rx="14.7579" ry="10.0952" fill="#C57B31" opacity="0.192" />
+<ellipse cx="583.4409" cy="736.718" rx="15.0909" ry="17.3089" fill="#44D772" opacity="0.3336" />
+<ellipse cx="717.4784" cy="471.3243" rx="37.4158" ry="12.3379" fill="#B738B1" opacity="0.3205" />
+<ellipse cx="338.0564" cy="405.2508" rx="21.0561" ry="39.239" fill="#CF656C" opacity="0.3514" />
+<ellipse cx="523.9994" cy="817.2232" rx="45.1021" ry="43.3717" fill="#CF656C" opacity="0.5372" />
+<ellipse cx="170.3175" cy="793.6874" rx="20.7003" ry="23.6786" fill="#CF656C" opacity="0.3057" />
+<ellipse cx="478.52" cy="647.5968" rx="46.7111" ry="25.9011" fill="#C57B31" opacity="0.4878" />
+<ellipse cx="476.6001" cy="809.5588" rx="44.2147" ry="44.2091" fill="#C57B31" opacity="0.399" />
+<ellipse cx="653.7885" cy="397.4985" rx="17.1755" ry="23.1762" fill="#B738B1" opacity="0.4235" />
+<ellipse cx="304.1848" cy="737.6456" rx="13.4529" ry="42.1557" fill="#44D772" opacity="0.5539" />
+<ellipse cx="788.0432" cy="162.548" rx="51.0677" ry="12.2072" fill="#B738B1" opacity="0.2857" />
+<ellipse cx="863.6889" cy="794.8285" rx="20.941" ry="29.9381" fill="#B738B1" opacity="0.4741" />
+</g>
+<rect x="10" y="10" width="1004" height="1004" rx="5.0" fill="none" stroke="#44D772" stroke-width="2" opacity="0.45" />
+</svg>
