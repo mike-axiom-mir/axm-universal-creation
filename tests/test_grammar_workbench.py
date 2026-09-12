@@ -26,7 +26,11 @@ class GrammarWorkbenchTests(unittest.TestCase):
     def test_pinned_glass_regressions(self):
         folder=ROOT/'third_party/grammar-workbench'
         for name in ('state-ripple','state-ripple-validation','state-ripple-baseline-admission','render-budget'):
-            r=subprocess.run(['node',str(folder/('selftest-'+name+'.js'))],capture_output=True,text=True,timeout=30)
+            # The state-ripple donor intentionally executes a 1,001-node full
+            # reference path across 64 shadow comparisons. Slow/shared runners
+            # can legitimately exceed 30 seconds without deadlocking, so keep
+            # the timeout bounded but large enough for that declared workload.
+            r=subprocess.run(['node',str(folder/('selftest-'+name+'.js'))],capture_output=True,text=True,timeout=120)
             self.assertEqual(r.returncode,0,r.stdout+r.stderr)
     def test_construction_execution_and_module_rollback(self):
         req=json.loads((ROOT/'examples/grammar/construction.json').read_text())
