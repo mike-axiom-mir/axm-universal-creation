@@ -31,20 +31,10 @@
     "provides the first explicit downstream consumer for AXM Material / Surface Fabric donor packs",
     "maps donor entries to Asset Atom texture descriptors only when the source pack already declares a supported channel hint",
     "maps a declared donor family to one material atom only when its accepted members resolve to unique supported texture channels",
+    "delegates final package structure truth to the already anatomy-bound AXM-CAP-COMPOSE-ASSET-ATOMS validator rather than claiming a second implementation of the same anatomy",
     "keeps held donor state visible instead of guessing missing material semantics or silently discarding unmappable entries"
   ],
-  "anatomy_refs": [
-    {
-      "id": "AXM-10-2D-IMAGING-C-020-texture-map",
-      "role": "uses",
-      "basis": "Portable donor image payloads become bounded texture-resource descriptors with explicit channel and SHA-256 evidence."
-    },
-    {
-      "id": "AXM-12-RENDERING-MATERIALS-C-007-material-graph",
-      "role": "uses",
-      "basis": "Declared material families become exact Asset Atom material graphs only when each accepted member maps to one unique explicit texture channel."
-    }
-  ],
+  "anatomy_refs": [],
   "implementation": {
     "kind": "DETERMINISTIC_SOURCE",
     "entrypoint": "builtin:material_donor_adapter",
@@ -55,13 +45,14 @@
     "unassigned channel hints are held rather than inferred from pixels, names, or appearance",
     "data URLs are decoded and SHA-256 hashed, but donor:// resource descriptors are not installed, rendered, sampled, or compared perceptually by this capability",
     "family adaptation requires one unique supported channel per accepted member; duplicate channels or held members keep that family on HOLD",
+    "this adapter intentionally declares no new anatomy implementation binding because texture/material anatomy is already represented by the Asset Atom capability it delegates to",
     "Asset Atom validation proves descriptor structure and dependency integrity, not PBR correctness, artistic quality, renderer compatibility, or physical-material behavior"
   ],
   "persistent_state": null,
   "root_fit": {
     "truth": {
       "fit": true,
-      "basis": "The adapter distinguishes donor declarations, decoded-byte evidence, exact Asset Atom validation, held state, and unverified rendering/material claims."
+      "basis": "The adapter distinguishes donor declarations, decoded-byte evidence, exact Asset Atom validation, held state, and unverified rendering/material claims without double-counting the delegated anatomy implementation."
     },
     "agency": {
       "fit": true,
