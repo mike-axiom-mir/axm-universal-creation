@@ -182,11 +182,15 @@ def adapt_material_donor_pack(raw_pack: Any, *, strict: bool = False) -> dict[st
 
         channel = _entry_channel(raw_entry)
         if channel == "unassigned":
-            held_entries.append({
-                "entry_id": entry_id,
-                "reason": "entry has no supported explicit channel hint",
-                "observed_hint": raw_entry.get("usage", {}).get("channelHint") if isinstance(raw_entry.get("usage"), dict) else None,
-            })
+            held_entries.append(
+                {
+                    "entry_id": entry_id,
+                    "reason": "entry has no supported explicit channel hint",
+                    "observed_hint": raw_entry.get("usage", {}).get("channelHint")
+                    if isinstance(raw_entry.get("usage"), dict)
+                    else None,
+                }
+            )
             continue
         try:
             data_mime, payload_bytes = _decode_data_url(raw_entry.get("dataUrl"), entry_id=entry_id)
@@ -194,7 +198,11 @@ def adapt_material_donor_pack(raw_pack: Any, *, strict: bool = False) -> dict[st
             if declared_mime != data_mime:
                 raise MaterialDonorError(
                     "entry MIME does not match data URL MIME",
-                    {"entry_id": entry_id, "declared_mime": declared_mime, "data_url_mime": data_mime},
+                    {
+                        "entry_id": entry_id,
+                        "declared_mime": declared_mime,
+                        "data_url_mime": data_mime,
+                    },
                 )
         except MaterialDonorError as exc:
             held_entries.append({"entry_id": entry_id, "reason": str(exc), "details": exc.details})
@@ -339,6 +347,20 @@ def adapt_material_donor_pack(raw_pack: Any, *, strict: bool = False) -> dict[st
         "asset_class": "material.library",
         "root_atoms": root_atoms,
         "atoms": atoms,
+        "provenance": {
+            "kind": "derived-material-donor",
+            "basis": (
+                "Adapted from explicit axm-material-donor-pack/v0.2 routing declarations; "
+                "portable data URLs were decoded and SHA-256 hashed without inferring pixel semantics."
+            ),
+            "creator": "AXM-Material-Donor-Adapter",
+            "source_uri": f"donor://{_safe_atom_id('pack', pack_id)}",
+        },
+        "limitations": [
+            "donor resource bytes are decoded and SHA-256 hashed but are not installed or rendered by this adapter",
+            "texture channel meaning comes only from explicit donor-pack channel hints and is not physically verified",
+            "validated Asset Atom descriptor structure does not prove PBR correctness, visual quality, renderer compatibility, or physical-material behavior",
+        ],
     }
 
     try:
@@ -357,7 +379,9 @@ def adapt_material_donor_pack(raw_pack: Any, *, strict: bool = False) -> dict[st
         )
 
     return {
-        "truth_status": "READY_EXACT_MATERIAL_DONOR_ADAPTER" if not holds_exist else "PARTIAL_EXACT_MATERIAL_DONOR_ADAPTER_WITH_HOLDS",
+        "truth_status": "READY_EXACT_MATERIAL_DONOR_ADAPTER"
+        if not holds_exist
+        else "PARTIAL_EXACT_MATERIAL_DONOR_ADAPTER_WITH_HOLDS",
         "source": {
             "format": DONOR_FORMAT,
             "version": DONOR_VERSION,
