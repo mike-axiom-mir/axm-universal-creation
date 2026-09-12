@@ -121,7 +121,7 @@ def face(h):
     interior=h.mesh('Concave mouth cavity',vs,fs,'mouth','Head');interior['axm_mouth']=True
     # Shape the collar around the open mouth instead of moving the mouth
     # forward to conceal intersecting torso geometry.
-    cutter=geo.sphere('Temporary throat clearance',(0,-.12,1.465),(.255,.26,.127),h.mat['mouth'],segments=48,rings=24)
+    cutter=geo.sphere('Temporary throat clearance',(0,-.12,1.465),(.27,.28,.17),h.mat['mouth'],segments=48,rings=24)
     for part in h.parts:
         if part.name.startswith(('Barrel torso padded underlayer','Curved yellow breastplate shaped forged shell')):
             geo.select_only([part]);bpy.context.view_layer.objects.active=part
