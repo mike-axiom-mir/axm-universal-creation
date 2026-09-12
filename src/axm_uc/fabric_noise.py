@@ -52,4 +52,3 @@ def png_bytes(width: int, height: int, channels: int, pixels: bytes) -> bytes:
     signature = b"\x89PNG\r\n\x1a\n"
     ihdr = struct.pack(">IIBBBBB", width, height, 8, color_type, 0, 0, 0)
     return signature + _png_chunk(b"IHDR", ihdr) + _png_chunk(b"IDAT", zlib.compress(raw, 9)) + _png_chunk(b"IEND", b"")
-

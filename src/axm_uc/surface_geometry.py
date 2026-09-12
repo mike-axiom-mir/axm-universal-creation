@@ -63,4 +63,3 @@ class SurfaceBuilder:
    for j in range(m):
     if not self.far and (i,j) in [(0,m-1),(1,m-1),(n-1,m-1)]:continue
     self.double(mat,[at(i/n,j/m),at((i+1)/n,j/m),at((i+1)/n,(j+1)/m),at(i/n,(j+1)/m)],tag)
-
