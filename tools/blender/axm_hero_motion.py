@@ -71,6 +71,12 @@ def rig(hero):
                 a=min(1,int(t));f=t-a
                 groups[a].add([v.index],1-f,'REPLACE')
                 if f>0:groups[a+1].add([v.index],f,'REPLACE')
+        elif ob.get('axm_mouth'):
+            upper=ob.vertex_groups.new(name='Head');lower=ob.vertex_groups.new(name='Jaw')
+            for v in ob.data.vertices:
+                f=max(0,min(1,(1.56-v.co.z)/.18))
+                if f<1:upper.add([v.index],1-f,'REPLACE')
+                if f>0:lower.add([v.index],f,'REPLACE')
         else:
             vg=ob.vertex_groups.new(name=ob['axm_bone']);vg.add(list(range(len(ob.data.vertices))),1,'REPLACE')
         cp=ob.copy();cp.data=ob.data.copy();bpy.context.collection.objects.link(cp);copies.append(cp)
@@ -83,7 +89,7 @@ def rig(hero):
     clean_triangles(mesh)
     skin=mesh.modifiers.new('Armour rigid / cape blended skin','ARMATURE');skin.object=arm
     arm['forward_axis']='-Y in Blender, +Z in glTF';arm['meters_per_unit']=1.0
-    arm['binding']='Rigid mechanical shells; blended cape; articulated face and fingers.'
+    arm['binding']='Rigid mechanical shells; blended cape and mouth; articulated face and fingers.'
     return arm,mesh
 
 
@@ -305,7 +311,7 @@ def export(hero,arm,mesh,clips,out):
             'source_hashes':{n:hashlib.sha256(Path(__file__).with_name(n).read_bytes()).hexdigest() for n in source_files},
             'reference':'1000000471.png; supplied character illustration',
             'reference_fidelity':'Authored 3D interpretation, not exact reconstruction. Rear surfaces inferred.',
-            'binding':'Rigid armour and finger/face parts; blended three-segment cape. Not muscle simulation.',
+            'binding':'Rigid armour and finger/face parts; blended head/jaw mouth and three-segment cape. Not muscle simulation.',
             'collision_recommendation':{'type':'capsule','radius_m':.35,'height_m':1.95,'center_y_m':.975},
             'engine_status':'Portable skeleton and clips; target engine/controller integration untested.'}
     (out/'character-manifest.json').write_text(json.dumps(report,indent=2)+'\n')

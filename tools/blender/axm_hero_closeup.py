@@ -7,6 +7,7 @@ import numpy as np
 from PIL import Image
 from mathutils import Vector
 from mathutils.bvhtree import BVHTree
+import axm_blender_forge as geo
 
 
 def remove(h,prefix):
@@ -47,18 +48,30 @@ def face(h):
     remove(h,'Dark mouth interior');remove(h,'Lower smile lip');remove(h,'Tongue')
     # An inward bowl gives a true shaded cavity instead of a convex dark blob
     # in front of the cut mouth. The tongue has its own articulated root.
-    # Keep the inner surface ahead of the high breastplate/neck junction.
-    vs=[(0,-.257,1.478)];fs=[];n=64;rows=12
+    # The perimeter follows the curved face, rather than placing a flat oval
+    # in front of it. Its lower vertices blend onto the jaw during animation.
+    vs=[(0,-.135,1.478)];fs=[];n=64;rows=12
     for j in range(1,rows+1):
         r=j/rows
         for i in range(n):
             a=math.tau*i/n
-            vs.append((.233*r*math.cos(a),-.257-.048*r*r,1.478+.108*r*math.sin(a)))
+            edge_y=-.30+.168*math.cos(a)**2
+            vs.append((.207*r*math.cos(a),-.135*(1-r*r)+edge_y*r*r,1.478+.102*r*math.sin(a)))
     for i in range(n):fs.append((0,1+(i+1)%n,1+i))
     for j in range(rows-1):
         a=1+j*n;b=a+n
         for i in range(n):k=(i+1)%n;fs.append((a+i,a+k,b+k,b+i))
-    h.mesh('Concave mouth cavity',vs,fs,'mouth','Head')
+    interior=h.mesh('Concave mouth cavity',vs,fs,'mouth','Head');interior['axm_mouth']=True
+    # Shape the collar around the open mouth instead of moving the mouth
+    # forward to conceal intersecting torso geometry.
+    cutter=geo.sphere('Temporary throat clearance',(0,-.12,1.465),(.255,.26,.127),h.mat['mouth'],segments=48,rings=24)
+    for part in h.parts:
+        if part.name.startswith(('Barrel torso padded underlayer','Curved yellow breastplate shaped forged shell')):
+            geo.select_only([part]);bpy.context.view_layer.objects.active=part
+            mod=part.modifiers.new('Throat clearance','BOOLEAN');mod.operation='DIFFERENCE';mod.object=cutter
+            bpy.ops.object.modifier_apply(modifier=mod.name)
+        if part.name.startswith('Chest AXM raised emblem'):part.location.z-=.045
+    bpy.data.objects.remove(cutter,do_unlink=True)
     h.ball('Curled smiling tongue',(0,-.286,1.421),(.093,.084,.039),'tongue','Tongue',48,24)
     h.line('Tongue central groove',[(0,-.363,1.436),(0,-.333,1.452),(0,-.294,1.460)],.0015,'skin','Tongue')
     h.current='Head'
@@ -93,7 +106,7 @@ def cloth(h):
         for i in range(n+1):
             u=i/n;s=math.sin(math.pi*u)
             x=(u-.5)*.59;y=-.055-.21*s+.010*math.sin(u*29+v*4)*math.sin(math.pi*v)
-            z=1.451-.042*s-v*(.095-.027*s)+.004*math.sin(u*49)*v*v
+            z=1.451-.042*s-.05*s*s-v*(.095-.027*s)+.004*math.sin(u*49)*v*v
             vs.append((x,y,z));uv.append((u,v))
     for j in range(m):
         for i in range(n):q=j*(n+1)+i;fs.append((q,q+1,q+n+2,q+n+1))
@@ -101,7 +114,7 @@ def cloth(h):
     so=ob.modifiers.new('Scarf fabric gauge','SOLIDIFY');so.thickness=.004
     for i in range(40):
         u=(i+.5)/40;s=math.sin(math.pi*u);x=(u-.5)*.59;y=-.055-.21*s
-        z=1.451-.042*s-(.095-.027*s)
+        z=1.451-.042*s-.05*s*s-(.095-.027*s)
         h.line('Scarf frayed hem',[(x,y,z+.003),(x+.001,y-.001,z-.006)],.0008,'red')
     # The rear mark follows the actual cloth triangles; it cannot float off a
     # guessed plane or slice through a fold. Skin weights still follow cape Z.

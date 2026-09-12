@@ -50,8 +50,9 @@ Bulk modifier conversion avoids repeatedly evaluating the whole scene for every
 small part. Conformal toe armour addresses a real intersecting-surface failure.
 Triangle cleanup uses local edge cross products: the polygon area accumulator
 retained five collinear text triangles through floating-point cancellation.
-The cape emblem is projected onto actual fabric triangles. The mouth is a
-concave surface with clearance from the breastplate.
+The cape emblem is projected beyond the solidified fabric. The concave mouth
+follows the curved face and blends between head and jaw. Its collar clearance
+is cut into the breastplate rather than moving a dark surface in front of the face.
 The source Blender file retains named authoring pieces in a hidden collection,
 as well as the combined skinned mesh, editable actions and a preview studio.
 Those authoring pieces are retained source, not live-linked modifiers: edit the
@@ -61,7 +62,8 @@ main skinned mesh for edits that must immediately deform with the existing rig.
 
 The skeleton has 50 bones, including articulated fingers, eye/brow/lid/jaw
 controls, a tool/grip attachment, scarf, charm and a blended three-bone cape.
-Mechanical shells use rigid skin weights. This is not a muscle or cloth solver.
+Mechanical shells use rigid skin weights; the inner mouth blends between head
+and jaw. This is not a muscle or cloth solver.
 
 | Family | Clips |
 | --- | --- |
