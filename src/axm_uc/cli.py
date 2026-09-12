@@ -118,6 +118,9 @@ def build_parser() -> argparse.ArgumentParser:
         help="filter by observed materialization state",
     )
     organ_census_p.add_argument("--offset", type=int, default=0)
+    from .organ_materialization import IMPLEMENTATION_COVERAGE_STATES
+    organ_census_p.add_argument("--coverage", choices=sorted(IMPLEMENTATION_COVERAGE_STATES),
+                                help="filter combined package and live implementation declarations")
     organ_census_p.add_argument("--limit", type=int, default=415)
 
     sub.add_parser("forge", help="inspect the detached creation-unit spawning surface and truth boundary")
@@ -263,6 +266,7 @@ def main(argv: list[str] | None = None) -> int:
             anatomy_id=args.anatomy_id,
             domain_code=args.domain_code,
             state=args.state,
+            coverage=args.coverage,
             offset=args.offset,
             limit=args.limit,
         ))

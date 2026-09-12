@@ -241,6 +241,10 @@ def _cylinder_geometry(segments: int) -> tuple[list[tuple[float, float, float]],
         positions.extend([(0., -.5, 0.), p1, p0])
         normals.extend([(0., -1., 0.)] * 3)
         indices.extend([bottom, bottom + 1, bottom + 2])
+    # Increasing angle runs clockwise when viewed from above in this Y-up
+    # coordinate system. Reverse sides and both caps to face outward.
+    for index in range(0, len(indices), 3):
+        indices[index + 1], indices[index + 2] = indices[index + 2], indices[index + 1]
     return positions, normals, indices
 
 
@@ -410,6 +414,31 @@ def verify_glb(body: bytes, *, expected_spec_digest: str | None = None) -> dict[
             raise Procedural3DError("generated GLB accessor reference or component type is invalid", {"index": index})
         if not isinstance(accessor.get("count"), int) or accessor["count"] <= 0 or accessor.get("type") not in {"SCALAR", "VEC3"}:
             raise Procedural3DError("generated GLB accessor shape is invalid", {"index": index})
+    def decode_accessor(ref: int, component_type: int, shape: str) -> list[tuple]:
+        accessor = accessors[ref]
+        if accessor["componentType"] != component_type or accessor["type"] != shape:
+            raise Procedural3DError("generated GLB geometry accessor has the wrong type", {"accessor": ref})
+        if "sparse" in accessor or accessor.get("normalized", False):
+            raise Procedural3DError("generated GLB geometry accessor uses unsupported encoding")
+        view = views[accessor["bufferView"]]
+        fmt = "<fff" if shape == "VEC3" else "<H"
+        width = struct.calcsize(fmt)
+        start = accessor.get("byteOffset", 0)
+        stride = view.get("byteStride", width)
+        alignment = 4 if component_type == 5126 else 2
+        if (type(start) is not int or start < 0 or start % alignment
+                or type(stride) is not int or stride < width or stride % alignment
+                or start + (accessor["count"] - 1) * stride + width > view["byteLength"]):
+            raise Procedural3DError("generated GLB geometry accessor exceeds or misaligns its bufferView", {"accessor": ref})
+        start += view.get("byteOffset", 0)
+        if start % alignment:
+            raise Procedural3DError("generated GLB geometry buffer offset is misaligned")
+        values = [struct.unpack_from(fmt, bin_bytes, start + item * stride) for item in range(accessor["count"])]
+        if any(not math.isfinite(value) for row in values for value in row):
+            raise Procedural3DError("generated GLB geometry contains non-finite values", {"accessor": ref})
+        return values
+
+    decoded_triangles = 0
     for index, mesh in enumerate(meshes):
         primitives = mesh.get("primitives") if isinstance(mesh, dict) else None
         if not isinstance(primitives, list) or len(primitives) != 1:
@@ -422,6 +451,22 @@ def verify_glb(body: bytes, *, expected_spec_digest: str | None = None) -> dict[
         material = primitive.get("material")
         if not isinstance(material, int) or not 0 <= material < len(materials) or primitive.get("mode") != 4:
             raise Procedural3DError("generated GLB mesh material or draw mode is invalid", {"index": index})
+        positions = decode_accessor(refs[0], 5126, "VEC3")
+        normals = decode_accessor(refs[1], 5126, "VEC3")
+        indices = [row[0] for row in decode_accessor(refs[2], 5123, "SCALAR")]
+        if len(positions) != len(normals) or len(indices) % 3 or max(indices) >= len(positions):
+            raise Procedural3DError("generated GLB geometry counts or triangle indices are invalid", {"mesh": index})
+        for offset in range(0, len(indices), 3):
+            face = indices[offset:offset + 3]
+            a, b, c = (positions[vertex] for vertex in face)
+            u = tuple(b[i] - a[i] for i in range(3))
+            v = tuple(c[i] - a[i] for i in range(3))
+            cross = (u[1]*v[2] - u[2]*v[1], u[2]*v[0] - u[0]*v[2], u[0]*v[1] - u[1]*v[0])
+            if sum(value*value for value in cross) == 0:
+                raise Procedural3DError("generated GLB contains a degenerate triangle", {"mesh": index, "triangle": offset // 3})
+            if any(sum(cross[i] * normals[vertex][i] for i in range(3)) <= 0 for vertex in face):
+                raise Procedural3DError("generated GLB triangle winding disagrees with vertex normals", {"mesh": index, "triangle": offset // 3})
+        decoded_triangles += len(indices) // 3
     if len(nodes) != len(meshes) or len(materials) != len(meshes):
         raise Procedural3DError("generated GLB primitive, node, mesh, and material counts diverge")
     for index, node in enumerate(nodes):
@@ -444,7 +489,15 @@ def verify_glb(body: bytes, *, expected_spec_digest: str | None = None) -> dict[
         "primitives": len(meshes),
         "nodes": len(nodes),
         "materials": len(materials),
-        "triangles": sum(accessors[mesh["primitives"][0]["indices"]]["count"] // 3 for mesh in meshes),
+        "triangles": decoded_triangles,
+        "geometry_validation": {
+            "decoded_triangle_count": decoded_triangles,
+            "finite_positions_and_normals": True,
+            "indices_in_range": True,
+            "nondegenerate_triangles": True,
+            "winding_matches_vertex_normals": True,
+            "scope": "native bounded generator geometry; not arbitrary glTF, manifoldness, collision, visual quality or host import proof",
+        },
         "specification_sha256": digest,
     }
 
