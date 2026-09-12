@@ -13,12 +13,14 @@ def verify(path):
     g=GLB(path);doc=g.doc;triangles=0;vertices=0;degenerate=0;all_points=[]
     assert not doc.get('cameras') and not doc.get('animations')
     assert not any(i.get('uri') for i in doc.get('images',[])), 'all texture images must be embedded'
-    images=[]
+    images=[];compressed_image_bytes=0;estimated_rgba8_bytes=0
     for image in doc.get('images',[]):
         view=doc['bufferViews'][image['bufferView']];off=view.get('byteOffset',0);blob=g.binary[off:off+view['byteLength']]
+        compressed_image_bytes+=len(blob)
         with Image.open(io.BytesIO(blob)) as im:
             im.load();assert im.width>=256 and im.height>=256
-            images.append({'size':[im.width,im.height],'sha256':hashlib.sha256(blob).hexdigest()})
+            estimated_rgba8_bytes+=im.width*im.height*4
+            images.append({'size':[im.width,im.height],'bytes':len(blob),'sha256':hashlib.sha256(blob).hexdigest()})
     assert len(images)>=12, 'PBR imagery was lost'
     for mesh in doc['meshes']:
         for p in mesh['primitives']:
@@ -37,14 +39,62 @@ def verify(path):
     assert np.isfinite(points).all() and hi[1]-lo[1]>4 and hi[1]-lo[1]<6
     assert max(hi-lo)<8, 'review floor or a misplaced component leaked into the asset'
     assert triangles>0 and degenerate/max(1,triangles)<.001
+    materials=doc.get('materials',[])
     return {'sha256':hashlib.sha256(path.read_bytes()).hexdigest(),'triangles':triangles,'vertices':vertices,
             'degenerate_triangles_under_1e-10':degenerate,'material_batches':len(doc['meshes']),
-            'embedded_images':len(images),'bounds_y_up':{'min':lo.tolist(),'max':hi.tolist()},'images':images,
-            'scope':'Decoded geometry, UV, normals, embedded images and world bounds. Not an FPS or visual-quality score.'}
+            'materials':len(materials),'double_sided_materials':sum(bool(m.get('doubleSided')) for m in materials),
+            'embedded_images':len(images),'embedded_compressed_bytes':compressed_image_bytes,
+            'estimated_rgba8_bytes_before_mips':estimated_rgba8_bytes,
+            'bounds_y_up':{'min':lo.tolist(),'max':hi.tolist()},'images':images,
+            'scope':'Decoded geometry, UV, normals, material flags, embedded images and world bounds. Not collision, engine import, FPS, LOD perceptual equivalence or visual-quality proof.'}
+
+
+def game_readiness_gates(report):
+    near=report['improvised-workshop.glb'];lod=report['improvised-workshop-lod1.glb']
+    ratio=lod['triangles']/near['triangles']
+    return {
+        'schema':'axm.workshop-game-readiness-gates/v0.1',
+        'source':'glb-inspection.json',
+        'measured':{
+            'detailed_triangles':near['triangles'],
+            'lod1_triangles':lod['triangles'],
+            'lod1_triangle_ratio':ratio,
+            'detailed_materials':near['materials'],
+            'lod1_materials':lod['materials'],
+            'detailed_double_sided_materials':near['double_sided_materials'],
+            'lod1_double_sided_materials':lod['double_sided_materials'],
+            'detailed_embedded_images':near['embedded_images'],
+            'detailed_embedded_compressed_bytes':near['embedded_compressed_bytes'],
+            'detailed_estimated_rgba8_bytes_before_mips':near['estimated_rgba8_bytes_before_mips'],
+        },
+        'gates':{
+            'geometry_structure':'TESTED',
+            'embedded_texture_integrity':'TESTED',
+            'lod_triangle_reduction':'TESTED',
+            'lod_perceptual_equivalence':'NOT_TESTED',
+            'collision':'NOT_TESTED',
+            'navigation':'NOT_TESTED',
+            'target_engine_import':'NOT_TESTED',
+            'target_rts_integration':'NOT_TESTED',
+            'target_device_fps':'NOT_TESTED',
+            'material_texture_budget_acceptance':'NOT_TESTED',
+            'visual_quality':'NOT_TESTED',
+        },
+        'nonclaims':[
+            'A valid GLB is not a game-ready asset by itself.',
+            'Triangle reduction is not LOD visual equivalence.',
+            'Material/image counts are measured cost surfaces, not accepted budgets.',
+            'No collision, navigation, target-engine, target-RTS or target-device performance claim is created by this report.',
+        ],
+    }
+
 
 if __name__=='__main__':
     root=Path(sys.argv[1]);report={}
     for name in ['improvised-workshop.glb','improvised-workshop-lod1.glb']:report[name]=verify(root/name)
     assert report['improvised-workshop-lod1.glb']['triangles']<report['improvised-workshop.glb']['triangles']
     (root/'glb-inspection.json').write_text(json.dumps(report,indent=2)+'\n')
+    gates=game_readiness_gates(report)
+    (root/'game-readiness-gates.json').write_text(json.dumps(gates,indent=2)+'\n')
     print(json.dumps({k:{a:b for a,b in v.items() if a!='images'} for k,v in report.items()},indent=2))
+    print(json.dumps(gates,indent=2))
