@@ -1,6 +1,6 @@
 {
   "id": "AXM-CAP-BUILD-OFFLINE-BROWSER-GAME",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "status": "live",
   "purpose": "Assemble one dependency-free offline tactical browser arena from a closed game specification, deterministic session state machine, generated PNG and WAV assets, inspectable HTML/CSS/JavaScript, and exact project validation.",
   "handles": [

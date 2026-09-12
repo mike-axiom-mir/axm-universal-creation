@@ -279,14 +279,15 @@ INDEX_TEMPLATE = """<!doctype html>
       <button id="targetButton" type="button">Next target</button>
       <button id="reloadButton" type="button">Reload</button>
       <button id="resetButton" type="button">Reset</button>
-      <span class="hint">Move: WASD / arrows · Fire: hold canvas / Space · Target: Q · Reload: R · Pause: P</span>
-    </nav>
     <div class="touch" aria-label="Touch movement controls">
       <button type="button" data-key="ArrowUp" aria-label="Move up">↑</button>
       <button type="button" data-key="ArrowLeft" aria-label="Move left">←</button>
       <button type="button" data-key="ArrowDown" aria-label="Move down">↓</button>
       <button type="button" data-key="ArrowRight" aria-label="Move right">→</button>
     </div>
+      <span class="hint">Move: WASD / arrows · Fire: hold canvas / Space · Target: Q · Reload: R · Pause: P</span>
+    </nav>
+
   </main>
   <script src="game.js"></script>
 </body>
@@ -294,7 +295,7 @@ INDEX_TEMPLATE = """<!doctype html>
 """
 
 
-STYLE_TEMPLATE = """:root{color-scheme:dark;font-family:Inter,ui-sans-serif,system-ui,sans-serif;--background:__AXM_BACKGROUND__;--panel:__AXM_PANEL__;--accent:__AXM_ACCENT__;--text:__AXM_TEXT__;background:#080e15;color:var(--text)}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% 0,#1b323a 0,#090f17 65%);padding:24px}.shell{width:min(1280px,100%);margin:auto;display:grid;gap:0}.hud{display:grid;grid-template-columns:minmax(230px,1.8fr) repeat(4,minmax(90px,1fr));gap:0;padding:18px 8px 24px;align-items:center}.hud>div{padding:0 22px;border-left:1px solid #40535b55}.hud>.brand{border:0;padding-left:0}.brand{display:flex;align-items:center;gap:14px;font-size:27px;font-weight:650;letter-spacing:-.04em}.brand img{width:36px;height:36px;filter:grayscale(1) brightness(2)}.label{display:block;color:#78939f;font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;margin-bottom:6px}.brand .label{color:#b6aa83;font-size:9px;letter-spacing:.2em}.hud strong{font-variant-numeric:tabular-nums;font-weight:500;font-size:17px}.hud meter{display:block;width:90%;max-width:130px;height:5px;margin-top:5px;accent-color:var(--accent)}.arena{position:relative;border:1px solid #52697766;border-radius:4px;overflow:hidden;box-shadow:0 30px 90px #0007;background:#0b1a24}canvas{display:block;width:100%;height:auto;aspect-ratio:__AXM_RATIO__;touch-action:none}.status{position:absolute;left:50%;top:14px;transform:translateX(-50%);color:#98b3bc;background:#0b1b25bb;padding:7px 16px;border:1px solid #9ababd22;border-radius:3px;font-size:11px;pointer-events:none;white-space:nowrap}.controls{display:flex;align-items:center;gap:9px;flex-wrap:wrap;padding:20px 0}.controls button,.touch button{border:1px solid #69818c55;border-radius:4px;background:#172832;color:#d2e2e5;padding:12px 17px;font:inherit;font-size:12px;font-weight:600;cursor:pointer}.controls button:hover,.touch button:hover{background:#29404c;border-color:#91b6bb}.controls button:disabled{opacity:.4;cursor:default}.controls button:focus-visible,.touch button:focus-visible,canvas:focus-visible{outline:2px solid var(--accent);outline-offset:-3px}#sessionButton{background:#d3bc87;border-color:#d3bc87;color:#18242a;min-width:95px}#fireButton{color:#a1e8d2;border-color:#5ea18d88}.hint{color:#78919e;font-size:11px;margin-left:auto}.touch{display:none;grid-template-columns:repeat(4,1fr);gap:8px}.touch button{font-size:20px;padding:14px;touch-action:none}@media(max-width:850px){body{padding:12px}.hud{grid-template-columns:repeat(4,1fr);padding:10px 0 15px;row-gap:22px}.hud>.brand{grid-column:1/-1}.hud>div{padding:0 8px}.hud strong{font-size:14px}.brand{font-size:24px}.label{font-size:8px}.touch{display:grid}.hint{width:100%;margin:6px 0}.controls{padding:12px 0;gap:6px}.controls button{padding:12px 10px}.status{top:8px;font-size:9px;padding:5px 8px}}\n"""
+STYLE_TEMPLATE = """:root{color-scheme:dark;font-family:Inter,ui-sans-serif,system-ui,sans-serif;--background:__AXM_BACKGROUND__;--panel:__AXM_PANEL__;--accent:__AXM_ACCENT__;--text:__AXM_TEXT__;background:#080e15;color:var(--text)}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% 0,#1b323a 0,#090f17 65%);padding:24px}.shell{width:min(1280px,100%);margin:auto;display:grid;gap:0}.hud{display:grid;grid-template-columns:minmax(230px,1.8fr) repeat(4,minmax(90px,1fr));gap:0;padding:18px 8px 24px;align-items:center}.hud>div{padding:0 22px;border-left:1px solid #40535b55}.hud>.brand{border:0;padding-left:0}.brand{display:flex;align-items:center;gap:14px;font-size:27px;font-weight:650;letter-spacing:-.04em}.brand img{width:36px;height:36px;filter:grayscale(1) brightness(2)}.label{display:block;color:#78939f;font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;margin-bottom:6px}.brand .label{color:#b6aa83;font-size:9px;letter-spacing:.2em}.hud strong{font-variant-numeric:tabular-nums;font-weight:500;font-size:17px}.hud meter{display:block;width:90%;max-width:130px;height:5px;margin-top:5px;accent-color:var(--accent)}.arena{position:relative;border:1px solid #52697766;border-radius:4px;overflow:hidden;box-shadow:0 30px 90px #0007;background:#0b1a24}canvas{display:block;width:100%;height:auto;aspect-ratio:__AXM_RATIO__;touch-action:none}.status{position:absolute;left:50%;top:14px;transform:translateX(-50%);color:#98b3bc;background:#0b1b25bb;padding:7px 16px;border:1px solid #9ababd22;border-radius:3px;font-size:11px;pointer-events:none;white-space:nowrap}.controls{display:flex;align-items:center;gap:9px;flex-wrap:wrap;padding:20px 0}.controls button,.touch button{border:1px solid #69818c55;border-radius:4px;background:#172832;color:#d2e2e5;padding:12px 17px;font:inherit;font-size:12px;font-weight:600;cursor:pointer}.controls button:hover,.touch button:hover{background:#29404c;border-color:#91b6bb}.controls button:disabled{opacity:.4;cursor:default}.controls button:focus-visible,.touch button:focus-visible,canvas:focus-visible{outline:2px solid var(--accent);outline-offset:-3px}#sessionButton{background:#d3bc87;border-color:#d3bc87;color:#18242a;min-width:95px}#fireButton{color:#a1e8d2;border-color:#5ea18d88}.hint{color:#78919e;font-size:11px;margin-left:auto}.touch{display:grid;grid-template-columns:repeat(4,42px);gap:4px}.touch button{font-size:20px;padding:8px;touch-action:none}.controls{order:1}.arena{order:2}.shell>nav:not(.controls){order:3}.controls button{touch-action:none;user-select:none;-webkit-user-select:none}@media(max-width:850px){body{padding:12px}.hud{grid-template-columns:repeat(4,1fr);padding:10px 0 15px;row-gap:22px}.hud>.brand{grid-column:1/-1}.hud>div{padding:0 8px}.hud strong{font-size:14px}.brand{font-size:24px}.label{font-size:8px}.touch{display:grid}.hint{width:100%;margin:6px 0}.controls{padding:12px 0;gap:6px}.controls button{padding:12px 10px}.status{top:8px;font-size:9px;padding:5px 8px}}\n"""
 
 
 GAME_JS_TEMPLATE = r'''"use strict";
@@ -325,8 +326,9 @@ let lastFrame = 0;
 let pointerAim = null;
 let pointerHeld = false;
 let targetHeld = false;
+const touchKeys = new Set();
 
-function clearInputs() { keys.clear(); pointerHeld = false; targetHeld = false; }
+function clearInputs() { keys.clear(); touchKeys.clear(); pointerHeld = false; targetHeld = false; }
 
 function transition(event) {
   const row = SESSION.transitions.find(item => item.from === state.phase && item.event === event);
@@ -376,7 +378,7 @@ function fireSelected() {
 }
 
 function setStatus() {
-  const labels = {ready:"Ready — start when you choose.",playing:"Defend the command tower.",paused:"Paused.",won:"Arena secured.",lost:"Command tower lost."};
+  const labels = {ready:"Press Start to enable movement and firing.",playing:"Defend the command tower.",paused:"Paused.",won:"Arena secured.",lost:"Command tower lost."};
   statusNode.textContent = labels[state.phase];
   sessionButton.textContent = state.phase === "ready" ? "Start" : state.phase === "playing" ? "Pause" : state.phase === "paused" ? "Resume" : "Play again";
 }
@@ -390,6 +392,7 @@ function updateHud() {
   scoreValue.textContent = String(state.score);
   ammoValue.textContent = state.reloadRemaining > 0 ? "RELOADING" : `${state.ammo} / ${SPEC.rules.ammo_capacity}`;
   fireButton.disabled = state.phase !== "playing";
+  for(const button of document.querySelectorAll("[data-key]"))button.disabled=state.phase!=="playing";
   reloadButton.disabled = state.phase !== "playing" || state.reloadRemaining > 0 || state.ammo === SPEC.rules.ammo_capacity;
   targetButton.disabled = !target;
   setStatus();
@@ -421,8 +424,8 @@ function update(dt) {
   state.time += dt;
   for(const f of state.fx){f.x+=f.vx*dt;f.y+=f.vy*dt;f.z+=f.vz*dt;f.vz-=180*dt;f.life-=dt;}
   state.fx=state.fx.filter(f=>f.life>0);
-  let dx = (keys.has("ArrowRight") || keys.has("d") ? 1 : 0) - (keys.has("ArrowLeft") || keys.has("a") ? 1 : 0);
-  let dy = (keys.has("ArrowDown") || keys.has("s") ? 1 : 0) - (keys.has("ArrowUp") || keys.has("w") ? 1 : 0);
+  let dx = (keys.has("ArrowRight") || touchKeys.has("ArrowRight") || keys.has("d") ? 1 : 0) - (keys.has("ArrowLeft") || touchKeys.has("ArrowLeft") || keys.has("a") ? 1 : 0);
+  let dy = (keys.has("ArrowDown") || touchKeys.has("ArrowDown") || keys.has("s") ? 1 : 0) - (keys.has("ArrowUp") || touchKeys.has("ArrowUp") || keys.has("w") ? 1 : 0);
   const movement = Math.hypot(dx, dy) || 1;
   state.player.x = Math.max(state.player.size, Math.min(SPEC.viewport.width-state.player.size, state.player.x + dx/movement*state.player.speed*dt));
   state.player.y = Math.max(state.player.size, Math.min(SPEC.viewport.height-state.player.size, state.player.y + dy/movement*state.player.speed*dt));
@@ -490,13 +493,17 @@ canvas.addEventListener("pointerdown", event => {
 canvas.addEventListener("pointermove", event => { pointerAim = pointerPosition(event); });
 for (const name of ["pointerup","pointercancel","lostpointercapture"]) canvas.addEventListener(name,()=>{pointerHeld=false;});
 window.addEventListener("keydown", event => {
-  // Native controls keep Space/arrow behavior; game keys belong to the canvas.
-  if (event.target !== canvas) return;
+  // Gameplay keys survive focus changes within the page. Text entry and native
+  // button activation keep their normal browser behavior.
+  const target=event.target;
+  if(target?.isContentEditable || ["INPUT","TEXTAREA","SELECT"].includes(target?.tagName))return;
   const key = event.key.length===1 ? event.key.toLowerCase() : event.key;
+  if((key===" " || key==="Enter") && target?.tagName==="BUTTON")return;
   if (["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"," "].includes(key)) event.preventDefault();
   keys.add(key);
   if (!event.repeat) {
     if(key==="p") { if(state.phase==="playing") transition("pause"); else if(state.phase==="paused") transition("resume"); updateHud(); }
+    if(key===" ") fireSelected();
     if(key==="q") nextTarget();
     if(key==="r") startReload();
   }
@@ -507,15 +514,15 @@ window.addEventListener("blur",pauseOnLeave);
 document.addEventListener("visibilitychange",()=>{if(document.hidden) pauseOnLeave();});
 for(const button of document.querySelectorAll("[data-key]")){
   const key=button.dataset.key;
-  button.addEventListener("pointerdown",event=>{event.preventDefault();button.setPointerCapture(event.pointerId);if(state.phase==="playing")keys.add(key);});
-  for(const name of ["pointerup","pointercancel","lostpointercapture"])button.addEventListener(name,()=>keys.delete(key));
+  button.addEventListener("pointerdown",event=>{event.preventDefault();button.setPointerCapture(event.pointerId);if(state.phase==="playing")touchKeys.add(key);});
+  for(const name of ["pointerup","pointercancel","lostpointercapture"])button.addEventListener(name,()=>touchKeys.delete(key));
 }
 fireButton.addEventListener("pointerdown",event=>{if(event.button!==0)return;event.preventDefault();fireButton.setPointerCapture(event.pointerId);targetHeld=state.phase==="playing";fireSelected();});
 for(const name of ["pointerup","pointercancel","lostpointercapture"])fireButton.addEventListener(name,()=>{targetHeld=false;});
 fireButton.addEventListener("click",event=>{if(event.detail===0)fireSelected();});
-targetButton.addEventListener("click",nextTarget);
+targetButton.addEventListener("click",()=>{nextTarget();canvas.focus({preventScroll:true});});
 sessionButton.addEventListener("click",()=>{if(state.phase==="ready")transition("start");else if(state.phase==="playing")transition("pause");else if(state.phase==="paused")transition("resume");else{reset();transition("start");}updateHud();canvas.focus();});
-reloadButton.addEventListener("click",startReload);
+reloadButton.addEventListener("click",()=>{startReload();canvas.focus({preventScroll:true});});
 resetButton.addEventListener("click",()=>{if(state.phase!=="ready")transition("reset");reset();});
 reset(); requestAnimationFrame(frame);
 // Optional read-only browser tool; ordinary play needs no agent or service.

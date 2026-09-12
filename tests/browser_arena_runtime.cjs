@@ -4,14 +4,14 @@ const fs = require('node:fs');
 const vm = require('node:vm');
 function node() {
   const handlers = {};
-  return {handlers, disabled:false, textContent:'', addEventListener(name,fn){(handlers[name]??=[]).push(fn);},
+  return {handlers, tagName:'BUTTON',disabled:false, textContent:'', addEventListener(name,fn){(handlers[name]??=[]).push(fn);},
     emit(name,event={}){for(const fn of handlers[name]||[])fn({target:this,button:0,pointerId:1,detail:1,preventDefault(){},...event});},
     focus(){},setPointerCapture(){},getBoundingClientRect(){return {left:0,top:0,width:960,height:540};}};
 }
 const ids = ['game','status','sessionButton','reloadButton','resetButton','fireButton','targetButton','targetName','targetHealth','towerValue','scoreValue','ammoValue'];
 const nodes = Object.fromEntries(ids.map(id=>[id,node()]));
 const context = new Proxy({}, {get:(o,k)=>o[k]??(['createRadialGradient','createLinearGradient'].includes(k)?()=>({addColorStop(){}}):()=>{}),set:(o,k,v)=>(o[k]=v,true)});
-nodes.game.width=960;nodes.game.height=540;nodes.game.getContext=()=>context;
+nodes.game.tagName='CANVAS';nodes.game.width=960;nodes.game.height=540;nodes.game.getContext=()=>context;
 const touch = ['ArrowUp','ArrowLeft','ArrowDown','ArrowRight'].map(key=>Object.assign(node(),{dataset:{key}}));
 const doc = Object.assign(node(),{hidden:false,querySelector:s=>nodes[s.slice(1)],querySelectorAll:()=>touch});
 const win = node();
@@ -48,6 +48,20 @@ const second=read('state.selectedId');key('q',{repeat:true});assert.equal(read('
 key(' ');read('update(0.01)');const ammo=read('state.ammo');read('update(0.2)');assert.equal(read('state.ammo'),ammo-1);
 // Native focused controls must not inject movement or shooting.
 win.emit('keyup',{key:' '});win.emit('keydown',{target:nodes.resetButton,key:' '});assert.equal(read('keys.has(" ")'),false);
+// Focus on Next target must not swallow WASD; editable fields stay native.
+win.emit('keydown',{target:nodes.targetButton,key:'d'});
+const focusX=read('state.player.x');read('update(0.1)');assert.ok(read('state.player.x')>focusX);
+win.emit('keyup',{key:'d'});
+win.emit('keydown',{target:{tagName:'INPUT'},key:'a'});assert.equal(read('keys.has("a")'),false);
+// Simultaneous touch movement/fire advances position and consumes ammunition.
+read('state.fireCooldown=0');touch[3].emit('pointerdown');nodes.fireButton.emit('pointerdown');
+const touchX=read('state.player.x'), touchAmmo=read('state.ammo');read('update(0.2)');
+assert.ok(read('state.player.x')>touchX);assert.ok(read('state.ammo')<touchAmmo);
+// Touch release does not cancel a keyboard holding the same direction.
+key('ArrowRight');touch[3].emit('pointerup');assert.equal(read('keys.has("ArrowRight")'),true);
+win.emit('keyup',{key:'ArrowRight'});nodes.fireButton.emit('pointerup');
+// A quick Space tap between frames still fires one shot.
+read('state.fireCooldown=0');const tapAmmo=read('state.ammo');key(' ');win.emit('keyup',{key:' '});assert.equal(read('state.ammo'),tapAmmo-1);
 // Blur pauses and clears input. Resume must not keep firing or moving.
 key('d');win.emit('blur');assert.equal(read('state.phase'),'paused');assert.equal(read('keys.size'),0);
 const x=read('state.player.x');const stoppedAmmo=read('state.ammo');nodes.sessionButton.emit('click');read('update(0.25)');
@@ -56,8 +70,8 @@ assert.equal(read('state.player.x'),x);assert.equal(read('state.ammo'),stoppedAm
 nodes.game.emit('pointerdown',{clientX:480,clientY:100});nodes.sessionButton.emit('click');
 assert.equal(read('pointerHeld'),false);const paused=read('JSON.stringify(state)');read('update(5)');assert.equal(read('JSON.stringify(state)'),paused);
 // Pointer cancellation and reset release every input source.
-nodes.sessionButton.emit('click');touch[3].emit('pointerdown');assert.equal(read('keys.has("ArrowRight")'),true);
-touch[3].emit('lostpointercapture');assert.equal(read('keys.size'),0);
+nodes.sessionButton.emit('click');touch[3].emit('pointerdown');assert.equal(read('touchKeys.has("ArrowRight")'),true);
+touch[3].emit('lostpointercapture');assert.equal(read('touchKeys.size'),0);
 nodes.fireButton.emit('pointerdown');assert.equal(read('targetHeld'),true);nodes.fireButton.emit('pointercancel');assert.equal(read('targetHeld'),false);
 key('d');nodes.resetButton.emit('click');assert.equal(read('state.phase'),'ready');assert.equal(read('keys.size'),0);
 // Visibility loss pauses; restored visibility never starts the session by itself.

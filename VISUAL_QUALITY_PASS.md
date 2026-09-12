@@ -64,3 +64,24 @@ Truth separates authored design, machine assembly and observed behavior. Agency
 keeps start/resume/light controls explicit. Continuity retains canonical game
 state and earlier outputs. Wisdom before speed leaves untested claims open and
 keeps the change in this chat's existing branch/PR lane.
+
+## Input repair after user play — 2026-09-12
+
+The user reported movement/firing difficulty. Source inspection confirmed that
+keyboard input was ignored after focus moved onto another game button, the Fire
+button did not suppress touch panning, and movement controls were hidden on wide
+viewports. The prior visual evidence did not establish complete playability.
+
+Version 0.2.1 accepts gameplay keys after button focus while preserving native
+Space/Enter activation and editable fields. Quick Space taps shoot immediately;
+held fire still observes cooldown. Touch movement has a separate input set so
+releasing one source cannot cancel a keyboard hold. Game buttons disable touch
+panning. Start, firing and movement are grouped above the arena at all widths;
+ready/paused movement is explicitly disabled with a Start instruction.
+
+Final full build: 453 tests pass (25.372 seconds), BUILD_OK. New runtime checks
+exercise focused-button movement, text-entry isolation, simultaneous touch-state
+movement/fire, separate input release and between-frame Space taps. Chrome held
+on-screen movement visibly moved the vehicle; firing reduced ammunition. This
+cloud mouse-pointer test does not establish Android multi-touch behavior; actual
+phone confirmation remains open.
