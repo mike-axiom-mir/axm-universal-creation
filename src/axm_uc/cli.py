@@ -33,6 +33,9 @@ def build_parser() -> argparse.ArgumentParser:
     pipelines.add_argument('--search-budget', type=int, default=10000)
     workshop = sub.add_parser('survivor-workshop', help='build both detail levels of the authored custom-surface workshop with an offline viewer')
     workshop.add_argument('path')
+    rts = sub.add_parser('rts-reference-pack', help='build the 83-design survivor RTS reference collection')
+    rts.add_argument('path')
+    rts.add_argument('--asset', action='append', default=None, help='select a catalog asset ID; repeat to build a subset')
 
     timeline = sub.add_parser('sample-track', help='sample a local integer animation track at a frame')
     timeline.add_argument('track_file')
@@ -162,6 +165,12 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     root = find_machine_root(args.root) if args.root else find_machine_root()
     machine = UniversalCreationMachine(root)
+    if args.command == 'rts-reference-pack':
+        from .rts_foundry import reference_pack_request
+        result = machine.create(reference_pack_request(args.path, args.asset))
+        _print(result)
+        return 0 if result.get('type') == 'CREATION_RESULT' else 1
+
     if args.command == 'survivor-workshop':
         from .workshop_project import workshop_request
         result = machine.create(workshop_request(args.path))

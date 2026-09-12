@@ -16,6 +16,7 @@ REQUEST_BUILDERS = (
     ('bitmap-label', 'src/axm_uc/media_workbench.py', 'label_request', 'Transparent bitmap labels'),
     ('normalize-wav', 'src/axm_uc/media_workbench.py', 'wav_request', 'PCM WAV normalization'),
     ('fabric', 'src/axm_uc/fabric_material.py', 'fabric_request', 'Woven fabric maps'),
+    ('rts-reference-pack', 'src/axm_uc/rts_foundry.py', 'reference_pack_request', '83 authored RTS reference designs: articulated GLBs, detail levels, collision proxies and offline viewer'),
     ('survivor-workshop', 'src/axm_uc/workshop_project.py', 'workshop_request', 'Authored survivor workshop: verified surface GLBs and offline preview'),
 )
 BOUNDARY = 'Read-only candidate connections. No pipeline execution, compatibility proof, installation or automatic adoption.'
@@ -64,7 +65,7 @@ def installed_nodes(root):
         nodes.append({'id':name,'module':'request-builder','description':description,
                       'source':{'path':source,'function':fn,'sha256':sources[source]},
                       'accepts':[], 'requires':[], 'provides':['request.kind.mixed-media-project'],
-                      'required_parameters':'Caller supplies path and function-specific arguments; see MEDIA_WORKBENCH.md, DONOR_ABSORPTION.md and WORKSHOP_PIPELINE.md.',
+                      'required_parameters':'Caller supplies path and function-specific arguments; see MEDIA_WORKBENCH.md, DONOR_ABSORPTION.md WORKSHOP_PIPELINE.md and RTS_REFERENCE_FOUNDRY.md.',
                       'evidence_status':'explicit_source_adapter_not_executed'})
     # The manifest content, including implementation declarations, participates in identity.
     digest=hashlib.sha256(json.dumps({'nodes':nodes,'sources':sources,'excluded':excluded},sort_keys=True).encode()).hexdigest()
