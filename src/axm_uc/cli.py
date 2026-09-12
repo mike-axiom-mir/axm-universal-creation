@@ -19,6 +19,11 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--root", help="machine root; normally auto-detected")
     sub = parser.add_subparsers(dest="command", required=True)
 
+    fabric = sub.add_parser('fabric', help='generate standalone woven fabric material maps')
+    fabric.add_argument('path')
+    fabric.add_argument('--size',type=int,default=256)
+    fabric.add_argument('--seed',type=int,default=1)
+
     formats = sub.add_parser('formats', help='list size/layout presets or create an editable layout project')
     formats.add_argument('--format', dest='format_name')
     formats.add_argument('--layout')
@@ -114,6 +119,15 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     root = find_machine_root(args.root) if args.root else find_machine_root()
     machine = UniversalCreationMachine(root)
+
+    if args.command == 'fabric':
+        from .fabric_material import fabric_request
+        try:
+            request=fabric_request(args.path,args.size,args.seed)
+        except ValueError as exc:
+            raise SystemExit(str(exc)) from exc
+        result=machine.create(request); _print(result)
+        return 0 if result.get('type')=='CREATION_RESULT' else 1
 
     if args.command == 'formats':
         from .format_templates import catalog, layout_project
