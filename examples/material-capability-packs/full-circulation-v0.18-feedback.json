@@ -1,0 +1,67 @@
+{
+  "format": "axm-material-use-feedback",
+  "version": "0.18.0",
+  "id": "material-use-feedback-4e1937b3",
+  "fingerprint": "4e1937b3",
+  "packId": "material-capability-pack-756825c8",
+  "packFingerprint": "756825c8",
+  "consumer": {
+    "system": "AXM Universal Creation",
+    "repository": "mike-axiom-mir/axm-universal-creation",
+    "adapter": "material-capability-consumer/v0.19.0",
+    "instance": null
+  },
+  "events": [
+    {
+      "id": "use-event-9d340891",
+      "capabilityId": "cap-material-entry-8fba7d60",
+      "action": "adopted",
+      "outcome": "PASS",
+      "evidence": {"projection": "validated-asset-atom", "detached": true, "assetAtomValidated": true, "renderingVerified": false},
+      "derivedIds": ["texture-surface-base"],
+      "note": "Mapped exactly through the existing detached Material Donor -> Asset Atom adapter."
+    },
+    {
+      "id": "use-event-63ee64ed",
+      "capabilityId": "cap-material-family-0f94735e",
+      "action": "adopted",
+      "outcome": "PASS",
+      "evidence": {"projection": "validated-asset-atom", "detached": true, "assetAtomValidated": true, "renderingVerified": false},
+      "derivedIds": ["material-painted-metal-family"],
+      "note": "Mapped exactly through the existing detached Material Donor -> Asset Atom adapter."
+    },
+    {
+      "id": "use-event-3862c472",
+      "capabilityId": "cap-pattern-bfe14cc0",
+      "action": "adopted",
+      "outcome": "PASS",
+      "evidence": {"projectionFormat": "axm.uc.material-pattern/v0.1", "slots": 2, "support": 2, "recurrenceOnly": true, "autonomousPromotion": false},
+      "derivedIds": ["uc-pattern-49da0176"],
+      "note": "Adopted as an exact detached keeper-derived pattern descriptor."
+    },
+    {
+      "id": "use-event-eae39db4",
+      "capabilityId": "cap-recipe-642024ae",
+      "action": "adopted",
+      "outcome": "PASS",
+      "evidence": {"projectionFormat": "axm.uc.material-recipe/v0.1", "layers": 2, "transparent": true, "renderingVerified": false},
+      "derivedIds": ["uc-recipe-922067f2"],
+      "note": "Adopted as an exact detached deterministic material-composition recipe."
+    },
+    {
+      "id": "use-event-cafdde87",
+      "capabilityId": "cap-sprite-candidate-bfd4a164",
+      "action": "adopted",
+      "outcome": "PASS",
+      "evidence": {"projectionFormat": "axm.uc.material-sprite-candidate/v0.1", "alphaBoundsPreserved": true, "semanticRecognition": false, "renderingVerified": false},
+      "derivedIds": ["uc-sprite-052e2cac"],
+      "note": "Adopted as an exact detached alpha-bounded sprite descriptor."
+    }
+  ],
+  "note": "AXM Universal Creation full detached material-capability intake receipt.",
+  "truthBoundary": {
+    "use": "PASS adopted means a bounded detached Universal Creation representation was created for the named capability.",
+    "quality": "Adoption does not prove beauty, realism, PBR correctness, semantic understanding, or renderer output.",
+    "authority": "Feedback cannot silently rewrite either repository's canonical state."
+  }
+}
