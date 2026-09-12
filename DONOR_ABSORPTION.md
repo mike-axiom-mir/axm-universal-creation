@@ -101,3 +101,11 @@ not automatically invoked by every creation and not automatic adoption authority
 The survey remains four pinned repositories, not every potentially useful AXM
 operation. Larger rendering, full communication routing and character-generation
 systems still need their own dependency and integration assessment.
+
+## Uploaded visual pack and browser composer
+
+The missing visual ingredient path is now available through `tools/asset-composer/index.html`.
+It bundles 24 original uploaded PNG sheets as a separate, hash-indexed opaque RGB pack,
+plus an adapted local browser renderer/editor. See `tools/asset-composer/README.md`
+for usage, provenance, blending limits, and the browser QA limitation. The donor
+v0.11 manifest and its locked archive identity remain unchanged.
