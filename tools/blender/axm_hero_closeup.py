@@ -43,6 +43,63 @@ def iris(h):
     h.ball('Small secondary eye glint',(-.12,-.379,1.762),(.004,.002,.004),'white','Eye',12,8)
 
 
+def lower_jaw(h):
+    """A cheek-to-cheek jaw arc and rooted tongue, rather than stacked ovals.
+
+    The jaw shares the cavity's head/jaw blend. Its upper ends disappear inside
+    the cheeks, while its front stays beside the cavity's curved lower edge.
+    The tongue is a closed longitudinal volume with a recessed dorsal groove;
+    its hidden root extends into the mouth instead of resting on the chin.
+    """
+    vs=[];fs=[];uv=[];rows=80;ring=32
+    for j in range(rows+1):
+        u=j/rows;a=math.pi-.18+u*(math.pi+.36)
+        ca,sa=math.cos(a),math.sin(a)
+        cx=.222*ca;cy=-.225+.100*ca*ca;cz=1.478+.111*sa
+        radial=.030+.014*abs(ca);depth=.072-.006*abs(ca)
+        for i in range(ring):
+            b=math.tau*i/ring;c,s=math.cos(b),math.sin(b)
+            vs.append((cx+ca*radial*c,cy+depth*s,cz+sa*radial*c))
+            uv.append((u,i/ring))
+    for j in range(rows):
+        for i in range(ring):
+            a=j*ring+i;b=j*ring+(i+1)%ring
+            fs.append((a,b,b+ring,a+ring))
+    fs.extend([tuple(reversed(range(ring))),tuple(rows*ring+i for i in range(ring))])
+    jaw=h.mesh('Continuous cheek-to-cheek lower jaw',vs,fs,'fur','Jaw',uv)
+    jaw['axm_mouth']=True
+    # Fine short tufts follow the front/outer jaw surface and its skin blend.
+    rng=random.Random(471003);fv=[];ff=[]
+    for _ in range(2200):
+        u=rng.uniform(.06,.94);a=math.pi-.18+u*(math.pi+.36)
+        ca,sa=math.cos(a),math.sin(a);b=rng.uniform(-math.pi*.70,math.pi*.10)
+        c,s=math.cos(b),math.sin(b);radial=.030+.014*abs(ca);depth=.072-.006*abs(ca)
+        p=Vector((.222*ca+ca*radial*c,-.225+.100*ca*ca+depth*s,1.478+.111*sa+sa*radial*c))
+        normal=Vector((ca*c,s,sa*c)).normalized();flow=Vector((ca*.4,0,-1))
+        tangent=normal.cross(flow).normalized();length=rng.uniform(.002,.0045);w=.00035
+        k=len(fv);fv.extend([tuple(p-tangent*w),tuple(p+tangent*w),tuple(p+normal*length*.4+flow*length)])
+        ff.append((k,k+1,k+2))
+    fuzz=h.mesh('Short lower jaw fur',fv,ff,'fur','Jaw');fuzz['axm_mouth']=True
+    vs=[(0,-.135,1.478)];fs=[];uv=[(.5,0)];rows=32;ring=48
+    for j in range(1,rows):
+        u=j/rows;q=math.sin(math.pi*u);width=.077*q**.55;thickness=.033*q**.5
+        cy=-.195-.149*u;cz=1.472-.048*u+.008*math.sin(math.pi*u)
+        for i in range(ring):
+            a=math.tau*i/ring;x=width*math.cos(a)
+            z=cz+thickness*math.sin(a)
+            z-=.0018*math.exp(-(x/.009)**2)*q*max(0,math.sin(a))**8
+            vs.append((x,cy,z));uv.append((i/ring,u))
+    for i in range(ring):fs.append((0,1+(i+1)%ring,1+i))
+    for j in range(rows-2):
+        for i in range(ring):
+            a=1+j*ring+i;b=1+j*ring+(i+1)%ring
+            fs.append((a,b,b+ring,a+ring))
+    tip=len(vs);vs.append((0,-.344,1.424));uv.append((.5,1))
+    last=1+(rows-2)*ring
+    for i in range(ring):fs.append((last+i,last+(i+1)%ring,tip))
+    h.mesh('Rooted curled tongue',vs,fs,'tongue','Tongue',uv)
+
+
 def face(h):
     remove(h,'Upper smiling muzzle');remove(h,'Lower tooth');remove(h,'Soft smiling chin')
     remove(h,'Dark mouth interior');remove(h,'Lower smile lip');remove(h,'Tongue')
@@ -64,7 +121,7 @@ def face(h):
     interior=h.mesh('Concave mouth cavity',vs,fs,'mouth','Head');interior['axm_mouth']=True
     # Shape the collar around the open mouth instead of moving the mouth
     # forward to conceal intersecting torso geometry.
-    cutter=geo.sphere('Temporary throat clearance',(0,-.12,1.465),(.255,.26,.127),h.mat['mouth'],segments=48,rings=24)
+    cutter=geo.sphere('Temporary throat clearance',(0,-.12,1.465),(.27,.28,.17),h.mat['mouth'],segments=48,rings=24)
     for part in h.parts:
         if part.name.startswith(('Barrel torso padded underlayer','Curved yellow breastplate shaped forged shell')):
             geo.select_only([part]);bpy.context.view_layer.objects.active=part
@@ -72,11 +129,9 @@ def face(h):
             bpy.ops.object.modifier_apply(modifier=mod.name)
         if part.name.startswith('Chest AXM raised emblem'):part.location.z-=.045
     bpy.data.objects.remove(cutter,do_unlink=True)
-    h.ball('Curled smiling tongue',(0,-.286,1.421),(.093,.084,.039),'tongue','Tongue',48,24)
-    h.line('Tongue central groove',[(0,-.363,1.436),(0,-.333,1.452),(0,-.294,1.460)],.0015,'skin','Tongue')
+    lower_jaw(h)
     h.current='Head'
     for s in [-1,1]:h.ball('Furry smiling muzzle',(s*.085,-.238,1.611),(.129,.09,.048),'fur',segments=48,rings=24)
-    h.ball('Sculpted soft chin',(0,-.231,1.374),(.223,.110,.064),'fur','Jaw',48,24)
     socket=next(o for o in h.parts if o.name.startswith('Right eye socket'))
     socket.scale=(.90,.95,.91)
     iris(h)
@@ -106,7 +161,7 @@ def cloth(h):
         for i in range(n+1):
             u=i/n;s=math.sin(math.pi*u)
             x=(u-.5)*.59;y=-.055-.21*s+.010*math.sin(u*29+v*4)*math.sin(math.pi*v)
-            z=1.451-.042*s-.05*s*s-v*(.095-.027*s)+.004*math.sin(u*49)*v*v
+            z=1.451-.042*s-.075*s*s-v*(.095-.027*s)+.004*math.sin(u*49)*v*v
             vs.append((x,y,z));uv.append((u,v))
     for j in range(m):
         for i in range(n):q=j*(n+1)+i;fs.append((q,q+1,q+n+2,q+n+1))
@@ -114,7 +169,7 @@ def cloth(h):
     so=ob.modifiers.new('Scarf fabric gauge','SOLIDIFY');so.thickness=.004
     for i in range(40):
         u=(i+.5)/40;s=math.sin(math.pi*u);x=(u-.5)*.59;y=-.055-.21*s
-        z=1.451-.042*s-.05*s*s-(.095-.027*s)
+        z=1.451-.042*s-.075*s*s-(.095-.027*s)
         h.line('Scarf frayed hem',[(x,y,z+.003),(x+.001,y-.001,z-.006)],.0008,'red')
     # The rear mark follows the actual cloth triangles; it cannot float off a
     # guessed plane or slice through a fold. Skin weights still follow cape Z.

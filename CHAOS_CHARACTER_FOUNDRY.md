@@ -20,6 +20,8 @@ python tools/blender/axm_chaos_hero.py --output creations/chaos-hero --resolutio
 python tools/blender/verify_chaos_hero.py --directory creations/chaos-hero
 python tools/blender/render_chaos_hero.py --directory creations/chaos-hero --mode hero --resolution 1600
 python tools/blender/render_chaos_hero.py --directory creations/chaos-hero --mode motion --resolution 540
+python tools/blender/render_chaos_hero.py --directory creations/chaos-hero --mode face --resolution 800
+python tools/blender/render_chaos_hero.py --directory creations/chaos-hero --mode face-motion --resolution 480
 ```
 
 The builder requires a new destination. It never overwrites an accepted asset.
@@ -53,6 +55,11 @@ retained five collinear text triangles through floating-point cancellation.
 The cape emblem is projected beyond the solidified fabric. The concave mouth
 follows the curved face and blends between head and jaw. Its collar clearance
 is cut into the breastplate rather than moving a dark surface in front of the face.
+The lower jaw is a continuous cheek-to-cheek arc with shared head/jaw weighting
+and short fur. The tongue has a hidden root, a curved longitudinal volume and an
+inset groove. These replace the flattened chin and separate oval tongue that
+read as stacked buttons. The `face` and `face-motion` views inspect this contact
+at close range from the exported skin; a full-body thumbnail can conceal it.
 The source Blender file retains named authoring pieces in a hidden collection,
 as well as the combined skinned mesh, editable actions and a preview studio.
 Those authoring pieces are retained source, not live-linked modifiers: edit the
