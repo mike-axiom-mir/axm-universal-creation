@@ -1,0 +1,85 @@
+{
+  "id": "AXM-CAP-BIND-HOST-EVIDENCE",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Bind an explicit runtime, browser, visual, gameplay, accessibility, or host-specific observation to the exact current project-file digests, preserve freshness and claim-level PASS/FAIL/UNKNOWN/BLOCKED evidence, and avoid relabeling an external observation as deterministic core proof.",
+  "handles": [
+    "inspect-host-evidence",
+    "creation-host-evidence",
+    "runtime-evidence",
+    "browser-evidence",
+    "visual-evidence",
+    "gameplay-evidence"
+  ],
+  "input_contract": {
+    "required": ["operation"],
+    "required_by_operation": {
+      "bind": ["path", "expected_file_digests", "evidence"]
+    },
+    "properties": {
+      "operation": "inspect or bind",
+      "path": "bind only; exact created project directory",
+      "expected_file_digests": "bind only; complete exact digest map from the observed project body",
+      "evidence": "bind only; typed external observation with observer, time, freshness lifetime, claims, evidence references, limitations, and optional attachment digests"
+    }
+  },
+  "output_contract": {
+    "kind": "creation-host-evidence-receipt",
+    "contains": [
+      "exact project file manifest and digest",
+      "normalized external observation",
+      "freshness state",
+      "effective status",
+      "claim and authority boundary",
+      "receipt digest"
+    ]
+  },
+  "implementation": {
+    "kind": "EXTERNAL_EVIDENCE_BOUNDARY",
+    "entrypoint": "builtin:host_evidence",
+    "source": "src/axm_uc/host_evidence.py"
+  },
+  "dependencies": ["AXM-CAP-VERIFY-PROJECT"],
+  "anatomy_refs": [
+    {
+      "id": "AXM-01-PROVENANCE-A-012-observation",
+      "role": "implements",
+      "basis": "The capability normalizes a bounded observer-supplied claim set, preserves evidence references and limitations, checks freshness, and digest-binds the observation to one exact project body."
+    },
+    {
+      "id": "AXM-20-TESTING-OBSERVABILITY-C-015-validation-report",
+      "role": "uses",
+      "basis": "Host observations extend rather than replace the deterministic structural validation boundary."
+    }
+  ],
+  "relationships": [
+    "allows browser, visual, gameplay, runtime, and accessibility verifiers to return exact bounded evidence",
+    "refuses evidence for a changed or incomplete project digest map",
+    "turns stale external PASS/FAIL into effective UNKNOWN without deleting the original observation",
+    "does not write an automatic activity log or grant execution authority"
+  ],
+  "limitations": [
+    "the core validates the evidence envelope, project binding, internal status consistency, and freshness but does not independently repeat the external observation",
+    "an image or browser receipt proves only its named bounded claims",
+    "host evidence does not install, adopt, merge, grant authority, or establish general semantic correctness"
+  ],
+  "persistent_state": null,
+  "root_fit": {
+    "truth": {
+      "fit": true,
+      "basis": "External observations stay attributed, claim-bounded, freshness-aware, digest-bound, and explicitly not independently re-performed by the core."
+    },
+    "agency": {
+      "fit": true,
+      "basis": "The caller chooses whether to request and preserve host evidence; the capability does not monitor or log activity automatically."
+    },
+    "continuity": {
+      "fit": true,
+      "basis": "Evidence is accepted only for the exact unchanged project-file body identified by the supplied complete digest map."
+    },
+    "wisdom-before-speed": {
+      "fit": true,
+      "basis": "Missing, contradictory, stale, malformed, or body-drifted evidence stops or becomes UNKNOWN instead of being promoted to a pass."
+    }
+  }
+}

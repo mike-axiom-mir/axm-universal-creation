@@ -1,0 +1,78 @@
+name: Portable runtime
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "src/axm_uc/portable.py"
+      - "src/axm_uc/portable_cli.py"
+      - "tests/test_portable_runtime.py"
+      - "pyproject.toml"
+      - ".github/workflows/portable-runtime.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  portable-consumer:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.13"]
+    steps:
+      - name: Checkout exact PR state
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Run portable runtime tests
+        env:
+          PYTHONPATH: src
+        run: python -m unittest discover -s tests -p 'test_portable_runtime.py' -v
+      - name: Build and verify exact-head capsule
+        env:
+          PYTHONPATH: src
+        run: |
+          python -m axm_uc.portable_cli build \
+            --output "$RUNNER_TEMP/axm-universal-creation-runtime.zip" \
+            --source-revision "$GITHUB_SHA" \
+            > "$RUNNER_TEMP/build-receipt.json"
+          python -m axm_uc.portable_cli verify \
+            "$RUNNER_TEMP/axm-universal-creation-runtime.zip" \
+            > "$RUNNER_TEMP/verify-receipt.json"
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          temp = Path(os.environ["RUNNER_TEMP"])
+          build = json.loads((temp / "build-receipt.json").read_text())
+          verify = json.loads((temp / "verify-receipt.json").read_text())
+          assert build["status"] == verify["status"] == "PASS"
+          assert build["archiveSha256"] == verify["archiveSha256"]
+          assert build["contentDigest"] == verify["contentDigest"]
+          PY
+      - name: Verify capsule through installed wheel command
+        run: |
+          python -m pip wheel --no-deps \
+            --wheel-dir "$RUNNER_TEMP/wheel" .
+          python -m venv "$RUNNER_TEMP/venv"
+          "$RUNNER_TEMP/venv/bin/python" -m pip install --no-deps \
+            "$RUNNER_TEMP"/wheel/*.whl
+          "$RUNNER_TEMP/venv/bin/axm-uc-portable" verify \
+            "$RUNNER_TEMP/axm-universal-creation-runtime.zip" \
+            > "$RUNNER_TEMP/installed-verify-receipt.json"
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          receipt = json.loads(
+              (Path(os.environ["RUNNER_TEMP"]) / "installed-verify-receipt.json").read_text()
+          )
+          assert receipt["status"] == "PASS"
+          PY

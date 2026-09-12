@@ -1,0 +1,64 @@
+{
+  "id": "AXM-CAP-WRITE-MIXED-PROJECT",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Create and transactionally publish a bounded project containing exact UTF-8 text and strict-base64 binary files, with byte-digest verification before and after publication.",
+  "handles": [
+    "mixed-media-project",
+    "asset-project",
+    "binary-asset-project",
+    "game-asset-project"
+  ],
+  "input_contract": {
+    "required": ["path", "text_files", "binary_files"],
+    "properties": {
+      "path": "target project directory outside the protected machine body",
+      "text_files": "object mapping safe project-relative paths to exact UTF-8 text; may be empty when binary_files is non-empty",
+      "binary_files": "object mapping safe project-relative paths to strict base64 descriptors; may be empty when text_files is non-empty",
+      "project_type": "generic, static-web, or python",
+      "checks": "optional deterministic checks including SHA-256 and bounded media signatures",
+      "publish_mode": "validated by default, or grounded-draft",
+      "replace": "optional boolean"
+    }
+  },
+  "output_contract": {
+    "kind": "mixed-project-directory",
+    "contains": ["path", "published", "files", "binary_receipts", "validation", "grounding", "grammar_inventory"]
+  },
+  "dependencies": ["AXM-CAP-VERIFY-PROJECT"],
+  "relationships": [
+    "extends exact project creation from text-only bodies to bounded mixed byte bodies",
+    "uses digest identity for every emitted file and exact UTF-8 equality for supplied text files"
+  ],
+  "anatomy_refs": [
+    {
+      "id": "AXM-24-WORKSPACE-COLLABORATION-C-010-project",
+      "role": "implements",
+      "basis": "Publishes one bounded project assembly with transactional replacement and exact file receipts."
+    },
+    {
+      "id": "AXM-06-BUILD-PACKAGE-O-004-artifact-builder",
+      "role": "uses",
+      "basis": "Builds an exact mixed-file artifact body, but does not claim compilation or runtime execution."
+    }
+  ],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:write_mixed_project",
+    "source": "src/axm_uc/mixed_project.py"
+  },
+  "limitations": [
+    "binary content must be supplied explicitly as strict base64; this capability does not invent media bytes",
+    "declared media types are preserved as caller claims and are not treated as verified",
+    "media-signature checks prove only bounded container signatures, not successful decoding, appearance, sound, geometry, or semantics",
+    "maximum 256 files, 16 MiB per file, and 64 MiB total in this milestone",
+    "generated code is not executed and browser or game behavior still requires host evidence"
+  ],
+  "persistent_state": null,
+  "root_fit": {
+    "truth": {"fit": true, "basis": "Every emitted byte is represented by an observed count and SHA-256 receipt; declared media types and bounded signature checks are not inflated into decoding or semantic proof."},
+    "agency": {"fit": true, "basis": "The caller supplies every text and binary byte, destination, validation check, publication mode, and replacement choice."},
+    "continuity": {"fit": true, "basis": "Publication is staged and reverified, and failed replacement restores the prior project body."},
+    "wisdom-before-speed": {"fit": true, "basis": "Strict base64, safe paths, byte limits, collision checks, and pre/post-publication verification run before convenience or breadth claims."}
+  }
+}

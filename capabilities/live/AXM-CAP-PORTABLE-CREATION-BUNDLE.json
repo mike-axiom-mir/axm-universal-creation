@@ -1,0 +1,66 @@
+{
+  "id": "AXM-CAP-PORTABLE-CREATION-BUNDLE",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Pack, inspect, and safely unpack a deterministic portable creation bundle whose manifest binds every project-relative file to its exact bytes and SHA-256 digest.",
+  "handles": [
+    "portable-creation-bundle",
+    "axm-creation-export",
+    "axm-creation-import"
+  ],
+  "input_contract": {
+    "required": ["path"],
+    "required_by_operation": {
+      "pack": ["source"],
+      "unpack": ["target"]
+    },
+    "properties": {
+      "operation": "inspect by default, pack, or unpack",
+      "path": "bundle archive path",
+      "source": "existing validated project directory for pack",
+      "target": "new project directory for unpack",
+      "project_type": "generic, static-web, or python when packing",
+      "name": "optional human-readable bundle name",
+      "replace": "optional boolean for archive or target replacement"
+    }
+  },
+  "output_contract": {
+    "kind": "portable-creation-bundle-receipt",
+    "contains": ["operation", "archive_sha256 or bundle_inspection", "exact file receipts"]
+  },
+  "dependencies": ["AXM-CAP-VERIFY-PROJECT"],
+  "relationships": [
+    "moves verified creation bytes between standalone machines or host adapters without granting execution authority",
+    "rejects symlinks, unsafe paths, duplicate entries, undeclared files, and manifest/body digest drift"
+  ],
+  "anatomy_refs": [
+    {
+      "id": "AXM-06-BUILD-PACKAGE-O-004-artifact-builder",
+      "role": "implements",
+      "basis": "Builds and re-inspects a deterministic ZIP_STORED artifact with an exact canonical manifest."
+    },
+    {
+      "id": "AXM-16-GAMES-O-015-content-packager",
+      "role": "uses",
+      "basis": "Provides a generic content packaging route usable by game projects without claiming a complete game-specific release pipeline."
+    }
+  ],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:portable_creation_bundle",
+    "source": "src/axm_uc/portable_bundle.py"
+  },
+  "limitations": [
+    "the format preserves regular project files only; symlinks, executable permission bits, ownership, timestamps, and platform metadata are intentionally excluded",
+    "a valid bundle proves archive structure and exact byte identity, not runtime compatibility or semantic correctness",
+    "archives are bounded to 1024 files and 128 MiB of body data",
+    "packing and unpacking ordinary creations cannot mutate the protected live machine body"
+  ],
+  "persistent_state": null,
+  "root_fit": {
+    "truth": {"fit": true, "basis": "The canonical manifest, archive digest, entry bounds, and exact per-file observations remain visible while runtime compatibility stays unclaimed."},
+    "agency": {"fit": true, "basis": "The caller chooses the source, archive, target, project type, name, and replacement behavior; inspection grants no execution authority."},
+    "continuity": {"fit": true, "basis": "Pack is reproducible, unpack is staged, and target replacement retains rollback until the published body is reverified."},
+    "wisdom-before-speed": {"fit": true, "basis": "Unsafe paths, links, compression, undeclared entries, drift, and failed project validation stop before publication."}
+  }
+}

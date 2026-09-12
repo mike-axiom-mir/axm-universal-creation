@@ -40,9 +40,13 @@ class CharacterInspectorTests(unittest.TestCase):
             self.assertEqual(response.headers["X-Content-Type-Options"],"nosniff")
         with urlopen(self.url+"/") as response:
             self.assertIn(b"AXM",response.read())
+        with urlopen(self.url+"/inspection_controls.js") as response:
+            body=response.read()
+            self.assertIn(b"InspectionInputRouter",body)
+            self.assertEqual(response.headers["Content-Type"],"text/javascript; charset=utf-8")
 
     def test_no_directory_listing_or_arbitrary_files(self):
-        for path in ("/private.txt","/../private.txt","/%2e%2e/private.txt","/textures/","/AGENTS.md"):
+        for path in ("/private.txt","/../private.txt","/%2e%2e/private.txt","/textures/","/AGENTS.md","/inspection_controls.test.mjs"):
             with self.assertRaises(HTTPError) as error:
                 urlopen(self.url+path)
             self.assertEqual(error.exception.code,404)

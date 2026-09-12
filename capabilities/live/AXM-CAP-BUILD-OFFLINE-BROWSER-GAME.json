@@ -1,0 +1,99 @@
+{
+  "id": "AXM-CAP-BUILD-OFFLINE-BROWSER-GAME",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Assemble one dependency-free offline tactical browser arena from a closed game specification, deterministic session state machine, generated PNG and WAV assets, inspectable HTML/CSS/JavaScript, and exact project validation.",
+  "handles": [
+    "offline-browser-game",
+    "browser-arena-game",
+    "playable-game-project",
+    "browser-game-project"
+  ],
+  "input_contract": {
+    "required": ["path", "specification"],
+    "properties": {
+      "path": "target project directory outside the protected live machine body",
+      "specification": "axm.browser-arena/v0.1 game object",
+      "checks": "optional additional deterministic project checks",
+      "replace": "optional boolean; defaults false"
+    }
+  },
+  "output_contract": {
+    "kind": "validated-offline-browser-game-source-project",
+    "contains": [
+      "normalized game specification and digest",
+      "compiled session-machine digest",
+      "validated mixed project receipt",
+      "generated media receipts",
+      "explicit browser-evidence boundary"
+    ]
+  },
+  "dependencies": [
+    "AXM-CAP-DETERMINISTIC-STATE-MACHINE",
+    "AXM-CAP-GENERATE-PROCEDURAL-MEDIA",
+    "AXM-CAP-WRITE-MIXED-PROJECT",
+    "AXM-CAP-VERIFY-PROJECT"
+  ],
+  "relationships": [
+    "compiles a closed ready-playing-paused-won-lost session graph and embeds the exact normalized graph into the game source",
+    "generates and consumes local PNG and WAV assets without a network, package manager, framework, or cloud provider",
+    "retains browser execution, visual quality, controls, audio playback, accessibility, and gameplay balance as separate host-evidence questions"
+  ],
+  "anatomy_refs": [
+    {
+      "id": "AXM-16-GAMES-O-001-game-loop-runtime",
+      "role": "implements",
+      "basis": "Emits a bounded requestAnimationFrame update/draw loop with explicit delta clamping and terminal session states."
+    },
+    {
+      "id": "AXM-16-GAMES-O-003-gameplay-rule-engine",
+      "role": "implements",
+      "basis": "Emits explicit movement, projectile, damage, reload, reward, win, and loss rules bound to the normalized game specification."
+    },
+    {
+      "id": "AXM-16-GAMES-O-009-input-system",
+      "role": "implements",
+      "basis": "Emits keyboard, pointer, and touch mappings for movement, aiming, firing, reload, pause, start, and reset."
+    },
+    {
+      "id": "AXM-16-GAMES-O-014-game-ui-and-hud-organ",
+      "role": "implements",
+      "basis": "Emits a responsive HUD for selected target health, tower health, credits, ammunition, session state, and explicit controls."
+    },
+    {
+      "id": "AXM-03-TIME-STATE-EVENT-C-004-state-machine",
+      "role": "uses",
+      "basis": "Compiles and embeds the existing closed deterministic state-machine grammar as the session control graph."
+    }
+  ],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:browser_game",
+    "source": "src/axm_uc/browser_game.py"
+  },
+  "limitations": [
+    "the current schema builds one bounded 2D tower-defense arena shape rather than arbitrary game genres, engines, networking, physics, saves, user accounts, or downloadable native executables",
+    "source and assets are generated and structurally validated but JavaScript is not executed by the deterministic core",
+    "browser rendering, input behavior, audio permission/playback, frame pacing, responsive layout, accessibility, fun, and balance require later browser, user, or authorized host evidence",
+    "maximum enemy count is 64 and the project intentionally has no third-party runtime dependencies"
+  ],
+  "persistent_state": null,
+  "root_fit": {
+    "truth": {
+      "fit": true,
+      "basis": "The exact game and state specifications, source/assets, digests, static checks, and absent browser observation remain distinguishable."
+    },
+    "agency": {
+      "fit": true,
+      "basis": "The caller supplies the complete bounded arena specification, output path, extra checks, and replacement choice; the generated game never calls a service or grants itself host authority."
+    },
+    "continuity": {
+      "fit": true,
+      "basis": "The mixed project is staged, validated, published, and revalidated with rollback, and its explicit JSON sources make later extension inspectable."
+    },
+    "wisdom-before-speed": {
+      "fit": true,
+      "basis": "Closed schemas, bounds, deterministic state compilation, generated container checks, local-reference checks, and exact digest checks precede publication."
+    }
+  }
+}

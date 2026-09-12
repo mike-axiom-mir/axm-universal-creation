@@ -10,6 +10,7 @@ from .asset_geometry import review_static_glb
 from .visual_assets import catalog as base_catalog, generate_asset, generate_kit
 from .visual_creation_grammar import compile_visual_recipe, grammar_catalog
 from .visual_expanded import expansion_catalog, generate_expanded_asset, generate_expansion_kit
+from .visual_state_prompt_atlas import compile_visual_state, visual_state_catalog
 from .visual_learning import compile_adaptive_visual_recipe, inspect_png, inspect_visual_learning, record_visual_use
 from .visual_3d import (
     assess_3d_output,
@@ -44,6 +45,7 @@ def combined_catalog() -> dict:
         "dependencies": [],
         "outputs": outputs,
         "visual_grammar": grammar_catalog(),
+        "visual_state_atlas": visual_state_catalog(),
         "three_d_forge": catalog_3d(),
         "rigged_characters": character_catalog(),
     }
@@ -56,6 +58,13 @@ def build_parser() -> argparse.ArgumentParser:
     sub.add_parser("grammar-catalog", help="show the composable visual-intent grammar")
     plan = sub.add_parser("plan", help="compile one structured visual request into a deterministic recipe")
     plan.add_argument("request", help="path to a UTF-8 JSON visual request")
+    state_catalog = sub.add_parser("state-catalog", help="show the source-backed 99-command visual state atlas")
+    state_catalog.add_argument("--include-aliases", action="store_true")
+    state_compile = sub.add_parser(
+        "state-compile",
+        help="compile visual slash-command shorthand into renderer-neutral state",
+    )
+    state_compile.add_argument("request", help="path to a UTF-8 JSON visual state request")
     adaptive = sub.add_parser("plan-adaptive", help="compile a request with exact-context lessons from prior use")
     adaptive.add_argument("request", help="path to a UTF-8 JSON visual request")
     adaptive.add_argument("--state-root", default=".")
@@ -165,6 +174,11 @@ def main(argv: list[str] | None = None) -> int:
     elif args.command == "plan":
         request = json.loads(Path(args.request).read_text(encoding="utf-8"))
         result = compile_visual_recipe(request)
+    elif args.command == "state-catalog":
+        result = visual_state_catalog(include_aliases=args.include_aliases)
+    elif args.command == "state-compile":
+        request = json.loads(Path(args.request).read_text(encoding="utf-8"))
+        result = compile_visual_state(request)
     elif args.command == "plan-adaptive":
         request = json.loads(Path(args.request).read_text(encoding="utf-8"))
         result = compile_adaptive_visual_recipe(args.state_root, request)
@@ -257,7 +271,3 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "3d-forge" and result.get("spatial_contract_review", {}).get("status", "PASS") != "PASS":
         return 2
     return 0
-
-
-if __name__ == "__main__":
-    raise SystemExit(main())

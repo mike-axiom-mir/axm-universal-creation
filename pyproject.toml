@@ -12,9 +12,13 @@ dependencies = []
 [project.scripts]
 axm-uc = "axm_uc.cli:main"
 axm-assets = "axm_uc.visual_assets_cli:main"
+axm-uc-portable = "axm_uc.portable_cli:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+axm_uc = ["data/visual_state/*.json"]

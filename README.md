@@ -33,6 +33,12 @@ PYTHONPATH=src python -m axm_uc assets
 python tools/build.py
 ```
 
+To build a sealed, independently verifiable runtime ZIP that works outside an
+editable checkout, use `axm-uc-portable`. The extracted capsule provides a
+path-independent `python run.py <command>` entrypoint and carries the exact
+registry, capability, organ, asset, source, license, and provenance bytes it
+declares. See [PORTABLE_RUNTIME.md](PORTABLE_RUNTIME.md).
+
 The website trial writes inspectable source under `creations/first-real-site/`; open its `index.html` locally to perform the separate human visual and interaction check. `inspect`, `forge`, and `gap-forge` are read-only. Passing a test does not automatically install, admit, promote, merge, or grant authority to a candidate.
 
 To see the newest growth loop, run `examples/requests/explore_missing_status_panel_organ_closure.json`. It starts from a real missing interface, tests one explicitly supplied organ in detached and disposable spaces, and leaves the live installed-organ body unchanged. See `ORGAN_GAP_CLOSURE.md` for the exact evidence boundary.
@@ -374,6 +380,8 @@ python tools/build.py
 ```
 
 The Markdown example intentionally begins as a gap. The candidate demonstrates the smallest justified growth in this case: reuse the exact text writer and add an inspectable Markdown route rather than inventing a duplicate writer.
+
+Candidate adoption treats the canonical live manifest as the commit point. If a process stops after publishing that exact canonical manifest but before consuming its internal candidate, retrying the same tested candidate reconstructs the committed result and completes cleanup. A different, non-regular, or differently encoded live target remains a collision; the live manifest proves content identity, not the earlier recovery-snapshot receipt or authorship.
 
 GitHub collaboration uses one branch/PR lane per AI chat or instance by default; see `AGENTS.md`. That convention is repository hygiene, not machine architecture.
 

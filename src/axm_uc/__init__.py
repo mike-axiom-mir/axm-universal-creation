@@ -179,3 +179,7 @@ def _register_extension_builtins() -> None:
 
 
 _register_extension_builtins()
+
+from .growth_lane_compat import install_growth_lane_compatibility
+
+install_growth_lane_compatibility()

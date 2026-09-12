@@ -15,6 +15,7 @@ from .project import ProjectError, build_project, validate_project
 from .registry import Registry
 from .repair import patch_project
 from .self_workspace import SelfWorkspaceError, operate_self_workspace
+from .standalone_creation_capabilities import register_standalone_creation_builtins
 from .template import instantiate_project_template
 
 
@@ -452,6 +453,15 @@ BUILTINS: dict[str, Callable[[Path, dict[str, Any]], dict[str, Any]]] = {
     "builtin:verify_project": builtin_verify_project,
     "builtin:patch_project": builtin_patch_project,
 }
+BUILTINS.update(
+    register_standalone_creation_builtins(
+        capability_error=CapabilityError,
+        resolve_output_path=_resolve_output_path,
+        is_machine_body_path=_is_machine_body_path,
+        grammar_inventory=grammar_inventory,
+        project_error=ProjectError,
+    )
+)
 
 
 _MISSING = object()
@@ -565,18 +575,34 @@ class CapabilityStore:
     def route(self, creation_kind: str) -> dict[str, Any] | None:
         return next((c for c in self.live() if creation_kind in c.get("handles", [])), None)
 
+    @staticmethod
+    def required_inputs(manifest: dict[str, Any], inputs: dict[str, Any]) -> list[str]:
+        contract = manifest.get("input_contract", {})
+        required = list(contract.get("required", []))
+        operation = inputs.get("operation")
+        by_operation = contract.get("required_by_operation", {})
+        if isinstance(operation, str) and isinstance(by_operation, dict):
+            conditional = by_operation.get(operation.strip().casefold(), [])
+            if isinstance(conditional, list):
+                required.extend(conditional)
+        return sorted({str(key) for key in required})
+
+    @staticmethod
+    def missing_required_inputs(manifest: dict[str, Any], inputs: dict[str, Any]) -> list[str]:
+        return sorted(key for key in CapabilityStore.required_inputs(manifest, inputs) if key not in inputs)
+
     def invoke(self, manifest: dict[str, Any], inputs: dict[str, Any], _seen: set[str] | None = None) -> dict[str, Any]:
-        required = manifest.get("input_contract", {}).get("required", [])
-        missing = [key for key in required if key not in inputs]
+        missing = self.missing_required_inputs(manifest, inputs)
         if missing:
             raise CapabilityError(f"missing required inputs: {', '.join(missing)}")
         impl = manifest.get("implementation", {})
         kind = impl.get("kind")
-        if kind == "DETERMINISTIC_SOURCE":
+        if kind in {"DETERMINISTIC_SOURCE", "LOCAL_PROVIDER_BOUNDARY", "EXTERNAL_EVIDENCE_BOUNDARY"}:
             entry = impl.get("entrypoint")
             fn = BUILTINS.get(entry)
             if fn is None:
-                raise CapabilityError(f"unknown builtin entrypoint: {entry}")
+                label = "boundary" if kind != "DETERMINISTIC_SOURCE" else "builtin"
+                raise CapabilityError(f"unknown {label} entrypoint: {entry}")
             return fn(self.root, inputs)
         if kind == "DETERMINISTIC_ALIAS":
             delegate_id = impl.get("delegate")
