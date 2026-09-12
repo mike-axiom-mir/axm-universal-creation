@@ -179,18 +179,6 @@ def register_standalone_creation_builtins(
         except Procedural3DError as exc:
             raise capability_error(str(exc), exc.details) from exc
 
-    def material_donor_adapter(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
-        del root
-        from .material_donor import MaterialDonorError, adapt_material_donor_pack
-
-        strict = inputs.get("strict", False)
-        if not isinstance(strict, bool):
-            raise capability_error("material donor strict must be a boolean")
-        try:
-            return adapt_material_donor_pack(inputs["donor_pack"], strict=strict)
-        except MaterialDonorError as exc:
-            raise capability_error(str(exc), exc.details) from exc
-
     return {
         "builtin:local_creation_provider": local_creation_provider,
         "builtin:host_evidence": host_evidence,
@@ -201,5 +189,4 @@ def register_standalone_creation_builtins(
         "builtin:browser_game": browser_game,
         "builtin:creation_growth": creation_growth,
         "builtin:procedural_3d": procedural_3d,
-        "builtin:material_donor_adapter": material_donor_adapter,
     }
