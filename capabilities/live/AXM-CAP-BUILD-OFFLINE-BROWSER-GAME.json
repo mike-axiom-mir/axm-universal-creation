@@ -1,6 +1,6 @@
 {
   "id": "AXM-CAP-BUILD-OFFLINE-BROWSER-GAME",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "status": "live",
   "purpose": "Assemble one dependency-free offline tactical browser arena from a closed game specification, deterministic session state machine, generated PNG and WAV assets, inspectable HTML/CSS/JavaScript, and exact project validation.",
   "handles": [
@@ -10,7 +10,10 @@
     "browser-game-project"
   ],
   "input_contract": {
-    "required": ["path", "specification"],
+    "required": [
+      "path",
+      "specification"
+    ],
     "properties": {
       "path": "target project directory outside the protected live machine body",
       "specification": "axm.browser-arena/v0.1 game object",
@@ -37,7 +40,8 @@
   "relationships": [
     "compiles a closed ready-playing-paused-won-lost session graph and embeds the exact normalized graph into the game source",
     "generates and consumes local PNG and WAV assets without a network, package manager, framework, or cloud provider",
-    "retains browser execution, visual quality, controls, audio playback, accessibility, and gameplay balance as separate host-evidence questions"
+    "retains browser execution, visual quality, controls, audio playback, accessibility, and gameplay balance as separate host-evidence questions",
+    "Hold-to-fire, explicit target cycling, focus-loss pause and reset input cleanup share the same generated game state; optional read-only WebMCP reports the visible HUD."
   ],
   "anatomy_refs": [
     {
