@@ -1,0 +1,111 @@
+name: One-shot growth census repair
+
+on:
+  push:
+    branches:
+      - integration/growth-days-20260912
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout integration branch
+        uses: actions/checkout@v4
+        with:
+          ref: integration/growth-days-20260912
+          fetch-depth: 0
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Verify observed census and patch stale assertions
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import sys
+
+          root = Path.cwd()
+          sys.path.insert(0, str(root / 'src'))
+          from axm_uc.machine import UniversalCreationMachine
+
+          summary = UniversalCreationMachine(root).executable()['summary']
+          expected = {
+              'implemented_master_records': 41,
+              'implemented_master_by_level': {'atom': 1, 'component': 19, 'organ': 21},
+              'live_capabilities': 32,
+              'resolved_bindings': 99,
+          }
+          observed = {key: summary[key] for key in expected}
+          if observed != expected:
+              raise SystemExit(f'census changed unexpectedly: {observed!r}')
+
+          replacements = {
+              'tests/test_composite_and_executable.py': [
+                  (
+                      '        self.assertEqual(summary["implemented_master_records"], 28)\n'
+                      '        self.assertEqual(summary["implemented_master_by_level"], {"component": 19, "organ": 9})\n'
+                      '        self.assertEqual(summary["live_capabilities"], 23)\n'
+                      '        self.assertEqual(summary["resolved_bindings"], 73)\n',
+                      '        self.assertEqual(summary["implemented_master_records"], 41)\n'
+                      '        self.assertEqual(summary["implemented_master_by_level"], {"atom": 1, "component": 19, "organ": 21})\n'
+                      '        self.assertEqual(summary["live_capabilities"], 32)\n'
+                      '        self.assertEqual(summary["resolved_bindings"], 99)\n',
+                  ),
+                  (
+                      '        self.assertEqual(artifact_builder["implemented_by"], ["AXM-CAP-SPAWN-CREATION-UNIT"])\n',
+                      '        self.assertEqual(artifact_builder["implemented_by"], ["AXM-CAP-PORTABLE-CREATION-BUNDLE", "AXM-CAP-SPAWN-CREATION-UNIT"])\n',
+                  ),
+                  (
+                      '        self.assertEqual(adapter["implemented_by"], ["AXM-CAP-SYNTHESIZE-CREATION-GAP"])\n',
+                      '        self.assertEqual(adapter["implemented_by"], ["AXM-CAP-LOCAL-CREATION-PROVIDER", "AXM-CAP-SYNTHESIZE-CREATION-GAP"])\n',
+                  ),
+                  (
+                      '        self.assertEqual(state_machine["implemented_by"], ["AXM-CAP-SIMULATE-CREATION"])\n',
+                      '        self.assertEqual(state_machine["implemented_by"], ["AXM-CAP-DETERMINISTIC-STATE-MACHINE", "AXM-CAP-SIMULATE-CREATION"])\n',
+                  ),
+              ],
+              'tests/test_creation_forge.py': [
+                  (
+                      '        self.assertEqual(len(inspection["live_capabilities"]), 23)\n',
+                      '        self.assertEqual(len(inspection["live_capabilities"]), 32)\n',
+                  ),
+              ],
+              'tests/test_gap_synthesis.py': [
+                  (
+                      '        self.assertEqual(len(inspection["live_capabilities"]), 23)\n',
+                      '        self.assertEqual(len(inspection["live_capabilities"]), 32)\n',
+                  ),
+              ],
+          }
+
+          for relative, pairs in replacements.items():
+              path = root / relative
+              text = path.read_text(encoding='utf-8')
+              for old, new in pairs:
+                  count = text.count(old)
+                  if count != 1:
+                      raise SystemExit(f'{relative}: expected exactly one match, found {count}: {old!r}')
+                  text = text.replace(old, new, 1)
+              path.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Verify exact repaired tree before publication
+        run: |
+          python -m compileall -q src tests
+          python -m unittest discover -s tests -p 'test_*.py' -v
+          node tools/character_inspector/inspection_controls.test.mjs
+
+      - name: Publish repair and remove one-shot workflow
+        run: |
+          rm .github/workflows/one-shot-growth-census-repair.yml
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add tests/test_composite_and_executable.py tests/test_creation_forge.py tests/test_gap_synthesis.py .github/workflows/one-shot-growth-census-repair.yml
+          git commit -m "Update growth-lane census evidence after verified migration"
+          git push origin HEAD:integration/growth-days-20260912
