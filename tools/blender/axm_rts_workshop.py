@@ -117,13 +117,14 @@ def roof_canopy(m):
         cable('canopy tie rope',[tuple(a),tuple(a+Vector((.12,-.12,-.20))),(a.x*1.04,a.y*1.12,.38)],.012,m['wood'])
     # Repair patch follows actual roof curvature rather than floating above it.
     verts=[];uv=[]
-    for j in range(9):
-        for i in range(9):
-            u=.48+i*.23/8;v=.40+j*.28/8
-            verts.append(tuple(Vector(pt(u,v))+Vector((0,0,.009))));uv.append((i/8*.4,j/8*.4))
-    faces=[]
     for j in range(8):
-        for i in range(8):q=j*9+i;faces.append((q,q+1,q+10,q+9))
+        for i in range(8):
+            # Same tessellation as the base cloth: avoid crossing interpolated folds.
+            u=(15+i)/32;v=(9+j)/24
+            verts.append(tuple(Vector(pt(u,v))+Vector((0,0,.018))));uv.append((i/7*.4,j/7*.4))
+    faces=[]
+    for j in range(7):
+        for i in range(7):q=j*8+i;faces.append((q,q+1,q+9,q+8))
     mesh('patch-cloth fitted roof repair',verts,faces,m['tarp_light'],uv,True)
 
 
