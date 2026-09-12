@@ -105,7 +105,8 @@ def lantern(name,c,mats,scale=1):
         beam(name+' cage',(x+dx,y+dy,z-.17*s),(x+dx,y+dy,z+.18*s),.009*s,mats['iron'],vertices=6)
     torus(name+' handle',(x,y,z+.33*s),.065*s,.010*s,mats['iron'],rotation=(math.pi/2,0,0),major_segments=20,minor_segments=6)
     light=bpy.data.lights.new(name+' practical','POINT');light.energy=75*s;light.color=(1,.48,.14);light.shadow_soft_size=.13*s
-    ob=bpy.data.objects.new(name+' practical',light);bpy.context.collection.objects.link(ob);ob.location=(x,y,z)
+    ob=bpy.data.objects.new(name+' practical',light);bpy.context.collection.objects.link(ob);ob.location=(x,y-.18*s,z-.02*s)
+    # Outside the opaque emissive shell: the lamp can illuminate its surroundings.
     ob['export_note']='Render practical; intensity must be matched by the game lighting setup.'
 
 

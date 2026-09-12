@@ -73,3 +73,28 @@ asset is examined before multiplying the new treatment across the collection.
 Integration is supported when the source regression suite and fresh-export
 checks pass. Root fit does not certify the entire collection's visual quality or
 replace the user's acceptance of their game assets.
+# Plate style iteration
+
+The follow-up keeps the detailed workshop source while tightening the canopy
+footprint, increasing fabric sag and corner folds, enlarging the fitted patch,
+and opening the hero view toward the inhabited work area. A separate reusable
+`axm_salvage_personality.py` constructs a kettle, mug, reclaimed car-door cabinet,
+hubcap stool, timber repair braces and wheel-driven hoist from actual geometry.
+These are authored additions consistent with found-object engineering, not
+objects claimed to have been reconstructed exactly from the plate.
+
+Lantern practicals now sit outside their opaque emissive shells so their light
+can reach nearby surfaces. A warm workbench practical complements the lamps.
+Practical lights remain explicit metadata; consumers must recreate them in the
+game. They are not baked into textures or bundled with the GLB's geometry.
+
+The proof is a fresh GLB import rendered from three views, plus independent
+decoded geometry checks. This iteration covers the workshop only. The earlier
+83-design pack has not inherited this polish merely because these reusable
+constructors exist. It does not establish animation, collider, target-engine
+integration, FPS or automatic visual acceptance.
+
+Root fit: retain the previous deliverable and editable sources (Continuity);
+name authored interpretation and remaining coverage limits (Truth); keep target
+game adoption explicit (Agency); inspect actual exported geometry before
+promoting the change (Wisdom before speed).
