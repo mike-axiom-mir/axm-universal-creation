@@ -1,0 +1,285 @@
+{
+  "kind": "offline-browser-game",
+  "direction": "Create an outpost with placeable generators, turrets and repair stations",
+  "inputs": {
+    "path": "creations/outpost-encounters",
+    "specification": {
+      "schema": "axm.browser-arena/v0.1",
+      "id": "signal-outpost-encounters",
+      "title": "Signal Outpost: Escalation",
+      "viewport": {
+        "width": 960,
+        "height": 540
+      },
+      "theme": {
+        "background": "#08141E",
+        "ground": "#253C47",
+        "panel": "#13242F",
+        "accent": "#79E8C7",
+        "danger": "#E9747F",
+        "text": "#E5F0ED"
+      },
+      "player": {
+        "x": 480,
+        "y": 450,
+        "size": 18,
+        "color": "#FFC857",
+        "speed": 250,
+        "max_health": 100
+      },
+      "tower": {
+        "x": 405,
+        "y": 245,
+        "width": 150,
+        "height": 105,
+        "color": "#19A7A1",
+        "max_health": 500
+      },
+      "enemies": [
+        {
+          "id": "drone-0",
+          "label": "Breaker",
+          "x": 480,
+          "y": 70,
+          "size": 46,
+          "color": "#E9747F",
+          "health": 150,
+          "speed": 12,
+          "damage": 12,
+          "reward": 500
+        },
+        {
+          "id": "drone-1",
+          "label": "Scout 01",
+          "x": 170,
+          "y": 115,
+          "size": 28,
+          "color": "#D48987",
+          "health": 60,
+          "speed": 18,
+          "damage": 6,
+          "reward": 100
+        },
+        {
+          "id": "drone-2",
+          "label": "Scout 02",
+          "x": 740,
+          "y": 85,
+          "size": 30,
+          "color": "#D48987",
+          "health": 60,
+          "speed": 18,
+          "damage": 6,
+          "reward": 100
+        },
+        {
+          "id": "drone-3",
+          "label": "Scout 03",
+          "x": 95,
+          "y": 270,
+          "size": 26,
+          "color": "#D48987",
+          "health": 60,
+          "speed": 18,
+          "damage": 6,
+          "reward": 100
+        },
+        {
+          "id": "drone-4",
+          "label": "Scout 04",
+          "x": 840,
+          "y": 285,
+          "size": 28,
+          "color": "#D48987",
+          "health": 60,
+          "speed": 18,
+          "damage": 6,
+          "reward": 100
+        },
+        {
+          "id": "drone-5",
+          "label": "Scout 05",
+          "x": 260,
+          "y": 65,
+          "size": 25,
+          "color": "#D48987",
+          "health": 60,
+          "speed": 18,
+          "damage": 6,
+          "reward": 100
+        },
+        {
+          "id": "drone-6",
+          "label": "Scout 06",
+          "x": 670,
+          "y": 45,
+          "size": 27,
+          "color": "#D48987",
+          "health": 60,
+          "speed": 18,
+          "damage": 6,
+          "reward": 100
+        }
+      ],
+      "rules": {
+        "projectile_speed": 620,
+        "projectile_damage": 30,
+        "fire_cooldown_ms": 130,
+        "ammo_capacity": 18,
+        "reload_ms": 1100,
+        "contact_distance": 72
+      },
+      "construction": {
+        "cell_size": 60,
+        "initial_credits": 200,
+        "blocked": [
+          [
+            7,
+            0
+          ],
+          [
+            7,
+            1
+          ],
+          [
+            7,
+            2
+          ],
+          [
+            7,
+            3
+          ],
+          [
+            7,
+            4
+          ],
+          [
+            7,
+            5
+          ],
+          [
+            7,
+            6
+          ],
+          [
+            7,
+            7
+          ],
+          [
+            7,
+            8
+          ],
+          [
+            8,
+            0
+          ],
+          [
+            8,
+            1
+          ],
+          [
+            8,
+            2
+          ],
+          [
+            8,
+            3
+          ],
+          [
+            8,
+            4
+          ],
+          [
+            8,
+            5
+          ],
+          [
+            8,
+            6
+          ],
+          [
+            8,
+            7
+          ],
+          [
+            8,
+            8
+          ],
+          [
+            0,
+            0
+          ],
+          [
+            15,
+            0
+          ],
+          [
+            0,
+            8
+          ],
+          [
+            15,
+            8
+          ],
+          [
+            2,
+            7
+          ],
+          [
+            13,
+            1
+          ]
+        ],
+        "catalog": {
+          "generator": {
+            "label": "Generator",
+            "cost": 60,
+            "rate": 6,
+            "range": 0
+          },
+          "turret": {
+            "label": "Turret",
+            "cost": 90,
+            "rate": 25,
+            "range": 220
+          },
+          "repair": {
+            "label": "Repair station",
+            "cost": 50,
+            "rate": 5,
+            "range": 230
+          }
+        }
+      },
+      "waves": {
+        "count": 3,
+        "health_step": 0.25,
+        "speed_step": 0.1,
+        "clear_bonus": 60,
+        "rosters": [
+          [
+            "drone-1",
+            "drone-2",
+            "drone-3"
+          ],
+          [
+            "drone-3",
+            "drone-4",
+            "drone-5",
+            "drone-6",
+            "drone-0"
+          ],
+          [
+            "drone-0",
+            "drone-1",
+            "drone-2",
+            "drone-3",
+            "drone-4",
+            "drone-5",
+            "drone-6"
+          ]
+        ]
+      }
+    }
+  }
+}

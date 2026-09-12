@@ -1,6 +1,6 @@
 {
   "id": "AXM-CAP-BUILD-OFFLINE-BROWSER-GAME",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "status": "live",
   "purpose": "Assemble one dependency-free offline tactical browser arena from a closed game specification, deterministic session state machine, generated PNG and WAV assets, inspectable HTML/CSS/JavaScript, and exact project validation.",
   "handles": [
@@ -45,7 +45,8 @@
     "Reuses visual_surface hull generation for a local metal deck; renders depth-sorted oblique geometry, contact shadows, light cues and bounded particles while preserving the canonical world plane and inverse-projected picking.",
     "Caches only the static scenery layer at the existing bounded backing resolution, invalidates when the local texture becomes available, and falls back to direct drawing if a cache cannot be allocated. Player and tower material shades derive from their canonical colors.",
     "Optional construction contract composes strict grid placement, integer credits, per-second generator income, ranged turret support and bounded core repair with the existing arena. Construction operations are independent of Canvas.",
-    "Optional finite wave plans preserve the outpost between explicit player-launched waves, award clear bonuses once, and freeze simulation during building breaks."
+    "Optional finite wave plans preserve the outpost between explicit player-launched waves, award clear bonuses once, and freeze simulation during building breaks.",
+    "Optional per-wave rosters select unique known enemies in authored order; omitted rosters preserve the existing full-roster behavior."
   ],
   "anatomy_refs": [
     {

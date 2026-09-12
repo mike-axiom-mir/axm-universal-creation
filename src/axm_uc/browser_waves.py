@@ -1,16 +1,35 @@
 """Optional bounded wave plan; explicit launches reuse the arena session graph."""
 
-def validate_waves(raw):
-    from .browser_game import _object,_integer,_number
-    w=_object(raw,'waves',{'count','health_step','speed_step','clear_bonus'})
-    return {'count':_integer(w['count'],'waves.count',1,12),'health_step':_number(w['health_step'],'health_step',0,1),'speed_step':_number(w['speed_step'],'speed_step',0,1),'clear_bonus':_integer(w['clear_bonus'],'clear_bonus',0,1000000)}
+def validate_waves(raw, enemy_ids):
+    from .browser_game import _object, _integer, _number, BrowserGameError
+    has_rosters = isinstance(raw, dict) and 'rosters' in raw
+    w = _object({k: v for k, v in raw.items() if k != 'rosters'} if has_rosters else raw,
+                'waves', {'count', 'health_step', 'speed_step', 'clear_bonus'})
+    result = {'count': _integer(w['count'], 'waves.count', 1, 12),
+              'health_step': _number(w['health_step'], 'health_step', 0, 1),
+              'speed_step': _number(w['speed_step'], 'speed_step', 0, 1),
+              'clear_bonus': _integer(w['clear_bonus'], 'clear_bonus', 0, 1000000)}
+    if has_rosters:
+        rosters = raw['rosters']
+        if not isinstance(rosters, list) or len(rosters) != result['count']:
+            raise BrowserGameError('waves.rosters must contain one roster per wave')
+        result['rosters'] = []
+        for roster in rosters:
+            if (not isinstance(roster, list) or not 1 <= len(roster) <= len(enemy_ids)
+                    or any(not isinstance(e, str) or e not in enemy_ids for e in roster)
+                    or len(set(roster)) != len(roster)):
+                raise BrowserGameError('Each wave roster must contain unique known enemy ids')
+            result['rosters'].append(list(roster))
+    return result
 
 
 WAVES_JS = r'''
 const WaveCycle=(()=>{
   function enemies(base,plan,index){
     if(!Number.isInteger(index)||index<0||index>=(plan?.count||1))throw new Error('Wave index outside plan');
-    return base.map(e=>{const health=Math.min(1000000,Math.round(e.health*(1+index*(plan?.health_step||0))));return {...e,health,maxHealth:health,speed:Math.min(1000,e.speed*(1+index*(plan?.speed_step||0))),alive:true,contactCooldown:0};});
+    const roster=plan?.rosters?.[index];
+    const source=roster?roster.map(id=>base.find(e=>e.id===id)):base;
+    return source.map(e=>{const health=Math.min(1000000,Math.round(e.health*(1+index*(plan?.health_step||0))));return {...e,health,maxHealth:health,speed:Math.min(1000,e.speed*(1+index*(plan?.speed_step||0))),alive:true,contactCooldown:0};});
   }
   return {enemies};
 })();

@@ -230,7 +230,7 @@ def validate_browser_game_spec(raw: Any) -> dict[str, Any]:
         "tower": normalized_tower,
         "enemies": normalized_enemies,
         "rules": normalized_rules,
-        **({"waves":validate_waves(raw["waves"])} if has_waves else {}),
+        **({"waves":validate_waves(raw["waves"], enemy_ids)} if has_waves else {}),
         **({"construction": validate_construction(raw["construction"], {"width":width,"height":height}, normalized_tower, normalized_player)} if has_construction else {}),
     }
 
@@ -356,7 +356,7 @@ function freshState() {
     tower: {...SPEC.tower, health: SPEC.tower.max_health},
     enemies: WaveCycle.enemies(SPEC.enemies,SPEC.waves,0),
     bullets: [], ammo: SPEC.rules.ammo_capacity, reloadRemaining: 0,
-    fireCooldown: 0, score: 0, selectedId: SPEC.enemies[0].id,
+    fireCooldown: 0, score: 0, selectedId: SPEC.waves?.rosters?.[0]?.[0] || SPEC.enemies[0].id,
   };
 }
 

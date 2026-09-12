@@ -87,3 +87,23 @@ Chrome completed all three waves through visible controls in a temporary generat
 one-enemy, low-health fixture: 270, 340, then 410 credits including kill rewards.
 This verifies browser transitions, not the full outpost's difficulty or a physical
 phone. The fixture is excluded from the published site.
+
+## Authored encounter rosters — 2026-09-12
+
+The optional `waves.rosters` field accepts exactly one nonempty list of enemy IDs
+per wave. IDs must exist in the canonical enemy catalog and be unique within that
+wave. List order is retained, including the initially selected target. Omitting
+rosters retains the full catalog every wave, preserving existing recipes.
+
+`examples/requests/create_outpost_encounters.json` demonstrates three initial
+scouts, a heavier second encounter and the full final roster. Generate it using
+`PYTHONPATH=src python -m axm_uc create examples/requests/create_outpost_encounters.json`.
+Enemy scaling still derives from original values, never from damaged runtime
+copies. All original arrival footprints stay reserved across waves.
+
+Evidence: Python tests reject absent, empty, duplicate, unknown and malformed
+rosters and verify normalized round-trips and caller-data independence. Node
+executes the emitted wave operations to check order, scaling, independent enemy
+copies, old-plan compatibility and bounds. The generator validates the complete
+roster project. This pass changes generator source and adds a recipe; it does not
+replace the published playtest or claim browser-observed encounter balance.
