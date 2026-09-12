@@ -19,6 +19,16 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--root", help="machine root; normally auto-detected")
     sub = parser.add_subparsers(dest="command", required=True)
 
+    formats = sub.add_parser('formats', help='list size/layout presets or create an editable layout project')
+    formats.add_argument('--format', dest='format_name')
+    formats.add_argument('--layout')
+    formats.add_argument('--path')
+    formats.add_argument('--title', default='Untitled creation')
+    formats.add_argument('--dpi', type=float, default=300)
+    formats.add_argument('--bleed', type=float, default=0, help='extra mm on each print edge')
+    formats.add_argument('--safe', type=float, default=0, help='inset in format units')
+    formats.add_argument('--landscape', action='store_true')
+
     inspect_p = sub.add_parser("inspect", help="inspect the current machine and registry")
     inspect_p.add_argument("--query", default="")
     inspect_p.add_argument("--level", choices=["atom", "component", "organ"])
@@ -104,6 +114,23 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     root = find_machine_root(args.root) if args.root else find_machine_root()
     machine = UniversalCreationMachine(root)
+
+    if args.command == 'formats':
+        from .format_templates import catalog, layout_project
+        if not any((args.format_name,args.layout,args.path)):
+            _print(catalog()); return 0
+        if not all((args.format_name,args.layout,args.path)):
+            raise SystemExit('--format, --layout and --path are required together')
+        try:
+            template=layout_project(args.format_name,args.layout,args.title,dpi=args.dpi,
+                                    bleed=args.bleed,safe=args.safe,landscape=args.landscape)
+        except ValueError as exc:
+            raise SystemExit(str(exc)) from exc
+        result=machine.create({'kind':'templated-static-web-project',
+            'direction':'create an editable size-aware layout scaffold',
+            'inputs':{'path':args.path,'template':template,'variables':{}}})
+        _print(result)
+        return 0 if result.get('type')=='CREATION_RESULT' else 1
 
     if args.command == "inspect":
         _print(machine.inspect(args.query, args.level, args.limit))
