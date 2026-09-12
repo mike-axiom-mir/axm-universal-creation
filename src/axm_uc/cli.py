@@ -31,6 +31,8 @@ def build_parser() -> argparse.ArgumentParser:
     pipelines.add_argument('--max-hops', type=int, default=4)
     pipelines.add_argument('--limit', type=int, default=30)
     pipelines.add_argument('--search-budget', type=int, default=10000)
+    workshop = sub.add_parser('survivor-workshop', help='build both detail levels of the authored custom-surface workshop with an offline viewer')
+    workshop.add_argument('path')
 
     timeline = sub.add_parser('sample-track', help='sample a local integer animation track at a frame')
     timeline.add_argument('track_file')
@@ -160,6 +162,11 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     root = find_machine_root(args.root) if args.root else find_machine_root()
     machine = UniversalCreationMachine(root)
+    if args.command == 'survivor-workshop':
+        from .workshop_project import workshop_request
+        result = machine.create(workshop_request(args.path))
+        _print(result)
+        return 0 if result.get('type') == 'CREATION_RESULT' else 1
 
     if args.command in ('grammar-capsule', 'state-ripple', 'render-budget', 'construction-program'):
         from .grammar_workbench import run_grammar_tool

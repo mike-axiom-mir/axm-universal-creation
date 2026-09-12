@@ -19,9 +19,9 @@ class PipelineMapTests(unittest.TestCase):
         before=(ROOT/'state/machine.json').read_bytes()
         with patch.object(CapabilityStore,'invoke',side_effect=AssertionError('must not execute')):
             r=map_capabilities(ROOT,'result.kind.mixed-project-directory')
-        self.assertEqual(len(r['pipelines']),4)
+        self.assertEqual(len(r['pipelines']),5)
         self.assertEqual({p['nodes'][0] for p in r['pipelines']},
-                         {'request-builder::'+n for n in ('metal','fabric','bitmap-label','normalize-wav')})
+                         {'request-builder::'+n for n in ('metal','fabric','bitmap-label','normalize-wav','survivor-workshop')})
         self.assertTrue(all(p['status']=='declared_contract_path_not_tested' for p in r['pipelines']))
         self.assertEqual(before,(ROOT/'state/machine.json').read_bytes())
         self.assertEqual(r,map_capabilities(ROOT,'result.kind.mixed-project-directory'))
@@ -72,7 +72,7 @@ class PipelineMapTests(unittest.TestCase):
             # CapabilityStore's Registry requires its baseline; avoid initialization only here.
             with patch.object(CapabilityStore,'__init__',return_value=None), patch.object(ExecutableOrganLibrary,'__init__',return_value=None):
                 ns,identity=installed_nodes(root)
-                self.assertEqual(ns,[]);self.assertEqual(len(identity['excluded_adapters']),4)
+                self.assertEqual(ns,[]);self.assertEqual(len(identity['excluded_adapters']),5)
                 path=root/'src/axm_uc/fabric_material.py';path.parent.mkdir(parents=True)
                 path.write_text('def fabric_request():\n    pass\n')
                 ns,new=installed_nodes(root)

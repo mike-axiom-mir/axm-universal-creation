@@ -129,3 +129,12 @@ pyramids and cylinders at 3/16/64 radial segments, positive signed volume, and
 rejection of deliberately reversed, degenerate, invalid-index and NaN geometry.
 No new browser screenshot, game playthrough, engine import, listening session
 or performance trace was captured during this audit.
+
+## Follow-up: supported workshop generation
+
+The subsequent implementation in `WORKSHOP_PIPELINE.md` closes the workshop
+recipe's disconnection from UC generation/publication: the existing native
+exporter now accepts explicit surfaces and vertex colors, and the normal UC
+project route emits both authored detail levels plus an offline GLB viewer.
+The map above records the original audit state. Game/engine import, collision,
+texture UVs and gameplay-distance acceptance remain open.

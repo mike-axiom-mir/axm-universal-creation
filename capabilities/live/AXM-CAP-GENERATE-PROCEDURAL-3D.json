@@ -1,8 +1,8 @@
 {
   "id": "AXM-CAP-GENERATE-PROCEDURAL-3D",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "status": "live",
-  "purpose": "Generate one bounded deterministic GLB scene from explicit box, pyramid, and outward-facing cylinder primitives, then decode and validate its actual geometry and exact bytes after atomic publication.",
+  "purpose": "Generate bounded deterministic GLB scenes from explicit primitives or supplied surface meshes, including linear vertex colors, with decoded geometry validation and atomic publication.",
   "handles": [
     "procedural-3d-asset",
     "procedural-glb-asset",
@@ -16,7 +16,7 @@
     ],
     "properties": {
       "path": "target .glb file outside the protected live machine body",
-      "specification": "closed axm.procedural-3d/v0.1 scene with 1 through 128 explicit primitives",
+      "specification": "closed axm.procedural-3d/v0.1 primitive scene or axm.surface-3d/v0.1 explicit positions/normals/indices/material groups with optional linear RGBA vertex colors",
       "replace": "optional boolean; defaults false"
     }
   },
@@ -42,7 +42,7 @@
     {
       "id": "AXM-11-3D-SPATIAL-O-001-geometry-generator",
       "role": "implements",
-      "basis": "Generates indexed triangle geometry and normals for a closed bounded box, pyramid, and cylinder grammar."
+      "basis": "Generates closed primitive geometry or encodes caller-supplied bounded surface triangles with normals and optional vertex colors; arbitrary shape intent still needs a source recipe."
     },
     {
       "id": "AXM-11-3D-SPATIAL-O-003-topology-validator",
@@ -66,10 +66,11 @@
     "source": "src/axm_uc/procedural_3d.py"
   },
   "limitations": [
-    "the first grammar supports only boxes, square pyramids, and straight cylinders with translation and scale; rotation, animation, skins, cameras, lights, textures, UVs, morphs, LODs, physics, and arbitrary mesh import are not implemented",
-    "materials contain only one base color plus metallic and roughness factors",
+    "Primitive schema supports boxes, pyramids and cylinders; surface schema accepts supplied triangle meshes. Rotation, animation, skins, cameras, lights, texture UVs, arbitrary GLB import, automatic LOD generation and physics are not implemented.",
+    "Materials use a base color plus metallic/roughness factors and optional linear vertex colors; no texture maps.",
     "container validation proves exact bounded glTF structure and buffer ranges, not rendered appearance, artistic quality, manifold topology, physical correctness, or compatibility with a particular engine or viewer",
-    "the maximum is 128 primitives and 64 radial segments per cylinder"
+    "the maximum is 128 primitives and 64 radial segments per cylinder",
+    "Surface input: at most 128 material groups, 65535 vertices per group, 131072 vertices and 131072 triangles overall. Supplied geometry is not independently invented or aesthetically judged."
   ],
   "persistent_state": null,
   "root_fit": {

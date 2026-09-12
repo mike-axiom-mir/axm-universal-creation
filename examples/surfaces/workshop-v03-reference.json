@@ -1,0 +1,340 @@
+{
+  "schema": "axm.authored-geometry-reference/v0.1",
+  "basis": "Decoded attribute bytes and scalar materials from the original assistant-authored workshop v03 handoff; not aesthetic acceptance.",
+  "lods": {
+    "near": {
+      "source_glb_sha256": "9db53689c56dbe484fb842a7d7684e7f8160eedad953718ba740a3d76776eac0",
+      "groups": {
+        "concrete": {
+          "attributes": {
+            "POSITION": "ebda395270d325330cd6c53e9a06ff92a782f750487111ddc69cf37e8a68df45",
+            "NORMAL": "1eb21586e59fea5b5562aaffa6e1e63dbb5acdb981dfcde91f48e3602b906bb9",
+            "COLOR_0": "0714f248e35ba1ac39882f6073aaf7879a9f17abd8012e3dfeda0083daaf2046",
+            "indices": "fc608891f77fec2694b22f72b6c3b802049e0504c712ba2265461a73e7a9583d"
+          },
+          "material": {
+            "baseColorFactor": [
+              0.12941176470588237,
+              0.11372549019607843,
+              0.08627450980392157,
+              1.0
+            ],
+            "metallicFactor": 0.0,
+            "roughnessFactor": 0.95
+          }
+        },
+        "iron": {
+          "attributes": {
+            "POSITION": "27e175de49da7778f4871ce84d50f3620929d77d3a9b7aa901498da27571b73e",
+            "NORMAL": "791171f7d5f6a21a74e7f805df1068be53391d53c1013ae05206306dead2ad73",
+            "COLOR_0": "8419b46dc76e227bb1ca49ed70dad098f66687f70b670be472fa33be38991e7a",
+            "indices": "b7cfd3f01bc47594c8acfc232660afefbd5aaac67114c39d35be0a9fec600d71"
+          },
+          "material": {
+            "baseColorFactor": [
+              0.09019607843137255,
+              0.06666666666666667,
+              0.047058823529411764,
+              1.0
+            ],
+            "metallicFactor": 0.75,
+            "roughnessFactor": 0.67
+          }
+        },
+        "tin": {
+          "attributes": {
+            "POSITION": "d899ad23bbc2dfec2a24b17698f6e8b9dee9f7d366ebdb8da05b35016e389661",
+            "NORMAL": "bfea03bf22d36e97f6ee78de548e21b2f56ba13248535b53898510a2d69a18b9",
+            "COLOR_0": "68d3fb067935d4bcbe6badb6b745425e8ee098c0ac702cf280147197bd3d652c",
+            "indices": "8d6322383016765fb423e89a689953332f952f486653e1075030cabb8228bc0e"
+          },
+          "material": {
+            "baseColorFactor": [
+              0.1843137254901961,
+              0.2,
+              0.1607843137254902,
+              1.0
+            ],
+            "metallicFactor": 0.65,
+            "roughnessFactor": 0.57
+          }
+        },
+        "rust": {
+          "attributes": {
+            "POSITION": "725c7c423716ad52f87e8f36a8648f04eaa151d9dbb2265435cad023a13c4885",
+            "NORMAL": "96bba8b82e0f885254b5425fba2739c89c41c4ab12f4bdba33096d5617437755",
+            "COLOR_0": "1f3f527a0499896f0182e1c28891f5240658561c988d10e4b4b4cd8e37413d63",
+            "indices": "f675b98de4d0639098519e58bc886eb03c75c3bc36a373f774688dea581491f3"
+          },
+          "material": {
+            "baseColorFactor": [
+              0.24705882352941178,
+              0.058823529411764705,
+              0.023529411764705882,
+              1.0
+            ],
+            "metallicFactor": 0.18,
+            "roughnessFactor": 0.93
+          }
+        },
+        "paint": {
+          "attributes": {
+            "POSITION": "3ded98fa5b8c62769277661a4c291d560ef29fefc1d66b6f2be9267cec51994b",
+            "NORMAL": "571bfa02f3a8e068f1b27fe4cb2c03d3d07d7ecd3cb8e2de9cc8f4ad4e1a043a",
+            "COLOR_0": "0d862c0f0afb8f3ac820a0e93720be1cda49cfa0ebc6fc7cf16b2a7735ce026a",
+            "indices": "e4f9bc677bcdd83ea32f88949b8792152ea4e004250e7c45ad84833eae752ff5"
+          },
+          "material": {
+            "baseColorFactor": [
+              0.06274509803921569,
+              0.09803921568627451,
+              0.08235294117647059,
+              1.0
+            ],
+            "metallicFactor": 0.45,
+            "roughnessFactor": 0.78
+          }
+        },
+        "wood": {
+          "attributes": {
+            "POSITION": "ed3e232be5687a41dfad617c0c0905c060899685dffcea476a851e5ba1a9e174",
+            "NORMAL": "b4f515012e8c14ccf29d4682e8f267c97ca5382f9d743e75343bb304325f5285",
+            "COLOR_0": "cee27af95a768ff3b6e0a83d43c2c8b08d69e0b6982551236d31bb2214a4938f",
+            "indices": "034295abb3b906dfa0c3f448870d2175d8a35bc998cac31d092f906f816254a2"
+          },
+          "material": {
+            "baseColorFactor": [
+              0.09803921568627451,
+              0.058823529411764705,
+              0.03137254901960784,
+              1.0
+            ],
+            "metallicFactor": 0.0,
+            "roughnessFactor": 0.96
+          }
+        },
+        "canvas": {
+          "attributes": {
+            "POSITION": "cf312ad0bc5429e06e86d0574cbd021e75979fd115dda42067c365a60a6a5aaf",
+            "NORMAL": "beedfd5c9e70edae0a434f291d5e7b669d67648933d68cc8da0d478f80ec7440",
+            "COLOR_0": "cbefee10c32816da05e4e6f7a4d1bdd874f9417712a778ca1ddbd8758145981d",
+            "indices": "4c460cade1c24a426c35c606dcbac88ddfee76049b24acc5eb68d4cdcb233347"
+          },
+          "material": {
+            "baseColorFactor": [
+              0.2235294117647059,
+              0.17647058823529413,
+              0.09803921568627451,
+              1.0
+            ],
+            "metallicFactor": 0.0,
+            "roughnessFactor": 0.96
+          }
+        },
+        "rubber": {
+          "attributes": {
+            "POSITION": "bba5e6df929b8fd10e7bf2789b02770aad69218c79d3d38417cbdcb9a4515353",
+            "NORMAL": "47c618e4069ffe279d19255a85806d0a4b0fd0f766d8b5b0a1bdf5c4a2e1e772",
+            "COLOR_0": "e0f3fae68c6793108c7dca012244c292d0133a8b49e1caed49e3ffb66bd0eb1e",
+            "indices": "ffb04521ccc3baf9520f279fc5c750aab928a1f71683e8a244c68b49f44aa13b"
+          },
+          "material": {
+            "baseColorFactor": [
+              0.0196078431372549,
+              0.0196078431372549,
+              0.01568627450980392,
+              1.0
+            ],
+            "metallicFactor": 0.0,
+            "roughnessFactor": 0.97
+          }
+        },
+        "signal": {
+          "attributes": {
+            "POSITION": "cd2980b85e8c629171f8f31c2b16873fe061f92d6c6c56464901f382e3420b7a",
+            "NORMAL": "22f52218aeb9c570bc3783946d0146f338f57799b6f7c507400468c29d23c502",
+            "COLOR_0": "0226f6ecc230e4daaaf5a06e70cb428240e7c8366863703d2b5f6cacbe30369a",
+            "indices": "8daaa4c6b16f6bd020f9520536487dcb46bc254d02c98e45d21356fb8f73cf3e"
+          },
+          "material": {
+            "baseColorFactor": [
+              0.5215686274509804,
+              0.3607843137254902,
+              0.1607843137254902,
+              1.0
+            ],
+            "metallicFactor": 0.0,
+            "roughnessFactor": 0.7
+          }
+        }
+      }
+    },
+    "far": {
+      "source_glb_sha256": "8c2a8197cd1d873530a3375f35ae6f7e96b139d90f596d4855a57ad696a6948c",
+      "groups": {
+        "concrete": {
+          "attributes": {
+            "POSITION": "ebda395270d325330cd6c53e9a06ff92a782f750487111ddc69cf37e8a68df45",
+            "NORMAL": "1eb21586e59fea5b5562aaffa6e1e63dbb5acdb981dfcde91f48e3602b906bb9",
+            "COLOR_0": "0714f248e35ba1ac39882f6073aaf7879a9f17abd8012e3dfeda0083daaf2046",
+            "indices": "fc608891f77fec2694b22f72b6c3b802049e0504c712ba2265461a73e7a9583d"
+          },
+          "material": {
+            "baseColorFactor": [
+              0.12941176470588237,
+              0.11372549019607843,
+              0.08627450980392157,
+              1.0
+            ],
+            "metallicFactor": 0.0,
+            "roughnessFactor": 0.95
+          }
+        },
+        "iron": {
+          "attributes": {
+            "POSITION": "ff8d760a0444b1546b447881504732d14385800cf564d97115d72317fa211b70",
+            "NORMAL": "9678a9341ab9c4d0969404c1b6127f0095686266ddb963a636af9530fbf4d0a8",
+            "COLOR_0": "e30142e7ffbee9eb007c07116f71b2e19ce910a1216ceee176762d01016b37d2",
+            "indices": "6ae99479817f4dd791065e55b754a328ab0aaf24dc247c0d61f55b4ef1dd4277"
+          },
+          "material": {
+            "baseColorFactor": [
+              0.09019607843137255,
+              0.06666666666666667,
+              0.047058823529411764,
+              1.0
+            ],
+            "metallicFactor": 0.75,
+            "roughnessFactor": 0.67
+          }
+        },
+        "tin": {
+          "attributes": {
+            "POSITION": "6b7914c104f2776bb036ec3b9e88191865603ee81222d7fc46e9f1cb51ac12d2",
+            "NORMAL": "c840903739b9f71799f11502157f66db98d9bbb18e215e1bde6757560864cccc",
+            "COLOR_0": "1c2f08ba15f7245467aa17e1f29361c960a743428fd61c62f1bb1de4a7013d90",
+            "indices": "126dfa208d89dc555754d54d5400febb2b5d52496e2b0b54654259cf381e3e25"
+          },
+          "material": {
+            "baseColorFactor": [
+              0.1843137254901961,
+              0.2,
+              0.1607843137254902,
+              1.0
+            ],
+            "metallicFactor": 0.65,
+            "roughnessFactor": 0.57
+          }
+        },
+        "rust": {
+          "attributes": {
+            "POSITION": "b50f5de2f4f6d7194ad51640d5e6a080eaa473422f44223ab6302c8aee07599a",
+            "NORMAL": "dc38f5a9a8967a386579fd3a1cdf0b7c180da0b9175b46e7023baa865054d5ca",
+            "COLOR_0": "92d356805b7802919ccbd8db2152c0ce21c21c7b16e5ed3abdd3b25ee7cc6665",
+            "indices": "bb20e1f8999f8f0d2240608f532e70729273d53d4ebd3e878020bb5eef6d922a"
+          },
+          "material": {
+            "baseColorFactor": [
+              0.24705882352941178,
+              0.058823529411764705,
+              0.023529411764705882,
+              1.0
+            ],
+            "metallicFactor": 0.18,
+            "roughnessFactor": 0.93
+          }
+        },
+        "paint": {
+          "attributes": {
+            "POSITION": "8b0f332754cc0a89038ca411399b8aeb86dfce9ee604917d8fbfafa0bd758f2a",
+            "NORMAL": "1725fc4f158708232cdc7e6087329fb3f552a2947c205841028d2eea431a7b54",
+            "COLOR_0": "09a14a567acbb5c01bb711a1066bfd1dc9ea2723e221518ca7e3df79ce8e5a05",
+            "indices": "032b6fbe75cbad2c67d1242ebc4badd7a8e6a974e059496daefec0dae2013ce3"
+          },
+          "material": {
+            "baseColorFactor": [
+              0.06274509803921569,
+              0.09803921568627451,
+              0.08235294117647059,
+              1.0
+            ],
+            "metallicFactor": 0.45,
+            "roughnessFactor": 0.78
+          }
+        },
+        "wood": {
+          "attributes": {
+            "POSITION": "ed3e232be5687a41dfad617c0c0905c060899685dffcea476a851e5ba1a9e174",
+            "NORMAL": "b4f515012e8c14ccf29d4682e8f267c97ca5382f9d743e75343bb304325f5285",
+            "COLOR_0": "cee27af95a768ff3b6e0a83d43c2c8b08d69e0b6982551236d31bb2214a4938f",
+            "indices": "034295abb3b906dfa0c3f448870d2175d8a35bc998cac31d092f906f816254a2"
+          },
+          "material": {
+            "baseColorFactor": [
+              0.09803921568627451,
+              0.058823529411764705,
+              0.03137254901960784,
+              1.0
+            ],
+            "metallicFactor": 0.0,
+            "roughnessFactor": 0.96
+          }
+        },
+        "canvas": {
+          "attributes": {
+            "POSITION": "7f0a0dd3ea2876b0af00117ba80a7d37e18442d46d2b5d6db44d2e1165ac257e",
+            "NORMAL": "38117a4447bdcb8b2406a8c5d9a7729adf1bc33448ed18ae6d549f9ceed8ec17",
+            "COLOR_0": "8b4074594c13c938889a418248130751924120e7e9ae17f9234200401326486a",
+            "indices": "4978aa16639bb285f117f4a7ab17b1e8fbd2c6df2b179976c7a386a1d7cd1672"
+          },
+          "material": {
+            "baseColorFactor": [
+              0.2235294117647059,
+              0.17647058823529413,
+              0.09803921568627451,
+              1.0
+            ],
+            "metallicFactor": 0.0,
+            "roughnessFactor": 0.96
+          }
+        },
+        "rubber": {
+          "attributes": {
+            "POSITION": "eafc735d49780e94b796fd4efc3cecde74ee46c5e09030695031d24449afd78a",
+            "NORMAL": "f2930c0822012c421d570e292e638dd7450b866f8e7f967a33ec8b968220f209",
+            "COLOR_0": "36b9354970898e049bd82c3003d87c4cf6eca26fd6676a3677417c9df9b62a05",
+            "indices": "ea4839bcf9be10f9d1bf15ae320ac268b39c4cde0a9594e9bf78f3ae1f0686ca"
+          },
+          "material": {
+            "baseColorFactor": [
+              0.0196078431372549,
+              0.0196078431372549,
+              0.01568627450980392,
+              1.0
+            ],
+            "metallicFactor": 0.0,
+            "roughnessFactor": 0.97
+          }
+        },
+        "signal": {
+          "attributes": {
+            "POSITION": "cd2980b85e8c629171f8f31c2b16873fe061f92d6c6c56464901f382e3420b7a",
+            "NORMAL": "22f52218aeb9c570bc3783946d0146f338f57799b6f7c507400468c29d23c502",
+            "COLOR_0": "0226f6ecc230e4daaaf5a06e70cb428240e7c8366863703d2b5f6cacbe30369a",
+            "indices": "8daaa4c6b16f6bd020f9520536487dcb46bc254d02c98e45d21356fb8f73cf3e"
+          },
+          "material": {
+            "baseColorFactor": [
+              0.5215686274509804,
+              0.3607843137254902,
+              0.1607843137254902,
+              1.0
+            ],
+            "metallicFactor": 0.0,
+            "roughnessFactor": 0.7
+          }
+        }
+      }
+    }
+  }
+}

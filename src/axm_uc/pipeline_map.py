@@ -16,6 +16,7 @@ REQUEST_BUILDERS = (
     ('bitmap-label', 'src/axm_uc/media_workbench.py', 'label_request', 'Transparent bitmap labels'),
     ('normalize-wav', 'src/axm_uc/media_workbench.py', 'wav_request', 'PCM WAV normalization'),
     ('fabric', 'src/axm_uc/fabric_material.py', 'fabric_request', 'Woven fabric maps'),
+    ('survivor-workshop', 'src/axm_uc/workshop_project.py', 'workshop_request', 'Authored survivor workshop: verified surface GLBs and offline preview'),
 )
 BOUNDARY = 'Read-only candidate connections. No pipeline execution, compatibility proof, installation or automatic adoption.'
 
@@ -63,12 +64,12 @@ def installed_nodes(root):
         nodes.append({'id':name,'module':'request-builder','description':description,
                       'source':{'path':source,'function':fn,'sha256':sources[source]},
                       'accepts':[], 'requires':[], 'provides':['request.kind.mixed-media-project'],
-                      'required_parameters':'Caller supplies path and function-specific arguments; see MEDIA_WORKBENCH.md and DONOR_ABSORPTION.md.',
+                      'required_parameters':'Caller supplies path and function-specific arguments; see MEDIA_WORKBENCH.md, DONOR_ABSORPTION.md and WORKSHOP_PIPELINE.md.',
                       'evidence_status':'explicit_source_adapter_not_executed'})
     # The manifest content, including implementation declarations, participates in identity.
     digest=hashlib.sha256(json.dumps({'nodes':nodes,'sources':sources,'excluded':excluded},sort_keys=True).encode()).hexdigest()
     return nodes, {'catalog_sha256':digest,'source_sha256':sources,'excluded_adapters':excluded,
-                   'coverage':'Live capability manifests, installed executable organs, four explicit request builders. Descriptive anatomy and other APIs are not implicitly executable.'}
+                   'coverage':'Live capability manifests, installed executable organs, explicit request builders. Descriptive anatomy and other APIs are not implicitly executable.'}
 
 
 def connect_nodes(nodes):
