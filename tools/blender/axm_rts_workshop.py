@@ -16,6 +16,7 @@ from mathutils import Vector
 from axm_blender_forge import box, cylinder, cone, torus, cable, beam, sphere, select_only, export_glb
 from axm_salvage_construction import mesh, corrugated, cloth, flange, barrel, crate, lantern, plant, physically_scaled_uv
 from axm_salvage_surfaces import pbr_material, solid, banner_material
+from axm_salvage_personality import workshop_life
 
 
 def materials(out,font):
@@ -91,9 +92,9 @@ def main_structure(m):
 
 def roof_canopy(m):
     # Two different fabric spans; gravity sag lives between tensioned corners.
-    corners=[(-.63,1.14,3.72),(2.34,1.20,3.62),(-.60,-1.51,3.30),(2.38,-1.36,3.43)]
-    ob,pt=cloth('tarp main tensioned roof',corners,m['tarp'],sag=.12,flutter=.047,tile=(2,2),edge_sag=.24,corner_folds=.095)
-    for u in [0,.34,.69,1]:
+    corners=[(-.63,1.05,3.77),(2.23,1.12,3.61),(-.60,-1.13,3.19),(2.25,-1.04,3.38)]
+    ob,pt=cloth('tarp main tensioned roof',corners,m['tarp'],sag=.20,flutter=.065,tile=(2,2),edge_sag=.18,corner_folds=.14)
+    for u in [0,.28,.64,1]:
         cable('canvas stitched seam',[pt(u,j/32) for j in range(33)],.009,m['tarp_light'])
     for v in [0,1]:cable('canvas bound hem',[pt(j/40,v) for j in range(41)],.017,m['tarp_light'])
     # Scalloped valance hangs from front edge and exposes two glowing lamps.
@@ -116,13 +117,14 @@ def roof_canopy(m):
         cable('canopy tie rope',[tuple(a),tuple(a+Vector((.12,-.12,-.20))),(a.x*1.04,a.y*1.12,.38)],.012,m['wood'])
     # Repair patch follows actual roof curvature rather than floating above it.
     verts=[];uv=[]
-    for j in range(9):
-        for i in range(9):
-            u=.57+i*.16/8;v=.35+j*.18/8
-            verts.append(tuple(Vector(pt(u,v))+Vector((0,0,.009))));uv.append((i/8*.4,j/8*.4))
-    faces=[]
     for j in range(8):
-        for i in range(8):q=j*9+i;faces.append((q,q+1,q+10,q+9))
+        for i in range(8):
+            # Same tessellation as the base cloth: avoid crossing interpolated folds.
+            u=(15+i)/32;v=(9+j)/24
+            verts.append(tuple(Vector(pt(u,v))+Vector((0,0,.018))));uv.append((i/7*.4,j/7*.4))
+    faces=[]
+    for j in range(7):
+        for i in range(7):q=j*8+i;faces.append((q,q+1,q+9,q+8))
     mesh('patch-cloth fitted roof repair',verts,faces,m['tarp_light'],uv,True)
 
 
@@ -280,7 +282,7 @@ def setup_render(resolution,samples):
         data=bpy.data.lights.new(name,'AREA');data.energy=power;data.color=color;data.shape='DISK';data.size=size
         ob=bpy.data.objects.new('REVIEW '+name,data);bpy.context.collection.objects.link(ob);ob.location=loc;point(ob,(0,0,1.6))
     data=bpy.data.cameras.new('Review camera');cam=bpy.data.objects.new('REVIEW camera',data);bpy.context.collection.objects.link(cam);scene.camera=cam
-    cam.data.type='ORTHO';cam.data.ortho_scale=7.3;cam.location=(7,-11,7.0);point(cam,(0,.10,2.2))
+    cam.data.type='ORTHO';cam.data.ortho_scale=7.3;cam.location=(6.7,-12,6.0);point(cam,(0,.10,2.2))
     return cam
 
 
@@ -329,7 +331,7 @@ def main():
         bpy.ops.wm.open_mainfile(filepath=str(args.source_blend.resolve()))
     else:
         m=materials(out,args.font)
-        for f in [foundation,main_structure,roof_canopy,pipes_and_roof,workshop_interior,foreground]:
+        for f in [foundation,main_structure,roof_canopy,pipes_and_roof,workshop_interior,foreground,workshop_life]:
             print('BUILD',f.__name__,flush=True);f(m)
         objects=[o for o in bpy.context.scene.objects if o.type=='MESH'];physically_scaled_uv(objects)
     bpy.ops.wm.save_as_mainfile(filepath=str(out/'workshop-editable.blend'))
@@ -366,13 +368,13 @@ def main():
         ob=bpy.data.objects.new(l['name'],data);bpy.context.collection.objects.link(ob);ob.location=l['position_source_z_up']
     cam=setup_render(args.resolution,args.samples)
     views=[]
-    for name,loc,target,scale in [('hero',(7,-11,7),(0,.10,2.2),7.3),('rear',(-8,10,7),(0,.1,2.1),7.3),('detail',(4,-9,4.8),(.6,-.2,1.7),4.4)]:
+    for name,loc,target,scale in [('hero',(6.7,-12,6.0),(0,.10,2.2),7.3),('rear',(-8,10,7),(0,.1,2.1),7.3),('detail',(4,-9,4.8),(.6,-.2,1.7),4.4)]:
         cam.location=loc;point(cam,target);cam.data.ortho_scale=scale
         bpy.context.scene.render.filepath=str(out/f'workshop-{name}.png');bpy.ops.render.render(write_still=True);views.append(f'workshop-{name}.png')
     digest=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
     report={'schema':'axm.rts-workshop-polish/v0.1','asset':'improvised-workshop','reference':'1000000415.png','reference_sha256':'4e154be2ff7451318b09abc6d2153297ab9f1b51bae4ad94599d5901dfd7368f','geometry':stats,
       'units':'meters','glb_up':'Y','glb_forward':'+Z','source_up':'Z','source_forward':'-Y','source_runtime':bpy.app.version_string,
-      'source_sha256':{p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in [Path(__file__),Path(__file__).with_name('axm_salvage_construction.py'),Path(__file__).with_name('axm_salvage_surfaces.py')]},'font_sha256':digest(args.font),'fresh_import_meshes':len(imported),'practical_lights':lights,'render_views':views,
+      'source_sha256':{p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in [Path(__file__),Path(__file__).with_name('axm_salvage_construction.py'),Path(__file__).with_name('axm_salvage_surfaces.py'),Path(__file__).with_name('axm_salvage_personality.py')]},'font_sha256':digest(args.font),'fresh_import_meshes':len(imported),'practical_lights':lights,'render_views':views,
       'artifacts':{f.name:{'bytes':f.stat().st_size,'sha256':digest(f)} for f in out.iterdir() if f.is_file()},
       'scope':'Reference-led authored 3D interpretation. Fresh GLB import with Cycles CPU render. No target RTS integration or performance certification. Review ground, camera and studio lighting are not asset geometry.'}
     (out/'verification.json').write_text(json.dumps(report,indent=2)+'\n')
