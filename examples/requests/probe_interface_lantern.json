@@ -1,0 +1,38 @@
+{
+  "kind": "independent-interface-lantern-with-report",
+  "direction": "create from required interfaces, independently verify every emitted digest, and preserve that evidence as exact JSON",
+  "inputs": {
+    "path": "creations/independent-probe/lantern",
+    "report_path": "creations/independent-probe/verification.json",
+    "replace": false,
+    "checks": [
+      {
+        "type": "contains",
+        "path": "index.html",
+        "text": "Machine-made lantern"
+      }
+    ],
+    "organ_goal": {
+      "schema": "axm.interface-organ-goal/v0.1",
+      "id": "axm.experiment.machine-lantern",
+      "version": "1.0.0",
+      "project_type": "static-web",
+      "required_interfaces": [
+        "local-interaction"
+      ],
+      "bindings": {
+        "document-shell": {
+          "title": "Machine-made lantern",
+          "idle_label": "Light the lantern"
+        },
+        "visual-theme": {
+          "background": "radial-gradient(circle at top, #52407a, #13152b 60%, #080a13)"
+        },
+        "local-interaction": {
+          "active_label": "The lantern is lit",
+          "state": "lit"
+        }
+      }
+    }
+  }
+}
