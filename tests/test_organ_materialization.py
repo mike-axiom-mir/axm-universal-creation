@@ -4,6 +4,7 @@ import json
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -102,6 +103,43 @@ class OrganMaterializationTests(unittest.TestCase):
         selected = self.machine.organ_census(anatomy_id=ANATOMY_ID)
         self.assertEqual(selected["pagination"]["matched"], 1)
         self.assertEqual(selected["organs"][0]["materialization"]["state"], "CONNECTED_EXECUTABLE_PACKAGE")
+
+    def test_combined_coverage_keeps_package_and_live_binding_evidence_separate(self):
+        result = census_organs(ROOT)
+        coverage = result["summary"]["implementation_coverage"]
+        self.assertEqual(coverage["states"], {
+            "PACKAGE_AND_LIVE_BINDING": 1, "PACKAGE_ONLY": 14,
+            "LIVE_BINDING_ONLY": 20, "NO_DECLARED_IMPLEMENTATION": 380,
+        })
+        self.assertEqual(coverage["organs_with_live_implements_bindings"], 21)
+        self.assertEqual(coverage["organs_with_either_route"], 35)
+        self.assertFalse(coverage["runtime_execution_performed"])
+        self.assertFalse(coverage["full_organ_semantics_proven"])
+        selected = self._create("inspect-organ-materialization", {
+            "operation": "census", "coverage": "LIVE_BINDING_ONLY", "limit": 2,
+        })["result"]
+        self.assertEqual(selected["pagination"]["matched"], 20)
+        for row in selected["organs"]:
+            self.assertEqual(row["materialization"]["state"], "IMPLEMENTATION_REQUIRED")
+            self.assertTrue(row["implementation_coverage"]["live_implements_bindings"])
+        self.assertEqual(self.machine.organ_census(coverage="NO_DECLARED_IMPLEMENTATION")["pagination"]["matched"], 380)
+
+    def test_coverage_deduplicates_and_excludes_support_uses_and_invalid_bindings(self):
+        organs = [row["anatomy_id"] for row in census_organs(ROOT, coverage="NO_DECLARED_IMPLEMENTATION")["organs"]]
+        refs = [
+            {"id": organs[0], "role": "implements", "basis": "Bounded test implementation"},
+            {"id": organs[0], "role": "implements", "basis": "Another declaration for the same organ"},
+            {"id": organs[1], "role": "supports", "basis": "Support only"},
+            {"id": organs[2], "role": "uses", "basis": "Usage only"},
+            {"id": organs[3], "role": "implements", "basis": ""},
+            {"id": "missing-anatomy", "role": "implements", "basis": "Unresolved"},
+        ]
+        with patch("axm_uc.capabilities.CapabilityStore.live", return_value=[{"id": "test", "anatomy_refs": refs}]):
+            result = census_organs(ROOT, coverage="LIVE_BINDING_ONLY")
+        self.assertEqual(result["pagination"]["matched"], 1)
+        coverage = result["organs"][0]["implementation_coverage"]
+        self.assertEqual(coverage["live_capability_ids"], ["test"])
+        self.assertEqual(len(coverage["live_implements_bindings"]), 2)
 
     def test_connectivity_requires_a_finite_transitive_provider_chain(self):
         packages = [

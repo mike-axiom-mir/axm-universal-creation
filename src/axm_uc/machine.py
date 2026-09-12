@@ -119,12 +119,14 @@ class UniversalCreationMachine:
         state: str | None = None,
         offset: int = 0,
         limit: int = 415,
+        coverage: str | None = None,
     ) -> dict[str, Any]:
         return census_organs(
             self.root,
             anatomy_id=anatomy_id,
             domain_code=domain_code,
             state=state,
+            coverage=coverage,
             offset=offset,
             limit=limit,
         )

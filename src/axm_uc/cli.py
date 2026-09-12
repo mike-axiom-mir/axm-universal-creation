@@ -19,6 +19,61 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--root", help="machine root; normally auto-detected")
     sub = parser.add_subparsers(dest="command", required=True)
 
+    for name, help_text in [('grammar-capsule','compose a standalone Grammar 102 language capability capsule'),
+                            ('state-ripple','compare sparse and full evaluation of an explicit state graph'),
+                            ('construction-program','compose and evaluate declared state operations'),
+                            ('render-budget','select a bounded visual projection without changing source state')]:
+        gp = sub.add_parser(name, help=help_text)
+        gp.add_argument('request', help='JSON request file; at most 1 MiB')
+
+    pipelines = sub.add_parser('pipelines', help='map installed capability connections without executing them')
+    pipelines.add_argument('--goal', help='exact output token or namespace prefix')
+    pipelines.add_argument('--max-hops', type=int, default=4)
+    pipelines.add_argument('--limit', type=int, default=30)
+    pipelines.add_argument('--search-budget', type=int, default=10000)
+    workshop = sub.add_parser('survivor-workshop', help='build both detail levels of the authored custom-surface workshop with an offline viewer')
+    workshop.add_argument('path')
+
+    timeline = sub.add_parser('sample-track', help='sample a local integer animation track at a frame')
+    timeline.add_argument('track_file')
+    timeline.add_argument('--frame',type=int,required=True)
+    timeline.add_argument('--start',type=int,default=0)
+    timeline.add_argument('--end',type=int,default=60)
+
+    metal = sub.add_parser('metal', help='generate painted-metal material maps offline')
+    metal.add_argument('path')
+    metal.add_argument('--size', type=int, default=128)
+    metal.add_argument('--seed', type=int, default=1)
+    metal.add_argument('--wear', type=float, default=0.32)
+    metal.add_argument('--scratches', type=int, default=18)
+    metal.add_argument('--spec', help='JSON PaintedMetalSpec; overrides wear and scratches flags')
+
+    label = sub.add_parser('bitmap-label', help='create a transparent native 5x7 interface label')
+    label.add_argument('path')
+    label.add_argument('--text', required=True)
+    label.add_argument('--scale', type=int, default=4)
+
+    wav = sub.add_parser('normalize-wav', help='convert integer PCM WAV to mono/stereo 16-bit PCM')
+    wav.add_argument('source')
+    wav.add_argument('path')
+    wav.add_argument('--rate', type=int, default=48000)
+    wav.add_argument('--channels', type=int, default=1)
+
+    fabric = sub.add_parser('fabric', help='generate standalone woven fabric material maps')
+    fabric.add_argument('path')
+    fabric.add_argument('--size',type=int,default=256)
+    fabric.add_argument('--seed',type=int,default=1)
+
+    formats = sub.add_parser('formats', help='list size/layout presets or create an editable layout project')
+    formats.add_argument('--format', dest='format_name')
+    formats.add_argument('--layout')
+    formats.add_argument('--path')
+    formats.add_argument('--title', default='Untitled creation')
+    formats.add_argument('--dpi', type=float, default=300)
+    formats.add_argument('--bleed', type=float, default=0, help='extra mm on each print edge')
+    formats.add_argument('--safe', type=float, default=0, help='inset in format units')
+    formats.add_argument('--landscape', action='store_true')
+
     inspect_p = sub.add_parser("inspect", help="inspect the current machine and registry")
     inspect_p.add_argument("--query", default="")
     inspect_p.add_argument("--level", choices=["atom", "component", "organ"])
@@ -65,6 +120,9 @@ def build_parser() -> argparse.ArgumentParser:
         help="filter by observed materialization state",
     )
     organ_census_p.add_argument("--offset", type=int, default=0)
+    from .organ_materialization import IMPLEMENTATION_COVERAGE_STATES
+    organ_census_p.add_argument("--coverage", choices=sorted(IMPLEMENTATION_COVERAGE_STATES),
+                                help="filter combined package and live implementation declarations")
     organ_census_p.add_argument("--limit", type=int, default=415)
 
     sub.add_parser("forge", help="inspect the detached creation-unit spawning surface and truth boundary")
@@ -104,6 +162,84 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     root = find_machine_root(args.root) if args.root else find_machine_root()
     machine = UniversalCreationMachine(root)
+    if args.command == 'survivor-workshop':
+        from .workshop_project import workshop_request
+        result = machine.create(workshop_request(args.path))
+        _print(result)
+        return 0 if result.get('type') == 'CREATION_RESULT' else 1
+
+    if args.command in ('grammar-capsule', 'state-ripple', 'render-budget', 'construction-program'):
+        from .grammar_workbench import run_grammar_tool
+        try:
+            with Path(args.request).open('rb') as source:
+                data = source.read(1048577)
+            if len(data) > 1048576: raise ValueError('request exceeds 1 MiB')
+            _print(run_grammar_tool(root, args.command, json.loads(data)))
+        except (ValueError, OSError) as exc:
+            raise SystemExit(str(exc)) from exc
+        return 0
+
+    if args.command == 'pipelines':
+        from .pipeline_map import map_capabilities
+        try:
+            result = map_capabilities(root, args.goal, args.max_hops, args.limit, args.search_budget)
+        except (ValueError, OSError) as exc:
+            raise SystemExit(str(exc)) from exc
+        _print(result)
+        return 0
+
+    if args.command in ('metal', 'bitmap-label', 'normalize-wav'):
+        from .media_workbench import PaintedMetalSpec, metal_request, label_request, wav_request
+        try:
+            if args.command == 'metal':
+                spec = PaintedMetalSpec(**json.loads(Path(args.spec).read_text())) if args.spec else PaintedMetalSpec(wear=args.wear, scratches=args.scratches)
+                request = metal_request(args.path, args.size, args.seed, spec)
+            elif args.command == 'bitmap-label':
+                request = label_request(args.path, args.text, args.scale)
+            else:
+                with Path(args.source).open('rb') as source:
+                    data = source.read(16*1024*1024+1)
+                request = wav_request(args.path, data, args.rate, args.channels)
+        except (ValueError, TypeError, OSError) as exc:
+            raise SystemExit(str(exc)) from exc
+        result = machine.create(request); _print(result)
+        return 0 if result.get('type') == 'CREATION_RESULT' else 1
+
+    if args.command == 'sample-track':
+        from .timeline_tracks import sample_track
+        try:
+            track=json.loads(Path(args.track_file).read_text())
+            value=sample_track(track,args.frame,args.start,args.end)
+        except (ValueError,OSError) as exc:
+            raise SystemExit(str(exc)) from exc
+        _print({'frame':args.frame,'value':value,'evidence':'integer track sampled; animation rendering not observed'})
+        return 0
+
+    if args.command == 'fabric':
+        from .fabric_material import fabric_request
+        try:
+            request=fabric_request(args.path,args.size,args.seed)
+        except ValueError as exc:
+            raise SystemExit(str(exc)) from exc
+        result=machine.create(request); _print(result)
+        return 0 if result.get('type')=='CREATION_RESULT' else 1
+
+    if args.command == 'formats':
+        from .format_templates import catalog, layout_project
+        if not any((args.format_name,args.layout,args.path)):
+            _print(catalog()); return 0
+        if not all((args.format_name,args.layout,args.path)):
+            raise SystemExit('--format, --layout and --path are required together')
+        try:
+            template=layout_project(args.format_name,args.layout,args.title,dpi=args.dpi,
+                                    bleed=args.bleed,safe=args.safe,landscape=args.landscape)
+        except ValueError as exc:
+            raise SystemExit(str(exc)) from exc
+        result=machine.create({'kind':'templated-static-web-project',
+            'direction':'create an editable size-aware layout scaffold',
+            'inputs':{'path':args.path,'template':template,'variables':{}}})
+        _print(result)
+        return 0 if result.get('type')=='CREATION_RESULT' else 1
 
     if args.command == "inspect":
         _print(machine.inspect(args.query, args.level, args.limit))
@@ -137,6 +273,7 @@ def main(argv: list[str] | None = None) -> int:
             anatomy_id=args.anatomy_id,
             domain_code=args.domain_code,
             state=args.state,
+            coverage=args.coverage,
             offset=args.offset,
             limit=args.limit,
         ))

@@ -1,0 +1,14 @@
+{
+  "repository": "mike-axiom-mir/Axm-game-assets",
+  "commit": "d6a930251e4a99f1f98365b8d01fc968025b1fd9",
+  "files": {
+    "native_pbr.py": "e2f1f12f82c4acdb5ca387aac6d14e31c07bbe08fc8df8333094ee36036a0621",
+    "native_fabric_material.py": "afd7fb17e3bb7175a0cfd221c4a49c7e53f4b3656440230bef8fba225c55719d"
+  },
+  "adaptations": [
+    "extract only noise/PNG helpers",
+    "local relative import",
+    "strict bounded inputs",
+    "UC mixed project request replaces donor direct writer"
+  ]
+}

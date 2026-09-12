@@ -1,0 +1,19 @@
+{
+  "format": "axm-material-offer",
+  "version": "0.9.0",
+  "id": "fixture-hash-mismatch",
+  "producer": { "system": "AXM conformance fixture", "sourceId": "fixture-hash-mismatch" },
+  "entries": [
+    {
+      "id": "base",
+      "name": "Mismatched hash PNG",
+      "channel": "base-color",
+      "mime": "image/png",
+      "width": 1,
+      "height": 1,
+      "dataUrl": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Y9ZspAAAAAASUVORK5CYII=",
+      "sha256": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+    }
+  ],
+  "families": [{ "id": "family", "name": "Hash mismatch", "entryIds": ["base"] }]
+}

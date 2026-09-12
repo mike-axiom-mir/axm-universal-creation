@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import tempfile
 import unittest
+import json
+import struct
 from pathlib import Path
 
 import sys
@@ -45,6 +47,64 @@ def tower_spec() -> dict:
 
 
 class Procedural3DTests(unittest.TestCase):
+    @staticmethod
+    def _decoded_asset(body):
+        json_length = struct.unpack_from("<I", body, 12)[0]
+        document = json.loads(body[20:20 + json_length])
+        binary_start = 28 + json_length
+        return document, binary_start
+
+    def test_exported_closed_primitives_have_outward_winding_and_positive_volume(self):
+        for kind in ("box", "pyramid", "cylinder"):
+            for segments in ((3, 16, 64) if kind == "cylinder" else (None,)):
+                with self.subTest(kind=kind, segments=segments):
+                    primitive = {"id": "shape", "type": kind, "size": [1, 1, 1],
+                                 "translation": [0, 0, 0],
+                                 "material": {"color": "#808080FF", "metallic": 0.5, "roughness": 0.5}}
+                    if segments is not None:
+                        primitive["segments"] = segments
+                    body = build_glb({"schema": "axm.procedural-3d/v0.1", "name": "Surface check", "primitives": [primitive]})["body"]
+                    receipt = verify_glb(body)
+                    self.assertTrue(receipt["geometry_validation"]["winding_matches_vertex_normals"])
+                    document, binary_start = self._decoded_asset(body)
+                    def read(ref, fmt):
+                        accessor = document["accessors"][ref]
+                        view = document["bufferViews"][accessor["bufferView"]]
+                        start = binary_start + view.get("byteOffset", 0) + accessor.get("byteOffset", 0)
+                        return [struct.unpack_from(fmt, body, start + i * struct.calcsize(fmt)) for i in range(accessor["count"])]
+                    mesh = document["meshes"][0]["primitives"][0]
+                    points = read(mesh["attributes"]["POSITION"], "<fff")
+                    indices = [row[0] for row in read(mesh["indices"], "<H")]
+                    volume = 0
+                    for offset in range(0, len(indices), 3):
+                        a, b, c = (points[i] for i in indices[offset:offset+3])
+                        cross = (b[1]*c[2]-b[2]*c[1], b[2]*c[0]-b[0]*c[2], b[0]*c[1]-b[1]*c[0])
+                        volume += sum(a[i]*cross[i] for i in range(3))/6
+                    self.assertGreater(volume, 0)
+
+    def test_validator_rejects_actual_binary_geometry_defects(self):
+        original = build_glb(tower_spec())["body"]
+        document, binary_start = self._decoded_asset(original)
+        mesh = document["meshes"][0]["primitives"][0]
+        def address(ref):
+            a = document["accessors"][ref]
+            return binary_start + document["bufferViews"][a["bufferView"]].get("byteOffset", 0) + a.get("byteOffset", 0)
+        index_start = address(mesh["indices"])
+        position_start = address(mesh["attributes"]["POSITION"])
+        face = struct.unpack_from("<HHH", original, index_start)
+        corruptions = [
+            (index_start, "<HHH", (face[0], face[2], face[1]), "winding"),
+            (index_start, "<HHH", (face[0], face[0], face[2]), "degenerate"),
+            (index_start, "<H", (65535,), "indices"),
+            (position_start, "<f", (float("nan"),), "non-finite"),
+        ]
+        for offset, fmt, values, expected in corruptions:
+            with self.subTest(defect=expected):
+                corrupted = bytearray(original)
+                struct.pack_into(fmt, corrupted, offset, *values)
+                with self.assertRaisesRegex(Procedural3DError, expected):
+                    verify_glb(bytes(corrupted))
+
     def test_same_spec_emits_identical_complete_glb(self):
         first = build_glb(tower_spec())
         second = build_glb(tower_spec())

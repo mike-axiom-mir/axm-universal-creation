@@ -9,7 +9,28 @@ The current observed census is:
 | Descriptive organ records | 415 | Canonical registry candidates, each exactly materialized under `organs/` |
 | Connected executable-package mappings | 15 | An installed package cites the anatomy record and has a finite transitive provider chain within one declared project type |
 | Executable mappings with missing interfaces | 0 | Installed source exists, but an exact declared interface provider is absent |
-| Implementation required | 400 | No installed executable package cites the anatomy record |
+| Package implementation required | 400 | No installed executable package cites the anatomy record; this is not a census of live capability bindings |
+
+The combined implementation census additionally reuses `ExecutableAnatomy`'s exact
+resolved `role=implements` bindings. It does not infer implementation from organ
+names, `supports`/`uses` references, or research-seed text.
+
+| Combined declaration state | Organs |
+| --- | ---: |
+| `PACKAGE_AND_LIVE_BINDING` | 1 |
+| `PACKAGE_ONLY` | 14 |
+| `LIVE_BINDING_ONLY` | 20 |
+| `NO_DECLARED_IMPLEMENTATION` | 380 |
+
+Thus 21 organs have live implementation declarations, 15 have package mappings,
+and 35 have at least one of those routes. These are overlapping sets, not 36
+fully implemented organs. The 380 remaining records have neither declaration;
+unmapped source in UC or other repositories is not searched by this census.
+Neither route proves complete organ semantics or executes a runtime test.
+
+Each row now includes `implementation_coverage`, with capability IDs and the
+actual bounded implementation bases. The original `materialization` states and
+summary counts retain their package-only meaning for compatibility.
 
 “Connected” here means a finite transitive chain of exact structural interface coverage within one declared project type. Cycles without a complete base provider remain unresolved. Connection does not prove unique selection, semantic conformance, or runtime behavior.
 
@@ -21,6 +42,8 @@ The read-only census verifies the canonical registry, every standalone organ sou
 PYTHONPATH=src python -m axm_uc organ-census
 PYTHONPATH=src python -m axm_uc organ-census --state IMPLEMENTATION_REQUIRED --limit 20
 PYTHONPATH=src python -m axm_uc organ-census --id AXM-00-FOUNDATION-O-001-identity-registry
+PYTHONPATH=src python -m axm_uc organ-census --coverage NO_DECLARED_IMPLEMENTATION --limit 20
+PYTHONPATH=src python -m axm_uc organ-census --coverage LIVE_BINDING_ONLY
 ```
 
 Every row reports one of three states:

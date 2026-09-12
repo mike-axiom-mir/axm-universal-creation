@@ -1,0 +1,18 @@
+{
+  "format": "axm-material-offer",
+  "version": "0.9.0",
+  "id": "fixture-missing-bytes",
+  "producer": { "system": "AXM conformance fixture", "sourceId": "fixture-missing-bytes" },
+  "entries": [
+    {
+      "id": "height",
+      "name": "Metadata-only height",
+      "channel": "height",
+      "mime": "image/png",
+      "width": 0,
+      "height": 0,
+      "source": { "fixture": true }
+    }
+  ],
+  "families": [{ "id": "family", "name": "Metadata-only family", "entryIds": ["height"] }]
+}

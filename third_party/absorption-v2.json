@@ -1,0 +1,149 @@
+[
+  {
+    "repo": "axm-material-surface-fabric",
+    "commit": "c5ed5b09be88e13031b89977d392b3088d659e4a",
+    "source": "premade-composer-core.js",
+    "destination": "third_party/material-surface/premade-composer-core.js",
+    "sha256": "d7e85702f3d379edb508ad7770e4ec66e8c3c42e8a21cf3a45ca41759e57e3a5"
+  },
+  {
+    "repo": "axm-material-surface-fabric",
+    "commit": "c5ed5b09be88e13031b89977d392b3088d659e4a",
+    "source": "premade-pack.js",
+    "destination": "third_party/material-surface/premade-pack.js",
+    "sha256": "9341f8e8e00eb73bf235f5d5f9cdc1daf70d1ba319f9136e30bba80a515d9ead"
+  },
+  {
+    "repo": "axm-material-surface-fabric",
+    "commit": "c5ed5b09be88e13031b89977d392b3088d659e4a",
+    "source": "conformance-core.js",
+    "destination": "third_party/material-surface/conformance-core.js",
+    "sha256": "03951a617b15a7fc49425207d3d8f710a3f7e729940ab46c3d1ee7646e392ecd"
+  },
+  {
+    "repo": "axm-material-surface-fabric",
+    "commit": "c5ed5b09be88e13031b89977d392b3088d659e4a",
+    "source": "exchange-core.js",
+    "destination": "third_party/material-surface/exchange-core.js",
+    "sha256": "68c37707c3d6fe72e87ad2551b5f731272fb1ebba0bda4b1e1a7613b57fb0bb3"
+  },
+  {
+    "repo": "axm-material-surface-fabric",
+    "commit": "c5ed5b09be88e13031b89977d392b3088d659e4a",
+    "source": "influence-core.js",
+    "destination": "third_party/material-surface/influence-core.js",
+    "sha256": "f8a6462235de5f0ea422ae40309dc1d6e2def50a114b06994110e350c11a94c0"
+  },
+  {
+    "repo": "axm-material-surface-fabric",
+    "commit": "c5ed5b09be88e13031b89977d392b3088d659e4a",
+    "source": "library-core.js",
+    "destination": "third_party/material-surface/library-core.js",
+    "sha256": "57d52b1d5f05785b3dfd6240dc1c81601b35723b05d324a769787345a6bb154e"
+  },
+  {
+    "repo": "axm-material-surface-fabric",
+    "commit": "c5ed5b09be88e13031b89977d392b3088d659e4a",
+    "source": "tools/premade-compose.js",
+    "destination": "third_party/material-surface/tools/premade-compose.js",
+    "sha256": "bad213966c60396c56aaca800cbfc37a4ff6584a3c1f67dcfddf0e05d13c6253"
+  },
+  {
+    "repo": "axm-material-surface-fabric",
+    "commit": "c5ed5b09be88e13031b89977d392b3088d659e4a",
+    "source": "tools/material-conformance.js",
+    "destination": "third_party/material-surface/tools/material-conformance.js",
+    "sha256": "ec8dcf3d135d448a3bd382d5336b2593cedddf4c3ea0f428bd993a22d686b092"
+  },
+  {
+    "repo": "axm-material-surface-fabric",
+    "commit": "c5ed5b09be88e13031b89977d392b3088d659e4a",
+    "source": "tests/premade-composer-core.test.js",
+    "destination": "third_party/material-surface/tests/premade-composer-core.test.js",
+    "sha256": "37814a4d8dd88d254193a3e59c8dd865433702a1178b007ab773f9b5811e7a16"
+  },
+  {
+    "repo": "axm-material-surface-fabric",
+    "commit": "c5ed5b09be88e13031b89977d392b3088d659e4a",
+    "source": "tests/conformance-core.test.js",
+    "destination": "third_party/material-surface/tests/conformance-core.test.js",
+    "sha256": "95e9ceeb346ceab33970474793860ce3856af65b16ba7bc800f6c775d8965099"
+  },
+  {
+    "repo": "axm-material-surface-fabric",
+    "commit": "c5ed5b09be88e13031b89977d392b3088d659e4a",
+    "source": "assets/premade/v0.11/manifest.json",
+    "destination": "third_party/material-surface/assets/premade/v0.11/manifest.json",
+    "sha256": "791fc2467a1c4759a0c346e71272998678763a676a91e18e84a4241ed45dafca"
+  },
+  {
+    "repo": "axm-material-surface-fabric",
+    "commit": "c5ed5b09be88e13031b89977d392b3088d659e4a",
+    "source": "examples/conformance/dangling-family-offer.json",
+    "destination": "third_party/material-surface/examples/conformance/dangling-family-offer.json",
+    "sha256": "e02b47ba31dddd3525be8bc50d1fbfaf024e8d77f2dd60d87a587fc415f848c5"
+  },
+  {
+    "repo": "axm-material-surface-fabric",
+    "commit": "c5ed5b09be88e13031b89977d392b3088d659e4a",
+    "source": "examples/conformance/missing-bytes-offer.json",
+    "destination": "third_party/material-surface/examples/conformance/missing-bytes-offer.json",
+    "sha256": "481e577dc00c367ddb2c6465c85ea280e6b53eb82a503d6db63b2a98b16bab66"
+  },
+  {
+    "repo": "axm-material-surface-fabric",
+    "commit": "c5ed5b09be88e13031b89977d392b3088d659e4a",
+    "source": "examples/conformance/duplicate-id-offer.json",
+    "destination": "third_party/material-surface/examples/conformance/duplicate-id-offer.json",
+    "sha256": "a2e6096d52f2b260cfd2da309bebe68dc99245f1ad7db67e337e907eb692b799"
+  },
+  {
+    "repo": "axm-material-surface-fabric",
+    "commit": "c5ed5b09be88e13031b89977d392b3088d659e4a",
+    "source": "examples/conformance/unassigned-offer.json",
+    "destination": "third_party/material-surface/examples/conformance/unassigned-offer.json",
+    "sha256": "2cf2ea5261514d136e08bb56290f3ab7f71d02b6cbf8cb6abe37ea87f3102c00"
+  },
+  {
+    "repo": "axm-material-surface-fabric",
+    "commit": "c5ed5b09be88e13031b89977d392b3088d659e4a",
+    "source": "examples/conformance/valid-offer.json",
+    "destination": "third_party/material-surface/examples/conformance/valid-offer.json",
+    "sha256": "e01f075fc641c41255f238f9d1e657af7ae228701b7124436991a6a2d2ea3e18"
+  },
+  {
+    "repo": "axm-material-surface-fabric",
+    "commit": "c5ed5b09be88e13031b89977d392b3088d659e4a",
+    "source": "examples/conformance/hash-mismatch-offer.json",
+    "destination": "third_party/material-surface/examples/conformance/hash-mismatch-offer.json",
+    "sha256": "f80627714bc712d58bdc44c8ce1cee4bbc7a905150b988bae85c8872a53a0127"
+  },
+  {
+    "repo": "axm-framestate",
+    "commit": "60ea68ba72e4ad4df8dc5746c6bb18fcd6569a34",
+    "source": "src/axm_framestate/timeline.py",
+    "destination": "src/axm_uc/donor_timeline.py",
+    "sha256": "24f022a0c486601cb30daf8be530b1453134daf1b02e2441039adffba7bd7dc1"
+  },
+  {
+    "repo": "axm-framestate",
+    "commit": "60ea68ba72e4ad4df8dc5746c6bb18fcd6569a34",
+    "source": "LICENSE",
+    "destination": "third_party/framestate/LICENSE",
+    "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+  },
+  {
+    "repo": "axm-machine-voice",
+    "commit": "b77f6d083db2951d19e082e712fdaa3061ced956",
+    "source": "src/axm_machine_voice/core.py",
+    "destination": "src/axm_uc/donor_voice/core.py",
+    "sha256": "a54881e6a37b8b3157ff0ecc634701799a1e3cb7191d192acc04842e26d4a730"
+  },
+  {
+    "repo": "axm-machine-voice",
+    "commit": "b77f6d083db2951d19e082e712fdaa3061ced956",
+    "source": "src/axm_machine_voice/outcome.py",
+    "destination": "src/axm_uc/donor_voice/outcome.py",
+    "sha256": "1d4dbad88f5a7a58af59d282a00feddd622fcc08fc99e83aae26e0202ffb3dd0"
+  }
+]

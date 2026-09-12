@@ -10,6 +10,11 @@ from pathlib import Path
 from typing import Any
 
 from .mixed_project import build_mixed_project
+from .browser_arena_visuals import ARENA_VISUALS_JS
+from .browser_construction import validate_construction, CONSTRUCTION_JS, CONSTRUCTION_UI_JS
+from .browser_waves import validate_waves, WAVES_JS
+from .visual_surface import surface_rows
+from .visual_base import png_bytes
 from .procedural_media import generate_media
 from .project import ProjectError
 from .state_machine import STATE_MACHINE_SCHEMA, StateMachineError, compile_state_machine
@@ -105,8 +110,10 @@ def _color(value: Any, label: str) -> str:
 
 
 def validate_browser_game_spec(raw: Any) -> dict[str, Any]:
+    has_construction = isinstance(raw, dict) and "construction" in raw
+    has_waves = isinstance(raw, dict) and "waves" in raw
     spec = _object(
-        raw,
+        {k:v for k,v in raw.items() if k not in {"construction","waves"}} if has_construction or has_waves else raw,
         "specification",
         {
             "schema",
@@ -223,6 +230,8 @@ def validate_browser_game_spec(raw: Any) -> dict[str, Any]:
         "tower": normalized_tower,
         "enemies": normalized_enemies,
         "rules": normalized_rules,
+        **({"waves":validate_waves(raw["waves"], enemy_ids)} if has_waves else {}),
+        **({"construction": validate_construction(raw["construction"], {"width":width,"height":height}, normalized_tower, normalized_player)} if has_construction else {}),
     }
 
 
@@ -259,29 +268,33 @@ INDEX_TEMPLATE = """<!doctype html>
 </head>
 <body>
   <main class="shell">
-    <header class="hud" aria-live="polite">
-      <div class="brand"><img src="assets/target.png" alt=""><span>__AXM_TITLE__</span></div>
+    <header class="hud">
+      <div class="brand"><img src="assets/target.png" alt=""><div><span class="label">RELAY DEFENSE</span><span>__AXM_TITLE__</span></div></div>
       <div><span class="label">Target</span><strong id="targetName">Scanning…</strong><meter id="targetHealth" min="0" max="100" value="100"></meter></div>
-      <div><span class="label">Tower</span><strong id="towerValue">100%</strong></div>
+      <div><span class="label">Core integrity</span><strong id="towerValue">100%</strong></div>
       <div><span class="label">Credits</span><strong id="scoreValue">0</strong></div>
-      <div><span class="label">Ammo</span><strong id="ammoValue">0 / 0</strong></div>
+      <div><span class="label">Magazine</span><strong id="ammoValue">0 / 0</strong></div>
     </header>
+    __AXM_CONSTRUCTION_PANEL__
     <section class="arena" aria-label="Offline tactical arena">
-      <canvas id="game" width="__AXM_WIDTH__" height="__AXM_HEIGHT__" tabindex="0" aria-label="Playable arena canvas. Move with WASD or arrows and fire by clicking or tapping.">Canvas is unavailable.</canvas>
-      <div id="status" class="status">Ready — start when you choose.</div>
+      <canvas id="game" width="__AXM_WIDTH__" height="__AXM_HEIGHT__" tabindex="0" aria-label="Playable arena canvas. Move with WASD or arrows and fire by clicking, tapping, or pressing Space. Q selects the next target.">Canvas is unavailable.</canvas>
+      <div id="status" class="status" role="status">Ready — start when you choose.</div>
     </section>
     <nav class="controls" aria-label="Game controls">
       <button id="sessionButton" type="button">Start</button>
+      <button id="fireButton" type="button">Fire at target</button>
+      <button id="targetButton" type="button">Next target</button>
       <button id="reloadButton" type="button">Reload</button>
       <button id="resetButton" type="button">Reset</button>
-      <span class="hint">Move: WASD / arrows · Aim + fire: click or tap · Pause: P</span>
-    </nav>
     <div class="touch" aria-label="Touch movement controls">
       <button type="button" data-key="ArrowUp" aria-label="Move up">↑</button>
       <button type="button" data-key="ArrowLeft" aria-label="Move left">←</button>
       <button type="button" data-key="ArrowDown" aria-label="Move down">↓</button>
       <button type="button" data-key="ArrowRight" aria-label="Move right">→</button>
     </div>
+      <span class="hint">Move: WASD / arrows · Fire: hold canvas / Space · Target: Q · Reload: R · Pause: P</span>
+    </nav>
+
   </main>
   <script src="game.js"></script>
 </body>
@@ -289,11 +302,12 @@ INDEX_TEMPLATE = """<!doctype html>
 """
 
 
-STYLE_TEMPLATE = """:root{color-scheme:dark;font-family:Inter,ui-sans-serif,system-ui,sans-serif;--background:__AXM_BACKGROUND__;--panel:__AXM_PANEL__;--accent:__AXM_ACCENT__;--text:__AXM_TEXT__;background:var(--background);color:var(--text)}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% 0,color-mix(in srgb,var(--accent) 18%,var(--background)) 0,var(--background) 52%);padding:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left))}.shell{width:min(1180px,100%);margin:auto;display:grid;gap:10px}.hud{display:grid;grid-template-columns:minmax(180px,1.5fr) repeat(4,minmax(90px,1fr));gap:8px}.hud>div,.controls,.touch{background:color-mix(in srgb,var(--panel) 92%,transparent);border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);border-radius:12px;padding:10px 12px}.brand{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:.06em;text-transform:uppercase}.brand img{width:28px;height:28px}.label{display:block;color:color-mix(in srgb,var(--accent) 58%,var(--text));font-size:.68rem;letter-spacing:.14em;text-transform:uppercase}.hud strong{font-variant-numeric:tabular-nums}.hud meter{display:block;width:100%;height:6px}.arena{position:relative;border:1px solid color-mix(in srgb,var(--accent) 42%,transparent);border-radius:14px;overflow:hidden;box-shadow:0 24px 80px #000;background:var(--panel)}canvas{display:block;width:100%;height:auto;touch-action:none}.status{position:absolute;left:50%;top:18px;transform:translateX(-50%);padding:8px 14px;border:1px solid color-mix(in srgb,var(--text) 24%,transparent);border-radius:999px;background:color-mix(in srgb,var(--panel) 88%,transparent);font-size:.82rem;pointer-events:none}.controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.controls button,.touch button{border:1px solid color-mix(in srgb,var(--text) 28%,transparent);border-radius:10px;background:color-mix(in srgb,var(--panel) 72%,var(--accent));color:var(--text);padding:10px 14px;font:inherit;font-weight:800;cursor:pointer}.controls button:hover,.touch button:hover{border-color:var(--accent)}.hint{color:color-mix(in srgb,var(--accent) 52%,var(--text));font-size:.8rem}.touch{display:none;grid-template-columns:repeat(4,1fr);gap:8px}.touch button{font-size:1.25rem;padding:14px}@media(max-width:760px){.hud{grid-template-columns:1fr 1fr}.brand{grid-column:1/-1}.touch{display:grid}.hint{width:100%}}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}\n"""
+STYLE_TEMPLATE = """:root{color-scheme:dark;font-family:Inter,ui-sans-serif,system-ui,sans-serif;--background:__AXM_BACKGROUND__;--panel:__AXM_PANEL__;--accent:__AXM_ACCENT__;--text:__AXM_TEXT__;background:#080e15;color:var(--text)}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% 0,#1b323a 0,#090f17 65%);padding:24px}.shell{width:min(1280px,100%);margin:auto;display:grid;gap:0}.hud{display:grid;grid-template-columns:minmax(230px,1.8fr) repeat(4,minmax(90px,1fr));gap:0;padding:18px 8px 24px;align-items:center}.hud>div{padding:0 22px;border-left:1px solid #40535b55}.hud>.brand{border:0;padding-left:0}.brand{display:flex;align-items:center;gap:14px;font-size:27px;font-weight:650;letter-spacing:-.04em}.brand img{width:36px;height:36px;filter:grayscale(1) brightness(2)}.label{display:block;color:#78939f;font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;margin-bottom:6px}.brand .label{color:#b6aa83;font-size:9px;letter-spacing:.2em}.hud strong{font-variant-numeric:tabular-nums;font-weight:500;font-size:17px}.hud meter{display:block;width:90%;max-width:130px;height:5px;margin-top:5px;accent-color:var(--accent)}.arena{position:relative;border:1px solid #52697766;border-radius:4px;overflow:hidden;box-shadow:0 30px 90px #0007;background:#0b1a24}canvas{display:block;width:100%;height:auto;aspect-ratio:__AXM_RATIO__;touch-action:none}.status{position:absolute;left:50%;top:14px;transform:translateX(-50%);color:#98b3bc;background:#0b1b25bb;padding:7px 16px;border:1px solid #9ababd22;border-radius:3px;font-size:11px;pointer-events:none;white-space:nowrap}.controls{display:flex;align-items:center;gap:9px;flex-wrap:wrap;padding:20px 0}.controls button,.touch button{border:1px solid #69818c55;border-radius:4px;background:#172832;color:#d2e2e5;padding:12px 17px;font:inherit;font-size:12px;font-weight:600;cursor:pointer}.controls button:hover,.touch button:hover{background:#29404c;border-color:#91b6bb}.controls button:disabled{opacity:.4;cursor:default}.controls button:focus-visible,.touch button:focus-visible,canvas:focus-visible{outline:2px solid var(--accent);outline-offset:-3px}#sessionButton{background:#d3bc87;border-color:#d3bc87;color:#18242a;min-width:95px}#fireButton{color:#a1e8d2;border-color:#5ea18d88}.hint{color:#78919e;font-size:11px;margin-left:auto}.touch{display:grid;grid-template-columns:repeat(4,42px);gap:4px}.touch button{font-size:20px;padding:8px;touch-action:none}.controls{order:1}.arena{order:2}.shell>nav:not(.controls){order:3}.controls button{touch-action:none;user-select:none;-webkit-user-select:none}@media(max-width:850px){body{padding:12px}.hud{grid-template-columns:repeat(4,1fr);padding:10px 0 15px;row-gap:22px}.hud>.brand{grid-column:1/-1}.hud>div{padding:0 8px}.hud strong{font-size:14px}.brand{font-size:24px}.label{font-size:8px}.touch{display:grid}.hint{width:100%;margin:6px 0}.controls{padding:12px 0;gap:6px}.controls button{padding:12px 10px}.status{top:8px;font-size:9px;padding:5px 8px}}\n"""
 
 
 GAME_JS_TEMPLATE = r'''"use strict";
 const SPEC = Object.freeze(__AXM_SPEC__);
+__AXM_CONSTRUCTION_CORE__
 const SESSION = Object.freeze(__AXM_SESSION__);
 const SPEC_DIGEST = "__AXM_SPEC_DIGEST__";
 const SESSION_DIGEST = "__AXM_SESSION_DIGEST__";
@@ -303,6 +317,8 @@ const statusNode = document.querySelector("#status");
 const sessionButton = document.querySelector("#sessionButton");
 const reloadButton = document.querySelector("#reloadButton");
 const resetButton = document.querySelector("#resetButton");
+const fireButton = document.querySelector("#fireButton");
+const targetButton = document.querySelector("#targetButton");
 const targetName = document.querySelector("#targetName");
 const targetHealth = document.querySelector("#targetHealth");
 const towerValue = document.querySelector("#towerValue");
@@ -310,28 +326,43 @@ const scoreValue = document.querySelector("#scoreValue");
 const ammoValue = document.querySelector("#ammoValue");
 const fireSound = new Audio("assets/fire.wav");
 const keys = new Set();
+const renderScale = Math.min(window.devicePixelRatio || 1, 2);
+canvas.width = Math.round(SPEC.viewport.width * renderScale);
+canvas.height = Math.round(SPEC.viewport.height * renderScale);
 let state;
 let lastFrame = 0;
+let pointerAim = null;
+let pointerHeld = false;
+let targetHeld = false;
+const touchKeys = new Set();
+
+function clearInputs() { keys.clear(); touchKeys.clear(); pointerHeld = false; targetHeld = false; }
 
 function transition(event) {
   const row = SESSION.transitions.find(item => item.from === state.phase && item.event === event);
   if (!row) return false;
   state.phase = row.to;
+  if (state.phase !== "playing") clearInputs();
   return true;
 }
 
 function freshState() {
   return {
     phase: SESSION.initial_state,
+    time: 0, fx: [], fxSerial: 0,
+    waveIndex:0,wavesCleared:0,betweenWaves:false,
+    construction:SPEC.construction?Construction.create(SPEC.construction):null, supportBeams:[],
     player: {...SPEC.player, health: SPEC.player.max_health},
     tower: {...SPEC.tower, health: SPEC.tower.max_health},
-    enemies: SPEC.enemies.map(enemy => ({...enemy, maxHealth: enemy.health, alive: true, contactCooldown: 0})),
+    enemies: WaveCycle.enemies(SPEC.enemies,SPEC.waves,0),
     bullets: [], ammo: SPEC.rules.ammo_capacity, reloadRemaining: 0,
-    fireCooldown: 0, score: 0, selectedId: SPEC.enemies[0].id,
+    fireCooldown: 0, score: 0, selectedId: SPEC.waves?.rosters?.[0]?.[0] || SPEC.enemies[0].id,
   };
 }
 
 function reset() {
+  clearInputs(); resetConstructionUI();
+  pointerAim = null;
   state = freshState();
   lastFrame = 0;
   updateHud();
@@ -343,8 +374,21 @@ function selectedEnemy() {
     || state.enemies.find(enemy => enemy.alive) || null;
 }
 
+function nextTarget() {
+  const alive = state.enemies.filter(enemy => enemy.alive);
+  if (!alive.length) return;
+  const index = alive.findIndex(enemy => enemy.id === state.selectedId);
+  state.selectedId = alive[(index + 1) % alive.length].id;
+  updateHud();
+}
+
+function fireSelected() {
+  const target = selectedEnemy();
+  if (target) fireAt(target.x, target.y);
+}
+
 function setStatus() {
-  const labels = {ready:"Ready — start when you choose.",playing:"Defend the command tower.",paused:"Paused.",won:"Arena secured.",lost:"Command tower lost."};
+  const labels = {ready:"Press Start to enable movement and firing.",playing:"Defend the command tower.",paused:"Paused.",won:"Arena secured.",lost:"Command tower lost."};
   statusNode.textContent = labels[state.phase];
   sessionButton.textContent = state.phase === "ready" ? "Start" : state.phase === "playing" ? "Pause" : state.phase === "paused" ? "Resume" : "Play again";
 }
@@ -357,7 +401,13 @@ function updateHud() {
   towerValue.textContent = `${Math.ceil(100 * state.tower.health / state.tower.max_health)}%`;
   scoreValue.textContent = String(state.score);
   ammoValue.textContent = state.reloadRemaining > 0 ? "RELOADING" : `${state.ammo} / ${SPEC.rules.ammo_capacity}`;
+  fireButton.disabled = state.phase !== "playing";
+  for(const button of document.querySelectorAll("[data-key]"))button.disabled=state.phase!=="playing";
+  reloadButton.disabled = state.phase !== "playing" || state.reloadRemaining > 0 || state.ammo === SPEC.rules.ammo_capacity;
+  targetButton.disabled = !target;
   setStatus();
+  updateConstructionHud();
+  updateWaveHud();
 }
 
 function startReload() {
@@ -367,30 +417,37 @@ function startReload() {
 }
 
 function fireAt(x, y) {
-  if (state.phase !== "playing" || state.fireCooldown > 0 || state.reloadRemaining > 0) return;
+  if (buildKind || state.phase !== "playing" || state.fireCooldown > 0 || state.reloadRemaining > 0) return;
   if (state.ammo <= 0) { startReload(); return; }
   const dx = x - state.player.x;
   const dy = y - state.player.y;
   const length = Math.hypot(dx, dy) || 1;
   state.bullets.push({x:state.player.x,y:state.player.y,vx:dx/length*SPEC.rules.projectile_speed,vy:dy/length*SPEC.rules.projectile_speed,r:4});
+  burst(state.player.x+dx/length*state.player.size*1.8,state.player.y+dy/length*state.player.size*1.8,"#fff0b8",5);
   state.ammo -= 1;
   state.fireCooldown = SPEC.rules.fire_cooldown_ms / 1000;
-  try { const cue = fireSound.cloneNode(); cue.volume = 0.25; void cue.play(); } catch (_) { /* audio permission is host-controlled */ }
+  try { const cue = fireSound.cloneNode(); cue.volume = 0.25; const playback = cue.play(); if (playback) playback.catch(() => {}); } catch (_) { /* audio permission is host-controlled */ }
   if (state.ammo === 0) startReload();
+  updateHud();
 }
 
 function update(dt) {
   if (state.phase !== "playing") return;
-  let dx = (keys.has("ArrowRight") || keys.has("d") ? 1 : 0) - (keys.has("ArrowLeft") || keys.has("a") ? 1 : 0);
-  let dy = (keys.has("ArrowDown") || keys.has("s") ? 1 : 0) - (keys.has("ArrowUp") || keys.has("w") ? 1 : 0);
+  state.time += dt;
+  for(const f of state.fx){f.x+=f.vx*dt;f.y+=f.vy*dt;f.z+=f.vz*dt;f.vz-=180*dt;f.life-=dt;}
+  state.fx=state.fx.filter(f=>f.life>0);
+  let dx = (keys.has("ArrowRight") || touchKeys.has("ArrowRight") || keys.has("d") ? 1 : 0) - (keys.has("ArrowLeft") || touchKeys.has("ArrowLeft") || keys.has("a") ? 1 : 0);
+  let dy = (keys.has("ArrowDown") || touchKeys.has("ArrowDown") || keys.has("s") ? 1 : 0) - (keys.has("ArrowUp") || touchKeys.has("ArrowUp") || keys.has("w") ? 1 : 0);
   const movement = Math.hypot(dx, dy) || 1;
-  state.player.x = Math.max(state.player.size, Math.min(canvas.width-state.player.size, state.player.x + dx/movement*state.player.speed*dt));
-  state.player.y = Math.max(state.player.size, Math.min(canvas.height-state.player.size, state.player.y + dy/movement*state.player.speed*dt));
+  state.player.x = Math.max(state.player.size, Math.min(SPEC.viewport.width-state.player.size, state.player.x + dx/movement*state.player.speed*dt));
+  state.player.y = Math.max(state.player.size, Math.min(SPEC.viewport.height-state.player.size, state.player.y + dy/movement*state.player.speed*dt));
   state.fireCooldown = Math.max(0, state.fireCooldown - dt);
   if (state.reloadRemaining > 0) {
     state.reloadRemaining -= dt;
     if (state.reloadRemaining <= 0) { state.reloadRemaining = 0; state.ammo = SPEC.rules.ammo_capacity; }
   }
+  if (pointerHeld && pointerAim) fireAt(pointerAim.x, pointerAim.y);
+  else if (targetHeld || keys.has(" ")) fireSelected();
   const tx = state.tower.x + state.tower.width / 2;
   const ty = state.tower.y + state.tower.height / 2;
   for (const enemy of state.enemies) {
@@ -412,43 +469,20 @@ function update(dt) {
     for (const enemy of state.enemies) {
       if (!enemy.alive || bullet.hit || Math.hypot(bullet.x-enemy.x,bullet.y-enemy.y) > enemy.size/2+bullet.r) continue;
       bullet.hit = true;
-      enemy.health -= SPEC.rules.projectile_damage;
-      if (enemy.health <= 0) { enemy.alive = false; state.score += enemy.reward; }
+      applyEnemyDamage(enemy,SPEC.rules.projectile_damage);
       break;
     }
   }
-  state.bullets = state.bullets.filter(b => !b.hit && b.x>=0 && b.x<=canvas.width && b.y>=0 && b.y<=canvas.height);
+  state.bullets = state.bullets.filter(b => !b.hit && b.x>=0 && b.x<=SPEC.viewport.width && b.y>=0 && b.y<=SPEC.viewport.height);
+  updateConstruction(dt);
   if (state.tower.health <= 0) transition("lose");
-  else if (!state.enemies.some(enemy => enemy.alive)) transition("win");
+  else if (!state.enemies.some(enemy => enemy.alive)) completeWave();
   updateHud();
 }
 
-function drawBlock(x,y,size,color) {
-  ctx.fillStyle = color; ctx.fillRect(x-size/2,y-size/2,size,size);
-  ctx.fillStyle = "rgba(255,255,255,.22)"; ctx.fillRect(x-size*.28,y-size*.28,size*.2,size*.2);
-}
-
-function draw() {
-  const {width,height} = canvas;
-  ctx.fillStyle = SPEC.theme.background; ctx.fillRect(0,0,width,height);
-  ctx.strokeStyle = "rgba(59,232,218,.08)"; ctx.lineWidth = 1;
-  for (let x=0;x<width;x+=48){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,height);ctx.stroke();}
-  for (let y=0;y<height;y+=48){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(width,y);ctx.stroke();}
-  ctx.fillStyle = SPEC.theme.ground;
-  ctx.beginPath(); ctx.moveTo(width*.12,height); ctx.lineTo(width*.36,height*.38); ctx.lineTo(width*.66,height*.38); ctx.lineTo(width*.9,height); ctx.closePath(); ctx.fill();
-  ctx.fillStyle = state.tower.color; ctx.fillRect(state.tower.x,state.tower.y,state.tower.width,state.tower.height);
-  ctx.fillStyle = SPEC.theme.accent; ctx.fillRect(state.tower.x+state.tower.width*.2,state.tower.y-18,state.tower.width*.6,18);
-  const target = selectedEnemy();
-  for (const enemy of state.enemies) {
-    if (!enemy.alive) continue;
-    drawBlock(enemy.x,enemy.y,enemy.size,enemy.color);
-    ctx.fillStyle = SPEC.theme.danger; ctx.fillRect(enemy.x-enemy.size/2,enemy.y-enemy.size*.78,enemy.size*Math.max(0,enemy.health)/enemy.maxHealth,4);
-    if (target && enemy.id === target.id) { ctx.strokeStyle=SPEC.theme.accent;ctx.lineWidth=2;ctx.strokeRect(enemy.x-enemy.size*.72,enemy.y-enemy.size*.72,enemy.size*1.44,enemy.size*1.44); }
-  }
-  ctx.save(); ctx.translate(state.player.x,state.player.y); ctx.fillStyle=state.player.color; ctx.beginPath(); ctx.moveTo(0,-state.player.size);ctx.lineTo(state.player.size*.75,state.player.size);ctx.lineTo(-state.player.size*.75,state.player.size);ctx.closePath();ctx.fill();ctx.restore();
-  ctx.fillStyle = SPEC.theme.accent; for(const bullet of state.bullets){ctx.beginPath();ctx.arc(bullet.x,bullet.y,bullet.r,0,Math.PI*2);ctx.fill();}
-  if (state.phase === "won" || state.phase === "lost") { ctx.fillStyle="rgba(0,0,0,.6)";ctx.fillRect(0,0,width,height);ctx.fillStyle=SPEC.theme.text;ctx.textAlign="center";ctx.font="900 48px system-ui";ctx.fillText(state.phase === "won" ? "ARENA SECURED" : "TOWER LOST",width/2,height/2); }
-}
+__AXM_VISUALS__
+__AXM_CONSTRUCTION_UI__
+__AXM_WAVES__
 
 function frame(timestamp) {
   const dt = lastFrame ? Math.min((timestamp-lastFrame)/1000,0.05) : 0;
@@ -456,19 +490,72 @@ function frame(timestamp) {
   update(dt); draw(); requestAnimationFrame(frame);
 }
 
+function pointerPosition(event) {
+  const rect = canvas.getBoundingClientRect();
+  return unproject((event.clientX-rect.left)*SPEC.viewport.width/rect.width,(event.clientY-rect.top)*SPEC.viewport.height/rect.height+21);
+}
 canvas.addEventListener("pointerdown", event => {
-  const rect=canvas.getBoundingClientRect(); const x=(event.clientX-rect.left)*canvas.width/rect.width; const y=(event.clientY-rect.top)*canvas.height/rect.height;
-  const nearest=state.enemies.filter(e=>e.alive).sort((a,b)=>Math.hypot(a.x-x,a.y-y)-Math.hypot(b.x-x,b.y-y))[0];
-  if (nearest) state.selectedId=nearest.id;
-  fireAt(x,y); canvas.focus();
+  if (event.button !== 0) return;
+  if(attemptConstruction(event)){event.preventDefault();return;}
+  pointerAim = pointerPosition(event);
+  const nearest = state.enemies.filter(e=>e.alive).sort((a,b)=>Math.hypot(a.x-pointerAim.x,a.y-pointerAim.y)-Math.hypot(b.x-pointerAim.x,b.y-pointerAim.y))[0];
+  if (nearest) state.selectedId = nearest.id;
+  pointerHeld = state.phase === "playing";
+  canvas.setPointerCapture(event.pointerId);
+  fireAt(pointerAim.x,pointerAim.y); canvas.focus({preventScroll:true}); updateHud();
 });
-window.addEventListener("keydown", event => { const key=event.key.length===1?event.key.toLowerCase():event.key; keys.add(key); if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"," "].includes(key))event.preventDefault(); if(key==="p"){if(state.phase==="playing")transition("pause");else if(state.phase==="paused")transition("resume");} if(key==="r")startReload(); });
+canvas.addEventListener("pointermove", event => { pointerAim = pointerPosition(event); });
+for (const name of ["pointerup","pointercancel","lostpointercapture"]) canvas.addEventListener(name,()=>{pointerHeld=false;});
+window.addEventListener("keydown", event => {
+  // Gameplay keys survive focus changes within the page. Text entry and native
+  // button activation keep their normal browser behavior.
+  const target=event.target;
+  if(target?.isContentEditable || ["INPUT","TEXTAREA","SELECT"].includes(target?.tagName))return;
+  const key = event.key.length===1 ? event.key.toLowerCase() : event.key;
+  if((key===" " || key==="Enter") && target?.tagName==="BUTTON")return;
+  if (["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"," "].includes(key)) event.preventDefault();
+  keys.add(key);
+  if (!event.repeat) {
+    if(key==="p" && !state.betweenWaves) { if(state.phase==="playing") transition("pause"); else if(state.phase==="paused") transition("resume"); updateHud(); }
+    if(key===" ") fireSelected();
+    if(key==="q") nextTarget();
+    if(key==="r") startReload();
+  }
+});
 window.addEventListener("keyup", event => keys.delete(event.key.length===1?event.key.toLowerCase():event.key));
-for(const button of document.querySelectorAll("[data-key]")){const key=button.dataset.key;button.addEventListener("pointerdown",()=>keys.add(key));for(const name of ["pointerup","pointercancel","pointerleave"])button.addEventListener(name,()=>keys.delete(key));}
-sessionButton.addEventListener("click",()=>{if(state.phase==="ready")transition("start");else if(state.phase==="playing")transition("pause");else if(state.phase==="paused")transition("resume");else{reset();transition("start");}updateHud();canvas.focus();});
-reloadButton.addEventListener("click",startReload);
+function pauseOnLeave() { clearInputs(); if(state.phase==="playing") transition("pause"); updateHud(); }
+window.addEventListener("blur",pauseOnLeave);
+document.addEventListener("visibilitychange",()=>{if(document.hidden) pauseOnLeave();});
+for(const button of document.querySelectorAll("[data-key]")){
+  const key=button.dataset.key;
+  button.addEventListener("pointerdown",event=>{event.preventDefault();button.setPointerCapture(event.pointerId);if(state.phase==="playing")touchKeys.add(key);});
+  for(const name of ["pointerup","pointercancel","lostpointercapture"])button.addEventListener(name,()=>touchKeys.delete(key));
+}
+fireButton.addEventListener("pointerdown",event=>{if(event.button!==0)return;event.preventDefault();fireButton.setPointerCapture(event.pointerId);targetHeld=state.phase==="playing";fireSelected();});
+for(const name of ["pointerup","pointercancel","lostpointercapture"])fireButton.addEventListener(name,()=>{targetHeld=false;});
+fireButton.addEventListener("click",event=>{if(event.detail===0)fireSelected();});
+targetButton.addEventListener("click",()=>{nextTarget();canvas.focus({preventScroll:true});});
+sessionButton.addEventListener("click",()=>{if(state.betweenWaves)launchNextWave();else if(state.phase==="ready")transition("start");else if(state.phase==="playing")transition("pause");else if(state.phase==="paused")transition("resume");else{reset();transition("start");}updateHud();canvas.focus({preventScroll:true});});
+reloadButton.addEventListener("click",()=>{startReload();canvas.focus({preventScroll:true});});
 resetButton.addEventListener("click",()=>{if(state.phase!=="ready")transition("reset");reset();});
 reset(); requestAnimationFrame(frame);
+// Optional read-only browser tool; ordinary play needs no agent or service.
+if (document.modelContext?.registerTool) {
+  const lifecycle = new AbortController();
+  window.addEventListener("pagehide",()=>lifecycle.abort(),{once:true});
+  try {
+    Promise.resolve(document.modelContext.registerTool({
+      name:"read_arena_status", title:"Read arena status",
+      description:"Read the same session, target, tower, credits and ammunition shown in the arena HUD. Does not play or modify the game.",
+      inputSchema:{type:"object",properties:{},additionalProperties:false},
+      annotations:{readOnlyHint:true,untrustedContentHint:false},
+      execute(input) {
+        if (!input || typeof input !== "object" || Array.isArray(input) || Object.keys(input).length) throw new Error("Expected an empty object");
+        return {status:statusNode.textContent,target:targetName.textContent,tower:towerValue.textContent,credits:scoreValue.textContent,ammo:ammoValue.textContent};
+      }
+    },{signal:lifecycle.signal})).catch(()=>{});
+  } catch (_) { /* optional browser tool support does not control gameplay */ }
+}
 console.info("AXM browser arena source", {specDigest:SPEC_DIGEST,sessionDigest:SESSION_DIGEST,browserExecutionObserved:false});
 '''
 
@@ -483,24 +570,35 @@ def _render_project(spec: dict[str, Any], compiled: dict[str, Any]) -> tuple[dic
         .replace("__AXM_WIDTH__", str(spec["viewport"]["width"]))
         .replace("__AXM_HEIGHT__", str(spec["viewport"]["height"]))
     )
+    panel = ""
+    if "construction" in spec:
+        index=index.replace('<span class="label">Credits</span>','<span class="label">Combat score</span>')
+        c=spec["construction"]
+        descriptions={"generator":f'Earns {c["catalog"]["generator"]["rate"]} credits/sec',"turret":f'{c["catalog"]["turret"]["rate"]} damage/sec to nearby enemies',"repair":f'Heals core {c["catalog"]["repair"]["rate"]}/sec when nearby'}
+        buttons="".join(f'<button type="button" data-build="{kind}" aria-pressed="false">{html.escape(e["label"])} · {e["cost"]}<small>{html.escape(descriptions[kind])}</small></button>' for kind,e in c["catalog"].items())
+        panel='<section class="construction" aria-label="Outpost construction"><div class="build-summary">BUILD YOUR OUTPOST · <strong id="constructionBalance">0</strong> credits · +<strong id="constructionIncome">0</strong>/sec · <strong id="constructionCount">0</strong> buildings</div><div class="build-buttons">'+buttons+'<button id="cancelBuild" type="button">Return to combat</button></div><p id="buildMessage" role="status">Place support buildings, then press Start. Income and support run only while playing.</p></section>'
+    if "waves" in spec:
+        panel+=f'<p class="wave-summary" style="order:1;color:#cfdfcd;font-size:12px;margin:12px 0 0"><strong id="waveValue">Wave 1</strong> · {spec["waves"]["clear_bonus"]} credits per clear · You launch each wave</p>'
+    index=index.replace("__AXM_CONSTRUCTION_PANEL__",panel)
     game_js = (
-        GAME_JS_TEMPLATE.replace("__AXM_SPEC__", json.dumps(spec, ensure_ascii=True, sort_keys=True, separators=(",", ":")))
+        GAME_JS_TEMPLATE.replace("__AXM_WAVES__", WAVES_JS).replace("__AXM_CONSTRUCTION_CORE__", CONSTRUCTION_JS).replace("__AXM_CONSTRUCTION_UI__", CONSTRUCTION_UI_JS).replace("__AXM_VISUALS__", ARENA_VISUALS_JS).replace("__AXM_SPEC__", json.dumps(spec, ensure_ascii=True, sort_keys=True, separators=(",", ":")))
         .replace("__AXM_SESSION__", json.dumps(session, ensure_ascii=True, sort_keys=True, separators=(",", ":")))
         .replace("__AXM_SPEC_DIGEST__", spec_digest)
         .replace("__AXM_SESSION_DIGEST__", session_digest)
     )
     style = (
-        STYLE_TEMPLATE.replace("__AXM_BACKGROUND__", spec["theme"]["background"])
+        STYLE_TEMPLATE.replace("__AXM_RATIO__", str(spec["viewport"]["width"])+" / "+str(spec["viewport"]["height"])).replace("__AXM_BACKGROUND__", spec["theme"]["background"])
         .replace("__AXM_PANEL__", spec["theme"]["panel"])
         .replace("__AXM_ACCENT__", spec["theme"]["accent"])
         .replace("__AXM_TEXT__", spec["theme"]["text"])
     )
+    style += ".construction{order:1;border:1px solid #58757555;background:#11252d;padding:16px;border-radius:4px}.build-summary{font-size:12px;letter-spacing:.04em;color:#bed5d4}.build-summary strong{color:#ffe1a0}.build-buttons{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.build-buttons button{background:#233c45;border:1px solid #75928e;color:#e1ede8;padding:12px;cursor:pointer;touch-action:manipulation}.build-buttons small{display:block;font-size:10px;color:#b2cec5;margin-top:5px}.build-buttons button[aria-pressed=true]{background:#466757;border-color:#b6efd2}.build-buttons button:focus-visible{outline:2px solid #b6efd2}.build-buttons button:disabled{opacity:.4}#buildMessage{font-size:12px;color:#acc5c5;margin:12px 0 0}"
     game_json = json.dumps(spec, ensure_ascii=False, indent=2, sort_keys=True) + "\n"
     session_json = json.dumps(session, ensure_ascii=False, indent=2, sort_keys=True) + "\n"
     readme = (
         f"# {spec['title']}\n\n"
         "A dependency-free offline browser arena generated by AXM Universal Creation.\n\n"
-        "Open `index.html` in a modern browser. Move with WASD or arrow keys, aim and fire with click/tap, press P to pause, and R to reload.\n\n"
+        "Open `index.html` in a modern browser. Move with WASD or arrow keys, aim and hold click/tap to fire, or hold Space to fire at the selected target. Q cycles targets, P pauses, and R reloads. On touch screens use the movement pad and hold Fire at target. Leaving the window pauses the session; resume is always explicit.\n\n"
         f"Game specification SHA-256: `{spec_digest}`\n\n"
         f"Session machine SHA-256: `{session_digest}`\n\n"
         "The source, links, JSON, PNG payload, WAV payload, and exact bytes were deterministically validated. Browser execution, visual quality, input behavior, audio playback, accessibility, and gameplay balance require separate host evidence.\n"
@@ -537,7 +635,9 @@ def _render_project(spec: dict[str, Any], compiled: dict[str, Any]) -> tuple[dic
         "state-machine.json": session_json,
         "style.css": style,
     }
+    deck = png_bytes(96, 96, surface_rows("spaceship-hull", 96, 96, seed=int(spec_digest[:8], 16), colors=["#13252e", "#536c76", "#8da0a8"]), "RGB")
     binary_files = {
+        "assets/deck.png": {"encoding": "base64", "content": base64.b64encode(deck).decode("ascii"), "media_type": "image/png", "sha256": hashlib.sha256(deck).hexdigest()},
         "assets/target.png": {
             "encoding": "base64",
             "content": base64.b64encode(icon["body"]).decode("ascii"),
@@ -574,6 +674,7 @@ def build_browser_game(
         {"type": "contains", "path": "game.js", "text": spec_digest},
         {"type": "contains", "path": "game.js", "text": compiled["machine_digest"]},
         {"type": "media-signature", "path": "assets/target.png", "format": "png"},
+        {"type": "media-signature", "path": "assets/deck.png", "format": "png"},
         {"type": "media-signature", "path": "assets/fire.wav", "format": "wav"},
     ]
     try:

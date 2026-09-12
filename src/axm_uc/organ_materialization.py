@@ -19,6 +19,12 @@ MATERIALIZATION_STATES = {
     "EXECUTABLE_PACKAGE_WITH_MISSING_INTERFACES",
     "IMPLEMENTATION_REQUIRED",
 }
+IMPLEMENTATION_COVERAGE_STATES = {
+    "PACKAGE_AND_LIVE_BINDING",
+    "PACKAGE_ONLY",
+    "LIVE_BINDING_ONLY",
+    "NO_DECLARED_IMPLEMENTATION",
+}
 ZERO_AUTHORITY = {
     "execute": False,
     "install": False,
@@ -155,8 +161,19 @@ def _package_connectivity(packages: list[dict[str, Any]]) -> dict[str, dict[str,
 
 
 def _census_data(root: Path) -> tuple[dict[str, Any], list[dict[str, Any]]]:
+    from .capabilities import CapabilityStore
+    from .executable import ExecutableAnatomy
+    from .topology import KernelTopology
+
     root = Path(root).resolve()
     records, by_id = _organ_records(root)
+    registry = Registry(root)
+    anatomy = ExecutableAnatomy(registry, CapabilityStore(root), KernelTopology(registry))
+    live_bindings: dict[str, list[dict[str, Any]]] = {organ_id: [] for organ_id in by_id}
+    for binding in anatomy.bindings:
+        if (binding.get("resolved") is True and binding.get("role") == "implements"
+                and binding.get("master_id") in live_bindings):
+            live_bindings[binding["master_id"]].append(copy.deepcopy(binding))
     source_observations, extra_source_files = _source_observations(root, records)
     library = ExecutableOrganLibrary(root)
     packages = library.list()
@@ -196,6 +213,13 @@ def _census_data(root: Path) -> tuple[dict[str, Any], list[dict[str, Any]]]:
             state = "CONNECTED_EXECUTABLE_PACKAGE"
         else:
             state = "EXECUTABLE_PACKAGE_WITH_MISSING_INTERFACES"
+        bindings = live_bindings[organ_id]
+        coverage_state = (
+            "PACKAGE_AND_LIVE_BINDING" if package_refs and bindings else
+            "PACKAGE_ONLY" if package_refs else
+            "LIVE_BINDING_ONLY" if bindings else
+            "NO_DECLARED_IMPLEMENTATION"
+        )
         rows.append({
             "anatomy_id": organ_id,
             "name": record.get("name"),
@@ -206,6 +230,12 @@ def _census_data(root: Path) -> tuple[dict[str, Any], list[dict[str, Any]]]:
             "source_basis": record.get("source_basis"),
             "source_keys": copy.deepcopy(record.get("source_keys", [])),
             "descriptive_source": source_observations[organ_id],
+            "implementation_coverage": {
+                "state": coverage_state,
+                "live_capability_ids": sorted({row["capability_id"] for row in bindings}),
+                "live_implements_bindings": bindings,
+                "scope": "explicit package anatomy_refs and resolved live role=implements declarations; bounded basis only, not complete organ functionality or runtime proof",
+            },
             "materialization": {
                 "state": state,
                 "package_refs": package_refs,
@@ -229,6 +259,9 @@ def _census_data(root: Path) -> tuple[dict[str, Any], list[dict[str, Any]]]:
     state_counts = {state: 0 for state in sorted(MATERIALIZATION_STATES)}
     for row in rows:
         state_counts[row["materialization"]["state"]] += 1
+    coverage_counts = {state: 0 for state in sorted(IMPLEMENTATION_COVERAGE_STATES)}
+    for row in rows:
+        coverage_counts[row["implementation_coverage"]["state"]] += 1
     source_counts = {state: 0 for state in ("EXACT", "MISSING", "DIVERGENT", "INVALID")}
     for observation in source_observations.values():
         source_counts[observation["status"]] += 1
@@ -249,6 +282,17 @@ def _census_data(root: Path) -> tuple[dict[str, Any], list[dict[str, Any]]]:
         "dangling_installed_anatomy_refs": dangling_anatomy_refs,
         "installed_packages_without_anatomy_refs": sorted(packages_without_anatomy_refs),
         "all_descriptive_organs_executable": state_counts["IMPLEMENTATION_REQUIRED"] == 0,
+        "materialization_state_scope": "installed executable packages only; IMPLEMENTATION_REQUIRED means no package mapping, not absence of all implementation",
+        "implementation_coverage": {
+            "states": coverage_counts,
+            "organs_with_live_implements_bindings": sum(bool(value) for value in live_bindings.values()),
+            "organs_with_either_route": len(records) - coverage_counts["NO_DECLARED_IMPLEMENTATION"],
+            "organs_with_neither_route": coverage_counts["NO_DECLARED_IMPLEMENTATION"],
+            "rule": "union of exact package anatomy_refs and resolved live role=implements bindings, deduplicated by organ ID",
+            "unmapped_source_implementations_searched": False,
+            "runtime_execution_performed": False,
+            "full_organ_semantics_proven": False,
+        },
         "connectivity_meaning": "a finite transitive chain of exact installed provided/required interfaces within one declared project type; not uniqueness, semantic conformance, or runtime proof",
         "truth_boundaries": {
             "descriptive_record_is_executable_body": False,
@@ -271,6 +315,7 @@ def census_organs(
     anatomy_id: Any = None,
     domain_code: Any = None,
     state: Any = None,
+    coverage: Any = None,
     offset: Any = 0,
     limit: Any = 415,
 ) -> dict[str, Any]:
@@ -291,6 +336,13 @@ def census_organs(
                 {"state": selected_state, "supported_states": sorted(MATERIALIZATION_STATES)},
             )
         rows = [row for row in rows if row["materialization"]["state"] == selected_state]
+    if coverage is not None:
+        selected_coverage = _required_text(coverage, "coverage", maximum=80).upper()
+        if selected_coverage not in IMPLEMENTATION_COVERAGE_STATES:
+            raise OrganMaterializationError("unsupported implementation coverage state", {
+                "coverage": selected_coverage, "supported_states": sorted(IMPLEMENTATION_COVERAGE_STATES),
+            })
+        rows = [row for row in rows if row["implementation_coverage"]["state"] == selected_coverage]
     selected_offset = _bounded_integer(offset, "offset", minimum=0, maximum=415)
     selected_limit = _bounded_integer(limit, "limit", minimum=1, maximum=415)
     page = rows[selected_offset:selected_offset + selected_limit]
@@ -302,6 +354,7 @@ def census_organs(
             "anatomy_id": anatomy_id,
             "domain_code": domain_code,
             "state": state,
+            "coverage": coverage,
         },
         "pagination": {
             "offset": selected_offset,
@@ -524,7 +577,7 @@ def operate_organ_materialization(root: Path, inputs: Any) -> dict[str, Any]:
         raise OrganMaterializationError("organ materialization inputs must be an object")
     operation = _required_text(inputs.get("operation"), "operation", maximum=80).casefold()
     allowed_by_operation = {
-        "census": {"operation", "anatomy_id", "domain_code", "state", "offset", "limit"},
+        "census": {"operation", "anatomy_id", "domain_code", "state", "coverage", "offset", "limit"},
         "prepare": {"operation", "anatomy_id", "package"},
         "materialize-and-test": {"operation", "path", "anatomy_id", "package", "replace"},
     }
@@ -546,6 +599,7 @@ def operate_organ_materialization(root: Path, inputs: Any) -> dict[str, Any]:
             anatomy_id=inputs.get("anatomy_id"),
             domain_code=inputs.get("domain_code"),
             state=inputs.get("state"),
+            coverage=inputs.get("coverage"),
             offset=inputs.get("offset", 0),
             limit=inputs.get("limit", 415),
         )

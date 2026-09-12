@@ -16,6 +16,7 @@ GLB_VERSION = 2
 JSON_CHUNK = 0x4E4F534A
 BIN_CHUNK = 0x004E4942
 SPEC_SCHEMA = "axm.procedural-3d/v0.1"
+SURFACE_SCHEMA = "axm.surface-3d/v0.1"
 MAX_PRIMITIVES = 128
 MAX_CYLINDER_SEGMENTS = 64
 MAX_REPLACED_FILE_BYTES = 64 * 1024 * 1024
@@ -241,6 +242,10 @@ def _cylinder_geometry(segments: int) -> tuple[list[tuple[float, float, float]],
         positions.extend([(0., -.5, 0.), p1, p0])
         normals.extend([(0., -1., 0.)] * 3)
         indices.extend([bottom, bottom + 1, bottom + 2])
+    # Increasing angle runs clockwise when viewed from above in this Y-up
+    # coordinate system. Reverse sides and both caps to face outward.
+    for index in range(0, len(indices), 3):
+        indices[index + 1], indices[index + 2] = indices[index + 2], indices[index + 1]
     return positions, normals, indices
 
 
@@ -252,8 +257,63 @@ def _geometry(kind: str, segments: int | None) -> tuple[list[tuple[float, float,
     return _cylinder_geometry(int(segments or 16))
 
 
+def _normalize_surface_spec(raw: Any) -> dict[str, Any]:
+    spec = _object(raw, "surface specification", required={"schema", "name", "primitives"})
+    if spec["schema"] != SURFACE_SCHEMA:
+        raise Procedural3DError("unsupported surface schema")
+    if not isinstance(spec["name"], str) or not 1 <= len(spec["name"].strip()) <= 120:
+        raise Procedural3DError("surface name must contain 1..120 characters")
+    if not isinstance(spec["primitives"], list) or not 1 <= len(spec["primitives"]) <= MAX_PRIMITIVES:
+        raise Procedural3DError("surface requires 1..128 material groups")
+    groups, seen, total_vertices, total_indices = [], set(), 0, 0
+    for raw_group in spec["primitives"]:
+        group = _object(raw_group, "surface group", required={"id", "positions", "normals", "indices", "material"}, optional={"colors"})
+        name = group["id"]
+        if not isinstance(name, str) or not _ID_RE.fullmatch(name) or name in seen:
+            raise Procedural3DError("surface group IDs must be unique portable identifiers")
+        seen.add(name)
+        positions, normals, indices = group["positions"], group["normals"], group["indices"]
+        if not isinstance(positions, list) or not 3 <= len(positions) <= 65535:
+            raise Procedural3DError("surface group requires 3..65535 vertices")
+        if not isinstance(normals, list) or len(normals) != len(positions):
+            raise Procedural3DError("surface normal count must match positions")
+        if not isinstance(indices, list) or not indices or len(indices) % 3:
+            raise Procedural3DError("surface indices must contain complete triangles")
+        total_vertices += len(positions)
+        total_indices += len(indices)
+        if total_vertices > 131072 or total_indices > 393216:
+            raise Procedural3DError("surface exceeds 131072 vertices or triangles")
+        if any(type(value) is not int or not 0 <= value < len(positions) for value in indices):
+            raise Procedural3DError("surface index is out of range")
+        def vector(row, label, low, high, width=3):
+            if not isinstance(row, (list, tuple)) or len(row) != width:
+                raise Procedural3DError(f"{label} must contain {width} values")
+            return [_number(value, label, low, high) for value in row]
+        material = _object(group["material"], "surface material", required={"color", "metallic", "roughness"})
+        normalized = {"id": name, "type": "surface", "size": [1, 1, 1], "translation": [0, 0, 0],
+                      "positions": [vector(row, "position", -100000, 100000) for row in positions],
+                      "normals": [vector(row, "normal", -1, 1) for row in normals], "indices": list(indices),
+                      "material": {"color": _color(material["color"], "surface color")[0],
+                                   "metallic": _number(material["metallic"], "metallic", 0, 1),
+                                   "roughness": _number(material["roughness"], "roughness", 0, 1)}}
+        if "colors" in group:
+            colors = group["colors"]
+            if not isinstance(colors, list) or len(colors) != len(positions):
+                raise Procedural3DError("surface color count must match positions")
+            normalized["colors"] = [vector(row, "linear vertex color", 0, 1, 4) for row in colors]
+        groups.append(normalized)
+    return {"schema": SURFACE_SCHEMA, "name": spec["name"].strip(), "primitives": groups}
+
+
 def build_glb(raw: Any) -> dict[str, Any]:
-    spec = _normalize_spec(raw)
+    spec = _normalize_surface_spec(raw) if isinstance(raw, dict) and raw.get("schema") == SURFACE_SCHEMA else _normalize_spec(raw)
+    built = _encode_glb(spec)
+    # Validate the emitted floats and indices, including float32 rounding effects.
+    verify_glb(built["body"], expected_spec_digest=built["specification_sha256"])
+    return built
+
+
+def _encode_glb(spec: dict[str, Any]) -> dict[str, Any]:
     spec_digest = hashlib.sha256(_canonical(spec)).hexdigest()
     binary = bytearray()
     buffer_views: list[dict[str, Any]] = []
@@ -272,7 +332,10 @@ def build_glb(raw: Any) -> dict[str, Any]:
         return index
 
     for primitive in spec["primitives"]:
-        positions, normals, indices = _geometry(primitive["type"], primitive["segments"])
+        if primitive["type"] == "surface":
+            positions, normals, indices = (primitive[key] for key in ("positions", "normals", "indices"))
+        else:
+            positions, normals, indices = _geometry(primitive["type"], primitive["segments"])
         position_data = b"".join(struct.pack("<fff", *position) for position in positions)
         normal_data = b"".join(struct.pack("<fff", *normal) for normal in normals)
         index_data = b"".join(struct.pack("<H", index) for index in indices)
@@ -299,6 +362,12 @@ def build_glb(raw: Any) -> dict[str, Any]:
             "min": [min(indices)],
             "max": [max(indices)],
         })
+        attributes = {"POSITION": position_accessor, "NORMAL": normal_accessor}
+        if "colors" in primitive:
+            color_view = append_buffer(b"".join(struct.pack("<ffff", *color) for color in primitive["colors"]), target=34962)
+            attributes["COLOR_0"] = len(accessors)
+            accessors.append({"bufferView": color_view, "componentType": 5126,
+                              "count": len(primitive["colors"]), "type": "VEC4"})
         _color_text, rgba = _color(primitive["material"]["color"], "material.color")
         material_index = len(materials)
         materials.append({
@@ -313,7 +382,7 @@ def build_glb(raw: Any) -> dict[str, Any]:
         meshes.append({
             "name": primitive["id"],
             "primitives": [{
-                "attributes": {"POSITION": position_accessor, "NORMAL": normal_accessor},
+                "attributes": attributes,
                 "indices": index_accessor,
                 "material": material_index,
                 "mode": 4,
@@ -338,7 +407,7 @@ def build_glb(raw: Any) -> dict[str, Any]:
         "bufferViews": buffer_views,
         "buffers": [{"byteLength": buffer_length}],
         "extras": {
-            "axmSpecificationSchema": SPEC_SCHEMA,
+            "axmSpecificationSchema": spec["schema"],
             "axmSpecificationSha256": spec_digest,
             "axmPrimitiveCount": len(spec["primitives"]),
         },
@@ -408,8 +477,33 @@ def verify_glb(body: bytes, *, expected_spec_digest: str | None = None) -> dict[
             raise Procedural3DError("generated GLB accessor is invalid", {"index": index})
         if not 0 <= accessor["bufferView"] < len(views) or accessor.get("componentType") not in {5123, 5126}:
             raise Procedural3DError("generated GLB accessor reference or component type is invalid", {"index": index})
-        if not isinstance(accessor.get("count"), int) or accessor["count"] <= 0 or accessor.get("type") not in {"SCALAR", "VEC3"}:
+        if not isinstance(accessor.get("count"), int) or accessor["count"] <= 0 or accessor.get("type") not in {"SCALAR", "VEC3", "VEC4"}:
             raise Procedural3DError("generated GLB accessor shape is invalid", {"index": index})
+    def decode_accessor(ref: int, component_type: int, shape: str) -> list[tuple]:
+        accessor = accessors[ref]
+        if accessor["componentType"] != component_type or accessor["type"] != shape:
+            raise Procedural3DError("generated GLB geometry accessor has the wrong type", {"accessor": ref})
+        if "sparse" in accessor or accessor.get("normalized", False):
+            raise Procedural3DError("generated GLB geometry accessor uses unsupported encoding")
+        view = views[accessor["bufferView"]]
+        fmt = {"VEC3": "<fff", "VEC4": "<ffff", "SCALAR": "<H"}[shape]
+        width = struct.calcsize(fmt)
+        start = accessor.get("byteOffset", 0)
+        stride = view.get("byteStride", width)
+        alignment = 4 if component_type == 5126 else 2
+        if (type(start) is not int or start < 0 or start % alignment
+                or type(stride) is not int or stride < width or stride % alignment
+                or start + (accessor["count"] - 1) * stride + width > view["byteLength"]):
+            raise Procedural3DError("generated GLB geometry accessor exceeds or misaligns its bufferView", {"accessor": ref})
+        start += view.get("byteOffset", 0)
+        if start % alignment:
+            raise Procedural3DError("generated GLB geometry buffer offset is misaligned")
+        values = [struct.unpack_from(fmt, bin_bytes, start + item * stride) for item in range(accessor["count"])]
+        if any(not math.isfinite(value) for row in values for value in row):
+            raise Procedural3DError("generated GLB geometry contains non-finite values", {"accessor": ref})
+        return values
+
+    decoded_triangles = 0
     for index, mesh in enumerate(meshes):
         primitives = mesh.get("primitives") if isinstance(mesh, dict) else None
         if not isinstance(primitives, list) or len(primitives) != 1:
@@ -422,6 +516,29 @@ def verify_glb(body: bytes, *, expected_spec_digest: str | None = None) -> dict[
         material = primitive.get("material")
         if not isinstance(material, int) or not 0 <= material < len(materials) or primitive.get("mode") != 4:
             raise Procedural3DError("generated GLB mesh material or draw mode is invalid", {"index": index})
+        positions = decode_accessor(refs[0], 5126, "VEC3")
+        normals = decode_accessor(refs[1], 5126, "VEC3")
+        indices = [row[0] for row in decode_accessor(refs[2], 5123, "SCALAR")]
+        if "COLOR_0" in attributes:
+            color_ref = attributes["COLOR_0"]
+            if type(color_ref) is not int or not 0 <= color_ref < len(accessors):
+                raise Procedural3DError("generated GLB vertex color reference is invalid")
+            colors = decode_accessor(color_ref, 5126, "VEC4")
+            if len(colors) != len(positions) or any(not 0 <= value <= 1 for row in colors for value in row):
+                raise Procedural3DError("generated GLB vertex colors have invalid count or range")
+        if len(positions) != len(normals) or len(indices) % 3 or max(indices) >= len(positions):
+            raise Procedural3DError("generated GLB geometry counts or triangle indices are invalid", {"mesh": index})
+        for offset in range(0, len(indices), 3):
+            face = indices[offset:offset + 3]
+            a, b, c = (positions[vertex] for vertex in face)
+            u = tuple(b[i] - a[i] for i in range(3))
+            v = tuple(c[i] - a[i] for i in range(3))
+            cross = (u[1]*v[2] - u[2]*v[1], u[2]*v[0] - u[0]*v[2], u[0]*v[1] - u[1]*v[0])
+            if sum(value*value for value in cross) == 0:
+                raise Procedural3DError("generated GLB contains a degenerate triangle", {"mesh": index, "triangle": offset // 3})
+            if any(sum(cross[i] * normals[vertex][i] for i in range(3)) <= 0 for vertex in face):
+                raise Procedural3DError("generated GLB triangle winding disagrees with vertex normals", {"mesh": index, "triangle": offset // 3})
+        decoded_triangles += len(indices) // 3
     if len(nodes) != len(meshes) or len(materials) != len(meshes):
         raise Procedural3DError("generated GLB primitive, node, mesh, and material counts diverge")
     for index, node in enumerate(nodes):
@@ -444,7 +561,15 @@ def verify_glb(body: bytes, *, expected_spec_digest: str | None = None) -> dict[
         "primitives": len(meshes),
         "nodes": len(nodes),
         "materials": len(materials),
-        "triangles": sum(accessors[mesh["primitives"][0]["indices"]]["count"] // 3 for mesh in meshes),
+        "triangles": decoded_triangles,
+        "geometry_validation": {
+            "decoded_triangle_count": decoded_triangles,
+            "finite_positions_and_normals": True,
+            "indices_in_range": True,
+            "nondegenerate_triangles": True,
+            "winding_matches_vertex_normals": True,
+            "scope": "native bounded generator geometry; not arbitrary glTF, manifoldness, collision, visual quality or host import proof",
+        },
         "specification_sha256": digest,
     }
 

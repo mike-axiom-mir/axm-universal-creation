@@ -1,0 +1,19 @@
+{
+  "format": "axm-material-offer",
+  "version": "0.9.0",
+  "id": "fixture-unassigned-channel",
+  "producer": { "system": "AXM conformance fixture", "sourceId": "fixture-unassigned" },
+  "entries": [
+    {
+      "id": "unknown",
+      "name": "Explicitly unassigned visual ingredient",
+      "channel": "unassigned",
+      "mime": "image/png",
+      "width": 1,
+      "height": 1,
+      "dataUrl": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Y9ZspAAAAAASUVORK5CYII="
+    }
+  ],
+  "families": [{ "id": "family", "name": "Unassigned family", "entryIds": ["unknown"] }],
+  "truthBoundary": { "channel": "Unassigned is intentional and must not be guessed into another material channel." }
+}

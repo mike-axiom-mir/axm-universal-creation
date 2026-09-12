@@ -1,8 +1,8 @@
 {
   "id": "AXM-CAP-MATERIALIZE-ORGANS",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "status": "live",
-  "purpose": "Census every descriptive organ against exact installed executable-package evidence and compile an explicitly supplied implementation package into a detached Forge-ready or materialized-and-tested organ candidate without inventing source or installing it.",
+  "purpose": "Census every descriptive organ against exact installed executable-package evidence and explicit live implementation bindings, then compile supplied package source into a detached Forge-ready or materialized-and-tested candidate.",
   "handles": [
     "inspect-organ-materialization",
     "prepare-organ-materialization",
@@ -21,7 +21,8 @@
       "limit": "census only; optional result bound from 1 through 415",
       "package": "prepare/materialize only; complete explicit supported axm.executable-software-organ/v0.1 or v0.2 package source that cites the selected anatomy ID",
       "path": "materialize-and-test only; detached candidate directory under creations/ or outside the live machine body",
-      "replace": "materialize-and-test only; optional explicit detached-target replacement boolean"
+      "replace": "materialize-and-test only; optional explicit detached-target replacement boolean",
+      "coverage": "census only; optional PACKAGE_AND_LIVE_BINDING, PACKAGE_ONLY, LIVE_BINDING_ONLY, or NO_DECLARED_IMPLEMENTATION filter"
     }
   },
   "output_contract": {
@@ -30,7 +31,8 @@
       "separate descriptive, executable-package, interface-coverage, detached-test, and installation states",
       "all 415 exact anatomy rows or an explicit filtered page for census",
       "closed Forge proposal compiled only from caller-supplied implementation source for prepare",
-      "spawn and bounded organ-package test evidence for materialize-and-test"
+      "spawn and bounded organ-package test evidence for materialize-and-test",
+      "deduplicated package/live implementation coverage with exact bounded binding bases; no runtime or complete-organ inference"
     ]
   },
   "dependencies": [

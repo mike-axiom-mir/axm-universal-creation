@@ -396,3 +396,21 @@ Project creation and repair preserve the caller's exact UTF-8 bytes, including e
 No claim of universal creation is made. The name describes the direction of the experiment, not a completed capability.
 
 Mike - Axiom/Mir
+
+## Standalone media workbench
+
+Generate painted-metal maps and transparent bitmap labels, or normalize PCM WAV
+files for local projects. Commands and boundaries: [MEDIA_WORKBENCH.md](MEDIA_WORKBENCH.md).
+Donor survey and exact-source records: [DONOR_ABSORPTION.md](DONOR_ABSORPTION.md).
+
+## Discover installed tool combinations
+
+`PYTHONPATH=src python -m axm_uc pipelines` maps declared connections between
+installed capabilities and organs. Query an output token with `--goal`; missing
+inputs and incomplete searches stay visible. See [PIPELINE_MAP.md](PIPELINE_MAP.md).
+
+## Grammar workbench
+
+[GRAMMAR_WORKBENCH.md](GRAMMAR_WORKBENCH.md) exposes the packaged Grammar 102
+capability capsule, Grammar Glass sparse/full state comparison, and visual
+projection budgets through three offline JSON commands.

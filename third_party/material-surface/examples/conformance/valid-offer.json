@@ -1,0 +1,38 @@
+{
+  "format": "axm-material-offer",
+  "version": "0.9.0",
+  "id": "fixture-valid-offer",
+  "createdAt": "2026-09-12T10:00:00.000Z",
+  "producer": {
+    "system": "AXM conformance fixture",
+    "repo": "mike-axiom-mir/axm-material-surface-fabric",
+    "sourceId": "fixture-valid",
+    "stateKind": "test-fixture",
+    "version": "0.10.0"
+  },
+  "entries": [
+    {
+      "id": "base",
+      "name": "One pixel PNG",
+      "channel": "base-color",
+      "mime": "image/png",
+      "width": 1,
+      "height": 1,
+      "dataUrl": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Y9ZspAAAAAASUVORK5CYII=",
+      "sha256": "sha256:8d473d4ed6a3cbe533a061b79f1c4b25f1bab5524e5158629fea5b245ea92792",
+      "source": { "fixture": true },
+      "tags": ["fixture"]
+    }
+  ],
+  "families": [
+    {
+      "id": "family",
+      "name": "Valid family",
+      "purpose": "Portable conformance proof fixture.",
+      "entryIds": ["base"],
+      "tags": ["fixture"]
+    }
+  ],
+  "evidence": { "fixtureOnly": true },
+  "truthBoundary": { "quality": "Fixture proves contract and byte checking only." }
+}

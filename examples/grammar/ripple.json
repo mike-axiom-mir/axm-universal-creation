@@ -1,0 +1,10 @@
+{
+  "fabric": {"fabricId":"creation-stats","nodes":[
+    {"id":"ore","reads":["inputs.ore"],"writes":["outputs.ore"],"dependsOn":[],"effects":[],"operations":[{"op":"COPY","from":"inputs.ore","path":"outputs.ore"}]},
+    {"id":"food","reads":["inputs.food"],"writes":["outputs.food"],"dependsOn":[],"effects":[],"operations":[{"op":"COPY","from":"inputs.food","path":"outputs.food"}]},
+    {"id":"total","reads":["outputs.ore","outputs.food"],"writes":["summary.total"],"dependsOn":[],"effects":[],"operations":[{"op":"SUM","paths":["outputs.ore","outputs.food"],"path":"summary.total"}]}
+  ]},
+  "initialState":{"inputs":{"ore":2,"food":3}},
+  "changedState":{"inputs":{"ore":7,"food":3}},
+  "wakeBudget":3
+}
