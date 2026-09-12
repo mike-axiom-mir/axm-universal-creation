@@ -1,0 +1,10 @@
+{
+  "paint_rgb": [150, 34, 28],
+  "metal_rgb": [112, 118, 121],
+  "wear": 0.5,
+  "scratches": 24,
+  "height_grain_amplitude": 0.035,
+  "height_broad_amplitude": 0.02,
+  "height_scratch_depth": 0.09,
+  "normal_strength": 2.5
+}

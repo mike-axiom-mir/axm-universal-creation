@@ -1,0 +1,39 @@
+[
+  {
+    "repo": "Axm-game-assets",
+    "commit": "d6a930251e4a99f1f98365b8d01fc968025b1fd9",
+    "source": "native_pbr.py",
+    "destination": "src/axm_uc/donor_metal.py",
+    "source_sha256": "e2f1f12f82c4acdb5ca387aac6d14e31c07bbe08fc8df8333094ee36036a0621",
+    "extracted_names": [
+      "PaintedMetalSpec",
+      "_clamp01",
+      "_u8",
+      "_distance_to_segment",
+      "_scratch_segments",
+      "painted_metal_fields"
+    ],
+    "adaptation": "Exact AST source slices plus local imports; validation and output writer are separate adapters."
+  },
+  {
+    "repo": "axm-framestate",
+    "commit": "60ea68ba72e4ad4df8dc5746c6bb18fcd6569a34",
+    "source": "src/axm_framestate/text.py",
+    "destination": "src/axm_uc/donor_bitmap.py",
+    "source_sha256": "1acea7b8f1b3a61d30ec325f42227e1c88005de5b4164971075b4bd69c878911",
+    "extracted_names": [
+      "FONT",
+      "BOX",
+      "bitmap_text"
+    ],
+    "adaptation": "Exact AST source slices plus local imports; validation and output writer are separate adapters."
+  },
+  {
+    "repo": "axm-framestate",
+    "commit": "60ea68ba72e4ad4df8dc5746c6bb18fcd6569a34",
+    "source": "src/axm_framestate/native_audio.py",
+    "destination": "src/axm_uc/donor_audio.py",
+    "source_sha256": "cc960ebf680e9944e9a04ca12f93bb7892460b291b4088085d3ed53f6fe9fc8e",
+    "adaptation": "Copied byte for byte; validation and output writer are separate adapters."
+  }
+]

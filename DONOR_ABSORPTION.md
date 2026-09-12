@@ -109,3 +109,24 @@ It bundles 24 original uploaded PNG sheets as a separate, hash-indexed opaque RG
 plus an adapted local browser renderer/editor. See `tools/asset-composer/README.md`
 for usage, provenance, blending limits, and the browser QA limitation. The donor
 v0.11 manifest and its locked archive identity remain unchanged.
+
+## Third absorption pass — broader repository survey
+
+The following default-branch snapshots were inspected on 2026-09-12. This table
+records the depth actually reviewed, not a claim to have audited every source
+file or open PR. Game Assets and FrameState have the same heads as the prior
+pass; this pass absorbs additional functions already present there.
+
+| Repository / pinned commit | Review depth | Decision for Universal Creation |
+|---|---|---|
+| Axm-game-assets / `d6a930251e4a99f1f98365b8d01fc968025b1fd9` | README and full native PBR generator | Added seven-channel painted-metal generation with bounded parameters and the existing transactional project route. |
+| axm-framestate / `60ea68ba72e4ad4df8dc5746c6bb18fcd6569a34` | README, module inventory, native PCM decoder, bitmap text and caption source | Added native bitmap label generation and WAV normalization. Full video rendering and supplied-font shaping remain separate candidates. |
+| axm-monolith / `6f5b7893d142c5eeaae79897518b3c0b4a57a2e5` | README, pipeline graph builder and function inventory | Strong next candidate: discover connections from UC's installed capability contracts. Its current input is Monolith STACK_ANALYSIS; a UC adapter is needed. No mapper code copied in this pass. |
+| axm-profession-fabric / `241b4e7d7af67a94937c5668abee88bb6db8104b` | README, package inventory, gameplay tool/procedure contracts | Useful future workflow contracts. Their declared tools are not implementations of those tools; do not count them as installed game-generation capability. |
+| axm-ghost-studio / `073e9af6472e3f2f72843fd4aeb531d3ea2c9573` | README and source inventory | Blackline Relay is a separate game experiment. No code copied; reusable gameplay functions need a source-level extraction assessment. |
+| axm-anomaly-garden / `4a92a92403a6d964bfa1a2ff66a5d85f7308969a` | README | Checkpoint/RNG/causal-world features are candidates for simulation creation. No claim that these are integrated or independently tested here. |
+| axm-directional-state-fabric / `d7ed9539bce5d2b43a2f670981fda65dc4543fd8` | README and repository inventory | This snapshot supplies foundations and two schemas. It is not yet an executable creative renderer or planner donor. |
+
+See `MEDIA_WORKBENCH.md` for the three runnable additions. This broadens the
+review beyond the initial four repositories while keeping executable additions
+separate from research directions and descriptive professional contracts.

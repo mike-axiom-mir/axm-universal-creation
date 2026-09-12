@@ -396,3 +396,9 @@ Project creation and repair preserve the caller's exact UTF-8 bytes, including e
 No claim of universal creation is made. The name describes the direction of the experiment, not a completed capability.
 
 Mike - Axiom/Mir
+
+## Standalone media workbench
+
+Generate painted-metal maps and transparent bitmap labels, or normalize PCM WAV
+files for local projects. Commands and boundaries: [MEDIA_WORKBENCH.md](MEDIA_WORKBENCH.md).
+Donor survey and exact-source records: [DONOR_ABSORPTION.md](DONOR_ABSORPTION.md).

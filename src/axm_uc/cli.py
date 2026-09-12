@@ -25,6 +25,25 @@ def build_parser() -> argparse.ArgumentParser:
     timeline.add_argument('--start',type=int,default=0)
     timeline.add_argument('--end',type=int,default=60)
 
+    metal = sub.add_parser('metal', help='generate painted-metal material maps offline')
+    metal.add_argument('path')
+    metal.add_argument('--size', type=int, default=128)
+    metal.add_argument('--seed', type=int, default=1)
+    metal.add_argument('--wear', type=float, default=0.32)
+    metal.add_argument('--scratches', type=int, default=18)
+    metal.add_argument('--spec', help='JSON PaintedMetalSpec; overrides wear and scratches flags')
+
+    label = sub.add_parser('bitmap-label', help='create a transparent native 5x7 interface label')
+    label.add_argument('path')
+    label.add_argument('--text', required=True)
+    label.add_argument('--scale', type=int, default=4)
+
+    wav = sub.add_parser('normalize-wav', help='convert integer PCM WAV to mono/stereo 16-bit PCM')
+    wav.add_argument('source')
+    wav.add_argument('path')
+    wav.add_argument('--rate', type=int, default=48000)
+    wav.add_argument('--channels', type=int, default=1)
+
     fabric = sub.add_parser('fabric', help='generate standalone woven fabric material maps')
     fabric.add_argument('path')
     fabric.add_argument('--size',type=int,default=256)
@@ -125,6 +144,23 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     root = find_machine_root(args.root) if args.root else find_machine_root()
     machine = UniversalCreationMachine(root)
+
+    if args.command in ('metal', 'bitmap-label', 'normalize-wav'):
+        from .media_workbench import PaintedMetalSpec, metal_request, label_request, wav_request
+        try:
+            if args.command == 'metal':
+                spec = PaintedMetalSpec(**json.loads(Path(args.spec).read_text())) if args.spec else PaintedMetalSpec(wear=args.wear, scratches=args.scratches)
+                request = metal_request(args.path, args.size, args.seed, spec)
+            elif args.command == 'bitmap-label':
+                request = label_request(args.path, args.text, args.scale)
+            else:
+                with Path(args.source).open('rb') as source:
+                    data = source.read(16*1024*1024+1)
+                request = wav_request(args.path, data, args.rate, args.channels)
+        except (ValueError, TypeError, OSError) as exc:
+            raise SystemExit(str(exc)) from exc
+        result = machine.create(request); _print(result)
+        return 0 if result.get('type') == 'CREATION_RESULT' else 1
 
     if args.command == 'sample-track':
         from .timeline_tracks import sample_track
