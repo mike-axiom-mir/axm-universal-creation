@@ -21,6 +21,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     for name, help_text in [('grammar-capsule','compose a standalone Grammar 102 language capability capsule'),
                             ('state-ripple','compare sparse and full evaluation of an explicit state graph'),
+                            ('construction-program','compose and evaluate declared state operations'),
                             ('render-budget','select a bounded visual projection without changing source state')]:
         gp = sub.add_parser(name, help=help_text)
         gp.add_argument('request', help='JSON request file; at most 1 MiB')
@@ -157,7 +158,7 @@ def main(argv: list[str] | None = None) -> int:
     root = find_machine_root(args.root) if args.root else find_machine_root()
     machine = UniversalCreationMachine(root)
 
-    if args.command in ('grammar-capsule', 'state-ripple', 'render-budget'):
+    if args.command in ('grammar-capsule', 'state-ripple', 'render-budget', 'construction-program'):
         from .grammar_workbench import run_grammar_tool
         try:
             with Path(args.request).open('rb') as source:

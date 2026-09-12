@@ -149,3 +149,9 @@ state-ripple and projection-budget lanes in Grammar Glass
 read-only Grammar 102 capsule and Glass's exact sparse-state/projection dependency
 closure with UC JSON/CLI adapters. See `GRAMMAR_WORKBENCH.md` for actual callable
 scope, provenance and deferred candidates. Existing direction imports stay intact.
+
+The Grammar Glass workbench now also exposes its pinned construction-program
+core through `construction-program`: declared dependency-ordered state modules,
+optional transient execution, and failed-module rollback. See
+GRAMMAR_WORKBENCH.md for the working outpost example and the separately assessed,
+not-yet-integrated durable workspace recovery path.

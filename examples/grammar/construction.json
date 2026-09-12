@@ -1,0 +1,81 @@
+{
+  "program": {
+    "programId": "outpost-wave-start",
+    "modules": [
+      {
+        "id": "supply",
+        "writes": [
+          "supplies"
+        ],
+        "operations": [
+          {
+            "op": "SET",
+            "path": "supplies",
+            "value": 10
+          }
+        ]
+      },
+      {
+        "id": "build",
+        "dependsOn": [
+          "supply"
+        ],
+        "reads": [
+          "supplies"
+        ],
+        "writes": [
+          "supplies",
+          "turrets"
+        ],
+        "operations": [
+          {
+            "op": "INCREMENT",
+            "path": "supplies",
+            "by": -4
+          },
+          {
+            "op": "SET",
+            "path": "turrets",
+            "value": 1
+          }
+        ]
+      },
+      {
+        "id": "start",
+        "dependsOn": [
+          "build"
+        ],
+        "reads": [
+          "turrets"
+        ],
+        "writes": [
+          "phase"
+        ],
+        "effects": [
+          "wave.ready"
+        ],
+        "operations": [
+          {
+            "op": "ASSERT_EQ",
+            "path": "turrets",
+            "value": 1
+          },
+          {
+            "op": "SET",
+            "path": "phase",
+            "value": "defend"
+          },
+          {
+            "op": "EMIT_SIGNAL",
+            "signal": "wave.ready"
+          }
+        ]
+      }
+    ],
+    "requiredEffects": [
+      "wave.ready"
+    ]
+  },
+  "initialState": {},
+  "execute": true
+}

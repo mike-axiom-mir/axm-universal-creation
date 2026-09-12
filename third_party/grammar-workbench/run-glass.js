@@ -12,6 +12,13 @@ try {
   const f=r.createFabric(x.fabric);const base=r.runAll(f,x.initialState);
   if(!base.baseline)result=base;
   else result=r.shadowVerify(f,x.changedState,base.baseline,{wakeBudget:x.wakeBudget??4096});
+ }else if(process.argv[2]==='construction-program'){
+  if(!x.program || typeof x.program!=='object')throw Error('PROGRAM_REQUIRED');
+  if(x.initialState!==undefined && (!x.initialState || typeof x.initialState!=='object' || Array.isArray(x.initialState)))throw Error('INITIAL_STATE_OBJECT_REQUIRED');
+  if(x.execute!==undefined && typeof x.execute!=='boolean')throw Error('EXECUTE_BOOLEAN_REQUIRED');
+  const p=require('./construction-program-core.js');
+  const program=p.createProgram(x.program);
+  result={program,execution:x.execute===true?p.execute(program,x.initialState||{}):null};
  }else throw Error('UNKNOWN_OPERATION');
  process.stdout.write(JSON.stringify(result));
 }catch(e){process.stderr.write(JSON.stringify({error:e.message}));process.exitCode=2;}

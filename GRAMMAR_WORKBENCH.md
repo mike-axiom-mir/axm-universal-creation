@@ -66,3 +66,33 @@ Larger donor features remain separate: workspace edit/recovery hands, polyglot
 minimal reverification, Construction Hand candidate generation, and discovery
 ledger recovery have not been installed by this pass. Their presence upstream
 does not imply Universal Creation can already invoke them.
+
+## Construction programs
+
+`PYTHONPATH=src python -m axm_uc construction-program examples/grammar/construction.json`
+
+Compose up to 12 modules / 128 operations using the pinned Glass construction
+core already included in this workbench. Operations are SET, INCREMENT,
+TRANSITION, ASSERT_EQ and EMIT_SIGNAL. Each module declares reads, writes,
+dependencies and signals. Unordered overlapping writes and dependency cycles
+are rejected. The command returns the normalized program and its digest.
+
+Set `execute: true` to evaluate against an `initialState` JSON object; otherwise
+execution is null. The example supplies an outpost, spends four supplies on a
+turret, checks that it exists, and enters the defend phase. This constructs and
+runs a bounded state program, not HTML or arbitrary source code. It does not
+connect itself to existing games.
+
+Changes are atomic per module: a failing assertion discards that module's staged
+changes and stops later modules. Previously successful modules remain committed
+in the returned state. This is not whole-program rollback or crash recovery.
+The input object is unchanged; output is returned on stdout, with no project write.
+
+### Recovery integration assessment
+
+Grammar 102's `workspace-edit-hand.js` and `workspace-edit-journal.js` include
+real target-file replacement, external journal storage, leases, recovery, and
+parser-process bindings. They are not exposed by this adapter. Integrating them
+requires connecting their exact-target and journal contracts to UC workspace
+isolation and exercising interrupted-write recovery. A transient state rollback
+test is not evidence of durable file recovery.

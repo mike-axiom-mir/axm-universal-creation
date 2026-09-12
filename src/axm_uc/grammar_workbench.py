@@ -1,7 +1,6 @@
 """Pinned offline Grammar 102 / Glass process adapters. No caller code execution."""
 from __future__ import annotations
 import hashlib
-import io
 import json
 from pathlib import Path, PurePosixPath
 import shutil
@@ -11,7 +10,7 @@ import tempfile
 
 
 def run_grammar_tool(root, operation, request):
-    if operation not in ('grammar-capsule','state-ripple','render-budget'):
+    if operation not in ('grammar-capsule','state-ripple','render-budget','construction-program'):
         raise ValueError('unknown grammar tool')
     body=json.dumps(request,allow_nan=False).encode()
     if len(body)>1048576:raise ValueError('request exceeds 1 MiB')

@@ -28,3 +28,27 @@ class GrammarWorkbenchTests(unittest.TestCase):
         for name in ('state-ripple','state-ripple-validation','state-ripple-baseline-admission','render-budget'):
             r=subprocess.run(['node',str(folder/('selftest-'+name+'.js'))],capture_output=True,text=True,timeout=30)
             self.assertEqual(r.returncode,0,r.stdout+r.stderr)
+    def test_construction_execution_and_module_rollback(self):
+        req=json.loads((ROOT/'examples/grammar/construction.json').read_text())
+        original=copy.deepcopy(req)
+        result=run_grammar_tool(ROOT,'construction-program',req)
+        self.assertEqual(result['execution']['finalState'],{'supplies':6,'turrets':1,'phase':'defend'})
+        self.assertEqual(result['execution']['realizedEffects'],['wave.ready'])
+        self.assertEqual(req,original)
+        req['execute']=False
+        self.assertIsNone(run_grammar_tool(ROOT,'construction-program',req)['execution'])
+        req['execute']=True
+        req['program']['modules'][1]['operations'].append({'op':'ASSERT_EQ','path':'supplies','value':999})
+        held=run_grammar_tool(ROOT,'construction-program',req)['execution']
+        self.assertEqual(held['result'],'PROGRAM_HELD_MODULE_FAILURE')
+        self.assertEqual(held['finalState'],{'supplies':10})
+        self.assertEqual(held['realizedEffects'],[])
+    def test_construction_rejects_ambiguous_writes_and_bad_inputs(self):
+        req={'program':{'modules':[{'id':'a','writes':['state'],'operations':[{'op':'SET','path':'state','value':{}}]}, {'id':'b','writes':['state.value'],'operations':[{'op':'SET','path':'state.value','value':2}]}]}}
+        with self.assertRaisesRegex(ValueError,'AMBIGUOUS_WRITE_ORDER'):
+            run_grammar_tool(ROOT,'construction-program',req)
+        req['program']['modules'][1]['dependsOn']=['a']
+        self.assertIsNotNone(run_grammar_tool(ROOT,'construction-program',req)['program'])
+        req['initialState']=[]
+        with self.assertRaisesRegex(ValueError,'INITIAL_STATE_OBJECT_REQUIRED'):
+            run_grammar_tool(ROOT,'construction-program',req)
