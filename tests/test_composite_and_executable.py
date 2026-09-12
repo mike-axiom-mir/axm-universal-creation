@@ -17,10 +17,10 @@ class CompositeAndExecutableTests(unittest.TestCase):
         machine = UniversalCreationMachine(ROOT)
         summary = machine.executable()["summary"]
         self.assertEqual(summary["truth_status"], "EXPLICIT_LIVE_CAPABILITY_BINDINGS")
-        self.assertEqual(summary["implemented_master_records"], 28)
-        self.assertEqual(summary["implemented_master_by_level"], {"component": 19, "organ": 9})
-        self.assertEqual(summary["live_capabilities"], 23)
-        self.assertEqual(summary["resolved_bindings"], 73)
+        self.assertEqual(summary["implemented_master_records"], 41)
+        self.assertEqual(summary["implemented_master_by_level"], {"atom": 1, "component": 19, "organ": 21})
+        self.assertEqual(summary["live_capabilities"], 32)
+        self.assertEqual(summary["resolved_bindings"], 99)
 
         project = machine.executable(master_id="AXM-24-WORKSPACE-COLLABORATION-C-010-project")["master"]
         self.assertEqual(project["status"], "live-backed")
@@ -66,7 +66,7 @@ class CompositeAndExecutableTests(unittest.TestCase):
 
         artifact_builder = machine.executable(master_id="AXM-06-BUILD-PACKAGE-O-004-artifact-builder")["master"]
         self.assertEqual(artifact_builder["status"], "live-backed")
-        self.assertEqual(artifact_builder["implemented_by"], ["AXM-CAP-SPAWN-CREATION-UNIT"])
+        self.assertEqual(artifact_builder["implemented_by"], ["AXM-CAP-PORTABLE-CREATION-BUNDLE", "AXM-CAP-SPAWN-CREATION-UNIT"])
 
         interface_validator = machine.executable(master_id="AXM-00-FOUNDATION-O-012-interface-validator")["master"]
         self.assertEqual(interface_validator["status"], "live-backed")
@@ -78,7 +78,7 @@ class CompositeAndExecutableTests(unittest.TestCase):
 
         adapter = machine.executable(master_id="AXM-19-AI-ML-AGENTS-C-009-adapter")["master"]
         self.assertEqual(adapter["status"], "live-backed")
-        self.assertEqual(adapter["implemented_by"], ["AXM-CAP-SYNTHESIZE-CREATION-GAP"])
+        self.assertEqual(adapter["implemented_by"], ["AXM-CAP-LOCAL-CREATION-PROVIDER", "AXM-CAP-SYNTHESIZE-CREATION-GAP"])
 
         rollback = machine.executable(master_id="AXM-01-PROVENANCE-C-014-rollback-snapshot")["master"]
         self.assertEqual(rollback["status"], "live-backed")
@@ -90,7 +90,7 @@ class CompositeAndExecutableTests(unittest.TestCase):
 
         state_machine = machine.executable(master_id="AXM-03-TIME-STATE-EVENT-C-004-state-machine")["master"]
         self.assertEqual(state_machine["status"], "live-backed")
-        self.assertEqual(state_machine["implemented_by"], ["AXM-CAP-SIMULATE-CREATION"])
+        self.assertEqual(state_machine["implemented_by"], ["AXM-CAP-DETERMINISTIC-STATE-MACHINE", "AXM-CAP-SIMULATE-CREATION"])
 
         lod_group = machine.executable(master_id="AXM-11-3D-SPATIAL-C-028-level-of-detail-group")["master"]
         self.assertEqual(lod_group["status"], "live-backed")
