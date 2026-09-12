@@ -10,6 +10,9 @@ from pathlib import Path
 from typing import Any
 
 from .mixed_project import build_mixed_project
+from .browser_arena_visuals import ARENA_VISUALS_JS
+from .visual_surface import surface_rows
+from .visual_base import png_bytes
 from .procedural_media import generate_media
 from .project import ProjectError
 from .state_machine import STATE_MACHINE_SCHEMA, StateMachineError, compile_state_machine
@@ -260,11 +263,11 @@ INDEX_TEMPLATE = """<!doctype html>
 <body>
   <main class="shell">
     <header class="hud">
-      <div class="brand"><img src="assets/target.png" alt=""><span>__AXM_TITLE__</span></div>
+      <div class="brand"><img src="assets/target.png" alt=""><div><span class="label">RELAY DEFENSE</span><span>__AXM_TITLE__</span></div></div>
       <div><span class="label">Target</span><strong id="targetName">Scanning…</strong><meter id="targetHealth" min="0" max="100" value="100"></meter></div>
-      <div><span class="label">Tower</span><strong id="towerValue">100%</strong></div>
+      <div><span class="label">Core integrity</span><strong id="towerValue">100%</strong></div>
       <div><span class="label">Credits</span><strong id="scoreValue">0</strong></div>
-      <div><span class="label">Ammo</span><strong id="ammoValue">0 / 0</strong></div>
+      <div><span class="label">Magazine</span><strong id="ammoValue">0 / 0</strong></div>
     </header>
     <section class="arena" aria-label="Offline tactical arena">
       <canvas id="game" width="__AXM_WIDTH__" height="__AXM_HEIGHT__" tabindex="0" aria-label="Playable arena canvas. Move with WASD or arrows and fire by clicking, tapping, or pressing Space. Q selects the next target.">Canvas is unavailable.</canvas>
@@ -291,7 +294,7 @@ INDEX_TEMPLATE = """<!doctype html>
 """
 
 
-STYLE_TEMPLATE = """:root{color-scheme:dark;font-family:Inter,ui-sans-serif,system-ui,sans-serif;--background:__AXM_BACKGROUND__;--panel:__AXM_PANEL__;--accent:__AXM_ACCENT__;--text:__AXM_TEXT__;background:var(--background);color:var(--text)}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% 0,color-mix(in srgb,var(--accent) 18%,var(--background)) 0,var(--background) 52%);padding:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left))}.shell{width:min(1180px,100%);margin:auto;display:grid;gap:10px}.hud{display:grid;grid-template-columns:minmax(180px,1.5fr) repeat(4,minmax(90px,1fr));gap:8px}.hud>div,.controls,.touch{background:color-mix(in srgb,var(--panel) 92%,transparent);border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);border-radius:12px;padding:10px 12px}.brand{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:.06em;text-transform:uppercase}.brand img{width:28px;height:28px}.label{display:block;color:color-mix(in srgb,var(--accent) 58%,var(--text));font-size:.68rem;letter-spacing:.14em;text-transform:uppercase}.hud strong{font-variant-numeric:tabular-nums}.hud meter{display:block;width:100%;height:6px}.arena{position:relative;border:1px solid color-mix(in srgb,var(--accent) 42%,transparent);border-radius:14px;overflow:hidden;box-shadow:0 24px 80px #000;background:var(--panel)}canvas{display:block;width:100%;height:auto;touch-action:none}.status{position:absolute;left:50%;top:18px;transform:translateX(-50%);padding:8px 14px;border:1px solid color-mix(in srgb,var(--text) 24%,transparent);border-radius:999px;background:color-mix(in srgb,var(--panel) 88%,transparent);font-size:.82rem;pointer-events:none}.controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.controls button,.touch button{border:1px solid color-mix(in srgb,var(--text) 28%,transparent);border-radius:10px;background:color-mix(in srgb,var(--panel) 72%,var(--accent));color:var(--text);padding:10px 14px;font:inherit;font-weight:800;cursor:pointer}.controls button:disabled{opacity:.4;cursor:default}.controls button:focus-visible,.touch button:focus-visible,canvas:focus-visible{outline:3px solid var(--accent);outline-offset:-3px}#fireButton{background:var(--accent);color:var(--background)}.controls button:hover,.touch button:hover{border-color:var(--accent)}.hint{color:color-mix(in srgb,var(--accent) 52%,var(--text));font-size:.8rem}.touch{display:none;grid-template-columns:repeat(4,1fr);gap:8px}.touch button{font-size:1.25rem;padding:14px}@media(max-width:760px){.hud{grid-template-columns:1fr 1fr}.brand{grid-column:1/-1}.touch{display:grid}.hint{width:100%}}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}\n"""
+STYLE_TEMPLATE = """:root{color-scheme:dark;font-family:Inter,ui-sans-serif,system-ui,sans-serif;--background:__AXM_BACKGROUND__;--panel:__AXM_PANEL__;--accent:__AXM_ACCENT__;--text:__AXM_TEXT__;background:#080e15;color:var(--text)}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% 0,#1b323a 0,#090f17 65%);padding:24px}.shell{width:min(1280px,100%);margin:auto;display:grid;gap:0}.hud{display:grid;grid-template-columns:minmax(230px,1.8fr) repeat(4,minmax(90px,1fr));gap:0;padding:18px 8px 24px;align-items:center}.hud>div{padding:0 22px;border-left:1px solid #40535b55}.hud>.brand{border:0;padding-left:0}.brand{display:flex;align-items:center;gap:14px;font-size:27px;font-weight:650;letter-spacing:-.04em}.brand img{width:36px;height:36px;filter:grayscale(1) brightness(2)}.label{display:block;color:#78939f;font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;margin-bottom:6px}.brand .label{color:#b6aa83;font-size:9px;letter-spacing:.2em}.hud strong{font-variant-numeric:tabular-nums;font-weight:500;font-size:17px}.hud meter{display:block;width:90%;max-width:130px;height:5px;margin-top:5px;accent-color:var(--accent)}.arena{position:relative;border:1px solid #52697766;border-radius:4px;overflow:hidden;box-shadow:0 30px 90px #0007;background:#0b1a24}canvas{display:block;width:100%;height:auto;aspect-ratio:__AXM_RATIO__;touch-action:none}.status{position:absolute;left:50%;top:14px;transform:translateX(-50%);color:#98b3bc;background:#0b1b25bb;padding:7px 16px;border:1px solid #9ababd22;border-radius:3px;font-size:11px;pointer-events:none;white-space:nowrap}.controls{display:flex;align-items:center;gap:9px;flex-wrap:wrap;padding:20px 0}.controls button,.touch button{border:1px solid #69818c55;border-radius:4px;background:#172832;color:#d2e2e5;padding:12px 17px;font:inherit;font-size:12px;font-weight:600;cursor:pointer}.controls button:hover,.touch button:hover{background:#29404c;border-color:#91b6bb}.controls button:disabled{opacity:.4;cursor:default}.controls button:focus-visible,.touch button:focus-visible,canvas:focus-visible{outline:2px solid var(--accent);outline-offset:-3px}#sessionButton{background:#d3bc87;border-color:#d3bc87;color:#18242a;min-width:95px}#fireButton{color:#a1e8d2;border-color:#5ea18d88}.hint{color:#78919e;font-size:11px;margin-left:auto}.touch{display:none;grid-template-columns:repeat(4,1fr);gap:8px}.touch button{font-size:20px;padding:14px;touch-action:none}@media(max-width:850px){body{padding:12px}.hud{grid-template-columns:repeat(4,1fr);padding:10px 0 15px;row-gap:22px}.hud>.brand{grid-column:1/-1}.hud>div{padding:0 8px}.hud strong{font-size:14px}.brand{font-size:24px}.label{font-size:8px}.touch{display:grid}.hint{width:100%;margin:6px 0}.controls{padding:12px 0;gap:6px}.controls button{padding:12px 10px}.status{top:8px;font-size:9px;padding:5px 8px}}\n"""
 
 
 GAME_JS_TEMPLATE = r'''"use strict";
@@ -314,6 +317,9 @@ const scoreValue = document.querySelector("#scoreValue");
 const ammoValue = document.querySelector("#ammoValue");
 const fireSound = new Audio("assets/fire.wav");
 const keys = new Set();
+const renderScale = Math.min(window.devicePixelRatio || 1, 2);
+canvas.width = Math.round(SPEC.viewport.width * renderScale);
+canvas.height = Math.round(SPEC.viewport.height * renderScale);
 let state;
 let lastFrame = 0;
 let pointerAim = null;
@@ -333,6 +339,7 @@ function transition(event) {
 function freshState() {
   return {
     phase: SESSION.initial_state,
+    time: 0, fx: [], fxSerial: 0,
     player: {...SPEC.player, health: SPEC.player.max_health},
     tower: {...SPEC.tower, health: SPEC.tower.max_health},
     enemies: SPEC.enemies.map(enemy => ({...enemy, maxHealth: enemy.health, alive: true, contactCooldown: 0})),
@@ -401,6 +408,7 @@ function fireAt(x, y) {
   const dy = y - state.player.y;
   const length = Math.hypot(dx, dy) || 1;
   state.bullets.push({x:state.player.x,y:state.player.y,vx:dx/length*SPEC.rules.projectile_speed,vy:dy/length*SPEC.rules.projectile_speed,r:4});
+  burst(state.player.x+dx/length*state.player.size*1.8,state.player.y+dy/length*state.player.size*1.8,"#fff0b8",5);
   state.ammo -= 1;
   state.fireCooldown = SPEC.rules.fire_cooldown_ms / 1000;
   try { const cue = fireSound.cloneNode(); cue.volume = 0.25; const playback = cue.play(); if (playback) playback.catch(() => {}); } catch (_) { /* audio permission is host-controlled */ }
@@ -410,11 +418,14 @@ function fireAt(x, y) {
 
 function update(dt) {
   if (state.phase !== "playing") return;
+  state.time += dt;
+  for(const f of state.fx){f.x+=f.vx*dt;f.y+=f.vy*dt;f.z+=f.vz*dt;f.vz-=180*dt;f.life-=dt;}
+  state.fx=state.fx.filter(f=>f.life>0);
   let dx = (keys.has("ArrowRight") || keys.has("d") ? 1 : 0) - (keys.has("ArrowLeft") || keys.has("a") ? 1 : 0);
   let dy = (keys.has("ArrowDown") || keys.has("s") ? 1 : 0) - (keys.has("ArrowUp") || keys.has("w") ? 1 : 0);
   const movement = Math.hypot(dx, dy) || 1;
-  state.player.x = Math.max(state.player.size, Math.min(canvas.width-state.player.size, state.player.x + dx/movement*state.player.speed*dt));
-  state.player.y = Math.max(state.player.size, Math.min(canvas.height-state.player.size, state.player.y + dy/movement*state.player.speed*dt));
+  state.player.x = Math.max(state.player.size, Math.min(SPEC.viewport.width-state.player.size, state.player.x + dx/movement*state.player.speed*dt));
+  state.player.y = Math.max(state.player.size, Math.min(SPEC.viewport.height-state.player.size, state.player.y + dy/movement*state.player.speed*dt));
   state.fireCooldown = Math.max(0, state.fireCooldown - dt);
   if (state.reloadRemaining > 0) {
     state.reloadRemaining -= dt;
@@ -443,53 +454,19 @@ function update(dt) {
     for (const enemy of state.enemies) {
       if (!enemy.alive || bullet.hit || Math.hypot(bullet.x-enemy.x,bullet.y-enemy.y) > enemy.size/2+bullet.r) continue;
       bullet.hit = true;
+      burst(enemy.x,enemy.y,enemy.color,10);
       enemy.health -= SPEC.rules.projectile_damage;
-      if (enemy.health <= 0) { enemy.alive = false; state.score += enemy.reward; }
+      if (enemy.health <= 0) { enemy.alive = false; state.score += enemy.reward; burst(enemy.x,enemy.y,"#ffcd83",24); }
       break;
     }
   }
-  state.bullets = state.bullets.filter(b => !b.hit && b.x>=0 && b.x<=canvas.width && b.y>=0 && b.y<=canvas.height);
+  state.bullets = state.bullets.filter(b => !b.hit && b.x>=0 && b.x<=SPEC.viewport.width && b.y>=0 && b.y<=SPEC.viewport.height);
   if (state.tower.health <= 0) transition("lose");
   else if (!state.enemies.some(enemy => enemy.alive)) transition("win");
   updateHud();
 }
 
-function drawBlock(x,y,size,color) {
-  ctx.fillStyle = color; ctx.fillRect(x-size/2,y-size/2,size,size);
-  ctx.fillStyle = "rgba(255,255,255,.22)"; ctx.fillRect(x-size*.28,y-size*.28,size*.2,size*.2);
-}
-
-function draw() {
-  const {width,height} = canvas;
-  ctx.fillStyle = SPEC.theme.background; ctx.fillRect(0,0,width,height);
-  ctx.strokeStyle = "rgba(59,232,218,.08)"; ctx.lineWidth = 1;
-  for (let x=0;x<width;x+=48){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,height);ctx.stroke();}
-  for (let y=0;y<height;y+=48){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(width,y);ctx.stroke();}
-  ctx.fillStyle = SPEC.theme.ground;
-  ctx.beginPath(); ctx.moveTo(width*.12,height); ctx.lineTo(width*.36,height*.38); ctx.lineTo(width*.66,height*.38); ctx.lineTo(width*.9,height); ctx.closePath(); ctx.fill();
-  const glow=ctx.createRadialGradient(state.tower.x+state.tower.width/2,state.tower.y+state.tower.height/2,10,state.tower.x+state.tower.width/2,state.tower.y+state.tower.height/2,180);
-  glow.addColorStop(0,SPEC.theme.accent.slice(0,7)+"24");glow.addColorStop(1,SPEC.theme.accent.slice(0,7)+"00");
-  ctx.fillStyle=glow;ctx.fillRect(0,0,width,height);
-  ctx.fillStyle = state.tower.color; ctx.fillRect(state.tower.x,state.tower.y,state.tower.width,state.tower.height);
-  ctx.fillStyle = SPEC.theme.accent; ctx.fillRect(state.tower.x+state.tower.width*.2,state.tower.y-18,state.tower.width*.6,18);
-  ctx.fillStyle="rgba(0,0,0,.4)";ctx.fillRect(state.tower.x+12,state.tower.y+12,state.tower.width-24,state.tower.height-24);
-  ctx.strokeStyle=SPEC.theme.accent;ctx.strokeRect(state.tower.x+5,state.tower.y+5,state.tower.width-10,state.tower.height-10);
-  ctx.fillStyle=SPEC.theme.text;ctx.textAlign="center";ctx.font="700 12px system-ui";ctx.fillText("COMMAND",state.tower.x+state.tower.width/2,state.tower.y+state.tower.height/2);
-  ctx.fillStyle=SPEC.theme.accent;ctx.fillRect(state.tower.x,state.tower.y+state.tower.height+10,state.tower.width*state.tower.health/state.tower.max_health,5);
-  const target = selectedEnemy();
-  const aim = pointerHeld && pointerAim ? pointerAim : target;
-  if (aim) {ctx.strokeStyle=SPEC.theme.accent.slice(0,7)+"55";ctx.setLineDash([5,8]);ctx.beginPath();ctx.moveTo(state.player.x,state.player.y);ctx.lineTo(aim.x,aim.y);ctx.stroke();ctx.setLineDash([]);}
-  ctx.fillStyle=SPEC.theme.text;ctx.textAlign="left";ctx.font="700 13px system-ui";ctx.fillText("HOSTILES  " + state.enemies.filter(e=>e.alive).length + " / " + state.enemies.length,20,height-20);
-  for (const enemy of state.enemies) {
-    if (!enemy.alive) continue;
-    drawBlock(enemy.x,enemy.y,enemy.size,enemy.color);
-    ctx.fillStyle = SPEC.theme.danger; ctx.fillRect(enemy.x-enemy.size/2,enemy.y-enemy.size*.78,enemy.size*Math.max(0,enemy.health)/enemy.maxHealth,4);
-    if (target && enemy.id === target.id) { ctx.strokeStyle=SPEC.theme.accent;ctx.lineWidth=2;ctx.strokeRect(enemy.x-enemy.size*.72,enemy.y-enemy.size*.72,enemy.size*1.44,enemy.size*1.44); }
-  }
-  ctx.save(); ctx.translate(state.player.x,state.player.y); if(aim)ctx.rotate(Math.atan2(aim.y-state.player.y,aim.x-state.player.x)+Math.PI/2); ctx.fillStyle=state.player.color; ctx.beginPath(); ctx.moveTo(0,-state.player.size);ctx.lineTo(state.player.size*.75,state.player.size);ctx.lineTo(-state.player.size*.75,state.player.size);ctx.closePath();ctx.fill();ctx.restore();
-  ctx.fillStyle = SPEC.theme.accent; for(const bullet of state.bullets){ctx.beginPath();ctx.arc(bullet.x,bullet.y,bullet.r,0,Math.PI*2);ctx.fill();}
-  if (state.phase === "won" || state.phase === "lost") { ctx.fillStyle="rgba(0,0,0,.6)";ctx.fillRect(0,0,width,height);ctx.fillStyle=SPEC.theme.text;ctx.textAlign="center";ctx.font="900 48px system-ui";ctx.fillText(state.phase === "won" ? "ARENA SECURED" : "TOWER LOST",width/2,height/2); }
-}
+__AXM_VISUALS__
 
 function frame(timestamp) {
   const dt = lastFrame ? Math.min((timestamp-lastFrame)/1000,0.05) : 0;
@@ -499,7 +476,7 @@ function frame(timestamp) {
 
 function pointerPosition(event) {
   const rect = canvas.getBoundingClientRect();
-  return {x:(event.clientX-rect.left)*canvas.width/rect.width,y:(event.clientY-rect.top)*canvas.height/rect.height};
+  return unproject((event.clientX-rect.left)*SPEC.viewport.width/rect.width,(event.clientY-rect.top)*SPEC.viewport.height/rect.height+21);
 }
 canvas.addEventListener("pointerdown", event => {
   if (event.button !== 0) return;
@@ -573,13 +550,13 @@ def _render_project(spec: dict[str, Any], compiled: dict[str, Any]) -> tuple[dic
         .replace("__AXM_HEIGHT__", str(spec["viewport"]["height"]))
     )
     game_js = (
-        GAME_JS_TEMPLATE.replace("__AXM_SPEC__", json.dumps(spec, ensure_ascii=True, sort_keys=True, separators=(",", ":")))
+        GAME_JS_TEMPLATE.replace("__AXM_VISUALS__", ARENA_VISUALS_JS).replace("__AXM_SPEC__", json.dumps(spec, ensure_ascii=True, sort_keys=True, separators=(",", ":")))
         .replace("__AXM_SESSION__", json.dumps(session, ensure_ascii=True, sort_keys=True, separators=(",", ":")))
         .replace("__AXM_SPEC_DIGEST__", spec_digest)
         .replace("__AXM_SESSION_DIGEST__", session_digest)
     )
     style = (
-        STYLE_TEMPLATE.replace("__AXM_BACKGROUND__", spec["theme"]["background"])
+        STYLE_TEMPLATE.replace("__AXM_RATIO__", str(spec["viewport"]["width"])+" / "+str(spec["viewport"]["height"])).replace("__AXM_BACKGROUND__", spec["theme"]["background"])
         .replace("__AXM_PANEL__", spec["theme"]["panel"])
         .replace("__AXM_ACCENT__", spec["theme"]["accent"])
         .replace("__AXM_TEXT__", spec["theme"]["text"])
@@ -626,7 +603,9 @@ def _render_project(spec: dict[str, Any], compiled: dict[str, Any]) -> tuple[dic
         "state-machine.json": session_json,
         "style.css": style,
     }
+    deck = png_bytes(96, 96, surface_rows("spaceship-hull", 96, 96, seed=int(spec_digest[:8], 16), colors=["#13252e", "#536c76", "#8da0a8"]), "RGB")
     binary_files = {
+        "assets/deck.png": {"encoding": "base64", "content": base64.b64encode(deck).decode("ascii"), "media_type": "image/png", "sha256": hashlib.sha256(deck).hexdigest()},
         "assets/target.png": {
             "encoding": "base64",
             "content": base64.b64encode(icon["body"]).decode("ascii"),
@@ -663,6 +642,7 @@ def build_browser_game(
         {"type": "contains", "path": "game.js", "text": spec_digest},
         {"type": "contains", "path": "game.js", "text": compiled["machine_digest"]},
         {"type": "media-signature", "path": "assets/target.png", "format": "png"},
+        {"type": "media-signature", "path": "assets/deck.png", "format": "png"},
         {"type": "media-signature", "path": "assets/fire.wav", "format": "wav"},
     ]
     try:

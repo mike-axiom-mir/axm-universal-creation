@@ -10,18 +10,30 @@ function node() {
 }
 const ids = ['game','status','sessionButton','reloadButton','resetButton','fireButton','targetButton','targetName','targetHealth','towerValue','scoreValue','ammoValue'];
 const nodes = Object.fromEntries(ids.map(id=>[id,node()]));
-const context = new Proxy({}, {get:(o,k)=>o[k]??(k==='createRadialGradient'?()=>({addColorStop(){}}):()=>{}),set:(o,k,v)=>(o[k]=v,true)});
+const context = new Proxy({}, {get:(o,k)=>o[k]??(['createRadialGradient','createLinearGradient'].includes(k)?()=>({addColorStop(){}}):()=>{}),set:(o,k,v)=>(o[k]=v,true)});
 nodes.game.width=960;nodes.game.height=540;nodes.game.getContext=()=>context;
 const touch = ['ArrowUp','ArrowLeft','ArrowDown','ArrowRight'].map(key=>Object.assign(node(),{dataset:{key}}));
 const doc = Object.assign(node(),{hidden:false,querySelector:s=>nodes[s.slice(1)],querySelectorAll:()=>touch});
 const win = node();
+win.devicePixelRatio=2;
 let statusTool;
 doc.modelContext={registerTool(tool){statusTool=tool;}};
 class Audio {cloneNode(){return new Audio();}play(){return Promise.reject(new Error('Audio denied in test'));}}
-const sandbox=vm.createContext({document:doc,window:win,Audio,AbortController,requestAnimationFrame(){},console:{info(){}}});
+class Image {constructor(){this.complete=false;this.naturalWidth=0;}}
+const sandbox=vm.createContext({document:doc,window:win,Audio,Image,AbortController,requestAnimationFrame(){},console:{info(){}}});
 vm.runInContext(fs.readFileSync(process.argv[2],'utf8'),sandbox);
 const read=code=>vm.runInContext(code,sandbox);
 const key=(k,extra={})=>win.emit('keydown',{target:nodes.game,key:k,repeat:false,...extra});
+// High-DPI backing pixels must not change world limits or pointer picking.
+assert.equal(nodes.game.width,1920);assert.equal(nodes.game.height,1080);
+for(const [x,y] of [[0,0],[480,270],[960,540],[123,419]]){
+  const result=read(`unproject(project(${x},${y}).x,project(${x},${y}).y)`);
+  assert.ok(Math.abs(result.x-x)<1e-8 && Math.abs(result.y-y)<1e-8);
+  const aim=read(`pointerPosition({clientX:project(${x},${y},21).x,clientY:project(${x},${y},21).y})`);
+  assert.ok(Math.abs(aim.x-x)<1e-8 && Math.abs(aim.y-y)<1e-8);
+}
+read('burst(10,20,"#ffffff",250)');assert.equal(read('state.fx.length'),180);
+read('reset()');assert.equal(read('state.fx.length'),0);
 assert.equal(read('state.phase'),'ready');
 assert.equal(statusTool.name,'read_arena_status');
 assert.equal(statusTool.annotations.readOnlyHint,true);

@@ -71,6 +71,7 @@ class BrowserGameTests(unittest.TestCase):
                     "README.md",
                     "assets/fire.wav",
                     "assets/target.png",
+                    "assets/deck.png",
                     "game.js",
                     "game.json",
                     "index.html",
@@ -104,7 +105,7 @@ class BrowserGameTests(unittest.TestCase):
             verification = trial["verification"]["result"]
             digest_check = next(row for row in verification["checks"] if row["type"] == "expected-file-digests")
             self.assertTrue(digest_check["passed"])
-            self.assertEqual(len(digest_check["files"]), 8)
+            self.assertEqual(len(digest_check["files"]), 9)
             self.assertIn("browser", " ".join(trial["limitations"]))
 
     def test_invalid_specification_holds_before_replacing_an_existing_creation(self):
