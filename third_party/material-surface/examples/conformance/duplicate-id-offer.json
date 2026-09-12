@@ -1,0 +1,11 @@
+{
+  "format": "axm-material-offer",
+  "version": "0.9.0",
+  "id": "fixture-duplicate-entry",
+  "producer": { "system": "AXM conformance fixture" },
+  "entries": [
+    { "id": "dup", "name": "A", "channel": "base-color", "mime": "image/png", "dataUrl": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Y9ZspAAAAAASUVORK5CYII=" },
+    { "id": "dup", "name": "B", "channel": "roughness", "mime": "image/png", "dataUrl": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Y9ZspAAAAAASUVORK5CYII=" }
+  ],
+  "families": [{ "id": "family", "name": "Duplicate entry fixture", "entryIds": ["dup"] }]
+}

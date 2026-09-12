@@ -1,0 +1,51 @@
+{
+  "format": "axm-premade-visual-asset-pack",
+  "version": "0.11.0",
+  "name": "AXM Premade Alpha + Globe Pack 001",
+  "createdAt": "2026-09-12T11:20:00Z",
+  "binaryPack": {
+    "archive": "axm-premade-alpha-globes-v0.11.zip",
+    "sha256": "99cff0f3e098406145acba4b07a6539f8dcaae0c9aa1cd3adce461110421f905",
+    "sourcePngCount": 24,
+    "runtimeWebpCount": 24,
+    "sourceDimensions": [1254, 1254],
+    "runtimeDimensions": [512, 512],
+    "sourceFormat": "image/png",
+    "runtimeFormat": "image/webp",
+    "alphaVerified": true,
+    "note": "The binary archive is version-locked separately; generated PNG identity is preserved and runtime derivatives retain alpha."
+  },
+  "assets": [
+    {"id":"energy-globes","kind":"globe-atlas","category":"globes/energy","file":"futuristic_energy_spheres_asset_grid.webp","grid":{"columns":5,"rows":4},"tags":["energy","holographic","emissive","sci-fi"]},
+    {"id":"color-globes","kind":"globe-atlas","category":"globes/color","file":"glossy_3d_sphere_color_palette_grid.webp","grid":{"columns":12,"rows":8},"tags":["color","palette","swatches"]},
+    {"id":"material-globes","kind":"globe-atlas","category":"globes/material","file":"photorealistic_material_sphere_grid.webp","grid":{"columns":5,"rows":5},"tags":["material","surface","preview"]},
+    {"id":"weathered-globes","kind":"globe-atlas","category":"globes/weathered","file":"industrial_texture_sphere_grid.webp","grid":{"columns":5,"rows":5},"tags":["weathered","industrial","surface"]},
+    {"id":"fingerprints-smudges","kind":"overlay-atlas","category":"overlays/smudges","file":"grayscale_fingerprint_and_smudge_texture_sheet.webp","tags":["fingerprints","smudges","glass","alpha"]},
+    {"id":"metal-wear","kind":"overlay-atlas","category":"overlays/wear","file":"grunge_metal_damage_overlay_pack.webp","tags":["scratches","wear","chips","metal","alpha"]},
+    {"id":"hazard-decals","kind":"decal-atlas","category":"decals/industrial","file":"industrial_hazard_decal_sheet.webp","tags":["hazard","warning","industrial","alpha"]},
+    {"id":"panel-details","kind":"decal-atlas","category":"decals/panel-detail","file":"industrial_sci_fi_metal_asset_pack.webp","tags":["rivets","seams","brackets","metal","alpha"]},
+    {"id":"holographic-symbols","kind":"fx-atlas","category":"fx/holographic","file":"neon_cyan_holographic_hud_asset_sheet.webp","tags":["hologram","hud","emissive","alpha"]},
+    {"id":"hud-utility","kind":"fx-atlas","category":"fx/hud","file":"neon_cyan_sci_fi_hud_asset_sheet.webp","tags":["hud","sci-fi","emissive","alpha"]},
+    {"id":"light-effects","kind":"fx-atlas","category":"fx/light","file":"neon_cyan_sci_fi_hud_fx_sprite_sheet.webp","tags":["light","streak","flare","scan","alpha"]},
+    {"id":"holographic-grids","kind":"fx-atlas","category":"fx/holographic-grids","file":"neon_holographic_hud_asset_sheet.webp","tags":["grid","shield","projection","alpha"]},
+    {"id":"hud-panels","kind":"fx-atlas","category":"fx/hud","file":"neon_sci_fi_hud_asset_sheet.webp","tags":["hud","panel","emissive","alpha"]},
+    {"id":"radial-holograms","kind":"fx-atlas","category":"fx/holographic-radial","file":"neon_sci_fi_hud_overlay_sprite_sheet.webp","tags":["rings","portal","reticle","alpha"]},
+    {"id":"moss-lichen","kind":"overlay-atlas","category":"overlays/organic","file":"photorealistic_moss_and_lichen_overlay_sheet.webp","tags":["moss","lichen","algae","damp","alpha"]},
+    {"id":"mud-dirt","kind":"overlay-atlas","category":"overlays/dirt","file":"photorealistic_mud_and_dirt_texture_pack.webp","tags":["mud","dirt","dust","grit","alpha"]},
+    {"id":"oil-grease","kind":"overlay-atlas","category":"overlays/fluid-stains","file":"photorealistic_oil_and_grease_stain_texture_pack.webp","tags":["oil","grease","fuel","stain","alpha"]},
+    {"id":"water-droplets","kind":"overlay-atlas","category":"overlays/water","file":"photorealistic_water_droplet_overlay_sheet.webp","tags":["water","droplets","condensation","wet","alpha"]},
+    {"id":"cracked-glass","kind":"overlay-atlas","category":"overlays/fracture","file":"realistic_cracked_glass_overlay_sheet.webp","tags":["glass","crack","fracture","impact","alpha"]},
+    {"id":"rust-corrosion","kind":"overlay-atlas","category":"overlays/corrosion","file":"realistic_rust_texture_asset_sheet.webp","tags":["rust","corrosion","oxidation","alpha"]},
+    {"id":"scorch-soot","kind":"overlay-atlas","category":"overlays/burn","file":"scorch_and_soot_texture_overlay_collection.webp","tags":["scorch","soot","burn","heat","alpha"]},
+    {"id":"grunge-dust","kind":"overlay-atlas","category":"overlays/grunge","file":"transparent_grunge_overlay_asset_sheet.webp","tags":["grunge","dust","smear","soot","alpha"]},
+    {"id":"paint-damage","kind":"overlay-atlas","category":"overlays/paint","file":"weathered_red_paint_texture_atlas.webp","tags":["paint","chips","peel","cracks","alpha"]},
+    {"id":"frost-ice","kind":"overlay-atlas","category":"overlays/frost","file":"winter_frost_and_ice_overlay_pack.webp","tags":["frost","ice","condensation","cold","alpha"]}
+  ],
+  "summary": {"atlases":24,"globeAtlases":4,"declaredGlobeCells":166,"alphaIsRequired":true},
+  "truthBoundary": {
+    "source": "Model-generated visual ingredients; not externally sourced scans.",
+    "alpha": "Transparency/alpha is part of the asset contract and was inspected before packing.",
+    "physical": "Appearance does not prove PBR correctness, measured BRDF data, physical scale, or engine parity.",
+    "authority": "Assets are reusable ingredients, never automatic canon or promotion authority."
+  }
+}

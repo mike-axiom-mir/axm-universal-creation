@@ -1,0 +1,10 @@
+{
+  "format": "axm-material-offer",
+  "version": "0.9.0",
+  "id": "fixture-dangling-family",
+  "producer": { "system": "AXM conformance fixture" },
+  "entries": [
+    { "id": "base", "name": "Base", "channel": "base-color", "mime": "image/png", "dataUrl": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Y9ZspAAAAAASUVORK5CYII=" }
+  ],
+  "families": [{ "id": "family", "name": "Dangling family fixture", "entryIds": ["base", "missing"] }]
+}

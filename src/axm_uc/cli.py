@@ -19,6 +19,12 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--root", help="machine root; normally auto-detected")
     sub = parser.add_subparsers(dest="command", required=True)
 
+    timeline = sub.add_parser('sample-track', help='sample a local integer animation track at a frame')
+    timeline.add_argument('track_file')
+    timeline.add_argument('--frame',type=int,required=True)
+    timeline.add_argument('--start',type=int,default=0)
+    timeline.add_argument('--end',type=int,default=60)
+
     fabric = sub.add_parser('fabric', help='generate standalone woven fabric material maps')
     fabric.add_argument('path')
     fabric.add_argument('--size',type=int,default=256)
@@ -119,6 +125,16 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     root = find_machine_root(args.root) if args.root else find_machine_root()
     machine = UniversalCreationMachine(root)
+
+    if args.command == 'sample-track':
+        from .timeline_tracks import sample_track
+        try:
+            track=json.loads(Path(args.track_file).read_text())
+            value=sample_track(track,args.frame,args.start,args.end)
+        except (ValueError,OSError) as exc:
+            raise SystemExit(str(exc)) from exc
+        _print({'frame':args.frame,'value':value,'evidence':'integer track sampled; animation rendering not observed'})
+        return 0
 
     if args.command == 'fabric':
         from .fabric_material import fabric_request

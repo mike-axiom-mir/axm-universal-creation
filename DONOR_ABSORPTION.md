@@ -59,3 +59,45 @@ parameters and no automatic overwrite. Continuity: source license/digests,
 compatible machine writer and donor vectors retained. Wisdom before speed:
 absorb one usable operation with its small dependency closure; keep the remaining
 candidates visible rather than copying whole machines without integration.
+
+## Second absorption pass
+
+The remaining focused candidates now have local callable implementations:
+
+- FrameState's original integer timeline sampler is retained byte-for-byte in
+  `donor_timeline.py`. `timeline_tracks.sample_track` adds strict validation for
+  ordered keyframes, scalar bounds and known easing names. CLI:
+  `PYTHONPATH=src python -m axm_uc sample-track TRACK.json --frame 15`.
+  Linear, smoothstep and hold sampling are executable; no new animation renderer
+  is implied. Existing Asset Atom time-based animation schemas are unchanged.
+- Machine Voice's core and criterion-outcome producer are retained byte-for-byte
+  in `axm_uc.donor_voice`. Call `produce_criterion_outcome` with explicit criterion
+  references and observations. Complete positive evidence yields a success
+  candidate; one evidenced failed required criterion yields failure; partial
+  positive evidence yields no candidate. It does not run tests or authenticate
+  supplied evidence. The general UC result format is not silently replaced.
+- Material Surface Fabric's pinned composer, metadata pack and conformance
+  dependency closure are local under `third_party/material-surface`. Run:
+  `node third_party/material-surface/tools/premade-compose.js seed demo`
+  to produce a deterministic layer recipe and plan. Run:
+  `node third_party/material-surface/tools/material-conformance.js check-material-offer OFFER.json`
+  to verify portable offers. These tools need Node but no npm dependencies,
+  network or donor checkout. Conformance validates portable bytes and declarations,
+  not image quality. The premade binary image pack is NOT included; planning is
+  executable but rendering those premades remains unavailable without those bytes.
+
+`third_party/absorption-v2.json` records exact donor commits, source paths,
+local destinations and original SHA-256 values. Copied source is unchanged;
+validation/CLI adapters and test integration are separate UC code. FrameState's
+Apache-2.0 license is included. No LICENSE file was present in the inspected
+Material Surface or Machine Voice snapshots; these owned-repo subsets were
+brought across under Mike's explicit reuse instruction, with attribution retained
+and no invented open-source license grant.
+
+The donor composer and conformance suites pass locally, including their actual
+Node CLI checks. UC tests exercise timeline boundaries/invalid inputs and
+success/failure/incomplete criterion behavior. These are callable local tools,
+not automatically invoked by every creation and not automatic adoption authority.
+The survey remains four pinned repositories, not every potentially useful AXM
+operation. Larger rendering, full communication routing and character-generation
+systems still need their own dependency and integration assessment.
