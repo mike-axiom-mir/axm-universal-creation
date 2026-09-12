@@ -2,10 +2,13 @@ from __future__ import annotations
 
 import copy
 import unittest
+from pathlib import Path
 
+from axm_uc.capabilities import CapabilityStore
 from axm_uc.material_donor import MaterialDonorError, adapt_material_donor_pack
 
 
+ROOT = Path(__file__).resolve().parents[1]
 BASE_DATA = "data:image/png;base64,iVBORw0KGgo="
 ROUGH_DATA = "data:image/png;base64,iVBORw0KGgp="
 
@@ -86,6 +89,17 @@ class MaterialDonorAdapterTests(unittest.TestCase):
         self.assertEqual(sorted(material["uses"]), sorted(material["payload"]["texture_bindings"].values()))
         self.assertTrue(all(atom["payload"]["resource"]["uri"].startswith("donor://") for atom in package["atoms"] if atom["kind"] == "texture"))
         self.assertTrue(all(atom["payload"]["resource"]["digest"].startswith("sha256:") for atom in package["atoms"] if atom["kind"] == "texture"))
+
+    def test_live_capability_route_invokes_same_adapter(self) -> None:
+        store = CapabilityStore(ROOT)
+        manifest = store.route("import-material-donor-pack")
+        self.assertIsNotNone(manifest)
+        self.assertEqual(manifest["id"], "AXM-CAP-IMPORT-MATERIAL-DONOR")
+        result = store.invoke(manifest, {"donor_pack": donor_pack(), "strict": True})
+        self.assertEqual(result["truth_status"], "READY_EXACT_MATERIAL_DONOR_ADAPTER")
+        self.assertEqual(result["receipt"]["accepted_entries"], 2)
+        self.assertEqual(result["receipt"]["accepted_families"], 1)
+        self.assertEqual(result["asset_package"]["schema"], "axm.asset-atom-package/v0.1")
 
     def test_unassigned_entry_is_visible_hold_not_silent_guess(self) -> None:
         pack = donor_pack()
