@@ -1,0 +1,88 @@
+name: Workshop specialist render evidence
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'tools/blender/**'
+      - 'src/axm_uc/**'
+      - 'tests/test_workshop_*.py'
+      - 'RTS_WORKSHOP_SPECIALIST_PASS_001.md'
+      - '.github/workflows/workshop-specialist-render.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  render-workshop-evidence:
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.head_ref, 'codex/workshop-specialist-pass-')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Check out exact candidate
+        uses: actions/checkout@v4
+
+      - name: Use Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Provision explicit offline Blender Python runtime
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install 'numpy==1.26.4' 'Pillow>=10,<12' 'bpy==4.3.0'
+          python - <<'PY'
+          import bpy, numpy, PIL
+          print('bpy', bpy.app.version_string)
+          print('numpy', numpy.__version__)
+          print('Pillow', PIL.__version__)
+          assert bpy.app.version[:2] == (4, 3)
+          PY
+
+      - name: Build exact workshop candidate and fresh-import renders
+        run: |
+          test -f /usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf
+          rm -rf /tmp/workshop-specialist-evidence
+          PYTHONPATH=src python -m axm_uc rts-workshop-polish /tmp/workshop-specialist-evidence \
+            --python "$(command -v python)" \
+            --font /usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf \
+            --resolution 768 \
+            --samples 16
+
+      - name: Run independent GLB and game-readiness verifier
+        run: |
+          PYTHONPATH=tools/blender python tools/blender/verify_rts_workshop.py /tmp/workshop-specialist-evidence
+          test -f /tmp/workshop-specialist-evidence/game-readiness-gates.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path('/tmp/workshop-specialist-evidence')
+          gates=json.loads((root/'game-readiness-gates.json').read_text())
+          assert gates['gates']['geometry_structure']=='TESTED'
+          assert gates['gates']['collision']=='NOT_TESTED'
+          assert gates['gates']['target_rts_integration']=='NOT_TESTED'
+          assert gates['gates']['visual_quality']=='NOT_TESTED'
+          print(json.dumps(gates, indent=2))
+          PY
+
+      - name: Stage bounded visual evidence artifact
+        run: |
+          mkdir -p workshop-specialist-evidence
+          cp /tmp/workshop-specialist-evidence/workshop-hero.png workshop-specialist-evidence/
+          cp /tmp/workshop-specialist-evidence/workshop-rear.png workshop-specialist-evidence/
+          cp /tmp/workshop-specialist-evidence/workshop-detail.png workshop-specialist-evidence/
+          cp /tmp/workshop-specialist-evidence/verification.json workshop-specialist-evidence/
+          cp /tmp/workshop-specialist-evidence/glb-inspection.json workshop-specialist-evidence/
+          cp /tmp/workshop-specialist-evidence/game-readiness-gates.json workshop-specialist-evidence/
+          sha256sum /tmp/workshop-specialist-evidence/improvised-workshop.glb /tmp/workshop-specialist-evidence/improvised-workshop-lod1.glb \
+            > workshop-specialist-evidence/glb-sha256.txt
+
+      - name: Upload workshop evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: workshop-specialist-pass-001-evidence
+          path: workshop-specialist-evidence
+          if-no-files-found: error
+          retention-days: 14
