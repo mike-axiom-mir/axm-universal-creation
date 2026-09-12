@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import json
 from pathlib import Path
 import tempfile
@@ -18,6 +19,8 @@ from axm_uc.material_capability_realization import (
 
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURE = ROOT / "examples" / "material-capability-packs" / "full-circulation-v0.18.json"
+SVG_PROOF = ROOT / "examples" / "material-capability-packs" / "full-circulation-v0.20-realization.svg"
+FEEDBACK_PROOF = ROOT / "examples" / "material-capability-packs" / "full-circulation-v0.20-realization-feedback.json"
 
 
 class MaterialCapabilityRealizationTests(unittest.TestCase):
@@ -54,6 +57,19 @@ class MaterialCapabilityRealizationTests(unittest.TestCase):
             self.assertEqual({event["derivedIds"][0] for event in feedback["events"]}, {result["id"]})
             self.assertTrue(all(event["evidence"]["svgArtifactGenerated"] for event in feedback["events"]))
             self.assertTrue(all(event["evidence"]["producerPixelsRendered"] is False for event in feedback["events"]))
+
+    def test_exact_realization_artifact_and_feedback_are_pinned(self) -> None:
+        expected_svg = SVG_PROOF.read_text(encoding="utf-8")
+        expected_feedback = json.loads(FEEDBACK_PROOF.read_text(encoding="utf-8"))
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory) / "proof.svg"
+            result = realize_material_capability_pack(self.pack, target)
+            self.assertEqual(target.read_text(encoding="utf-8"), expected_svg)
+            self.assertEqual(result["id"], "uc-material-creation-a80d9ff46d31057e1aa5")
+            self.assertEqual(result["output"]["sha256"], "a00b24de9257c68852060d0ebb3c02fe958d38499ead5091c86807ae17e06b74")
+            self.assertEqual(hashlib.sha256(expected_svg.encode("utf-8")).hexdigest(), result["output"]["sha256"])
+            self.assertEqual(result["feedback"], expected_feedback)
+            self.assertEqual(result["feedback"]["id"], "material-use-feedback-0a233906")
 
     def test_realization_is_path_independent_and_deterministic(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

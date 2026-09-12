@@ -1,0 +1,109 @@
+{
+  "format": "axm-material-use-feedback",
+  "version": "0.18.0",
+  "id": "material-use-feedback-0a233906",
+  "fingerprint": "0a233906",
+  "packId": "material-capability-pack-756825c8",
+  "packFingerprint": "756825c8",
+  "consumer": {
+    "system": "AXM Universal Creation",
+    "repository": "mike-axiom-mir/axm-universal-creation",
+    "adapter": "material-capability-realizer/v0.20.0",
+    "instance": null
+  },
+  "events": [
+    {
+      "id": "use-event-a633c200",
+      "capabilityId": "cap-material-entry-8fba7d60",
+      "action": "reused",
+      "outcome": "PASS",
+      "evidence": {
+        "nativeCreationId": "uc-material-creation-a80d9ff46d31057e1aa5",
+        "artifactFormat": "image/svg+xml",
+        "artifactSha256": "a00b24de9257c68852060d0ebb3c02fe958d38499ead5091c86807ae17e06b74",
+        "useMode": "hash-derived-native-palette-seed",
+        "svgArtifactGenerated": true,
+        "producerPixelsRendered": false,
+        "rasterRenderVerified": false
+      },
+      "derivedIds": ["uc-material-creation-a80d9ff46d31057e1aa5"],
+      "note": "Capability state directly influenced a deterministic native Universal Creation SVG artifact; this is not a faithful render of producer atlas pixels."
+    },
+    {
+      "id": "use-event-82f9d3eb",
+      "capabilityId": "cap-material-family-0f94735e",
+      "action": "reused",
+      "outcome": "PASS",
+      "evidence": {
+        "nativeCreationId": "uc-material-creation-a80d9ff46d31057e1aa5",
+        "artifactFormat": "image/svg+xml",
+        "artifactSha256": "a00b24de9257c68852060d0ebb3c02fe958d38499ead5091c86807ae17e06b74",
+        "useMode": "native-material-family-grouping",
+        "svgArtifactGenerated": true,
+        "producerPixelsRendered": false,
+        "rasterRenderVerified": false
+      },
+      "derivedIds": ["uc-material-creation-a80d9ff46d31057e1aa5"],
+      "note": "Capability state directly influenced a deterministic native Universal Creation SVG artifact; this is not a faithful render of producer atlas pixels."
+    },
+    {
+      "id": "use-event-1afc2666",
+      "capabilityId": "cap-sprite-candidate-bfd4a164",
+      "action": "reused",
+      "outcome": "PASS",
+      "evidence": {
+        "nativeCreationId": "uc-material-creation-a80d9ff46d31057e1aa5",
+        "artifactFormat": "image/svg+xml",
+        "artifactSha256": "a00b24de9257c68852060d0ebb3c02fe958d38499ead5091c86807ae17e06b74",
+        "useMode": "alpha-bounds-native-motif-window",
+        "svgArtifactGenerated": true,
+        "producerPixelsRendered": false,
+        "rasterRenderVerified": false
+      },
+      "derivedIds": ["uc-material-creation-a80d9ff46d31057e1aa5"],
+      "note": "Capability state directly influenced a deterministic native Universal Creation SVG artifact; this is not a faithful render of producer atlas pixels."
+    },
+    {
+      "id": "use-event-c5e93065",
+      "capabilityId": "cap-recipe-642024ae",
+      "action": "reused",
+      "outcome": "PASS",
+      "evidence": {
+        "nativeCreationId": "uc-material-creation-a80d9ff46d31057e1aa5",
+        "artifactFormat": "image/svg+xml",
+        "artifactSha256": "a00b24de9257c68852060d0ebb3c02fe958d38499ead5091c86807ae17e06b74",
+        "useMode": "layout-transform-opacity-blend-structure",
+        "svgArtifactGenerated": true,
+        "producerPixelsRendered": false,
+        "rasterRenderVerified": false
+      },
+      "derivedIds": ["uc-material-creation-a80d9ff46d31057e1aa5"],
+      "note": "Capability state directly influenced a deterministic native Universal Creation SVG artifact; this is not a faithful render of producer atlas pixels."
+    },
+    {
+      "id": "use-event-e1c073c8",
+      "capabilityId": "cap-pattern-bfe14cc0",
+      "action": "reused",
+      "outcome": "PASS",
+      "evidence": {
+        "nativeCreationId": "uc-material-creation-a80d9ff46d31057e1aa5",
+        "artifactFormat": "image/svg+xml",
+        "artifactSha256": "a00b24de9257c68852060d0ebb3c02fe958d38499ead5091c86807ae17e06b74",
+        "useMode": "slot-order-category-support-motif-structure",
+        "svgArtifactGenerated": true,
+        "producerPixelsRendered": false,
+        "rasterRenderVerified": false
+      },
+      "derivedIds": ["uc-material-creation-a80d9ff46d31057e1aa5"],
+      "note": "Capability state directly influenced a deterministic native Universal Creation SVG artifact; this is not a faithful render of producer atlas pixels."
+    }
+  ],
+  "note": "AXM Universal Creation native structural material-capability realization receipt.",
+  "truthBoundary": {
+    "use": "PASS reused means the named capability directly influenced the generated native SVG state.",
+    "pixels": "The producer atlas/image pixels were not rendered or sampled; material-entry bytes only seed deterministic native palette state by fingerprint.",
+    "rendering": "An SVG artifact was generated and hashed; cross-browser raster output was not verified.",
+    "quality": "Reuse does not prove aesthetics, realism, PBR correctness, semantic understanding, or universal usefulness.",
+    "authority": "Actual use evidence does not auto-promote either repository's canonical state."
+  }
+}
