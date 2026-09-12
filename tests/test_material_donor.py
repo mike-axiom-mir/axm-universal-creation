@@ -1,10 +1,13 @@
 from __future__ import annotations
 
 import copy
+import json
+import subprocess
+import sys
+import tempfile
 import unittest
 from pathlib import Path
 
-from axm_uc.capabilities import CapabilityStore
 from axm_uc.material_donor import MaterialDonorError, adapt_material_donor_pack
 
 
@@ -80,6 +83,8 @@ class MaterialDonorAdapterTests(unittest.TestCase):
         kinds = [atom["kind"] for atom in package["atoms"]]
         self.assertEqual(kinds.count("texture"), 2)
         self.assertEqual(kinds.count("material"), 1)
+        self.assertEqual(package["provenance"]["kind"], "derived-material-donor")
+        self.assertTrue(package["limitations"])
 
         material = next(atom for atom in package["atoms"] if atom["kind"] == "material")
         self.assertEqual(
@@ -90,16 +95,29 @@ class MaterialDonorAdapterTests(unittest.TestCase):
         self.assertTrue(all(atom["payload"]["resource"]["uri"].startswith("donor://") for atom in package["atoms"] if atom["kind"] == "texture"))
         self.assertTrue(all(atom["payload"]["resource"]["digest"].startswith("sha256:") for atom in package["atoms"] if atom["kind"] == "texture"))
 
-    def test_live_capability_route_invokes_same_adapter(self) -> None:
-        store = CapabilityStore(ROOT)
-        manifest = store.route("import-material-donor-pack")
-        self.assertIsNotNone(manifest)
-        self.assertEqual(manifest["id"], "AXM-CAP-IMPORT-MATERIAL-DONOR")
-        result = store.invoke(manifest, {"donor_pack": donor_pack(), "strict": True})
-        self.assertEqual(result["truth_status"], "READY_EXACT_MATERIAL_DONOR_ADAPTER")
-        self.assertEqual(result["receipt"]["accepted_entries"], 2)
-        self.assertEqual(result["receipt"]["accepted_families"], 1)
-        self.assertEqual(result["asset_package"]["schema"], "axm.asset-atom-package/v0.1")
+    def test_detached_cli_consumes_pack_into_same_validated_grammar(self) -> None:
+        with tempfile.TemporaryDirectory() as td:
+            donor_path = Path(td) / "donor.json"
+            donor_path.write_text(json.dumps(donor_pack()), encoding="utf-8")
+            run = subprocess.run(
+                [
+                    sys.executable,
+                    str(ROOT / "tools/import_material_donor.py"),
+                    str(donor_path),
+                    "--strict",
+                ],
+                cwd=ROOT,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            self.assertEqual(run.returncode, 0, run.stderr)
+            result = json.loads(run.stdout)
+            self.assertEqual(result["truth_status"], "READY_EXACT_MATERIAL_DONOR_ADAPTER")
+            self.assertEqual(result["receipt"]["accepted_entries"], 2)
+            self.assertEqual(result["receipt"]["accepted_families"], 1)
+            self.assertEqual(result["asset_package"]["schema"], "axm.asset-atom-package/v0.1")
+            self.assertFalse(result["receipt"]["rendering_verified"])
 
     def test_unassigned_entry_is_visible_hold_not_silent_guess(self) -> None:
         pack = donor_pack()
