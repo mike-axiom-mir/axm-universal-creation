@@ -1,0 +1,171 @@
+{
+  "format": "axm-material-capability-pack",
+  "version": "0.18.0",
+  "id": "material-capability-pack-756825c8",
+  "name": "AXM Full Cross-Repo Circulation Pack",
+  "fingerprint": "756825c8",
+  "producer": {
+    "system": "AXM Material / Surface Fabric",
+    "repository": "mike-axiom-mir/axm-material-surface-fabric"
+  },
+  "capabilities": [
+    {
+      "id": "cap-material-entry-8fba7d60",
+      "kind": "material-entry",
+      "sourceId": "surface-base",
+      "payload": {
+        "name": "Cross Repo Painted Base",
+        "kind": "texture",
+        "mime": "image/png",
+        "width": 1,
+        "height": 1,
+        "bytes": 70,
+        "dataUrl": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAFgwJ/lXgZ/wAAAABJRU5ErkJggg==",
+        "payload": {"portable": true, "length": 118, "hash": "fixture"},
+        "usage": {"channelHint": "base-color", "channelBasis": "operator-declared", "note": "cross-repo circulation fixture"},
+        "tags": ["cross-repo", "painted-metal"]
+      },
+      "provenance": {
+        "sourceFormat": "axm-material-library",
+        "sourceVersion": "0.4.0",
+        "sourceLibraryId": "circulation-material-library",
+        "source": {"method": "cross-repo-circulation-v0.18.1"}
+      },
+      "refs": {},
+      "evidence": {"portableBytesPresent": true, "channelHintIsPhysicalTruth": false},
+      "fingerprint": "a0caa94a"
+    },
+    {
+      "id": "cap-material-family-0f94735e",
+      "kind": "material-family",
+      "sourceId": "painted-metal-family",
+      "payload": {
+        "name": "Cross Repo Painted Metal",
+        "purpose": "full v0.18 circulation proof",
+        "entryIds": ["surface-base"],
+        "tags": ["cross-repo"]
+      },
+      "provenance": {
+        "sourceFormat": "axm-material-library",
+        "sourceVersion": "0.4.0",
+        "sourceLibraryId": "circulation-material-library"
+      },
+      "refs": {"materialEntrySourceIds": ["surface-base"]},
+      "evidence": {"familyIsDeclaredGrouping": true, "physicalMaterialClaim": false},
+      "fingerprint": "ee637613"
+    },
+    {
+      "id": "cap-pattern-bfe14cc0",
+      "kind": "pattern",
+      "sourceId": "pattern-circulation-001",
+      "payload": {
+        "pattern": {
+          "id": "pattern-circulation-001",
+          "signature": "sig-circulation-001",
+          "support": 2,
+          "sourcePackIds": ["keeper-circulation"],
+          "sourceRecipeFingerprints": ["2e2e0454"],
+          "slots": [
+            {"order": 0, "role": "base", "kind": "globe-atlas", "category": "globes/material"},
+            {"order": 1, "role": "layer", "kind": "overlay-atlas", "category": "overlays/corrosion"}
+          ],
+          "truthBoundary": {"meaning": "recurring explicit keeper structure", "support": "recurrence only"}
+        },
+        "support": 2
+      },
+      "provenance": {
+        "sourceFormat": "axm-premade-pattern-library",
+        "sourceVersion": "0.15.0",
+        "sourceLibraryId": "pattern-library-circulation",
+        "sourcePackIds": ["keeper-circulation"]
+      },
+      "refs": {},
+      "evidence": {"supportIsRecurrenceOnly": true, "preferenceClaim": false, "qualityClaim": false},
+      "fingerprint": "833ab17d"
+    },
+    {
+      "id": "cap-recipe-642024ae",
+      "kind": "recipe",
+      "sourceId": "premade-circulation-001",
+      "payload": {
+        "recipe": {
+          "format": "axm-premade-composition",
+          "version": "0.12.0",
+          "id": "premade-circulation-001",
+          "name": "circulation painted rust",
+          "seed": "circulation-001",
+          "canvas": {"width": 1024, "height": 1024, "transparent": true},
+          "layers": [
+            {
+              "id": "base-globe",
+              "name": "material globe",
+              "assetId": "material-globes",
+              "cell": {"row": 0, "column": 2},
+              "crop": null,
+              "spriteCandidate": null,
+              "visible": true,
+              "opacity": 1,
+              "blendMode": "normal",
+              "transform": {"x": 0.5, "y": 0.5, "width": 0.78, "height": 0.78, "rotation": 0, "mirrorX": false, "mirrorY": false},
+              "provenance": {"rule": "circulation-base"}
+            },
+            {
+              "id": "rust-window",
+              "name": "rust crop",
+              "assetId": "rust-corrosion",
+              "cell": null,
+              "crop": {"x": 0.25, "y": 0.25, "width": 0.25, "height": 0.25, "samplingGrid": "4x4"},
+              "spriteCandidate": null,
+              "visible": true,
+              "opacity": 0.52,
+              "blendMode": "overlay",
+              "transform": {"x": 0.5, "y": 0.5, "width": 0.72, "height": 0.72, "rotation": -8, "mirrorX": false, "mirrorY": false},
+              "provenance": {"rule": "circulation-overlay"}
+            }
+          ],
+          "notes": "Cross-repo circulation fixture.",
+          "truthBoundary": {"alpha": "transparent output", "segmentation": "crop is not semantic segmentation", "physical": "not physical truth", "authority": "proposal only"}
+        },
+        "recipeFingerprint": "2e2e0454",
+        "premadePack": {
+          "format": "axm-premade-visual-asset-pack",
+          "version": "0.11.0",
+          "archiveSha256": "99cff0f3e098406145acba4b07a6539f8dcaae0c9aa1cd3adce461110421f905"
+        }
+      },
+      "provenance": {"sourceFormat": "axm-premade-composition", "sourceVersion": "0.12.0", "sourceArtifact": "direct-recipe"},
+      "refs": {},
+      "evidence": {"transparent": true, "aestheticQualityClaim": false},
+      "fingerprint": "afeafe2e"
+    },
+    {
+      "id": "cap-sprite-candidate-bfd4a164",
+      "kind": "sprite-candidate",
+      "sourceId": "rust-corrosion/sprite-001",
+      "payload": {
+        "atlasId": "rust-corrosion",
+        "normalizedBounds": {"x": 0.125, "y": 0.1875, "width": 0.25, "height": 0.28125},
+        "bounds": {"x": 64, "y": 96, "width": 128, "height": 144},
+        "alphaCoverage": {"visibleShare": 0.61},
+        "componentCount": 3,
+        "pixelCount": 10000,
+        "rgbaHash": "fnv1a:deadbeef",
+        "spriteFile": null,
+        "spriteSha256": null
+      },
+      "provenance": {
+        "sourceFormat": "axm-premade-sprite-index",
+        "sourceVersion": "0.14.0",
+        "sourceIndexId": "sprite-index-circulation",
+        "sourceBasis": "runtime-webp-alpha",
+        "sourceSha256": null,
+        "atlas": {"id": "rust-corrosion"}
+      },
+      "refs": {},
+      "evidence": {"alphaObserved": true, "semanticObjectClaim": false},
+      "fingerprint": "b52427d8"
+    }
+  ],
+  "summary": {"total": 5, "kinds": {"material-entry": 1, "material-family": 1, "sprite-candidate": 1, "recipe": 1, "pattern": 1}},
+  "truthBoundary": {"export": "exported state/provenance only", "portability": "bytes only where present", "semantics": "bounded semantics remain bounded", "authority": "feedback is not authority"}
+}
