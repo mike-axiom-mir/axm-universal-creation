@@ -19,6 +19,12 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--root", help="machine root; normally auto-detected")
     sub = parser.add_subparsers(dest="command", required=True)
 
+    pipelines = sub.add_parser('pipelines', help='map installed capability connections without executing them')
+    pipelines.add_argument('--goal', help='exact output token or namespace prefix')
+    pipelines.add_argument('--max-hops', type=int, default=4)
+    pipelines.add_argument('--limit', type=int, default=30)
+    pipelines.add_argument('--search-budget', type=int, default=10000)
+
     timeline = sub.add_parser('sample-track', help='sample a local integer animation track at a frame')
     timeline.add_argument('track_file')
     timeline.add_argument('--frame',type=int,required=True)
@@ -144,6 +150,15 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     root = find_machine_root(args.root) if args.root else find_machine_root()
     machine = UniversalCreationMachine(root)
+
+    if args.command == 'pipelines':
+        from .pipeline_map import map_capabilities
+        try:
+            result = map_capabilities(root, args.goal, args.max_hops, args.limit, args.search_budget)
+        except (ValueError, OSError) as exc:
+            raise SystemExit(str(exc)) from exc
+        _print(result)
+        return 0
 
     if args.command in ('metal', 'bitmap-label', 'normalize-wav'):
         from .media_workbench import PaintedMetalSpec, metal_request, label_request, wav_request

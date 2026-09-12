@@ -130,3 +130,12 @@ pass; this pass absorbs additional functions already present there.
 See `MEDIA_WORKBENCH.md` for the three runnable additions. This broadens the
 review beyond the initial four repositories while keeping executable additions
 separate from research directions and descriptive professional contracts.
+
+## Monolith mapper integration
+
+The previously deferred pipeline candidate now has a UC adapter. `pipelines`
+reads current local live capability manifests, validated executable organs and
+four explicit media request builders. It uses selected pinned Monolith graph
+helpers with a UC-owned bounded search. See `PIPELINE_MAP.md` and
+`third_party/pipeline-provenance.json`. This connects discovery to local contracts;
+it does not execute chains or replace the existing organ resolver.

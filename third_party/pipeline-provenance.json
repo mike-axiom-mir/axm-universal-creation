@@ -1,0 +1,17 @@
+{
+  "repo": "mike-axiom-mir/axm-monolith",
+  "commit": "6f5b7893d142c5eeaae79897518b3c0b4a57a2e5",
+  "source": "tools/pipeline_fabric.py",
+  "source_sha256": "0e65448ce5805f9d817c7343b6e95eef9ac99d419dab6e6dd85777e5c7bf6c1b",
+  "destination": "src/axm_uc/donor_pipeline.py",
+  "extracted_definitions": [
+    "SCHEMA_VERSION",
+    "STATUS_BY_MIN_SCORE",
+    "capability_node_id",
+    "build_pipeline_graph",
+    "path_status",
+    "pipeline_id"
+  ],
+  "license": "No LICENSE present in inspected donor snapshot; user-authorized owned-repo reuse. No new upstream license grant.",
+  "adaptation": "Exact selected source definitions; UC inventory, exact matching, bounded traversal, required-input reporting and CLI are local adapters. Donor writer, refresh and exhaustive search are not imported."
+}
