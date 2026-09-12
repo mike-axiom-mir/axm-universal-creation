@@ -37,6 +37,13 @@ def build_parser() -> argparse.ArgumentParser:
     rts.add_argument('path')
     rts.add_argument('--asset', action='append', default=None, help='select a catalog asset ID; repeat to build a subset')
 
+    polish = sub.add_parser('rts-workshop-polish', help='build and render the reference-led PBR workshop using a supplied offline Blender Python environment')
+    polish.add_argument('path')
+    polish.add_argument('--python', required=True, help='Python executable with bpy 4.3, numpy <2 and Pillow installed')
+    polish.add_argument('--font', required=True, help='local font file for authored workshop signage')
+    polish.add_argument('--resolution', type=int, default=1100)
+    polish.add_argument('--samples', type=int, default=64)
+
     timeline = sub.add_parser('sample-track', help='sample a local integer animation track at a frame')
     timeline.add_argument('track_file')
     timeline.add_argument('--frame',type=int,required=True)
@@ -165,6 +172,16 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     root = find_machine_root(args.root) if args.root else find_machine_root()
     machine = UniversalCreationMachine(root)
+    if args.command == 'rts-workshop-polish':
+        from .rts_polish import polish_workshop
+        try:
+            result = polish_workshop(root, args.path, args.python, args.font, args.resolution, args.samples)
+        except (ValueError, OSError, RuntimeError) as error:
+            _print({'type': 'RTS_WORKSHOP_POLISH_FAILED', 'reason': str(error)})
+            return 1
+        _print(result)
+        return 0
+
     if args.command == 'rts-reference-pack':
         from .rts_foundry import reference_pack_request
         result = machine.create(reference_pack_request(args.path, args.asset))
