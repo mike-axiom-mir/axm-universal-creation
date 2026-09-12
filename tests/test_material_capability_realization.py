@@ -27,7 +27,7 @@ class MaterialCapabilityRealizationTests(unittest.TestCase):
     def test_all_five_capability_kinds_drive_one_native_svg_creation(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             target = Path(directory) / "material-capability-realization.svg"
-            result = realize_material_capability_pack(self.pack, target, strict=False if False else None)
+            result = realize_material_capability_pack(self.pack, target)
 
             self.assertEqual(result["schema"], REALIZATION_SCHEMA)
             self.assertEqual(result["truth_status"], "OBSERVED_GENERATED_NATIVE_MATERIAL_CAPABILITY_CREATION")
