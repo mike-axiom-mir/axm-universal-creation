@@ -1,0 +1,646 @@
+{
+  "schema": "axm.rts-reference-catalog/v0.1",
+  "references": [
+    {
+      "filename": "1000000412.png",
+      "sha256": "d92613ef92ec86df378a91aa837512488c9bb35af53ca15c49766aceb156c9e3",
+      "source": "User supplied in this conversation",
+      "rights": "User supplied; no independent rights certification"
+    },
+    {
+      "filename": "1000000413.png",
+      "sha256": "2996a04974dca9073a556e030351717eb31b7a707aeb817550409312309b5898",
+      "source": "User supplied in this conversation",
+      "rights": "User supplied; no independent rights certification"
+    },
+    {
+      "filename": "1000000414.png",
+      "sha256": "feb38008c9786aec8b5fec366aa40a61e4404bfb40007fe7588d834bf3c8f53a",
+      "source": "User supplied in this conversation",
+      "rights": "User supplied; no independent rights certification"
+    },
+    {
+      "filename": "1000000415.png",
+      "sha256": "4e154be2ff7451318b09abc6d2153297ab9f1b51bae4ad94599d5901dfd7368f",
+      "source": "User supplied in this conversation",
+      "rights": "User supplied; no independent rights certification"
+    },
+    {
+      "filename": "1000000416.png",
+      "sha256": "6d11d0fe75710515ecb8466cb0d9aae4add8c99ad4c3549a69b552967eef344c",
+      "source": "User supplied in this conversation",
+      "rights": "User supplied; no independent rights certification"
+    },
+    {
+      "filename": "1000000417.png",
+      "sha256": "c2e6748508aaff509bca3e40c6c8dbe34644b81ebd593f56f074f703c6b14eea",
+      "source": "User supplied in this conversation",
+      "rights": "User supplied; no independent rights certification"
+    },
+    {
+      "filename": "1000000418.png",
+      "sha256": "46737346c8a6bb3c8bde361b0f76d6793e4d71748c637bc13d292df223aecf09",
+      "source": "User supplied in this conversation",
+      "rights": "User supplied; no independent rights certification"
+    },
+    {
+      "filename": "1000000419.png",
+      "sha256": "4678eebbb3fad10051957b08af1da0e742c1fbeb511cad5126817559a6d6ecd8",
+      "source": "User supplied in this conversation",
+      "rights": "User supplied; no independent rights certification"
+    }
+  ],
+  "assets": [
+    {
+      "id": "open-crop-terrace",
+      "name": "Open crop terrace",
+      "family": "industry",
+      "reference": "1000000413.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "bus-window-greenhouse",
+      "name": "Bus-window greenhouse",
+      "family": "industry",
+      "reference": "1000000413.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "fungal-shed",
+      "name": "Fungal shed",
+      "family": "industry",
+      "reference": "1000000413.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "livestock-pen",
+      "name": "Livestock pen",
+      "family": "industry",
+      "reference": "1000000413.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "water-catcher",
+      "name": "Water catcher",
+      "family": "industry",
+      "reference": "1000000413.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "scrap-sorting-yard",
+      "name": "Scrap sorting yard",
+      "family": "industry",
+      "reference": "1000000413.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "shallow-mine-entrance",
+      "name": "Shallow mine entrance",
+      "family": "industry",
+      "reference": "1000000413.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "deep-mine-head",
+      "name": "Deep mine head",
+      "family": "industry",
+      "reference": "1000000413.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "asteroid-extraction-rig",
+      "name": "Asteroid extraction rig",
+      "family": "industry",
+      "reference": "1000000413.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "battery-fuel-station",
+      "name": "Battery fuel station",
+      "family": "industry",
+      "reference": "1000000413.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "clustered-storage-bins",
+      "name": "Clustered storage bins",
+      "family": "industry",
+      "reference": "1000000413.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "crew-worker",
+      "name": "Crew worker",
+      "family": "crew",
+      "reference": "1000000414.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "scavenger",
+      "name": "Scavenger",
+      "family": "crew",
+      "reference": "1000000414.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "citizen-harvester",
+      "name": "Citizen harvester",
+      "family": "crew",
+      "reference": "1000000414.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "rifle-guard",
+      "name": "Rifle guard",
+      "family": "crew",
+      "reference": "1000000414.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "shotgun-raider",
+      "name": "Shotgun raider",
+      "family": "crew",
+      "reference": "1000000414.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "mechanic-repair-crew",
+      "name": "Mechanic repair crew",
+      "family": "crew",
+      "reference": "1000000414.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "field-medic",
+      "name": "Field medic",
+      "family": "crew",
+      "reference": "1000000414.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "scout",
+      "name": "Scout",
+      "family": "crew",
+      "reference": "1000000414.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "licensed-driver",
+      "name": "Licensed driver",
+      "family": "crew",
+      "reference": "1000000414.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "heavy-vehicle-operator",
+      "name": "Heavy vehicle operator",
+      "family": "crew",
+      "reference": "1000000414.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "mercenary-ex-mil",
+      "name": "Mercenary ex-mil",
+      "family": "crew",
+      "reference": "1000000414.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "mercenary-free-agent",
+      "name": "Mercenary free agent",
+      "family": "crew",
+      "reference": "1000000414.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "settlement-hub",
+      "name": "Settlement hub",
+      "family": "buildings",
+      "reference": "1000000415.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "civic-shelter",
+      "name": "Civic shelter",
+      "family": "buildings",
+      "reference": "1000000415.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "improvised-workshop",
+      "name": "Improvised workshop",
+      "family": "buildings",
+      "reference": "1000000415.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "command-signal-hall",
+      "name": "Command signal hall",
+      "family": "buildings",
+      "reference": "1000000415.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "training-yard",
+      "name": "Training yard",
+      "family": "buildings",
+      "reference": "1000000415.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "repair-garage",
+      "name": "Repair garage",
+      "family": "buildings",
+      "reference": "1000000415.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "storage-hall",
+      "name": "Storage hall",
+      "family": "buildings",
+      "reference": "1000000415.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "refinery-shack",
+      "name": "Refinery shack",
+      "family": "buildings",
+      "reference": "1000000415.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "power-core-building",
+      "name": "Power core building",
+      "family": "buildings",
+      "reference": "1000000415.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "machine-shop",
+      "name": "Machine shop",
+      "family": "buildings",
+      "reference": "1000000415.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "comic-book-wall",
+      "name": "Comic-book wall",
+      "family": "defenses",
+      "reference": "1000000416.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "car-door-wall",
+      "name": "Car-door wall",
+      "family": "defenses",
+      "reference": "1000000416.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "fridge-barricade",
+      "name": "Fridge barricade",
+      "family": "defenses",
+      "reference": "1000000416.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "signplate-barricade",
+      "name": "Signplate barricade",
+      "family": "defenses",
+      "reference": "1000000416.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "scrap-bunker",
+      "name": "Scrap bunker",
+      "family": "defenses",
+      "reference": "1000000416.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "crane-section-watchtower",
+      "name": "Crane-section watchtower",
+      "family": "defenses",
+      "reference": "1000000416.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "bathtub-turret",
+      "name": "Bathtub turret",
+      "family": "defenses",
+      "reference": "1000000416.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "spotlight-tower",
+      "name": "Spotlight tower",
+      "family": "defenses",
+      "reference": "1000000416.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "spike-gate",
+      "name": "Spike gate",
+      "family": "defenses",
+      "reference": "1000000416.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "mine-marker",
+      "name": "Mine marker",
+      "family": "defenses",
+      "reference": "1000000416.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "sandbag-scrap-firing-nest",
+      "name": "Sandbag-scrap firing nest",
+      "family": "defenses",
+      "reference": "1000000416.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "improvised-anti-vehicle-barrier",
+      "name": "Improvised anti-vehicle barrier",
+      "family": "defenses",
+      "reference": "1000000416.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "push-cart",
+      "name": "Push cart",
+      "family": "vehicles",
+      "reference": "1000000417.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "utility-hauler",
+      "name": "Utility hauler",
+      "family": "vehicles",
+      "reference": "1000000417.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "scrap-buggy",
+      "name": "Scrap buggy",
+      "family": "vehicles",
+      "reference": "1000000417.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "scout-trike",
+      "name": "Scout trike",
+      "family": "vehicles",
+      "reference": "1000000417.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "flatbed-convoy-truck",
+      "name": "Flatbed convoy truck",
+      "family": "vehicles",
+      "reference": "1000000417.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "armored-bus",
+      "name": "Armored bus",
+      "family": "vehicles",
+      "reference": "1000000417.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "tow-crawler",
+      "name": "Tow crawler",
+      "family": "vehicles",
+      "reference": "1000000417.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "crane-truck",
+      "name": "Crane truck",
+      "family": "vehicles",
+      "reference": "1000000417.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "drill-rig-vehicle",
+      "name": "Drill rig vehicle",
+      "family": "vehicles",
+      "reference": "1000000417.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "cargo-trailer",
+      "name": "Cargo trailer",
+      "family": "vehicles",
+      "reference": "1000000417.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "field-ambulance-van",
+      "name": "Field ambulance van",
+      "family": "vehicles",
+      "reference": "1000000417.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "mercenary-carrier",
+      "name": "Mercenary carrier",
+      "family": "vehicles",
+      "reference": "1000000417.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "scrap-rifle",
+      "name": "Scrap rifle",
+      "family": "equipment",
+      "reference": "1000000418.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "pipe-shotgun",
+      "name": "Pipe shotgun",
+      "family": "equipment",
+      "reference": "1000000418.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "compact-smg",
+      "name": "Compact SMG",
+      "family": "equipment",
+      "reference": "1000000418.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "improvised-launcher",
+      "name": "Improvised launcher",
+      "family": "equipment",
+      "reference": "1000000418.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "rotary-gun",
+      "name": "Rotary gun",
+      "family": "equipment",
+      "reference": "1000000418.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "repair-welder",
+      "name": "Repair welder",
+      "family": "equipment",
+      "reference": "1000000418.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "mining-drill",
+      "name": "Mining drill",
+      "family": "equipment",
+      "reference": "1000000418.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "lantern-scanner",
+      "name": "Lantern scanner",
+      "family": "equipment",
+      "reference": "1000000418.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "bridge-kit",
+      "name": "Bridge kit",
+      "family": "equipment",
+      "reference": "1000000418.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "wheel-module",
+      "name": "Wheel module",
+      "family": "equipment",
+      "reference": "1000000418.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "track-module",
+      "name": "Track module",
+      "family": "equipment",
+      "reference": "1000000418.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "engine-block",
+      "name": "Engine block",
+      "family": "equipment",
+      "reference": "1000000418.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "turret-module",
+      "name": "Turret module",
+      "family": "equipment",
+      "reference": "1000000418.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "meteor-power-cell",
+      "name": "Meteor power cell",
+      "family": "equipment",
+      "reference": "1000000418.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "ruined-town-block",
+      "name": "Ruined town block",
+      "family": "world",
+      "reference": "1000000419.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "survivor-outpost-cluster",
+      "name": "Survivor outpost cluster",
+      "family": "world",
+      "reference": "1000000419.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "regional-scrap-market-gate",
+      "name": "Regional scrap-market gate",
+      "family": "world",
+      "reference": "1000000419.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "rail-checkpoint",
+      "name": "Rail checkpoint",
+      "family": "world",
+      "reference": "1000000419.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "bridge-fragment",
+      "name": "Bridge fragment",
+      "family": "world",
+      "reference": "1000000419.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "major-city-wall-section",
+      "name": "Major-city wall section",
+      "family": "world",
+      "reference": "1000000419.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "major-city-tower-district",
+      "name": "Major-city tower district",
+      "family": "world",
+      "reference": "1000000419.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "asteroid-impact-crater-rig",
+      "name": "Asteroid impact crater rig",
+      "family": "world",
+      "reference": "1000000419.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "meteor-reactor",
+      "name": "Meteor reactor",
+      "family": "world",
+      "reference": "1000000419.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "sky-tracker-dish",
+      "name": "Sky-tracker dish",
+      "family": "world",
+      "reference": "1000000419.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "strange-late-tech-salvage-structure",
+      "name": "Strange late-tech salvage structure",
+      "family": "world",
+      "reference": "1000000419.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    },
+    {
+      "id": "light-tower",
+      "name": "Light tower",
+      "family": "utilities",
+      "reference": "1000000412.png",
+      "interpretation": "Authored 3D interpretation of the visible reference; unseen geometry is inferred."
+    }
+  ],
+  "overview_aliases": {
+    "Survivor crew": "crew-worker",
+    "Improvised workshop": "improvised-workshop",
+    "Comic wall segment": "comic-book-wall",
+    "Bathtub turret": "bathtub-turret",
+    "Scrap buggy": "scrap-buggy",
+    "Greenhouse bus windows": "bus-window-greenhouse",
+    "Meteor component": "meteor-power-cell"
+  },
+  "scope": "83 distinct labeled asset designs across eight reference sheets. Repeated masthead scenery, palette swatches and decorative silhouette legends are not additional assets."
+}

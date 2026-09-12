@@ -21,4 +21,4 @@ package-dir = {"" = "src"}
 where = ["src"]
 
 [tool.setuptools.package-data]
-axm_uc = ["data/visual_state/*.json"]
+axm_uc = ["data/visual_state/*.json", "data/*.html", "data/rts/*.json", "data/rts/*.html"]
