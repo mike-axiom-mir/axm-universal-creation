@@ -10,10 +10,16 @@ function node() {
 }
 const ids = ['game','status','sessionButton','reloadButton','resetButton','fireButton','targetButton','targetName','targetHealth','towerValue','scoreValue','ammoValue'];
 const nodes = Object.fromEntries(ids.map(id=>[id,node()]));
-const context = new Proxy({}, {get:(o,k)=>o[k]??(['createRadialGradient','createLinearGradient'].includes(k)?()=>({addColorStop(){}}):()=>{}),set:(o,k,v)=>(o[k]=v,true)});
+const drawCalls={};
+const context = new Proxy({}, {get:(o,k)=>o[k]??((...args)=>{drawCalls[k]=(drawCalls[k]||0)+1;if(['createRadialGradient','createLinearGradient'].includes(k))return {addColorStop(){}};}),set:(o,k,v)=>(o[k]=v,true)});
+function resetDrawCalls(){for(const k of Object.keys(drawCalls))delete drawCalls[k];}
+function totalDrawCalls(){return Object.values(drawCalls).reduce((a,b)=>a+b,0);}
+let cacheCopies=0,cacheAllocations=0;
+function createCacheCanvas(){cacheAllocations++;return {width:0,height:0,getContext(){return {drawImage(source){assert.equal(source,nodes.game);cacheCopies++;}};}};}
+
 nodes.game.tagName='CANVAS';nodes.game.width=960;nodes.game.height=540;nodes.game.getContext=()=>context;
 const touch = ['ArrowUp','ArrowLeft','ArrowDown','ArrowRight'].map(key=>Object.assign(node(),{dataset:{key}}));
-const doc = Object.assign(node(),{hidden:false,querySelector:s=>nodes[s.slice(1)],querySelectorAll:()=>touch});
+const doc = Object.assign(node(),{hidden:false,createElement:createCacheCanvas,querySelector:s=>nodes[s.slice(1)],querySelectorAll:()=>touch});
 const win = node();
 win.devicePixelRatio=2;
 let statusTool;
@@ -24,6 +30,28 @@ const sandbox=vm.createContext({document:doc,window:win,Audio,Image,AbortControl
 vm.runInContext(fs.readFileSync(process.argv[2],'utf8'),sandbox);
 const read=code=>vm.runInContext(code,sandbox);
 const key=(k,extra={})=>win.emit('keydown',{target:nodes.game,key:k,repeat:false,...extra});
+// Static rendering work is reused; it never changes canonical gameplay state.
+const canonicalBefore=read('JSON.stringify(state)');
+read('deckCache=null');resetDrawCalls();read('drawDeck()');const uncachedCommands=totalDrawCalls();
+const copiesBefore=cacheCopies;resetDrawCalls();read('drawDeck()');const cachedCommands=totalDrawCalls();
+assert.ok(uncachedCommands>100);assert.equal(cachedCommands,1);assert.equal(drawCalls.drawImage,1);
+assert.equal(cacheCopies,copiesBefore);assert.equal(read('JSON.stringify(state)'),canonicalBefore);
+// A texture arriving after the first frame must replace the untextured cache.
+read('deckTexture.complete=true;deckTexture.naturalWidth=96;drawDeck()');assert.equal(cacheCopies,copiesBefore+1);
+read('drawDeck()');assert.equal(cacheCopies,copiesBefore+1);
+// Reset does not retain ghosts, reallocate the scenery, or change color intent.
+const resetCopies=cacheCopies;read('reset()');assert.equal(cacheCopies,resetCopies);
+assert.equal(read('shadeColor("#12345680",0)'), '#12345680');
+assert.equal(read('shadeColor("#12345680",-1)'), '#00000080');
+assert.equal(read('shadeColor("#12345680",1)'), '#ffffff80');
+assert.equal(read('playerPaint.top'),read('shadeColor(SPEC.player.color,-.18)'));
+assert.equal(read('relayPaint.top'),read('shadeColor(SPEC.tower.color,.25)'));
+// Cache allocation failures keep the direct renderer usable without retrying.
+let failedAllocations=0;doc.createElement=()=>{failedAllocations++;return {getContext(){return null;}};};
+read('deckCache=null;deckCacheUnavailable=false;drawDeck()');resetDrawCalls();read('drawDeck()');
+assert.equal(failedAllocations,1);assert.ok(totalDrawCalls()>100);assert.equal(read('JSON.stringify(state)'),canonicalBefore);
+doc.createElement=createCacheCanvas;read('deckCache=null;deckCacheUnavailable=false;reset()');
+console.log(`STATIC_DECK_COMMANDS uncached=${uncachedCommands} cached=${cachedCommands} (call counts, not frame time)`);
 // High-DPI backing pixels must not change world limits or pointer picking.
 assert.equal(nodes.game.width,1920);assert.equal(nodes.game.height,1080);
 for(const [x,y] of [[0,0],[480,270],[960,540],[123,419]]){

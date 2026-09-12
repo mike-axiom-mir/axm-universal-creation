@@ -85,3 +85,27 @@ movement/fire, separate input release and between-frame Space taps. Chrome held
 on-screen movement visibly moved the vehicle; firing reduced ammunition. This
 cloud mouse-pointer test does not establish Android multi-touch behavior; actual
 phone confirmation remains open.
+
+## Reusable rendering efficiency — 2026-09-12
+
+Version 0.2.2 caches the opaque static scenery layer before any units, effects or
+HUD are drawn. A later texture load invalidates the cache; reset reuses scenery
+without preserving moving objects. Cache allocation failure falls back to direct
+drawing once, without repeated allocation attempts. The disposable buffer is
+outside game state and cannot modify the specification or simulation. Its maximum
+backing size follows the existing viewport and 2x DPR limits: 3840×2160 pixels
+(about 31.6 MiB for RGBA pixel storage, excluding browser overhead).
+
+The prior visual pass hardcoded player/tower material paint. Material shades now
+derive from each creation's supplied colors, preserving alpha. Geometry, lighting
+cues and gameplay rules remain the same.
+
+Evidence: final full build 453 tests passed, BUILD_OK (23.586 seconds). The Node
+fixture measures 2,335 Canvas method calls for an uncached static deck versus one
+image draw on reuse. This is a command-count reduction, not a browser FPS result.
+Additional checks cover delayed texture arrival, cache reuse across reset,
+canonical-state equality, alpha preservation, and allocation-failure fallback.
+Chrome screenshots showed the textured deck, canonical teal tower paint, movement
+and firing without visible stale-unit trails. Reset returned ready with 18/18
+ammo and the original target. Larger RTS/tycoon workloads, physical phones and
+sustained frame pacing remain unmeasured.

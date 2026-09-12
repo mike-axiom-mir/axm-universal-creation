@@ -7,6 +7,16 @@ ARENA_VISUALS_JS = r'''
 const WORLD = SPEC.viewport;
 const reduceMotion = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)').matches : false;
 const deckTexture = new Image(); deckTexture.src = 'assets/deck.png';
+// One disposable realization cache, outside canonical gameplay state.
+let deckCache = null;
+let deckCacheTextureReady = false;
+let deckCacheUnavailable = false;
+function shadeColor(color, amount) {
+  const channels=[1,3,5].map(i=>parseInt(color.slice(i,i+2),16));
+  return '#'+channels.map(c=>Math.round(amount<0?c*(1+amount):c+(255-c)*amount).toString(16).padStart(2,'0')).join('')+color.slice(7);
+}
+const playerPaint={top:shadeColor(SPEC.player.color,-.18),side:shadeColor(SPEC.player.color,-.40),shadow:shadeColor(SPEC.player.color,-.57),highlight:shadeColor(SPEC.player.color,.25)};
+const relayPaint={top:shadeColor(SPEC.tower.color,.25),side:shadeColor(SPEC.tower.color,-.35),shadow:shadeColor(SPEC.tower.color,-.55),highlight:shadeColor(SPEC.tower.color,.45)};
 function project(x,y,z=0) {
   return {x:WORLD.width*.5+(x-WORLD.width*.5)*.72-(y-WORLD.height*.5)*.36,
           y:WORLD.height*.52+(x-WORLD.width*.5)*.14+(y-WORLD.height*.5)*.56-z};
@@ -38,7 +48,29 @@ function burst(x,y,color,count=12) {
   if(state.fx.length>180)state.fx.splice(0,state.fx.length-180);
 }
 function drawDeck() {
+  const ready=Boolean(deckTexture.complete && deckTexture.naturalWidth);
+  if(deckCache && deckCacheTextureReady===ready && deckCache.width===canvas.width && deckCache.height===canvas.height){
+    ctx.drawImage(deckCache,0,0,WORLD.width,WORLD.height);
+    return;
+  }
+  // Paint an opaque static layer first; copy it before any units/effects/HUD.
+  drawDeckSurface();
+  if(deckCacheUnavailable)return;
+  try {
+    if(!deckCache)deckCache=document.createElement('canvas');
+    deckCache.width=canvas.width;deckCache.height=canvas.height;
+    const cacheContext=deckCache.getContext('2d');
+    if(!cacheContext)throw new Error('No static-layer canvas context');
+    cacheContext.drawImage(canvas,0,0);
+    deckCacheTextureReady=ready;
+  } catch (_) {
+    // Allocation failure keeps direct drawing functional, with no retry storm.
+    deckCache=null;deckCacheUnavailable=true;
+  }
+}
+function drawDeckSurface() {
   const W=WORLD.width,H=WORLD.height;
+  ctx.fillStyle='#030b12';ctx.fillRect(0,0,W,H);
   const sky=ctx.createLinearGradient(0,0,W,H);sky.addColorStop(0,'#102532');sky.addColorStop(.55,SPEC.theme.background);sky.addColorStop(1,'#030b12');ctx.fillStyle=sky;ctx.fillRect(0,0,W,H);
   for(let i=0;i<75;i++){ctx.fillStyle=i%5===0?'#60808b66':'#63859624';ctx.fillRect(noise(i)*W,noise(i+900)*H,1+(i%3===0),1);}
   // Distant terrain silhouettes, entirely decorative.
@@ -74,9 +106,9 @@ function drawRelay() {
   shadow(cx,cy,Math.max(w,h)*.63);
   disc(cx,cy,1,w*.66,'#081d2580',SPEC.theme.accent.slice(0,7)+'55',1);
   box(t.x-9,t.y-9,w+18,h+18,0,9,'#526977','#263945','#344b58');
-  box(t.x,t.y,w,h,9,25*unit,'#7e949e','#2c4753','#416471');
+  box(t.x,t.y,w,h,9,25*unit,relayPaint.top,relayPaint.shadow,relayPaint.side);
   for(let i=0;i<6;i++){beam(t.x+12+i*w*.14,t.y+h,15,t.x+12+i*w*.14,t.y+h,30*unit,'#0b2835',3);}
-  box(t.x+w*.12,t.y+h*.12,w*.76,h*.76,9+25*unit,12*unit,'#9aabb0','#415d68','#537380');
+  box(t.x+w*.12,t.y+h*.12,w*.76,h*.76,9+25*unit,12*unit,relayPaint.highlight,relayPaint.shadow,relayPaint.side);
   // Four structural pylons support a luminous segmented reactor.
   for(const [u,v] of [[.14,.16],[.8,.16],[.14,.76],[.8,.76]])box(t.x+w*u,t.y+h*v,w*.09,h*.09,46*unit,31*unit,'#8ea5ad','#344f5c','#526e7b');
   disc(cx,cy,49*unit,w*.26,'#0d2c38',SPEC.theme.accent,2);
@@ -118,8 +150,8 @@ function drawPlayer() {
     box(x+side*r*.85-r*.18,y-r,r*.36,r*2,1,8,'#465762','#172732','#293c48');
     for(let k=0;k<6;k++)beam(x+side*r*.85-r*.15,y-r+k*r*.34,9,x+side*r*.85+r*.15,y-r+k*r*.34,9,'#80929a',1);
   }
-  box(x-r*.6,y-r*.75,r*1.2,r*1.5,7,10,'#c4a267','#6f5b40','#98794d');
-  box(x-r*.42,y-r*.38,r*.84,r*.76,17,8,'#f3cf89','#a48755','#c5a66e');
+  box(x-r*.6,y-r*.75,r*1.2,r*1.5,7,10,playerPaint.top,playerPaint.shadow,playerPaint.side);
+  box(x-r*.42,y-r*.38,r*.84,r*.76,17,8,playerPaint.highlight,playerPaint.side,playerPaint.top);
   const recoil=state.fireCooldown>SPEC.rules.fire_cooldown_ms/1000*.65?4:0;
   beam(x,y,24,x+Math.cos(a)*(r*1.8-recoil),y+Math.sin(a)*(r*1.8-recoil),24,'#263d49',7);
   beam(x,y,26,x+Math.cos(a)*(r*1.8-recoil),y+Math.sin(a)*(r*1.8-recoil),26,'#c4d5d8',3);
