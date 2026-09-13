@@ -9,6 +9,21 @@ from PIL import Image
 from axm_glb_reader import GLB
 
 
+VARIANTS = (
+    'improvised-workshop.glb',
+    'improvised-workshop-lod1.glb',
+    'improvised-workshop-tactical.glb',
+    'improvised-workshop-rts.glb',
+    'improvised-workshop-far.glb',
+)
+
+TARGET_BANDS = {
+    'improvised-workshop-tactical.glb': (20_000, 40_000),
+    'improvised-workshop-rts.glb': (4_000, 12_000),
+    'improvised-workshop-far.glb': (500, 2_000),
+}
+
+
 def verify(path):
     g=GLB(path);doc=g.doc;triangles=0;vertices=0;degenerate=0;all_points=[]
     assert not doc.get('cameras') and not doc.get('animations')
@@ -49,18 +64,38 @@ def verify(path):
             'scope':'Decoded geometry, UV, normals, material flags, embedded images and world bounds. Not collision, engine import, FPS, LOD perceptual equivalence or visual-quality proof.'}
 
 
+def validate_lod_ladder(report):
+    counts=[report[name]['triangles'] for name in VARIANTS]
+    assert all(a>b for a,b in zip(counts,counts[1:])), f'LOD ladder must strictly reduce triangles: {counts}'
+    target_results={}
+    for name,(minimum,maximum) in TARGET_BANDS.items():
+        triangles=report[name]['triangles']
+        assert minimum<=triangles<=maximum, f'{name} triangles {triangles} outside target {minimum}..{maximum}'
+        target_results[name]={'triangles':triangles,'target_min':minimum,'target_max':maximum,'inside_target_band':True}
+    return target_results
+
+
 def game_readiness_gates(report):
     near=report['improvised-workshop.glb'];lod=report['improvised-workshop-lod1.glb']
+    tactical=report['improvised-workshop-tactical.glb'];rts=report['improvised-workshop-rts.glb'];far=report['improvised-workshop-far.glb']
     ratio=lod['triangles']/near['triangles']
+    target_results=validate_lod_ladder(report)
     return {
-        'schema':'axm.workshop-game-readiness-gates/v0.1',
+        'schema':'axm.workshop-game-readiness-gates/v0.2-lod-ladder',
         'source':'glb-inspection.json',
         'measured':{
             'detailed_triangles':near['triangles'],
             'lod1_triangles':lod['triangles'],
             'lod1_triangle_ratio':ratio,
+            'tactical_triangles':tactical['triangles'],
+            'rts_triangles':rts['triangles'],
+            'far_triangles':far['triangles'],
+            'runtime_lod_target_bands':target_results,
             'detailed_materials':near['materials'],
             'lod1_materials':lod['materials'],
+            'tactical_materials':tactical['materials'],
+            'rts_materials':rts['materials'],
+            'far_materials':far['materials'],
             'detailed_double_sided_materials':near['double_sided_materials'],
             'lod1_double_sided_materials':lod['double_sided_materials'],
             'detailed_embedded_images':near['embedded_images'],
@@ -71,6 +106,7 @@ def game_readiness_gates(report):
             'geometry_structure':'TESTED',
             'embedded_texture_integrity':'TESTED',
             'lod_triangle_reduction':'TESTED',
+            'runtime_lod_target_bands':'TESTED',
             'lod_perceptual_equivalence':'NOT_TESTED',
             'collision':'NOT_TESTED',
             'navigation':'NOT_TESTED',
@@ -82,8 +118,9 @@ def game_readiness_gates(report):
         },
         'nonclaims':[
             'A valid GLB is not a game-ready asset by itself.',
-            'Triangle reduction is not LOD visual equivalence.',
+            'Triangle reduction and target-band membership are not LOD visual equivalence.',
             'Material/image counts are measured cost surfaces, not accepted budgets.',
+            'The far geometry tier is not an impostor and is not automatically the final far-distance solution.',
             'No collision, navigation, target-engine, target-RTS or target-device performance claim is created by this report.',
         ],
     }
@@ -91,8 +128,8 @@ def game_readiness_gates(report):
 
 if __name__=='__main__':
     root=Path(sys.argv[1]);report={}
-    for name in ['improvised-workshop.glb','improvised-workshop-lod1.glb']:report[name]=verify(root/name)
-    assert report['improvised-workshop-lod1.glb']['triangles']<report['improvised-workshop.glb']['triangles']
+    for name in VARIANTS:report[name]=verify(root/name)
+    validate_lod_ladder(report)
     (root/'glb-inspection.json').write_text(json.dumps(report,indent=2)+'\n')
     gates=game_readiness_gates(report)
     (root/'game-readiness-gates.json').write_text(json.dumps(gates,indent=2)+'\n')
