@@ -1,0 +1,57 @@
+{
+  "capsule_id": "bd7f2052e91e20658b79c0f9b00a1f809a6e176b301a0bfda8f8feff2a26043d",
+  "evidence": {
+    "files": [
+      {
+        "additions": 8,
+        "binary": false,
+        "content_sha256": "ca002501cd1ea8d22b29970d999ca4f5f1b5226ad7752ec32fe8372b66aea7c4",
+        "deletions": 3,
+        "path": "tests/test_material_capability_full_intake.py",
+        "status": "M",
+        "symbols": [
+          "FullMaterialCapabilityIntakeTests"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "b6fb3fb0b58e0e88bad103f824f44754ebf9c5c31ff113d931d5f30803c554f0"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 7,
+    "kinds": [
+      "code",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "axm",
+      "capability",
+      "circulation",
+      "creation-machine",
+      "exact",
+      "fabric",
+      "feedback",
+      "full",
+      "intake",
+      "material",
+      "pin",
+      "receipt",
+      "standalone",
+      "universal-creation"
+    ]
+  },
+  "source": {
+    "base": "a44575b23cf7a2240eeb001425a4ed3082a82720",
+    "commit_subject": "Pin exact Material Fabric circulation feedback receipt (#43)",
+    "head": "ec96aef681a15c8831bbf8bdd42d99ba8c6303ed",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

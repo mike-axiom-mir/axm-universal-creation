@@ -1,0 +1,106 @@
+{
+  "capsule_id": "8c47cea1d09b7e7aa932fee751902541c95c43308f80cede817331fb96b4472e",
+  "evidence": {
+    "files": [
+      {
+        "additions": 39,
+        "binary": false,
+        "content_sha256": "f61de13840475870522cc3cc350936d6d0325be8f6aacaffd5934aedf0de1e9e",
+        "deletions": 0,
+        "path": "RTS_BATCH_FINISH.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Complete RTS catalog finishing"
+        ]
+      },
+      {
+        "additions": 165,
+        "binary": false,
+        "content_sha256": "6fdc63579999ba78e5262df066a893d7ef8bd2c71dc8e7ccc4d60c1213746022",
+        "deletions": 0,
+        "path": "tools/blender/axm_rts_batch.py",
+        "status": "A",
+        "symbols": [
+          "append_view",
+          "array",
+          "texture",
+          "palette",
+          "finish_geometry",
+          "finish",
+          "main"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 44,
+        "binary": false,
+        "content_sha256": "336705cfde38e5bc7a7a804eaaef36a9553ebc104fb94a211bd1c6eaffa231f6",
+        "deletions": 0,
+        "path": "tools/blender/render_rts_batch.py",
+        "status": "A",
+        "symbols": [
+          "render"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 52,
+        "binary": false,
+        "content_sha256": "d3935b143ca0c2afa2f716d4a296e1556d4254b3bb584d2b8dc3142a87d0e160",
+        "deletions": 0,
+        "path": "tools/blender/verify_rts_batch.py",
+        "status": "A",
+        "symbols": [
+          "verify",
+          "main"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "b66c89c71230e4ba456a7ec942dd3e3bafe4907ac1db00e6923e8cde2f912576"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 4,
+    "kinds": [
+      "code",
+      "knowledge"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "append",
+      "array",
+      "axm",
+      "batch",
+      "blender",
+      "catalog",
+      "complete",
+      "creation-machine",
+      "finish",
+      "finishing",
+      "geometry",
+      "merge",
+      "palette",
+      "render",
+      "rts",
+      "standalone",
+      "texture",
+      "tools",
+      "universal-creation",
+      "verify",
+      "view"
+    ]
+  },
+  "source": {
+    "base": "59e3817c21cbc5212570518365b98866a69cb331",
+    "commit_subject": "Merge complete RTS catalog batch finishing",
+    "head": "f02f6fd772d77e50cdbe284d746bc29997e5bce4",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

@@ -1,0 +1,139 @@
+{
+  "capsule_id": "1a8a06dd150d06986519e704260ff5b15c96fbcf1cc25aa309e65e1a65d43c03",
+  "evidence": {
+    "files": [
+      {
+        "additions": 62,
+        "binary": false,
+        "content_sha256": "acb9ada7f638959ff9d39935e1f66b17198a2578975b9faddeb4a3cc42b226f2",
+        "deletions": 0,
+        "path": "MATERIAL_CAPABILITY_EXCHANGE_ADAPTER.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Material Capability Exchange Adapter v0.18",
+          "What is adopted",
+          "What remains HOLD",
+          "CLI",
+          "Cross-repo proof",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 528,
+        "binary": false,
+        "content_sha256": "f99c5c828ccef80363aa3f3965edcfc81514fdbdcfbae76f121b93399665c722",
+        "deletions": 0,
+        "path": "src/axm_uc/material_capability_exchange.py",
+        "status": "A",
+        "symbols": [
+          "MaterialCapabilityError",
+          "_stable_json",
+          "_fnv1a_js",
+          "_text",
+          "_capability_identity",
+          "_capability_fingerprint",
+          "validate_material_capability_pack",
+          "_synthetic_donor_pack",
+          "_event",
+          "_create_feedback",
+          "validate_material_use_feedback",
+          "consume_material_capability_pack"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 89,
+        "binary": false,
+        "content_sha256": "503d8717d4035ed8bd08f5c1184b4515397249c66bb15db904e90da52a077a21",
+        "deletions": 0,
+        "path": "tests/test_material_capability_exchange.py",
+        "status": "A",
+        "symbols": [
+          "MaterialCapabilityExchangeTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 57,
+        "binary": false,
+        "content_sha256": "be30c04c3d0e072a4349045588ee7a6a35e9894aa1860172718d1b635424813b",
+        "deletions": 0,
+        "path": "tools/import_material_capability_pack.py",
+        "status": "A",
+        "symbols": [
+          "parse_args",
+          "write_json",
+          "main"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "34a8966494ddeddb57a5d9df9d325ac922fa5b819d640c7493303377244220a1"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "adapter",
+      "adopted",
+      "args",
+      "axm",
+      "boundary",
+      "capability",
+      "cli",
+      "consume",
+      "create",
+      "creation-machine",
+      "cross",
+      "donor",
+      "error",
+      "event",
+      "exchange",
+      "fabric",
+      "feedback",
+      "fingerprint",
+      "fnv1a",
+      "hold",
+      "identity",
+      "import",
+      "json",
+      "material",
+      "pack",
+      "packs",
+      "parse",
+      "proof",
+      "remains",
+      "repo",
+      "stable",
+      "standalone",
+      "synthetic",
+      "text",
+      "tools",
+      "truth",
+      "universal-creation",
+      "use",
+      "validate",
+      "what",
+      "write"
+    ]
+  },
+  "source": {
+    "base": "e7e5a68cce2206da72cc9cac6ce6582304387598",
+    "commit_subject": "Consume Material Fabric v0.18 capability packs (#41)",
+    "head": "94be5a6729c390c28cf43661fb74139190bfadd9",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

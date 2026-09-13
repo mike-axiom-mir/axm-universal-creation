@@ -1,0 +1,159 @@
+{
+  "capsule_id": "c185291d388be28322620d9175538fafb47f233a447244fcb03246e9fd7ce531",
+  "evidence": {
+    "files": [
+      {
+        "additions": 74,
+        "binary": false,
+        "content_sha256": "21c8aea9f7aaf58b47dfb13b0b1a3c942e46e2fb7552662534e0d2617376a619",
+        "deletions": 0,
+        "path": "MATERIAL_CAPABILITY_REALIZATION.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Material Capability Realization v0.20",
+          "What actually affects the output",
+          "Output",
+          "CLI",
+          "What this proves",
+          "What it does not prove",
+          "Roots"
+        ]
+      },
+      {
+        "additions": 485,
+        "binary": false,
+        "content_sha256": "76f7f6ab2f16b09ff3c7b74b0735b4e44f18ab8a56bb0f8a50c165cb7cd1bf28",
+        "deletions": 0,
+        "path": "src/axm_uc/material_capability_realization.py",
+        "status": "A",
+        "symbols": [
+          "MaterialCapabilityRealizationError",
+          "_stable_json",
+          "_sha256_bytes",
+          "_fmt",
+          "_number",
+          "_color",
+          "_prng",
+          "_selection",
+          "_projection_map",
+          "_layer_box",
+          "_blend",
+          "_motif_elements",
+          "build_material_capability_svg",
+          "_feedback_event",
+          "_create_realization_feedback",
+          "validate_realization_feedback",
+          "realize_material_capability_pack"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 114,
+        "binary": false,
+        "content_sha256": "751d4ddba0be620eb66b33e17b6e9bab7b78ce41ae6a7eff8f3d677c66b38327",
+        "deletions": 0,
+        "path": "tests/test_material_capability_realization.py",
+        "status": "A",
+        "symbols": [
+          "MaterialCapabilityRealizationTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 64,
+        "binary": false,
+        "content_sha256": "9dd96d86618fba5e46859c04f23f8bbfc145949ec48d03693b415a5dfa464c87",
+        "deletions": 0,
+        "path": "tools/realize_material_capability_pack.py",
+        "status": "A",
+        "symbols": [
+          "parse_args",
+          "write_json",
+          "main"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "620f6b789cf95f8e88b96dcb26ef6fd030da94d7f5fc29b596bf58422292a989"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "actually",
+      "affects",
+      "args",
+      "axiom",
+      "axm",
+      "blend",
+      "box",
+      "build",
+      "bytes",
+      "capability",
+      "cli",
+      "codex",
+      "color",
+      "create",
+      "creation-machine",
+      "does",
+      "elements",
+      "error",
+      "event",
+      "feedback",
+      "fmt",
+      "from",
+      "json",
+      "layer",
+      "map",
+      "material",
+      "merge",
+      "mike",
+      "mir",
+      "motif",
+      "not",
+      "number",
+      "output",
+      "pack",
+      "parse",
+      "prng",
+      "projection",
+      "prove",
+      "proves",
+      "pull",
+      "realization",
+      "realize",
+      "request",
+      "roots",
+      "selection",
+      "sha256",
+      "stable",
+      "standalone",
+      "svg",
+      "this",
+      "tools",
+      "universal-creation",
+      "validate",
+      "what",
+      "write"
+    ]
+  },
+  "source": {
+    "base": "651bbdd34d2dacbb5bf418f09aed6a7eadedd72f",
+    "commit_subject": "Merge pull request #44 from mike-axiom-mir/codex/material-capability-realization-v0.20.0",
+    "head": "000c875bce353820a60ff9cdb9f4c06294613674",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "capsule_id": "782bf96616e006a78a38482f853a8a03e846adba6066052b44abb6bd93e579c1",
+  "evidence": {
+    "files": [
+      {
+        "additions": 7,
+        "binary": false,
+        "content_sha256": "b040273d3215a7fff67348c3ca6091ad5ac040624919fcb65903a477387ae396",
+        "deletions": 0,
+        "path": "CHAOS_CHARACTER_FOUNDRY.md",
+        "status": "M",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 61,
+        "binary": false,
+        "content_sha256": "175f3e4d0499f47fdccee0ff4e18c6dc13661c03102a3a839cdd57c23d1a052e",
+        "deletions": 6,
+        "path": "tools/blender/axm_hero_closeup.py",
+        "status": "M",
+        "symbols": [
+          "iris",
+          "lower_jaw",
+          "face",
+          "cloth"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 23,
+        "binary": false,
+        "content_sha256": "5885358f8505574025df8bfb18d620762d5a6154f3092e8c69a8c7a915fe690c",
+        "deletions": 2,
+        "path": "tools/blender/render_chaos_hero.py",
+        "status": "M",
+        "symbols": [
+          "main"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "af05288e66470f681f2fc749f280aced7674d5ae6a8d04d78e286399f7eaddf2"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 4,
+    "kinds": [
+      "code",
+      "knowledge"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "axm",
+      "blender",
+      "chaos",
+      "character",
+      "closeup",
+      "cloth",
+      "connect",
+      "creation-machine",
+      "face",
+      "foundry",
+      "hero",
+      "iris",
+      "jaw",
+      "lower",
+      "render",
+      "standalone",
+      "tongue",
+      "tools",
+      "universal-creation"
+    ]
+  },
+  "source": {
+    "base": "78b16c01b543733688d7d036552b63679c87c10b",
+    "commit_subject": "Connect the Chaos character jaw and tongue",
+    "head": "346111530ed007d644bd810eef326fd06f33dd66",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

@@ -1,0 +1,991 @@
+{
+  "capsule_id": "073ccc7ccbf61534b53e5a42366b834b062dd30b98ac81ada2972f4ee46a4638",
+  "evidence": {
+    "files": [
+      {
+        "additions": 46,
+        "binary": false,
+        "content_sha256": "f0e294032c8207ebe55c90d64317cc3d1de670720bb2f8752276395688126fb9",
+        "deletions": 0,
+        "path": "BROWSER_ARENA_USE_LOOP.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Browser arena use loop \u2014 Signal Keep",
+          "Reproduce",
+          "Reusable improvements",
+          "Evidence \u2014 2026-09-12",
+          "Roots and limits"
+        ]
+      },
+      {
+        "additions": 157,
+        "binary": false,
+        "content_sha256": "1d400f5d240d85c713cfa1b5e3018017311cc9d2c76ca156b4aea42fc16c9046",
+        "deletions": 0,
+        "path": "DONOR_ABSORPTION.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Standalone donor absorption \u2014 2026-09-12",
+          "Runnable addition",
+          "Source integrity",
+          "Evidence and boundaries",
+          "Second absorption pass",
+          "Uploaded visual pack and browser composer",
+          "Third absorption pass \u2014 broader repository survey",
+          "Monolith mapper integration",
+          "Grammar 102 and Grammar Glass pass"
+        ]
+      },
+      {
+        "additions": 40,
+        "binary": false,
+        "content_sha256": "e877e756cbb2ceb53a6bb6e9e88fc483c692e90e120df5558561d47cc9f3227a",
+        "deletions": 0,
+        "path": "FORMAT_TEMPLATES.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Size-aware creation templates"
+        ]
+      },
+      {
+        "additions": 98,
+        "binary": false,
+        "content_sha256": "acf726a4dab6050dc830f6516d08a4335d4e3c67bb477dc3780e230a85125a02",
+        "deletions": 0,
+        "path": "GRAMMAR_WORKBENCH.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Grammar 102 and Grammar Glass workbench",
+          "Provenance and evidence",
+          "Construction programs",
+          "Recovery integration assessment"
+        ]
+      },
+      {
+        "additions": 18,
+        "binary": false,
+        "content_sha256": "4ff4610206f5757d95b037f62fab400b25f554aa23083d2af432f2b126f5263b",
+        "deletions": 0,
+        "path": "INDEPENDENT_CREATION_PROBE.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Independent creation probe"
+        ]
+      },
+      {
+        "additions": 66,
+        "binary": false,
+        "content_sha256": "06ed9a786affa2d29e5ba3678fac77e6c9c692db1148681a0bc9a2bf05d236a2",
+        "deletions": 0,
+        "path": "MEDIA_WORKBENCH.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Standalone media workbench",
+          "Seven painted-metal maps, with a stable seed and adjustable wear.",
+          "All material parameters can be supplied as a JSON PaintedMetalSpec.",
+          "Transparent native bitmap text for interface assets.",
+          "Bring integer PCM WAV into a predictable stereo delivery format.",
+          "What is available",
+          "Sources and checks"
+        ]
+      },
+      {
+        "additions": 24,
+        "binary": false,
+        "content_sha256": "2446d9b25c1aff59a7261410627b1de38ad497a7cf37b9525b7f509ed810ae55",
+        "deletions": 1,
+        "path": "ORGAN_MATERIALIZATION.md",
+        "status": "M",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 109,
+        "binary": false,
+        "content_sha256": "712a8d8807e09f6936cea8379134c319b6dff9dc521726024a4e390c3b0c8e36",
+        "deletions": 0,
+        "path": "OUTPOST_CONSTRUCTION.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Outpost placement and resources",
+          "Reusable operations",
+          "First demonstration",
+          "Evidence \u2014 2026-09-12",
+          "Three-wave pass \u2014 2026-09-12",
+          "Authored encounter rosters \u2014 2026-09-12"
+        ]
+      },
+      {
+        "additions": 91,
+        "binary": false,
+        "content_sha256": "36818ee868be5ffc8a35e80eb4d187805bf8f1721228fe51af46df59bed7a3d4",
+        "deletions": 0,
+        "path": "PIPELINE_MAP.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Installed capability connections",
+          "Discover candidate chains and missing organ-interface providers.",
+          "Find routes that end in the mixed-media project writer.",
+          "Find the installed web-interface composition paths.",
+          "Explicit traversal and result limits.",
+          "What the map means",
+          "Inputs, alternatives and missing work",
+          "Search and evidence boundaries"
+        ]
+      },
+      {
+        "additions": 57,
+        "binary": false,
+        "content_sha256": "218fc3a159eb1553d10d4358743435fdc669ea3915f6c167706a1d27998ac845",
+        "deletions": 0,
+        "path": "PR40_ROOT_REVIEW.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "PR #40 integration review \u2014 2026-09-12",
+          "Evidence",
+          "Root assessment"
+        ]
+      },
+      {
+        "additions": 140,
+        "binary": false,
+        "content_sha256": "6623cecb6dfaa5226692761e4f95b20edc902f01f472daca65362a8ec933d8e2",
+        "deletions": 0,
+        "path": "PRODUCTION_READINESS.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Production readiness: a bounded post-apocalyptic slice",
+          "The 400-organ question",
+          "Slice used to expose the gaps",
+          "Map the seven suggested multipliers onto existing machinery",
+          "Concrete repairs made during this audit",
+          "Follow-up: supported workshop generation"
+        ]
+      },
+      {
+        "additions": 18,
+        "binary": false,
+        "content_sha256": "ae041442648494172a2188788f6a4b8cdc441e774fe083db1535729f68f03446",
+        "deletions": 0,
+        "path": "README.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Standalone media workbench",
+          "Discover installed tool combinations",
+          "Grammar workbench"
+        ]
+      },
+      {
+        "additions": 72,
+        "binary": false,
+        "content_sha256": "a36e42366453c76e16ea65274069732eca0d4bfc7b4035d23396fb06e32a2cd2",
+        "deletions": 0,
+        "path": "VISUAL_PROMPT_ATLAS_INTAKE.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Applying the supplied Global Visual Prompt Atlas research to UC",
+          "Useful additions",
+          "First bounded implementation to build",
+          "Root fit"
+        ]
+      },
+      {
+        "additions": 111,
+        "binary": false,
+        "content_sha256": "6d78b3a70a21d712135e4f73cb0e8bdc72250c007581d364fd0ea051933a0f81",
+        "deletions": 0,
+        "path": "VISUAL_QUALITY_PASS.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Visual quality pass \u2014 2026-09-12",
+          "Reusable arena realization",
+          "Afterlight reference",
+          "Evidence and limits",
+          "Input repair after user play \u2014 2026-09-12",
+          "Reusable rendering efficiency \u2014 2026-09-12"
+        ]
+      },
+      {
+        "additions": 101,
+        "binary": false,
+        "content_sha256": "64bd19b058f56b16218d02d3cbdcae358cc073fafeb411e97fe31ad5093591dc",
+        "deletions": 0,
+        "path": "WORKSHOP_PIPELINE.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Reproducible survivor workshop",
+          "Reusable surface contract",
+          "Artifact handoff",
+          "Provenance and verification"
+        ]
+      },
+      {
+        "additions": 15,
+        "binary": false,
+        "content_sha256": "a52b76f67e87a51eda0c1000d066d366d44c9ecfcf81746c8ea127dae77f644e",
+        "deletions": 4,
+        "path": "capabilities/live/AXM-CAP-BUILD-OFFLINE-BROWSER-GAME.json",
+        "status": "M",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 15,
+        "binary": false,
+        "content_sha256": "660271b317a068a5867b2da78c2d641a8b22fb3d0b5df52870fadfd6aa62d08b",
+        "deletions": 10,
+        "path": "capabilities/live/AXM-CAP-GENERATE-PROCEDURAL-3D.json",
+        "status": "M",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 6,
+        "binary": false,
+        "content_sha256": "5a99c6296f9b4bf6b3ae3353f91889663dc0a8bc63853ca3830a8def3854a8c4",
+        "deletions": 4,
+        "path": "capabilities/live/AXM-CAP-MATERIALIZE-ORGANS.json",
+        "status": "M",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 262,
+        "binary": false,
+        "content_sha256": "e424f81f64f135430a6812bc6e0c03ba8abae914c6188fbb2da062c70583a64f",
+        "deletions": 0,
+        "path": "examples/requests/create_outpost.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 285,
+        "binary": false,
+        "content_sha256": "8a98b80a8306d8f3fbae4a061fe84b20f4814b4c08f606fec70d2ebf028ae1a8",
+        "deletions": 0,
+        "path": "examples/requests/create_outpost_encounters.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 134,
+        "binary": false,
+        "content_sha256": "7aa7018c93acf0ddeb199df45254924803d0b998f0c46d03745b2db5d095d036",
+        "deletions": 0,
+        "path": "examples/requests/create_signal_keep.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 38,
+        "binary": false,
+        "content_sha256": "b52674d9ae25bc27af46d280968f49ae3ed582317644468feeff03dc4ec42c6c",
+        "deletions": 0,
+        "path": "examples/requests/probe_interface_lantern.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 183,
+        "binary": false,
+        "content_sha256": "fdc89d7867cc8329ebd1aae4d1af4764084def5b03c8eb70c851f48a503f6944",
+        "deletions": 0,
+        "path": "src/axm_uc/browser_arena_visuals.py",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 31,
+        "binary": false,
+        "content_sha256": "912312183fc25956bdc31dedf71ba43b0a33351f5015377aa77294aa03506477",
+        "deletions": 0,
+        "path": "src/axm_uc/browser_construction.py",
+        "status": "A",
+        "symbols": [
+          "validate_construction"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 116,
+        "binary": false,
+        "content_sha256": "d0a9e88e90129ef07664e34f91a725fbae9672197abaf09ad9e4543e63d4e573",
+        "deletions": 0,
+        "path": "src/axm_uc/browser_construction_source.py",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 161,
+        "binary": false,
+        "content_sha256": "7729e8edd398b75543218ccf5263aba5e8797863c9a833b8bd88dde319e8d517",
+        "deletions": 60,
+        "path": "src/axm_uc/browser_game.py",
+        "status": "M",
+        "symbols": [
+          "validate_browser_game_spec",
+          "_render_project",
+          "build_browser_game"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 69,
+        "binary": false,
+        "content_sha256": "6569d53c85e0443ae7ef473c12d9105784fdf818fe67889f2b9a6e4af820164f",
+        "deletions": 0,
+        "path": "src/axm_uc/browser_waves.py",
+        "status": "A",
+        "symbols": [
+          "validate_waves"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 137,
+        "binary": false,
+        "content_sha256": "8190d9f1954047d570bc2a5448a5490238b427ea0f62c51d67c168affd0ee379",
+        "deletions": 0,
+        "path": "src/axm_uc/cli.py",
+        "status": "M",
+        "symbols": [
+          "build_parser",
+          "main"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 59,
+        "binary": false,
+        "content_sha256": "cc960ebf680e9944e9a04ca12f93bb7892460b291b4088085d3ed53f6fe9fc8e",
+        "deletions": 0,
+        "path": "src/axm_uc/donor_audio.py",
+        "status": "A",
+        "symbols": [
+          "NativeAudioError",
+          "_sample_to_s16",
+          "decode_wav_bytes",
+          "decode_wav_file"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 33,
+        "binary": false,
+        "content_sha256": "df5802c7f90081a625c0acb033564398264b5444a06b39572199ae65346c3b73",
+        "deletions": 0,
+        "path": "src/axm_uc/donor_bitmap.py",
+        "status": "A",
+        "symbols": [
+          "bitmap_text"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 149,
+        "binary": false,
+        "content_sha256": "dd2569c4289731e3bbf161bb0affa5d6566f8df6ea8de3dcdb6210e8c0172df7",
+        "deletions": 0,
+        "path": "src/axm_uc/donor_metal.py",
+        "status": "A",
+        "symbols": [
+          "PaintedMetalSpec",
+          "_clamp01",
+          "_u8",
+          "_distance_to_segment",
+          "_scratch_segments",
+          "painted_metal_fields"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 94,
+        "binary": false,
+        "content_sha256": "1a914517779e1ff44f1d817f7c6a63dcbeba3c38c4cada5f985022b3031c5405",
+        "deletions": 0,
+        "path": "src/axm_uc/donor_pipeline.py",
+        "status": "A",
+        "symbols": [
+          "capability_node_id",
+          "build_pipeline_graph",
+          "path_status",
+          "pipeline_id"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 51,
+        "binary": false,
+        "content_sha256": "24f022a0c486601cb30daf8be530b1453134daf1b02e2441039adffba7bd7dc1",
+        "deletions": 0,
+        "path": "src/axm_uc/donor_timeline.py",
+        "status": "A",
+        "symbols": [
+          "_smoothstep_milli",
+          "_ease",
+          "sample",
+          "shift_track"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 1,
+        "binary": false,
+        "content_sha256": "36127e72239b7543d9855097431f984be585b81658e0158ae3c1397f09c7b6b9",
+        "deletions": 0,
+        "path": "src/axm_uc/donor_voice/__init__.py",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 322,
+        "binary": false,
+        "content_sha256": "a54881e6a37b8b3157ff0ecc634701799a1e3cb7191d192acc04842e26d4a730",
+        "deletions": 0,
+        "path": "src/axm_uc/donor_voice/core.py",
+        "status": "A",
+        "symbols": [
+          "CommunicationKind",
+          "ProposalStatus",
+          "Ref",
+          "Relation",
+          "Claim",
+          "ProposalMap",
+          "Candidate",
+          "GateContext",
+          "GateDecision",
+          "StateTalkPacket",
+          "_normalise",
+          "canonical_json",
+          "semantic_fingerprint",
+          "evaluate",
+          "emit",
+          "render_floorvoice",
+          "packet_dict",
+          "JsonlEventLog"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 234,
+        "binary": false,
+        "content_sha256": "1d4dbad88f5a7a58af59d282a00feddd622fcc08fc99e83aae26e0202ffb3dd0",
+        "deletions": 0,
+        "path": "src/axm_uc/donor_voice/outcome.py",
+        "status": "A",
+        "symbols": [
+          "_sorted_unique_refs",
+          "_require_unique_refs",
+          "CriterionObservation",
+          "produce_criterion_outcome"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 148,
+        "binary": false,
+        "content_sha256": "c999a91d8846e36a9e7af7d919310d6a564f1b92096b19a63009f5f5cfd1bc74",
+        "deletions": 0,
+        "path": "src/axm_uc/fabric_material.py",
+        "status": "A",
+        "symbols": [
+          "FabricSpec",
+          "_clamp01",
+          "_u8",
+          "_sha",
+          "fabric_fields",
+          "fabric_request"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 54,
+        "binary": false,
+        "content_sha256": "259386d119ed950ea35c23a3096dbd36bb8999a4a6c19551dde2090db3c91abf",
+        "deletions": 0,
+        "path": "src/axm_uc/fabric_noise.py",
+        "status": "A",
+        "symbols": [
+          "_hash2",
+          "_smoothstep",
+          "value_noise",
+          "fbm",
+          "_png_chunk",
+          "png_bytes"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 78,
+        "binary": false,
+        "content_sha256": "885a6602ccdffef783b8f8107a447d89b0fb5fba38d6638cddc047626447371b",
+        "deletions": 0,
+        "path": "src/axm_uc/format_templates.py",
+        "status": "A",
+        "symbols": [
+          "catalog",
+          "resolve_format",
+          "layout_project"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 46,
+        "binary": false,
+        "content_sha256": "f35f7985aa283273c6913ba9934053cbc50c4e23b7e35a29b9b19c0d3eda1fc3",
+        "deletions": 0,
+        "path": "src/axm_uc/grammar_workbench.py",
+        "status": "A",
+        "symbols": [
+          "run_grammar_tool"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 2,
+        "binary": false,
+        "content_sha256": "0b442b5b6c8f045680260bee807302bf44567cebb5d752dd15a0fef45f7f8508",
+        "deletions": 0,
+        "path": "src/axm_uc/machine.py",
+        "status": "M",
+        "symbols": [
+          "UniversalCreationMachine"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 130,
+        "binary": false,
+        "content_sha256": "988d84f18c79c6c4f3ea6018341fd84d480638c30d1bed82b7c0f28147a8a7d2",
+        "deletions": 0,
+        "path": "src/axm_uc/media_workbench.py",
+        "status": "A",
+        "symbols": [
+          "_integer",
+          "_number",
+          "_rgb",
+          "_project",
+          "metal_fields",
+          "metal_request",
+          "label_request",
+          "normalize_wav",
+          "wav_request"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 55,
+        "binary": false,
+        "content_sha256": "3ff80eca48375973d2f008ff23e4a7d29454c59e2e84da405a3e3d36010e5427",
+        "deletions": 1,
+        "path": "src/axm_uc/organ_materialization.py",
+        "status": "M",
+        "symbols": [
+          "_census_data",
+          "census_organs",
+          "operate_organ_materialization"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 148,
+        "binary": false,
+        "content_sha256": "e165ccd7fcf326ade70c71dbe297e5bee0f8e293363349635938611c06f004fa",
+        "deletions": 0,
+        "path": "src/axm_uc/pipeline_map.py",
+        "status": "A",
+        "symbols": [
+          "_bounded",
+          "installed_nodes",
+          "connect_nodes",
+          "map_capabilities",
+          "map_nodes"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 131,
+        "binary": false,
+        "content_sha256": "8c40702adf4c03825a5e013a8879b4896ad12724d556b8443ef404a33dee557c",
+        "deletions": 6,
+        "path": "src/axm_uc/procedural_3d.py",
+        "status": "M",
+        "symbols": [
+          "_cylinder_geometry",
+          "_geometry",
+          "_normalize_surface_spec",
+          "build_glb",
+          "_encode_glb",
+          "verify_glb"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 65,
+        "binary": false,
+        "content_sha256": "f4d8ec52f2193602e8fe59f7d60e6f693d5765025dc38794b37107d7c8008cc2",
+        "deletions": 0,
+        "path": "src/axm_uc/surface_geometry.py",
+        "status": "A",
+        "symbols": [
+          "cross",
+          "sub",
+          "add",
+          "mul",
+          "norm",
+          "SurfaceBuilder"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 102,
+        "binary": false,
+        "content_sha256": "5d6e4af985920f5e2bc71f24c2441279b724a54ef9c98d27569e21b6dd6294de",
+        "deletions": 0,
+        "path": "src/axm_uc/survivor_workshop.py",
+        "status": "A",
+        "symbols": [
+          "lin",
+          "workshop",
+          "workshop_spec"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 31,
+        "binary": false,
+        "content_sha256": "57f14e5d450277413131db56bed1526b2b9a03dea571cd4304d5342a68e57636",
+        "deletions": 0,
+        "path": "src/axm_uc/timeline_tracks.py",
+        "status": "A",
+        "symbols": [
+          "sample_track"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 51,
+        "binary": false,
+        "content_sha256": "a3da002eb16b870122a58d1f8fd35b20931f2d23a4100214c33e0ed51e697c14",
+        "deletions": 0,
+        "path": "src/axm_uc/workshop_project.py",
+        "status": "A",
+        "symbols": [
+          "workshop_request"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 49,
+        "binary": false,
+        "content_sha256": "f2df5b03180e3a298d082fb38bbe76b9621f4d2eb6599ce20ba5e85841ad25ff",
+        "deletions": 0,
+        "path": "tests/test_browser_construction.py",
+        "status": "A",
+        "symbols": [
+          "construction_spec",
+          "ConstructionTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 2,
+        "binary": false,
+        "content_sha256": "7228c9040bc5ad66883142186a4296f0389381aa9a73de3e41e948066aa88a6b",
+        "deletions": 1,
+        "path": "tests/test_browser_game.py",
+        "status": "M",
+        "symbols": [
+          "BrowserGameTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 23,
+        "binary": false,
+        "content_sha256": "cd5d6dbb62fc80c4194279b21a9e4a17cee3494cb9cb268b4740803c18ff0ecb",
+        "deletions": 0,
+        "path": "tests/test_browser_game_runtime.py",
+        "status": "A",
+        "symbols": [
+          "BrowserGameRuntimeTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 68,
+        "binary": false,
+        "content_sha256": "4773a18626e3fc4445edae4e5284a11bd9aa6eb769a5d8175f28d6fd6bc026cf",
+        "deletions": 0,
+        "path": "tests/test_browser_waves.py",
+        "status": "A",
+        "symbols": [
+          "WaveTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 27,
+        "binary": false,
+        "content_sha256": "49fd34a8e3ec4d38935b504242c84fdc46b664bcb26a1794787b7b0268da589a",
+        "deletions": 0,
+        "path": "tests/test_donor_absorption.py",
+        "status": "A",
+        "symbols": [
+          "DonorTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 28,
+        "binary": false,
+        "content_sha256": "626095ddbeed0c44fe31b5ff02ded340d85e04a603ba4ad4607eacd1010bc583",
+        "deletions": 0,
+        "path": "tests/test_fabric_material.py",
+        "status": "A",
+        "symbols": [
+          "FabricTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 32,
+        "binary": false,
+        "content_sha256": "898adf83770369ddefac79c3870cfb1e1216fdac73c77921a68eac9e74a35411",
+        "deletions": 0,
+        "path": "tests/test_format_templates.py",
+        "status": "A",
+        "symbols": [
+          "FormatTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 54,
+        "binary": false,
+        "content_sha256": "bf3cf8560667c21f2e258664b87d96d16fd22e204c7a42c8541cda8dc96a302f",
+        "deletions": 0,
+        "path": "tests/test_grammar_workbench.py",
+        "status": "A",
+        "symbols": [
+          "GrammarWorkbenchTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 98,
+        "binary": false,
+        "content_sha256": "9d6fea8a7677877101a9d75162ba05cfd5ca6350801ea94c301d5c716ffa40ea",
+        "deletions": 0,
+        "path": "tests/test_media_workbench.py",
+        "status": "A",
+        "symbols": [
+          "wav_bytes",
+          "samples",
+          "MediaWorkbenchTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 38,
+        "binary": false,
+        "content_sha256": "3488a5838b82cf6a631fcd0fec4d6b7b8b0eef5a3e5f1901f4d96c678bd24cff",
+        "deletions": 0,
+        "path": "tests/test_organ_materialization.py",
+        "status": "M",
+        "symbols": [
+          "OrganMaterializationTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 81,
+        "binary": false,
+        "content_sha256": "e46bf0ef6b6bfe399177c272185ee3c84057d2d6ebf788180e9335f68c9e9b80",
+        "deletions": 0,
+        "path": "tests/test_pipeline_map.py",
+        "status": "A",
+        "symbols": [
+          "node",
+          "PipelineMapTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 60,
+        "binary": false,
+        "content_sha256": "cb6484841ad505efac372a28a96d0cd484c2ad5098f330ce452c41443e0ba4b3",
+        "deletions": 0,
+        "path": "tests/test_procedural_3d.py",
+        "status": "M",
+        "symbols": [
+          "Procedural3DTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 89,
+        "binary": false,
+        "content_sha256": "a9454b38e276a654ba1f06fe534a642f732683bbcc29e43c706fa210ca72b565",
+        "deletions": 0,
+        "path": "tests/test_surface_workshop.py",
+        "status": "A",
+        "symbols": [
+          "triangle",
+          "SurfaceWorkshopTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 34,
+        "binary": false,
+        "content_sha256": "07f27040203bef45513d625d79d885a00feeb7abf004d293e4e725485370becc",
+        "deletions": 0,
+        "path": "tools/asset-composer/README.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Universal Creation Asset Composer"
+        ]
+      },
+      {
+        "additions": 37,
+        "binary": false,
+        "content_sha256": "77c0faa6b23ff203e1e3f0c5cc1bf1475835f0e3837fdeecc060128effb2b27d",
+        "deletions": 0,
+        "path": "tools/build_afterlight_reference.py",
+        "status": "A",
+        "symbols": [
+          "build"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 96,
+        "binary": false,
+        "content_sha256": "b2847e1522638c6c9cbe8913cfef2ea409441188d54151b87cd81370f9919b64",
+        "deletions": 0,
+        "path": "tools/run_independent_creation_probe.py",
+        "status": "A",
+        "symbols": [
+          "dump",
+          "body_digest",
+          "run"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "6abbb19603653a5ac5c149e9d46c9852dbbc60022019e7f5c6153f6e1149f9c7"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 9,
+    "kinds": [
+      "code",
+      "configuration",
+      "knowledge",
+      "organ-capability",
+      "protocol-state",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "absorption",
+      "add",
+      "addition",
+      "additions",
+      "adjustable",
+      "after",
+      "afterlight",
+      "all",
+      "alternatives",
+      "apocalyptic",
+      "applying",
+      "arena",
+      "artifact",
+      "assessment",
+      "asset",
+      "atlas",
+      "audio",
+      "audit",
+      "authored",
+      "available",
+      "aware",
+      "axm",
+      "bitmap",
+      "body",
+      "boundaries",
+      "bounded",
+      "bring",
+      "broader",
+      "browser",
+      "build",
+      "builder",
+      "bytes",
+      "can",
+      "candidate",
+      "canonical",
+      "cap",
+      "capabilities",
+      "capability",
+      "catalog",
+      "census",
+      "chains",
+      "checks",
+      "chunk",
+      "claim",
+      "clamp01",
+      "cli",
+      "combinations",
+      "communication",
+      "composer",
+      "composition",
+      "concrete",
+      "connect",
+      "connections",
+      "construction",
+      "context",
+      "contract",
+      "create",
+      "creation",
+      "creation-machine",
+      "criterion",
+      "cross",
+      "cylinder",
+      "decision",
+      "decode"
+    ]
+  },
+  "source": {
+    "base": "88cfd8364cc4d2032e5db43702ede5cb56917e7c",
+    "commit_subject": "Merge verified Universal Creation browser, donor and surface pipeline improvements",
+    "head": "a44575b23cf7a2240eeb001425a4ed3082a82720",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

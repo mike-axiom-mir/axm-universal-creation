@@ -1,0 +1,254 @@
+{
+  "capsule_id": "43cdae7d1d5ddedfe4b6b524aead8ab2e42bffd14727ee1299c6cf764be05dc9",
+  "evidence": {
+    "files": [
+      {
+        "additions": 93,
+        "binary": false,
+        "content_sha256": "b0f377ec4cb788d2bb031a9b1c24cbfb307cbbf27c4b8234f2cbd274ba6ad958",
+        "deletions": 0,
+        "path": "RTS_REFERENCE_FOUNDRY.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "RTS reference foundry",
+          "What the machine gained",
+          "Publication and limits",
+          "Evidence and boundaries",
+          "Root review"
+        ]
+      },
+      {
+        "additions": 9,
+        "binary": false,
+        "content_sha256": "4d6b1a5b4ef753622a0dfc8f6628b7852ca26c873bb5fbad0443e0848e6afd8a",
+        "deletions": 0,
+        "path": "src/axm_uc/cli.py",
+        "status": "M",
+        "symbols": [
+          "build_parser",
+          "main"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 2,
+        "binary": false,
+        "content_sha256": "d5c97f37b55e923f1bd638a86308a241e8206dcb8b1697c28d3e992b7f255d85",
+        "deletions": 1,
+        "path": "src/axm_uc/pipeline_map.py",
+        "status": "M",
+        "symbols": [
+          "installed_nodes"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 127,
+        "binary": false,
+        "content_sha256": "110ee499a8375da98fe7092e79396f859097c19ee42a45c5a538866ba885b09c",
+        "deletions": 0,
+        "path": "src/axm_uc/rts_detail.py",
+        "status": "A",
+        "symbols": [
+          "lettering",
+          "sign",
+          "patches",
+          "cargo",
+          "dress"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 213,
+        "binary": false,
+        "content_sha256": "298b9fb3f95fba695a10fee625d5ab4af48b3b76e01e29fdeecca0ac1ab72bdf",
+        "deletions": 0,
+        "path": "src/axm_uc/rts_foundry.py",
+        "status": "A",
+        "symbols": [
+          "catalog",
+          "unpack_glb",
+          "pack_glb",
+          "read_accessor",
+          "articulated_glb",
+          "verify_articulated_glb",
+          "collision_contract",
+          "collision_glb",
+          "reference_pack_request"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 159,
+        "binary": false,
+        "content_sha256": "60441a99fa8a0c91ba2df525c73c3daa05d6ee99be25ba1f9482591abd40e8af",
+        "deletions": 0,
+        "path": "src/axm_uc/rts_mesh.py",
+        "status": "A",
+        "symbols": [
+          "SalvageMesh"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 634,
+        "binary": false,
+        "content_sha256": "41b4cb1924885e6375d9aa1d8cab7d506d3722025199d8c7a620a82931be1278",
+        "deletions": 0,
+        "path": "src/axm_uc/rts_recipes.py",
+        "status": "A",
+        "symbols": [
+          "platform",
+          "canopy",
+          "tank",
+          "shed",
+          "bench",
+          "crane",
+          "tower",
+          "solar",
+          "meteor",
+          "track",
+          "gun",
+          "crew",
+          "vehicle",
+          "greenhouse",
+          "industry",
+          "building",
+          "defense",
+          "equipment",
+          "ruins",
+          "world",
+          "build_reference_mesh"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 3,
+        "binary": false,
+        "content_sha256": "6c777fa2fc0d0089314e2e25cd02f85c5bfe3f3e8a632bfc5664da5aafbfc8fb",
+        "deletions": 3,
+        "path": "tests/test_pipeline_map.py",
+        "status": "M",
+        "symbols": [
+          "PipelineMapTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 92,
+        "binary": false,
+        "content_sha256": "714e42a5336214352a2b21d5f333703f2aaa281aa3dc1ce862717862affea808",
+        "deletions": 0,
+        "path": "tests/test_rts_foundry.py",
+        "status": "A",
+        "symbols": [
+          "RTSFoundryTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 91,
+        "binary": false,
+        "content_sha256": "8c6fa61f3170580a850153adc16adfdb4ae065404785598cc43a3bb47198bad5",
+        "deletions": 0,
+        "path": "tools/review_rts_foundry.py",
+        "status": "A",
+        "symbols": [
+          "decode",
+          "raster",
+          "main"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "a8a5b21488ad3cadd9293ecdc4e63b7dfee0dcc7543d4ede73862a24371ba64d"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 6,
+    "kinds": [
+      "code",
+      "knowledge",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "accessor",
+      "articulated",
+      "asset",
+      "axm",
+      "bench",
+      "boundaries",
+      "build",
+      "building",
+      "canopy",
+      "cargo",
+      "catalog",
+      "cli",
+      "collision",
+      "contract",
+      "crane",
+      "creation-machine",
+      "crew",
+      "decode",
+      "defense",
+      "detail",
+      "dress",
+      "equipment",
+      "evidence",
+      "foundry",
+      "gained",
+      "glb",
+      "greenhouse",
+      "gun",
+      "industry",
+      "installed",
+      "lettering",
+      "limits",
+      "machine",
+      "map",
+      "merge",
+      "mesh",
+      "meteor",
+      "nodes",
+      "pack",
+      "parser",
+      "patches",
+      "pipeline",
+      "platform",
+      "publication",
+      "raster",
+      "read",
+      "recipes",
+      "reference",
+      "request",
+      "review",
+      "root",
+      "rts",
+      "rtsfoundry",
+      "ruins",
+      "salvage",
+      "shed",
+      "sign",
+      "solar",
+      "standalone",
+      "tank",
+      "tools",
+      "tower",
+      "track",
+      "universal-creation"
+    ]
+  },
+  "source": {
+    "base": "dc25fc86eff665bb1874168dc5c930ffd60f7c2e",
+    "commit_subject": "Merge RTS reference foundry: 83 articulated asset recipes",
+    "head": "71112cc5b249e4f48ab28a4d4651f037d962a330",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

@@ -1,0 +1,153 @@
+{
+  "capsule_id": "cbd6c06fff65bed9ebe37cb7c3745bea57a3c1d13462f0735075abd036c9ab04",
+  "evidence": {
+    "files": [
+      {
+        "additions": 74,
+        "binary": false,
+        "content_sha256": "508e1738db029c6ed23eaded0f2ca71295542d25f2c4896b69f4b50688fbc2f5",
+        "deletions": 0,
+        "path": "RTS_WORKSHOP_SPECIALIST_PASS_001.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "RTS Workshop \u2014 Profession Fabric Specialist Pass 001",
+          "Origin",
+          "Source change in this lane",
+          "What this lane can establish without Blender",
+          "Visual acceptance remains blocked",
+          "Technical-art / QA gates remain separate",
+          "Merge rule"
+        ]
+      },
+      {
+        "additions": 48,
+        "binary": false,
+        "content_sha256": "b55d0fdec4876123c04e1947ba3e1d12dca8fdada603af3814b2ab576c7e56ed",
+        "deletions": 0,
+        "path": "tests/test_workshop_game_readiness_gate_source.py",
+        "status": "A",
+        "symbols": [
+          "WorkshopGameReadinessGateSourceTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 47,
+        "binary": false,
+        "content_sha256": "6864b6ef8627cdfc995ff4a8089152b8aafd26ca071cff0ba54d8ecd1f539a1e",
+        "deletions": 0,
+        "path": "tests/test_workshop_personality_anchors.py",
+        "status": "A",
+        "symbols": [
+          "WorkshopPersonalityAnchorTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 46,
+        "binary": false,
+        "content_sha256": "e655ba7d413a9a7470ffb422a0678784bf0e558d609793d0f074496cbd87488d",
+        "deletions": 0,
+        "path": "tools/blender/axm_salvage_personality.py",
+        "status": "M",
+        "symbols": [
+          "mug",
+          "salvage_grin",
+          "roof_wheel_vane",
+          "rear_trophy_rack",
+          "workshop_life"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 54,
+        "binary": false,
+        "content_sha256": "005c7805595c5ccc130b5a823b959e5b3b6a9392a5020884277c543a2ef1994c",
+        "deletions": 4,
+        "path": "tools/blender/verify_rts_workshop.py",
+        "status": "M",
+        "symbols": [
+          "verify",
+          "game_readiness_gates"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "2d9a8ada4dfb064609655a27f1d178ba8aa46160ad0f41a28a53fdfc6eb58af2"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 6,
+    "kinds": [
+      "code",
+      "knowledge",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "acceptance",
+      "anchor",
+      "anchors",
+      "apply",
+      "art",
+      "axm",
+      "blender",
+      "blocked",
+      "can",
+      "change",
+      "creation-machine",
+      "establish",
+      "fabric",
+      "first",
+      "game",
+      "gate",
+      "gates",
+      "grin",
+      "lane",
+      "life",
+      "merge",
+      "mug",
+      "origin",
+      "pass",
+      "personality",
+      "profession",
+      "rack",
+      "readiness",
+      "rear",
+      "remain",
+      "remains",
+      "roof",
+      "rts",
+      "rule",
+      "salvage",
+      "separate",
+      "source",
+      "specialist",
+      "standalone",
+      "technical",
+      "this",
+      "tools",
+      "trophy",
+      "universal-creation",
+      "vane",
+      "verify",
+      "visual",
+      "what",
+      "wheel",
+      "without",
+      "workshop"
+    ]
+  },
+  "source": {
+    "base": "a5cc708457b7e8f33e794fdac648ae65d15a0fb4",
+    "commit_subject": "Workshop: apply first Profession Fabric specialist pass",
+    "head": "7826367e17fb9a66197635a50923c2c1cfb0113e",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

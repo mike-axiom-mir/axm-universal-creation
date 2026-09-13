@@ -1,0 +1,220 @@
+{
+  "capsule_id": "706c1690bffd1d3e39e7369ae482a8a2beaa61bd6633848aabe6d21331f08d80",
+  "evidence": {
+    "files": [
+      {
+        "additions": 75,
+        "binary": false,
+        "content_sha256": "9e396f80d3f3df4c5ec11e23a098922feb00db19fedc3d88b92b11a779a65b3d",
+        "deletions": 0,
+        "path": "RTS_WORKSHOP_POLISH.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Reference-led workshop polish",
+          "Run from a complete checkout",
+          "What changed perceptually",
+          "Evidence and boundaries",
+          "Root review"
+        ]
+      },
+      {
+        "additions": 17,
+        "binary": false,
+        "content_sha256": "3cac1db744464d4aaf688d47505a1e89cf81e330a23f658beed9e3add0ec3ec4",
+        "deletions": 0,
+        "path": "src/axm_uc/cli.py",
+        "status": "M",
+        "symbols": [
+          "build_parser",
+          "main"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 46,
+        "binary": false,
+        "content_sha256": "fb3b96834f459443d9729e718a5f691df02b2100f18f444f455658e36727c220",
+        "deletions": 0,
+        "path": "src/axm_uc/rts_polish.py",
+        "status": "A",
+        "symbols": [
+          "polish_workshop"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 40,
+        "binary": false,
+        "content_sha256": "2f1387f23da6cdee3bcf477b3eaa976c585105a1e9e6e55886e62603451a9240",
+        "deletions": 0,
+        "path": "tests/test_rts_polish.py",
+        "status": "A",
+        "symbols": [
+          "RTSWorkshopPublicationTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 381,
+        "binary": false,
+        "content_sha256": "ae2a6994f0e75e6171ea117d9d12a87e1f1fad7f4c4c1920cf2216aa81c6493a",
+        "deletions": 0,
+        "path": "tools/blender/axm_rts_workshop.py",
+        "status": "A",
+        "symbols": [
+          "materials",
+          "foundation",
+          "main_structure",
+          "roof_canopy",
+          "pipes_and_roof",
+          "workshop_interior",
+          "foreground",
+          "point",
+          "setup_render",
+          "clean_mesh",
+          "convert_and_batch",
+          "main"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 132,
+        "binary": false,
+        "content_sha256": "2e066ae4c285c527b81153a8cb2236edcded21e3e3ace8952b4a552f8bc646d6",
+        "deletions": 0,
+        "path": "tools/blender/axm_salvage_construction.py",
+        "status": "A",
+        "symbols": [
+          "mesh",
+          "corrugated",
+          "cloth",
+          "flange",
+          "barrel",
+          "crate",
+          "lantern",
+          "plant",
+          "physically_scaled_uv"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 120,
+        "binary": false,
+        "content_sha256": "8012d00d7f1ff70ec48f7311868ff4ba04f0ef34a911490372e0db2ba9b41422",
+        "deletions": 0,
+        "path": "tools/blender/axm_salvage_surfaces.py",
+        "status": "A",
+        "symbols": [
+          "srgb",
+          "noise",
+          "write_maps",
+          "pbr_material",
+          "solid",
+          "banner_material"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 50,
+        "binary": false,
+        "content_sha256": "9b98a1649e7623facf1dd44648a87a2efc9fe58a92ab314f05b41e16edff1beb",
+        "deletions": 0,
+        "path": "tools/blender/verify_rts_workshop.py",
+        "status": "A",
+        "symbols": [
+          "verify"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "4f1091fa34e59d5b0f680192f5f3d1480ff028ffebbe038fc169a2333b0a574f"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 6,
+    "kinds": [
+      "code",
+      "knowledge",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "axm",
+      "banner",
+      "barrel",
+      "batch",
+      "blender",
+      "boundaries",
+      "build",
+      "canopy",
+      "changed",
+      "checkout",
+      "clean",
+      "cli",
+      "cloth",
+      "complete",
+      "construction",
+      "convert",
+      "corrugated",
+      "crate",
+      "creation-machine",
+      "evidence",
+      "flange",
+      "foreground",
+      "foundation",
+      "from",
+      "interior",
+      "lantern",
+      "led",
+      "maps",
+      "material",
+      "materials",
+      "merge",
+      "mesh",
+      "noise",
+      "parser",
+      "pbr",
+      "perceptually",
+      "physically",
+      "pipes",
+      "plant",
+      "point",
+      "polish",
+      "publication",
+      "reference",
+      "render",
+      "review",
+      "roof",
+      "root",
+      "rts",
+      "rtsworkshop",
+      "run",
+      "salvage",
+      "scaled",
+      "setup",
+      "solid",
+      "srgb",
+      "standalone",
+      "structure",
+      "surfaces",
+      "tools",
+      "universal-creation",
+      "verify",
+      "what",
+      "workshop",
+      "write"
+    ]
+  },
+  "source": {
+    "base": "71112cc5b249e4f48ab28a4d4651f037d962a330",
+    "commit_subject": "Merge reference-led RTS workshop polish",
+    "head": "fb1f645cffcac1e05f07462b20316b51d270492b",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

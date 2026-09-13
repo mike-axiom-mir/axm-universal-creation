@@ -1,0 +1,98 @@
+{
+  "capsule_id": "39d9044b101e37a273943a40daa29a3e30f5257e90828cd07d13370821d77342",
+  "evidence": {
+    "files": [
+      {
+        "additions": 35,
+        "binary": false,
+        "content_sha256": "4663257cb8cd3aba7e257e65a37b48bb2b12ebeb015708b911414af353257546",
+        "deletions": 0,
+        "path": "MATERIAL_DONOR_INVARIANT_RECEIPT.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Material donor invariant receipt v1",
+          "Status",
+          "Why this exists",
+          "Run",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 70,
+        "binary": false,
+        "content_sha256": "dd662785622ba0323a2d4cab80a893771d7ad6d52e6f0c2924fb7a49d09e83aa",
+        "deletions": 0,
+        "path": "tests/test_material_donor_invariant_receipt.py",
+        "status": "A",
+        "symbols": [
+          "MaterialDonorInvariantReceiptTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 153,
+        "binary": false,
+        "content_sha256": "d29d8d2b9dca6bf36f2b693e3be39bd98269aba4c4148041ba2a48e30560b472",
+        "deletions": 0,
+        "path": "tools/material_donor_invariant_receipt.py",
+        "status": "A",
+        "symbols": [
+          "_load_fixture",
+          "_accepted_summary",
+          "build_receipt",
+          "main"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "920ccc1bef17ac8e7064001acb44e179c3d651112013f0cba6ce6d627aa38e8a"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 7,
+    "kinds": [
+      "code",
+      "knowledge",
+      "protocol-state",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "accepted",
+      "axm",
+      "boundary",
+      "build",
+      "capability",
+      "creation-machine",
+      "donor",
+      "exists",
+      "fixture",
+      "invariant",
+      "load",
+      "material",
+      "owned",
+      "receipt",
+      "run",
+      "standalone",
+      "status",
+      "summary",
+      "this",
+      "tools",
+      "truth",
+      "universal-creation",
+      "why"
+    ]
+  },
+  "source": {
+    "base": "8c8a313fa076a49f947df594e6997b7def267ac9",
+    "commit_subject": "Capability: donor-owned material invariant receipt",
+    "head": "b6e77afca5dce48f42c41e73af3ec2f7709d6a6d",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

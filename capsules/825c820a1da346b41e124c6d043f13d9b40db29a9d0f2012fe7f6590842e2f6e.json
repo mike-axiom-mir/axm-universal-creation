@@ -1,0 +1,235 @@
+{
+  "capsule_id": "825c820a1da346b41e124c6d043f13d9b40db29a9d0f2012fe7f6590842e2f6e",
+  "evidence": {
+    "files": [
+      {
+        "additions": 107,
+        "binary": false,
+        "content_sha256": "7489b5e30b9c39adc9f49f1afcf3e492a4573390d301b14d10729c2e1f1a4c54",
+        "deletions": 0,
+        "path": "CHAOS_CHARACTER_FOUNDRY.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "AXM Chaos character foundry",
+          "Execute",
+          "Composable operations",
+          "Animation contract",
+          "Evidence and acceptance boundaries"
+        ]
+      },
+      {
+        "additions": 465,
+        "binary": false,
+        "content_sha256": "fc2486b0bfbc899856dc54c5e481474ca3e390c51f356629ffd1512fbc8f48d0",
+        "deletions": 0,
+        "path": "tools/blender/axm_chaos_hero.py",
+        "status": "A",
+        "symbols": [
+          "Hero",
+          "main"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 169,
+        "binary": false,
+        "content_sha256": "bc2579518496b744089773a0a88919273072c3eaeee9a74dd53b5947107d8f1c",
+        "deletions": 0,
+        "path": "tools/blender/axm_hero_closeup.py",
+        "status": "A",
+        "symbols": [
+          "remove",
+          "iris",
+          "face",
+          "cloth",
+          "boots",
+          "finish"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 177,
+        "binary": false,
+        "content_sha256": "1eeb68a9cb7f8950cead415cf5b1cc32b65a795c421376c488096c2b7395b05c",
+        "deletions": 0,
+        "path": "tools/blender/axm_hero_detail.py",
+        "status": "A",
+        "symbols": [
+          "replace_armour",
+          "rim_panel",
+          "hardware",
+          "sculptural_face",
+          "surface_wear",
+          "upgrade"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 357,
+        "binary": false,
+        "content_sha256": "32f3d49ba6076928f44e58cdf6498f6cbd78aced87fc83b0f9791535048a7d48",
+        "deletions": 0,
+        "path": "tools/blender/axm_hero_motion.py",
+        "status": "A",
+        "symbols": [
+          "clean_triangles",
+          "rig",
+          "translate",
+          "base_pose",
+          "arm_pose",
+          "envelope",
+          "stance",
+          "pose",
+          "animate",
+          "export",
+          "studio",
+          "preview"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 57,
+        "binary": false,
+        "content_sha256": "755e97f856654aaf945aa08d9a711da93ce6173c7253c74ae56eb59b800e4a99",
+        "deletions": 0,
+        "path": "tools/blender/axm_hero_surfaces.py",
+        "status": "A",
+        "symbols": [
+          "surface"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 65,
+        "binary": false,
+        "content_sha256": "60eb3a9814e552576f712c6cc0e0da4d583d46ed1d494e14c2cfd483c67ae4c2",
+        "deletions": 0,
+        "path": "tools/blender/render_chaos_hero.py",
+        "status": "A",
+        "symbols": [
+          "load",
+          "main"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 48,
+        "binary": false,
+        "content_sha256": "0123691f624d226e3959445e5c9d5d52dae186c17669523da29c090093e9b4dc",
+        "deletions": 0,
+        "path": "tools/blender/repair_chaos_hero_export.py",
+        "status": "A",
+        "symbols": [
+          "main"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 128,
+        "binary": false,
+        "content_sha256": "5e12388cdee9d8be6d405b7c2e1cf82da909e310bebcac087547a21860b098b2",
+        "deletions": 0,
+        "path": "tools/blender/verify_chaos_hero.py",
+        "status": "A",
+        "symbols": [
+          "document",
+          "reset",
+          "action_set",
+          "find_action",
+          "positions",
+          "inspect",
+          "main"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "08fd0857cf2083c39dfbe6bef8935bc2142076f78d23c99c58513d39a14b3cfb"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 4,
+    "kinds": [
+      "code",
+      "knowledge"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "acceptance",
+      "action",
+      "add",
+      "animate",
+      "animation",
+      "arm",
+      "armour",
+      "authoring",
+      "axm",
+      "base",
+      "blender",
+      "boots",
+      "boundaries",
+      "chaos",
+      "character",
+      "clean",
+      "closeup",
+      "cloth",
+      "composable",
+      "contract",
+      "creation-machine",
+      "detail",
+      "document",
+      "envelope",
+      "evidence",
+      "execute",
+      "export",
+      "face",
+      "find",
+      "finish",
+      "foundry",
+      "hardware",
+      "hero",
+      "inspect",
+      "iris",
+      "load",
+      "motion",
+      "operations",
+      "panel",
+      "pose",
+      "positions",
+      "preview",
+      "remove",
+      "render",
+      "repair",
+      "replace",
+      "reset",
+      "rig",
+      "rim",
+      "sculptural",
+      "set",
+      "skeletal",
+      "stance",
+      "standalone",
+      "studio",
+      "surface",
+      "surfaces",
+      "tools",
+      "translate",
+      "triangles",
+      "universal-creation",
+      "upgrade",
+      "verified",
+      "verify"
+    ]
+  },
+  "source": {
+    "base": "7826367e17fb9a66197635a50923c2c1cfb0113e",
+    "commit_subject": "Add verified Chaos character authoring and skeletal animation tools",
+    "head": "78b16c01b543733688d7d036552b63679c87c10b",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

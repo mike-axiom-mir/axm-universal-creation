@@ -1,0 +1,276 @@
+diff --git a/MATERIAL_DONOR_INVARIANT_RECEIPT.md b/MATERIAL_DONOR_INVARIANT_RECEIPT.md
+new file mode 100644
+index 0000000..cb0d54e
+--- /dev/null
++++ b/MATERIAL_DONOR_INVARIANT_RECEIPT.md
+@@ -0,0 +1,35 @@
++# Material donor invariant receipt v1
++
++## Status
++
++**Executable donor-owned evidence surface / bounded probe / not CANON.**
++
++`tools/material_donor_invariant_receipt.py` executes the existing material donor adapter against one retained self-made probe fixture and emits a deterministic JSON receipt for cross-repository verification.
++
++It does not replace `adapt_material_donor_pack`, change donor semantics, or grant authority to a consumer.
++
++## Why this exists
++
++A consumer should not have to hand-rewrite Universal Creation's material donor behavior in order to observe whether the adapter still:
++
++- preserves declared pack/library/entry identity on a complete adaptation;
++- leaves an unassigned channel visibly held and rejects it in strict mode;
++- keeps accepted texture entries while holding a family with duplicate channel bindings;
++- rejects an unsupported donor version;
++- keeps rendering unverified.
++
++The receipt is produced by executing the donor-owned adapter itself. It therefore gives consumers a bounded runtime observation without pretending to prove arbitrary donor packs or image/material semantics.
++
++## Run
++
++```bash
++python tools/material_donor_invariant_receipt.py
++```
++
++The default fixture is `fixtures/material-donor-invariant-probe-v1.json`.
++
++## Truth boundary
++
++The receipt proves only the exact executed adapter behavior over that fixture and its three deterministic mutations. It does **not** prove authorship, real image semantics, PBR correctness, rendering, deployment, arbitrary material packs, or constitutional/CANON authority.
++
++All emitted authority fields are false. Consumers may verify or hold on this evidence, but the receipt cannot execute, merge, promote, or declare CANON.
+diff --git a/tests/test_material_donor_invariant_receipt.py b/tests/test_material_donor_invariant_receipt.py
+new file mode 100644
+index 0000000..8864234
+--- /dev/null
++++ b/tests/test_material_donor_invariant_receipt.py
+@@ -0,0 +1,70 @@
++from __future__ import annotations
++
++import json
++import subprocess
++import sys
++import unittest
++from pathlib import Path
++
++ROOT = Path(__file__).resolve().parents[1]
++
++
++class MaterialDonorInvariantReceiptTests(unittest.TestCase):
++    def _run(self) -> dict:
++        run = subprocess.run(
++            [sys.executable, str(ROOT / "tools" / "material_donor_invariant_receipt.py")],
++            cwd=ROOT,
++            capture_output=True,
++            text=True,
++            check=False,
++        )
++        self.assertEqual(run.returncode, 0, run.stderr)
++        return json.loads(run.stdout)
++
++    def test_receipt_is_deterministic_and_keeps_authority_false(self) -> None:
++        first = self._run()
++        second = self._run()
++        self.assertEqual(first, second)
++        self.assertEqual(first["schema"], "axm.universal-creation.material-donor-invariant-receipt/v1")
++        self.assertEqual(first["producer"]["adapterFormat"], "axm-material-donor-pack")
++        self.assertEqual(first["producer"]["adapterVersion"], "0.2.0")
++        self.assertTrue(first["producer"]["fixtureSha256"])
++        self.assertTrue(all(value is False for value in first["authority"].values()))
++
++    def test_complete_and_ambiguous_observations_preserve_donor_semantics(self) -> None:
++        receipt = self._run()
++        observations = receipt["observations"]
++
++        complete = observations["complete"]
++        self.assertEqual(complete["truthStatus"], "READY_EXACT_MATERIAL_DONOR_ADAPTER")
++        self.assertEqual(complete["source"]["pack_id"], "invariant-probe-pack")
++        self.assertEqual(complete["source"]["source_library_id"], "invariant-probe-library")
++        self.assertEqual(
++            {item["entryId"] for item in complete["acceptedEntries"]},
++            {"probe-base", "probe-roughness"},
++        )
++        self.assertTrue(all(item["source"]["method"] == "self-made-invariant-probe" for item in complete["acceptedEntries"]))
++        self.assertFalse(complete["renderingVerified"])
++
++        unassigned = observations["unassigned"]
++        self.assertEqual(unassigned["truthStatus"], "PARTIAL_EXACT_MATERIAL_DONOR_ADAPTER_WITH_HOLDS")
++        self.assertTrue(unassigned["strictRejected"])
++        self.assertEqual(len(unassigned["heldEntries"]), 1)
++        self.assertIn("no supported explicit channel hint", unassigned["heldEntries"][0]["reason"])
++
++        family = observations["familyConflict"]
++        self.assertEqual(family["truthStatus"], "PARTIAL_EXACT_MATERIAL_DONOR_ADAPTER_WITH_HOLDS")
++        self.assertEqual(family["acceptedFamilyCount"], 0)
++        self.assertEqual(family["heldFamilies"][0]["duplicate_channels"], ["base-color"])
++        self.assertEqual(len(family["acceptedEntries"]), 3)
++
++    def test_unsupported_version_is_retained_as_fail_closed_observation(self) -> None:
++        receipt = self._run()
++        unsupported = receipt["observations"]["unsupportedVersion"]
++        self.assertTrue(unsupported["rejected"])
++        self.assertIn("unsupported material donor version", unsupported["message"])
++        self.assertIn("Executable donor-owned observations", receipt["truthBoundary"]["claim"])
++
++
++if __name__ == "__main__":
++    unittest.main()
+diff --git a/tools/material_donor_invariant_receipt.py b/tools/material_donor_invariant_receipt.py
+new file mode 100644
+index 0000000..0b46d9c
+--- /dev/null
++++ b/tools/material_donor_invariant_receipt.py
+@@ -0,0 +1,153 @@
++from __future__ import annotations
++
++import argparse
++import copy
++import hashlib
++import json
++import sys
++from pathlib import Path
++from typing import Any
++
++ROOT = Path(__file__).resolve().parents[1]
++sys.path.insert(0, str(ROOT / "src"))
++
++from axm_uc.material_donor import (  # noqa: E402
++    DONOR_FORMAT,
++    DONOR_VERSION,
++    MaterialDonorError,
++    adapt_material_donor_pack,
++)
++
++SCHEMA = "axm.universal-creation.material-donor-invariant-receipt/v1"
++DEFAULT_FIXTURE = ROOT / "fixtures" / "material-donor-invariant-probe-v1.json"
++
++
++def _load_fixture(path: Path) -> tuple[dict[str, Any], str]:
++    raw = path.read_bytes()
++    value = json.loads(raw.decode("utf-8"))
++    if not isinstance(value, dict):
++        raise ValueError("material donor invariant probe fixture must be a JSON object")
++    return value, hashlib.sha256(raw).hexdigest()
++
++
++def _accepted_summary(result: dict[str, Any]) -> list[dict[str, Any]]:
++    return sorted(
++        [
++            {
++                "entryId": item.get("entry_id"),
++                "channel": item.get("channel"),
++                "source": copy.deepcopy(item.get("source")),
++            }
++            for item in result.get("accepted_entries", [])
++            if isinstance(item, dict)
++        ],
++        key=lambda item: str(item.get("entryId")),
++    )
++
++
++def build_receipt(fixture_path: Path = DEFAULT_FIXTURE) -> dict[str, Any]:
++    pack, fixture_sha256 = _load_fixture(fixture_path)
++
++    complete = adapt_material_donor_pack(pack, strict=True)
++
++    unassigned_pack = copy.deepcopy(pack)
++    probe = copy.deepcopy(unassigned_pack["library"]["entries"][0])
++    probe["id"] = "probe-unassigned"
++    probe["name"] = "probe-unassigned.png"
++    probe["usage"] = {
++        "channelHint": "unassigned",
++        "channelBasis": "operator-declared",
++    }
++    unassigned_pack["library"]["entries"].append(probe)
++    unassigned = adapt_material_donor_pack(unassigned_pack, strict=False)
++    strict_rejected = False
++    try:
++        adapt_material_donor_pack(unassigned_pack, strict=True)
++    except MaterialDonorError:
++        strict_rejected = True
++
++    family_pack = copy.deepcopy(pack)
++    duplicate = copy.deepcopy(family_pack["library"]["entries"][0])
++    duplicate["id"] = "probe-base-duplicate"
++    duplicate["name"] = "probe-base-duplicate.png"
++    family_pack["library"]["entries"].append(duplicate)
++    family_pack["library"]["families"][0]["entryIds"].append(duplicate["id"])
++    family_conflict = adapt_material_donor_pack(family_pack, strict=False)
++
++    unsupported_pack = copy.deepcopy(pack)
++    unsupported_pack["version"] = "0.1.0"
++    unsupported_rejected = False
++    unsupported_message = None
++    try:
++        adapt_material_donor_pack(unsupported_pack, strict=False)
++    except MaterialDonorError as exc:
++        unsupported_rejected = True
++        unsupported_message = str(exc)
++
++    return {
++        "schema": SCHEMA,
++        "producer": {
++            "repository": "mike-axiom-mir/axm-universal-creation",
++            "tool": "tools/material_donor_invariant_receipt.py",
++            "fixture": str(fixture_path.relative_to(ROOT)).replace("\\", "/"),
++            "fixtureSha256": fixture_sha256,
++            "adapterFormat": DONOR_FORMAT,
++            "adapterVersion": DONOR_VERSION,
++        },
++        "observations": {
++            "complete": {
++                "truthStatus": complete.get("truth_status"),
++                "source": copy.deepcopy(complete.get("source")),
++                "acceptedEntries": _accepted_summary(complete),
++                "heldEntryCount": len(complete.get("receipt", {}).get("held_entries", [])),
++                "heldFamilyCount": len(complete.get("receipt", {}).get("held_families", [])),
++                "renderingVerified": complete.get("receipt", {}).get("rendering_verified"),
++            },
++            "unassigned": {
++                "truthStatus": unassigned.get("truth_status"),
++                "acceptedEntries": _accepted_summary(unassigned),
++                "heldEntries": copy.deepcopy(unassigned.get("receipt", {}).get("held_entries", [])),
++                "strictRejected": strict_rejected,
++            },
++            "familyConflict": {
++                "truthStatus": family_conflict.get("truth_status"),
++                "acceptedEntries": _accepted_summary(family_conflict),
++                "acceptedFamilyCount": len(family_conflict.get("accepted_families", [])),
++                "heldFamilies": copy.deepcopy(family_conflict.get("receipt", {}).get("held_families", [])),
++            },
++            "unsupportedVersion": {
++                "rejected": unsupported_rejected,
++                "message": unsupported_message,
++            },
++        },
++        "authority": {
++            "mayExecute": False,
++            "mayMerge": False,
++            "mayPromote": False,
++            "mayDeclareCanon": False,
++        },
++        "truthBoundary": {
++            "claim": "Executable donor-owned observations for the exact material-donor adapter and bounded probe fixture.",
++            "notProven": [
++                "authorship",
++                "image semantic correctness",
++                "PBR correctness",
++                "rendering",
++                "deployment",
++                "constitutional authority",
++            ],
++        },
++    }
++
++
++def main() -> int:
++    parser = argparse.ArgumentParser(description="Emit a bounded donor-owned INV-10 evidence receipt.")
++    parser.add_argument("--fixture", type=Path, default=DEFAULT_FIXTURE)
++    args = parser.parse_args()
++    receipt = build_receipt(args.fixture.resolve())
++    sys.stdout.write(json.dumps(receipt, ensure_ascii=False, sort_keys=True, indent=2) + "\n")
++    return 0
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())

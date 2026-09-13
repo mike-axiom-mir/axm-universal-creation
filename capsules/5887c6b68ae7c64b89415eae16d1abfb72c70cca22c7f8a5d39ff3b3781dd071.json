@@ -1,0 +1,145 @@
+{
+  "capsule_id": "5887c6b68ae7c64b89415eae16d1abfb72c70cca22c7f8a5d39ff3b3781dd071",
+  "evidence": {
+    "files": [
+      {
+        "additions": 117,
+        "binary": false,
+        "content_sha256": "eac318e93e9a7b8abff2cb17b799a1ca4fb95c3318a9c119fd98f52becae6c06",
+        "deletions": 0,
+        "path": "MATERIAL_DONOR_ADAPTER.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "AXM Material Donor Adapter v0.1",
+          "First proof boundary",
+          "Entry mapping",
+          "Family mapping",
+          "Strict versus partial",
+          "What is actually proven",
+          "What is not proven",
+          "Why this is the first reuse proof",
+          "Roots"
+        ]
+      },
+      {
+        "additions": 413,
+        "binary": false,
+        "content_sha256": "05f7a105331bb46509d33500fe1880e6a1eb3593205896cebf094f6b55a9d02e",
+        "deletions": 0,
+        "path": "src/axm_uc/material_donor.py",
+        "status": "A",
+        "symbols": [
+          "MaterialDonorError",
+          "_canonical_bytes",
+          "_digest",
+          "_text",
+          "_safe_atom_id",
+          "_decode_data_url",
+          "_color_space",
+          "_entry_channel",
+          "_validate_pack",
+          "adapt_material_donor_pack"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 175,
+        "binary": false,
+        "content_sha256": "14c1dc279a39a63ebd099a1c1b2f6799cc1478f12fb61b86c6cea8c930d2b48a",
+        "deletions": 0,
+        "path": "tests/test_material_donor.py",
+        "status": "A",
+        "symbols": [
+          "donor_pack",
+          "MaterialDonorAdapterTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 64,
+        "binary": false,
+        "content_sha256": "d003cb72494bc09819cddf3bd6ce135d0e0c90f9ba2f23413dbf0d1ccc0b638e",
+        "deletions": 0,
+        "path": "tools/import_material_donor.py",
+        "status": "A",
+        "symbols": [
+          "parse_args",
+          "main"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "2da5f61c5ae54c9ec284b7169f553dd130ab57faac1331ae97e9603d6be39f82"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "actually",
+      "adapt",
+      "adapter",
+      "add",
+      "args",
+      "atom",
+      "axm",
+      "boundary",
+      "bytes",
+      "canonical",
+      "channel",
+      "color",
+      "creation-machine",
+      "decode",
+      "detached",
+      "digest",
+      "donor",
+      "entry",
+      "error",
+      "family",
+      "first",
+      "import",
+      "mapping",
+      "material",
+      "not",
+      "pack",
+      "parse",
+      "partial",
+      "proof",
+      "proven",
+      "reuse",
+      "roots",
+      "safe",
+      "space",
+      "standalone",
+      "strict",
+      "surface",
+      "text",
+      "this",
+      "tools",
+      "universal-creation",
+      "url",
+      "validate",
+      "versus",
+      "what",
+      "why"
+    ]
+  },
+  "source": {
+    "base": "d2502e6aca6f1d1ababaaf231b8e5295ae545d95",
+    "commit_subject": "Add detached Material Surface donor-pack adapter",
+    "head": "e7e5a68cce2206da72cc9cac6ce6582304387598",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

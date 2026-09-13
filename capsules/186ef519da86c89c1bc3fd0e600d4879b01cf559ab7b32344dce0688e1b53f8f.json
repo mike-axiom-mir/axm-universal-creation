@@ -1,0 +1,59 @@
+{
+  "capsule_id": "186ef519da86c89c1bc3fd0e600d4879b01cf559ab7b32344dce0688e1b53f8f",
+  "evidence": {
+    "files": [
+      {
+        "additions": 16,
+        "binary": false,
+        "content_sha256": "58f479b751265d826af744a7b4331ac0d08c57429fce385f9dc65564ce26d987",
+        "deletions": 0,
+        "path": "tests/test_material_capability_realization.py",
+        "status": "M",
+        "symbols": [
+          "MaterialCapabilityRealizationTests"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "c7209e279b685cf3b206f72dd4da43d0d368e29a5da34789111c4509ba5346a7"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 7,
+    "kinds": [
+      "code",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "axiom",
+      "axm",
+      "capability",
+      "codex",
+      "creation-machine",
+      "from",
+      "material",
+      "merge",
+      "mike",
+      "mir",
+      "proof",
+      "pull",
+      "realization",
+      "request",
+      "standalone",
+      "universal-creation"
+    ]
+  },
+  "source": {
+    "base": "000c875bce353820a60ff9cdb9f4c06294613674",
+    "commit_subject": "Merge pull request #45 from mike-axiom-mir/codex/material-capability-realization-proof-v0.20.1",
+    "head": "dc25fc86eff665bb1874168dc5c930ffd60f7c2e",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

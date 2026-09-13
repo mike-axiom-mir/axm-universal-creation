@@ -1,0 +1,110 @@
+{
+  "capsule_id": "6606a33b44332f793011d257fa039f8ae9e9f457f321e45f578d890db77e501b",
+  "evidence": {
+    "files": [
+      {
+        "additions": 25,
+        "binary": false,
+        "content_sha256": "14c104dff858691a103201206025dcd7091073829a38a006ac4d88f6d8ac6cf6",
+        "deletions": 0,
+        "path": "RTS_WORKSHOP_POLISH.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Plate style iteration"
+        ]
+      },
+      {
+        "additions": 15,
+        "binary": false,
+        "content_sha256": "2b0a7fc72ef215fd950cc8f30402aa01a2fc0a74ade97be9a27ade1847f264b1",
+        "deletions": 13,
+        "path": "tools/blender/axm_rts_workshop.py",
+        "status": "M",
+        "symbols": [
+          "materials",
+          "roof_canopy",
+          "setup_render",
+          "main"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 2,
+        "binary": false,
+        "content_sha256": "6cd19b7c651f32fe1f2fe1432ae01f3d0875f86375ca1576a10a86516dbd0858",
+        "deletions": 1,
+        "path": "tools/blender/axm_salvage_construction.py",
+        "status": "M",
+        "symbols": [
+          "lantern"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 56,
+        "binary": false,
+        "content_sha256": "d5ac9311f520e509cab72929ac6c1e67df3d60a526ede45433f9e313b7403a78",
+        "deletions": 0,
+        "path": "tools/blender/axm_salvage_personality.py",
+        "status": "A",
+        "symbols": [
+          "kettle",
+          "mug",
+          "workshop_life"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "6cd720214b323ff83a85d2b0ae3895e6288561e0060db08041dd0b3860384263"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 4,
+    "kinds": [
+      "code",
+      "knowledge"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "axm",
+      "blender",
+      "canopy",
+      "construction",
+      "creation-machine",
+      "improvements",
+      "iteration",
+      "kettle",
+      "lantern",
+      "life",
+      "lighting",
+      "materials",
+      "merge",
+      "mug",
+      "personality",
+      "plate",
+      "polish",
+      "render",
+      "roof",
+      "rts",
+      "salvage",
+      "setup",
+      "standalone",
+      "style",
+      "tools",
+      "universal-creation",
+      "workshop"
+    ]
+  },
+  "source": {
+    "base": "fb1f645cffcac1e05f07462b20316b51d270492b",
+    "commit_subject": "Merge workshop plate-style construction and lighting improvements",
+    "head": "59e3817c21cbc5212570518365b98866a69cb331",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

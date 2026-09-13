@@ -1,0 +1,432 @@
+diff --git a/RTS_WORKSHOP_POLISH.md b/RTS_WORKSHOP_POLISH.md
+index ed0dd90..3de7920 100644
+--- a/RTS_WORKSHOP_POLISH.md
++++ b/RTS_WORKSHOP_POLISH.md
+@@ -28,9 +28,27 @@ PYTHONPATH=src python -m axm_uc rts-workshop-polish OUTPUT \
+ The command builds in temporary staging and publishes only after Blender exits
+ successfully and the expected asset/render files match their recorded hashes.
+ An existing destination is refused. Output includes editable packed Blender
+-source, embedded-texture near/far GLBs, actual fresh-import renders and receipts.
+-A rendering failure is not a successful publication. A source checkout is required;
+-this optional tool-backed hand is not included in the small Python wheel.
++source, embedded-texture hero and runtime-LOD GLBs, actual fresh-import hero
++renders and receipts. A rendering failure is not a successful publication. A
++source checkout is required; this optional tool-backed hand is not included in
++the small Python wheel.
++
++## Runtime LOD ladder
++
++The authored hero and existing LOD1 remain unchanged. A separate bounded Blender
++post-stage descends from the verified LOD1 and emits three additional runtime
++candidates:
++
++- `improvised-workshop-tactical.glb`: structural target 20k–40k triangles;
++- `improvised-workshop-rts.glb`: structural target 4k–12k triangles;
++- `improvised-workshop-far.glb`: structural target 500–2k triangles.
++
++Those bands are runtime geometry targets, not visual-quality labels. The
++independent verifier must measure a strictly decreasing five-level ladder and
++must reject a candidate that falls outside its declared band. Perceptual
++equivalence, target-RTS use, material/texture budget acceptance and device FPS
++remain separate evidence. The far GLB is geometry, not an impostor; a later
++impostor may still be the better final far-distance solution.
+ 
+ ## What changed perceptually
+ 
+@@ -50,16 +68,18 @@ repair patch. Actual GLB re-import is reviewed, not only the native source scene
+ ## Evidence and boundaries
+ 
+ `verify_rts_workshop.py` independently reads GLB accessors, indices, UVs, normals,
+-embedded image bytes, material batches, bounds and the lower-detail triangle
+-reduction. It rejects missing textures, invalid geometry and leaked review-floor
+-geometry. It does not turn mesh counts into aesthetic quality claims.
++embedded image bytes, material batches, bounds and the complete LOD triangle
++ladder. It rejects missing textures, invalid geometry, leaked review-floor
++geometry, non-monotonic LODs and runtime tiers outside their declared triangle
++bands. It does not turn mesh counts into aesthetic quality claims.
+ 
+ The preview is a Cycles CPU render. The GLB retains actual textures and geometry;
+ the game must provide suitable lighting, shadows, practical lights and tone mapping.
+ Studio staging is deliberately excluded. This is a static building, not an
+-animated construction sequence. There is no measured target-game FPS, in-game
+-import observation, automatic perceptual acceptance, or exact concept-match claim.
+-Finer wear and authored cloth shaping remain opportunities for later iterations.
++animated construction sequence. There is no measured target-game FPS, automatic
++LOD perceptual acceptance, final far-impostor acceptance, or exact concept-match
++claim. Finer wear and authored cloth shaping remain opportunities for later
++iterations.
+ 
+ ## Root review
+ 
+diff --git a/src/axm_uc/rts_polish.py b/src/axm_uc/rts_polish.py
+index e7594ac..c7818f2 100644
+--- a/src/axm_uc/rts_polish.py
++++ b/src/axm_uc/rts_polish.py
+@@ -13,6 +13,22 @@ import subprocess
+ import tempfile
+ 
+ 
++WORKSHOP_ARTIFACTS = (
++    'improvised-workshop.glb',
++    'improvised-workshop-lod1.glb',
++    'improvised-workshop-tactical.glb',
++    'improvised-workshop-rts.glb',
++    'improvised-workshop-far.glb',
++    'workshop-editable.blend',
++    'workshop-hero.png',
++    'workshop-rear.png',
++    'workshop-detail.png',
++    'lod-ladder-build.json',
++    'glb-inspection.json',
++    'game-readiness-gates.json',
++)
++
++
+ def polish_workshop(root, destination, python, font, resolution=1100, samples=64):
+     root=Path(root).resolve();target=Path(destination).resolve()
+     if target.exists():raise FileExistsError(f'Refusing to overwrite {target}')
+@@ -23,24 +39,44 @@ def polish_workshop(root, destination, python, font, resolution=1100, samples=64
+     font=Path(font).resolve()
+     if not font.is_file():raise FileNotFoundError(font)
+     script=root/'tools/blender/axm_rts_workshop.py'
+-    if not script.is_file():raise FileNotFoundError('This execution hand requires a complete Universal Creation source checkout')
++    lod_script=root/'tools/blender/axm_rts_workshop_lods.py'
++    verifier=root/'tools/blender/verify_rts_workshop.py'
++    for required in (script,lod_script,verifier):
++        if not required.is_file():raise FileNotFoundError('This execution hand requires a complete Universal Creation source checkout')
+     target.parent.mkdir(parents=True,exist_ok=True)
+     with tempfile.TemporaryDirectory(prefix='axm-rts-polish-',dir=target.parent) as temp:
+         stage=Path(temp)/'asset';log=Path(temp)/'build.log'
+-        command=[runtime,str(script),'--output',str(stage),'--font',str(font),'--resolution',str(resolution),'--samples',str(samples)]
++        commands=[
++            [runtime,str(script),'--output',str(stage),'--font',str(font),'--resolution',str(resolution),'--samples',str(samples)],
++            [runtime,str(lod_script),'--root',str(stage)],
++            [runtime,str(verifier),str(stage)],
++        ]
+         with log.open('w') as stream:
+-            result=subprocess.run(command,stdout=stream,stderr=subprocess.STDOUT,timeout=1800,check=False)
+-        if result.returncode:
+-            raise RuntimeError('Blender workshop failed; destination was not published. '+log.read_text(errors='replace')[-1800:])
++            for command in commands:
++                stream.write('$ '+' '.join(command)+'\n');stream.flush()
++                result=subprocess.run(command,stdout=stream,stderr=subprocess.STDOUT,timeout=1800,check=False)
++                if result.returncode:
++                    raise RuntimeError('Blender workshop stage failed; destination was not published. '+log.read_text(errors='replace')[-1800:])
+         report_path=stage/'verification.json'
+         if not report_path.is_file():raise RuntimeError('Blender returned without a verification report')
+         report=json.loads(report_path.read_text())
+-        for name in ['improvised-workshop.glb','improvised-workshop-lod1.glb','workshop-editable.blend','workshop-hero.png','workshop-rear.png','workshop-detail.png']:
++        digest=lambda path:hashlib.sha256(path.read_bytes()).hexdigest()
++        report['source_sha256'][lod_script.name]=digest(lod_script)
++        report['source_sha256'][verifier.name]=digest(verifier)
++        report['lod_ladder']=json.loads((stage/'lod-ladder-build.json').read_text())
++        report['game_readiness_gates']=json.loads((stage/'game-readiness-gates.json').read_text())
++        for name in WORKSHOP_ARTIFACTS:
++            path=stage/name
++            if not path.is_file():raise RuntimeError(f'Missing workshop artifact: {name}')
++            report['artifacts'][name]={'bytes':path.stat().st_size,'sha256':digest(path)}
++        report['scope']='Reference-led authored asset with fresh-import Blender hero renders and a structurally verified runtime LOD ladder. LOD visual equivalence, target RTS acceptance and target-device performance remain separate evidence.'
++        report_path.write_text(json.dumps(report,indent=2)+'\n')
++        for name in WORKSHOP_ARTIFACTS:
+             path=stage/name;entry=report['artifacts'][name]
+-            if not path.is_file() or hashlib.sha256(path.read_bytes()).hexdigest()!=entry['sha256']:
++            if digest(path)!=entry['sha256']:
+                 raise RuntimeError(f'Artifact evidence does not match: {name}')
+         shutil.copyfile(log,stage/'build.log')
+         if target.exists():raise FileExistsError(target)
+         stage.rename(target)
+     return {'type':'RTS_WORKSHOP_POLISH_RESULT','path':str(target),'verification':report,
+-            'scope':'Reference-led authored asset; fresh-import Blender renders, not target RTS execution or user visual acceptance.'}
++            'scope':'Reference-led authored asset; fresh-import Blender hero renders plus independently verified runtime LOD structure, not target RTS execution or user visual acceptance.'}
+diff --git a/tests/test_rts_polish.py b/tests/test_rts_polish.py
+index 2cd89d2..0459f78 100644
+--- a/tests/test_rts_polish.py
++++ b/tests/test_rts_polish.py
+@@ -12,7 +12,9 @@ from axm_uc.rts_polish import polish_workshop
+ 
+ class RTSWorkshopPublicationTests(unittest.TestCase):
+     def fixture(self, temp):
+-        root=Path(temp);script=root/'tools/blender/axm_rts_workshop.py';script.parent.mkdir(parents=True);script.write_text('# fixture')
++        root=Path(temp);tools=root/'tools/blender';tools.mkdir(parents=True)
++        for name in ('axm_rts_workshop.py','axm_rts_workshop_lods.py','verify_rts_workshop.py'):
++            (tools/name).write_text('# fixture')
+         font=root/'font.ttf';font.write_bytes(b'fixture-font')
+         return root,font
+ 
+diff --git a/tests/test_workshop_lod_ladder_source.py b/tests/test_workshop_lod_ladder_source.py
+new file mode 100644
+index 0000000..6efd47b
+--- /dev/null
++++ b/tests/test_workshop_lod_ladder_source.py
+@@ -0,0 +1,53 @@
++import ast
++import unittest
++from pathlib import Path
++
++
++ROOT = Path(__file__).resolve().parents[1]
++LOD_SOURCE = ROOT / 'tools' / 'blender' / 'axm_rts_workshop_lods.py'
++VERIFY_SOURCE = ROOT / 'tools' / 'blender' / 'verify_rts_workshop.py'
++POLISH_SOURCE = ROOT / 'src' / 'axm_uc' / 'rts_polish.py'
++
++
++class WorkshopLodLadderSourceTests(unittest.TestCase):
++    def test_sources_parse(self):
++        for path in (LOD_SOURCE, VERIFY_SOURCE, POLISH_SOURCE):
++            ast.parse(path.read_text(encoding='utf-8'))
++
++    def test_runtime_ladder_artifacts_are_explicit(self):
++        combined = '\n'.join(path.read_text(encoding='utf-8') for path in (LOD_SOURCE, VERIFY_SOURCE, POLISH_SOURCE))
++        for name in (
++            'improvised-workshop-lod1.glb',
++            'improvised-workshop-tactical.glb',
++            'improvised-workshop-rts.glb',
++            'improvised-workshop-far.glb',
++        ):
++            self.assertIn(name, combined)
++
++    def test_target_bands_match_current_rts_policy(self):
++        text = VERIFY_SOURCE.read_text(encoding='utf-8')
++        for literal in ('20_000, 40_000', '4_000, 12_000', '500, 2_000'):
++            self.assertIn(literal, text)
++        self.assertIn('validate_lod_ladder', text)
++        self.assertIn("'runtime_lod_target_bands':'TESTED'", text)
++
++    def test_visual_and_target_acceptance_stay_separate(self):
++        text = VERIFY_SOURCE.read_text(encoding='utf-8')
++        for gate in (
++            'lod_perceptual_equivalence',
++            'target_rts_integration',
++            'target_device_fps',
++            'material_texture_budget_acceptance',
++            'visual_quality',
++        ):
++            self.assertIn(f"'{gate}':'NOT_TESTED'", text)
++
++    def test_execution_hand_requires_and_publishes_lod_stage(self):
++        text = POLISH_SOURCE.read_text(encoding='utf-8')
++        self.assertIn('axm_rts_workshop_lods.py', text)
++        self.assertIn('lod-ladder-build.json', text)
++        self.assertIn('game-readiness-gates.json', text)
++
++
++if __name__ == '__main__':
++    unittest.main()
+diff --git a/tools/blender/axm_rts_workshop_lods.py b/tools/blender/axm_rts_workshop_lods.py
+new file mode 100644
+index 0000000..98a2fe4
+--- /dev/null
++++ b/tools/blender/axm_rts_workshop_lods.py
+@@ -0,0 +1,116 @@
++"""Derive deeper runtime LODs from the verified workshop LOD1 GLB.
++
++This is deliberately a post-stage: the authored hero and existing LOD1 remain
++unchanged.  The ladder is sequential so each cheaper tier descends from the
++already simplified previous tier instead of re-authoring the workshop.
++"""
++from __future__ import annotations
++
++import argparse
++import json
++from pathlib import Path
++
++import bpy
++
++from axm_blender_forge import export_glb, select_only
++
++
++SOURCE_NAME = "improvised-workshop-lod1.glb"
++LOD_STAGES = (
++    {
++        "role": "near-tactical",
++        "filename": "improvised-workshop-tactical.glb",
++        "ratio": 0.45,
++        "target_triangles": [20_000, 40_000],
++    },
++    {
++        "role": "ordinary-rts",
++        "filename": "improvised-workshop-rts.glb",
++        "ratio": 0.30,
++        "target_triangles": [4_000, 12_000],
++    },
++    {
++        "role": "far-rts",
++        "filename": "improvised-workshop-far.glb",
++        "ratio": 0.10,
++        "target_triangles": [500, 2_000],
++    },
++)
++
++
++def triangle_count(objects):
++    return sum(sum(max(0, len(poly.vertices) - 2) for poly in obj.data.polygons) for obj in objects)
++
++
++def clear_scene():
++    bpy.ops.object.select_all(action="SELECT")
++    bpy.ops.object.delete(use_global=False)
++    for block in list(bpy.data.objects):
++        if block.users == 0:
++            bpy.data.objects.remove(block)
++
++
++def apply_decimation(objects, ratio):
++    for obj in objects:
++        if obj.type != "MESH" or len(obj.data.polygons) <= 4:
++            continue
++        modifier = obj.modifiers.new("AXM runtime LOD reduction", "DECIMATE")
++        modifier.ratio = ratio
++        select_only([obj])
++        bpy.context.view_layer.objects.active = obj
++        bpy.ops.object.modifier_apply(modifier=modifier.name)
++
++
++def main():
++    parser = argparse.ArgumentParser()
++    parser.add_argument("--root", type=Path, required=True)
++    args = parser.parse_args()
++    root = args.root.resolve()
++    source = root / SOURCE_NAME
++    if not source.is_file():
++        raise SystemExit(f"Missing verified source LOD: {source}")
++
++    clear_scene()
++    bpy.ops.import_scene.gltf(filepath=str(source))
++    objects = [obj for obj in bpy.context.scene.objects if obj.type == "MESH"]
++    if not objects:
++        raise SystemExit("LOD1 import produced no mesh objects")
++
++    stages = []
++    previous_triangles = triangle_count(objects)
++    for stage in LOD_STAGES:
++        before = previous_triangles
++        apply_decimation(objects, stage["ratio"])
++        after = triangle_count(objects)
++        if not 0 < after < before:
++            raise RuntimeError(
++                f"{stage['role']} did not reduce geometry: before={before}, after={after}"
++            )
++        output = root / stage["filename"]
++        export_glb(output, objects)
++        stages.append(
++            {
++                **stage,
++                "input_triangles_in_blender": before,
++                "output_triangles_in_blender": after,
++                "observed_ratio_in_blender": after / before,
++            }
++        )
++        previous_triangles = after
++
++    report = {
++        "schema": "axm.rts-workshop-lod-ladder-build/v0.1",
++        "source": SOURCE_NAME,
++        "source_triangles_in_blender": triangle_count(objects) if not stages else stages[0]["input_triangles_in_blender"],
++        "stages": stages,
++        "scope": (
++            "Sequential Blender decimation from the existing verified LOD1. "
++            "Triangle bands are targets for later independent GLB verification, not visual-equivalence claims."
++        ),
++    }
++    (root / "lod-ladder-build.json").write_text(json.dumps(report, indent=2) + "\n")
++    print(json.dumps(report, indent=2), flush=True)
++
++
++if __name__ == "__main__":
++    main()
+diff --git a/tools/blender/verify_rts_workshop.py b/tools/blender/verify_rts_workshop.py
+index bbee732..e76207e 100644
+--- a/tools/blender/verify_rts_workshop.py
++++ b/tools/blender/verify_rts_workshop.py
+@@ -9,6 +9,21 @@ from PIL import Image
+ from axm_glb_reader import GLB
+ 
+ 
++VARIANTS = (
++    'improvised-workshop.glb',
++    'improvised-workshop-lod1.glb',
++    'improvised-workshop-tactical.glb',
++    'improvised-workshop-rts.glb',
++    'improvised-workshop-far.glb',
++)
++
++TARGET_BANDS = {
++    'improvised-workshop-tactical.glb': (20_000, 40_000),
++    'improvised-workshop-rts.glb': (4_000, 12_000),
++    'improvised-workshop-far.glb': (500, 2_000),
++}
++
++
+ def verify(path):
+     g=GLB(path);doc=g.doc;triangles=0;vertices=0;degenerate=0;all_points=[]
+     assert not doc.get('cameras') and not doc.get('animations')
+@@ -49,18 +64,38 @@ def verify(path):
+             'scope':'Decoded geometry, UV, normals, material flags, embedded images and world bounds. Not collision, engine import, FPS, LOD perceptual equivalence or visual-quality proof.'}
+ 
+ 
++def validate_lod_ladder(report):
++    counts=[report[name]['triangles'] for name in VARIANTS]
++    assert all(a>b for a,b in zip(counts,counts[1:])), f'LOD ladder must strictly reduce triangles: {counts}'
++    target_results={}
++    for name,(minimum,maximum) in TARGET_BANDS.items():
++        triangles=report[name]['triangles']
++        assert minimum<=triangles<=maximum, f'{name} triangles {triangles} outside target {minimum}..{maximum}'
++        target_results[name]={'triangles':triangles,'target_min':minimum,'target_max':maximum,'inside_target_band':True}
++    return target_results
++
++
+ def game_readiness_gates(report):
+     near=report['improvised-workshop.glb'];lod=report['improvised-workshop-lod1.glb']
++    tactical=report['improvised-workshop-tactical.glb'];rts=report['improvised-workshop-rts.glb'];far=report['improvised-workshop-far.glb']
+     ratio=lod['triangles']/near['triangles']
++    target_results=validate_lod_ladder(report)
+     return {
+-        'schema':'axm.workshop-game-readiness-gates/v0.1',
++        'schema':'axm.workshop-game-readiness-gates/v0.2-lod-ladder',
+         'source':'glb-inspection.json',
+         'measured':{
+             'detailed_triangles':near['triangles'],
+             'lod1_triangles':lod['triangles'],
+             'lod1_triangle_ratio':ratio,
++            'tactical_triangles':tactical['triangles'],
++            'rts_triangles':rts['triangles'],
++            'far_triangles':far['triangles'],
++            'runtime_lod_target_bands':target_results,
+             'detailed_materials':near['materials'],
+             'lod1_materials':lod['materials'],
++            'tactical_materials':tactical['materials'],
++            'rts_materials':rts['materials'],
++            'far_materials':far['materials'],
+             'detailed_double_sided_materials':near['double_sided_materials'],
+             'lod1_double_sided_materials':lod['double_sided_materials'],
+             'detailed_embedded_images':near['embedded_images'],
+@@ -71,6 +106,7 @@ def game_readiness_gates(report):
+             'geometry_structure':'TESTED',
+             'embedded_texture_integrity':'TESTED',
+             'lod_triangle_reduction':'TESTED',
++            'runtime_lod_target_bands':'TESTED',
+             'lod_perceptual_equivalence':'NOT_TESTED',
+             'collision':'NOT_TESTED',
+             'navigation':'NOT_TESTED',
+@@ -82,8 +118,9 @@ def game_readiness_gates(report):
+         },
+         'nonclaims':[
+             'A valid GLB is not a game-ready asset by itself.',
+-            'Triangle reduction is not LOD visual equivalence.',
++            'Triangle reduction and target-band membership are not LOD visual equivalence.',
+             'Material/image counts are measured cost surfaces, not accepted budgets.',
++            'The far geometry tier is not an impostor and is not automatically the final far-distance solution.',
+             'No collision, navigation, target-engine, target-RTS or target-device performance claim is created by this report.',
+         ],
+     }
+@@ -91,8 +128,8 @@ def game_readiness_gates(report):
+ 
+ if __name__=='__main__':
+     root=Path(sys.argv[1]);report={}
+-    for name in ['improvised-workshop.glb','improvised-workshop-lod1.glb']:report[name]=verify(root/name)
+-    assert report['improvised-workshop-lod1.glb']['triangles']<report['improvised-workshop.glb']['triangles']
++    for name in VARIANTS:report[name]=verify(root/name)
++    validate_lod_ladder(report)
+     (root/'glb-inspection.json').write_text(json.dumps(report,indent=2)+'\n')
+     gates=game_readiness_gates(report)
+     (root/'game-readiness-gates.json').write_text(json.dumps(gates,indent=2)+'\n')
