@@ -28,7 +28,8 @@ from .visual_3d_iteration import (
     reject_3d_iteration, review_3d_iteration, start_3d_iteration,
 )
 from .rigged_characters import character_catalog, forge_rigged_character, inspect_rigged_character
-from .game_material_styles import FAMILIES, FINISHES, game_material_catalog, generate_game_material
+from .game_material_styles import (FAMILIES, FINISHES, WearLayer, game_material_catalog,
+                                   generate_game_material, protected_regions_mask)
 
 BASE_CATEGORIES = ["texture", "gradient", "material", "fixture", "decal", "palette"]
 EXPANDED_CATEGORIES = ["surface", "pigment", "sprite", "mesh", "vector-part"]
@@ -66,6 +67,11 @@ def build_parser() -> argparse.ArgumentParser:
     material.add_argument("--size", type=int, default=128)
     material.add_argument("--seed", type=int, default=1)
     material.add_argument("--color", type=int, nargs=3, metavar=("R", "G", "B"))
+    material.add_argument("--layered-wear", type=float, metavar="AMOUNT")
+    material.add_argument("--substrate-color", type=int, nargs=3, metavar=("R", "G", "B"))
+    material.add_argument("--protect", type=float, nargs=4, action="append",
+                          metavar=("X0", "Y0", "X1", "Y1"),
+                          help="normalized authored rectangle; repeat for readable regions")
     plan = sub.add_parser("plan", help="compile one structured visual request into a deterministic recipe")
     plan.add_argument("request", help="path to a UTF-8 JSON visual request")
     state_catalog = sub.add_parser("state-catalog", help="show the source-backed 99-command visual state atlas")
@@ -176,7 +182,8 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
-    args = build_parser().parse_args(argv)
+    parser = build_parser()
+    args = parser.parse_args(argv)
     if args.command == "catalog":
         result = combined_catalog()
     elif args.command == "grammar-catalog":
@@ -184,7 +191,19 @@ def main(argv: list[str] | None = None) -> int:
     elif args.command == "game-material-catalog":
         result = game_material_catalog()
     elif args.command == "game-material":
-        result = generate_game_material(args.path, args.family, args.size, args.seed, args.finish, args.color)
+        layer = None
+        protection = None
+        protection_source = None
+        if args.layered_wear is not None:
+            layer = WearLayer(amount=args.layered_wear,
+                              substrate_rgb=tuple(args.substrate_color or (92, 101, 105)))
+            if args.protect:
+                protection = protected_regions_mask(args.size, args.protect)
+                protection_source = "authored-cli-rectangles"
+        elif args.substrate_color or args.protect:
+            parser.error("--substrate-color/--protect require --layered-wear")
+        result = generate_game_material(args.path, args.family, args.size, args.seed, args.finish, args.color,
+                                        layer, protection, protected_mask_source=protection_source)
     elif args.command == "plan":
         request = json.loads(Path(args.request).read_text(encoding="utf-8"))
         result = compile_visual_recipe(request)

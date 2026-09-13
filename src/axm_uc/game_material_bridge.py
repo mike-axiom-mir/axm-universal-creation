@@ -18,7 +18,8 @@ from .game_material_styles import FAMILIES, FINISHES
 
 LEGACY_NORMAL = "inherited donor for painted-metal/woven-fabric; tangent +Y for other families"
 MAP_CHANNELS = {"base_color": 3, "normal": 3, "orm": 3, "ao": 1,
-                "roughness": 1, "height": 1, "metallic": 1, "thickness": 1}
+                "roughness": 1, "height": 1, "metallic": 1, "thickness": 1,
+                "wear_mask": 1, "protection_mask": 1, "exposed_mask": 1, "coat_height": 1}
 REQUIRED_MAPS = {"base_color", "normal", "orm", "ao", "roughness", "height"}
 
 
