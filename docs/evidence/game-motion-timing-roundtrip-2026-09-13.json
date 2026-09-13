@@ -1,0 +1,66 @@
+{
+  "schema": "axm.game-motion-timing-roundtrip-summary/v0.1",
+  "date": "2026-09-13",
+  "blender": "4.3.0",
+  "fresh_process_import": true,
+  "asset": "AXM Clockwork Smacker",
+  "rig_bones": 6,
+  "named_clips": 4,
+  "uc_glb_inspector": {
+    "status": "RIGGED_STRUCTURE_REVIEW_REQUIRED",
+    "one_skeleton": true,
+    "all_meshes_skinned": true,
+    "skin_attributes": true,
+    "animation_channels_per_clip": 18,
+    "note": "The generic character inspector's asset-specific clip/material gates are not acceptance criteria for this solid-material mechanical proof."
+  },
+  "clip_frames_inclusive": 37,
+  "fps": 30,
+  "lod0": {
+    "triangles": 40572,
+    "vertices": 21614,
+    "bytes": 3195984,
+    "sha256": "f075742f250f439a87a568da641a527c556c41c0f1ede6b1664a5d200593ba89"
+  },
+  "lod1": {
+    "triangles": 19473,
+    "vertices": 10660,
+    "bytes": 1346048,
+    "sha256": "3681db2fbc3815b64df9d2a6f579cad641af6806e69dabab23286862b3d29093"
+  },
+  "profile_impact_frames_zero_based": {
+    "restrained-product": 18,
+    "weighty-salvage": 22,
+    "snappy-comic": 14,
+    "springy-adventure": 15
+  },
+  "profile_action_acceleration_ratios": {
+    "restrained-product": 1.7352070326388918,
+    "weighty-salvage": 2.911957006465883,
+    "snappy-comic": 2.225779216345073,
+    "springy-adventure": 2.254466839454113
+  },
+  "maximum_fresh_import_marker_target_gap_m": 1.3657139822709083e-7,
+  "maximum_fresh_import_world_loop_seam_error_m": 0.0,
+  "visual_review": {
+    "source": "Freshly imported LOD0 GLB representative frames",
+    "claim": "The two reviewed profiles visibly separate anticipation and recoil while preserving the same character, action endpoint and full silhouette.",
+    "verdict": "PASS",
+    "missing": "Continuous target-engine playback, audio, broad perceptual review and frame-time performance"
+  },
+  "donor_review": {
+    "repository": "mike-axiom-mir/Axm-game-assets",
+    "commit": "aaae29c81422366610e6c0ed75e2af6794b100f6",
+    "files_inspected": ["native_animation.py", "LICENSE"],
+    "license": "Apache-2.0",
+    "source_copied": false,
+    "note": "Its local-track sampling and contact-drift concepts informed boundary review; this implementation and proof asset are independently authored."
+  },
+  "truth_limits": {
+    "target_engine_playback": false,
+    "ik_or_surface_contact_solver": false,
+    "secondary_motion": false,
+    "soft_deformation_acceptance": false,
+    "frame_time_measured": false
+  }
+}
