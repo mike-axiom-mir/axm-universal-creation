@@ -48,8 +48,9 @@ maps, plus a manifest with parameters, color spaces and file digests. Woven
 fabric also retains its thickness map. ORM channels are occlusion, roughness,
 metallic. Stylization never changes AO or conductivity. Height remains an
 authoring proxy; rebuilding normals from it replaces the selected normal finish.
-Normal orientation for existing donors is inherited and must be checked by a
-renderer adapter; new families use tangent +Y. Generated files are not silently
+Normal orientation for existing donors is tangent -Y; new families use tangent
++Y. The opt-in Blender adapter now corrects inherited direction in packed
+derivatives, preserving original source maps. Generated files are not silently
 accepted as engine-ready merely because their PNG structure passes.
 
 Python callers can compose `game_material_fields`, `apply_finish`, or
@@ -63,8 +64,8 @@ Choose the next useful unoccupied step after reading current main and PRs.
 Dependencies and observed failures may change the order. Finish and repair a
 bounded change before starting another; no quota of new files or assets.
 
-1. Connect the new surface fields to the Blender material adapter and independently
-   inspect actual exported GLBs, including data color spaces and normal direction.
+1. **Completed:** connect surface fields to the opt-in Blender adapter and
+   independently inspect actual GLBs, data color spaces and normal direction.
 2. Add controllable layered paint, exposed-metal edges, roughness variation and
    protected readable regions; distinguish authored masks from mesh-derived wear.
 3. Add reusable playful form controls: taper, squash, oversized functional parts,
@@ -87,6 +88,48 @@ exports when those features change. Measure performance before making claims.
 
 ## Current checkpoint
 
+### Material realization pass — 2026-09-13
+
+- Completed `src/axm_uc/game_material_bridge.py`: validated bounded UC bundles,
+  packed editable Blender PBR materials, explicit glTF AO, correct ORM/data color
+  spaces, tangent +Y derivative normals. Existing realistic/product generators
+  remain untouched; updated manifest direction is metadata, not a field rewrite.
+- Actual local verification: **17 tests pass** (11 prior + 6 bridge tests), source
+  compilation, and two-process Blender 4.3 GLB export/re-import of all **24**
+  family/finish combinations. Every embedded base/ORM/normal pixel matches the
+  expected source or explicit Y-flipped derivative exactly. Reopened `.blend`
+  contains 72 packed runtime images; original bundle bytes remain unchanged.
+- Evidence: `tools/blender/game_material_roundtrip.py`,
+  `docs/GAME_MATERIAL_BLENDER.md`, and
+  `docs/evidence/game-material-roundtrip-2026-09-13.json`. Deliverable:
+  `AXM-Material-Realization-Proof.zip` (actual GLB, editable Blender scene, original
+  maps, before/after renders and verification receipt); preview
+  `AXM-Material-Realization.png`.
+- Visual inspection found pole-distorted cloth/wood and cramped labels in the
+  first proof. Front-planar UVs and label spacing repaired those presentation
+  faults. Source and re-import stills visibly retain the same materials; measured
+  mean absolute RGB-byte difference is 0.000069 across this pair. This does not
+  establish target-engine appearance or full game-style quality. The graphic
+  finish stays PBR, not a cel shader; some finish differences remain subtle.
+- Limits: static material proof only, not a new character/animated asset. No
+  engine/gameplay/performance/LOD/animation/deformation or mesh-wear acceptance.
+  AO is an export socket, not Blender preview darkening. Optional Draco was
+  unavailable (not requested); shared ORM/AO sampler warning was checked against
+  matching settings and actual GLB wrapping. Blender runtime recovered using
+  cached Python 3.11/bpy 4.3 with NumPy 1.26.4, not UC's Windows provisioner.
+- **Next useful step: priority 2**, controllable layered paint/exposed substrate
+  and protected readable regions, with this real export test retained. Then
+  priority 3 form controls. Do not restart the completed bridge or duplicate it.
+- Active branch: `codex/rts-reference-foundry`, based on `bf607a5`; unrelated open
+  PR #54 is outside this pass. Require current-head checks before merging this
+  change; the final GitHub PR state is authoritative for merge completion.
+- Roots: Truth distinguishes map/export/render evidence from game acceptance;
+  Agency keeps this opt-in and free of remote/paid dependencies; Continuity keeps
+  original maps, manifests and rich editable source; Wisdom repaired visible
+  presentation errors and preserved uncertainty rather than claiming full style.
+
+### Earlier bootstrap
+
 - Bootstrap: executable material families/finish composition and `axm-assets`
   commands implemented; this precedes the ten scheduled activations.
 - Local verification: eleven tests pass, covering all 24 family/finish combinations,
@@ -101,7 +144,8 @@ exports when those features change. Measure performance before making claims.
   preserving strong edges, and bands
   within each source field's range. No shaded game asset or engine integration
   demonstrated here. Surface maps alone do not satisfy Mike's complete style goal.
-- Next useful step: material-to-Blender/export adapter plus a small rendered proof.
+- Bootstrap's next step (now completed above): Blender/export adapter plus a
+  small rendered proof.
 - Working lane: `codex/rts-reference-foundry`; continue an existing open PR when
   present and keep related fixes together. Prior trike PR #58 is already merged.
 - Approval basis: Mike explicitly authorizes this bounded improvement campaign
