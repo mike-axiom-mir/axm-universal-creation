@@ -32,6 +32,8 @@ from .game_material_styles import (FAMILIES, FINISHES, WearLayer, game_material_
                                    generate_game_material, protected_regions_mask)
 from .game_form_styles import FORM_STYLES, game_form_catalog, publish_game_form
 from .game_render_styles import RENDER_STYLES, game_render_style_catalog, publish_game_render_style
+from .game_character_expression import (EXPRESSIONS, STANCES, game_character_expression_catalog,
+                                        publish_character_expression)
 
 BASE_CATEGORIES = ["texture", "gradient", "material", "fixture", "decal", "palette"]
 EXPANDED_CATEGORIES = ["surface", "pigment", "sprite", "mesh", "vector-part"]
@@ -55,6 +57,7 @@ def combined_catalog() -> dict:
         "game_materials": game_material_catalog(),
         "game_forms": game_form_catalog(),
         "game_render_styles": game_render_style_catalog(),
+        "game_character_expressions": game_character_expression_catalog(),
     }
 
 
@@ -66,6 +69,13 @@ def build_parser() -> argparse.ArgumentParser:
     sub.add_parser("game-material-catalog", help="show material families and opt-in surface finishes")
     sub.add_parser("game-form-catalog", help="show deterministic silhouette and proportion styles")
     sub.add_parser("game-render-catalog", help="show portable baked graphic and painterly styles")
+    sub.add_parser("character-expression-catalog", help="show static face expressions and storytelling stances")
+    character_expression = sub.add_parser(
+        "character-expression", help="derive a checked static face expression and stance while retaining source")
+    character_expression.add_argument("request", help="JSON object containing mesh and exact component semantics")
+    character_expression.add_argument("path", help="new output directory; existing paths are never overwritten")
+    character_expression.add_argument("--expression", choices=[item.name for item in EXPRESSIONS], default="mischief")
+    character_expression.add_argument("--stance", choices=[item.name for item in STANCES], default="mechanic-ready")
     render = sub.add_parser("game-render", help="bake a portable GLB lighting style while retaining source")
     render.add_argument("request", help="JSON object containing exactly one surface mesh")
     render.add_argument("path", help="new output directory; existing paths are never overwritten")
@@ -213,6 +223,14 @@ def main(argv: list[str] | None = None) -> int:
         result = game_form_catalog()
     elif args.command == "game-render-catalog":
         result = game_render_style_catalog()
+    elif args.command == "character-expression-catalog":
+        result = game_character_expression_catalog()
+    elif args.command == "character-expression":
+        request = json.loads(Path(args.request).read_text(encoding="utf-8"))
+        if not isinstance(request, dict) or set(request) != {"mesh", "parts"}:
+            parser.error("character-expression request must contain exactly mesh and parts")
+        result = publish_character_expression(args.path, request["mesh"], request["parts"],
+                                              args.expression, args.stance)
     elif args.command == "game-render":
         request = json.loads(Path(args.request).read_text(encoding="utf-8"))
         if not isinstance(request, dict) or set(request) != {"mesh"}:
