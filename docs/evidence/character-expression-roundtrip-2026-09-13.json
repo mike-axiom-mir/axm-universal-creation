@@ -1,0 +1,46 @@
+{
+  "schema": "axm.character-expression-roundtrip/v0.1",
+  "blender": "4.3.0",
+  "variants": [
+    {
+      "expression": "neutral",
+      "stance": "neutral",
+      "sha256": "621c175d1bb59fb212f9b74e8b9e5ee747fa5a70e132f6d7213326bea043e61a",
+      "primitives": 33,
+      "triangles": 2302,
+      "protected_components": ["identity_ring", "nose"],
+      "identity_max_error": 0.0
+    },
+    {
+      "expression": "curious",
+      "stance": "mechanic-ready",
+      "sha256": "514750fe896121f5f6bbde4f4c2ea2f95bf798a3b16e7c52ef414cb6ffe33b32",
+      "primitives": 33,
+      "triangles": 2302,
+      "protected_components": ["identity_ring", "nose"],
+      "identity_max_error": 1.000000000861423e-08
+    },
+    {
+      "expression": "mischief",
+      "stance": "comic-sneak",
+      "sha256": "6cdf93bdcca78842675b412157eefab91102c4259e1ceac1fcd702ab7122457f",
+      "primitives": 33,
+      "triangles": 2302,
+      "protected_components": ["identity_ring", "nose"],
+      "identity_max_error": 1.0000000050247593e-08
+    },
+    {
+      "expression": "alarmed",
+      "stance": "victory",
+      "sha256": "84c09ae80330274aa9f002dbd959b3d971ddd67b92ac07d305b647ebfe04238e",
+      "primitives": 33,
+      "triangles": 2302,
+      "protected_components": ["identity_ring", "nose"],
+      "identity_max_error": 1.000000000861423e-08
+    }
+  ],
+  "maximum_position_float_error": 1.1916503916964416e-07,
+  "editable_source_variant_meshes": 132,
+  "source_reimport_render_mae": 0.0,
+  "limits": "Four static expression/stance specimens. No skeleton, clips, deformation, contact, collision, game-distance, target-engine or performance acceptance."
+}

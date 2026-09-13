@@ -78,7 +78,8 @@ bounded change before starting another; no quota of new files or assets.
 4. **Completed:** distinct graphic/painterly realizations that survive GLB
    export through final linear vertex colours and `KHR_materials_unlit`, with
    target-engine-only shader features stated explicitly.
-5. Improve expressive character/robot face shapes and stances with identity checks.
+5. **Completed:** explicit character/robot face expressions and hierarchical
+   storytelling stances with protected rigid identity and eye-pivot checks.
 6. Expand animation composition for anticipation, acceleration, impact and settle.
 7. Add reusable secondary motion for springs, cloth, antennae and carried props.
 8. Improve contact, sockets, useful LOD selection and game-distance readability.
@@ -93,6 +94,46 @@ Inspect representative motion frames, contact, loop seams and re-imported
 exports when those features change. Measure performance before making claims.
 
 ## Current checkpoint
+
+### Character expression and stance pass — 2026-09-13
+
+- Completed `game_character_expression.py`, the transactional
+  `axm-assets character-expression` publisher and catalog. Five expressions
+  reshape declared eyes, brows and mouths around authored pivots. Four stances
+  compose rigid body/head/arm/leg/prop transforms through an explicit acyclic
+  parent tree. Neutral/neutral is an exact identity.
+- Identity is caller-defined rather than guessed. Protected components cannot
+  receive local face or stance changes; the gate verifies their radial geometry,
+  pairwise pivot relationships and authored eye-pivot spacing. Canonical source,
+  semantic controls and receipts remain embedded. Inverse-transpose normal
+  transformation preserves authored shading through non-uniform face changes.
+- Actual verification: **31 focused tests pass** across nine new expression
+  tests plus form, render-style and native GLB regressions. Blender 4.3 exported
+  and freshly imported four actual 33-primitive/2,302-triangle GLBs. Maximum
+  decoded position error was 0.000000119 m; maximum protected identity error was
+  0.000000010 m; the editable-source/re-import render MAE was 0.0.
+- Visual repair: the first still visibly distinguished curious, mischief and
+  alarmed faces and poses, but clipped the victory arm. A wider final camera
+  retained every full silhouette. Static inspection then passed the bounded
+  claim that all four expressions/stances are visibly distinct and the monocle
+  ring/beak identity remains recognizable in this specimen.
+- Evidence: `tools/blender/character_expression_roundtrip.py`,
+  `docs/GAME_CHARACTER_EXPRESSION.md`, and
+  `docs/evidence/character-expression-roundtrip-2026-09-13.json`. The proof is
+  one original Patchwork Foreman and combines the existing portable painted
+  realization after posing; no donor mesh or external character source was used.
+- Limits: static geometry poses only—no skeleton, skin, clips, transitions,
+  deformation, contact/collision, target-engine, game-distance or performance
+  acceptance. Protected-pivot metrics do not prove general perceptual identity.
+- **Next useful step: priority 6**, reusable motion timing composition for
+  anticipation, acceleration, impact and settle over named animation tracks.
+- Active lane: `codex/rts-reference-foundry`, based on merged PR #64/main
+  `6ca9d30`; unrelated PR #54 remains outside this pass. Current-head checks are
+  required before merge; final GitHub state is authoritative.
+- Roots: Truth keeps static geometry, visual and animation claims separate;
+  Agency requires explicit caller semantics and optional profiles; Continuity
+  preserves canonical source and protected identity relationships; Wisdom
+  repaired normals and framing before publication.
 
 ### Portable render-style pass — 2026-09-13
 
