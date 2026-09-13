@@ -74,4 +74,3 @@ The proof does not establish target-engine playback, controller/state-machine
 integration, audio synchronization, soft deformation, IK surface solving,
 frame-time performance or complete perceptual animation acceptance. The bell
 contact is an authored marker relationship, not a general contact solver.
-
