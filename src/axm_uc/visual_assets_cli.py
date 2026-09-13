@@ -37,6 +37,7 @@ from .game_character_expression import (EXPRESSIONS, STANCES, game_character_exp
 from .game_motion_timing import PROFILES as MOTION_PROFILES, game_motion_timing_catalog, publish_game_motion
 from .game_secondary_motion import game_secondary_motion_catalog, publish_secondary_motion
 from .game_runtime_realization import game_runtime_realization_catalog, publish_game_runtime_realization
+from .game_showcase_contract import game_showcase_catalog, publish_game_showcase
 
 BASE_CATEGORIES = ["texture", "gradient", "material", "fixture", "decal", "palette"]
 EXPANDED_CATEGORIES = ["surface", "pigment", "sprite", "mesh", "vector-part"]
@@ -64,6 +65,7 @@ def combined_catalog() -> dict:
         "game_motion_timing": game_motion_timing_catalog(),
         "game_secondary_motion": game_secondary_motion_catalog(),
         "game_runtime_realization": game_runtime_realization_catalog(),
+        "game_showcase": game_showcase_catalog(),
     }
 
 
@@ -79,6 +81,10 @@ def build_parser() -> argparse.ArgumentParser:
     sub.add_parser("motion-timing-catalog", help="show deterministic anticipation, impact and settle profiles")
     sub.add_parser("secondary-motion-catalog", help="show reusable inertial follow-through profiles")
     sub.add_parser("game-realization-catalog", help="show measured LOD, anchor and readability planning")
+    sub.add_parser("game-showcase-catalog", help="show combined animated game-asset evidence requirements")
+    showcase = sub.add_parser("game-showcase-verify", help="bind combined asset evidence into a fail-closed receipt")
+    showcase.add_argument("source", help="JSON combined game-showcase evidence")
+    showcase.add_argument("path", help="new output directory; existing paths are never overwritten")
     realization = sub.add_parser(
         "game-realization-plan", help="select useful LODs from measured anchor and screen-space evidence")
     realization.add_argument("source", help="JSON measured LOD source contract")
@@ -255,6 +261,11 @@ def main(argv: list[str] | None = None) -> int:
         result = game_secondary_motion_catalog()
     elif args.command == "game-realization-catalog":
         result = game_runtime_realization_catalog()
+    elif args.command == "game-showcase-catalog":
+        result = game_showcase_catalog()
+    elif args.command == "game-showcase-verify":
+        source = json.loads(Path(args.source).read_text(encoding="utf-8"))
+        result = publish_game_showcase(args.path, source)
     elif args.command == "game-realization-plan":
         source = json.loads(Path(args.source).read_text(encoding="utf-8"))
         request = json.loads(Path(args.request).read_text(encoding="utf-8"))
