@@ -188,6 +188,7 @@ def build(h):
     h.cyl('Wrench yellow badge',(-.58,-.58,2.19),.095,.02,'yellow',(0,-1,0),6)
     h.logo('Wrench crest',(-.58,-.595,2.19),.12,'ink')
     # Duck on flexible spring and cloth pennant.
+    h.beam('Duck mast support',(0,-.18,2.06),(0,-.18,2.20),.022,'steel')
     spring(h,'Duck bobble spring',(0,-.18,2.20),(0,-.18,2.57),.035,.009,8,'brass')
     h.current='Duck';h.duck((0,-.18,2.61),2.1,'Duck')
     h.current='Chassis';h.beam('Flag mast',(.46,.55,1.86),(.46,.55,2.94),.017,'steel')
