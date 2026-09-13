@@ -9,6 +9,7 @@ import base64
 import hashlib
 import json
 import math
+import random
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
@@ -26,6 +27,18 @@ class Finish:
     normal_detail: float
     roughness_floor: float
     brush_strength: float = 0.0
+
+
+@dataclass(frozen=True)
+class WearLayer:
+    """One removable top-coat layer over a physically distinct substrate."""
+    amount: float = 0.38
+    substrate_rgb: tuple[int, int, int] = (92, 101, 105)
+    substrate_roughness: float = 0.34
+    substrate_metallic: float = 1.0
+    chip_scale: float = 15.0
+    scratch_count: int = 14
+    edge_normal_strength: float = 0.014
 
 
 FINISHES = (
@@ -51,6 +64,162 @@ def _inputs(size, seed):
         raise ValueError("size must be an integer from 16 to 512")
     if type(seed) is not int or not 0 <= seed <= 2147483647:
         raise ValueError("seed must be an integer from 0 to 2147483647")
+
+
+def _unit(value, name):
+    if type(value) not in (int, float) or not math.isfinite(value) or not 0 <= value <= 1:
+        raise ValueError(f"{name} must be finite from 0 to 1")
+    return float(value)
+
+
+def _wear_layer(layer):
+    if not isinstance(layer, WearLayer):
+        raise ValueError("layer must be WearLayer")
+    for name in ("amount", "substrate_roughness", "substrate_metallic", "edge_normal_strength"):
+        _unit(getattr(layer, name), name)
+    if (not isinstance(layer.substrate_rgb, (tuple, list)) or len(layer.substrate_rgb) != 3
+            or any(type(c) is not int or not 0 <= c <= 255 for c in layer.substrate_rgb)):
+        raise ValueError("substrate_rgb requires three integer sRGB bytes")
+    if type(layer.chip_scale) not in (int, float) or not math.isfinite(layer.chip_scale) or not 2 <= layer.chip_scale <= 128:
+        raise ValueError("chip_scale must be finite from 2 to 128")
+    if type(layer.scratch_count) is not int or not 0 <= layer.scratch_count <= 128:
+        raise ValueError("scratch_count must be an integer from 0 to 128")
+    return layer
+
+
+def protected_regions_mask(size, rectangles):
+    """Rasterize normalized authored rectangles; 255 vetoes all wear exactly."""
+    if type(size) is not int or not 16 <= size <= 512:
+        raise ValueError("size must be an integer from 16 to 512")
+    if not isinstance(rectangles, (tuple, list)) or len(rectangles) > 64:
+        raise ValueError("rectangles must be a list of at most 64 regions")
+    checked = []
+    for rect in rectangles:
+        if not isinstance(rect, (tuple, list)) or len(rect) != 4:
+            raise ValueError("each protected rectangle needs x0 y0 x1 y1")
+        x0, y0, x1, y1 = (_unit(value, "rectangle coordinate") for value in rect)
+        if x0 >= x1 or y0 >= y1:
+            raise ValueError("protected rectangle must have positive area")
+        checked.append((x0, y0, x1, y1))
+    return bytes(255 if any(x0 <= (x + .5) / size <= x1 and y0 <= (y + .5) / size <= y1
+                            for x0, y0, x1, y1 in checked) else 0
+                 for y in range(size) for x in range(size))
+
+
+def _mask(value, size, name):
+    if value is None:
+        return bytes(size * size)
+    if not isinstance(value, bytes) or len(value) != size * size:
+        raise ValueError(f"{name} must be one byte per pixel")
+    return value
+
+
+def _distance_to_segment(px, py, ax, ay, bx, by):
+    vx, vy, wx, wy = bx - ax, by - ay, px - ax, py - ay
+    length = vx * vx + vy * vy
+    if length <= 1e-12:
+        return math.hypot(wx, wy)
+    t = max(0, min(1, (wx * vx + wy * vy) / length))
+    return math.hypot(px - ax - t * vx, py - ay - t * vy)
+
+
+def procedural_wear_mask(size, seed=1, layer=WearLayer()):
+    """Return deterministic UV-space chip/scratch proposal; it is not mesh wear."""
+    _inputs(size, seed)
+    layer = _wear_layer(layer)
+    rng = random.Random(seed ^ 0xA4D6E29)
+    scratches = []
+    for _ in range(layer.scratch_count):
+        ax, ay = rng.random(), rng.random()
+        angle, length = rng.uniform(-math.pi, math.pi), rng.uniform(.06, .34)
+        scratches.append((ax, ay, ax + math.cos(angle) * length,
+                          ay + math.sin(angle) * length, rng.uniform(.002, .009)))
+    output = bytearray()
+    # Amount moves the chip threshold and scratch opacity; zero stays exact zero.
+    threshold = .77 - layer.amount * .22
+    for y in range(size):
+        v = (y + .5) / size
+        for x in range(size):
+            u = (x + .5) / size
+            broad = fbm(u * 4.7, v * 4.7, seed + 7103, 3)
+            chip = fbm(u * layer.chip_scale, v * layer.chip_scale, seed + 7207, 4)
+            islands = max(0, (chip * .78 + broad * .22 - threshold) / max(.04, 1 - threshold))
+            scratch = max((max(0, 1 - _distance_to_segment(u, v, *line[:4]) / line[4])
+                           for line in scratches), default=0)
+            damage = max(islands, scratch * (.35 + layer.amount * .65)) * layer.amount
+            output.append(_u8(min(1, damage)))
+    return bytes(output)
+
+
+def _srgb_linear(value):
+    value /= 255
+    return value / 12.92 if value <= .04045 else ((value + .055) / 1.055) ** 2.4
+
+
+def _linear_srgb(value):
+    value = max(0, min(1, value))
+    return _u8(value * 12.92 if value <= .0031308 else 1.055 * value ** (1 / 2.4) - .055)
+
+
+def apply_layered_wear(fields, size, seed=1, layer=WearLayer(), protected_mask=None, wear_mask=None,
+                       normal_convention="tangent +Y"):
+    """Composite paint loss without mutating the canonical top-coat fields.
+
+    A supplied wear mask is an untrusted proposal; callers must record whether it
+    was authored, projected or mesh-baked. Protection always wins and is retained.
+    Without a supplied mask the candidate is explicitly procedural UV damage.
+    """
+    _inputs(size, seed)
+    _validate_fields(fields, size)
+    layer = _wear_layer(layer)
+    protected = _mask(protected_mask, size, "protected_mask")
+    if normal_convention not in ("tangent +Y", "tangent -Y"):
+        raise ValueError("normal_convention must be tangent +Y or tangent -Y")
+    candidate = (bytes(round(value * layer.amount) for value in _mask(wear_mask, size, "wear_mask"))
+                 if wear_mask is not None else procedural_wear_mask(size, seed, layer))
+    exposed = bytes(round(candidate[i] * (255 - protected[i]) / 255) for i in range(size * size))
+    paint = bytes(255 - value for value in exposed)
+    coat_height = paint
+    overlay = _normal_from_height([value / 255 for value in coat_height], size, layer.edge_normal_strength)
+    if normal_convention == "tangent -Y":
+        overlay = bytes(255 - value if index % 3 == 1 else value for index, value in enumerate(overlay))
+    source_base, source_rough, source_normal = fields["base_color"][1], fields["roughness"][1], fields["normal"][1]
+    source_metal = fields.get("metallic", (1, fields["orm"][1][2::3]))[1]
+    base, rough, metal, normal = bytearray(), bytearray(), bytearray(), bytearray()
+    substrate = [_srgb_linear(value) for value in layer.substrate_rgb]
+    for i, byte in enumerate(exposed):
+        mix = byte / 255
+        if byte == 0:
+            base.extend(source_base[i * 3:i * 3 + 3])
+            rough.append(source_rough[i])
+            metal.append(source_metal[i])
+            normal.extend(source_normal[i * 3:i * 3 + 3])
+            continue
+        for channel in range(3):
+            top = _srgb_linear(source_base[i * 3 + channel])
+            base.append(_linear_srgb(top * (1 - mix) + substrate[channel] * mix))
+        rough.append(_u8(source_rough[i] / 255 * (1 - mix) + layer.substrate_roughness * mix))
+        metal.append(_u8(source_metal[i] / 255 * (1 - mix) + layer.substrate_metallic * mix))
+        source_xyz = [value / 127.5 - 1 for value in source_normal[i * 3:i * 3 + 3]]
+        overlay_xyz = [value / 127.5 - 1 for value in overlay[i * 3:i * 3 + 3]]
+        nx, ny, nz = source_xyz[0] + overlay_xyz[0], source_xyz[1] + overlay_xyz[1], source_xyz[2]
+        length = math.sqrt(nx * nx + ny * ny + nz * nz) or 1
+        normal.extend(_u8(value / length * .5 + .5) for value in (nx, ny, nz))
+    ao = fields["ao"][1]
+    orm = bytes(value for i in range(size * size) for value in (ao[i], rough[i], metal[i]))
+    result = dict(fields)
+    result.update(base_color=(3, bytes(base)), roughness=(1, bytes(rough)), metallic=(1, bytes(metal)),
+                  normal=(3, bytes(normal)), orm=(3, orm), wear_mask=(1, candidate),
+                  protection_mask=(1, protected), exposed_mask=(1, exposed), coat_height=(1, coat_height))
+    return result
+
+
+def layered_game_material_fields(family, size=128, seed=1, finish="realistic", color=None,
+                                 layer=WearLayer(), protected_mask=None, wear_mask=None):
+    """Build top coat, then add an opt-in removable layer with source-family orientation."""
+    fields = game_material_fields(family, size, seed, finish, color)
+    convention = "tangent -Y" if family in ("painted-metal", "woven-fabric") else "tangent +Y"
+    return apply_layered_wear(fields, size, seed, layer, protected_mask, wear_mask, convention)
 
 
 def _finish(name):
@@ -216,12 +385,32 @@ def game_material_fields(family, size=128, seed=1, finish="realistic", color=Non
 def game_material_catalog():
     return {"schema": "axm.game-material-styles/v0.1", "families": list(FAMILIES),
             "finishes": [asdict(f) for f in FINISHES], "dependencies": [],
+            "optional_layers": [{"name": "removable-top-coat", "default_parameters": asdict(WearLayer()),
+                                 "mask_order": ["wear proposal", "protected-region veto", "actual exposure"],
+                                 "wear_sources": ["procedural-uv", "caller-declared authored/projected/mesh-baked"]}],
             "preserves_existing_generators": True,
             "truth": "Executable surface maps only. Not a complete game art style, cel shader, geometry or animation generator."}
 
 
-def game_material_request(path, family, size=128, seed=1, finish="realistic", color=None):
-    fields = game_material_fields(family, size, seed, finish, color)
+def game_material_request(path, family, size=128, seed=1, finish="realistic", color=None,
+                          layer=None, protected_mask=None, wear_mask=None,
+                          protected_mask_source=None, wear_mask_source=None):
+    if layer is None:
+        if any(value is not None for value in (protected_mask, wear_mask, protected_mask_source, wear_mask_source)):
+            raise ValueError("wear/protection inputs require a WearLayer")
+        fields = game_material_fields(family, size, seed, finish, color)
+    else:
+        _wear_layer(layer)
+        if protected_mask is not None and not protected_mask_source:
+            raise ValueError("protected_mask_source is required for supplied protection")
+        if wear_mask is not None and not wear_mask_source:
+            raise ValueError("wear_mask_source is required for supplied wear")
+        for value, name in ((protected_mask_source, "protected_mask_source"),
+                            (wear_mask_source, "wear_mask_source")):
+            if value is not None and (not isinstance(value, str) or not value.strip() or len(value) > 100):
+                raise ValueError(f"{name} must be a short non-empty label")
+        fields = layered_game_material_fields(family, size, seed, finish, color, layer,
+                                              protected_mask, wear_mask)
     binaries, maps = {}, {}
     for name, (channels, pixels) in fields.items():
         data = png_bytes(size, size, channels, pixels)
@@ -238,6 +427,14 @@ def game_material_request(path, family, size=128, seed=1, finish="realistic", co
                 "normal_convention": "tangent -Y" if family in ("painted-metal", "woven-fabric") else "tangent +Y",
                 "truth": "Authored procedural fields, not scanned material. No mesh-aware edge wear, seamless tiling, lighting or engine acceptance claimed.",
                 "height_usage": "Authoring proxy; finish modifies normals independently. Re-baking normal from height replaces that finish choice."}
+    if layer is not None:
+        manifest["layers"] = [{"type": "removable-top-coat", "parameters": asdict(layer),
+                               "wear_mask_source": wear_mask_source or "procedural-uv",
+                               "protected_mask_source": protected_mask_source or "none",
+                               "maps": {"proposal": "wear_mask", "protected": "protection_mask",
+                                        "actual_exposure": "exposed_mask", "remaining_coat": "coat_height"},
+                               "truth": "Procedural UV wear is not mesh-derived. Supplied mask source is caller-declared; protection vetoes exposure."}]
+        manifest["truth"] = "Layered procedural material fields, not scans. Wear source is explicit; no automatic mesh-edge derivation, seamless tiling, lighting or engine acceptance claimed."
     return {"kind": "mixed-media-project", "direction": "generate reusable game material maps",
             "inputs": {"path": str(path), "project_type": "generic",
                        "text_files": {"game-material.json": json.dumps(manifest, indent=2)},
@@ -245,8 +442,11 @@ def game_material_request(path, family, size=128, seed=1, finish="realistic", co
                        "checks": [{"type": "media-signature", "path": p, "format": "png"} for p in binaries]}}
 
 
-def generate_game_material(path, family, size=128, seed=1, finish="realistic", color=None):
-    request = game_material_request(path, family, size, seed, finish, color)
+def generate_game_material(path, family, size=128, seed=1, finish="realistic", color=None,
+                           layer=None, protected_mask=None, wear_mask=None,
+                           protected_mask_source=None, wear_mask_source=None):
+    request = game_material_request(path, family, size, seed, finish, color, layer,
+                                    protected_mask, wear_mask, protected_mask_source, wear_mask_source)
     inputs = dict(request["inputs"])
     target = Path(inputs.pop("path"))
     return build_mixed_project(target, **inputs)

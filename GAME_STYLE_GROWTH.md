@@ -41,12 +41,16 @@ No mesh-aware wear or seamless texture repetition is claimed.
 axm-assets game-material-catalog
 axm-assets game-material painted-metal out/comic-paint --finish comic-salvage --size 128 --seed 471
 axm-assets game-material carved-wood out/painted-wood --finish painted-adventure --color 157 100 48
+axm-assets game-material painted-metal out/worn --finish comic-salvage --layered-wear .7 --protect .3 .3 .7 .7
 ```
 
 Each publication includes PNG base color, normal, AO, roughness, height and ORM
 maps, plus a manifest with parameters, color spaces and file digests. Woven
 fabric also retains its thickness map. ORM channels are occlusion, roughness,
-metallic. Stylization never changes AO or conductivity. Height remains an
+metallic. Finish stylization never changes AO or conductivity. The opt-in
+removable-coat layer can expose a separately authored substrate and therefore
+changes correlated albedo, roughness, conductivity and paint-edge normals while
+retaining proposal/protection/exposure/coat masks. Height remains an
 authoring proxy; rebuilding normals from it replaces the selected normal finish.
 Normal orientation for existing donors is tangent -Y; new families use tangent
 +Y. The opt-in Blender adapter now corrects inherited direction in packed
@@ -66,8 +70,8 @@ bounded change before starting another; no quota of new files or assets.
 
 1. **Completed:** connect surface fields to the opt-in Blender adapter and
    independently inspect actual GLBs, data color spaces and normal direction.
-2. Add controllable layered paint, exposed-metal edges, roughness variation and
-   protected readable regions; distinguish authored masks from mesh-derived wear.
+2. **Completed:** controllable layered paint, exposed-metal response, roughness
+   variation and protected readable regions, with attributed mask sources.
 3. Add reusable playful form controls: taper, squash, oversized functional parts,
    asymmetry, large/medium/small detail hierarchy. Preserve rig/contact invariants.
 4. Build distinct graphic/painterly realization options that survive export;
@@ -87,6 +91,51 @@ Inspect representative motion frames, contact, loop seams and re-imported
 exports when those features change. Measure performance before making claims.
 
 ## Current checkpoint
+
+### Layered wear pass — 2026-09-13
+
+- Completed opt-in `WearLayer`, deterministic UV chip/scratch proposals,
+  caller-supplied mask composition, normalized protected rectangles and CLI
+  controls. Protection is applied as an exact veto after proposed damage.
+  Runtime base color is blended in linear light; roughness, metallic response and
+  paint-edge normals change together. Original finish maps and authoring height
+  remain unchanged; proposal, protection, actual exposure and remaining coat are
+  retained as separate maps with declared sources in the manifest.
+- Actual local verification: **26 focused tests pass** across all six families ×
+  four finishes, exact protected-pixel invariants, source immutability, correlated
+  ORM, deterministic variation, normal convention, mask/source validation, CLI
+  publication and Blender bundle acceptance. Full repository checks are still
+  required at the actual proposed head.
+- Real Blender 4.3 evidence: `tools/blender/layered_wear_roundtrip.py` built a
+  three-panel specimen, exported actual GLB, independently matched its embedded
+  runtime textures, reopened nine packed images from editable `.blend`, re-imported
+  the GLB into an empty scene and rendered it. Source maps stayed byte-identical;
+  protected pixels had zero exposure; source/re-import render MAE was 0.002662.
+  Evidence: `docs/evidence/layered-wear-roundtrip-2026-09-13.json` and
+  `docs/GAME_MATERIAL_BLENDER.md`. Deliverable: `AXM-Layered-Wear-Proof.zip` plus
+  `AXM-Layered-Wear.png`.
+- Visual repair: the first specimen cropped two panels and smeared UV masks; a
+  wider camera and explicit front-planar UVs fixed both. A second render exposed
+  implausibly deep paint-edge normals; calibrated thickness-scale relief fixed
+  the false gouge while preserving exposed-metal readability. Final source and
+  re-imported stills visibly show the same wear proposal interrupted around the
+  protected M. This is visible evidence for this bounded specimen only.
+- Limits: static material specimen, not a complete game asset, animation, LOD,
+  performance or target-engine acceptance. Built-in wear is UV procedural, not
+  curvature/mesh derived. Caller source labels are provenance statements, not
+  independently proven authorship. The proof's analytic UV mask and unwrap are
+  authored specifically for inspection; seamless tiling is not claimed.
+- **Next useful step: priority 3**, reusable playful form controls (taper,
+  squash, functional exaggeration, asymmetry and detail hierarchy) while
+  preserving rig/contact invariants. A later geometry adapter can provide actual
+  mesh-baked wear masks without conflating them with this procedural proposal.
+- Active branch: `codex/rts-reference-foundry`, based on merged PR #61/main
+  `c20bcc4`; unrelated open PR #54 remains outside this pass. Require current-head
+  checks before merge; final GitHub state is authoritative.
+- Roots: Truth preserves mask source and evidence boundaries; Agency keeps the
+  layer optional/offline and prevents damage proposals overriding authored
+  protection; Continuity retains canonical inputs and editable masks; Wisdom
+  repaired visible UV/framing/relief faults before publishing.
 
 ### Material realization pass — 2026-09-13
 
@@ -117,9 +166,8 @@ exports when those features change. Measure performance before making claims.
   unavailable (not requested); shared ORM/AO sampler warning was checked against
   matching settings and actual GLB wrapping. Blender runtime recovered using
   cached Python 3.11/bpy 4.3 with NumPy 1.26.4, not UC's Windows provisioner.
-- **Next useful step: priority 2**, controllable layered paint/exposed substrate
-  and protected readable regions, with this real export test retained. Then
-  priority 3 form controls. Do not restart the completed bridge or duplicate it.
+- That pass's priority 2 is completed above. Continue with priority 3 form
+  controls; retain both real export tests and do not duplicate this layer work.
 - Active branch: `codex/rts-reference-foundry`, based on `bf607a5`; unrelated open
   PR #54 is outside this pass. Require current-head checks before merging this
   change; the final GitHub PR state is authoritative for merge completion.

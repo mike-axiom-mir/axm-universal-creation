@@ -10,6 +10,9 @@ Generate a bundle using the existing portable CLI, then assign it in Blender:
 
 ```sh
 axm-assets game-material painted-metal out/comic-paint --finish comic-salvage --seed 471
+# Add a substrate layer and reserve a normalized UV rectangle around a logo:
+axm-assets game-material painted-metal out/worn-logo --finish comic-salvage \
+  --layered-wear .7 --substrate-color 92 101 105 --protect .3 .3 .7 .7
 ```
 
 ```python
@@ -40,6 +43,42 @@ install a runtime, unwrap geometry or replace existing object materials.
   height is not displacement and must not silently regenerate styled normals.
 - Material extras retain family, finish, original convention and manifest hash.
   Keep the original bundle alongside the `.blend` when archiving a creation.
+
+## Layered wear and readable regions
+
+`WearLayer` is an optional post-finish composition. It changes correlated base
+color, roughness, metallic response and paint-edge normals, so it is not a color
+filter. The original surface fields are inputs and remain unmodified. Output
+retains four editable scalar maps:
+
+- `wear_mask`: proposed damage before protection;
+- `protection_mask`: authored veto; 255 preserves the top coat exactly;
+- `exposed_mask`: actual damage after that veto;
+- `coat_height`: remaining paint coverage, separate from original authoring
+  height so a later rebake cannot silently replace finish semantics.
+
+The built-in proposal is deterministic UV-space chip/scratch noise and is
+recorded as `procedural-uv`; it does not know mesh curvature or object history.
+Python callers can instead provide one byte per pixel as `wear_mask` and must
+provide `wear_mask_source` when publishing—for example `authored`,
+`projection-derived`, or `mesh-baked`. These labels preserve attribution but do
+not prove the caller's claim. Protection masks likewise require a source label.
+
+```python
+from axm_uc.game_material_styles import WearLayer, game_material_request
+
+request = game_material_request(
+    "out/panel", "painted-metal", finish="comic-salvage",
+    layer=WearLayer(amount=.65, substrate_rgb=(92, 101, 105)),
+    wear_mask=my_mesh_bake, wear_mask_source="mesh-baked:panel-v3",
+    protected_mask=my_logo_mask, protected_mask_source="authored:logo-safe-zone",
+)
+```
+
+CLI `--protect` rectangles are normalized UV coordinates and may be repeated.
+Arbitrary silhouettes use the Python byte-mask API. Protection applies after
+the damage proposal, so full protection leaves top-coat base, roughness,
+metallic and normal bytes unchanged even under full proposed wear.
 
 New manifests explicitly identify normal direction. Existing v0.1 manifests
 with the original inherited-donor wording remain accepted for the six known
@@ -80,6 +119,13 @@ requested. It also reports shared sampler selection for ORM/AO; this adapter
 uses matching sampler settings and the GLB inspection verifies repeat wrapping.
 Neither warning is hidden or converted into a claim of compressed delivery.
 
+`tools/blender/layered_wear_roundtrip.py` adds a smaller material-layer specimen:
+intact, an exposed-metal proposal, and the identical proposal with a protected
+mark. It exports GLB, reopens packed `.blend` data, decodes embedded maps,
+re-imports in a fresh scene and renders the result. The proof uses an attributed
+analytic UV mask so the protected result is unambiguous; it is not evidence of
+automatic mesh-edge wear.
+
 ## Limits and next work
 
 The graphic-toon option is flatter **PBR surface data**, not exported cel lighting.
@@ -89,6 +135,5 @@ There are no rigs, animation clips or LODs in this material proof, deliberately.
 No performance benchmark, target-engine gameplay test, hero UV/deformation test,
 seamless tiling or mesh-aware edge wear is claimed.
 
-Next: layered paint and exposed substrate with protected readable areas, followed
-by expressive form controls. Retain this export test as a regression gate when
-those material mechanisms change.
+Next: reusable expressive form controls, followed by a real mesh-bake adapter
+when a geometry source is available. Retain both export tests as regressions.

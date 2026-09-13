@@ -1,0 +1,15 @@
+{
+  "blend_packed_images": 9,
+  "blender": "4.3.0",
+  "glb_sha256": "8a6d9d7fc139ccfd5ef1f6f90067b799e96accbaa691b23fd995c764acc292d9",
+  "limits": "Static material integration specimen; no animation, LOD, engine gameplay, performance, automatic UVs or mesh-derived wear acceptance.",
+  "protected_pixels_have_zero_exposure": true,
+  "runtime_maps_exact": [
+    "intact",
+    "exposed",
+    "protected"
+  ],
+  "schema": "axm.layered-wear-roundtrip/v0.1",
+  "source_maps_immutable": true,
+  "source_reimport_render_mae": 0.002661788617886179
+}
