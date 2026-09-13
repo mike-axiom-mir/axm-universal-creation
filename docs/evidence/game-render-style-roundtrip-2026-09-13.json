@@ -1,0 +1,34 @@
+{
+  "schema": "axm.game-render-style-roundtrip/v0.1",
+  "blender": "4.3.0",
+  "styles": [
+    {
+      "style": "realistic-pbr",
+      "sha256": "ffd72ace2d9b30537542898560083cf6461498f69631280ab81603cbc17ab8ae",
+      "primitives": 22,
+      "unlit": false
+    },
+    {
+      "style": "graphic-toon-baked",
+      "sha256": "ed671b478201c942bfd15054bfb12aa7dd99be7ec036d00da74eb9f17de1363c",
+      "primitives": 22,
+      "unlit": true
+    },
+    {
+      "style": "painted-adventure-baked",
+      "sha256": "f4d5aee803e7cb8c9f898b50ffae109cf085e6911ceabe0de1b6bbd962fa3258",
+      "primitives": 22,
+      "unlit": true
+    }
+  ],
+  "same_decoded_geometry_across_styles": true,
+  "maximum_vertex_color_float_error": 2.9800342304930894e-08,
+  "blender_fresh_import_unlit_realization": {
+    "realistic-pbr": false,
+    "graphic-toon-baked": true,
+    "painted-adventure-baked": true
+  },
+  "editable_source_variant_meshes": 66,
+  "source_reimport_render_mae": 0.0,
+  "limits": "Static fixed-light render-style specimen. No target-engine colour-management, dynamic light-band, outline, camera rim, screen-space grain, animation, performance or game-distance acceptance."
+}

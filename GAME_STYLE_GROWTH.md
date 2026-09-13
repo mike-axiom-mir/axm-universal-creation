@@ -75,8 +75,9 @@ bounded change before starting another; no quota of new files or assets.
 3. **Completed:** reusable playful form controls: taper, squash, oversized
    functional parts, asymmetry and explicit large/medium/small hierarchy, with
    protected contact/socket coordinates and canonical source retained.
-4. Build distinct graphic/painterly realization options that survive export;
-   state exactly which shader features need a target-engine adapter or bake.
+4. **Completed:** distinct graphic/painterly realizations that survive GLB
+   export through final linear vertex colours and `KHR_materials_unlit`, with
+   target-engine-only shader features stated explicitly.
 5. Improve expressive character/robot face shapes and stances with identity checks.
 6. Expand animation composition for anticipation, acceleration, impact and settle.
 7. Add reusable secondary motion for springs, cloth, antennae and carried props.
@@ -92,6 +93,48 @@ Inspect representative motion frames, contact, loop seams and re-imported
 exports when those features change. Measure performance before making claims.
 
 ## Current checkpoint
+
+### Portable render-style pass — 2026-09-13
+
+- Completed renderer-neutral `game_render_styles.py`, the
+  `axm-assets game-render` publisher and a truthful catalog. `realistic-pbr`
+  remains an exact identity. `graphic-toon-baked` authors three hard light
+  bands; `painted-adventure-baked` authors six bands plus seeded, object-space
+  warm/cool pigment rhythm. These are actual colour-field changes, not palette
+  labels or extra polygons.
+- Stylized realizations fold the source material factor into final linear
+  vertex colours and opt into glTF `KHR_materials_unlit`. Positions, normals
+  and indices remain exact. The canonical source, its digest, chosen light,
+  seed, realization and engine-adapter limits are retained in every package.
+  Existing non-unlit GLBs keep their prior document shape.
+- Actual verification: **18 focused tests pass** across the eight new render
+  tests plus procedural-3D and workshop regressions. Blender 4.3 exported and
+  freshly re-imported three 22-primitive courier GLBs. Decoded geometry was
+  identical across styles, maximum vertex-colour float error was
+  0.0000000298, stylized materials re-imported as unlit while realistic stayed
+  lit, and the editable-source/re-import render MAE was 0.0.
+- Visual repair: the first comparison cropped the wrench and made painted too
+  close to graphic. Stronger chromatic pigment rhythm separated them; final
+  wider framing keeps all three silhouettes and labels clear. The final still
+  visibly distinguishes lit PBR, hard graphic planes and softer faceted
+  painted colour variation on the same form.
+- Evidence: `tools/blender/game_render_style_roundtrip.py`,
+  `docs/GAME_RENDER_STYLES.md`, and
+  `docs/evidence/game-render-style-roundtrip-2026-09-13.json`. No donor code or
+  external shader runtime was copied in this pass.
+- Limits: fixed authored lighting only. Camera-responsive outlines, dynamic
+  light direction, screen-space grain, camera rim and animated brush crawl need
+  target-engine adapters. This is a static style/export proof, not animation,
+  game-distance, engine colour-management or performance acceptance.
+- **Next useful step: priority 5**, expressive character/robot face shapes and
+  stances with explicit identity checks.
+- Active lane: `codex/rts-reference-foundry`, based on merged PR #63/main
+  `b98776a`; unrelated PR #54 remains outside this pass. Current-head checks are
+  required before merge; final GitHub state is authoritative.
+- Roots: Truth separates fixed-bake evidence from dynamic-shader acceptance;
+  Agency keeps every style opt-in and offline; Continuity embeds the exact
+  canonical source and preserves legacy realistic output; Wisdom repaired the
+  visible style separation and framing before publication.
 
 ### Expressive form pass — 2026-09-13
 
