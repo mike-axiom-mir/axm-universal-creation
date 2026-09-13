@@ -12,7 +12,8 @@ arm=next(o for o in s.objects if o.type=='ARMATURE')
 action_set(arm,find_action('Drive_Cycle' if a.view=='motion' else 'Engine_Idle'));s.frame_set(0)
 cam=studio(a.resolution);s.cycles.samples=20;s.render.use_persistent_data=True
 cam.location=(4.5,-6.5,3.6)
-if a.view=='rear':arm.rotation_euler.z=3.141592653589793
+if a.view=='rear':
+ arm.rotation_mode='XYZ';arm.rotation_euler.z=3.141592653589793
 target=Vector((0,0,1.35));cam.rotation_euler=(target-cam.location).to_track_quat('-Z','Y').to_euler();cam.data.ortho_scale=3.65
 if a.view=='motion':
  s.cycles.samples=6;folder=a.directory/'frames';folder.mkdir(exist_ok=True)
