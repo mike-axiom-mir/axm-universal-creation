@@ -31,6 +31,7 @@ from .rigged_characters import character_catalog, forge_rigged_character, inspec
 from .game_material_styles import (FAMILIES, FINISHES, WearLayer, game_material_catalog,
                                    generate_game_material, protected_regions_mask)
 from .game_form_styles import FORM_STYLES, game_form_catalog, publish_game_form
+from .game_render_styles import RENDER_STYLES, game_render_style_catalog, publish_game_render_style
 
 BASE_CATEGORIES = ["texture", "gradient", "material", "fixture", "decal", "palette"]
 EXPANDED_CATEGORIES = ["surface", "pigment", "sprite", "mesh", "vector-part"]
@@ -53,6 +54,7 @@ def combined_catalog() -> dict:
         "rigged_characters": character_catalog(),
         "game_materials": game_material_catalog(),
         "game_forms": game_form_catalog(),
+        "game_render_styles": game_render_style_catalog(),
     }
 
 
@@ -63,6 +65,15 @@ def build_parser() -> argparse.ArgumentParser:
     sub.add_parser("grammar-catalog", help="show the composable visual-intent grammar")
     sub.add_parser("game-material-catalog", help="show material families and opt-in surface finishes")
     sub.add_parser("game-form-catalog", help="show deterministic silhouette and proportion styles")
+    sub.add_parser("game-render-catalog", help="show portable baked graphic and painterly styles")
+    render = sub.add_parser("game-render", help="bake a portable GLB lighting style while retaining source")
+    render.add_argument("request", help="JSON object containing exactly one surface mesh")
+    render.add_argument("path", help="new output directory; existing paths are never overwritten")
+    render.add_argument("--style", choices=[style.name for style in RENDER_STYLES],
+                        default="graphic-toon-baked")
+    render.add_argument("--seed", type=int, default=1)
+    render.add_argument("--light", type=float, nargs=3, metavar=("X", "Y", "Z"),
+                        default=(-.45, .82, .35))
     form = sub.add_parser("game-form", help="derive a styled surface mesh while retaining canonical source")
     form.add_argument("request", help="JSON object containing mesh and exact per-component part specs")
     form.add_argument("path", help="new output directory; existing paths are never overwritten")
@@ -200,6 +211,14 @@ def main(argv: list[str] | None = None) -> int:
         result = game_material_catalog()
     elif args.command == "game-form-catalog":
         result = game_form_catalog()
+    elif args.command == "game-render-catalog":
+        result = game_render_style_catalog()
+    elif args.command == "game-render":
+        request = json.loads(Path(args.request).read_text(encoding="utf-8"))
+        if not isinstance(request, dict) or set(request) != {"mesh"}:
+            parser.error("game-render request must contain exactly mesh")
+        result = publish_game_render_style(args.path, request["mesh"], args.style,
+                                           args.seed, tuple(args.light))
     elif args.command == "game-form":
         request = json.loads(Path(args.request).read_text(encoding="utf-8"))
         if not isinstance(request, dict) or set(request) != {"mesh", "parts"}:

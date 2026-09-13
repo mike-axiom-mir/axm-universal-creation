@@ -37,7 +37,7 @@ def procedural_3d_summary() -> dict[str, Any]:
         "primitive_grammar": ["box", "pyramid", "cylinder"],
         "maximum_primitives": MAX_PRIMITIVES,
         "maximum_cylinder_segments": MAX_CYLINDER_SEGMENTS,
-        "materials": "base-color metallic-roughness only",
+        "materials": "base-color metallic-roughness; surface meshes may opt into KHR_materials_unlit",
         "container_and_buffer_ranges_reverified_after_publish": True,
         "rendered_appearance_or_host_compatibility_proven": False,
     }
@@ -289,13 +289,20 @@ def _normalize_surface_spec(raw: Any) -> dict[str, Any]:
             if not isinstance(row, (list, tuple)) or len(row) != width:
                 raise Procedural3DError(f"{label} must contain {width} values")
             return [_number(value, label, low, high) for value in row]
-        material = _object(group["material"], "surface material", required={"color", "metallic", "roughness"})
+        material = _object(group["material"], "surface material",
+                           required={"color", "metallic", "roughness"}, optional={"unlit"})
+        unlit = material.get("unlit", False)
+        if type(unlit) is not bool:
+            raise Procedural3DError("surface material.unlit must be a boolean")
+        normalized_material = {"color": _color(material["color"], "surface color")[0],
+                               "metallic": _number(material["metallic"], "metallic", 0, 1),
+                               "roughness": _number(material["roughness"], "roughness", 0, 1)}
+        if unlit:
+            normalized_material["unlit"] = True
         normalized = {"id": name, "type": "surface", "size": [1, 1, 1], "translation": [0, 0, 0],
                       "positions": [vector(row, "position", -100000, 100000) for row in positions],
                       "normals": [vector(row, "normal", -1, 1) for row in normals], "indices": list(indices),
-                      "material": {"color": _color(material["color"], "surface color")[0],
-                                   "metallic": _number(material["metallic"], "metallic", 0, 1),
-                                   "roughness": _number(material["roughness"], "roughness", 0, 1)}}
+                      "material": normalized_material}
         if "colors" in group:
             colors = group["colors"]
             if not isinstance(colors, list) or len(colors) != len(positions):
@@ -370,14 +377,17 @@ def _encode_glb(spec: dict[str, Any]) -> dict[str, Any]:
                               "count": len(primitive["colors"]), "type": "VEC4"})
         _color_text, rgba = _color(primitive["material"]["color"], "material.color")
         material_index = len(materials)
-        materials.append({
+        material = {
             "name": f"{primitive['id']}-material",
             "pbrMetallicRoughness": {
                 "baseColorFactor": rgba,
                 "metallicFactor": primitive["material"]["metallic"],
                 "roughnessFactor": primitive["material"]["roughness"],
             },
-        })
+        }
+        if primitive["material"].get("unlit", False):
+            material["extensions"] = {"KHR_materials_unlit": {}}
+        materials.append(material)
         mesh_index = len(meshes)
         meshes.append({
             "name": primitive["id"],
@@ -412,6 +422,9 @@ def _encode_glb(spec: dict[str, Any]) -> dict[str, Any]:
             "axmPrimitiveCount": len(spec["primitives"]),
         },
     }
+    if any(material.get("extensions", {}).get("KHR_materials_unlit") == {} for material in materials):
+        document["extensionsUsed"] = ["KHR_materials_unlit"]
+        document["extensionsRequired"] = ["KHR_materials_unlit"]
     json_bytes = _canonical(document)
     json_padded = json_bytes + b" " * ((-len(json_bytes)) % 4)
     binary_padded = bytes(binary) + b"\x00" * ((-len(binary)) % 4)
@@ -503,6 +516,24 @@ def verify_glb(body: bytes, *, expected_spec_digest: str | None = None) -> dict[
             raise Procedural3DError("generated GLB geometry contains non-finite values", {"accessor": ref})
         return values
 
+    used = document.get("extensionsUsed", [])
+    required = document.get("extensionsRequired", [])
+    if (not isinstance(used, list) or not isinstance(required, list)
+            or set(used) - {"KHR_materials_unlit"} or set(required) - {"KHR_materials_unlit"}
+            or not set(required) <= set(used)):
+        raise Procedural3DError("generated GLB extension declarations are invalid")
+    unlit_materials = 0
+    for index, material in enumerate(materials):
+        extensions = material.get("extensions", {}) if isinstance(material, dict) else None
+        if not isinstance(extensions, dict) or set(extensions) - {"KHR_materials_unlit"}:
+            raise Procedural3DError("generated GLB material extensions are invalid", {"index": index})
+        if "KHR_materials_unlit" in extensions:
+            if extensions["KHR_materials_unlit"] != {} or "KHR_materials_unlit" not in required:
+                raise Procedural3DError("generated GLB unlit material is not explicitly required", {"index": index})
+            unlit_materials += 1
+    if "KHR_materials_unlit" in used and not unlit_materials:
+        raise Procedural3DError("generated GLB declares an unused unlit extension")
+
     decoded_triangles = 0
     for index, mesh in enumerate(meshes):
         primitives = mesh.get("primitives") if isinstance(mesh, dict) else None
@@ -561,6 +592,7 @@ def verify_glb(body: bytes, *, expected_spec_digest: str | None = None) -> dict[
         "primitives": len(meshes),
         "nodes": len(nodes),
         "materials": len(materials),
+        "unlit_materials": unlit_materials,
         "triangles": decoded_triangles,
         "geometry_validation": {
             "decoded_triangle_count": decoded_triangles,
