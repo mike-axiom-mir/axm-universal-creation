@@ -72,8 +72,9 @@ bounded change before starting another; no quota of new files or assets.
    independently inspect actual GLBs, data color spaces and normal direction.
 2. **Completed:** controllable layered paint, exposed-metal response, roughness
    variation and protected readable regions, with attributed mask sources.
-3. Add reusable playful form controls: taper, squash, oversized functional parts,
-   asymmetry, large/medium/small detail hierarchy. Preserve rig/contact invariants.
+3. **Completed:** reusable playful form controls: taper, squash, oversized
+   functional parts, asymmetry and explicit large/medium/small hierarchy, with
+   protected contact/socket coordinates and canonical source retained.
 4. Build distinct graphic/painterly realization options that survive export;
    state exactly which shader features need a target-engine adapter or bake.
 5. Improve expressive character/robot face shapes and stances with identity checks.
@@ -91,6 +92,46 @@ Inspect representative motion frames, contact, loop seams and re-imported
 exports when those features change. Measure performance before making claims.
 
 ## Current checkpoint
+
+### Expressive form pass — 2026-09-13
+
+- Completed renderer-neutral `game_form_styles.py` and `axm-assets game-form`.
+  Four opt-in profiles now alter actual silhouette geometry using coordinated
+  squash, taper, functional/armor exaggeration, hierarchy scaling and seeded
+  asymmetry. `realistic` remains an exact geometry identity. Every component
+  requires an explicit semantic role; unclassified components fail closed.
+- Canonical source is embedded unchanged beside the realization. Named contact
+  and socket points fade displacement to exact zero and receive before/after
+  drift receipts. This protects declared coordinates, not entire contact patches,
+  rig deformation, collisions or articulation clearance.
+- Actual verification: **8 focused tests pass** for identity, immutability,
+  geometry-not-color changes, hierarchy, functional exaggeration, deterministic
+  asymmetry, exact anchors, CLI publishing/overwrite refusal and malformed input.
+  Blender 4.3 exported a neutral/comic courier comparison to GLB, reopened the
+  editable `.blend`, freshly imported the GLB, and checked all 44 mesh bounds
+  against renderer-neutral geometry (maximum error 0.000000222 m). Nine declared
+  anchors stayed exact; source/re-import still MAE was 0.0.
+- Visual repair: the first render cropped the source wrench. Wider framing fixed
+  it; a second render showed the explanatory caption fighting the wheel contacts,
+  so the caption was removed. Final still visibly shows larger head/wrench/wheels,
+  a squashed/tapered chassis, reduced badge detail and controlled imbalance.
+- Evidence: `tools/blender/game_form_roundtrip.py`,
+  `docs/GAME_FORM_STYLES.md`, and
+  `docs/evidence/game-form-roundtrip-2026-09-13.json`. The pinned theme-park
+  cartoon/fantasy source was reviewed for coordinated form ideas; no donor code
+  or park runtime was copied.
+- Limits: static comparison specimen, not a finished game asset. No rig,
+  animation, collision, LOD, UV, target-engine/game-distance/performance or
+  perceptual style acceptance. Optional Draco is unavailable and unused.
+- **Next useful step: priority 4**, portable graphic/painterly realization that
+  survives export, with target-engine-only shader features stated explicitly.
+- Active lane: `codex/rts-reference-foundry`, based on merged PR #62/main
+  `2243cbb`; unrelated PR #54 remains outside this pass. Current-head checks are
+  required before merge; final GitHub state is authoritative.
+- Roots: Truth separates point/bounds/render evidence from artistic or runtime
+  acceptance; Agency keeps profiles optional and caller roles explicit;
+  Continuity embeds immutable canonical source; Wisdom repaired visible framing
+  and hierarchy presentation before publication.
 
 ### Layered wear pass — 2026-09-13
 

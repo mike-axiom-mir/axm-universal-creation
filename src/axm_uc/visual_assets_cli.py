@@ -30,6 +30,7 @@ from .visual_3d_iteration import (
 from .rigged_characters import character_catalog, forge_rigged_character, inspect_rigged_character
 from .game_material_styles import (FAMILIES, FINISHES, WearLayer, game_material_catalog,
                                    generate_game_material, protected_regions_mask)
+from .game_form_styles import FORM_STYLES, game_form_catalog, publish_game_form
 
 BASE_CATEGORIES = ["texture", "gradient", "material", "fixture", "decal", "palette"]
 EXPANDED_CATEGORIES = ["surface", "pigment", "sprite", "mesh", "vector-part"]
@@ -51,6 +52,7 @@ def combined_catalog() -> dict:
         "three_d_forge": catalog_3d(),
         "rigged_characters": character_catalog(),
         "game_materials": game_material_catalog(),
+        "game_forms": game_form_catalog(),
     }
 
 
@@ -60,6 +62,12 @@ def build_parser() -> argparse.ArgumentParser:
     sub.add_parser("catalog", help="show every executable generator family")
     sub.add_parser("grammar-catalog", help="show the composable visual-intent grammar")
     sub.add_parser("game-material-catalog", help="show material families and opt-in surface finishes")
+    sub.add_parser("game-form-catalog", help="show deterministic silhouette and proportion styles")
+    form = sub.add_parser("game-form", help="derive a styled surface mesh while retaining canonical source")
+    form.add_argument("request", help="JSON object containing mesh and exact per-component part specs")
+    form.add_argument("path", help="new output directory; existing paths are never overwritten")
+    form.add_argument("--style", choices=[style.name for style in FORM_STYLES], default="comic-salvage")
+    form.add_argument("--seed", type=int, default=1)
     material = sub.add_parser("game-material", help="generate portable PBR maps with a selected game finish")
     material.add_argument("family", choices=FAMILIES)
     material.add_argument("path")
@@ -190,6 +198,13 @@ def main(argv: list[str] | None = None) -> int:
         result = grammar_catalog()
     elif args.command == "game-material-catalog":
         result = game_material_catalog()
+    elif args.command == "game-form-catalog":
+        result = game_form_catalog()
+    elif args.command == "game-form":
+        request = json.loads(Path(args.request).read_text(encoding="utf-8"))
+        if not isinstance(request, dict) or set(request) != {"mesh", "parts"}:
+            parser.error("game-form request must contain exactly mesh and parts")
+        result = publish_game_form(args.path, request["mesh"], request["parts"], args.style, args.seed)
     elif args.command == "game-material":
         layer = None
         protection = None
