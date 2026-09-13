@@ -126,6 +126,27 @@ def _validate_fields(fields, size):
         raise ValueError("ORM must match the separate metallic field")
 
 
+def _smooth_values(values, size):
+    """Small edge-aware separable filter; retain grain/paint-chip boundaries."""
+    radius = max(1, size // 64)
+    rows, output = [0.0] * len(values), [0.0] * len(values)
+    for source, dest, horizontal in ((values, rows, True), (rows, output, False)):
+        for y in range(size):
+            for x in range(size):
+                centre = source[y * size + x]
+                total = weight_sum = 0.0
+                for delta in range(-radius, radius + 1):
+                    xx, yy = (x + delta, y) if horizontal else (x, y + delta)
+                    if not (0 <= xx < size and 0 <= yy < size):
+                        continue
+                    sample = source[yy * size + xx]
+                    weight = 1 / (1 + ((sample - centre) / .025) ** 4)
+                    total += sample * weight
+                    weight_sum += weight
+                dest[y * size + x] = total / weight_sum
+    return output
+
+
 def apply_finish(fields, size, finish="realistic", seed=1):
     """Return new map fields. Realistic is byte-for-byte identity, not a restyle.
 
@@ -141,12 +162,18 @@ def apply_finish(fields, size, finish="realistic", seed=1):
     base, normal = bytearray(), bytearray()
     source = fields["base_color"][1]
     source_normal = fields["normal"][1]
+    values = [max(source[i:i + 3]) / 255 for i in range(0, len(source), 3)]
+    smooth_values = _smooth_values(values, size)
+    low, high = min(smooth_values), max(smooth_values)
+    span = high - low
     for i in range(size * size):
         rgb = source[i * 3:i * 3 + 3]
-        value = max(rgb) / 255
-        # Quantize HSV value; use interval centres so dark materials stay legible.
-        band = min(profile.value_bands - 1, int(value * profile.value_bands))
-        target = (band + .5) / profile.value_bands
+        value = values[i]
+        # Quantize within this field's own range. Absolute 0..1 bands can erase
+        # an entire dark wood/rubber signal or turn threshold noise into speckles.
+        local = (smooth_values[i] - low) / span if span > 1e-8 else 0
+        band = max(0, min(profile.value_bands - 1, round(local * (profile.value_bands - 1))))
+        target = low + span * band / (profile.value_bands - 1)
         value_out = value * (1 - profile.band_mix) + target * profile.band_mix
         if profile.brush_strength:
             u, v = (i % size + .5) / size, (i // size + .5) / size

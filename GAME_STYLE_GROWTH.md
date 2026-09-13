@@ -29,7 +29,7 @@ The original Blender hero/companion/trike surfaces and donors are unchanged.
 | realistic | Identity transformation of source fields |
 | comic-salvage | Partially grouped albedo values, reduced normal detail and broader roughness |
 | painted-adventure | Soft value grouping, directional procedural brush variation and restrained normals |
-| graphic-toon | Three albedo value bands, flat tangent normals and broad roughness |
+| graphic-toon | Three albedo value bands within the source field's range, flat tangent normals and broad roughness |
 
 These are **surface finishes**, not complete art styles. In particular,
 graphic-toon is not a cel-lighting shader. Lighting, silhouette, shape hierarchy,
@@ -89,13 +89,18 @@ exports when those features change. Measure performance before making claims.
 
 - Bootstrap: executable material families/finish composition and `axm-assets`
   commands implemented; this precedes the ten scheduled activations.
-- Local verification: eight tests pass, covering all 24 family/finish combinations,
+- Local verification: eleven tests pass, covering all 24 family/finish combinations,
   donor identity, source immutability, ORM consistency, bounded inputs, deterministic
   variation, normal lengths/direction, actual CLI publication and overwrite refusal.
+  Added regressions protect dark-material structure, narrow grain and constant surfaces after
+  an albedo comparison exposed grain loss with absolute 0–1 quantization.
 - Applicable full-repository checks are required at the actual proposed GitHub head.
   Their live GitHub results, not this pre-publication note, establish merge readiness.
-- Visual status: no shaded game asset or engine integration demonstrated by this
-  change. Surface maps alone do not satisfy Mike's complete game-style goal.
+- Visual status: a six-family/four-finish albedo comparison exposed erased wood
+  grain and speckled thresholds. The finish now smooths fine value noise while
+  preserving strong edges, and bands
+  within each source field's range. No shaded game asset or engine integration
+  demonstrated here. Surface maps alone do not satisfy Mike's complete style goal.
 - Next useful step: material-to-Blender/export adapter plus a small rendered proof.
 - Working lane: `codex/rts-reference-foundry`; continue an existing open PR when
   present and keep related fixes together. Prior trike PR #58 is already merged.

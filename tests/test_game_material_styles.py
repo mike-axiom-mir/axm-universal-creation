@@ -14,7 +14,7 @@ from axm_uc.donor_metal import painted_metal_fields, PaintedMetalSpec
 from axm_uc.fabric_material import fabric_fields, FabricSpec
 from axm_uc.game_material_styles import (
     DEFAULT_COLORS, FAMILIES, FINISHES, apply_finish, game_material_fields,
-    game_material_request, generate_game_material, _normal_from_height,
+    game_material_request, generate_game_material, _normal_from_height, _smooth_values,
 )
 from axm_uc.project import ProjectError
 from axm_uc.visual_assets_cli import main
@@ -69,6 +69,25 @@ class GameMaterialStyleTests(unittest.TestCase):
             self.assertNotEqual(fields['base_color'], game_material_fields(family, 16, 82, 'painted-adventure')['base_color'])
             fingerprints.add(hashlib.sha256(fields['normal'][1]).digest())
         self.assertGreater(len(fingerprints), 3)
+
+    def test_graphic_bands_retain_dark_material_structure(self):
+        # One absolute 0..1 bin used to collapse this entire authored grain.
+        fields = game_material_fields('carved-wood', 32, 471, 'graphic-toon')
+        values = {max(fields['base_color'][1][i:i + 3]) for i in range(0, 32 * 32 * 3, 3)}
+        self.assertEqual(len(values), 3)
+        self.assertGreater(max(values) - min(values), 12)
+
+    def test_constant_surface_does_not_acquire_false_bands(self):
+        raw = game_material_fields('rubber', 16)
+        raw['base_color'] = (3, bytes([25, 30, 35]) * 256)
+        result = apply_finish(raw, 16, 'graphic-toon')
+        self.assertEqual(result['base_color'], raw['base_color'])
+
+    def test_smoothing_preserves_narrow_structural_grain(self):
+        values = [.3 if x % 4 == 0 else .6 for y in range(16) for x in range(16)]
+        filtered = _smooth_values(values, 16)
+        self.assertLess(filtered[8 * 16 + 8], .31)
+        self.assertGreater(filtered[8 * 16 + 9], .59)
 
     def test_new_family_normal_orientation_and_flat_surface(self):
         self.assertEqual(_normal_from_height([.5] * 256, 16, 1), bytes([128, 128, 255]) * 256)
