@@ -83,7 +83,9 @@ bounded change before starting another; no quota of new files or assets.
 6. **Completed:** deterministic animation composition for anticipation,
    acceleration, impact, recoil/counter-overshoot and settle, with sampled
    portable tracks, exact phase events and fresh-import loop/contact receipts.
-7. Add reusable secondary motion for springs, cloth, antennae and carried props.
+7. **Completed:** reusable causal secondary motion for springs, short rigid
+   cloth chains, antennae and carried props, with bounded response and exact
+   authored loop closure.
 8. Improve contact, sockets, useful LOD selection and game-distance readability.
 9. Exercise the combined capabilities on one memorable animated game asset,
    such as a mischievous salvage delivery bot, with editable source and real GLBs.
@@ -96,6 +98,55 @@ Inspect representative motion frames, contact, loop seams and re-imported
 exports when those features change. Measure performance before making claims.
 
 ## Current checkpoint
+
+### Secondary motion pass — 2026-09-13
+
+- Completed `game_secondary_motion.py`, `axm-assets secondary-motion-compose`
+  and its catalog. Four reusable classes derive per-frame local tracks from an
+  explicit sampled primary channel: `coil-spring`, `antenna`, `cloth-tail` and
+  `carried-prop`. Response frequency, damping, drive gain, causal frame lag,
+  axis, direction and amplitude remain explicit rather than inferred.
+- The primary composition and secondary request are embedded unchanged with
+  SHA-256 identities. Missing/static drivers, duplicate outputs, zero axes,
+  unsafe scale and unbounded samples fail closed. Receipts expose declared and
+  observed lag, peak/limit, pre-closure residual and exact loop seam. Primary
+  `settle` starts an authored cubic return to rest; this is not presented as a
+  physical simulation.
+- Actual verification: **9 new focused tests pass** for all four classes,
+  deterministic composition, source immutability, identical sample clocks,
+  causal chainable delays, quaternion normalization, positive scale, bounds,
+  invalid/static drivers, transactional publication and CLI execution.
+- Blender 4.3 proof: the same original Clockwork Smacker now has 11 bones and
+  five secondary controls across a coil, antenna, two-panel cape and tool bag.
+  It exports actual LOD0 (58,928 triangles) and LOD1 (28,284 triangles) GLBs,
+  editable `.blend`, and the named 37-frame
+  `Bell_Smack_Secondary_Followthrough` clip. A separate process imported both
+  files and evaluated every secondary track at every sample: maximum local
+  error `0.000000306`; maximum secondary world loop seam `0 m`.
+- Visual repair: the first comparison silently rendered both rows with active
+  curves, so identical pixels failed the evidence claim. Explicit curve muting
+  fixed the comparison. Rear inspection then exposed two plain black cape
+  backs; patched red, ivory and teal panels restored the salvage story. Final
+  locked/enabled RMSE is 0.0248 at anticipation and 0.0638 at settle; the full
+  silhouette remains framed. These stills prove visible sampled differences,
+  not continuous playback.
+- Evidence: `tools/blender/game_secondary_motion_roundtrip.py`,
+  `docs/GAME_SECONDARY_MOTION.md`, and
+  `docs/evidence/game-secondary-motion-roundtrip-2026-09-13.json`.
+  Deliverable: `AXM-Secondary-Motion-Proof.zip` plus
+  `AXM-Secondary-Motion.png`.
+- Limits: rigid bone controls only. No soft cloth, collision/self-contact, rig
+  inference, target-engine playback, state-machine/controller integration,
+  audio sync, continuous perceptual acceptance or measured frame time.
+- **Next useful step: priority 8**, improve contact/socket evidence, useful LOD
+  selection and game-distance readability without conflating those gates.
+- Active lane: `codex/rts-reference-foundry`, based on merged PR #66/main
+  `6b68f09`; unrelated PR #54 remains outside this pass. Recheck current main,
+  overlap and exact-head checks before merge; final GitHub state rules.
+- Roots: Truth keeps rigid follow-through separate from cloth/engine claims;
+  Agency requires explicit caller-owned drivers and profiles; Continuity embeds
+  unchanged primary/source state and exact endpoints; Wisdom repaired invalid
+  visual evidence and the exposed cape style defect before publication.
 
 ### Motion timing composition pass — 2026-09-13
 

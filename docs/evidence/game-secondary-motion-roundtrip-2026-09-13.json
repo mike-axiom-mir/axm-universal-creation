@@ -1,0 +1,53 @@
+{
+  "schema": "axm.game-secondary-motion-evidence/v0.1",
+  "date": "2026-09-13",
+  "runtime": "Blender bpy 4.3.0 / CPython 3.11.16",
+  "fresh_import": true,
+  "asset": "axm-clockwork-smacker-secondary",
+  "rig_bones": 11,
+  "animation": {
+    "name": "Bell_Smack_Secondary_Followthrough",
+    "frames": 37,
+    "fps": 30,
+    "loop": true
+  },
+  "secondary_tracks": [
+    {"target": "Coil", "class": "coil-spring", "lag_frames": 1, "peak": 0.17153264641246793, "limit": 0.2},
+    {"target": "Antenna", "class": "antenna", "lag_frames": 2, "peak": 0.36045524533947143, "limit": 0.42},
+    {"target": "Cape.01", "class": "cloth-tail", "lag_frames": 3, "peak": 0.43539427566513633, "limit": 0.48},
+    {"target": "Cape.02", "class": "cloth-tail", "lag_frames": 6, "peak": 0.44418998668904486, "limit": 0.62},
+    {"target": "ToolBag", "class": "carried-prop", "lag_frames": 1, "peak": 0.18574911900233534, "limit": 0.3}
+  ],
+  "exports": {
+    "LOD0": {
+      "file": "AXM_Clockwork_Smacker_Secondary.glb",
+      "bytes": 4762880,
+      "triangles": 58928,
+      "vertices": 31976,
+      "sha256": "c843e6d146c40cae1ec6d6cddfcba4219bac7353921ecc5cadd7555eb0ca60d4"
+    },
+    "LOD1": {
+      "file": "AXM_Clockwork_Smacker_Secondary_LOD1.glb",
+      "bytes": 2039168,
+      "triangles": 28284,
+      "vertices": 15807,
+      "sha256": "63da1966857d8d1194d99de284f4acdd531fa5234e1c1c709fc51142c5c7834c"
+    }
+  },
+  "maximum_secondary_local_track_error": 3.055976274257688e-7,
+  "maximum_secondary_world_loop_seam_m": 0.0,
+  "visual_comparison_rmse": {
+    "anticipation": 0.0248007,
+    "impact": 0.0552087,
+    "recoil": 0.0630671,
+    "settle": 0.0637817
+  },
+  "preview_sha256": "a3b084367dbcc206f8c6e2b2b9861ab3326a740ad23cf00ffc41604ee8a323f9",
+  "passed": true,
+  "limits": {
+    "soft_cloth_or_collision": false,
+    "target_engine_playback": false,
+    "continuous_visual_motion_review": false,
+    "frame_time_performance": false
+  }
+}

@@ -35,6 +35,7 @@ from .game_render_styles import RENDER_STYLES, game_render_style_catalog, publis
 from .game_character_expression import (EXPRESSIONS, STANCES, game_character_expression_catalog,
                                         publish_character_expression)
 from .game_motion_timing import PROFILES as MOTION_PROFILES, game_motion_timing_catalog, publish_game_motion
+from .game_secondary_motion import game_secondary_motion_catalog, publish_secondary_motion
 
 BASE_CATEGORIES = ["texture", "gradient", "material", "fixture", "decal", "palette"]
 EXPANDED_CATEGORIES = ["surface", "pigment", "sprite", "mesh", "vector-part"]
@@ -60,6 +61,7 @@ def combined_catalog() -> dict:
         "game_render_styles": game_render_style_catalog(),
         "game_character_expressions": game_character_expression_catalog(),
         "game_motion_timing": game_motion_timing_catalog(),
+        "game_secondary_motion": game_secondary_motion_catalog(),
     }
 
 
@@ -73,11 +75,17 @@ def build_parser() -> argparse.ArgumentParser:
     sub.add_parser("game-render-catalog", help="show portable baked graphic and painterly styles")
     sub.add_parser("character-expression-catalog", help="show static face expressions and storytelling stances")
     sub.add_parser("motion-timing-catalog", help="show deterministic anticipation, impact and settle profiles")
+    sub.add_parser("secondary-motion-catalog", help="show reusable inertial follow-through profiles")
     motion = sub.add_parser("motion-compose", help="compose sampled local transform tracks with timing receipts")
     motion.add_argument("request", help="JSON motion request with explicit rest/action transform channels")
     motion.add_argument("path", help="new output directory; existing paths are never overwritten")
     motion.add_argument("--profile", choices=[item.name for item in MOTION_PROFILES],
                         default="weighty-salvage")
+    secondary = sub.add_parser(
+        "secondary-motion-compose", help="derive sampled secondary tracks from a composed primary clip")
+    secondary.add_argument("primary", help="JSON axm.game-motion-timing/v0.1 composition")
+    secondary.add_argument("request", help="JSON request with explicit secondary attachments")
+    secondary.add_argument("path", help="new output directory; existing paths are never overwritten")
     character_expression = sub.add_parser(
         "character-expression", help="derive a checked static face expression and stance while retaining source")
     character_expression.add_argument("request", help="JSON object containing mesh and exact component semantics")
@@ -235,9 +243,15 @@ def main(argv: list[str] | None = None) -> int:
         result = game_character_expression_catalog()
     elif args.command == "motion-timing-catalog":
         result = game_motion_timing_catalog()
+    elif args.command == "secondary-motion-catalog":
+        result = game_secondary_motion_catalog()
     elif args.command == "motion-compose":
         request = json.loads(Path(args.request).read_text(encoding="utf-8"))
         result = publish_game_motion(args.path, request, args.profile)
+    elif args.command == "secondary-motion-compose":
+        primary = json.loads(Path(args.primary).read_text(encoding="utf-8"))
+        request = json.loads(Path(args.request).read_text(encoding="utf-8"))
+        result = publish_secondary_motion(args.path, primary, request)
     elif args.command == "character-expression":
         request = json.loads(Path(args.request).read_text(encoding="utf-8"))
         if not isinstance(request, dict) or set(request) != {"mesh", "parts"}:
