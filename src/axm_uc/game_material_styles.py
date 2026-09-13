@@ -235,7 +235,7 @@ def game_material_request(path, family, size=128, seed=1, finish="realistic", co
                 "size": size, "seed": seed, "color": list(DEFAULT_COLORS[family] if color is None else color),
                 "profile": asdict(_finish(finish)), "maps": maps,
                 "orm_channels": ["occlusion", "roughness", "metallic"],
-                "normal_convention": "inherited donor for painted-metal/woven-fabric; tangent +Y for other families",
+                "normal_convention": "tangent -Y" if family in ("painted-metal", "woven-fabric") else "tangent +Y",
                 "truth": "Authored procedural fields, not scanned material. No mesh-aware edge wear, seamless tiling, lighting or engine acceptance claimed.",
                 "height_usage": "Authoring proxy; finish modifies normals independently. Re-baking normal from height replaces that finish choice."}
     return {"kind": "mixed-media-project", "direction": "generate reusable game material maps",

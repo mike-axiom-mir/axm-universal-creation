@@ -1,0 +1,156 @@
+{
+  "blend_reopened_packed_images": 72,
+  "blender": "4.3.0",
+  "glb_sha256": "43fa514a472192576f02a4cb7e65a35a6b5a29f3111da734eb447753e100d5dd",
+  "limits": "Material spheres only; no engine gameplay, animation, performance, cel shader or full style acceptance.",
+  "materials": [
+    {
+      "embedded_pixels": "exact",
+      "export_normal": "tangent +Y",
+      "material": "painted-metal__realistic",
+      "source_normal": "tangent -Y"
+    },
+    {
+      "embedded_pixels": "exact",
+      "export_normal": "tangent +Y",
+      "material": "painted-metal__comic-salvage",
+      "source_normal": "tangent -Y"
+    },
+    {
+      "embedded_pixels": "exact",
+      "export_normal": "tangent +Y",
+      "material": "painted-metal__painted-adventure",
+      "source_normal": "tangent -Y"
+    },
+    {
+      "embedded_pixels": "exact",
+      "export_normal": "tangent +Y",
+      "material": "painted-metal__graphic-toon",
+      "source_normal": "tangent -Y"
+    },
+    {
+      "embedded_pixels": "exact",
+      "export_normal": "tangent +Y",
+      "material": "woven-fabric__realistic",
+      "source_normal": "tangent -Y"
+    },
+    {
+      "embedded_pixels": "exact",
+      "export_normal": "tangent +Y",
+      "material": "woven-fabric__comic-salvage",
+      "source_normal": "tangent -Y"
+    },
+    {
+      "embedded_pixels": "exact",
+      "export_normal": "tangent +Y",
+      "material": "woven-fabric__painted-adventure",
+      "source_normal": "tangent -Y"
+    },
+    {
+      "embedded_pixels": "exact",
+      "export_normal": "tangent +Y",
+      "material": "woven-fabric__graphic-toon",
+      "source_normal": "tangent -Y"
+    },
+    {
+      "embedded_pixels": "exact",
+      "export_normal": "tangent +Y",
+      "material": "rubber__realistic",
+      "source_normal": "tangent +Y"
+    },
+    {
+      "embedded_pixels": "exact",
+      "export_normal": "tangent +Y",
+      "material": "rubber__comic-salvage",
+      "source_normal": "tangent +Y"
+    },
+    {
+      "embedded_pixels": "exact",
+      "export_normal": "tangent +Y",
+      "material": "rubber__painted-adventure",
+      "source_normal": "tangent +Y"
+    },
+    {
+      "embedded_pixels": "exact",
+      "export_normal": "tangent +Y",
+      "material": "rubber__graphic-toon",
+      "source_normal": "tangent +Y"
+    },
+    {
+      "embedded_pixels": "exact",
+      "export_normal": "tangent +Y",
+      "material": "leather__realistic",
+      "source_normal": "tangent +Y"
+    },
+    {
+      "embedded_pixels": "exact",
+      "export_normal": "tangent +Y",
+      "material": "leather__comic-salvage",
+      "source_normal": "tangent +Y"
+    },
+    {
+      "embedded_pixels": "exact",
+      "export_normal": "tangent +Y",
+      "material": "leather__painted-adventure",
+      "source_normal": "tangent +Y"
+    },
+    {
+      "embedded_pixels": "exact",
+      "export_normal": "tangent +Y",
+      "material": "leather__graphic-toon",
+      "source_normal": "tangent +Y"
+    },
+    {
+      "embedded_pixels": "exact",
+      "export_normal": "tangent +Y",
+      "material": "ceramic__realistic",
+      "source_normal": "tangent +Y"
+    },
+    {
+      "embedded_pixels": "exact",
+      "export_normal": "tangent +Y",
+      "material": "ceramic__comic-salvage",
+      "source_normal": "tangent +Y"
+    },
+    {
+      "embedded_pixels": "exact",
+      "export_normal": "tangent +Y",
+      "material": "ceramic__painted-adventure",
+      "source_normal": "tangent +Y"
+    },
+    {
+      "embedded_pixels": "exact",
+      "export_normal": "tangent +Y",
+      "material": "ceramic__graphic-toon",
+      "source_normal": "tangent +Y"
+    },
+    {
+      "embedded_pixels": "exact",
+      "export_normal": "tangent +Y",
+      "material": "carved-wood__realistic",
+      "source_normal": "tangent +Y"
+    },
+    {
+      "embedded_pixels": "exact",
+      "export_normal": "tangent +Y",
+      "material": "carved-wood__comic-salvage",
+      "source_normal": "tangent +Y"
+    },
+    {
+      "embedded_pixels": "exact",
+      "export_normal": "tangent +Y",
+      "material": "carved-wood__painted-adventure",
+      "source_normal": "tangent +Y"
+    },
+    {
+      "embedded_pixels": "exact",
+      "export_normal": "tangent +Y",
+      "material": "carved-wood__graphic-toon",
+      "source_normal": "tangent +Y"
+    }
+  ],
+  "reimported_meshes": 24,
+  "render_mean_absolute_byte_difference": 0.00006898148148148148,
+  "schema": "axm.material-roundtrip-proof/v0.1",
+  "source_immutable": true
+}
