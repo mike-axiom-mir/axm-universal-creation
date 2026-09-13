@@ -32,7 +32,7 @@ LOD_STAGES = (
     {
         "role": "far-rts",
         "filename": "improvised-workshop-far.glb",
-        "ratio": 0.15,
+        "ratio": 0.10,
         "target_triangles": [500, 2_000],
     },
 )
