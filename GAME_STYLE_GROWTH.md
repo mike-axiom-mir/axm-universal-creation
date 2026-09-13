@@ -86,7 +86,8 @@ bounded change before starting another; no quota of new files or assets.
 7. **Completed:** reusable causal secondary motion for springs, short rigid
    cloth chains, antennae and carried props, with bounded response and exact
    authored loop closure.
-8. Improve contact, sockets, useful LOD selection and game-distance readability.
+8. **Completed:** measured contact/socket frames, useful LOD selection and
+   game-distance readability with exact-view render evidence.
 9. Exercise the combined capabilities on one memorable animated game asset,
    such as a mischievous salvage delivery bot, with editable source and real GLBs.
 10. Repair the weakest demonstrated quality gap; verify and package a coherent
@@ -98,6 +99,46 @@ Inspect representative motion frames, contact, loop seams and re-imported
 exports when those features change. Measure performance before making claims.
 
 ## Current checkpoint
+
+### Game runtime realization pass — 2026-09-13
+
+- Completed `game_runtime_realization.py`, `axm-assets game-realization-plan`
+  and its catalog. The deterministic planner chooses the cheapest measured LOD
+  satisfying contact/socket drift, projected surface error, readable feature
+  retention and exact-view RGBA/silhouette limits. Missing evidence fails
+  closed; caller-owned source, view policy and hashes remain intact.
+- Actual verification: **9 new focused tests pass** for near/mid/far selection,
+  feature readability, anchor rejection, render-gated false confidence,
+  canonical fallback, determinism, validation, publication and CLI execution.
+  Full repository gates remain required at the proposed head.
+- Blender 4.3 proof: the same animated 11-bone Clockwork Smacker exports and
+  freshly imports LOD0/1/2 at 58,928 / 28,284 / 10,586 triangles. Final imported
+  surface deviations are 0 / 0.000502 / 0.003396 m. Four contact/socket frames
+  pass; maximum wheel-marker-to-imported-surface distance is 0.000945 m; all
+  five declared story features retain real triangles at every tier.
+- Visual repair: geometry-only evidence first selected LOD2 at every distance.
+  Actual stills measured near RMSE 0.03875 and gameplay RMSE 0.01266, above the
+  declared 0.01 limit. Exact-view render gates now select LOD0 at 2.8 m, LOD1 at
+  9 m and LOD2 at 22 m. Static inspection passes framing, silhouette continuity
+  and recognizability for these representative frames; it does not prove motion.
+- Evidence: `tools/blender/game_runtime_realization_roundtrip.py`,
+  `docs/GAME_RUNTIME_REALIZATION.md`, and
+  `docs/evidence/game-runtime-realization-roundtrip-2026-09-13.json`.
+  Deliverable: `AXM-Game-Realization-Proof.zip` plus
+  `AXM-Game-Realization.png`.
+- Limits: representative stills and two rest contact markers only—no continuous
+  collision/contact, target-engine playback, dynamic camera selection,
+  measured frame time or continuous perceptual motion review.
+- **Next useful step: priority 9**, exercise the combined style, form, material,
+  expression, primary/secondary motion and realization capabilities on one
+  memorable original animated game asset.
+- Active lane: `codex/rts-reference-foundry`, based on merged PR #67/main
+  `228708d`; unrelated PR #54 remains outside this pass. Recheck current main,
+  overlap and exact-head checks before merge; final GitHub state rules.
+- Roots: Truth added render evidence after geometry-only selection failed;
+  Agency keeps camera/tolerances explicit; Continuity retains canonical source
+  and exact anchors; Wisdom repairs exported topology and uses the cheapest LOD
+  only after all independent gates pass.
 
 ### Secondary motion pass — 2026-09-13
 

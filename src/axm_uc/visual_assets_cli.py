@@ -36,6 +36,7 @@ from .game_character_expression import (EXPRESSIONS, STANCES, game_character_exp
                                         publish_character_expression)
 from .game_motion_timing import PROFILES as MOTION_PROFILES, game_motion_timing_catalog, publish_game_motion
 from .game_secondary_motion import game_secondary_motion_catalog, publish_secondary_motion
+from .game_runtime_realization import game_runtime_realization_catalog, publish_game_runtime_realization
 
 BASE_CATEGORIES = ["texture", "gradient", "material", "fixture", "decal", "palette"]
 EXPANDED_CATEGORIES = ["surface", "pigment", "sprite", "mesh", "vector-part"]
@@ -62,6 +63,7 @@ def combined_catalog() -> dict:
         "game_character_expressions": game_character_expression_catalog(),
         "game_motion_timing": game_motion_timing_catalog(),
         "game_secondary_motion": game_secondary_motion_catalog(),
+        "game_runtime_realization": game_runtime_realization_catalog(),
     }
 
 
@@ -76,6 +78,12 @@ def build_parser() -> argparse.ArgumentParser:
     sub.add_parser("character-expression-catalog", help="show static face expressions and storytelling stances")
     sub.add_parser("motion-timing-catalog", help="show deterministic anticipation, impact and settle profiles")
     sub.add_parser("secondary-motion-catalog", help="show reusable inertial follow-through profiles")
+    sub.add_parser("game-realization-catalog", help="show measured LOD, anchor and readability planning")
+    realization = sub.add_parser(
+        "game-realization-plan", help="select useful LODs from measured anchor and screen-space evidence")
+    realization.add_argument("source", help="JSON measured LOD source contract")
+    realization.add_argument("request", help="JSON view and tolerance request")
+    realization.add_argument("path", help="new output directory; existing paths are never overwritten")
     motion = sub.add_parser("motion-compose", help="compose sampled local transform tracks with timing receipts")
     motion.add_argument("request", help="JSON motion request with explicit rest/action transform channels")
     motion.add_argument("path", help="new output directory; existing paths are never overwritten")
@@ -245,6 +253,12 @@ def main(argv: list[str] | None = None) -> int:
         result = game_motion_timing_catalog()
     elif args.command == "secondary-motion-catalog":
         result = game_secondary_motion_catalog()
+    elif args.command == "game-realization-catalog":
+        result = game_runtime_realization_catalog()
+    elif args.command == "game-realization-plan":
+        source = json.loads(Path(args.source).read_text(encoding="utf-8"))
+        request = json.loads(Path(args.request).read_text(encoding="utf-8"))
+        result = publish_game_runtime_realization(args.path, source, request)
     elif args.command == "motion-compose":
         request = json.loads(Path(args.request).read_text(encoding="utf-8"))
         result = publish_game_motion(args.path, request, args.profile)
