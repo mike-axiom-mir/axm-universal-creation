@@ -1,0 +1,55 @@
+{
+  "runtime": {
+    "schema": "axm.game-animation-runtime/v0.1",
+    "id": "parcel-imp",
+    "initial_state": "idle",
+    "clips": [
+      {
+        "name": "Idle_Parcel_Panic",
+        "duration_s": 1.6,
+        "loop": true,
+        "root_motion_m": [0, 0, 0],
+        "events": [{"name": "blink", "time_s": 0.4}]
+      },
+      {
+        "name": "Delivery_Dash",
+        "duration_s": 1.0,
+        "loop": false,
+        "root_motion_m": [0, 0, -1.25],
+        "events": [{"name": "dash-impact", "time_s": 0.6}]
+      },
+      {
+        "name": "Package_Launch",
+        "duration_s": 1.2666666666666666,
+        "loop": false,
+        "root_motion_m": [0, 0, 0],
+        "events": [
+          {"name": "release", "time_s": 0.3},
+          {"name": "apex", "time_s": 0.6666666666666666},
+          {"name": "impact", "time_s": 1.2}
+        ]
+      }
+    ],
+    "states": [
+      {"name": "idle", "clip": "Idle_Parcel_Panic", "speed": 1, "root_motion": "ignore", "completion_event": null},
+      {"name": "dash", "clip": "Delivery_Dash", "speed": 1, "root_motion": "apply", "completion_event": "complete"},
+      {"name": "launch", "clip": "Package_Launch", "speed": 1, "root_motion": "ignore", "completion_event": "complete"}
+    ],
+    "transitions": [
+      {"from": "idle", "event": "move", "to": "dash", "blend_s": 0.08},
+      {"from": "idle", "event": "launch", "to": "launch", "blend_s": 0.12},
+      {"from": "dash", "event": "complete", "to": "idle", "blend_s": 0.1},
+      {"from": "dash", "event": "stop", "to": "idle", "blend_s": 0.05},
+      {"from": "launch", "event": "complete", "to": "idle", "blend_s": 0.15}
+    ]
+  },
+  "commands": [
+    {"event": "move"},
+    {"dt": 0.4},
+    {"dt": 0.6},
+    {"dt": 0.2},
+    {"event": "launch"},
+    {"dt": 0.5},
+    {"dt": 0.7666666666666667}
+  ]
+}
