@@ -38,6 +38,7 @@ from .game_motion_timing import PROFILES as MOTION_PROFILES, game_motion_timing_
 from .game_secondary_motion import game_secondary_motion_catalog, publish_secondary_motion
 from .game_runtime_realization import game_runtime_realization_catalog, publish_game_runtime_realization
 from .game_showcase_contract import game_showcase_catalog, publish_game_showcase
+from .game_functional_motion import game_functional_motion_catalog, publish_game_functional_motion
 
 BASE_CATEGORIES = ["texture", "gradient", "material", "fixture", "decal", "palette"]
 EXPANDED_CATEGORIES = ["surface", "pigment", "sprite", "mesh", "vector-part"]
@@ -66,6 +67,7 @@ def combined_catalog() -> dict:
         "game_secondary_motion": game_secondary_motion_catalog(),
         "game_runtime_realization": game_runtime_realization_catalog(),
         "game_showcase": game_showcase_catalog(),
+        "game_functional_motion": game_functional_motion_catalog(),
     }
 
 
@@ -85,6 +87,10 @@ def build_parser() -> argparse.ArgumentParser:
     showcase = sub.add_parser("game-showcase-verify", help="bind combined asset evidence into a fail-closed receipt")
     showcase.add_argument("source", help="JSON combined game-showcase evidence")
     showcase.add_argument("path", help="new output directory; existing paths are never overwritten")
+    sub.add_parser("functional-motion-catalog", help="show distance-derived wheel and released-prop motion")
+    functional = sub.add_parser("functional-motion-compose", help="author sampled wheel-roll and released-prop tracks")
+    functional.add_argument("request", help="JSON functional-motion request")
+    functional.add_argument("path", help="new output directory; existing paths are never overwritten")
     realization = sub.add_parser(
         "game-realization-plan", help="select useful LODs from measured anchor and screen-space evidence")
     realization.add_argument("source", help="JSON measured LOD source contract")
@@ -266,6 +272,11 @@ def main(argv: list[str] | None = None) -> int:
     elif args.command == "game-showcase-verify":
         source = json.loads(Path(args.source).read_text(encoding="utf-8"))
         result = publish_game_showcase(args.path, source)
+    elif args.command == "functional-motion-catalog":
+        result = game_functional_motion_catalog()
+    elif args.command == "functional-motion-compose":
+        request = json.loads(Path(args.request).read_text(encoding="utf-8"))
+        result = publish_game_functional_motion(args.path, request)
     elif args.command == "game-realization-plan":
         source = json.loads(Path(args.source).read_text(encoding="utf-8"))
         request = json.loads(Path(args.request).read_text(encoding="utf-8"))

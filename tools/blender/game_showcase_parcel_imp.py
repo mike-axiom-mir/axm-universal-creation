@@ -32,11 +32,13 @@ from axm_uc.game_material_styles import WearLayer, generate_game_material
 from axm_uc.game_motion_timing import compose_game_motion
 from axm_uc.game_secondary_motion import compose_secondary_motion
 from axm_uc.game_showcase_contract import SOURCE_SCHEMA, compose_game_showcase
+from axm_uc.game_functional_motion import compose_game_functional_motion
 
 
 FPS = 30
 CLIPS = ("Idle_Parcel_Panic", "Delivery_Dash", "Package_Launch")
 SECONDARY = ("Coil", "Antenna", "Receipt.01", "Receipt.02", "Satchel")
+FUNCTIONAL = ("Wheel.L", "Wheel.R", "Package")
 ANCHORS = ("Contact.Wheel.L", "Contact.Wheel.R", "Socket.Package", "Socket.Companion")
 
 
@@ -79,6 +81,8 @@ def new_hero(output):
 
 def bones(h):
     h.bone("Root", (0, 0, 0), (0, 0, .18))
+    h.bone("Wheel.L", (-.36, .03, .34), (-.36, .03, .52), "Root")
+    h.bone("Wheel.R", (.36, .04, .20), (.36, .04, .38), "Root")
     h.bone("Body", (0, 0, .45), (0, 0, 1.12), "Root")
     h.bone("Head", (-.08, 0, 1.05), (-.08, 0, 1.43), "Body")
     h.bone("Launcher", (.42, 0, .82), (.42, 0, 1.60), "Body")
@@ -98,14 +102,16 @@ def build_geometry(h):
     bones(h)
     # Primary silhouette: one enormous armored drive wheel, one smaller stabilizer,
     # a forward-leaning boiler and an oversized parcel catapult.
-    h.current = "Root"
+    h.current = "Wheel.L"
     h.cyl("Hero rubber drive wheel", (-.36, .03, .34), .34, .19, "rubber", axis=(1, 0, 0), v=48)
     h.ring("Hero yellow wheel armour", (-.36, -.095, .34), .288, .045, "yellow", axis=(1, 0, 0))
     h.cyl("Hero wheel hub", (-.36, -.135, .34), .105, .045, "steel", axis=(1, 0, 0), v=32)
     h.logo("Wheel squeak crest", (-.36, -.185, .34), .16, "ivory")
+    h.current = "Wheel.R"
     h.cyl("Small impatient caster", (.36, .04, .20), .19, .16, "rubber", axis=(1, 0, 0), v=36)
     h.ring("Caster teal guard", (.36, -.075, .20), .15, .028, "teal", axis=(1, 0, 0))
     h.cyl("Caster hub", (.36, -.105, .20), .055, .032, "brass", axis=(1, 0, 0), v=24)
+    h.current = "Root"
     h.beam("Bent axle", (-.36, .03, .34), (.36, .04, .20), .055, "iron")
 
     h.current = "Body"
@@ -181,33 +187,31 @@ def build_geometry(h):
 
 
 def request(name):
-    common = {"fps": FPS, "loop": True}
     if name == "Idle_Parcel_Panic":
-        return dict(common, name=name, duration=1.6, channels=[
+        return dict(name=name, fps=FPS, loop=True, duration=1.6, channels=[
             {"target": "Root", "path": "translation", "rest": [0, 0, 0], "action": [0, 0, .035]},
             {"target": "Body", "path": "scale", "rest": [1, 1, 1], "action": [1.035, .97, .955], "anticipation_scale": .7},
             {"target": "Head", "path": "rotation", "rest": [0, 0, 0, 1], "action": q((0, 0, 1), 11), "anticipation_scale": .75},
         ])
     if name == "Delivery_Dash":
-        return dict(common, name=name, duration=1.0, channels=[
-            {"target": "Root", "path": "translation", "rest": [0, 0, 0], "action": [0, 0, -.055]},
+        return dict(name=name, fps=FPS, loop=False, duration=1.0, channels=[
             {"target": "Body", "path": "rotation", "rest": [0, 0, 0, 1], "action": q((1, 0, 0), -15), "anticipation_scale": .8},
             {"target": "Head", "path": "rotation", "rest": [0, 0, 0, 1], "action": q((0, 0, 1), -12), "anticipation_scale": .6},
         ])
-    return dict(common, name=name, duration=1.25, channels=[
+    return dict(name=name, fps=FPS, loop=False, duration=1.25, channels=[
         {"target": "Root", "path": "translation", "rest": [0, 0, 0], "action": [0, 0, -.07]},
         {"target": "Launcher", "path": "rotation", "rest": [0, 0, 0, 1], "action": q((0, 0, 1), -76), "anticipation_scale": .82},
-        {"target": "Package", "path": "translation", "rest": [0, 0, 0], "action": [0, .38, .10], "anticipation_scale": .15},
         {"target": "Body", "path": "scale", "rest": [1, 1, 1], "action": [1.08, .90, .92], "anticipation_scale": .65},
     ])
 
 
 def secondary_request(name, primary):
-    driver = "Launcher" if name == "Package_Launch" else "Head"
-    path, component = ("rotation", 2)
+    driver, component = (("Launcher", 2) if name == "Package_Launch" else
+                         ("Body", 0) if name == "Delivery_Dash" else ("Head", 2))
+    path = "rotation"
     return {"name": name + "_Secondary", "attachments": [
         {"target": "Coil", "path": "scale", "rest": [1, 1, 1], "axis": [0, 0, 1], "amplitude": .18,
-         "driver_target": "Root", "driver_path": "translation", "driver_component": 2, "motion_class": "coil-spring"},
+         "driver_target": driver, "driver_path": path, "driver_component": component, "motion_class": "coil-spring"},
         {"target": "Antenna", "path": "rotation", "rest": [0, 0, 0, 1], "axis": [1, 0, 0], "amplitude": .38,
          "driver_target": driver, "driver_path": path, "driver_component": component, "motion_class": "antenna"},
         {"target": "Receipt.01", "path": "rotation", "rest": [0, 0, 0, 1], "axis": [1, 0, 0], "amplitude": .44,
@@ -215,8 +219,30 @@ def secondary_request(name, primary):
         {"target": "Receipt.02", "path": "rotation", "rest": [0, 0, 0, 1], "axis": [1, 0, 0], "amplitude": .60,
          "driver_target": driver, "driver_path": path, "driver_component": component, "motion_class": "cloth-tail", "lag_frames": 6},
         {"target": "Satchel", "path": "rotation", "rest": [0, 0, 0, 1], "axis": [0, 1, 0], "amplitude": .28,
-         "driver_target": "Root", "driver_path": "translation", "driver_component": 2, "motion_class": "carried-prop", "direction": -1},
+         "driver_target": driver, "driver_path": path, "driver_component": component, "motion_class": "carried-prop", "direction": -1},
     ]}
+
+
+def functional_request(name, frame_count):
+    base = {"name": name + "_Function", "fps": FPS, "frame_count": frame_count,
+            "locomotion": None, "wheels": [], "projectile": None}
+    if name == "Delivery_Dash":
+        # Root bone local -Z is Blender world -Y for this vertical edit bone.
+        base["locomotion"] = {"root_target": "Root", "start": [0, 0, 0], "end": [0, 0, -1.25],
+                              "start_frame": 3, "end_frame": frame_count - 2, "easing": "smoothstep"}
+        base["wheels"] = [
+            {"target": "Wheel.L", "radius_m": .34, "axis": [1, 0, 0], "direction": -1},
+            {"target": "Wheel.R", "radius_m": .19, "axis": [1, 0, 0], "direction": -1},
+        ]
+    elif name == "Package_Launch":
+        base["projectile"] = {"target": "Package", "start": [0, 0, 0],
+                              # Package local +Y follows the vertical edit bone;
+                              # the endpoint puts the parcel just above floor.
+                              "landing": [.62, -1.08, 0], "gravity": [0, -9.81, 0],
+                              "release_frame": 9, "impact_frame": frame_count - 3}
+    else:
+        return None
+    return base
 
 
 def apply_track(arm, track, frame):
@@ -235,6 +261,8 @@ def author_actions(arm):
     for name, profile in zip(CLIPS, ("springy-adventure", "weighty-salvage", "snappy-comic")):
         primary = compose_game_motion(request(name), profile)
         secondary = compose_secondary_motion(primary, secondary_request(name, primary))
+        functional_raw = functional_request(name, primary["receipt"]["sampled_intervals"] + 1)
+        functional = compose_game_functional_motion(functional_raw) if functional_raw else None
         action = bpy.data.actions.new(name); action.use_fake_user = True
         arm.animation_data_create(); arm.animation_data.action = action
         frames = primary["receipt"]["sampled_intervals"]
@@ -242,13 +270,15 @@ def author_actions(arm):
             reset_pose(arm)
             for track in primary["clip"]["tracks"]: apply_track(arm, track, frame)
             for track in secondary["clip"]["tracks"]: apply_track(arm, track, frame)
+            if functional:
+                for track in functional["clip"]["tracks"]: apply_track(arm, track, frame)
         for curve in action.fcurves:
             for key in curve.keyframe_points: key.interpolation = "LINEAR"
-        rows.append({"name": name, "frames": frames + 1, "fps": FPS, "loop": True,
+        rows.append({"name": name, "frames": frames + 1, "fps": FPS, "loop": request(name)["loop"],
                      "profile": profile, "events": primary["clip"]["events"]})
-        compositions[name] = {"primary": primary, "secondary": secondary}
+        compositions[name] = {"primary": primary, "secondary": secondary, "functional": functional}
     arm.animation_data.action = None; reset_pose(arm)
-    for name in ("Head", "Launcher", "Package") + SECONDARY:
+    for name in ("Head", "Launcher", "Package", "Wheel.L", "Wheel.R") + SECONDARY:
         arm.pose.bones[name].rotation_mode = "QUATERNION"
     return rows, compositions
 
@@ -318,15 +348,16 @@ def build(output):
                 "material_families": ["painted-metal", "woven-fabric", "rubber", "ceramic", "leather"],
                 "styles": ["realistic", "comic-salvage", "painted-adventure"],
                 "anchors": list(ANCHORS), "secondary_controls": list(SECONDARY),
+                "functional_controls": list(FUNCTIONAL),
                 "identity_features": ["screen-face", "oversized-wheel", "parcel-launcher", "navigator-duck", "endless-receipt"],
                 "origin": "Grounded between wheel contacts; metres; Blender -Y front; glTF Y-up.",
-                "integration": "Import one GLB, keep its armature, and select one named action. Motion is baked; no runtime solver is required.",
+                "integration": "Import one GLB, keep its armature, and select one named action. Wheel roll and parcel flight are baked; no runtime solver is required.",
                 "truth": "Real skinned animated GLBs and editable Blender source. Target-engine playback and frame-time performance are unproven.",
                 "source_sha256": sha256(__file__)}
     (output / "asset-manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
     (output / "INTEGRATION.md").write_text(
         "# AXM Parcel Imp\n\nImport one GLB and retain `AXM_Parcel_Imp_Rig`. Available clips: "
-        "`Idle_Parcel_Panic`, `Delivery_Dash`, and `Package_Launch`. The clips are in-place and seam-looped; "
+        "`Idle_Parcel_Panic`, `Delivery_Dash`, and `Package_Launch`. Idle is seam-looped; Delivery_Dash carries root motion and Package_Launch is a released-prop one-shot. "
         "antenna, spring, receipt and satchel follow-through is already baked. `Socket.Package` is the parcel mount and "
         "`Socket.Companion` is the hover-companion mount. The two `Contact.Wheel.*` bones mark the ground plane. "
         "LOD1 preserves the complete rig and identity props. No target-engine playback or frame-time benchmark is claimed.\n")
@@ -354,7 +385,7 @@ def verify(output):
     receipts, preview = {}, output / "preview-frames"
     if preview.exists(): shutil.rmtree(preview)
     preview.mkdir(exist_ok=False)
-    max_track_error = 0.; max_seam = 0.
+    max_track_error = 0.; max_functional_error = 0.; max_seam = 0.; max_wheel_slip = 0.; max_impact_error = 0.
     for export_name, row in manifest["exports"].items():
         bpy.ops.wm.read_factory_settings(use_empty=True); bpy.context.scene.render.fps = FPS
         bpy.ops.import_scene.gltf(filepath=str(output / row["path"]))
@@ -366,6 +397,8 @@ def verify(output):
         for name in CLIPS:
             primary = compose_game_motion(request(name), ("springy-adventure", "weighty-salvage", "snappy-comic")[CLIPS.index(name)])
             secondary = compose_secondary_motion(primary, secondary_request(name, primary))
+            functional_raw = functional_request(name, len(primary["clip"]["tracks"][0]["times"]))
+            functional = compose_game_functional_motion(functional_raw) if functional_raw else None
             act = action(name); arm.animation_data_create(); arm.animation_data.action = act
             if getattr(act, "slots", None): arm.animation_data.action_slot = act.slots[0]
             first, last = [round(x) for x in act.frame_range]
@@ -373,12 +406,20 @@ def verify(output):
                 bpy.context.scene.frame_set(frame + 1)
                 for track in secondary["clip"]["tracks"]:
                     max_track_error = max(max_track_error, value_error(track["path"], local_value(arm.pose.bones[track["target"]], track["path"]), track["values"][frame]))
+                if functional:
+                    for track in functional["clip"]["tracks"]:
+                        max_functional_error = max(max_functional_error, value_error(track["path"], local_value(arm.pose.bones[track["target"]], track["path"]), track["values"][frame]))
             bpy.context.scene.frame_set(first)
             start = {bone: tuple(arm.matrix_world @ arm.pose.bones[bone].tail) for bone in SECONDARY}
             bpy.context.scene.frame_set(last)
             seam = max((Vector(start[bone]) - arm.matrix_world @ arm.pose.bones[bone].tail).length for bone in SECONDARY)
-            max_seam = max(max_seam, seam)
-            clips.append({"name": name, "frames": last - first + 1, "fps": FPS, "loop": True, "loop_seam_m": seam})
+            if request(name)["loop"]:
+                max_seam = max(max_seam, seam)
+            if functional:
+                max_wheel_slip = max(max_wheel_slip, functional["receipt"]["maximum_no_slip_residual_m"])
+                max_impact_error = max(max_impact_error, functional["receipt"]["projectile_impact_residual_m"])
+            clips.append({"name": name, "frames": last - first + 1, "fps": FPS,
+                          "loop": request(name)["loop"], "loop_seam_m": seam})
         contacts = []
         for name in ANCHORS:
             bone = arm.pose.bones[name]; world = arm.matrix_world @ bone.head
@@ -392,7 +433,13 @@ def verify(output):
                 if getattr(act, "slots", None): arm.animation_data.action_slot = act.slots[0]
                 primary = compose_game_motion(request(name), ("springy-adventure", "weighty-salvage", "snappy-comic")[CLIPS.index(name)])
                 events = {x["name"]: x["frame"] + 1 for x in primary["clip"]["events"]}
-                for phase in ("anticipation", "impact", "recoil"):
+                phases = ("anticipation", "impact", "recoil")
+                functional_raw = functional_request(name, len(primary["clip"]["tracks"][0]["times"]))
+                if functional_raw and functional_raw["projectile"]:
+                    functional = compose_game_functional_motion(functional_raw)
+                    events = {x["name"]: x["frame"] + 1 for x in functional["clip"]["events"]}
+                    phases = ("release", "apex", "impact")
+                for phase in phases:
                     bpy.context.scene.frame_set(events[phase]); bpy.context.scene.render.filepath = str(preview / f"{name}-{phase}.png")
                     bpy.ops.render.render(write_still=True)
         # Same imported clip/frame, transparent background and camera at two
@@ -450,7 +497,11 @@ def verify(output):
               "limits": ["No continuous target-engine playback was performed.", "LOD comparisons are two imported still views, not continuous perceptual acceptance.", "No frame-time or device performance benchmark was performed."]}
     showcase = compose_game_showcase(source)
     roundtrip = {"schema": "axm.parcel-imp-roundtrip/v0.1", "fresh_import": True, "exports": receipts,
-                 "maximum_secondary_local_track_error": max_track_error, "maximum_secondary_world_loop_seam_m": max_seam,
+                 "maximum_secondary_local_track_error": max_track_error,
+                 "maximum_functional_local_track_error": max_functional_error,
+                 "maximum_wheel_no_slip_residual_m": max_wheel_slip,
+                 "projectile_impact_residual_m": max_impact_error,
+                 "maximum_secondary_world_loop_seam_m": max_seam,
                  "showcase_status": showcase["status"], "showcase_gates": showcase["gates"],
                  "limits": source["limits"], "passed": showcase["status"] == "PASS"}
     (output / "showcase-source.json").write_text(json.dumps(source, indent=2) + "\n")

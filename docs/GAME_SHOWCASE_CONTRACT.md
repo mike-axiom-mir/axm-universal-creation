@@ -23,6 +23,13 @@ A structurally valid source can return `HOLD` when any measured gate fails. Malf
 
 `tools/blender/game_showcase_parcel_imp.py` builds one original salvage courier bot rather than another isolated mechanism swatch. It has a mischievous screen face, one oversized armored wheel, crooked caster, parcel catapult, navigator duck, spring alarm, endless receipt and swinging excuse satchel.
 
-The proof exports LOD0 and LOD1 GLBs with the same 14-bone rig and three named actions: `Idle_Parcel_Panic`, `Delivery_Dash`, and `Package_Launch`. The spring, antenna, receipt chain and satchel use the repository's deterministic secondary-motion solver. Worn yellow painted metal, patched fabric and rubber are realized from repository material bundles; the realistic finish remains independently selectable.
+The proof exports LOD0 and LOD1 GLBs with the same 16-bone rig and three named actions: `Idle_Parcel_Panic`, `Delivery_Dash`, and `Package_Launch`. The spring, antenna, receipt chain and satchel use the repository's deterministic secondary-motion solver. Worn yellow painted metal, patched fabric and rubber are realized from repository material bundles; the realistic finish remains independently selectable.
+
+The priority-10 repair adds functional motion without replacing those authored
+layers: dash root travel now drives radius-correct wheel and caster rotation,
+and the parcel follows a constant-gravity release/apex/impact track between
+explicit endpoints. Fresh-import comparisons bind those tracks to the GLBs.
+The calculated wheel residual is an authored distance/rotation consistency
+check, not terrain-contact physics.
 
 Fresh Blender 4.3 imports measure animation tracks, loop closure, ground contacts, sockets, triangle counts and two transparent fixed-view LOD comparisons. Representative stills support only static visual review. Continuous target-engine playback, collision behavior and frame-time performance remain explicitly unproven.
