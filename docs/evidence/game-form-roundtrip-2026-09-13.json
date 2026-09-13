@@ -1,0 +1,11 @@
+{
+  "schema": "axm.game-form-roundtrip/v0.1",
+  "blender": "4.3.0",
+  "glb_sha256": "0a2b976c1a0b0ed00f1f83c698ed951967e4438e6182399e3c497648c486beb8",
+  "fresh_import_mesh_bounds_checked": 44,
+  "maximum_bound_error_m": 2.224191337774073e-07,
+  "declared_anchors_preserved": 9,
+  "editable_source_contains_both_variants": true,
+  "source_reimport_render_mae": 0.0,
+  "limits": "Static two-variant geometry specimen. No rig, animation, collision, LOD, target-engine, game-distance or perceptual style acceptance. Anchor coordinates pass; full contact surfaces do not."
+}
