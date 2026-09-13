@@ -28,6 +28,7 @@ from .visual_3d_iteration import (
     reject_3d_iteration, review_3d_iteration, start_3d_iteration,
 )
 from .rigged_characters import character_catalog, forge_rigged_character, inspect_rigged_character
+from .game_material_styles import FAMILIES, FINISHES, game_material_catalog, generate_game_material
 
 BASE_CATEGORIES = ["texture", "gradient", "material", "fixture", "decal", "palette"]
 EXPANDED_CATEGORIES = ["surface", "pigment", "sprite", "mesh", "vector-part"]
@@ -48,6 +49,7 @@ def combined_catalog() -> dict:
         "visual_state_atlas": visual_state_catalog(),
         "three_d_forge": catalog_3d(),
         "rigged_characters": character_catalog(),
+        "game_materials": game_material_catalog(),
     }
 
 
@@ -56,6 +58,14 @@ def build_parser() -> argparse.ArgumentParser:
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("catalog", help="show every executable generator family")
     sub.add_parser("grammar-catalog", help="show the composable visual-intent grammar")
+    sub.add_parser("game-material-catalog", help="show material families and opt-in surface finishes")
+    material = sub.add_parser("game-material", help="generate portable PBR maps with a selected game finish")
+    material.add_argument("family", choices=FAMILIES)
+    material.add_argument("path")
+    material.add_argument("--finish", choices=[f.name for f in FINISHES], default="realistic")
+    material.add_argument("--size", type=int, default=128)
+    material.add_argument("--seed", type=int, default=1)
+    material.add_argument("--color", type=int, nargs=3, metavar=("R", "G", "B"))
     plan = sub.add_parser("plan", help="compile one structured visual request into a deterministic recipe")
     plan.add_argument("request", help="path to a UTF-8 JSON visual request")
     state_catalog = sub.add_parser("state-catalog", help="show the source-backed 99-command visual state atlas")
@@ -171,6 +181,10 @@ def main(argv: list[str] | None = None) -> int:
         result = combined_catalog()
     elif args.command == "grammar-catalog":
         result = grammar_catalog()
+    elif args.command == "game-material-catalog":
+        result = game_material_catalog()
+    elif args.command == "game-material":
+        result = generate_game_material(args.path, args.family, args.size, args.seed, args.finish, args.color)
     elif args.command == "plan":
         request = json.loads(Path(args.request).read_text(encoding="utf-8"))
         result = compile_visual_recipe(request)
