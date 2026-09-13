@@ -80,7 +80,9 @@ bounded change before starting another; no quota of new files or assets.
    target-engine-only shader features stated explicitly.
 5. **Completed:** explicit character/robot face expressions and hierarchical
    storytelling stances with protected rigid identity and eye-pivot checks.
-6. Expand animation composition for anticipation, acceleration, impact and settle.
+6. **Completed:** deterministic animation composition for anticipation,
+   acceleration, impact, recoil/counter-overshoot and settle, with sampled
+   portable tracks, exact phase events and fresh-import loop/contact receipts.
 7. Add reusable secondary motion for springs, cloth, antennae and carried props.
 8. Improve contact, sockets, useful LOD selection and game-distance readability.
 9. Exercise the combined capabilities on one memorable animated game asset,
@@ -94,6 +96,55 @@ Inspect representative motion frames, contact, loop seams and re-imported
 exports when those features change. Measure performance before making claims.
 
 ## Current checkpoint
+
+### Motion timing composition pass — 2026-09-13
+
+- Completed `game_motion_timing.py`, `axm-assets motion-compose` and its
+  catalog. Four opt-in profiles derive fully sampled local translation,
+  quaternion and scale tracks through rest, anticipation, accelerated action,
+  impact, recoil, counter, settle and complete. Geometry, materials and the
+  realistic/product path remain unchanged.
+- Canonical requests and SHA-256 identity stay embedded. Inputs are bounded;
+  duplicate channels, invalid quaternions, negative/inverted scale and unsafe
+  durations fail closed. Rotations use shortest-hemisphere normalized slerp.
+  Receipts measure acceleration, declared impact endpoints, quaternion error
+  and exact loop seams. The publisher refuses overwrite.
+- Actual verification: **8 new focused tests pass** across deterministic
+  profiles, phase quantization, per-frame portable samples, quaternion
+  hemisphere equivalence, source immutability, validation, publication and
+  CLI execution. Full repository checks remain required at the proposed head.
+- Blender 4.3 proof: the original six-bone AXM Clockwork Smacker exports actual
+  LOD0 (40,572 triangles) and LOD1 (19,473 triangles) GLBs, editable `.blend`
+  and four named clips. A separate fresh process imported both GLBs, selected
+  all eight exported clip instances, verified 37-frame ranges, measured a
+  maximum bell marker gap of 0.000000137 m and a 0 m world loop seam.
+- Visual repair: the first GLB showed no hammer swing and missed the bell by
+  0.816 m. The exporter had evaluated quaternion curves while the pose channel
+  was left in Euler mode; restoring the explicit mode made the hidden failure
+  visible, then a local-bone-axis and scaled-target repair closed contact. The
+  final imported-frame sheet visibly keeps the whole silhouette and separates
+  weighty versus snappy anticipation/recoil on the same action endpoints.
+- Evidence: `tools/blender/game_motion_timing_roundtrip.py`,
+  `docs/GAME_MOTION_TIMING.md`, and
+  `docs/evidence/game-motion-timing-roundtrip-2026-09-13.json`. Deliverable:
+  `AXM-Motion-Timing-Proof.zip` plus `AXM-Motion-Timing.png`.
+- Limits: local timing is not rig inference, secondary motion, IK/contact
+  solving, transition/state-machine authoring, audio synchronization, target-
+  engine playback, soft-deformation acceptance or frame-time performance. The
+  contact receipt proves the two declared rig markers, not arbitrary surfaces.
+- Donor boundary: `native_animation.py` and Apache-2.0 at Axm-game-assets
+  `aaae29c8` were inspected for sampling/contact concepts; no donor source or
+  mesh was copied. The capability and proof asset are independently authored.
+- **Next useful step: priority 7**, reusable phase-lagged secondary motion for
+  springs, cloth, antennae and carried props driven from these primary tracks.
+- Active lane: `codex/rts-reference-foundry`, based on merged PR #65/main
+  `f41d73a`; unrelated open PR #54 remains outside this pass. Recheck current
+  main, overlap and exact-head checks before merge; final GitHub state rules.
+- Roots: Truth separated timing, contact-marker, visual and engine claims;
+  Agency keeps profiles explicit/offline and rig semantics caller-owned;
+  Continuity retains exact sources and unchanged endpoints; Wisdom repaired an
+  actual export-mode/contact failure before publishing instead of weakening the
+  gate.
 
 ### Character expression and stance pass — 2026-09-13
 

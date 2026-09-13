@@ -34,6 +34,7 @@ from .game_form_styles import FORM_STYLES, game_form_catalog, publish_game_form
 from .game_render_styles import RENDER_STYLES, game_render_style_catalog, publish_game_render_style
 from .game_character_expression import (EXPRESSIONS, STANCES, game_character_expression_catalog,
                                         publish_character_expression)
+from .game_motion_timing import PROFILES as MOTION_PROFILES, game_motion_timing_catalog, publish_game_motion
 
 BASE_CATEGORIES = ["texture", "gradient", "material", "fixture", "decal", "palette"]
 EXPANDED_CATEGORIES = ["surface", "pigment", "sprite", "mesh", "vector-part"]
@@ -58,6 +59,7 @@ def combined_catalog() -> dict:
         "game_forms": game_form_catalog(),
         "game_render_styles": game_render_style_catalog(),
         "game_character_expressions": game_character_expression_catalog(),
+        "game_motion_timing": game_motion_timing_catalog(),
     }
 
 
@@ -70,6 +72,12 @@ def build_parser() -> argparse.ArgumentParser:
     sub.add_parser("game-form-catalog", help="show deterministic silhouette and proportion styles")
     sub.add_parser("game-render-catalog", help="show portable baked graphic and painterly styles")
     sub.add_parser("character-expression-catalog", help="show static face expressions and storytelling stances")
+    sub.add_parser("motion-timing-catalog", help="show deterministic anticipation, impact and settle profiles")
+    motion = sub.add_parser("motion-compose", help="compose sampled local transform tracks with timing receipts")
+    motion.add_argument("request", help="JSON motion request with explicit rest/action transform channels")
+    motion.add_argument("path", help="new output directory; existing paths are never overwritten")
+    motion.add_argument("--profile", choices=[item.name for item in MOTION_PROFILES],
+                        default="weighty-salvage")
     character_expression = sub.add_parser(
         "character-expression", help="derive a checked static face expression and stance while retaining source")
     character_expression.add_argument("request", help="JSON object containing mesh and exact component semantics")
@@ -225,6 +233,11 @@ def main(argv: list[str] | None = None) -> int:
         result = game_render_style_catalog()
     elif args.command == "character-expression-catalog":
         result = game_character_expression_catalog()
+    elif args.command == "motion-timing-catalog":
+        result = game_motion_timing_catalog()
+    elif args.command == "motion-compose":
+        request = json.loads(Path(args.request).read_text(encoding="utf-8"))
+        result = publish_game_motion(args.path, request, args.profile)
     elif args.command == "character-expression":
         request = json.loads(Path(args.request).read_text(encoding="utf-8"))
         if not isinstance(request, dict) or set(request) != {"mesh", "parts"}:
