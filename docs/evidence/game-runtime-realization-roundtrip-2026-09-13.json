@@ -1,0 +1,43 @@
+{
+  "schema": "axm.game-runtime-realization-evidence/v0.1",
+  "date": "2026-09-13",
+  "runtime": "Blender bpy 4.3.0 / CPython 3.11.16",
+  "fresh_import": true,
+  "asset": "axm-clockwork-smacker-realization",
+  "camera_policy": {
+    "vertical_fov_deg": 42,
+    "viewport_height_px": 512,
+    "error_budget_px": 2.0,
+    "max_rgba_rmse": 0.01,
+    "min_silhouette_iou": 0.995
+  },
+  "selected_lods": {
+    "near-hero-2.8m": "LOD0",
+    "gameplay-9m": "LOD1",
+    "far-gameplay-22m": "LOD2"
+  },
+  "exports": {
+    "LOD0": {"triangles": 58928, "bytes": 4771000, "max_deviation_m": 0.0, "sha256": "0802ede2e85755decf29f80c3a71f34b156cf9b0c74da8ee92b8d86b4cb30928"},
+    "LOD1": {"triangles": 28284, "bytes": 2047240, "max_deviation_m": 0.0005022061043225759, "sha256": "f2454e76dbf47b07ce117a323cb1902827a8206fbc5b1eb04fd851605bd31073"},
+    "LOD2": {"triangles": 10586, "bytes": 788200, "max_deviation_m": 0.0033964075938618843, "sha256": "ee75f64168df9273801d4ea390965fd447d0189f9b03e665556ae71dd0de23a9"}
+  },
+  "render_rgba_rmse": {
+    "near-hero": {"LOD0": 0.0, "LOD1": 0.01620924288099753, "LOD2": 0.03875082838758845},
+    "gameplay": {"LOD0": 0.0, "LOD1": 0.0049181905112922805, "LOD2": 0.012661955862028578},
+    "far-gameplay": {"LOD0": 0.0, "LOD1": 0.0021407302293902355, "LOD2": 0.004465585174733105}
+  },
+  "minimum_silhouette_iou": 0.9984452607155361,
+  "maximum_contact_surface_distance_m": 0.0009449608722304901,
+  "anchors": ["wheel-contact-left", "wheel-contact-right", "tool-socket", "companion-socket"],
+  "story_features_preserved_all_lods": ["hero-shape", "clock-signal", "lucky-duck", "patched-cape", "tool-bag"],
+  "editable_source": {"bytes": 2518632, "sha256": "30a6c4a0acecdaeb95487c46fb5a0e293732902d316bf64497cd2f52bc37865d"},
+  "preview_sha256": "3956540012b59dd5a733ca684ee1a6e8120cb291b4cff5539a034e52a3804832",
+  "passed": true,
+  "limits": {
+    "continuous_collision_or_contact": false,
+    "target_engine_playback": false,
+    "dynamic_camera_policy": false,
+    "measured_frame_time": false,
+    "continuous_visual_motion_review": false
+  }
+}
