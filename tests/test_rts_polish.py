@@ -12,7 +12,9 @@ from axm_uc.rts_polish import polish_workshop
 
 class RTSWorkshopPublicationTests(unittest.TestCase):
     def fixture(self, temp):
-        root=Path(temp);script=root/'tools/blender/axm_rts_workshop.py';script.parent.mkdir(parents=True);script.write_text('# fixture')
+        root=Path(temp);tools=root/'tools/blender';tools.mkdir(parents=True)
+        for name in ('axm_rts_workshop.py','axm_rts_workshop_lods.py','verify_rts_workshop.py'):
+            (tools/name).write_text('# fixture')
         font=root/'font.ttf';font.write_bytes(b'fixture-font')
         return root,font
 

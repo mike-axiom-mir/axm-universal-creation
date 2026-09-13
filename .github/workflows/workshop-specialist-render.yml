@@ -55,28 +55,37 @@ jobs:
         run: |
           PYTHONPATH=tools/blender python tools/blender/verify_rts_workshop.py /tmp/workshop-specialist-evidence
           test -f /tmp/workshop-specialist-evidence/game-readiness-gates.json
+          test -f /tmp/workshop-specialist-evidence/lod-ladder-build.json
           python - <<'PY'
           import json
           from pathlib import Path
           root=Path('/tmp/workshop-specialist-evidence')
           gates=json.loads((root/'game-readiness-gates.json').read_text())
           assert gates['gates']['geometry_structure']=='TESTED'
+          assert gates['gates']['runtime_lod_target_bands']=='TESTED'
+          assert gates['gates']['lod_perceptual_equivalence']=='NOT_TESTED'
           assert gates['gates']['collision']=='NOT_TESTED'
           assert gates['gates']['target_rts_integration']=='NOT_TESTED'
           assert gates['gates']['visual_quality']=='NOT_TESTED'
           print(json.dumps(gates, indent=2))
           PY
 
-      - name: Stage bounded visual evidence artifact
+      - name: Stage bounded visual and LOD evidence artifact
         run: |
           mkdir -p workshop-specialist-evidence
           cp /tmp/workshop-specialist-evidence/workshop-hero.png workshop-specialist-evidence/
           cp /tmp/workshop-specialist-evidence/workshop-rear.png workshop-specialist-evidence/
           cp /tmp/workshop-specialist-evidence/workshop-detail.png workshop-specialist-evidence/
           cp /tmp/workshop-specialist-evidence/verification.json workshop-specialist-evidence/
+          cp /tmp/workshop-specialist-evidence/lod-ladder-build.json workshop-specialist-evidence/
           cp /tmp/workshop-specialist-evidence/glb-inspection.json workshop-specialist-evidence/
           cp /tmp/workshop-specialist-evidence/game-readiness-gates.json workshop-specialist-evidence/
-          sha256sum /tmp/workshop-specialist-evidence/improvised-workshop.glb /tmp/workshop-specialist-evidence/improvised-workshop-lod1.glb \
+          sha256sum \
+            /tmp/workshop-specialist-evidence/improvised-workshop.glb \
+            /tmp/workshop-specialist-evidence/improvised-workshop-lod1.glb \
+            /tmp/workshop-specialist-evidence/improvised-workshop-tactical.glb \
+            /tmp/workshop-specialist-evidence/improvised-workshop-rts.glb \
+            /tmp/workshop-specialist-evidence/improvised-workshop-far.glb \
             > workshop-specialist-evidence/glb-sha256.txt
 
       - name: Upload workshop evidence

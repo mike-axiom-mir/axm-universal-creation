@@ -28,9 +28,27 @@ PYTHONPATH=src python -m axm_uc rts-workshop-polish OUTPUT \
 The command builds in temporary staging and publishes only after Blender exits
 successfully and the expected asset/render files match their recorded hashes.
 An existing destination is refused. Output includes editable packed Blender
-source, embedded-texture near/far GLBs, actual fresh-import renders and receipts.
-A rendering failure is not a successful publication. A source checkout is required;
-this optional tool-backed hand is not included in the small Python wheel.
+source, embedded-texture hero and runtime-LOD GLBs, actual fresh-import hero
+renders and receipts. A rendering failure is not a successful publication. A
+source checkout is required; this optional tool-backed hand is not included in
+the small Python wheel.
+
+## Runtime LOD ladder
+
+The authored hero and existing LOD1 remain unchanged. A separate bounded Blender
+post-stage descends from the verified LOD1 and emits three additional runtime
+candidates:
+
+- `improvised-workshop-tactical.glb`: structural target 20k–40k triangles;
+- `improvised-workshop-rts.glb`: structural target 4k–12k triangles;
+- `improvised-workshop-far.glb`: structural target 500–2k triangles.
+
+Those bands are runtime geometry targets, not visual-quality labels. The
+independent verifier must measure a strictly decreasing five-level ladder and
+must reject a candidate that falls outside its declared band. Perceptual
+equivalence, target-RTS use, material/texture budget acceptance and device FPS
+remain separate evidence. The far GLB is geometry, not an impostor; a later
+impostor may still be the better final far-distance solution.
 
 ## What changed perceptually
 
@@ -50,16 +68,18 @@ repair patch. Actual GLB re-import is reviewed, not only the native source scene
 ## Evidence and boundaries
 
 `verify_rts_workshop.py` independently reads GLB accessors, indices, UVs, normals,
-embedded image bytes, material batches, bounds and the lower-detail triangle
-reduction. It rejects missing textures, invalid geometry and leaked review-floor
-geometry. It does not turn mesh counts into aesthetic quality claims.
+embedded image bytes, material batches, bounds and the complete LOD triangle
+ladder. It rejects missing textures, invalid geometry, leaked review-floor
+geometry, non-monotonic LODs and runtime tiers outside their declared triangle
+bands. It does not turn mesh counts into aesthetic quality claims.
 
 The preview is a Cycles CPU render. The GLB retains actual textures and geometry;
 the game must provide suitable lighting, shadows, practical lights and tone mapping.
 Studio staging is deliberately excluded. This is a static building, not an
-animated construction sequence. There is no measured target-game FPS, in-game
-import observation, automatic perceptual acceptance, or exact concept-match claim.
-Finer wear and authored cloth shaping remain opportunities for later iterations.
+animated construction sequence. There is no measured target-game FPS, automatic
+LOD perceptual acceptance, final far-impostor acceptance, or exact concept-match
+claim. Finer wear and authored cloth shaping remain opportunities for later
+iterations.
 
 ## Root review
 
