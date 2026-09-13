@@ -90,8 +90,9 @@ bounded change before starting another; no quota of new files or assets.
    game-distance readability with exact-view render evidence.
 9. **Completed:** exercise the combined capabilities on one memorable animated
    game asset: the mischievous AXM Parcel Imp, with editable source and real GLBs.
-10. Repair the weakest demonstrated quality gap; verify and package a coherent
-    result instead of maximizing output count.
+10. **Completed:** repair the weakest demonstrated quality gap with real
+    wheel-roll synchronization and a released-parcel trajectory, then verify
+    and package the coherent result.
 
 Retain source, named rigs and clips. A render is evidence of appearance; a
 structural test is evidence of structure; neither alone proves gameplay fit.
@@ -99,6 +100,55 @@ Inspect representative motion frames, contact, loop seams and re-imported
 exports when those features change. Measure performance before making claims.
 
 ## Current checkpoint
+
+### Functional motion repair pass — 2026-09-13
+
+- Completed `game_functional_motion.py`, `axm-assets
+  functional-motion-compose` and its catalog. The reusable deterministic
+  compositor derives sampled wheel rotation from root distance/radius and a
+  released-prop trajectory from endpoints, gravity and explicit release/impact
+  frames. Validated source and its digest remain embedded; realistic styling
+  and all prior authored layers remain selectable and editable.
+- Repaired the Parcel Imp rather than starting another asset. `Delivery_Dash`
+  now travels 1.25 m while its mismatched wheel and caster turn by their own
+  radii; `Package_Launch` now visibly releases the parcel through a ballistic
+  apex to an exact authored landing. The rig grows from 14 to 16 named bones to
+  expose the two wheel controls across both LODs.
+- Actual verification: **8 new adversarial tests pass** for portable tracks,
+  distance/radius roll, constant-gravity endpoint solution, independent modes,
+  source immutability, invalid requests, truth boundaries and transactional
+  CLI publication. Full repository and exact-head GitHub gates remain required
+  before merge.
+- Blender 4.3 exported and freshly re-imported 60,400 / 25,972-triangle GLBs.
+  The fresh import retains three named clips and the 16-bone rig; maximum
+  functional local-track error is under 0.000001 m, wheel distance/rotation
+  residual is under 0.000000000001 m and parcel endpoint residual is 0 m.
+  Existing secondary tracks and the seam-looped idle also remain within their
+  declared thresholds.
+- Visual repair: the first dash used the wrong local travel axis and sank the
+  character through the floor; the next launch landing was partly cropped.
+  Both outputs were rejected. Corrected imported stills keep the courier
+  grounded and show readable roll plus release, apex and landing without
+  obvious clipping or mesh failure. These stills do not prove continuous play.
+- Evidence: `tools/blender/game_showcase_parcel_imp.py`,
+  `docs/GAME_FUNCTIONAL_MOTION.md`, and
+  `docs/evidence/game-functional-motion-parcel-imp-2026-09-13.json`.
+  Deliverable: `AXM-Parcel-Imp-Functional-Proof.zip` plus
+  `AXM-Parcel-Imp-Functional-Motion.png`.
+- Limits: authored local bone tracks only—no scene-graph detach, terrain
+  contact, collision response, steering, suspension, continuous target-engine
+  playback or device frame-time benchmark. The wheel residual proves arithmetic
+  consistency, not physical tyre contact.
+- **Next useful step:** exercise the finished portable clips in a real target
+  engine state machine, then add steering/suspension/collision only where that
+  playback evidence identifies a concrete need.
+- Active lane: `codex/rts-reference-foundry`, based on merged PR #69/main
+  `b6a111d`; unrelated PR #54 remains outside this pass. Recheck current main,
+  overlap and exact-head checks before merge; final GitHub state rules.
+- Roots: Truth separates arithmetic, export and visual evidence; Agency keeps
+  dimensions/endpoints explicit; Continuity preserves canonical source,
+  identity, materials and LODs; Wisdom repairs one demonstrated gameplay gap
+  instead of inflating the asset count.
 
 ### Combined Parcel Imp showcase pass — 2026-09-13
 
