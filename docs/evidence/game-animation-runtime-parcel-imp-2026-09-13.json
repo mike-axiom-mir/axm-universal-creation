@@ -1,0 +1,30 @@
+{
+  "schema": "axm.game-animation-runtime-evidence/v0.1",
+  "asset_id": "axm-parcel-imp",
+  "runtime_source_sha256": "4559b5dd46c1913117b1fb25b93537bd84f5d9d02a0a23d2385defc9943c60ae",
+  "command_stream_sha256": "f47538341ee51a2474667daea45089bd99932bca6d502fb73efd1b06622d2281",
+  "clips": {
+    "Idle_Parcel_Panic": {"duration_s": 1.6, "loop": true},
+    "Delivery_Dash": {"duration_s": 1.0, "loop": false, "root_motion_m": [0, 0, -1.25]},
+    "Package_Launch": {"duration_s": 1.2666666666666666, "loop": false}
+  },
+  "observed_replay": {
+    "commands": 7,
+    "manual_transitions": ["idle -> dash", "idle -> launch"],
+    "automatic_transitions": ["dash -> idle", "launch -> idle"],
+    "ordered_clip_events": ["dash-impact", "release", "apex", "impact"],
+    "final_state": "idle",
+    "final_clip": "Idle_Parcel_Panic",
+    "world_translation_m": [0, 0, -1.25],
+    "held_unknown_transition_tested": true,
+    "step_partition_equivalence_tested": true
+  },
+  "focused_tests": 9,
+  "status": "PASS",
+  "limits": [
+    "The runtime does not load GLB bytes or evaluate bone poses.",
+    "Blend durations are adapter instructions; pose blending was not executed.",
+    "Root motion is deterministic vector accumulation, not physics-body movement.",
+    "No collision, renderer, browser, Unity, Unreal or Godot playback was performed."
+  ]
+}

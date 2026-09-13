@@ -101,6 +101,46 @@ exports when those features change. Measure performance before making claims.
 
 ## Current checkpoint
 
+### Portable animation runtime pass — 2026-09-13
+
+- Completed `game_animation_runtime.py`, `axm-assets
+  animation-runtime-replay` and its catalog. This is the missing executable
+  control layer between exported clips and a target adapter: deterministic clip
+  clocks, explicit state/event transitions, timed events, automatic non-loop
+  completion and caller-selected `ignore` / `extract` / `apply` root motion.
+- The compiler binds states to declared clips and rejects missing clips,
+  duplicate transitions, unordered events, completion on looped clips and
+  completion events without a declared exit. Normalized source and command
+  stream receive separate SHA-256 identities; publication is transactional.
+- Actual Parcel Imp replay uses the exported 49/31/39-frame timings. `move`
+  enters `Delivery_Dash`, applies exactly 1.25 m, emits `dash-impact` and returns
+  to idle. `launch` enters `Package_Launch`, emits release/apex/impact in order
+  and returns to idle. Final state is idle with world translation retained at
+  `[0, 0, -1.25]` m.
+- Actual verification: **9 new focused tests pass** for exact clip binding,
+  applied/extracted root motion, automatic completion, ordered launch events,
+  timestep partition equivalence, unknown-event HOLD, adversarial validation,
+  source immutability, catalog truth and transactional CLI use. Full repository
+  and exact-head GitHub gates remain required before merge.
+- Evidence: `examples/game-animation-runtime-parcel-imp.json`,
+  `docs/GAME_ANIMATION_RUNTIME.md`, and
+  `docs/evidence/game-animation-runtime-parcel-imp-2026-09-13.json`.
+  Deliverable: `AXM-Parcel-Imp-Runtime-Proof.zip`.
+- Limits: this executes adapter-neutral state and clocks, not GLB loading, bone
+  evaluation, pose blending, physics-body movement, collision or visual
+  playback in a browser, Unity, Unreal or Godot. Blend durations remain adapter
+  instructions. No renderer claim is made from data-only tests.
+- **Next useful step:** connect this exact contract to one locally available
+  target renderer/character controller and observe continuous playback plus
+  transitions before adding steering, suspension or collision behavior.
+- Active lane: `codex/rts-reference-foundry`, based on merged PR #70/main
+  `cc0c406`; unrelated PR #54 remains outside this pass. Recheck current main,
+  overlap and exact-head checks before merge; final GitHub state rules.
+- Roots: Truth keeps execution separate from renderer/physics claims; Agency
+  makes transitions and root-motion ownership explicit; Continuity retains
+  exact clip identities and command provenance; Wisdom adds the smallest
+  portable runtime layer before choosing an engine-specific implementation.
+
 ### Functional motion repair pass — 2026-09-13
 
 - Completed `game_functional_motion.py`, `axm-assets
