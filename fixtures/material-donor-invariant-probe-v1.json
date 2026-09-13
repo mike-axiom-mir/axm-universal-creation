@@ -1,0 +1,69 @@
+{
+  "format": "axm-material-donor-pack",
+  "version": "0.2.0",
+  "id": "invariant-probe-pack",
+  "exportedAt": "2026-09-13T00:00:00Z",
+  "library": {
+    "sourceFormat": "axm-material-library",
+    "sourceVersion": "0.4.0",
+    "sourceLibraryId": "invariant-probe-library",
+    "entries": [
+      {
+        "id": "probe-base",
+        "name": "probe-base.png",
+        "kind": "texture",
+        "mime": "image/png",
+        "width": 1,
+        "height": 1,
+        "dataUrl": "data:image/png;base64,iVBORw0KGgo=",
+        "source": {
+          "method": "self-made-invariant-probe"
+        },
+        "usage": {
+          "channelHint": "base-color",
+          "channelBasis": "operator-declared"
+        },
+        "tags": [
+          "invariant-probe"
+        ]
+      },
+      {
+        "id": "probe-roughness",
+        "name": "probe-roughness.png",
+        "kind": "roughness",
+        "mime": "image/png",
+        "width": 1,
+        "height": 1,
+        "dataUrl": "data:image/png;base64,iVBORw0KGgp=",
+        "source": {
+          "method": "self-made-invariant-probe"
+        },
+        "usage": {
+          "channelHint": "roughness",
+          "channelBasis": "operator-declared"
+        },
+        "tags": [
+          "invariant-probe"
+        ]
+      }
+    ],
+    "families": [
+      {
+        "id": "probe-family",
+        "name": "probe family",
+        "purpose": "bounded donor-fidelity invariant probe",
+        "entryIds": [
+          "probe-base",
+          "probe-roughness"
+        ],
+        "tags": [
+          "invariant-probe"
+        ]
+      }
+    ]
+  },
+  "assets": [],
+  "workspace": {},
+  "layers": [],
+  "experiment": null
+}
