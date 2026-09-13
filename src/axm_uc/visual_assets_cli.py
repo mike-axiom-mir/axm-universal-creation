@@ -39,6 +39,7 @@ from .game_secondary_motion import game_secondary_motion_catalog, publish_second
 from .game_runtime_realization import game_runtime_realization_catalog, publish_game_runtime_realization
 from .game_showcase_contract import game_showcase_catalog, publish_game_showcase
 from .game_functional_motion import game_functional_motion_catalog, publish_game_functional_motion
+from .game_animation_runtime import game_animation_runtime_catalog, publish_game_animation_replay
 
 BASE_CATEGORIES = ["texture", "gradient", "material", "fixture", "decal", "palette"]
 EXPANDED_CATEGORIES = ["surface", "pigment", "sprite", "mesh", "vector-part"]
@@ -68,6 +69,7 @@ def combined_catalog() -> dict:
         "game_runtime_realization": game_runtime_realization_catalog(),
         "game_showcase": game_showcase_catalog(),
         "game_functional_motion": game_functional_motion_catalog(),
+        "game_animation_runtime": game_animation_runtime_catalog(),
     }
 
 
@@ -91,6 +93,11 @@ def build_parser() -> argparse.ArgumentParser:
     functional = sub.add_parser("functional-motion-compose", help="author sampled wheel-roll and released-prop tracks")
     functional.add_argument("request", help="JSON functional-motion request")
     functional.add_argument("path", help="new output directory; existing paths are never overwritten")
+    sub.add_parser("animation-runtime-catalog", help="show deterministic clip clock and state execution")
+    animation_runtime = sub.add_parser(
+        "animation-runtime-replay", help="execute animation transitions, clocks, events and root motion")
+    animation_runtime.add_argument("request", help="JSON object containing runtime and commands")
+    animation_runtime.add_argument("path", help="new output directory; existing paths are never overwritten")
     realization = sub.add_parser(
         "game-realization-plan", help="select useful LODs from measured anchor and screen-space evidence")
     realization.add_argument("source", help="JSON measured LOD source contract")
@@ -277,6 +284,13 @@ def main(argv: list[str] | None = None) -> int:
     elif args.command == "functional-motion-compose":
         request = json.loads(Path(args.request).read_text(encoding="utf-8"))
         result = publish_game_functional_motion(args.path, request)
+    elif args.command == "animation-runtime-catalog":
+        result = game_animation_runtime_catalog()
+    elif args.command == "animation-runtime-replay":
+        request = json.loads(Path(args.request).read_text(encoding="utf-8"))
+        if not isinstance(request, dict) or set(request) != {"runtime", "commands"}:
+            parser.error("animation-runtime-replay request must contain exactly runtime and commands")
+        result = publish_game_animation_replay(args.path, request["runtime"], request["commands"])
     elif args.command == "game-realization-plan":
         source = json.loads(Path(args.source).read_text(encoding="utf-8"))
         request = json.loads(Path(args.request).read_text(encoding="utf-8"))
