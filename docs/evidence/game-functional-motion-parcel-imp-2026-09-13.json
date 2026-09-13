@@ -1,0 +1,66 @@
+{
+  "schema": "axm.game-functional-motion-evidence/v0.1",
+  "asset_id": "axm-parcel-imp",
+  "tool": "Blender 4.3.0",
+  "fresh_import": true,
+  "exports": {
+    "LOD0": {
+      "triangles": 60400,
+      "bones": 16,
+      "clips": [
+        "Idle_Parcel_Panic",
+        "Delivery_Dash",
+        "Package_Launch"
+      ]
+    },
+    "LOD1": {
+      "triangles": 25972,
+      "bones": 16,
+      "clips": [
+        "Idle_Parcel_Panic",
+        "Delivery_Dash",
+        "Package_Launch"
+      ]
+    }
+  },
+  "functional_motion": {
+    "root_travel_m": 1.25,
+    "maximum_imported_local_track_error_m": 4.33921814035898e-07,
+    "maximum_wheel_distance_rotation_residual_m": 1.1102230246251565e-16,
+    "projectile_impact_residual_m": 0.0
+  },
+  "regression_evidence": {
+    "maximum_secondary_local_track_error_m": 2.3082727451662066e-07,
+    "maximum_looped_secondary_world_seam_m": 0.0,
+    "lod_play_distance_rgba_rmse": 0.018251022422003556,
+    "lod_play_distance_silhouette_iou": 0.999928743752354,
+    "lod_far_rgba_rmse": 0.009727070852272266,
+    "lod_far_silhouette_iou": 0.9999803335431089
+  },
+  "static_visual_inspection": {
+    "status": "PASS",
+    "frames": [
+      "Idle_Parcel_Panic anticipation/impact/recoil",
+      "Delivery_Dash anticipation/impact/recoil",
+      "Package_Launch release/apex/impact"
+    ],
+    "observed": [
+      "courier remains grounded and framed across representative dash poses",
+      "wheel orientation visibly changes across dash poses",
+      "parcel visibly separates and follows a readable arc",
+      "release, apex and landing are fully framed",
+      "no obvious clipping, mesh explosion or material loss"
+    ],
+    "rejected_iterations": [
+      "wrong local dash axis visibly sank the character through the floor",
+      "first corrected trajectory cropped the parcel at landing"
+    ]
+  },
+  "status": "PASS",
+  "limits": [
+    "Representative imported stills do not prove continuous motion.",
+    "Wheel residual proves authored distance/rotation consistency, not physical tyre contact.",
+    "Package motion is a local bone track without scene-graph detachment or collision response.",
+    "No steering, suspension, target-engine playback or device performance benchmark was performed."
+  ]
+}
