@@ -88,8 +88,8 @@ bounded change before starting another; no quota of new files or assets.
    authored loop closure.
 8. **Completed:** measured contact/socket frames, useful LOD selection and
    game-distance readability with exact-view render evidence.
-9. Exercise the combined capabilities on one memorable animated game asset,
-   such as a mischievous salvage delivery bot, with editable source and real GLBs.
+9. **Completed:** exercise the combined capabilities on one memorable animated
+   game asset: the mischievous AXM Parcel Imp, with editable source and real GLBs.
 10. Repair the weakest demonstrated quality gap; verify and package a coherent
     result instead of maximizing output count.
 
@@ -99,6 +99,53 @@ Inspect representative motion frames, contact, loop seams and re-imported
 exports when those features change. Measure performance before making claims.
 
 ## Current checkpoint
+
+### Combined Parcel Imp showcase pass — 2026-09-13
+
+- Completed `game_showcase_contract.py`, `axm-assets game-showcase-verify` and
+  the catalog. The fail-closed receipt requires selectable realistic/game
+  styles, three realized material families, named clips, multiple secondary
+  classes, contact/socket bones, descending LODs, fixed-view pixel comparisons
+  and digests for both GLB and editable source. A single isolated success can no
+  longer stand in for a combined game-asset proof.
+- Built one original character, the mischievous AXM Parcel Imp: asymmetrical
+  armored wheel/caster silhouette, screen grin, oversized parcel catapult,
+  layered boiler machinery, navigator duck, panic spring, endless receipt and
+  excuse satchel. Worn painted metal, fabric and rubber use actual exported
+  material bundles; `realistic` remains an unchanged selectable option.
+- Blender 4.3 exported and freshly re-imported LOD0/LOD1 at 60,400 / 25,972
+  triangles. Both retain one 14-bone skin, four contact/socket bones and three
+  named clips (`Idle_Parcel_Panic`, `Delivery_Dash`, `Package_Launch`). Five
+  secondary controls span spring, antenna, cloth-tail and carried-prop classes.
+  Maximum imported local track error is 0.000000231 m; all measured loop seams
+  are 0 m and wheel contacts sit within 0.000000000000000422 m of ground.
+- Exact imported-still LOD comparisons pass at play/far framing: RGBA RMSE
+  0.01825 / 0.00973 and silhouette IoU 0.999929 / 0.999980 against declared
+  0.03 / 0.99 limits. Static inspection passes silhouette, face/function
+  readability, visible catapult pose change, framing and absence of obvious
+  mesh explosion. It does not prove continuous motion.
+- Actual verification: **6 new adversarial contract tests pass** for complete
+  integration, deterministic source preservation, each measurable HOLD,
+  structural-shortcut rejection, truth boundaries and transactional CLI use.
+  Full repository checks remain required at the proposed head.
+- Evidence: `tools/blender/game_showcase_parcel_imp.py`,
+  `docs/GAME_SHOWCASE_CONTRACT.md`, and
+  `docs/evidence/game-showcase-parcel-imp-2026-09-13.json`. Deliverable:
+  `AXM-Parcel-Imp-Proof.zip` plus `AXM-Parcel-Imp-Motion.png`.
+- Limits: representative imported stills only—no continuous target-engine
+  playback, state-machine transitions, collision behavior, audio sync or
+  device frame-time benchmark.
+- **Next useful step: priority 10**, identify and repair the weakest demonstrated
+  quality gap. Current candidate: package release/trajectory and wheel rotation
+  semantics, because the present launch/dash clips prove expressive body motion
+  but not a detached projectile or locomotion cycle.
+- Active lane: `codex/rts-reference-foundry`, based on merged PR #68/main
+  `d93faaaa`; unrelated PR #54 remains outside this pass. Recheck current main,
+  overlap and exact-head checks before merge; final GitHub state rules.
+- Roots: Truth binds evidence types and preserves explicit limits; Agency keeps
+  styles, clips and thresholds selectable; Continuity retains the editable
+  source, canonical identity and exact sockets through LOD1; Wisdom proves one
+  coherent character rather than inflating an output count.
 
 ### Game runtime realization pass — 2026-09-13
 

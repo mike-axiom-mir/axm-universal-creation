@@ -1,0 +1,27 @@
+{
+  "schema": "axm.parcel-imp-evidence/v0.1",
+  "asset_id": "axm-parcel-imp",
+  "fresh_import": true,
+  "exports": {
+    "LOD0": {"triangles": 60400, "bytes": 5589652, "sha256": "56ddf9dee978e5080ab725a9fd4615d1205c3daf2fbd65f7ce9103ee204ebb95"},
+    "LOD1": {"triangles": 25972, "bytes": 2192052, "sha256": "ddfa1afac36ac8f80d385f9e2f76797c6617429bbd30a8ef023f63d52081b52f"}
+  },
+  "editable_source": {"path": "AXM_Parcel_Imp.blend", "bytes": 2859683, "sha256": "36219a50108551203f74e1645f92dfb68ad8ecd0d3910df84c47caaae78c159d"},
+  "rig": {"bones": 14, "clips": ["Idle_Parcel_Panic", "Delivery_Dash", "Package_Launch"]},
+  "secondary_motion": {"classes": ["coil-spring", "antenna", "cloth-tail", "carried-prop"], "maximum_local_track_error": 2.3082727451662066e-7, "maximum_world_loop_seam_m": 0.0},
+  "anchors": {"contact_bones": ["Contact.Wheel.L", "Contact.Wheel.R"], "socket_bones": ["Socket.Package", "Socket.Companion"], "maximum_contact_surface_distance_m": 4.2177357098927644e-16},
+  "lod_render_comparison": {
+    "play_distance": {"rgba_rmse": 0.018251403365022355, "silhouette_iou": 0.999928744477697},
+    "far_readability": {"rgba_rmse": 0.009726933049745859, "silhouette_iou": 0.9999803339298708}
+  },
+  "showcase_gates": {"style_choice": true, "material_realization": true, "named_motion": true, "secondary_motion": true, "anchors": true, "lod_ladder": true, "render_evidence": true, "artifact_manifest": true},
+  "static_visual_review": {
+    "claim": "The imported character reads as one distinctive comic salvage courier and its three sampled motion beats are visibly differentiated.",
+    "image": "AXM-Parcel-Imp-Motion.png, nine imported frames",
+    "visible_facts": ["large yellow armored wheel and smaller cyan-rimmed caster create a strong asymmetrical silhouette", "bright screen eyes, brows and grin remain readable", "parcel catapult changes from vertical to a large horizontal impact pose", "antenna halo, parcel, duck, plates and satchel remain in frame", "no obvious mesh explosion, floor penetration or camera clipping is visible"],
+    "interpretation": "The courier function and mischievous personality are visibly stronger than a generic product-design robot.",
+    "verdict": "PASS",
+    "missing_evidence": ["continuous playback", "target-engine state transitions", "collision behavior", "device frame time"]
+  },
+  "truth": "Fresh Blender import and representative still evidence. No target-engine playback or performance acceptance claimed."
+}
