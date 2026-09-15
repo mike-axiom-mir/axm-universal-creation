@@ -401,6 +401,19 @@ Project creation and repair preserve the caller's exact UTF-8 bytes, including e
 
 No claim of universal creation is made. The name describes the direction of the experiment, not a completed capability.
 
+## Vehicle presentation tools
+
+Reusable vehicle work now includes explicit rigid-motion compilation, configurable art direction, and deterministic actual-GLB inspection renders:
+
+```bash
+PYTHONPATH=src python -m axm_uc.visual_assets_cli vehicle-motion-catalog
+PYTHONPATH=src python -m axm_uc.visual_assets_cli vehicle-art-catalog
+PYTHONPATH=src python -m axm_uc.visual_assets_cli vehicle-art-compose request.json vehicle-surface.json output-directory
+PYTHONPATH=src python -m axm_uc.visual_assets_cli software-glb-preview-catalog
+```
+
+See [RIGID_VEHICLE_MOTION.md](docs/RIGID_VEHICLE_MOTION.md), [VEHICLE_ART_DIRECTION.md](docs/VEHICLE_ART_DIRECTION.md), and [SOFTWARE_GLB_PREVIEW.md](docs/SOFTWARE_GLB_PREVIEW.md). These are bounded asset/presentation capabilities, not vehicle physics or target-engine proof.
+
 Mike - Axiom/Mir
 
 ## Standalone media workbench

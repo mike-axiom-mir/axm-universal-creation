@@ -33,6 +33,9 @@ class SoftwareGlbPreviewTests(unittest.TestCase):
         first = render_glb_preview(source, width=160, height=120, supersample=1)
         second = render_glb_preview(source, width=160, height=120, supersample=1)
         self.assertEqual(first, second)
+        self.assertEqual(first["receipt"]["lighting"], "studio")
+        self.assertEqual(first["receipt"]["light_count"], 4)
+        self.assertGreater(first["receipt"]["contact_shadow_pixels"], 0)
         self.assertTrue(first["body"].startswith(b"\x89PNG\r\n\x1a\n"))
         self.assertEqual(first["receipt"]["triangles"], 12)
         self.assertGreater(first["receipt"]["visible_triangles"], 0)
@@ -58,6 +61,8 @@ class SoftwareGlbPreviewTests(unittest.TestCase):
             render_glb_preview(asset(), clip="drive", width=96, height=96, supersample=1)
         with self.assertRaisesRegex(ValueError, "width"):
             render_glb_preview(asset(), width=32, height=96, supersample=1)
+        with self.assertRaisesRegex(ValueError, "lighting"):
+            render_glb_preview(asset(), width=96, height=96, supersample=1, lighting="mystery")
 
 
 if __name__ == "__main__":
