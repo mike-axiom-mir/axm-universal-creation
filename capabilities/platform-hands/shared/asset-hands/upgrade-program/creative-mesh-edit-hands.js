@@ -1,5 +1,5 @@
 'use strict';
-const U=require('./foundation-utils');const E=require('./precision-mesh-edit');
+const U=require('./foundation-utils');const E=require('./precision-mesh-edit');const S=require('./precision-mesh-selection-ops');
 const HAND_SCHEMA='axm.creative-executable-hand/v1',RESULT_SCHEMA='axm.creative-executable-hand-result/v1';
 const FACE_SELECT=['all','by-normal','by-axis','by-area','boundary','connected'];
 const VERTEX_SELECT=['box','sphere','by-axis','by-normal'];
@@ -8,16 +8,16 @@ const FACE_EDIT=['delete','flip','extract','duplicate','extrude-region','extrude
 const VERTEX_EDIT=['translate','scale','rotate-x','rotate-y','rotate-z','smooth','noise'];
 const EDGE_SELECT=['all','boundary','by-angle','by-length','region-boundary'];
 const MESH_EDIT=['split-face-vertices'];
-function title(v){return v.split('-').map((x)=>x.charAt(0).toUpperCase()+x.slice(1)).join(' ');}function descriptor(family,operation,outputs){const d={schema:HAND_SCHEMA,version:'1.0.0',id:'creative.'+family+'.'+operation,title:title(operation),family,operation,state:'EXECUTABLE',deterministic:true,outputs:outputs||['application/json'],truth:'Deterministic triangle-mesh edit or selection operation over an exact digest-bound precision mesh; no DCC product code or UI is embedded.'};d.digest=U.sha256(d);return Object.freeze(d);}
+function title(v){return v.split('-').map((x)=>x.charAt(0).toUpperCase()+x.slice(1)).join(' ');}function descriptor(family,operation,outputs){const d={schema:HAND_SCHEMA,version:'1.0.1',id:'creative.'+family+'.'+operation,title:title(operation),family,operation,state:'EXECUTABLE',deterministic:true,outputs:outputs||['application/json'],truth:'Deterministic triangle-mesh edit or selection operation over an exact digest-bound precision mesh; no DCC product code or UI is embedded.'};d.digest=U.sha256(d);return Object.freeze(d);}
 const DESCRIPTORS=Object.freeze([...FACE_SELECT.map((x)=>descriptor('mesh-face-select',x)),...VERTEX_SELECT.map((x)=>descriptor('mesh-vertex-select',x)),...SELECTION_OP.map((x)=>descriptor('mesh-selection',x)),...FACE_EDIT.map((x)=>descriptor('mesh-face-edit',x,['axm.precision-mesh/v1'])),...VERTEX_EDIT.map((x)=>descriptor('mesh-vertex-edit',x,['axm.precision-mesh/v1'])),...EDGE_SELECT.map((x)=>descriptor('mesh-edge-select',x)),...MESH_EDIT.map((x)=>descriptor('mesh-edit',x,['axm.precision-mesh/v1']))]);const BY_ID=new Map(DESCRIPTORS.map((d)=>[d.id,d]));
-function list(){return DESCRIPTORS.map((d)=>JSON.parse(JSON.stringify(d)));}function get(id){const d=BY_ID.get(String(id||''));return d?JSON.parse(JSON.stringify(d)):null;}function wrap(hand,result){const v={schema:RESULT_SCHEMA,version:'1.0.0',status:'EXECUTED',hand_id:hand.id,hand_digest:hand.digest,result};v.digest=U.sha256(v);return v;}
+function list(){return DESCRIPTORS.map((d)=>JSON.parse(JSON.stringify(d)));}function get(id){const d=BY_ID.get(String(id||''));return d?JSON.parse(JSON.stringify(d)):null;}function wrap(hand,result){const v={schema:RESULT_SCHEMA,version:'1.0.1',status:'EXECUTED',hand_id:hand.id,hand_digest:hand.digest,result};v.digest=U.sha256(v);return v;}
 function invoke(id,args){const hand=BY_ID.get(String(id||''));U.ensure(hand,'unknown mesh edit hand: '+id);args=args||{};let r;
   if(hand.family==='mesh-face-select'){
     if(hand.operation==='all')r=E.facesAll(args.mesh);else if(hand.operation==='by-normal')r=E.facesByNormal(args.mesh,args.spec);else if(hand.operation==='by-axis')r=E.facesByAxis(args.mesh,args.spec);else if(hand.operation==='by-area')r=E.facesByArea(args.mesh,args.spec);else if(hand.operation==='boundary')r=E.boundaryFaces(args.mesh);else r=E.connectedFaces(args.mesh,args.seed_face);
   } else if(hand.family==='mesh-vertex-select'){
     if(hand.operation==='box')r=E.verticesBox(args.mesh,args.spec);else if(hand.operation==='sphere')r=E.verticesSphere(args.mesh,args.spec);else if(hand.operation==='by-axis')r=E.verticesByAxis(args.mesh,args.spec);else r=E.verticesByNormal(args.mesh,args.spec);
   } else if(hand.family==='mesh-selection'){
-    if(hand.operation==='expand-faces')r=E.expandFaces(args.mesh,args.selection,args.steps);else if(hand.operation==='shrink-faces')r=E.shrinkFaces(args.mesh,args.selection,args.steps);else if(hand.operation==='invert-faces')r=E.invertFaces(args.mesh,args.selection);else if(hand.operation==='faces-to-vertices')r=E.facesToVertices(args.mesh,args.selection);else r=E.invertVertices(args.mesh,args.selection);
+    if(hand.operation==='expand-faces')r=E.expandFaces(args.mesh,args.selection,args.steps);else if(hand.operation==='shrink-faces')r=S.shrinkFaces(args.mesh,args.selection,args.steps);else if(hand.operation==='invert-faces')r=E.invertFaces(args.mesh,args.selection);else if(hand.operation==='faces-to-vertices')r=E.facesToVertices(args.mesh,args.selection);else r=E.invertVertices(args.mesh,args.selection);
   } else if(hand.family==='mesh-face-edit'){
     if(hand.operation==='delete')r=E.deleteFaces(args.mesh,args.selection);else if(hand.operation==='flip')r=E.flipFaces(args.mesh,args.selection);else if(hand.operation==='extract')r=E.extractFaces(args.mesh,args.selection,args.id);else if(hand.operation==='duplicate')r=E.duplicateFaces(args.mesh,args.selection,args.spec);else if(hand.operation==='extrude-region')r=E.extrudeRegion(args.mesh,args.selection,args.spec);else if(hand.operation==='extrude-individual')r=E.extrudeIndividual(args.mesh,args.selection,args.spec);else r=E.insetIndividual(args.mesh,args.selection,args.amount);
   } else if(hand.family==='mesh-vertex-edit'){
@@ -27,5 +27,5 @@ function invoke(id,args){const hand=BY_ID.get(String(id||''));U.ensure(hand,'unk
   } else if(hand.family==='mesh-edit')r=E.splitFaceVertices(args.mesh);
   U.ensure(r!=null,'mesh edit hand has no execution path: '+hand.id);return wrap(hand,r);
 }
-function audit(){const by_family={};for(const d of DESCRIPTORS)by_family[d.family]=(by_family[d.family]||0)+1;const v={schema:'axm.creative-mesh-edit-hand-audit/v1',version:'1.0.0',total:DESCRIPTORS.length,counts:{EXECUTABLE:DESCRIPTORS.length},by_family,ids:DESCRIPTORS.map((d)=>d.id)};v.digest=U.sha256(v);return v;}
+function audit(){const by_family={};for(const d of DESCRIPTORS)by_family[d.family]=(by_family[d.family]||0)+1;const v={schema:'axm.creative-mesh-edit-hand-audit/v1',version:'1.0.1',total:DESCRIPTORS.length,counts:{EXECUTABLE:DESCRIPTORS.length},by_family,ids:DESCRIPTORS.map((d)=>d.id)};v.digest=U.sha256(v);return v;}
 module.exports={HAND_SCHEMA,RESULT_SCHEMA,FACE_SELECT,VERTEX_SELECT,SELECTION_OP,FACE_EDIT,VERTEX_EDIT,EDGE_SELECT,MESH_EDIT,list,get,invoke,audit};
