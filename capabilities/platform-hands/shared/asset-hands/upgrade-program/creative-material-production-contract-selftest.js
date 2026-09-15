@@ -1,0 +1,16 @@
+'use strict';
+const assert=require('assert');const Hands=require('./creative-material-production-hands');const Mesh=require('./precision-mesh');const G=require('./precision-procedural-raster');const Mat=require('./precision-material');
+const cube=Mesh.weld(Mesh.primitive('cube',{id:'contract-cube',detail:8}),1e-6),other=Mesh.translate(cube,[1,0,0]);let layout=Hands.invoke('creative.uv-production.create',{mesh:cube}).result;
+assert.throws(()=>Hands.invoke('creative.uv-production.mark-seams',{mesh:cube,layout,edges:[[0,7]]}),/actual mesh edge/);
+assert.throws(()=>Hands.invoke('creative.uv-production.islands',{mesh:other,layout}),/bind exact mesh/);
+assert.throws(()=>Hands.invoke('creative.uv-production.scale-density',{mesh:cube,layout,spec:{resolution:1024,target:0}}),/must be positive/);
+const dense=Mesh.primitive('sphere',{id:'dense',detail:64}),denseLayout=Hands.invoke('creative.uv-production.create',{mesh:dense}).result;assert.throws(()=>Hands.invoke('creative.uv-production.overlap-audit',{mesh:dense,layout:denseLayout}),/face budget exceeded/);
+const solid=G.solid({width:16,height:16,rgba:[80,80,80,255]}),base=Mat.create({id:'base',channels:{'base-colour':solid,height:solid}});let stack=Hands.invoke('creative.material-stack.create',{base_material:base,spec:{id:'contract-stack'}}).result;
+stack=Hands.invoke('creative.material-generator.add-fill',{stack,spec:{id:'one',channels:{roughness:[128,128,128,255]}}}).result;
+assert.throws(()=>Hands.invoke('creative.material-generator.add-fill',{stack,spec:{id:'one',channels:{roughness:[10,10,10,255]}}}),/already exists/);
+assert.throws(()=>Hands.invoke('creative.material-stack.set-blend',{stack,spec:{id:'one',blend:'imaginary'}}),/unsupported material layer blend/);
+assert.throws(()=>Hands.invoke('creative.material-generator.add-procedural',{stack,spec:{id:'badgen',channel:'base-colour',generator:'imaginary'}}),/unknown procedural material generator/);
+assert.throws(()=>Hands.invoke('creative.material-anchor.luminance-mask',{stack,spec:{id:'missing'}}),/unknown material anchor/);
+assert.throws(()=>Hands.invoke('creative.texture-projection.position-map',{mesh:cube,layout,spec:{width:4096,height:4096}}),/pixel budget exceeded/);
+const broken=Object.assign({},layout,{mesh_digest:'not-the-cube'});assert.throws(()=>Hands.invoke('creative.texture-projection.normal-map',{mesh:cube,layout:broken,spec:{width:32,height:32}}),/bind exact mesh/);
+console.log(JSON.stringify({status:'PASS',contracts:['actual-edge-seams','exact-layout-binding','positive-density','overlap-budget','unique-layers','blend-modes','generator-modes','anchor-existence','projection-pixel-budget']},null,2));
