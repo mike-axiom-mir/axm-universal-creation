@@ -28,7 +28,7 @@
 - Next: explicit adapters for material/effect/layer tools with captured inputs,
   compatible outputs and per-tool resource costs, then useful persistent workers
   for tiny jobs. Keep UC standalone and source identity stable.
-- Lane: codex/rts-reference-foundry; current pass PR pending creation. Final
+- Lane: codex/rts-reference-foundry; current pass PR #82. Final
   remote head checks and merge outcome recorded on the PR.
 
 ### Reusable sticker assemblies — 2026-09-15
