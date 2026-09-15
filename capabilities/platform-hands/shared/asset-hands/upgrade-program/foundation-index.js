@@ -21,6 +21,7 @@ module.exports = Object.freeze({
   precisionTimelineFinish: require('./precision-timeline-finish'),
   precisionMesh: require('./precision-mesh'),
   precisionMeshEdit: require('./precision-mesh-edit'),
+  precisionMeshSelectionOps: require('./precision-mesh-selection-ops'),
   precisionTransform: require('./precision-transform'),
   precisionVectorOps: require('./precision-vector-ops'),
   precisionPixelArt: require('./precision-pixel-art'),
