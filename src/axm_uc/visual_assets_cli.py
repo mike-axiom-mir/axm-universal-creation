@@ -41,6 +41,7 @@ from .game_showcase_contract import game_showcase_catalog, publish_game_showcase
 from .game_functional_motion import game_functional_motion_catalog, publish_game_functional_motion
 from .game_animation_runtime import game_animation_runtime_catalog, publish_game_animation_replay
 from .game_pose_runtime import game_pose_runtime_catalog, publish_game_pose
+from .studio_compositor import studio_compositor_catalog, publish_studio_project, edit_studio_layers
 
 BASE_CATEGORIES = ["texture", "gradient", "material", "fixture", "decal", "palette"]
 EXPANDED_CATEGORIES = ["surface", "pigment", "sprite", "mesh", "vector-part"]
@@ -72,6 +73,7 @@ def combined_catalog() -> dict:
         "game_functional_motion": game_functional_motion_catalog(),
         "game_animation_runtime": game_animation_runtime_catalog(),
         "game_pose_runtime": game_pose_runtime_catalog(),
+        "studio_compositor": studio_compositor_catalog(),
     }
 
 
@@ -97,6 +99,14 @@ def build_parser() -> argparse.ArgumentParser:
     functional.add_argument("path", help="new output directory; existing paths are never overwritten")
     sub.add_parser("animation-runtime-catalog", help="show deterministic clip clock and state execution")
     sub.add_parser("pose-runtime-catalog", help="show offline GLB pose, attachment and skin evaluation")
+    sub.add_parser("studio-compositor-catalog", help="show imported Studio raster tools and runtime requirements")
+    studio = sub.add_parser("studio-compose", help="compose PNG layers using the original Studio donor")
+    studio.add_argument("project", help="editable Studio composition project JSON")
+    studio.add_argument("path", help="new output directory")
+    studio_edit = sub.add_parser("studio-edit", help="add, change, reorder or remove layers and publish a new revision")
+    studio_edit.add_argument("project", help="existing editable Studio project JSON")
+    studio_edit.add_argument("operations", help="JSON array of layer edits")
+    studio_edit.add_argument("path", help="new output directory")
     pose = sub.add_parser("pose-sample", help="evaluate or blend an actual GLB pose without a renderer")
     pose.add_argument("asset", help="embedded GLB with LINEAR or STEP TRS animation")
     pose.add_argument("request", help="JSON clip, time_s and optional loop, blend, vertices")
@@ -295,6 +305,22 @@ def main(argv: list[str] | None = None) -> int:
         result = game_animation_runtime_catalog()
     elif args.command == "pose-runtime-catalog":
         result = game_pose_runtime_catalog()
+    elif args.command == "studio-compositor-catalog":
+        result = studio_compositor_catalog()
+    elif args.command in ("studio-compose", "studio-edit"):
+        project_path = Path(args.project)
+        with project_path.open("rb") as handle:
+            body = handle.read(1024 * 1024 + 1)
+        if len(body) > 1024 * 1024:
+            parser.error("Studio project exceeds byte bound")
+        project = json.loads(body)
+        if args.command == "studio-edit":
+            with Path(args.operations).open("rb") as handle:
+                edits = handle.read(1024 * 1024 + 1)
+            if len(edits) > 1024 * 1024:
+                parser.error("Studio edits exceed byte bound")
+            project = edit_studio_layers(project, json.loads(edits))
+        result = publish_studio_project(args.path, project, project_path.parent)
     elif args.command == "pose-sample":
         request = json.loads(Path(args.request).read_text(encoding="utf-8"))
         result = publish_game_pose(args.path, args.asset, request)

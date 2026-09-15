@@ -101,6 +101,48 @@ exports when those features change. Measure performance before making claims.
 
 ## Current checkpoint
 
+### Studio donor recovery and executable layers — 2026-09-15
+
+- Mike redirected this pass to recover the actual old Studio from the paused
+  collaboration platform, then asked about UCP and layer editing. Donor platform
+  stays read-only. All 19 Studio files plus selected shared machinery are copied
+  from `27757ace6133b243a200b0463e427c8b04d5a8e3`; 34 original file copies are
+  byte-verified against pinned Git blobs. `donors/collaboration-studio/manifest.json`
+  records paths/provenance; Apache license and notices are retained.
+- UC now directly executes the original raster-compositor.js through a bounded
+  local Node adapter: 14 blends, 13 filters, ordered layers, alpha/luminance masks,
+  opacity, visibility and offsets. `studio-compose` saves replayable PNG projects;
+  `studio-edit` adds/changes/moves/removes layers into a new revision. Original
+  inputs and complete request remain intact alongside the normalized recipe.
+- UCP recovered with target-canvas and native-bridge-codec dependencies. Its
+  unchanged fixture passes. This validates component graph contracts, not renderer
+  dispatch. Recovered Studio has 84 unique actions and its three inline scripts
+  compile; original mirror bridge fixture passes. Whole Studio UI remains coupled
+  to sibling/shared platform modules and has not been browser-tested here.
+- Local verification: 16 focused tests pass with Python 3.12/Node 24. Analytical
+  alpha/blending/filter fixtures, masks, replay, source preservation, explicit layer
+  edits, failure cleanup, profile/path rejection and work bounds are covered.
+  Full UC verification belongs to actual-head CI; this partial local checkout
+  lacks unrelated registry fixtures. The new Studio CI also runs Node 22 and
+  tests the installed package outside the checkout. No existing gates weakened.
+- Original salvage-panel proof: `tools/studio_compositor_proof.py`; output replay
+  is byte-identical, protected nameplate pixels independently match via Pillow.
+  Static comparison shows layered cyan lightning/glow, changed paint and intact
+  logo, without framing loss. Artifacts: AXM-Studio-Donor-Proof.png and
+  AXM-Studio-Editable-Proof.zip. This is a 2D effect, not an animated/3D asset.
+- Limits: encoded-sRGB RGBA8 only; no ICC conversion, mesh projection, UI port or
+  animated compositor. Original straight-alpha blur behavior disclosed; alpha:false
+  refused because the donor does not flatten it. See docs/STUDIO_DONOR.md.
+- Roots: Truth preserves source-era evidence as historical and separates contract,
+  pixels and visual claims; Agency exposes opt-in human/machine commands without
+  remote services; Continuity preserves actual source, licenses and prior projects;
+  Wisdom keeps the platform paused and tests the donor before broader integration.
+- Lane: `codex/rts-reference-foundry`, based on main `964ff1b`; this pass's PR is
+  identified by its title "Recover Studio and UCP source; execute editable layers".
+  GitHub's final actual-head checks and merge state are authoritative. PR #54 is
+  unrelated and untouched. Next: bridge one UC operation into recovered UCP, then
+  connect the original layer panel/brush packets to the same editable state.
+
 ### Offline pose execution pass — 2026-09-15
 
 - Completed `game_pose_runtime.py`, `axm-assets pose-sample` and catalog:

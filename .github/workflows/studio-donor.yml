@@ -1,0 +1,46 @@
+name: Studio donor
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'donors/collaboration-studio/**'
+      - 'src/axm_uc/data/studio/**'
+      - 'src/axm_uc/studio_compositor.py'
+      - 'src/axm_uc/visual_assets_cli.py'
+      - 'tests/test_studio_compositor.py'
+      - 'tools/studio*'
+      - 'pyproject.toml'
+      - '.github/workflows/studio-donor.yml'
+  workflow_dispatch:
+jobs:
+  studio-donor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install package including original JavaScript and license
+        run: python -m pip install .
+      - name: Analytical pixels, editable replay and source integrity
+        run: python -m unittest discover -s tests -p test_studio_compositor.py -v
+      - name: Recovered original fixtures and syntax
+        run: |
+          node donors/collaboration-studio/source/shared/asset-hands/universal-component-selftest.js
+          node donors/collaboration-studio/source/tools/studio/mirror-studio-bridge-selftest.js
+          node tools/studio_donor_checks.cjs
+      - name: Build deterministic original proof and replay
+        run: python tools/studio_compositor_proof.py "${{ runner.temp }}/studio-proof"
+      - name: Execute installed package outside source checkout
+        working-directory: ${{ runner.temp }}
+        run: axm-assets studio-compose studio-proof/editable/project.json studio-installed
+      - uses: actions/upload-artifact@v4
+        with:
+          name: studio-layered-effect-proof
+          path: ${{ runner.temp }}/studio-proof
