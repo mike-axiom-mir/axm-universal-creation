@@ -229,33 +229,47 @@ class Registry:
     def __exit__(self,*args): self.db.close()
 
     def register(self,definition,assets=None):
-        definition = validate(definition)
+        return self.register_many([definition],assets)[0]
+
+    def register_many(self,definitions,assets=None):
+        """Explicit bounded batch, one atomic durable commit, shared exact bytes."""
+        if not isinstance(definitions,list) or not 1 <= len(definitions) <= 4096:
+            raise ValueError('batch requires 1..4096 definitions')
+        definitions = [validate(d) for d in definitions]
+        if sum(len(encode(d)) for d in definitions) > 16*MAX_JSON:
+            raise ValueError('batch definition byte budget exceeded')
         assets = {} if assets is None else assets
-        if not isinstance(assets,dict) or set(assets)-set(definition['assets'].values()):
+        declared = {s for d in definitions for s in d['assets'].values()}
+        if not isinstance(assets,dict) or set(assets)-declared:
             raise ValueError('supplied assets must be referenced digests')
         if any(not isinstance(v,bytes) for v in assets.values()) or sum(map(len,assets.values())) > MAX_ASSETS:
             raise ValueError('asset bytes exceed 32 MiB')
         with self._write():
-            existing = self.db.execute('SELECT digest FROM stickers WHERE id=? AND version=?',
-                                       (definition['id'],definition['version'])).fetchone()
-            key = digest(definition)
-            if existing and existing[0] != key:
-                raise ValueError('immutable version conflict; register a new version')
-            total_bytes = 0
-            for reference in set(definition['assets'].values()):
-                if reference in assets:
-                    body = assets[reference]
-                    if hashlib.sha256(body).hexdigest() != reference: raise ValueError('asset digest mismatch')
-                    self.db.execute('INSERT OR IGNORE INTO assets VALUES (?,?)',(reference,body))
-                total_bytes += len(self.asset(reference))
-                if total_bytes > MAX_ASSETS: raise ValueError('referenced assets exceed 32 MiB')
-            self.db.execute('INSERT OR IGNORE INTO stickers VALUES (?,?,?,?,?,?)',
-                            (definition['id'],definition['version'],key,definition['adapter'],
-                             definition['attachment']['socket'],encode(definition).decode()))
-            for tag in definition['tags']:
-                self.db.execute('INSERT OR IGNORE INTO tags VALUES (?,?,?)',
-                                (definition['id'],definition['version'],tag))
-            return {'id':definition['id'],'version':definition['version'],'digest':key}
+            return [self._register(d,{s:assets[s] for s in set(d['assets'].values()) if s in assets})
+                    for d in definitions]
+
+    def _register(self,definition,assets):
+        existing = self.db.execute('SELECT digest FROM stickers WHERE id=? AND version=?',
+                                   (definition['id'],definition['version'])).fetchone()
+        key = digest(definition)
+        if existing and existing[0] != key:
+            raise ValueError('immutable version conflict; register a new version')
+        total_bytes = 0
+        for reference in set(definition['assets'].values()):
+            if reference in assets:
+                body = assets[reference]
+                if hashlib.sha256(body).hexdigest() != reference: raise ValueError('asset digest mismatch')
+                self.db.execute('INSERT OR IGNORE INTO assets VALUES (?,?)',(reference,body))
+            total_bytes += len(self.asset(reference))
+            if total_bytes > MAX_ASSETS: raise ValueError('referenced assets exceed 32 MiB')
+        self.db.execute('INSERT OR IGNORE INTO stickers VALUES (?,?,?,?,?,?)',
+                        (definition['id'],definition['version'],key,definition['adapter'],
+                         definition['attachment']['socket'],encode(definition).decode()))
+        for tag in definition['tags']:
+            self.db.execute('INSERT OR IGNORE INTO tags VALUES (?,?,?)',
+                            (definition['id'],definition['version'],tag))
+        return {'id':definition['id'],'version':definition['version'],'digest':key}
+
 
     def get(self,id,ver):
         identifier(id); version(ver)

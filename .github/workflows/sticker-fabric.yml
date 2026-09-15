@@ -4,11 +4,11 @@ on:
     branches: [main]
     paths:
       - 'src/axm_stickers/**'
-      - 'src/axm_uc/sticker_adapter.py'
+      - 'src/axm_uc/sticker*.py'
       - 'src/axm_uc/studio_compositor.py'
       - 'src/axm_uc/game_pose_runtime.py'
-      - 'tests/test_stickers.py'
-      - 'tools/sticker_proof.py'
+      - 'tests/test_sticker*.py'
+      - 'tools/sticker*proof.py'
       - 'pyproject.toml'
       - '.github/workflows/sticker-fabric.yml'
   workflow_dispatch:
@@ -29,7 +29,7 @@ jobs:
       - name: Install and verify independent core and UC adapters
         run: |
           python -m pip install . 'matplotlib>=3.8,<4'
-          python -m unittest discover -s tests -p test_stickers.py -v
+          python -m unittest discover -s tests -p 'test_sticker*.py' -v
       - name: Actual layered placements, shared source and animated GLB
         run: |
           python tools/sticker_proof.py "${{ runner.temp }}/sticker-proof"
@@ -40,6 +40,16 @@ jobs:
           echo '{"operation":"search","tag":"salvage","limit":2}' > sticker-search.json
           axm-stickers sticker-proof/registry.sqlite sticker-search.json
           python -m pip wheel sticker-proof/standalone-core --no-deps --wheel-dir sticker-proof/wheels
+      - name: Nested reusable animated creature and portable rebuild
+        run: |
+          python tools/sticker_assembly_proof.py "${{ runner.temp }}/sticker-proof/rivetwing"
+          python tools/sticker_assembly_proof.py preview "${{ runner.temp }}/sticker-proof/rivetwing"
+      - name: Execute installed UC creator outside source checkout
+        working-directory: ${{ runner.temp }}
+        run: |
+          echo '{"operation":"export_assembly","id":"rivetwing","ver":1,"output":"installed-rivetwing.glb"}' > create-assembly.json
+          axm-sticker-create sticker-proof/rivetwing/stickers.sqlite create-assembly.json
+          python -c "from pathlib import Path; assert Path('installed-rivetwing.glb').read_bytes() == Path('sticker-proof/rivetwing/rivetwing.glb').read_bytes()"
       - uses: actions/upload-artifact@v4
         with:
           name: sticker-fabric-proof-and-standalone-core
