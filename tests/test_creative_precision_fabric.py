@@ -1,0 +1,35 @@
+"""Exercise the exact Creative Precision Fabric JavaScript foundations in CI."""
+from pathlib import Path
+import shutil
+import subprocess
+import unittest
+
+ROOT = Path(__file__).resolve().parents[1]
+PROGRAM = ROOT / 'capabilities' / 'platform-hands' / 'shared' / 'asset-hands' / 'upgrade-program'
+
+
+@unittest.skipUnless(shutil.which('node'), 'Node is required; dedicated CI supplies it')
+class CreativePrecisionFabricTests(unittest.TestCase):
+    def run_node(self, name):
+        result = subprocess.run(
+            ['node', str(PROGRAM / name)],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            timeout=60,
+        )
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn('"status": "PASS"', result.stdout)
+
+    def test_mask_brush_and_effect_foundations(self):
+        self.run_node('creative-precision-selftest.js')
+
+    def test_pixel_selection_and_transform_foundations(self):
+        self.run_node('precision-raster-selftest.js')
+
+    def test_creative_recipe_composition(self):
+        self.run_node('creative-recipes-selftest.js')
+
+
+if __name__ == '__main__':
+    unittest.main()
