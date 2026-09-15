@@ -13,6 +13,8 @@ assert.equal(audit.counts.EXECUTABLE,56);
 assert.equal(audit.by_family.brush,12);
 assert.equal(audit.by_family.adjust,17);
 assert.equal(audit.by_family.vector,9);
+assert.deepEqual(Hands.get('creative.filter.box-blur').limits.radius,{min:1,max:7});
+assert.throws(()=>Hands.invoke('creative.filter.box-blur',{image,spec:{radius:8}}),/radius outside 1\.\.7/);
 
 const bright=Hands.invoke('creative.adjust.brightness',{image,spec:{amount:.2}});
 assert.equal(bright.status,'EXECUTED');
