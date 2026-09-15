@@ -48,6 +48,7 @@ jobs:
           rsync -a _platform/shared/evidence-retention/ "$capsule/shared/evidence-retention/"
           rsync -a _platform/shared/visual-kernel/ "$capsule/shared/visual-kernel/"
           rsync -a _platform/shared/visual-fx/ "$capsule/shared/visual-fx/"
+          rsync -a _platform/shared/vendor/ "$capsule/shared/vendor/"
           cp _platform/tools/spatial-studio/spatial-core.js "$capsule/tools/spatial-studio/"
           cp _platform/tools/spatial-studio/spatial-geometry.js "$capsule/tools/spatial-studio/"
           cp _platform/tools/film-motion-studio/film-motion-core.js "$capsule/tools/film-motion-studio/"
@@ -70,6 +71,7 @@ jobs:
               'shared/evidence-retention',
               'shared/visual-kernel',
               'shared/visual-fx',
+              'shared/vendor',
               'tools/deterministic-json-core',
           ]
           files = []
@@ -104,7 +106,7 @@ jobs:
               'platform_mutated':False,
               'authority_change':False,
               'families':['shared/asset-hands','shared/ai-native-hands'],
-              'support':['shared/evidence-retention','shared/visual-kernel','shared/visual-fx','tools/deterministic-json-core','tools/spatial-studio/spatial-core.js','tools/spatial-studio/spatial-geometry.js','tools/film-motion-studio/film-motion-core.js','tools/asset-fabric/fabric-core.js']
+              'support':['shared/evidence-retention','shared/visual-kernel','shared/visual-fx','shared/vendor','tools/deterministic-json-core','tools/spatial-studio/spatial-core.js','tools/spatial-studio/spatial-geometry.js','tools/film-motion-studio/film-motion-core.js','tools/asset-fabric/fabric-core.js']
           }
           (capsule/'INTAKE_RECEIPT.json').write_text(json.dumps(receipt,indent=2,sort_keys=True)+'\n')
           PY
