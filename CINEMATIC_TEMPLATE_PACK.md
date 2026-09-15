@@ -33,6 +33,10 @@ The product contains eleven responsive screens:
 - `end-card` — content and duration remain explicit;
 - `legal-line` — exact legal/disclaimer text remains source state.
 
+## Registry discoverability
+
+Pack membership is defined by the exact `visual.cinematic.core` screen list. Registry tag searches are intentionally broad metadata discovery and may also return older templates that use the same `cinematic` tag, so tag-result count is not a canonical pack-membership count.
+
 ## Truth boundary
 
 This pack proves deterministic layout/timing contracts, responsive geometry and source separation. It does not prove motion-render quality, subtitle transcription accuracy, trailer editorial quality, transition rendering, platform compliance or aesthetic acceptance.
