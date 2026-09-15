@@ -12,15 +12,16 @@ from axm_uc import visual_templates as vt
 
 
 SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
+GAME_PRODUCTS=('game.racing.full','game.coop.action','game.rts.command','game.system.shell')
 
 
 class VisualTemplateTests(unittest.TestCase):
     def test_catalog_is_valid_and_professional_pack_is_present(self):
         counts=vt.validate_catalog()
-        self.assertEqual(counts,{'styles':7,'primitives':24,'screens':39,'products':5})
+        self.assertEqual(counts,{'styles':8,'primitives':32,'screens':57,'products':6})
         self.assertEqual(vt.CATALOG_COMPOSITION['counts'],counts)
         products={p['id'] for p in vt.catalog()['products']}
-        self.assertTrue({'game.racing.performance','game.racing.full','game.coop.action','game.rts.command','software.creator.studio'} <= products)
+        self.assertTrue({'game.racing.performance','game.racing.full','game.coop.action','game.rts.command','game.system.shell','software.creator.studio'} <= products)
 
     def test_all_resolutions_stay_in_viewport(self):
         for tid in vt.SCREEN_TEMPLATES:
@@ -60,8 +61,23 @@ class VisualTemplateTests(unittest.TestCase):
         self.assertIn(('game.racing.countdown','game.racing.hud.performance','start-race'),flow)
         self.assertIn(('game.racing.hud.performance','game.racing.recovery','connection-loss'),flow)
 
+    def test_shared_game_system_shell_covers_professional_product_plumbing(self):
+        product=vt.get('game.system.shell')
+        self.assertEqual(len(product['screens']),18)
+        required={
+            'game.system.profile','game.system.party','game.system.matchmaking','game.system.server-browser',
+            'game.system.controller-remap','game.system.display','game.system.audio','game.system.accessibility',
+            'game.system.save-slots','game.system.achievements','game.system.tutorial','game.system.photo-mode',
+            'game.system.credits','game.system.error-recovery','game.system.notifications','game.system.chat',
+            'game.system.privacy-consent','game.system.language',
+        }
+        self.assertEqual(set(product['screens']),required)
+        privacy=vt.get('game.system.privacy-consent')
+        self.assertIn('revocation', ' '.join(privacy['quality']).lower())
+        self.assertIn('observed', ' '.join(vt.get('game.system.matchmaking')['quality']).lower())
+
     def test_game_products_resolve_exact_screens_across_viewports(self):
-        for product_id in ('game.racing.full','game.coop.action','game.rts.command'):
+        for product_id in GAME_PRODUCTS:
             product=vt.get(product_id)
             for width,height in SIZES:
                 out=vt.product_resolution(product_id,width,height)
@@ -72,7 +88,7 @@ class VisualTemplateTests(unittest.TestCase):
         screen=vt.screen_project('game.racing.hud.performance',1280,720)
         ElementTree.fromstring(screen['files']['screen.svg'])
         json.loads(screen['files']['template.json'])
-        for product_id in ('game.racing.full','game.coop.action','game.rts.command'):
+        for product_id in GAME_PRODUCTS:
             product=vt.product_project(product_id,1280,720)
             svgs=[name for name in product['files'] if name.endswith('.svg')]
             self.assertEqual(len(svgs),len(vt.get(product_id)['screens']))
@@ -82,11 +98,11 @@ class VisualTemplateTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             with Registry(Path(td)/'stickers.sqlite') as registry:
                 pins=vt.install_builtins(registry)
-                self.assertEqual(len(pins),44)
+                self.assertEqual(len(pins),63)
                 racing=registry.search(adapter=vt.ADAPTER,tag='racing',limit=100)['entries']
                 game=registry.search(adapter=vt.ADAPTER,tag='game',limit=100)['entries']
                 self.assertGreaterEqual(len(racing),19)
-                self.assertGreaterEqual(len(game),34)
+                self.assertGreaterEqual(len(game),52)
                 definition=registry.get('visual.game.racing.hud.performance',1)
                 self.assertEqual(definition['recipe']['visual_template']['schema'],vt.SCHEMA)
                 self.assertNotIn('"latest"',json.dumps(definition,sort_keys=True))
@@ -95,10 +111,14 @@ class VisualTemplateTests(unittest.TestCase):
         required={
             'player-seat','selection-card','stat-comparison','slider-row','countdown','loading-state',
             'recovery-banner','telemetry-strip','input-hint','modal','empty-state','tab-strip',
+            'keybind-row','save-slot','party-member','server-row','notification-badge','chat-message',
+            'confirmation-summary','focus-indicator',
         }
         self.assertTrue(required <= set(vt.PRIMITIVES))
         self.assertTrue(vt.PRIMITIVES['loading-state']['fake_progress_forbidden'])
         self.assertTrue(vt.PRIMITIVES['player-seat']['ownership_must_be_explicit'])
+        self.assertTrue(vt.PRIMITIVES['keybind-row']['conflicts_must_be_explicit'])
+        self.assertTrue(vt.PRIMITIVES['server-row']['availability_must_be_observed'])
 
     def test_slot_binding_requires_exact_pin_and_contract(self):
         definition={
