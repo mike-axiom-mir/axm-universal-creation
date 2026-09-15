@@ -343,6 +343,10 @@ class Practice:
         with self._write():
             trial = self._get('trials', trial_id)
             state = self.status(trial['session'])
+            feedback = dict(decision=decision, actor=actor, reason=reason)
+            if trial['review'] == feedback:
+                # Delivery retries are reads of an existing judgment, not votes.
+                return trial['review']
             if state['status'] == 'closed':
                 raise ValueError('closed session is sealed; start a new session')
             if decision == 'keep':
@@ -351,7 +355,7 @@ class Practice:
                 if state['current'] != trial['base'] or state['current_png'] != trial['base_png']:
                     raise ValueError('stale proposal; replay edits against the current revision')
                 state.update(current=trial['project'], current_png=trial['png'], current_trial=trial_id)
-            trial['review'] = dict(decision=decision, actor=actor, reason=reason)
+            trial['review'] = feedback
             self._event(state['id'], 'review', {'trial':trial_id, **trial['review']})
             self._save('trials', trial_id, trial)
             self.db.execute('UPDATE memory SET body=? WHERE profile=? AND trial=?',

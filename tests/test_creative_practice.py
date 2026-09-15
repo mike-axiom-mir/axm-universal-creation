@@ -225,6 +225,19 @@ p.tick(sys.argv[2])
         with self.assertRaises(ValueError): Practice(other)
         self.assertEqual(other.read_bytes(), before)
 
+    def test_identical_feedback_retries_add_no_votes_or_events(self):
+        t = self.p.tick(self.s, proposal())
+        feedback = dict(actor='machine:review', reason='Explicit selection')
+        original = self.p.review(t['id'], 'keep', **feedback)
+        before = self.p.journal(self.s)
+        for _ in range(20):
+            self.assertEqual(self.p.review(t['id'], 'keep', **feedback), original)
+        self.assertEqual(self.p.journal(self.s), before)
+        self.p.control(self.s, 'close')
+        sealed = self.p.journal(self.s)
+        self.p.review(t['id'], 'keep', **feedback)
+        self.assertEqual(self.p.journal(self.s), sealed)
+
     def test_concurrent_writers_commit_only_one_matching_attempt(self):
         from concurrent.futures import ThreadPoolExecutor
         def execute():

@@ -76,7 +76,8 @@ not just the last journal page, and skips already observed input/operation pairs
 A new session with the same input therefore makes a different choice. No-change
 pixels and blocked operations remain useful observations. Repeated observations
 are skipped unless explicitly retried; retries carry `repeat_of`, never a higher
-confidence score. An implementation change invalidates exact-match reuse.
+confidence score. Identical feedback delivery retries return the existing judgment
+without adding events or votes. An implementation change invalidates exact-match reuse.
 A temporary runtime failure can be retried explicitly after repairing the runtime.
 
 `context` returns current intent, project, capabilities and the latest 20 compact

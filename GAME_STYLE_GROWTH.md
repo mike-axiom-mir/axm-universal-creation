@@ -115,7 +115,7 @@ exports when those features change. Measure performance before making claims.
   Only explicit keep changes a working revision; originals persist. Repetition
   never becomes confidence. Unknown filters retain their real error. No remote
   model, weight training, autonomous code installation or external task created.
-- Actual local verification: 19 practice tests, including abrupt process death,
+- Actual local verification: 20 practice tests, including abrupt process death,
   concurrent writers, full-database rollback, stale reviews, immutable consumed
   feedback snapshots, source loss, resume and exact editable replay. The existing
   16 Studio tests also pass. Current-head full CI is required before merging.
@@ -132,7 +132,7 @@ exports when those features change. Measure performance before making claims.
   explicit selection and exposes equivalent caller controls; Continuity retains
   originals, dissent and fork provenance; Wisdom consults prior failures before
   repeating work and verifies crash recovery. Platform donor remains unchanged.
-- Lane: `codex/rts-reference-foundry`, based on current main `882aeef`;
+- Lane: `codex/rts-reference-foundry`, PR #77, based on current main `882aeef`;
   PR #54 remains unrelated. Next: connect the Studio profile/session controls
   and add another capability adapter through the same practice contract.
 
