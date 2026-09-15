@@ -14,8 +14,8 @@ assert.equal(audit.by_family['raster-geometry'],10);
 assert.equal(audit.by_family.procedural,12);
 assert.equal(audit.by_family['audio-dsp'],10);
 assert.equal(audit.by_family['timeline-finish'],7);
-assert.equal(Platform.creativeHands.audit().total,197);
-assert.equal(Platform.creativeHands.recipeRegistry().count,204);
+assert.equal(Platform.creativeHands.audit().total,239);
+assert.equal(Platform.creativeHands.recipeRegistry().count,246);
 
 const multiplied=Hands.invoke('creative.composite.multiply',{base,top,spec:{opacity:.65}});
 assert.equal(multiplied.result.schema,'axm.precision-composite/v1');
@@ -58,4 +58,4 @@ assert(timeline.clips.some((c)=>c.id==='b-copy'));
 timeline=Hands.invoke('creative.timeline-finish.ripple-delete',{timeline,spec:{id:'a'}}).result;
 assert(!timeline.clips.some((c)=>c.id==='a'));assert.equal(timeline.clips.find((c)=>c.id==='b').start,0);assert(!timeline.captions.some((c)=>c.id==='inside'));assert.equal(timeline.captions.find((c)=>c.id==='later').start,.5);assert.equal(timeline.transitions.length,0);
 
-console.log(JSON.stringify({status:'PASS',executable_hands:audit.total,recipes:Platform.creativeHands.recipeRegistry().count,by_family:audit.by_family,composite:multiplied.digest,geometry:padded.digest,procedural:voronoiA.digest,audio:echoed.digest,timeline:timeline.digest},null,2));
+console.log(JSON.stringify({status:'PASS',executable_hands:audit.total,public_hands:Platform.creativeHands.audit().total,recipes:Platform.creativeHands.recipeRegistry().count,by_family:audit.by_family,composite:multiplied.digest,geometry:padded.digest,procedural:voronoiA.digest,audio:echoed.digest,timeline:timeline.digest},null,2));
