@@ -1,0 +1,162 @@
+# Creative Precision Fabric — face / edge / vertex modeling wave 6
+
+Wave 6 adds deterministic topology-level modeling on top of the bounded `axm.precision-mesh/v1` body from Wave 5.
+
+It does not introduce another 3D system. Spatial Studio still supplies the original primitive geometry, the precision-mesh body still owns canonical editable triangle state, and this wave adds selections plus local face/edge/vertex operations over that same state.
+
+## Public capability growth
+
+Wave 6 adds a separate **40-hand precision mesh-edit registry**.
+
+The existing registries remain independently inspectable:
+
+- core creative registry: 197 executable hands;
+- precision mesh registry: 42 executable hands;
+- precision mesh-edit registry: 40 executable hands.
+
+The public `PlatformHands.creativeHands` aggregate therefore exposes:
+
+- **279 executable creative hands**
+- **286 callable creative recipes**
+
+The public service now aggregates modular registries generically instead of hard-coding one special mesh branch. Future bounded creative organs can join the same host surface without rewriting older hand identities.
+
+## Exact mesh-edit hand families
+
+| family | executable hands |
+| --- | ---: |
+| face selection | 7 |
+| vertex selection | 5 |
+| selection conversion / growth | 7 |
+| face editing | 7 |
+| selected-vertex editing | 7 |
+| edge selection | 6 |
+| general mesh edit | 1 |
+| **total** | **40** |
+
+Every selection carries the exact source mesh digest. Applying a selection after the mesh changes fails closed rather than silently applying old indices to a new topology.
+
+## Face selection
+
+Executable face selectors:
+
+- all faces;
+- explicit face indices;
+- face normal direction / minimum dot;
+- face centroid axis / side / threshold;
+- face area range;
+- mesh-boundary faces;
+- connected component from one seed face.
+
+Explicit index selection is intentional machine-native functionality. If another deterministic process already knows that faces `12..18` are the target, it does not need to invent a geometric query merely to address them.
+
+## Vertex selection
+
+Executable vertex selectors:
+
+- explicit vertex indices;
+- axis-aligned box;
+- sphere;
+- coordinate axis / side / threshold;
+- stored vertex-normal direction.
+
+## Selection operations
+
+- expand face selection by topological adjacency;
+- shrink face selection;
+- invert faces;
+- face selection -> incident vertices;
+- invert vertices;
+- edge selection -> incident vertices;
+- vertex selection -> incident faces.
+
+Face-selection shrinking is **mesh-boundary aware**: a selected face touching an actual open boundary is treated as an outer selection face even when every adjacent face is selected.
+
+`vertices-to-faces` selects faces incident to at least one selected vertex. It does not mean “only faces whose every vertex is selected.”
+
+## Edge selection
+
+- all indexed edges;
+- explicit edge pairs;
+- open boundary edges;
+- dihedral-angle threshold;
+- length range;
+- boundary edges of a selected face region.
+
+Edge identity is canonicalized as the sorted indexed vertex pair. Geometrically coincident but split vertices remain separate edges until an explicit weld changes topology.
+
+## Face editing
+
+- delete selected faces;
+- flip selected face winding;
+- extract selected faces into a compact mesh;
+- duplicate selected triangles with a translation offset;
+- extrude one connected/open selected region;
+- extrude selected triangles individually;
+- inset selected triangles individually.
+
+### Region extrusion
+
+`extrude-region` duplicates selected region vertices, replaces selected top faces with their translated copies and builds side walls along the selected region's topological boundary.
+
+A completely selected closed shell has no region boundary and is rejected. This avoids pretending that a closed-shell “extrude everything” operation has an unambiguous side-wall interpretation.
+
+The optional direction is explicit. Without it, selected-vertex displacement uses accumulated selected-face normals.
+
+### Individual extrusion and inset
+
+`extrude-individual` treats each selected triangle independently and creates its own side walls.
+
+`inset-individual` is explicitly **triangle-wise individual inset**. It creates a smaller coplanar triangle around each selected triangle centroid and fills the surrounding ring. It is not a Blender-style connected-region inset and does not resolve arbitrary polygon region corners.
+
+## Selected-vertex editing
+
+- translate;
+- positive scale about selected-vertex centroid;
+- rotate X / Y / Z about selected centroid;
+- Laplacian-style neighbor smoothing with bounded iterations;
+- seeded normal-direction noise.
+
+Negative selected-vertex scale is not accepted as an implicit reflection contract. Existing explicit mesh mirror hands remain the winding-aware reflection route.
+
+## General topology helper
+
+`split-face-vertices` converts each triangle corner into its own vertex. This is useful before operations that deliberately need disconnected faces or independent per-face attribute control. It preserves triangle count while increasing vertex count and intentionally destroys shared indexed adjacency.
+
+## Truth boundaries
+
+This wave adds real selection, extrusion and local triangle editing. It does **not** claim:
+
+- generic edge bevel/chamfer;
+- loop cut / ring selection;
+- connected-region inset;
+- arbitrary mesh union/intersection/difference;
+- seam-aware UV unwrap or packing;
+- remeshing or retopology;
+- sculpt brushes / dynamic topology;
+- ngon or quad-native topology (the canonical body remains indexed triangles);
+- preservation of a selection across a topology-changing edit.
+
+Selections intentionally invalidate when the mesh digest changes. A machine that edits topology must derive or create a new selection against the new canonical state.
+
+## Verification
+
+`creative-mesh-edit-hands-selftest.js` uses an explicit shared-vertex 4x4 grid rather than assuming the existing Spatial Studio plane primitive has subdivisions. It verifies:
+
+- exact 40-hand family census;
+- exact public 279-hand / 286-recipe census;
+- geometric and direct-index face / vertex / edge selection;
+- connected selection, growth, boundary-aware shrink, inversion and type conversion;
+- boundary, length and welded-cube angle edge queries;
+- face delete / flip / extract / duplicate;
+- two-triangle region extrusion and exact resulting triangle count;
+- individual extrude and individual inset;
+- closed-shell region-extrude rejection;
+- selected-vertex translation / scale / all-axis rotation / smoothing / seeded noise;
+- exact-mesh selection binding by deliberately rejecting a stale selection after an edit;
+- split-face-vertices;
+- public recipe invocation of region extrusion.
+
+The JavaScript proof is bound into `tests/test_creative_precision_fabric.py` and therefore runs inside the normal complete repository gate.
+
+The next modeling wave should target the remaining genuinely structural gaps rather than aliases: deterministic bevel/chamfer, edge loops/rings, region inset, hole fill/bridge, limited well-defined mesh booleans, seam marking plus UV island packing, and bounded sculpt/remesh operations.
