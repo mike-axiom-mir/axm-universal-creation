@@ -1,0 +1,15 @@
+AXM Visual Template Fabric v2 lane
+
+Adds creative editor and editable comic/narrative foundations to the same deterministic v1 catalog.
+
+Expected composed census:
+- 10 style systems
+- 47 reusable primitives
+- 79 responsive screens
+- 8 whole-product archetypes
+
+New products:
+- editor.creative.core (12 screens)
+- comic.narrative.core (10 screens)
+
+Core truth boundary: structural editability is preserved and testable; finished art quality, authoring ergonomics and target-engine behavior are not claimed.
