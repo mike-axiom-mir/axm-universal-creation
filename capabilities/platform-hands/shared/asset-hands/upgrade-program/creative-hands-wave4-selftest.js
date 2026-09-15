@@ -14,8 +14,8 @@ assert.equal(audit.by_family['raster-geometry'],10);
 assert.equal(audit.by_family.procedural,12);
 assert.equal(audit.by_family['audio-dsp'],10);
 assert.equal(audit.by_family['timeline-finish'],7);
-assert.equal(Platform.creativeHands.audit().total,239);
-assert.equal(Platform.creativeHands.recipeRegistry().count,246);
+assert.equal(Platform.creativeHands.audit().total,279);
+assert.equal(Platform.creativeHands.recipeRegistry().count,286);
 
 const multiplied=Hands.invoke('creative.composite.multiply',{base,top,spec:{opacity:.65}});
 assert.equal(multiplied.result.schema,'axm.precision-composite/v1');
