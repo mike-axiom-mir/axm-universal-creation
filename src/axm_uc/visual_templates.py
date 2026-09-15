@@ -28,8 +28,9 @@ from .visual_template_configurator import extend_configurator_catalog as _extend
 from .visual_template_motion import extend_motion_catalog as _extend_motion_catalog
 from .visual_template_brand import extend_brand_catalog as _extend_brand_catalog
 from .visual_template_environment import extend_environment_catalog as _extend_environment_catalog
+from .visual_template_vfx import extend_vfx_catalog as _extend_vfx_catalog
 
-_COMPOSITION=("visual_template_growth","visual_template_game_systems","visual_template_creative_narrative","visual_template_axm_system","visual_template_game_shared","visual_template_keyart","visual_template_cards","visual_template_cinematic","visual_template_video_overlay","visual_template_diagram","visual_template_atlas","visual_template_novel","visual_template_showroom","visual_template_music","visual_template_presentation","visual_template_character_reference","visual_template_configurator","visual_template_motion","visual_template_brand","visual_template_environment")
+_COMPOSITION=("visual_template_growth","visual_template_game_systems","visual_template_creative_narrative","visual_template_axm_system","visual_template_game_shared","visual_template_keyart","visual_template_cards","visual_template_cinematic","visual_template_video_overlay","visual_template_diagram","visual_template_atlas","visual_template_novel","visual_template_showroom","visual_template_music","visual_template_presentation","visual_template_character_reference","visual_template_configurator","visual_template_motion","visual_template_brand","visual_template_environment","visual_template_vfx")
 _applied=getattr(_core,"_AXM_VISUAL_COMPOSITION",None)
 if _applied is None:
     _extend_catalog(vars(_core))
@@ -52,6 +53,7 @@ if _applied is None:
     _extend_motion_catalog(vars(_core))
     _extend_brand_catalog(vars(_core))
     _extend_environment_catalog(vars(_core))
+    _extend_vfx_catalog(vars(_core))
     _core._AXM_VISUAL_COMPOSITION=_COMPOSITION
 elif _applied != _COMPOSITION:
     raise RuntimeError("visual template composition changed inside a live process; restart with one exact catalog")
