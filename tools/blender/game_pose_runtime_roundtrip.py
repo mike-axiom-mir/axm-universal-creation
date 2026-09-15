@@ -40,7 +40,11 @@ def compare(asset_path):
     armatures = [o for o in bpy.context.scene.objects if o.type == "ARMATURE"]
     assert len(armatures) == 1, "requires the original single Parcel Imp rig"
     arm = armatures[0]
-    meshes = [o for o in bpy.context.scene.objects if o.type == "MESH"]
+    # The importer creates an Icosphere for bone display. It is not GLB mesh
+    # data. Exclude only objects explicitly referenced as bone custom shapes.
+    helpers = {b.custom_shape for b in arm.pose.bones if b.custom_shape is not None}
+    meshes = [o for o in bpy.context.scene.objects if o.type == "MESH" and o not in helpers]
+    assert len(meshes) == 1 and meshes[0].parent == arm, "requires the original Parcel Imp skin"
     joint_ids = sorted({j for skin in description["skins"] for j in skin["joints"]})
     assert len(joint_ids) == 16, "Parcel Imp joint identity changed"
     rows = []
@@ -95,7 +99,8 @@ def compare(asset_path):
                          "bidirectional_vertex_error_m": vertex_error,
                          "uc_vertices": len(actual_points), "blender_vertices": len(expected_points)})
     return {"asset": asset_path.name, "source_sha256": asset.source_sha256,
-            "joint_count": len(joint_ids), "samples": rows}
+            "joint_count": len(joint_ids), "excluded_bone_display_helpers": sorted(o.name for o in helpers),
+            "samples": rows}
 
 
 def main():
