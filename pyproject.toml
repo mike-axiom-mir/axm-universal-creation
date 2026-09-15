@@ -12,6 +12,7 @@ dependencies = []
 [project.scripts]
 axm-uc = "axm_uc.cli:main"
 axm-assets = "axm_uc.visual_assets_cli:main"
+axm-effects = "axm_uc.procedural_effects:main"
 axm-uc-portable = "axm_uc.portable_cli:main"
 
 [tool.setuptools]
