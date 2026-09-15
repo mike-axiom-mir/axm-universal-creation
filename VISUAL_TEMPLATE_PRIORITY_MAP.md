@@ -1,6 +1,6 @@
 # AXM Visual Template Expansion Priority Map
 
-Status: v6 growth lane after verified v1–v5 merges.
+Status: v7 growth lane after verified v1–v6 merges.
 
 The visual-template fabric grows where Universal Creation is likely to reuse the knowledge soon. This is a build priority, not canon: templates remain editable foundations and may be replaced when evidence supports a better structure.
 
@@ -24,50 +24,53 @@ The visual-template fabric grows where Universal Creation is likely to reuse the
 
 `visual.keyart.core` — source-first composition, subject staging, typography, lighting/effects, atmosphere, crop variants, exact alternate compositions, review and export.
 
-## Priority 5B — Card / deck editor — IMPLEMENTED IN THIS LANE
+## Priority 5B — Card / deck editor — MERGED
 
-Product: `visual.cards.core`
+`visual.cards.core` — card face/back, artwork, exact text/stats/rules, rarity, finish/foil, deck building, print sheets and review/export.
+
+## Priority 5C — Cinematic titles / credits / trailer overlays — IMPLEMENTED IN THIS LANE
+
+Product: `visual.cinematic.core`
 
 Implemented screens:
 
-- `visual.cards.project-hub`
-- `visual.cards.face-editor`
-- `visual.cards.back-editor`
-- `visual.cards.artwork-editor`
-- `visual.cards.text-stats`
-- `visual.cards.ability-layout`
-- `visual.cards.rarity-style`
-- `visual.cards.effects-finish`
-- `visual.cards.deck-builder`
-- `visual.cards.print-sheet`
-- `visual.cards.review-export`
+- `visual.cinematic.project-hub`
+- `visual.cinematic.title-card-editor`
+- `visual.cinematic.lower-third-editor`
+- `visual.cinematic.chapter-card-editor`
+- `visual.cinematic.subtitle-editor`
+- `visual.cinematic.credits-editor`
+- `visual.cinematic.overlay-timeline`
+- `visual.cinematic.transition-editor`
+- `visual.cinematic.trailer-layout`
+- `visual.cinematic.end-card-editor`
+- `visual.cinematic.review-export`
 
 New primitives:
 
-- `card-frame`
-- `artwork-window`
-- `stat-block`
-- `ability-row`
-- `rarity-badge`
-- `cost-symbol`
-- `card-state`
-- `deck-slot`
-- `foil-pass`
-- `print-safe-frame`
+- `title-card`
+- `lower-third`
+- `subtitle-cue`
+- `credit-entry`
+- `timeline-cue`
+- `transition-safe-zone`
+- `overlay-track`
+- `shot-marker`
+- `end-card`
+- `legal-line`
 
-Style: `visual.cards.collectible`.
+Style: `visual.cinematic.motion`.
 
-The source-first boundary is explicit: face/back remain distinct, source art and crop remain separate, rules text stays exact, rarity is not color-only, deck membership uses exact card references, foil cannot replace base art and print guides cannot mutate source layout.
+The source-first boundary is explicit: text, timing, layout and transitions remain separately editable; subtitles/credits/legal text stay exact; overlay order and time ranges are explicit; transitions may not silently hide required content; derived trailer/export outputs never replace richer timing source state.
 
-## Priority 5C — Next high-value visual/creation families
+## Priority 5D — Next high-value visual/creation families
 
-1. **Cinematic title / credits / trailer overlay system** — title cards, lower thirds, chapter cards, credits, subtitles and transition-safe zones.
-2. **Video / stream overlay editor** — gameplay frame, cameras, alerts, chat, score and responsive scene sets.
-3. **Infographic / diagram editor** — nodes, relationships, legends, annotations, evidence/source panels and export layouts.
-4. **World-map / lore-atlas editor** — regions, routes, layers, points of interest, time/state overlays and narrative references.
-5. **Interactive visual-novel surfaces** — dialogue, choices, character staging, backgrounds, history/log, saves and branching state.
-6. **3D showroom / gallery presentation** — hero object, comparison, annotations, material/variant selection and orbit/detail views.
-7. **Music visualizer / album-art editor** — cover systems, track identity, waveform/beat-driven visual states and export crops.
+1. **Video / stream overlay editor** — gameplay frame, cameras, alerts, chat, score and responsive scene sets.
+2. **Infographic / diagram editor** — nodes, relationships, legends, annotations, evidence/source panels and export layouts.
+3. **World-map / lore-atlas editor** — regions, routes, layers, points of interest, time/state overlays and narrative references.
+4. **Interactive visual-novel surfaces** — dialogue, choices, character staging, backgrounds, history/log, saves and branching state.
+5. **3D showroom / gallery presentation** — hero object, comparison, annotations, material/variant selection and orbit/detail views.
+6. **Music visualizer / album-art editor** — cover systems, track identity, waveform/beat-driven visual states and export crops.
 
 ## Cross-cutting rules
 
@@ -83,7 +86,7 @@ Every new family should preserve the existing visual-template contract:
 
 ## Immediate build order
 
-1. exact-head verify `visual.cards.core`;
-2. merge v6 only when template + repository checks pass;
-3. begin cinematic title/credits/trailer overlays from fresh main;
+1. exact-head verify `visual.cinematic.core`;
+2. merge v7 only when template + repository checks pass;
+3. begin video / stream overlay editor from fresh main;
 4. keep prioritizing reusable editors over flat one-off output templates.
