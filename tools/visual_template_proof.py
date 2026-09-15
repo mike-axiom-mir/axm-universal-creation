@@ -8,7 +8,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src'))
 from axm_uc import visual_templates as vt
 
 SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
-PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell","visual.keyart.core","visual.cards.core")
+PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell","visual.keyart.core","visual.cards.core","visual.cinematic.core")
 
 def _write(project,target):
     target.mkdir(); out=[]
@@ -25,7 +25,7 @@ def main(argv):
     out.mkdir(parents=True)
     try:
         counts=vt.validate_catalog()
-        if counts!={'styles':14,'primitives':86,'screens':124,'products':12}: raise AssertionError(counts)
+        if counts!={'styles':15,'primitives':96,'screens':134,'products':13}: raise AssertionError(counts)
         evidence=[]
         for pid in PRODUCTS:
             expected=vt.get(pid)
@@ -47,27 +47,28 @@ def main(argv):
             ('axm.system.shell',1920,1080,'axm-system','AXM System Shell Foundation'),
             ('visual.keyart.core',1920,1080,'keyart','AXM Editable Key Art Foundation'),
             ('visual.cards.core',1920,1080,'cards','AXM Editable Card and Deck Foundation'),
+            ('visual.cinematic.core',1920,1080,'cinematic','AXM Cinematic Title and Overlay Foundation'),
         )
         outputs=[]
         for pid,w,h,folder,title in galleries: outputs+=_write(vt.product_project(pid,w,h,title),out/folder)
         outputs+=_write(vt.screen_project('product.mobile.home',1080,1920,'AXM Mobile Foundation'),out/'mobile-home')
-        cards=vt.get('visual.cards.core')
-        required={'visual.cards.project-hub','visual.cards.face-editor','visual.cards.back-editor','visual.cards.artwork-editor','visual.cards.text-stats','visual.cards.ability-layout','visual.cards.rarity-style','visual.cards.effects-finish','visual.cards.deck-builder','visual.cards.print-sheet','visual.cards.review-export'}
-        if set(cards['screens'])!=required: raise AssertionError('card/deck pack lost required surfaces')
+        cinematic=vt.get('visual.cinematic.core')
+        required={'visual.cinematic.project-hub','visual.cinematic.title-editor','visual.cinematic.chapter-editor','visual.cinematic.lower-third','visual.cinematic.subtitle-editor','visual.cinematic.credits-editor','visual.cinematic.overlay-timeline','visual.cinematic.transition-editor','visual.cinematic.aspect-variants','visual.cinematic.review-export'}
+        if set(cinematic['screens'])!=required: raise AssertionError('cinematic pack lost required surfaces')
         checks={
-            'frame_geometry_editable':vt.PRIMITIVES['card-frame']['geometry_must_remain_editable'],
-            'art_source_crop_separate':vt.PRIMITIVES['artwork-window']['source_and_crop_remain_separate'],
-            'stats_explicit':vt.PRIMITIVES['stat-block']['label_value_pair_must_be_explicit'],
-            'rules_text_exact':vt.PRIMITIVES['ability-row']['rules_text_must_remain_exact'],
-            'rarity_noncolor':vt.PRIMITIVES['rarity-badge']['must_not_depend_on_color'],
-            'cost_type_value_explicit':vt.PRIMITIVES['cost-symbol']['value_and_resource_type_required'],
-            'card_state_explicit':vt.PRIMITIVES['card-state']['state_must_be_explicit'],
-            'deck_reference_exact':vt.PRIMITIVES['deck-slot']['card_reference_must_be_exact'],
-            'foil_preserves_art':vt.PRIMITIVES['foil-pass']['finish_must_not_replace_base_art'],
-            'print_guides_preserve_source':vt.PRIMITIVES['print-safe-frame']['guide_must_not_mutate_source_layout'],
+            'title_text_layout_timing_separate':vt.PRIMITIVES['title-card']['text_layout_timing_remain_separate'],
+            'lower_third_exact_state':vt.PRIMITIVES['lower-third']['content_anchor_duration_explicit'],
+            'subtitle_text_timing_exact':vt.PRIMITIVES['subtitle-cue']['text_and_timing_must_be_exact'],
+            'credits_content_order_exact':vt.PRIMITIVES['credit-line']['content_and_order_must_remain_exact'],
+            'time_cue_start_end':vt.PRIMITIVES['time-cue']['start_end_required'],
+            'safe_zone_preserves_source':vt.PRIMITIVES['safe-zone']['guide_must_not_rewrite_source_layout'],
+            'transition_preserves_sources':vt.PRIMITIVES['transition-cue']['transition_must_not_replace_source_states'],
+            'chapter_time_label':vt.PRIMITIVES['chapter-marker']['time_and_label_required'],
+            'overlay_conflicts_visible':vt.PRIMITIVES['overlay-track']['overlaps_must_remain_visible'],
+            'logo_source_transform_separate':vt.PRIMITIVES['logo-lockup']['source_and_transform_remain_separate'],
         }
-        if not all(checks.values()): raise AssertionError('card/deck editability contract failed')
-        receipt={'schema':'axm.visual-template-proof/v8','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'card_deck_checks':checks,'truth':'Offline structural evidence only. Card-game balance, rules correctness, artwork quality, foil rendering, print production, physical color management and aesthetic acceptance were not observed.'}
+        if not all(checks.values()): raise AssertionError('cinematic editability contract failed')
+        receipt={'schema':'axm.visual-template-proof/v9','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'cinematic_checks':checks,'truth':'Offline structural evidence only. Typography quality, subtitle reading speed, credit correctness, motion timing quality, renderer fidelity and aesthetic acceptance were not observed.'}
         (out/'receipt.json').write_text(json.dumps(receipt,indent=2,sort_keys=True),encoding='utf-8')
         print(json.dumps(receipt,indent=2,sort_keys=True))
     except BaseException:
