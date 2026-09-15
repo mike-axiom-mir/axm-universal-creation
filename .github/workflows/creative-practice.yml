@@ -1,0 +1,42 @@
+name: Creative practice
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/axm_uc/creative_practice.py'
+      - 'src/axm_uc/studio_compositor.py'
+      - 'src/axm_uc/data/studio/**'
+      - 'tests/test_creative_practice.py'
+      - 'tools/creative_practice_proof.py'
+      - 'pyproject.toml'
+      - '.github/workflows/creative-practice.yml'
+  workflow_dispatch:
+jobs:
+  creative-practice:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install runtime and execute persistence tests
+        run: |
+          python -m pip install .
+          python -m unittest discover -s tests -p test_creative_practice.py -v
+      - name: Real creation, evidence retrieval and portable recovery
+        run: python tools/creative_practice_proof.py "${{ runner.temp }}/practice-proof"
+      - name: Inspect cartridge using installed CLI outside checkout
+        working-directory: ${{ runner.temp }}
+        run: |
+          echo '{"operation":"inventory"}' > practice-request.json
+          axm-practice practice-proof/portable-copy.sqlite practice-request.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: creative-practice-cartridge
+          path: ${{ runner.temp }}/practice-proof
