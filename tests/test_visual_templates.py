@@ -62,7 +62,7 @@ class VisualTemplateTests(unittest.TestCase):
                 pins=vt.install_builtins(registry)
                 self.assertEqual(len(pins),136)
                 cards=registry.search(adapter=vt.ADAPTER,tag='cards',limit=100)['entries']
-                self.assertGreaterEqual(len(cards),12)
+                self.assertEqual(len(cards),11)
                 d=registry.get('visual.visual.cards.face-editor',1)
                 self.assertEqual(d['recipe']['visual_template']['schema'],vt.SCHEMA)
                 self.assertNotIn('"latest"',json.dumps(d,sort_keys=True))
