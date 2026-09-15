@@ -1,0 +1,333 @@
+{
+  "evaluator": "Python standard library only",
+  "exports": [
+    {
+      "asset": "AXM_Parcel_Imp_LOD0.glb",
+      "excluded_bone_display_helpers": [
+        "Icosphere"
+      ],
+      "joint_count": 16,
+      "samples": [
+        {
+          "bidirectional_vertex_error_m": 1.5557269250621175e-7,
+          "blender_vertices": 73060,
+          "clip": "Delivery_Dash",
+          "joint_error_m": 2.4005008732553624e-7,
+          "time_s": 0.03333333333333333,
+          "uc_vertices": 73060
+        },
+        {
+          "bidirectional_vertex_error_m": 2.3853496600168e-7,
+          "blender_vertices": 73060,
+          "clip": "Delivery_Dash",
+          "joint_error_m": 2.394640249012142e-7,
+          "time_s": 0.16666666666666666,
+          "uc_vertices": 73060
+        },
+        {
+          "bidirectional_vertex_error_m": 3.604110077048972e-7,
+          "blender_vertices": 73060,
+          "clip": "Delivery_Dash",
+          "joint_error_m": 2.4027400458748785e-7,
+          "time_s": 0.3333333333333333,
+          "uc_vertices": 73060
+        },
+        {
+          "bidirectional_vertex_error_m": 2.731428025981586e-7,
+          "blender_vertices": 73060,
+          "clip": "Delivery_Dash",
+          "joint_error_m": 2.4755668231600746e-7,
+          "time_s": 0.5333333333333333,
+          "uc_vertices": 73060
+        },
+        {
+          "bidirectional_vertex_error_m": 0.0000012534702591437963,
+          "blender_vertices": 73060,
+          "clip": "Delivery_Dash",
+          "joint_error_m": 6.056547591954939e-7,
+          "time_s": 0.7666666666666667,
+          "uc_vertices": 73060
+        },
+        {
+          "bidirectional_vertex_error_m": 4.2981520209650625e-7,
+          "blender_vertices": 73060,
+          "clip": "Delivery_Dash",
+          "joint_error_m": 2.4755668231600746e-7,
+          "time_s": 1.0333333015441895,
+          "uc_vertices": 73060
+        },
+        {
+          "bidirectional_vertex_error_m": 1.5557269250621175e-7,
+          "blender_vertices": 73060,
+          "clip": "Idle_Parcel_Panic",
+          "joint_error_m": 2.4005008732553624e-7,
+          "time_s": 0.03333333333333333,
+          "uc_vertices": 73060
+        },
+        {
+          "bidirectional_vertex_error_m": 1.9371509552001953e-7,
+          "blender_vertices": 73060,
+          "clip": "Idle_Parcel_Panic",
+          "joint_error_m": 2.449927188077179e-7,
+          "time_s": 0.26666666666666666,
+          "uc_vertices": 73060
+        },
+        {
+          "bidirectional_vertex_error_m": 2.4211522031691857e-7,
+          "blender_vertices": 73060,
+          "clip": "Idle_Parcel_Panic",
+          "joint_error_m": 2.448794011703848e-7,
+          "time_s": 0.5,
+          "uc_vertices": 73060
+        },
+        {
+          "bidirectional_vertex_error_m": 0.0000017998357861870318,
+          "blender_vertices": 73060,
+          "clip": "Idle_Parcel_Panic",
+          "joint_error_m": 6.145712920219088e-7,
+          "time_s": 0.8333333333333334,
+          "uc_vertices": 73060
+        },
+        {
+          "bidirectional_vertex_error_m": 0.000001463124021938711,
+          "blender_vertices": 73060,
+          "clip": "Idle_Parcel_Panic",
+          "joint_error_m": 5.693725697559952e-7,
+          "time_s": 1.2,
+          "uc_vertices": 73060
+        },
+        {
+          "bidirectional_vertex_error_m": 1.5557269250621175e-7,
+          "blender_vertices": 73060,
+          "clip": "Idle_Parcel_Panic",
+          "joint_error_m": 2.4005008732553624e-7,
+          "time_s": 1.6333333253860474,
+          "uc_vertices": 73060
+        },
+        {
+          "bidirectional_vertex_error_m": 1.5557269250621175e-7,
+          "blender_vertices": 73060,
+          "clip": "Package_Launch",
+          "joint_error_m": 2.4005008732553624e-7,
+          "time_s": 0.03333333333333333,
+          "uc_vertices": 73060
+        },
+        {
+          "bidirectional_vertex_error_m": 2.606638531688077e-7,
+          "blender_vertices": 73060,
+          "clip": "Package_Launch",
+          "joint_error_m": 2.4103088849868035e-7,
+          "time_s": 0.2,
+          "uc_vertices": 73060
+        },
+        {
+          "bidirectional_vertex_error_m": 3.73719217350299e-7,
+          "blender_vertices": 73060,
+          "clip": "Package_Launch",
+          "joint_error_m": 2.421152116249788e-7,
+          "time_s": 0.4,
+          "uc_vertices": 73060
+        },
+        {
+          "bidirectional_vertex_error_m": 9.72579073277302e-7,
+          "blender_vertices": 73060,
+          "clip": "Package_Launch",
+          "joint_error_m": 3.159985835240558e-7,
+          "time_s": 0.6666666666666666,
+          "uc_vertices": 73060
+        },
+        {
+          "bidirectional_vertex_error_m": 6.151129809950362e-7,
+          "blender_vertices": 73060,
+          "clip": "Package_Launch",
+          "joint_error_m": 1.5242993878248905e-7,
+          "time_s": 0.9666666666666667,
+          "uc_vertices": 73060
+        },
+        {
+          "bidirectional_vertex_error_m": 4.300734417483909e-7,
+          "blender_vertices": 73060,
+          "clip": "Package_Launch",
+          "joint_error_m": 2.686603327408849e-7,
+          "time_s": 1.2999999523162842,
+          "uc_vertices": 73060
+        }
+      ],
+      "source_sha256": "86eceb7d7d2276e3054fdc4f746a9b55096773b5602f81f19782031a4ba3f597"
+    },
+    {
+      "asset": "AXM_Parcel_Imp_LOD1.glb",
+      "excluded_bone_display_helpers": [
+        "Icosphere"
+      ],
+      "joint_count": 16,
+      "samples": [
+        {
+          "bidirectional_vertex_error_m": 1.5557269250621175e-7,
+          "blender_vertices": 26134,
+          "clip": "Delivery_Dash",
+          "joint_error_m": 2.4005008732553624e-7,
+          "time_s": 0.03333333333333333,
+          "uc_vertices": 26134
+        },
+        {
+          "bidirectional_vertex_error_m": 2.3844768293201923e-7,
+          "blender_vertices": 26134,
+          "clip": "Delivery_Dash",
+          "joint_error_m": 2.394640249012142e-7,
+          "time_s": 0.16666666666666666,
+          "uc_vertices": 26134
+        },
+        {
+          "bidirectional_vertex_error_m": 3.4763166922857636e-7,
+          "blender_vertices": 26134,
+          "clip": "Delivery_Dash",
+          "joint_error_m": 2.4027400458748785e-7,
+          "time_s": 0.3333333333333333,
+          "uc_vertices": 26134
+        },
+        {
+          "bidirectional_vertex_error_m": 2.682209014892578e-7,
+          "blender_vertices": 26134,
+          "clip": "Delivery_Dash",
+          "joint_error_m": 2.4755668231600746e-7,
+          "time_s": 0.5333333333333333,
+          "uc_vertices": 26134
+        },
+        {
+          "bidirectional_vertex_error_m": 0.000001349028366348648,
+          "blender_vertices": 26134,
+          "clip": "Delivery_Dash",
+          "joint_error_m": 6.056547591954939e-7,
+          "time_s": 0.7666666666666667,
+          "uc_vertices": 26134
+        },
+        {
+          "bidirectional_vertex_error_m": 4.1509832726660534e-7,
+          "blender_vertices": 26134,
+          "clip": "Delivery_Dash",
+          "joint_error_m": 2.4755668231600746e-7,
+          "time_s": 1.0333333015441895,
+          "uc_vertices": 26134
+        },
+        {
+          "bidirectional_vertex_error_m": 1.5557269250621175e-7,
+          "blender_vertices": 26134,
+          "clip": "Idle_Parcel_Panic",
+          "joint_error_m": 2.4005008732553624e-7,
+          "time_s": 0.03333333333333333,
+          "uc_vertices": 26134
+        },
+        {
+          "bidirectional_vertex_error_m": 1.8189184913808276e-7,
+          "blender_vertices": 26134,
+          "clip": "Idle_Parcel_Panic",
+          "joint_error_m": 2.449927188077179e-7,
+          "time_s": 0.26666666666666666,
+          "uc_vertices": 26134
+        },
+        {
+          "bidirectional_vertex_error_m": 2.4073563054116676e-7,
+          "blender_vertices": 26134,
+          "clip": "Idle_Parcel_Panic",
+          "joint_error_m": 2.448794011703848e-7,
+          "time_s": 0.5,
+          "uc_vertices": 26134
+        },
+        {
+          "bidirectional_vertex_error_m": 0.000001792546072465484,
+          "blender_vertices": 26134,
+          "clip": "Idle_Parcel_Panic",
+          "joint_error_m": 6.145712920219088e-7,
+          "time_s": 0.8333333333333334,
+          "uc_vertices": 26134
+        },
+        {
+          "bidirectional_vertex_error_m": 0.0000014651714081992395,
+          "blender_vertices": 26134,
+          "clip": "Idle_Parcel_Panic",
+          "joint_error_m": 5.693725697559952e-7,
+          "time_s": 1.2,
+          "uc_vertices": 26134
+        },
+        {
+          "bidirectional_vertex_error_m": 1.5557269250621175e-7,
+          "blender_vertices": 26134,
+          "clip": "Idle_Parcel_Panic",
+          "joint_error_m": 2.4005008732553624e-7,
+          "time_s": 1.6333333253860474,
+          "uc_vertices": 26134
+        },
+        {
+          "bidirectional_vertex_error_m": 1.5557269250621175e-7,
+          "blender_vertices": 26134,
+          "clip": "Package_Launch",
+          "joint_error_m": 2.4005008732553624e-7,
+          "time_s": 0.03333333333333333,
+          "uc_vertices": 26134
+        },
+        {
+          "bidirectional_vertex_error_m": 2.606638531688077e-7,
+          "blender_vertices": 26134,
+          "clip": "Package_Launch",
+          "joint_error_m": 2.4103088849868035e-7,
+          "time_s": 0.2,
+          "uc_vertices": 26134
+        },
+        {
+          "bidirectional_vertex_error_m": 3.488272284357663e-7,
+          "blender_vertices": 26134,
+          "clip": "Package_Launch",
+          "joint_error_m": 2.421152116249788e-7,
+          "time_s": 0.4,
+          "uc_vertices": 26134
+        },
+        {
+          "bidirectional_vertex_error_m": 9.533250135973503e-7,
+          "blender_vertices": 26134,
+          "clip": "Package_Launch",
+          "joint_error_m": 3.159985835240558e-7,
+          "time_s": 0.6666666666666666,
+          "uc_vertices": 26134
+        },
+        {
+          "bidirectional_vertex_error_m": 6.151129809950362e-7,
+          "blender_vertices": 26134,
+          "clip": "Package_Launch",
+          "joint_error_m": 1.5242993878248905e-7,
+          "time_s": 0.9666666666666667,
+          "uc_vertices": 26134
+        },
+        {
+          "bidirectional_vertex_error_m": 4.300734417483909e-7,
+          "blender_vertices": 26134,
+          "clip": "Package_Launch",
+          "joint_error_m": 2.686603327408849e-7,
+          "time_s": 1.2999999523162842,
+          "uc_vertices": 26134
+        }
+      ],
+      "source_sha256": "c2f2767e1471df50e90867493bc06bce83a9ee4bc8ab365f70ea8799cef485ed"
+    }
+  ],
+  "limits": [
+    "Sampled positions only; no shading, normals, continuous playback or performance claim.",
+    "Vertex comparison is bidirectional nearest-point error, not a vertex-order or topology proof.",
+    "Crossfades have analytical unit coverage, not native Blender transition playback coverage."
+  ],
+  "maximum_joint_error_m": 6.145712920219088e-7,
+  "maximum_vertex_error_m": 0.0000017998357861870318,
+  "passed": true,
+  "reference": "fresh Blender 4.3.0 GLB import and evaluated skin",
+  "schema": "axm.game-pose-blender-comparison/v0.1",
+  "evidence_commit": "f8406f4e601eab0bcc7787d4abd27d9dd9818ee4",
+  "workflow_run": "https://github.com/mike-axiom-mir/axm-universal-creation/actions/runs/34944009459",
+  "artifact_url": "https://github.com/mike-axiom-mir/axm-universal-creation/actions/runs/34944009459/artifacts/10386577466",
+  "local_tests": 70,
+  "full_repository_tests": 660,
+  "analytical_tests": 21,
+  "repairs": [
+    "Preserve nonzero first-key timestamps when aligning the independent reference clock.",
+    "Exclude only imported objects explicitly used as bone custom shapes from the deformed asset point-set comparison."
+  ]
+}

@@ -1,0 +1,38 @@
+name: Offline game pose evidence
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/axm_uc/game_pose_runtime.py'
+      - 'tests/test_game_pose_runtime.py'
+      - 'tools/blender/game_pose_runtime_roundtrip.py'
+      - 'tools/blender/game_showcase_parcel_imp.py'
+      - '.github/workflows/game-pose-runtime.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  blender-pose-reference:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install independent reference tools
+        run: python -m pip install 'numpy==1.26.4' 'Pillow>=10,<12' 'bpy==4.3.0'
+      - name: Rebuild existing Parcel Imp source
+        run: python tools/blender/game_showcase_parcel_imp.py build --output /tmp/parcel-pose-evidence
+      - name: Independently re-import and compare animated poses and skin positions
+        run: python tools/blender/game_pose_runtime_roundtrip.py /tmp/parcel-pose-evidence
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: parcel-imp-pose-evidence
+          path: /tmp/parcel-pose-evidence
+          if-no-files-found: error
+          retention-days: 14

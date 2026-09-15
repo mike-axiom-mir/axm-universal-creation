@@ -101,6 +101,51 @@ exports when those features change. Measure performance before making claims.
 
 ## Current checkpoint
 
+### Offline pose execution pass — 2026-09-15
+
+- Completed `game_pose_runtime.py`, `axm-assets pose-sample` and catalog:
+  embedded GLB intake, LINEAR/STEP tracks, shortest-arc quaternion sampling,
+  explicit pose crossfades, hierarchy evaluation, socket points and linear skin
+  positions. The execution requires Python's standard library only.
+- Preserves exact source bytes/materials/styles and ties every output to its
+  source SHA-256. Rejects malformed/unsupported pose data rather than substituting
+  default animation. Source meshes and editable Blender files remain canonical.
+- Actual local verification: 21 new analytical/CLI tests pass; 70 focused game
+  tests pass together. Tests exercise inverse binds, nonuniform parent scale,
+  mixed weights, antipodal rotations, clip rest resets, crossfades, loop/STEP
+  boundaries, malformed input and failed-publication cleanup.
+- Added an independent reference job to rebuild the existing Parcel Imp and
+  freshly import both LODs in Blender 4.3. It compares 16 joint origins and full
+  deformed vertex point sets over three clips × six authored keyframes per LOD.
+  Native reference passed at `f8406f4`: maximum joint error 0.000000615 m,
+  maximum bidirectional vertex error 0.000001800 m. All 36 samples passed the
+  unchanged 0.00002 m tolerance; LOD0/LOD1 compared 73,060/26,134 vertices.
+  Full repository CI passed 660 tests. Its `parcel-imp-pose-evidence` artifact
+  carries the GLBs, editable source and JSON comparison. Saved-asset recovery
+  returned HTTP 502, so the job regenerates from repository source.
+- Reference repairs: aligned Blender frames with nonzero first authored key
+  times; excluded only importer-generated bone custom-shape objects (an
+  Icosphere), which are not exported asset geometry. No tolerance was relaxed.
+- Evidence: `tests/test_game_pose_runtime.py`, `docs/GAME_POSE_RUNTIME.md`,
+  `tools/blender/game_pose_runtime_roundtrip.py`,
+  `docs/evidence/game-pose-runtime-2026-09-15.json`, and
+  [reference run 34944009459](https://github.com/mike-axiom-mir/axm-universal-creation/actions/runs/34944009459).
+- Limits: positions only; no shading, deformed normals, morphs, CUBICSPLINE, IK,
+  automatic transition/collision policy or continuous visual playback claim.
+  Between-key SLERP/crossfades have analytical coverage, not native crossfade
+  playback evidence. Point-set comparison does not prove topology or vertex order.
+- Next useful improvement: explicit binding between runtime clocks and the
+  actual root curve, preserving authored acceleration and preventing the same
+  motion being applied through both pose and world displacement. Then bounded
+  normals/tangents evaluation and a host-driven continuous visual proof.
+- Active lane: `codex/rts-reference-foundry`, based on main `3ec310f`; resume this
+  [PR #73](https://github.com/mike-axiom-mir/axm-universal-creation/pull/73)
+  and related repairs until its final checks pass. PR #54 remains untouched.
+- Roots: Truth separates execution from appearance and measures independent
+  imported geometry; Agency keeps clocks, blend weights and motion ownership
+  caller-controlled; Continuity preserves bytes, identity and richer source;
+  Wisdom requires native comparison before accepting real-asset compatibility.
+
 ### Portable animation runtime pass — 2026-09-13
 
 - Completed `game_animation_runtime.py`, `axm-assets
