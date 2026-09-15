@@ -8,12 +8,12 @@ from axm_stickers import Registry
 from axm_uc import visual_templates as vt
 
 SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
-PRODUCTS=('game.racing.full','game.coop.action','game.rts.command','game.system.shell','editor.creative.core','comic.narrative.core','axm.system.shell')
+PRODUCTS=('game.racing.full','game.coop.action','game.rts.command','game.system.shell','game.shared.core','editor.creative.core','comic.narrative.core','axm.system.shell')
 
 class VisualTemplateTests(unittest.TestCase):
     def test_catalog_counts_and_products(self):
         counts=vt.validate_catalog()
-        self.assertEqual(counts,{'styles':11,'primitives':57,'screens':91,'products':9})
+        self.assertEqual(counts,{'styles':12,'primitives':67,'screens':103,'products':10})
         self.assertEqual(vt.CATALOG_COMPOSITION['counts'],counts)
         ids={p['id'] for p in vt.catalog()['products']}
         self.assertTrue(set(PRODUCTS)|{'game.racing.performance','software.creator.studio'} <= ids)
@@ -26,27 +26,21 @@ class VisualTemplateTests(unittest.TestCase):
                 out=vt.resolve(tid,width,height)
                 for x,y,w,h in out['regions'].values():
                     self.assertGreaterEqual(min(x,y,w,h),0)
-                    self.assertLessEqual(x+w,width+1e-6)
-                    self.assertLessEqual(y+h,height+1e-6)
+                    self.assertLessEqual(x+w,width+1e-6); self.assertLessEqual(y+h,height+1e-6)
 
     def test_existing_product_depth_is_retained(self):
-        self.assertEqual(len(vt.get('game.racing.full')['screens']),19)
-        self.assertEqual(len(vt.get('game.system.shell')['screens']),18)
-        self.assertEqual(len(vt.get('editor.creative.core')['screens']),12)
-        self.assertEqual(len(vt.get('comic.narrative.core')['screens']),10)
+        expected={'game.racing.full':19,'game.system.shell':18,'editor.creative.core':12,'comic.narrative.core':10,'axm.system.shell':12}
+        for pid,count in expected.items(): self.assertEqual(len(vt.get(pid)['screens']),count)
         self.assertIn('game.racing.hud.split',vt.get('game.racing.full')['screens'])
-        self.assertIn('game.system.privacy-consent',vt.get('game.system.shell')['screens'])
-        self.assertIn('editor.creative.node-graph',vt.get('editor.creative.core')['screens'])
         self.assertIn('comic.narrative.dialogue-editor',vt.get('comic.narrative.core')['screens'])
 
-    def test_axm_system_shell(self):
-        product=vt.get('axm.system.shell')
-        required={'axm.system.home','axm.system.registry','axm.system.capability-browser','axm.system.cartridge-loader','axm.system.machine-state','axm.system.evidence-review','axm.system.workflow','axm.system.specialists','axm.system.workfloor','axm.system.snapshots','axm.system.settings','axm.system.recovery'}
+    def test_shared_gameplay_product_covers_near_term_gaps(self):
+        product=vt.get('game.shared.core')
+        required={'game.shared.inventory','game.shared.skill-tree','game.shared.mission-briefing','game.shared.world-map','game.shared.objective-log','game.shared.upgrade-shop','game.shared.codex','game.shared.revive-overlay','game.shared.boss-encounter-hud','game.shared.spectator','game.shared.end-session-summary','game.shared.challenge-board'}
         self.assertEqual(set(product['screens']),required)
-        self.assertEqual(product['style'],'axm.machine.glass')
-        flow={(a,b,c) for a,b,c in product['flow']}
-        self.assertIn(('axm.system.cartridge-loader','axm.system.machine-state','inspect-state'),flow)
-        self.assertIn(('axm.system.snapshots','axm.system.recovery','recover'),flow)
+        self.assertEqual(product['style'],'game.shared.adventure')
+        self.assertIn('revive-expired',{c for _,_,c in product['flow']})
+        self.assertIn('encounter-complete',{c for _,_,c in product['flow']})
 
     def test_products_resolve_and_previews_parse(self):
         for pid in PRODUCTS:
@@ -63,28 +57,31 @@ class VisualTemplateTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             with Registry(Path(td)/'stickers.sqlite') as registry:
                 pins=vt.install_builtins(registry)
-                self.assertEqual(len(pins),100)
+                self.assertEqual(len(pins),113)
                 self.assertEqual(len(registry.search(adapter=vt.ADAPTER,tag='axm',limit=100)['entries']),12)
-                self.assertEqual(len(registry.search(adapter=vt.ADAPTER,tag='comic',limit=100)['entries']),10)
-                d=registry.get('visual.axm.system.registry',1)
+                shared=registry.search(adapter=vt.ADAPTER,tag='shared',limit=100)['entries']
+                self.assertGreaterEqual(len(shared),12)
+                d=registry.get('visual.game.shared.inventory',1)
                 self.assertEqual(d['recipe']['visual_template']['schema'],vt.SCHEMA)
                 self.assertNotIn('"latest"',json.dumps(d,sort_keys=True))
 
     def test_reusable_state_contracts(self):
-        required={'player-seat','loading-state','layer-row','timeline-track','node-card','speech-bubble','reading-order-marker','truth-state','capability-card','registry-entry','evidence-chip','state-diff','cartridge-card','specialist-card','workfloor-lane','snapshot-entry','recovery-choice'}
+        required={'truth-state','registry-entry','layer-row','speech-bubble','inventory-slot','skill-node','objective-row','shop-offer','codex-entry','revive-state','boss-phase','spectator-seat','challenge-card','session-stat'}
         self.assertTrue(required <= set(vt.PRIMITIVES))
-        self.assertTrue(vt.PRIMITIVES['truth-state']['source_must_be_visible'])
-        self.assertTrue(vt.PRIMITIVES['registry-entry']['no_floating_latest'])
-        self.assertTrue(vt.PRIMITIVES['snapshot-entry']['restore_is_explicit'])
-        self.assertTrue(vt.PRIMITIVES['recovery-choice']['consequence_must_be_visible'])
+        self.assertTrue(vt.PRIMITIVES['inventory-slot']['ownership_must_be_explicit'])
+        self.assertTrue(vt.PRIMITIVES['skill-node']['prerequisites_and_cost_must_be_visible'])
+        self.assertTrue(vt.PRIMITIVES['codex-entry']['undiscovered_content_must_not_be_faked'])
+        self.assertTrue(vt.PRIMITIVES['revive-state']['timer_and_actor_must_be_explicit'])
+        self.assertTrue(vt.PRIMITIVES['boss-phase']['phase_change_needs_non_color_cue'])
+        self.assertTrue(vt.PRIMITIVES['challenge-card']['progress_and_reward_must_be_explicit'])
 
     def test_copy_safety_variant_rejection_and_bad_geometry(self):
-        a=vt.resolve('axm.system.home',1920,1080); b=vt.resolve('axm.system.home',1920,1080)
+        a=vt.resolve('game.shared.inventory',1920,1080); b=vt.resolve('game.shared.inventory',1920,1080)
         self.assertEqual(a,b)
-        copy=vt.get('axm.system.home'); copy['name']='changed'
-        self.assertNotEqual(vt.get('axm.system.home')['name'],'changed')
-        with self.assertRaises(ValueError): vt.resolve('axm.system.home',1920,1080,variant='unknown')
-        bad=vt.get('axm.system.registry'); bad['variants']['standard']['entries']=[.9,.9,.2,.2]
+        copy=vt.get('game.shared.inventory'); copy['name']='changed'
+        self.assertNotEqual(vt.get('game.shared.inventory')['name'],'changed')
+        with self.assertRaises(ValueError): vt.resolve('game.shared.inventory',1920,1080,variant='unknown')
+        bad=vt.get('game.shared.world-map'); bad['variants']['standard']['map']=[.9,.9,.2,.2]
         with self.assertRaises(ValueError): vt.validate_screen(bad)
 
     def test_exact_sticker_slot_binding_is_retained(self):
