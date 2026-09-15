@@ -78,6 +78,17 @@ def compare(asset_path):
             actual_tree, expected_tree = tree(actual_points), tree(expected_points)
             vertex_error = max(max(expected_tree.find(p)[2] for p in actual_points),
                                max(actual_tree.find(p)[2] for p in expected_points))
+            if vertex_error >= 2e-5:
+                worst = max(range(len(actual_points)), key=lambda i: expected_tree.find(actual_points[i])[2])
+                reverse = max(expected_points, key=lambda p: actual_tree.find(p)[2])
+                diagnostic = {"asset": asset_path.name, "clip": clip["name"], "time_s": time,
+                    "joint_error": joint_error, "counts": [len(actual_points), len(expected_points)],
+                    "uc_point": list(actual_points[worst]), "nearest_blender": list(expected_tree.find(actual_points[worst])[0]),
+                    "blender_point": list(reverse), "nearest_uc": list(actual_tree.find(reverse)[0]),
+                    "arm_matrix": [list(r) for r in arm.matrix_world],
+                    "meshes": [{"name": m.name, "matrix": [list(r) for r in m.matrix_world],
+                        "modifiers": [{"type": mod.type, "preserve_volume": getattr(mod, "use_deform_preserve_volume", None)} for mod in m.modifiers]} for m in meshes]}
+                print("POSE_DIAGNOSTIC " + json.dumps(diagnostic), flush=True)
             assert joint_error < 2e-5, (asset_path.name, clip["name"], time, "joint", joint_error)
             assert vertex_error < 2e-5, (asset_path.name, clip["name"], time, "skin", vertex_error)
             rows.append({"clip": clip["name"], "time_s": time, "joint_error_m": joint_error,
