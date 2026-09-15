@@ -1,0 +1,79 @@
+{
+  "id": "AXM-CAP-WORKSHOP-CONSTRUCTION-LOOP",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Close the deterministic workshop loop between rough spatial intent and reusable sticker construction: bind every sketch part to an exact existing 3D sticker, compile or save an ordinary immutable assembly, compare its direct target-frame state back to the exact sketch, propose only uniquely grounded placement repairs, and save those repairs as a new immutable assembly version without inventing source geometry, size, fit, physics, or aesthetics.",
+  "handles": [
+    "workshop-construction-loop",
+    "compile-sketch-sticker-build",
+    "save-sketch-sticker-build",
+    "compare-sketch-sticker-assembly",
+    "propose-sketch-sticker-repair",
+    "save-sketch-sticker-repair"
+  ],
+  "input_contract": {
+    "required": ["operation"],
+    "required_by_operation": {
+      "validate-sticker-build": ["database", "sketch", "plan"],
+      "compile-sticker-build": ["database", "sketch", "plan"],
+      "save-sticker-build": ["database", "sketch", "plan", "id", "name", "origin"],
+      "compare-sticker-assembly": ["database", "sketch", "assembly"],
+      "propose-sticker-repair": ["database", "sketch", "assembly"],
+      "save-sticker-repair": ["database", "sketch", "assembly", "id", "name", "origin", "ver"]
+    },
+    "properties": {
+      "operation": "inspect-construction-loop, validate-sticker-build, compile-sticker-build, save-sticker-build, compare-sticker-assembly, propose-sticker-repair, or save-sticker-repair",
+      "database": "local UC sticker SQLite registry; relative paths must stay in creations/.axm-build or may be outside the machine body",
+      "sketch": "exact axm.design-sketch/v0.1 body from Design Workshop",
+      "plan": "axm.design-sticker-build/v0.1 body binding every sketch part once to an exact 3D sticker pin plus explicit overrides/placement",
+      "assembly": "exact immutable sticker pin for a saved 3D assembly",
+      "id": "new immutable assembly sticker id",
+      "name": "new assembly display name",
+      "origin": "author/license/source provenance; workshop lineage is appended rather than replacing caller source",
+      "ver": "explicit positive immutable version",
+      "socket": "optional attachment socket for a newly built assembly",
+      "anchor": "optional rigid attachment frame for a newly built assembly",
+      "tags": "optional sticker tags"
+    }
+  },
+  "output_contract": {
+    "kind": "sketch-bound-sticker-build-comparison-repair-or-saved-assembly",
+    "contains": [
+      "exact sketch and build-plan digests",
+      "explicit exact source sticker pins for every sketch part",
+      "ordinary axm.sticker/v1 assembly children using sketch frames as declared target socket frames",
+      "placement-only residuals for position, orientation and frame-derived workshop gauges",
+      "separate HOLD for actual source mesh dimensions",
+      "bounded set-target-frame repair actions only when uniquely grounded",
+      "new immutable repaired assembly version plus post-repair structural verification"
+    ]
+  },
+  "dependencies": ["AXM-CAP-DESIGN-WORKSHOP"],
+  "relationships": [
+    "uses Design Workshop sketch intent without changing the verified sketch/gauge contract",
+    "uses UC's embedded sticker core and ordinary assembly v1 rather than requiring external Sticker Fabric at runtime",
+    "can consume ordinary multiplied sticker wrappers because multiplication outputs normal exact-pinned sticker definitions",
+    "keeps source-sticker selection explicit instead of inferring a part identity from a rough blockout shape"
+  ],
+  "anatomy_refs": [],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:workshop_construction_loop",
+    "source": "src/axm_uc/design_workshop_construction.py via src/axm_uc/__init__.py registration; matching JSON operations are also exposed through src/axm_uc/sticker_create.py"
+  },
+  "limitations": [
+    "v0.1 requires one exact 3D sticker binding for every sketch part",
+    "the sketch part frame becomes a target socket frame; no geometric-center or dimension correspondence is inferred",
+    "saved assembly recipes expose placement state but not actual source mesh dimensions, so size evidence stays HOLD",
+    "automatic repair changes only direct child target frames; missing/extra parts and size/geometry/material/aesthetic changes stay unresolved",
+    "parameterized source assemblies are rejected by repair v0.1 rather than silently invalidating their defaults",
+    "repair rebases explicit rigid motion samples when the target frame moves but makes no animation-quality claim"
+  ],
+  "persistent_state": null,
+  "root_fit": {
+    "truth": {"fit": true, "basis": "Exact sketch digests, sticker pins, assembly pins, structural residuals and repair receipts are revalidated; unavailable mesh-size evidence remains HOLD."},
+    "agency": {"fit": true, "basis": "The caller chooses every source sticker binding, override, placement, output identity/version/provenance and whether a proposed repair is saved."},
+    "continuity": {"fit": true, "basis": "Build, compare and repair receipts bind the exact sketch, source pins, source assembly and new immutable assembly version without rewriting prior versions."},
+    "wisdom-before-speed": {"fit": true, "basis": "Structural mismatches, unknown pins, missing/extra parts, parameterized repair ambiguity and unobserved dimensions hold or fail closed instead of being guessed through."}
+  }
+}
