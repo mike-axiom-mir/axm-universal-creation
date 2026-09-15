@@ -12,8 +12,8 @@ assert.equal(audit.by_family['mesh-deform'],8);
 assert.equal(audit.by_family['mesh-topology'],9);
 assert.equal(audit.by_family['mesh-uv'],6);
 assert.equal(audit.by_family['mesh-analysis'],5);
-assert.equal(Platform.creativeHands.audit().total,314);
-assert.equal(Platform.creativeHands.recipeRegistry().count,321);
+assert.equal(Platform.creativeHands.audit().total,340);
+assert.equal(Platform.creativeHands.recipeRegistry().count,347);
 
 for(const kind of ['cube','sphere','cylinder','cone','plane','torus']){
   const built=Platform.creativeHands.invoke('creative.mesh-primitive.'+kind,{spec:{id:'p-'+kind,detail:12}}).result;
