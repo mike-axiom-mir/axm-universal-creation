@@ -8,7 +8,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src'))
 from axm_uc import visual_templates as vt
 
 SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
-PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell","visual.keyart.core","visual.cards.core","visual.cinematic.core","visual.broadcast.core","visual.diagram.core","visual.atlas.core","visual.novel.core","visual.showroom.core","visual.music.core","visual.presentation.core","visual.character.core","visual.configurator.core","visual.motion.core","visual.brand.core")
+PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell","visual.keyart.core","visual.cards.core","visual.cinematic.core","visual.broadcast.core","visual.diagram.core","visual.atlas.core","visual.novel.core","visual.showroom.core","visual.music.core","visual.presentation.core","visual.character.core","visual.configurator.core","visual.motion.core","visual.brand.core","visual.environment.core")
 
 def _write(project,target):
     target.mkdir(); out=[]
@@ -25,7 +25,7 @@ def main(argv):
     out.mkdir(parents=True)
     try:
         counts=vt.validate_catalog()
-        if counts!={'styles':26,'primitives':206,'screens':244,'products':24}: raise AssertionError(counts)
+        if counts!={'styles':27,'primitives':216,'screens':254,'products':25}: raise AssertionError(counts)
         evidence=[]
         for pid in PRODUCTS:
             expected=vt.get(pid)
@@ -59,29 +59,31 @@ def main(argv):
             ('visual.configurator.core',1920,1080,'configurator','AXM Equipment and Vehicle Configurator Foundation'),
             ('visual.motion.core',1920,1080,'motion','AXM Source-Bound UI Motion Foundation'),
             ('visual.brand.core',1920,1080,'brand','AXM Source-Bound Brand Identity Foundation'),
+            ('visual.environment.core',1920,1080,'environment','AXM Environment and Level Reference Foundation'),
         )
         outputs=[]
         for pid,w,h,folder,title in galleries: outputs+=_write(vt.product_project(pid,w,h,title),out/folder)
         outputs+=_write(vt.screen_project('product.mobile.home',1080,1920,'AXM Mobile Foundation'),out/'mobile-home')
-        product=vt.get('visual.brand.core')
-        required={'visual.brand.project-hub','visual.brand.marks-lockups','visual.brand.typography','visual.brand.icons','visual.brand.tokens','visual.brand.spacing-usage','visual.brand.variants','visual.brand.applications','visual.brand.review-audit','visual.brand.export'}
-        if set(product['screens'])!=required: raise AssertionError('brand pack lost required surfaces')
+        product=vt.get('visual.environment.core')
+        required={'visual.environment.project-hub','visual.environment.identity-board','visual.environment.zones-layout','visual.environment.scale-measurements','visual.environment.modular-kit','visual.environment.materials','visual.environment.lighting-weather','visual.environment.traversal-annotations','visual.environment.variants','visual.environment.review-export'}
+        if set(product['screens'])!=required: raise AssertionError('environment pack lost required surfaces')
         checks={
-            'asset_identity_source_version_provenance':vt.PRIMITIVES['brand-asset-source']['identity_source_version_provenance_required'],
-            'lockup_asset_refs_layout_status':vt.PRIMITIVES['brand-lockup']['asset_refs_layout_status_required'],
-            'type_font_source_role':vt.PRIMITIVES['brand-type-role']['font_source_role_required'],
-            'icon_family_source_members':vt.PRIMITIVES['brand-icon-family']['family_source_members_required'],
-            'token_value_context_source':vt.PRIMITIVES['brand-token']['value_context_source_required'],
-            'clearspace_target_measurement':vt.PRIMITIVES['brand-clearspace-rule']['target_measurement_basis_required'],
-            'usage_subject_context_status_source':vt.PRIMITIVES['brand-usage-rule']['subject_context_status_source_required'],
-            'application_asset_token_target':vt.PRIMITIVES['brand-application']['asset_token_target_refs_required'],
-            'variant_base_delta_context':vt.PRIMITIVES['brand-variant']['base_delta_context_required'],
-            'export_requirements_visible':vt.PRIMITIVES['brand-export-target']['requirements_must_be_visible'],
+            'environment_identity_source_scope':vt.PRIMITIVES['environment-source']['identity_source_version_scope_required'],
+            'zone_geometry_source_status':vt.PRIMITIVES['environment-zone']['geometry_source_status_required'],
+            'measurement_value_unit_source_precision':vt.PRIMITIVES['environment-measurement']['value_unit_source_precision_required'],
+            'kit_source_socket_transform':vt.PRIMITIVES['modular-environment-piece']['source_socket_transform_required'],
+            'prop_identity_source_context':vt.PRIMITIVES['environment-prop']['identity_source_context_status_required'],
+            'material_target_source_context':vt.PRIMITIVES['environment-material']['target_material_source_context_required'],
+            'lighting_source_time_weather_exposure':vt.PRIMITIVES['environment-lighting-state']['source_time_weather_exposure_required'],
+            'traversal_target_type_source_status':vt.PRIMITIVES['traversal-reference']['target_type_source_status_required'],
+            'variant_base_delta_context_source':vt.PRIMITIVES['environment-variant']['base_delta_context_source_required'],
+            'export_requirements_visible':vt.PRIMITIVES['environment-export-target']['requirements_must_be_visible'],
         }
-        if not all(checks.values()): raise AssertionError('brand source/rule contract failed')
+        if not all(checks.values()): raise AssertionError('environment source/reference contract failed')
         retained={
+            'brand_asset':vt.PRIMITIVES['brand-asset-source']['identity_source_version_provenance_required'],
+            'brand_clearspace':vt.PRIMITIVES['brand-clearspace-rule']['target_measurement_basis_required'],
             'motion_state':vt.PRIMITIVES['motion-state']['source_target_identity_required'],
-            'reduced_motion':vt.PRIMITIVES['reduced-motion-rule']['equivalent_state_result_required'],
             'config_digest':vt.PRIMITIVES['configuration-state']['base_attachment_variant_digest_required'],
             'character_identity':vt.PRIMITIVES['character-source']['identity_source_version_required'],
             'presentation_page':vt.PRIMITIVES['presentation-page']['identity_role_order_required'],
@@ -91,7 +93,7 @@ def main(argv):
             'atlas_coordinate':vt.PRIMITIVES['map-coordinate']['system_source_precision_required'],
         }
         if not all(retained.values()): raise AssertionError('prior visual source boundary failed')
-        receipt={'schema':'axm.visual-template-proof/v20','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'brand_checks':checks,'retained_checks':retained,'truth':'Offline structural evidence only. Trademark clearance, font/icon licensing, legal rights, market effectiveness, visual quality and accessibility acceptance were not observed.'}
+        receipt={'schema':'axm.visual-template-proof/v21','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'environment_checks':checks,'retained_checks':retained,'truth':'Offline structural evidence only. Final level geometry, scale correctness, collision, navigation, gameplay quality, lighting correctness, performance and aesthetic acceptance were not observed.'}
         (out/'receipt.json').write_text(json.dumps(receipt,indent=2,sort_keys=True),encoding='utf-8')
         print(json.dumps(receipt,indent=2,sort_keys=True))
     except BaseException:
