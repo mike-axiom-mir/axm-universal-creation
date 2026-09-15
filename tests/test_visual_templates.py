@@ -8,18 +8,18 @@ from axm_stickers import Registry
 from axm_uc import visual_templates as vt
 
 SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
-PRODUCTS=('game.racing.full','game.coop.action','game.rts.command','game.system.shell','game.shared.core','editor.creative.core','comic.narrative.core','axm.system.shell','visual.keyart.core','visual.cards.core','visual.cinematic.core','visual.broadcast.core','visual.diagram.core','visual.atlas.core','visual.novel.core')
+PRODUCTS=('game.racing.full','game.coop.action','game.rts.command','game.system.shell','game.shared.core','editor.creative.core','comic.narrative.core','axm.system.shell','visual.keyart.core','visual.cards.core','visual.cinematic.core','visual.broadcast.core','visual.diagram.core','visual.atlas.core','visual.novel.core','visual.showroom.core')
 
 class VisualTemplateTests(unittest.TestCase):
     def test_catalog_counts_and_products(self):
         counts=vt.validate_catalog()
-        self.assertEqual(counts,{'styles':19,'primitives':136,'screens':174,'products':17})
+        self.assertEqual(counts,{'styles':20,'primitives':146,'screens':184,'products':18})
         self.assertEqual(vt.CATALOG_COMPOSITION['counts'],counts)
         ids={p['id'] for p in vt.catalog()['products']}
         self.assertTrue(set(PRODUCTS)|{'game.racing.performance','software.creator.studio'} <= ids)
 
     def test_all_geometry_and_major_variants(self):
-        prefixes=('game.','editor.creative.','comic.narrative.','axm.system.','visual.keyart.','visual.cards.','visual.cinematic.','visual.broadcast.','visual.diagram.','visual.atlas.','visual.novel.')
+        prefixes=('game.','editor.creative.','comic.narrative.','axm.system.','visual.keyart.','visual.cards.','visual.cinematic.','visual.broadcast.','visual.diagram.','visual.atlas.','visual.novel.','visual.showroom.')
         for tid,definition in vt.SCREEN_TEMPLATES.items():
             if tid.startswith(prefixes): self.assertEqual(set(definition['variants']),{'compact','standard','wide'},tid)
             for width,height in SIZES:
@@ -29,22 +29,22 @@ class VisualTemplateTests(unittest.TestCase):
                     self.assertLessEqual(x+w,width+1e-6); self.assertLessEqual(y+h,height+1e-6)
 
     def test_existing_product_depth_is_retained(self):
-        expected={'game.racing.full':19,'game.system.shell':18,'game.shared.core':12,'editor.creative.core':12,'comic.narrative.core':10,'axm.system.shell':12,'visual.keyart.core':10,'visual.cards.core':11,'visual.cinematic.core':10,'visual.broadcast.core':10,'visual.diagram.core':10,'visual.atlas.core':10}
+        expected={'game.racing.full':19,'game.system.shell':18,'game.shared.core':12,'editor.creative.core':12,'comic.narrative.core':10,'axm.system.shell':12,'visual.keyart.core':10,'visual.cards.core':11,'visual.cinematic.core':10,'visual.broadcast.core':10,'visual.diagram.core':10,'visual.atlas.core':10,'visual.novel.core':10}
         for pid,count in expected.items(): self.assertEqual(len(vt.get(pid)['screens']),count)
 
-    def test_novel_product_preserves_branching_source_truth(self):
-        product=vt.get('visual.novel.core')
-        required={'visual.novel.project-hub','visual.novel.scene-editor','visual.novel.character-stage','visual.novel.dialogue-editor','visual.novel.choice-editor','visual.novel.branch-graph','visual.novel.state-inspector','visual.novel.history-log','visual.novel.save-checkpoint','visual.novel.review-export'}
+    def test_showroom_product_preserves_object_and_presentation_truth(self):
+        product=vt.get('visual.showroom.core')
+        required={'visual.showroom.project-hub','visual.showroom.object-stage','visual.showroom.orbit-camera','visual.showroom.material-editor','visual.showroom.variant-editor','visual.showroom.annotation-editor','visual.showroom.comparison','visual.showroom.detail-view','visual.showroom.turntable','visual.showroom.review-export'}
         self.assertEqual(set(product['screens']),required)
-        self.assertEqual(product['style'],'visual.novel.story')
+        self.assertEqual(product['style'],'visual.showroom.studio')
         quality=' '.join(product['quality']).lower()
         self.assertIn('separately editable',quality)
-        self.assertIn('speaker text',quality)
-        self.assertIn('character identity',quality)
-        self.assertIn('runtime flags',quality)
-        self.assertIn('branching narrative source',quality)
-        self.assertIn('dialogue_safe_ratio',vt.get('visual.novel.scene-editor')['math_hooks'])
-        self.assertIn('node_spacing_ratio',vt.get('visual.novel.branch-graph')['math_hooks'])
+        self.assertIn('source asset identity',quality)
+        self.assertIn('availability',quality)
+        self.assertIn('value, unit and source',quality)
+        self.assertIn('showroom source state',quality)
+        self.assertIn('hero_coverage_ratio',vt.get('visual.showroom.object-stage')['math_hooks'])
+        self.assertIn('detail_coverage_ratio',vt.get('visual.showroom.detail-view')['math_hooks'])
 
     def test_products_resolve_and_previews_parse(self):
         for pid in PRODUCTS:
@@ -61,28 +61,29 @@ class VisualTemplateTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             with Registry(Path(td)/'stickers.sqlite') as registry:
                 pins=vt.install_builtins(registry)
-                self.assertEqual(len(pins),191)
-                novel=registry.search(adapter=vt.ADAPTER,tag='novel',limit=100)['entries']
-                self.assertEqual(len(novel),10)
-                d=registry.get('visual.visual.novel.scene-editor',1)
+                self.assertEqual(len(pins),202)
+                showroom=registry.search(adapter=vt.ADAPTER,tag='showroom',limit=100)['entries']
+                self.assertEqual(len(showroom),10)
+                d=registry.get('visual.visual.showroom.object-stage',1)
                 self.assertEqual(d['recipe']['visual_template']['schema'],vt.SCHEMA)
                 self.assertNotIn('"latest"',json.dumps(d,sort_keys=True))
 
-    def test_novel_scene_character_dialogue_branch_and_save_contracts(self):
-        required={'scene-background','character-stage','dialogue-block','choice-option','branch-node','story-flag','history-entry','save-checkpoint','scene-transition','novel-export-target'}
+    def test_showroom_object_camera_material_variant_and_measurement_contracts(self):
+        required={'showroom-object','orbit-rig','camera-preset','material-slot','variant-option','object-annotation','comparison-object','turntable-state','measurement-callout','showroom-export-target'}
         self.assertTrue(required <= set(vt.PRIMITIVES))
-        self.assertTrue(vt.PRIMITIVES['scene-background']['source_and_transform_remain_separate'])
-        self.assertTrue(vt.PRIMITIVES['character-stage']['identity_pose_expression_source_required'])
-        self.assertTrue(vt.PRIMITIVES['dialogue-block']['speaker_text_voice_ref_exact'])
-        self.assertTrue(vt.PRIMITIVES['choice-option']['id_label_target_conditions_required'])
-        self.assertTrue(vt.PRIMITIVES['branch-node']['identity_and_edges_required'])
-        self.assertTrue(vt.PRIMITIVES['story-flag']['name_value_source_required'])
-        self.assertTrue(vt.PRIMITIVES['history-entry']['sequence_and_source_required'])
-        self.assertTrue(vt.PRIMITIVES['save-checkpoint']['state_identity_digest_required'])
-        self.assertTrue(vt.PRIMITIVES['scene-transition']['from_to_identity_required'])
-        self.assertTrue(vt.PRIMITIVES['novel-export-target']['requirements_must_be_visible'])
+        self.assertTrue(vt.PRIMITIVES['showroom-object']['source_identity_version_required'])
+        self.assertTrue(vt.PRIMITIVES['orbit-rig']['target_pivot_range_required'])
+        self.assertTrue(vt.PRIMITIVES['camera-preset']['projection_lens_transform_required'])
+        self.assertTrue(vt.PRIMITIVES['material-slot']['part_material_source_required'])
+        self.assertTrue(vt.PRIMITIVES['variant-option']['identity_properties_availability_required'])
+        self.assertTrue(vt.PRIMITIVES['object-annotation']['target_anchor_content_required'])
+        self.assertTrue(vt.PRIMITIVES['comparison-object']['reference_and_fields_required'])
+        self.assertTrue(vt.PRIMITIVES['turntable-state']['target_angle_speed_required'])
+        self.assertTrue(vt.PRIMITIVES['measurement-callout']['value_unit_source_required'])
+        self.assertTrue(vt.PRIMITIVES['showroom-export-target']['requirements_must_be_visible'])
 
     def test_prior_source_boundaries_remain_present(self):
+        self.assertTrue(vt.PRIMITIVES['save-checkpoint']['state_identity_digest_required'])
         self.assertTrue(vt.PRIMITIVES['map-coordinate']['system_source_precision_required'])
         self.assertTrue(vt.PRIMITIVES['relationship-edge']['endpoints_and_relation_type_required'])
         self.assertTrue(vt.PRIMITIVES['source-window']['source_identity_must_be_explicit'])
@@ -92,12 +93,12 @@ class VisualTemplateTests(unittest.TestCase):
         self.assertTrue(vt.PRIMITIVES['truth-state']['source_must_be_visible'])
 
     def test_copy_safety_variant_rejection_and_bad_geometry(self):
-        a=vt.resolve('visual.novel.scene-editor',1920,1080); b=vt.resolve('visual.novel.scene-editor',1920,1080)
+        a=vt.resolve('visual.showroom.object-stage',1920,1080); b=vt.resolve('visual.showroom.object-stage',1920,1080)
         self.assertEqual(a,b)
-        copy=vt.get('visual.novel.scene-editor'); copy['name']='changed'
-        self.assertNotEqual(vt.get('visual.novel.scene-editor')['name'],'changed')
-        with self.assertRaises(ValueError): vt.resolve('visual.novel.scene-editor',1920,1080,variant='unknown')
-        bad=vt.get('visual.novel.branch-graph'); bad['variants']['standard']['graph']=[.9,.9,.2,.2]
+        copy=vt.get('visual.showroom.object-stage'); copy['name']='changed'
+        self.assertNotEqual(vt.get('visual.showroom.object-stage')['name'],'changed')
+        with self.assertRaises(ValueError): vt.resolve('visual.showroom.object-stage',1920,1080,variant='unknown')
+        bad=vt.get('visual.showroom.object-stage'); bad['variants']['standard']['stage']=[.9,.9,.2,.2]
         with self.assertRaises(ValueError): vt.validate_screen(bad)
 
     def test_exact_sticker_slot_binding_is_retained(self):
