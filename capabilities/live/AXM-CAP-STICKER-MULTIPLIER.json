@@ -42,11 +42,6 @@
       "id": "AXM-01-PROVENANCE-A-012-observation",
       "role": "uses",
       "basis": "Every multiplied sticker retains an exact source pin and canonical multiplication-plan digest in provenance."
-    },
-    {
-      "id": "AXM-10-ASSET-PIPELINE-C-006-asset-variant",
-      "role": "implements",
-      "basis": "Creates bounded reusable asset variants from exact source state without rewriting the source asset body."
     }
   ],
   "implementation": {
