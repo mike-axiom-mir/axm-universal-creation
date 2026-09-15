@@ -26,6 +26,7 @@ def _register_extension_builtins() -> None:
     from .sticker_clearance_contact import StickerClearanceContactError, operate_sticker_clearance_contact
     from .sticker_geometry_calipers import StickerGeometryCaliperError, operate_sticker_geometry_calipers
     from .sticker_multiplier import StickerMultiplierError, operate_sticker_multiplier
+    from .workshop_bounded_planner import WorkshopBoundedPlannerError, operate_workshop_bounded_planner
 
     # The universal body contains twenty reusable lenses. Allow up to twenty
     # challenge-derived registry specialists so the declared 40-person maximum
@@ -207,6 +208,13 @@ def _register_extension_builtins() -> None:
             details = getattr(exc, "details", {})
             raise _capabilities.CapabilityError(str(exc), details) from exc
 
+    def workshop_bounded_planner_surface(root, inputs):
+        try:
+            return operate_workshop_bounded_planner(root, inputs)
+        except (WorkshopBoundedPlannerError, ValueError, TypeError) as exc:
+            details = getattr(exc, "details", {})
+            raise _capabilities.CapabilityError(str(exc), details) from exc
+
     def sticker_multiplier_surface(root, inputs):
         try:
             return operate_sticker_multiplier(root, inputs)
@@ -233,6 +241,7 @@ def _register_extension_builtins() -> None:
     _capabilities.BUILTINS["builtin:workshop_construction_loop"] = workshop_construction_surface
     _capabilities.BUILTINS["builtin:sticker_geometry_calipers"] = sticker_geometry_calipers_surface
     _capabilities.BUILTINS["builtin:sticker_clearance_contact"] = sticker_clearance_contact_surface
+    _capabilities.BUILTINS["builtin:workshop_bounded_planner"] = workshop_bounded_planner_surface
     _capabilities.BUILTINS["builtin:sticker_multiplier"] = sticker_multiplier_surface
     _capabilities.BUILTINS["builtin:inspect_fabric_sources"] = fabric_source_surface
 
