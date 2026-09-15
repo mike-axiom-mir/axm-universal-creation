@@ -3,13 +3,7 @@
   "version": "0.1.0",
   "status": "live",
   "purpose": "Externalize rough spatial design intent as a deterministic sketch and give human, script, AI, or machine builders ruler/straightedge/spacing/square/level/symmetry/caliper-style evidence while they construct against that plan.",
-  "handles": [
-    "design-workshop",
-    "design-sketch",
-    "measure-design",
-    "compare-design-to-sketch",
-    "materialize-design-sketch"
-  ],
+  "handles": ["design-workshop", "design-sketch", "measure-design", "compare-design-to-sketch", "materialize-design-sketch"],
   "input_contract": {
     "required": ["operation"],
     "required_by_operation": {
@@ -28,43 +22,13 @@
   },
   "output_contract": {
     "kind": "design-sketch-validation-measurement-or-schematic-project",
-    "contains": [
-      "exact sketch digest",
-      "per-part position/size/orientation residuals",
-      "distance, alignment, spacing, angle, orientation, symmetry and size gauge evidence",
-      "explicit PASS/FAIL/HOLD without hidden repair",
-      "optional schematic front/top/side SVG paired with exact sketch JSON"
-    ]
+    "contains": ["exact sketch digest", "per-part position/size/orientation residuals", "distance, alignment, spacing, angle, orientation, symmetry and size gauge evidence", "explicit PASS/FAIL/HOLD without hidden repair", "optional schematic front/top/side SVG paired with exact sketch JSON"]
   },
   "dependencies": [],
-  "relationships": [
-    "sits beside Design Fabric as a pre-build/blockout and during-build measurement surface",
-    "lets the machine externalize rough spatial intent instead of relying only on language or hidden context",
-    "returns numeric residuals that can feed later repair planning without silently applying a repair"
-  ],
-  "anatomy_refs": [
-    {
-      "id": "AXM-12-RENDERING-MATERIALS-C-007-material-graph",
-      "role": "uses",
-      "basis": "Keeps rough visual-spatial intent explicit while separating schematic intent from final rendering evidence."
-    },
-    {
-      "id": "AXM-01-PROVENANCE-A-012-observation",
-      "role": "uses",
-      "basis": "Observed construction state is digest-bound to the exact sketch before numeric comparison."
-    }
-  ],
-  "implementation": {
-    "kind": "DETERMINISTIC_SOURCE",
-    "entrypoint": "builtin:design_workshop",
-    "source": "src/axm_uc/design_workshop.py via src/axm_uc/__init__.py registration"
-  },
-  "limitations": [
-    "sketch parts are bounded simple shape/frame/size intent, not final mesh geometry",
-    "schematic SVG projection does not rasterize rotated extents and never replaces exact frame data",
-    "measurements compare caller-supplied frames and sizes; no camera/screenshot inference is performed",
-    "PASS does not prove mesh fit, collision clearance, strength, manufacturability, physics, semantics, aesthetics or target-engine quality"
-  ],
+  "relationships": ["sits beside Design Fabric as a pre-build/blockout and during-build measurement surface", "lets the machine externalize rough spatial intent instead of relying only on language or hidden context", "returns numeric residuals that can feed later repair planning without silently applying a repair"],
+  "anatomy_refs": [],
+  "implementation": {"kind": "DETERMINISTIC_SOURCE", "entrypoint": "builtin:design_workshop", "source": "src/axm_uc/design_workshop.py via src/axm_uc/__init__.py registration"},
+  "limitations": ["sketch parts are bounded simple shape/frame/size intent, not final mesh geometry", "schematic SVG projection does not rasterize rotated extents and never replaces exact frame data", "measurements compare caller-supplied frames and sizes; no camera/screenshot inference is performed", "PASS does not prove mesh fit, collision clearance, strength, manufacturability, physics, semantics, aesthetics or target-engine quality"],
   "persistent_state": null,
   "root_fit": {
     "truth": {"fit": true, "basis": "Every measurement reports explicit numeric residuals against declared tolerances and unobserved parts HOLD instead of being guessed."},
