@@ -1,0 +1,74 @@
+{
+  "id": "AXM-CAP-WORKSHOP-BOUNDED-PLANNER",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Search or accept bounded exact 3D sticker candidate pools for every Design Workshop sketch part, assemble candidate combinations only in an ephemeral registry, measure each candidate with actual triangle geometry and optional exact-sketch clearance/contact requirements, reject non-PASS constructions, minimize explicit numeric size error among the remaining candidates, protect a passing incumbent unless a candidate strictly improves that numeric objective, and retain a selected construction only through an explicit immutable write request.",
+  "handles": [
+    "workshop-bounded-planner",
+    "plan-workshop-construction",
+    "select-measured-sticker-assembly",
+    "retain-measured-sticker-assembly"
+  ],
+  "input_contract": {
+    "required": ["operation"],
+    "required_by_operation": {
+      "preview-workshop-plan": ["database", "sketch", "planner"],
+      "retain-workshop-plan": ["database", "sketch", "planner", "retention"]
+    },
+    "properties": {
+      "operation": "inspect-workshop-planner, preview-workshop-plan, or retain-workshop-plan",
+      "database": "local UC sticker SQLite registry; relative paths must stay in creations/.axm-build or may be outside the machine body",
+      "sketch": "exact axm.design-sketch/v0.1 body",
+      "planner": "axm.workshop-bounded-planner/v0.1 request covering every sketch part with either exact candidate pins or a bounded exact registry tag/socket/adapter query; may bind an exact clearance companion plan and incumbent assembly",
+      "retention": "explicit id/name/version/socket/tags/origin for a new immutable selected assembly; ignored when the protected incumbent remains selected"
+    }
+  },
+  "output_contract": {
+    "kind": "bounded-workshop-candidate-evaluation-selection-or-retention",
+    "contains": [
+      "resolved exact candidate pools and planner digest",
+      "bounded Cartesian combination count",
+      "per-candidate geometry/clearance evidence digests and numeric size-error score",
+      "explicit rejected/non-PASS candidates",
+      "protected incumbent evidence when supplied",
+      "selected candidate only after all required gates PASS",
+      "strict-improvement outcome or incumbent retention reason",
+      "optional new immutable retained assembly and post-retention measurement receipts"
+    ]
+  },
+  "dependencies": [
+    "AXM-CAP-DESIGN-WORKSHOP",
+    "AXM-CAP-WORKSHOP-CONSTRUCTION-LOOP",
+    "AXM-CAP-STICKER-GEOMETRY-CALIPERS",
+    "AXM-CAP-STICKER-CLEARANCE-CONTACT"
+  ],
+  "relationships": [
+    "turns the existing sketch, sticker registry, real geometry calipers, and clearance/contact instruments into one bounded selection loop rather than adding another isolated generator",
+    "registry metadata only narrows candidate pools; exact pins and actual measured geometry decide structural acceptance",
+    "preview candidates live in a temporary registry and cannot pollute the source sticker library",
+    "an explicitly supplied incumbent is the continuity baseline and survives ties or non-improving alternatives",
+    "retained assemblies remain ordinary axm.sticker/v1 immutable assemblies and therefore compose with the existing sticker fabric"
+  ],
+  "anatomy_refs": [],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:workshop_bounded_planner",
+    "source": "src/axm_uc/workshop_bounded_planner.py via src/axm_uc/__init__.py registration; matching preview/retain JSON operations are exposed through src/axm_uc/sticker_create.py"
+  },
+  "limitations": [
+    "v0.1 evaluates at most 8 candidates per part, 32 sketch slots, 512 registry query matches, and 256 Cartesian candidate assemblies",
+    "the only optimization objective is actual numeric part-size agreement after every required geometry and clearance/contact gate passes",
+    "clearance requirements are acceptance gates, not a hidden preference for larger or smaller gaps",
+    "candidate metadata, names, tags, rough sketch roles, and prose are not treated as proof of semantic suitability or visual quality",
+    "v0.1 does not infer parameter overrides, deform geometry, generate missing assets, or choose visual style",
+    "rendered appearance, aesthetic quality, gameplay feel, physics, swept motion and engine acceptance require separate evidence and are not silently scored",
+    "retention is explicit and immutable; planner selection is evidence-bearing state, not CANON authority"
+  ],
+  "persistent_state": null,
+  "root_fit": {
+    "truth": {"fit": true, "basis": "Every candidate is exact-pinned, evaluated with actual geometry evidence, and non-PASS or unavailable evidence remains rejected/HOLD rather than becoming a quality claim."},
+    "agency": {"fit": true, "basis": "The caller supplies the sketch, candidate search boundaries or exact pins, optional clearance requirements, incumbent, objective contract, and any explicit retention identity/provenance."},
+    "continuity": {"fit": true, "basis": "Preview is ephemeral, incumbents win without strict measured improvement, and retention creates a new immutable assembly instead of rewriting previous versions."},
+    "wisdom-before-speed": {"fit": true, "basis": "Candidate breadth and Cartesian work are bounded, query results become exact pins before testing, and the planner refuses to substitute unmeasured aesthetics or semantics for evidence."}
+  }
+}
