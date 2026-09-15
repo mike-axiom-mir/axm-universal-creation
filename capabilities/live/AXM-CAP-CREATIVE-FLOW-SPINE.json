@@ -1,0 +1,72 @@
+{
+  "id": "AXM-CAP-CREATIVE-FLOW-SPINE",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Discover, resolve, preflight and execute bounded multi-hand creative plans against the shared deterministic Creative Hands body without making AI the owner of those capabilities.",
+  "handles": [
+    "creative-flow",
+    "creative-hand-flow",
+    "creative-tool-orchestration"
+  ],
+  "input_contract": {
+    "required": [],
+    "properties": {
+      "mode": "summary, discover, plan or execute; defaults to execute when steps are supplied and discover otherwise",
+      "goal": "optional caller goal used only for deterministic token discovery in v1; prose alone never authorizes execution",
+      "discovery": "optional exact id/family/operation/query filters",
+      "state": "optional canonical candidate-state values available to plan steps",
+      "steps": "bounded explicit DAG steps using hand_id, recipe_id or a uniquely resolvable selector",
+      "expose": "optional named references to return alongside final candidate state"
+    }
+  },
+  "output_contract": {
+    "kind": "creative-flow-result",
+    "contains": [
+      "exact Creative Hands registry evidence",
+      "deterministic discovery or HOLD evidence",
+      "compiled dependency order and exact selected operation ids",
+      "per-step input/output digests and PASS receipts",
+      "candidate final-state digest on successful execution",
+      "explicit failure/HOLD without mutating supplied canonical state"
+    ]
+  },
+  "dependencies": [],
+  "relationships": [
+    "routes through PlatformHands.creativeHands rather than duplicating creative implementations",
+    "lets human code, deterministic recipes and AI-proposed plans use the same underlying hand body",
+    "keeps ambiguous selection and prose-only planning on HOLD rather than silently choosing"
+  ],
+  "anatomy_refs": [],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:creative_flow",
+    "source": "src/axm_uc/creative_flow.py",
+    "runtime_bridge": "capabilities/platform-hands/shared/asset-hands/creative-flow-bridge.js"
+  },
+  "limitations": [
+    "V1 does not invent an execution plan from arbitrary prose. A goal without explicit steps returns deterministic candidates and HOLD_PLAN_REQUIRED.",
+    "Compatibility preflight proves plan structure, exact operation existence, dependencies and state-reference availability; individual hand implementations remain authoritative for their own schema and parameter validation at execution.",
+    "Execution is an in-memory candidate transaction. V1 does not persist final creative state to a project file or machine canon by itself.",
+    "The local Node runtime used by Platform Hands must be available. No network access is required.",
+    "Maximum explicit flow length is 128 steps and maximum encoded request size is 64 MiB."
+  ],
+  "persistent_state": null,
+  "root_fit": {
+    "truth": {
+      "fit": true,
+      "basis": "Every resolved operation id, plan digest, state digest, step dependency and execution receipt remains inspectable; ambiguous discovery holds instead of being narrated as certainty."
+    },
+    "agency": {
+      "fit": true,
+      "basis": "The caller supplies or accepts the plan. AI may propose the same explicit plan format but does not gain hidden execution authority or ownership of the hands."
+    },
+    "continuity": {
+      "fit": true,
+      "basis": "The supplied canonical state is cloned into candidate state and is not mutated by the flow runtime; failed plans return HOLD evidence rather than partially committing state."
+    },
+    "wisdom-before-speed": {
+      "fit": true,
+      "basis": "Plans are bounded, dependency-sorted and structurally preflighted before execution; selectors must resolve uniquely and each hand still enforces its own bounded contract."
+    }
+  }
+}
