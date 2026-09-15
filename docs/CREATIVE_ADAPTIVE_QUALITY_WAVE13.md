@@ -56,6 +56,24 @@ A time budget without observed throughput returns `HOLD_CALIBRATION_REQUIRED`. T
 
 Work units are deterministic planning weights, not milliseconds. State bytes are profile estimates used for preflight, not a claim that a future runtime allocation will exactly equal the estimate.
 
+## Explicit local calibration
+
+`adaptive-calibrate` locally executes a bounded known profile one to five times (default three), measures the actual wall-clock duration of those executions, and returns an `axm.creative-throughput-calibration/v1` receipt plus a reusable machine-policy patch containing `work_units_per_ms`.
+
+Calibration is explicit because it performs real bounded work. It is not silently triggered by `adaptive-plan`.
+
+The receipt binds:
+
+- exact profile id and realized calibration quality;
+- deterministic serial work-unit count;
+- exact current Creative Hands audit digest;
+- exact quality-profile registry digest;
+- execution result digests;
+- per-sample and median observed timing;
+- derived work units per millisecond.
+
+Timing is explicitly observational. The calibration digest may change when runtime scheduling, CPU load, Node version, host hardware or other execution conditions change. It is **not canonical creation truth, a persistent hardware identity, or a guarantee of future throughput**. A caller may feed the returned rate into a later machine budget and may recalibrate whenever runtime conditions materially change.
+
 ## Scheduler
 
 The resolver derives dependencies from retained `$state` references, then emits bounded concurrency groups. The schedule reports:
@@ -73,13 +91,14 @@ This distinction lets machine speed and future parallel execution improve withou
 The existing `creative-flow` live capability and `PlatformHands.creativeFlow` service gain:
 
 - `adaptive-plan` — resolve profile, quality, budgets, missing operations and schedule without executing;
-- `adaptive-execute` — explicitly authorize execution of the resolved plan through the same existing Creative Flow transaction.
+- `adaptive-execute` — explicitly authorize execution of the resolved plan through the same existing Creative Flow transaction;
+- `adaptive-calibrate` — explicitly execute a bounded known route to observe current local throughput and return a reusable policy patch.
 
 Ordinary `plan` mode remains unchanged: arbitrary prose without explicit steps still returns `HOLD_PLAN_REQUIRED`.
 
 ## Agency and continuity
 
-Adaptive execution is explicit. Quality degradation is off by default. A profile cannot silently broaden itself to an unknown goal. The supplied canonical state is still cloned into candidate state; held or failed work does not partially publish final state.
+Adaptive execution and calibration are explicit. Quality degradation is off by default. A profile cannot silently broaden itself to an unknown goal. The supplied canonical state is still cloned into candidate state; held or failed work does not partially publish final state.
 
 ## Verification
 
@@ -94,6 +113,7 @@ Adaptive execution is explicit. Quality degradation is off by default. A profile
 - step-budget adaptation;
 - throughput/time-budget adaptation where a faster calibrated machine can realize at least as much quality as a slower one;
 - `HOLD_CALIBRATION_REQUIRED` when time is supplied without observed throughput;
+- explicit local calibration produces positive measured throughput and a reusable machine-policy patch;
 - real `adaptive-execute` through the same Creative Flow executor, including a degraded execution.
 
-`tests/test_creative_flow.py` separately proves the adaptive modes cross the ordinary `UniversalCreationMachine.create(kind="creative-flow")` live-capability bridge.
+`tests/test_creative_flow.py` separately proves the adaptive planning/execution modes cross the ordinary `UniversalCreationMachine.create(kind="creative-flow")` live-capability bridge.
