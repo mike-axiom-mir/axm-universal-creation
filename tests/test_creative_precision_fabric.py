@@ -51,6 +51,9 @@ class CreativePrecisionFabricTests(unittest.TestCase):
     def test_sculpt_uv_topology_modifier_wave(self):
         self.run_node('creative-mesh-advanced-hands-selftest.js')
 
+    def test_creative_flow_spine(self):
+        self.run_node('creative-flow-selftest.js')
+
 
 if __name__ == '__main__':
     unittest.main()
