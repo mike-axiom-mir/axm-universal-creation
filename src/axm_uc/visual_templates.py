@@ -9,8 +9,10 @@ from __future__ import annotations
 
 from . import visual_template_core as _core
 from .visual_template_growth import extend_catalog as _extend_catalog
+from .visual_template_game_systems import extend_game_system_catalog as _extend_game_system_catalog
 
 _extend_catalog(vars(_core))
+_extend_game_system_catalog(vars(_core))
 _core.validate_catalog()
 
 __all__ = []
@@ -22,7 +24,7 @@ for _name in dir(_core):
 CATALOG_COMPOSITION = {
     "schema": "axm.visual-template-composition/v1",
     "core": "visual_template_core",
-    "extensions": ["visual_template_growth"],
+    "extensions": ["visual_template_growth", "visual_template_game_systems"],
     "counts": _core.validate_catalog(),
     "truth": "One v1 catalog composed deterministically from retained core plus explicit foundation extensions.",
 }
