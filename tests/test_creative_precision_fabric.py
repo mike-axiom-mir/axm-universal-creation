@@ -80,6 +80,9 @@ class CreativePrecisionFabricTests(unittest.TestCase):
     def test_quality_level_creation_gauntlet(self):
         self.run_node('creative-quality-gauntlet-selftest.js', echo=True)
 
+    def test_adaptive_quality_resolver_and_scheduler(self):
+        self.run_node('creative-quality-resolver-selftest.js', echo=True)
+
 
 if __name__ == '__main__':
     unittest.main()
