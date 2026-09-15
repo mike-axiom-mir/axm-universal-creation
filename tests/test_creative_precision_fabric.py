@@ -54,6 +54,9 @@ class CreativePrecisionFabricTests(unittest.TestCase):
     def test_creative_flow_spine(self):
         self.run_node('creative-flow-selftest.js')
 
+    def test_precision_modeling_wave(self):
+        self.run_node('creative-mesh-modeling-hands-selftest.js')
+
 
 if __name__ == '__main__':
     unittest.main()
