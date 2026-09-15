@@ -8,7 +8,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src'))
 from axm_uc import visual_templates as vt
 
 SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
-PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell","visual.keyart.core","visual.cards.core","visual.cinematic.core","visual.broadcast.core","visual.diagram.core","visual.atlas.core","visual.novel.core","visual.showroom.core","visual.music.core","visual.presentation.core","visual.character.core","visual.configurator.core","visual.motion.core","visual.brand.core","visual.environment.core","visual.vfx.core","visual.mission.core")
+PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell","visual.keyart.core","visual.cards.core","visual.cinematic.core","visual.broadcast.core","visual.diagram.core","visual.atlas.core","visual.novel.core","visual.showroom.core","visual.music.core","visual.presentation.core","visual.character.core","visual.configurator.core","visual.motion.core","visual.brand.core","visual.environment.core","visual.vfx.core","visual.mission.core","visual.hud.core")
 
 def _write(project,target):
     target.mkdir(); out=[]
@@ -25,7 +25,7 @@ def main(argv):
     out.mkdir(parents=True)
     try:
         counts=vt.validate_catalog()
-        if counts!={'styles':29,'primitives':236,'screens':274,'products':27}: raise AssertionError(counts)
+        if counts!={'styles':30,'primitives':246,'screens':284,'products':28}: raise AssertionError(counts)
         evidence=[]
         for pid in PRODUCTS:
             expected=vt.get(pid)
@@ -62,33 +62,34 @@ def main(argv):
             ('visual.environment.core',1920,1080,'environment','AXM Environment and Level Reference Foundation'),
             ('visual.vfx.core',1920,1080,'vfx','AXM VFX and Particle Foundation'),
             ('visual.mission.core',1920,1080,'mission','AXM Quest and Mission Flow Foundation'),
+            ('visual.hud.core',1920,1080,'hud','AXM Source-Bound HUD Theme Foundation'),
         )
         outputs=[]
         for pid,w,h,folder,title in galleries: outputs+=_write(vt.product_project(pid,w,h,title),out/folder)
         outputs+=_write(vt.screen_project('product.mobile.home',1080,1920,'AXM Mobile Foundation'),out/'mobile-home')
-        product=vt.get('visual.mission.core')
-        required={'visual.mission.project-hub','visual.mission.objectives','visual.mission.conditions','visual.mission.branch-flow','visual.mission.world-bindings','visual.mission.rewards-outcomes','visual.mission.failure-retry','visual.mission.runtime-state','visual.mission.variants','visual.mission.review-export'}
-        if set(product['screens'])!=required: raise AssertionError('mission pack lost required surfaces')
+        product=vt.get('visual.hud.core')
+        required={'visual.hud.project-hub','visual.hud.components','visual.hud.layout','visual.hud.data-bindings','visual.hud.readability','visual.hud.alerts-feedback','visual.hud.platform-input','visual.hud.theme-skin','visual.hud.compare-preview','visual.hud.review-export'}
+        if set(product['screens'])!=required: raise AssertionError('hud pack lost required surfaces')
         checks={
-            'mission_identity_source_context':vt.PRIMITIVES['mission-source']['identity_source_version_context_required'],
-            'objective_identity_status_source':vt.PRIMITIVES['objective-state']['identity_type_status_source_required'],
-            'condition_subject_operator_value_source':vt.PRIMITIVES['mission-condition']['subject_operator_value_source_required'],
-            'edge_from_to_type_conditions':vt.PRIMITIVES['mission-edge']['from_to_type_conditions_required'],
-            'world_target_source_status':vt.PRIMITIVES['mission-world-reference']['target_source_status_required'],
-            'reward_source_amount_status':vt.PRIMITIVES['mission-reward-reference']['reward_source_amount_status_required'],
-            'failure_recovery_consequence':vt.PRIMITIVES['mission-failure-recovery']['condition_recovery_consequence_required'],
-            'runtime_flag_identity_value_source':vt.PRIMITIVES['mission-runtime-flag']['identity_value_source_required'],
-            'variant_base_delta_context':vt.PRIMITIVES['mission-variant']['base_delta_context_required'],
-            'export_requirements_visible':vt.PRIMITIVES['mission-export-target']['requirements_must_be_visible'],
+            'hud_identity_source_context':vt.PRIMITIVES['hud-source']['identity_source_version_context_required'],
+            'component_identity_role_source':vt.PRIMITIVES['hud-component']['identity_role_source_required'],
+            'layout_component_region_constraints':vt.PRIMITIVES['hud-layout-anchor']['component_region_constraints_required'],
+            'binding_subject_field_source_freshness':vt.PRIMITIVES['hud-data-binding']['subject_field_source_freshness_required'],
+            'readability_target_context_threshold_source':vt.PRIMITIVES['hud-readability-rule']['target_context_threshold_source_required'],
+            'safe_region_viewport_platform_source':vt.PRIMITIVES['hud-safe-region']['viewport_platform_source_required'],
+            'alert_source_severity_channels':vt.PRIMITIVES['hud-alert-state']['source_severity_channels_required'],
+            'platform_base_delta_device_input':vt.PRIMITIVES['hud-platform-variant']['base_delta_device_input_required'],
+            'theme_base_token_component_delta':vt.PRIMITIVES['hud-theme-variant']['base_token_component_delta_required'],
+            'export_requirements_visible':vt.PRIMITIVES['hud-export-target']['requirements_must_be_visible'],
         }
-        if not all(checks.values()): raise AssertionError('mission source/runtime contract failed')
+        if not all(checks.values()): raise AssertionError('hud source/readability contract failed')
         retained={
+            'mission_source':vt.PRIMITIVES['mission-source']['identity_source_version_context_required'],
+            'objective_state':vt.PRIMITIVES['objective-state']['identity_type_status_source_required'],
             'vfx_source':vt.PRIMITIVES['vfx-source']['identity_source_version_purpose_required'],
             'vfx_interaction':vt.PRIMITIVES['vfx-interaction-hook']['subject_event_response_source_required'],
             'environment_source':vt.PRIMITIVES['environment-source']['identity_source_version_scope_required'],
-            'environment_measurement':vt.PRIMITIVES['environment-measurement']['value_unit_source_precision_required'],
             'brand_asset':vt.PRIMITIVES['brand-asset-source']['identity_source_version_provenance_required'],
-            'brand_clearspace':vt.PRIMITIVES['brand-clearspace-rule']['target_measurement_basis_required'],
             'motion_state':vt.PRIMITIVES['motion-state']['source_target_identity_required'],
             'config_digest':vt.PRIMITIVES['configuration-state']['base_attachment_variant_digest_required'],
             'character_identity':vt.PRIMITIVES['character-source']['identity_source_version_required'],
@@ -99,7 +100,7 @@ def main(argv):
             'atlas_coordinate':vt.PRIMITIVES['map-coordinate']['system_source_precision_required'],
         }
         if not all(retained.values()): raise AssertionError('prior visual source boundary failed')
-        receipt={'schema':'axm.visual-template-proof/v23','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'mission_checks':checks,'retained_checks':retained,'truth':'Offline structural evidence only. Mission balance, narrative quality, runtime branch reachability, reward correctness, map correctness and gameplay acceptance were not observed.'}
+        receipt={'schema':'axm.visual-template-proof/v24','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'hud_checks':checks,'retained_checks':retained,'truth':'Offline structural evidence only. Gameplay correctness, real-device readability, accessibility acceptance, input ergonomics, target-engine rendering and aesthetic quality were not observed.'}
         (out/'receipt.json').write_text(json.dumps(receipt,indent=2,sort_keys=True),encoding='utf-8')
         print(json.dumps(receipt,indent=2,sort_keys=True))
     except BaseException:
