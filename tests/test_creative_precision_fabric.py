@@ -30,6 +30,9 @@ class CreativePrecisionFabricTests(unittest.TestCase):
     def test_creative_recipe_composition(self):
         self.run_node('creative-recipes-selftest.js')
 
+    def test_executable_creative_hand_wave(self):
+        self.run_node('creative-hands-selftest.js')
+
 
 if __name__ == '__main__':
     unittest.main()
