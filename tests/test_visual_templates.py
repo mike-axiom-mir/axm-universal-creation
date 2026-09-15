@@ -62,7 +62,9 @@ class VisualTemplateTests(unittest.TestCase):
                 pins=vt.install_builtins(registry)
                 self.assertEqual(len(pins),235)
                 character=registry.search(adapter=vt.ADAPTER,tag='character',limit=100)['entries']
-                self.assertEqual(len(character),10)
+                self.assertEqual(len(character),12)
+                expected={f'visual.visual.character.{name}' for name in ('project-hub','turnaround','proportions','expressions','poses','materials','callouts','scale-variants','reference-board','review-export')}
+                self.assertTrue(expected <= {entry['id'] for entry in character})
                 d=registry.get('visual.visual.character.turnaround',1)
                 self.assertEqual(d['recipe']['visual_template']['schema'],vt.SCHEMA)
                 self.assertNotIn('"latest"',json.dumps(d,sort_keys=True))
