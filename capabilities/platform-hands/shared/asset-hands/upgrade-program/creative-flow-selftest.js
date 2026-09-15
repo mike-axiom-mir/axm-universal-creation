@@ -8,7 +8,17 @@ const summary=Flow.summary();
 assert.equal(summary.state,'EXECUTABLE');
 assert(summary.public_hands>=314);
 assert(summary.callable_recipes>=321);
-assert.equal(Platform.creativeFlow.summary().digest,summary.digest);
+const publicSummary=Platform.creativeFlow.summary();
+assert.equal(publicSummary.state,summary.state);
+assert.equal(publicSummary.public_hands,summary.public_hands);
+assert.equal(publicSummary.callable_recipes,summary.callable_recipes);
+assert.equal(publicSummary.hand_audit_digest,summary.hand_audit_digest);
+assert.equal(publicSummary.recipe_registry_digest,summary.recipe_registry_digest);
+assert.equal(publicSummary.core_flow_digest,summary.digest);
+assert.equal(publicSummary.adaptive_quality,true);
+assert.deepEqual(publicSummary.adaptive_modes,['adaptive-plan','adaptive-execute','adaptive-calibrate']);
+assert.equal(publicSummary.quality_profiles,1);
+assert.notEqual(publicSummary.digest,summary.digest);
 
 const exact=Flow.discover({family:'mesh-transform',operation:'scale',require_unique:true});
 assert.equal(exact.status,'MATCHES');
@@ -98,4 +108,4 @@ assert.throws(()=>Flow.compile({state:{mesh:{x:1}},steps:[
   {id:'overwrite',hand_id:'creative.mesh-primitive.cube',args:{spec:{id:'x',detail:8}},save_as:'mesh'}
 ]}),/cannot overwrite initial state/);
 
-console.log(JSON.stringify({status:'PASS',summary:summary.digest,plan:compiled.digest,result:result.digest,cross:cross.digest,modeling_discovery:modeling.digest,receipts:result.receipts.map((row)=>row.digest),failure:failure.failure.digest},null,2));
+console.log(JSON.stringify({status:'PASS',summary:summary.digest,public_summary:publicSummary.digest,plan:compiled.digest,result:result.digest,cross:cross.digest,modeling_discovery:modeling.digest,receipts:result.receipts.map((row)=>row.digest),failure:failure.failure.digest},null,2));

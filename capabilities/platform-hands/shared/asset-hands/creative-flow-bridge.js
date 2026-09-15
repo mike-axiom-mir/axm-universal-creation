@@ -1,6 +1,6 @@
 'use strict';
 
-const Flow=require('./upgrade-program/creative-flow');
+const Flow=require('./creative-flow-service');
 const MAX_STDIN=64*1024*1024;
 let chunks=[],bytes=0;
 process.stdin.on('data',(chunk)=>{bytes+=chunk.length;if(bytes>MAX_STDIN){process.stderr.write('creative flow request exceeds 64 MiB\n');process.exitCode=2;process.stdin.pause();return;}chunks.push(chunk);});

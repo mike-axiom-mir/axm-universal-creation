@@ -1,13 +1,27 @@
 'use strict';
 
+const U=require('./upgrade-program/foundation-utils');
 const Flow=require('./upgrade-program/creative-flow');
+const Quality=require('./upgrade-program/creative-quality-resolver');
 
+const ADAPTIVE_RESULT_SCHEMA='axm.creative-flow-adaptive-result/v1';
+const CALIBRATION_SCHEMA='axm.creative-throughput-calibration/v1';
+function summary(){const base=Flow.summary(),profiles=Quality.registry(),value=Object.assign({},base,{version:'1.2.0',core_flow_digest:base.digest,adaptive_quality:true,adaptive_modes:['adaptive-plan','adaptive-execute','adaptive-calibrate'],quality_profile_registry_digest:profiles.digest,quality_profiles:profiles.profiles.length,adaptive_execution_truth:'Known deterministic quality profiles can author explicit bounded plans from goal + quality + machine budget. Unknown goals still HOLD; current concurrency schedule is planning evidence and execution remains serial. Throughput calibration is explicit and observational.'});value.digest=U.sha256(value);return value;}
+function adaptivePlan(request){return Quality.resolve(request||{});}
+function adaptiveExecute(request){const resolution=Quality.resolve(request||{});if(!['READY','READY_DEGRADED'].includes(resolution.status)){const value={schema:ADAPTIVE_RESULT_SCHEMA,version:'1.0.0',status:resolution.status,candidate_ready:false,requested_quality:resolution.requested_quality,realized_quality:null,resolution};value.digest=U.sha256(value);return value;}const execution=Flow.execute(resolution.execution_request),status=execution.status==='PASS'?(resolution.status==='READY_DEGRADED'?'PASS_DEGRADED':'PASS'):execution.status,value={schema:ADAPTIVE_RESULT_SCHEMA,version:'1.0.0',status,candidate_ready:execution.candidate_ready===true,requested_quality:resolution.requested_quality,realized_quality:resolution.realized_quality,degraded:resolution.degraded===true,profile_id:resolution.profile_id,schedule:resolution.schedule,resolution_digest:resolution.digest,execution};value.digest=U.sha256({status:value.status,requested_quality:value.requested_quality,realized_quality:value.realized_quality,degraded:value.degraded,profile_id:value.profile_id,schedule_digest:value.schedule&&value.schedule.digest,resolution_digest:value.resolution_digest,execution_digest:execution.digest||execution.final_state_digest||execution.plan_digest});return value;}
+function median(values){const sorted=values.slice().sort((a,b)=>a-b),mid=Math.floor(sorted.length/2);return sorted.length%2?sorted[mid]:(sorted[mid-1]+sorted[mid])/2;}
+function adaptiveCalibrate(request){request=U.clone(request||{});const samples=request.samples==null?3:Math.floor(U.finite(request.samples,'calibration samples'));U.ensure(samples>=1&&samples<=5,'calibration samples outside 1..5');const machine=Object.assign({},request.machine||{});delete machine.time_budget_ms;delete machine.work_units_per_ms;delete machine.allow_quality_degrade;const calibrationRequest={goal:request.goal,profile_id:request.profile_id,quality:request.quality==null?.45:request.quality,machine};const resolution=Quality.resolve(calibrationRequest);if(!['READY','READY_DEGRADED'].includes(resolution.status)){const value={schema:CALIBRATION_SCHEMA,version:'1.0.0',status:resolution.status,receipt:null,resolution};value.digest=U.sha256(value);return value;}const timings=[],executionDigests=[];for(let i=0;i<samples;i++){const start=process.hrtime.bigint(),execution=Flow.execute(resolution.execution_request),end=process.hrtime.bigint();if(execution.status!=='PASS'){const value={schema:CALIBRATION_SCHEMA,version:'1.0.0',status:'HOLD_CALIBRATION_EXECUTION_FAILED',receipt:null,failure:execution};value.digest=U.sha256(value);return value;}timings.push(Number(end-start)/1e6);executionDigests.push(execution.digest||execution.final_state_digest);}const medianMs=median(timings),rate=resolution.estimate.serial_work_units/Math.max(medianMs,1e-9),receipt={schema:CALIBRATION_SCHEMA,version:'1.0.0',status:'PASS',profile_id:resolution.profile_id,quality:resolution.realized_quality,serial_work_units:resolution.estimate.serial_work_units,samples,timings_ms:timings.map((x)=>Math.round(x*1000)/1000),median_ms:Math.round(medianMs*1000)/1000,work_units_per_ms:Math.round(rate*1000000)/1000000,hand_audit_digest:resolution.hand_audit_digest,quality_profile_registry_digest:Quality.registry().digest,execution_digests:executionDigests,scope:'observational throughput for this local runtime/process class; not canonical creation truth and not a hardware identity claim'};receipt.digest=U.sha256(receipt);const value={schema:CALIBRATION_SCHEMA,version:'1.0.0',status:'PASS',receipt,machine_policy_patch:{work_units_per_ms:receipt.work_units_per_ms},truth:'Calibration executes a bounded known profile locally. Its timing is observational and must be refreshed when runtime conditions materially change.'};value.digest=U.sha256(value);return value;}
+function run(request){request=request||{};const mode=String(request.mode||'');if(mode==='adaptive-plan')return adaptivePlan(request);if(mode==='adaptive-execute')return adaptiveExecute(request);if(mode==='adaptive-calibrate')return adaptiveCalibrate(request);return Flow.run(request);}
 module.exports=Object.freeze({
-  version:'1.0.0',
-  summary:Flow.summary,
+  version:'1.2.0',
+  summary,
   catalog:Flow.catalog,
   discover:Flow.discover,
   compile:Flow.compile,
   execute:Flow.execute,
-  run:Flow.run,
+  adaptivePlan,
+  adaptiveExecute,
+  adaptiveCalibrate,
+  qualityProfiles:Quality.registry,
+  run,
 });
