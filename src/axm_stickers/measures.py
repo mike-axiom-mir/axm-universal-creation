@@ -8,6 +8,10 @@ import re
 from typing import Any
 
 from .math import convert, resolve_family, unit_info, validate_family
+from .measurement import (measurement_value as measured_value,
+                          source_summary as measurement_source_summary,
+                          standard_uncertainty,
+                          validate_measurement_result)
 
 SCHEMA = "axm.known-measure/v1"
 BASES = {"si_definition", "conventional", "defined_unit"}
@@ -114,19 +118,30 @@ def measure_value(measure_id: str, to_unit: str | None = None) -> float:
 
 def resolve_family_with_measures(family: Any, *, variant: str | None = None,
                                  overrides: dict[str, Any] | None = None,
-                                 measure_overrides: dict[str, str] | None = None) -> dict[str, Any]:
+                                 measure_overrides: dict[str, str] | None = None,
+                                 measurement_overrides: dict[str, Any] | None = None) -> dict[str, Any]:
     family = validate_family(family)
-    if measure_overrides is None:
+    if measure_overrides is None and measurement_overrides is None:
         return resolve_family(family, variant=variant, overrides=overrides)
-    if not isinstance(measure_overrides, dict) or len(measure_overrides) > 256:
+    if measure_overrides is not None and (not isinstance(measure_overrides, dict) or len(measure_overrides) > 256):
         raise ValueError("measure_overrides must be a bounded object")
-    if set(measure_overrides) - set(family["parameters"]):
-        raise ValueError("known measures may only target declared parameters")
-    if overrides is not None and set(overrides) & set(measure_overrides):
-        raise ValueError("numeric and known-measure overrides cannot target the same parameter")
+    if measurement_overrides is not None and (not isinstance(measurement_overrides, dict) or len(measurement_overrides) > 256):
+        raise ValueError("measurement_overrides must be a bounded object")
+
+    numeric_keys = set(overrides or {})
+    known_keys = set(measure_overrides or {})
+    measured_keys = set(measurement_overrides or {})
+    all_evidence_keys = known_keys | measured_keys
+    if all_evidence_keys - set(family["parameters"]):
+        raise ValueError("evidence overrides may only target declared parameters")
+    if numeric_keys & all_evidence_keys or known_keys & measured_keys:
+        raise ValueError("numeric, known-measure and measurement overrides cannot target the same parameter")
+
     numeric = dict(overrides or {})
-    used = {}
-    for parameter, measure_id in measure_overrides.items():
+    used_known: dict[str, dict[str, Any]] = {}
+    used_measurements: dict[str, dict[str, Any]] = {}
+
+    for parameter, measure_id in (measure_overrides or {}).items():
         item = known_measure(measure_id)
         q = item["quantity"]
         spec = family["parameters"][parameter]
@@ -139,14 +154,42 @@ def resolve_family_with_measures(family: Any, *, variant: str | None = None,
             raise ValueError("known-measure provenance exceeds math source bound")
         spec["source"] = summary
         spec.pop("uncertainty", None)
-        used[parameter] = item
+        used_known[parameter] = item
+
+    for parameter, raw_record in (measurement_overrides or {}).items():
+        item = validate_measurement_result(raw_record)
+        spec = family["parameters"][parameter]
+        target_unit = spec["unit"]
+        numeric[parameter] = measured_value(item, target_unit)
+        spec["truth"] = "measured"
+        spec["source"] = measurement_source_summary(item)
+        spec["uncertainty"] = standard_uncertainty(item, target_unit)
+        used_measurements[parameter] = item
+
     result = resolve_family(family, variant=variant, overrides=numeric)
-    for parameter, item in used.items():
+    for parameter, item in used_known.items():
         result["parameters"][parameter]["selected_by"] = "known_measure"
         result["parameters"][parameter]["known_measure"] = copy.deepcopy(item)
-    result["known_measures"] = {parameter: item["id"] for parameter, item in used.items()}
+    for parameter, item in used_measurements.items():
+        record = result["parameters"][parameter]
+        record["selected_by"] = "measurement_result"
+        record["measurement_result"] = copy.deepcopy(item)
+        record["uncertainty_basis"] = (
+            "expanded_divided_by_coverage_factor"
+            if item["uncertainty"]["kind"] == "expanded"
+            else "reported_standard"
+        )
+    if used_known:
+        result["known_measures"] = {parameter: item["id"] for parameter, item in used_known.items()}
+    if used_measurements:
+        result["measurement_results"] = {parameter: item["id"] for parameter, item in used_measurements.items()}
     result["truth_boundary"] += (
-        " Known measures preserve basis, scope and source; a definition or convention is not automatically "
-        "evidence that a particular physical object or location has that value."
+        " Evidence overrides preserve their source and scope. Definitions/conventions are not object measurements; "
+        "measurement results retain a standard-equivalent input uncertainty, but derived uncertainty is not yet propagated."
     )
     return result
+
+
+def resolve_family_with_evidence(family: Any, **kwargs: Any) -> dict[str, Any]:
+    """Clear-name alias for callers combining known measures and measurements."""
+    return resolve_family_with_measures(family, **kwargs)
