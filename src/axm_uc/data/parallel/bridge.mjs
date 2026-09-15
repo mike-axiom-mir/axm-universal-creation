@@ -16,10 +16,21 @@ function worker(task, signal) {
   return new Promise((resolve, reject) => {
     const startedAt = Date.now();
     const child = spawn(job.python, ['-m', 'axm_uc.parallel_create', '--worker', task.input],
-      { cwd: job.root, env: process.env, stdio: ['ignore', 'pipe', 'pipe'] });
+      { cwd: job.root, env: process.env, stdio: ['ignore', 'pipe', 'pipe'], detached: process.platform !== 'win32' });
     children.add(child);
     let output = '', errors = '', failure;
-    const kill = reason => { failure ??= reason; child.kill('SIGKILL'); };
+    const kill = reason => {
+      if (failure) return;
+      failure = reason;
+      if (!child.pid) return;
+      if (process.platform === 'win32') {
+        // Studio owns a Node child: terminate the whole fixed local tool tree.
+        const killer = spawn('taskkill', ['/pid', String(child.pid), '/T', '/F'], {stdio:'ignore'});
+        killer.on('error', () => child.kill('SIGKILL'));
+      } else {
+        try { process.kill(-child.pid, 'SIGKILL'); } catch { child.kill('SIGKILL'); }
+      }
+    };
     const abort = () => kill(Error('creation cancelled'));
     signal.addEventListener('abort', abort, { once: true });
     if (signal.aborted) abort();

@@ -18,6 +18,7 @@ axm-effects = "axm_uc.procedural_effects:main"
 axm-stickers = "axm_stickers.__main__:main"
 axm-sticker-create = "axm_uc.sticker_create:main"
 axm-create-parallel = "axm_uc.parallel_create:main"
+axm-create-surface = "axm_uc.surface_creation:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}

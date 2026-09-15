@@ -20,10 +20,12 @@ from axm_stickers import Registry, instance
 from axm_stickers.assembly import import_library, library_bundle
 from .sticker_create import execute
 from .sticker_assembly import export_assembly
+from axm_stickers.assembly import CREATIVE
+from .creative_tasks import OPERATIONS as CREATIVE_OPERATIONS, execute_creative, export_creative, export_creative_sources
 
 SCHEMA = 'axm.parallel-creation/v1'
 MAX_BYTES = 48 * 1024 * 1024
-OPERATIONS = ('create_3d', 'save_assembly')
+OPERATIONS = ('create_3d', 'save_assembly') + CREATIVE_OPERATIONS
 DATA = Path(__file__).parent / 'data' / 'parallel'
 
 
@@ -52,6 +54,17 @@ def write(path, value):
 
 def references(value):
     if isinstance(value, dict):
+        if '$asset' in value:
+            ref = value['$asset']
+            if set(value) != {'$asset'} or not isinstance(ref,dict) or set(ref) != {'task','key'} or not all(isinstance(v,str) for v in ref.values()):
+                raise ValueError('asset reference requires task and key')
+            yield ref['task']
+            return
+        if '$task' in value:
+            if set(value) != {'$task'} or not isinstance(value['$task'],str):
+                raise ValueError('task reference requires a task ID')
+            yield value['$task']
+            return
         if '$instance' in value:
             if set(value) != {'$instance'} or not isinstance(value['$instance'], dict):
                 raise ValueError('invalid instance reference')
@@ -132,7 +145,10 @@ def run_worker(input_path):
         request = resolve_references(job['request'], definitions)
         if request.get('operation') not in OPERATIONS:
             raise ValueError('unsupported worker operation')
-        definition = execute(registry, request, path.parent)
+        if request['operation'] in CREATIVE_OPERATIONS:
+            definition = execute_creative(registry, request, path.parent, definitions)
+        else:
+            definition = execute(registry, request, path.parent)
         bundle = library_bundle(registry, definition['id'], definition['version'])
         write(path.parent / 'library.json', bundle)
         return {'root': bundle['root'], 'bundle_sha256': sha(encode(bundle)),
@@ -214,12 +230,19 @@ def build(plan, output, *, workers=4, timeout=120):
                     import_library(registry, bundle)
                 chosen = next(r['output']['root'] for r in receipt['outputs'] if r['taskId'] == plan['result'])
                 bundle = library_bundle(registry, chosen['id'], chosen['version'])
-                artifact = export_assembly(registry, chosen['id'], chosen['version'])
-                (staged / 'asset.glb').write_bytes(artifact['body'])
+                definition = registry.get(chosen['id'], chosen['version'])
+                if definition['adapter'] == CREATIVE:
+                    realization = export_creative(registry, definition, staged)
+                    realization['sources'] = export_creative_sources(registry, definition, staged)
+                    output_fields = {'asset_sha256':realization['sha256'], 'primary':realization['primary'], 'export':realization}
+                else:
+                    artifact = export_assembly(registry, chosen['id'], chosen['version'])
+                    (staged / 'asset.glb').write_bytes(artifact['body'])
+                    output_fields = {'glb_sha256':sha(artifact['body']), 'primary':'asset.glb', 'export':artifact['receipt']}
                 write(staged / 'library.json', bundle)
-            receipt['creation'] = {'plan_sha256': job['digest'], 'glb_sha256': sha(artifact['body']),
-                'result': chosen, 'export': artifact['receipt'], 'workers': workers,
-                'limits': 'Local authored rigid GLB assembly; no physics or engine playback acceptance.'}
+            receipt['creation'] = {'plan_sha256': job['digest'], **output_fields,
+                'result': chosen, 'workers': workers,
+                'limits': 'Local authored creation; no physics or engine playback acceptance.'}
             write(staged / 'plan.json', plan); write(staged / 'receipt.json', receipt)
             # Atomic no-clobber reservation, then move only into our own directory.
             output.mkdir()
