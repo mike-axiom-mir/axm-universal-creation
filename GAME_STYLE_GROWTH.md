@@ -26,7 +26,7 @@
 - Next: more bounded creation compositions, compatible precision tools from main,
   explicit 3D/channel binding with separate evidence. Free-form prompt interpretation
   is not implemented by this deterministic control.
-- Lane: codex/rts-reference-foundry; PR recorded on publication. Base includes
+- Lane: codex/rts-reference-foundry; PR #84. Base includes
   independent PR #83 without modifying its files.
 - Roots: Truth scopes claims to executed generation/replay and visible stills;
   Agency retains equal callable controls and Studio editing; Continuity preserves
