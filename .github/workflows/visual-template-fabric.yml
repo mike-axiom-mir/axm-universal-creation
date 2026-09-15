@@ -16,6 +16,7 @@ on:
       - 'src/axm_uc/visual_template_video_overlay.py'
       - 'src/axm_uc/visual_template_diagram.py'
       - 'src/axm_uc/visual_template_atlas.py'
+      - 'src/axm_uc/visual_template_novel.py'
       - 'src/axm_uc/visual_templates_cli.py'
       - 'tests/test_visual_templates.py'
       - 'tools/visual_template_proof.py'
@@ -29,6 +30,7 @@ on:
       - 'VIDEO_OVERLAY_TEMPLATE_PACK.md'
       - 'DIAGRAM_TEMPLATE_PACK.md'
       - 'ATLAS_TEMPLATE_PACK.md'
+      - 'NOVEL_TEMPLATE_PACK.md'
       - 'pyproject.toml'
       - '.github/workflows/visual-template-fabric.yml'
   pull_request:
@@ -46,6 +48,7 @@ on:
       - 'src/axm_uc/visual_template_video_overlay.py'
       - 'src/axm_uc/visual_template_diagram.py'
       - 'src/axm_uc/visual_template_atlas.py'
+      - 'src/axm_uc/visual_template_novel.py'
       - 'src/axm_uc/visual_templates_cli.py'
       - 'tests/test_visual_templates.py'
       - 'tools/visual_template_proof.py'
@@ -59,6 +62,7 @@ on:
       - 'VIDEO_OVERLAY_TEMPLATE_PACK.md'
       - 'DIAGRAM_TEMPLATE_PACK.md'
       - 'ATLAS_TEMPLATE_PACK.md'
+      - 'NOVEL_TEMPLATE_PACK.md'
       - 'pyproject.toml'
       - '.github/workflows/visual-template-fabric.yml'
   workflow_dispatch:
