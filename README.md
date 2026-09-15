@@ -56,6 +56,12 @@ For checking actual exported static triangles against footprint, floor,
 attachment-marker and collision requirements, see
 [STATIC_ASSET_CONTRACTS.md](STATIC_ASSET_CONTRACTS.md).
 
+For modular four-corner vehicle presentation traces that remain subordinate to
+caller-owned simulation state, see [RIGID_VEHICLE_MOTION.md](docs/RIGID_VEHICLE_MOTION.md).
+For deterministic PNG inspection of actual GLB geometry and sampled poses without
+a GPU, browser, Blender, NumPy, or Pillow, see
+[SOFTWARE_GLB_PREVIEW.md](docs/SOFTWARE_GLB_PREVIEW.md).
+
 ## Core rule
 
 > **Do not hide what the machine is.**

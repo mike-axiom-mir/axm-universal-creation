@@ -41,6 +41,8 @@ from .game_showcase_contract import game_showcase_catalog, publish_game_showcase
 from .game_functional_motion import game_functional_motion_catalog, publish_game_functional_motion
 from .game_animation_runtime import game_animation_runtime_catalog, publish_game_animation_replay
 from .game_pose_runtime import game_pose_runtime_catalog, publish_game_pose
+from .rigid_vehicle_motion import rigid_vehicle_motion_catalog, publish_rigid_vehicle_motion
+from .software_glb_preview import software_glb_preview_catalog, publish_glb_preview
 from .studio_compositor import studio_compositor_catalog, publish_studio_project, edit_studio_layers
 
 BASE_CATEGORIES = ["texture", "gradient", "material", "fixture", "decal", "palette"]
@@ -73,6 +75,8 @@ def combined_catalog() -> dict:
         "game_functional_motion": game_functional_motion_catalog(),
         "game_animation_runtime": game_animation_runtime_catalog(),
         "game_pose_runtime": game_pose_runtime_catalog(),
+        "rigid_vehicle_motion": rigid_vehicle_motion_catalog(),
+        "software_glb_preview": software_glb_preview_catalog(),
         "studio_compositor": studio_compositor_catalog(),
     }
 
@@ -99,6 +103,22 @@ def build_parser() -> argparse.ArgumentParser:
     functional.add_argument("path", help="new output directory; existing paths are never overwritten")
     sub.add_parser("animation-runtime-catalog", help="show deterministic clip clock and state execution")
     sub.add_parser("pose-runtime-catalog", help="show offline GLB pose, attachment and skin evaluation")
+    sub.add_parser("vehicle-motion-catalog", help="show explicit rigid vehicle presentation compilation")
+    vehicle = sub.add_parser("vehicle-motion-compose", help="compile vehicle samples into body, corner and wheel traces")
+    vehicle.add_argument("request", help="JSON rigid vehicle motion request")
+    vehicle.add_argument("path", help="new output directory; existing paths are never overwritten")
+    sub.add_parser("software-glb-preview-catalog", help="show deterministic renderer-independent GLB preview support")
+    preview = sub.add_parser("software-glb-preview", help="render actual GLB geometry and one sampled pose to PNG")
+    preview.add_argument("asset", help="embedded GLB accepted by the offline pose runtime")
+    preview.add_argument("output", help="new PNG path; existing files are never overwritten")
+    preview.add_argument("--clip")
+    preview.add_argument("--time", type=float, default=0.0, dest="time_s")
+    preview.add_argument("--loop", action="store_true")
+    preview.add_argument("--width", type=int, default=640)
+    preview.add_argument("--height", type=int, default=420)
+    preview.add_argument("--yaw", type=float, default=.72)
+    preview.add_argument("--elevation", type=float, default=.38)
+    preview.add_argument("--supersample", type=int, choices=(1, 2), default=2)
     sub.add_parser("studio-compositor-catalog", help="show imported Studio raster tools and runtime requirements")
     studio = sub.add_parser("studio-compose", help="compose PNG layers using the original Studio donor")
     studio.add_argument("project", help="editable Studio composition project JSON")
@@ -305,6 +325,19 @@ def main(argv: list[str] | None = None) -> int:
         result = game_animation_runtime_catalog()
     elif args.command == "pose-runtime-catalog":
         result = game_pose_runtime_catalog()
+    elif args.command == "vehicle-motion-catalog":
+        result = rigid_vehicle_motion_catalog()
+    elif args.command == "vehicle-motion-compose":
+        request = json.loads(Path(args.request).read_text(encoding="utf-8"))
+        result = publish_rigid_vehicle_motion(args.path, request)
+    elif args.command == "software-glb-preview-catalog":
+        result = software_glb_preview_catalog()
+    elif args.command == "software-glb-preview":
+        result = publish_glb_preview(
+            args.asset, args.output, width=args.width, height=args.height,
+            yaw=args.yaw, elevation=args.elevation, clip=args.clip,
+            time_s=args.time_s, loop=args.loop, supersample=args.supersample,
+        )
     elif args.command == "studio-compositor-catalog":
         result = studio_compositor_catalog()
     elif args.command in ("studio-compose", "studio-edit"):
