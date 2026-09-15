@@ -30,6 +30,7 @@ from .sticker_geometry_calipers import (
     measure_sticker_geometry,
 )
 from .sticker_multiplier import preview_multiplication, multiply_stickers
+from .workshop_bounded_planner import preview_workshop_plan, retain_workshop_plan
 from .procedural_3d import build_glb
 
 
@@ -104,6 +105,14 @@ def execute(registry,request,root):
         sketch=request.pop('sketch'); assembly=request.pop('assembly'); plan=request.pop('plan')
         if request: raise TypeError('unexpected compare_sketch_clearance arguments')
         return compare_sketch_clearance(registry,sketch,assembly,plan)
+    if operation=='preview_workshop_plan':
+        sketch=request.pop('sketch'); planner=request.pop('planner')
+        if request: raise TypeError('unexpected preview_workshop_plan arguments')
+        return preview_workshop_plan(registry,sketch,planner)
+    if operation=='retain_workshop_plan':
+        sketch=request.pop('sketch'); planner=request.pop('planner'); retention=request.pop('retention')
+        if request: raise TypeError('unexpected retain_workshop_plan arguments')
+        return retain_workshop_plan(registry,sketch,planner,retention)
     if operation=='propose_sketch_repair':
         sketch=request.pop('sketch'); assembly=request.pop('assembly')
         if request: raise TypeError('unexpected propose_sketch_repair arguments')
