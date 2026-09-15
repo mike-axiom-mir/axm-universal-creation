@@ -18,6 +18,11 @@ from .design_workshop_construction import (
 )
 from .sticker_adapter import register_glb, register_studio
 from .sticker_assembly import export_assembly
+from .sticker_geometry_calipers import (
+    compare_sticker_geometry,
+    measure_sticker_assembly_parts,
+    measure_sticker_geometry,
+)
 from .sticker_multiplier import preview_multiplication, multiply_stickers
 from .procedural_3d import build_glb
 
@@ -64,6 +69,18 @@ def execute(registry,request,root):
         sketch=request.pop('sketch'); assembly=request.pop('assembly')
         if request: raise TypeError('unexpected compare_sketch_assembly arguments')
         return compare_sticker_assembly(registry,sketch,assembly)
+    if operation=='measure_sticker_geometry':
+        sticker=request.pop('sticker')
+        if request: raise TypeError('unexpected measure_sticker_geometry arguments')
+        return measure_sticker_geometry(registry,sticker)
+    if operation=='measure_sticker_assembly_parts':
+        assembly=request.pop('assembly')
+        if request: raise TypeError('unexpected measure_sticker_assembly_parts arguments')
+        return measure_sticker_assembly_parts(registry,assembly)
+    if operation=='compare_sketch_geometry':
+        sketch=request.pop('sketch'); assembly=request.pop('assembly')
+        if request: raise TypeError('unexpected compare_sketch_geometry arguments')
+        return compare_sticker_geometry(registry,sketch,assembly)
     if operation=='propose_sketch_repair':
         sketch=request.pop('sketch'); assembly=request.pop('assembly')
         if request: raise TypeError('unexpected propose_sketch_repair arguments')
