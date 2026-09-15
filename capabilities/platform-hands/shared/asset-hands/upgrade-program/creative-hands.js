@@ -15,7 +15,13 @@ const RETOUCH=['clone','heal'];
 const VECTORS=['affine','quadratic','arc','simplify','smooth','regular-polygon','star','stroke-outline','rounded-rect'];
 const PIXELS=['palette-quantize','ordered-dither','error-diffusion','spritesheet','tilemap'];
 function title(id){return id.split(/[.-]/).map((v)=>v.charAt(0).toUpperCase()+v.slice(1)).join(' ');}
-function descriptor(family,operation,fn,outputs){const id='creative.'+family+'.'+operation;const value={schema:HAND_SCHEMA,version:'1.0.0',id,title:title(operation),family,operation,state:'EXECUTABLE',deterministic:true,function:fn,outputs:outputs||['application/json'],truth:'Executable UC-native deterministic operation; product influence is conceptual only and no external product code or UI is embedded.'};value.digest=U.sha256(value);return Object.freeze(value);}
+function limits(family,operation){
+  if(family==='filter'&&['box-blur','gaussian-blur','sharpen','high-pass'].includes(operation))return{radius:{min:1,max:7}};
+  if(family==='filter'&&operation==='median-blur')return{radius:{min:1,max:4}};
+  if(family==='brush'&&['blur','sharpen'].includes(operation))return{radius:{min:1,max:7}};
+  return{};
+}
+function descriptor(family,operation,fn,outputs){const id='creative.'+family+'.'+operation;const value={schema:HAND_SCHEMA,version:'1.0.0',id,title:title(operation),family,operation,state:'EXECUTABLE',deterministic:true,function:fn,outputs:outputs||['application/json'],limits:limits(family,operation),truth:'Executable UC-native deterministic operation; product influence is conceptual only and no external product code or UI is embedded.'};value.digest=U.sha256(value);return Object.freeze(value);}
 const DESCRIPTORS=Object.freeze([
   ...ADJUSTMENTS.map((op)=>descriptor('adjust',op,'applyAdjustment',['axm.precision-raster/v1'])),
   ...FILTERS.map((op)=>descriptor('filter',op,'filter',['axm.precision-raster/v1'])),
@@ -28,10 +34,11 @@ const BY_ID=new Map(DESCRIPTORS.map((d)=>[d.id,d]));
 function list(){return DESCRIPTORS.map((d)=>JSON.parse(JSON.stringify(d)));}
 function get(id){const d=BY_ID.get(String(id||''));return d?JSON.parse(JSON.stringify(d)):null;}
 function wrap(hand,result){const value={schema:RESULT_SCHEMA,version:'1.0.0',status:'EXECUTED',hand_id:hand.id,hand_digest:hand.digest,result};value.digest=U.sha256(value);return value;}
+function boundedSpec(hand,spec){const next=Object.assign({},spec||{}),radius=hand.limits&&hand.limits.radius;if(radius&&next.radius!=null){const value=U.finite(next.radius,hand.id+' radius');U.ensure(value>=radius.min&&value<=radius.max,hand.id+' radius outside '+radius.min+'..'+radius.max);next.radius=value;}return next;}
 function invoke(id,args){const hand=BY_ID.get(String(id||''));U.ensure(hand,'unknown creative executable hand: '+id);args=args||{};let result;
   if(hand.family==='adjust')result=Raster.applyAdjustment(args.image,Object.assign({},args.spec||{},{type:hand.operation}));
-  else if(hand.family==='filter')result=Raster.filter(args.image,Object.assign({},args.spec||{},{type:hand.operation}));
-  else if(hand.family==='brush'){const brush=Object.assign({},args.brush||{});brush.operator=hand.operation;const plan=args.plan||P.brushPlan(brush);result=Raster.brushApply(args.image,plan,Object.assign({},args.spec||{},{mode:hand.operation}));}
+  else if(hand.family==='filter')result=Raster.filter(args.image,Object.assign(boundedSpec(hand,args.spec),{type:hand.operation}));
+  else if(hand.family==='brush'){const brush=Object.assign({},args.brush||{});brush.operator=hand.operation;const plan=args.plan||P.brushPlan(brush);result=Raster.brushApply(args.image,plan,Object.assign(boundedSpec(hand,args.spec),{mode:hand.operation}));}
   else if(hand.family==='retouch')result=Raster.maskedRetouch(args.image,Object.assign({},args.spec||{},{mode:hand.operation,mask:args.mask||(args.spec&&args.spec.mask),source_image:args.source_image||(args.spec&&args.spec.source_image)}));
   else if(hand.family==='vector'){
     if(hand.operation==='affine')result=Vector.affine(args.path,args.matrix,args.id);
