@@ -1,4 +1,4 @@
-"""Bind deterministic math-family results into real Universal Creation requests."""
+"""Bind deterministic math-family results and evidence into Universal Creation."""
 from __future__ import annotations
 
 import argparse
@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Any
 
 from axm_stickers import (domain_catalog, domain_family, measure_catalog,
-                          resolve_family_with_measures, value_map)
+                          resolve_family_with_evidence, value_map)
 
 SCHEMA = "axm.math-create/v1"
 BOUND_SCHEMA = "axm.math-bound-request/v1"
@@ -47,7 +47,7 @@ def bind_request(spec: Any) -> dict[str, Any]:
     if not isinstance(spec, dict):
         raise ValueError("math-create request must be an object")
     required = {"schema", "template", "bindings"}
-    optional = {"family", "family_id", "variant", "overrides", "measure_overrides"}
+    optional = {"family", "family_id", "variant", "overrides", "measure_overrides", "measurement_overrides"}
     if not required <= set(spec) or set(spec) - required - optional or spec["schema"] != SCHEMA:
         raise ValueError("unsupported math-create request")
 
@@ -59,11 +59,12 @@ def bind_request(spec: Any) -> dict[str, Any]:
     if not isinstance(bindings, dict) or not 1 <= len(bindings) <= MAX_BINDINGS:
         raise ValueError("bindings must contain 1..256 value paths")
 
-    result = resolve_family_with_measures(
+    result = resolve_family_with_evidence(
         family,
         variant=spec.get("variant"),
         overrides=spec.get("overrides"),
         measure_overrides=spec.get("measure_overrides"),
+        measurement_overrides=spec.get("measurement_overrides"),
     )
     values = value_map(result)
     request = copy.deepcopy(template)
@@ -94,11 +95,11 @@ def bind_request(spec: Any) -> dict[str, Any]:
         "request": request,
         "bindings": copy.deepcopy(bindings),
         "truth_boundary": (
-            "Math bindings replace only declared numeric template targets. Built-in family IDs and "
-            "known-measure IDs resolve only to local records; no network fetch occurs at creation time. "
-            "Known measures remain scoped definitions or conventions rather than automatic claims about "
-            "a particular physical object or location. The downstream creation machine remains responsible "
-            "for its own capability checks and output evidence."
+            "Math bindings replace only declared numeric template targets. Built-in family IDs and known-measure IDs "
+            "resolve only to local records; measurement overrides are explicit supplied evidence records. No network fetch "
+            "occurs at creation time. Definitions/conventions are not measurements of a particular object, and measured "
+            "input uncertainty is retained without claiming general derived uncertainty propagation. The downstream "
+            "creation machine remains responsible for its own capability checks and output evidence."
         ),
     }
 
@@ -128,7 +129,7 @@ def _read_request(path: str) -> dict[str, Any]:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         prog="axm-math-create",
-        description="Resolve dimension-aware math and source-backed measures into a Universal Creation request",
+        description="Resolve dimension-aware math and evidence into a Universal Creation request",
     )
     parser.add_argument("request", nargs="?", help="axm.math-create/v1 JSON request")
     parser.add_argument("--root", help="Universal Creation machine root; normally auto-detected")
