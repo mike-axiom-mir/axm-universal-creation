@@ -2,47 +2,47 @@
 
 Universal Creation contains one deterministic library of **known visual archetypes** between low-level format scaffolds and finished products. Templates are editable structural starting points, not finished art and not automatic canon.
 
-The public module remains `axm_uc.visual_templates`. Explicit extension packs cover games/product plumbing, creative editors, comics, AXM system surfaces, key art, cards/decks, cinematic/broadcast overlays, diagrams, atlas/map editing, branching narrative, 3D showroom, music, presentation/explainers, character reference, equipment configuration, source-bound UI motion, brand/identity systems and environment/level references. Sticker Fabric remains the immutable/versioned registry bridge. Mathematical work can enrich declared ratios/ranges through `math_hooks` without replacing template identity.
+The public module remains `axm_uc.visual_templates`. Explicit extension packs cover games/product plumbing, creative editors, comics, AXM system surfaces, key art, cards/decks, cinematic/broadcast overlays, diagrams, atlas/map editing, branching narrative, 3D showroom, music, presentation/explainers, character reference, equipment configuration, source-bound UI motion, brand/identity systems, environment/level references, and VFX/particle authoring. Sticker Fabric remains the immutable/versioned registry bridge. Mathematical work can enrich declared ratios/ranges through `math_hooks` without replacing template identity.
 
-## Current v19 candidate census
+## Current v20 candidate census
 
-- **216 reusable visual/state primitives**
-- **27 coherent style systems**
-- **254 responsive screen archetypes**
-- **25 whole-product archetypes**
-- **279 exact screen/product definitions** when explicitly installed into Sticker Registry
+- **226 reusable visual/state primitives**
+- **28 coherent style systems**
+- **264 responsive screen archetypes**
+- **26 whole-product archetypes**
+- **290 exact screen/product definitions** when explicitly installed into Sticker Registry
 
 Every major family provides compact, standard and wide normalized layouts. Unknown requested variants fail rather than silently falling back.
 
-## Source-bound environment / level-reference foundation
+## Source-bound VFX / particle foundation
 
-`visual.environment.core` provides ten production-reference surfaces:
+`visual.vfx.core` provides ten effect-authoring surfaces:
 
-- project / location hub;
-- environment identity board;
-- zone / layout editor;
-- scale / measurement editor;
-- modular kit / prop editor;
-- material / surface editor;
-- lighting / weather / time reference editor;
-- traversal / gameplay annotation editor;
-- environment / biome variant editor;
+- project / effect hub;
+- effect stage;
+- emitter-state editor;
+- spawn-region editor;
+- curves / timing editor;
+- particle-module editor;
+- layer / composite editor;
+- runtime interaction-hook editor;
+- reduced-effect / performance editor;
 - review / export.
 
-Its `visual.environment.reference` style is replaceable. Environment truth remains explicit:
+Its `visual.vfx.effect` style is replaceable. Effect truth stays explicit:
 
-- `environment-source` preserves exact location identity, source, version, digest and scope;
-- `environment-zone` preserves exact geometry/source/status;
-- `environment-measurement` preserves value, unit, source and precision/assumption state;
-- `modular-environment-piece` preserves exact kit source, connection semantics and transform;
-- `environment-prop` preserves prop identity/source, placement context and gameplay/visual status;
-- `environment-material` preserves exact target/material/source/context;
-- `environment-lighting-state` preserves source, time, weather and exposure/state;
-- `traversal-reference` binds exact targets to traversal/gameplay type, source and status;
-- `environment-variant` preserves exact base, deltas, context and source;
-- `environment-export-target` keeps source-coverage, scale, material, prop, lighting and annotation requirements visible.
+- `vfx-source` preserves exact effect identity, source, version and semantic purpose;
+- `emitter-state` preserves trigger, lifetime, rate/burst and enabled state;
+- `spawn-region` preserves exact shape, source transform, dimensions and distribution;
+- `emission-curve` preserves an explicit channel and its time/value state;
+- `particle-module` preserves module identity, parameters and order;
+- `vfx-layer` preserves exact layer identity, blend/order/depth relationship and source state;
+- `vfx-interaction-hook` binds exact subjects/events/responses to source/runtime state;
+- `vfx-timing-event` preserves exact timeline markers and semantic purpose;
+- `reduced-effect-rule` preserves required semantic feedback while reducing intensity;
+- `vfx-export-target` keeps exact source/module/timing/hook/performance/accessibility requirements visible.
 
-A beautiful reference board never becomes authoritative level geometry merely because it looks coherent. Physical scale is not inferred solely from perspective imagery. Prop proximity does not establish gameplay linkage. Lighting/weather/biome variants remain explicit state references rather than hidden rewrites of the base environment.
+A spectacular preview never proves that a collision, hit, damage event, gameplay trigger or other runtime state actually happened. Those semantics require exact source-bound interaction hooks. Spawn previews do not rewrite source spawn geometry, and compositing does not flatten canonical source layers.
 
 ## Registry and identity
 
@@ -52,8 +52,8 @@ Every built-in screen/product can be wrapped as an immutable Sticker definition.
 
 ```sh
 axm-visual-templates catalog
-axm-visual-templates show visual.environment.core
-axm-visual-templates render visual.environment.core creations/environment --width 1920 --height 1080
+axm-visual-templates show visual.vfx.core
+axm-visual-templates render visual.vfx.core creations/vfx --width 1920 --height 1080
 ```
 
 Preview/export remains derived inspection output, never authoritative source.
@@ -65,19 +65,19 @@ python -m unittest discover -s tests -p 'test_visual_templates.py' -v
 python tools/visual_template_proof.py /new/output/path
 ```
 
-The v19 gate requires:
+The v20 gate requires:
 
-- exact census: 27 styles / 216 primitives / 254 screens / 25 products;
-- all 254 screens stay within six representative viewport shapes;
+- exact census: 28 styles / 226 primitives / 264 screens / 26 products;
+- all 264 screens stay within six representative viewport shapes;
 - exact product screen order and flows resolve across those viewports;
-- parseable galleries for all prior proof products plus `visual.environment.core`;
-- all 279 screen/product definitions install through Sticker Registry;
-- exact environment identity/source/scope, zone geometry, measurements, modular kit, prop/material context, lighting state, traversal targets and environment variants remain present;
-- prior brand/motion/configurator/character/presentation/music/showroom/visual-novel/atlas/diagram/broadcast/cinematic/card/key-art/comic/game/AXM boundaries remain intact;
+- parseable galleries for all prior proof products plus `visual.vfx.core`;
+- all 290 screen/product definitions install through Sticker Registry;
+- exact effect identity/source/purpose, emitter, spawn geometry, curves, modules, layers, runtime hooks, timing events and reduced-effect semantic-feedback contracts remain present;
+- prior environment/brand/motion/configurator/character/presentation/music/showroom/visual-novel/atlas/diagram/broadcast/cinematic/card/key-art/comic/game/AXM boundaries remain intact;
 - copy safety, strict variant rejection, invalid-geometry rejection and exact Sticker-slot binding remain intact.
 
 ## Truth boundary
 
-Current evidence proves deterministic structural/editability contracts only. It does **not** prove final level geometry, physical scale, collision/navigation, gameplay quality, lighting correctness, performance or aesthetic acceptance.
+Current evidence proves deterministic structural/editability contracts only. It does **not** prove runtime integration, collision or damage correctness, gameplay balance, GPU cost, accessibility acceptance, frame pacing or aesthetic quality.
 
-Consuming projects must supply real environment state. Unknown, estimated, decorative, optional, unavailable and unresolved information stays distinguishable. Richer editable source remains authoritative over reference boards/previews/exports.
+Consuming products must supply real runtime/gameplay state. Unknown, disabled, conditional and unresolved information stays distinguishishable. Richer editable source remains authoritative over previews/composites/exports.
