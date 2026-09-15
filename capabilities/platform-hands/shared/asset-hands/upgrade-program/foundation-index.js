@@ -5,6 +5,7 @@ module.exports = Object.freeze({
   familyCoherence: require('./family-coherence'),
   conformance: require('./conformance'),
   editKernel: require('./edit-kernel'),
+  creativePrecision: require('./creative-precision'),
   runtimeSubstrates: require('./runtime-substrates'),
   negotiationSdk: require('./negotiation-sdk'),
   roundTripLedger: require('./roundtrip-ledger'),
