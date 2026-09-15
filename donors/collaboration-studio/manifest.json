@@ -28,8 +28,9 @@
     {
       "git_blob_sha": "0a3f9f260ea2b32396ac15fd5467e0f6e8b43363",
       "local": "donors/collaboration-studio/source/tools/studio/COMMAND_DECK_EVIDENCE.md",
-      "modifications": "none",
-      "source": "tools/studio/COMMAND_DECK_EVIDENCE.md"
+      "modifications": "Markdown hard-break spaces replaced by backslashes; executable source unchanged",
+      "source": "tools/studio/COMMAND_DECK_EVIDENCE.md",
+      "original_text_archive": "donors/collaboration-studio/original-text/COMMAND_DECK_EVIDENCE.json"
     },
     {
       "git_blob_sha": "632aa05a5e5130a9b944807c0913ca6c83641633",

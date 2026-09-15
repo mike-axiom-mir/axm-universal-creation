@@ -6,7 +6,11 @@ all 19 files of `tools/studio`, selected shared dependencies, and UCP from
 `mike-axiom-mir/axm-collaboration-platform` at
 `27757ace6133b243a200b0463e427c8b04d5a8e3`.
 
-Every source entry in `manifest.json` is byte-identical to that pinned Git blob.
+All executable source is byte-identical to its pinned Git blob. Of 34 original
+file copies, 33 are unchanged. COMMAND_DECK_EVIDENCE.md uses backslash Markdown
+hard breaks to satisfy UC's existing whitespace gate; its exact original text is
+preserved losslessly in the JSON archive named by `manifest.json`. Tests verify
+the original Git blob and the precise three-line formatting conversion.
 The compositor itself lives in `src/axm_uc/data/studio/raster-compositor.js` so it
 ships in the Python package. The manifest records this relocation. Apache-2.0
 LICENSE, original notices, THIRD_PARTY and the referenced license registry are
@@ -43,8 +47,7 @@ The original Studio `selftest.js`, `html-inline-syntax-test.js` and shared raste
 Hands selftest reference further platform files. They are retained unmodified;
 the entire suites were not executed. UC's focused syntax/action checks do not
 substitute for interactive verification. Historical evidence documents inside
-`source/` describe donor-era runs, not this extraction's observations. Intentional
-Markdown hard-break spaces in COMMAND_DECK_EVIDENCE are preserved verbatim.
+`source/` describe donor-era runs, not this extraction's observations.
 
 ## UCP and skins
 

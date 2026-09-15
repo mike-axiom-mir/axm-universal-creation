@@ -106,8 +106,10 @@ exports when those features change. Measure performance before making claims.
 - Mike redirected this pass to recover the actual old Studio from the paused
   collaboration platform, then asked about UCP and layer editing. Donor platform
   stays read-only. All 19 Studio files plus selected shared machinery are copied
-  from `27757ace6133b243a200b0463e427c8b04d5a8e3`; 34 original file copies are
-  byte-verified against pinned Git blobs. `donors/collaboration-studio/manifest.json`
+  from `27757ace6133b243a200b0463e427c8b04d5a8e3`; 34 original file payloads are
+  byte-verified against pinned Git blobs. Executable source is unchanged; one
+  Markdown hard-break repair retains exact original text in a JSON archive.
+  `donors/collaboration-studio/manifest.json`
   records paths/provenance; Apache license and notices are retained.
 - UC now directly executes the original raster-compositor.js through a bounded
   local Node adapter: 14 blends, 13 filters, ordered layers, alpha/luminance masks,
@@ -138,7 +140,7 @@ exports when those features change. Measure performance before making claims.
   remote services; Continuity preserves actual source, licenses and prior projects;
   Wisdom keeps the platform paused and tests the donor before broader integration.
 - Lane: `codex/rts-reference-foundry`, based on main `964ff1b`; this pass's PR is
-  identified by its title "Recover Studio and UCP source; execute editable layers".
+  PR #74: "Recover Studio and UCP source; execute editable layers".
   GitHub's final actual-head checks and merge state are authoritative. PR #54 is
   unrelated and untouched. Next: bridge one UC operation into recovered UCP, then
   connect the original layer panel/brush packets to the same editable state.

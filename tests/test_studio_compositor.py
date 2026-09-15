@@ -77,9 +77,17 @@ class StudioRecoveryTests(unittest.TestCase):
         studio_paths = []
         for item in manifest['files']:
             body = (ROOT / item['local']).read_bytes()
+            if 'original_text_archive' in item:
+                archived = json.loads((ROOT / item['original_text_archive']).read_text())
+                original = archived['utf8'].encode('utf-8')
+                self.assertEqual(archived['source'],item['source'])
+                self.assertEqual(archived['commit'],manifest['commit'])
+                self.assertEqual(body,original.replace(b'  \n',b'\\\n'))
+                body = original
+            else:
+                self.assertEqual(item['modifications'], 'none')
             digest = hashlib.sha1(b'blob ' + str(len(body)).encode() + b'\0' + body).hexdigest()
             self.assertEqual(digest, item['git_blob_sha'], item['local'])
-            self.assertEqual(item['modifications'], 'none')
             if item['source'].startswith('tools/studio/'): studio_paths.append(item['source'])
         self.assertEqual(len(studio_paths), 19)
 

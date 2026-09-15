@@ -1,8 +1,8 @@
 # Studio Command Deck visual verification
 
-Date: 2026-07-24  
-Surface: `http://127.0.0.1:8123/tools/studio/index.html` served from the local Workshop  
-Visual backend: `BROWSER_PRIMARY` (Codex in-app browser)  
+Date: 2026-07-24\
+Surface: `http://127.0.0.1:8123/tools/studio/index.html` served from the local Workshop\
+Visual backend: `BROWSER_PRIMARY` (Codex in-app browser)\
 Capture policy: bounded semantic snapshots and screenshots only; no video or rolling buffer was required for these static interaction claims. The temporary browser tab was finalized and the local verification server was stopped.
 
 ## Claim 1 — core commands are discoverable and reach real Studio controls

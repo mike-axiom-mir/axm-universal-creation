@@ -2,5 +2,7 @@ AXM Collaboration Platform Studio / Universal Component Protocol donor
 Source repository: https://github.com/mike-axiom-mir/axm-collaboration-platform
 Pinned source commit: 27757ace6133b243a200b0463e427c8b04d5a8e3
 License: Apache License, Version 2.0; see LICENSE.
-Original source files listed in manifest.json are unchanged, including notices.
+Executable source files listed in manifest.json are unchanged, including notices.
+One Markdown document has line-break formatting normalized as declared there;
+its exact original text is preserved in original-text/COMMAND_DECK_EVIDENCE.json.
 UC integration, proof and tests are separate new files, not upstream originals.
