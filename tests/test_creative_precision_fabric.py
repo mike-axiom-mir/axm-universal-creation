@@ -57,6 +57,9 @@ class CreativePrecisionFabricTests(unittest.TestCase):
     def test_precision_modeling_wave(self):
         self.run_node('creative-mesh-modeling-hands-selftest.js')
 
+    def test_rigging_animation_wave(self):
+        self.run_node('creative-animation-hands-selftest.js')
+
 
 if __name__ == '__main__':
     unittest.main()
