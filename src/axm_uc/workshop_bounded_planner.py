@@ -15,11 +15,7 @@ from axm_stickers.placement import identity
 
 from .design_workshop import validate_sketch
 from .design_workshop_construction import DesignWorkshopConstructionError, _exact_definition, _pin
-from .sticker_clearance_contact import (
-    StickerClearanceContactError,
-    compare_sketch_clearance,
-    validate_clearance_plan,
-)
+from .sticker_clearance_contact import StickerClearanceContactError, compare_sketch_clearance, validate_clearance_plan
 from .sticker_geometry_calipers import StickerGeometryCaliperError, compare_sticker_geometry
 from .sticker_multiplier import _machine_body, _resolve_registry_path
 
@@ -31,11 +27,7 @@ MAX_CANDIDATES_PER_SLOT = 8
 MAX_COMBINATIONS = 256
 MAX_QUERY_SCAN = 512
 
-PLANNER_OPERATIONS = {
-    "inspect-workshop-planner",
-    "preview-workshop-plan",
-    "retain-workshop-plan",
-}
+PLANNER_OPERATIONS = {"inspect-workshop-planner", "preview-workshop-plan", "retain-workshop-plan"}
 
 
 class WorkshopBoundedPlannerError(RuntimeError):
@@ -108,10 +100,9 @@ def _search_pool(registry: Registry, query: dict[str, Any]) -> list[dict[str, An
         attachment = row.get("attachment", {})
         if not isinstance(attachment, dict) or attachment.get("space") != "3d":
             continue
-        pin = {"id": row["id"], "version": row["version"], "digest": row["digest"]}
-        checked, _ = _pin_checked(registry, pin, "query result")
+        checked, _ = _pin_checked(registry, {"id": row["id"], "version": row["version"], "digest": row["digest"]}, "query result")
         pins[(checked["id"], checked["version"], checked["digest"])] = checked
-    return [pins[key] for key in sorted(pins)[: query["limit"]]]
+    return [pins[key] for key in sorted(pins)[:query["limit"]]]
 
 
 def _normalize_request(registry: Registry, sketch_raw: Any, raw: Any) -> tuple[dict[str, Any], dict[str, Any]]:
@@ -123,11 +114,8 @@ def _normalize_request(registry: Registry, sketch_raw: Any, raw: Any) -> tuple[d
     if raw["sketch_digest"] != sketch["sketch_digest"]:
         raise WorkshopBoundedPlannerError("planner request does not match the exact sketch digest")
     objective = raw["objective"]
-    if not isinstance(objective, dict) or objective != {
-        "kind": "minimize-size-error",
-        "require_all_evidence_pass": True,
-        "incumbent_policy": "strict-improvement",
-    }:
+    expected_objective = {"kind": "minimize-size-error", "require_all_evidence_pass": True, "incumbent_policy": "strict-improvement"}
+    if objective != expected_objective:
         raise WorkshopBoundedPlannerError(
             "v0.1 objective must explicitly require all evidence PASS, minimize size error, and retain incumbents without strict improvement"
         )
@@ -144,19 +132,19 @@ def _normalize_request(registry: Registry, sketch_raw: Any, raw: Any) -> tuple[d
         if not isinstance(part, str) or part not in sketch_ids or part in seen:
             raise WorkshopBoundedPlannerError("planner slots must reference every sketch part exactly once")
         seen.add(part)
-        has_candidates = "candidates" in slot
-        has_query = "query" in slot
-        if has_candidates == has_query or set(slot) != ({"part", "candidates"} if has_candidates else {"part", "query"}):
+        explicit = "candidates" in slot
+        queried = "query" in slot
+        if explicit == queried or set(slot) != ({"part", "candidates"} if explicit else {"part", "query"}):
             raise WorkshopBoundedPlannerError("each planner slot requires exactly one of candidates or query")
-        if has_candidates:
+        if explicit:
             candidates_raw = slot["candidates"]
             if not isinstance(candidates_raw, list) or not 1 <= len(candidates_raw) <= MAX_CANDIDATES_PER_SLOT:
                 raise WorkshopBoundedPlannerError(f"slot candidates must contain 1..{MAX_CANDIDATES_PER_SLOT} exact pins")
-            candidates: dict[tuple[str, int, str], dict[str, Any]] = {}
+            unique: dict[tuple[str, int, str], dict[str, Any]] = {}
             for candidate_index, candidate in enumerate(candidates_raw):
                 pin, _ = _pin_checked(registry, candidate, f"slots[{index}].candidates[{candidate_index}]")
-                candidates[(pin["id"], pin["version"], pin["digest"])] = pin
-            by_part[part] = {"part": part, "source": "explicit", "candidates": [candidates[key] for key in sorted(candidates)]}
+                unique[(pin["id"], pin["version"], pin["digest"])] = pin
+            by_part[part] = {"part": part, "source": "explicit", "candidates": [unique[key] for key in sorted(unique)]}
         else:
             query = _query_spec(slot["query"], f"slots[{index}].query")
             by_part[part] = {"part": part, "source": "registry-query", "query": query, "candidates": _search_pool(registry, query)}
@@ -183,13 +171,12 @@ def _normalize_request(registry: Registry, sketch_raw: Any, raw: Any) -> tuple[d
         "schema": PLANNER_SCHEMA,
         "sketch_digest": sketch["sketch_digest"],
         "slots": slots,
-        "objective": copy.deepcopy(objective),
+        "objective": copy.deepcopy(expected_objective),
         "clearance_plan": clearance_plan,
         "incumbent": incumbent,
         "combination_count": combination_count,
     }
-    body = copy.deepcopy(normalized)
-    resolved_digest = _digest(body)
+    resolved_digest = _digest(normalized)
     if "planner_digest" in raw and raw["planner_digest"] != resolved_digest:
         raise WorkshopBoundedPlannerError("persisted planner digest does not match the resolved exact candidate body")
     normalized["planner_digest"] = resolved_digest
@@ -218,9 +205,8 @@ def _children(registry: Registry, sketch: dict[str, Any], selection: dict[str, d
         definition = registry.get(pin["id"], pin["version"])
         if digest(definition) != pin["digest"]:
             raise WorkshopBoundedPlannerError("candidate pin drifted in evaluation registry", {"part": part["id"], "pin": pin})
-        placed = instance(definition, part["id"])
         children.append({
-            "instance": placed,
+            "instance": instance(definition, part["id"]),
             "target": {"space": "3d", "socket": definition["attachment"]["socket"], "frame": copy.deepcopy(part["frame"])},
             "motion": None,
             "clip": None,
@@ -255,10 +241,7 @@ def _score(geometry: dict[str, Any]) -> dict[str, float] | None:
         residuals.extend(float(value) for value in evidence["axis_residuals"])
     if not residuals:
         return None
-    return {
-        "max_axis_size_error_m": round(max(residuals), 12),
-        "total_axis_size_error_m": round(sum(residuals), 12),
-    }
+    return {"max_axis_size_error_m": round(max(residuals), 12), "total_axis_size_error_m": round(sum(residuals), 12)}
 
 
 def _numeric_key(score: dict[str, float]) -> tuple[float, float]:
@@ -269,7 +252,7 @@ def _selection_signature(sketch: dict[str, Any], selection: dict[str, dict[str, 
     return _digest([{"part": part["id"], "sticker": selection[part["id"]]} for part in sketch["parts"]])
 
 
-def _evaluate_existing(registry: Registry, sketch: dict[str, Any], pin: dict[str, Any], clearance_plan: dict[str, Any] | None) -> dict[str, Any]:
+def _evaluate(registry: Registry, sketch: dict[str, Any], pin: dict[str, Any], clearance_plan: dict[str, Any] | None) -> dict[str, Any]:
     try:
         geometry = compare_sticker_geometry(registry, sketch, pin)
         clearance = compare_sketch_clearance(registry, sketch, pin, clearance_plan) if clearance_plan is not None else None
@@ -300,42 +283,28 @@ def _evaluate_existing(registry: Registry, sketch: dict[str, Any], pin: dict[str
         }
 
 
-def _summary(index: int | None, selection: dict[str, dict[str, Any]] | None, evidence: dict[str, Any], *, kind: str) -> dict[str, Any]:
-    return {
-        "kind": kind,
-        "index": index,
-        "selection": copy.deepcopy(selection),
-        "accepted": evidence["accepted"],
-        "geometry_status": evidence["geometry_status"],
-        "geometry_report_digest": evidence["geometry_report_digest"],
-        "clearance_status": evidence["clearance_status"],
-        "clearance_report_digest": evidence["clearance_report_digest"],
-        "score": copy.deepcopy(evidence["score"]),
-        "reason": evidence["reason"],
-        "selection_signature": _selection_signature_from_map(selection) if selection is not None else None,
-    }
+def _unused_eval_id(trial: Registry, planner_digest: str, index: int) -> str:
+    root = planner_digest.split(":", 1)[-1][:12]
+    for salt in range(16):
+        candidate = f"axm-planner-{root}-{index:03d}-{salt:02d}"
+        try:
+            trial.get(candidate, 1)
+        except ValueError:
+            return candidate
+    raise WorkshopBoundedPlannerError("could not allocate collision-free ephemeral candidate id")
 
 
-def _selection_signature_from_map(selection: dict[str, dict[str, Any]]) -> str:
-    return _digest([{"part": key, "sticker": selection[key]} for key in sorted(selection)])
-
-
-def _run_preview(registry: Registry, sketch_raw: Any, planner_raw: Any) -> tuple[dict[str, Any], dict[str, Any] | None]:
-    sketch, planner = _normalize_request(registry, sketch_raw, planner_raw)
-    candidate_pins = [pin for slot in planner["slots"] for pin in slot["candidates"]]
-    roots = []
-    for pin in candidate_pins:
-        roots.append(_exact_definition(registry, pin))
+def _run_preview_resolved(registry: Registry, sketch: dict[str, Any], planner: dict[str, Any]) -> dict[str, Any]:
+    roots = [_exact_definition(registry, pin) for slot in planner["slots"] for pin in slot["candidates"]]
     if planner["incumbent"] is not None:
         roots.append(_exact_definition(registry, planner["incumbent"]))
-
     with tempfile.TemporaryDirectory(prefix="axm-workshop-planner-") as temp:
         with Registry(Path(temp) / "planner.sqlite") as trial:
             _copy_closure(registry, trial, roots)
             incumbent_evidence = None
             incumbent_summary = None
             if planner["incumbent"] is not None:
-                incumbent_evidence = _evaluate_existing(trial, sketch, planner["incumbent"], planner["clearance_plan"])
+                incumbent_evidence = _evaluate(trial, sketch, planner["incumbent"], planner["clearance_plan"])
                 incumbent_summary = {
                     "kind": "incumbent",
                     "assembly": copy.deepcopy(planner["incumbent"]),
@@ -347,28 +316,26 @@ def _run_preview(registry: Registry, sketch_raw: Any, planner_raw: Any) -> tuple
                     "score": copy.deepcopy(incumbent_evidence["score"]),
                     "reason": incumbent_evidence["reason"],
                 }
-
             evaluations: list[dict[str, Any]] = []
-            full: list[tuple[dict[str, Any], dict[str, Any], dict[str, dict[str, Any]]]] = []
+            full: list[tuple[dict[str, Any], dict[str, Any]]] = []
             pools = [slot["candidates"] for slot in planner["slots"]]
-            for index, combination in enumerate(itertools.product(*pools) if pools and all(pools) else []):
+            combinations = itertools.product(*pools) if pools and all(pools) else []
+            for index, combination in enumerate(combinations, start=1):
                 selection = {slot["part"]: copy.deepcopy(pin) for slot, pin in zip(planner["slots"], combination)}
-                children = _children(trial, sketch, selection)
                 candidate = _assembly_definition(
-                    id=f"planner-candidate-{index + 1:03d}",
-                    name=f"Planner candidate {index + 1:03d}",
+                    id=_unused_eval_id(trial, planner["planner_digest"], index),
+                    name=f"Planner candidate {index:03d}",
                     ver=1,
                     socket="mount",
                     tags=["planner-candidate"],
                     origin={"author": "AXM workshop planner", "license": "CC0-1.0", "source": f"ephemeral planner evaluation {planner['planner_digest']}"},
-                    children=children,
+                    children=_children(trial, sketch, selection),
                 )
                 expand(trial, candidate)
                 trial.register(candidate)
-                pin = _exact_pin(candidate)
-                evidence = _evaluate_existing(trial, sketch, pin, planner["clearance_plan"])
+                evidence = _evaluate(trial, sketch, _exact_pin(candidate), planner["clearance_plan"])
                 summary = {
-                    "index": index + 1,
+                    "index": index,
                     "selection": copy.deepcopy(selection),
                     "selection_signature": _selection_signature(sketch, selection),
                     "accepted": evidence["accepted"],
@@ -380,58 +347,54 @@ def _run_preview(registry: Registry, sketch_raw: Any, planner_raw: Any) -> tuple
                     "reason": evidence["reason"],
                 }
                 evaluations.append(summary)
-                full.append((summary, evidence, selection))
-
+                full.append((summary, evidence))
             passing = [row for row in full if row[0]["accepted"]]
             passing.sort(key=lambda row: (_numeric_key(row[0]["score"]), row[0]["selection_signature"]))
             best = passing[0] if passing else None
-            selected_public = None
+            selected = None
             selected_evidence = None
             outcome = "HOLD_NO_PASSING_CANDIDATE"
             if planner["incumbent"] is not None:
                 if incumbent_evidence is not None and incumbent_evidence["accepted"]:
                     if best is not None and _numeric_key(best[0]["score"]) < _numeric_key(incumbent_evidence["score"]):
-                        selected_public = {"kind": "candidate", **copy.deepcopy(best[0])}
+                        selected = {"kind": "candidate", **copy.deepcopy(best[0])}
                         selected_evidence = best[1]
                         outcome = "SELECTED_STRICT_NUMERIC_IMPROVEMENT"
                     else:
-                        selected_public = {"kind": "incumbent", "assembly": copy.deepcopy(planner["incumbent"]),
-                                           "accepted": True, "score": copy.deepcopy(incumbent_evidence["score"])}
+                        selected = {"kind": "incumbent", "assembly": copy.deepcopy(planner["incumbent"]), "accepted": True,
+                                    "score": copy.deepcopy(incumbent_evidence["score"])}
                         selected_evidence = incumbent_evidence
                         outcome = "INCUMBENT_RETAINED_NO_STRICT_IMPROVEMENT"
                 elif best is not None:
-                    selected_public = {"kind": "candidate", **copy.deepcopy(best[0])}
+                    selected = {"kind": "candidate", **copy.deepcopy(best[0])}
                     selected_evidence = best[1]
                     outcome = "SELECTED_PASSING_RECOVERY_FROM_NONPASS_INCUMBENT"
                 else:
-                    selected_public = {"kind": "incumbent", "assembly": copy.deepcopy(planner["incumbent"]),
-                                       "accepted": False, "score": copy.deepcopy(incumbent_evidence["score"] if incumbent_evidence else None)}
+                    selected = {"kind": "incumbent", "assembly": copy.deepcopy(planner["incumbent"]), "accepted": False,
+                                "score": copy.deepcopy(incumbent_evidence["score"] if incumbent_evidence else None)}
                     selected_evidence = incumbent_evidence
                     outcome = "HOLD_INCUMBENT_RETAINED_NO_PASSING_REPLACEMENT"
             elif best is not None:
-                selected_public = {"kind": "candidate", **copy.deepcopy(best[0])}
+                selected = {"kind": "candidate", **copy.deepcopy(best[0])}
                 selected_evidence = best[1]
                 outcome = "SELECTED_BEST_PASSING_CANDIDATE"
-
-            empty_slots = [slot["part"] for slot in planner["slots"] if not slot["candidates"]]
             report = {
                 "schema": PREVIEW_SCHEMA,
                 "truth_status": "BOUNDED_REGISTRY_SEARCH_ASSEMBLY_MEASURE_REJECT_SELECT_WITH_STRICT_INCUMBENT_PROTECTION",
-                "status": "PASS" if selected_public is not None and selected_public.get("accepted") else "HOLD",
+                "status": "PASS" if selected is not None and selected.get("accepted") else "HOLD",
                 "outcome": outcome,
                 "sketch_digest": sketch["sketch_digest"],
                 "planner_digest": planner["planner_digest"],
                 "resolved_slots": copy.deepcopy(planner["slots"]),
                 "combination_count": planner["combination_count"],
                 "evaluated_candidates": len(evaluations),
-                "empty_slots": empty_slots,
+                "empty_slots": [slot["part"] for slot in planner["slots"] if not slot["candidates"]],
                 "incumbent": incumbent_summary,
                 "candidates": evaluations,
-                "selection": selected_public,
-                "selection_evidence": ({
-                    "geometry": copy.deepcopy(selected_evidence["geometry"]),
-                    "clearance": copy.deepcopy(selected_evidence["clearance"]),
-                } if selected_evidence is not None else None),
+                "selection": selected,
+                "selection_evidence": ({"geometry": copy.deepcopy(selected_evidence["geometry"]),
+                                        "clearance": copy.deepcopy(selected_evidence["clearance"])}
+                                       if selected_evidence is not None else None),
                 "source_registry_mutated": False,
                 "objective": copy.deepcopy(planner["objective"]),
                 "limitations": [
@@ -444,22 +407,20 @@ def _run_preview(registry: Registry, sketch_raw: Any, planner_raw: Any) -> tuple
                 ],
             }
             report["report_digest"] = _digest(report)
-            return report, selected_evidence
+            return report
 
 
 def preview_workshop_plan(registry: Registry, sketch_raw: Any, planner_raw: Any) -> dict[str, Any]:
-    report, _ = _run_preview(registry, sketch_raw, planner_raw)
-    return report
+    sketch, planner = _normalize_request(registry, sketch_raw, planner_raw)
+    return _run_preview_resolved(registry, sketch, planner)
 
 
 def _retention_spec(raw: Any) -> dict[str, Any]:
     if not isinstance(raw, dict) or set(raw) != {"id", "name", "version", "socket", "tags", "origin"}:
         raise WorkshopBoundedPlannerError("retention requires id, name, version, socket, tags, and origin")
     try:
-        sticker_id = identifier(raw["id"])
-        sticker_name = text(raw["name"], 160)
-        sticker_version = version(raw["version"])
-        socket = identifier(raw["socket"])
+        sticker_id = identifier(raw["id"]); sticker_name = text(raw["name"], 160)
+        sticker_version = version(raw["version"]); socket = identifier(raw["socket"])
     except ValueError as exc:
         raise WorkshopBoundedPlannerError(str(exc)) from exc
     tags = raw["tags"]
@@ -480,7 +441,11 @@ def _retention_spec(raw: Any) -> dict[str, Any]:
 
 
 def retain_workshop_plan(registry: Registry, sketch_raw: Any, planner_raw: Any, retention_raw: Any) -> dict[str, Any]:
-    preview, _ = _run_preview(registry, sketch_raw, planner_raw)
+    # Resolve exactly once before any publication. A retained sticker may match the
+    # same registry query; that must never retroactively alter the candidate universe
+    # or invalidate the evidence that selected it.
+    sketch, planner = _normalize_request(registry, sketch_raw, planner_raw)
+    preview = _run_preview_resolved(registry, sketch, planner)
     selected = preview.get("selection")
     if not selected or not selected.get("accepted"):
         raise WorkshopBoundedPlannerError("planner has no passing selected construction to retain")
@@ -496,30 +461,21 @@ def retain_workshop_plan(registry: Registry, sketch_raw: Any, planner_raw: Any, 
         }
         result["receipt_digest"] = _digest(result)
         return result
-
     retention = _retention_spec(retention_raw)
-    sketch = validate_sketch(sketch_raw)
     selection = selected["selection"]
-    children = _children(registry, sketch, selection)
-    lineage = f"{retention['origin']['source']} | AXM workshop planner {preview['planner_digest']} selected {selected['selection_signature']}"
+    lineage = f"{retention['origin']['source']} | AXM workshop planner {planner['planner_digest']} selected {selected['selection_signature']}"
     if len(lineage) > 2000:
         raise WorkshopBoundedPlannerError("retained provenance source exceeds sticker source bound")
     final = _assembly_definition(
-        id=retention["id"],
-        name=retention["name"],
-        ver=retention["version"],
-        socket=retention["socket"],
+        id=retention["id"], name=retention["name"], ver=retention["version"], socket=retention["socket"],
         tags=list(dict.fromkeys(retention["tags"] + ["planner-retained"])),
         origin={"author": retention["origin"]["author"], "license": retention["origin"]["license"], "source": lineage},
-        children=children,
+        children=_children(registry, sketch, selection),
     )
-    # Dependency closure and all source instances are rechecked against the live registry
-    # before the one immutable root definition is committed.
     expand(registry, final)
     registry.register(final)
     pin = _exact_pin(final)
     geometry = compare_sticker_geometry(registry, sketch, pin)
-    planner = _normalize_request(registry, sketch, planner_raw)[1]
     clearance = compare_sketch_clearance(registry, sketch, pin, planner["clearance_plan"]) if planner["clearance_plan"] is not None else None
     verification_pass = geometry["status"] == "PASS" and (clearance is None or clearance["status"] == "PASS")
     result = {
@@ -527,7 +483,7 @@ def retain_workshop_plan(registry: Registry, sketch_raw: Any, planner_raw: Any, 
         "truth_status": "NEW_IMMUTABLE_PLANNER_SELECTED_ASSEMBLY_RETAINED_AND_REMEASURED",
         "status": "PASS" if verification_pass else "HOLD",
         "planner_report_digest": preview["report_digest"],
-        "planner_digest": preview["planner_digest"],
+        "planner_digest": planner["planner_digest"],
         "selection_signature": selected["selection_signature"],
         "assembly": pin,
         "new_registry_entry": True,
