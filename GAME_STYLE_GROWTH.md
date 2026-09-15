@@ -101,6 +101,43 @@ exports when those features change. Measure performance before making claims.
 
 ## Current checkpoint
 
+### Offline pose execution pass — 2026-09-15
+
+- Completed `game_pose_runtime.py`, `axm-assets pose-sample` and catalog:
+  embedded GLB intake, LINEAR/STEP tracks, shortest-arc quaternion sampling,
+  explicit pose crossfades, hierarchy evaluation, socket points and linear skin
+  positions. The execution requires Python's standard library only.
+- Preserves exact source bytes/materials/styles and ties every output to its
+  source SHA-256. Rejects malformed/unsupported pose data rather than substituting
+  default animation. Source meshes and editable Blender files remain canonical.
+- Actual local verification: 20 new analytical/CLI tests pass; 69 focused game
+  tests pass together. Tests exercise inverse binds, nonuniform parent scale,
+  mixed weights, antipodal rotations, clip rest resets, crossfades, loop/STEP
+  boundaries, malformed input and failed-publication cleanup.
+- Added an independent reference job to rebuild the existing Parcel Imp and
+  freshly import both LODs in Blender 4.3. It compares 16 joint origins and full
+  deformed vertex point sets over three clips × six authored keyframes per LOD.
+  Native reference results are pending until the actual PR job completes; its
+  `parcel-imp-pose-evidence` artifact carries the GLBs, editable source and JSON
+  comparison. Local saved-asset recovery returned HTTP 502 twice, so the job
+  regenerates from pinned repository source without requiring another upload.
+- Evidence: `tests/test_game_pose_runtime.py`, `docs/GAME_POSE_RUNTIME.md`,
+  `tools/blender/game_pose_runtime_roundtrip.py` and the new Actions reference job.
+- Limits: positions only; no shading, deformed normals, morphs, CUBICSPLINE, IK,
+  automatic transition/collision policy or continuous visual playback claim.
+  Between-key SLERP/crossfades have analytical coverage, not native crossfade
+  playback evidence. Point-set comparison does not prove topology or vertex order.
+- Next useful improvement: explicit binding between runtime clocks and the
+  actual root curve, preserving authored acceleration and preventing the same
+  motion being applied through both pose and world displacement. Then bounded
+  normals/tangents evaluation and a host-driven continuous visual proof.
+- Active lane: `codex/rts-reference-foundry`, based on main `3ec310f`; resume this
+  lane's PR and related repairs. PR #54 is unrelated and remains untouched.
+- Roots: Truth separates execution from appearance and measures independent
+  imported geometry; Agency keeps clocks, blend weights and motion ownership
+  caller-controlled; Continuity preserves bytes, identity and richer source;
+  Wisdom requires native comparison before accepting real-asset compatibility.
+
 ### Portable animation runtime pass — 2026-09-13
 
 - Completed `game_animation_runtime.py`, `axm-assets
@@ -604,3 +641,4 @@ exports when those features change. Measure performance before making claims.
 - Approval basis: Mike explicitly authorizes this bounded improvement campaign
   and its merges; evaluate against the four roots and relevant checks, preserving
   uncertainty. Do not leave sound changes waiting solely for Mike's confirmation.
+

@@ -40,6 +40,7 @@ from .game_runtime_realization import game_runtime_realization_catalog, publish_
 from .game_showcase_contract import game_showcase_catalog, publish_game_showcase
 from .game_functional_motion import game_functional_motion_catalog, publish_game_functional_motion
 from .game_animation_runtime import game_animation_runtime_catalog, publish_game_animation_replay
+from .game_pose_runtime import game_pose_runtime_catalog, publish_game_pose
 
 BASE_CATEGORIES = ["texture", "gradient", "material", "fixture", "decal", "palette"]
 EXPANDED_CATEGORIES = ["surface", "pigment", "sprite", "mesh", "vector-part"]
@@ -70,6 +71,7 @@ def combined_catalog() -> dict:
         "game_showcase": game_showcase_catalog(),
         "game_functional_motion": game_functional_motion_catalog(),
         "game_animation_runtime": game_animation_runtime_catalog(),
+        "game_pose_runtime": game_pose_runtime_catalog(),
     }
 
 
@@ -94,6 +96,11 @@ def build_parser() -> argparse.ArgumentParser:
     functional.add_argument("request", help="JSON functional-motion request")
     functional.add_argument("path", help="new output directory; existing paths are never overwritten")
     sub.add_parser("animation-runtime-catalog", help="show deterministic clip clock and state execution")
+    sub.add_parser("pose-runtime-catalog", help="show offline GLB pose, attachment and skin evaluation")
+    pose = sub.add_parser("pose-sample", help="evaluate or blend an actual GLB pose without a renderer")
+    pose.add_argument("asset", help="embedded GLB with LINEAR or STEP TRS animation")
+    pose.add_argument("request", help="JSON clip, time_s and optional loop, blend, vertices")
+    pose.add_argument("path", help="new output directory; existing paths are never overwritten")
     animation_runtime = sub.add_parser(
         "animation-runtime-replay", help="execute animation transitions, clocks, events and root motion")
     animation_runtime.add_argument("request", help="JSON object containing runtime and commands")
@@ -286,6 +293,11 @@ def main(argv: list[str] | None = None) -> int:
         result = publish_game_functional_motion(args.path, request)
     elif args.command == "animation-runtime-catalog":
         result = game_animation_runtime_catalog()
+    elif args.command == "pose-runtime-catalog":
+        result = game_pose_runtime_catalog()
+    elif args.command == "pose-sample":
+        request = json.loads(Path(args.request).read_text(encoding="utf-8"))
+        result = publish_game_pose(args.path, args.asset, request)
     elif args.command == "animation-runtime-replay":
         request = json.loads(Path(args.request).read_text(encoding="utf-8"))
         if not isinstance(request, dict) or set(request) != {"runtime", "commands"}:
