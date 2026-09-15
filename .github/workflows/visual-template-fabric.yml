@@ -4,6 +4,8 @@ on:
   push:
     paths:
       - 'src/axm_uc/visual_templates.py'
+      - 'src/axm_uc/visual_template_core.py'
+      - 'src/axm_uc/visual_template_growth.py'
       - 'src/axm_uc/visual_templates_cli.py'
       - 'tests/test_visual_templates.py'
       - 'tools/visual_template_proof.py'
@@ -13,6 +15,8 @@ on:
   pull_request:
     paths:
       - 'src/axm_uc/visual_templates.py'
+      - 'src/axm_uc/visual_template_core.py'
+      - 'src/axm_uc/visual_template_growth.py'
       - 'src/axm_uc/visual_templates_cli.py'
       - 'tests/test_visual_templates.py'
       - 'tools/visual_template_proof.py'
