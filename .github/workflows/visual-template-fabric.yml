@@ -19,6 +19,7 @@ on:
       - 'src/axm_uc/visual_template_novel.py'
       - 'src/axm_uc/visual_template_showroom.py'
       - 'src/axm_uc/visual_template_music.py'
+      - 'src/axm_uc/visual_template_presentation.py'
       - 'src/axm_uc/visual_templates_cli.py'
       - 'tests/test_visual_templates.py'
       - 'tools/visual_template_proof.py'
@@ -35,6 +36,7 @@ on:
       - 'NOVEL_TEMPLATE_PACK.md'
       - 'SHOWROOM_TEMPLATE_PACK.md'
       - 'MUSIC_TEMPLATE_PACK.md'
+      - 'PRESENTATION_TEMPLATE_PACK.md'
       - 'pyproject.toml'
       - '.github/workflows/visual-template-fabric.yml'
   pull_request:
@@ -55,6 +57,7 @@ on:
       - 'src/axm_uc/visual_template_novel.py'
       - 'src/axm_uc/visual_template_showroom.py'
       - 'src/axm_uc/visual_template_music.py'
+      - 'src/axm_uc/visual_template_presentation.py'
       - 'src/axm_uc/visual_templates_cli.py'
       - 'tests/test_visual_templates.py'
       - 'tools/visual_template_proof.py'
@@ -71,6 +74,7 @@ on:
       - 'NOVEL_TEMPLATE_PACK.md'
       - 'SHOWROOM_TEMPLATE_PACK.md'
       - 'MUSIC_TEMPLATE_PACK.md'
+      - 'PRESENTATION_TEMPLATE_PACK.md'
       - 'pyproject.toml'
       - '.github/workflows/visual-template-fabric.yml'
   workflow_dispatch:
