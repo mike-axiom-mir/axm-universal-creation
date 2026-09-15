@@ -1,6 +1,6 @@
 # AXM Visual Template Expansion Priority Map
 
-Status: v12 growth lane after verified v1–v11 merges.
+Status: v13 growth lane after verified v1–v12 merges.
 
 The visual-template fabric grows where Universal Creation is likely to reuse the knowledge soon. This is a build priority, not canon: templates remain editable foundations and may be replaced when evidence supports a better structure.
 
@@ -14,48 +14,49 @@ The visual-template fabric grows where Universal Creation is likely to reuse the
 - video / program / stream overlay editor;
 - evidence-aware infographic / diagram editor;
 - world-map / lore-atlas editor;
-- interactive visual-novel / branching narrative editor.
+- interactive visual-novel / branching narrative editor;
+- 3D showroom / gallery presentation.
 
-## 3D showroom / gallery presentation — IMPLEMENTED IN THIS LANE
+## Music visualizer / album-art editor — IMPLEMENTED IN THIS LANE
 
-Product: `visual.showroom.core`
+Product: `visual.music.core`
 
 Implemented screens:
 
-- `visual.showroom.project-hub`
-- `visual.showroom.object-stage`
-- `visual.showroom.orbit-camera`
-- `visual.showroom.material-editor`
-- `visual.showroom.variant-editor`
-- `visual.showroom.annotation-editor`
-- `visual.showroom.comparison`
-- `visual.showroom.detail-view`
-- `visual.showroom.turntable`
-- `visual.showroom.review-export`
+- `visual.music.project-hub`
+- `visual.music.cover-editor`
+- `visual.music.track-identity`
+- `visual.music.analysis-waveform`
+- `visual.music.marker-timing`
+- `visual.music.reactive-editor`
+- `visual.music.tracklist-sequence`
+- `visual.music.crop-variants`
+- `visual.music.playback-preview`
+- `visual.music.review-export`
 
 New primitives:
 
-- `showroom-object`
-- `orbit-rig`
-- `camera-preset`
-- `material-slot`
-- `variant-option`
-- `object-annotation`
-- `comparison-object`
-- `turntable-state`
-- `measurement-callout`
-- `showroom-export-target`
+- `music-track-source`
+- `music-analysis`
+- `beat-marker`
+- `waveform-source`
+- `cover-composition`
+- `reactive-visual-layer`
+- `music-marker-cue`
+- `album-variant`
+- `track-list-entry`
+- `music-export-target`
 
-Style: `visual.showroom.studio`.
+Style: `visual.music.resonant`.
 
-The central rule is object/source truth: exact asset/version, camera target, part/material binding, variant identity/availability, annotation target, comparison references and measurement value/unit/source remain inspectable. Camera/orbit/turntable presentation cannot silently rewrite source-object state.
+The central rule is audio/source truth: exact track identity/source/digest/duration stays authoritative. Waveform, analysis, beat markers and reactive state must be observed or explicitly derived and attributed. Album art remains editable source layers; no lyrics are inferred or manufactured by this pack.
 
 ## Next high-value visual/creation families
 
-1. **Music visualizer / album-art editor** — cover systems, track identity, waveform/beat-driven visual states, lyric-free timing/marker state and export crops.
-2. **Presentation / explainer page systems** — reusable storytelling pages assembled from diagram, key-art, atlas and editor foundations.
-3. **Character / creature reference-sheet editor** — turnaround views, expressions, materials, proportions, callouts and source/reference state for future games/comics.
-4. **Vehicle / weapon configuration presentation** — attachment sockets, stat comparison, exploded/detail presentation and exact source/configuration identity for game garages/loadouts.
+1. **Presentation / explainer page systems** — reusable storytelling pages assembled from diagram, key-art, atlas, showroom and editor foundations.
+2. **Character / creature reference-sheet editor** — turnaround views, expressions, materials, proportions, callouts and source/reference state for future games/comics.
+3. **Vehicle / weapon configuration presentation** — attachment sockets, stat comparison, exploded/detail presentation and exact source/configuration identity for game garages/loadouts.
+4. **UI motion / transition archetypes** — reusable state transitions, focus motion, spatial continuity and reduced-motion variants across software/game products.
 
 ## Cross-cutting rules
 
@@ -71,7 +72,7 @@ Every family preserves the existing visual-template contract:
 
 ## Immediate build order
 
-1. exact-head verify `visual.showroom.core`;
-2. merge v12 only when template + repository checks pass;
-3. begin music visualizer / album-art editing from fresh main;
+1. exact-head verify `visual.music.core`;
+2. merge v13 only when template + repository checks pass;
+3. begin presentation / explainer page systems from fresh main;
 4. keep prioritizing reusable source-first editors over flat one-off outputs.

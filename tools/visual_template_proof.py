@@ -8,7 +8,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src'))
 from axm_uc import visual_templates as vt
 
 SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
-PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell","visual.keyart.core","visual.cards.core","visual.cinematic.core","visual.broadcast.core","visual.diagram.core","visual.atlas.core","visual.novel.core","visual.showroom.core")
+PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell","visual.keyart.core","visual.cards.core","visual.cinematic.core","visual.broadcast.core","visual.diagram.core","visual.atlas.core","visual.novel.core","visual.showroom.core","visual.music.core")
 
 def _write(project,target):
     target.mkdir(); out=[]
@@ -25,7 +25,7 @@ def main(argv):
     out.mkdir(parents=True)
     try:
         counts=vt.validate_catalog()
-        if counts!={'styles':20,'primitives':146,'screens':184,'products':18}: raise AssertionError(counts)
+        if counts!={'styles':21,'primitives':156,'screens':194,'products':19}: raise AssertionError(counts)
         evidence=[]
         for pid in PRODUCTS:
             expected=vt.get(pid)
@@ -53,27 +53,28 @@ def main(argv):
             ('visual.atlas.core',1920,1080,'atlas','AXM World-Map and Lore-Atlas Foundation'),
             ('visual.novel.core',1920,1080,'visual-novel','AXM Branching Visual-Novel Foundation'),
             ('visual.showroom.core',1920,1080,'showroom','AXM 3D Showroom and Gallery Foundation'),
+            ('visual.music.core',1920,1080,'music','AXM Music Visualizer and Album-Art Foundation'),
         )
         outputs=[]
         for pid,w,h,folder,title in galleries: outputs+=_write(vt.product_project(pid,w,h,title),out/folder)
         outputs+=_write(vt.screen_project('product.mobile.home',1080,1920,'AXM Mobile Foundation'),out/'mobile-home')
-        product=vt.get('visual.showroom.core')
-        required={'visual.showroom.project-hub','visual.showroom.object-stage','visual.showroom.orbit-camera','visual.showroom.material-editor','visual.showroom.variant-editor','visual.showroom.annotation-editor','visual.showroom.comparison','visual.showroom.detail-view','visual.showroom.turntable','visual.showroom.review-export'}
-        if set(product['screens'])!=required: raise AssertionError('showroom pack lost required surfaces')
+        product=vt.get('visual.music.core')
+        required={'visual.music.project-hub','visual.music.cover-editor','visual.music.track-identity','visual.music.analysis-waveform','visual.music.marker-timing','visual.music.reactive-editor','visual.music.tracklist-sequence','visual.music.crop-variants','visual.music.playback-preview','visual.music.review-export'}
+        if set(product['screens'])!=required: raise AssertionError('music visual pack lost required surfaces')
         checks={
-            'object_source_identity_version':vt.PRIMITIVES['showroom-object']['source_identity_version_required'],
-            'orbit_target_pivot_range':vt.PRIMITIVES['orbit-rig']['target_pivot_range_required'],
-            'camera_projection_lens_transform':vt.PRIMITIVES['camera-preset']['projection_lens_transform_required'],
-            'material_part_source':vt.PRIMITIVES['material-slot']['part_material_source_required'],
-            'variant_identity_properties_availability':vt.PRIMITIVES['variant-option']['identity_properties_availability_required'],
-            'annotation_target_anchor_content':vt.PRIMITIVES['object-annotation']['target_anchor_content_required'],
-            'comparison_reference_fields':vt.PRIMITIVES['comparison-object']['reference_and_fields_required'],
-            'turntable_target_angle_speed':vt.PRIMITIVES['turntable-state']['target_angle_speed_required'],
-            'measurement_value_unit_source':vt.PRIMITIVES['measurement-callout']['value_unit_source_required'],
-            'export_requirements_visible':vt.PRIMITIVES['showroom-export-target']['requirements_must_be_visible'],
+            'track_identity_source_digest_duration':vt.PRIMITIVES['music-track-source']['identity_source_digest_duration_required'],
+            'analysis_source_version_status':vt.PRIMITIVES['music-analysis']['analysis_source_version_status_required'],
+            'beat_time_source_status':vt.PRIMITIVES['beat-marker']['time_source_status_required'],
+            'waveform_track_analysis_source':vt.PRIMITIVES['waveform-source']['track_and_analysis_source_required'],
+            'cover_layers_editable':vt.PRIMITIVES['cover-composition']['layers_must_remain_editable'],
+            'reactive_input_mapping':vt.PRIMITIVES['reactive-visual-layer']['input_mapping_required'],
+            'marker_name_time_source':vt.PRIMITIVES['music-marker-cue']['name_time_source_required'],
+            'album_variant_base_delta_target':vt.PRIMITIVES['album-variant']['base_delta_target_required'],
+            'tracklist_identity_order':vt.PRIMITIVES['track-list-entry']['track_identity_and_order_required'],
+            'export_requirements_visible':vt.PRIMITIVES['music-export-target']['requirements_must_be_visible'],
         }
-        if not all(checks.values()): raise AssertionError('showroom object/presentation contract failed')
-        receipt={'schema':'axm.visual-template-proof/v14','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'showroom_checks':checks,'truth':'Offline structural evidence only. Renderer fidelity, geometry correctness, physical scale, material realism, lighting quality, product availability and aesthetic acceptance were not observed.'}
+        if not all(checks.values()): raise AssertionError('music source/analysis/reactive contract failed')
+        receipt={'schema':'axm.visual-template-proof/v15','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'music_checks':checks,'truth':'Offline structural evidence only. Audio-analysis correctness, musical timing quality, rights/licensing, mastering quality, renderer fidelity and aesthetic acceptance were not observed.'}
         (out/'receipt.json').write_text(json.dumps(receipt,indent=2,sort_keys=True),encoding='utf-8')
         print(json.dumps(receipt,indent=2,sort_keys=True))
     except BaseException:

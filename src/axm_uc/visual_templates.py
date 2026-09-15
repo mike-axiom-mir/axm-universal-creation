@@ -21,8 +21,9 @@ from .visual_template_diagram import extend_diagram_catalog as _extend_diagram_c
 from .visual_template_atlas import extend_atlas_catalog as _extend_atlas_catalog
 from .visual_template_novel import extend_novel_catalog as _extend_novel_catalog
 from .visual_template_showroom import extend_showroom_catalog as _extend_showroom_catalog
+from .visual_template_music import extend_music_catalog as _extend_music_catalog
 
-_COMPOSITION=("visual_template_growth","visual_template_game_systems","visual_template_creative_narrative","visual_template_axm_system","visual_template_game_shared","visual_template_keyart","visual_template_cards","visual_template_cinematic","visual_template_video_overlay","visual_template_diagram","visual_template_atlas","visual_template_novel","visual_template_showroom")
+_COMPOSITION=("visual_template_growth","visual_template_game_systems","visual_template_creative_narrative","visual_template_axm_system","visual_template_game_shared","visual_template_keyart","visual_template_cards","visual_template_cinematic","visual_template_video_overlay","visual_template_diagram","visual_template_atlas","visual_template_novel","visual_template_showroom","visual_template_music")
 _applied=getattr(_core,"_AXM_VISUAL_COMPOSITION",None)
 if _applied is None:
     _extend_catalog(vars(_core))
@@ -38,6 +39,7 @@ if _applied is None:
     _extend_atlas_catalog(vars(_core))
     _extend_novel_catalog(vars(_core))
     _extend_showroom_catalog(vars(_core))
+    _extend_music_catalog(vars(_core))
     _core._AXM_VISUAL_COMPOSITION=_COMPOSITION
 elif _applied != _COMPOSITION:
     raise RuntimeError("visual template composition changed inside a live process; restart with one exact catalog")
