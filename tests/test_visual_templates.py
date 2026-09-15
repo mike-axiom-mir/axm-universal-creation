@@ -8,18 +8,18 @@ from axm_stickers import Registry
 from axm_uc import visual_templates as vt
 
 SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
-PRODUCTS=('game.racing.full','game.coop.action','game.rts.command','game.system.shell','game.shared.core','editor.creative.core','comic.narrative.core','axm.system.shell','visual.keyart.core','visual.cards.core','visual.cinematic.core','visual.broadcast.core','visual.diagram.core','visual.atlas.core','visual.novel.core','visual.showroom.core','visual.music.core','visual.presentation.core','visual.character.core','visual.configurator.core','visual.motion.core')
+PRODUCTS=('game.racing.full','game.coop.action','game.rts.command','game.system.shell','game.shared.core','editor.creative.core','comic.narrative.core','axm.system.shell','visual.keyart.core','visual.cards.core','visual.cinematic.core','visual.broadcast.core','visual.diagram.core','visual.atlas.core','visual.novel.core','visual.showroom.core','visual.music.core','visual.presentation.core','visual.character.core','visual.configurator.core','visual.motion.core','visual.brand.core')
 
 class VisualTemplateTests(unittest.TestCase):
     def test_catalog_counts_and_products(self):
         counts=vt.validate_catalog()
-        self.assertEqual(counts,{'styles':25,'primitives':196,'screens':234,'products':23})
+        self.assertEqual(counts,{'styles':26,'primitives':206,'screens':244,'products':24})
         self.assertEqual(vt.CATALOG_COMPOSITION['counts'],counts)
         ids={p['id'] for p in vt.catalog()['products']}
         self.assertTrue(set(PRODUCTS)|{'game.racing.performance','software.creator.studio'} <= ids)
 
     def test_all_geometry_and_major_variants(self):
-        prefixes=('game.','editor.creative.','comic.narrative.','axm.system.','visual.keyart.','visual.cards.','visual.cinematic.','visual.broadcast.','visual.diagram.','visual.atlas.','visual.novel.','visual.showroom.','visual.music.','visual.presentation.','visual.character.','visual.configurator.','visual.motion.')
+        prefixes=('game.','editor.creative.','comic.narrative.','axm.system.','visual.keyart.','visual.cards.','visual.cinematic.','visual.broadcast.','visual.diagram.','visual.atlas.','visual.novel.','visual.showroom.','visual.music.','visual.presentation.','visual.character.','visual.configurator.','visual.motion.','visual.brand.')
         for tid,definition in vt.SCREEN_TEMPLATES.items():
             if tid.startswith(prefixes): self.assertEqual(set(definition['variants']),{'compact','standard','wide'},tid)
             for width,height in SIZES:
@@ -29,21 +29,21 @@ class VisualTemplateTests(unittest.TestCase):
                     self.assertLessEqual(x+w,width+1e-6); self.assertLessEqual(y+h,height+1e-6)
 
     def test_existing_product_depth_is_retained(self):
-        expected={'game.racing.full':19,'game.system.shell':18,'game.shared.core':12,'editor.creative.core':12,'comic.narrative.core':10,'axm.system.shell':12,'visual.keyart.core':10,'visual.cards.core':11,'visual.cinematic.core':10,'visual.broadcast.core':10,'visual.diagram.core':10,'visual.atlas.core':10,'visual.novel.core':10,'visual.showroom.core':10,'visual.music.core':10,'visual.presentation.core':10,'visual.character.core':10,'visual.configurator.core':10}
+        expected={'game.racing.full':19,'game.system.shell':18,'game.shared.core':12,'editor.creative.core':12,'comic.narrative.core':10,'axm.system.shell':12,'visual.keyart.core':10,'visual.cards.core':11,'visual.cinematic.core':10,'visual.broadcast.core':10,'visual.diagram.core':10,'visual.atlas.core':10,'visual.novel.core':10,'visual.showroom.core':10,'visual.music.core':10,'visual.presentation.core':10,'visual.character.core':10,'visual.configurator.core':10,'visual.motion.core':10}
         for pid,count in expected.items(): self.assertEqual(len(vt.get(pid)['screens']),count)
 
-    def test_motion_product_preserves_state_and_accessibility_truth(self):
-        product=vt.get('visual.motion.core')
-        required={'visual.motion.project-hub','visual.motion.transition-editor','visual.motion.focus-navigation','visual.motion.spatial-continuity','visual.motion.timing-curves','visual.motion.interruption-recovery','visual.motion.progress-loading','visual.motion.reduced-motion','visual.motion.trigger-matrix','visual.motion.review-export'}
+    def test_brand_product_preserves_identity_and_usage_truth(self):
+        product=vt.get('visual.brand.core')
+        required={'visual.brand.project-hub','visual.brand.marks-lockups','visual.brand.typography','visual.brand.icons','visual.brand.tokens','visual.brand.spacing-usage','visual.brand.variants','visual.brand.applications','visual.brand.review-audit','visual.brand.export'}
         self.assertEqual(set(product['screens']),required)
-        self.assertEqual(product['style'],'visual.motion.system')
+        self.assertEqual(product['style'],'visual.brand.identity')
         quality=' '.join(product['quality']).lower()
         self.assertIn('separately editable',quality)
-        self.assertIn('never manufactures a state change or completion',quality)
-        self.assertIn('semantic identities',quality)
-        self.assertIn('rollback destinations',quality)
-        self.assertIn('same state result',quality)
-        self.assertIn('duration_ms',vt.get('visual.motion.transition-editor')['math_hooks'])
+        self.assertIn('never silently becomes canonical identity source',quality)
+        self.assertIn('measurement basis',quality)
+        self.assertIn('exceptions remain explicit',quality)
+        self.assertIn('exact identity assets',quality)
+        self.assertIn('clearspace_ratio',vt.get('visual.brand.marks-lockups')['math_hooks'])
 
     def test_products_resolve_and_previews_parse(self):
         for pid in PRODUCTS:
@@ -60,29 +60,31 @@ class VisualTemplateTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             with Registry(Path(td)/'stickers.sqlite') as registry:
                 pins=vt.install_builtins(registry)
-                self.assertEqual(len(pins),257)
-                motion=registry.search(adapter=vt.ADAPTER,tag='motion',limit=100)['entries']
-                expected={f'visual.visual.motion.{name}' for name in ('project-hub','transition-editor','focus-navigation','spatial-continuity','timing-curves','interruption-recovery','progress-loading','reduced-motion','trigger-matrix','review-export')}
-                self.assertTrue(expected <= {entry['id'] for entry in motion})
-                d=registry.get('visual.visual.motion.transition-editor',1)
+                self.assertEqual(len(pins),268)
+                brand=registry.search(adapter=vt.ADAPTER,tag='brand',limit=100)['entries']
+                expected={f'visual.visual.brand.{name}' for name in ('project-hub','marks-lockups','typography','icons','tokens','spacing-usage','variants','applications','review-audit','export')}
+                self.assertTrue(expected <= {entry['id'] for entry in brand})
+                d=registry.get('visual.visual.brand.marks-lockups',1)
                 self.assertEqual(d['recipe']['visual_template']['schema'],vt.SCHEMA)
                 self.assertNotIn('"latest"',json.dumps(d,sort_keys=True))
 
-    def test_motion_state_trigger_focus_recovery_progress_and_reduced_contracts(self):
-        required={'motion-state','transition-edge-state','timing-curve','focus-motion-path','spatial-anchor-transition','interruption-recovery','progress-motion-state','reduced-motion-rule','motion-trigger','motion-export-target'}
+    def test_brand_asset_lockup_type_icon_token_rule_variant_application_contracts(self):
+        required={'brand-asset-source','brand-lockup','brand-type-role','brand-icon-family','brand-token','brand-clearspace-rule','brand-usage-rule','brand-application','brand-variant','brand-export-target'}
         self.assertTrue(required <= set(vt.PRIMITIVES))
-        self.assertTrue(vt.PRIMITIVES['motion-state']['source_target_identity_required'])
-        self.assertTrue(vt.PRIMITIVES['transition-edge-state']['trigger_source_target_duration_required'])
-        self.assertTrue(vt.PRIMITIVES['timing-curve']['duration_curve_parameters_required'])
-        self.assertTrue(vt.PRIMITIVES['focus-motion-path']['focus_from_to_order_required'])
-        self.assertTrue(vt.PRIMITIVES['spatial-anchor-transition']['source_target_anchor_required'])
-        self.assertTrue(vt.PRIMITIVES['interruption-recovery']['interrupt_recovery_state_required'])
-        self.assertTrue(vt.PRIMITIVES['progress-motion-state']['progress_source_status_required'])
-        self.assertTrue(vt.PRIMITIVES['reduced-motion-rule']['equivalent_state_result_required'])
-        self.assertTrue(vt.PRIMITIVES['motion-trigger']['event_source_repeat_required'])
-        self.assertTrue(vt.PRIMITIVES['motion-export-target']['requirements_must_be_visible'])
+        self.assertTrue(vt.PRIMITIVES['brand-asset-source']['identity_source_version_provenance_required'])
+        self.assertTrue(vt.PRIMITIVES['brand-lockup']['asset_refs_layout_status_required'])
+        self.assertTrue(vt.PRIMITIVES['brand-type-role']['font_source_role_required'])
+        self.assertTrue(vt.PRIMITIVES['brand-icon-family']['family_source_members_required'])
+        self.assertTrue(vt.PRIMITIVES['brand-token']['value_context_source_required'])
+        self.assertTrue(vt.PRIMITIVES['brand-clearspace-rule']['target_measurement_basis_required'])
+        self.assertTrue(vt.PRIMITIVES['brand-usage-rule']['subject_context_status_source_required'])
+        self.assertTrue(vt.PRIMITIVES['brand-application']['asset_token_target_refs_required'])
+        self.assertTrue(vt.PRIMITIVES['brand-variant']['base_delta_context_required'])
+        self.assertTrue(vt.PRIMITIVES['brand-export-target']['requirements_must_be_visible'])
 
-    def test_configurator_and_prior_source_boundaries_remain_present(self):
+    def test_motion_configurator_and_prior_boundaries_remain_present(self):
+        self.assertTrue(vt.PRIMITIVES['motion-state']['source_target_identity_required'])
+        self.assertTrue(vt.PRIMITIVES['reduced-motion-rule']['equivalent_state_result_required'])
         self.assertTrue(vt.PRIMITIVES['configuration-state']['base_attachment_variant_digest_required'])
         self.assertTrue(vt.PRIMITIVES['compatibility-rule']['subject_target_rule_status_required'])
         self.assertTrue(vt.PRIMITIVES['character-source']['identity_source_version_required'])
@@ -99,12 +101,12 @@ class VisualTemplateTests(unittest.TestCase):
         self.assertTrue(vt.PRIMITIVES['truth-state']['source_must_be_visible'])
 
     def test_copy_safety_variant_rejection_and_bad_geometry(self):
-        a=vt.resolve('visual.motion.transition-editor',1920,1080); b=vt.resolve('visual.motion.transition-editor',1920,1080)
+        a=vt.resolve('visual.brand.marks-lockups',1920,1080); b=vt.resolve('visual.brand.marks-lockups',1920,1080)
         self.assertEqual(a,b)
-        copy=vt.get('visual.motion.transition-editor'); copy['name']='changed'
-        self.assertNotEqual(vt.get('visual.motion.transition-editor')['name'],'changed')
-        with self.assertRaises(ValueError): vt.resolve('visual.motion.transition-editor',1920,1080,variant='unknown')
-        bad=vt.get('visual.motion.transition-editor'); bad['variants']['standard']['preview']=[.9,.9,.2,.2]
+        copy=vt.get('visual.brand.marks-lockups'); copy['name']='changed'
+        self.assertNotEqual(vt.get('visual.brand.marks-lockups')['name'],'changed')
+        with self.assertRaises(ValueError): vt.resolve('visual.brand.marks-lockups',1920,1080,variant='unknown')
+        bad=vt.get('visual.brand.marks-lockups'); bad['variants']['standard']['stage']=[.9,.9,.2,.2]
         with self.assertRaises(ValueError): vt.validate_screen(bad)
 
     def test_exact_sticker_slot_binding_is_retained(self):
