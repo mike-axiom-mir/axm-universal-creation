@@ -101,6 +101,41 @@ exports when those features change. Measure performance before making claims.
 
 ## Current checkpoint
 
+### Portable sticker fabric and registry — 2026-09-15
+
+- Mike requested pullable reusable creation parts and a registry usable by other
+  programs. Added independent `axm_stickers` (standard library only) with immutable
+  versions, exact instance pins, declared parameters, source attribution, indexed
+  lookup, shared asset blobs and portable bundles. Registry lives inside the core;
+  future dedicated repo name is `axm-sticker-fabric`, not a required service.
+- UC consumes the core through `sticker_adapter.py`: original layered Studio
+  recipes, translated/scaled/rotated/alpha placements, per-call render reuse and
+  replayable scene publication. Canonical host, nested sticker recipes, source
+  PNGs and independent instance controls survive the flattened preview.
+- Rigid GLB stickers gain source/target socket contracts and optional exported
+  host-socket motion. Original geometry/materials/buffer and source bytes remain
+  retained. Actual GLB re-import checks 17 samples with maximum socket error
+  0.0000000142 m. This is rigid attachment, not skinning, projection or physics.
+- Local evidence: 13 focused tests pass, including isolated import without UC,
+  cross-registry bundles, immutable versions, invalid overrides/pins/sockets,
+  exact pixels and source-loss scene replay. The original proof registered 1,000
+  metadata fixtures sharing two PNGs and placed 1,000 instances with one render:
+  0.38–0.43 seconds on this host, not an arbitrary-device speed guarantee.
+- Proof: `tools/sticker_proof.py`, `docs/STICKER_FABRIC.md`; dedicated CI exports
+  actual GLBs, editable source, portable scenes/registry and an independently
+  installable core package. Static proof inspection confirms distinct 2D instances
+  and visible 3D posed geometry; an occluding per-object preview-sort error was
+  repaired by sorting faces together. No continuous playback/PBR acceptance.
+- Roots: Truth separates contract/render/visual/performance evidence; Agency keeps
+  changes explicit and versions pinned; Continuity retains rich source/provenance
+  across derivatives; Wisdom bounds work and measures reuse instead of promising
+  instant arbitrary complexity. Existing donors and paused platform are unchanged.
+- Lane: `codex/rts-reference-foundry`, based on current main `90148a8`.
+  PR #54 is unrelated. Next: placement UI, optional smoother sampling, measured
+  surface projection and nested assembly references. Practice promotion remains
+  explicit registration; no silent additions to a shared registry.
+
+
 ### Profile-based creative practice — 2026-09-15
 
 - Mike requested resumable heartbeat practice, identity-linked directed growth,

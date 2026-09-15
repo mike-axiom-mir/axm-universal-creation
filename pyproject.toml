@@ -15,6 +15,7 @@ axm-assets = "axm_uc.visual_assets_cli:main"
 axm-practice = "axm_uc.creative_practice:main"
 axm-uc-portable = "axm_uc.portable_cli:main"
 axm-effects = "axm_uc.procedural_effects:main"
+axm-stickers = "axm_stickers.__main__:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
