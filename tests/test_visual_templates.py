@@ -8,18 +8,18 @@ from axm_stickers import Registry
 from axm_uc import visual_templates as vt
 
 SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
-PRODUCTS=('game.racing.full','game.coop.action','game.rts.command','game.system.shell','game.shared.core','editor.creative.core','comic.narrative.core','axm.system.shell','visual.keyart.core','visual.cards.core','visual.cinematic.core','visual.broadcast.core','visual.diagram.core','visual.atlas.core','visual.novel.core','visual.showroom.core','visual.music.core','visual.presentation.core')
+PRODUCTS=('game.racing.full','game.coop.action','game.rts.command','game.system.shell','game.shared.core','editor.creative.core','comic.narrative.core','axm.system.shell','visual.keyart.core','visual.cards.core','visual.cinematic.core','visual.broadcast.core','visual.diagram.core','visual.atlas.core','visual.novel.core','visual.showroom.core','visual.music.core','visual.presentation.core','visual.character.core')
 
 class VisualTemplateTests(unittest.TestCase):
     def test_catalog_counts_and_products(self):
         counts=vt.validate_catalog()
-        self.assertEqual(counts,{'styles':22,'primitives':166,'screens':204,'products':20})
+        self.assertEqual(counts,{'styles':23,'primitives':176,'screens':214,'products':21})
         self.assertEqual(vt.CATALOG_COMPOSITION['counts'],counts)
         ids={p['id'] for p in vt.catalog()['products']}
         self.assertTrue(set(PRODUCTS)|{'game.racing.performance','software.creator.studio'} <= ids)
 
     def test_all_geometry_and_major_variants(self):
-        prefixes=('game.','editor.creative.','comic.narrative.','axm.system.','visual.keyart.','visual.cards.','visual.cinematic.','visual.broadcast.','visual.diagram.','visual.atlas.','visual.novel.','visual.showroom.','visual.music.','visual.presentation.')
+        prefixes=('game.','editor.creative.','comic.narrative.','axm.system.','visual.keyart.','visual.cards.','visual.cinematic.','visual.broadcast.','visual.diagram.','visual.atlas.','visual.novel.','visual.showroom.','visual.music.','visual.presentation.','visual.character.')
         for tid,definition in vt.SCREEN_TEMPLATES.items():
             if tid.startswith(prefixes): self.assertEqual(set(definition['variants']),{'compact','standard','wide'},tid)
             for width,height in SIZES:
@@ -29,21 +29,21 @@ class VisualTemplateTests(unittest.TestCase):
                     self.assertLessEqual(x+w,width+1e-6); self.assertLessEqual(y+h,height+1e-6)
 
     def test_existing_product_depth_is_retained(self):
-        expected={'game.racing.full':19,'game.system.shell':18,'game.shared.core':12,'editor.creative.core':12,'comic.narrative.core':10,'axm.system.shell':12,'visual.keyart.core':10,'visual.cards.core':11,'visual.cinematic.core':10,'visual.broadcast.core':10,'visual.diagram.core':10,'visual.atlas.core':10,'visual.novel.core':10,'visual.showroom.core':10,'visual.music.core':10}
+        expected={'game.racing.full':19,'game.system.shell':18,'game.shared.core':12,'editor.creative.core':12,'comic.narrative.core':10,'axm.system.shell':12,'visual.keyart.core':10,'visual.cards.core':11,'visual.cinematic.core':10,'visual.broadcast.core':10,'visual.diagram.core':10,'visual.atlas.core':10,'visual.novel.core':10,'visual.showroom.core':10,'visual.music.core':10,'visual.presentation.core':10}
         for pid,count in expected.items(): self.assertEqual(len(vt.get(pid)['screens']),count)
 
-    def test_presentation_product_preserves_content_source_and_order_truth(self):
-        product=vt.get('visual.presentation.core')
-        required={'visual.presentation.project-hub','visual.presentation.page-editor','visual.presentation.outline-editor','visual.presentation.block-editor','visual.presentation.figure-editor','visual.presentation.source-editor','visual.presentation.emphasis-layout','visual.presentation.notes-review','visual.presentation.sequence-preview','visual.presentation.export'}
+    def test_character_product_preserves_identity_measurement_and_reference_truth(self):
+        product=vt.get('visual.character.core')
+        required={'visual.character.project-hub','visual.character.turnaround','visual.character.proportions','visual.character.expressions','visual.character.poses','visual.character.materials','visual.character.callouts','visual.character.scale-variants','visual.character.reference-board','visual.character.review-export'}
         self.assertEqual(set(product['screens']),required)
-        self.assertEqual(product['style'],'visual.presentation.story')
+        self.assertEqual(product['style'],'visual.character.reference')
         quality=' '.join(product['quality']).lower()
         self.assertIn('separately editable',quality)
-        self.assertIn('never rewrite exact source meaning',quality)
-        self.assertIn('exact identity/version/view bindings',quality)
-        self.assertIn('missing or disputed source state',quality)
-        self.assertIn('richer presentation source state',quality)
-        self.assertIn('page_safe_ratio',vt.get('visual.presentation.page-editor')['math_hooks'])
+        self.assertIn('canonical character/creature identity',quality)
+        self.assertIn('unit, source and precision/assumption state',quality)
+        self.assertIn('exact anatomical, gear or feature targets',quality)
+        self.assertIn('richer character source state',quality)
+        self.assertIn('figure_height_ratio',vt.get('visual.character.turnaround')['math_hooks'])
 
     def test_products_resolve_and_previews_parse(self):
         for pid in PRODUCTS:
@@ -60,28 +60,31 @@ class VisualTemplateTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             with Registry(Path(td)/'stickers.sqlite') as registry:
                 pins=vt.install_builtins(registry)
-                self.assertEqual(len(pins),224)
-                presentation=registry.search(adapter=vt.ADAPTER,tag='presentation',limit=100)['entries']
-                self.assertEqual(len(presentation),10)
-                d=registry.get('visual.visual.presentation.page-editor',1)
+                self.assertEqual(len(pins),235)
+                character=registry.search(adapter=vt.ADAPTER,tag='character',limit=100)['entries']
+                self.assertEqual(len(character),12)
+                expected={f'visual.visual.character.{name}' for name in ('project-hub','turnaround','proportions','expressions','poses','materials','callouts','scale-variants','reference-board','review-export')}
+                self.assertTrue(expected <= {entry['id'] for entry in character})
+                d=registry.get('visual.visual.character.turnaround',1)
                 self.assertEqual(d['recipe']['visual_template']['schema'],vt.SCHEMA)
                 self.assertNotIn('"latest"',json.dumps(d,sort_keys=True))
 
-    def test_presentation_source_embed_notes_order_and_export_contracts(self):
-        required={'presentation-page','content-block','source-footnote','figure-frame','presentation-section','emphasis-cue','speaker-note','embed-binding','presentation-transition','presentation-export-target'}
+    def test_character_source_view_measurement_material_scale_and_export_contracts(self):
+        required={'character-source','turnaround-view','proportion-guide','expression-state','pose-reference','character-material','character-callout','scale-reference','character-variant','reference-export-target'}
         self.assertTrue(required <= set(vt.PRIMITIVES))
-        self.assertTrue(vt.PRIMITIVES['presentation-page']['identity_role_order_required'])
-        self.assertTrue(vt.PRIMITIVES['content-block']['type_content_source_required'])
-        self.assertTrue(vt.PRIMITIVES['source-footnote']['target_source_status_required'])
-        self.assertTrue(vt.PRIMITIVES['figure-frame']['source_caption_identity_required'])
-        self.assertTrue(vt.PRIMITIVES['presentation-section']['membership_order_required'])
-        self.assertTrue(vt.PRIMITIVES['emphasis-cue']['must_not_rewrite_source_meaning'])
-        self.assertTrue(vt.PRIMITIVES['speaker-note']['target_and_source_required'])
-        self.assertTrue(vt.PRIMITIVES['embed-binding']['identity_version_view_required'])
-        self.assertTrue(vt.PRIMITIVES['presentation-transition']['must_not_change_page_order'])
-        self.assertTrue(vt.PRIMITIVES['presentation-export-target']['requirements_must_be_visible'])
+        self.assertTrue(vt.PRIMITIVES['character-source']['identity_source_version_required'])
+        self.assertTrue(vt.PRIMITIVES['turnaround-view']['identity_view_camera_required'])
+        self.assertTrue(vt.PRIMITIVES['proportion-guide']['anchors_value_unit_source_required'])
+        self.assertTrue(vt.PRIMITIVES['expression-state']['identity_name_source_required'])
+        self.assertTrue(vt.PRIMITIVES['pose-reference']['identity_pose_source_required'])
+        self.assertTrue(vt.PRIMITIVES['character-material']['part_material_source_required'])
+        self.assertTrue(vt.PRIMITIVES['character-callout']['target_content_source_required'])
+        self.assertTrue(vt.PRIMITIVES['scale-reference']['reference_value_unit_source_required'])
+        self.assertTrue(vt.PRIMITIVES['character-variant']['base_delta_status_required'])
+        self.assertTrue(vt.PRIMITIVES['reference-export-target']['requirements_must_be_visible'])
 
     def test_prior_source_boundaries_remain_present(self):
+        self.assertTrue(vt.PRIMITIVES['presentation-page']['identity_role_order_required'])
         self.assertTrue(vt.PRIMITIVES['music-track-source']['identity_source_digest_duration_required'])
         self.assertTrue(vt.PRIMITIVES['showroom-object']['source_identity_version_required'])
         self.assertTrue(vt.PRIMITIVES['save-checkpoint']['state_identity_digest_required'])
@@ -94,12 +97,12 @@ class VisualTemplateTests(unittest.TestCase):
         self.assertTrue(vt.PRIMITIVES['truth-state']['source_must_be_visible'])
 
     def test_copy_safety_variant_rejection_and_bad_geometry(self):
-        a=vt.resolve('visual.presentation.page-editor',1920,1080); b=vt.resolve('visual.presentation.page-editor',1920,1080)
+        a=vt.resolve('visual.character.turnaround',1920,1080); b=vt.resolve('visual.character.turnaround',1920,1080)
         self.assertEqual(a,b)
-        copy=vt.get('visual.presentation.page-editor'); copy['name']='changed'
-        self.assertNotEqual(vt.get('visual.presentation.page-editor')['name'],'changed')
-        with self.assertRaises(ValueError): vt.resolve('visual.presentation.page-editor',1920,1080,variant='unknown')
-        bad=vt.get('visual.presentation.page-editor'); bad['variants']['standard']['page']=[.9,.9,.2,.2]
+        copy=vt.get('visual.character.turnaround'); copy['name']='changed'
+        self.assertNotEqual(vt.get('visual.character.turnaround')['name'],'changed')
+        with self.assertRaises(ValueError): vt.resolve('visual.character.turnaround',1920,1080,variant='unknown')
+        bad=vt.get('visual.character.turnaround'); bad['variants']['standard']['views']=[.9,.9,.2,.2]
         with self.assertRaises(ValueError): vt.validate_screen(bad)
 
     def test_exact_sticker_slot_binding_is_retained(self):
