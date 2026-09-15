@@ -75,6 +75,9 @@ class CreativePrecisionFabricTests(unittest.TestCase):
     def test_cross_domain_finishing_fail_closed_contracts(self):
         self.run_node('creative-finishing-contract-selftest.js')
 
+    def test_quality_level_creation_gauntlet(self):
+        self.run_node('creative-quality-gauntlet-selftest.js')
+
 
 if __name__ == '__main__':
     unittest.main()
