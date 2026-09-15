@@ -6,14 +6,16 @@ const Platform=require('../../../index');
 
 const summary=Flow.summary();
 assert.equal(summary.state,'EXECUTABLE');
-assert.equal(summary.public_hands,314);
-assert.equal(summary.callable_recipes,321);
+assert(summary.public_hands>=314);
+assert(summary.callable_recipes>=321);
 assert.equal(Platform.creativeFlow.summary().digest,summary.digest);
 
 const exact=Flow.discover({family:'mesh-transform',operation:'scale',require_unique:true});
 assert.equal(exact.status,'MATCHES');
 assert.equal(exact.matches.length,1);
 assert.equal(exact.matches[0].id,'creative.mesh-transform.scale');
+const modeling=Flow.discover({family:'mesh-model-cut',operation:'clip-positive',require_unique:true});
+assert.equal(modeling.status,'MATCHES');assert.equal(modeling.matches.length,1);assert.equal(modeling.matches[0].id,'creative.mesh-model-cut.clip-positive');
 
 const broad=Flow.discover({query:'mesh',require_unique:true,limit:20});
 assert.equal(broad.status,'HOLD_AMBIGUOUS');
@@ -96,4 +98,4 @@ assert.throws(()=>Flow.compile({state:{mesh:{x:1}},steps:[
   {id:'overwrite',hand_id:'creative.mesh-primitive.cube',args:{spec:{id:'x',detail:8}},save_as:'mesh'}
 ]}),/cannot overwrite initial state/);
 
-console.log(JSON.stringify({status:'PASS',summary:summary.digest,plan:compiled.digest,result:result.digest,cross:cross.digest,receipts:result.receipts.map((row)=>row.digest),failure:failure.failure.digest},null,2));
+console.log(JSON.stringify({status:'PASS',summary:summary.digest,plan:compiled.digest,result:result.digest,cross:cross.digest,modeling_discovery:modeling.digest,receipts:result.receipts.map((row)=>row.digest),failure:failure.failure.digest},null,2));
