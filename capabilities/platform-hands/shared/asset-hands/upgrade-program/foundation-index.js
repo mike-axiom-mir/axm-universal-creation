@@ -8,6 +8,7 @@ module.exports = Object.freeze({
   creativePrecision: require('./creative-precision'),
   precisionRaster: require('./precision-raster'),
   precisionTransform: require('./precision-transform'),
+  creativeRecipes: require('./creative-recipes'),
   runtimeSubstrates: require('./runtime-substrates'),
   negotiationSdk: require('./negotiation-sdk'),
   roundTripLedger: require('./roundtrip-ledger'),
