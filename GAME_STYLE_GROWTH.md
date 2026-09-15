@@ -101,6 +101,42 @@ exports when those features change. Measure performance before making claims.
 
 ## Current checkpoint
 
+### Profile-based creative practice — 2026-09-15
+
+- Mike requested resumable heartbeat practice, identity-linked directed growth,
+  and meaningful batched journals without file proliferation. Implemented
+  `creative_practice.py` / `axm-practice`: one SQLite cartridge for profiles,
+  captured editable sources, deduplicated PNGs, session journals and summaries.
+- Each tick executes one real Studio layer edit. Free/graphic/surface starter
+  repertoires choose untried experiments using exact prior evidence. Explicit
+  human/machine/AI proposals share the same API; bounded context includes
+  attributed feedback. Profile forks snapshot lessons and then grow separately.
+- Rendering success, changed pixels and artistic judgment remain separate.
+  Only explicit keep changes a working revision; originals persist. Repetition
+  never becomes confidence. Unknown filters retain their real error. No remote
+  model, weight training, autonomous code installation or external task created.
+- Actual local verification: 20 practice tests, including abrupt process death,
+  concurrent writers, full-database rollback, stale reviews, immutable consumed
+  feedback snapshots, source loss, resume and exact editable replay. The existing
+  16 Studio tests also pass. Current-head full CI is required before merging.
+- `tools/creative_practice_proof.py` executes two linked sessions, a missing
+  filter probe, a profile fork and 1,000 paused ticks adding zero events. Its
+  recovered session uses prior evidence to choose a different treatment and
+  reproduces exact source bytes after their original files are removed.
+  The dedicated CI artifact contains the portable database and editable outputs.
+- Limits: first adapter is 2D Studio compositing; six starter operations, no
+  autonomous aesthetic evaluator. Session steps/time, record size and database
+  size are bounded; no automatic evidence deletion. Host heartbeat calls tick,
+  or an explicit foreground run supplies pacing. See docs/CREATIVE_PRACTICE.md.
+- Roots: Truth keeps observation and judgment attributable; Agency requires
+  explicit selection and exposes equivalent caller controls; Continuity retains
+  originals, dissent and fork provenance; Wisdom consults prior failures before
+  repeating work and verifies crash recovery. Platform donor remains unchanged.
+- Lane: `codex/rts-reference-foundry`, PR #77, based on current main `882aeef`;
+  PR #54 remains unrelated. Next: connect the Studio profile/session controls
+  and add another capability adapter through the same practice contract.
+
+
 ### Studio donor recovery and executable layers — 2026-09-15
 
 - Mike redirected this pass to recover the actual old Studio from the paused
