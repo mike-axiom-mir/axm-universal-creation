@@ -1,6 +1,6 @@
 # AXM Visual Template Expansion Priority Map
 
-Status: v13 growth lane after verified v1–v12 merges.
+Status: v14 growth lane after verified v1–v13 merges.
 
 The visual-template fabric grows where Universal Creation is likely to reuse the knowledge soon. This is a build priority, not canon: templates remain editable foundations and may be replaced when evidence supports a better structure.
 
@@ -15,48 +15,49 @@ The visual-template fabric grows where Universal Creation is likely to reuse the
 - evidence-aware infographic / diagram editor;
 - world-map / lore-atlas editor;
 - interactive visual-novel / branching narrative editor;
-- 3D showroom / gallery presentation.
+- 3D showroom / gallery presentation;
+- music visualizer / album-art editor.
 
-## Music visualizer / album-art editor — IMPLEMENTED IN THIS LANE
+## Presentation / explainer page systems — IMPLEMENTED IN THIS LANE
 
-Product: `visual.music.core`
+Product: `visual.presentation.core`
 
 Implemented screens:
 
-- `visual.music.project-hub`
-- `visual.music.cover-editor`
-- `visual.music.track-identity`
-- `visual.music.analysis-waveform`
-- `visual.music.marker-timing`
-- `visual.music.reactive-editor`
-- `visual.music.tracklist-sequence`
-- `visual.music.crop-variants`
-- `visual.music.playback-preview`
-- `visual.music.review-export`
+- `visual.presentation.project-hub`
+- `visual.presentation.page-editor`
+- `visual.presentation.outline-editor`
+- `visual.presentation.block-editor`
+- `visual.presentation.figure-editor`
+- `visual.presentation.source-editor`
+- `visual.presentation.emphasis-layout`
+- `visual.presentation.notes-review`
+- `visual.presentation.sequence-preview`
+- `visual.presentation.export`
 
 New primitives:
 
-- `music-track-source`
-- `music-analysis`
-- `beat-marker`
-- `waveform-source`
-- `cover-composition`
-- `reactive-visual-layer`
-- `music-marker-cue`
-- `album-variant`
-- `track-list-entry`
-- `music-export-target`
+- `presentation-page`
+- `content-block`
+- `source-footnote`
+- `figure-frame`
+- `presentation-section`
+- `emphasis-cue`
+- `speaker-note`
+- `embed-binding`
+- `presentation-transition`
+- `presentation-export-target`
 
-Style: `visual.music.resonant`.
+Style: `visual.presentation.story`.
 
-The central rule is audio/source truth: exact track identity/source/digest/duration stays authoritative. Waveform, analysis, beat markers and reactive state must be observed or explicitly derived and attributed. Album art remains editable source layers; no lyrics are inferred or manufactured by this pack.
+The central rule is source/meaning continuity: page order, content, citations, figure identity and embedded artifact versions stay exact. Layout/emphasis/transition choices can improve communication but cannot manufacture evidence, rewrite source meaning or silently reorder the story.
 
 ## Next high-value visual/creation families
 
-1. **Presentation / explainer page systems** — reusable storytelling pages assembled from diagram, key-art, atlas, showroom and editor foundations.
-2. **Character / creature reference-sheet editor** — turnaround views, expressions, materials, proportions, callouts and source/reference state for future games/comics.
-3. **Vehicle / weapon configuration presentation** — attachment sockets, stat comparison, exploded/detail presentation and exact source/configuration identity for game garages/loadouts.
-4. **UI motion / transition archetypes** — reusable state transitions, focus motion, spatial continuity and reduced-motion variants across software/game products.
+1. **Character / creature reference-sheet editor** — turnaround views, expressions, materials, proportions, callouts and source/reference state for games/comics.
+2. **Vehicle / weapon configuration presentation** — attachment sockets, stat comparison, exploded/detail presentation and exact source/configuration identity for garages/loadouts.
+3. **UI motion / transition archetypes** — reusable state transitions, focus motion, spatial continuity and reduced-motion variants across software/game products.
+4. **Brand / identity system editor** — exact logos, typography, icon families, spacing rules, usage variants and provenance-backed export packs.
 
 ## Cross-cutting rules
 
@@ -72,7 +73,7 @@ Every family preserves the existing visual-template contract:
 
 ## Immediate build order
 
-1. exact-head verify `visual.music.core`;
-2. merge v13 only when template + repository checks pass;
-3. begin presentation / explainer page systems from fresh main;
+1. exact-head verify `visual.presentation.core`;
+2. merge v14 only when template + repository checks pass;
+3. begin character / creature reference-sheet editing from fresh main;
 4. keep prioritizing reusable source-first editors over flat one-off outputs.
