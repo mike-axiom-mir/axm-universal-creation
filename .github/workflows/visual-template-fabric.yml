@@ -13,6 +13,7 @@ on:
       - 'src/axm_uc/visual_template_keyart.py'
       - 'src/axm_uc/visual_template_cards.py'
       - 'src/axm_uc/visual_template_cinematic.py'
+      - 'src/axm_uc/visual_template_video_overlay.py'
       - 'src/axm_uc/visual_templates_cli.py'
       - 'tests/test_visual_templates.py'
       - 'tools/visual_template_proof.py'
@@ -23,6 +24,7 @@ on:
       - 'KEYART_TEMPLATE_PACK.md'
       - 'CARD_DECK_TEMPLATE_PACK.md'
       - 'CINEMATIC_TEMPLATE_PACK.md'
+      - 'VIDEO_OVERLAY_TEMPLATE_PACK.md'
       - 'pyproject.toml'
       - '.github/workflows/visual-template-fabric.yml'
   pull_request:
@@ -37,6 +39,7 @@ on:
       - 'src/axm_uc/visual_template_keyart.py'
       - 'src/axm_uc/visual_template_cards.py'
       - 'src/axm_uc/visual_template_cinematic.py'
+      - 'src/axm_uc/visual_template_video_overlay.py'
       - 'src/axm_uc/visual_templates_cli.py'
       - 'tests/test_visual_templates.py'
       - 'tools/visual_template_proof.py'
@@ -47,6 +50,7 @@ on:
       - 'KEYART_TEMPLATE_PACK.md'
       - 'CARD_DECK_TEMPLATE_PACK.md'
       - 'CINEMATIC_TEMPLATE_PACK.md'
+      - 'VIDEO_OVERLAY_TEMPLATE_PACK.md'
       - 'pyproject.toml'
       - '.github/workflows/visual-template-fabric.yml'
   workflow_dispatch:

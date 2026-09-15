@@ -8,7 +8,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src'))
 from axm_uc import visual_templates as vt
 
 SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
-PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell","visual.keyart.core","visual.cards.core","visual.cinematic.core")
+PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell","visual.keyart.core","visual.cards.core","visual.cinematic.core","visual.broadcast.core")
 
 def _write(project,target):
     target.mkdir(); out=[]
@@ -25,7 +25,7 @@ def main(argv):
     out.mkdir(parents=True)
     try:
         counts=vt.validate_catalog()
-        if counts!={'styles':15,'primitives':96,'screens':134,'products':13}: raise AssertionError(counts)
+        if counts!={'styles':16,'primitives':106,'screens':144,'products':14}: raise AssertionError(counts)
         evidence=[]
         for pid in PRODUCTS:
             expected=vt.get(pid)
@@ -48,27 +48,28 @@ def main(argv):
             ('visual.keyart.core',1920,1080,'keyart','AXM Editable Key Art Foundation'),
             ('visual.cards.core',1920,1080,'cards','AXM Editable Card and Deck Foundation'),
             ('visual.cinematic.core',1920,1080,'cinematic','AXM Cinematic Title and Overlay Foundation'),
+            ('visual.broadcast.core',1920,1080,'broadcast','AXM Video and Stream Overlay Foundation'),
         )
         outputs=[]
         for pid,w,h,folder,title in galleries: outputs+=_write(vt.product_project(pid,w,h,title),out/folder)
         outputs+=_write(vt.screen_project('product.mobile.home',1080,1920,'AXM Mobile Foundation'),out/'mobile-home')
-        cinematic=vt.get('visual.cinematic.core')
-        required={'visual.cinematic.project-hub','visual.cinematic.title-editor','visual.cinematic.chapter-editor','visual.cinematic.lower-third','visual.cinematic.subtitle-editor','visual.cinematic.credits-editor','visual.cinematic.overlay-timeline','visual.cinematic.transition-editor','visual.cinematic.aspect-variants','visual.cinematic.review-export'}
-        if set(cinematic['screens'])!=required: raise AssertionError('cinematic pack lost required surfaces')
+        product=vt.get('visual.broadcast.core')
+        required={'visual.broadcast.project-hub','visual.broadcast.scene-editor','visual.broadcast.source-router','visual.broadcast.camera-editor','visual.broadcast.score-status','visual.broadcast.alert-editor','visual.broadcast.chat-social','visual.broadcast.scene-set','visual.broadcast.format-variants','visual.broadcast.review-output'}
+        if set(product['screens'])!=required: raise AssertionError('broadcast pack lost required surfaces')
         checks={
-            'title_text_layout_timing_separate':vt.PRIMITIVES['title-card']['text_layout_timing_remain_separate'],
-            'lower_third_exact_state':vt.PRIMITIVES['lower-third']['content_anchor_duration_explicit'],
-            'subtitle_text_timing_exact':vt.PRIMITIVES['subtitle-cue']['text_and_timing_must_be_exact'],
-            'credits_content_order_exact':vt.PRIMITIVES['credit-line']['content_and_order_must_remain_exact'],
-            'time_cue_start_end':vt.PRIMITIVES['time-cue']['start_end_required'],
-            'safe_zone_preserves_source':vt.PRIMITIVES['safe-zone']['guide_must_not_rewrite_source_layout'],
-            'transition_preserves_sources':vt.PRIMITIVES['transition-cue']['transition_must_not_replace_source_states'],
-            'chapter_time_label':vt.PRIMITIVES['chapter-marker']['time_and_label_required'],
-            'overlay_conflicts_visible':vt.PRIMITIVES['overlay-track']['overlaps_must_remain_visible'],
-            'logo_source_transform_separate':vt.PRIMITIVES['logo-lockup']['source_and_transform_remain_separate'],
+            'source_identity_explicit':vt.PRIMITIVES['source-window']['source_identity_must_be_explicit'],
+            'camera_source_crop_separate':vt.PRIMITIVES['camera-slot']['source_and_crop_remain_separate'],
+            'status_source_freshness':vt.PRIMITIVES['status-field']['value_source_freshness_required'],
+            'alert_no_fake_success':vt.PRIMITIVES['alert-cue']['unobserved_success_forbidden'],
+            'chat_delivery_explicit':vt.PRIMITIVES['chat-panel']['delivery_state_must_be_explicit'],
+            'scene_identity_exact':vt.PRIMITIVES['scene-state']['scene_identity_must_be_exact'],
+            'overlay_conflicts_visible':vt.PRIMITIVES['overlay-zone']['overlap_conflicts_must_be_visible'],
+            'identity_source_transform_separate':vt.PRIMITIVES['identity-panel']['source_and_transform_remain_separate'],
+            'transition_from_to_exact':vt.PRIMITIVES['transition-state']['from_to_identity_required'],
+            'output_state_observed':vt.PRIMITIVES['output-monitor']['target_state_must_be_observed'],
         }
-        if not all(checks.values()): raise AssertionError('cinematic editability contract failed')
-        receipt={'schema':'axm.visual-template-proof/v9','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'cinematic_checks':checks,'truth':'Offline structural evidence only. Typography quality, subtitle reading speed, credit correctness, motion timing quality, renderer fidelity and aesthetic acceptance were not observed.'}
+        if not all(checks.values()): raise AssertionError('broadcast source/state contract failed')
+        receipt={'schema':'axm.visual-template-proof/v10','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'broadcast_checks':checks,'truth':'Offline structural evidence only. Live capture, score correctness, message delivery, encoder/output health, platform integration, latency and aesthetic acceptance were not observed.'}
         (out/'receipt.json').write_text(json.dumps(receipt,indent=2,sort_keys=True),encoding='utf-8')
         print(json.dumps(receipt,indent=2,sort_keys=True))
     except BaseException:
