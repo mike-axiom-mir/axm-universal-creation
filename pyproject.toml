@@ -17,6 +17,7 @@ axm-uc-portable = "axm_uc.portable_cli:main"
 axm-effects = "axm_uc.procedural_effects:main"
 axm-stickers = "axm_stickers.__main__:main"
 axm-sticker-create = "axm_uc.sticker_create:main"
+axm-create-parallel = "axm_uc.parallel_create:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
@@ -25,4 +26,4 @@ package-dir = {"" = "src"}
 where = ["src"]
 
 [tool.setuptools.package-data]
-axm_uc = ["data/visual_state/*.json", "data/*.html", "data/rts/*.json", "data/rts/*.html", "data/studio/*.js", "data/studio/*.cjs", "data/studio/LICENSE", "data/studio/NOTICE"]
+axm_uc = ["data/visual_state/*.json", "data/*.html", "data/rts/*.json", "data/rts/*.html", "data/studio/*.js", "data/studio/*.cjs", "data/studio/LICENSE", "data/studio/NOTICE", "data/parallel/*.mjs", "data/parallel/*.json", "data/parallel/LICENSE", "data/parallel/NOTICE"]

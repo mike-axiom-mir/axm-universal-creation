@@ -1,3 +1,36 @@
+### Deterministic parallel creation — 2026-09-15
+
+- Reused the exact Apache-2.0 scheduler from axm-parallel-capability at
+  85f6d75bf8517bb0171d6a223b2389e03299e4b6. Bundled source, license,
+  provenance hashes and unchanged 16-test fixture; no external runtime repo.
+- Added axm-create-parallel / axm_uc.parallel_create.build: explicit dependency
+  graphs, 1..8 real Python worker processes, private registries, bounded task
+  timeouts, dependency instances from exact completed pins, deterministic merge,
+  conflict rejection, no overwrite of existing output. Humans, deterministic
+  software and AI share the same JSON interface. No AI required.
+- First adapters: create_3d and save_assembly. Preserve original styles/materials,
+  editable source and nested motion. The task count limit is 256; this is not a
+  claim of hundreds of wired tools. Node 20+ and Python 3.11+ are local runtimes.
+- Evidence: six integration tests, 23 sticker regression tests and 16 unchanged
+  donor tests pass locally. Rivetwing builds through 19 processes with observed
+  peak overlap four; all dependency starts follow completion. Four-worker and
+  one-worker libraries/GLBs are byte-exact, and GLB matches the earlier direct
+  build. Re-imported motion samples preserve nonzero motion and exact loop.
+  Initial source-order/hash drift was detected and repaired before acceptance.
+- Proof: tools/parallel_creation_proof.py, workflow parallel-creation.yml,
+  downloadable CI artifacts parallel-creation-ubuntu-latest / windows-latest.
+  Local one-sample wall times: 2.40 s one worker, 1.35 s four workers; this is
+  workload-specific, not a general speedup/CPU utilization claim.
+- Limits: trusted local tools; no RAM sandbox, distributed scheduling, checkpoint
+  reuse, new visual-quality/physics claim or live UI. Failed task blobs are
+  temporary; receipts survive through the API/CLI. Publication reserves a fresh
+  directory after validation; clients wait for completion, not atomic visibility.
+- Next: explicit adapters for material/effect/layer tools with captured inputs,
+  compatible outputs and per-tool resource costs, then useful persistent workers
+  for tiny jobs. Keep UC standalone and source identity stable.
+- Lane: codex/rts-reference-foundry; current pass PR pending creation. Final
+  remote head checks and merge outcome recorded on the PR.
+
 ### Reusable sticker assemblies — 2026-09-15
 
 - UC remains standalone: its installed package includes both registry and creation

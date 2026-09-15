@@ -1,0 +1,48 @@
+name: Parallel creation
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/axm_uc/parallel_create.py'
+      - 'src/axm_uc/data/parallel/**'
+      - 'src/axm_uc/sticker*.py'
+      - 'src/axm_stickers/**'
+      - 'tests/test_parallel_create.py'
+      - 'tests/parallel_donor/**'
+      - 'tools/parallel_creation_proof.py'
+      - 'pyproject.toml'
+      - '.github/workflows/parallel-creation.yml'
+  workflow_dispatch:
+jobs:
+  parallel-creation:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: python -m pip install .
+      - name: Exact donor fixture and real worker integration
+        run: |
+          node --test tests/parallel_donor/test/fabric.test.js
+          python -m unittest discover -s tests -p 'test_parallel_create.py' -v
+      - name: Create nineteen pieces and compare serial and parallel assembly
+        run: python tools/parallel_creation_proof.py "${{ runner.temp }}/parallel-proof"
+      - name: Execute installed standalone command outside checkout
+        working-directory: ${{ runner.temp }}
+        run: |
+          axm-create-parallel parallel-proof/plan.json installed-parallel --workers 2
+          python -c "from pathlib import Path; assert Path('installed-parallel/asset.glb').read_bytes() == Path('parallel-proof/parallel/asset.glb').read_bytes()"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: parallel-creation-${{ matrix.os }}
+          path: ${{ runner.temp }}/parallel-proof

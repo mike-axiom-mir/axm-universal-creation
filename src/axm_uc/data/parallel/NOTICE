@@ -1,0 +1,8 @@
+AXM parallel-capability scheduler
+Source: https://github.com/mike-axiom-mir/axm-parallel-capability
+Pinned commit: 85f6d75bf8517bb0171d6a223b2389e03299e4b6
+License: Apache-2.0 (see LICENSE).
+Unmodified src/fabric.js is distributed as fabric.mjs.
+UPSTREAM.json records exact file hashes and the unchanged test fixture.
+UC bridge.mjs and parallel_create.py are local adapters, not upstream code.
+No upstream NOTICE file was present in the pinned tree.

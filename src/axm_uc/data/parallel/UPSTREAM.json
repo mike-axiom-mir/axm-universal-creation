@@ -1,0 +1,26 @@
+{
+  "repository": "mike-axiom-mir/axm-parallel-capability",
+  "commit": "85f6d75bf8517bb0171d6a223b2389e03299e4b6",
+  "license": "Apache-2.0",
+  "files": [
+    {
+      "source": "src/fabric.js",
+      "local": "src/axm_uc/data/parallel/fabric.mjs",
+      "sha256": "41269a7ee2a304d2d13f9935809c175075e9e1bee625caac99c975b92b69b99f",
+      "changes": "none; byte-exact copy"
+    },
+    {
+      "source": "test/fabric.test.js",
+      "local": "tests/parallel_donor/test/fabric.test.js",
+      "sha256": "603e8354772525bddc0b3d47df377c172817528ef6c0b6df963071e24d6a77f0",
+      "changes": "none; byte-exact copy"
+    },
+    {
+      "source": "LICENSE",
+      "local": "src/axm_uc/data/parallel/LICENSE",
+      "sha256": "d0889f1a995b47981446ab00fdf0459ab003cd1cfee2c8096d39e2dd5add8bd7",
+      "changes": "none; byte-exact copy"
+    }
+  ],
+  "scope": "Scheduler only; no clone, decomposition, agent or service runtime imported. UC bridge is separately authored. Original fixture imports resolve through a local three-export test facade."
+}
