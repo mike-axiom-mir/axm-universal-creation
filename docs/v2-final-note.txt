@@ -1,0 +1,1 @@
+Creative/editor and editable-comic templates are implemented; exact-head checks determine merge readiness.
