@@ -1,0 +1,3 @@
+# Preserve byte-exact vendored Platform Hands/support files without making
+# upstream whitespace style a Universal Creation source-quality failure.
+capabilities/platform-hands/** -whitespace

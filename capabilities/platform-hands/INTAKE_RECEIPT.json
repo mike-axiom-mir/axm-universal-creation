@@ -1,0 +1,28 @@
+{
+  "aggregate_manifest_sha256": "96da5075002db7af71f1d139ff3cab43dd031b0ccb0147956e464677e826b368",
+  "authority_change": false,
+  "capsule_root": "capabilities/platform-hands",
+  "copied_bytes": 28889695,
+  "copied_file_count": 357,
+  "copy_verified_byte_exact": true,
+  "families": [
+    "shared/asset-hands",
+    "shared/ai-native-hands"
+  ],
+  "platform_mutated": false,
+  "schema": "axm.platform-hands-intake/v1",
+  "source_commit": "27757ace6133b243a200b0463e427c8b04d5a8e3",
+  "source_repository": "mike-axiom-mir/axm-collaboration-platform",
+  "support": [
+    "shared/evidence-retention",
+    "shared/visual-kernel",
+    "shared/visual-fx",
+    "shared/vendor",
+    "tools/deterministic-json-core",
+    "tools/spatial-studio/spatial-core.js",
+    "tools/spatial-studio/spatial-geometry.js",
+    "tools/film-motion-studio/film-motion-core.js",
+    "tools/asset-fabric/fabric-core.js"
+  ],
+  "target_repository": "mike-axiom-mir/axm-universal-creation"
+}

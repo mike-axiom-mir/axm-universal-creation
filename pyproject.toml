@@ -12,8 +12,8 @@ dependencies = []
 [project.scripts]
 axm-uc = "axm_uc.cli:main"
 axm-assets = "axm_uc.visual_assets_cli:main"
-axm-effects = "axm_uc.procedural_effects:main"
 axm-uc-portable = "axm_uc.portable_cli:main"
+axm-effects = "axm_uc.procedural_effects:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
@@ -22,4 +22,4 @@ package-dir = {"" = "src"}
 where = ["src"]
 
 [tool.setuptools.package-data]
-axm_uc = ["data/visual_state/*.json", "data/*.html", "data/rts/*.json", "data/rts/*.html"]
+axm_uc = ["data/visual_state/*.json", "data/*.html", "data/rts/*.json", "data/rts/*.html", "data/studio/*.js", "data/studio/*.css", "data/studio/*.html"]
