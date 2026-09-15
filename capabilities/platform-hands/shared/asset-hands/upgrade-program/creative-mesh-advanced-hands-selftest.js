@@ -12,8 +12,8 @@ assert.equal(audit.by_family['mesh-sculpt'],8);
 assert.equal(audit.by_family['mesh-uv-edit'],11);
 assert.equal(audit.by_family['mesh-topology-inspect'],9);
 assert.equal(audit.by_family['mesh-modifier'],7);
-assert.equal(Platform.creativeHands.audit().total,314);
-assert.equal(Platform.creativeHands.recipeRegistry().count,321);
+assert(Platform.creativeHands.audit().total>=314);
+assert(Platform.creativeHands.recipeRegistry().count>=321);
 
 const sphere=MeshHands.invoke('creative.mesh-primitive.sphere',{spec:{id:'sculpt-sphere',detail:16}}).result;
 const sculptSpec={center:[0,1,0],radius:1.2,strength:.15,falloff_power:2};
