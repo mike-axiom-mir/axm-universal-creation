@@ -41,11 +41,11 @@ These call the already installed Spatial Studio geometry builders. Detail is bou
 ## Transform hands
 
 - translate
-- non-uniform or uniform scale
+- non-uniform or uniform positive scale
 - rotate X / Y / Z
 - mirror X / Y / Z
 
-Mirrors also repair triangle winding so orientation does not silently invert merely because a negative spatial transform was applied.
+The public scale hand rejects zero and negative components. Reflections use the explicit mirror hands, which also repair triangle winding. This prevents a negative scale from silently creating inside-out orientation.
 
 ## Deform hands
 
@@ -56,7 +56,7 @@ Mirrors also repair triangle winding so orientation does not silently invert mer
 - flatten X / Y / Z
 - seeded normal-direction noise displacement
 
-Noise displacement is deterministic for the same mesh, seed and amount.
+Noise displacement is deterministic for the same mesh, seed and amount. Inflate/noise operate on the mesh's stored vertex-normal topology; on deliberately split hard-surface vertices they are not a promise of watertight solid-offset behavior.
 
 ## Topology / repair hands
 
@@ -72,7 +72,7 @@ Noise displacement is deterministic for the same mesh, seed and amount.
 
 Subdivision checks its projected triangle count before expansion. Mesh creation separately enforces the global vertex and triangle ceilings.
 
-`weld` may intentionally convert split-face vertices into shared vertices and therefore may smooth formerly hard normal seams after normal recalculation. It is a geometry weld, not a preservation promise for authored split normals.
+`weld` intentionally converts positional duplicates into shared vertices. It can therefore smooth formerly hard normal seams **and collapse UV seams by retaining one representative UV**. It is a geometry weld, not a preservation promise for authored split normals or seam-separated UV vertices.
 
 ## UV hands
 
@@ -117,7 +117,7 @@ Mesh recipes use ids such as `mesh-primitive.sphere`, `mesh-transform.rotate-y`,
 - exact 42 mesh-hand family census;
 - exact public 239-hand / 246-recipe census;
 - all six installed primitive routes;
-- translations, non-uniform scale, all axis rotations and mirrors;
+- translations, positive non-uniform scale, explicit rejection of negative scale, all axis rotations and mirrors;
 - all deform classes including seeded determinism;
 - winding, centering, scale normalization, compaction, welding, merge, subdivision, degenerate removal and normal recalculation;
 - all six UV hands with bounded UV results;
