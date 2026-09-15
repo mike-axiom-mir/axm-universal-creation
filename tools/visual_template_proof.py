@@ -8,7 +8,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src'))
 from axm_uc import visual_templates as vt
 
 SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
-PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell","visual.keyart.core")
+PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell","visual.keyart.core","visual.cards.core")
 
 def _write(project,target):
     target.mkdir(); out=[]
@@ -25,7 +25,7 @@ def main(argv):
     out.mkdir(parents=True)
     try:
         counts=vt.validate_catalog()
-        if counts!={'styles':13,'primitives':76,'screens':113,'products':11}: raise AssertionError(counts)
+        if counts!={'styles':14,'primitives':86,'screens':124,'products':12}: raise AssertionError(counts)
         evidence=[]
         for pid in PRODUCTS:
             expected=vt.get(pid)
@@ -46,25 +46,28 @@ def main(argv):
             ('comic.narrative.core',1920,1080,'comic-narrative','AXM Editable Comic Foundation'),
             ('axm.system.shell',1920,1080,'axm-system','AXM System Shell Foundation'),
             ('visual.keyart.core',1920,1080,'keyart','AXM Editable Key Art Foundation'),
+            ('visual.cards.core',1920,1080,'cards','AXM Editable Card and Deck Foundation'),
         )
         outputs=[]
         for pid,w,h,folder,title in galleries: outputs+=_write(vt.product_project(pid,w,h,title),out/folder)
         outputs+=_write(vt.screen_project('product.mobile.home',1080,1920,'AXM Mobile Foundation'),out/'mobile-home')
-        keyart=vt.get('visual.keyart.core')
-        required={'visual.keyart.project-hub','visual.keyart.composition-editor','visual.keyart.subject-stage','visual.keyart.type-editor','visual.keyart.lighting-effects','visual.keyart.background-atmosphere','visual.keyart.crop-variants','visual.keyart.variant-board','visual.keyart.review-compare','visual.keyart.export'}
-        if set(keyart['screens'])!=required: raise AssertionError('key art pack lost required surfaces')
+        cards=vt.get('visual.cards.core')
+        required={'visual.cards.project-hub','visual.cards.face-editor','visual.cards.back-editor','visual.cards.artwork-editor','visual.cards.text-stats','visual.cards.ability-layout','visual.cards.rarity-style','visual.cards.effects-finish','visual.cards.deck-builder','visual.cards.print-sheet','visual.cards.review-export'}
+        if set(cards['screens'])!=required: raise AssertionError('card/deck pack lost required surfaces')
         checks={
-            'subject_editable':vt.PRIMITIVES['hero-subject']['source_and_transform_must_remain_editable'],
-            'depth_order_explicit':vt.PRIMITIVES['depth-layer']['order_must_be_explicit'],
-            'mask_preserves_source':vt.PRIMITIVES['focal-mask']['mask_must_not_replace_source_art'],
-            'title_separable':vt.PRIMITIVES['title-lockup']['text_and_layout_remain_separate'],
-            'effects_non_authoritative':vt.PRIMITIVES['lighting-pass']['effect_must_remain_non_authoritative'],
-            'crop_preserves_source':vt.PRIMITIVES['crop-safe-frame']['crop_must_not_modify_source_geometry'],
-            'variant_identity_exact':vt.PRIMITIVES['variant-card']['variant_identity_must_be_exact'],
-            'export_requirements_visible':vt.PRIMITIVES['export-target']['target_requirements_must_be_visible'],
+            'frame_geometry_editable':vt.PRIMITIVES['card-frame']['geometry_must_remain_editable'],
+            'art_source_crop_separate':vt.PRIMITIVES['artwork-window']['source_and_crop_remain_separate'],
+            'stats_explicit':vt.PRIMITIVES['stat-block']['label_value_pair_must_be_explicit'],
+            'rules_text_exact':vt.PRIMITIVES['ability-row']['rules_text_must_remain_exact'],
+            'rarity_noncolor':vt.PRIMITIVES['rarity-badge']['must_not_depend_on_color'],
+            'cost_type_value_explicit':vt.PRIMITIVES['cost-symbol']['value_and_resource_type_required'],
+            'card_state_explicit':vt.PRIMITIVES['card-state']['state_must_be_explicit'],
+            'deck_reference_exact':vt.PRIMITIVES['deck-slot']['card_reference_must_be_exact'],
+            'foil_preserves_art':vt.PRIMITIVES['foil-pass']['finish_must_not_replace_base_art'],
+            'print_guides_preserve_source':vt.PRIMITIVES['print-safe-frame']['guide_must_not_mutate_source_layout'],
         }
-        if not all(checks.values()): raise AssertionError('key art editability contract failed')
-        receipt={'schema':'axm.visual-template-proof/v7','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'keyart_checks':checks,'truth':'Offline structural evidence only. Finished illustration quality, typography quality, lighting quality, store compliance, print production, target-renderer output and aesthetic acceptance were not observed.'}
+        if not all(checks.values()): raise AssertionError('card/deck editability contract failed')
+        receipt={'schema':'axm.visual-template-proof/v8','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'card_deck_checks':checks,'truth':'Offline structural evidence only. Card-game balance, rules correctness, artwork quality, foil rendering, print production, physical color management and aesthetic acceptance were not observed.'}
         (out/'receipt.json').write_text(json.dumps(receipt,indent=2,sort_keys=True),encoding='utf-8')
         print(json.dumps(receipt,indent=2,sort_keys=True))
     except BaseException:
