@@ -18,6 +18,12 @@ from .design_workshop_construction import (
 )
 from .sticker_adapter import register_glb, register_studio
 from .sticker_assembly import export_assembly
+from .sticker_clearance_contact import (
+    compare_sketch_clearance,
+    measure_sticker_assembly_clearances,
+    measure_sticker_clearance_pair,
+    validate_clearance_plan,
+)
 from .sticker_geometry_calipers import (
     compare_sticker_geometry,
     measure_sticker_assembly_parts,
@@ -81,6 +87,23 @@ def execute(registry,request,root):
         sketch=request.pop('sketch'); assembly=request.pop('assembly')
         if request: raise TypeError('unexpected compare_sketch_geometry arguments')
         return compare_sticker_geometry(registry,sketch,assembly)
+    if operation=='measure_sticker_clearance_pair':
+        assembly=request.pop('assembly'); part_a=request.pop('part_a'); part_b=request.pop('part_b')
+        tolerance=request.pop('tolerance_m',1e-6)
+        if request: raise TypeError('unexpected measure_sticker_clearance_pair arguments')
+        return measure_sticker_clearance_pair(registry,assembly,part_a,part_b,tolerance_m=tolerance)
+    if operation=='measure_sticker_assembly_clearances':
+        assembly=request.pop('assembly'); pairs=request.pop('pairs',None); tolerance=request.pop('tolerance_m',1e-6)
+        if request: raise TypeError('unexpected measure_sticker_assembly_clearances arguments')
+        return measure_sticker_assembly_clearances(registry,assembly,pairs=pairs,tolerance_m=tolerance)
+    if operation=='validate_clearance_plan':
+        sketch=request.pop('sketch'); plan=request.pop('plan')
+        if request: raise TypeError('unexpected validate_clearance_plan arguments')
+        return {'truth_status':'DETERMINISTIC_CLEARANCE_PLAN_VALIDATION','plan':validate_clearance_plan(plan,sketch)}
+    if operation=='compare_sketch_clearance':
+        sketch=request.pop('sketch'); assembly=request.pop('assembly'); plan=request.pop('plan')
+        if request: raise TypeError('unexpected compare_sketch_clearance arguments')
+        return compare_sketch_clearance(registry,sketch,assembly,plan)
     if operation=='propose_sketch_repair':
         sketch=request.pop('sketch'); assembly=request.pop('assembly')
         if request: raise TypeError('unexpected propose_sketch_repair arguments')
