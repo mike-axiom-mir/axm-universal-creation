@@ -48,6 +48,8 @@ module.exports = Object.freeze({
   creativeAnimationHands: require('./creative-animation-hands'),
   creativeMaterialProductionHands: require('./creative-material-production-hands'),
   creativeFinishingHands: require('./creative-finishing-hands'),
+  creativeQualityProfiles: require('./creative-quality-profiles'),
+  creativeQualityResolver: require('./creative-quality-resolver'),
   runtimeSubstrates: require('./runtime-substrates'),
   negotiationSdk: require('./negotiation-sdk'),
   roundTripLedger: require('./roundtrip-ledger'),
