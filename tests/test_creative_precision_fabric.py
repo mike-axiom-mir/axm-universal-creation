@@ -69,6 +69,12 @@ class CreativePrecisionFabricTests(unittest.TestCase):
     def test_uv_material_texture_fail_closed_contracts(self):
         self.run_node('creative-material-production-contract-selftest.js')
 
+    def test_cross_domain_finishing_wave(self):
+        self.run_node('creative-finishing-hands-selftest.js')
+
+    def test_cross_domain_finishing_fail_closed_contracts(self):
+        self.run_node('creative-finishing-contract-selftest.js')
+
 
 if __name__ == '__main__':
     unittest.main()
