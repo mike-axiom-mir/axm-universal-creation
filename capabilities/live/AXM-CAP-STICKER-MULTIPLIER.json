@@ -1,0 +1,71 @@
+{
+  "id": "AXM-CAP-STICKER-MULTIPLIER",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Multiply useful exact 3D stickers into bounded reusable variant families without duplicating source assets: explicit variants or deterministic Cartesian products of declared source parameters and scale become ordinary immutable v1 wrapper stickers in one atomic registry commit.",
+  "handles": [
+    "sticker-multiplier",
+    "preview-sticker-multiplication",
+    "multiply-stickers"
+  ],
+  "input_contract": {
+    "required": ["operation"],
+    "required_by_operation": {
+      "preview-multiplication": ["database", "plan"],
+      "multiply-stickers": ["database", "plan"]
+    },
+    "properties": {
+      "operation": "inspect-multiplier, preview-multiplication, or multiply-stickers",
+      "database": "local sticker SQLite registry path; relative paths resolve from the UC root and must stay in creations/.axm-build or outside the machine body",
+      "plan": "axm.sticker-multiplication/v0.1 exact source pin plus either explicit variants or a bounded parameter/scale matrix"
+    }
+  },
+  "output_contract": {
+    "kind": "sticker-multiplication-preview-or-atomic-result",
+    "contains": [
+      "exact source sticker pin",
+      "canonical multiplication-plan digest",
+      "bounded deterministic variant ids and digests",
+      "ordinary axm.sticker/v1 assembly wrappers",
+      "atomic batch registration receipts",
+      "explicit source-assets-duplicated false evidence"
+    ]
+  },
+  "dependencies": [],
+  "relationships": [
+    "uses UC's embedded sticker registry and assembly core so external Sticker Fabric remains optional",
+    "turns one useful exact source sticker into a controlled family of reusable parameter/scale variants",
+    "shares source assets by digest rather than copying GLB or editable-source bytes into every variant"
+  ],
+  "anatomy_refs": [
+    {
+      "id": "AXM-01-PROVENANCE-A-012-observation",
+      "role": "uses",
+      "basis": "Every multiplied sticker retains an exact source pin and canonical multiplication-plan digest in provenance."
+    },
+    {
+      "id": "AXM-10-ASSET-PIPELINE-C-006-asset-variant",
+      "role": "implements",
+      "basis": "Creates bounded reusable asset variants from exact source state without rewriting the source asset body."
+    }
+  ],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:sticker_multiplier",
+    "source": "src/axm_uc/sticker_multiplier.py via src/axm_uc/__init__.py registration and src/axm_uc/sticker_create.py JSON authoring path"
+  },
+  "limitations": [
+    "v0.1 accepts 3D source stickers only",
+    "matrix axes are declared sticker parameters and one optional scale axis; no random mutation is inferred",
+    "maximum 256 variants per multiplication plan",
+    "wrapper multiplication does not prove visual distinctness, usefulness, geometric fit, aesthetics or target-engine acceptance",
+    "a multiplied wrapper retains the source sticker dependency rather than baking duplicate source assets"
+  ],
+  "persistent_state": null,
+  "root_fit": {
+    "truth": {"fit": true, "basis": "Exact source pins and declared variant axes are validated before definitions are produced; no undeclared parameter mutation is guessed."},
+    "agency": {"fit": true, "basis": "The caller chooses source, explicit variants or matrix axes, authorship/license, naming and whether preview becomes an atomic save."},
+    "continuity": {"fit": true, "basis": "Every wrapper pins its exact source and records the canonical multiplication plan in provenance while shared source assets remain content-addressed."},
+    "wisdom-before-speed": {"fit": true, "basis": "The full bounded batch is expanded and validated before one transaction; invalid values or immutable-version conflicts cannot justify silent partial growth."}
+  }
+}
