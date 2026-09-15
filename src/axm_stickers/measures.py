@@ -184,8 +184,9 @@ def resolve_family_with_measures(family: Any, *, variant: str | None = None,
     if used_measurements:
         result["measurement_results"] = {parameter: item["id"] for parameter, item in used_measurements.items()}
     result["truth_boundary"] += (
-        " Evidence overrides preserve their source and scope. Definitions/conventions are not object measurements; "
-        "measurement results retain a standard-equivalent input uncertainty, but derived uncertainty is not yet propagated."
+        " Evidence overrides preserve their source and scope. Definitions/conventions are not measurements of a "
+        "particular physical object or location; measurement results retain a standard-equivalent input uncertainty, "
+        "but derived uncertainty is not yet propagated."
     )
     return result
 
