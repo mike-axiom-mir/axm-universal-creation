@@ -38,6 +38,8 @@ const original=JSON.parse(JSON.stringify(request.state));
 const compiled=Flow.compile(request);
 assert.equal(compiled.status,'READY');
 assert.deepEqual(compiled.order,['make','scale','bounds']);
+assert.deepEqual(compiled.steps.find((row)=>row.id==='scale').dependencies,['make']);
+assert.deepEqual(compiled.steps.find((row)=>row.id==='bounds').dependencies,['scale']);
 const result=Flow.run(request);
 assert.equal(result.status,'PASS');
 assert.equal(result.candidate_ready,true);
@@ -48,6 +50,28 @@ assert.deepEqual(request.state,original);
 assert.deepEqual(result.final_state.bounds.size,[4,2,2]);
 assert.deepEqual(result.outputs.bounds.size,[4,2,2]);
 assert.notEqual(result.initial_state_digest,result.final_state_digest);
+
+const cross=Flow.run({
+  mode:'execute',
+  goal:'turn a plane into a shallow edited model and inspect it',
+  steps:[
+    {id:'plane',hand_id:'creative.mesh-primitive.plane',args:{spec:{id:'flow-plane',detail:4}},save_as:'mesh'},
+    {id:'faces',hand_id:'creative.mesh-face-select.all',args:{mesh:{$state:'mesh'}},save_as:'selection'},
+    {id:'extrude',hand_id:'creative.mesh-face-edit.extrude-region',args:{mesh:{$state:'mesh'},selection:{$state:'selection'},spec:{distance:.5,direction:[0,1,0]}},save_as:'extruded'},
+    {id:'shear',hand_id:'creative.mesh-modifier.shear',args:{mesh:{$state:'extruded'},spec:{target_axis:'x',source_axis:'y',factor:.25}},save_as:'model'},
+    {id:'inspect',hand_id:'creative.mesh-analysis.bounds',args:{mesh:{$state:'model'}},save_as:'bounds'}
+  ]
+});
+assert.equal(cross.status,'PASS');
+assert.equal(cross.receipts.length,5);
+assert.deepEqual(cross.receipts.map((row)=>row.operation_id),[
+  'creative.mesh-primitive.plane',
+  'creative.mesh-face-select.all',
+  'creative.mesh-face-edit.extrude-region',
+  'creative.mesh-modifier.shear',
+  'creative.mesh-analysis.bounds'
+]);
+assert(Math.abs(cross.final_state.bounds.size[1]-.5)<1e-9);
 
 const failure=Flow.run({
   mode:'execute',
@@ -68,5 +92,8 @@ assert.throws(()=>Flow.compile({steps:[
   {id:'a',hand_id:'creative.mesh-primitive.cube',depends_on:['b'],args:{spec:{id:'a',detail:8}}},
   {id:'b',hand_id:'creative.mesh-primitive.cube',depends_on:['a'],args:{spec:{id:'b',detail:8}}}
 ]}),/dependency cycle/);
+assert.throws(()=>Flow.compile({state:{mesh:{x:1}},steps:[
+  {id:'overwrite',hand_id:'creative.mesh-primitive.cube',args:{spec:{id:'x',detail:8}},save_as:'mesh'}
+]}),/cannot overwrite initial state/);
 
-console.log(JSON.stringify({status:'PASS',summary:summary.digest,plan:compiled.digest,result:result.digest,receipts:result.receipts.map((row)=>row.digest),failure:failure.failure.digest},null,2));
+console.log(JSON.stringify({status:'PASS',summary:summary.digest,plan:compiled.digest,result:result.digest,cross:cross.digest,receipts:result.receipts.map((row)=>row.digest),failure:failure.failure.digest},null,2));
