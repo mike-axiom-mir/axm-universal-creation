@@ -10,6 +10,7 @@ from axm_stickers import Registry, instance
 from axm_stickers.assembly import save_assembly, library_bundle, import_library
 from .sticker_adapter import register_glb, register_studio
 from .sticker_assembly import export_assembly
+from .sticker_multiplier import preview_multiplication, multiply_stickers
 from .procedural_3d import build_glb
 
 
@@ -32,6 +33,14 @@ def execute(registry,request,root):
         project=request.pop('project')
         return register_studio(registry,project,root,**request)
     if operation=='save_assembly': return save_assembly(registry,**request)
+    if operation=='preview_multiplication':
+        plan=request.pop('plan')
+        if request: raise TypeError('unexpected preview_multiplication arguments')
+        return preview_multiplication(registry,plan)
+    if operation=='multiply_stickers':
+        plan=request.pop('plan')
+        if request: raise TypeError('unexpected multiply_stickers arguments')
+        return multiply_stickers(registry,plan)
     if operation=='instance':
         d=registry.get(request.pop('sticker_id'),request.pop('version'))
         return instance(d,**request)
