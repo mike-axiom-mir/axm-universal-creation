@@ -1,6 +1,6 @@
 {
   "id": "AXM-CAP-CREATIVE-FLOW-SPINE",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "status": "live",
   "purpose": "Discover, resolve, preflight and execute bounded multi-hand creative plans against the shared deterministic Creative Hands body, including quality/budget-aware planning for registered proven creation profiles, without making AI the owner of those capabilities.",
   "handles": [
@@ -11,11 +11,12 @@
   "input_contract": {
     "required": [],
     "properties": {
-      "mode": "summary, discover, plan, execute, adaptive-plan or adaptive-execute",
+      "mode": "summary, discover, plan, execute, adaptive-plan, adaptive-execute or adaptive-calibrate",
       "goal": "caller goal; ordinary V1 discovery remains non-authorizing, while adaptive modes may match it only to an installed deterministic quality profile",
       "quality": "optional numeric 0..1 quality depth or a known convenience alias for adaptive modes",
       "machine": "optional bounded resource policy: max steps/work/state, observed work throughput, time budget, concurrency, and explicit allow_quality_degrade",
       "profile_id": "optional exact installed adaptive quality profile id",
+      "samples": "adaptive-calibrate only; optional bounded sample count 1..5, default 3",
       "discovery": "optional exact id/family/operation/query filters",
       "state": "optional canonical candidate-state values available to plan steps",
       "steps": "bounded explicit DAG steps using hand_id, recipe_id or a uniquely resolvable selector",
@@ -29,6 +30,7 @@
       "deterministic discovery or HOLD evidence",
       "adaptive requested-versus-realized quality evidence when used",
       "machine-budget estimates and dependency-derived schedule groups",
+      "optional explicit local throughput calibration receipt and reusable machine-policy patch",
       "compiled dependency order and exact selected operation ids",
       "per-step input/output digests and PASS receipts",
       "candidate final-state digest on successful execution",
@@ -40,6 +42,7 @@
     "routes through PlatformHands.creativeHands rather than duplicating creative implementations",
     "lets human code, deterministic recipes and AI-proposed plans use the same underlying hand body",
     "lets registered proven quality profiles deterministically derive bounded plans from goal + requested quality + machine policy",
+    "can explicitly calibrate local throughput by executing a bounded proven profile rather than guessing from hardware labels",
     "keeps unknown goals, ambiguous profile selection, missing required hands and unaccepted quality degradation on HOLD"
   ],
   "anatomy_refs": [],
@@ -53,7 +56,8 @@
     "Adaptive planning is profile-bounded, not universal prose synthesis. Wave 13 initially installs only the creation profile learned from the verified armored-crate gauntlet; unknown goals HOLD instead of receiving invented plans.",
     "Numeric quality is continuous, but available operation families still create real stage boundaries. Requested and realized quality are reported separately and quality degradation requires explicit allow_quality_degrade=true.",
     "The scheduler derives dependency-safe concurrency groups and a theoretical parallel work floor, but Wave 13 still executes through the existing serial Creative Flow runtime. It does not claim parallel speedup until a worker runtime exists.",
-    "A time budget requires an explicit observed work_units_per_ms calibration. Without it, time-bounded adaptive planning returns HOLD_CALIBRATION_REQUIRED rather than guessing hardware speed.",
+    "A time budget requires observed work_units_per_ms. Without it, time-bounded adaptive planning returns HOLD_CALIBRATION_REQUIRED rather than guessing hardware speed.",
+    "adaptive-calibrate is explicit and locally executes a bounded proven profile. Its timing receipt is observational, environment-dependent and noncanonical; it is not a persistent hardware identity or guaranteed future throughput.",
     "Compatibility preflight proves plan structure, exact operation existence, dependencies and state-reference availability; individual hand implementations remain authoritative for their own schema and parameter validation at execution.",
     "Execution is an in-memory candidate transaction. It does not persist final creative state to a project file or machine canon by itself.",
     "The local Node runtime used by Platform Hands must be available. No network access is required.",
@@ -63,11 +67,11 @@
   "root_fit": {
     "truth": {
       "fit": true,
-      "basis": "Requested quality, realized quality, profile identity, exact selected hands, budget estimates, missing operations, schedule groups, plan digest and execution receipts remain inspectable; unsupported or under-resourced work holds instead of being narrated as achieved."
+      "basis": "Requested quality, realized quality, profile identity, exact selected hands, budget estimates, missing operations, schedule groups, plan digest, calibration evidence and execution receipts remain inspectable; unsupported or under-resourced work holds instead of being narrated as achieved."
     },
     "agency": {
       "fit": true,
-      "basis": "Adaptive execution requires an explicit adaptive-execute request. Resource-driven quality degradation is off by default and must be explicitly allowed by the caller; AI has no hidden execution path or ownership of the hands."
+      "basis": "Adaptive execution and calibration are explicit requests. Resource-driven quality degradation is off by default and must be explicitly allowed by the caller; AI has no hidden execution path or ownership of the hands."
     },
     "continuity": {
       "fit": true,
@@ -75,7 +79,7 @@
     },
     "wisdom-before-speed": {
       "fit": true,
-      "basis": "Quality plans are bounded by exact installed profiles, resource ceilings and required capabilities before execution. Missing machine-throughput calibration holds, and planned concurrency is not mislabeled as executed parallel work."
+      "basis": "Quality plans are bounded by exact installed profiles, resource ceilings and required capabilities before execution. Missing machine-throughput calibration holds, local calibration is explicit, and planned concurrency is not mislabeled as executed parallel work."
     }
   }
 }
