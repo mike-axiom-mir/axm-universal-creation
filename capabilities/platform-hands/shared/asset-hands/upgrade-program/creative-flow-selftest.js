@@ -16,7 +16,7 @@ assert.equal(publicSummary.hand_audit_digest,summary.hand_audit_digest);
 assert.equal(publicSummary.recipe_registry_digest,summary.recipe_registry_digest);
 assert.equal(publicSummary.core_flow_digest,summary.digest);
 assert.equal(publicSummary.adaptive_quality,true);
-assert.deepEqual(publicSummary.adaptive_modes,['adaptive-plan','adaptive-execute']);
+assert.deepEqual(publicSummary.adaptive_modes,['adaptive-plan','adaptive-execute','adaptive-calibrate']);
 assert.equal(publicSummary.quality_profiles,1);
 assert.notEqual(publicSummary.digest,summary.digest);
 
