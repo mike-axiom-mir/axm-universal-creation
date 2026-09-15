@@ -1,6 +1,6 @@
 # AXM Visual Template Expansion Priority Map
 
-Status: v11 growth lane after verified v1–v10 merges.
+Status: v12 growth lane after verified v1–v11 merges.
 
 The visual-template fabric grows where Universal Creation is likely to reuse the knowledge soon. This is a build priority, not canon: templates remain editable foundations and may be replaced when evidence supports a better structure.
 
@@ -13,48 +13,49 @@ The visual-template fabric grows where Universal Creation is likely to reuse the
 - cinematic title / credits / overlay editor;
 - video / program / stream overlay editor;
 - evidence-aware infographic / diagram editor;
-- world-map / lore-atlas editor.
+- world-map / lore-atlas editor;
+- interactive visual-novel / branching narrative editor.
 
-## Interactive visual-novel / branching narrative — IMPLEMENTED IN THIS LANE
+## 3D showroom / gallery presentation — IMPLEMENTED IN THIS LANE
 
-Product: `visual.novel.core`
+Product: `visual.showroom.core`
 
 Implemented screens:
 
-- `visual.novel.project-hub`
-- `visual.novel.scene-editor`
-- `visual.novel.character-stage`
-- `visual.novel.dialogue-editor`
-- `visual.novel.choice-editor`
-- `visual.novel.branch-graph`
-- `visual.novel.state-inspector`
-- `visual.novel.history-log`
-- `visual.novel.save-checkpoint`
-- `visual.novel.review-export`
+- `visual.showroom.project-hub`
+- `visual.showroom.object-stage`
+- `visual.showroom.orbit-camera`
+- `visual.showroom.material-editor`
+- `visual.showroom.variant-editor`
+- `visual.showroom.annotation-editor`
+- `visual.showroom.comparison`
+- `visual.showroom.detail-view`
+- `visual.showroom.turntable`
+- `visual.showroom.review-export`
 
 New primitives:
 
-- `scene-background`
-- `character-stage`
-- `dialogue-block`
-- `choice-option`
-- `branch-node`
-- `story-flag`
-- `history-entry`
-- `save-checkpoint`
-- `scene-transition`
-- `novel-export-target`
+- `showroom-object`
+- `orbit-rig`
+- `camera-preset`
+- `material-slot`
+- `variant-option`
+- `object-annotation`
+- `comparison-object`
+- `turntable-state`
+- `measurement-callout`
+- `showroom-export-target`
 
-Style: `visual.novel.story`.
+Style: `visual.showroom.studio`.
 
-The central rule is branching-state truth: exact scenes, character identity/pose/expression, dialogue, choice targets/conditions, node edges, runtime flags, history and save/checkpoint state remain independently editable and inspectable. Presentation cannot silently manufacture a reachable branch or character/runtime state.
+The central rule is object/source truth: exact asset/version, camera target, part/material binding, variant identity/availability, annotation target, comparison references and measurement value/unit/source remain inspectable. Camera/orbit/turntable presentation cannot silently rewrite source-object state.
 
 ## Next high-value visual/creation families
 
-1. **3D showroom / gallery presentation** — hero object, comparison, annotations, material/variant selection, turntable/orbit and detail views.
-2. **Music visualizer / album-art editor** — cover systems, track identity, waveform/beat-driven visual states and export crops.
-3. **Presentation / explainer page systems** — reusable storytelling pages assembled from diagram, key-art, atlas and editor foundations.
-4. **Character / creature reference-sheet editor** — turnaround views, expressions, materials, proportions, callouts and source/reference state for future games/comics.
+1. **Music visualizer / album-art editor** — cover systems, track identity, waveform/beat-driven visual states, lyric-free timing/marker state and export crops.
+2. **Presentation / explainer page systems** — reusable storytelling pages assembled from diagram, key-art, atlas and editor foundations.
+3. **Character / creature reference-sheet editor** — turnaround views, expressions, materials, proportions, callouts and source/reference state for future games/comics.
+4. **Vehicle / weapon configuration presentation** — attachment sockets, stat comparison, exploded/detail presentation and exact source/configuration identity for game garages/loadouts.
 
 ## Cross-cutting rules
 
@@ -70,7 +71,7 @@ Every family preserves the existing visual-template contract:
 
 ## Immediate build order
 
-1. exact-head verify `visual.novel.core`;
-2. merge v11 only when template + repository checks pass;
-3. begin 3D showroom / gallery presentation from fresh main;
+1. exact-head verify `visual.showroom.core`;
+2. merge v12 only when template + repository checks pass;
+3. begin music visualizer / album-art editing from fresh main;
 4. keep prioritizing reusable source-first editors over flat one-off outputs.
