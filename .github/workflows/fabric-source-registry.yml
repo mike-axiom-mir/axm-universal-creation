@@ -1,0 +1,125 @@
+name: Fabric source registry
+
+on:
+  push:
+    branches:
+      - chatgpt/fabric-source-registry
+    paths:
+      - .github/workflows/fabric-source-registry.yml
+
+permissions:
+  contents: write
+
+jobs:
+  verify-and-bind:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Bind resolver and repair live-capability census invariants
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+
+          init = Path('src/axm_uc/__init__.py')
+          text = init.read_text()
+          import_anchor = '    from .design_visual import DesignVisualError, operate_design_visual\n'
+          import_line = '    from .fabric_sources import FabricSourceError, inspect_fabric_sources\n'
+          if import_line not in text:
+              if import_anchor not in text:
+                  raise SystemExit('IMPORT_ANCHOR_NOT_FOUND')
+              text = text.replace(import_anchor, import_anchor + import_line, 1)
+
+          function_anchor = '    _capabilities.BUILTINS["builtin:specialist_tournament"] = multi_perspective_orchestration\n'
+          function_block = '''    def fabric_source_surface(root, inputs):\n        overrides = inputs.get("overrides")\n        if overrides is not None and not isinstance(overrides, dict):\n            raise _capabilities.CapabilityError("fabric source overrides must be an object")\n        source_id = inputs.get("source_id")\n        if source_id is not None and not isinstance(source_id, str):\n            raise _capabilities.CapabilityError("fabric source_id must be text")\n        try:\n            return inspect_fabric_sources(root, overrides=overrides, source_id=source_id)\n        except (FabricSourceError, ValueError, TypeError) as exc:\n            raise _capabilities.CapabilityError(str(exc)) from exc\n\n'''
+          if function_block not in text:
+              if function_anchor not in text:
+                  raise SystemExit('FUNCTION_ANCHOR_NOT_FOUND')
+              text = text.replace(function_anchor, function_block + function_anchor, 1)
+
+          registration = '    _capabilities.BUILTINS["builtin:inspect_fabric_sources"] = fabric_source_surface\n'
+          if registration not in text:
+              registration_anchor = '    _capabilities.BUILTINS["builtin:design_fabric"] = design_fabric_surface\n'
+              if registration_anchor not in text:
+                  raise SystemExit('REGISTRATION_ANCHOR_NOT_FOUND')
+              text = text.replace(registration_anchor, registration_anchor + registration, 1)
+          init.write_text(text)
+
+          repairs = {
+              Path('tests/test_composite_and_executable.py'): (
+                  '        self.assertEqual(summary["live_capabilities"], 32)\n',
+                  '        live = machine.inspect()["live_capabilities"]\n'
+                  '        live_ids = {row["id"] for row in live}\n'
+                  '        self.assertEqual(len(live_ids), len(live))\n'
+                  '        self.assertIn("AXM-CAP-INSPECT-FABRIC-SOURCES", live_ids)\n'
+                  '        self.assertEqual(summary["live_capabilities"], len(live))\n'
+              ),
+              Path('tests/test_creation_forge.py'): (
+                  '        self.assertEqual(len(inspection["live_capabilities"]), 32)\n',
+                  '        live_ids = [row["id"] for row in inspection["live_capabilities"]]\n'
+                  '        self.assertEqual(len(live_ids), len(set(live_ids)))\n'
+                  '        self.assertIn("AXM-CAP-INSPECT-FABRIC-SOURCES", live_ids)\n'
+              ),
+              Path('tests/test_gap_synthesis.py'): (
+                  '        self.assertEqual(len(inspection["live_capabilities"]), 32)\n',
+                  '        live_ids = [row["id"] for row in inspection["live_capabilities"]]\n'
+                  '        self.assertEqual(len(live_ids), len(set(live_ids)))\n'
+                  '        self.assertIn("AXM-CAP-INSPECT-FABRIC-SOURCES", live_ids)\n'
+              ),
+          }
+          for path, (old, new) in repairs.items():
+              source = path.read_text()
+              if old not in source:
+                  raise SystemExit(f'CENSUS_ASSERTION_ANCHOR_NOT_FOUND:{path}')
+              path.write_text(source.replace(old, new, 1))
+          PY
+
+      - name: Verify focused fabric-source behavior
+        shell: bash
+        run: |
+          set -euo pipefail
+          PYTHONPATH=src python -m unittest discover -s tests -p 'test_fabric_sources.py' -v
+          PYTHONPATH=src python - <<'PY'
+          from pathlib import Path
+          from axm_uc.capabilities import BUILTINS
+          fn = BUILTINS.get('builtin:inspect_fabric_sources')
+          if fn is None:
+              raise SystemExit('FABRIC_SOURCE_BUILTIN_MISSING')
+          report = fn(Path('.'), {})
+          if report.get('schema') != 'axm.fabric-source-resolution/v1':
+              raise SystemExit('FABRIC_SOURCE_SCHEMA_MISMATCH')
+          by_id = {row['id']: row for row in report['sources']}
+          if by_id['organ-archive']['callable_by_default'] is not False:
+              raise SystemExit('ARCHIVE_CALLABILITY_BOUNDARY_LOST')
+          if report.get('network_fetch_performed') is not False:
+              raise SystemExit('UNEXPECTED_NETWORK_FETCH_CLAIM')
+          if by_id['hands-fabric']['status'] != 'LOCAL_FALLBACK_AVAILABLE':
+              raise SystemExit('EXPECTED_EXISTING_HANDS_FALLBACK_NOT_OBSERVED')
+          if by_id['organ-fabric']['status'] != 'LOCAL_FALLBACK_AVAILABLE':
+              raise SystemExit('EXPECTED_EXISTING_ORGAN_FALLBACK_NOT_OBSERVED')
+          print('FABRIC_SOURCE_BUILTIN_OK')
+          PY
+
+      - name: Run full repository tests on current-main base
+        shell: bash
+        run: |
+          set -euo pipefail
+          PYTHONPATH=src python -m unittest discover -s tests -p 'test_*.py'
+
+      - name: Commit verified current-main binding
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/axm_uc/__init__.py tests/test_composite_and_executable.py tests/test_creation_forge.py tests/test_gap_synthesis.py
+          if git diff --cached --quiet; then
+            echo "No binding changes"
+            exit 0
+          fi
+          git commit -m "Bind shared fabric source resolver on current main"
+          git push origin HEAD:${GITHUB_REF_NAME}

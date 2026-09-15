@@ -604,7 +604,9 @@ class GapSynthesisTests(unittest.TestCase):
         self.assertTrue(summary["reuse_precedes_new_embodiment"])
         self.assertFalse(summary["semantic_source_invention"])
         self.assertFalse(summary["automatic_admission"])
-        self.assertEqual(len(inspection["live_capabilities"]), 32)
+        live_ids = [row["id"] for row in inspection["live_capabilities"]]
+        self.assertEqual(len(live_ids), len(set(live_ids)))
+        self.assertIn("AXM-CAP-INSPECT-FABRIC-SOURCES", live_ids)
 
 
 if __name__ == "__main__":

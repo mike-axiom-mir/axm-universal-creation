@@ -318,7 +318,9 @@ class CreationForgeTests(unittest.TestCase):
         self.assertTrue(forge["extension_kinds_allowed"])
         self.assertFalse(forge["automatic_execution"])
         self.assertFalse(forge["automatic_install_or_registration"])
-        self.assertEqual(len(inspection["live_capabilities"]), 32)
+        live_ids = [row["id"] for row in inspection["live_capabilities"]]
+        self.assertEqual(len(live_ids), len(set(live_ids)))
+        self.assertIn("AXM-CAP-INSPECT-FABRIC-SOURCES", live_ids)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,64 @@
+{
+  "id": "AXM-CAP-INSPECT-FABRIC-SOURCES",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Inspect and resolve explicit local mounts for shared AXM capability fabrics while preserving truthful local fallbacks and performing no hidden network fetch.",
+  "handles": [
+    "inspect-fabric-sources",
+    "resolve-fabric-source"
+  ],
+  "input_contract": {
+    "required": [],
+    "properties": {
+      "source_id": "optional exact source id: hands-fabric, organ-fabric, organ-archive, or visual-effect-fabric",
+      "overrides": "optional object mapping exact source ids to explicit local paths; an explicit missing path is reported and never silently replaced by fallback"
+    }
+  },
+  "output_contract": {
+    "kind": "fabric-source-resolution",
+    "contains": [
+      "truth_status",
+      "source_count",
+      "sources",
+      "network_fetch_performed",
+      "authority_change"
+    ]
+  },
+  "dependencies": [],
+  "relationships": [
+    "prefers caller-supplied or locally mounted shared Fabric bodies when present",
+    "reports current UC Hands capsules and organ bodies as explicit local fallbacks rather than pretending they are mirrors of the newer shared Fabrics",
+    "marks Organ Archive preservation-only and never treats archive presence as executable or canonical authority",
+    "performs no network cloning, downloading, publishing, or mutation",
+    "path availability never transfers CANON, permission, publication, or user authority"
+  ],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:inspect_fabric_sources",
+    "source": "src/axm_uc/fabric_sources.py"
+  },
+  "limitations": [
+    "this capability resolves local source availability; it does not automatically install, update, execute, or synchronize an external Fabric",
+    "a local fallback may be a pinned donor snapshot or local body rather than the preferred shared Fabric",
+    "runtime adapters remain responsible for validating any specific Hand or Organ before invocation"
+  ],
+  "persistent_state": "none; source mounts and existing local bodies are observed read-only",
+  "root_fit": {
+    "truth": {
+      "fit": true,
+      "basis": "Preferred mounts, fallbacks, missing explicit paths, and network behavior are reported separately instead of collapsing source availability into capability claims."
+    },
+    "agency": {
+      "fit": true,
+      "basis": "Explicit source overrides are authoritative and are never silently replaced when missing; no source lookup grants permission or CANON authority."
+    },
+    "continuity": {
+      "fit": true,
+      "basis": "Existing UC local bodies remain valid fallbacks while shared Fabrics become the preferred reusable source boundary."
+    },
+    "wisdom-before-speed": {
+      "fit": true,
+      "basis": "The resolver adds source indirection without deleting proven local bodies or pretending unmounted repositories are available."
+    }
+  }
+}
