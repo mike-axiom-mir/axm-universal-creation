@@ -1,0 +1,72 @@
+{
+  "id": "AXM-CAP-STICKER-CLEARANCE-CONTACT",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Measure bounded rest-pose geometric clearance and contact relationships between exact sticker assembly parts using actual transformed triangle geometry, with broad-phase bounds, narrow-phase triangle distance, conservative touching/contact language, and closed-surface inside witnesses for grounded penetration claims.",
+  "handles": [
+    "sticker-clearance-contact",
+    "measure-sticker-clearance-pair",
+    "measure-sticker-assembly-clearances",
+    "validate-clearance-plan",
+    "compare-sketch-clearance"
+  ],
+  "input_contract": {
+    "required": ["operation"],
+    "required_by_operation": {
+      "measure-sticker-clearance-pair": ["database", "assembly", "part_a", "part_b"],
+      "measure-sticker-assembly-clearances": ["database", "assembly"],
+      "validate-clearance-plan": ["database", "sketch", "plan"],
+      "compare-sketch-clearance": ["database", "sketch", "assembly", "plan"]
+    },
+    "properties": {
+      "operation": "inspect-clearance-contact, measure-sticker-clearance-pair, measure-sticker-assembly-clearances, validate-clearance-plan, or compare-sketch-clearance",
+      "database": "local UC sticker SQLite registry; relative paths must stay in creations/.axm-build or may be outside the machine body",
+      "assembly": "exact immutable 3D assembly sticker pin",
+      "part_a": "first direct assembly child id",
+      "part_b": "second distinct direct assembly child id",
+      "pairs": "optional bounded explicit list of direct-part id pairs; omitted means bounded all-pairs scan",
+      "tolerance_m": "optional finite geometric tolerance in metres",
+      "sketch": "exact axm.design-sketch/v0.1 body",
+      "plan": "exact-sketch-bound axm.design-clearance-plan/v0.1 companion requirements"
+    }
+  },
+  "output_contract": {
+    "kind": "rest-pose-clearance-contact-evidence",
+    "contains": [
+      "broad-phase AABB lower-bound and overlap evidence",
+      "triangle-level minimum surface distance and closest point witnesses",
+      "SEPARATED, TOUCHING, PENETRATING, CONTACT_OR_INTERSECTION, or UNMEASURED relation",
+      "closed-surface inside witness before any PENETRATING claim",
+      "bounded all-pairs assembly scan",
+      "exact-sketch-bound minimum-clearance, contact, and no-penetration requirement results"
+    ]
+  },
+  "dependencies": ["AXM-CAP-STICKER-GEOMETRY-CALIPERS"],
+  "relationships": [
+    "uses the same actual rigid GLB geometry truth boundary as Sticker Geometry Calipers",
+    "flattens nested assemblies and multiplied wrappers through exact stored transforms",
+    "keeps clearance requirements in an exact sketch-bound companion plan instead of silently rewriting the established Design Workshop sketch schema",
+    "reserves PENETRATING for a positive inside witness and holds unresolved zero-distance intersections instead of guessing"
+  ],
+  "anatomy_refs": [],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:sticker_clearance_contact",
+    "source": "src/axm_uc/sticker_clearance_contact.py via src/axm_uc/__init__.py registration; matching JSON operations are also exposed through src/axm_uc/sticker_create.py"
+  },
+  "limitations": [
+    "v0.1 measures authored/default rest pose only and does not sweep animation",
+    "supported geometry is the same bounded rigid embedded GLB TRIANGLES subset used by current sticker calipers",
+    "closed-surface point classification checks welded topology but does not itself prove freedom from self-intersection; ambiguous classification holds",
+    "CONTACT_OR_INTERSECTION means zero-distance evidence exists but touching versus penetration is not grounded strongly enough",
+    "clearance/contact evidence does not prove physics, strength, manufacturability, gameplay behavior, aesthetics, engine acceptance, or runtime performance",
+    "v0.1 reports penetration witness but not penetration depth or automatic geometry repair"
+  ],
+  "persistent_state": null,
+  "root_fit": {
+    "truth": {"fit": true, "basis": "Distance comes from actual triangle geometry; AABB overlap is never promoted to contact, and penetration requires a positive inside witness."},
+    "agency": {"fit": true, "basis": "Humans, scripts, and machine callers choose exact assemblies, pairs, tolerances, sketches, and companion requirements; measurement does not silently rewrite assets."},
+    "continuity": {"fit": true, "basis": "Reports bind exact immutable assembly/sketch/plan state and preserve nested exact source pins rather than replacing definitions."},
+    "wisdom-before-speed": {"fit": true, "basis": "Work is bounded; unsupported/open/ambiguous geometry holds instead of inventing a contact or penetration verdict."}
+  }
+}
