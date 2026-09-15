@@ -23,6 +23,7 @@ const cube=MeshHands.invoke('creative.mesh-primitive.cube',{spec:{id:'cube',deta
 const moved=MeshHands.invoke('creative.mesh-transform.translate',{mesh:cube,vector:[3,-2,5]}).result;
 const moveBounds=Mesh.bounds(moved);assert(Math.abs(moveBounds.center[0]-3)<1e-9&&Math.abs(moveBounds.center[1]+2)<1e-9&&Math.abs(moveBounds.center[2]-5)<1e-9);
 const scaled=MeshHands.invoke('creative.mesh-transform.scale',{mesh:cube,vector:[2,3,4]}).result;assert.deepEqual(Mesh.bounds(scaled).size,[4,6,8]);
+assert.throws(()=>MeshHands.invoke('creative.mesh-transform.scale',{mesh:cube,vector:[-1,1,1]}),/use explicit mirror hands/);
 for(const axis of ['x','y','z']){assert.equal(MeshHands.invoke('creative.mesh-transform.rotate-'+axis,{mesh:cube,degrees:90}).result.positions.length,cube.positions.length);assert.equal(MeshHands.invoke('creative.mesh-transform.mirror-'+axis,{mesh:cube}).result.indices.length,cube.indices.length);}
 
 for(const [id,args] of [['inflate',{amount:.1}],['twist',{degrees:90}],['taper',{factor:.5}],['bend',{degrees:45}]])assert.notEqual(MeshHands.invoke('creative.mesh-deform.'+id,Object.assign({mesh:cube},args)).result.digest,cube.digest);
