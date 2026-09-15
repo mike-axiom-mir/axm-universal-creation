@@ -63,7 +63,7 @@ class VisualTemplateTests(unittest.TestCase):
                 pins=vt.install_builtins(registry)
                 self.assertEqual(len(pins),147)
                 cinematic=registry.search(adapter=vt.ADAPTER,tag='cinematic',limit=100)['entries']
-                self.assertEqual(len(cinematic),10)
+                self.assertEqual(len(cinematic),11)
                 d=registry.get('visual.visual.cinematic.title-editor',1)
                 self.assertEqual(d['recipe']['visual_template']['schema'],vt.SCHEMA)
                 self.assertNotIn('"latest"',json.dumps(d,sort_keys=True))
