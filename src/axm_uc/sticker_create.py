@@ -8,6 +8,14 @@ import json
 from pathlib import Path
 from axm_stickers import Registry, instance
 from axm_stickers.assembly import save_assembly, library_bundle, import_library
+from .design_workshop_construction import (
+    compare_sticker_assembly,
+    compile_sticker_build,
+    propose_sticker_repair,
+    save_sticker_build,
+    save_sticker_repair,
+    validate_sticker_build_plan,
+)
 from .sticker_adapter import register_glb, register_studio
 from .sticker_assembly import export_assembly
 from .sticker_multiplier import preview_multiplication, multiply_stickers
@@ -41,6 +49,28 @@ def execute(registry,request,root):
         plan=request.pop('plan')
         if request: raise TypeError('unexpected multiply_stickers arguments')
         return multiply_stickers(registry,plan)
+    if operation=='validate_sketch_build':
+        sketch=request.pop('sketch'); plan=request.pop('plan')
+        if request: raise TypeError('unexpected validate_sketch_build arguments')
+        return {'truth_status':'DETERMINISTIC_STICKER_BUILD_PLAN_VALIDATION','plan':validate_sticker_build_plan(plan,sketch)}
+    if operation=='compile_sketch_build':
+        sketch=request.pop('sketch'); plan=request.pop('plan')
+        if request: raise TypeError('unexpected compile_sketch_build arguments')
+        return compile_sticker_build(registry,sketch,plan)
+    if operation=='save_sketch_build':
+        sketch=request.pop('sketch'); plan=request.pop('plan')
+        return save_sticker_build(registry,sketch,plan,**request)
+    if operation=='compare_sketch_assembly':
+        sketch=request.pop('sketch'); assembly=request.pop('assembly')
+        if request: raise TypeError('unexpected compare_sketch_assembly arguments')
+        return compare_sticker_assembly(registry,sketch,assembly)
+    if operation=='propose_sketch_repair':
+        sketch=request.pop('sketch'); assembly=request.pop('assembly')
+        if request: raise TypeError('unexpected propose_sketch_repair arguments')
+        return propose_sticker_repair(registry,sketch,assembly)
+    if operation=='save_sketch_repair':
+        sketch=request.pop('sketch'); assembly=request.pop('assembly')
+        return save_sticker_repair(registry,sketch,assembly,**request)
     if operation=='instance':
         d=registry.get(request.pop('sticker_id'),request.pop('version'))
         return instance(d,**request)
