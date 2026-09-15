@@ -1,8 +1,8 @@
 {
   "id": "AXM-CAP-CREATIVE-FLOW-SPINE",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "status": "live",
-  "purpose": "Discover, resolve, preflight and execute bounded multi-hand creative plans against the shared deterministic Creative Hands body without making AI the owner of those capabilities.",
+  "purpose": "Discover, resolve, preflight and execute bounded multi-hand creative plans against the shared deterministic Creative Hands body, including quality/budget-aware planning for registered proven creation profiles, without making AI the owner of those capabilities.",
   "handles": [
     "creative-flow",
     "creative-hand-flow",
@@ -11,8 +11,11 @@
   "input_contract": {
     "required": [],
     "properties": {
-      "mode": "summary, discover, plan or execute; defaults to execute when steps are supplied and discover otherwise",
-      "goal": "optional caller goal used only for deterministic token discovery in v1; prose alone never authorizes execution",
+      "mode": "summary, discover, plan, execute, adaptive-plan or adaptive-execute",
+      "goal": "caller goal; ordinary V1 discovery remains non-authorizing, while adaptive modes may match it only to an installed deterministic quality profile",
+      "quality": "optional numeric 0..1 quality depth or a known convenience alias for adaptive modes",
+      "machine": "optional bounded resource policy: max steps/work/state, observed work throughput, time budget, concurrency, and explicit allow_quality_degrade",
+      "profile_id": "optional exact installed adaptive quality profile id",
       "discovery": "optional exact id/family/operation/query filters",
       "state": "optional canonical candidate-state values available to plan steps",
       "steps": "bounded explicit DAG steps using hand_id, recipe_id or a uniquely resolvable selector",
@@ -24,6 +27,8 @@
     "contains": [
       "exact Creative Hands registry evidence",
       "deterministic discovery or HOLD evidence",
+      "adaptive requested-versus-realized quality evidence when used",
+      "machine-budget estimates and dependency-derived schedule groups",
       "compiled dependency order and exact selected operation ids",
       "per-step input/output digests and PASS receipts",
       "candidate final-state digest on successful execution",
@@ -34,7 +39,8 @@
   "relationships": [
     "routes through PlatformHands.creativeHands rather than duplicating creative implementations",
     "lets human code, deterministic recipes and AI-proposed plans use the same underlying hand body",
-    "keeps ambiguous selection and prose-only planning on HOLD rather than silently choosing"
+    "lets registered proven quality profiles deterministically derive bounded plans from goal + requested quality + machine policy",
+    "keeps unknown goals, ambiguous profile selection, missing required hands and unaccepted quality degradation on HOLD"
   ],
   "anatomy_refs": [],
   "implementation": {
@@ -44,29 +50,32 @@
     "runtime_bridge": "capabilities/platform-hands/shared/asset-hands/creative-flow-bridge.js"
   },
   "limitations": [
-    "V1 does not invent an execution plan from arbitrary prose. A goal without explicit steps returns deterministic candidates and HOLD_PLAN_REQUIRED.",
+    "Adaptive planning is profile-bounded, not universal prose synthesis. Wave 13 initially installs only the creation profile learned from the verified armored-crate gauntlet; unknown goals HOLD instead of receiving invented plans.",
+    "Numeric quality is continuous, but available operation families still create real stage boundaries. Requested and realized quality are reported separately and quality degradation requires explicit allow_quality_degrade=true.",
+    "The scheduler derives dependency-safe concurrency groups and a theoretical parallel work floor, but Wave 13 still executes through the existing serial Creative Flow runtime. It does not claim parallel speedup until a worker runtime exists.",
+    "A time budget requires an explicit observed work_units_per_ms calibration. Without it, time-bounded adaptive planning returns HOLD_CALIBRATION_REQUIRED rather than guessing hardware speed.",
     "Compatibility preflight proves plan structure, exact operation existence, dependencies and state-reference availability; individual hand implementations remain authoritative for their own schema and parameter validation at execution.",
-    "Execution is an in-memory candidate transaction. V1 does not persist final creative state to a project file or machine canon by itself.",
+    "Execution is an in-memory candidate transaction. It does not persist final creative state to a project file or machine canon by itself.",
     "The local Node runtime used by Platform Hands must be available. No network access is required.",
-    "Maximum explicit flow length is 128 steps and maximum encoded request size is 64 MiB."
+    "Maximum explicit flow length remains 128 steps and maximum encoded request size remains 64 MiB."
   ],
   "persistent_state": null,
   "root_fit": {
     "truth": {
       "fit": true,
-      "basis": "Every resolved operation id, plan digest, state digest, step dependency and execution receipt remains inspectable; ambiguous discovery holds instead of being narrated as certainty."
+      "basis": "Requested quality, realized quality, profile identity, exact selected hands, budget estimates, missing operations, schedule groups, plan digest and execution receipts remain inspectable; unsupported or under-resourced work holds instead of being narrated as achieved."
     },
     "agency": {
       "fit": true,
-      "basis": "The caller supplies or accepts the plan. AI may propose the same explicit plan format but does not gain hidden execution authority or ownership of the hands."
+      "basis": "Adaptive execution requires an explicit adaptive-execute request. Resource-driven quality degradation is off by default and must be explicitly allowed by the caller; AI has no hidden execution path or ownership of the hands."
     },
     "continuity": {
       "fit": true,
-      "basis": "The supplied canonical state is cloned into candidate state and is not mutated by the flow runtime; failed plans return HOLD evidence rather than partially committing state."
+      "basis": "The supplied canonical state is cloned into candidate state and is not mutated by the flow runtime; failed or held adaptive plans return evidence rather than partially committing state."
     },
     "wisdom-before-speed": {
       "fit": true,
-      "basis": "Plans are bounded, dependency-sorted and structurally preflighted before execution; selectors must resolve uniquely and each hand still enforces its own bounded contract."
+      "basis": "Quality plans are bounded by exact installed profiles, resource ceilings and required capabilities before execution. Missing machine-throughput calibration holds, and planned concurrency is not mislabeled as executed parallel work."
     }
   }
 }
