@@ -50,6 +50,10 @@ introduced. With no clip, sampling returns the rest pose.
 Non-looping samples clamp to the clip's end; looping samples wrap, with exactly
 one duration returning to time zero. Individual tracks clamp before their first
 key and after their last key. The evaluator supports LINEAR and STEP tracks.
+`start_s` records the first authored key; `duration_s` is the last timestamp in
+the unchanged GLB time domain. An initial gap holds the first value and is not
+silently subtracted. Reference importers must align their frame range to that
+authored interval when comparing poses.
 
 ## Portable coordinates and root ownership
 

@@ -128,6 +128,14 @@ class GamePoseRuntimeTests(unittest.TestCase):
         self.assertEqual(a.sample("Turn", 9)["time_s"], 1)
         self.assertEqual(a.sample("Turn", 1, loop=True)["time_s"], 0)
 
+    def test_nonzero_first_key_preserves_authored_time_domain(self):
+        struct.pack_into("<f", self.binary, 0, .5)
+        a = self.asset()
+        self.assertEqual(a.describe()["clips"][0]["start_s"], .5)
+        self.assertEqual(a.describe()["clips"][0]["duration_s"], 1.)
+        self.vector(a.sample("Turn", .25)["local"][1]["rotation"], [0,0,0,1])
+        self.vector(a.sample("Turn", .75)["local"][1]["rotation"], [0,0,math.sqrt(.5),math.sqrt(.5)])
+
     def test_partial_channels_reset_to_rest_between_samples(self):
         a = self.asset(); a.sample("Turn", 1)
         pose = a.sample("Slide", .5)

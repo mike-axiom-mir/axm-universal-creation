@@ -51,13 +51,13 @@ def compare(asset_path):
         # Import uses Blender frames from seconds and can put its first key at 0.
         # Read this mapping rather than assuming an authored frame-one offset.
         start, end = actions[0].frame_range
-        assert abs((end - start) / 30 - clip["duration_s"]) < 1e-5
+        assert abs((end - start) / 30 - (clip["duration_s"] - clip["start_s"])) < 1e-5, (clip, start, end, bpy.context.scene.render.fps, bpy.context.scene.render.fps_base)
         for fraction in (0., .137, .3, .5, .731, 1.):
             # Compare authored 30 Hz keys. Blender quaternion component F-curves
             # need not implement glTF SLERP between keys; the latter is covered
             # independently by the analytical shortest-arc tests.
-            time = min(round(clip["duration_s"] * 30 * fraction) / 30, clip["duration_s"])
-            frame = start + time * 30
+            time = min(round((clip["start_s"] + (clip["duration_s"] - clip["start_s"]) * fraction) * 30) / 30, clip["duration_s"])
+            frame = start + (time - clip["start_s"]) * 30
             bpy.context.scene.frame_set(math.floor(frame), subframe=frame - math.floor(frame))
             pose = asset.sample(clip["name"], time, vertices=True)
             joint_error = 0.

@@ -271,7 +271,7 @@ class GamePoseAsset:
                 duration = max(duration, times[-1])
             if not tracks or duration <= 0:
                 raise ValueError("animation requires nonempty tracks and positive duration")
-            self._clips[name] = {"duration_s": duration, "tracks": tracks}
+            self._clips[name] = {"start_s": min(t["times"][0] for t in tracks), "duration_s": duration, "tracks": tracks}
 
         self._skins = []
         for skin in _array(document, "skins", 128):
@@ -332,7 +332,8 @@ class GamePoseAsset:
     def describe(self):
         return {"schema": "axm.game-pose-asset/v0.1", "source_sha256": self.source_sha256,
                 "nodes": [{"index": i, "name": row["name"], "parent": self._parents[i]} for i, row in enumerate(self._nodes)],
-                "clips": [{"name": name, "duration_s": clip["duration_s"], "channels": len(clip["tracks"])} for name, clip in self._clips.items()],
+                "clips": [{"name": name, "start_s": clip["start_s"], "duration_s": clip["duration_s"],
+                           "channels": len(clip["tracks"])} for name, clip in self._clips.items()],
                 "skins": [{"joints": list(skin["joints"])} for skin in self._skins],
                 "primitives": len(self._meshes), "vertices": sum(len(m["positions"]) for m in self._meshes),
                 "truth": game_pose_runtime_catalog()["truth"]}
