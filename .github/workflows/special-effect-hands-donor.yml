@@ -1,0 +1,27 @@
+name: Special-effect Hands donor
+
+on:
+  push:
+    branches:
+      - chatgpt/special-effect-hands-donor
+    paths:
+      - 'capabilities/special-effect-hands/**'
+      - '.github/workflows/special-effect-hands-donor.yml'
+  pull_request:
+    paths:
+      - 'capabilities/special-effect-hands/**'
+      - '.github/workflows/special-effect-hands-donor.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Verify portable special-effect Hands
+        run: npm --prefix capabilities/special-effect-hands test
