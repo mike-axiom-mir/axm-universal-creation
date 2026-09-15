@@ -18,6 +18,7 @@ def _register_extension_builtins() -> None:
     from .design_observer import DesignObserverError, operate_design_observer
     from .design_visual import DesignVisualError, operate_design_visual
     from .design_workshop import DesignWorkshopError, operate_design_workshop
+    from .design_workshop_construction import DesignWorkshopConstructionError, operate_workshop_construction
     from .fabric_sources import FabricSourceError, inspect_fabric_sources
     from .simulation import SimulationError, operate_simulation
     from .specialist_pool_extension import build_specialist_pool as _contextual_pool_builder
@@ -183,6 +184,13 @@ def _register_extension_builtins() -> None:
             details = getattr(exc, "details", {})
             raise _capabilities.CapabilityError(str(exc), details) from exc
 
+    def workshop_construction_surface(root, inputs):
+        try:
+            return operate_workshop_construction(root, inputs)
+        except (DesignWorkshopConstructionError, ValueError, TypeError) as exc:
+            details = getattr(exc, "details", {})
+            raise _capabilities.CapabilityError(str(exc), details) from exc
+
     def sticker_multiplier_surface(root, inputs):
         try:
             return operate_sticker_multiplier(root, inputs)
@@ -206,6 +214,7 @@ def _register_extension_builtins() -> None:
     _capabilities.BUILTINS["builtin:simulate_creation"] = adaptive_simulation_surface
     _capabilities.BUILTINS["builtin:design_fabric"] = design_fabric_surface
     _capabilities.BUILTINS["builtin:design_workshop"] = design_workshop_surface
+    _capabilities.BUILTINS["builtin:workshop_construction_loop"] = workshop_construction_surface
     _capabilities.BUILTINS["builtin:sticker_multiplier"] = sticker_multiplier_surface
     _capabilities.BUILTINS["builtin:inspect_fabric_sources"] = fabric_source_surface
 
