@@ -22,13 +22,19 @@ def integration_summary(root: Path) -> dict[str, Any]:
     bridge = root / BRIDGE_RELATIVE
     return {
         "type": "CREATIVE_FLOW_SPINE",
-        "version": "1.0.0",
+        "version": "1.1.0",
         "creation_kind": "creative-flow",
         "bridge": str(BRIDGE_RELATIVE).replace("\\", "/"),
         "bridge_present": bridge.is_file(),
         "runtime": "node",
         "machine_route": "live capability registry",
-        "policy": "explicit plan execution plus deterministic discovery; prose-only goals HOLD for a plan",
+        "policy": (
+            "explicit plan execution plus deterministic discovery; known adaptive quality profiles may derive "
+            "bounded plans from goal + quality + machine budget, while unknown goals still HOLD"
+        ),
+        "adaptive_quality": True,
+        "adaptive_modes": ["adaptive-plan", "adaptive-execute"],
+        "parallel_runtime": "planned-not-executed",
         "source_state_mutation": False,
     }
 
