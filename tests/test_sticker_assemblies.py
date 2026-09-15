@@ -2,6 +2,7 @@
 import copy
 import json
 import math
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -143,7 +144,8 @@ class AssemblyTests(unittest.TestCase):
     def test_human_and_machine_cli_save_and_reload_the_same_requests(self):
         request={'operation':'save_assembly','id':'saved','name':'Saved group','children':[child(self.d,'part')],'origin':ORIGIN}
         path=self.root/'request.json';path.write_text(json.dumps(request))
-        run=subprocess.run([sys.executable,'-m','axm_stickers',str(self.root/'r.sqlite'),str(path)],capture_output=True,text=True)
+        run=subprocess.run([sys.executable,'-m','axm_stickers',str(self.root/'r.sqlite'),str(path)],cwd=self.root,
+            env={**os.environ,'PYTHONPATH':str(Path(__file__).resolve().parents[1]/'src')},capture_output=True,text=True)
         self.assertEqual(run.returncode,0,run.stderr)
         self.assertEqual(json.loads(run.stdout),self.r.get('saved',1))
         execute(self.r,{'operation':'export_assembly','id':'saved','ver':1,'output':'asset.glb'},self.root)

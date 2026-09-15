@@ -44,6 +44,12 @@ jobs:
         run: |
           python tools/sticker_assembly_proof.py "${{ runner.temp }}/sticker-proof/rivetwing"
           python tools/sticker_assembly_proof.py preview "${{ runner.temp }}/sticker-proof/rivetwing"
+      - name: Execute installed UC creator outside source checkout
+        working-directory: ${{ runner.temp }}
+        run: |
+          echo '{"operation":"export_assembly","id":"rivetwing","ver":1,"output":"installed-rivetwing.glb"}' > create-assembly.json
+          axm-sticker-create sticker-proof/rivetwing/stickers.sqlite create-assembly.json
+          python -c "from pathlib import Path; assert Path('installed-rivetwing.glb').read_bytes() == Path('sticker-proof/rivetwing/rivetwing.glb').read_bytes()"
       - uses: actions/upload-artifact@v4
         with:
           name: sticker-fabric-proof-and-standalone-core
