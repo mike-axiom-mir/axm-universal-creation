@@ -22,7 +22,7 @@ def integration_summary(root: Path) -> dict[str, Any]:
     bridge = root / BRIDGE_RELATIVE
     return {
         "type": "CREATIVE_FLOW_SPINE",
-        "version": "1.1.0",
+        "version": "1.2.0",
         "creation_kind": "creative-flow",
         "bridge": str(BRIDGE_RELATIVE).replace("\\", "/"),
         "bridge_present": bridge.is_file(),
@@ -33,7 +33,8 @@ def integration_summary(root: Path) -> dict[str, Any]:
             "bounded plans from goal + quality + machine budget, while unknown goals still HOLD"
         ),
         "adaptive_quality": True,
-        "adaptive_modes": ["adaptive-plan", "adaptive-execute"],
+        "adaptive_modes": ["adaptive-plan", "adaptive-execute", "adaptive-calibrate"],
+        "calibration": "explicit bounded local execution returns observational work-units-per-ms; never inferred from a hardware label",
         "parallel_runtime": "planned-not-executed",
         "source_state_mutation": False,
     }
