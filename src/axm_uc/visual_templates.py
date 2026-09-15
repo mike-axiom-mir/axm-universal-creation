@@ -13,8 +13,9 @@ from .visual_template_game_systems import extend_game_system_catalog as _extend_
 from .visual_template_creative_narrative import extend_creative_narrative_catalog as _extend_creative_narrative_catalog
 from .visual_template_axm_system import extend_axm_system_catalog as _extend_axm_system_catalog
 from .visual_template_game_shared import extend_game_shared_catalog as _extend_game_shared_catalog
+from .visual_template_keyart import extend_keyart_catalog as _extend_keyart_catalog
 
-_COMPOSITION=("visual_template_growth","visual_template_game_systems","visual_template_creative_narrative","visual_template_axm_system","visual_template_game_shared")
+_COMPOSITION=("visual_template_growth","visual_template_game_systems","visual_template_creative_narrative","visual_template_axm_system","visual_template_game_shared","visual_template_keyart")
 _applied=getattr(_core,"_AXM_VISUAL_COMPOSITION",None)
 if _applied is None:
     _extend_catalog(vars(_core))
@@ -22,6 +23,7 @@ if _applied is None:
     _extend_creative_narrative_catalog(vars(_core))
     _extend_axm_system_catalog(vars(_core))
     _extend_game_shared_catalog(vars(_core))
+    _extend_keyart_catalog(vars(_core))
     _core._AXM_VISUAL_COMPOSITION=_COMPOSITION
 elif _applied != _COMPOSITION:
     raise RuntimeError("visual template composition changed inside a live process; restart with one exact catalog")

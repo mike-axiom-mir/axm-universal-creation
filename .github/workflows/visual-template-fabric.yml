@@ -10,6 +10,7 @@ on:
       - 'src/axm_uc/visual_template_creative_narrative.py'
       - 'src/axm_uc/visual_template_axm_system.py'
       - 'src/axm_uc/visual_template_game_shared.py'
+      - 'src/axm_uc/visual_template_keyart.py'
       - 'src/axm_uc/visual_templates_cli.py'
       - 'tests/test_visual_templates.py'
       - 'tools/visual_template_proof.py'
@@ -17,6 +18,7 @@ on:
       - 'VISUAL_TEMPLATE_PRIORITY_MAP.md'
       - 'AXM_SYSTEM_TEMPLATE_PACK.md'
       - 'GAME_SHARED_TEMPLATE_PACK.md'
+      - 'KEYART_TEMPLATE_PACK.md'
       - 'pyproject.toml'
       - '.github/workflows/visual-template-fabric.yml'
   pull_request:
@@ -28,6 +30,7 @@ on:
       - 'src/axm_uc/visual_template_creative_narrative.py'
       - 'src/axm_uc/visual_template_axm_system.py'
       - 'src/axm_uc/visual_template_game_shared.py'
+      - 'src/axm_uc/visual_template_keyart.py'
       - 'src/axm_uc/visual_templates_cli.py'
       - 'tests/test_visual_templates.py'
       - 'tools/visual_template_proof.py'
@@ -35,6 +38,7 @@ on:
       - 'VISUAL_TEMPLATE_PRIORITY_MAP.md'
       - 'AXM_SYSTEM_TEMPLATE_PACK.md'
       - 'GAME_SHARED_TEMPLATE_PACK.md'
+      - 'KEYART_TEMPLATE_PACK.md'
       - 'pyproject.toml'
       - '.github/workflows/visual-template-fabric.yml'
   workflow_dispatch:
