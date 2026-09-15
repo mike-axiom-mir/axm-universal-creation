@@ -16,20 +16,20 @@ This extends, rather than replaces, the existing systems:
 
 The public module is `axm_uc.visual_templates`.
 
-Its retained deterministic kernel lives in `visual_template_core.py`. Professional foundation packs live in `visual_template_growth.py`. The public facade composes those dictionaries, rejects collisions, validates the resulting catalog, then exposes the same v1 schemas and functions.
+Its retained deterministic kernel lives in `visual_template_core.py`. Genre/product growth lives in `visual_template_growth.py`. Shared professional game-product surfaces live in `visual_template_game_systems.py`. The public facade composes those dictionaries, rejects collisions, validates the resulting catalog, then exposes the same v1 schemas and functions.
 
-This is intentionally **one catalog**, not two template systems and not two registries.
+This is intentionally **one catalog**, not competing template systems and not multiple registries.
 
 Current deterministic catalog:
 
-- **24 reusable primitives**;
-- **7 coherent style systems**;
-- **39 responsive screen archetypes**;
-- **5 whole-product archetypes**.
+- **32 reusable primitives**;
+- **8 coherent style systems**;
+- **57 responsive screen archetypes**;
+- **6 whole-product archetypes**.
 
 ## Layers
 
-1. **Primitives** — reusable state/interaction contracts such as panel, navigation, player seat, selection card, stat comparison, slider row, countdown, loading state, recovery banner, telemetry strip and modal.
+1. **Primitives** — reusable state/interaction contracts such as panel, navigation, player seat, selection card, stat comparison, slider row, countdown, loading state, recovery banner, keybind row, save slot and confirmation summary.
 2. **Style systems** — coherent surface, type, depth, shape and motion language. These are semantic visual systems, not one-off color themes.
 3. **Screen archetypes** — normalized responsive region geometry, slots, math hooks, intent and quality constraints.
 4. **Whole-product archetypes** — exact screen sets plus explicit flow edges and product-level coherence rules.
@@ -43,14 +43,15 @@ Two racing products are retained deliberately:
 - `game.racing.performance` — the smaller six-screen racing shell: lobby, event selection, garage, driving HUD, pause and results.
 - `game.racing.full` — the professional 19-screen foundation intended for a complete game shell.
 
-`game.racing.full` adds:
+`game.racing.full` covers:
 
 - home / main menu;
+- co-op lobby;
+- event selection;
 - vehicle selection;
 - garage;
 - detailed reversible tuning + telemetry;
 - livery / appearance editing;
-- event selection;
 - pre-race briefing and grid;
 - truthful loading/readiness;
 - start countdown;
@@ -97,6 +98,44 @@ The reusable `player-seat` contract includes empty, joining, ready, not-ready, d
 
 Its quality contract keeps the strategic map/world as the referent while command panels change. Selection, ownership, resources, production and strategic consequences retain stable anchors rather than turning the experience into unrelated dashboards.
 
+## Shared professional game-system shell
+
+`game.system.shell` is a genre-neutral library of **18 optional product surfaces**. It exists so every new AXM game does not have to rediscover the non-gameplay half of being a professional product.
+
+It contains:
+
+- player profile;
+- party / seat management;
+- matchmaking queue;
+- server/session browser;
+- controller/input remapping;
+- display/graphics settings;
+- audio settings;
+- shared accessibility settings;
+- save/load slots;
+- achievements/challenges;
+- tutorial/training;
+- photo mode;
+- credits/licenses;
+- error/recovery;
+- notifications;
+- text chat/channels;
+- privacy/consent;
+- language/localization selection.
+
+These screens are **capabilities, not assumptions**. A local/offline game does not suddenly require accounts, matchmaking, servers or chat because templates exist for them. A game selects only the surfaces relevant to its real product state.
+
+Truth-sensitive contracts include:
+
+- fake loading/progress state is forbidden;
+- server/session availability must be observed;
+- pending/failed chat delivery cannot look delivered;
+- corrupt/incompatible saves remain visible as such rather than being silently rewritten;
+- input conflicts must be shown before replacement;
+- display changes can expose a bounded revert path;
+- consent is not preselected merely to improve conversion and revocation remains discoverable;
+- errors say what failed, what remains safe and what recovery evidence exists.
+
 ## Responsive geometry
 
 Screen regions are stored in normalized `0..1` coordinates. `resolve()` turns them into exact pixels for a supplied viewport. Game screens currently ship all three variants:
@@ -135,11 +174,13 @@ List the composed catalog:
 axm-visual-templates catalog
 ```
 
-Inspect one exact foundation:
+Inspect exact foundations:
 
 ```sh
-axm-visual-templates show game.racing.hud.performance
 axm-visual-templates show game.racing.full
+axm-visual-templates show game.coop.action
+axm-visual-templates show game.rts.command
+axm-visual-templates show game.system.shell
 ```
 
 Write local structural previews:
@@ -148,6 +189,7 @@ Write local structural previews:
 axm-visual-templates render game.racing.full creations/racing-foundation --width 1920 --height 1080
 axm-visual-templates render game.coop.action creations/coop-foundation --width 1280 --height 720
 axm-visual-templates render game.rts.command creations/rts-foundation --width 1920 --height 1080
+axm-visual-templates render game.system.shell creations/game-system-foundation --width 1280 --height 720
 ```
 
 A product preview contains one SVG per screen, `product.json` with exact resolved structure, and a local HTML gallery. A screen preview contains `screen.svg`, `template.json` and HTML.
@@ -170,19 +212,20 @@ python tools/visual_template_proof.py /new/output/path
 The deterministic test suite checks:
 
 - exact composed catalog counts;
-- all 39 screens across six representative viewport shapes/sizes;
+- all 57 screens across six representative viewport shapes/sizes;
 - compact/standard/wide coverage for game screens;
 - strict unknown-variant rejection;
 - exact product screen ordering and flow references;
 - the 19-screen professional racing shell and key loading/recovery transitions;
-- racing, co-op and RTS product resolution;
+- the 18-screen shared system shell including consent/recovery/input/persistence surfaces;
+- racing, co-op, RTS and shared-system product resolution;
 - SVG parseability;
-- actual Sticker Registry installation of all 44 screens/products;
+- actual Sticker Registry installation of all 63 screens/products;
 - exact Sticker slot pins;
 - rejection of invalid geometry;
-- mature reusable game primitives including truthful loading and explicit player-seat ownership.
+- mature reusable primitives including truthful loading, observed availability and explicit player-seat ownership.
 
-The proof generates galleries for `game.racing.full`, `game.coop.action` and `game.rts.command`, plus a portrait mobile foundation. It resolves all three game products at 640×360, 1080×1920, 1280×720, 1920×1080, 2560×1080 and 3840×2160 and rejects any region that escapes its viewport.
+The proof generates galleries for `game.racing.full`, `game.coop.action`, `game.rts.command` and `game.system.shell`, plus a portrait mobile foundation. It resolves all four game products at 640×360, 1080×1920, 1280×720, 1920×1080, 2560×1080 and 3840×2160 and rejects any region that escapes its viewport.
 
 ## Truth boundary
 
@@ -190,10 +233,11 @@ Current claims are intentionally narrow:
 
 - these are known structural foundations, **not** professional-quality guarantees by themselves;
 - generated SVG is an offline structural preview, not target-engine rendering;
-- no gameplay, controller feel, interaction timing, localization, font rendering, performance, accessibility audit or aesthetic acceptance is proven by the template resolver;
+- no gameplay, controller feel, interaction timing, localization, font rendering, network behavior, save reliability, runtime performance, accessibility audit or aesthetic acceptance is proven by the template resolver;
 - having an accessibility template does not mean a finished product is accessible; it prevents that product surface from being absent by default;
+- having privacy/consent templates does not establish legal compliance; it preserves a non-manipulative explicit-choice starting structure;
 - color/style tokens express coherent intent but do not replace final art direction;
-- loading and recovery contracts forbid fake state, but the real product still has to connect them to observed runtime evidence;
+- loading, recovery and availability contracts forbid fake state, but the real product still has to connect them to observed runtime evidence;
 - the machine may mutate, combine, replace or ignore a template when evidence and user intent support doing so;
 - no template becomes canon merely because it is built in or registered.
 
