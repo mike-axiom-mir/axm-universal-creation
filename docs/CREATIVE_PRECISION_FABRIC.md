@@ -1,0 +1,140 @@
+# Creative Precision Fabric
+
+Status: first executable foundation wave.
+
+## Purpose
+
+Universal Creation should learn from mature creative software without becoming a clone of any product.
+
+The useful unit is not a toolbar button. It is the smallest reusable deterministic operation underneath that button.
+
+Examples:
+
+- magic-wand selection -> contiguous colour mask;
+- colour-range selection -> colour-distance mask;
+- dodge/burn -> brush dab plan + exposure operator;
+- clone/heal -> brush dab plan + source sampler + replacement/reconciliation operator;
+- perspective clone -> homography + source sampler + clone brush;
+- adjustment layer -> effect graph + mask reference;
+- smart filter -> source-linked state + effect graph + mask;
+- smart material -> material channels + generators + masks + effect graph.
+
+This keeps human interfaces optional. Human UI, AI orchestration, recipes and deterministic code can all call the same machinery.
+
+## Influence rule
+
+Creative applications are capability references, not implementation donors by default.
+
+Concepts may be studied, decomposed and rebuilt as AXM-native operations. Do not copy proprietary code, UI, branding, icons, bundled assets or hidden implementation details. Any third-party source reuse needs its own explicit licence and provenance review.
+
+Reference families include raster editors, digital-paint systems, headless image processors, raw/photo processors, vector editors, pixel-art systems, material authoring systems, 3D model/sculpt/animation packages, node compositors, font editors, page-layout systems, DAWs/audio editors, video editors, CAD/manufacturing tools and other mature creative systems.
+
+## Current executable foundation
+
+`capabilities/platform-hands/shared/asset-hands/upgrade-program/creative-precision.js`
+
+Provides:
+
+- precision mask document with retained digests;
+- rectangle, ellipse and polygon mask generation;
+- union, intersection, subtraction, XOR and multiply mask algebra;
+- invert and threshold;
+- grow, shrink, open and close morphology;
+- deterministic multi-pass feathering;
+- deterministic brush dab planning;
+- pressure, tilt, rotation, velocity, direction, elapsed-time and seeded-random sensor inputs;
+- dynamic size, opacity, flow, hardness, angle, spacing and scatter mapping;
+- deterministic acyclic effect-graph compilation;
+- an influence-derived microtool catalog. The catalog is not an implementation claim.
+
+`precision-raster.js` adds pixel-derived selection evidence:
+
+- red/green/blue/alpha/luminance channel masks;
+- luminance-range masks;
+- colour-range masks;
+- contiguous-colour flood selection with 4/8 connectivity;
+- Sobel-derived edge masks.
+
+`precision-transform.js` adds:
+
+- 3x3 projective matrices;
+- exact four-corner homography solving;
+- nearest/bilinear projective raster warp;
+- transparent or clamp boundaries;
+- displacement-field raster warp.
+
+`creative-recipes.js` composes familiar creative concepts from these primitives. Every recipe carries one of three explicit states:
+
+- `EXECUTABLE` — the requested result is produced by current primitives;
+- `PLAN_EXECUTABLE` — UC can deterministically build the operation plan, but one or more application operators are still missing;
+- `EXECUTABLE_CONTRACT` — the non-destructive structure is real, while actual domain rendering remains delegated to an appropriate hand.
+
+No recipe may silently upgrade itself from plan/contract to executable.
+
+## Existing UC machinery to reuse, not duplicate
+
+The precision fabric sits underneath existing capabilities rather than replacing them.
+
+- raster compositor: existing blend modes, masks and filters;
+- non-destructive raster document: editable layers, pressure stroke and bounded retouch;
+- universal edit kernel: selection, transforms, hierarchy, masks, instances and exact undo/redo;
+- vector engine: path construction, splitting/joining, offsets, variable outlines and current booleans;
+- typography/story engine;
+- advanced 3D, material, audio and video foundations;
+- Asset Hands routing, evidence and substrate machinery.
+
+When a new creative concept can be expressed through an existing primitive, add a recipe or a small missing primitive instead of making another parallel editor.
+
+## Influence families -> UC-native decomposition
+
+| Mature tool family | Harvest as UC primitives |
+| --- | --- |
+| Photoshop / GIMP-class raster | selection fields, layer/mask algebra, blend/effect stacks, channels, retouch sampling, transforms, filters |
+| Krita / digital paint | reusable dab engines, sensor mappings, stabilization, texture/smudge/filter operators, symmetry |
+| ImageMagick / headless imaging | explicit operator pipelines, channel math, morphology, distortion, batching |
+| darktable / RawTherapee | parametric masks, local adjustments, frequency/wavelet operations, denoise, deconvolution, colour pipelines |
+| Inkscape / vector | generic path-node surgery, booleans, offsets, simplify/smooth, gradients, patterns, clones, path effects |
+| Aseprite / pixel art | indexed palettes, deterministic dithering, cels, linked cels, tags, tiles, tilemaps, sprite sheets |
+| Substance-style material authoring | multi-channel stacks, geometry-derived generators, anchors, smart masks/materials, projections |
+| Blender / 3D DCC | modeling primitives, modifiers, UV, sculpt masks/brushes, rig/animation, simulation, procedural graphs |
+| node compositors | graph evaluation, roto/mattes, keying, tracking, stabilization, temporal operators, AOV assembly |
+| FontForge / type | glyph outlines, bearings, kerning, OpenType features, variable axes, hinting |
+| DTP / layout | frames, grids, text flow, masters, imposition, preflight, accessible structure |
+| audio editors / DAWs | waveform/spectral masks, automation envelopes, EQ/dynamics, repair, pitch/time, loudness |
+| video / motion | timelines, tracks, transitions, keyframes, masks, tracking, colour, captions, delivery graphs |
+| CAD / manufacturing | parametric constraints, sketches, B-reps, booleans, fillet/chamfer, sheet metal, CAM contracts |
+| terrain / procedural world tools | fields, splines, scatter, erosion, biome masks, height/material generation |
+
+The list is deliberately about operation families rather than brand parity. New references can extend it without changing the architecture.
+
+## Current machine-readable target space
+
+`creativeMicrotoolCatalog()` currently exposes 217 named microtool targets across selection, brush, colour, transform, filter, vector, pixel, material, retouch, typography and audio families. Its `truth_boundary` states that target names are not implementation evidence.
+
+`creativeRecipes.registry()` currently exposes the smaller set that UC can already execute, plan deterministically or represent as an executable non-destructive contract.
+
+## Verification
+
+Focused deterministic checks:
+
+```bash
+node capabilities/platform-hands/shared/asset-hands/upgrade-program/creative-precision-selftest.js
+node capabilities/platform-hands/shared/asset-hands/upgrade-program/precision-raster-selftest.js
+node capabilities/platform-hands/shared/asset-hands/upgrade-program/creative-recipes-selftest.js
+```
+
+These are unit-level evidence only. They do not certify the whole 217-target catalog, visual quality, a complete human editor, or parity with any referenced application.
+
+## Growth rule
+
+Before adding a new creative tool:
+
+1. describe the observable operation, not the product name;
+2. decompose it into existing primitives;
+3. reuse any current UC capability that already satisfies a piece;
+4. implement only the smallest real missing primitive;
+5. add deterministic evidence;
+6. expose whether the final recipe is executable, plan-only, contract-only or still missing;
+7. preserve richer canonical state when a cheaper realization is needed.
+
+The goal is not to own every toolbar on Earth. The goal is to make the small deterministic vocabulary from which those toolbars can be composed.
