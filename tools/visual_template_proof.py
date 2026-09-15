@@ -8,7 +8,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src'))
 from axm_uc import visual_templates as vt
 
 SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
-PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell")
+PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell","visual.keyart.core")
 
 def _write(project,target):
     target.mkdir(); out=[]
@@ -25,7 +25,7 @@ def main(argv):
     out.mkdir(parents=True)
     try:
         counts=vt.validate_catalog()
-        if counts!={'styles':12,'primitives':67,'screens':103,'products':10}: raise AssertionError(counts)
+        if counts!={'styles':13,'primitives':76,'screens':113,'products':11}: raise AssertionError(counts)
         evidence=[]
         for pid in PRODUCTS:
             expected=vt.get(pid)
@@ -45,23 +45,26 @@ def main(argv):
             ('editor.creative.core',1920,1080,'creative-editor','AXM Creative Editor Foundation'),
             ('comic.narrative.core',1920,1080,'comic-narrative','AXM Editable Comic Foundation'),
             ('axm.system.shell',1920,1080,'axm-system','AXM System Shell Foundation'),
+            ('visual.keyart.core',1920,1080,'keyart','AXM Editable Key Art Foundation'),
         )
         outputs=[]
         for pid,w,h,folder,title in galleries: outputs+=_write(vt.product_project(pid,w,h,title),out/folder)
         outputs+=_write(vt.screen_project('product.mobile.home',1080,1920,'AXM Mobile Foundation'),out/'mobile-home')
-        shared=vt.get('game.shared.core')
-        required={'game.shared.inventory','game.shared.skill-tree','game.shared.mission-briefing','game.shared.world-map','game.shared.objective-log','game.shared.upgrade-shop','game.shared.codex','game.shared.revive-overlay','game.shared.boss-encounter-hud','game.shared.spectator','game.shared.end-session-summary','game.shared.challenge-board'}
-        if set(shared['screens'])!=required: raise AssertionError('shared gameplay pack lost required surfaces')
+        keyart=vt.get('visual.keyart.core')
+        required={'visual.keyart.project-hub','visual.keyart.composition-editor','visual.keyart.subject-stage','visual.keyart.type-editor','visual.keyart.lighting-effects','visual.keyart.background-atmosphere','visual.keyart.crop-variants','visual.keyart.variant-board','visual.keyart.review-compare','visual.keyart.export'}
+        if set(keyart['screens'])!=required: raise AssertionError('key art pack lost required surfaces')
         checks={
-            'inventory_ownership':vt.PRIMITIVES['inventory-slot']['ownership_must_be_explicit'],
-            'skill_prerequisites':vt.PRIMITIVES['skill-node']['prerequisites_and_cost_must_be_visible'],
-            'codex_unknowns':vt.PRIMITIVES['codex-entry']['undiscovered_content_must_not_be_faked'],
-            'revive_actor_timer':vt.PRIMITIVES['revive-state']['timer_and_actor_must_be_explicit'],
-            'boss_phase_noncolor':vt.PRIMITIVES['boss-phase']['phase_change_needs_non_color_cue'],
-            'challenge_progress_reward':vt.PRIMITIVES['challenge-card']['progress_and_reward_must_be_explicit'],
+            'subject_editable':vt.PRIMITIVES['hero-subject']['source_and_transform_must_remain_editable'],
+            'depth_order_explicit':vt.PRIMITIVES['depth-layer']['order_must_be_explicit'],
+            'mask_preserves_source':vt.PRIMITIVES['focal-mask']['mask_must_not_replace_source_art'],
+            'title_separable':vt.PRIMITIVES['title-lockup']['text_and_layout_remain_separate'],
+            'effects_non_authoritative':vt.PRIMITIVES['lighting-pass']['effect_must_remain_non_authoritative'],
+            'crop_preserves_source':vt.PRIMITIVES['crop-safe-frame']['crop_must_not_modify_source_geometry'],
+            'variant_identity_exact':vt.PRIMITIVES['variant-card']['variant_identity_must_be_exact'],
+            'export_requirements_visible':vt.PRIMITIVES['export-target']['target_requirements_must_be_visible'],
         }
-        if not all(checks.values()): raise AssertionError('shared gameplay contract failed')
-        receipt={'schema':'axm.visual-template-proof/v6','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'game_shared_checks':checks,'truth':'Offline structural evidence only. Gameplay behavior, economy balance, progression tuning, encounter timing, runtime state and aesthetic acceptance were not observed.'}
+        if not all(checks.values()): raise AssertionError('key art editability contract failed')
+        receipt={'schema':'axm.visual-template-proof/v7','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'keyart_checks':checks,'truth':'Offline structural evidence only. Finished illustration quality, typography quality, lighting quality, store compliance, print production, target-renderer output and aesthetic acceptance were not observed.'}
         (out/'receipt.json').write_text(json.dumps(receipt,indent=2,sort_keys=True),encoding='utf-8')
         print(json.dumps(receipt,indent=2,sort_keys=True))
     except BaseException:
