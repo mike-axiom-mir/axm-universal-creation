@@ -2,47 +2,47 @@
 
 Universal Creation contains one deterministic library of **known visual archetypes** between low-level format scaffolds and finished products. Templates are editable structural starting points, not finished art and not automatic canon.
 
-The public module remains `axm_uc.visual_templates`. Explicit extension packs cover games/product plumbing, creative editors, comics, AXM system surfaces, key art, cards/decks, cinematic/broadcast overlays, diagrams, atlas/map editing, branching narrative, 3D showroom, music, presentation/explainers, character reference, equipment configuration and source-bound UI motion. Sticker Fabric remains the immutable/versioned registry bridge. Mathematical work can enrich declared ratios/ranges through `math_hooks` without replacing template identity.
+The public module remains `axm_uc.visual_templates`. Explicit extension packs cover games/product plumbing, creative editors, comics, AXM system surfaces, key art, cards/decks, cinematic/broadcast overlays, diagrams, atlas/map editing, branching narrative, 3D showroom, music, presentation/explainers, character reference, equipment configuration, source-bound UI motion and brand/identity systems. Sticker Fabric remains the immutable/versioned registry bridge. Mathematical work can enrich declared ratios/ranges through `math_hooks` without replacing template identity.
 
-## Current v17 candidate census
+## Current v18 candidate census
 
-- **196 reusable visual/state primitives**
-- **25 coherent style systems**
-- **234 responsive screen archetypes**
-- **23 whole-product archetypes**
-- **257 exact screen/product definitions** when explicitly installed into Sticker Registry
+- **206 reusable visual/state primitives**
+- **26 coherent style systems**
+- **244 responsive screen archetypes**
+- **24 whole-product archetypes**
+- **268 exact screen/product definitions** when explicitly installed into Sticker Registry
 
 Every major family provides compact, standard and wide normalized layouts. Unknown requested variants fail rather than silently falling back.
 
-## Source-bound UI motion foundation
+## Source-bound brand / identity foundation
 
-`visual.motion.core` provides ten state-first motion surfaces:
+`visual.brand.core` provides ten identity-system surfaces:
 
-- project / motion-system hub;
-- state-transition editor;
-- focus / navigation motion editor;
-- spatial / shared-element continuity editor;
-- timing / easing editor;
-- interruption / recovery editor;
-- progress / loading motion editor;
-- reduced-motion variant editor;
-- trigger matrix;
-- review / export.
+- project / identity hub;
+- marks and lockups editor;
+- typography editor;
+- icon-family editor;
+- identity-token editor;
+- clearspace / usage-rule editor;
+- identity-variant editor;
+- brand application editor;
+- review / rule audit;
+- export matrix.
 
-Its `visual.motion.system` style is replaceable. The contract is semantic state before animation:
+Its `visual.brand.identity` style is replaceable. Identity source remains explicit:
 
-- `motion-state` keeps exact source/target identities;
-- `transition-edge-state` keeps trigger, source, target, duration and completion semantics explicit;
-- `timing-curve` preserves explicit duration/easing parameters;
-- `focus-motion-path` preserves exact focus identities and semantic order;
-- `spatial-anchor-transition` requires exact source/target anchor IDs;
-- `interruption-recovery` keeps cancellation and rollback/recovery state explicit;
-- `progress-motion-state` binds motion to observed progress/status, never inferred completion;
-- `reduced-motion-rule` preserves the same semantic result while reducing unnecessary motion;
-- `motion-trigger` binds transitions to exact events/inputs/state changes;
-- `motion-export-target` keeps runtime/accessibility requirements visible.
+- `brand-asset-source` preserves exact mark/logo/wordmark source, version, digest and provenance state;
+- `brand-lockup` preserves exact asset references, relative layout and approved-use status;
+- `brand-type-role` preserves exact font source/style plus semantic role;
+- `brand-icon-family` preserves family identity/source/version and exact member references;
+- `brand-token` preserves exact value, context/unit, source and usage role;
+- `brand-clearspace-rule` preserves exact target and measurement basis;
+- `brand-usage-rule` preserves exact subject, context, status and source;
+- `brand-application` remains a derived application bound to exact identity inputs;
+- `brand-variant` preserves base identity, deltas, intended context and availability;
+- `brand-export-target` keeps exact asset/token/rule/format/provenance requirements visible.
 
-Animation is never evidence that state changed. Animation completion cannot manufacture task completion. Visual proximity cannot define focus order or shared-element identity. Reduced-motion is first-class and must preserve the same destination/meaning.
+A polished mockup never becomes canonical identity merely because it looks convincing. Visual similarity does not merge identity assets. Clearspace rules require explicit measurement basis, and exceptions/restricted variants remain visible.
 
 ## Registry and identity
 
@@ -52,8 +52,8 @@ Every built-in screen/product can be wrapped as an immutable Sticker definition.
 
 ```sh
 axm-visual-templates catalog
-axm-visual-templates show visual.motion.core
-axm-visual-templates render visual.motion.core creations/motion --width 1920 --height 1080
+axm-visual-templates show visual.brand.core
+axm-visual-templates render visual.brand.core creations/brand --width 1920 --height 1080
 ```
 
 Preview/export remains derived inspection output, never authoritative source.
@@ -65,19 +65,19 @@ python -m unittest discover -s tests -p 'test_visual_templates.py' -v
 python tools/visual_template_proof.py /new/output/path
 ```
 
-The v17 gate requires:
+The v18 gate requires:
 
-- exact census: 25 styles / 196 primitives / 234 screens / 23 products;
-- all 234 screens stay within six representative viewport shapes;
+- exact census: 26 styles / 206 primitives / 244 screens / 24 products;
+- all 244 screens stay within six representative viewport shapes;
 - exact product screen order and flows resolve across those viewports;
-- parseable galleries for all prior proof products plus `visual.motion.core`;
-- all 257 screen/product definitions install through Sticker Registry;
-- exact state edge, trigger, timing, focus order, anchor identity, interruption/recovery, progress source and reduced-motion parity contracts remain present;
-- prior configurator/character/presentation/music/showroom/visual-novel/atlas/diagram/broadcast/cinematic/card/key-art/comic/game/AXM source boundaries remain intact;
+- parseable galleries for all prior proof products plus `visual.brand.core`;
+- all 268 screen/product definitions install through Sticker Registry;
+- exact identity asset/source/provenance, lockup layout/status, font role/source, icon membership, token value/context, clearspace measurement basis, usage rule status, application binding and variant-base contracts remain present;
+- prior motion/configurator/character/presentation/music/showroom/visual-novel/atlas/diagram/broadcast/cinematic/card/key-art/comic/game/AXM boundaries remain intact;
 - copy safety, strict variant rejection, invalid-geometry rejection and exact Sticker-slot binding remain intact.
 
 ## Truth boundary
 
-Current evidence proves deterministic structural/editability contracts only. It does **not** prove perceptual motion quality, vestibular comfort, target-framework behavior, frame pacing, input latency or accessibility acceptance.
+Current evidence proves deterministic structural/editability contracts only. It does **not** prove trademark clearance, font/icon licensing, legal rights, market effectiveness, visual quality or accessibility acceptance.
 
-Consuming products must provide real state transitions and runtime evidence. Unknown, interrupted, stalled and incomplete state stays distinguishable. Richer editable source remains authoritative over previews/exports.
+Consuming products must supply real identity/provenance state. Unknown, restricted, deprecated and exception states remain distinguishable. Richer editable source remains authoritative over applications/previews/exports.
