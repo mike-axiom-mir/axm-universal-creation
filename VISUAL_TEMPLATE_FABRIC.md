@@ -1,133 +1,81 @@
 # Visual Template / Archetype Fabric
 
-Universal Creation has a deterministic layer between low-level format scaffolds and finished products: **known visual archetypes**.
+Universal Creation contains one deterministic library of **known visual archetypes** between low-level format scaffolds and finished products. Templates are editable structural starting points, not finished art and not automatic canon.
 
-A visual archetype is not finished art and it is not canon. It is a versioned, inspectable answer to a recurring structural problem: where important information belongs, what should dominate, how a layout adapts, what visual language holds it together, what reusable asset sockets exist, and which quality constraints should survive variation.
+The public module remains `axm_uc.visual_templates`. The retained kernel is `visual_template_core.py`; explicit extension packs add game/product, creative/narrative, AXM-system and shared-game knowledge before the facade validates one composed v1 catalog. Sticker Fabric remains the immutable/versioned local registry bridge. Mathematical work can enrich declared ratios/ranges through `math_hooks` without replacing template identity.
 
-This extends, rather than replaces, the existing systems:
+## Current v4 candidate census
 
-- `format_templates.py` still owns physical/screen canvases and simple semantic rectangles;
-- deterministic project templates still instantiate exact files;
-- Sticker Fabric remains the immutable/versioned local registry and reusable-part system;
-- visual archetypes supply stronger screen and whole-product foundations those systems can consume;
-- separate mathematical work can enrich declared ratios/ranges through `math_hooks` without replacing template identity.
+- **67 reusable visual/state primitives**
+- **12 coherent style systems**
+- **103 responsive screen archetypes**
+- **10 whole-product archetypes**
+- **113 exact screen/product definitions** when explicitly installed into Sticker Registry
 
-## One composed catalog
+Every major game/editor/comic/AXM family provides compact, standard and wide normalized layouts. Unknown requested variants fail rather than silently falling back.
 
-The public module is `axm_uc.visual_templates`.
+## Product foundations accumulated so far
 
-Its retained deterministic kernel lives in `visual_template_core.py`. Genre/product growth lives in `visual_template_growth.py`. Shared professional game-product surfaces live in `visual_template_game_systems.py`. Creative-editor and editable-narrative surfaces live in `visual_template_creative_narrative.py`. AXM-native machine/system surfaces live in `visual_template_axm_system.py`. The public facade composes those dictionaries, rejects collisions, validates the resulting catalog, then exposes the same v1 schemas and functions.
+### Games
 
-This is intentionally **one catalog**, not competing template systems and not multiple registries.
+- `game.racing.performance` — compact six-screen racing shell.
+- `game.racing.full` — 19-screen professional racing product including selection, tuning, livery, loading, countdown, primary/split HUDs, recovery, replay, progression, settings and accessibility.
+- `game.coop.action` — reusable co-op action shell.
+- `game.rts.command` — persistent-world RTS command shell.
+- `game.system.shell` — 18 optional genre-neutral product surfaces such as profiles, party/seats, matchmaking/server browsing, controls, graphics/audio, saves, achievements, tutorial, photo mode, recovery, chat, privacy/consent and language.
+- `game.shared.core` — 12 reusable gameplay-system surfaces for inventory, progression, mission/map/objectives, upgrades, lore, revive/boss/spectator state, session summaries and challenges.
 
-Current deterministic catalog in the v3 lane:
+Optional online/account surfaces remain capabilities, not requirements for local/offline products.
 
-- **57 reusable primitives**;
-- **11 coherent style systems**;
-- **91 responsive screen archetypes**;
-- **9 whole-product archetypes**.
+### Creative/editor
 
-## Layers
+`editor.creative.core` provides twelve coordinated editing surfaces: project hub, assets, layers, timeline, node graph, inspector, animation, effects, cutscenes, materials, audio and review/export. Rich editable source stays authoritative over previews and exports.
 
-1. **Primitives** — reusable state/interaction contracts such as player seat, loading state, layer row, graph node, panel frame, speech bubble, truth state, capability card and recovery choice.
-2. **Style systems** — coherent surface, type, depth, shape and motion language. These are semantic visual systems, not one-off color themes.
-3. **Screen archetypes** — normalized responsive region geometry, slots, math hooks, intent and quality constraints.
-4. **Whole-product archetypes** — exact screen sets plus explicit flow edges and product-level coherence rules.
+### Comics / visual narrative
 
-Primitives describe reusable behavior/state expectations; they are not hidden widget implementations. A target product can realize them differently while preserving the contract that matters.
+`comic.narrative.core` provides ten editable story surfaces: project library, page editor, panel editor, dialogue/lettering editor, character sheet, scene graph, storyboard, motion timeline, reader preview and export. Page geometry, panels, source art, dialogue, bubble body/tail, captions, references, reading order, branching beats and motion timing remain separate semantic state.
 
-## Game foundations
+### AXM system / monolith shell
 
-The merged game foundations remain intact:
+`axm.system.shell` provides twelve AXM-native surfaces: home, registry, capability browser, cartridge loader, machine state, evidence review, workflow, specialists, workfloor, snapshots, settings and recovery. The `axm.machine.glass` visual language is a starting style, not canonical AXM identity. Human-facing views use progressive detail while source/version/evidence and recovery consequences remain inspectable.
 
-- `game.racing.performance` — compact six-screen racing shell;
-- `game.racing.full` — 19-screen professional racing foundation;
-- `game.coop.action` — reusable co-op action shell;
-- `game.rts.command` — persistent-world RTS command shell;
-- `game.system.shell` — 18 optional genre-neutral professional product surfaces.
+## Shared gameplay-system pack
 
-Those foundations include truthful loading/recovery, explicit player-seat ownership, split-screen support, controller remapping, save/load, accessibility, privacy/consent, language/localization and other reusable product plumbing. Optional network/account surfaces remain capabilities, not requirements for local/offline games.
+`game.shared.core` closes common near-term gaps without rebuilding product plumbing that already exists elsewhere.
 
-## Creative editor foundation
+Its screens are:
 
-`editor.creative.core` is a 12-screen professional editing foundation:
+- `game.shared.inventory`
+- `game.shared.skill-tree`
+- `game.shared.mission-briefing`
+- `game.shared.world-map`
+- `game.shared.objective-log`
+- `game.shared.upgrade-shop`
+- `game.shared.codex`
+- `game.shared.revive-overlay`
+- `game.shared.boss-encounter-hud`
+- `game.shared.spectator`
+- `game.shared.end-session-summary`
+- `game.shared.challenge-board`
 
-- project hub;
-- asset browser;
-- layer/composition editor;
-- timeline editor;
-- node graph;
-- deep inspector;
-- animation workspace;
-- effects workspace;
-- cutscene editor;
-- material editor;
-- audio editor;
-- review/export.
+The pack adds state-aware primitives instead of only rectangles:
 
-Its `creative.workbench` visual language prioritizes stable editing context and dense inspectable state. New primitives include `layer-row`, `timeline-track`, `keyframe`, `node-card`, `socket-port`, `inspector-field` and `asset-tile`.
+- `inventory-slot` — quantity/ownership/equipped/compatibility state;
+- `skill-node` — prerequisites, cost and unlock state;
+- `objective-row` — objective lifecycle and progress;
+- `shop-offer` — cost plus resulting ownership state;
+- `codex-entry` — discovered versus unknown knowledge;
+- `revive-state` — actor/time/revival lifecycle;
+- `boss-phase` — phase/vulnerability state with non-color cues;
+- `spectator-seat` — viewed target/control context;
+- `challenge-card` — progress, expiry and reward;
+- `session-stat` — metric plus personal/team scope.
 
-The contract is source-first: selected state, modified state, graph typing, timeline position, provenance and richer editable source remain visible. A derived preview/export never becomes authoritative merely because it is easier to render.
+The style `game.shared.adventure` is deliberately neutral enough to be replaced by a specific game's art direction while retaining these semantic contracts.
 
-## Editable comics and visual narrative
+## Registry and identity
 
-`comic.narrative.core` is a 10-screen visual-story foundation:
-
-- story/project library;
-- page editor;
-- panel editor;
-- dialogue/lettering editor;
-- character reference sheet;
-- scene graph;
-- storyboard;
-- motion-comic timeline;
-- reader preview;
-- review/export.
-
-The important boundary is **editability**, not just appearance. Page geometry, panel geometry, source art, crops/depth, dialogue text, bubble shape/tail, captions, character references, reading order, branching story beats and motion timing remain distinct semantic state.
-
-Reusable narrative primitives include `panel-frame`, `panel-gutter`, `speech-bubble`, `caption-box`, `storyboard-card`, `reading-order-marker`, `character-reference-card` and `story-beat-link`.
-
-The `narrative.ink` style gives the pack a coherent editorial starting language, but a comic may replace that style without replacing its structural/editability contract.
-
-## AXM system / monolith shell
-
-`axm.system.shell` is a 12-screen AXM-native machine/product foundation:
-
-- home/current-state overview;
-- registry browser;
-- capability browser;
-- monolith/cartridge loader;
-- machine-state inspector;
-- evidence/truth review;
-- workflow/creation flow;
-- specialist perspectives;
-- machine workfloor;
-- snapshots/continuity;
-- settings/policy;
-- recovery/repair.
-
-Its `axm.machine.glass` style is a layered metallic/glass starting language, not canonical identity. The structural rule is progressive detail: ordinary use sees a calm summary first, while source, version, evidence, dependency and recovery detail remains available when needed.
-
-Reusable AXM primitives include `truth-state`, `capability-card`, `registry-entry`, `evidence-chip`, `state-diff`, `cartridge-card`, `specialist-card`, `workfloor-lane`, `snapshot-entry` and `recovery-choice`.
-
-These templates represent machine state; they do not manufacture it. A real product must connect status, package compatibility, capability availability, snapshots and recovery outcomes to actual observed runtime state.
-
-## Responsive geometry
-
-Screen regions are stored in normalized `0..1` coordinates. `resolve()` turns them into exact pixels for a supplied viewport. Current game, creative-editor, comic and AXM-system screens ship all three variants:
-
-- `compact`: width below 900 px or portrait/narrow ratio below 1.15;
-- `wide`: aspect ratio at least 1.9;
-- `standard`: everything between.
-
-Callers can request a declared variant explicitly. Unknown explicit variants fail; they do not silently fall back.
-
-The current geometry is a known structural foundation. Mathematical growth can later replace or enrich ratio/range derivation through `math_hooks` without changing product/template identity or rewriting source state.
-
-## Sticker Fabric / registry bridge
-
-Every built-in screen or whole-product archetype can be wrapped as an ordinary immutable Sticker definition:
+Every built-in screen/product can be wrapped as an ordinary immutable Sticker definition:
 
 ```python
 from axm_stickers import Registry
@@ -137,43 +85,22 @@ with Registry('stickers.sqlite') as registry:
     pins = install_builtins(registry)
 ```
 
-The wrapper keeps the exact visual template inside the sticker recipe. Existing Sticker Registry guarantees still apply: exact id/version/digest pins, no floating `latest`, no silent upgrades, explicit registration and portable offline state.
-
-The v3 catalog contains 91 screens + 9 products, so explicit built-in installation currently registers **100 exact visual definitions**.
-
-The bridge does **not** turn every Sticker into UI. It lets visual foundations use the same proven immutable local registry when desired.
-
-Screen archetypes may declare Sticker slots. `bind_sticker_slots()` accepts only explicit `{id, version, digest}` pins and validates socket/tag requirements. It never searches for or chooses a replacement on the caller's behalf.
+Definitions use exact id/version/digest identity. There is no floating `latest`, silent upgrade or automatic canon. Screen Sticker slots accept exact pins only and validate declared socket/tag requirements.
 
 ## CLI
 
-List the composed catalog:
-
 ```sh
 axm-visual-templates catalog
-```
-
-Inspect exact foundations:
-
-```sh
-axm-visual-templates show game.racing.full
+axm-visual-templates show game.shared.core
 axm-visual-templates show editor.creative.core
 axm-visual-templates show comic.narrative.core
 axm-visual-templates show axm.system.shell
+axm-visual-templates render game.shared.core creations/game-shared --width 1920 --height 1080
 ```
 
-Write local structural previews:
+A product preview contains one structural SVG per screen plus exact `product.json` and local HTML gallery. Preview is derived inspection output, not authoritative source.
 
-```sh
-axm-visual-templates render game.racing.full creations/racing-foundation --width 1920 --height 1080
-axm-visual-templates render editor.creative.core creations/creative-editor --width 1920 --height 1080
-axm-visual-templates render comic.narrative.core creations/comic-editor --width 1920 --height 1080
-axm-visual-templates render axm.system.shell creations/axm-system --width 1920 --height 1080
-```
-
-A product preview contains one SVG per screen, `product.json` with exact resolved structure, and a local HTML gallery. A screen preview contains `screen.svg`, `template.json` and HTML.
-
-## Evidence
+## Evidence gate
 
 Run:
 
@@ -182,35 +109,20 @@ python -m unittest discover -s tests -p 'test_visual_templates.py' -v
 python tools/visual_template_proof.py /new/output/path
 ```
 
-The deterministic suite now checks:
+The v4 candidate gate requires:
 
-- exact composed catalog counts: 11 styles / 57 primitives / 91 screens / 9 products;
-- all 91 screens across six representative viewport shapes/sizes;
-- compact/standard/wide coverage for game, editor, comic and AXM-system screens;
-- exact product screen ordering and flow references;
-- retained racing/game-system/editor/comic depth;
-- 12-screen AXM system-shell coverage;
-- source/version/evidence/recovery contracts in AXM primitives;
-- SVG parseability;
-- actual Sticker Registry installation of all 100 screens/products;
-- exact Sticker slot pins and invalid-geometry rejection.
-
-The proof generates galleries for racing, co-op, RTS, shared game systems, the creative editor, editable comic system and AXM system shell, plus a portrait mobile reference. It resolves all seven proof products at 640×360, 1080×1920, 1280×720, 1920×1080, 2560×1080 and 3840×2160 and rejects any region that escapes its viewport.
+- exact census: 12 styles / 67 primitives / 103 screens / 10 products;
+- all 103 screens inside six representative viewport shapes;
+- exact product screen order and flow across those viewports;
+- parseable galleries for racing, co-op, RTS, product systems, shared gameplay, creative editor, editable comics and AXM system shell;
+- all 113 screen/product definitions install through the existing immutable Sticker Registry;
+- explicit state contracts for inventory ownership, skill prerequisites/costs, unknown codex content, revive actor/time, boss phases and challenge progress/rewards;
+- copy safety, strict variant rejection, invalid-geometry rejection and exact Sticker slot binding remain intact.
 
 ## Truth boundary
 
-Current claims are intentionally narrow:
+Current evidence proves deterministic structural knowledge and state vocabulary only. It does **not** prove target-engine rendering, gameplay feel, economy balance, progression fairness, encounter timing, network behavior, save reliability, authoring ergonomics, drawing quality, package mounting, recovery success, accessibility compliance or aesthetic acceptance.
 
-- these are known structural foundations, **not** professional-quality guarantees by themselves;
-- generated SVG is an offline structural preview, not target-engine rendering;
-- creative/editor templates do not prove actual authoring behavior, undo/redo correctness, file compatibility or export fidelity;
-- comic templates do not prove drawing quality, lettering quality, reading experience, localization or aesthetic acceptance;
-- AXM system templates do not prove package mounting, machine execution, capability availability, snapshot restore or recovery success;
-- preserving separate semantic regions is structural evidence, not proof that a finished GUI exposes every operation perfectly;
-- having accessibility/privacy surfaces does not establish accessibility or legal compliance;
-- loading, recovery and availability contracts require real products to connect displayed state to actual evidence;
-- color/style tokens express coherent intent but do not replace final art direction;
-- the machine may mutate, combine, replace or ignore a template when evidence and user intent support doing so;
-- no template becomes canon merely because it is built in or registered.
+Templates must be connected to actual runtime/project state by the consuming product. Unknown or unavailable state stays visibly unknown rather than being invented. Richer editable source remains authoritative over lossy previews/exports. Templates may be mutated, combined, replaced or ignored when better evidence and product intent support another solution.
 
 The goal is to stop creation from beginning at zero while preserving agency, exact source truth, deep editability and room for better solutions.

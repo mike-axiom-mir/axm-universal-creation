@@ -1,64 +1,26 @@
 # AXM Visual Template Expansion Priority Map
 
-Status: v3 growth lane after verified v1 + v2 merges.
+Status: v4 growth lane after verified v1 + v2 + v3 merges.
 
 The visual-template fabric should grow where Universal Creation is most likely to reuse the knowledge soon. The order below is a build priority, not canon: templates remain editable foundations and may be replaced when evidence supports a better structure.
 
 ## Priority 1 — Creative editor core — MERGED
 
-Product: `editor.creative.core`
-
-Twelve coordinated professional editing surfaces are now part of the catalog: project hub, asset browser, layer editor, timeline, node graph, inspector, animation, effects, cutscene, material, audio and review/export. Style: `creative.workbench`.
+Product: `editor.creative.core` — project hub, assets, layers, timeline, graph, inspector, animation, effects, cutscenes, materials, audio and review/export.
 
 ## Priority 2 — Editable comics and visual narrative — MERGED
 
-Product: `comic.narrative.core`
+Product: `comic.narrative.core` — library, page/panel/dialogue editing, characters, scene graph, storyboard, motion timeline, reader preview and export.
 
-Ten editable visual-story surfaces are now part of the catalog: library, page editor, panel editor, dialogue editor, character sheet, scene graph, storyboard, motion timeline, reader preview and export. Style: `narrative.ink`.
+## Priority 3 — AXM software / monolith shell — MERGED
 
-The structural contract keeps page/panel/dialogue/scene/motion state distinct and preserves editable source above flattened previews.
+Product: `axm.system.shell` — home, registry, capabilities, cartridge loader, state, evidence, workflow, specialists, workfloor, snapshots, settings and recovery.
 
-## Priority 3 — AXM software / monolith shell — IMPLEMENTED IN THIS LANE
+## Priority 4 — Near-term shared gameplay gaps — IMPLEMENTED IN THIS LANE
 
-Product: `axm.system.shell`
+Product: `game.shared.core`
 
-Implemented screens:
-
-- `axm.system.home`
-- `axm.system.registry`
-- `axm.system.capability-browser`
-- `axm.system.cartridge-loader`
-- `axm.system.machine-state`
-- `axm.system.evidence-review`
-- `axm.system.workflow`
-- `axm.system.specialists`
-- `axm.system.workfloor`
-- `axm.system.snapshots`
-- `axm.system.settings`
-- `axm.system.recovery`
-
-New reusable primitives:
-
-- `truth-state`
-- `capability-card`
-- `registry-entry`
-- `evidence-chip`
-- `state-diff`
-- `cartridge-card`
-- `specialist-card`
-- `workfloor-lane`
-- `snapshot-entry`
-- `recovery-choice`
-
-Style: `axm.machine.glass`.
-
-Design rule: deep machine state may be complex, but the human-facing shell exposes summary first and progressively reveals detail. Source/version/evidence state and recovery consequences stay explicit.
-
-## Priority 4 — Remaining near-term game gaps — NEXT
-
-These extend the merged game foundation only where real reusable gaps remain.
-
-Planned IDs:
+Implemented IDs:
 
 - `game.shared.inventory`
 - `game.shared.skill-tree`
@@ -73,19 +35,36 @@ Planned IDs:
 - `game.shared.end-session-summary`
 - `game.shared.challenge-board`
 
-These should inherit the existing game-system shell where possible rather than duplicating profile/settings/network/accessibility surfaces.
+New state-aware primitives:
 
-## Priority 5 — Later visual families
+- `inventory-slot`
+- `skill-node`
+- `objective-row`
+- `shop-offer`
+- `codex-entry`
+- `revive-state`
+- `boss-phase`
+- `spectator-seat`
+- `challenge-card`
+- `session-stat`
 
-- poster / key-art composition systems;
-- card/deck editors;
-- cinematic title/credit systems;
-- music visualizers and album-art editors;
-- video overlay / stream-layout systems;
-- procedural diagram / infographic editors;
-- world-map / lore-atlas editors;
-- interactive visual novel surfaces;
-- 3D showroom / gallery presentation templates.
+Style: `game.shared.adventure`.
+
+These inherit existing product plumbing where possible rather than duplicating profile/settings/network/accessibility surfaces.
+
+## Priority 5 — High-value visual/creation families — NEXT
+
+Potential next packs, ordered by likely reuse:
+
+1. **Key art / poster / cover composition** — hero subject, title hierarchy, focal lighting, credits, variants and crop-safe outputs.
+2. **Card/deck editor** — card faces/backs, rarity/state, deck building, stat/ability layouts and print/digital variants.
+3. **Cinematic title / credits / trailer overlay system** — title cards, lower thirds, chapter cards, credits, subtitles and transition-safe zones.
+4. **Video / stream overlay editor** — gameplay frame, cameras, alerts, chat, score, sponsor-free identity areas and responsive scene sets.
+5. **Infographic / diagram editor** — nodes, relationships, legends, annotations, evidence/source panels and export layouts.
+6. **World-map / lore-atlas editor** — regions, routes, layers, points of interest, time/state overlays and narrative references.
+7. **Interactive visual-novel surfaces** — dialogue, choices, character staging, backgrounds, history/log, saves and branching state.
+8. **3D showroom / gallery presentation** — hero object, comparison, annotations, material/variant selection and orbit/detail views.
+9. **Music visualizer / album-art editor** — cover systems, track identity, waveform/beat-driven visual states and export crops.
 
 ## Cross-cutting rules
 
@@ -101,7 +80,7 @@ Every new family should preserve the existing visual-template contract:
 
 ## Immediate build order
 
-1. finish exact-head verification for `axm.system.shell`;
-2. merge v3 only when template + repository checks pass;
-3. start remaining near-term game gaps from fresh main;
-4. only then expand into later visual families.
+1. finish exact-head verification for `game.shared.core`;
+2. merge v4 only when template + repository checks pass;
+3. start the highest-value visual/creation family from fresh main;
+4. prefer reusable editors over one-off flat output templates.
