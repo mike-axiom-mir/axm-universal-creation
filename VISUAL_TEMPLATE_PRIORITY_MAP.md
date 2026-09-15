@@ -1,83 +1,28 @@
 # AXM Visual Template Expansion Priority Map
 
-Status: v2 growth lane after merged PR #94.
+Status: v3 growth lane after verified v1 + v2 merges.
 
 The visual-template fabric should grow where Universal Creation is most likely to reuse the knowledge soon. The order below is a build priority, not canon: templates remain editable foundations and may be replaced when evidence supports a better structure.
 
-## Priority 1 — Creative editor core — IMPLEMENTED IN THIS LANE
+## Priority 1 — Creative editor core — MERGED
 
 Product: `editor.creative.core`
 
-Purpose: give AXM reusable professional editing surfaces so generated work remains editable instead of collapsing into flat final outputs.
+Twelve coordinated professional editing surfaces are now part of the catalog: project hub, asset browser, layer editor, timeline, node graph, inspector, animation, effects, cutscene, material, audio and review/export. Style: `creative.workbench`.
 
-Implemented screen IDs:
-
-- `editor.creative.project-hub`
-- `editor.creative.asset-browser`
-- `editor.creative.layer-editor`
-- `editor.creative.timeline`
-- `editor.creative.node-graph`
-- `editor.creative.inspector`
-- `editor.creative.animation`
-- `editor.creative.effects`
-- `editor.creative.cutscene`
-- `editor.creative.material`
-- `editor.creative.audio`
-- `editor.creative.review-export`
-
-Implemented reusable primitives:
-
-- `layer-row`
-- `timeline-track`
-- `keyframe`
-- `node-card`
-- `socket-port`
-- `inspector-field`
-- `asset-tile`
-
-Style: `creative.workbench`.
-
-## Priority 2 — Editable comics and visual narrative — IMPLEMENTED IN THIS LANE
+## Priority 2 — Editable comics and visual narrative — MERGED
 
 Product: `comic.narrative.core`
 
-Purpose: move beyond a flat comic-image generator into an editable visual-story system where page geometry, panels, source art, dialogue, captions, characters, sequencing and motion remain independently controllable.
+Ten editable visual-story surfaces are now part of the catalog: library, page editor, panel editor, dialogue editor, character sheet, scene graph, storyboard, motion timeline, reader preview and export. Style: `narrative.ink`.
 
-Implemented screen IDs:
+The structural contract keeps page/panel/dialogue/scene/motion state distinct and preserves editable source above flattened previews.
 
-- `comic.narrative.library`
-- `comic.narrative.page-editor`
-- `comic.narrative.panel-editor`
-- `comic.narrative.dialogue-editor`
-- `comic.narrative.character-sheet`
-- `comic.narrative.scene-graph`
-- `comic.narrative.storyboard`
-- `comic.narrative.motion-timeline`
-- `comic.narrative.reader-preview`
-- `comic.narrative.export`
+## Priority 3 — AXM software / monolith shell — IMPLEMENTED IN THIS LANE
 
-Implemented reusable primitives:
+Product: `axm.system.shell`
 
-- `panel-frame`
-- `panel-gutter`
-- `speech-bubble`
-- `caption-box`
-- `storyboard-card`
-- `reading-order-marker`
-- `character-reference-card`
-- `story-beat-link`
-
-Style: `narrative.ink`.
-
-The proof gate requires panel/page/dialogue/scene/motion surfaces to remain distinct and requires speech text/tail plus reading-order conflicts to stay explicitly editable/visible. This is structural editability evidence, not a claim of finished drawing quality or authoring UX acceptance.
-
-## Priority 3 — AXM software / monolith shell — NEXT
-
-Product target: `axm.system.shell`
-
-Purpose: give AXM-native software coherent reusable surfaces rather than repeatedly inventing one-off dashboards.
-
-Planned screen IDs:
+Implemented screens:
 
 - `axm.system.home`
 - `axm.system.registry`
@@ -92,9 +37,24 @@ Planned screen IDs:
 - `axm.system.settings`
 - `axm.system.recovery`
 
-Design rule: deep machine state may be complex, but the human-facing shell should expose progressive detail rather than forcing internal complexity onto ordinary use.
+New reusable primitives:
 
-## Priority 4 — Remaining near-term game gaps
+- `truth-state`
+- `capability-card`
+- `registry-entry`
+- `evidence-chip`
+- `state-diff`
+- `cartridge-card`
+- `specialist-card`
+- `workfloor-lane`
+- `snapshot-entry`
+- `recovery-choice`
+
+Style: `axm.machine.glass`.
+
+Design rule: deep machine state may be complex, but the human-facing shell exposes summary first and progressively reveals detail. Source/version/evidence state and recovery consequences stay explicit.
+
+## Priority 4 — Remaining near-term game gaps — NEXT
 
 These extend the merged game foundation only where real reusable gaps remain.
 
@@ -117,8 +77,6 @@ These should inherit the existing game-system shell where possible rather than d
 
 ## Priority 5 — Later visual families
 
-Grow only after the editor/comic/AXM shells prove useful:
-
 - poster / key-art composition systems;
 - card/deck editors;
 - cinematic title/credit systems;
@@ -138,12 +96,12 @@ Every new family should preserve the existing visual-template contract:
 3. no floating `latest` references or silent upgrades;
 4. richer editable source remains authoritative over preview/export derivatives;
 5. selection, focus, ownership, errors and destructive consequences do not depend on color alone;
-6. `math_hooks` remain available for the mathematics lane to improve ratios/ranges without silently replacing template identity;
+6. `math_hooks` remain available for the mathematics lane to improve ratios/ranges without replacing template identity;
 7. templates are known foundations, never automatic canon.
 
 ## Immediate build order
 
-1. finish exact-head verification for `editor.creative.core` and `comic.narrative.core`;
-2. merge the v2 lane only after proof and repository checks pass;
-3. begin `axm.system.shell` from fresh main;
-4. add game-gap templates only when they are not already represented by the merged catalog.
+1. finish exact-head verification for `axm.system.shell`;
+2. merge v3 only when template + repository checks pass;
+3. start remaining near-term game gaps from fresh main;
+4. only then expand into later visual families.
