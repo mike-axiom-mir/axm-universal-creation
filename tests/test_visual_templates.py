@@ -8,18 +8,18 @@ from axm_stickers import Registry
 from axm_uc import visual_templates as vt
 
 SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
-PRODUCTS=('game.racing.full','game.coop.action','game.rts.command','game.system.shell','game.shared.core','editor.creative.core','comic.narrative.core','axm.system.shell','visual.keyart.core','visual.cards.core','visual.cinematic.core')
+PRODUCTS=('game.racing.full','game.coop.action','game.rts.command','game.system.shell','game.shared.core','editor.creative.core','comic.narrative.core','axm.system.shell','visual.keyart.core','visual.cards.core','visual.cinematic.core','visual.broadcast.core')
 
 class VisualTemplateTests(unittest.TestCase):
     def test_catalog_counts_and_products(self):
         counts=vt.validate_catalog()
-        self.assertEqual(counts,{'styles':15,'primitives':96,'screens':134,'products':13})
+        self.assertEqual(counts,{'styles':16,'primitives':106,'screens':144,'products':14})
         self.assertEqual(vt.CATALOG_COMPOSITION['counts'],counts)
         ids={p['id'] for p in vt.catalog()['products']}
         self.assertTrue(set(PRODUCTS)|{'game.racing.performance','software.creator.studio'} <= ids)
 
     def test_all_geometry_and_major_variants(self):
-        prefixes=('game.','editor.creative.','comic.narrative.','axm.system.','visual.keyart.','visual.cards.','visual.cinematic.')
+        prefixes=('game.','editor.creative.','comic.narrative.','axm.system.','visual.keyart.','visual.cards.','visual.cinematic.','visual.broadcast.')
         for tid,definition in vt.SCREEN_TEMPLATES.items():
             if tid.startswith(prefixes): self.assertEqual(set(definition['variants']),{'compact','standard','wide'},tid)
             for width,height in SIZES:
@@ -29,22 +29,21 @@ class VisualTemplateTests(unittest.TestCase):
                     self.assertLessEqual(x+w,width+1e-6); self.assertLessEqual(y+h,height+1e-6)
 
     def test_existing_product_depth_is_retained(self):
-        expected={'game.racing.full':19,'game.system.shell':18,'game.shared.core':12,'editor.creative.core':12,'comic.narrative.core':10,'axm.system.shell':12,'visual.keyart.core':10,'visual.cards.core':11}
+        expected={'game.racing.full':19,'game.system.shell':18,'game.shared.core':12,'editor.creative.core':12,'comic.narrative.core':10,'axm.system.shell':12,'visual.keyart.core':10,'visual.cards.core':11,'visual.cinematic.core':10}
         for pid,count in expected.items(): self.assertEqual(len(vt.get(pid)['screens']),count)
 
-    def test_cinematic_product_preserves_exact_timed_source_state(self):
-        product=vt.get('visual.cinematic.core')
-        required={'visual.cinematic.project-hub','visual.cinematic.title-editor','visual.cinematic.chapter-editor','visual.cinematic.lower-third','visual.cinematic.subtitle-editor','visual.cinematic.credits-editor','visual.cinematic.overlay-timeline','visual.cinematic.transition-editor','visual.cinematic.aspect-variants','visual.cinematic.review-export'}
+    def test_broadcast_product_preserves_source_and_live_state_truth(self):
+        product=vt.get('visual.broadcast.core')
+        required={'visual.broadcast.project-hub','visual.broadcast.scene-editor','visual.broadcast.source-router','visual.broadcast.camera-editor','visual.broadcast.score-status','visual.broadcast.alert-editor','visual.broadcast.chat-social','visual.broadcast.scene-set','visual.broadcast.format-variants','visual.broadcast.review-output'}
         self.assertEqual(set(product['screens']),required)
-        self.assertEqual(product['style'],'visual.cinematic.motion')
+        self.assertEqual(product['style'],'visual.broadcast.modular')
         quality=' '.join(product['quality']).lower()
-        self.assertIn('separately editable',quality)
-        self.assertIn('exact names',quality)
-        self.assertIn('safe-area',quality)
-        self.assertIn('source state',quality)
-        self.assertIn('title_safe_ratio',vt.get('visual.cinematic.title-editor')['math_hooks'])
-        self.assertIn('subtitle_safe_ratio',vt.get('visual.cinematic.subtitle-editor')['math_hooks'])
-        self.assertIn('safe_inset_ratio',vt.get('visual.cinematic.aspect-variants')['math_hooks'])
+        self.assertIn('source and freshness',quality)
+        self.assertIn('exact',quality)
+        self.assertIn('unobserved success',quality)
+        self.assertIn('source composition',quality)
+        self.assertIn('safe_inset_ratio',vt.get('visual.broadcast.scene-editor')['math_hooks'])
+        self.assertIn('safe_inset_ratio',vt.get('visual.broadcast.format-variants')['math_hooks'])
 
     def test_products_resolve_and_previews_parse(self):
         for pid in PRODUCTS:
@@ -61,28 +60,29 @@ class VisualTemplateTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             with Registry(Path(td)/'stickers.sqlite') as registry:
                 pins=vt.install_builtins(registry)
-                self.assertEqual(len(pins),147)
-                cinematic=registry.search(adapter=vt.ADAPTER,tag='cinematic',limit=100)['entries']
-                self.assertEqual(len(cinematic),11)
-                d=registry.get('visual.visual.cinematic.title-editor',1)
+                self.assertEqual(len(pins),158)
+                broadcast=registry.search(adapter=vt.ADAPTER,tag='broadcast',limit=100)['entries']
+                self.assertEqual(len(broadcast),10)
+                d=registry.get('visual.visual.broadcast.scene-editor',1)
                 self.assertEqual(d['recipe']['visual_template']['schema'],vt.SCHEMA)
                 self.assertNotIn('"latest"',json.dumps(d,sort_keys=True))
 
-    def test_cinematic_source_timing_and_safe_area_contracts(self):
-        required={'title-card','lower-third','subtitle-cue','credit-line','time-cue','safe-zone','transition-cue','chapter-marker','overlay-track','logo-lockup'}
+    def test_broadcast_source_freshness_scene_and_output_contracts(self):
+        required={'source-window','camera-slot','status-field','alert-cue','chat-panel','scene-state','overlay-zone','identity-panel','transition-state','output-monitor'}
         self.assertTrue(required <= set(vt.PRIMITIVES))
-        self.assertTrue(vt.PRIMITIVES['title-card']['text_layout_timing_remain_separate'])
-        self.assertTrue(vt.PRIMITIVES['lower-third']['content_anchor_duration_explicit'])
-        self.assertTrue(vt.PRIMITIVES['subtitle-cue']['text_and_timing_must_be_exact'])
-        self.assertTrue(vt.PRIMITIVES['credit-line']['content_and_order_must_remain_exact'])
-        self.assertTrue(vt.PRIMITIVES['time-cue']['start_end_required'])
-        self.assertTrue(vt.PRIMITIVES['safe-zone']['guide_must_not_rewrite_source_layout'])
-        self.assertTrue(vt.PRIMITIVES['transition-cue']['transition_must_not_replace_source_states'])
-        self.assertTrue(vt.PRIMITIVES['chapter-marker']['time_and_label_required'])
-        self.assertTrue(vt.PRIMITIVES['overlay-track']['overlaps_must_remain_visible'])
-        self.assertTrue(vt.PRIMITIVES['logo-lockup']['source_and_transform_remain_separate'])
+        self.assertTrue(vt.PRIMITIVES['source-window']['source_identity_must_be_explicit'])
+        self.assertTrue(vt.PRIMITIVES['camera-slot']['source_and_crop_remain_separate'])
+        self.assertTrue(vt.PRIMITIVES['status-field']['value_source_freshness_required'])
+        self.assertTrue(vt.PRIMITIVES['alert-cue']['unobserved_success_forbidden'])
+        self.assertTrue(vt.PRIMITIVES['chat-panel']['delivery_state_must_be_explicit'])
+        self.assertTrue(vt.PRIMITIVES['scene-state']['scene_identity_must_be_exact'])
+        self.assertTrue(vt.PRIMITIVES['overlay-zone']['overlap_conflicts_must_be_visible'])
+        self.assertTrue(vt.PRIMITIVES['identity-panel']['source_and_transform_remain_separate'])
+        self.assertTrue(vt.PRIMITIVES['transition-state']['from_to_identity_required'])
+        self.assertTrue(vt.PRIMITIVES['output-monitor']['target_state_must_be_observed'])
 
     def test_prior_source_boundaries_remain_present(self):
+        self.assertTrue(vt.PRIMITIVES['title-card']['text_layout_timing_remain_separate'])
         self.assertTrue(vt.PRIMITIVES['card-frame']['geometry_must_remain_editable'])
         self.assertTrue(vt.PRIMITIVES['crop-safe-frame']['crop_must_not_modify_source_geometry'])
         self.assertTrue(vt.PRIMITIVES['speech-bubble']['text_and_tail_remain_separate'])
@@ -90,12 +90,12 @@ class VisualTemplateTests(unittest.TestCase):
         self.assertTrue(vt.PRIMITIVES['truth-state']['source_must_be_visible'])
 
     def test_copy_safety_variant_rejection_and_bad_geometry(self):
-        a=vt.resolve('visual.cinematic.title-editor',1920,1080); b=vt.resolve('visual.cinematic.title-editor',1920,1080)
+        a=vt.resolve('visual.broadcast.scene-editor',1920,1080); b=vt.resolve('visual.broadcast.scene-editor',1920,1080)
         self.assertEqual(a,b)
-        copy=vt.get('visual.cinematic.title-editor'); copy['name']='changed'
-        self.assertNotEqual(vt.get('visual.cinematic.title-editor')['name'],'changed')
-        with self.assertRaises(ValueError): vt.resolve('visual.cinematic.title-editor',1920,1080,variant='unknown')
-        bad=vt.get('visual.cinematic.aspect-variants'); bad['variants']['standard']['variants']=[.9,.9,.2,.2]
+        copy=vt.get('visual.broadcast.scene-editor'); copy['name']='changed'
+        self.assertNotEqual(vt.get('visual.broadcast.scene-editor')['name'],'changed')
+        with self.assertRaises(ValueError): vt.resolve('visual.broadcast.scene-editor',1920,1080,variant='unknown')
+        bad=vt.get('visual.broadcast.format-variants'); bad['variants']['standard']['variants']=[.9,.9,.2,.2]
         with self.assertRaises(ValueError): vt.validate_screen(bad)
 
     def test_exact_sticker_slot_binding_is_retained(self):
