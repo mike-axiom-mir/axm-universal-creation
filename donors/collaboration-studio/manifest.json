@@ -1,0 +1,213 @@
+{
+  "commit": "27757ace6133b243a200b0463e427c8b04d5a8e3",
+  "files": [
+    {
+      "git_blob_sha": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64",
+      "local": "donors/collaboration-studio/LICENSE",
+      "modifications": "none",
+      "source": "LICENSE"
+    },
+    {
+      "git_blob_sha": "0bc446851388e6b32895a4677940700c9129d99b",
+      "local": "donors/collaboration-studio/source/THIRD_PARTY.json",
+      "modifications": "none",
+      "source": "THIRD_PARTY.json"
+    },
+    {
+      "git_blob_sha": "8f271768cbe7e31cf636a9850f83e5561a1c6307",
+      "local": "donors/collaboration-studio/source/shared/asset-hands/raster-compositor-selftest.js",
+      "modifications": "none",
+      "source": "shared/asset-hands/raster-compositor-selftest.js"
+    },
+    {
+      "git_blob_sha": "2aa4f4bfe982f2ffc6847c3c9165d292bfe8ecdd",
+      "local": "donors/collaboration-studio/source/shared/output/license-registry.json",
+      "modifications": "none",
+      "source": "shared/output/license-registry.json"
+    },
+    {
+      "git_blob_sha": "0a3f9f260ea2b32396ac15fd5467e0f6e8b43363",
+      "local": "donors/collaboration-studio/source/tools/studio/COMMAND_DECK_EVIDENCE.md",
+      "modifications": "Markdown hard-break spaces replaced by backslashes; executable source unchanged",
+      "source": "tools/studio/COMMAND_DECK_EVIDENCE.md",
+      "original_text_archive": "donors/collaboration-studio/original-text/COMMAND_DECK_EVIDENCE.json"
+    },
+    {
+      "git_blob_sha": "632aa05a5e5130a9b944807c0913ca6c83641633",
+      "local": "donors/collaboration-studio/source/tools/studio/README.md",
+      "modifications": "none",
+      "source": "tools/studio/README.md"
+    },
+    {
+      "git_blob_sha": "ff3c15fa9d950f12ef458140cd2133ace7aad5e0",
+      "local": "donors/collaboration-studio/source/tools/studio/axm-foundation.js",
+      "modifications": "none",
+      "source": "tools/studio/axm-foundation.js"
+    },
+    {
+      "git_blob_sha": "d587645c55c72508ad46154456fbd0efb699c11a",
+      "local": "donors/collaboration-studio/source/tools/studio/discovery-seam-review.js",
+      "modifications": "none",
+      "source": "tools/studio/discovery-seam-review.js"
+    },
+    {
+      "git_blob_sha": "638a84d2eb16badb79345918adc85bd7535c14f1",
+      "local": "donors/collaboration-studio/source/tools/studio/engine.html",
+      "modifications": "none",
+      "source": "tools/studio/engine.html"
+    },
+    {
+      "git_blob_sha": "b9ece7bf63a9e0f4ea6cc423317364652c13b063",
+      "local": "donors/collaboration-studio/source/tools/studio/html-inline-syntax-test.js",
+      "modifications": "none",
+      "source": "tools/studio/html-inline-syntax-test.js"
+    },
+    {
+      "git_blob_sha": "2da7de8597b2390cdd9bcf22609dc4638760c60f",
+      "local": "donors/collaboration-studio/source/tools/studio/index.html",
+      "modifications": "none",
+      "source": "tools/studio/index.html"
+    },
+    {
+      "git_blob_sha": "7d980de57fdb8c959cf932dddcef38ffb7d06f3d",
+      "local": "donors/collaboration-studio/source/tools/studio/manifest.json",
+      "modifications": "none",
+      "source": "tools/studio/manifest.json"
+    },
+    {
+      "git_blob_sha": "6dbf0a33d283350ef148b9e6e6d5eeb835bb1c1a",
+      "local": "donors/collaboration-studio/source/tools/studio/mirror-studio-bridge-selftest.js",
+      "modifications": "none",
+      "source": "tools/studio/mirror-studio-bridge-selftest.js"
+    },
+    {
+      "git_blob_sha": "04d3c38aa4806665eda381b514d4131ae214be24",
+      "local": "donors/collaboration-studio/source/tools/studio/mirror-studio-bridge.js",
+      "modifications": "none",
+      "source": "tools/studio/mirror-studio-bridge.js"
+    },
+    {
+      "git_blob_sha": "ff0b256f6ab0dc2fe58b7f9243e37818a4166fd8",
+      "local": "donors/collaboration-studio/source/tools/studio/module.contract.json",
+      "modifications": "none",
+      "source": "tools/studio/module.contract.json"
+    },
+    {
+      "git_blob_sha": "bd05556538ae06cbba76990a3fe5e58f0cb30443",
+      "local": "donors/collaboration-studio/source/tools/studio/selftest.js",
+      "modifications": "none",
+      "source": "tools/studio/selftest.js"
+    },
+    {
+      "git_blob_sha": "9d0ea9297c031ac2cffdf8ae01f6642b9b916f82",
+      "local": "donors/collaboration-studio/source/tools/studio/studio-actions.js",
+      "modifications": "none",
+      "source": "tools/studio/studio-actions.js"
+    },
+    {
+      "git_blob_sha": "e920fb9cd570a82ab13db65b8b6d3b25d1142aba",
+      "local": "donors/collaboration-studio/source/tools/studio/studio-core.js",
+      "modifications": "none",
+      "source": "tools/studio/studio-core.js"
+    },
+    {
+      "git_blob_sha": "b19b3a139ce50880fb9ef4160b5cc589875546ed",
+      "local": "donors/collaboration-studio/source/tools/studio/studio-shell.css",
+      "modifications": "none",
+      "source": "tools/studio/studio-shell.css"
+    },
+    {
+      "git_blob_sha": "df0ea80d44ff6e49640e1d5198d76787acde2402",
+      "local": "donors/collaboration-studio/source/tools/studio/studio-shell.js",
+      "modifications": "none",
+      "source": "tools/studio/studio-shell.js"
+    },
+    {
+      "git_blob_sha": "9c3f40b0b2ebfc1e58c4f4f09256caaf7be2b72c",
+      "local": "donors/collaboration-studio/source/tools/studio/studio-upgrade-handoff.schema.json",
+      "modifications": "none",
+      "source": "tools/studio/studio-upgrade-handoff.schema.json"
+    },
+    {
+      "git_blob_sha": "1e68cb80db6ca12ad32820764c2d218bd1f8395a",
+      "local": "donors/collaboration-studio/source/tools/studio/upgrade-handoff-selftest.js",
+      "modifications": "none",
+      "source": "tools/studio/upgrade-handoff-selftest.js"
+    },
+    {
+      "git_blob_sha": "0c27a113aa6e6baa71c90082ed20a38a373851db",
+      "local": "donors/collaboration-studio/source/tools/studio/upgrade-handoff.js",
+      "modifications": "none",
+      "source": "tools/studio/upgrade-handoff.js"
+    },
+    {
+      "git_blob_sha": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64",
+      "local": "src/axm_uc/data/studio/LICENSE",
+      "modifications": "none",
+      "source": "LICENSE"
+    },
+    {
+      "git_blob_sha": "15f3fcb967190c99381b634eabc3f3181dba936e",
+      "local": "src/axm_uc/data/studio/raster-compositor.js",
+      "modifications": "none",
+      "source": "shared/asset-hands/raster-compositor.js"
+    },
+    {
+      "git_blob_sha": "69ce0b8cdb179af9eacb117c933c81869a58ee1d",
+      "local": "donors/collaboration-studio/source/shared/asset-hands/universal-component.js",
+      "modifications": "none",
+      "source": "shared/asset-hands/universal-component.js"
+    },
+    {
+      "git_blob_sha": "d4896349d2d0e42d396fe699e5814322f18a9c3e",
+      "local": "donors/collaboration-studio/source/shared/asset-hands/universal-component-selftest.js",
+      "modifications": "none",
+      "source": "shared/asset-hands/universal-component-selftest.js"
+    },
+    {
+      "git_blob_sha": "f879ca3b7960591e1ae32c2a1a7271ba1d02b0b8",
+      "local": "donors/collaboration-studio/source/shared/asset-hands/universal-component.schema.json",
+      "modifications": "none",
+      "source": "shared/asset-hands/universal-component.schema.json"
+    },
+    {
+      "git_blob_sha": "84d610cb331783a36131fe05ae7d4a3d1127aa71",
+      "local": "donors/collaboration-studio/source/shared/asset-hands/universal-component-graph.schema.json",
+      "modifications": "none",
+      "source": "shared/asset-hands/universal-component-graph.schema.json"
+    },
+    {
+      "git_blob_sha": "a8e23e066f922c389194df14b0c92ed90ff4bc41",
+      "local": "donors/collaboration-studio/source/shared/asset-hands/universal-component-receipt.schema.json",
+      "modifications": "none",
+      "source": "shared/asset-hands/universal-component-receipt.schema.json"
+    },
+    {
+      "git_blob_sha": "a506b8815a91e0c7d57f686bf6812eb9779fd190",
+      "local": "donors/collaboration-studio/source/shared/asset-hands/target-canvas.js",
+      "modifications": "none",
+      "source": "shared/asset-hands/target-canvas.js"
+    },
+    {
+      "git_blob_sha": "21fa8d886a0c404bdd47a17657b15dafed3667fc",
+      "local": "donors/collaboration-studio/source/shared/asset-hands/target-canvas.schema.json",
+      "modifications": "none",
+      "source": "shared/asset-hands/target-canvas.schema.json"
+    },
+    {
+      "git_blob_sha": "cbcf12c96f4b11e28d19b5be95309f8ac6938ce5",
+      "local": "donors/collaboration-studio/source/shared/asset-hands/native-bridge-codec.js",
+      "modifications": "none",
+      "source": "shared/asset-hands/native-bridge-codec.js"
+    },
+    {
+      "git_blob_sha": "0b47ef2a73a13532a38b1e4f9546e993b5be8f70",
+      "local": "donors/collaboration-studio/source/shared/visual-actions/visual-actions.js",
+      "modifications": "none",
+      "source": "shared/visual-actions/visual-actions.js"
+    }
+  ],
+  "license": "Apache-2.0",
+  "repository": "mike-axiom-mir/axm-collaboration-platform",
+  "schema": "axm.studio-donor-snapshot/v1"
+}
