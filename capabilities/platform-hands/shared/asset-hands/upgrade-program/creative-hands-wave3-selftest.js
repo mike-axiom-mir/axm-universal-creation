@@ -1,7 +1,7 @@
 'use strict';
 const assert=require('assert');const Hands=require('./creative-hands');const R=require('./precision-raster');const P=require('./creative-precision');const Platform=require('../../../index');
 const rgba=Buffer.alloc(16*16*4);for(let y=0;y<16;y++)for(let x=0;x<16;x++){const i=(y*16+x)*4;rgba[i]=x*15;rgba[i+1]=y*15;rgba[i+2]=(x+y)*7;rgba[i+3]=255;}const image=R.image({width:16,height:16,rgba});
-const audit=Hands.audit();assert.equal(audit.total,197);assert.equal(audit.by_family['mask-advanced'],6);assert.equal(audit.by_family.liquify,6);assert.equal(audit.by_family['raster-advanced'],12);assert.equal(audit.by_family.material,12);assert.equal(audit.by_family.audio,13);assert.equal(audit.by_family.timeline,9);assert.equal(Platform.creativeHands.audit().total,239);assert.equal(Platform.creativeHands.recipeRegistry().count,246);
+const audit=Hands.audit();assert.equal(audit.total,197);assert.equal(audit.by_family['mask-advanced'],6);assert.equal(audit.by_family.liquify,6);assert.equal(audit.by_family['raster-advanced'],12);assert.equal(audit.by_family.material,12);assert.equal(audit.by_family.audio,13);assert.equal(audit.by_family.timeline,9);assert.equal(Platform.creativeHands.audit().total,279);assert.equal(Platform.creativeHands.recipeRegistry().count,286);
 const mask=P.shapeMask({width:16,height:16,kind:'rectangle',x:4,y:4,rect_width:8,rect_height:8});
 const border=Hands.invoke('creative.mask-advanced.border',{mask,inner:1,outer:2});assert.equal(border.result.schema,'axm.precision-mask/v1');
 const distance=Hands.invoke('creative.mask-advanced.distance-field',{mask,spec:{max_distance:4}});assert.equal(distance.result.schema,'axm.precision-distance-field/v1');
