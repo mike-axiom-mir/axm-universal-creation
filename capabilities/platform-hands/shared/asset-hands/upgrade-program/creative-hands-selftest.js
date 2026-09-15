@@ -8,8 +8,8 @@ const rgba=Buffer.alloc(8*8*4);
 for(let y=0;y<8;y+=1)for(let x=0;x<8;x+=1){const i=(y*8+x)*4;rgba[i]=x*30;rgba[i+1]=y*30;rgba[i+2]=80;rgba[i+3]=255;}
 const image=R.image({width:8,height:8,rgba});
 const audit=Hands.audit();
-assert.equal(audit.total,144);
-assert.equal(audit.counts.EXECUTABLE,144);
+assert.equal(audit.total,197);
+assert.equal(audit.counts.EXECUTABLE,197);
 assert.equal(audit.by_family.brush,12);
 assert.equal(audit.by_family.adjust,17);
 assert.equal(audit.by_family.vector,9);

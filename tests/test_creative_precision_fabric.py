@@ -36,6 +36,9 @@ class CreativePrecisionFabricTests(unittest.TestCase):
     def test_advanced_executable_creative_hand_wave(self):
         self.run_node('creative-hands-wave3-selftest.js')
 
+    def test_compositing_geometry_procedural_audio_timeline_wave(self):
+        self.run_node('creative-hands-wave4-selftest.js')
+
 
 if __name__ == '__main__':
     unittest.main()
