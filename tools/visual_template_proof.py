@@ -8,7 +8,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src'))
 from axm_uc import visual_templates as vt
 
 SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
-PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell","visual.keyart.core","visual.cards.core","visual.cinematic.core","visual.broadcast.core","visual.diagram.core","visual.atlas.core","visual.novel.core","visual.showroom.core","visual.music.core","visual.presentation.core","visual.character.core","visual.configurator.core","visual.motion.core","visual.brand.core","visual.environment.core")
+PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell","visual.keyart.core","visual.cards.core","visual.cinematic.core","visual.broadcast.core","visual.diagram.core","visual.atlas.core","visual.novel.core","visual.showroom.core","visual.music.core","visual.presentation.core","visual.character.core","visual.configurator.core","visual.motion.core","visual.brand.core","visual.environment.core","visual.vfx.core")
 
 def _write(project,target):
     target.mkdir(); out=[]
@@ -25,7 +25,7 @@ def main(argv):
     out.mkdir(parents=True)
     try:
         counts=vt.validate_catalog()
-        if counts!={'styles':27,'primitives':216,'screens':254,'products':25}: raise AssertionError(counts)
+        if counts!={'styles':28,'primitives':226,'screens':264,'products':26}: raise AssertionError(counts)
         evidence=[]
         for pid in PRODUCTS:
             expected=vt.get(pid)
@@ -60,27 +60,30 @@ def main(argv):
             ('visual.motion.core',1920,1080,'motion','AXM Source-Bound UI Motion Foundation'),
             ('visual.brand.core',1920,1080,'brand','AXM Source-Bound Brand Identity Foundation'),
             ('visual.environment.core',1920,1080,'environment','AXM Environment and Level Reference Foundation'),
+            ('visual.vfx.core',1920,1080,'vfx','AXM VFX and Particle Foundation'),
         )
         outputs=[]
         for pid,w,h,folder,title in galleries: outputs+=_write(vt.product_project(pid,w,h,title),out/folder)
         outputs+=_write(vt.screen_project('product.mobile.home',1080,1920,'AXM Mobile Foundation'),out/'mobile-home')
-        product=vt.get('visual.environment.core')
-        required={'visual.environment.project-hub','visual.environment.identity-board','visual.environment.zones-layout','visual.environment.scale-measurements','visual.environment.modular-kit','visual.environment.materials','visual.environment.lighting-weather','visual.environment.traversal-annotations','visual.environment.variants','visual.environment.review-export'}
-        if set(product['screens'])!=required: raise AssertionError('environment pack lost required surfaces')
+        product=vt.get('visual.vfx.core')
+        required={'visual.vfx.project-hub','visual.vfx.effect-stage','visual.vfx.emitter-editor','visual.vfx.spawn-region','visual.vfx.curves-timing','visual.vfx.modules','visual.vfx.layers-composite','visual.vfx.interaction-hooks','visual.vfx.reduced-performance','visual.vfx.review-export'}
+        if set(product['screens'])!=required: raise AssertionError('vfx pack lost required surfaces')
         checks={
-            'environment_identity_source_scope':vt.PRIMITIVES['environment-source']['identity_source_version_scope_required'],
-            'zone_geometry_source_status':vt.PRIMITIVES['environment-zone']['geometry_source_status_required'],
-            'measurement_value_unit_source_precision':vt.PRIMITIVES['environment-measurement']['value_unit_source_precision_required'],
-            'kit_source_socket_transform':vt.PRIMITIVES['modular-environment-piece']['source_socket_transform_required'],
-            'prop_identity_source_context':vt.PRIMITIVES['environment-prop']['identity_source_context_status_required'],
-            'material_target_source_context':vt.PRIMITIVES['environment-material']['target_material_source_context_required'],
-            'lighting_source_time_weather_exposure':vt.PRIMITIVES['environment-lighting-state']['source_time_weather_exposure_required'],
-            'traversal_target_type_source_status':vt.PRIMITIVES['traversal-reference']['target_type_source_status_required'],
-            'variant_base_delta_context_source':vt.PRIMITIVES['environment-variant']['base_delta_context_source_required'],
-            'export_requirements_visible':vt.PRIMITIVES['environment-export-target']['requirements_must_be_visible'],
+            'effect_identity_source_purpose':vt.PRIMITIVES['vfx-source']['identity_source_version_purpose_required'],
+            'emitter_trigger_lifetime_rate':vt.PRIMITIVES['emitter-state']['trigger_lifetime_rate_required'],
+            'spawn_shape_transform_dimensions':vt.PRIMITIVES['spawn-region']['shape_transform_dimensions_required'],
+            'emission_channel_time_value':vt.PRIMITIVES['emission-curve']['channel_time_value_required'],
+            'module_identity_params_order':vt.PRIMITIVES['particle-module']['identity_parameters_order_required'],
+            'layer_identity_blend_order':vt.PRIMITIVES['vfx-layer']['identity_blend_order_required'],
+            'interaction_subject_event_response_source':vt.PRIMITIVES['vfx-interaction-hook']['subject_event_response_source_required'],
+            'timing_event_source':vt.PRIMITIVES['vfx-timing-event']['time_event_source_required'],
+            'reduced_semantic_feedback':vt.PRIMITIVES['reduced-effect-rule']['equivalent_semantic_feedback_required'],
+            'export_requirements_visible':vt.PRIMITIVES['vfx-export-target']['requirements_must_be_visible'],
         }
-        if not all(checks.values()): raise AssertionError('environment source/reference contract failed')
+        if not all(checks.values()): raise AssertionError('vfx source/runtime contract failed')
         retained={
+            'environment_source':vt.PRIMITIVES['environment-source']['identity_source_version_scope_required'],
+            'environment_measurement':vt.PRIMITIVES['environment-measurement']['value_unit_source_precision_required'],
             'brand_asset':vt.PRIMITIVES['brand-asset-source']['identity_source_version_provenance_required'],
             'brand_clearspace':vt.PRIMITIVES['brand-clearspace-rule']['target_measurement_basis_required'],
             'motion_state':vt.PRIMITIVES['motion-state']['source_target_identity_required'],
@@ -93,7 +96,7 @@ def main(argv):
             'atlas_coordinate':vt.PRIMITIVES['map-coordinate']['system_source_precision_required'],
         }
         if not all(retained.values()): raise AssertionError('prior visual source boundary failed')
-        receipt={'schema':'axm.visual-template-proof/v21','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'environment_checks':checks,'retained_checks':retained,'truth':'Offline structural evidence only. Final level geometry, scale correctness, collision, navigation, gameplay quality, lighting correctness, performance and aesthetic acceptance were not observed.'}
+        receipt={'schema':'axm.visual-template-proof/v22','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'vfx_checks':checks,'retained_checks':retained,'truth':'Offline structural evidence only. Runtime integration, collision or damage correctness, gameplay balance, GPU cost, accessibility acceptance, frame pacing and aesthetic quality were not observed.'}
         (out/'receipt.json').write_text(json.dumps(receipt,indent=2,sort_keys=True),encoding='utf-8')
         print(json.dumps(receipt,indent=2,sort_keys=True))
     except BaseException:

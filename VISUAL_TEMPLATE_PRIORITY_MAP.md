@@ -1,6 +1,6 @@
 # AXM Visual Template Expansion Priority Map
 
-Status: v19 growth lane after verified v1–v18 merges.
+Status: v20 growth lane after verified v1–v19 merges.
 
 The visual-template fabric grows where Universal Creation is likely to reuse the knowledge soon. This is a build priority, not canon: templates remain editable foundations and may be replaced when evidence supports a better structure.
 
@@ -14,48 +14,49 @@ The visual-template fabric grows where Universal Creation is likely to reuse the
 - character / creature reference sheets;
 - vehicle / weapon / equipment configurator;
 - source-bound UI motion / transition systems;
-- brand / identity system editor.
+- brand / identity system editor;
+- environment / level reference boards.
 
-## Environment / level reference boards — IMPLEMENTED IN THIS LANE
+## VFX / particle reference-authoring — IMPLEMENTED IN THIS LANE
 
-Product: `visual.environment.core`
+Product: `visual.vfx.core`
 
 Implemented screens:
 
-- `visual.environment.project-hub`
-- `visual.environment.identity-board`
-- `visual.environment.zones-layout`
-- `visual.environment.scale-measurements`
-- `visual.environment.modular-kit`
-- `visual.environment.materials`
-- `visual.environment.lighting-weather`
-- `visual.environment.traversal-annotations`
-- `visual.environment.variants`
-- `visual.environment.review-export`
+- `visual.vfx.project-hub`
+- `visual.vfx.effect-stage`
+- `visual.vfx.emitter-editor`
+- `visual.vfx.spawn-region`
+- `visual.vfx.curves-timing`
+- `visual.vfx.modules`
+- `visual.vfx.layers-composite`
+- `visual.vfx.interaction-hooks`
+- `visual.vfx.reduced-performance`
+- `visual.vfx.review-export`
 
 New primitives:
 
-- `environment-source`
-- `environment-zone`
-- `environment-measurement`
-- `modular-environment-piece`
-- `environment-prop`
-- `environment-material`
-- `environment-lighting-state`
-- `traversal-reference`
-- `environment-variant`
-- `environment-export-target`
+- `vfx-source`
+- `emitter-state`
+- `spawn-region`
+- `emission-curve`
+- `particle-module`
+- `vfx-layer`
+- `vfx-interaction-hook`
+- `vfx-timing-event`
+- `reduced-effect-rule`
+- `vfx-export-target`
 
-Style: `visual.environment.reference`.
+Style: `visual.vfx.effect`.
 
-The central rule is environment truth: reference boards guide production but do not become authoritative level geometry. Scale requires explicit measurements/source state, prop proximity is not gameplay linkage, and traversal/lighting/biome references remain exact source-bound annotations or variants.
+The central rule is runtime truth: effects can communicate or decorate exact events but never prove those events occurred. Collision, damage, interaction and state-change semantics require explicit source-bound hooks; reduced-effect variants preserve required semantic feedback.
 
 ## Next high-value visual/creation families
 
-1. **VFX / particle reference and authoring surfaces** — emitter/state identity, timing curves, spawn regions, layering, collision/interaction hooks and reduced-effect variants.
-2. **Quest / mission flow reference systems** — objective identity, prerequisites, branches, state transitions, rewards, failure/retry and world/map references for game production.
-3. **HUD theme / skin systems** — source-bound component families, layout constraints, readability state, platform/input variants and per-game identity application.
-4. **Lighting / post-process look systems** — source-bound exposure, tone, fog, grading, bloom and accessibility/performance variants without baking presentation into world state.
+1. **Quest / mission flow reference systems** — objective identity, prerequisites, branches, state transitions, rewards, failure/retry and world/map references for game production.
+2. **HUD theme / skin systems** — source-bound component families, layout constraints, readability state, platform/input variants and per-game identity application.
+3. **Lighting / post-process look systems** — source-bound exposure, tone, fog, grading, bloom and accessibility/performance variants without baking presentation into world state.
+4. **Camera / shot reference systems** — exact camera rigs, targets, framing, lens/FOV, shot transitions and gameplay/cinematic ownership without treating preview framing as world state.
 
 ## Cross-cutting rules
 
@@ -71,7 +72,7 @@ Every family preserves the existing visual-template contract:
 
 ## Immediate build order
 
-1. exact-head verify `visual.environment.core`;
-2. merge v19 only when template + repository checks pass;
-3. begin VFX / particle reference-authoring from fresh main;
+1. exact-head verify `visual.vfx.core`;
+2. merge v20 only when template + repository checks pass;
+3. begin quest / mission flow reference systems from fresh main;
 4. keep prioritizing reusable source-first editors over flat one-off outputs.

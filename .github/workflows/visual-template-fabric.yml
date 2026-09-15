@@ -25,6 +25,7 @@ on:
       - 'src/axm_uc/visual_template_motion.py'
       - 'src/axm_uc/visual_template_brand.py'
       - 'src/axm_uc/visual_template_environment.py'
+      - 'src/axm_uc/visual_template_vfx.py'
       - 'src/axm_uc/visual_templates_cli.py'
       - 'tests/test_visual_templates.py'
       - 'tools/visual_template_proof.py'
@@ -47,6 +48,7 @@ on:
       - 'MOTION_TEMPLATE_PACK.md'
       - 'BRAND_TEMPLATE_PACK.md'
       - 'ENVIRONMENT_TEMPLATE_PACK.md'
+      - 'VFX_TEMPLATE_PACK.md'
       - 'pyproject.toml'
       - '.github/workflows/visual-template-fabric.yml'
   pull_request:
@@ -73,6 +75,7 @@ on:
       - 'src/axm_uc/visual_template_motion.py'
       - 'src/axm_uc/visual_template_brand.py'
       - 'src/axm_uc/visual_template_environment.py'
+      - 'src/axm_uc/visual_template_vfx.py'
       - 'src/axm_uc/visual_templates_cli.py'
       - 'tests/test_visual_templates.py'
       - 'tools/visual_template_proof.py'
@@ -95,6 +98,7 @@ on:
       - 'MOTION_TEMPLATE_PACK.md'
       - 'BRAND_TEMPLATE_PACK.md'
       - 'ENVIRONMENT_TEMPLATE_PACK.md'
+      - 'VFX_TEMPLATE_PACK.md'
       - 'pyproject.toml'
       - '.github/workflows/visual-template-fabric.yml'
   workflow_dispatch:
