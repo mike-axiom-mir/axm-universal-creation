@@ -1,0 +1,25 @@
+'use strict';
+const assert = require('assert');
+const P = require('./creative-precision');
+
+const rect = P.shapeMask({width:16,height:16,kind:'rectangle',x:2,y:2,rect_width:8,rect_height:8});
+const ellipse = P.shapeMask({width:16,height:16,kind:'ellipse',cx:8,cy:8,rx:5,ry:5});
+const union = P.combineMasks(rect, ellipse, 'union');
+const intersection = P.combineMasks(rect, ellipse, 'intersection');
+const subtract = P.combineMasks(rect, ellipse, 'subtract');
+assert.equal(P.decodeMask(union).alpha.length, 256);
+assert(P.decodeMask(union).alpha.reduce((a,b)=>a+b,0) >= P.decodeMask(intersection).alpha.reduce((a,b)=>a+b,0));
+assert(P.decodeMask(subtract).alpha.some((v)=>v>0));
+assert(P.decodeMask(P.invertMask(P.invertMask(rect))).alpha.equals(P.decodeMask(rect).alpha));
+const grown = P.morphology(rect,'grow',2); const shrunk = P.morphology(rect,'shrink',2); const feather = P.featherMask(rect,2,2);
+assert(P.decodeMask(grown).alpha.reduce((a,b)=>a+b,0) > P.decodeMask(rect).alpha.reduce((a,b)=>a+b,0));
+assert(P.decodeMask(shrunk).alpha.reduce((a,b)=>a+b,0) < P.decodeMask(rect).alpha.reduce((a,b)=>a+b,0));
+assert(P.decodeMask(feather).alpha.some((v)=>v>0&&v<255));
+const brush = P.brushPlan({id:'test',operator:'smudge',size:10,spacing:0.25,scatter:0.1,seed:'same',samples:[{x:0,y:0,pressure:.2,time_ms:0},{x:30,y:0,pressure:.8,time_ms:30}],dynamics:{size:{sensor:'pressure',min:.5,max:1.5,gamma:1},opacity:{sensor:'velocity',min:.4,max:1}}});
+const brush2 = P.brushPlan({id:'test',operator:'smudge',size:10,spacing:0.25,scatter:0.1,seed:'same',samples:[{x:0,y:0,pressure:.2,time_ms:0},{x:30,y:0,pressure:.8,time_ms:30}],dynamics:{size:{sensor:'pressure',min:.5,max:1.5,gamma:1},opacity:{sensor:'velocity',min:.4,max:1}}});
+assert(brush.dab_count>0); assert.equal(brush.digest,brush2.digest); assert.equal(brush.operator,'smudge');
+const graph = P.effectGraph({id:'stack',nodes:[{id:'source',op:'source'},{id:'levels',op:'levels',inputs:['source'],params:{black:0.05,white:.95}},{id:'blur',op:'gaussian-blur',inputs:['levels'],mask_id:'edge-mask',params:{radius:2}}],outputs:['blur']});
+assert.deepEqual(graph.order,['source','levels','blur']);
+assert.throws(()=>P.effectGraph({nodes:[{id:'a',op:'x',inputs:['b']},{id:'b',op:'x',inputs:['a']}]}),/cycle/);
+const catalog=P.creativeMicrotoolCatalog(); assert(catalog.total>=200); assert(catalog.families.material.tools.includes('anchor-point')); assert(catalog.families.audio.tools.includes('spectral-select')); assert(catalog.truth_boundary.includes('only foundation_executable'));
+console.log(JSON.stringify({status:'PASS',mask:union.digest,brush:brush.digest,effect:graph.digest,microtools:catalog.total,foundation_executable:catalog.foundation_executable.length},null,2));
