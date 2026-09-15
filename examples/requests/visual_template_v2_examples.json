@@ -1,0 +1,28 @@
+[
+  {
+    "tool": "axm-visual-templates",
+    "operation": "show",
+    "id": "editor.creative.core"
+  },
+  {
+    "tool": "axm-visual-templates",
+    "operation": "render",
+    "id": "editor.creative.core",
+    "width": 1920,
+    "height": 1080,
+    "output": "creations/creative-editor"
+  },
+  {
+    "tool": "axm-visual-templates",
+    "operation": "show",
+    "id": "comic.narrative.core"
+  },
+  {
+    "tool": "axm-visual-templates",
+    "operation": "render",
+    "id": "comic.narrative.core",
+    "width": 1920,
+    "height": 1080,
+    "output": "creations/comic-narrative"
+  }
+]
