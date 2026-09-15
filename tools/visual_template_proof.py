@@ -8,7 +8,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src'))
 from axm_uc import visual_templates as vt
 
 SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
-PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell","visual.keyart.core","visual.cards.core","visual.cinematic.core","visual.broadcast.core")
+PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell","visual.keyart.core","visual.cards.core","visual.cinematic.core","visual.broadcast.core","visual.diagram.core")
 
 def _write(project,target):
     target.mkdir(); out=[]
@@ -25,7 +25,7 @@ def main(argv):
     out.mkdir(parents=True)
     try:
         counts=vt.validate_catalog()
-        if counts!={'styles':16,'primitives':106,'screens':144,'products':14}: raise AssertionError(counts)
+        if counts!={'styles':17,'primitives':116,'screens':154,'products':15}: raise AssertionError(counts)
         evidence=[]
         for pid in PRODUCTS:
             expected=vt.get(pid)
@@ -49,27 +49,28 @@ def main(argv):
             ('visual.cards.core',1920,1080,'cards','AXM Editable Card and Deck Foundation'),
             ('visual.cinematic.core',1920,1080,'cinematic','AXM Cinematic Title and Overlay Foundation'),
             ('visual.broadcast.core',1920,1080,'broadcast','AXM Video and Stream Overlay Foundation'),
+            ('visual.diagram.core',1920,1080,'diagram','AXM Evidence-Aware Diagram Foundation'),
         )
         outputs=[]
         for pid,w,h,folder,title in galleries: outputs+=_write(vt.product_project(pid,w,h,title),out/folder)
         outputs+=_write(vt.screen_project('product.mobile.home',1080,1920,'AXM Mobile Foundation'),out/'mobile-home')
-        product=vt.get('visual.broadcast.core')
-        required={'visual.broadcast.project-hub','visual.broadcast.scene-editor','visual.broadcast.source-router','visual.broadcast.camera-editor','visual.broadcast.score-status','visual.broadcast.alert-editor','visual.broadcast.chat-social','visual.broadcast.scene-set','visual.broadcast.format-variants','visual.broadcast.review-output'}
-        if set(product['screens'])!=required: raise AssertionError('broadcast pack lost required surfaces')
+        product=vt.get('visual.diagram.core')
+        required={'visual.diagram.project-hub','visual.diagram.canvas-editor','visual.diagram.node-editor','visual.diagram.relationship-editor','visual.diagram.evidence-editor','visual.diagram.annotation-editor','visual.diagram.legend-style','visual.diagram.layout-variants','visual.diagram.review-compare','visual.diagram.export'}
+        if set(product['screens'])!=required: raise AssertionError('diagram pack lost required surfaces')
         checks={
-            'source_identity_explicit':vt.PRIMITIVES['source-window']['source_identity_must_be_explicit'],
-            'camera_source_crop_separate':vt.PRIMITIVES['camera-slot']['source_and_crop_remain_separate'],
-            'status_source_freshness':vt.PRIMITIVES['status-field']['value_source_freshness_required'],
-            'alert_no_fake_success':vt.PRIMITIVES['alert-cue']['unobserved_success_forbidden'],
-            'chat_delivery_explicit':vt.PRIMITIVES['chat-panel']['delivery_state_must_be_explicit'],
-            'scene_identity_exact':vt.PRIMITIVES['scene-state']['scene_identity_must_be_exact'],
-            'overlay_conflicts_visible':vt.PRIMITIVES['overlay-zone']['overlap_conflicts_must_be_visible'],
-            'identity_source_transform_separate':vt.PRIMITIVES['identity-panel']['source_and_transform_remain_separate'],
-            'transition_from_to_exact':vt.PRIMITIVES['transition-state']['from_to_identity_required'],
-            'output_state_observed':vt.PRIMITIVES['output-monitor']['target_state_must_be_observed'],
+            'node_identity_exact':vt.PRIMITIVES['diagram-node']['identity_must_be_exact'],
+            'relationship_endpoints_type':vt.PRIMITIVES['relationship-edge']['endpoints_and_relation_type_required'],
+            'evidence_source_status':vt.PRIMITIVES['evidence-reference']['source_and_status_required'],
+            'data_value_unit_source_period':vt.PRIMITIVES['data-field']['value_unit_source_period_required'],
+            'annotation_target_exact':vt.PRIMITIVES['annotation-pin']['target_reference_must_be_exact'],
+            'legend_noncolor':vt.PRIMITIVES['legend-entry']['meaning_must_not_depend_on_color_only'],
+            'group_membership_explicit':vt.PRIMITIVES['group-boundary']['membership_must_be_explicit'],
+            'layout_preserves_semantics':vt.PRIMITIVES['layout-guide']['guide_must_not_change_semantic_relationships'],
+            'callout_evidence_separate':vt.PRIMITIVES['callout-card']['content_and_evidence_status_separate'],
+            'export_requirements_visible':vt.PRIMITIVES['diagram-export-target']['target_requirements_must_be_visible'],
         }
-        if not all(checks.values()): raise AssertionError('broadcast source/state contract failed')
-        receipt={'schema':'axm.visual-template-proof/v10','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'broadcast_checks':checks,'truth':'Offline structural evidence only. Live capture, score correctness, message delivery, encoder/output health, platform integration, latency and aesthetic acceptance were not observed.'}
+        if not all(checks.values()): raise AssertionError('diagram semantic/evidence contract failed')
+        receipt={'schema':'axm.visual-template-proof/v11','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'diagram_checks':checks,'truth':'Offline structural evidence only. Relationship truth, causal validity, evidence sufficiency, data correctness and aesthetic acceptance were not observed.'}
         (out/'receipt.json').write_text(json.dumps(receipt,indent=2,sort_keys=True),encoding='utf-8')
         print(json.dumps(receipt,indent=2,sort_keys=True))
     except BaseException:
