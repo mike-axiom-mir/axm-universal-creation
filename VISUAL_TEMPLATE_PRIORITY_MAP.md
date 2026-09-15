@@ -1,6 +1,6 @@
 # AXM Visual Template Expansion Priority Map
 
-Status: v20 growth lane after verified v1–v19 merges.
+Status: v21 growth lane after verified v1–v20 merges.
 
 The visual-template fabric grows where Universal Creation is likely to reuse the knowledge soon. This is a build priority, not canon: templates remain editable foundations and may be replaced when evidence supports a better structure.
 
@@ -15,48 +15,49 @@ The visual-template fabric grows where Universal Creation is likely to reuse the
 - vehicle / weapon / equipment configurator;
 - source-bound UI motion / transition systems;
 - brand / identity system editor;
-- environment / level reference boards.
+- environment / level reference boards;
+- VFX / particle reference-authoring.
 
-## VFX / particle reference-authoring — IMPLEMENTED IN THIS LANE
+## Quest / mission flow reference systems — IMPLEMENTED IN THIS LANE
 
-Product: `visual.vfx.core`
+Product: `visual.mission.core`
 
 Implemented screens:
 
-- `visual.vfx.project-hub`
-- `visual.vfx.effect-stage`
-- `visual.vfx.emitter-editor`
-- `visual.vfx.spawn-region`
-- `visual.vfx.curves-timing`
-- `visual.vfx.modules`
-- `visual.vfx.layers-composite`
-- `visual.vfx.interaction-hooks`
-- `visual.vfx.reduced-performance`
-- `visual.vfx.review-export`
+- `visual.mission.project-hub`
+- `visual.mission.objectives`
+- `visual.mission.conditions`
+- `visual.mission.branch-flow`
+- `visual.mission.world-bindings`
+- `visual.mission.rewards-outcomes`
+- `visual.mission.failure-retry`
+- `visual.mission.runtime-state`
+- `visual.mission.variants`
+- `visual.mission.review-export`
 
 New primitives:
 
-- `vfx-source`
-- `emitter-state`
-- `spawn-region`
-- `emission-curve`
-- `particle-module`
-- `vfx-layer`
-- `vfx-interaction-hook`
-- `vfx-timing-event`
-- `reduced-effect-rule`
-- `vfx-export-target`
+- `mission-source`
+- `objective-state`
+- `mission-condition`
+- `mission-edge`
+- `mission-world-reference`
+- `mission-reward-reference`
+- `mission-failure-recovery`
+- `mission-runtime-flag`
+- `mission-variant`
+- `mission-export-target`
 
-Style: `visual.vfx.effect`.
+Style: `visual.mission.flow`.
 
-The central rule is runtime truth: effects can communicate or decorate exact events but never prove those events occurred. Collision, damage, interaction and state-change semantics require explicit source-bound hooks; reduced-effect variants preserve required semantic feedback.
+The central rule is runtime/flow truth: graph lines do not prove reachability, objective presentation does not prove completion, map proximity does not create a mission binding, reward presentation does not prove delivery, and failure/retry/recovery consequences remain explicit source state.
 
 ## Next high-value visual/creation families
 
-1. **Quest / mission flow reference systems** — objective identity, prerequisites, branches, state transitions, rewards, failure/retry and world/map references for game production.
-2. **HUD theme / skin systems** — source-bound component families, layout constraints, readability state, platform/input variants and per-game identity application.
-3. **Lighting / post-process look systems** — source-bound exposure, tone, fog, grading, bloom and accessibility/performance variants without baking presentation into world state.
-4. **Camera / shot reference systems** — exact camera rigs, targets, framing, lens/FOV, shot transitions and gameplay/cinematic ownership without treating preview framing as world state.
+1. **HUD theme / skin systems** — source-bound component families, layout constraints, readability state, platform/input variants and per-game identity application.
+2. **Lighting / post-process look systems** — source-bound exposure, tone, fog, grading, bloom and accessibility/performance variants without baking presentation into world state.
+3. **Camera / shot reference systems** — exact camera rigs, targets, framing, lens/FOV, shot transitions and gameplay/cinematic ownership without treating preview framing as world state.
+4. **Inventory / item-reference systems** — item identity, rarity/affordance presentation, equipment slots, stats, comparison, provenance and platform/input variants without turning iconography into gameplay truth.
 
 ## Cross-cutting rules
 
@@ -72,7 +73,7 @@ Every family preserves the existing visual-template contract:
 
 ## Immediate build order
 
-1. exact-head verify `visual.vfx.core`;
-2. merge v20 only when template + repository checks pass;
-3. begin quest / mission flow reference systems from fresh main;
+1. exact-head verify `visual.mission.core`;
+2. merge v21 only when template + repository checks pass;
+3. begin HUD theme / skin systems from fresh main;
 4. keep prioritizing reusable source-first editors over flat one-off outputs.

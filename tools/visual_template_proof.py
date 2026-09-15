@@ -8,7 +8,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src'))
 from axm_uc import visual_templates as vt
 
 SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
-PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell","visual.keyart.core","visual.cards.core","visual.cinematic.core","visual.broadcast.core","visual.diagram.core","visual.atlas.core","visual.novel.core","visual.showroom.core","visual.music.core","visual.presentation.core","visual.character.core","visual.configurator.core","visual.motion.core","visual.brand.core","visual.environment.core","visual.vfx.core")
+PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell","visual.keyart.core","visual.cards.core","visual.cinematic.core","visual.broadcast.core","visual.diagram.core","visual.atlas.core","visual.novel.core","visual.showroom.core","visual.music.core","visual.presentation.core","visual.character.core","visual.configurator.core","visual.motion.core","visual.brand.core","visual.environment.core","visual.vfx.core","visual.mission.core")
 
 def _write(project,target):
     target.mkdir(); out=[]
@@ -25,7 +25,7 @@ def main(argv):
     out.mkdir(parents=True)
     try:
         counts=vt.validate_catalog()
-        if counts!={'styles':28,'primitives':226,'screens':264,'products':26}: raise AssertionError(counts)
+        if counts!={'styles':29,'primitives':236,'screens':274,'products':27}: raise AssertionError(counts)
         evidence=[]
         for pid in PRODUCTS:
             expected=vt.get(pid)
@@ -61,27 +61,30 @@ def main(argv):
             ('visual.brand.core',1920,1080,'brand','AXM Source-Bound Brand Identity Foundation'),
             ('visual.environment.core',1920,1080,'environment','AXM Environment and Level Reference Foundation'),
             ('visual.vfx.core',1920,1080,'vfx','AXM VFX and Particle Foundation'),
+            ('visual.mission.core',1920,1080,'mission','AXM Quest and Mission Flow Foundation'),
         )
         outputs=[]
         for pid,w,h,folder,title in galleries: outputs+=_write(vt.product_project(pid,w,h,title),out/folder)
         outputs+=_write(vt.screen_project('product.mobile.home',1080,1920,'AXM Mobile Foundation'),out/'mobile-home')
-        product=vt.get('visual.vfx.core')
-        required={'visual.vfx.project-hub','visual.vfx.effect-stage','visual.vfx.emitter-editor','visual.vfx.spawn-region','visual.vfx.curves-timing','visual.vfx.modules','visual.vfx.layers-composite','visual.vfx.interaction-hooks','visual.vfx.reduced-performance','visual.vfx.review-export'}
-        if set(product['screens'])!=required: raise AssertionError('vfx pack lost required surfaces')
+        product=vt.get('visual.mission.core')
+        required={'visual.mission.project-hub','visual.mission.objectives','visual.mission.conditions','visual.mission.branch-flow','visual.mission.world-bindings','visual.mission.rewards-outcomes','visual.mission.failure-retry','visual.mission.runtime-state','visual.mission.variants','visual.mission.review-export'}
+        if set(product['screens'])!=required: raise AssertionError('mission pack lost required surfaces')
         checks={
-            'effect_identity_source_purpose':vt.PRIMITIVES['vfx-source']['identity_source_version_purpose_required'],
-            'emitter_trigger_lifetime_rate':vt.PRIMITIVES['emitter-state']['trigger_lifetime_rate_required'],
-            'spawn_shape_transform_dimensions':vt.PRIMITIVES['spawn-region']['shape_transform_dimensions_required'],
-            'emission_channel_time_value':vt.PRIMITIVES['emission-curve']['channel_time_value_required'],
-            'module_identity_params_order':vt.PRIMITIVES['particle-module']['identity_parameters_order_required'],
-            'layer_identity_blend_order':vt.PRIMITIVES['vfx-layer']['identity_blend_order_required'],
-            'interaction_subject_event_response_source':vt.PRIMITIVES['vfx-interaction-hook']['subject_event_response_source_required'],
-            'timing_event_source':vt.PRIMITIVES['vfx-timing-event']['time_event_source_required'],
-            'reduced_semantic_feedback':vt.PRIMITIVES['reduced-effect-rule']['equivalent_semantic_feedback_required'],
-            'export_requirements_visible':vt.PRIMITIVES['vfx-export-target']['requirements_must_be_visible'],
+            'mission_identity_source_context':vt.PRIMITIVES['mission-source']['identity_source_version_context_required'],
+            'objective_identity_status_source':vt.PRIMITIVES['objective-state']['identity_type_status_source_required'],
+            'condition_subject_operator_value_source':vt.PRIMITIVES['mission-condition']['subject_operator_value_source_required'],
+            'edge_from_to_type_conditions':vt.PRIMITIVES['mission-edge']['from_to_type_conditions_required'],
+            'world_target_source_status':vt.PRIMITIVES['mission-world-reference']['target_source_status_required'],
+            'reward_source_amount_status':vt.PRIMITIVES['mission-reward-reference']['reward_source_amount_status_required'],
+            'failure_recovery_consequence':vt.PRIMITIVES['mission-failure-recovery']['condition_recovery_consequence_required'],
+            'runtime_flag_identity_value_source':vt.PRIMITIVES['mission-runtime-flag']['identity_value_source_required'],
+            'variant_base_delta_context':vt.PRIMITIVES['mission-variant']['base_delta_context_required'],
+            'export_requirements_visible':vt.PRIMITIVES['mission-export-target']['requirements_must_be_visible'],
         }
-        if not all(checks.values()): raise AssertionError('vfx source/runtime contract failed')
+        if not all(checks.values()): raise AssertionError('mission source/runtime contract failed')
         retained={
+            'vfx_source':vt.PRIMITIVES['vfx-source']['identity_source_version_purpose_required'],
+            'vfx_interaction':vt.PRIMITIVES['vfx-interaction-hook']['subject_event_response_source_required'],
             'environment_source':vt.PRIMITIVES['environment-source']['identity_source_version_scope_required'],
             'environment_measurement':vt.PRIMITIVES['environment-measurement']['value_unit_source_precision_required'],
             'brand_asset':vt.PRIMITIVES['brand-asset-source']['identity_source_version_provenance_required'],
@@ -96,7 +99,7 @@ def main(argv):
             'atlas_coordinate':vt.PRIMITIVES['map-coordinate']['system_source_precision_required'],
         }
         if not all(retained.values()): raise AssertionError('prior visual source boundary failed')
-        receipt={'schema':'axm.visual-template-proof/v22','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'vfx_checks':checks,'retained_checks':retained,'truth':'Offline structural evidence only. Runtime integration, collision or damage correctness, gameplay balance, GPU cost, accessibility acceptance, frame pacing and aesthetic quality were not observed.'}
+        receipt={'schema':'axm.visual-template-proof/v23','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'mission_checks':checks,'retained_checks':retained,'truth':'Offline structural evidence only. Mission balance, narrative quality, runtime branch reachability, reward correctness, map correctness and gameplay acceptance were not observed.'}
         (out/'receipt.json').write_text(json.dumps(receipt,indent=2,sort_keys=True),encoding='utf-8')
         print(json.dumps(receipt,indent=2,sort_keys=True))
     except BaseException:
