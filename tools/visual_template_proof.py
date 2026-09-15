@@ -13,7 +13,7 @@ from axm_uc import visual_templates as vt
 
 
 SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
-GAME_PRODUCTS=("game.racing.full","game.coop.action","game.rts.command")
+GAME_PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell")
 
 
 def _write_project(project: dict, target: Path) -> list[str]:
@@ -38,7 +38,7 @@ def main(argv: list[str]) -> int:
     out.mkdir(parents=True)
     try:
         counts=vt.validate_catalog()
-        if counts != {"styles":7,"primitives":24,"screens":39,"products":5}:
+        if counts != {"styles":8,"primitives":32,"screens":57,"products":6}:
             raise AssertionError(f"unexpected composed catalog: {counts}")
 
         evidence=[]
@@ -64,6 +64,7 @@ def main(argv: list[str]) -> int:
             ("game.racing.full",1920,1080,"racing-full","AXM Full Racing Foundation"),
             ("game.coop.action",1280,720,"coop-action","AXM Co-op Action Foundation"),
             ("game.rts.command",1920,1080,"rts-command","AXM RTS Command Foundation"),
+            ("game.system.shell",1280,720,"game-system","AXM Shared Game-System Foundation"),
         )
         for product_id,width,height,folder,title in galleries:
             outputs.extend(_write_project(vt.product_project(product_id,width,height,title),out/folder))
@@ -72,22 +73,25 @@ def main(argv: list[str]) -> int:
         outputs.extend(_write_project(mobile,out/"mobile-home"))
 
         racing=vt.get("game.racing.full")
-        required={"game.racing.accessibility","game.racing.recovery","game.racing.hud.split","game.racing.tuning","game.racing.replay"}
-        if not required <= set(racing["screens"]):
+        required_racing={"game.racing.accessibility","game.racing.recovery","game.racing.hud.split","game.racing.tuning","game.racing.replay"}
+        if not required_racing <= set(racing["screens"]):
             raise AssertionError("full racing foundation lost required professional surfaces")
+        system=vt.get("game.system.shell")
+        required_system={"game.system.controller-remap","game.system.save-slots","game.system.error-recovery","game.system.privacy-consent","game.system.language"}
+        if not required_system <= set(system["screens"]):
+            raise AssertionError("shared game-system foundation lost required product surfaces")
 
         receipt={
-            "schema":"axm.visual-template-proof/v2",
+            "schema":"axm.visual-template-proof/v3",
             "catalog":counts,
             "composition":vt.CATALOG_COMPOSITION,
             "product_evidence":evidence,
             "galleries":{
-                "game.racing.full":{"screens":len(vt.get("game.racing.full")["screens"]),"path":"racing-full/index.html"},
-                "game.coop.action":{"screens":len(vt.get("game.coop.action")["screens"]),"path":"coop-action/index.html"},
-                "game.rts.command":{"screens":len(vt.get("game.rts.command")["screens"]),"path":"rts-command/index.html"},
+                product_id:{"screens":len(vt.get(product_id)["screens"]),"path":folder+"/index.html"}
+                for product_id,_,_,folder,_ in galleries
             },
             "parsed_svg_count":sum(1 for path in outputs if path.endswith(".svg")),
-            "truth":"Offline contract/layout evidence only. SVG/HTML structure was generated and SVG parsed; target-engine interaction, gameplay, typography rendering, accessibility audit and aesthetic acceptance were not observed.",
+            "truth":"Offline contract/layout evidence only. SVG/HTML structure was generated and SVG parsed; target-engine interaction, gameplay, typography rendering, network behavior, persistence behavior, accessibility audit and aesthetic acceptance were not observed.",
         }
         (out/"receipt.json").write_text(json.dumps(receipt,indent=2,sort_keys=True),encoding="utf-8")
         print(json.dumps(receipt,indent=2,sort_keys=True))
