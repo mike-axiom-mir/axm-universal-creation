@@ -1,0 +1,144 @@
+# Creative Modeling Wave 9 — deterministic triangle-modeling depth
+
+Wave 9 grows Universal Creation's existing precision-mesh body instead of introducing another 3D representation.
+
+It adds a separate **26-hand precision-modeling registry** and plugs that registry into the public Creative Hands service. Because Wave 8 Creative Flow discovers the public service dynamically, these hands become available to the machine flow without any modeling-specific orchestrator branch.
+
+## Public capability growth
+
+Existing registries remain intact:
+
+- core creative: 197 executable hands;
+- precision mesh: 42;
+- face/edge/vertex mesh edit: 40;
+- advanced sculpt/UV/topology/modifier: 35;
+- **Wave 9 precision modeling: 26**.
+
+Public aggregate:
+
+- **340 executable creative hands**
+- **347 callable creative recipes**
+
+Wave 9 families:
+
+| family | count |
+| --- | ---: |
+| mesh-model-select | 6 |
+| mesh-model-build | 7 |
+| mesh-model-cut | 3 |
+| mesh-model-symmetry | 6 |
+| mesh-model-optimize | 4 |
+| **total** | **26** |
+
+## Selection and topology navigation
+
+Executable selectors:
+
+- one indexed boundary component;
+- one connected face component;
+- weighted shortest vertex path;
+- shortest face-adjacency path;
+- vertices near an explicit plane;
+- faces crossing/touching an explicit plane.
+
+Selections remain digest-bound to the exact mesh where a selection object is returned.
+
+The weighted shortest-vertex-path implementation is intentionally bounded to **10,000 vertices** because its current deterministic search is quadratic. Larger meshes fail closed instead of consuming an unbounded amount of work. This is a performance truth boundary, not a claim that large-mesh path search is impossible.
+
+## Boundary construction
+
+Executable modeling operations:
+
+- fill one simple closed boundary with a center fan;
+- cap all simple closed boundary components;
+- bridge two simple closed equal-cardinality boundaries;
+- extrude one simple closed boundary by an explicit vector;
+- subdivide selected triangles through face centers without creating edge T-junctions;
+- extract one connected face component;
+- separate every connected face component into its own precision mesh.
+
+`bridge-boundaries` deterministically aligns equal-sized loops by the smallest summed vertex distance after reversing the second boundary orientation. It is not a general mismatched-loop bridge or quad-layout optimizer.
+
+`fill-boundary-fan` is appropriate for simple holes whose center-fan triangulation is meaningful. It does not claim constrained Delaunay filling or high-quality patch reconstruction for arbitrary concave boundaries.
+
+## Plane cutting
+
+Wave 9 adds deterministic triangle/plane clipping:
+
+- keep positive half-space;
+- keep negative half-space;
+- return both halves as a bisect result.
+
+Crossing edge positions and UVs are linearly interpolated. Existing indexed vertices are reused where possible; generated intersections are cached by indexed source edge.
+
+The cut surface is **not automatically capped**. A caller can inspect resulting boundaries and explicitly use the boundary-filling hands if closing the cut is desired. This separation keeps cutting and topology repair inspectable.
+
+## Symmetry
+
+Wave 9 adds:
+
+- mirror + positional weld on X/Y/Z;
+- positive- or negative-side symmetrization on X/Y/Z around an explicit plane offset.
+
+These are indexed triangle-mesh operations. Positional weld may collapse authored split normals or UV seams, consistent with the existing precision-mesh weld truth boundary.
+
+## Reduction and relaxation
+
+Executable bounded tools:
+
+- remove faces below an explicit area threshold;
+- deterministic largest-area triangle cull by ratio;
+- vertex-cluster reduction using an explicit spatial cell size;
+- whole-mesh Laplacian relaxation with bounded factor/iterations.
+
+`area-cull` is deliberately named as such. It can open topology and is **not** represented as topology-preserving production decimation.
+
+`cluster-reduce` is a deterministic positional clustering/reduction foundation. It is not voxel remeshing, quad remeshing, retopology, feature-preserving simplification or an aesthetic optimizer.
+
+## Creative Flow integration
+
+Wave 8 needs no new planner logic. Once the registry is aggregated, Creative Flow discovers the hands from the same public catalog.
+
+The Wave 9 proof executes:
+
+`cube -> clip-positive -> symmetrize-x -> relax -> bounds analysis`
+
+through Creative Flow and validates the receipts and final retained candidate state.
+
+## Explicit non-claims / still missing
+
+This wave does **not** claim:
+
+- production generic edge bevel/chamfer;
+- quad-native loop-cut or edge-ring semantics;
+- arbitrary robust mesh union/intersection/difference CSG;
+- constrained high-quality hole reconstruction;
+- mismatched-loop bridge resampling;
+- feature-preserving QEM decimation;
+- voxel/surface remeshing or automatic retopology;
+- sculpt dynamic topology;
+- seam-aware UV unwrap/packing.
+
+Those remain legitimate future tools. Wave 9 intentionally builds deterministic primitives underneath them instead of assigning professional DCC names to weaker behavior.
+
+## Verification
+
+`creative-mesh-modeling-hands-selftest.js` verifies:
+
+- exact 26-hand family census;
+- exact public 340-hand / 347-recipe census;
+- boundary/connected-component selection;
+- weighted vertex and face paths;
+- plane selectors;
+- closing an open pyramid into an edge-manifold mesh;
+- capping multiple boundaries;
+- bridging two equal triangle boundaries into an edge-manifold closed body;
+- boundary extrusion;
+- crack-free face-center subdivision;
+- component extraction/separation;
+- positive/negative clipping and two-half bisect;
+- all six symmetry operations;
+- small-face removal, area cull, cluster reduction and relaxation;
+- automatic Creative Flow discovery/execution of the new modeling registry.
+
+The proof is called by `tests/test_creative_precision_fabric.py` and therefore runs inside the ordinary full repository gate.
