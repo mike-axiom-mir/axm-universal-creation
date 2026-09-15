@@ -1,6 +1,6 @@
 # AXM Visual Template Expansion Priority Map
 
-Status: v10 growth lane after verified v1–v9 merges.
+Status: v11 growth lane after verified v1–v10 merges.
 
 The visual-template fabric grows where Universal Creation is likely to reuse the knowledge soon. This is a build priority, not canon: templates remain editable foundations and may be replaced when evidence supports a better structure.
 
@@ -12,48 +12,49 @@ The visual-template fabric grows where Universal Creation is likely to reuse the
 - card / deck editor;
 - cinematic title / credits / overlay editor;
 - video / program / stream overlay editor;
-- evidence-aware infographic / diagram editor.
+- evidence-aware infographic / diagram editor;
+- world-map / lore-atlas editor.
 
-## World-map / lore-atlas editor — IMPLEMENTED IN THIS LANE
+## Interactive visual-novel / branching narrative — IMPLEMENTED IN THIS LANE
 
-Product: `visual.atlas.core`
+Product: `visual.novel.core`
 
 Implemented screens:
 
-- `visual.atlas.project-hub`
-- `visual.atlas.map-editor`
-- `visual.atlas.region-editor`
-- `visual.atlas.route-editor`
-- `visual.atlas.poi-lore`
-- `visual.atlas.layer-editor`
-- `visual.atlas.timeline-state`
-- `visual.atlas.coordinate-source`
-- `visual.atlas.review-compare`
-- `visual.atlas.export`
+- `visual.novel.project-hub`
+- `visual.novel.scene-editor`
+- `visual.novel.character-stage`
+- `visual.novel.dialogue-editor`
+- `visual.novel.choice-editor`
+- `visual.novel.branch-graph`
+- `visual.novel.state-inspector`
+- `visual.novel.history-log`
+- `visual.novel.save-checkpoint`
+- `visual.novel.review-export`
 
 New primitives:
 
-- `map-region`
-- `route-path`
-- `poi-marker`
-- `map-layer`
-- `time-slice`
-- `lore-reference`
-- `boundary-line`
-- `map-coordinate`
-- `state-overlay`
-- `atlas-export-target`
+- `scene-background`
+- `character-stage`
+- `dialogue-block`
+- `choice-option`
+- `branch-node`
+- `story-flag`
+- `history-entry`
+- `save-checkpoint`
+- `scene-transition`
+- `novel-export-target`
 
-Style: `visual.atlas.cartographic`.
+Style: `visual.novel.story`.
 
-The central rule is spatial truth: unknown coordinates/routes/boundaries remain unknown, projected state is not observation, and visual boundaries do not become factual borders without explicit source/type.
+The central rule is branching-state truth: exact scenes, character identity/pose/expression, dialogue, choice targets/conditions, node edges, runtime flags, history and save/checkpoint state remain independently editable and inspectable. Presentation cannot silently manufacture a reachable branch or character/runtime state.
 
 ## Next high-value visual/creation families
 
-1. **Interactive visual-novel surfaces** — dialogue, choices, character staging, backgrounds, history/log, saves and branching state.
-2. **3D showroom / gallery presentation** — hero object, comparison, annotations, material/variant selection and orbit/detail views.
-3. **Music visualizer / album-art editor** — cover systems, track identity, waveform/beat-driven visual states and export crops.
-4. **Presentation / explainer page systems** — reusable visual storytelling pages assembled from the diagram, key-art, atlas and editor foundations.
+1. **3D showroom / gallery presentation** — hero object, comparison, annotations, material/variant selection, turntable/orbit and detail views.
+2. **Music visualizer / album-art editor** — cover systems, track identity, waveform/beat-driven visual states and export crops.
+3. **Presentation / explainer page systems** — reusable storytelling pages assembled from diagram, key-art, atlas and editor foundations.
+4. **Character / creature reference-sheet editor** — turnaround views, expressions, materials, proportions, callouts and source/reference state for future games/comics.
 
 ## Cross-cutting rules
 
@@ -69,7 +70,7 @@ Every family preserves the existing visual-template contract:
 
 ## Immediate build order
 
-1. exact-head verify `visual.atlas.core`;
-2. merge v10 only when template + repository checks pass;
-3. begin interactive visual-novel surfaces from fresh main;
+1. exact-head verify `visual.novel.core`;
+2. merge v11 only when template + repository checks pass;
+3. begin 3D showroom / gallery presentation from fresh main;
 4. keep prioritizing reusable source-first editors over flat one-off outputs.

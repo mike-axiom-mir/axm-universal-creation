@@ -2,51 +2,51 @@
 
 Universal Creation contains one deterministic library of **known visual archetypes** between low-level format scaffolds and finished products. Templates are editable structural starting points, not finished art and not automatic canon.
 
-The public module remains `axm_uc.visual_templates`. Explicit extension packs now cover games/product plumbing, creative editors, comics, AXM system surfaces, key art, cards/decks, cinematic overlays, video/broadcast overlays, evidence-aware diagrams and world-map/lore-atlas editing. Sticker Fabric remains the immutable/versioned registry bridge. Mathematical work can enrich declared ratios/ranges through `math_hooks` without replacing template identity.
+The public module remains `axm_uc.visual_templates`. Explicit extension packs now cover games/product plumbing, creative editors, comics, AXM system surfaces, key art, cards/decks, cinematic overlays, video/broadcast overlays, evidence-aware diagrams, world-map/lore-atlas editing and branching visual novels. Sticker Fabric remains the immutable/versioned registry bridge. Mathematical work can enrich declared ratios/ranges through `math_hooks` without replacing template identity.
 
-## Current v10 candidate census
+## Current v11 candidate census
 
-- **126 reusable visual/state primitives**
-- **18 coherent style systems**
-- **164 responsive screen archetypes**
-- **16 whole-product archetypes**
-- **180 exact screen/product definitions** when explicitly installed into Sticker Registry
+- **136 reusable visual/state primitives**
+- **19 coherent style systems**
+- **174 responsive screen archetypes**
+- **17 whole-product archetypes**
+- **191 exact screen/product definitions** when explicitly installed into Sticker Registry
 
 Every major family provides compact, standard and wide normalized layouts. Unknown requested variants fail rather than silently falling back.
 
 ## Product foundations
 
-The catalog retains the merged game, creative-editor, comic, AXM-system, key-art, card/deck, cinematic, broadcast and diagram products, and adds `visual.atlas.core`.
+The catalog retains the merged game, creative-editor, comic, AXM-system, key-art, card/deck, cinematic, broadcast, diagram and atlas products, and adds `visual.novel.core`.
 
-## World-map / lore-atlas foundation
+## Branching visual-novel foundation
 
-`visual.atlas.core` provides ten source-first surfaces:
+`visual.novel.core` provides ten source-first surfaces:
 
-- project / atlas hub;
-- world-map editor;
-- region / boundary editor;
-- route / path editor;
-- POI / lore-reference editor;
-- layer editor;
-- timeline / state-overlay editor;
-- coordinate / spatial-source editor;
-- review / comparison;
-- export matrix.
+- project / narrative hub;
+- scene / background editor;
+- character staging editor;
+- dialogue / voice-reference editor;
+- choice / condition editor;
+- branch graph editor;
+- runtime state / flag inspector;
+- narrative history / decision log;
+- save / checkpoint editor;
+- review / export.
 
-Its `visual.atlas.cartographic` style is replaceable. Spatial and narrative truth remains explicit:
+Its `visual.novel.story` style is replaceable. Narrative source truth remains explicit:
 
-- `map-region` requires exact geometry/source state;
-- `route-path` requires exact endpoints plus known/planned/blocked/unknown status;
-- `poi-marker` keeps identity and location source/status explicit;
-- `map-layer` preserves independent layer provenance;
-- `time-slice` preserves period plus current/historical/projected/unknown status;
-- `lore-reference` binds exact target and source/status;
-- `boundary-line` requires boundary type, source and uncertainty state;
-- `map-coordinate` keeps coordinate system, source and precision explicit;
-- `state-overlay` stays bound to exact source and time slice;
-- `atlas-export-target` keeps extent/layer/label/provenance requirements visible.
+- `scene-background` keeps source identity separate from crop/transform;
+- `character-stage` keeps exact character identity, pose, expression, source and placement;
+- `dialogue-block` preserves exact speaker, text and voice/audio reference;
+- `choice-option` requires exact choice id, label, destination and conditions;
+- `branch-node` preserves exact node identity and incoming/outgoing references;
+- `story-flag` preserves flag name, value and source/change point;
+- `history-entry` preserves ordered observed/imported/derived history;
+- `save-checkpoint` binds exact restorable story state and digest;
+- `scene-transition` remains derived between exact source/destination states;
+- `novel-export-target` keeps branch/assets/text/state requirements visible.
 
-**Unknown coordinates, routes or boundaries are never invented merely to make a map look complete.** Projected state remains distinguishable from observed/current state, and visual boundaries do not become factual borders without declared type/source.
+A convincing rendered scene does not prove that a character is present, dialogue was spoken, a choice exists, or a branch is reachable. Unknown or unresolved runtime state remains visible rather than being fabricated.
 
 ## Registry and identity
 
@@ -56,8 +56,8 @@ Every built-in screen/product can be wrapped as an immutable Sticker definition.
 
 ```sh
 axm-visual-templates catalog
-axm-visual-templates show visual.atlas.core
-axm-visual-templates render visual.atlas.core creations/atlas --width 1920 --height 1080
+axm-visual-templates show visual.novel.core
+axm-visual-templates render visual.novel.core creations/visual-novel --width 1920 --height 1080
 ```
 
 Preview/export remains derived inspection output, never authoritative source.
@@ -69,19 +69,19 @@ python -m unittest discover -s tests -p 'test_visual_templates.py' -v
 python tools/visual_template_proof.py /new/output/path
 ```
 
-The v10 gate requires:
+The v11 gate requires:
 
-- exact census: 18 styles / 126 primitives / 164 screens / 16 products;
-- all 164 screens stay within six representative viewport shapes;
+- exact census: 19 styles / 136 primitives / 174 screens / 17 products;
+- all 174 screens stay within six representative viewport shapes;
 - exact product screen order and flows resolve across those viewports;
-- parseable galleries for all prior proof products plus `visual.atlas.core`;
-- all 180 screen/product definitions install through Sticker Registry;
-- exact region geometry/source, route endpoints/status, POI location source, layer provenance, time-slice status, lore target/source, boundary type/source, coordinate precision/source and overlay source/time remain present;
-- prior diagram/broadcast/cinematic/card/key-art/comic/game/AXM source boundaries remain intact;
+- parseable galleries for all prior proof products plus `visual.novel.core`;
+- all 191 screen/product definitions install through Sticker Registry;
+- scene/background source, exact character identity/pose/expression, dialogue speaker/text/voice refs, choice targets/conditions, branch node/edge identity, flags, history sequence/source and save state/digest remain present;
+- prior atlas/diagram/broadcast/cinematic/card/key-art/comic/game/AXM source boundaries remain intact;
 - copy safety, strict variant rejection, invalid-geometry rejection and exact Sticker-slot binding remain intact.
 
 ## Truth boundary
 
-Current evidence proves deterministic structural/editability contracts only. It does **not** prove coordinate accuracy, route existence, border/geopolitical claims, chronology correctness, lore truth, source reliability or aesthetic acceptance.
+Current evidence proves deterministic structural/editability contracts only. It does **not** prove story quality, branch correctness, character continuity, voice performance, localization quality, save compatibility across future versions or aesthetic acceptance.
 
-Consuming products must provide real source state. Unknown, disputed, approximate, derived and projected information stays distinguishable. Richer editable source remains authoritative over previews/exports.
+Consuming products must provide real project/runtime state. Unknown, unresolved, unavailable and incompatible state stays distinguishable. Richer editable source remains authoritative over previews/exports.
