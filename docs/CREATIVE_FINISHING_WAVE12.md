@@ -1,0 +1,92 @@
+# Creative Finishing Wave 12
+
+Wave 12 extends Universal Creation's shared Creative Hands body from 441 to **501 executable hands** and from 448 to **508 callable recipes**. It adds one modular 60-hand registry; Creative Flow itself receives no domain-specific planner branch.
+
+## Exact hand census
+
+- `vector-finish`: 16
+- `typography-edit`: 14
+- `audio-mastering`: 15
+- `frame-finish`: 15
+
+Total: **60 executable hands**.
+
+## Vector finishing
+
+The vector family operates on the existing `axm.precision-vector-path/v1` body and adds reverse/open/close, cubic flattening, resampling, sampled length and tangent evidence, affine transform/translate/scale/rotate/origin normalization, bounded simplification, deterministic dash segmentation and constant-width outline construction.
+
+Cubic length, point-at-distance and tangent evidence are sampled approximations controlled by `segments_per_cubic`; they are not analytic arc-length solvers. Simplification is bounded to 2,048 sampled points. Flattening is bounded to one million generated samples. Dash phase is normalized to one pattern cycle. Stroke outlining uses the existing UC variable-outline foundation and does not claim production-grade joins, caps, self-intersection cleanup or general offset-curve robustness.
+
+Wave 12 still does **not** claim arbitrary robust vector booleans, multi-subpath compound-path winding semantics, live path-effect parity, mesh gradients or a full font/vector editor.
+
+## Typography finishing
+
+The typography family introduces an explicit `axm.precision-text-document/v1` edit state and executable set/insert/delete/replace, case and whitespace normalization, tracking plans, bounded text fitting, paragraph layout, text-on-path realization and multipage story routing through the existing typography story engine.
+
+Tracking plans use UC's deterministic approximate advance model. They do not replace HarfBuzz shaping evidence. Production paragraph status still depends on the existing shaping/subset receipts. Text fitting searches a bounded font-size interval against the current layout engine; it does not claim typographic taste, optical kerning, language-specific editorial quality or glyph-outline/OpenType authoring.
+
+## Audio mastering and restoration
+
+The public family exposes 15 new operations:
+
+- polarity inversion;
+- mono summing;
+- RMS normalization;
+- parametric peaking EQ;
+- low/high shelves;
+- notch and band-pass filters;
+- downward expansion;
+- deterministic soft clipping;
+- bounded 50/60 Hz harmonic hum notching;
+- simple click repair;
+- bounded moving-average denoise;
+- first-difference transient shaping;
+- user-supplied bounded FIR convolution.
+
+These are real PCM transforms over `axm.precision-audio/v1`. They do **not** claim psychoacoustic loudness compliance, phase-linear mastering, spectral source separation, ML restoration, de-reverberation, production de-essing, mastering judgment or studio acceptance. Moving denoise is explicitly a moving-average method. Click repair is local interpolation. Hum removal is a deterministic notch cascade. Expensive neighborhood/FIR work fails closed at explicit operation budgets.
+
+## Frame finishing
+
+Wave 12 adds actual raster-frame operations rather than another timeline abstraction:
+
+- chroma, luma and difference keying with explicit mattes;
+- channel despill;
+- matte application;
+- premultiply/unpremultiply;
+- dissolve and horizontal/vertical wipes;
+- positioned source-over overlay;
+- absolute RGB difference imaging;
+- bounded block-match translation tracking;
+- translation stabilization bound to an exact tracking receipt;
+- bounded multi-frame motion trails.
+
+Tracking searches one explicit rectangular template in an integer translation window using RGB mean-squared error. It is **not** optical flow, feature tracking, perspective/rotation tracking, camera solving or object understanding. Stabilization corrects only the measured integer translation and deliberately leaves uncovered pixels transparent. Keying is deterministic colour/luminance/difference math, not production roto/keying quality judgment.
+
+## Machine-use integration
+
+`creative-finishing-hands` joins the same modular Creative Hands service used by all previous waves. Therefore Wave 8 Creative Flow can discover, resolve and invoke these hands through its existing catalog without new finishing-specific orchestration code.
+
+The Wave 12 proof executes a real frame chain through Creative Flow:
+
+`reference + current -> block match -> stabilization -> difference frame`
+
+with state references and receipts handled by the unchanged flow spine.
+
+## Resource and continuity boundaries
+
+- vector flattening and simplification have explicit sample ceilings;
+- dash segmentation is capped;
+- precision audio retains the existing 20,000,000-sample body limit;
+- hum, moving-denoise and FIR work have tighter per-operation ceilings;
+- block matching is capped at 32,000,000 template/candidate pixel comparisons before channel work;
+- motion-trail blend work is capped and input frames are decoded once per invocation;
+- all frame operations remain bounded by the existing precision-raster limits;
+- existing hand IDs and prior local registry censuses remain unchanged.
+
+## Verification
+
+`creative-finishing-hands-selftest.js` requires exact **60 / 501 / 508** counts and executes representative operations from every family, including Creative Flow integration.
+
+`creative-finishing-contract-selftest.js` proves fail-closed behavior for vector count/pattern errors, invalid text ranges, out-of-band EQ, FIR and denoise work budgets, tracking work overflow, invalid key bounds and stale tracking receipts.
+
+Both are bound into `tests/test_creative_precision_fabric.py`. Exact final PR-head CI is required before merge.
