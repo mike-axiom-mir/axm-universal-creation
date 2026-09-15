@@ -1,0 +1,46 @@
+name: Sticker fabric
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/axm_stickers/**'
+      - 'src/axm_uc/sticker_adapter.py'
+      - 'src/axm_uc/studio_compositor.py'
+      - 'src/axm_uc/game_pose_runtime.py'
+      - 'tests/test_stickers.py'
+      - 'tools/sticker_proof.py'
+      - 'pyproject.toml'
+      - '.github/workflows/sticker-fabric.yml'
+  workflow_dispatch:
+jobs:
+  sticker-fabric:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install and verify independent core and UC adapters
+        run: |
+          python -m pip install . 'matplotlib>=3.8,<4'
+          python -m unittest discover -s tests -p test_stickers.py -v
+      - name: Actual layered placements, shared source and animated GLB
+        run: |
+          python tools/sticker_proof.py "${{ runner.temp }}/sticker-proof"
+          python tools/sticker_proof.py preview "${{ runner.temp }}/sticker-proof"
+      - name: Execute installed registry outside checkout and build independent package
+        working-directory: ${{ runner.temp }}
+        run: |
+          echo '{"operation":"search","tag":"salvage","limit":2}' > sticker-search.json
+          axm-stickers sticker-proof/registry.sqlite sticker-search.json
+          python -m pip wheel sticker-proof/standalone-core --no-deps --wheel-dir sticker-proof/wheels
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sticker-fabric-proof-and-standalone-core
+          path: ${{ runner.temp }}/sticker-proof
