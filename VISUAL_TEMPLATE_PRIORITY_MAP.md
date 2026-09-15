@@ -1,16 +1,16 @@
 # AXM Visual Template Expansion Priority Map
 
-Status: post-v1 growth plan after merged PR #94.
+Status: v2 growth lane after merged PR #94.
 
 The visual-template fabric should grow where Universal Creation is most likely to reuse the knowledge soon. The order below is a build priority, not canon: templates remain editable foundations and may be replaced when evidence supports a better structure.
 
-## Priority 1 — Creative editor core
+## Priority 1 — Creative editor core — IMPLEMENTED IN THIS LANE
 
-Product target: `editor.creative.core`
+Product: `editor.creative.core`
 
 Purpose: give AXM reusable professional editing surfaces so generated work remains editable instead of collapsing into flat final outputs.
 
-Planned screen IDs:
+Implemented screen IDs:
 
 - `editor.creative.project-hub`
 - `editor.creative.asset-browser`
@@ -25,7 +25,7 @@ Planned screen IDs:
 - `editor.creative.audio`
 - `editor.creative.review-export`
 
-Reusable primitive targets:
+Implemented reusable primitives:
 
 - `layer-row`
 - `timeline-track`
@@ -35,15 +35,15 @@ Reusable primitive targets:
 - `inspector-field`
 - `asset-tile`
 
-Primary style target: `creative.workbench`.
+Style: `creative.workbench`.
 
-## Priority 2 — Editable comics and visual narrative
+## Priority 2 — Editable comics and visual narrative — IMPLEMENTED IN THIS LANE
 
-Product target: `comic.narrative.core`
+Product: `comic.narrative.core`
 
 Purpose: move beyond a flat comic-image generator into an editable visual-story system where page geometry, panels, source art, dialogue, captions, characters, sequencing and motion remain independently controllable.
 
-Planned screen IDs:
+Implemented screen IDs:
 
 - `comic.narrative.library`
 - `comic.narrative.page-editor`
@@ -56,7 +56,7 @@ Planned screen IDs:
 - `comic.narrative.reader-preview`
 - `comic.narrative.export`
 
-Reusable primitive targets:
+Implemented reusable primitives:
 
 - `panel-frame`
 - `panel-gutter`
@@ -67,9 +67,11 @@ Reusable primitive targets:
 - `character-reference-card`
 - `story-beat-link`
 
-Primary style target: `narrative.ink`.
+Style: `narrative.ink`.
 
-## Priority 3 — AXM software / monolith shell
+The proof gate requires panel/page/dialogue/scene/motion surfaces to remain distinct and requires speech text/tail plus reading-order conflicts to stay explicitly editable/visible. This is structural editability evidence, not a claim of finished drawing quality or authoring UX acceptance.
+
+## Priority 3 — AXM software / monolith shell — NEXT
 
 Product target: `axm.system.shell`
 
@@ -94,7 +96,7 @@ Design rule: deep machine state may be complex, but the human-facing shell shoul
 
 ## Priority 4 — Remaining near-term game gaps
 
-These extend the already merged 57-screen game foundation only where real reusable gaps remain.
+These extend the merged game foundation only where real reusable gaps remain.
 
 Planned IDs:
 
@@ -141,9 +143,7 @@ Every new family should preserve the existing visual-template contract:
 
 ## Immediate build order
 
-1. implement `editor.creative.core`;
-2. implement `comic.narrative.core`;
-3. prove both across the existing representative viewport set;
-4. integrate both into the immutable registry and proof pack;
-5. then begin `axm.system.shell`;
-6. add game-gap templates only when they are not already represented by the merged v1 catalog.
+1. finish exact-head verification for `editor.creative.core` and `comic.narrative.core`;
+2. merge the v2 lane only after proof and repository checks pass;
+3. begin `axm.system.shell` from fresh main;
+4. add game-gap templates only when they are not already represented by the merged catalog.
