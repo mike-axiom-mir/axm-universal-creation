@@ -179,6 +179,14 @@ def register_standalone_creation_builtins(
         except Procedural3DError as exc:
             raise capability_error(str(exc), exc.details) from exc
 
+    def creative_flow(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+        from .creative_flow import CreativeFlowError, run_creative_flow
+
+        try:
+            return run_creative_flow(root, inputs)
+        except CreativeFlowError as exc:
+            raise capability_error(str(exc), exc.details) from exc
+
     return {
         "builtin:local_creation_provider": local_creation_provider,
         "builtin:host_evidence": host_evidence,
@@ -189,4 +197,5 @@ def register_standalone_creation_builtins(
         "builtin:browser_game": browser_game,
         "builtin:creation_growth": creation_growth,
         "builtin:procedural_3d": procedural_3d,
+        "builtin:creative_flow": creative_flow,
     }
