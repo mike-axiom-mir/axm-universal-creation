@@ -45,6 +45,9 @@ class CreativePrecisionFabricTests(unittest.TestCase):
     def test_face_edge_vertex_mesh_edit_wave(self):
         self.run_node('creative-mesh-edit-hands-selftest.js')
 
+    def test_explicit_mesh_edge_contract(self):
+        self.run_node('creative-mesh-edge-contract-selftest.js')
+
 
 if __name__ == '__main__':
     unittest.main()
