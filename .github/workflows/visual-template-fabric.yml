@@ -22,6 +22,7 @@ on:
       - 'src/axm_uc/visual_template_presentation.py'
       - 'src/axm_uc/visual_template_character_reference.py'
       - 'src/axm_uc/visual_template_configurator.py'
+      - 'src/axm_uc/visual_template_motion.py'
       - 'src/axm_uc/visual_templates_cli.py'
       - 'tests/test_visual_templates.py'
       - 'tools/visual_template_proof.py'
@@ -41,6 +42,7 @@ on:
       - 'PRESENTATION_TEMPLATE_PACK.md'
       - 'CHARACTER_REFERENCE_TEMPLATE_PACK.md'
       - 'CONFIGURATOR_TEMPLATE_PACK.md'
+      - 'MOTION_TEMPLATE_PACK.md'
       - 'pyproject.toml'
       - '.github/workflows/visual-template-fabric.yml'
   pull_request:
@@ -64,6 +66,7 @@ on:
       - 'src/axm_uc/visual_template_presentation.py'
       - 'src/axm_uc/visual_template_character_reference.py'
       - 'src/axm_uc/visual_template_configurator.py'
+      - 'src/axm_uc/visual_template_motion.py'
       - 'src/axm_uc/visual_templates_cli.py'
       - 'tests/test_visual_templates.py'
       - 'tools/visual_template_proof.py'
@@ -83,6 +86,7 @@ on:
       - 'PRESENTATION_TEMPLATE_PACK.md'
       - 'CHARACTER_REFERENCE_TEMPLATE_PACK.md'
       - 'CONFIGURATOR_TEMPLATE_PACK.md'
+      - 'MOTION_TEMPLATE_PACK.md'
       - 'pyproject.toml'
       - '.github/workflows/visual-template-fabric.yml'
   workflow_dispatch:

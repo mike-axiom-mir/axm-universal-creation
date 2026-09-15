@@ -8,7 +8,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src'))
 from axm_uc import visual_templates as vt
 
 SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
-PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell","visual.keyart.core","visual.cards.core","visual.cinematic.core","visual.broadcast.core","visual.diagram.core","visual.atlas.core","visual.novel.core","visual.showroom.core","visual.music.core","visual.presentation.core","visual.character.core","visual.configurator.core")
+PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell","visual.keyart.core","visual.cards.core","visual.cinematic.core","visual.broadcast.core","visual.diagram.core","visual.atlas.core","visual.novel.core","visual.showroom.core","visual.music.core","visual.presentation.core","visual.character.core","visual.configurator.core","visual.motion.core")
 
 def _write(project,target):
     target.mkdir(); out=[]
@@ -25,7 +25,7 @@ def main(argv):
     out.mkdir(parents=True)
     try:
         counts=vt.validate_catalog()
-        if counts!={'styles':24,'primitives':186,'screens':224,'products':22}: raise AssertionError(counts)
+        if counts!={'styles':25,'primitives':196,'screens':234,'products':23}: raise AssertionError(counts)
         evidence=[]
         for pid in PRODUCTS:
             expected=vt.get(pid)
@@ -57,37 +57,40 @@ def main(argv):
             ('visual.presentation.core',1920,1080,'presentation','AXM Presentation and Explainer Foundation'),
             ('visual.character.core',1920,1080,'character-reference','AXM Character and Creature Reference Foundation'),
             ('visual.configurator.core',1920,1080,'configurator','AXM Equipment and Vehicle Configurator Foundation'),
+            ('visual.motion.core',1920,1080,'motion','AXM Source-Bound UI Motion Foundation'),
         )
         outputs=[]
         for pid,w,h,folder,title in galleries: outputs+=_write(vt.product_project(pid,w,h,title),out/folder)
         outputs+=_write(vt.screen_project('product.mobile.home',1080,1920,'AXM Mobile Foundation'),out/'mobile-home')
-        product=vt.get('visual.configurator.core')
-        required={'visual.configurator.project-hub','visual.configurator.object-stage','visual.configurator.socket-editor','visual.configurator.exploded-view','visual.configurator.stat-editor','visual.configurator.variant-material','visual.configurator.compatibility','visual.configurator.comparison','visual.configurator.loadout-presets','visual.configurator.review-export'}
-        if set(product['screens'])!=required: raise AssertionError('configurator pack lost required surfaces')
+        product=vt.get('visual.motion.core')
+        required={'visual.motion.project-hub','visual.motion.transition-editor','visual.motion.focus-navigation','visual.motion.spatial-continuity','visual.motion.timing-curves','visual.motion.interruption-recovery','visual.motion.progress-loading','visual.motion.reduced-motion','visual.motion.trigger-matrix','visual.motion.review-export'}
+        if set(product['screens'])!=required: raise AssertionError('motion pack lost required surfaces')
         checks={
-            'object_identity_source_version':vt.PRIMITIVES['configurable-source']['identity_source_version_required'],
-            'socket_identity_type_status':vt.PRIMITIVES['attachment-socket']['socket_identity_type_status_required'],
-            'component_source_parent_transform':vt.PRIMITIVES['component-part']['source_parent_transform_required'],
-            'compatibility_subject_target_rule_status':vt.PRIMITIVES['compatibility-rule']['subject_target_rule_status_required'],
-            'stat_value_unit_source_context':vt.PRIMITIVES['config-stat-field']['value_unit_source_context_required'],
-            'configuration_base_attachment_variant_digest':vt.PRIMITIVES['configuration-state']['base_attachment_variant_digest_required'],
-            'exploded_offset_non_authoritative':vt.PRIMITIVES['exploded-view-state']['source_part_offset_non_authoritative'],
-            'variant_target_source_availability':vt.PRIMITIVES['config-material-variant']['target_variant_source_availability_required'],
-            'annotation_target_source':vt.PRIMITIVES['config-annotation']['target_content_source_required'],
-            'export_requirements_visible':vt.PRIMITIVES['configurator-export-target']['requirements_must_be_visible'],
+            'state_source_target_exact':vt.PRIMITIVES['motion-state']['source_target_identity_required'],
+            'transition_trigger_source_target_duration':vt.PRIMITIVES['transition-edge-state']['trigger_source_target_duration_required'],
+            'timing_curve_explicit':vt.PRIMITIVES['timing-curve']['duration_curve_parameters_required'],
+            'focus_from_to_order':vt.PRIMITIVES['focus-motion-path']['focus_from_to_order_required'],
+            'spatial_anchor_exact':vt.PRIMITIVES['spatial-anchor-transition']['source_target_anchor_required'],
+            'interruption_recovery_explicit':vt.PRIMITIVES['interruption-recovery']['interrupt_recovery_state_required'],
+            'progress_source_status':vt.PRIMITIVES['progress-motion-state']['progress_source_status_required'],
+            'reduced_same_state_result':vt.PRIMITIVES['reduced-motion-rule']['equivalent_state_result_required'],
+            'trigger_event_source_repeat':vt.PRIMITIVES['motion-trigger']['event_source_repeat_required'],
+            'export_requirements_visible':vt.PRIMITIVES['motion-export-target']['requirements_must_be_visible'],
         }
-        if not all(checks.values()): raise AssertionError('configurator source/configuration contract failed')
+        if not all(checks.values()): raise AssertionError('motion state/accessibility contract failed')
         retained={
-            'character_identity_source_version':vt.PRIMITIVES['character-source']['identity_source_version_required'],
-            'presentation_page_identity_order':vt.PRIMITIVES['presentation-page']['identity_role_order_required'],
-            'music_track_identity_digest':vt.PRIMITIVES['music-track-source']['identity_source_digest_duration_required'],
-            'showroom_object_identity_version':vt.PRIMITIVES['showroom-object']['source_identity_version_required'],
-            'novel_save_state_digest':vt.PRIMITIVES['save-checkpoint']['state_identity_digest_required'],
-            'atlas_coordinate_source_precision':vt.PRIMITIVES['map-coordinate']['system_source_precision_required'],
-            'diagram_relationship_identity':vt.PRIMITIVES['relationship-edge']['endpoints_and_relation_type_required'],
+            'config_digest':vt.PRIMITIVES['configuration-state']['base_attachment_variant_digest_required'],
+            'compatibility_explicit':vt.PRIMITIVES['compatibility-rule']['subject_target_rule_status_required'],
+            'character_identity':vt.PRIMITIVES['character-source']['identity_source_version_required'],
+            'presentation_page':vt.PRIMITIVES['presentation-page']['identity_role_order_required'],
+            'music_track':vt.PRIMITIVES['music-track-source']['identity_source_digest_duration_required'],
+            'showroom_object':vt.PRIMITIVES['showroom-object']['source_identity_version_required'],
+            'novel_save':vt.PRIMITIVES['save-checkpoint']['state_identity_digest_required'],
+            'atlas_coordinate':vt.PRIMITIVES['map-coordinate']['system_source_precision_required'],
+            'diagram_relationship':vt.PRIMITIVES['relationship-edge']['endpoints_and_relation_type_required'],
         }
         if not all(retained.values()): raise AssertionError('prior visual source boundary failed')
-        receipt={'schema':'axm.visual-template-proof/v18','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'configurator_checks':checks,'retained_checks':retained,'truth':'Offline structural evidence only. Attachment fit, game balance, stat correctness, real-world compatibility, physical dimensions, renderer fidelity and aesthetic acceptance were not observed.'}
+        receipt={'schema':'axm.visual-template-proof/v19','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'motion_checks':checks,'retained_checks':retained,'truth':'Offline structural evidence only. Motion quality, perceptual comfort, accessibility acceptance, framework behavior, frame pacing and input latency were not observed.'}
         (out/'receipt.json').write_text(json.dumps(receipt,indent=2,sort_keys=True),encoding='utf-8')
         print(json.dumps(receipt,indent=2,sort_keys=True))
     except BaseException:

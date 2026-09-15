@@ -2,47 +2,47 @@
 
 Universal Creation contains one deterministic library of **known visual archetypes** between low-level format scaffolds and finished products. Templates are editable structural starting points, not finished art and not automatic canon.
 
-The public module remains `axm_uc.visual_templates`. Explicit extension packs now cover games/product plumbing, creative editors, comics, AXM system surfaces, key art, cards/decks, cinematic overlays, broadcast/video overlays, evidence-aware diagrams, world-map/lore-atlas editing, branching visual novels, 3D showroom/gallery presentation, music visuals/album art, source-bound presentation/explainers, character/creature references, and equipment/vehicle/weapon configuration. Sticker Fabric remains the immutable/versioned registry bridge. Mathematical work can enrich declared ratios/ranges through `math_hooks` without replacing template identity.
+The public module remains `axm_uc.visual_templates`. Explicit extension packs cover games/product plumbing, creative editors, comics, AXM system surfaces, key art, cards/decks, cinematic/broadcast overlays, diagrams, atlas/map editing, branching narrative, 3D showroom, music, presentation/explainers, character reference, equipment configuration and source-bound UI motion. Sticker Fabric remains the immutable/versioned registry bridge. Mathematical work can enrich declared ratios/ranges through `math_hooks` without replacing template identity.
 
-## Current v16 candidate census
+## Current v17 candidate census
 
-- **186 reusable visual/state primitives**
-- **24 coherent style systems**
-- **224 responsive screen archetypes**
-- **22 whole-product archetypes**
-- **246 exact screen/product definitions** when explicitly installed into Sticker Registry
+- **196 reusable visual/state primitives**
+- **25 coherent style systems**
+- **234 responsive screen archetypes**
+- **23 whole-product archetypes**
+- **257 exact screen/product definitions** when explicitly installed into Sticker Registry
 
 Every major family provides compact, standard and wide normalized layouts. Unknown requested variants fail rather than silently falling back.
 
-## Equipment / vehicle / weapon configurator foundation
+## Source-bound UI motion foundation
 
-`visual.configurator.core` provides ten source-first configuration surfaces:
+`visual.motion.core` provides ten state-first motion surfaces:
 
-- project / configurator hub;
-- configurable object stage;
-- attachment socket editor;
-- exploded component editor;
-- configuration stat editor;
-- variant / material editor;
-- compatibility rule editor;
-- configuration comparison;
-- preset / loadout editor;
+- project / motion-system hub;
+- state-transition editor;
+- focus / navigation motion editor;
+- spatial / shared-element continuity editor;
+- timing / easing editor;
+- interruption / recovery editor;
+- progress / loading motion editor;
+- reduced-motion variant editor;
+- trigger matrix;
 - review / export.
 
-Its `visual.configurator.precision` style is replaceable. Configuration truth remains explicit:
+Its `visual.motion.system` style is replaceable. The contract is semantic state before animation:
 
-- `configurable-source` preserves exact object identity, source and version;
-- `attachment-socket` preserves socket identity/type/category/status;
-- `component-part` preserves exact part source, parent socket and source transform;
-- `compatibility-rule` preserves exact subject/target/rule/result/status;
-- `config-stat-field` keeps value, unit, source and configuration context;
-- `configuration-state` preserves base identity, attachment set, variants and digest;
-- `exploded-view-state` uses derived presentation offsets that never replace source transforms;
-- `config-material-variant` preserves exact target, variant source and availability;
-- `config-annotation` binds exact targets to content/source/status;
-- `configurator-export-target` keeps output requirements visible.
+- `motion-state` keeps exact source/target identities;
+- `transition-edge-state` keeps trigger, source, target, duration and completion semantics explicit;
+- `timing-curve` preserves explicit duration/easing parameters;
+- `focus-motion-path` preserves exact focus identities and semantic order;
+- `spatial-anchor-transition` requires exact source/target anchor IDs;
+- `interruption-recovery` keeps cancellation and rollback/recovery state explicit;
+- `progress-motion-state` binds motion to observed progress/status, never inferred completion;
+- `reduced-motion-rule` preserves the same semantic result while reducing unnecessary motion;
+- `motion-trigger` binds transitions to exact events/inputs/state changes;
+- `motion-export-target` keeps runtime/accessibility requirements visible.
 
-A component looking like it fits a socket is never treated as compatibility evidence. Unknown compatibility remains unknown, conditional rules remain explicit, and invalid configurations stay visible. Derived exploded, comparison and export views cannot silently modify the authoritative configuration.
+Animation is never evidence that state changed. Animation completion cannot manufacture task completion. Visual proximity cannot define focus order or shared-element identity. Reduced-motion is first-class and must preserve the same destination/meaning.
 
 ## Registry and identity
 
@@ -52,8 +52,8 @@ Every built-in screen/product can be wrapped as an immutable Sticker definition.
 
 ```sh
 axm-visual-templates catalog
-axm-visual-templates show visual.configurator.core
-axm-visual-templates render visual.configurator.core creations/configurator --width 1920 --height 1080
+axm-visual-templates show visual.motion.core
+axm-visual-templates render visual.motion.core creations/motion --width 1920 --height 1080
 ```
 
 Preview/export remains derived inspection output, never authoritative source.
@@ -65,19 +65,19 @@ python -m unittest discover -s tests -p 'test_visual_templates.py' -v
 python tools/visual_template_proof.py /new/output/path
 ```
 
-The v16 gate requires:
+The v17 gate requires:
 
-- exact census: 24 styles / 186 primitives / 224 screens / 22 products;
-- all 224 screens stay within six representative viewport shapes;
+- exact census: 25 styles / 196 primitives / 234 screens / 23 products;
+- all 234 screens stay within six representative viewport shapes;
 - exact product screen order and flows resolve across those viewports;
-- parseable galleries for all prior proof products plus `visual.configurator.core`;
-- all 246 screen/product definitions install through Sticker Registry;
-- exact object identity/source/version, socket identity/type/status, component parent/source transform, compatibility rule state, stat value/unit/source/context, configuration digest, variant availability and derived exploded-view boundaries remain present;
-- prior character/presentation/music/showroom/visual-novel/atlas/diagram/broadcast/cinematic/card/key-art/comic/game/AXM source boundaries remain intact;
+- parseable galleries for all prior proof products plus `visual.motion.core`;
+- all 257 screen/product definitions install through Sticker Registry;
+- exact state edge, trigger, timing, focus order, anchor identity, interruption/recovery, progress source and reduced-motion parity contracts remain present;
+- prior configurator/character/presentation/music/showroom/visual-novel/atlas/diagram/broadcast/cinematic/card/key-art/comic/game/AXM source boundaries remain intact;
 - copy safety, strict variant rejection, invalid-geometry rejection and exact Sticker-slot binding remain intact.
 
 ## Truth boundary
 
-Current evidence proves deterministic structural/editability contracts only. It does **not** prove real-world attachment fit, mechanical compatibility, gameplay balance, stat correctness, physical dimensions, target-engine rendering or aesthetic acceptance.
+Current evidence proves deterministic structural/editability contracts only. It does **not** prove perceptual motion quality, vestibular comfort, target-framework behavior, frame pacing, input latency or accessibility acceptance.
 
-Consuming products must provide real configuration state. Unknown, conditional, unavailable and invalid information stays distinguishable. Richer editable source remains authoritative over previews/exports.
+Consuming products must provide real state transitions and runtime evidence. Unknown, interrupted, stalled and incomplete state stays distinguishable. Richer editable source remains authoritative over previews/exports.
