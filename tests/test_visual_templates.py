@@ -41,7 +41,7 @@ class VisualTemplateTests(unittest.TestCase):
         self.assertIn('source and freshness',quality)
         self.assertIn('exact',quality)
         self.assertIn('unobserved success',quality)
-        self.assertIn('source composition',quality)
+        self.assertIn('scene composition',quality)
         self.assertIn('safe_inset_ratio',vt.get('visual.broadcast.scene-editor')['math_hooks'])
         self.assertIn('safe_inset_ratio',vt.get('visual.broadcast.format-variants')['math_hooks'])
 
