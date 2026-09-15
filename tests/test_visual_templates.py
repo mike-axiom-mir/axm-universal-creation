@@ -8,18 +8,18 @@ from axm_stickers import Registry
 from axm_uc import visual_templates as vt
 
 SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
-PRODUCTS=('game.racing.full','game.coop.action','game.rts.command','game.system.shell','game.shared.core','editor.creative.core','comic.narrative.core','axm.system.shell','visual.keyart.core','visual.cards.core')
+PRODUCTS=('game.racing.full','game.coop.action','game.rts.command','game.system.shell','game.shared.core','editor.creative.core','comic.narrative.core','axm.system.shell','visual.keyart.core','visual.cards.core','visual.cinematic.core')
 
 class VisualTemplateTests(unittest.TestCase):
     def test_catalog_counts_and_products(self):
         counts=vt.validate_catalog()
-        self.assertEqual(counts,{'styles':14,'primitives':86,'screens':124,'products':12})
+        self.assertEqual(counts,{'styles':15,'primitives':96,'screens':135,'products':13})
         self.assertEqual(vt.CATALOG_COMPOSITION['counts'],counts)
         ids={p['id'] for p in vt.catalog()['products']}
         self.assertTrue(set(PRODUCTS)|{'game.racing.performance','software.creator.studio'} <= ids)
 
     def test_all_geometry_and_major_variants(self):
-        prefixes=('game.','editor.creative.','comic.narrative.','axm.system.','visual.keyart.','visual.cards.')
+        prefixes=('game.','editor.creative.','comic.narrative.','axm.system.','visual.keyart.','visual.cards.','visual.cinematic.')
         for tid,definition in vt.SCREEN_TEMPLATES.items():
             if tid.startswith(prefixes): self.assertEqual(set(definition['variants']),{'compact','standard','wide'},tid)
             for width,height in SIZES:
@@ -29,21 +29,21 @@ class VisualTemplateTests(unittest.TestCase):
                     self.assertLessEqual(x+w,width+1e-6); self.assertLessEqual(y+h,height+1e-6)
 
     def test_existing_product_depth_is_retained(self):
-        expected={'game.racing.full':19,'game.system.shell':18,'game.shared.core':12,'editor.creative.core':12,'comic.narrative.core':10,'axm.system.shell':12,'visual.keyart.core':10}
+        expected={'game.racing.full':19,'game.system.shell':18,'game.shared.core':12,'editor.creative.core':12,'comic.narrative.core':10,'axm.system.shell':12,'visual.keyart.core':10,'visual.cards.core':11}
         for pid,count in expected.items(): self.assertEqual(len(vt.get(pid)['screens']),count)
 
-    def test_card_product_preserves_editable_card_and_deck_state(self):
-        product=vt.get('visual.cards.core')
-        required={'visual.cards.project-hub','visual.cards.face-editor','visual.cards.back-editor','visual.cards.artwork-editor','visual.cards.text-stats','visual.cards.ability-layout','visual.cards.rarity-style','visual.cards.effects-finish','visual.cards.deck-builder','visual.cards.print-sheet','visual.cards.review-export'}
+    def test_cinematic_product_preserves_timed_editable_overlays(self):
+        product=vt.get('visual.cinematic.core')
+        required={'visual.cinematic.project-hub','visual.cinematic.title-card-editor','visual.cinematic.lower-third-editor','visual.cinematic.chapter-card-editor','visual.cinematic.subtitle-editor','visual.cinematic.credits-editor','visual.cinematic.overlay-timeline','visual.cinematic.transition-editor','visual.cinematic.trailer-layout','visual.cinematic.end-card-editor','visual.cinematic.review-export'}
         self.assertEqual(set(product['screens']),required)
-        self.assertEqual(product['style'],'visual.cards.collectible')
+        self.assertEqual(product['style'],'visual.cinematic.motion')
         quality=' '.join(product['quality']).lower()
         self.assertIn('separately editable',quality)
-        self.assertIn('rules text',quality)
-        self.assertIn('face and back',quality)
-        self.assertIn('print/digital export',quality)
-        self.assertIn('artwork_area_ratio',vt.get('visual.cards.face-editor')['math_hooks'])
-        self.assertIn('bleed_ratio',vt.get('visual.cards.print-sheet')['math_hooks'])
+        self.assertIn('silently hidden',quality)
+        self.assertIn('exact source text',quality)
+        self.assertIn('time ranges',quality)
+        self.assertIn('title_safe_ratio',vt.get('visual.cinematic.title-card-editor')['math_hooks'])
+        self.assertIn('timeline_track_ratio',vt.get('visual.cinematic.overlay-timeline')['math_hooks'])
 
     def test_products_resolve_and_previews_parse(self):
         for pid in PRODUCTS:
@@ -60,40 +60,40 @@ class VisualTemplateTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             with Registry(Path(td)/'stickers.sqlite') as registry:
                 pins=vt.install_builtins(registry)
-                self.assertEqual(len(pins),136)
-                cards=registry.search(adapter=vt.ADAPTER,tag='cards',limit=100)['entries']
-                self.assertEqual(len(cards),11)
-                d=registry.get('visual.visual.cards.face-editor',1)
+                self.assertEqual(len(pins),148)
+                cinematic=registry.search(adapter=vt.ADAPTER,tag='cinematic',limit=100)['entries']
+                self.assertEqual(len(cinematic),11)
+                d=registry.get('visual.visual.cinematic.subtitle-editor',1)
                 self.assertEqual(d['recipe']['visual_template']['schema'],vt.SCHEMA)
                 self.assertNotIn('"latest"',json.dumps(d,sort_keys=True))
 
-    def test_card_source_and_output_contracts(self):
-        required={'card-frame','artwork-window','stat-block','ability-row','rarity-badge','cost-symbol','card-state','deck-slot','foil-pass','print-safe-frame'}
+    def test_cinematic_timing_text_and_safezone_contracts(self):
+        required={'title-card','lower-third','subtitle-cue','credit-entry','timeline-cue','transition-safe-zone','overlay-track','shot-marker','end-card','legal-line'}
         self.assertTrue(required <= set(vt.PRIMITIVES))
-        self.assertTrue(vt.PRIMITIVES['card-frame']['geometry_must_remain_editable'])
-        self.assertTrue(vt.PRIMITIVES['artwork-window']['source_and_crop_remain_separate'])
-        self.assertTrue(vt.PRIMITIVES['stat-block']['label_value_pair_must_be_explicit'])
-        self.assertTrue(vt.PRIMITIVES['ability-row']['rules_text_must_remain_exact'])
-        self.assertTrue(vt.PRIMITIVES['rarity-badge']['must_not_depend_on_color'])
-        self.assertTrue(vt.PRIMITIVES['cost-symbol']['value_and_resource_type_required'])
-        self.assertTrue(vt.PRIMITIVES['card-state']['state_must_be_explicit'])
-        self.assertTrue(vt.PRIMITIVES['deck-slot']['card_reference_must_be_exact'])
-        self.assertTrue(vt.PRIMITIVES['foil-pass']['finish_must_not_replace_base_art'])
-        self.assertTrue(vt.PRIMITIVES['print-safe-frame']['guide_must_not_mutate_source_layout'])
+        self.assertTrue(vt.PRIMITIVES['title-card']['text_timing_layout_separate'])
+        self.assertTrue(vt.PRIMITIVES['lower-third']['identity_and_timing_must_be_explicit'])
+        self.assertTrue(vt.PRIMITIVES['subtitle-cue']['text_and_timecode_must_be_exact'])
+        self.assertTrue(vt.PRIMITIVES['credit-entry']['credit_text_must_remain_exact'])
+        self.assertTrue(vt.PRIMITIVES['timeline-cue']['time_range_must_be_explicit'])
+        self.assertTrue(vt.PRIMITIVES['transition-safe-zone']['transition_cannot_silently_occlude_required_content'])
+        self.assertTrue(vt.PRIMITIVES['overlay-track']['order_and_timing_must_be_explicit'])
+        self.assertTrue(vt.PRIMITIVES['shot-marker']['marker_identity_and_time_required'])
+        self.assertTrue(vt.PRIMITIVES['end-card']['content_and_duration_must_be_explicit'])
+        self.assertTrue(vt.PRIMITIVES['legal-line']['content_must_remain_exact'])
 
     def test_prior_source_boundaries_remain_present(self):
+        self.assertTrue(vt.PRIMITIVES['card-frame']['geometry_must_remain_editable'])
         self.assertTrue(vt.PRIMITIVES['crop-safe-frame']['crop_must_not_modify_source_geometry'])
         self.assertTrue(vt.PRIMITIVES['speech-bubble']['text_and_tail_remain_separate'])
-        self.assertTrue(vt.PRIMITIVES['inventory-slot']['ownership_must_be_explicit'])
         self.assertTrue(vt.PRIMITIVES['truth-state']['source_must_be_visible'])
 
     def test_copy_safety_variant_rejection_and_bad_geometry(self):
-        a=vt.resolve('visual.cards.face-editor',1920,1080); b=vt.resolve('visual.cards.face-editor',1920,1080)
+        a=vt.resolve('visual.cinematic.overlay-timeline',1920,1080); b=vt.resolve('visual.cinematic.overlay-timeline',1920,1080)
         self.assertEqual(a,b)
-        copy=vt.get('visual.cards.face-editor'); copy['name']='changed'
-        self.assertNotEqual(vt.get('visual.cards.face-editor')['name'],'changed')
-        with self.assertRaises(ValueError): vt.resolve('visual.cards.face-editor',1920,1080,variant='unknown')
-        bad=vt.get('visual.cards.print-sheet'); bad['variants']['standard']['sheet']=[.9,.9,.2,.2]
+        copy=vt.get('visual.cinematic.overlay-timeline'); copy['name']='changed'
+        self.assertNotEqual(vt.get('visual.cinematic.overlay-timeline')['name'],'changed')
+        with self.assertRaises(ValueError): vt.resolve('visual.cinematic.overlay-timeline',1920,1080,variant='unknown')
+        bad=vt.get('visual.cinematic.transition-editor'); bad['variants']['standard']['preview']=[.9,.9,.2,.2]
         with self.assertRaises(ValueError): vt.validate_screen(bad)
 
     def test_exact_sticker_slot_binding_is_retained(self):
