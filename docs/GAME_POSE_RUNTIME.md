@@ -113,7 +113,9 @@ integer weights, static matrices, loop boundaries and rejected inputs.
 it independently re-imports both GLBs rebuilt by the existing Parcel Imp source,
 evaluates three clips at six authored keyframes each, and compares all 16 joint
 origins and the complete deformed vertex point sets. A fresh Blender process is
-the reference; the production sampler uses no Blender code. Both directional
+the reference; the production sampler uses no Blender code. Objects explicitly
+used as Blender bone custom shapes are excluded because the importer creates
+them for rig display, not from the GLB mesh. Both directional
 nearest-point errors must remain under 0.00002 metres. Vertex order/topology is
 not inferred from this point-set comparison. Between-key SLERP and crossfades
 have analytical unit coverage; native crossfade playback is not claimed.
@@ -122,6 +124,11 @@ The `Offline game pose evidence` Actions artifact carries the rebuilt GLBs,
 editable Blender source and `pose-runtime-comparison.json`. Its actual job result
 determines whether the real-asset reference passed. It must not be inferred from
 the unit tests or from this document.
+
+The recorded run in `docs/evidence/game-pose-runtime-2026-09-15.json` passed
+36 poses with maximum joint error 0.000000615 m and maximum bidirectional
+vertex error 0.000001800 m. It identifies the exact code commit and both GLB
+digests. LOD0/LOD1 each compared 73,060/26,134 vertex positions per pose.
 
 No shading, deformed normals/tangents, physics, constraints/IK, automatic
 transition blending, continuous visual playback or device performance is
