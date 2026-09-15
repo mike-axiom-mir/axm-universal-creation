@@ -1,3 +1,34 @@
+### Reusable sticker assemblies — 2026-09-15
+
+- UC remains standalone: its installed package includes both registry and creation
+  commands. The new axm-sticker-fabric repository is an optional sharing/growth
+  surface; UC does not fetch/import it at runtime.
+- Completed save/reuse of nested rigid assemblies, exact dependency-closure
+  library export/import, atomic batch registration, and the same JSON authoring
+  commands for human, script and AI callers. Create procedural 3D parts, capture
+  existing GLBs/Studio layers, save groups and export actual animated assemblies.
+- Export shares geometry/material/image resources per exact source while giving
+  each placement independent nodes. Selected source clips and explicit local
+  socket traces compose into AssemblyMotion; original clips/source remain intact.
+- Local evidence: 23 sticker tests pass (13 existing + 10 new); captured material
+  texture channels remap to exact embedded bytes. Rivetwing proof expands 277
+  records (272 rigid leaves), uses 15 GLB/mesh resources, 826 nodes, 206104 bytes;
+  local export ~0.10 seconds. Fresh portable-registry rebuild is byte-identical.
+  Four sampled poses verify exact loop closure and actual nonzero motion.
+- Preview inspected: articulated wings/gear eyes and repeated rivets remain
+  visible in three decoded GLB poses. Repaired floating-point endpoint residue
+  before claiming exact loop closure. This is offline flat-color geometry
+  inspection, not shaded/continuous engine playback, physics or LOD acceptance.
+- Reproduce: tools/sticker_assembly_proof.py; tests/test_sticker_assemblies.py;
+  docs/STICKER_ASSEMBLIES.md. CI publishes registry, GLB, editable requests/library,
+  preview and receipts. Next: interactive placement/source editing, surface
+  projection, bounded LOD selection, skinned parts after separate verification.
+- Active lane codex/rts-reference-foundry, base main 741eb6c (PR #79 merged).
+  Root gate: Truth scopes evidence; Agency gives equal explicit creation controls;
+  Continuity preserves editable source and pins; Wisdom shares resources and
+  bounds expansion. Actual-head CI results determine merge readiness.
+
+
 # Game style growth
 
 Mike's 2026-09-13 direction: retain the existing realistic/product-design
