@@ -1,0 +1,34 @@
+{
+  "name": "AXM Serious Electric Arc",
+  "kind": "electric-arc",
+  "seed": 471,
+  "canvas": {
+    "width": 1280,
+    "height": 720
+  },
+  "topology": {
+    "source": [0.12, 0.17],
+    "target": [0.86, 0.82],
+    "grid": 64,
+    "walkers": 48,
+    "spread": 0.11,
+    "octaves": 6,
+    "roughness": 0.78
+  },
+  "guides": {
+    "points": [
+      [0.31, 0.29],
+      [0.53, 0.43],
+      [0.68, 0.66]
+    ],
+    "strength": 0.72,
+    "radius": 0.13
+  },
+  "realization": {
+    "color": "#c9edff",
+    "background": "#05070c",
+    "core_width": 1.35,
+    "glow_width": 14.0,
+    "glow_strength": 0.88
+  }
+}
