@@ -1,0 +1,84 @@
+{
+  "kind": "creative-flow",
+  "direction": "exercise one deterministic multi-hand mesh creation flow",
+  "inputs": {
+    "mode": "execute",
+    "goal": "create a shallow edited plane and inspect its final bounds",
+    "state": {
+      "request_label": "creative-flow-wave8-example"
+    },
+    "steps": [
+      {
+        "id": "plane",
+        "hand_id": "creative.mesh-primitive.plane",
+        "args": {
+          "spec": {
+            "id": "example-plane",
+            "detail": 4
+          }
+        },
+        "save_as": "mesh"
+      },
+      {
+        "id": "faces",
+        "hand_id": "creative.mesh-face-select.all",
+        "args": {
+          "mesh": {
+            "$state": "mesh"
+          }
+        },
+        "save_as": "selection"
+      },
+      {
+        "id": "extrude",
+        "hand_id": "creative.mesh-face-edit.extrude-region",
+        "args": {
+          "mesh": {
+            "$state": "mesh"
+          },
+          "selection": {
+            "$state": "selection"
+          },
+          "spec": {
+            "distance": 0.5,
+            "direction": [0, 1, 0]
+          }
+        },
+        "save_as": "extruded"
+      },
+      {
+        "id": "shear",
+        "hand_id": "creative.mesh-modifier.shear",
+        "args": {
+          "mesh": {
+            "$state": "extruded"
+          },
+          "spec": {
+            "target_axis": "x",
+            "source_axis": "y",
+            "factor": 0.25
+          }
+        },
+        "save_as": "model"
+      },
+      {
+        "id": "inspect",
+        "recipe_id": "mesh-analysis.bounds",
+        "args": {
+          "mesh": {
+            "$state": "model"
+          }
+        },
+        "save_as": "bounds"
+      }
+    ],
+    "expose": {
+      "model": {
+        "$state": "model"
+      },
+      "bounds": {
+        "$state": "bounds"
+      }
+    }
+  }
+}
