@@ -7,7 +7,8 @@ import json
 from pathlib import Path
 from typing import Any
 
-from axm_stickers import domain_catalog, domain_family, resolve_family, value_map
+from axm_stickers import (domain_catalog, domain_family, measure_catalog,
+                          resolve_family_with_measures, value_map)
 
 SCHEMA = "axm.math-create/v1"
 BOUND_SCHEMA = "axm.math-bound-request/v1"
@@ -46,7 +47,7 @@ def bind_request(spec: Any) -> dict[str, Any]:
     if not isinstance(spec, dict):
         raise ValueError("math-create request must be an object")
     required = {"schema", "template", "bindings"}
-    optional = {"family", "family_id", "variant", "overrides"}
+    optional = {"family", "family_id", "variant", "overrides", "measure_overrides"}
     if not required <= set(spec) or set(spec) - required - optional or spec["schema"] != SCHEMA:
         raise ValueError("unsupported math-create request")
 
@@ -58,10 +59,11 @@ def bind_request(spec: Any) -> dict[str, Any]:
     if not isinstance(bindings, dict) or not 1 <= len(bindings) <= MAX_BINDINGS:
         raise ValueError("bindings must contain 1..256 value paths")
 
-    result = resolve_family(
+    result = resolve_family_with_measures(
         family,
         variant=spec.get("variant"),
         overrides=spec.get("overrides"),
+        measure_overrides=spec.get("measure_overrides"),
     )
     values = value_map(result)
     request = copy.deepcopy(template)
@@ -92,9 +94,11 @@ def bind_request(spec: Any) -> dict[str, Any]:
         "request": request,
         "bindings": copy.deepcopy(bindings),
         "truth_boundary": (
-            "Math bindings replace only declared numeric template targets. Built-in family IDs resolve "
-            "to local relation definitions; they do not fetch network data or imply empirical standards. "
-            "The downstream creation machine remains responsible for its own capability checks and output evidence."
+            "Math bindings replace only declared numeric template targets. Built-in family IDs and "
+            "known-measure IDs resolve only to local records; no network fetch occurs at creation time. "
+            "Known measures remain scoped definitions or conventions rather than automatic claims about "
+            "a particular physical object or location. The downstream creation machine remains responsible "
+            "for its own capability checks and output evidence."
         ),
     }
 
@@ -124,20 +128,24 @@ def _read_request(path: str) -> dict[str, Any]:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         prog="axm-math-create",
-        description="Resolve dimension-aware math and bind it into a Universal Creation request",
+        description="Resolve dimension-aware math and source-backed measures into a Universal Creation request",
     )
     parser.add_argument("request", nargs="?", help="axm.math-create/v1 JSON request")
     parser.add_argument("--root", help="Universal Creation machine root; normally auto-detected")
     parser.add_argument("--catalog", action="store_true", help="list built-in mathematical relation families")
+    parser.add_argument("--measure-catalog", action="store_true", help="list installed source-backed known measures")
     args = parser.parse_args(argv)
 
-    if args.catalog:
+    if args.catalog or args.measure_catalog:
         if args.request:
-            parser.error("--catalog does not accept a request file")
-        print(json.dumps(domain_catalog(), indent=2, ensure_ascii=False, sort_keys=True))
+            parser.error("catalog modes do not accept a request file")
+        if args.catalog and args.measure_catalog:
+            parser.error("choose one catalog mode")
+        payload = domain_catalog() if args.catalog else measure_catalog()
+        print(json.dumps(payload, indent=2, ensure_ascii=False, sort_keys=True))
         return 0
     if not args.request:
-        parser.error("request is required unless --catalog is used")
+        parser.error("request is required unless a catalog mode is used")
 
     from .machine import UniversalCreationMachine
     from .paths import find_machine_root
