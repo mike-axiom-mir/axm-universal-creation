@@ -6,6 +6,8 @@ module.exports = Object.freeze({
   conformance: require('./conformance'),
   editKernel: require('./edit-kernel'),
   creativePrecision: require('./creative-precision'),
+  precisionRaster: require('./precision-raster'),
+  precisionTransform: require('./precision-transform'),
   runtimeSubstrates: require('./runtime-substrates'),
   negotiationSdk: require('./negotiation-sdk'),
   roundTripLedger: require('./roundtrip-ledger'),
