@@ -121,7 +121,7 @@ class ParallelCreationTests(unittest.TestCase):
         worker.write_text('import time\ntime.sleep(30)\n')
         if sys.platform == 'win32': self.skipTest('POSIX executable fixture; main adapter remains portable')
         launcher = self.root / 'blocked'
-        launcher.write_text('#!' + sys.executable + '\nimport time\ntime.sleep(30)\n'); launcher.chmod(0o755)
+        launcher.write_text('#!' + sys.executable + '\nimport subprocess,sys,time\nsubprocess.Popen([sys.executable, \"-c\", \"import time; time.sleep(30)\"])\ntime.sleep(30)\n'); launcher.chmod(0o755)
         job = {'root': str(self.root), 'python': str(launcher), 'workers': 1, 'timeout': 1, 'digest': 'timeout',
                'tasks': [{'id': 'first', 'operation': 'test', 'dependencies': [], 'digest': '1', 'input': 'unused'},
                          {'id': 'next', 'operation': 'test', 'dependencies': ['first'], 'digest': '2', 'input': 'unused'}]}

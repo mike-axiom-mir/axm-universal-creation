@@ -11,6 +11,7 @@ from .core import (SCHEMA, MAX_ASSETS, Registry, digest, encode, identifier,
 from .placement import identity, rigid, attachment_matrix
 
 ASSEMBLY = 'axm.sticker.assembly-3d/v1'
+CREATIVE = 'axm.sticker.creative-task/v1'
 LIBRARY = 'axm.sticker-library/v1'
 MAX_PARTS = 4096
 MAX_DEPTH = 16
@@ -84,11 +85,46 @@ def save_assembly(registry, *, id, name, children, origin, ver=1, socket='mount'
     return d
 
 
+def library_definitions(registry, root):
+    """Exact dependency closure for assemblies and typed creative task outputs.
+
+    Creative dependencies are data pins, never executable code or render rules.
+    """
+    selected = {}; heights = {}
+    def visit(d, ancestors):
+        key = digest(d)
+        if key in ancestors or len(ancestors) >= MAX_DEPTH:
+            raise ValueError('cyclic or too-deep library dependency')
+        if key in heights:
+            if len(ancestors) + heights[key] > MAX_DEPTH:
+                raise ValueError('too-deep library dependency')
+            return heights[key]
+        if len(selected) >= MAX_PARTS: raise ValueError('library dependency budget exceeded')
+        selected[key] = d
+        height = 1
+        if d['adapter'] == ASSEMBLY:
+            for record in expand(registry, d)[1:]:
+                height = max(height, 1 + visit(record['definition'], ancestors + (key,)))
+        elif d['adapter'] == CREATIVE:
+            pins = d['recipe'].get('dependencies')
+            if not isinstance(pins, list) or len(pins) > 256:
+                raise ValueError('creative task requires bounded dependency pins')
+            for pin in pins:
+                if not isinstance(pin, dict): raise ValueError('invalid creative dependency pin')
+                source = registry.get(pin.get('id'), pin.get('version'))
+                placed = instance(source, 'dependency'); placed['sticker'] = pin
+                resolve(source, placed)
+                height = max(height, 1 + visit(source, ancestors + (key,)))
+        heights[key] = height
+        return height
+    visit(root, ())
+    return list(selected.values())
+
+
 def library_bundle(registry,id,ver):
     """Closure includes every source once, not per placement."""
     root=registry.get(id,ver)
-    records=expand(registry,root) if root['adapter']==ASSEMBLY else [{'definition':root}]
-    definitions={digest(r['definition']):r['definition'] for r in records}
+    definitions={digest(d):d for d in library_definitions(registry, root)}
     refs={s for d in definitions.values() for s in d['assets'].values()}
     assets={}; total=0
     for key in sorted(refs):
@@ -118,8 +154,7 @@ def import_library(registry,bundle):
     if not isinstance(pin,dict): raise ValueError('invalid library root')
     d=Lookup().get(pin.get('id'),pin.get('version'))
     p=instance(d,'check'); p['sticker']=pin; resolve(d,p)
-    records=expand(Lookup(),d) if d['adapter']==ASSEMBLY else [{'definition':d}]
-    if {digest(r['definition']) for r in records} != {digest(x) for x in definitions}:
+    if {digest(r) for r in library_definitions(Lookup(), d)} != {digest(x) for x in definitions}:
         raise ValueError('library includes unrelated definitions')
     refs={s for d in definitions for s in d['assets'].values()}
     if not isinstance(assets,dict) or set(assets)!=refs or any(not isinstance(v,str) for v in assets.values()):

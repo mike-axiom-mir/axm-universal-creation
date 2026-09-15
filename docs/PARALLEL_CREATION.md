@@ -13,10 +13,11 @@ axm-create-parallel plan.json new-asset-directory --workers 4 --timeout 120
 ```
 
 Python callers use `axm_uc.parallel_create.build(plan, output, workers=4)`.
-Humans, deterministic software and AI use the same explicit JSON contract. The
-current adapters are `create_3d` and `save_assembly`, using the existing sticker
-creator's parameters. This is two wired operation families, not a claim that
-hundreds of tool adapters are already available.
+This is the internal machine contract. A human-facing prompt interpreter or
+creation control invokes it underneath; people need not author task steps.
+`axm-create-surface` demonstrates a single creation request compiled to the graph.
+Adapters now include `create_3d`, `save_assembly`, `create_material`,
+`create_effect`, `compose_layers`, and `edit_layers`. See CREATIVE_OUTPUTS.md.
 
 Each task runs in a separate Python process with a private SQLite registry.
 Independent tasks can run concurrently. Assembly tasks wait for exact completed
@@ -76,7 +77,7 @@ the actual completed definition. Saved groups can be dependencies of larger
 groups. Children accept the existing explicit socket animation traces and source
 clip selection; the executor does not alter animation, material or style intent.
 
-Successful output contains `asset.glb`, `library.json`, `stickers.sqlite`,
+Successful output contains `asset.glb` or `asset.png`, `library.json`, `stickers.sqlite`,
 `plan.json`, and `receipt.json`. The library contains the chosen asset's closure;
 the registry retains every successful task so unused parts remain reusable too.
 Source dictionary order is preserved because existing authoring tools save that
@@ -101,7 +102,8 @@ transactional. Interrupts cancel queued jobs and terminate active child workers.
 The donor supports pause/resume and checkpointing internally, but this UC adapter
 does not expose checkpoint reuse: safe persistent reuse also needs exact tool and
 artifact lifetime binding. Nor does this adapter accept arbitrary shell commands,
-plugins, remote workers or file-reading tools. Add further tool families through
+plugins, remote workers or arbitrary file-reading tools. Composition sources
+are typed PNG outputs of declared dependencies. Add further tool families through
 explicit validated adapters, with their input capture and output merge rules.
 
 `python tools/parallel_creation_proof.py NEW_DIRECTORY` constructs Rivetwing as

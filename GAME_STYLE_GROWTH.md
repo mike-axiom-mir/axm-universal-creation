@@ -1,3 +1,38 @@
+### Creation controls and editable creative outputs — 2026-09-15
+
+- UC creates reusable assets for humans, deterministic machines and AI. Humans can
+  use a creation request/control and continue editing in the existing Studio.
+  Internal task graphs remain available to machine/AI orchestration.
+- Added create_material, create_effect, compose_layers and edit_layers to parallel
+  workers. One create_surface request compiles a four-task charged-surface creation.
+  Typed PNG dependencies capture exact inputs without arbitrary source paths.
+  Existing material families and finishes, including realistic, remain selectable.
+- Outputs: finished PNG, replayable Studio project, original PBR maps, effect
+  graph/SVG, intermediate compositions and complete immutable dependency library.
+  Libraries import without UC/renderers; shared sources stay deduplicated and
+  depth bounded. Worker cancellation now includes nested local tools.
+- Local verification: five creative integration tests, six worker tests, 27 sticker
+  tests and 16 unchanged donor JS tests pass. Stormpost proof independently restores
+  four definitions and reproduces PNG bytes; Studio replay is byte-exact; a further
+  opacity edit changes pixels without modifying source. Eleven material maps load;
+  all 141 original effect edges remain editable.
+- Static inspection: painted surface, separate branching arc, finished composition
+  and visibly reduced-charge Studio edit. This proves generated pixels/source replay,
+  not live editor interaction, animation or 3D projection. Artistic overlays do not
+  silently replace physically consistent PBR maps.
+- Reproduce: tools/creative_surface_proof.py, tests/test_creative_tasks.py,
+  docs/CREATIVE_OUTPUTS.md. Linux/Windows CI runs installed commands and publishes
+  proof under parallel-creation artifacts. Actual head checks govern merge readiness.
+- Next: more bounded creation compositions, compatible precision tools from main,
+  explicit 3D/channel binding with separate evidence. Free-form prompt interpretation
+  is not implemented by this deterministic control.
+- Lane: codex/rts-reference-foundry; PR recorded on publication. Base includes
+  independent PR #83 without modifying its files.
+- Roots: Truth scopes claims to executed generation/replay and visible stills;
+  Agency retains equal callable controls and Studio editing; Continuity preserves
+  original sources; Wisdom bounds work and rejects incomplete libraries. UC stays
+  standalone.
+
 ### Deterministic parallel creation — 2026-09-15
 
 - Reused the exact Apache-2.0 scheduler from axm-parallel-capability at
