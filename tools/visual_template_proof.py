@@ -8,7 +8,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src'))
 from axm_uc import visual_templates as vt
 
 SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
-PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell","visual.keyart.core","visual.cards.core","visual.cinematic.core","visual.broadcast.core","visual.diagram.core")
+PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell","visual.keyart.core","visual.cards.core","visual.cinematic.core","visual.broadcast.core","visual.diagram.core","visual.atlas.core")
 
 def _write(project,target):
     target.mkdir(); out=[]
@@ -25,7 +25,7 @@ def main(argv):
     out.mkdir(parents=True)
     try:
         counts=vt.validate_catalog()
-        if counts!={'styles':17,'primitives':116,'screens':154,'products':15}: raise AssertionError(counts)
+        if counts!={'styles':18,'primitives':126,'screens':164,'products':16}: raise AssertionError(counts)
         evidence=[]
         for pid in PRODUCTS:
             expected=vt.get(pid)
@@ -50,27 +50,28 @@ def main(argv):
             ('visual.cinematic.core',1920,1080,'cinematic','AXM Cinematic Title and Overlay Foundation'),
             ('visual.broadcast.core',1920,1080,'broadcast','AXM Video and Stream Overlay Foundation'),
             ('visual.diagram.core',1920,1080,'diagram','AXM Evidence-Aware Diagram Foundation'),
+            ('visual.atlas.core',1920,1080,'atlas','AXM World-Map and Lore-Atlas Foundation'),
         )
         outputs=[]
         for pid,w,h,folder,title in galleries: outputs+=_write(vt.product_project(pid,w,h,title),out/folder)
         outputs+=_write(vt.screen_project('product.mobile.home',1080,1920,'AXM Mobile Foundation'),out/'mobile-home')
-        product=vt.get('visual.diagram.core')
-        required={'visual.diagram.project-hub','visual.diagram.canvas-editor','visual.diagram.node-editor','visual.diagram.relationship-editor','visual.diagram.evidence-editor','visual.diagram.annotation-editor','visual.diagram.legend-style','visual.diagram.layout-variants','visual.diagram.review-compare','visual.diagram.export'}
-        if set(product['screens'])!=required: raise AssertionError('diagram pack lost required surfaces')
+        product=vt.get('visual.atlas.core')
+        required={'visual.atlas.project-hub','visual.atlas.map-editor','visual.atlas.region-editor','visual.atlas.route-editor','visual.atlas.poi-lore','visual.atlas.layer-editor','visual.atlas.timeline-state','visual.atlas.coordinate-source','visual.atlas.review-compare','visual.atlas.export'}
+        if set(product['screens'])!=required: raise AssertionError('atlas pack lost required surfaces')
         checks={
-            'node_identity_exact':vt.PRIMITIVES['diagram-node']['identity_must_be_exact'],
-            'relationship_endpoints_type':vt.PRIMITIVES['relationship-edge']['endpoints_and_relation_type_required'],
-            'evidence_source_status':vt.PRIMITIVES['evidence-reference']['source_and_status_required'],
-            'data_value_unit_source_period':vt.PRIMITIVES['data-field']['value_unit_source_period_required'],
-            'annotation_target_exact':vt.PRIMITIVES['annotation-pin']['target_reference_must_be_exact'],
-            'legend_noncolor':vt.PRIMITIVES['legend-entry']['meaning_must_not_depend_on_color_only'],
-            'group_membership_explicit':vt.PRIMITIVES['group-boundary']['membership_must_be_explicit'],
-            'layout_preserves_semantics':vt.PRIMITIVES['layout-guide']['guide_must_not_change_semantic_relationships'],
-            'callout_evidence_separate':vt.PRIMITIVES['callout-card']['content_and_evidence_status_separate'],
-            'export_requirements_visible':vt.PRIMITIVES['diagram-export-target']['target_requirements_must_be_visible'],
+            'region_geometry_source':vt.PRIMITIVES['map-region']['geometry_source_required'],
+            'route_endpoints_status':vt.PRIMITIVES['route-path']['endpoints_and_status_required'],
+            'poi_location_source':vt.PRIMITIVES['poi-marker']['location_source_required'],
+            'layer_source':vt.PRIMITIVES['map-layer']['layer_source_required'],
+            'time_period_status':vt.PRIMITIVES['time-slice']['period_and_status_required'],
+            'lore_target_source':vt.PRIMITIVES['lore-reference']['target_and_source_required'],
+            'boundary_type_source':vt.PRIMITIVES['boundary-line']['boundary_type_and_source_required'],
+            'coordinate_system_source_precision':vt.PRIMITIVES['map-coordinate']['system_source_precision_required'],
+            'overlay_source_time':vt.PRIMITIVES['state-overlay']['source_and_time_required'],
+            'export_requirements_visible':vt.PRIMITIVES['atlas-export-target']['requirements_must_be_visible'],
         }
-        if not all(checks.values()): raise AssertionError('diagram semantic/evidence contract failed')
-        receipt={'schema':'axm.visual-template-proof/v11','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'diagram_checks':checks,'truth':'Offline structural evidence only. Relationship truth, causal validity, evidence sufficiency, data correctness and aesthetic acceptance were not observed.'}
+        if not all(checks.values()): raise AssertionError('atlas spatial/source contract failed')
+        receipt={'schema':'axm.visual-template-proof/v12','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'atlas_checks':checks,'truth':'Offline structural evidence only. Coordinate accuracy, route truth, boundary claims, chronology correctness, lore truth and aesthetic acceptance were not observed.'}
         (out/'receipt.json').write_text(json.dumps(receipt,indent=2,sort_keys=True),encoding='utf-8')
         print(json.dumps(receipt,indent=2,sort_keys=True))
     except BaseException:
