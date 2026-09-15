@@ -649,4 +649,3 @@ exports when those features change. Measure performance before making claims.
 - Approval basis: Mike explicitly authorizes this bounded improvement campaign
   and its merges; evaluate against the four roots and relevant checks, preserving
   uncertainty. Do not leave sound changes waiting solely for Mike's confirmation.
-
