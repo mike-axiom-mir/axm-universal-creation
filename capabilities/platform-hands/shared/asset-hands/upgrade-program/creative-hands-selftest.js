@@ -36,4 +36,4 @@ assert.equal(quant.result.image.schema,'axm.precision-raster/v1');
 const sheet=Hands.invoke('creative.pixel.spritesheet',{frames:[image,image],spec:{columns:2,padding:1}});
 assert.equal(sheet.result.frames,2);
 assert.equal(sheet.result.image.width,17);
-console.log('creative executable hands selftest PASS:',audit.total);
+console.log(JSON.stringify({status:'PASS',executable_hands:audit.total,by_family:audit.by_family,bright:bright.digest,paint:paint.digest,star:star.digest,sheet:sheet.digest},null,2));
