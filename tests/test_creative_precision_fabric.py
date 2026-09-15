@@ -10,7 +10,7 @@ PROGRAM = ROOT / 'capabilities' / 'platform-hands' / 'shared' / 'asset-hands' / 
 
 @unittest.skipUnless(shutil.which('node'), 'Node is required; dedicated CI supplies it')
 class CreativePrecisionFabricTests(unittest.TestCase):
-    def run_node(self, name):
+    def run_node(self, name, echo=False):
         result = subprocess.run(
             ['node', str(PROGRAM / name)],
             cwd=ROOT,
@@ -18,6 +18,8 @@ class CreativePrecisionFabricTests(unittest.TestCase):
             text=True,
             timeout=60,
         )
+        if echo:
+            print(result.stdout)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn('"status": "PASS"', result.stdout)
 
@@ -76,7 +78,7 @@ class CreativePrecisionFabricTests(unittest.TestCase):
         self.run_node('creative-finishing-contract-selftest.js')
 
     def test_quality_level_creation_gauntlet(self):
-        self.run_node('creative-quality-gauntlet-selftest.js')
+        self.run_node('creative-quality-gauntlet-selftest.js', echo=True)
 
 
 if __name__ == '__main__':
