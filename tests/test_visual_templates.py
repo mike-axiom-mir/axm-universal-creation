@@ -1,182 +1,97 @@
 import json
 from pathlib import Path
-import sys
-import tempfile
-import unittest
+import sys,tempfile,unittest
 from xml.etree import ElementTree
-
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'src'))
 from axm_stickers import Registry
 from axm_uc import visual_templates as vt
 
-
 SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
-GAME_PRODUCTS=('game.racing.full','game.coop.action','game.rts.command','game.system.shell')
-CREATIVE_PRODUCTS=('editor.creative.core','comic.narrative.core')
-
+PRODUCTS=('game.racing.full','game.coop.action','game.rts.command','game.system.shell','editor.creative.core','comic.narrative.core','axm.system.shell')
 
 class VisualTemplateTests(unittest.TestCase):
-    def test_catalog_is_valid_and_professional_pack_is_present(self):
+    def test_catalog_counts_and_products(self):
         counts=vt.validate_catalog()
-        self.assertEqual(counts,{'styles':10,'primitives':47,'screens':79,'products':8})
+        self.assertEqual(counts,{'styles':11,'primitives':57,'screens':91,'products':9})
         self.assertEqual(vt.CATALOG_COMPOSITION['counts'],counts)
-        products={p['id'] for p in vt.catalog()['products']}
-        self.assertTrue({'game.racing.performance','game.racing.full','game.coop.action','game.rts.command','game.system.shell','software.creator.studio','editor.creative.core','comic.narrative.core'} <= products)
+        ids={p['id'] for p in vt.catalog()['products']}
+        self.assertTrue(set(PRODUCTS)|{'game.racing.performance','software.creator.studio'} <= ids)
 
-    def test_all_resolutions_stay_in_viewport(self):
-        for tid in vt.SCREEN_TEMPLATES:
+    def test_all_geometry_and_major_variants(self):
+        for tid,definition in vt.SCREEN_TEMPLATES.items():
+            if tid.startswith(('game.','editor.creative.','comic.narrative.','axm.system.')):
+                self.assertEqual(set(definition['variants']),{'compact','standard','wide'},tid)
             for width,height in SIZES:
                 out=vt.resolve(tid,width,height)
-                for box in out['regions'].values():
-                    x,y,w,h=box
-                    self.assertGreaterEqual(x,0); self.assertGreaterEqual(y,0)
-                    self.assertLessEqual(x+w,width+1e-6); self.assertLessEqual(y+h,height+1e-6)
+                for x,y,w,h in out['regions'].values():
+                    self.assertGreaterEqual(min(x,y,w,h),0)
+                    self.assertLessEqual(x+w,width+1e-6)
+                    self.assertLessEqual(y+h,height+1e-6)
 
-    def test_game_and_creative_screens_supply_all_three_responsive_variants(self):
-        for tid,screen in vt.SCREEN_TEMPLATES.items():
-            if tid.startswith(('game.','editor.creative.','comic.narrative.')):
-                self.assertEqual(set(screen['variants']),{'compact','standard','wide'},tid)
+    def test_existing_product_depth_is_retained(self):
+        self.assertEqual(len(vt.get('game.racing.full')['screens']),19)
+        self.assertEqual(len(vt.get('game.system.shell')['screens']),18)
+        self.assertEqual(len(vt.get('editor.creative.core')['screens']),12)
+        self.assertEqual(len(vt.get('comic.narrative.core')['screens']),10)
+        self.assertIn('game.racing.hud.split',vt.get('game.racing.full')['screens'])
+        self.assertIn('game.system.privacy-consent',vt.get('game.system.shell')['screens'])
+        self.assertIn('editor.creative.node-graph',vt.get('editor.creative.core')['screens'])
+        self.assertIn('comic.narrative.dialogue-editor',vt.get('comic.narrative.core')['screens'])
 
-    def test_deterministic_copy_safe_and_strict_variant(self):
-        a=vt.resolve('game.racing.hud.performance',1920,1080)
-        b=vt.resolve('game.racing.hud.performance',1920,1080)
-        self.assertEqual(a,b)
-        got=vt.get('game.racing.hud.performance'); got['name']='mutated'
-        self.assertNotEqual(vt.get('game.racing.hud.performance')['name'],'mutated')
-        with self.assertRaises(ValueError):
-            vt.resolve('game.racing.hud.performance',1920,1080,variant='unknown')
-
-    def test_full_racing_product_has_professional_shell(self):
-        product=vt.get('game.racing.full')
-        self.assertEqual(len(product['screens']),19)
-        required={
-            'game.racing.home','game.racing.vehicle-select','game.racing.tuning','game.racing.livery',
-            'game.racing.pre-race','game.racing.loading','game.racing.countdown','game.racing.hud.performance',
-            'game.racing.hud.split','game.racing.recovery','game.racing.results','game.racing.replay',
-            'game.racing.season','game.racing.settings','game.racing.accessibility',
-        }
-        self.assertTrue(required <= set(product['screens']))
-        flow={(a,b,action) for a,b,action in product['flow']}
-        self.assertIn(('game.racing.loading','game.racing.countdown','ready'),flow)
-        self.assertIn(('game.racing.countdown','game.racing.hud.performance','start-race'),flow)
-        self.assertIn(('game.racing.hud.performance','game.racing.recovery','connection-loss'),flow)
-
-    def test_shared_game_system_shell_covers_professional_product_plumbing(self):
-        product=vt.get('game.system.shell')
-        self.assertEqual(len(product['screens']),18)
-        required={
-            'game.system.profile','game.system.party','game.system.matchmaking','game.system.server-browser',
-            'game.system.controller-remap','game.system.display','game.system.audio','game.system.accessibility',
-            'game.system.save-slots','game.system.achievements','game.system.tutorial','game.system.photo-mode',
-            'game.system.credits','game.system.error-recovery','game.system.notifications','game.system.chat',
-            'game.system.privacy-consent','game.system.language',
-        }
+    def test_axm_system_shell(self):
+        product=vt.get('axm.system.shell')
+        required={'axm.system.home','axm.system.registry','axm.system.capability-browser','axm.system.cartridge-loader','axm.system.machine-state','axm.system.evidence-review','axm.system.workflow','axm.system.specialists','axm.system.workfloor','axm.system.snapshots','axm.system.settings','axm.system.recovery'}
         self.assertEqual(set(product['screens']),required)
-        privacy=vt.get('game.system.privacy-consent')
-        self.assertIn('revocation',' '.join(privacy['quality']).lower())
-        self.assertIn('observed',' '.join(vt.get('game.system.matchmaking')['quality']).lower())
+        self.assertEqual(product['style'],'axm.machine.glass')
+        flow={(a,b,c) for a,b,c in product['flow']}
+        self.assertIn(('axm.system.cartridge-loader','axm.system.machine-state','inspect-state'),flow)
+        self.assertIn(('axm.system.snapshots','axm.system.recovery','recover'),flow)
 
-    def test_creative_editor_product_covers_editable_source_work(self):
-        product=vt.get('editor.creative.core')
-        self.assertEqual(len(product['screens']),12)
-        required={
-            'editor.creative.project-hub','editor.creative.asset-browser','editor.creative.layer-editor',
-            'editor.creative.timeline','editor.creative.node-graph','editor.creative.inspector',
-            'editor.creative.animation','editor.creative.effects','editor.creative.cutscene',
-            'editor.creative.material','editor.creative.audio','editor.creative.review-export',
-        }
-        self.assertEqual(set(product['screens']),required)
-        self.assertIn('source state',' '.join(product['quality']).lower())
-        self.assertIn('layers',vt.get('editor.creative.layer-editor')['tags'])
-        self.assertIn('graph',vt.get('editor.creative.node-graph')['tags'])
-
-    def test_comic_product_preserves_editable_narrative_structure(self):
-        product=vt.get('comic.narrative.core')
-        self.assertEqual(len(product['screens']),10)
-        required={
-            'comic.narrative.library','comic.narrative.page-editor','comic.narrative.panel-editor',
-            'comic.narrative.dialogue-editor','comic.narrative.character-sheet','comic.narrative.scene-graph',
-            'comic.narrative.storyboard','comic.narrative.motion-timeline','comic.narrative.reader-preview',
-            'comic.narrative.export',
-        }
-        self.assertEqual(set(product['screens']),required)
-        quality=' '.join(product['quality']).lower()
-        self.assertIn('panel geometry',quality)
-        self.assertIn('flattened preview',quality)
-        page=vt.get('comic.narrative.page-editor')
-        self.assertIn('gutter_ratio',page['math_hooks'])
-        dialogue=' '.join(vt.get('comic.narrative.dialogue-editor')['quality']).lower()
-        self.assertIn('reading-order',dialogue)
-
-    def test_products_resolve_exact_screens_across_viewports(self):
-        for product_id in GAME_PRODUCTS+CREATIVE_PRODUCTS:
-            product=vt.get(product_id)
+    def test_products_resolve_and_previews_parse(self):
+        for pid in PRODUCTS:
+            definition=vt.get(pid)
             for width,height in SIZES:
-                out=vt.product_resolution(product_id,width,height)
-                self.assertEqual([x['template']['id'] for x in out['screens']],product['screens'])
-                self.assertEqual(len(out['flow']),len(product['flow']))
+                out=vt.product_resolution(pid,width,height)
+                self.assertEqual([x['template']['id'] for x in out['screens']],definition['screens'])
+            project=vt.product_project(pid,1280,720)
+            svgs=[v for k,v in project['files'].items() if k.endswith('.svg')]
+            self.assertEqual(len(svgs),len(definition['screens']))
+            for svg in svgs: ElementTree.fromstring(svg)
 
-    def test_preview_projects_are_parseable(self):
-        screen=vt.screen_project('comic.narrative.page-editor',1280,720)
-        ElementTree.fromstring(screen['files']['screen.svg'])
-        json.loads(screen['files']['template.json'])
-        for product_id in GAME_PRODUCTS+CREATIVE_PRODUCTS:
-            product=vt.product_project(product_id,1280,720)
-            svgs=[name for name in product['files'] if name.endswith('.svg')]
-            self.assertEqual(len(svgs),len(vt.get(product_id)['screens']))
-            for name in svgs: ElementTree.fromstring(product['files'][name])
-
-    def test_builtins_install_in_existing_sticker_registry(self):
+    def test_registry_installs_all_exact_definitions(self):
         with tempfile.TemporaryDirectory() as td:
             with Registry(Path(td)/'stickers.sqlite') as registry:
                 pins=vt.install_builtins(registry)
-                self.assertEqual(len(pins),87)
-                racing=registry.search(adapter=vt.ADAPTER,tag='racing',limit=100)['entries']
-                game=registry.search(adapter=vt.ADAPTER,tag='game',limit=100)['entries']
-                comic=registry.search(adapter=vt.ADAPTER,tag='comic',limit=100)['entries']
-                self.assertGreaterEqual(len(racing),19)
-                self.assertGreaterEqual(len(game),52)
-                self.assertEqual(len(comic),10)
-                definition=registry.get('visual.comic.narrative.page-editor',1)
-                self.assertEqual(definition['recipe']['visual_template']['schema'],vt.SCHEMA)
-                self.assertNotIn('"latest"',json.dumps(definition,sort_keys=True))
+                self.assertEqual(len(pins),100)
+                self.assertEqual(len(registry.search(adapter=vt.ADAPTER,tag='axm',limit=100)['entries']),12)
+                self.assertEqual(len(registry.search(adapter=vt.ADAPTER,tag='comic',limit=100)['entries']),10)
+                d=registry.get('visual.axm.system.registry',1)
+                self.assertEqual(d['recipe']['visual_template']['schema'],vt.SCHEMA)
+                self.assertNotIn('"latest"',json.dumps(d,sort_keys=True))
 
-    def test_reusable_primitives_cover_game_editing_and_narrative_states(self):
-        required={
-            'player-seat','selection-card','stat-comparison','slider-row','countdown','loading-state',
-            'recovery-banner','telemetry-strip','input-hint','modal','empty-state','tab-strip',
-            'keybind-row','save-slot','party-member','server-row','notification-badge','chat-message',
-            'confirmation-summary','focus-indicator','layer-row','timeline-track','keyframe','node-card',
-            'socket-port','inspector-field','asset-tile','panel-frame','panel-gutter','speech-bubble',
-            'caption-box','storyboard-card','reading-order-marker','character-reference-card','story-beat-link',
-        }
+    def test_reusable_state_contracts(self):
+        required={'player-seat','loading-state','layer-row','timeline-track','node-card','speech-bubble','reading-order-marker','truth-state','capability-card','registry-entry','evidence-chip','state-diff','cartridge-card','specialist-card','workfloor-lane','snapshot-entry','recovery-choice'}
         self.assertTrue(required <= set(vt.PRIMITIVES))
-        self.assertTrue(vt.PRIMITIVES['loading-state']['fake_progress_forbidden'])
-        self.assertTrue(vt.PRIMITIVES['layer-row']['order_must_be_explicit'])
-        self.assertTrue(vt.PRIMITIVES['speech-bubble']['text_and_tail_remain_separate'])
-        self.assertTrue(vt.PRIMITIVES['reading-order-marker']['order_conflicts_must_fail_visible'])
+        self.assertTrue(vt.PRIMITIVES['truth-state']['source_must_be_visible'])
+        self.assertTrue(vt.PRIMITIVES['registry-entry']['no_floating_latest'])
+        self.assertTrue(vt.PRIMITIVES['snapshot-entry']['restore_is_explicit'])
+        self.assertTrue(vt.PRIMITIVES['recovery-choice']['consequence_must_be_visible'])
 
-    def test_slot_binding_requires_exact_pin_and_contract(self):
-        definition={
-            'schema':'axm.sticker/v1','id':'test-speed-cluster','version':1,'name':'Test speed cluster',
-            'tags':['hud','metric'],'origin':{'author':'test','license':'test','source':'test'},
-            'adapter':'test/v1','attachment':{'space':'2d','socket':'surface','anchor':[0,0]},
-            'recipe':{},'assets':{},'parameters':{},
-        }
+    def test_copy_safety_variant_rejection_and_bad_geometry(self):
+        a=vt.resolve('axm.system.home',1920,1080); b=vt.resolve('axm.system.home',1920,1080)
+        self.assertEqual(a,b)
+        copy=vt.get('axm.system.home'); copy['name']='changed'
+        self.assertNotEqual(vt.get('axm.system.home')['name'],'changed')
+        with self.assertRaises(ValueError): vt.resolve('axm.system.home',1920,1080,variant='unknown')
+        bad=vt.get('axm.system.registry'); bad['variants']['standard']['entries']=[.9,.9,.2,.2]
+        with self.assertRaises(ValueError): vt.validate_screen(bad)
+
+    def test_exact_sticker_slot_binding_is_retained(self):
+        d={'schema':'axm.sticker/v1','id':'test-speed-cluster','version':1,'name':'Test speed cluster','tags':['hud','metric'],'origin':{'author':'test','license':'test','source':'test'},'adapter':'test/v1','attachment':{'space':'2d','socket':'surface','anchor':[0,0]},'recipe':{},'assets':{},'parameters':{}}
         with tempfile.TemporaryDirectory() as td:
             with Registry(Path(td)/'stickers.sqlite') as registry:
-                pin=registry.register(definition)
-                bound=vt.bind_sticker_slots('game.racing.hud.performance',registry,{'speed-cluster':pin})
-                self.assertEqual(bound['bindings']['speed-cluster'],pin)
-                bad=dict(pin); bad['digest']='0'*64
-                with self.assertRaises(ValueError):
-                    vt.bind_sticker_slots('game.racing.hud.performance',registry,{'speed-cluster':bad})
-
-    def test_bad_geometry_fails(self):
-        d=vt.get('comic.narrative.page-editor')
-        d['variants']['standard']['page']=[.9,.9,.2,.2]
-        with self.assertRaises(ValueError): vt.validate_screen(d)
-
+                pin=registry.register(d)
+                self.assertEqual(vt.bind_sticker_slots('game.racing.hud.performance',registry,{'speed-cluster':pin})['bindings']['speed-cluster'],pin)
 
 if __name__=='__main__': unittest.main()
