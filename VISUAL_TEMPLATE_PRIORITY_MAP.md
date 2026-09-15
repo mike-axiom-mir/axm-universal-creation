@@ -1,6 +1,6 @@
 # AXM Visual Template Expansion Priority Map
 
-Status: v21 growth lane after verified v1–v20 merges.
+Status: v22 growth lane after verified v1–v21 merges.
 
 The visual-template fabric grows where Universal Creation is likely to reuse the knowledge soon. This is a build priority, not canon: templates remain editable foundations and may be replaced when evidence supports a better structure.
 
@@ -16,48 +16,49 @@ The visual-template fabric grows where Universal Creation is likely to reuse the
 - source-bound UI motion / transition systems;
 - brand / identity system editor;
 - environment / level reference boards;
-- VFX / particle reference-authoring.
+- VFX / particle reference-authoring;
+- quest / mission flow systems.
 
-## Quest / mission flow reference systems — IMPLEMENTED IN THIS LANE
+## HUD theme / skin systems — IMPLEMENTED IN THIS LANE
 
-Product: `visual.mission.core`
+Product: `visual.hud.core`
 
 Implemented screens:
 
-- `visual.mission.project-hub`
-- `visual.mission.objectives`
-- `visual.mission.conditions`
-- `visual.mission.branch-flow`
-- `visual.mission.world-bindings`
-- `visual.mission.rewards-outcomes`
-- `visual.mission.failure-retry`
-- `visual.mission.runtime-state`
-- `visual.mission.variants`
-- `visual.mission.review-export`
+- `visual.hud.project-hub`
+- `visual.hud.components`
+- `visual.hud.layout`
+- `visual.hud.data-bindings`
+- `visual.hud.readability`
+- `visual.hud.alerts-feedback`
+- `visual.hud.platform-input`
+- `visual.hud.theme-skin`
+- `visual.hud.compare-preview`
+- `visual.hud.review-export`
 
 New primitives:
 
-- `mission-source`
-- `objective-state`
-- `mission-condition`
-- `mission-edge`
-- `mission-world-reference`
-- `mission-reward-reference`
-- `mission-failure-recovery`
-- `mission-runtime-flag`
-- `mission-variant`
-- `mission-export-target`
+- `hud-source`
+- `hud-component`
+- `hud-layout-anchor`
+- `hud-data-binding`
+- `hud-readability-rule`
+- `hud-safe-region`
+- `hud-alert-state`
+- `hud-platform-variant`
+- `hud-theme-variant`
+- `hud-export-target`
 
-Style: `visual.mission.flow`.
+Style: `visual.hud.system`.
 
-The central rule is runtime/flow truth: graph lines do not prove reachability, objective presentation does not prove completion, map proximity does not create a mission binding, reward presentation does not prove delivery, and failure/retry/recovery consequences remain explicit source state.
+The central rule is HUD/game-state truth: visual placement does not create a data binding, meter appearance does not prove the underlying value, icon/color alone cannot carry critical meaning, skins do not rewrite gameplay state, and platform variants preserve required semantic feedback/readability.
 
 ## Next high-value visual/creation families
 
-1. **HUD theme / skin systems** — source-bound component families, layout constraints, readability state, platform/input variants and per-game identity application.
-2. **Lighting / post-process look systems** — source-bound exposure, tone, fog, grading, bloom and accessibility/performance variants without baking presentation into world state.
-3. **Camera / shot reference systems** — exact camera rigs, targets, framing, lens/FOV, shot transitions and gameplay/cinematic ownership without treating preview framing as world state.
-4. **Inventory / item-reference systems** — item identity, rarity/affordance presentation, equipment slots, stats, comparison, provenance and platform/input variants without turning iconography into gameplay truth.
+1. **Lighting / post-process look systems** — source-bound exposure, tone, fog, grading, bloom and accessibility/performance variants without baking presentation into world state.
+2. **Camera / shot reference systems** — exact camera rigs, targets, framing, lens/FOV, shot transitions and gameplay/cinematic ownership without treating preview framing as world state.
+3. **Inventory / item-reference systems** — item identity, rarity/affordance presentation, equipment slots, stats, comparison, provenance and platform/input variants without turning iconography into gameplay truth.
+4. **Menu / shell theme systems** — source-bound navigation/component families, focus/state visibility, controller/touch/keyboard variants and branding hooks across complete game/application shells.
 
 ## Cross-cutting rules
 
@@ -73,7 +74,7 @@ Every family preserves the existing visual-template contract:
 
 ## Immediate build order
 
-1. exact-head verify `visual.mission.core`;
-2. merge v21 only when template + repository checks pass;
-3. begin HUD theme / skin systems from fresh main;
+1. exact-head verify `visual.hud.core`;
+2. merge v22 only when template + repository checks pass;
+3. begin lighting / post-process look systems from fresh main;
 4. keep prioritizing reusable source-first editors over flat one-off outputs.
