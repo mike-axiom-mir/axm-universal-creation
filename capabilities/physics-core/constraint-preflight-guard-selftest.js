@@ -37,6 +37,19 @@ const blockedReplay = Guard.step(baseWorld(), conflictingConstraints, 1 / 60);
 assert.equal(blocked.decisionChecksum, blockedReplay.decisionChecksum, 'blocked decision evidence must replay deterministically');
 assert.equal(blocked.preflight.checksum, blockedReplay.preflight.checksum);
 
+const radialConflictInput = baseWorld();
+const radialConflictSnapshot = JSON.stringify(radialConflictInput);
+const radialBlocked = Guard.step(radialConflictInput, {
+  distanceJoints: [{ id: 'distance-three', a: 'a', b: 'b', length: 3 }],
+  distanceLimits: [{ id: 'max-two', a: 'a', b: 'b', maxLength: 2 }]
+}, 1 / 60);
+assert.equal(radialBlocked.blocked, true, 'same-pair distance interval contradiction must fail closed before donor integration');
+assert.equal(radialBlocked.reason, 'PROVABLE_LOCAL_CONFLICT');
+assert.equal(radialBlocked.coreStepExecuted, false);
+assert.equal(radialBlocked.preflight.conflicts[0].code, 'CONFLICTING_DISTANCE_INTERVALS');
+assert.equal(radialBlocked.worldChecksumBefore, radialBlocked.worldChecksumAfter);
+assert.equal(JSON.stringify(radialConflictInput), radialConflictSnapshot, 'radial conflict block must preserve caller world state');
+
 const invalid = Guard.step(baseWorld(), {
   distanceJoints: [{ id: 'bad-distance', a: 'a', b: 'missing', length: 1 }]
 }, 1 / 60);
@@ -62,13 +75,18 @@ assert.deepEqual(guardedAccepted.world, directAccepted.world, 'accepted guard pa
 assert.deepEqual(guardedAccepted.composer, directAccepted, 'accepted guard path must expose the unmodified composer receipt');
 assert.equal(guardedAccepted.worldChecksumAfter, Core.checksum(directAccepted.world));
 
-const distanceOnly = Guard.step(baseWorld(), {
-  distanceJoints: [{ id: 'distance', a: 'a', b: 'b', length: Math.sqrt(13) }]
-}, 1 / 60);
-assert.equal(distanceOnly.accepted, true, 'valid unsupported-preflight distance families must still delegate to the composer');
-assert.equal(distanceOnly.preflight.counts.unsupportedConstraints, 1);
-assert.equal(distanceOnly.preflight.conflicts.length, 0);
-assert.equal(distanceOnly.coreStepExecuted, true);
-assert.match(distanceOnly.evidence.join(' '), /outside the local preflight proof/i);
+const compatibleDistanceConstraints = {
+  distanceJoints: [{ id: 'distance', a: 'a', b: 'b', length: Math.sqrt(13) }],
+  distanceLimits: [{ id: 'distance-band', a: 'a', b: 'b', minLength: 3, maxLength: 4 }]
+};
+const guardedDistance = Guard.step(baseWorld(), compatibleDistanceConstraints, 1 / 60, { composer: composerOptions });
+const directDistance = Composer.step(baseWorld(), compatibleDistanceConstraints, 1 / 60, composerOptions);
+assert.equal(guardedDistance.accepted, true, 'compatible same-pair distance constraints must still delegate to the composer');
+assert.equal(guardedDistance.preflight.counts.unsupportedConstraints, 0);
+assert.equal(guardedDistance.preflight.counts.radialGroups, 1);
+assert.equal(guardedDistance.preflight.conflicts.length, 0);
+assert.equal(guardedDistance.coreStepExecuted, true);
+assert.deepEqual(guardedDistance.composer, directDistance, 'accepted distance path must remain exact composer delegation');
+assert.match(guardedDistance.evidence.join(' '), /radial distance group/i);
 
-console.log('UC Constraint Preflight Guard selftest: PASS (fail-closed invalid/conflict blocking, zero-step preservation, accepted composer equivalence, unsupported-distance delegation and deterministic decision evidence)');
+console.log('UC Constraint Preflight Guard selftest: PASS (fail-closed invalid/projected/radial conflict blocking, zero-step preservation, accepted composer equivalence and deterministic decision evidence)');
