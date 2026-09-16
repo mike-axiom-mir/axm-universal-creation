@@ -251,6 +251,7 @@ def _bake_group(group, bundle, options):
             "projection_drop_axis": dropped,
             "cell": [x0, y0, x1, y1],
             "inner": [inner_x0, inner_y0, inner_x1, inner_y1],
+            "intra_chart_overlap": "NOT_TESTED",
         })
 
     encoded = {slot: png_bytes(atlas, atlas, 3, bytes(pixels)) for slot, pixels in atlases.items()}
@@ -278,7 +279,8 @@ def _bake_group(group, bundle, options):
         "columns": columns,
         "rows": rows,
         "nonmanifold_edges_left_as_seams": nonmanifold_edges,
-        "overlap_free_by_construction": True,
+        "inter_chart_overlap_free_by_construction": True,
+        "intra_chart_overlap": "NOT_TESTED",
         "charts": chart_receipts,
         "material_manifest_sha256": bundle["manifest_sha256"],
         "atlas_sha256": {slot: hashlib.sha256(data).hexdigest() for slot, data in encoded.items()},
@@ -337,6 +339,7 @@ def prepare(specification, materials, options=None, *, resolve_material):
         "professional_acceptance": "NOT_TESTED",
         "limitations": [
             "Connected charts reduce unnecessary seams on locally planar topology; they do not solve global seam aesthetics or density-optimal packing.",
+            "Separate chart cells cannot overlap each other, but intra-chart projected triangle overlap/distortion is not yet measured and remains NOT_TESTED.",
             "Nonmanifold edges, disconnected topology and faces beyond seam_angle_degrees remain separate by construction.",
             "Bake transfers the supplied material bundle into chart-local planar space; it does not perform high-to-low, cage, AO, curvature or thickness baking.",
             "Tangent-space output uses UC's current triangle-derived tangent path; MikkTSpace/target-engine parity remains unverified.",
