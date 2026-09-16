@@ -4,13 +4,16 @@ import os
 from pathlib import Path
 import shutil
 import subprocess
+import struct
 import sys
 import tempfile
 import unittest
+import zlib
 from unittest.mock import patch
 
 from axm_uc.capabilities import CapabilityStore
-from axm_uc.godot_target import _geometry_checks, _poses, observe_station, run_station, target_options
+from axm_uc.godot_target import _geometry_checks, _poses, _render_png, observe_station, run_station, target_options
+from axm_uc.fabric_noise import png_bytes
 from axm_uc.game_pose_runtime import GamePoseAsset
 from axm_uc.procedural_3d import build_glb
 from axm_uc.product_workflow import compile_draft, operate_product_workflow
@@ -102,6 +105,21 @@ class TargetContracts(unittest.TestCase):
         self.assertFalse(_geometry_checks(asset, poses, [], 44)[1])
         false_bounds = [{"bounds_m": {"min": [0, 0, 0], "max": [0, 0, 0]}, "triangles": 44}]
         self.assertFalse(_geometry_checks(asset, poses, false_bounds, 44)[1])
+
+    def test_engine_png_metadata_keeps_pixels_and_checks_all_crcs(self):
+        body = png_bytes(2, 2, 3, bytes([80, 120, 200] * 4))
+        payload = b"generator\0Godot"
+        chunk = struct.pack(">I", len(payload)) + b"tEXt" + payload + struct.pack(">I", zlib.crc32(b"tEXt" + payload) & 0xffffffff)
+        normalized, removed = _render_png(body[:33] + chunk + body[33:])
+        self.assertEqual(normalized, body)
+        self.assertEqual(removed, ["tEXt"])
+        broken = chunk[:-1] + bytes([chunk[-1] ^ 1])
+        with self.assertRaisesRegex(ValueError, "CRC"):
+            _render_png(body[:33] + broken + body[33:])
+        critical = b"ABCD"
+        unsupported = struct.pack(">I", 0) + critical + struct.pack(">I", zlib.crc32(critical) & 0xffffffff)
+        with self.assertRaisesRegex(ValueError, "critical"):
+            _render_png(body[:33] + unsupported + body[33:])
 
 
 @unittest.skipUnless(os.environ.get("AXM_GODOT"), "requires actual configured Godot and graphics display")

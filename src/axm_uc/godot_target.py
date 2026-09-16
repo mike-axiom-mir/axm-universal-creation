@@ -5,19 +5,20 @@ No downloads, caller scripts, editor projects or cached PASS receipts are used.
 """
 from __future__ import annotations
 
-import hashlib
 import json
 import os
 from pathlib import Path
 import shutil
 import subprocess
+import struct
 import tempfile
+import zlib
 
 from .atomic import atomic_write_json
 from .game_pose_runtime import GamePoseAsset, _parse
 from .mesh_production import _asset, _sha, _target
 from .mesh_quality import number
-from .native_textures import decode_png
+from .native_textures import decode_png, MAX_PNG_BYTES
 
 KINDS = {"validate-godot-target"}
 WORKER = Path(__file__).with_name("data") / "engine" / "godot_probe.gd"
@@ -117,6 +118,36 @@ def _geometry_checks(asset, poses, actual, triangles):
     return rows, all(r["bounds_error_m"] < 1e-4 and r["triangles_match"] for r in rows)
 
 
+def _render_png(body):
+    """Validate engine PNG chunks and retain their unchanged RGB scanlines.
+
+    Godot's PNG encoder adds ancillary metadata. UC's native format deliberately
+    supports IHDR/IDAT/IEND only. Validate every CRC before removing ancillary
+    chunks; unknown critical chunks and malformed data still fail closed.
+    """
+    if not 45 <= len(body) <= MAX_PNG_BYTES or body[:8] != b"\x89PNG\r\n\x1a\n":
+        raise ValueError("invalid bounded engine PNG")
+    cursor, parts, removed = 8, [body[:8]], []
+    while cursor + 12 <= len(body):
+        length = struct.unpack_from(">I", body, cursor)[0]
+        kind = body[cursor+4:cursor+8]
+        end = cursor + 8 + length
+        if end + 4 > len(body) or zlib.crc32(body[cursor+4:end]) & 0xffffffff != struct.unpack_from(">I", body, end)[0]:
+            raise ValueError("invalid engine PNG chunk length/CRC")
+        if kind in (b"IHDR", b"IDAT", b"IEND"):
+            parts.append(body[cursor:end+4])
+        elif kind[0] & 32:
+            removed.append(kind.decode("ascii"))
+        else:
+            raise ValueError("unsupported critical engine PNG chunk")
+        cursor = end + 4
+    if cursor != len(body):
+        raise ValueError("truncated engine PNG")
+    canonical = b"".join(parts)
+    decode_png(canonical)
+    return canonical, removed
+
+
 def _produce(body, p, output, executable):
     asset = GamePoseAsset(body)
     poses = _poses(asset, p)
@@ -147,6 +178,12 @@ def _produce(body, p, output, executable):
         worker = json.loads((output / "worker-result.json").read_text(encoding="utf-8"))
         if worker.get("error"):
             raise RuntimeError(worker["error"])
+        removed = {}
+        for image_path in output.glob("*.png"):
+            canonical, metadata = _render_png(image_path.read_bytes())
+            image_path.write_bytes(canonical)
+            removed[image_path.name] = metadata
+        report["removed_png_metadata"] = removed
         report["backend"] = worker["backend"]
         geometry, good = _geometry_checks(asset, poses, worker["poses"], triangles)
         report["pose_comparison"] = geometry
@@ -227,7 +264,7 @@ def observe_station(root, kind, inputs):
                   {"type": "stored-actual-target-pass", "passed": stored.get("status") == "PASS"}]
         for key in ("schema", "engine", "source_sha256", "worker_sha256", "options", "backend", "checks",
                     "pose_comparison", "playback_comparison", "material_bindings", "images", "released",
-                    "visual_quality", "professional_acceptance"):
+                    "visual_quality", "professional_acceptance", "removed_png_metadata"):
             checks.append({"type": "fresh-" + key, "passed": stored.get(key) == fresh.get(key)})
         original_files = stored.get("artifacts", {})
         checks.append({"type": "complete-artifact-set", "passed": set(original_files) == set(fresh["artifacts"])})
