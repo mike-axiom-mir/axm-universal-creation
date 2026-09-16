@@ -84,9 +84,11 @@ const limitOnlyConstraints = {
   distanceJoints: [],
   distanceLimits: [{ id: 'slack-assembly-edge', a: 'root', b: 'payload', maxLength: 1 }]
 };
-const limitPrepared = Isolation.prepare(assemblyWorld(), limitOnlyConstraints);
+const limitAssembly = assemblyWorld();
+limitAssembly.bodies.find(item => item.id === 'payload').position.x = 0.5;
+const limitPrepared = Isolation.prepare(limitAssembly, limitOnlyConstraints);
 assert.deepEqual(limitPrepared.components, [['payload', 'root']], 'a distance-limit edge alone must form an isolation component even while slack');
-const isolatedLimitOnly = Isolation.step(assemblyWorld(), limitOnlyConstraints, 0.01);
+const isolatedLimitOnly = Isolation.step(limitAssembly, limitOnlyConstraints, 0.01);
 assert.equal(isolatedLimitOnly.world.stepIndex, 1, 'distance-limit isolation must still share one donor-core integration');
 assert.equal(isolatedLimitOnly.constraints.distanceLimits.length, 1);
 assert.equal(isolatedLimitOnly.composerDiagnostics.after.distanceLimits[0].state, 'SLACK', 'component participation must not change distance-limit slack semantics');
