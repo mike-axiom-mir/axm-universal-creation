@@ -1,0 +1,21 @@
+name: Profession crew verification
+on:
+  pull_request:
+  workflow_dispatch:
+jobs:
+  crew:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ['3.11', '3.13']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Verify profession crews and existing specialist workflows
+        env:
+          PYTHONPATH: src:tests
+        run: python -m unittest test_profession_crew test_stepwise_workflow test_specialist_tournament test_machine test_procedural_3d -q
+      - name: Observe real failure, learning, repair and re-verification
+        run: python tools/profession_crew_demo.py
