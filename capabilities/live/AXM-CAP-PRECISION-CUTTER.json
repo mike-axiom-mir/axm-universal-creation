@@ -38,25 +38,10 @@
     "reuses the existing bounded surface-to-GLB encoder and geometry validator rather than introducing a second mesh publication path",
     "acts as a subtractive Creative Hand alongside additive primitive, sticker, and assembly workflows",
     "round-socket converts source radius plus requested clearance and kerf into measurable receiving geometry",
-    "outputs ordinary GLB assets that can enter existing observers, aftertouch, games, stickers, and profession workflows"
+    "outputs ordinary GLB assets that can enter existing observers, aftertouch, games, stickers, and profession workflows",
+    "does not duplicate executable-anatomy coverage already proven by AXM-CAP-GENERATE-PROCEDURAL-3D; its dependency and source remain explicit instead"
   ],
-  "anatomy_refs": [
-    {
-      "id": "AXM-11-3D-SPATIAL-O-001-geometry-generator",
-      "role": "extends",
-      "basis": "Generates explicit subtraction-result surface geometry from bounded mathematical cut recipes."
-    },
-    {
-      "id": "AXM-11-3D-SPATIAL-O-003-topology-validator",
-      "role": "uses",
-      "basis": "Delegates published cut geometry to UC's existing GLB finite-position, index, degeneracy, winding, and normal checks."
-    },
-    {
-      "id": "AXM-11-3D-SPATIAL-O-013-scene-exporter",
-      "role": "uses",
-      "basis": "Publishes the calculated cut body through the existing atomic deterministic GLB exporter."
-    }
-  ],
+  "anatomy_refs": [],
   "implementation": {
     "kind": "DETERMINISTIC_SOURCE",
     "entrypoint": "builtin:precision_cutter",
