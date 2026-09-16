@@ -1,0 +1,80 @@
+{
+  "id": "AXM-CAP-MESH-PRECISION-CUTTER",
+  "version": "0.2.0",
+  "status": "live",
+  "purpose": "Cut bounded subtractive features directly into one observed existing rigid static UC GLB rectangular-prism mesh, preserving exact supported material factors and revalidating topology and published GLB geometry.",
+  "handles": [
+    "mesh-precision-cut-3d",
+    "mesh-laser-through-hole",
+    "mesh-laser-box-notch"
+  ],
+  "input_contract": {
+    "required": [
+      "source_path",
+      "path",
+      "specification"
+    ],
+    "properties": {
+      "source_path": "existing ordinary .glb creation outside protected live machine body",
+      "path": "distinct target .glb path outside protected live machine body",
+      "specification": "closed axm.mesh-precision-cutter/v0.2 recipe using round-through-hole or box-notch",
+      "expected_source_sha256": "optional exact lowercase SHA-256 binding, with optional sha256: prefix",
+      "replace": "optional boolean; defaults false"
+    }
+  },
+  "output_contract": {
+    "kind": "validated-existing-mesh-precision-cut-glb",
+    "contains": [
+      "exact source GLB SHA-256 and source byte count",
+      "source closed edge-topology evidence before cutting",
+      "measured rectangular-prism recognition and volume evidence",
+      "cut recipe digest bound to exact source digest",
+      "kerf-aware round-hole or box-notch metrics",
+      "output closed edge-topology evidence before publication",
+      "existing procedural-3D post-publication GLB validation",
+      "explicit unsupported/not-tested boundaries"
+    ]
+  },
+  "dependencies": [
+    "AXM-CAP-PRECISION-CUTTER",
+    "AXM-CAP-GENERATE-PROCEDURAL-3D"
+  ],
+  "relationships": [
+    "reads actual existing GLB triangles through UC's static geometry decoder before calculating a cut",
+    "reuses UC seam-weld topology evidence before and after surgery",
+    "reuses the v0.1 cutter geometry constructors for the supported cut shapes",
+    "reuses the existing deterministic surface-to-GLB publisher and validator",
+    "keeps source bytes separate from the new output and refuses in-place cutting"
+  ],
+  "anatomy_refs": [],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:precision_cutter",
+    "source": "src/axm_uc/mesh_precision_cutter.py"
+  },
+  "limitations": [
+    "v0.2 proves the existing-mesh path on exactly one rigid static closed consistently oriented axis-aligned rectangular-prism primitive. General arbitrary-mesh boolean surgery remains unavailable.",
+    "Only principal-axis round through-holes and open box notches are supported. Rotated stock, multiple primitives/components, skins, animation, morphs, UVs, textures, tangents, vertex colours, joints and other extra vertex attributes are rejected rather than silently discarded.",
+    "Supported PBR colour/emissive factors must be exactly representable by the existing 8-bit colour surface grammar; unsupported material features are rejected.",
+    "Edge-manifold topology is checked, but self-intersection, visual quality, structural strength, real manufacturing behavior and host-engine import are not proven."
+  ],
+  "persistent_state": null,
+  "root_fit": {
+    "truth": {
+      "fit": true,
+      "basis": "The exact source bytes, topology, measured stock, cut parameters, output topology, output digest and unsupported boundaries are explicit."
+    },
+    "agency": {
+      "fit": true,
+      "basis": "The caller chooses the existing source, output path, cut axis, location, shape, dimensions, kerf and replacement decision; no design intent is silently selected."
+    },
+    "continuity": {
+      "fit": true,
+      "basis": "The source is read-only, in-place mutation is rejected, output publication reuses UC atomic GLB behavior, and protected machine-body paths remain unavailable."
+    },
+    "wisdom-before-speed": {
+      "fit": true,
+      "basis": "The cutter rejects unsupported source structure and material state, proves closed source topology and rectangular-prism scope before subtraction, then proves closed output topology and published GLB structure."
+    }
+  }
+}
