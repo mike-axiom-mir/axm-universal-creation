@@ -35,7 +35,8 @@ const activeAxisLimit = {
 const validation = Composer.validate(motionWorld(), activeAxisLimit);
 assert.equal(validation.ok, true);
 assert.equal(validation.axisLimitCount, 1);
-assert.deepEqual(Composer.FAMILY_ORDER, ['translation-mounts', 'distance-joints', 'distance-limits', 'axis-locks', 'axis-limits']);
+assert.equal(validation.directionLockCount, 0);
+assert.deepEqual(Composer.FAMILY_ORDER, ['translation-mounts', 'distance-joints', 'distance-limits', 'axis-locks', 'axis-limits', 'direction-locks']);
 
 let driven = motionWorld();
 driven = Core.applyImpulse(driven, 'payload', { x: 10, y: 4 });
@@ -44,6 +45,7 @@ assert.equal(composed.world.stepIndex, 1, 'axis limit inside composer must share
 assert.ok(composed.composerDiagnostics.afterCore.maxAxisLimitError > 0.4, 'core integration should visibly cross the configured max bound before post stabilization');
 assert.ok(composed.composerDiagnostics.after.maxAxisLimitError < 1e-8, 'composed axis limit must restore its selected-axis bound');
 assert.ok(composed.composerDiagnostics.after.maxAxisLimitRelativeSpeed < 1e-8, 'composed axis limit must stop outward relative speed at the active boundary');
+assert.equal(composed.composerDiagnostics.after.maxDirectionLockError, 0);
 assert.equal(composed.composerDiagnostics.after.axisLimits[0].state, 'AT_MAX');
 assert.ok(composed.world.bodies.find(item => item.id === 'payload').position.y > 0.3, 'orthogonal translation must remain free inside the mixed composer');
 assert.ok(composed.composerDiagnostics.postPassSummaries[0].axisLimitPositionReceiptCount > 0);
@@ -90,4 +92,4 @@ const replayB = Gate.step(motionWorld(), activeAxisLimit, 1 / 60, { isolateColli
 assert.equal(Core.checksum(replayA.world), Core.checksum(replayB.world), 'five-family guarded axis-limit path must replay deterministically in one JS runtime');
 assert.match(enabled.limitations.join(' '), /not scientific validation/i);
 
-console.log('UC Axis Limit Integration selftest: PASS (single-step composition, slack range semantics, activity filtering, component isolation, orthogonal freedom and deterministic replay)');
+console.log('UC Axis Limit Integration selftest: PASS (single-step composition, slack range semantics, five-family activity/isolation filtering, orthogonal freedom and deterministic replay under the extended composer order)');
