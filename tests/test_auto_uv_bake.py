@@ -20,13 +20,14 @@ def uvless_panel():
 
 
 def hard_fold():
+    diagonal = 0.7071067811865476
     return {
         "schema": "axm.surface-3d/v0.1",
         "name": "hard fold",
         "primitives": [{
             "id": "paint",
             "positions": [[0, 0, 0], [1, 0, 0], [0, 1, 0], [0, 0, 1]],
-            "normals": [[0, 0, 1]] * 4,
+            "normals": [[diagonal, 0, diagonal], [0, 0, 1], [diagonal, 0, diagonal], [1, 0, 0]],
             "indices": [0, 1, 2, 0, 2, 3],
             "material": {"color": "#ffffff", "metallic": 1, "roughness": 1},
         }],
