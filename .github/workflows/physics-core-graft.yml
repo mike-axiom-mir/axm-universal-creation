@@ -44,3 +44,5 @@ jobs:
         run: node capabilities/physics-core/constraint-collision-isolation-selftest.js
       - name: Verify disabled constraint activity gate
         run: node capabilities/physics-core/constraint-activity-gate-selftest.js
+      - name: Verify axis-lock composer gate and isolation integration
+        run: node capabilities/physics-core/axis-lock-integration-selftest.js
