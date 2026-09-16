@@ -1,6 +1,6 @@
-"""UC rich game-material bundles -> packed Blender/glTF Principled materials.
+"""UC rich/layered game-material bundles -> Blender/glTF Principled materials.
 
-Blender is imported lazily so the profile generator remains usable in headless
+Blender is imported lazily so the profile generators remain usable in headless
 non-Blender workflows. Bundle hashes are checked before Blender decodes images.
 """
 from __future__ import annotations
@@ -28,17 +28,56 @@ REQUIRED = set(MAP_CHANNELS)
 GLTF_OUTPUT_GROUP = "glTF Material Output"
 
 
-def load_rich_material_bundle(folder):
-    root = Path(folder).resolve(strict=True)
-    manifest_path = root / "rich-game-material.json"
-    if manifest_path.is_symlink() or manifest_path.stat().st_size > 65536:
-        raise ValueError("invalid rich material manifest path/size")
-    manifest_bytes = manifest_path.read_bytes()
-    manifest = json.loads(manifest_bytes)
-    if not isinstance(manifest, dict) or manifest.get("schema") != "axm.rich-game-material/v0.1":
-        raise ValueError("unsupported rich material schema")
-    if manifest.get("profile") not in PROFILE_BY_NAME:
+def _read_supported_manifest(root: Path) -> tuple[Path, bytes, dict, str]:
+    candidates = (
+        (root / "layered-game-material.json", "layered"),
+        (root / "rich-game-material.json", "rich"),
+    )
+    existing = [(path, kind) for path, kind in candidates if path.exists()]
+    if len(existing) != 1:
+        raise ValueError("material bundle requires exactly one supported manifest")
+    path, kind = existing[0]
+    if path.is_symlink() or path.stat().st_size > 131072:
+        raise ValueError("invalid material manifest path/size")
+    payload = path.read_bytes()
+    manifest = json.loads(payload)
+    if not isinstance(manifest, dict):
+        raise ValueError("material manifest must be an object")
+    if kind == "rich":
+        if manifest.get("schema") != "axm.rich-game-material/v0.1":
+            raise ValueError("unsupported rich material schema")
+        profile = manifest.get("profile")
+    else:
+        if manifest.get("schema") != "axm.layered-game-material/v0.1":
+            raise ValueError("unsupported layered material schema")
+        profile = manifest.get("base_profile")
+        layers = manifest.get("layers")
+        if not isinstance(layers, list) or len(layers) > 16:
+            raise ValueError("invalid layered material layers")
+        for index, layer in enumerate(layers):
+            if not isinstance(layer, dict) or layer.get("index") != index:
+                raise ValueError("invalid layered material layer record")
+            mask_file = layer.get("file")
+            if not isinstance(mask_file, str) or not mask_file.startswith("layer_masks/"):
+                raise ValueError("invalid layered material mask path")
+            mask_path = root / mask_file
+            if mask_path.is_symlink() or not mask_path.is_file() or mask_path.stat().st_size > 16 * 1024 * 1024:
+                raise ValueError("invalid layered material mask file")
+            data = mask_path.read_bytes()
+            if hashlib.sha256(data).hexdigest() != layer.get("sha256"):
+                raise ValueError("layered material mask digest mismatch")
+    if profile not in PROFILE_BY_NAME:
         raise ValueError("unknown rich material profile")
+    return path, payload, manifest, kind
+
+
+def load_rich_material_bundle(folder):
+    """Load either a v0.1 rich base bundle or v0.1 layered bundle.
+
+    The function name is preserved for compatibility with existing builders.
+    """
+    root = Path(folder).resolve(strict=True)
+    _manifest_path, manifest_bytes, manifest, kind = _read_supported_manifest(root)
     size = manifest.get("size")
     if type(size) is not int or not 16 <= size <= 1024:
         raise ValueError("invalid rich material size")
@@ -74,20 +113,14 @@ def load_rich_material_bundle(folder):
         payloads[name] = data
     return {
         "manifest": manifest,
+        "manifest_kind": kind,
         "manifest_sha256": hashlib.sha256(manifest_bytes).hexdigest(),
         "pngs": payloads,
     }
 
 
 def _get_gltf_material_output_group(bpy):
-    """Return the one canonical glTF exporter helper group for every material.
-
-    Blender's exporter recognizes the exact ``glTF Material Output`` node-group
-    contract. Creating a fresh group per material makes Blender suffix later names
-    (``.001``, ``.002`` ...), which causes AO/occlusion to disappear from those
-    exported materials. Reusing one shared group keeps every material on the same
-    exporter-recognized contract.
-    """
+    """Return the one canonical glTF exporter helper group for every material."""
     group = bpy.data.node_groups.get(GLTF_OUTPUT_GROUP)
     created = False
     if group is None:
@@ -103,7 +136,8 @@ def blender_rich_game_material(folder, name=None):
     import bpy
 
     manifest = bundle["manifest"]
-    label = name or f"UC_RICH_{manifest['profile']}"
+    profile = manifest.get("profile", manifest.get("base_profile"))
+    label = name or f"UC_RICH_{profile}"
     images = []
     material = None
     group = None
@@ -160,7 +194,9 @@ def blender_rich_game_material(folder, name=None):
         links.new(normal.outputs["Normal"], shader.inputs["Normal"])
 
         material["axm_rich_material_manifest_sha256"] = bundle["manifest_sha256"]
-        material["axm_rich_material_profile"] = manifest["profile"]
+        material["axm_rich_material_profile"] = profile
+        material["axm_material_bundle_kind"] = bundle["manifest_kind"]
+        material["axm_layer_count"] = len(manifest.get("layers", []))
         material["axm_normal_convention"] = "tangent +Y"
         return material
     except Exception:
