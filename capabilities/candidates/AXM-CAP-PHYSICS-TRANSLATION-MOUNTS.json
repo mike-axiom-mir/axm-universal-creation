@@ -1,0 +1,92 @@
+{
+  "id": "AXM-CAP-PHYSICS-TRANSLATION-MOUNTS",
+  "version": "0.1.0",
+  "status": "candidate",
+  "purpose": "Add deterministic fixed x/y translation mounts around the preserved AXM Physics Core so one body can carry another at an explicit offset without claiming rotational weld or angular-joint behavior.",
+  "handles": [
+    "translation-mount",
+    "fixed-offset-link",
+    "payload-mount",
+    "weapon-mount",
+    "kinematic-carrier"
+  ],
+  "input_contract": {
+    "required": ["world", "mounts"],
+    "properties": {
+      "world": "axm.physics-world/v1 world",
+      "mounts": "bounded array of explicit fixed-offset translation constraints",
+      "dt": "core step delta",
+      "options": "optional bounded pre/post position and velocity iteration counts"
+    }
+  },
+  "output_contract": {
+    "kind": "axm.uc-translation-mount-step/v0.1",
+    "contains": [
+      "stabilized world",
+      "normalized translation mounts",
+      "pre-core and post-core solve receipts",
+      "mount offset error diagnostics",
+      "separate donor-core collision/integration evidence",
+      "final state checksum"
+    ]
+  },
+  "dependencies": ["AXM-CAP-PHYSICS-FABRIC"],
+  "relationships": [
+    {
+      "type": "extends",
+      "target": "capabilities/physics-core/source/axm-physics-core.js"
+    },
+    {
+      "type": "complements",
+      "target": "AXM-CAP-PHYSICS-DISTANCE-JOINTS",
+      "basis": "Distance joints preserve scalar separation while translation mounts preserve the full world-axis x/y offset."
+    }
+  ],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "capabilities/physics-core/uc-translation-mounts.js",
+    "selftest": "node capabilities/physics-core/translation-mounts-selftest.js",
+    "capsule_index": "capabilities/physics-core/index.js"
+  },
+  "limitations": [
+    "fixed world-axis x/y translation offset only",
+    "mount offsets do not rotate with bodies",
+    "no angular inertia, angular response or rotational weld semantics",
+    "connected mounted bodies can still collide unless caller collision filters suppress the pair",
+    "post-core projection can move bodies after core-stage contact evidence was generated",
+    "2D game/prototype physics only",
+    "not scientific validation"
+  ],
+  "persistent_state": "mount definitions are explicit caller-owned JSON data",
+  "tests": [
+    {
+      "command": "node capabilities/physics-core/translation-mounts-selftest.js",
+      "proves": [
+        "fixed x/y offset projection",
+        "kinematic carrier following",
+        "inverse-mass correction balance",
+        "post-core stabilization under gravity",
+        "truthful handling of two immovable bodies",
+        "same-runtime deterministic replay"
+      ]
+    }
+  ],
+  "root_fit": {
+    "truth": {
+      "fit": true,
+      "basis": "The capability is explicitly translation-only and does not call itself a rotational weld or rigid-body angular joint."
+    },
+    "agency": {
+      "fit": true,
+      "basis": "Mount endpoints, offset, correction bounds and iteration counts remain explicit caller-controlled data."
+    },
+    "continuity": {
+      "fit": true,
+      "basis": "The imported AXM Physics Core v0.3.1 donor source is not modified; the mount solver is an additive UC layer."
+    },
+    "wisdom-before-speed": {
+      "fit": true,
+      "basis": "This adds a narrow mount primitive that is useful for carried equipment and modular assemblies without jumping ahead to unsupported rotation or full weld joints."
+    }
+  }
+}
