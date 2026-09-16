@@ -82,10 +82,6 @@ const simB = Joints.simulate(deterministicSeed(), [{ id: 'j', a: 'a', b: 'b', le
 assert.equal(simA.checksum, simB.checksum, 'distance-joint simulation must replay deterministically in one JS runtime');
 assert.equal(simA.world.stepIndex, 60);
 
-assert.throws(
-  () => Joints.validate(worldWithAnchor(), [{ id: 'bad', a: 'anchor', b: 'missing', length: 1 }]).ok && null,
-  /$a/
-);
 const invalid = Joints.validate(worldWithAnchor(), [{ id: 'bad', a: 'anchor', b: 'missing', length: 1 }]);
 assert.equal(invalid.ok, false);
 assert.match(invalid.errors.join(' '), /body not found/i);
