@@ -162,6 +162,18 @@ class StaticAssetTargetEvidenceTests(unittest.TestCase):
             self.assertEqual(report["status"], "FAIL")
             self.assertEqual(report["lane_results"]["target_device_performance"]["status"], "FAIL")
 
+    def test_weak_optional_pass_holds_whole_packet(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            target, raw = self._target(tmp)
+            packet = _packet(raw)
+            packet["lanes"]["target_device_performance"] = {
+                "status": "PASS",
+                "evidence": [{"kind": "SOURCE_INSPECTED", "source": "device-config", "summary": "A target device profile exists."}],
+            }
+            report = verify_static_asset_target_evidence(target, packet)
+            self.assertEqual(report["status"], "HOLD")
+            self.assertEqual(report["lane_results"]["target_device_performance"]["reason"], "INSUFFICIENT_EVIDENCE_KIND")
+
     def test_not_tested_required_lane_holds(self):
         with tempfile.TemporaryDirectory() as tmp:
             target, raw = self._target(tmp)
