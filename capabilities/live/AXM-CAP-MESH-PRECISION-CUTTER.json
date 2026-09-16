@@ -1,8 +1,8 @@
 {
   "id": "AXM-CAP-MESH-PRECISION-CUTTER",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "status": "live",
-  "purpose": "Cut bounded subtractive features directly into observed existing rigid static UC GLB rectangular-prism meshes, including rotated stock, hash-linked cumulative notch chains, and hash-linked cumulative round-hole chains with exact prior-state reconstruction.",
+  "purpose": "Cut bounded subtractive features directly into observed existing rigid static UC GLB rectangular-prism meshes, including rotated stock, hash-linked notch chains, and cumulative round-hole chains whose v0.6 sweep supports arbitrary non-overlapping same-axis hole layouts without the earlier projection-separability requirement.",
   "handles": [
     "mesh-precision-cut-3d",
     "mesh-laser-through-hole",
@@ -12,40 +12,36 @@
     "mesh-fabrication-chain",
     "mesh-laser-cut-chain",
     "mesh-hole-fabrication-chain",
-    "mesh-laser-hole-chain"
+    "mesh-laser-hole-chain",
+    "mesh-hole-sweep-chain",
+    "mesh-laser-hole-sweep"
   ],
   "input_contract": {
-    "required": [
-      "source_path",
-      "path",
-      "specification"
-    ],
+    "required": ["source_path", "path", "specification"],
     "properties": {
       "source_path": "existing ordinary .glb creation outside protected live machine body",
       "path": "distinct target .glb path outside protected live machine body",
-      "specification": "closed v0.2 axis-aligned cut recipe, v0.3 oriented cut recipe, axm.mesh-fabrication-chain/v0.4 cumulative box-notch recipe, or axm.mesh-hole-fabrication-chain/v0.5 cumulative round-hole recipe",
+      "specification": "closed v0.2 axis-aligned cut recipe, v0.3 oriented cut recipe, v0.4 cumulative box-notch recipe, v0.5 projection-separable hole-chain recipe, or axm.mesh-hole-fabrication-chain/v0.6 general same-axis round-hole sweep recipe",
       "expected_source_sha256": "optional exact lowercase SHA-256 binding, with optional sha256: prefix",
-      "lineage_path": "v0.4/v0.5 optional prior lineage JSON receipt when appending to a previous chain output",
-      "receipt_path": "v0.4/v0.5 optional distinct output JSON receipt path; defaults beside the output GLB",
-      "expected_lineage_sha256": "v0.4/v0.5 optional exact prior lineage SHA-256 binding",
+      "lineage_path": "v0.4-v0.6 optional prior lineage JSON receipt when appending to a previous chain output; v0.6 accepts a verified v0.5 hole lineage as an upgrade parent",
+      "receipt_path": "v0.4-v0.6 optional distinct output JSON receipt path; defaults beside the output GLB",
+      "expected_lineage_sha256": "v0.4-v0.6 optional exact prior lineage SHA-256 binding",
       "replace": "optional boolean; defaults false"
     }
   },
   "output_contract": {
     "kind": "validated-existing-mesh-precision-cut-glb",
     "contains": [
-      "exact source GLB SHA-256 and source byte count",
-      "source closed edge-topology evidence before initial cutting",
-      "measured rectangular-prism frame/corner/volume evidence",
-      "right-handed orthonormal source-frame axes and frame digest for rotated stock",
-      "cut recipe digests bound to exact source/frame state",
-      "hash-linked cumulative lineage with parent-to-child state hashes and final receipt digest",
-      "deterministic reconstruction of the prior cumulative output before any resume append",
-      "v0.5 stable inner hole polygons while slab seam tessellation is refined independently",
-      "v0.5 deterministic u/v slab partition evidence for supported multi-hole layouts",
-      "kerf-aware cut metrics and cumulative operation count",
-      "output closed edge-topology evidence before publication",
-      "existing procedural-3D post-publication GLB validation",
+      "exact source and output GLB SHA-256 bindings",
+      "source topology and proven rectangular-prism frame evidence",
+      "hash-linked cumulative operation lineage and final receipt digest",
+      "deterministic prior-output reconstruction before resume append",
+      "v0.6 vertical sweep events at resolved hole polygon x-coordinates",
+      "v0.6 synchronized free-region seams and split hole walls so no hidden internal walls are introduced",
+      "exact polygonized removed-area and closed-mesh volume agreement",
+      "v0.5-to-v0.6 lineage upgrade evidence when used",
+      "output closed oriented edge-manifold candidate evidence",
+      "procedural-3D post-publication GLB validation",
       "explicit unsupported/not-tested boundaries"
     ]
   },
@@ -54,49 +50,46 @@
     "AXM-CAP-GENERATE-PROCEDURAL-3D"
   ],
   "relationships": [
-    "reads actual existing GLB triangles through UC's static geometry decoder before calculating the first cut",
-    "reuses UC seam-weld topology evidence before and after fabrication",
-    "derives an orthonormal local frame from the observed eight stock corners instead of assuming world-axis alignment",
-    "binds an explicit world-space fabrication axis to exactly one proven source-frame axis",
-    "v0.4 preserves the proven source frame as lineage for cumulative non-overlapping box notches",
-    "v0.5 preserves the same proven frame for cumulative round holes and keeps each resolved hole polygon stable when new holes are appended",
-    "v0.5 synchronizes only outer slab seam events so adjacent slab triangulations weld without adding hidden material or reshaping earlier holes",
-    "v0.4/v0.5 verify prior receipt hashes, prior output digest and deterministic prior-output reconstruction before appending new operations",
-    "reuses the existing deterministic surface-to-GLB publisher and validator",
-    "keeps source bytes separate from the new output and refuses in-place cutting"
+    "reuses the existing static GLB geometry decoder, seam-weld topology inspector, proven oriented stock frame, deterministic GLB publisher and validator",
+    "v0.4 remains the bounded cumulative box-notch path",
+    "v0.5 remains available for its previously verified projection-separable multi-hole outputs and receipts",
+    "v0.6 removes only the same-axis projection-separability restriction by vertically decomposing the rectangular cross-section at every resolved polygon x event",
+    "v0.6 splits top/bottom free regions and matching hole side walls at shared sweep events so all material boundaries weld without internal fabrication walls",
+    "v0.6 can consume a v0.5 lineage only after the v0.5 compiler exactly rebuilds and matches the supplied parent GLB",
+    "source artifacts remain read-only and publication remains separate/rollback-capable"
   ],
   "anatomy_refs": [],
   "implementation": {
     "kind": "DETERMINISTIC_SOURCE",
     "entrypoint": "builtin:precision_cutter",
-    "source": "src/axm_uc/mesh_hole_fabrication_chain.py"
+    "source": "src/axm_uc/mesh_general_hole_chain.py"
   },
   "limitations": [
-    "v0.5 round-hole chaining is bounded to at most 32 non-overlapping/non-touching holes on one proven fabrication axis of one rigid rectangular-prism root stock.",
-    "v0.5 multi-hole layouts must be separable along one of the two canonical cross-section axes so synchronized deterministic slab seams can be proven. General polygon-with-holes triangulation remains unavailable.",
-    "v0.4 cumulative box-notch chains remain supported separately. Notch-and-hole mixing and cross-axis cumulative chains are still unavailable rather than approximated.",
-    "v0.3 single cuts still support round through-holes and box notches on rotated/transformed rectangular stock; arbitrary free-angle cutters relative to the proven stock frame remain rejected.",
-    "Multiple primitives/components, skins, animation, morphs, UVs, textures, tangents, vertex colours, joints and unsupported material state remain rejected rather than silently discarded.",
-    "Lineage receipts are content-hashed and exact-output-bound, but are not cryptographic authorship signatures or external trust anchors against coordinated replacement of both receipt and artifact.",
-    "General arbitrary-mesh boolean surgery remains unavailable. Edge-manifold topology is checked, but self-intersection, visual quality, structural strength, real manufacturing behavior and host-engine import are not proven."
+    "v0.6 cumulative sweep remains bounded to at most 32 non-overlapping/non-touching polygonized round through-holes on one proven fabrication axis of one rigid rectangular-prism root stock.",
+    "The same-axis projection-separability requirement is removed, but notch-and-hole mixing and cross-axis cumulative chains remain unavailable rather than approximated.",
+    "The v0.6 sweep is a bounded rectangular-stock polygon-hole decomposition, not a claim of general arbitrary polygon triangulation or arbitrary 3D boolean CSG.",
+    "As new cumulative holes add sweep x events, collinear tessellation points on older hole walls may be refined; the resolved physical hole polygon, polygonized area and per-hole digest stay unchanged.",
+    "Multiple source primitives/components, skins, animation, morphs, UVs, textures, tangents, vertex colours, joints and unsupported material state remain rejected.",
+    "Lineage receipts are content-hashed and exact-output-bound, but are not cryptographic authorship signatures or external trust anchors.",
+    "Edge-manifold topology and explicit non-overlap are checked; visual quality, structural strength, real manufacturing behavior and host-engine import remain unproven."
   ],
   "persistent_state": null,
   "root_fit": {
     "truth": {
       "fit": true,
-      "basis": "Exact source bytes, source frame, cumulative recipes, stable per-hole digests, parent/child step hashes, deterministic prior-output reconstruction, topology, output digest, receipt digest and unsupported boundaries remain inspectable."
+      "basis": "Exact source/frame state, per-hole physical polygon receipts, sweep decomposition, lineage hashes, deterministic prior reconstruction, volume agreement, topology, output digest and limitations are explicit."
     },
     "agency": {
       "fit": true,
-      "basis": "The caller chooses source, output, fabrication axis, hole locations/radii/resolution/kerf, resume receipt and replacement decision; unsupported overlap, mixed-operation, cross-axis and freeform requests fail closed."
+      "basis": "The caller chooses source, axis, hole locations/radii/resolution/kerf and continuation receipt; overlap, cross-axis, mixed-operation and freeform requests still fail closed."
     },
     "continuity": {
       "fit": true,
-      "basis": "Source artifacts are read-only, resume receipts are append-only, prior output is deterministically reconstructed before continuation, earlier resolved hole boundaries stay stable, and output/receipt publication retains rollback behavior."
+      "basis": "v0.6 preserves append-only lineage, verifies exact previous bytes before continuation, supports verified v0.5 lineage upgrade, keeps source artifacts read-only and retains rollback-capable output/receipt publication."
     },
     "wisdom-before-speed": {
       "fit": true,
-      "basis": "The cutter proves initial stock topology/frame, validates every lineage hash and exact prior output on resume, rejects overlapping or unprovable layouts, synchronizes slab seams deterministically, then proves closed output topology and published GLB structure."
+      "basis": "The sweep adds only the smallest geometry generalization it can prove: arbitrary non-overlapping same-axis round-hole layouts on rectangular stock, with manifold and volume gates before publication."
     }
   }
 }
