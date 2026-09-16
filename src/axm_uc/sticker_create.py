@@ -8,8 +8,29 @@ import json
 from pathlib import Path
 from axm_stickers import Registry, instance
 from axm_stickers.assembly import save_assembly, library_bundle, import_library
+from .design_workshop_construction import (
+    compare_sticker_assembly,
+    compile_sticker_build,
+    propose_sticker_repair,
+    save_sticker_build,
+    save_sticker_repair,
+    validate_sticker_build_plan,
+)
 from .sticker_adapter import register_glb, register_studio
 from .sticker_assembly import export_assembly
+from .sticker_clearance_contact import (
+    compare_sketch_clearance,
+    measure_sticker_assembly_clearances,
+    measure_sticker_clearance_pair,
+    validate_clearance_plan,
+)
+from .sticker_geometry_calipers import (
+    compare_sticker_geometry,
+    measure_sticker_assembly_parts,
+    measure_sticker_geometry,
+)
+from .sticker_multiplier import preview_multiplication, multiply_stickers
+from .workshop_bounded_planner import preview_workshop_plan, retain_workshop_plan
 from .procedural_3d import build_glb
 
 
@@ -32,6 +53,73 @@ def execute(registry,request,root):
         project=request.pop('project')
         return register_studio(registry,project,root,**request)
     if operation=='save_assembly': return save_assembly(registry,**request)
+    if operation=='preview_multiplication':
+        plan=request.pop('plan')
+        if request: raise TypeError('unexpected preview_multiplication arguments')
+        return preview_multiplication(registry,plan)
+    if operation=='multiply_stickers':
+        plan=request.pop('plan')
+        if request: raise TypeError('unexpected multiply_stickers arguments')
+        return multiply_stickers(registry,plan)
+    if operation=='validate_sketch_build':
+        sketch=request.pop('sketch'); plan=request.pop('plan')
+        if request: raise TypeError('unexpected validate_sketch_build arguments')
+        return {'truth_status':'DETERMINISTIC_STICKER_BUILD_PLAN_VALIDATION','plan':validate_sticker_build_plan(plan,sketch)}
+    if operation=='compile_sketch_build':
+        sketch=request.pop('sketch'); plan=request.pop('plan')
+        if request: raise TypeError('unexpected compile_sketch_build arguments')
+        return compile_sticker_build(registry,sketch,plan)
+    if operation=='save_sketch_build':
+        sketch=request.pop('sketch'); plan=request.pop('plan')
+        return save_sticker_build(registry,sketch,plan,**request)
+    if operation=='compare_sketch_assembly':
+        sketch=request.pop('sketch'); assembly=request.pop('assembly')
+        if request: raise TypeError('unexpected compare_sketch_assembly arguments')
+        return compare_sticker_assembly(registry,sketch,assembly)
+    if operation=='measure_sticker_geometry':
+        sticker=request.pop('sticker')
+        if request: raise TypeError('unexpected measure_sticker_geometry arguments')
+        return measure_sticker_geometry(registry,sticker)
+    if operation=='measure_sticker_assembly_parts':
+        assembly=request.pop('assembly')
+        if request: raise TypeError('unexpected measure_sticker_assembly_parts arguments')
+        return measure_sticker_assembly_parts(registry,assembly)
+    if operation=='compare_sketch_geometry':
+        sketch=request.pop('sketch'); assembly=request.pop('assembly')
+        if request: raise TypeError('unexpected compare_sketch_geometry arguments')
+        return compare_sticker_geometry(registry,sketch,assembly)
+    if operation=='measure_sticker_clearance_pair':
+        assembly=request.pop('assembly'); part_a=request.pop('part_a'); part_b=request.pop('part_b')
+        tolerance=request.pop('tolerance_m',1e-6)
+        if request: raise TypeError('unexpected measure_sticker_clearance_pair arguments')
+        return measure_sticker_clearance_pair(registry,assembly,part_a,part_b,tolerance_m=tolerance)
+    if operation=='measure_sticker_assembly_clearances':
+        assembly=request.pop('assembly'); pairs=request.pop('pairs',None); tolerance=request.pop('tolerance_m',1e-6)
+        if request: raise TypeError('unexpected measure_sticker_assembly_clearances arguments')
+        return measure_sticker_assembly_clearances(registry,assembly,pairs=pairs,tolerance_m=tolerance)
+    if operation=='validate_clearance_plan':
+        sketch=request.pop('sketch'); plan=request.pop('plan')
+        if request: raise TypeError('unexpected validate_clearance_plan arguments')
+        return {'truth_status':'DETERMINISTIC_CLEARANCE_PLAN_VALIDATION','plan':validate_clearance_plan(plan,sketch)}
+    if operation=='compare_sketch_clearance':
+        sketch=request.pop('sketch'); assembly=request.pop('assembly'); plan=request.pop('plan')
+        if request: raise TypeError('unexpected compare_sketch_clearance arguments')
+        return compare_sketch_clearance(registry,sketch,assembly,plan)
+    if operation=='preview_workshop_plan':
+        sketch=request.pop('sketch'); planner=request.pop('planner')
+        if request: raise TypeError('unexpected preview_workshop_plan arguments')
+        return preview_workshop_plan(registry,sketch,planner)
+    if operation=='retain_workshop_plan':
+        sketch=request.pop('sketch'); planner=request.pop('planner'); retention=request.pop('retention')
+        if request: raise TypeError('unexpected retain_workshop_plan arguments')
+        return retain_workshop_plan(registry,sketch,planner,retention)
+    if operation=='propose_sketch_repair':
+        sketch=request.pop('sketch'); assembly=request.pop('assembly')
+        if request: raise TypeError('unexpected propose_sketch_repair arguments')
+        return propose_sticker_repair(registry,sketch,assembly)
+    if operation=='save_sketch_repair':
+        sketch=request.pop('sketch'); assembly=request.pop('assembly')
+        return save_sticker_repair(registry,sketch,assembly,**request)
     if operation=='instance':
         d=registry.get(request.pop('sticker_id'),request.pop('version'))
         return instance(d,**request)

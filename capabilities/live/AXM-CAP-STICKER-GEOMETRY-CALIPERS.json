@@ -1,0 +1,66 @@
+{
+  "id": "AXM-CAP-STICKER-GEOMETRY-CALIPERS",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Give Universal Creation real deterministic workshop calipers over exact sticker geometry: measure actual triangle-referenced GLB POSITION vertices through stored node, assembly, anchor, offset and scale transforms; report local socket-frame bounds and dimensions for nested reusable parts; and combine those measurements with Design Workshop placement evidence without turning numeric bounds into fit, collision, physics or aesthetic claims.",
+  "handles": [
+    "sticker-geometry-calipers",
+    "measure-sticker-geometry",
+    "measure-sticker-assembly-parts",
+    "compare-sticker-geometry",
+    "actual-sticker-size"
+  ],
+  "input_contract": {
+    "required": ["operation"],
+    "required_by_operation": {
+      "measure-sticker-geometry": ["database", "sticker"],
+      "measure-sticker-assembly-parts": ["database", "assembly"],
+      "compare-sticker-geometry": ["database", "sketch", "assembly"]
+    },
+    "properties": {
+      "operation": "inspect-geometry-calipers, measure-sticker-geometry, measure-sticker-assembly-parts, or compare-sticker-geometry",
+      "database": "local UC sticker SQLite registry; relative paths must stay in creations/.axm-build or may be outside the machine body",
+      "sticker": "exact immutable 3D sticker pin",
+      "assembly": "exact immutable 3D assembly sticker pin",
+      "sketch": "exact axm.design-sketch/v0.1 body; numeric dimension comparison requires units exactly m"
+    }
+  },
+  "output_contract": {
+    "kind": "actual-rest-geometry-bounds-or-sketch-comparison",
+    "contains": [
+      "actual indexed TRIANGLES POSITION evidence instead of accessor min/max claims",
+      "bounds and XYZ dimensions in metres",
+      "per-direct-part bounds measured in each part's own sticker socket frame",
+      "nested assembly and multiplied-wrapper transforms flattened exactly",
+      "explicit rest/default-pose boundary for animation",
+      "combined placement plus actual-size PASS/FAIL/HOLD evidence against an exact sketch"
+    ]
+  },
+  "dependencies": ["AXM-CAP-DESIGN-WORKSHOP", "AXM-CAP-WORKSHOP-CONSTRUCTION-LOOP"],
+  "relationships": [
+    "closes the deliberate source-mesh-size HOLD left by Workshop Construction Loop",
+    "reuses UC's existing GLB geometry and pose validation machinery instead of inventing metadata-only dimensions",
+    "measures multiplied stickers and nested modules as ordinary reusable sticker assemblies",
+    "keeps dimensional evidence separate from fit, clearance, physics and visual approval"
+  ],
+  "anatomy_refs": [],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:sticker_geometry_calipers",
+    "source": "src/axm_uc/sticker_geometry_calipers.py via src/axm_uc/__init__.py registration; matching JSON operations are exposed through src/axm_uc/sticker_create.py"
+  },
+  "limitations": [
+    "v0.1 measures the authored/default rest pose; it does not compute swept animation envelopes",
+    "only ordinary indexed or non-indexed TRIANGLES geometry supported by the existing rigid GLB observer can become complete PASS evidence",
+    "sketch dimension comparison requires units exactly m; no implicit unit conversion is guessed",
+    "dimension mismatch is reported but this wave does not silently scale, deform or replace source geometry",
+    "bounds do not prove contact, collision clearance, strength, manufacturability, physics, aesthetics, engine acceptance or runtime performance"
+  ],
+  "persistent_state": null,
+  "root_fit": {
+    "truth": {"fit": true, "basis": "Bounds are derived from actual triangle-referenced vertex bytes plus exact stored transforms; unsupported or incomplete geometry holds/fails rather than trusting metadata or guessing units."},
+    "agency": {"fit": true, "basis": "Measurement is read-only; the caller chooses the exact sticker/assembly/sketch and no geometry or assembly state is silently repaired."},
+    "continuity": {"fit": true, "basis": "Every report binds exact immutable sticker pins and report digests while nested source assets remain content-addressed and unchanged."},
+    "wisdom-before-speed": {"fit": true, "basis": "Animation envelopes, unit conversions, unsupported geometry and physical-fit conclusions stay explicit gaps instead of being inferred from a bounding box."}
+  }
+}
