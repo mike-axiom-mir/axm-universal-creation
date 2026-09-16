@@ -104,8 +104,8 @@ def main():
                                            "height_broad_amplitude":.001,"height_pit_depth":.002,"base_grain_variation":.02}}},
         "specification":spec,"material_policy":{"minimum_size":size},"minimum_texels_per_m":4 if args.quick else 12,
         "maximum_size_m":[1.82,1.5,1.31],"preview":{"width":96 if args.quick else 640,"height":80 if args.quick else 480},
-        "production":{"uv":{"resolution":size,"padding_px":1 if args.quick else 2},
-                      "bake":{"size":size,"margin_px":1 if args.quick else 2,"samples":2 if args.quick else 24},
+        "production":{"uv":{"resolution":size,"padding_px":2},
+                      "bake":{"size":size,"margin_px":2,"samples":2 if args.quick else 24},
                       "target":{"width":96 if args.quick else 800,"height":80 if args.quick else 600,"samples":2 if args.quick else 48,
                                 "views":[{"yaw":.57,"elevation":.3},{"yaw":-2.1,"elevation":.4}]}}}
     print("Run static production through the actual profession workflow",flush=True)
