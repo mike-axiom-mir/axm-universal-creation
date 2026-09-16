@@ -8,7 +8,15 @@ const Preflight = require('./uc-constraint-preflight.js');
 const VERSION = '0.1.0';
 const STEP_SCHEMA = 'axm.uc-constraint-preflight-guard-step/v0.1';
 
-function clone(value) { return JSON.parse(JSON.stringify(value)); }
+function clone(value) {
+  if (Array.isArray(value)) return value.map(clone);
+  if (value && typeof value === 'object') {
+    const out = {};
+    Object.keys(value).forEach(key => { out[key] = clone(value[key]); });
+    return out;
+  }
+  return value;
+}
 
 function decisionChecksum(payload) {
   const basis = {
