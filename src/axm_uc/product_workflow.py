@@ -164,7 +164,7 @@ def compile_draft(root, inputs):
     canonical = {"schema": "axm.product-source/v1", "product_type": kind, "brief": brief,
                  "recipe": copy.deepcopy(inputs.get("recipe", {})), "specification": copy.deepcopy(inputs.get("specification")),
                  "files": copy.deepcopy(inputs.get("files")), "parent": parent,
-                 "quality_contract": {k: copy.deepcopy(inputs.get(k)) for k in ("material_policy", "minimum_texels_per_m", "maximum_size_m", "preview", "checks")},
+                 "quality_contract": {k: copy.deepcopy(inputs.get(k)) for k in ("material_policy", "minimum_texels_per_m", "maximum_size_m", "preview", "checks", "unwrap_bake")},
                  "source_status": "DECLARED_INTENT; not an aesthetic approval"}
     owner = {"software": "software-architect", "web": "visual-designer"}.get(kind, "art-director")
     add("brief-source", owner, "json-file", "source.json", value=canonical)
@@ -181,16 +181,29 @@ def compile_draft(root, inputs):
                 material=str(path/destination), policy=inputs.get("material_policy", {}))
             bindings[name] = {"path": str(path/destination), "wrap": "clamp"}
         if kind == "static-3d":
-            add("textured-assembly", "technical-artist", "bind-textured-asset", "asset.glb",
-                specification=inputs.get("specification"), materials=bindings)
+            specification = inputs.get("specification")
+            groups = specification.get("primitives", []) if isinstance(specification, dict) else []
+            uv_flags = [isinstance(group, dict) and "texcoords" in group for group in groups]
+            if uv_flags and all(uv_flags):
+                add("textured-assembly", "technical-artist", "bind-textured-asset", "asset.glb",
+                    specification=specification, materials=bindings)
+                asset_path = path/"asset.glb"
+            elif uv_flags and not any(uv_flags):
+                add("auto-unwrap-bake-assembly", "technical-artist", "auto-unwrap-bake-asset", "auto-bake",
+                    specification=specification, materials=bindings, options=inputs.get("unwrap_bake", {}))
+                asset_path = path/"auto-bake/asset.glb"
+            elif uv_flags:
+                raise ValueError("static-3d specification cannot mix supplied-UV and UV-less groups in the automatic fallback")
+            else:
+                raise ValueError("static-3d specification requires surface primitives")
             add("uv-geometry-check", "technical-artist", "inspect-textured-asset", "checks/asset.json",
-                asset=str(path/"asset.glb"), minimum_texels_per_m=inputs.get("minimum_texels_per_m", 64))
+                asset=str(asset_path), minimum_texels_per_m=inputs.get("minimum_texels_per_m", 64))
             if "maximum_size_m" in inputs:
                 steps[-1]["action"]["inputs"]["maximum_size_m"] = copy.deepcopy(inputs["maximum_size_m"])
             options = {"width": 480, "height": 360, "supersample": 1, **inputs.get("preview", {})}
             for light in ("studio", "garage"):
                 add("preview-"+light, "graphics-engineer", "render-asset-preview", "previews/"+light+".png",
-                    asset=str(path/"asset.glb"), options={**options, "lighting": light})
+                    asset=str(asset_path), options={**options, "lighting": light})
     else:
         project_type = "python" if kind == "software" else "static-web"
         action = "python-project" if kind == "software" else "static-web-project"
@@ -259,8 +272,12 @@ def _stage_observations(kind, plan, record):
             if station_ids and set(station_ids) == set(expected):
                 status, scope = "OBSERVED_BOUNDED", "Fresh map quality checks against explicit policy"
         if identity in {"geometry", "uv-layout", "assembly"} and "uv-geometry-check" in observed:
-            status, station_ids = "PARTIAL", ["textured-assembly", "uv-geometry-check"]
-            scope = "Geometry, texture coverage and UV density measured; topology/seams/overlaps/padding/mounts remain unverified"
+            assembly = "auto-unwrap-bake-assembly" if "auto-unwrap-bake-assembly" in observed else "textured-assembly"
+            status, station_ids = "PARTIAL", [assembly, "uv-geometry-check"]
+            if assembly == "auto-unwrap-bake-assembly":
+                scope = "Geometry, generated non-overlapping triangle charts, explicit atlas gutters, texture coverage and UV density observed; smart seam choice, density-optimal packing, high-to-low bake, mounts and aesthetic acceptance remain unverified"
+            else:
+                scope = "Geometry, texture coverage and UV density measured; supplied-UV seams/overlaps/padding/mounts remain unverified"
         if identity == "look-development" and {"preview-studio", "preview-garage"} <= observed:
             status, station_ids = "PARTIAL", ["preview-studio", "preview-garage"]
             scope = "Exact texture renders in two lighting profiles; aesthetic judgment remains open"

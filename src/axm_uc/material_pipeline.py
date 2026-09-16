@@ -9,6 +9,7 @@ import math
 from pathlib import Path
 
 from .atomic import atomic_write_json
+from .auto_uv_bake import build_directory as build_auto_uv_bake, verify_directory as verify_auto_uv_bake
 from .game_material_bridge import load_material_bundle
 from .game_material_styles import WearLayer, game_material_request, generate_game_material
 from .native_textures import decode_png, texture_set_from_bundle
@@ -18,7 +19,7 @@ from .material_uv_evidence import inspect_material_uv_density
 from .game_pose_runtime import GamePoseAsset
 
 KINDS = {"generate-game-material", "inspect-game-material", "bind-textured-asset",
-         "inspect-textured-asset", "render-asset-preview"}
+         "auto-unwrap-bake-asset", "inspect-textured-asset", "render-asset-preview"}
 
 
 def _target(root, value):
@@ -133,7 +134,7 @@ def asset_quality(root, inputs):
             "artifact_sha256": hashlib.sha256(path.read_bytes()).hexdigest(), "checks": checks,
             "minimum_texels_per_m": threshold, "geometry": geometry, "uv": uv,
             "bounds_m": bounds, "size_m": size,
-            "limitations": ["Density is measured, not a universal quality score. No unwrap overlap, padding, tangent parity or engine acceptance proof."]}
+            "limitations": ["Density is measured, not a universal quality score. Automatic fallback receipts can prove generated chart separation/padding, but not smart seams, tangent parity or engine acceptance."]}
 
 
 def validate_station(root, kind, inputs):
@@ -142,7 +143,7 @@ def validate_station(root, kind, inputs):
     _target(root, inputs.get("path"))
     if kind == "generate-game-material":
         material_options(inputs)
-    if kind == "bind-textured-asset":
+    if kind in {"bind-textured-asset", "auto-unwrap-bake-asset"}:
         # Existence belongs to execution: upstream stations may create these.
         if not isinstance(inputs.get("materials"), dict):
             raise ValueError("materials mapping is required")
@@ -161,6 +162,9 @@ def run_station(root, kind, inputs):
         return generate_game_material(target, **material_options(inputs))
     if kind == "bind-textured-asset":
         return publish_glb(target, bound_specification(root, inputs))
+    if kind == "auto-unwrap-bake-asset":
+        return build_auto_uv_bake(target, inputs.get("specification"), inputs.get("materials"), inputs.get("options"),
+                                  resolve_material=lambda value: _target(root, value))
     if kind == "render-asset-preview":
         return publish_glb_preview(_target(root, inputs["asset"]), target, **inputs.get("options", {}))
     report = (material_quality(_target(root, inputs["material"]), inputs.get("policy"))
@@ -182,6 +186,11 @@ def observe_station(root, kind, inputs):
     elif kind == "bind-textured-asset":
         expected = build_glb(bound_specification(root, inputs))["body"]
         checks = [{"type": "exact-textured-asset", "passed": target.read_bytes() == expected}]
+    elif kind == "auto-unwrap-bake-asset":
+        expected = verify_auto_uv_bake(target, inputs.get("specification"), inputs.get("materials"), inputs.get("options"),
+                                       resolve_material=lambda value: _target(root, value))
+        checks = expected["checks"]
+        details = {"unwrap_bake_receipt": expected["receipt"]}
     elif kind == "render-asset-preview":
         expected = render_glb_preview(_target(root, inputs["asset"]).read_bytes(), **inputs.get("options", {}))
         checks = [{"type": "fresh-exact-render", "passed": target.read_bytes() == expected["body"]}]
@@ -194,4 +203,4 @@ def observe_station(root, kind, inputs):
         details = {"quality_report": expected}
     return {"status": "PASS" if checks and all(r["passed"] for r in checks) else "FAIL", "checks": checks, **details,
             "visual_quality": "NOT_TESTED", "professional_acceptance": "NOT_TESTED",
-            "limitations": ["These are local byte, geometry, map and render observations. Aesthetic review and target acceptance remain separate."]}
+            "limitations": ["These are local byte, geometry, map, unwrap/bake and render observations. Aesthetic review and target acceptance remain separate."]}
