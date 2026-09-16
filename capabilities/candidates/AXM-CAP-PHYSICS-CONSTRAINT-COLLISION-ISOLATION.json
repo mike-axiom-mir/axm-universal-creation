@@ -1,18 +1,19 @@
 {
   "id": "AXM-CAP-PHYSICS-CONSTRAINT-COLLISION-ISOLATION",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "status": "candidate",
-  "purpose": "Allow translation-only constrained assemblies to opt into deterministic intra-component collision isolation during the preserved donor-core collision stage without rewriting the donor solver or silently overwriting caller collision-group semantics.",
+  "purpose": "Allow translation-only constrained assemblies spanning mounts, exact distance joints and slack distance limits to opt into deterministic intra-component collision isolation during the preserved donor-core collision stage without rewriting the donor solver or silently overwriting caller collision-group semantics.",
   "handles": [
     "constraint-component-collision-isolation",
     "assembly-self-collision-suppression",
-    "temporary-negative-collision-groups"
+    "temporary-negative-collision-groups",
+    "distance-limit-component-isolation"
   ],
   "input_contract": {
     "required": ["world", "constraints", "dt"],
     "properties": {
       "world": "axm.physics-world/v1 world",
-      "constraints": "constraint-composer translation mounts and/or distance joints",
+      "constraints": "constraint-composer translation mounts, exact distance joints and/or distance limits",
       "dt": "donor-core step delta",
       "options": "optional isolation enabled flag plus nested composer options"
     }
@@ -21,7 +22,7 @@
     "kind": "axm.uc-constraint-collision-isolation-step/v0.1",
     "contains": [
       "restored final world",
-      "component-isolation receipts",
+      "three-family component-isolation receipts",
       "temporary-group donor-core collision-stage world",
       "composer diagnostics",
       "restored-world checksum"
@@ -48,8 +49,9 @@
   },
   "limitations": [
     "isolation applies to whole connected constraint components rather than direct constraint edges only",
+    "a slack distance-limit edge still joins bodies into one isolation component even while that limit is not actively transmitting correction",
     "components containing any nonzero caller collision.group are skipped rather than overridden",
-    "only translation mounts and center-to-center distance joints are understood",
+    "only translation mounts, center-to-center distance joints and center-distance limits are understood",
     "no angular inertia, rotating local anchors, hinge, slider, rotational weld, motor or gear semantics",
     "core contact evidence describes the temporary-group collision stage before caller groups are restored",
     "not scientific validation"
@@ -60,6 +62,8 @@
       "command": "node capabilities/physics-core/constraint-collision-isolation-selftest.js",
       "proves": [
         "overlapping constrained bodies can be excluded from donor-core contacts when isolation is eligible",
+        "a distance-limit-only edge forms an isolation component without changing its slack physics semantics",
+        "all three supported constraint families contribute deterministic component topology",
         "caller collision groups are restored on the final world",
         "existing nonzero caller group semantics cause an explicit skip rather than silent override",
         "temporary negative groups are allocated deterministically while avoiding ids already present in the world",
@@ -70,7 +74,7 @@
   "root_fit": {
     "truth": {
       "fit": true,
-      "basis": "The capability names its component-wide behavior, exposes skipped components and preserves the exact donor collision-stage world used for contact evidence."
+      "basis": "The capability names its component-wide behavior, including the fact that even slack limit edges affect isolation topology, exposes skipped components and preserves the exact donor collision-stage world used for contact evidence."
     },
     "agency": {
       "fit": true,
@@ -78,11 +82,11 @@
     },
     "continuity": {
       "fit": true,
-      "basis": "It composes around the existing mixed-constraint lane and preserved donor source rather than replacing either."
+      "basis": "It grows with the established mixed-constraint lane and preserved donor source rather than replacing either."
     },
     "wisdom-before-speed": {
       "fit": true,
-      "basis": "The first collision-suppression step is deliberately bounded to deterministic connected components and declines ambiguous existing group semantics instead of guessing."
+      "basis": "Collision suppression remains bounded to deterministic connected components and declines ambiguous existing group semantics instead of guessing."
     }
   }
 }
