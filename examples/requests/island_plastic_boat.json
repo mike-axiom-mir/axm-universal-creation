@@ -17,11 +17,24 @@
     "cloth": [0.88, 0.79, 0.57, 1.0],
     "dark_metal": [0.075, 0.09, 0.11, 1.0]
   },
+  "material_texture_size": 512,
+  "material_seed": 9137,
+  "material_profiles": {
+    "pontoon": {"profile": "sun-faded-plastic", "color": "plastic_yellow"},
+    "deck": {"profile": "scratched-fiberglass", "color": "plastic_blue"},
+    "bumper": {"profile": "weathered-rubber", "color": "salvage_red"},
+    "frame": {"profile": "weathered-aluminum", "color": "dark_metal"},
+    "canopy": {"profile": "canvas", "color": "salvage_red"},
+    "sail": {"profile": "sailcloth", "color": "cloth"},
+    "life_ring": {"profile": "sun-faded-plastic", "color": "salvage_red"},
+    "duck": {"profile": "molded-plastic", "color": "plastic_yellow"},
+    "duck_beak": {"profile": "molded-plastic", "rgb": [242, 86, 18]}
+  },
   "design": {
-    "tone": ["funny", "cheap-looking", "lovable", "improvised", "game-readable"],
-    "must_read_as": ["fragile survival boat", "two-player craft", "bright plastic", "island salvage"],
-    "signature_details": ["yellow inflatable pontoons", "patchwork shade canopy", "smiley cloth sail", "life ring", "rubber duck", "cargo crate"],
-    "avoid": ["realistic military boat", "pirate ship", "flat image card", "non-animated render-only output"]
+    "tone": ["funny", "weathered", "lovable", "improvised", "game-readable", "stylized-detailed"],
+    "must_read_as": ["fragile survival boat", "two-player craft", "sun-worn plastic and fiberglass", "island salvage", "2.5d adventure game asset"],
+    "signature_details": ["yellow inflatable pontoons", "patchwork shade canopy", "smiley cloth sail", "life ring", "rubber duck", "cargo crate", "visible material wear and surface breakup"],
+    "avoid": ["realistic military boat", "pirate ship", "flat image card", "non-animated render-only output", "uniform toy-plastic shading", "single-flat-color materials"]
   },
   "required_game_sockets": [
     "Socket_Player1",
@@ -37,9 +50,10 @@
     "LOD2 GLB",
     "collision GLB",
     "Blender source",
+    "portable PBR textures",
     "PNG proof",
     "MP4 motion proof",
     "manifest"
   ],
-  "truth_boundary": "This first asset proves authored geometry, exportable animation, LOD/collision bodies and game attachment sockets. It does not prove final game balance, engine controller integration, buoyancy simulation or final art-direction acceptance."
+  "truth_boundary": "This asset proves authored geometry, exportable animation, LOD/collision bodies, game attachment sockets and UC-authored portable PBR material maps. It does not prove final game balance, engine controller integration, buoyancy simulation or final art-direction acceptance."
 }
