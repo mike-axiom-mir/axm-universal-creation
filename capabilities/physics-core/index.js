@@ -10,6 +10,7 @@ module.exports = {
   axisLocks: require('./uc-axis-locks.js'),
   axisLimits: require('./uc-axis-limits.js'),
   directionLocks: require('./uc-direction-locks.js'),
+  directionLimits: require('./uc-direction-limits.js'),
   constraintComposer: require('./uc-constraint-composer.js'),
   constraintCollisionIsolation: require('./uc-constraint-collision-isolation.js'),
   constraintActivityGate: require('./uc-constraint-activity-gate.js')
