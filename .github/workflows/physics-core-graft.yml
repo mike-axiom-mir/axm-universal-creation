@@ -6,6 +6,7 @@ on:
       - 'capabilities/physics-core/**'
       - 'capabilities/candidates/AXM-CAP-PHYSICS-FABRIC.json'
       - 'capabilities/candidates/AXM-CAP-PHYSICS-DISTANCE-JOINTS.json'
+      - 'capabilities/candidates/AXM-CAP-PHYSICS-DISTANCE-LIMITS.json'
       - 'capabilities/candidates/AXM-CAP-PHYSICS-TRANSLATION-MOUNTS.json'
       - 'capabilities/candidates/AXM-CAP-PHYSICS-CONSTRAINT-COMPOSER.json'
       - 'capabilities/candidates/AXM-CAP-PHYSICS-CONSTRAINT-COLLISION-ISOLATION.json'
@@ -29,6 +30,8 @@ jobs:
         run: node capabilities/physics-core/selftest.js
       - name: Verify projected distance joints
         run: node capabilities/physics-core/distance-joints-selftest.js
+      - name: Verify bounded distance limits
+        run: node capabilities/physics-core/distance-limits-selftest.js
       - name: Verify translation mounts
         run: node capabilities/physics-core/translation-mounts-selftest.js
       - name: Verify mixed constraint composer
