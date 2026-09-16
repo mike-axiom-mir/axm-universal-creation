@@ -32,8 +32,9 @@ from .visual_template_vfx import extend_vfx_catalog as _extend_vfx_catalog
 from .visual_template_mission import extend_mission_catalog as _extend_mission_catalog
 from .visual_template_hud import extend_hud_catalog as _extend_hud_catalog
 from .visual_template_lighting import extend_lighting_catalog as _extend_lighting_catalog
+from .visual_template_camera import extend_camera_catalog as _extend_camera_catalog
 
-_COMPOSITION=("visual_template_growth","visual_template_game_systems","visual_template_creative_narrative","visual_template_axm_system","visual_template_game_shared","visual_template_keyart","visual_template_cards","visual_template_cinematic","visual_template_video_overlay","visual_template_diagram","visual_template_atlas","visual_template_novel","visual_template_showroom","visual_template_music","visual_template_presentation","visual_template_character_reference","visual_template_configurator","visual_template_motion","visual_template_brand","visual_template_environment","visual_template_vfx","visual_template_mission","visual_template_hud","visual_template_lighting")
+_COMPOSITION=("visual_template_growth","visual_template_game_systems","visual_template_creative_narrative","visual_template_axm_system","visual_template_game_shared","visual_template_keyart","visual_template_cards","visual_template_cinematic","visual_template_video_overlay","visual_template_diagram","visual_template_atlas","visual_template_novel","visual_template_showroom","visual_template_music","visual_template_presentation","visual_template_character_reference","visual_template_configurator","visual_template_motion","visual_template_brand","visual_template_environment","visual_template_vfx","visual_template_mission","visual_template_hud","visual_template_lighting","visual_template_camera")
 _applied=getattr(_core,"_AXM_VISUAL_COMPOSITION",None)
 if _applied is None:
     _extend_catalog(vars(_core))
@@ -60,6 +61,7 @@ if _applied is None:
     _extend_mission_catalog(vars(_core))
     _extend_hud_catalog(vars(_core))
     _extend_lighting_catalog(vars(_core))
+    _extend_camera_catalog(vars(_core))
     _core._AXM_VISUAL_COMPOSITION=_COMPOSITION
 elif _applied != _COMPOSITION:
     raise RuntimeError("visual template composition changed inside a live process; restart with one exact catalog")
