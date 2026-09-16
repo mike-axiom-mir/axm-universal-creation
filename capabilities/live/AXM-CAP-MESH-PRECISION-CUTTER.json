@@ -1,8 +1,8 @@
 {
   "id": "AXM-CAP-MESH-PRECISION-CUTTER",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "status": "live",
-  "purpose": "Cut bounded subtractive features directly into observed existing rigid static UC GLB rectangular-prism meshes, including rotated stock, hash-linked notch chains, and cumulative round-hole chains whose v0.6 sweep supports arbitrary non-overlapping same-axis hole layouts without the earlier projection-separability requirement.",
+  "purpose": "Cut bounded subtractive features into observed rigid static UC rectangular-prism GLBs, including rotated stock, persistent notch chains, persistent hole chains, general same-axis hole sweeps, and v0.7 hash-linked mixed same-axis hole-plus-notch fabrication.",
   "handles": [
     "mesh-precision-cut-3d",
     "mesh-laser-through-hole",
@@ -14,18 +14,20 @@
     "mesh-hole-fabrication-chain",
     "mesh-laser-hole-chain",
     "mesh-hole-sweep-chain",
-    "mesh-laser-hole-sweep"
+    "mesh-laser-hole-sweep",
+    "mesh-mixed-fabrication-chain",
+    "mesh-laser-mixed-chain"
   ],
   "input_contract": {
     "required": ["source_path", "path", "specification"],
     "properties": {
       "source_path": "existing ordinary .glb creation outside protected live machine body",
       "path": "distinct target .glb path outside protected live machine body",
-      "specification": "closed v0.2 axis-aligned cut recipe, v0.3 oriented cut recipe, v0.4 cumulative box-notch recipe, v0.5 projection-separable hole-chain recipe, or axm.mesh-hole-fabrication-chain/v0.6 general same-axis round-hole sweep recipe",
+      "specification": "closed v0.2/v0.3 single-cut recipe, v0.4 notch-chain recipe, v0.5/v0.6 hole-chain recipe, or axm.mesh-mixed-fabrication-chain/v0.7 same-axis mixed operation recipe",
       "expected_source_sha256": "optional exact lowercase SHA-256 binding, with optional sha256: prefix",
-      "lineage_path": "v0.4-v0.6 optional prior lineage JSON receipt when appending to a previous chain output; v0.6 accepts a verified v0.5 hole lineage as an upgrade parent",
-      "receipt_path": "v0.4-v0.6 optional distinct output JSON receipt path; defaults beside the output GLB",
-      "expected_lineage_sha256": "v0.4-v0.6 optional exact prior lineage SHA-256 binding",
+      "lineage_path": "optional prior lineage receipt; v0.7 accepts verified v0.4 notch, v0.5/v0.6 hole, or v0.7 mixed lineage parents",
+      "receipt_path": "optional distinct output receipt path; defaults beside the output GLB",
+      "expected_lineage_sha256": "optional exact prior lineage SHA-256 binding",
       "replace": "optional boolean; defaults false"
     }
   },
@@ -33,15 +35,15 @@
     "kind": "validated-existing-mesh-precision-cut-glb",
     "contains": [
       "exact source and output GLB SHA-256 bindings",
-      "source topology and proven rectangular-prism frame evidence",
-      "hash-linked cumulative operation lineage and final receipt digest",
-      "deterministic prior-output reconstruction before resume append",
-      "v0.6 vertical sweep events at resolved hole polygon x-coordinates",
-      "v0.6 synchronized free-region seams and split hole walls so no hidden internal walls are introduced",
-      "exact polygonized removed-area and closed-mesh volume agreement",
-      "v0.5-to-v0.6 lineage upgrade evidence when used",
-      "output closed oriented edge-manifold candidate evidence",
-      "procedural-3D post-publication GLB validation",
+      "proven rectangular-prism root frame and source topology evidence",
+      "hash-linked cumulative operation lineage and receipt digest",
+      "exact deterministic parent-output reconstruction before continuation",
+      "v0.7 unified same-axis sweep over interior round holes and boundary-open box notches",
+      "v0.7 explicit omission of outer stock walls only where a notch opens to the exterior",
+      "stable resolved physical operation digests across lineage continuation",
+      "non-overlap/non-touch gate across hole-hole, notch-notch and hole-notch pairs",
+      "exact mixed removed-area and closed-mesh volume agreement",
+      "closed oriented edge-manifold candidate evidence and procedural-3D GLB validation",
       "explicit unsupported/not-tested boundaries"
     ]
   },
@@ -50,46 +52,47 @@
     "AXM-CAP-GENERATE-PROCEDURAL-3D"
   ],
   "relationships": [
-    "reuses the existing static GLB geometry decoder, seam-weld topology inspector, proven oriented stock frame, deterministic GLB publisher and validator",
-    "v0.4 remains the bounded cumulative box-notch path",
-    "v0.5 remains available for its previously verified projection-separable multi-hole outputs and receipts",
-    "v0.6 removes only the same-axis projection-separability restriction by vertically decomposing the rectangular cross-section at every resolved polygon x event",
-    "v0.6 splits top/bottom free regions and matching hole side walls at shared sweep events so all material boundaries weld without internal fabrication walls",
-    "v0.6 can consume a v0.5 lineage only after the v0.5 compiler exactly rebuilds and matches the supplied parent GLB",
-    "source artifacts remain read-only and publication remains separate/rollback-capable"
+    "reuses the static GLB geometry decoder, seam-weld topology inspector, proven oriented stock frame, deterministic GLB publisher and validator",
+    "v0.4 remains the verified bounded cumulative box-notch path",
+    "v0.5 and v0.6 remain the verified cumulative round-hole paths",
+    "v0.7 unifies same-axis holes and boundary-open notches in one deterministic cross-section sweep rather than gluing independently generated meshes",
+    "v0.7 omits cut walls only on the exact stock boundary through which a notch opens while retaining the three newly exposed notch walls",
+    "v0.7 rejects touching or overlapping cut polygons so mixed removed-volume receipts remain additive and exact",
+    "v0.7 can consume v0.4/v0.5/v0.6 lineage only after the corresponding legacy compiler exactly rebuilds the supplied parent GLB, then emits a new v0.7 lineage",
+    "all older cutter schemas delegate through their previously registered paths unchanged"
   ],
   "anatomy_refs": [],
   "implementation": {
     "kind": "DETERMINISTIC_SOURCE",
     "entrypoint": "builtin:precision_cutter",
-    "source": "src/axm_uc/mesh_general_hole_chain.py"
+    "source": "src/axm_uc/mesh_mixed_fabrication.py"
   },
   "limitations": [
-    "v0.6 cumulative sweep remains bounded to at most 32 non-overlapping/non-touching polygonized round through-holes on one proven fabrication axis of one rigid rectangular-prism root stock.",
-    "The same-axis projection-separability requirement is removed, but notch-and-hole mixing and cross-axis cumulative chains remain unavailable rather than approximated.",
-    "The v0.6 sweep is a bounded rectangular-stock polygon-hole decomposition, not a claim of general arbitrary polygon triangulation or arbitrary 3D boolean CSG.",
-    "As new cumulative holes add sweep x events, collinear tessellation points on older hole walls may be refined; the resolved physical hole polygon, polygonized area and per-hole digest stay unchanged.",
-    "Multiple source primitives/components, skins, animation, morphs, UVs, textures, tangents, vertex colours, joints and unsupported material state remain rejected.",
+    "v0.7 mixed fabrication remains bounded to at most 32 non-overlapping/non-touching round-through-hole and box-notch operations on one proven fabrication axis of one rigid rectangular-prism root stock.",
+    "Cross-axis cumulative fabrication remains unavailable rather than approximated.",
+    "v0.7 is a bounded rectangular-stock cross-section subtraction sweep, not general arbitrary 3D boolean CSG or arbitrary imported-mesh surgery.",
+    "Multiple source primitives/components, skins, animation, morphs, UVs, textures, tangents, vertex colours, joints and unsupported material state remain rejected by the existing source boundary.",
+    "Legacy lineage migration is exact-output-verified before conversion, but the v0.7 receipt rehashes imported physical operations under the v0.7 operation grammar while retaining the parent lineage digest and migration receipt.",
     "Lineage receipts are content-hashed and exact-output-bound, but are not cryptographic authorship signatures or external trust anchors.",
-    "Edge-manifold topology and explicit non-overlap are checked; visual quality, structural strength, real manufacturing behavior and host-engine import remain unproven."
+    "Edge-manifold topology, non-overlap and volume accounting are checked; visual quality, structural strength, real manufacturing behavior and host-engine import remain unproven."
   ],
   "persistent_state": null,
   "root_fit": {
     "truth": {
       "fit": true,
-      "basis": "Exact source/frame state, per-hole physical polygon receipts, sweep decomposition, lineage hashes, deterministic prior reconstruction, volume agreement, topology, output digest and limitations are explicit."
+      "basis": "Exact source/frame state, resolved hole/notch geometry, operation hashes, parent lineage, deterministic prior reconstruction, mixed sweep decomposition, topology, volume agreement, output digest and limitations are explicit."
     },
     "agency": {
       "fit": true,
-      "basis": "The caller chooses source, axis, hole locations/radii/resolution/kerf and continuation receipt; overlap, cross-axis, mixed-operation and freeform requests still fail closed."
+      "basis": "The caller chooses the stock, fabrication axis, ordered mixed operations, dimensions, kerf, continuation receipt and replacement decision; overlap, cross-axis and unsupported freeform requests fail closed."
     },
     "continuity": {
       "fit": true,
-      "basis": "v0.6 preserves append-only lineage, verifies exact previous bytes before continuation, supports verified v0.5 lineage upgrade, keeps source artifacts read-only and retains rollback-capable output/receipt publication."
+      "basis": "Source artifacts remain read-only, prior v0.4-v0.7 output is exactly reconstructed before continuation, parent receipt digests remain linked, and output/receipt publication retains rollback behavior."
     },
     "wisdom-before-speed": {
       "fit": true,
-      "basis": "The sweep adds only the smallest geometry generalization it can prove: arbitrary non-overlapping same-axis round-hole layouts on rectangular stock, with manifold and volume gates before publication."
+      "basis": "v0.7 adds only the smallest mixed-operation generalization whose geometry, non-overlap, manifoldness and removed volume can be deterministically checked before publication."
     }
   }
 }
