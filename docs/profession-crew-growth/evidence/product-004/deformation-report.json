@@ -1,0 +1,82 @@
+{
+  "artifact_sha256": "7ba5e8a5316d952a1be90314bd429185ba982c5c95ad82121be84715e5da6a8a",
+  "checks": [
+    {
+      "passed": true,
+      "type": "animated-mesh-present"
+    },
+    {
+      "passed": true,
+      "type": "required-skin-present"
+    },
+    {
+      "passed": true,
+      "type": "sampled-deformation-policy"
+    }
+  ],
+  "clips": [
+    {
+      "checks": {
+        "bounded_sampled_stretch": true,
+        "declared_contacts": true,
+        "declared_loop_continuity": true,
+        "no_sampled_collapse": true
+      },
+      "clip": "Flex",
+      "contacts": [
+        {
+          "clip": "Flex",
+          "end_s": 1,
+          "maximum_drift_m": 0.001,
+          "mesh": 0,
+          "observed_maximum_drift_m": 0.0,
+          "reference": [
+            0.2199999988079071,
+            0.0,
+            -0.09000000357627869
+          ],
+          "start_s": 0,
+          "vertex": 0
+        }
+      ],
+      "endpoint_delta_m": 0.0,
+      "maximum_edge_ratio": 1.222641545246609,
+      "maximum_motion_m": 0.945581789106988,
+      "minimum_area_ratio": 0.636610356473575,
+      "times_s": [
+        0.0,
+        0.125,
+        0.25,
+        0.375,
+        0.5,
+        0.625,
+        0.75,
+        0.875,
+        1.0
+      ]
+    }
+  ],
+  "policy": {
+    "contacts": [
+      {
+        "clip": "Flex",
+        "end_s": 1,
+        "maximum_drift_m": 0.001,
+        "mesh": 0,
+        "start_s": 0,
+        "vertex": 0
+      }
+    ],
+    "loop_clips": [
+      "Flex"
+    ],
+    "maximum_edge_ratio": 3.0,
+    "maximum_loop_delta_m": 0.001,
+    "minimum_area_ratio": 0.05,
+    "require_skin": true,
+    "samples_per_interval": 4
+  },
+  "schema": "axm.deformation-quality/v1",
+  "scope": "Authored keys and subdivisions, skin weights/hierarchy, triangle area, edge stretch, declared contacts and loops. No unsampled extrema, self-intersection, anatomy or motion-quality proof.",
+  "status": "PASS"
+}

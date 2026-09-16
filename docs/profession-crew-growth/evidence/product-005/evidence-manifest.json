@@ -1,0 +1,33 @@
+{
+  "schema": "axm.target-evidence-snapshot/v1",
+  "code_commit": "e4271a9ba2f20992979dab874bafff45f3304f59",
+  "godot_run": 35072004076,
+  "workshop_run": 35071427660,
+  "workshop_code_commit": "ff8f39e76a607cec69f74caffe1d2e5c281f4793",
+  "source_sha256": {
+    "src/axm_uc/godot_target.py": "05b7ad913b3e06012e992460378f21762de8458556af9e08f87ce37c8cfe7c07",
+    "src/axm_uc/data/engine/godot_probe.gd": "cb90c6c60de26de6cdb3a63484851d660b0be2595c4384e5875b613d150be472",
+    "src/axm_uc/product_workflow.py": "5950ec58c58a524ac24844a3979cd2e49a1b27f0db3b93ea399d8f49d5f4f6fc",
+    "src/axm_uc/material_pipeline.py": "cf9949039da611c869911191d08f95187c5fcf24ad7e8f9a8f2a5f7bcf2c1172",
+    "tools/godot_target_demo.py": "9ecd44100de164c833a4df2c55dadeccc2585846d561fcaa2976d3b21ea69547"
+  },
+  "artifacts": {
+    "godot-flex-playback.gif": "fede8f6e105acbf62c95bed215c637fc952fcfc258a59c0b0e037c04dde4a0d3",
+    "godot-case-front.png": "a411aee820b071d3fcea97d285960b1e36b1e8f750ef6f662de63578d5204505",
+    "godot-verification.json": "2655bef6811394d523807be4c7b9ec7cf25eea4e7d693828a892dc1dc9fc2248",
+    "workshop-verification.json": "b6149a17f5261263514f292cb0ded822d3e0168ecd52bca14482d1516a76b22c",
+    "workshop-hero.png": "7aea9daeb2f4d3b15a75d7f4f4f962fb51da427280dd875511dc9b384879aa98",
+    "godot-case-report.json": "327907015cf4238fc62e2fdd99d9c82c150787c67346c2eaa26a5d55aaed2d4a",
+    "workshop-game-readiness.json": "bdd4b0a61ce46301fe62e32094673be888130fdb30421567b363be76f4f1a34b",
+    "godot-flex-report.json": "44b717f52157e8f95b9137d1f12964158df808c17efd69ac0158b1cb2007edbb",
+    "godot-case-coverage.png": "e367a8a3a27c98971efd7cf9306995a4a4f66b031c1586373f36e4eaf8a39940",
+    "godot-target-evidence.zip": "a58dbfe8c9e78e42ca5b4a724fe88c72537db130793e2d50f5097f11286d881c",
+    "godot-flex-rest.png": "0cb0b227358e64c1b73bdb3ee3554a51d974ba1bb5e82f85928003cb812b6b2a",
+    "godot-case-back.png": "d14406c40f216bc061e17af57397e2fed6e4fc62d703f417930a06d80de82a07",
+    "godot-flex-bent.png": "67f4cf24bb73dd847973da78992b51d8f9dbba70899600260d7d0b1debe14df1"
+  },
+  "notes": [
+    "GIF is a viewing derivative assembled from all 25 original engine PNG frames; the exact originals and masks remain in the ZIP.",
+    "The workshop fixture is existing UC artwork freshly built/imported/rendered by the formerly skipped check; not new artwork authored in this run."
+  ]
+}

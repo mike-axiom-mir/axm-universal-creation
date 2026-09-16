@@ -1,0 +1,132 @@
+{
+  "artifacts": {
+    "asset.glb": "fcde9aeeb9dd3dac9190a3e2abfabc8e021fa2e65af6ee816a6e14af54f10c20",
+    "probe.gd": "cb90c6c60de26de6cdb3a63484851d660b0be2595c4384e5875b613d150be472",
+    "project.godot": "74c6dcc973cbefe75e61e4e25821dc93154f71569b649b901ebe8052ace07dfd",
+    "request.json": "508d4fb354103f9b08d0d66bb8602715b92b50ef7ddae6e3c2693d08cf8296b3",
+    "view-00-coverage.png": "e367a8a3a27c98971efd7cf9306995a4a4f66b031c1586373f36e4eaf8a39940",
+    "view-00.png": "a411aee820b071d3fcea97d285960b1e36b1e8f750ef6f662de63578d5204505",
+    "view-01-coverage.png": "8231c1db2eacbe11913707e354cda577fd48caafff4f140633b43e3058dfa175",
+    "view-01.png": "d14406c40f216bc061e17af57397e2fed6e4fc62d703f417930a06d80de82a07"
+  },
+  "backend": {
+    "adapter": "llvmpipe (LLVM 20.1.2, 256 bits)",
+    "display": "X11",
+    "renderer": "gl_compatibility",
+    "vendor": "Mesa",
+    "version": "4.4.1-stable (official)"
+  },
+  "checks": [
+    {
+      "passed": true,
+      "type": "actual-rendering-backend"
+    },
+    {
+      "passed": true,
+      "type": "exact-imported-source"
+    },
+    {
+      "passed": true,
+      "type": "native-target-geometry-agreement"
+    },
+    {
+      "passed": true,
+      "type": "target-texture-bindings-decoded"
+    },
+    {
+      "passed": true,
+      "type": "all-target-images-and-asset-masks"
+    }
+  ],
+  "engine": "godot",
+  "images": [
+    {
+      "channel_range": 255,
+      "file": "view-00.png",
+      "height": 480,
+      "mask_dimensions_match": true,
+      "visible_pixels": 56604,
+      "width": 640
+    },
+    {
+      "channel_range": 255,
+      "file": "view-01.png",
+      "height": 480,
+      "mask_dimensions_match": true,
+      "visible_pixels": 53487,
+      "width": 640
+    }
+  ],
+  "material_bindings": [
+    {
+      "albedo": true,
+      "ao": true,
+      "emission": false,
+      "metallic": true,
+      "normal": true,
+      "roughness": true
+    },
+    {
+      "albedo": true,
+      "ao": true,
+      "emission": false,
+      "metallic": true,
+      "normal": true,
+      "roughness": true
+    },
+    {
+      "albedo": true,
+      "ao": true,
+      "emission": false,
+      "metallic": true,
+      "normal": true,
+      "roughness": true
+    }
+  ],
+  "options": {
+    "engine": "godot",
+    "height": 480,
+    "playback": null,
+    "pose_samples": 3,
+    "views": [
+      {
+        "elevation": 0.3,
+        "yaw": 0.57
+      },
+      {
+        "elevation": 0.4,
+        "yaw": -2.1
+      }
+    ],
+    "width": 640
+  },
+  "pose_comparison": [
+    {
+      "bounds_error_m": 5.960464510845753e-08,
+      "clip": null,
+      "time_s": 0.0,
+      "triangles_match": true
+    }
+  ],
+  "professional_acceptance": "NOT_TESTED",
+  "released": false,
+  "removed_png_metadata": {
+    "view-00-coverage.png": [
+      "sRGB"
+    ],
+    "view-00.png": [
+      "sRGB"
+    ],
+    "view-01-coverage.png": [
+      "sRGB"
+    ],
+    "view-01.png": [
+      "sRGB"
+    ]
+  },
+  "schema": "axm.godot-target/v1",
+  "source_sha256": "fcde9aeeb9dd3dac9190a3e2abfabc8e021fa2e65af6ee816a6e14af54f10c20",
+  "status": "PASS",
+  "visual_quality": "REQUIRES_REVIEW",
+  "worker_sha256": "cb90c6c60de26de6cdb3a63484851d660b0be2595c4384e5875b613d150be472"
+}
