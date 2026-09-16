@@ -8,6 +8,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
+from axm_uc.machine import UniversalCreationMachine
 from axm_uc.standalone_creation_capabilities import register_standalone_creation_builtins
 
 
@@ -32,6 +33,16 @@ class NativeVisualMachineAdapterTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             result = fn(Path(temporary), {"operation": "inspect"})
         self.assertEqual(result["truth_status"], "EXECUTABLE_CODED_VISUAL_RUNTIME")
+
+    def test_live_manifest_routes_through_universal_creation_machine(self):
+        machine = UniversalCreationMachine(ROOT)
+        result = machine.create({
+            "kind": "native-visual-scene",
+            "inputs": {"operation": "inspect"},
+        })
+        self.assertEqual(result["type"], "CREATION_RESULT")
+        self.assertEqual(result["capability"], "AXM-CAP-NATIVE-VISUAL-RUNTIME")
+        self.assertEqual(result["result"]["truth_status"], "EXECUTABLE_CODED_VISUAL_RUNTIME")
 
     def test_machine_adapter_can_compile_and_bundle_demo(self):
         fn = self.builtins()["builtin:native_visual_runtime"]
