@@ -1,0 +1,27 @@
+{
+  "schema": "axm.uc-source-intake/v1",
+  "imported_at": "2026-09-16",
+  "source_repository": "mike-axiom-mir/axm-collaboration-platform",
+  "source_branch": "main",
+  "source_commit_observed": "27757ace6133b243a200b0463e427c8b04d5a8e3",
+  "copy_policy": "BYTE_FOR_BYTE_DONOR_SOURCE_PRESERVED",
+  "files": [
+    {
+      "source_path": "shared/physics/axm-physics-core.js",
+      "target_path": "capabilities/physics-core/source/axm-physics-core.js",
+      "git_blob_sha": "b21b5d71f93c532b26e580766a7f5505024c8cfd",
+      "source_version": "0.3.1"
+    },
+    {
+      "source_path": "shared/physics/axm-physics-adapter.js",
+      "target_path": "capabilities/physics-core/source/axm-physics-adapter.js",
+      "git_blob_sha": "666587df5a8849be3bf0ad8708c63679f7366adb",
+      "source_version": "0.3.1"
+    }
+  ],
+  "extension_policy": {
+    "donor_source_is_modified": false,
+    "uc_growth_entrypoint": "capabilities/physics-core/uc-physics-fabric.js",
+    "reason": "Preserve exact platform provenance while allowing Universal Creation to grow composable physics authoring and simulation capabilities around the proven donor core."
+  }
+}

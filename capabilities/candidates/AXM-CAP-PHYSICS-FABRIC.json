@@ -1,0 +1,99 @@
+{
+  "id": "AXM-CAP-PHYSICS-FABRIC",
+  "version": "0.1.0",
+  "status": "candidate",
+  "purpose": "Create, compose, step and replay bounded deterministic 2D physics scenes inside Universal Creation by preserving the existing platform physics core and adding creation-level materials, force fields, spring forces, drivers and scheduled actions around it.",
+  "handles": [
+    "physics-fabric",
+    "2d-physics-scene",
+    "physics-materials",
+    "force-fields",
+    "spring-distance",
+    "physics-replay"
+  ],
+  "input_contract": {
+    "required": [],
+    "properties": {
+      "capability": "create-fabric, add-body, add-bodies, step-fabric, simulate-fabric, inspect-fabric, query-point, or raycast",
+      "world": "AXM Physics Core world configuration",
+      "materials": "optional named material definitions",
+      "bodies": "optional deterministic body definitions",
+      "fields": "optional uniform, radial, vortex, or drag field definitions",
+      "springs": "optional force-based spring-distance definitions",
+      "drivers": "optional velocity or seek driver definitions",
+      "actions": "optional deterministic step-indexed physics actions"
+    }
+  },
+  "output_contract": {
+    "kind": "axm.uc-physics-fabric/v0.1 result",
+    "contains": [
+      "authoritative imported core world",
+      "UC composition state",
+      "step receipts",
+      "core diagnostics and events",
+      "same-runtime checksum evidence"
+    ]
+  },
+  "dependencies": [],
+  "relationships": [
+    {
+      "type": "preserves-and-extends",
+      "target": "mike-axiom-mir/axm-collaboration-platform:shared/physics/axm-physics-core.js@0.3.1"
+    }
+  ],
+  "anatomy_refs": [
+    {
+      "id": "AXM-15-SIMULATION-XR-O-001-physics-engine",
+      "role": "implements-runtime-candidate",
+      "basis": "Introduces an executable UC physics capsule while preserving the exact imported platform solver as the collision/integration authority."
+    }
+  ],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "capabilities/physics-core/uc-physics-fabric.js",
+    "capsule_index": "capabilities/physics-core/index.js",
+    "source_manifest": "capabilities/physics-core/SOURCE_MANIFEST.json",
+    "selftest": "node capabilities/physics-core/selftest.js"
+  },
+  "limitations": [
+    "candidate is not yet registered as a central UC live builtin",
+    "physics remains 2D and translation-only at the donor-core level",
+    "spring-distance constraints are force-based springs, not hard rigid joints",
+    "no scientific validation claim",
+    "no continuous rigid-body rotation, angular inertia, deformables, fluids or 3D solver yet",
+    "cross-JavaScript-engine deterministic equivalence is not claimed"
+  ],
+  "persistent_state": "explicit fabric JSON supplied and retained by the caller",
+  "tests": [
+    {
+      "command": "node capabilities/physics-core/selftest.js",
+      "proves": [
+        "donor core and adapter blob integrity",
+        "material-derived mass",
+        "uniform radial vortex and drag fields",
+        "spring force application",
+        "velocity and seek drivers",
+        "scheduled actions",
+        "same-runtime deterministic replay"
+      ]
+    }
+  ],
+  "root_fit": {
+    "truth": {
+      "fit": true,
+      "basis": "The original platform solver is copied byte-for-byte with recorded Git blob hashes, and unsupported rotation, rigid joints, 3D and scientific-validation claims remain explicit limitations."
+    },
+    "agency": {
+      "fit": true,
+      "basis": "Materials, bodies, fields, springs, drivers, actions and stepping are explicit caller-controlled data rather than hidden policy."
+    },
+    "continuity": {
+      "fit": true,
+      "basis": "The donor source remains untouched in a dedicated source directory while UC growth is additive and source lineage is retained in SOURCE_MANIFEST.json."
+    },
+    "wisdom-before-speed": {
+      "fit": true,
+      "basis": "The first growth wave composes bounded useful 2D capabilities around the proven core instead of pretending missing 3D, rotation or rigid-joint work is already solved."
+    }
+  }
+}
