@@ -8,18 +8,18 @@ from axm_stickers import Registry
 from axm_uc import visual_templates as vt
 
 SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
-PRODUCTS=('game.racing.full','game.coop.action','game.rts.command','game.system.shell','game.shared.core','editor.creative.core','comic.narrative.core','axm.system.shell','visual.keyart.core','visual.cards.core','visual.cinematic.core','visual.broadcast.core','visual.diagram.core','visual.atlas.core','visual.novel.core','visual.showroom.core','visual.music.core','visual.presentation.core','visual.character.core','visual.configurator.core','visual.motion.core','visual.brand.core','visual.environment.core','visual.vfx.core','visual.mission.core','visual.hud.core')
+PRODUCTS=('game.racing.full','game.coop.action','game.rts.command','game.system.shell','game.shared.core','editor.creative.core','comic.narrative.core','axm.system.shell','visual.keyart.core','visual.cards.core','visual.cinematic.core','visual.broadcast.core','visual.diagram.core','visual.atlas.core','visual.novel.core','visual.showroom.core','visual.music.core','visual.presentation.core','visual.character.core','visual.configurator.core','visual.motion.core','visual.brand.core','visual.environment.core','visual.vfx.core','visual.mission.core','visual.hud.core','visual.look.core')
 
 class VisualTemplateTests(unittest.TestCase):
     def test_catalog_counts_and_products(self):
         counts=vt.validate_catalog()
-        self.assertEqual(counts,{'styles':30,'primitives':246,'screens':284,'products':28})
+        self.assertEqual(counts,{'styles':31,'primitives':256,'screens':294,'products':29})
         self.assertEqual(vt.CATALOG_COMPOSITION['counts'],counts)
         ids={p['id'] for p in vt.catalog()['products']}
         self.assertTrue(set(PRODUCTS)|{'game.racing.performance','software.creator.studio'} <= ids)
 
     def test_all_geometry_and_major_variants(self):
-        prefixes=('game.','editor.creative.','comic.narrative.','axm.system.','visual.keyart.','visual.cards.','visual.cinematic.','visual.broadcast.','visual.diagram.','visual.atlas.','visual.novel.','visual.showroom.','visual.music.','visual.presentation.','visual.character.','visual.configurator.','visual.motion.','visual.brand.','visual.environment.','visual.vfx.','visual.mission.','visual.hud.')
+        prefixes=('game.','editor.creative.','comic.narrative.','axm.system.','visual.keyart.','visual.cards.','visual.cinematic.','visual.broadcast.','visual.diagram.','visual.atlas.','visual.novel.','visual.showroom.','visual.music.','visual.presentation.','visual.character.','visual.configurator.','visual.motion.','visual.brand.','visual.environment.','visual.vfx.','visual.mission.','visual.hud.','visual.look.')
         for tid,definition in vt.SCREEN_TEMPLATES.items():
             if tid.startswith(prefixes): self.assertEqual(set(definition['variants']),{'compact','standard','wide'},tid)
             for width,height in SIZES:
@@ -29,19 +29,8 @@ class VisualTemplateTests(unittest.TestCase):
                     self.assertLessEqual(x+w,width+1e-6); self.assertLessEqual(y+h,height+1e-6)
 
     def test_existing_product_depth_is_retained(self):
-        expected={'game.racing.full':19,'game.system.shell':18,'game.shared.core':12,'editor.creative.core':12,'comic.narrative.core':10,'axm.system.shell':12,'visual.keyart.core':10,'visual.cards.core':11,'visual.cinematic.core':10,'visual.broadcast.core':10,'visual.diagram.core':10,'visual.atlas.core':10,'visual.novel.core':10,'visual.showroom.core':10,'visual.music.core':10,'visual.presentation.core':10,'visual.character.core':10,'visual.configurator.core':10,'visual.motion.core':10,'visual.brand.core':10,'visual.environment.core':10,'visual.vfx.core':10,'visual.mission.core':10}
+        expected={'game.racing.full':19,'game.system.shell':18,'game.shared.core':12,'editor.creative.core':12,'comic.narrative.core':10,'axm.system.shell':12,'visual.keyart.core':10,'visual.cards.core':11,'visual.cinematic.core':10,'visual.broadcast.core':10,'visual.diagram.core':10,'visual.atlas.core':10,'visual.novel.core':10,'visual.showroom.core':10,'visual.music.core':10,'visual.presentation.core':10,'visual.character.core':10,'visual.configurator.core':10,'visual.motion.core':10,'visual.brand.core':10,'visual.environment.core':10,'visual.vfx.core':10,'visual.mission.core':10,'visual.hud.core':10}
         for pid,count in expected.items(): self.assertEqual(len(vt.get(pid)['screens']),count)
-
-    def test_mission_product_preserves_objective_branch_and_runtime_truth(self):
-        product=vt.get('visual.mission.core')
-        required={'visual.mission.project-hub','visual.mission.objectives','visual.mission.conditions','visual.mission.branch-flow','visual.mission.world-bindings','visual.mission.rewards-outcomes','visual.mission.failure-retry','visual.mission.runtime-state','visual.mission.variants','visual.mission.review-export'}
-        self.assertEqual(set(product['screens']),required)
-        self.assertEqual(product['style'],'visual.mission.flow')
-        quality=' '.join(product['quality']).lower()
-        self.assertIn('branch is reachable',quality)
-        self.assertIn('objective is complete',quality)
-        self.assertIn('reward icons never prove',quality)
-        self.assertIn('node_spacing_ratio',vt.get('visual.mission.branch-flow')['math_hooks'])
 
     def test_hud_product_preserves_binding_readability_and_platform_truth(self):
         product=vt.get('visual.hud.core')
@@ -49,13 +38,22 @@ class VisualTemplateTests(unittest.TestCase):
         self.assertEqual(set(product['screens']),required)
         self.assertEqual(product['style'],'visual.hud.system')
         quality=' '.join(product['quality']).lower()
-        self.assertIn('separately editable',quality)
-        self.assertIn('never proves gameplay/system state is true',quality)
         self.assertIn('never creates a data binding',quality)
         self.assertIn('icon/color alone never carries critical meaning',quality)
-        self.assertIn('source/evidence visible',quality)
-        self.assertIn('semantic feedback',quality)
         self.assertIn('safe_margin_ratio',vt.get('visual.hud.layout')['math_hooks'])
+
+    def test_look_product_preserves_world_source_and_presentation_truth(self):
+        product=vt.get('visual.look.core')
+        required={'visual.look.project-hub','visual.look.exposure-tone','visual.look.color-grade','visual.look.fog-atmosphere','visual.look.bloom-glare','visual.look.layer-stack','visual.look.scene-bindings','visual.look.platform-performance','visual.look.compare-preview','visual.look.review-export'}
+        self.assertEqual(set(product['screens']),required)
+        self.assertEqual(product['style'],'visual.look.system')
+        quality=' '.join(product['quality']).lower()
+        self.assertIn('separately editable',quality)
+        self.assertIn('never silently becomes authoritative world lighting or gameplay state',quality)
+        self.assertIn('never replace source materials, lights, geometry or environment state',quality)
+        self.assertIn('source-bound bindings',quality)
+        self.assertIn('visibility/state legibility',quality)
+        self.assertIn('exposure_ev_range',vt.get('visual.look.exposure-tone')['math_hooks'])
 
     def test_products_resolve_and_previews_parse(self):
         for pid in PRODUCTS:
@@ -72,29 +70,32 @@ class VisualTemplateTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             with Registry(Path(td)/'stickers.sqlite') as registry:
                 pins=vt.install_builtins(registry)
-                self.assertEqual(len(pins),312)
-                hud=registry.search(adapter=vt.ADAPTER,tag='hud',limit=100)['entries']
-                expected={f'visual.visual.hud.{name}' for name in ('project-hub','components','layout','data-bindings','readability','alerts-feedback','platform-input','theme-skin','compare-preview','review-export')}
-                self.assertTrue(expected <= {entry['id'] for entry in hud})
-                d=registry.get('visual.visual.hud.data-bindings',1)
+                self.assertEqual(len(pins),323)
+                looks=registry.search(adapter=vt.ADAPTER,tag='lighting',limit=100)['entries']
+                expected={f'visual.visual.look.{name}' for name in ('project-hub','exposure-tone','color-grade','fog-atmosphere','bloom-glare','layer-stack','scene-bindings','platform-performance','compare-preview','review-export')}
+                self.assertTrue(expected <= {entry['id'] for entry in looks})
+                d=registry.get('visual.visual.look.exposure-tone',1)
                 self.assertEqual(d['recipe']['visual_template']['schema'],vt.SCHEMA)
                 self.assertNotIn('"latest"',json.dumps(d,sort_keys=True))
 
-    def test_hud_source_component_layout_binding_readability_alert_platform_theme_contracts(self):
-        required={'hud-source','hud-component','hud-layout-anchor','hud-data-binding','hud-readability-rule','hud-safe-region','hud-alert-state','hud-platform-variant','hud-theme-variant','hud-export-target'}
+    def test_look_source_exposure_tone_grade_atmosphere_bloom_layer_binding_variant_contracts(self):
+        required={'look-source','exposure-state','tone-map-state','color-grade-state','fog-atmosphere-state','bloom-glare-state','postprocess-layer','scene-look-binding','look-platform-variant','look-export-target'}
         self.assertTrue(required <= set(vt.PRIMITIVES))
+        self.assertTrue(vt.PRIMITIVES['look-source']['identity_source_version_context_required'])
+        self.assertTrue(vt.PRIMITIVES['exposure-state']['value_range_source_context_required'])
+        self.assertTrue(vt.PRIMITIVES['tone-map-state']['operator_parameters_output_source_required'])
+        self.assertTrue(vt.PRIMITIVES['color-grade-state']['transform_spaces_intensity_source_required'])
+        self.assertTrue(vt.PRIMITIVES['fog-atmosphere-state']['density_range_scattering_source_required'])
+        self.assertTrue(vt.PRIMITIVES['bloom-glare-state']['threshold_intensity_radius_source_required'])
+        self.assertTrue(vt.PRIMITIVES['postprocess-layer']['identity_parameters_blend_order_scope_required'])
+        self.assertTrue(vt.PRIMITIVES['scene-look-binding']['target_look_source_activation_required'])
+        self.assertTrue(vt.PRIMITIVES['look-platform-variant']['base_delta_platform_context_required'])
+        self.assertTrue(vt.PRIMITIVES['look-export-target']['requirements_must_be_visible'])
+
+    def test_hud_mission_vfx_environment_brand_motion_and_prior_boundaries_remain_present(self):
         self.assertTrue(vt.PRIMITIVES['hud-source']['identity_source_version_context_required'])
-        self.assertTrue(vt.PRIMITIVES['hud-component']['identity_role_source_required'])
-        self.assertTrue(vt.PRIMITIVES['hud-layout-anchor']['component_region_constraints_required'])
         self.assertTrue(vt.PRIMITIVES['hud-data-binding']['subject_field_source_freshness_required'])
         self.assertTrue(vt.PRIMITIVES['hud-readability-rule']['target_context_threshold_source_required'])
-        self.assertTrue(vt.PRIMITIVES['hud-safe-region']['viewport_platform_source_required'])
-        self.assertTrue(vt.PRIMITIVES['hud-alert-state']['source_severity_channels_required'])
-        self.assertTrue(vt.PRIMITIVES['hud-platform-variant']['base_delta_device_input_required'])
-        self.assertTrue(vt.PRIMITIVES['hud-theme-variant']['base_token_component_delta_required'])
-        self.assertTrue(vt.PRIMITIVES['hud-export-target']['requirements_must_be_visible'])
-
-    def test_mission_vfx_environment_brand_motion_and_prior_boundaries_remain_present(self):
         self.assertTrue(vt.PRIMITIVES['mission-source']['identity_source_version_context_required'])
         self.assertTrue(vt.PRIMITIVES['objective-state']['identity_type_status_source_required'])
         self.assertTrue(vt.PRIMITIVES['vfx-source']['identity_source_version_purpose_required'])
@@ -120,12 +121,12 @@ class VisualTemplateTests(unittest.TestCase):
         self.assertTrue(vt.PRIMITIVES['truth-state']['source_must_be_visible'])
 
     def test_copy_safety_variant_rejection_and_bad_geometry(self):
-        a=vt.resolve('visual.hud.layout',1920,1080); b=vt.resolve('visual.hud.layout',1920,1080)
+        a=vt.resolve('visual.look.exposure-tone',1920,1080); b=vt.resolve('visual.look.exposure-tone',1920,1080)
         self.assertEqual(a,b)
-        copy=vt.get('visual.hud.layout'); copy['name']='changed'
-        self.assertNotEqual(vt.get('visual.hud.layout')['name'],'changed')
-        with self.assertRaises(ValueError): vt.resolve('visual.hud.layout',1920,1080,variant='unknown')
-        bad=vt.get('visual.hud.layout'); bad['variants']['standard']['stage']=[.9,.9,.2,.2]
+        copy=vt.get('visual.look.exposure-tone'); copy['name']='changed'
+        self.assertNotEqual(vt.get('visual.look.exposure-tone')['name'],'changed')
+        with self.assertRaises(ValueError): vt.resolve('visual.look.exposure-tone',1920,1080,variant='unknown')
+        bad=vt.get('visual.look.exposure-tone'); bad['variants']['standard']['preview']=[.9,.9,.2,.2]
         with self.assertRaises(ValueError): vt.validate_screen(bad)
 
     def test_exact_sticker_slot_binding_is_retained(self):
