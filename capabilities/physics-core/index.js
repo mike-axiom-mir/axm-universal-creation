@@ -3,5 +3,6 @@
 module.exports = {
   core: require('./source/axm-physics-core.js'),
   sourceAdapter: require('./source/axm-physics-adapter.js'),
-  fabric: require('./uc-physics-fabric.js')
+  fabric: require('./uc-physics-fabric.js'),
+  distanceJoints: require('./uc-distance-joints.js')
 };
