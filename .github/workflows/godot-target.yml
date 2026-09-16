@@ -34,6 +34,7 @@ jobs:
         env:
           PYTHONPATH: src:tests
           LIBGL_ALWAYS_SOFTWARE: '1'
+          AXM_TARGET_FAILURES: ${{ runner.temp }}/godot-evidence/failures
         run: xvfb-run -a python -m unittest test_godot_target -v
       - name: Preserve reviewable static and animated target evidence
         env:

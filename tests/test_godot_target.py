@@ -108,6 +108,13 @@ class TargetContracts(unittest.TestCase):
 class RealGodotTarget(unittest.TestCase):
     setUp = TargetContracts.setUp
     request = TargetContracts.request
+
+    def assert_product(self, result, target):
+        report = self.root / target / "report.json"
+        detail = report.read_text() if report.exists() else json.dumps(result["run"].get("error", result["status"]))
+        if result["status"] != "DRAFT_BUILT_REVIEW_REQUIRED" and os.environ.get("AXM_TARGET_FAILURES"):
+            shutil.copytree(self.root, Path(os.environ["AXM_TARGET_FAILURES"]) / self._testMethodName, dirs_exist_ok=True)
+        self.assertEqual(result["status"], "DRAFT_BUILT_REVIEW_REQUIRED", detail)
     def test_actual_textured_import_render_and_tamper_observation(self):
         # The existing UC compiler makes an actual textured asset and observes
         # all material, native preview and game-engine stations.
@@ -118,7 +125,7 @@ class RealGodotTarget(unittest.TestCase):
             "specification": panel(), "preview": {"width": 64, "height": 64},
             "production": {"target": {"engine": "godot", "width": 96, "height": 96, "views": [{"yaw": 0., "elevation": .3}]}}}
         result = operate_product_workflow(self.root, request)
-        self.assertEqual(result["status"], "DRAFT_BUILT_REVIEW_REQUIRED", result)
+        self.assert_product(result, "creations/panel/target")
         self.assertEqual(result["fresh"]["status"], "PASS", result)
         self.assertFalse(result["manifest"]["released"])
         inputs = {"asset": "creations/panel/asset.glb", "path": "creations/panel/target", "options": request["production"]["target"]}
@@ -134,7 +141,7 @@ class RealGodotTarget(unittest.TestCase):
             views=[{"yaw": .5, "elevation": .3, "clip": "Flex", "time_s": .5}],
             playback={"clip": "Flex", "fps": 8, "frames": 9})
         result = operate_product_workflow(self.root, request)
-        self.assertEqual(result["status"], "DRAFT_BUILT_REVIEW_REQUIRED", result)
+        self.assert_product(result, "creations/flex/target")
         report_path = self.root / "creations/flex/target/report.json"
         report = json.loads(report_path.read_text())
         self.assertEqual(len(report["playback_comparison"]), 9)

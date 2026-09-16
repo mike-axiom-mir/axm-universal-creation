@@ -188,6 +188,9 @@ def _produce(body, p, output, executable):
         report.update(checks=checks, images=images, status="PASS" if all(c["passed"] for c in checks) else "FAIL")
     except (OSError, ValueError, KeyError, TypeError, RuntimeError, subprocess.TimeoutExpired) as exc:
         report["failure"] = str(exc)
+        log_path = output / "worker.log"
+        if log_path.exists():
+            report["failure_log_tail"] = log_path.read_text(errors="replace")[-6000:]
         report["checks"].append({"type": "worker-completed-with-evidence", "passed": False})
     # Retain the exact input, worker, logs, failed reports and successful frames.
     report["artifacts"] = {f.name: _sha(f.read_bytes()) for f in output.iterdir()
@@ -236,5 +239,6 @@ def observe_station(root, kind, inputs):
             # cross-device visual equivalence claim.
             checks.append({"type": "fresh-artifact-" + name, "passed": original_files.get(name) == digest})
     return {"status": "PASS" if checks and all(c["passed"] for c in checks) else "FAIL", "checks": checks,
+            "failure": fresh.get("failure"), "failure_log_tail": fresh.get("failure_log_tail"),
             "scope": "Actual Godot import, decoded texture bindings, posed geometry, rendered masks and optional stepped animation. No gameplay, device-performance or artistic acceptance.",
             "visual_quality": "REQUIRES_REVIEW", "professional_acceptance": "NOT_TESTED"}

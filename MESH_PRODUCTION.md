@@ -31,6 +31,7 @@ runtime, not promised across Blender releases or machines.
 | `validate-blender-target` | QA/playtest with graphics evidence | Fresh GLB imports, decoded images, native-versus-Blender geometry/pose comparison, Cycles environment/area-light reflection renders |
 | `inspect-deformation` | Technical artist | Hierarchy/weights, authored keys and subdivisions, triangle collapse, excessive edge stretching, explicitly declared contact drift and loop discontinuity |
 | `copy-animation-asset` | Technical artist | Byte-preserving copy of the supplied embedded rigged GLB into a new product draft |
+| `validate-godot-target` | Software QA/playtest | Actual Godot GLB import, decoded material bindings, native/target posed geometry, rendered asset masks and optional stepped AnimationPlayer playback |
 
 The UV worker welds exact positions to find chart adjacency, then preserves the
 original triangle corners, normals, colors and material assignments. It emits
@@ -112,6 +113,55 @@ and for a closed, two-joint bend. It also tests a deliberately collapsed extreme
 high-to-low projection and a deliberately undersized cage, report tampering,
 source preservation, and missing-backend behavior.
 
+## Game-engine observation and multiple targets
+
+`production.target.engine` selects `blender-cycles` (the existing default) or
+`godot`. The latter runs a fixed GDScript worker in a fresh isolated project,
+using `AXM_GODOT` or `godot`/`godot4` on PATH. Godot 4.4+ and a working OpenGL
+display are required. A Linux Xvfb display with Mesa software rendering can
+produce real render evidence; Godot's headless dummy renderer cannot.
+
+Use `production.targets` instead of `target` to require both engines. Each
+target gets its own output, station, observer and evidence. A failure stops the
+remaining stations. Unknown engines, duplicate engines and ambiguous use of
+both fields are rejected before writes. A Blender result cannot count as a
+Godot result, and neither can count as Unity or Unreal evidence.
+
+```json
+{
+  "production": {
+    "targets": [
+      {"engine": "blender-cycles", "width": 640, "height": 480},
+      {"engine": "godot", "width": 320, "height": 400,
+       "views": [{"yaw": 0.5, "elevation": 0.3, "clip": "Flex", "time_s": 0.5}],
+       "playback": {"clip": "Flex", "fps": 24, "frames": 25}}
+    ]
+  }
+}
+```
+
+The example playback requires an authored `Flex` clip at least one second long.
+Godot advances its actual AnimationPlayer one explicit timestep per frame;
+UC independently evaluates each frame's bounds and triangle count. Rendered
+frames and asset-only coverage masks are retained. This is stepped target
+playback, not proof of real-time framerate, input responsiveness or a game loop.
+
+The fresh observer repeats the import, sampling, rendering and playback and
+requires matching artifacts on the recorded backend. This deliberately makes
+no cross-driver pixel-equivalence claim. Re-verification on a different backend
+may require a fresh draft. Failed worker execution retains its input, worker,
+log and FAIL report; it cannot turn into a successful handoff.
+
+`python tools/godot_target_demo.py <new-directory>` exercises the preserved
+Run 004 field case and rig. The CI job downloads pinned Godot 4.4.1, checks the
+official SHA512 manifest, uses Xvfb/Mesa and uploads actual evidence. There are
+no runtime downloads inside the UC capability.
+
+Unity and Unreal remain **unimplemented and unverified**. Closing those rows
+requires their actual editors, supported GLB import integration and target
+render/playback observations. An export package or a renamed report does not
+close that requirement.
+
 ## Boundaries
 
 | Area | Still outside this implementation |
@@ -120,7 +170,7 @@ source preservation, and missing-backend behavior.
 | Baking | Curvature/thickness maps, explicit cage meshes, arbitrary differently named high/low group pairing, automatic mesh-aware wear art direction |
 | Materials/rendering | Universal MikkTSpace parity with UC's simpler native preview, authored decals, transparent material production, compressed texture delivery |
 | Deformation | Morph/CUBICSPLINE support in the native evaluator, self-intersection, anatomical or artistic judgment, automatic rig authoring |
-| Targets | Unity/Unreal/Godot integration, continuous gameplay/input/audio tests, actual device performance; the selected verified target is Blender/Cycles |
+| Targets | Unity/Unreal adapters, continuous gameplay/input/audio tests and actual device performance; Godot support is bounded import/render/stepped-playback observation |
 | Refinement | Dependency-aware partial rebuilds, automatic aesthetic acceptance or release |
 
 The final product still has `released: false` and requires review. A target
@@ -132,3 +182,6 @@ engine's acceptance requirements by renaming its report.
 - [Khronos skinning tutorial](https://github.khronos.org/glTF-Tutorials/gltfTutorial/gltfTutorial_020_Skins.html): joint/weight/inverse-bind conventions used for independent pose comparisons.
 - [Khronos PBR guide](https://www.khronos.org/gltf/pbr/): core color and material channel conventions.
 - Blender's installed 4.3.2 operator RNA and actual execution were used to check UV, bake and render options. No third-party implementation code or artwork was copied.
+- [Godot GLTFDocument](https://docs.godotengine.org/en/4.4/classes/class_gltfdocument.html): runtime import and scene generation.
+- [Godot MeshInstance3D](https://docs.godotengine.org/en/4.4/classes/class_meshinstance3d.html): readback of the current skinned pose.
+- [Godot command-line interface](https://docs.godotengine.org/en/4.4/tutorials/editor/command_line_tutorial.html): fixed script and rendering configuration.
