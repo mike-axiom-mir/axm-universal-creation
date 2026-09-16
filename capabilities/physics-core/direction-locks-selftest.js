@@ -22,6 +22,7 @@ assert.equal(validation.ok, true);
 assert.equal(validation.lockCount, 1);
 assert.match(validation.warnings.join(' '), /perpendicular translation remains intentionally unconstrained/i);
 assert.match(validation.warnings.join(' '), /not a rotating local-axis or full prismatic joint/i);
+assert.match(validation.warnings.join(' '), /shared composer\/activity\/isolation integration is available/i);
 
 const beforeWorld = diagonalWorld();
 const beforeRoot = beforeWorld.bodies.find(item => item.id === 'root');
@@ -42,7 +43,8 @@ assert.ok(stepped.directionLockDiagnostics.maxErrorAfterStabilization < 1e-8);
 assert.equal(stepped.directionLockDiagnostics.contactEvidenceBasis, 'CORE_STAGE_BEFORE_POST_DIRECTION_LOCK_STABILIZATION');
 assert.ok(stepped.core.worldBeforePostDirectionLockStabilization);
 assert.equal(stepped.world.diagnostics.checksum, Core.checksum(stepped.world));
-assert.match(stepped.limitations.join(' '), /not yet integrated into the shared mixed composer/i);
+assert.match(stepped.limitations.join(' '), /standalone step entrypoint performs its own donor-core integration/i);
+assert.match(stepped.limitations.join(' '), /component isolation is broader than the one-axis physical correction/i);
 assert.match(stepped.limitations.join(' '), /not scientific validation/i);
 
 let gravityWorld = Core.createWorld({ gravity: { x: 0, y: 10 }, bounds: false, sleep: { enabled: false } });

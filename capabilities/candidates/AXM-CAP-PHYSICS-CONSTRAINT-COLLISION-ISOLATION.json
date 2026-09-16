@@ -1,18 +1,18 @@
 {
   "id": "AXM-CAP-PHYSICS-CONSTRAINT-COLLISION-ISOLATION",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "status": "candidate",
-  "purpose": "Allow constrained assemblies spanning translation mounts, exact distance joints, slack distance limits, world-axis translation locks and slack world-axis translation limits to opt into deterministic intra-component collision isolation during the preserved donor-core collision stage.",
-  "handles": ["constraint-component-collision-isolation", "assembly-self-collision-suppression", "temporary-negative-collision-groups", "axis-lock-component-isolation", "axis-limit-component-isolation"],
+  "purpose": "Allow constrained assemblies spanning translation mounts, exact distance joints, slack distance limits, world-axis translation locks, slack world-axis translation limits and fixed world-space direction locks to opt into deterministic intra-component collision isolation during the preserved donor-core collision stage.",
+  "handles": ["constraint-component-collision-isolation", "assembly-self-collision-suppression", "temporary-negative-collision-groups", "axis-lock-component-isolation", "axis-limit-component-isolation", "direction-lock-component-isolation"],
   "input_contract": {
     "required": ["world", "constraints", "dt"],
-    "properties": {"constraints": "five-family constraint-composer data", "options": "optional isolation enabled flag plus nested composer options"}
+    "properties": {"constraints": "six-family constraint-composer data", "options": "optional isolation enabled flag plus nested composer options"}
   },
   "output_contract": {
     "kind": "axm.uc-constraint-collision-isolation-step/v0.1",
-    "contains": ["restored final world", "five-family component-isolation receipts", "temporary-group donor-core stage world", "composer diagnostics", "restored-world checksum"]
+    "contains": ["restored final world", "six-family component-isolation receipts", "temporary-group donor-core stage world", "composer diagnostics", "restored-world checksum"]
   },
-  "dependencies": ["AXM-CAP-PHYSICS-CONSTRAINT-COMPOSER", "AXM-CAP-PHYSICS-AXIS-LOCKS", "AXM-CAP-PHYSICS-AXIS-LIMITS"],
+  "dependencies": ["AXM-CAP-PHYSICS-CONSTRAINT-COMPOSER", "AXM-CAP-PHYSICS-AXIS-LOCKS", "AXM-CAP-PHYSICS-AXIS-LIMITS", "AXM-CAP-PHYSICS-DIRECTION-LOCKS"],
   "implementation": {
     "kind": "DETERMINISTIC_SOURCE",
     "entrypoint": "capabilities/physics-core/uc-constraint-collision-isolation.js",
@@ -23,6 +23,7 @@
     "slack distance-limit edges still join isolation topology while physically slack",
     "axis-lock edges join topology even though orthogonal translation remains free",
     "slack axis-limit edges still join isolation topology while physically slack",
+    "fixed-direction lock edges join topology even though perpendicular translation remains free and their direction remains fixed in world space",
     "components containing any nonzero caller collision.group are skipped rather than overridden",
     "temporary groups affect only donor-core collision-stage grouping and are restored before return",
     "no angular inertia, rotating local anchors, hinge, full slider/prismatic, rotational weld, motor or gear semantics",
@@ -31,12 +32,13 @@
   "tests": [
     {"command": "node capabilities/physics-core/constraint-collision-isolation-selftest.js", "proves": ["legacy component suppression, caller-group preservation, deterministic allocation/restoration and replay"]},
     {"command": "node capabilities/physics-core/axis-lock-integration-selftest.js", "proves": ["an axis-lock edge forms an isolation component and suppresses donor-core self-contact only when isolation is explicitly requested"]},
-    {"command": "node capabilities/physics-core/axis-limit-integration-selftest.js", "proves": ["an enabled axis-limit edge can form an isolation component while its slack range remains physically unconstrained"]}
+    {"command": "node capabilities/physics-core/axis-limit-integration-selftest.js", "proves": ["an enabled axis-limit edge can form an isolation component while its slack range remains physically unconstrained"]},
+    {"command": "node capabilities/physics-core/direction-lock-integration-selftest.js", "proves": ["an enabled fixed-direction-lock edge forms an isolation component, preserves one donor-core step and restores caller collision groups afterward"]}
   ],
   "root_fit": {
-    "truth": {"fit": true, "basis": "Component-wide topology and its difference from physical correction are explicit for slack distance limits, axis locks and slack axis limits."},
+    "truth": {"fit": true, "basis": "Component-wide topology and its difference from physical correction are explicit for slack limits, axis locks and fixed-direction locks."},
     "agency": {"fit": true, "basis": "Isolation remains explicit and caller-controlled and never overwrites nonzero caller group semantics."},
-    "continuity": {"fit": true, "basis": "The existing temporary-group mechanism is extended to one additional known edge family without touching the donor source."},
+    "continuity": {"fit": true, "basis": "The existing temporary-group mechanism is extended to the sixth known edge family without touching the donor source."},
     "wisdom-before-speed": {"fit": true, "basis": "The extension reuses deterministic connected-component discovery and keeps ambiguous existing collision semantics fail-safe."}
   }
 }

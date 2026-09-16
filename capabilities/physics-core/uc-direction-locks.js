@@ -2,7 +2,7 @@
 
 const Core = require('./source/axm-physics-core.js');
 
-const VERSION = '0.1.0';
+const VERSION = '0.1.1';
 const LOCK_SCHEMA = 'axm.uc-direction-lock/v0.1';
 const STEP_SCHEMA = 'axm.uc-direction-lock-step/v0.1';
 const SIMULATION_SCHEMA = 'axm.uc-direction-lock-simulation/v0.1';
@@ -189,8 +189,9 @@ function step(world, locks, dt, options) {
       'The direction does not rotate with either body and does not represent a full prismatic/slider joint.',
       'No angular inertia, rotating anchors, angular limits or motors are implemented.',
       'Post-core projection can move bodies after collision/contact evidence was generated; returned core events and contact geometry describe the donor-core stage before post-direction-lock stabilization.',
-      'Connected locked bodies can still collide unless caller collision filters suppress that pair.',
-      'This standalone v0.1 capability is not yet integrated into the shared mixed composer/activity/isolation stack; callers must not chain this step wrapper with another wrapper when exactly one donor-core step is required.',
+      'Connected locked bodies can still collide unless caller collision filters suppress that pair or the separate component-isolation wrapper is used.',
+      'This standalone step entrypoint performs its own donor-core integration; mixed-family callers that require exactly one donor-core step must use the shared composer/activity/isolation path rather than chaining standalone step wrappers.',
+      'Shared composer, guarded activity and component-isolation integration are provided separately; component isolation is broader than the one-axis physical correction and remains caller-opt-in.',
       'This is game/prototype physics evidence, not scientific validation.'
     ]
   };
@@ -208,7 +209,7 @@ function validate(world, locks) {
   return { ok: errors.length === 0, errors, lockCount: normalized.length, warnings: [
     'Direction locks preserve one caller-selected fixed world-space translation projection while perpendicular translation remains intentionally unconstrained.',
     'This is not a rotating local-axis or full prismatic joint: there are no rotating anchors, angular limits or motors.',
-    'Standalone v0.1 is not yet integrated into the mixed composer/activity/isolation path.',
+    'The standalone step performs its own donor-core integration; shared composer/activity/isolation integration is available through the dedicated wrappers and must be used instead of chaining step wrappers when exactly one donor-core step is required.',
     'The donor physics source remains untouched.'
   ] };
 }
