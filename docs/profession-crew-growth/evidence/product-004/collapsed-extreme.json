@@ -1,0 +1,56 @@
+{
+  "schema": "axm.deformation-quality/v1",
+  "artifact_sha256": "5d1d4277c1643fe8a5427009c796b8e605b99921f9eda95e36f8dcdf16200394",
+  "status": "FAIL",
+  "checks": [
+    {
+      "type": "animated-mesh-present",
+      "passed": true
+    },
+    {
+      "type": "required-skin-present",
+      "passed": true
+    },
+    {
+      "type": "sampled-deformation-policy",
+      "passed": false
+    }
+  ],
+  "policy": {
+    "samples_per_interval": 4,
+    "minimum_area_ratio": 0.05,
+    "maximum_edge_ratio": 3.0,
+    "loop_clips": [],
+    "maximum_loop_delta_m": 0.001,
+    "contacts": [],
+    "require_skin": true
+  },
+  "clips": [
+    {
+      "clip": "Flex",
+      "times_s": [
+        0.0,
+        0.125,
+        0.25,
+        0.375,
+        0.5,
+        0.625,
+        0.75,
+        0.875,
+        1.0
+      ],
+      "minimum_area_ratio": 0.0,
+      "maximum_edge_ratio": 1.0,
+      "maximum_motion_m": 2.0140754703136645,
+      "endpoint_delta_m": 0.0,
+      "contacts": [],
+      "checks": {
+        "no_sampled_collapse": false,
+        "bounded_sampled_stretch": true,
+        "declared_loop_continuity": true,
+        "declared_contacts": true
+      }
+    }
+  ],
+  "scope": "Authored keys and subdivisions, skin weights/hierarchy, triangle area, edge stretch, declared contacts and loops. No unsampled extrema, self-intersection, anatomy or motion-quality proof."
+}

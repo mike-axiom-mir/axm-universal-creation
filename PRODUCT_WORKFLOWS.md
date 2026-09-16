@@ -11,8 +11,8 @@ orchestration machinery.
 | Product | Product-specific work in the plan | Executable draft recipe in this change |
 | --- | --- | --- |
 | Material | Surface intent, maps/layers, map checks, look development | Generate maps, independently reopen/check them, preserve source and delivery manifest |
-| Static 3D | Blockout, geometry, UVs, materials, assembly, LOD/collision | Generate/check materials, bind them to supplied UV geometry, measure density/coverage, render two light setups |
-| Animated 3D | Static production plus rig, deformation, timing and playback | Plan exported to existing stepwise workflow; automatic end-to-end animation recipe remains open |
+| Static 3D | Blockout, geometry, UVs, materials, assembly, LOD/collision | Generate/check materials, optional automatic UVs and mesh baking, measure density/coverage, native previews and optional Blender/Cycles or Godot targets |
+| Animated 3D | Static production plus rig, deformation, timing and playback | Preserve supplied rigged GLB, check sampled deformation/declared contacts and loops; optional fresh Blender/Cycles imports and renders |
 | Game | Playable loop, rules, world, asset production, audio and playtests | Plan with explicit evidence and owners; existing game capabilities need selected bindings |
 | Software | Brief, architecture, implementation and behavior checks | Publish supplied source and independently run supported project checks |
 | Web | Direction, interaction states, implementation and browser checks | Publish supplied source and run static project checks; browser evidence remains separate |
@@ -104,8 +104,12 @@ decoded base-level texture data per inspection scene. Material generation retain
 its existing 16..512 size bound; this work does not equate larger maps with
 better art. Native PNG decoding accepts all five standard scanline filters.
 
-No Blender, GPU, network connection or AI is required for this route. Existing
-optional Blender material realization remains available and unchanged.
+No Blender, GPU, network connection or AI is required for the native route.
+The optional production route now adds automatic UVs, mesh baking, physically
+lit reflection rendering using local Blender/Cycles, plus real Godot import,
+render and stepped-animation observations. Use `production.targets` to require
+multiple independently observed engines.
+See [Mesh production](MESH_PRODUCTION.md) for requests, runtime setup and limits.
 
 ## Quality work still needed
 
@@ -114,17 +118,17 @@ The workflow records these requirements instead of implying they are solved:
 | Area | Remaining work |
 | --- | --- |
 | Art direction | Per-product references, silhouette/composition judgment, coherent detail hierarchy and actual user acceptance |
-| UV authoring | Automatic unwrap, atlas/UDIM workflows, overlap/padding analysis, seam repair and density-aware packing |
-| Baking | Mesh-derived curvature/AO/thickness, high-to-low detail transfer, cage control and MikkTSpace tangent agreement |
+| UV authoring | UDIM, painted-atlas repacking, seam editing and all-mip padding; automatic per-material unwrap and overlap/base-padding checks now execute |
+| Baking | Curvature/thickness, explicit cage meshes and universal tangent parity; AO/high-to-low normals with extrusion/distance hit checks now execute |
 | Materials | Mesh-aware edge wear, authored decals, richer material graphs, perceptually seamless tiling and compressed texture delivery |
-| Rendering | Environment/image-based lighting, reflections, transparency, anisotropic filtering and target-renderer comparison |
-| Animation | Rig/deformation extremes, secondary motion, contacts, transitions and continuous target playback |
+| Rendering | Transparency, anisotropic filtering and additional engine comparisons; environment/reflections and Blender/Cycles and Godot target observation now execute |
+| Animation | Automatic rig creation, secondary motion, self-intersection, transition quality and real-time continuous playback; actual stepped Godot playback, sampled collapse/stretch and declared contacts/loops now execute |
 | Games/software | Real controls and full loops, sound, accessibility, recovery and measured device performance |
 | Refinement | Defect-led revisions, representative comparisons, dependency-aware partial rebuilds and semantic review |
 
-Opposite-edge pixel agreement is only a bounded tiling check. The demo's UVs are
-explicit per-polygon projections with intentional shared texture space, not an
-automatic unique atlas. The field case is an original inspection fixture, not
+Opposite-edge pixel agreement is only a bounded tiling check. The original product_workflow_demo's UVs are explicit per-polygon projections
+with intentional shared space. mesh_production_demo uses actual automatic unique
+atlases and native overlap/padding checks. The field case is an original inspection fixture, not
 a claim of cinematic realism or a finished game asset.
 
 The output status is `DRAFT_BUILT_REVIEW_REQUIRED` after its automatic recipe

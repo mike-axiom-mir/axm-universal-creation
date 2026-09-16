@@ -1,0 +1,60 @@
+{
+  "artifacts": {
+    "asset.glb": "fcde9aeeb9dd3dac9190a3e2abfabc8e021fa2e65af6ee816a6e14af54f10c20",
+    "paint-ao.png": "81cc43612b96b975d6cbebc65220811d59c6028f072ce741e52da10e15d888c4",
+    "rubber-ao.png": "4284313a0b2acc2ba9ced3da78e8d4395ea249e1a0731c1643d737ffd1487b8c",
+    "steel-ao.png": "9e1a41393895b228ef91cbb00ddc25b7552b0d523713196db1534afc8f833d32",
+    "surface.json": "dfa309a71ef5e426943be6cf800d731787fb937dc8e62ad304412aecc088583a"
+  },
+  "backend": {
+    "build": "32f5fdce0a0a",
+    "version": "4.3.2",
+    "worker_sha256": "5014919bdb389dfe042a840a1f2d0f89c8bc5f7fa76a0db14f1895ceb6e29cb9"
+  },
+  "bake": [
+    {
+      "ao_max": 255,
+      "ao_min": 0,
+      "covered_texels": 33312,
+      "id": "paint"
+    },
+    {
+      "ao_max": 255,
+      "ao_min": 0,
+      "covered_texels": 25815,
+      "id": "rubber"
+    },
+    {
+      "ao_max": 255,
+      "ao_min": 0,
+      "covered_texels": 18837,
+      "id": "steel"
+    }
+  ],
+  "checks": [
+    {
+      "passed": true,
+      "type": "source-geometry-and-uv-preserved"
+    },
+    {
+      "passed": true,
+      "type": "covered-bake-texels"
+    },
+    {
+      "passed": true,
+      "type": "normal-projection-hits"
+    }
+  ],
+  "kind": "bake-mesh-maps",
+  "normal_policy": "preserve original tangent normal",
+  "options": {
+    "cage_extrusion": 0.02,
+    "margin_px": 2,
+    "max_ray_distance": 0.1,
+    "samples": 24,
+    "size": 256
+  },
+  "schema": "axm.mesh-production/v1",
+  "source_sha256": "d0e429e8bd4a3b0e733eda5265fef92a6f1f92679b8eee10571f1636f17ad3f1",
+  "status": "PASS"
+}

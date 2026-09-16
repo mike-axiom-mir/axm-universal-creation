@@ -238,7 +238,8 @@ def plan_crew(root: Path, inputs: dict) -> dict:
                                        "scope": "STATIC_RIGID_TRANSLATION"}
         if kind in MATERIAL_KINDS:
             validate_station(root, kind, action["inputs"])
-            binding["quality_policy"] = action["inputs"].get("policy", {})
+            binding["quality_policy"] = {"policy": action["inputs"].get("policy", {}),
+                                         "options": action["inputs"].get("options", {})}
         key = _hash(binding)
         practice = copy.deepcopy(state["practice"].get(key, {}))
         reused_procedure = kind == CLEARANCE_REPAIR_KIND and bool(practice.get("procedure"))

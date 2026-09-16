@@ -1,0 +1,20 @@
+{
+  "id": "AXM-CAP-VALIDATE-GODOT-TARGET",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Observe actual Godot import, texture decoding, posed geometry, rendering and optional stepped animation",
+  "handles": ["validate-godot-target"],
+  "input_contract": {"required": ["path", "asset"]},
+  "output_contract": {"kind": "target-runtime-evidence"},
+  "dependencies": [],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:validate_godot_target",
+    "source": "src/axm_uc/godot_target.py"
+  },
+  "limitations": [
+    "Requires explicit local Godot 4.4+ executable and working OpenGL display; no automatic downloads.",
+    "Embedded GLB only, bounded native supported skin/animation subset.",
+    "Fresh backend execution required. No Unity/Unreal, gameplay, performance or artistic acceptance claim."
+  ]
+}

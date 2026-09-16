@@ -1,0 +1,28 @@
+{
+  "id": "AXM-CAP-BAKE-MESH-MAPS",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Mesh-derived AO and optional selected-to-active tangent normal transfer",
+  "handles": [
+    "bake-mesh-maps"
+  ],
+  "input_contract": {
+    "required": [
+      "path",
+      "specification"
+    ]
+  },
+  "output_contract": {
+    "kind": "mesh-production-artifact-or-measurement"
+  },
+  "dependencies": [],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:bake_mesh_maps",
+    "source": "src/axm_uc/mesh_production.py"
+  },
+  "limitations": [
+    "Runtime backend: Blender 4.3+ Cycles CPU. Explicit local installation; no automatic downloads.",
+    "Bounded technical evidence only. No automatic product or artistic acceptance."
+  ]
+}

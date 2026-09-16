@@ -1,0 +1,63 @@
+{
+  "schema": "axm.workshop-game-readiness-gates/v0.2-lod-ladder",
+  "source": "glb-inspection.json",
+  "measured": {
+    "detailed_triangles": 190431,
+    "lod1_triangles": 68534,
+    "lod1_triangle_ratio": 0.35988888363764304,
+    "tactical_triangles": 30829,
+    "rts_triangles": 9268,
+    "far_triangles": 1868,
+    "runtime_lod_target_bands": {
+      "improvised-workshop-tactical.glb": {
+        "triangles": 30829,
+        "target_min": 20000,
+        "target_max": 40000,
+        "inside_target_band": true
+      },
+      "improvised-workshop-rts.glb": {
+        "triangles": 9268,
+        "target_min": 4000,
+        "target_max": 12000,
+        "inside_target_band": true
+      },
+      "improvised-workshop-far.glb": {
+        "triangles": 1868,
+        "target_min": 500,
+        "target_max": 2000,
+        "inside_target_band": true
+      }
+    },
+    "detailed_materials": 19,
+    "lod1_materials": 19,
+    "tactical_materials": 19,
+    "rts_materials": 19,
+    "far_materials": 18,
+    "detailed_double_sided_materials": 19,
+    "lod1_double_sided_materials": 19,
+    "detailed_embedded_images": 47,
+    "detailed_embedded_compressed_bytes": 18547635,
+    "detailed_estimated_rgba8_bytes_before_mips": 55574528
+  },
+  "gates": {
+    "geometry_structure": "TESTED",
+    "embedded_texture_integrity": "TESTED",
+    "lod_triangle_reduction": "TESTED",
+    "runtime_lod_target_bands": "TESTED",
+    "lod_perceptual_equivalence": "NOT_TESTED",
+    "collision": "NOT_TESTED",
+    "navigation": "NOT_TESTED",
+    "target_engine_import": "NOT_TESTED",
+    "target_rts_integration": "NOT_TESTED",
+    "target_device_fps": "NOT_TESTED",
+    "material_texture_budget_acceptance": "NOT_TESTED",
+    "visual_quality": "NOT_TESTED"
+  },
+  "nonclaims": [
+    "A valid GLB is not a game-ready asset by itself.",
+    "Triangle reduction and target-band membership are not LOD visual equivalence.",
+    "Material/image counts are measured cost surfaces, not accepted budgets.",
+    "The far geometry tier is not an impostor and is not automatically the final far-distance solution.",
+    "No collision, navigation, target-engine, target-RTS or target-device performance claim is created by this report."
+  ]
+}

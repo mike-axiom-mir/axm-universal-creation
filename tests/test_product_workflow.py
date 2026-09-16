@@ -113,8 +113,12 @@ class ProductWorkflowTests(unittest.TestCase):
 
     def test_unimplemented_products_remain_explicit_plans(self):
         with self.assertRaisesRegex(ValueError, "currently has a plan"):
-            self.call("build", **self.request("animated-3d"))
+            self.call("build", **self.request("game"))
         self.assertFalse((self.root/"creations").exists())
+
+    def test_animated_recipe_requires_authored_source(self):
+        with self.assertRaisesRegex(ValueError, "authored rigged GLB"):
+            self.call("build", **self.request("animated-3d"))
 
     def test_forged_quality_report_cannot_satisfy_fresh_observer(self):
         request = self.request()

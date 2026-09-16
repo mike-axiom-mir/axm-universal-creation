@@ -1,0 +1,702 @@
+{
+  "case": {
+    "status": "PASS",
+    "fresh": {
+      "status": "PASS",
+      "checks": [
+        {
+          "type": "fresh-actual-target-pass",
+          "passed": true
+        },
+        {
+          "type": "stored-actual-target-pass",
+          "passed": true
+        },
+        {
+          "type": "fresh-schema",
+          "passed": true
+        },
+        {
+          "type": "fresh-engine",
+          "passed": true
+        },
+        {
+          "type": "fresh-source_sha256",
+          "passed": true
+        },
+        {
+          "type": "fresh-worker_sha256",
+          "passed": true
+        },
+        {
+          "type": "fresh-options",
+          "passed": true
+        },
+        {
+          "type": "fresh-backend",
+          "passed": true
+        },
+        {
+          "type": "fresh-checks",
+          "passed": true
+        },
+        {
+          "type": "fresh-pose_comparison",
+          "passed": true
+        },
+        {
+          "type": "fresh-playback_comparison",
+          "passed": true
+        },
+        {
+          "type": "fresh-material_bindings",
+          "passed": true
+        },
+        {
+          "type": "fresh-images",
+          "passed": true
+        },
+        {
+          "type": "fresh-released",
+          "passed": true
+        },
+        {
+          "type": "fresh-visual_quality",
+          "passed": true
+        },
+        {
+          "type": "fresh-professional_acceptance",
+          "passed": true
+        },
+        {
+          "type": "fresh-removed_png_metadata",
+          "passed": true
+        },
+        {
+          "type": "complete-artifact-set",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-request.json",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-request.json",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-view-00.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-view-00.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-probe.gd",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-probe.gd",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-asset.glb",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-asset.glb",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-view-01-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-view-01-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-view-01.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-view-01.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-view-00-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-view-00-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-project.godot",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-project.godot",
+          "passed": true
+        }
+      ],
+      "failure": null,
+      "failure_log_tail": null,
+      "scope": "Actual Godot import, decoded texture bindings, posed geometry, rendered masks and optional stepped animation. No gameplay, device-performance or artistic acceptance.",
+      "visual_quality": "REQUIRES_REVIEW",
+      "professional_acceptance": "NOT_TESTED"
+    },
+    "source_sha256": "fcde9aeeb9dd3dac9190a3e2abfabc8e021fa2e65af6ee816a6e14af54f10c20"
+  },
+  "flex": {
+    "status": "PASS",
+    "fresh": {
+      "status": "PASS",
+      "checks": [
+        {
+          "type": "fresh-actual-target-pass",
+          "passed": true
+        },
+        {
+          "type": "stored-actual-target-pass",
+          "passed": true
+        },
+        {
+          "type": "fresh-schema",
+          "passed": true
+        },
+        {
+          "type": "fresh-engine",
+          "passed": true
+        },
+        {
+          "type": "fresh-source_sha256",
+          "passed": true
+        },
+        {
+          "type": "fresh-worker_sha256",
+          "passed": true
+        },
+        {
+          "type": "fresh-options",
+          "passed": true
+        },
+        {
+          "type": "fresh-backend",
+          "passed": true
+        },
+        {
+          "type": "fresh-checks",
+          "passed": true
+        },
+        {
+          "type": "fresh-pose_comparison",
+          "passed": true
+        },
+        {
+          "type": "fresh-playback_comparison",
+          "passed": true
+        },
+        {
+          "type": "fresh-material_bindings",
+          "passed": true
+        },
+        {
+          "type": "fresh-images",
+          "passed": true
+        },
+        {
+          "type": "fresh-released",
+          "passed": true
+        },
+        {
+          "type": "fresh-visual_quality",
+          "passed": true
+        },
+        {
+          "type": "fresh-professional_acceptance",
+          "passed": true
+        },
+        {
+          "type": "fresh-removed_png_metadata",
+          "passed": true
+        },
+        {
+          "type": "complete-artifact-set",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-frame-019-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-frame-019-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-request.json",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-request.json",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-view-00.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-view-00.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-frame-000-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-frame-000-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-frame-020.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-frame-020.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-probe.gd",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-probe.gd",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-frame-024.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-frame-024.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-frame-024-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-frame-024-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-frame-003-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-frame-003-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-frame-012-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-frame-012-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-frame-013.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-frame-013.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-frame-011.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-frame-011.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-frame-014-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-frame-014-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-frame-006.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-frame-006.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-frame-022.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-frame-022.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-asset.glb",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-asset.glb",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-frame-016-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-frame-016-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-frame-001-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-frame-001-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-view-01-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-view-01-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-frame-004-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-frame-004-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-frame-006-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-frame-006-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-frame-018-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-frame-018-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-frame-009.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-frame-009.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-view-01.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-view-01.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-frame-018.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-frame-018.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-frame-007.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-frame-007.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-frame-003.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-frame-003.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-frame-010.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-frame-010.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-frame-020-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-frame-020-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-frame-016.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-frame-016.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-frame-010-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-frame-010-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-view-00-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-view-00-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-frame-004.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-frame-004.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-frame-017.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-frame-017.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-frame-023-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-frame-023-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-frame-021.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-frame-021.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-frame-008.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-frame-008.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-project.godot",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-project.godot",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-frame-021-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-frame-021-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-frame-002-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-frame-002-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-frame-000.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-frame-000.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-frame-009-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-frame-009-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-frame-013-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-frame-013-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-frame-019.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-frame-019.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-frame-011-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-frame-011-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-frame-014.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-frame-014.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-frame-022-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-frame-022-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-frame-023.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-frame-023.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-frame-005-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-frame-005-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-frame-017-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-frame-017-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-frame-001.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-frame-001.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-frame-002.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-frame-002.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-frame-015-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-frame-015-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-frame-008-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-frame-008-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-frame-007-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-frame-007-coverage.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-frame-015.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-frame-015.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-frame-012.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-frame-012.png",
+          "passed": true
+        },
+        {
+          "type": "current-artifact-frame-005.png",
+          "passed": true
+        },
+        {
+          "type": "fresh-artifact-frame-005.png",
+          "passed": true
+        }
+      ],
+      "failure": null,
+      "failure_log_tail": null,
+      "scope": "Actual Godot import, decoded texture bindings, posed geometry, rendered masks and optional stepped animation. No gameplay, device-performance or artistic acceptance.",
+      "visual_quality": "REQUIRES_REVIEW",
+      "professional_acceptance": "NOT_TESTED"
+    },
+    "source_sha256": "7ba5e8a5316d952a1be90314bd429185ba982c5c95ad82121be84715e5da6a8a"
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "artifacts": {
+    "coverage-00.png": "3b6e5dbe381d712e5c03b5e705f21c7818d338e373f6bcfb437cac0f348541af",
+    "coverage-01.png": "478632617a8916d8a404360be73fe352d331195f58560d4fc351b2ae2b590c94",
+    "view-00.png": "5985c4983d72dd08ab8ccf15058b7615a9b9a4099b1fe36d540802b95e30d693",
+    "view-01.png": "d9f8cef5b15c10a15d4b2967f3bbb16388e7ac1ee008af2ce527ac416a5f0bc3"
+  },
+  "backend": {
+    "build": "32f5fdce0a0a",
+    "version": "4.3.2",
+    "worker_sha256": "5014919bdb389dfe042a840a1f2d0f89c8bc5f7fa76a0db14f1895ceb6e29cb9"
+  },
+  "checks": [
+    {
+      "passed": true,
+      "type": "all-target-poses-observed"
+    },
+    {
+      "passed": true,
+      "type": "native-target-geometry-agreement"
+    },
+    {
+      "passed": true,
+      "type": "target-material-images-decoded"
+    },
+    {
+      "passed": true,
+      "type": "target-views-rendered"
+    }
+  ],
+  "images": [
+    {
+      "asset_visible_pixels": 128486,
+      "channel_range": 233,
+      "file": "view-00.png",
+      "height": 600,
+      "mask_dimensions_match": true,
+      "width": 800
+    },
+    {
+      "asset_visible_pixels": 121396,
+      "channel_range": 255,
+      "file": "view-01.png",
+      "height": 600,
+      "mask_dimensions_match": true,
+      "width": 800
+    }
+  ],
+  "kind": "validate-blender-target",
+  "options": {
+    "denoise": true,
+    "engine": "blender-cycles",
+    "environment_strength": 0.5,
+    "height": 600,
+    "pose_samples": 3,
+    "samples": 48,
+    "views": [
+      {
+        "elevation": 0.3,
+        "yaw": 0.57
+      },
+      {
+        "elevation": 0.4,
+        "yaw": -2.1
+      }
+    ],
+    "width": 800
+  },
+  "pose_comparison": [
+    {
+      "bounds_error_m": 0.0,
+      "clip": null,
+      "time_s": 0.0,
+      "triangles_match": true
+    }
+  ],
+  "schema": "axm.mesh-production/v1",
+  "scope": "Fresh Blender imports, native-vs-target pose bounds/triangle counts, image decode and Cycles renders. No Unity/Unreal/Godot, game controls or device performance claim.",
+  "source_sha256": "fcde9aeeb9dd3dac9190a3e2abfabc8e021fa2e65af6ee816a6e14af54f10c20",
+  "status": "PASS",
+  "target": "blender-cycles"
+}
