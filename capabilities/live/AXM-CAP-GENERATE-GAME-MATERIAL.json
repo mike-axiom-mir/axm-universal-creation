@@ -1,0 +1,28 @@
+{
+  "id": "AXM-CAP-GENERATE-GAME-MATERIAL",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "generate game material using native offline material machinery and exact artifact observation",
+  "handles": [
+    "generate-game-material"
+  ],
+  "input_contract": {
+    "required": [
+      "path",
+      "recipe"
+    ]
+  },
+  "output_contract": {
+    "kind": "material-station-artifact-or-measurement"
+  },
+  "dependencies": [],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:generate_game_material",
+    "source": "src/axm_uc/material_pipeline.py"
+  },
+  "limitations": [
+    "Native bounded PNG/core glTF subset. No automatic aesthetic, seamlessness or target-engine acceptance.",
+    "Sources are preserved; existing outputs are refused."
+  ]
+}

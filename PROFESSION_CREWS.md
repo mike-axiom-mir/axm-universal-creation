@@ -225,3 +225,20 @@ The initial crew implementation merged as PR #143 at main
 `8dd55d7186aa99911ca8d28af303f31d2c05fad4`. The manual target-evidence improvement
 continues the same working branch. The aftertouch and physics PRs remain separate;
 this work does not claim their adoption.
+
+## Product-specific production
+
+`product-workflow` now compiles material, static-3D, software and web draft recipes
+into the same crew stations. Eight product profiles preserve brief-to-delivery
+steps, owners, evidence requirements and unresolved reviews. Animated-3D, game,
+image and audio profiles currently prepare plans for explicit stepwise bindings.
+
+Native material stations generate and reopen bundles, check image/map quality,
+bind textures to supplied UV geometry, measure texture coverage/density and
+optional world dimensions, and render the actual embedded textures under two
+lights. A failed station stops downstream work. Refinement writes a separate
+version and preserves the earlier draft. Crew practice records distinct local
+observations; this does not create automatic artistic judgment or new code.
+
+See [PRODUCT_WORKFLOWS.md](PRODUCT_WORKFLOWS.md) for contracts, runnable examples,
+rendering limits and the remaining quality work.

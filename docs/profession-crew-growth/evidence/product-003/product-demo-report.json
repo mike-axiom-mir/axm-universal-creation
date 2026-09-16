@@ -1,0 +1,692 @@
+{
+  "baseline": {
+    "bounds": {
+      "max": [
+        0.8999999761581421,
+        1.3817387819290161,
+        0.7250000238418579
+      ],
+      "min": [
+        -0.8999999761581421,
+        0.02500000037252903,
+        -0.5799999833106995
+      ]
+    },
+    "clip": null,
+    "contact_shadow_pixels": 18986,
+    "elevation": 0.3,
+    "height": 480,
+    "light_count": 4,
+    "lighting": "studio",
+    "loop": false,
+    "png_sha256": "8ea9125bb530305713799064d1b82e6d5f3f34a44168afac2fc08c05855245fb",
+    "raster_visits": 1414206,
+    "schema": "axm.software-glb-preview/v0.1",
+    "source_sha256": "ebfa10988640fe12a208b58f07f3ae8008dce29301b2c7dcb4c2cfb89b53b415",
+    "supersample": 1,
+    "texture_shaded_pixels": 0,
+    "textured_triangles": 0,
+    "time_s": 0.0,
+    "triangles": 656,
+    "truth": "Observes decoded geometry, material factors, vertex colours, supported core embedded textures and one sampled pose. Textured surfaces use triangle-derived tangent frames and approximate direct metal/rough shading. It does not prove PBR/MikkTSpace parity, reflections, transparency, target-engine import, continuous animation, artistic quality or performance.",
+    "visible_triangles": 305,
+    "width": 640,
+    "yaw": 0.57
+  },
+  "demo_sha256": "a5fa637d361f16820b69c69effe351d8ec7ab0b42ddc02866c0502ca263b394d",
+  "evidence_files": {
+    "after-garage.png": "8b4e0c5a754505c6bd19f3f6a88589ffc86d37600361f38686a91b2e04555b44",
+    "after-studio.png": "878e7a920806f3ae46c32d8b799dc89f3618f25cd96b45b58ff820b6a486b4ca",
+    "before-scalar.png": "8ea9125bb530305713799064d1b82e6d5f3f34a44168afac2fc08c05855245fb",
+    "field-service-case.glb": "79a8ffe05be6803430628211a5fd29f283d0c8dbb1eea7eef85331cf7dd99c6c"
+  },
+  "executed_stations": [
+    "brief-source",
+    "generate-paint",
+    "check-paint",
+    "generate-rubber",
+    "check-rubber",
+    "generate-steel",
+    "check-steel",
+    "textured-assembly",
+    "uv-geometry-check",
+    "preview-studio",
+    "preview-garage"
+  ],
+  "first_status": "HOLD_FAILED_CHECK",
+  "fresh_verification": "PASS",
+  "limitations": [
+    "Demonstrates workflow and texture realization; not photorealism, artistic acceptance, target-engine import, animation or a shipped game.",
+    "Triangle-derived tangent frame is not MikkTSpace parity. No image-based reflections, anisotropic filtering, automatic unwrap, mesh baking or compressed texture export."
+  ],
+  "map_size": 128,
+  "material_families": [
+    "painted-metal",
+    "rubber",
+    "painted-metal"
+  ],
+  "previous_delivery_preserved": true,
+  "quality": {
+    "artifact_sha256": "79a8ffe05be6803430628211a5fd29f283d0c8dbb1eea7eef85331cf7dd99c6c",
+    "bounds_m": {
+      "max": [
+        0.8999999761581421,
+        1.3817387819290161,
+        0.7250000238418579
+      ],
+      "min": [
+        -0.8999999761581421,
+        0.02500000037252903,
+        -0.5799999833106995
+      ]
+    },
+    "checks": [
+      {
+        "passed": true,
+        "type": "native-geometry-and-textures"
+      },
+      {
+        "passed": true,
+        "type": "texture-coverage"
+      },
+      {
+        "passed": true,
+        "type": "uv-density"
+      },
+      {
+        "passed": true,
+        "type": "uv-findings"
+      },
+      {
+        "passed": true,
+        "type": "maximum-world-dimensions"
+      }
+    ],
+    "geometry": {
+      "accessors": 12,
+      "buffer_bytes": 211435,
+      "buffer_views": 21,
+      "chunks": [
+        "JSON",
+        "BIN"
+      ],
+      "emissive_materials": 0,
+      "format": "glb",
+      "geometry_validation": {
+        "decoded_triangle_count": 656,
+        "finite_positions_and_normals": true,
+        "indices_in_range": true,
+        "nondegenerate_triangles": true,
+        "scope": "native bounded generator geometry; not arbitrary glTF, manifoldness, collision, visual quality or host import proof",
+        "winding_matches_vertex_normals": true
+      },
+      "materials": 3,
+      "nodes": 3,
+      "passed": true,
+      "primitives": 3,
+      "specification_sha256": "0e7f9d58de98a5bc7d08374930200c8a590e2318be3298395f69a24a2e32f2e1",
+      "texture_validation": "Embedded RGB PNG decode, core bindings and noncollapsed UVs; no seam, unwrap, tangent parity or visual acceptance claim",
+      "textured_primitives": 3,
+      "triangles": 656,
+      "unlit_materials": 0,
+      "version": 2
+    },
+    "limitations": [
+      "Density is measured, not a universal quality score. No unwrap overlap, padding, tangent parity or engine acceptance proof."
+    ],
+    "minimum_texels_per_m": 64.0,
+    "schema": "axm.textured-asset-quality/v1",
+    "size_m": [
+      1.7999999523162842,
+      1.356738781556487,
+      1.3050000071525574
+    ],
+    "status": "PASS",
+    "uv": {
+      "artifact_sha256": "79a8ffe05be6803430628211a5fd29f283d0c8dbb1eea7eef85331cf7dd99c6c",
+      "findings": [],
+      "measurements": {
+        "collapsed_uv_triangles": 0,
+        "measured_binding_count": 12,
+        "primitive_count": 3,
+        "textured_primitive_count": 3
+      },
+      "primitives": [
+        {
+          "bindings": [
+            {
+              "byte_length": 14895,
+              "height": 128,
+              "image_index": 0,
+              "mime_type": "image/png",
+              "sha256": "091845e7dcbc5cd6707cf7eba4a3cf63b00d8d6fb634e7fedaa44fcfe7f8cd10",
+              "slot": "base-color",
+              "texels_per_m": {
+                "p10": 90.9656372186101,
+                "p50": 102.64004646219321,
+                "p90": 143.80207673151733,
+                "p90_p10_ratio": 1.5808395469811292,
+                "weighted_geometric_mean": 118.33528171499147
+              },
+              "texture_index": 0,
+              "width": 128,
+              "wrap_s": 33071,
+              "wrap_t": 33071
+            },
+            {
+              "byte_length": 13560,
+              "height": 128,
+              "image_index": 2,
+              "mime_type": "image/png",
+              "sha256": "17dd2469ba1589348afbd47f19c8c3b0117ed7be8cbdb015d880e5f58d84176d",
+              "slot": "metallic-roughness",
+              "texels_per_m": {
+                "p10": 90.9656372186101,
+                "p50": 102.64004646219321,
+                "p90": 143.80207673151733,
+                "p90_p10_ratio": 1.5808395469811292,
+                "weighted_geometric_mean": 118.33528171499147
+              },
+              "texture_index": 2,
+              "width": 128,
+              "wrap_s": 33071,
+              "wrap_t": 33071
+            },
+            {
+              "byte_length": 8090,
+              "height": 128,
+              "image_index": 1,
+              "mime_type": "image/png",
+              "sha256": "807c28d99a73ba6e41c4dcf9293d780367e687a8a8df532a9abc109a281b5cd3",
+              "slot": "normal",
+              "texels_per_m": {
+                "p10": 90.9656372186101,
+                "p50": 102.64004646219321,
+                "p90": 143.80207673151733,
+                "p90_p10_ratio": 1.5808395469811292,
+                "weighted_geometric_mean": 118.33528171499147
+              },
+              "texture_index": 1,
+              "width": 128,
+              "wrap_s": 33071,
+              "wrap_t": 33071
+            },
+            {
+              "byte_length": 13560,
+              "height": 128,
+              "image_index": 2,
+              "mime_type": "image/png",
+              "sha256": "17dd2469ba1589348afbd47f19c8c3b0117ed7be8cbdb015d880e5f58d84176d",
+              "slot": "occlusion",
+              "texels_per_m": {
+                "p10": 90.9656372186101,
+                "p50": 102.64004646219321,
+                "p90": 143.80207673151733,
+                "p90_p10_ratio": 1.5808395469811292,
+                "weighted_geometric_mean": 118.33528171499147
+              },
+              "texture_index": 2,
+              "width": 128,
+              "wrap_s": 33071,
+              "wrap_t": 33071
+            }
+          ],
+          "collapsed_uv_triangles": 0,
+          "material": "paint-material",
+          "material_index": 0,
+          "measured_triangles": 76,
+          "mesh": 0,
+          "node": "paint",
+          "primitive": 0,
+          "triangles": 76,
+          "uv_area": 33.98363636375828,
+          "uv_bounds": {
+            "max": [
+              1.0,
+              1.0
+            ],
+            "min": [
+              0.0,
+              0.0
+            ]
+          },
+          "world_area_m2": 11.080504244461572
+        },
+        {
+          "bindings": [
+            {
+              "byte_length": 6688,
+              "height": 128,
+              "image_index": 3,
+              "mime_type": "image/png",
+              "sha256": "233d36596c70ba6c09bff6be7920bb5098933aa17f52109a236e22ced32f6dc5",
+              "slot": "base-color",
+              "texels_per_m": {
+                "p10": 124.98665439764235,
+                "p50": 235.90713034456124,
+                "p90": 726.4059362339192,
+                "p90_p10_ratio": 5.811867992904861,
+                "weighted_geometric_mean": 253.03339312325005
+              },
+              "texture_index": 3,
+              "width": 128,
+              "wrap_s": 33071,
+              "wrap_t": 33071
+            },
+            {
+              "byte_length": 12501,
+              "height": 128,
+              "image_index": 5,
+              "mime_type": "image/png",
+              "sha256": "95472f9f0b44b7cafb60c05ab1adcb34fc1f13fe9a2814025509538cf997e46d",
+              "slot": "metallic-roughness",
+              "texels_per_m": {
+                "p10": 124.98665439764235,
+                "p50": 235.90713034456124,
+                "p90": 726.4059362339192,
+                "p90_p10_ratio": 5.811867992904861,
+                "weighted_geometric_mean": 253.03339312325005
+              },
+              "texture_index": 5,
+              "width": 128,
+              "wrap_s": 33071,
+              "wrap_t": 33071
+            },
+            {
+              "byte_length": 20273,
+              "height": 128,
+              "image_index": 4,
+              "mime_type": "image/png",
+              "sha256": "de123ca97e609a20f0833edc61a6c9b57e0b4f7bc5d864d9ac84eb1554f7ed37",
+              "slot": "normal",
+              "texels_per_m": {
+                "p10": 124.98665439764235,
+                "p50": 235.90713034456124,
+                "p90": 726.4059362339192,
+                "p90_p10_ratio": 5.811867992904861,
+                "weighted_geometric_mean": 253.03339312325005
+              },
+              "texture_index": 4,
+              "width": 128,
+              "wrap_s": 33071,
+              "wrap_t": 33071
+            },
+            {
+              "byte_length": 12501,
+              "height": 128,
+              "image_index": 5,
+              "mime_type": "image/png",
+              "sha256": "95472f9f0b44b7cafb60c05ab1adcb34fc1f13fe9a2814025509538cf997e46d",
+              "slot": "occlusion",
+              "texels_per_m": {
+                "p10": 124.98665439764235,
+                "p50": 235.90713034456124,
+                "p90": 726.4059362339192,
+                "p90_p10_ratio": 5.811867992904861,
+                "weighted_geometric_mean": 253.03339312325005
+              },
+              "texture_index": 5,
+              "width": 128,
+              "wrap_s": 33071,
+              "wrap_t": 33071
+            }
+          ],
+          "collapsed_uv_triangles": 0,
+          "material": "rubber-material",
+          "material_index": 1,
+          "measured_triangles": 232,
+          "mesh": 1,
+          "node": "rubber",
+          "primitive": 0,
+          "triangles": 232,
+          "uv_area": 95.22280417800044,
+          "uv_bounds": {
+            "max": [
+              1.0,
+              1.0
+            ],
+            "min": [
+              0.0,
+              0.0
+            ]
+          },
+          "world_area_m2": 5.081391075541367
+        },
+        {
+          "bindings": [
+            {
+              "byte_length": 20723,
+              "height": 128,
+              "image_index": 6,
+              "mime_type": "image/png",
+              "sha256": "42d054fa0de032d66854f2b07474bb8e928a7d34cd9491b814b18fdf74085e00",
+              "slot": "base-color",
+              "texels_per_m": {
+                "p10": 409.71797740211343,
+                "p50": 558.63783626553,
+                "p90": 936.0290137646944,
+                "p90_p10_ratio": 2.284569058208638,
+                "weighted_geometric_mean": 640.1680430934917
+              },
+              "texture_index": 6,
+              "width": 128,
+              "wrap_s": 33071,
+              "wrap_t": 33071
+            },
+            {
+              "byte_length": 24639,
+              "height": 128,
+              "image_index": 8,
+              "mime_type": "image/png",
+              "sha256": "cd66b90574c3e281203c2bd22efa38a50562722f2574f3cd665252d007879ff8",
+              "slot": "metallic-roughness",
+              "texels_per_m": {
+                "p10": 409.71797740211343,
+                "p50": 558.63783626553,
+                "p90": 936.0290137646944,
+                "p90_p10_ratio": 2.284569058208638,
+                "weighted_geometric_mean": 640.1680430934917
+              },
+              "texture_index": 8,
+              "width": 128,
+              "wrap_s": 33071,
+              "wrap_t": 33071
+            },
+            {
+              "byte_length": 23142,
+              "height": 128,
+              "image_index": 7,
+              "mime_type": "image/png",
+              "sha256": "ca75073d2019b0d1b7a6b70d83fbc4be70f5ad6ba848557fcabb05291388d37a",
+              "slot": "normal",
+              "texels_per_m": {
+                "p10": 409.71797740211343,
+                "p50": 558.63783626553,
+                "p90": 936.0290137646944,
+                "p90_p10_ratio": 2.284569058208638,
+                "weighted_geometric_mean": 640.1680430934917
+              },
+              "texture_index": 7,
+              "width": 128,
+              "wrap_s": 33071,
+              "wrap_t": 33071
+            },
+            {
+              "byte_length": 24639,
+              "height": 128,
+              "image_index": 8,
+              "mime_type": "image/png",
+              "sha256": "cd66b90574c3e281203c2bd22efa38a50562722f2574f3cd665252d007879ff8",
+              "slot": "occlusion",
+              "texels_per_m": {
+                "p10": 409.71797740211343,
+                "p50": 558.63783626553,
+                "p90": 936.0290137646944,
+                "p90_p10_ratio": 2.284569058208638,
+                "weighted_geometric_mean": 640.1680430934917
+              },
+              "texture_index": 8,
+              "width": 128,
+              "wrap_s": 33071,
+              "wrap_t": 33071
+            }
+          ],
+          "collapsed_uv_triangles": 0,
+          "material": "steel-material",
+          "material_index": 2,
+          "measured_triangles": 348,
+          "mesh": 2,
+          "node": "steel",
+          "primitive": 0,
+          "triangles": 348,
+          "uv_area": 148.18033974250875,
+          "uv_bounds": {
+            "max": [
+              1.0,
+              1.0
+            ],
+            "min": [
+              0.0,
+              0.0
+            ]
+          },
+          "world_area_m2": 3.1083942826026476
+        }
+      ],
+      "schema": "axm.material-uv-evidence/v0.1",
+      "scope": "Actual default-scene static GLB POSITION/TEXCOORD_0/indices/transforms plus core embedded PNG/JPEG dimensions. No unwrap, texture decode, shader/render, seam quality, style acceptance, engine import, deformation, performance, or automatic repair proof.",
+      "status": "MEASURED"
+    }
+  },
+  "renders": [
+    {
+      "bounds": {
+        "max": [
+          0.8999999761581421,
+          1.3817387819290161,
+          0.7250000238418579
+        ],
+        "min": [
+          -0.8999999761581421,
+          0.02500000037252903,
+          -0.5799999833106995
+        ]
+      },
+      "clip": null,
+      "contact_shadow_pixels": 18986,
+      "elevation": 0.3,
+      "height": 480,
+      "light_count": 4,
+      "lighting": "studio",
+      "loop": false,
+      "png_sha256": "878e7a920806f3ae46c32d8b799dc89f3618f25cd96b45b58ff820b6a486b4ca",
+      "raster_visits": 1414206,
+      "schema": "axm.software-glb-preview/v0.1",
+      "source_sha256": "79a8ffe05be6803430628211a5fd29f283d0c8dbb1eea7eef85331cf7dd99c6c",
+      "supersample": 1,
+      "texture_shaded_pixels": 314896,
+      "textured_triangles": 656,
+      "time_s": 0.0,
+      "triangles": 656,
+      "truth": "Observes decoded geometry, material factors, vertex colours, supported core embedded textures and one sampled pose. Textured surfaces use triangle-derived tangent frames and approximate direct metal/rough shading. It does not prove PBR/MikkTSpace parity, reflections, transparency, target-engine import, continuous animation, artistic quality or performance.",
+      "visible_triangles": 305,
+      "width": 640,
+      "yaw": 0.57
+    },
+    {
+      "bounds": {
+        "max": [
+          0.8999999761581421,
+          1.3817387819290161,
+          0.7250000238418579
+        ],
+        "min": [
+          -0.8999999761581421,
+          0.02500000037252903,
+          -0.5799999833106995
+        ]
+      },
+      "clip": null,
+      "contact_shadow_pixels": 18986,
+      "elevation": 0.3,
+      "height": 480,
+      "light_count": 3,
+      "lighting": "garage",
+      "loop": false,
+      "png_sha256": "8b4e0c5a754505c6bd19f3f6a88589ffc86d37600361f38686a91b2e04555b44",
+      "raster_visits": 1414206,
+      "schema": "axm.software-glb-preview/v0.1",
+      "source_sha256": "79a8ffe05be6803430628211a5fd29f283d0c8dbb1eea7eef85331cf7dd99c6c",
+      "supersample": 1,
+      "texture_shaded_pixels": 314896,
+      "textured_triangles": 656,
+      "time_s": 0.0,
+      "triangles": 656,
+      "truth": "Observes decoded geometry, material factors, vertex colours, supported core embedded textures and one sampled pose. Textured surfaces use triangle-derived tangent frames and approximate direct metal/rough shading. It does not prove PBR/MikkTSpace parity, reflections, transparency, target-engine import, continuous animation, artistic quality or performance.",
+      "visible_triangles": 305,
+      "width": 640,
+      "yaw": 0.57
+    }
+  ],
+  "schema": "axm.product-workflow-demo/v1",
+  "second_status": "DRAFT_BUILT_REVIEW_REQUIRED",
+  "source_hashes": {
+    "__init__.py": "4be2b41b3863b09f0c609ac7e36cd7d90a016cb0606e9ccfcc38a0aa36bd470c",
+    "donor_metal.py": "dd2569c4289731e3bbf161bb0affa5d6566f8df6ea8de3dcdb6210e8c0172df7",
+    "game_material_styles.py": "b8f15297901c68685417c84236f87006c00fbc778b4f15cebd95ff8ef314e1d1",
+    "growth_lane_compat.py": "c73b151406363c60ce52da474d1ccf3e0143ca597d54e21d383ee204316a864d",
+    "material_pipeline.py": "22be99284ec3153e2b1c5f33e65985cc6fe76b47d9766d15e23e6734dd653bef",
+    "native_textures.py": "584e62f20e4c6eef758d085172960ff2e1fbb099a01dad63aad78d7f5dcfcc8d",
+    "procedural_3d.py": "cf747d6dd05404a616bb52c478bdf54da861ef3ca4b7d079f17d36756c564099",
+    "product_workflow.py": "93ca1e90ad94ef35596f4d469b14e910a6a1e3fac79a5c486639e902d4b14eb6",
+    "profession_crew.py": "6600c046a2aef61064abf2463dcf0919e388e8c52fb660082e376b4c90158c39",
+    "software_glb_preview.py": "52c01543d7288a9e9bbae7feb81e6114b801592cf03e9b5aefc559f37b2eb597",
+    "texture_shading.py": "0cb773e69e8efbc3be72d1a7b09288d6a12617317f953902354425ef6231c0ec"
+  },
+  "stage_observations": [
+    {
+      "observed_stations": [
+        "brief-source"
+      ],
+      "profession_id": "art-director",
+      "scope": "Purpose, audience, target device, units, budget and explicit acceptance conditions",
+      "stage": "brief",
+      "status": "DECLARED"
+    },
+    {
+      "observed_stations": [
+        "brief-source"
+      ],
+      "profession_id": "art-director",
+      "scope": "References/provenance, composition, palette, material identity and detail hierarchy",
+      "stage": "direction",
+      "status": "DECLARED"
+    },
+    {
+      "observed_stations": [],
+      "profession_id": "3d-artist",
+      "scope": "Silhouette, dimensions, primary forms and assembly relationships",
+      "stage": "blockout",
+      "status": "PENDING"
+    },
+    {
+      "observed_stations": [
+        "textured-assembly",
+        "uv-geometry-check"
+      ],
+      "profession_id": "3d-artist",
+      "scope": "Geometry, texture coverage and UV density measured; topology/seams/overlaps/padding/mounts remain unverified",
+      "stage": "geometry",
+      "status": "PARTIAL"
+    },
+    {
+      "observed_stations": [
+        "textured-assembly",
+        "uv-geometry-check"
+      ],
+      "profession_id": "technical-artist",
+      "scope": "Geometry, texture coverage and UV density measured; topology/seams/overlaps/padding/mounts remain unverified",
+      "stage": "uv-layout",
+      "status": "PARTIAL"
+    },
+    {
+      "observed_stations": [
+        "brief-source"
+      ],
+      "profession_id": "3d-artist",
+      "scope": "Physical scale, substrate/coating, channel meanings and colour-space contract",
+      "stage": "surface-intent",
+      "status": "DECLARED"
+    },
+    {
+      "observed_stations": [
+        "generate-paint",
+        "generate-rubber",
+        "generate-steel"
+      ],
+      "profession_id": "3d-artist",
+      "scope": "Exact generated maps; no artistic acceptance",
+      "stage": "maps",
+      "status": "OBSERVED_BOUNDED"
+    },
+    {
+      "observed_stations": [
+        "check-paint",
+        "check-rubber",
+        "check-steel"
+      ],
+      "profession_id": "technical-artist",
+      "scope": "Fresh map quality checks against explicit policy",
+      "stage": "map-checks",
+      "status": "OBSERVED_BOUNDED"
+    },
+    {
+      "observed_stations": [
+        "preview-studio",
+        "preview-garage"
+      ],
+      "profession_id": "graphics-engineer",
+      "scope": "Exact texture renders in two lighting profiles; aesthetic judgment remains open",
+      "stage": "look-development",
+      "status": "PARTIAL"
+    },
+    {
+      "observed_stations": [
+        "textured-assembly",
+        "uv-geometry-check"
+      ],
+      "profession_id": "technical-artist",
+      "scope": "Geometry, texture coverage and UV density measured; topology/seams/overlaps/padding/mounts remain unverified",
+      "stage": "assembly",
+      "status": "PARTIAL"
+    },
+    {
+      "observed_stations": [],
+      "profession_id": "technical-artist",
+      "scope": "Distance/detail comparison, collision representation and placement checks",
+      "stage": "lod-collision",
+      "status": "PENDING"
+    },
+    {
+      "observed_stations": [],
+      "profession_id": "art-director",
+      "scope": "Defect-led revision with preserved source, previous version and fresh downstream checks",
+      "stage": "refinement",
+      "status": "PENDING"
+    },
+    {
+      "observed_stations": [],
+      "profession_id": "software-qa-playtest",
+      "scope": "Actual target import/runtime, budgets, accessibility and required edge cases",
+      "stage": "target-validation",
+      "status": "PENDING"
+    },
+    {
+      "observed_stations": [],
+      "profession_id": "integration-release-engineer",
+      "scope": "Editable source, artifacts, dependencies, licenses, instructions and unresolved limits",
+      "stage": "delivery",
+      "status": "PENDING"
+    },
+    {
+      "observed_stations": [
+        "brief-source",
+        "check-paint",
+        "check-rubber",
+        "check-steel",
+        "generate-paint",
+        "generate-rubber",
+        "generate-steel",
+        "preview-garage",
+        "preview-studio",
+        "textured-assembly",
+        "uv-geometry-check"
+      ],
+      "profession_id": "technical-artist",
+      "scope": "Existing crew stores distinct local observations; no rank or automatic recipe synthesis",
+      "stage": "retained-practice",
+      "status": "OBSERVED_BOUNDED"
+    }
+  ],
+  "triangle_count": 656
+}

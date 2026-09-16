@@ -14,6 +14,8 @@ from pathlib import Path
 from .atomic import atomic_write_bytes
 from .fabric_noise import png_bytes
 from .game_pose_runtime import GamePoseAsset, _parse
+from .native_textures import material_textures
+from .texture_shading import prepare_face, shade_pixel
 
 
 MAX_SIDE = 1024
@@ -66,19 +68,21 @@ LIGHTING_PROFILES = {
 
 def software_glb_preview_catalog():
     return {
-        "schema": "axm.software-glb-preview-catalog/v0.2",
+        "schema": "axm.software-glb-preview-catalog/v0.3",
         "input": "embedded GLB 2.0 accepted by the offline pose runtime",
         "output": "deterministic RGB PNG plus geometry-bound receipt",
         "features": ["animation sampling", "orthographic framing", "backface culling",
                      "depth buffer", "multi-light material-aware shading", "contact shadow",
-                     "four lighting profiles", "2x supersampling"],
+                     "four lighting profiles", "2x supersampling", "embedded RGB PNG textures",
+                     "linear-light color sampling", "bilinear/trilinear filtering", "core metal/rough and normal maps"],
         "lighting_profiles": sorted(LIGHTING_PROFILES),
         "dependencies": [],
         "limits": {"maximum_side": MAX_SIDE, "maximum_pixels": MAX_PIXELS,
                    "maximum_triangles": MAX_TRIANGLES, "maximum_raster_visits": MAX_RASTER_VISITS},
         "truth": (
-            "Observes decoded geometry, material factors, vertex colours and one sampled pose. "
-            "It does not prove PBR parity, reflections, textures, transparency, target-engine import, continuous "
+            "Observes decoded geometry, material factors, vertex colours, supported core embedded textures and one sampled pose. "
+            "Textured surfaces use triangle-derived tangent frames and approximate direct metal/rough shading. "
+            "It does not prove PBR/MikkTSpace parity, reflections, transparency, target-engine import, continuous "
             "animation, artistic quality or performance."
         ),
     }
@@ -132,7 +136,7 @@ def _accessor(document, binary, reference):
     component = accessor.get("componentType")
     kind = accessor.get("type")
     formats = {5121: ("B", 1), 5123: ("H", 2), 5125: ("I", 4), 5126: ("f", 4)}
-    widths = {"SCALAR": 1, "VEC3": 3, "VEC4": 4}
+    widths = {"SCALAR": 1, "VEC2": 2, "VEC3": 3, "VEC4": 4}
     if component not in formats or kind not in widths or accessor.get("sparse"):
         raise ValueError("unsupported preview accessor encoding")
     code, size = formats[component]
@@ -156,7 +160,7 @@ def _scene_triangles(body, clip, time_s, loop):
         raise ValueError(f"unknown preview clip: {clip}")
     document, binary = _parse(body)
     pose = asset.sample(clip, time_s, loop=loop, vertices=True)
-    triangles = []
+    triangles, texture_cache = [], {}
     for mesh in pose["meshes"]:
         node = document["nodes"][mesh["node"]]
         primitive = document["meshes"][node["mesh"]]["primitives"][mesh["primitive"]]
@@ -176,6 +180,12 @@ def _scene_triangles(body, clip, time_s, loop):
             raise ValueError("invalid preview emissive factor")
         metallic = _number(pbr.get("metallicFactor", 1), "metallicFactor", 0, 1)
         roughness = _number(pbr.get("roughnessFactor", 1), "roughnessFactor", 0, 1)
+        bindings = material_textures(document, binary, material, cache=texture_cache)
+        uvs = None
+        if bindings:
+            uvs = _accessor(document, binary, primitive.get("attributes", {}).get("TEXCOORD_0"))
+            if len(uvs) != len(mesh["positions"]) or any(len(row) != 2 or not all(math.isfinite(v) for v in row) for row in uvs):
+                raise ValueError("preview texture UVs do not match geometry")
         colors = None
         if "COLOR_0" in primitive.get("attributes", {}):
             colors = _accessor(document, binary, primitive["attributes"]["COLOR_0"])
@@ -189,7 +199,7 @@ def _scene_triangles(body, clip, time_s, loop):
                 tint = [sum(colors[index][channel] for index in face) / 3 for channel in range(3)]
             base = [max(0.0, min(1.0, factor[channel] * tint[channel])) for channel in range(3)]
             triangles.append((points, base, [max(0.0, min(1.0, value)) for value in emissive],
-                              metallic, roughness))
+                              metallic, roughness, [uvs[i] for i in face] if uvs else None, bindings))
             if len(triangles) > MAX_TRIANGLES:
                 raise ValueError("preview triangle budget exceeded")
     if not triangles:
@@ -222,7 +232,7 @@ def render_glb_preview(body, *, width=640, height=420, yaw=.72, elevation=.38,
     maximum = [-math.inf, -math.inf]
     world_min = [math.inf, math.inf, math.inf]
     world_max = [-math.inf, -math.inf, -math.inf]
-    for points, base, emissive, metallic, roughness in triangles:
+    for points, base, emissive, metallic, roughness, uvs, bindings in triangles:
         rows = []
         for point in points:
             rows.append([_dot(point, right), _dot(point, up), _dot(point, forward)])
@@ -233,7 +243,7 @@ def render_glb_preview(body, *, width=640, height=420, yaw=.72, elevation=.38,
             for axis in range(2):
                 minimum[axis] = min(minimum[axis], row[axis])
                 maximum[axis] = max(maximum[axis], row[axis])
-        projected.append((rows, points, base, emissive, metallic, roughness))
+        projected.append((rows, points, base, emissive, metallic, roughness, uvs, bindings))
     render_width, render_height = width * supersample, height * supersample
     span_x = max(.1, maximum[0] - minimum[0])
     span_y = max(.1, maximum[1] - minimum[1])
@@ -258,6 +268,9 @@ def render_glb_preview(body, *, width=640, height=420, yaw=.72, elevation=.38,
         start = y * render_width * 3
         pixels[start:start + len(row)] = row
     lights = [{**row, "direction": _unit(row["direction"])} for row in profile["lights"]]
+    for lamp in lights:
+        summed = tuple(lamp["direction"][i]+forward[i] for i in range(3))
+        lamp["half"] = _unit(summed) if _dot(summed, summed) > 1e-12 else forward
     world_center = [(world_min[axis] + world_max[axis]) / 2 for axis in range(3)]
     ground_point = (world_center[0], world_min[1], world_center[2])
     ground_projected = (_dot(ground_point, right), _dot(ground_point, up))
@@ -278,8 +291,8 @@ def render_glb_preview(body, *, width=640, height=420, yaw=.72, elevation=.38,
                 pixels[offset + channel] = round(pixels[offset + channel] * (1 - amount))
             shadow_pixels += 1
     visits = 0
-    visible_triangles = 0
-    for rows, points, base, emissive, metallic, roughness in projected:
+    visible_triangles, texture_pixels = 0, 0
+    for rows, points, base, emissive, metallic, roughness, uvs, bindings in projected:
         screen = [
             ((row[0] - center[0]) * scale + render_width / 2,
              render_height / 2 - (row[1] - center[1]) * scale,
@@ -305,12 +318,13 @@ def render_glb_preview(body, *, width=640, height=420, yaw=.72, elevation=.38,
         denominator = (b[1] - c[1]) * (a[0] - c[0]) + (c[0] - b[0]) * (a[1] - c[1])
         if abs(denominator) < 1e-12:
             continue
+        texture_frame = prepare_face(points, uvs, screen, bindings, normal) if bindings else None
         diffuse = list(profile["ambient"])
         specular = [0.0, 0.0, 0.0]
         for lamp in lights:
             direction = lamp["direction"]
             ndotl = max(0.0, _dot(normal, direction))
-            half_vector = _unit(tuple(direction[index] + forward[index] for index in range(3)))
+            half_vector = lamp["half"]
             highlight = max(0.0, _dot(normal, half_vector)) ** (6 + (1 - roughness) * 90)
             highlight *= lamp["intensity"] * (1 - roughness) * (.25 + .75 * ndotl)
             for channel in range(3):
@@ -337,7 +351,13 @@ def render_glb_preview(body, *, width=640, height=420, yaw=.72, elevation=.38,
                     continue
                 depth[at] = z
                 offset = at * 3
-                pixels[offset:offset + 3] = bytes(color)
+                if texture_frame:
+                    uv = [u*uvs[0][i]+v*uvs[1][i]+w*uvs[2][i] for i in range(2)]
+                    pixels[offset:offset+3] = shade_pixel(uv, bindings, texture_frame, normal, base,
+                        metallic, roughness, emissive, forward, lights, profile)
+                    texture_pixels += 1
+                else:
+                    pixels[offset:offset + 3] = bytes(color)
                 wrote = True
         visible_triangles += int(wrote)
     if not visible_triangles:
@@ -364,6 +384,8 @@ def render_glb_preview(body, *, width=640, height=420, yaw=.72, elevation=.38,
             "lighting": lighting, "light_count": len(lights), "contact_shadow_pixels": shadow_pixels,
             "triangles": len(triangles), "visible_triangles": visible_triangles,
             "raster_visits": visits,
+            "texture_shaded_pixels": texture_pixels,
+            "textured_triangles": sum(bool(row[-1]) for row in triangles),
             "bounds": {"min": world_min, "max": world_max},
             "truth": software_glb_preview_catalog()["truth"],
         },
