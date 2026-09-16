@@ -22,6 +22,7 @@ axm-create-surface = "axm_uc.surface_creation:main"
 axm-visual-templates = "axm_uc.visual_templates_cli:main"
 axm-native-visual = "axm_uc.native_visual_engine:main"
 axm-math-create = "axm_uc.math_creation:main"
+axm-rich-materials = "axm_uc.rich_game_material_cli:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
