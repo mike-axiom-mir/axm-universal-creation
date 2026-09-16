@@ -1,27 +1,15 @@
 # AXM Native Visual Engine
 
-Universal Creation now has two complementary visual execution paths rather than forcing every visual task through Blender.
+Universal Creation now separates two things that must not be confused:
 
-## 1. Blender forge — authoring and final proof
+1. **AXM-native visual capability** — code owned and executed by AXM without requiring Blender, Godot, Unreal, Krita, GIMP, FFmpeg, or another creative application.
+2. **External visual connectors** — optional third-party executables AXM may use when they are installed and explicitly selected.
 
-`tools/blender/axm_blender_pro.py` is an additive shared helper layer for the existing `bpy` forge scripts. It centralizes:
+`native` means the capability still exists when every external connector is absent.
 
-- preview, lookdev, hero, and proof render profiles;
-- deterministic Cycles seed and bounce settings;
-- AgX color management;
-- reusable world setup;
-- aimed cameras;
-- a reusable three-point area-light rig;
-- Principled PBR material creation;
-- structural pre-render scene validation;
-- deterministic proof-angle generation and truth-bounded receipts;
-- an `apply_native_scene(...)` bridge that realizes the native scene contract in Blender.
+## AXM-native visual runtime
 
-It does **not** claim visual quality from structure alone. Rendered review remains required.
-
-## 2. Native visual engine — fast coded visuals
-
-`src/axm_uc/native_visual_engine.py` compiles a small inspectable scene contract into a self-contained WebGL2 page. It has no external JavaScript dependencies and can be opened locally after generation.
+`src/axm_uc/native_visual_engine.py` compiles an inspectable scene contract into a self-contained WebGL2 page. It has no external JavaScript dependency and does not require Blender.
 
 Current runtime features:
 
@@ -33,8 +21,43 @@ Current runtime features:
 - mouse/touch orbit and wheel zoom;
 - spin, bob, and orbit procedural animation;
 - tone mapping, fog, depth testing, back-face culling;
-- deterministic scene hashing and build receipts;
-- explicit truth boundary: this is a real-time preview/runtime, not a replacement for Blender final asset authoring.
+- deterministic scene hashing and build receipts.
+
+This is real AXM-native code, but it is still an early renderer. It does **not** currently equal the geometry, rigging, simulation, texture, animation, or rendering breadth of mature external creative applications. That missing breadth is a native AXM growth target, not a reason to relabel an external dependency as native.
+
+## Optional external connector boundary
+
+`src/axm_uc/external_visual_tools.py` exposes a truth-labeled connector bus for installed third-party tools:
+
+- Blender
+- Godot
+- Unreal Engine
+- Krita
+- GIMP
+- ImageMagick
+- FFmpeg
+- OpenSCAD
+- Houdini
+- Inkscape
+
+Every connector reports `native=false` and `dependency_class=EXTERNAL_OPTIONAL`. The bus can catalog connectors, inspect PATH availability, run conservative probes where declared, and execute an explicitly selected tool when `allow_execute=true` is supplied.
+
+External execution:
+
+- performs no automatic download or installation;
+- never uses a command shell;
+- records the resolved executable and argv;
+- records return code plus stdout/stderr digests;
+- does not treat successful process execution as proof that rendered pixels are visually correct;
+- cannot use the protected live Machine body as its execution working directory through the Machine adapter.
+
+The live Machine capability is `AXM-CAP-EXTERNAL-VISUAL-TOOLS`.
+
+## Blender-backed code is external
+
+The existing `tools/blender/...` scripts and `tools/blender/axm_blender_pro.py` remain useful code, but their execution requires Blender/`bpy`. They are therefore **Blender-backed external tooling**, not an AXM-native Blender implementation.
+
+The native scene-to-Blender bridge can preserve shared scene intent when Blender is available. That is an optional conversion path; it does not define the native runtime and does not claim pixel parity.
 
 ## Run the native demo
 
@@ -52,12 +75,8 @@ axm-native-visual --scene my-scene.json --output out/my-scene
 
 ## Machine routing
 
-The runtime is also registered as live capability `AXM-CAP-NATIVE-VISUAL-RUNTIME`, so Universal Creation can route creation kinds such as `native-visual-scene`, `native-visual-runtime`, `coded-visual-scene`, and `webgl-visual-preview` through its normal capability store. Supported operations are `inspect`, `compile`, `bundle`, and `demo`.
+The native runtime is registered as live capability `AXM-CAP-NATIVE-VISUAL-RUNTIME`, routing creation kinds such as `native-visual-scene`, `native-visual-runtime`, `coded-visual-scene`, and `webgl-visual-preview`.
 
-This is deliberately path-explicit and refuses to write into the protected live machine body. Non-empty output directories require explicit `replace=true`.
+The external connector bus is registered separately as `AXM-CAP-EXTERNAL-VISUAL-TOOLS`, routing `external-visual-tool`, `external-visual-connector`, `visual-tool-bus`, and `third-party-visual-tool`.
 
-## Why both matter
-
-The native runtime gives the Machine a cheap, fast visual scratchpad for composition, lighting, material direction, motion, and camera iteration. Blender remains the deeper authoring and export path for high-detail geometry, textures, rigs, GLB, and artifact-bound proof. The included native-to-Blender bridge maps that same scene contract into `bpy`, so a fast preview can graduate into deeper authoring without silently rebuilding its camera, transforms, basic materials, or light layout.
-
-The bridge claims shared state, **not pixel parity**. WebGL and Blender remain different renderers, and final visual acceptance still requires rendered evidence.
+That separation is deliberate: the Machine can use external software when useful without treating it as part of AXM's native capability or making the native path disappear when a vendor tool is unavailable.
