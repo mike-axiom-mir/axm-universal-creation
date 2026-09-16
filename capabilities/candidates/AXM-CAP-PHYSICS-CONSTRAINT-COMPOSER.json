@@ -1,12 +1,12 @@
 {
   "id": "AXM-CAP-PHYSICS-CONSTRAINT-COMPOSER",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "status": "candidate",
-  "purpose": "Compose translation mounts, center-to-center distance joints, slack center-distance limits, world-axis translation locks and slack world-axis translation limits around one shared donor-core integration step with bounded convergence-aware pre/post stabilization.",
+  "purpose": "Compose translation mounts, center-to-center distance joints, slack center-distance limits, world-axis translation locks, slack world-axis translation limits and fixed world-space direction locks around one shared donor-core integration step with bounded convergence-aware pre/post stabilization.",
   "handles": [
     "mixed-constraint-step",
     "single-integration-constraint-composition",
-    "five-family-translation-constraint-composition",
+    "six-family-translation-constraint-composition",
     "convergence-aware-constraint-pass"
   ],
   "input_contract": {
@@ -17,6 +17,7 @@
       "constraints.distanceLimits": "bounded center-distance min/max limit array",
       "constraints.axisLocks": "bounded world-axis x/y translation-lock array",
       "constraints.axisLimits": "bounded world-axis x/y translation-limit array",
+      "constraints.directionLocks": "bounded fixed world-space direction translation-lock array",
       "options": "bounded pre/post family passes, per-family iteration counts and convergence tolerances"
     }
   },
@@ -24,7 +25,7 @@
     "kind": "axm.uc-constraint-composer-step/v0.1",
     "contains": [
       "final composed world",
-      "normalized five-family constraints",
+      "normalized six-family constraints",
       "fixed family-order evidence",
       "pre/core/post residual diagnostics",
       "single donor-core contact/integration evidence",
@@ -37,14 +38,15 @@
     "AXM-CAP-PHYSICS-DISTANCE-LIMITS",
     "AXM-CAP-PHYSICS-TRANSLATION-MOUNTS",
     "AXM-CAP-PHYSICS-AXIS-LOCKS",
-    "AXM-CAP-PHYSICS-AXIS-LIMITS"
+    "AXM-CAP-PHYSICS-AXIS-LIMITS",
+    "AXM-CAP-PHYSICS-DIRECTION-LOCKS"
   ],
   "implementation": {
     "kind": "DETERMINISTIC_SOURCE",
     "entrypoint": "capabilities/physics-core/uc-constraint-composer.js",
     "selftest": "node capabilities/physics-core/constraint-composer-selftest.js"
   },
-  "family_order": ["translation-mounts", "distance-joints", "distance-limits", "axis-locks", "axis-limits"],
+  "family_order": ["translation-mounts", "distance-joints", "distance-limits", "axis-locks", "axis-limits", "direction-locks"],
   "bounds": {
     "max_family_passes_per_stage": 16,
     "max_position_iterations_per_family_pass": 32,
@@ -56,8 +58,10 @@
     "all supported families are translation-only",
     "distance-limit and axis-limit range interiors remain intentionally slack",
     "axis locks and axis limits use world-space x/y axes and are not full prismatic/slider joints",
+    "direction locks use one caller-selected fixed world-space direction, leave perpendicular translation free, do not rotate with bodies and are not full prismatic/slider joints",
     "fixed deterministic family order introduces ordering bias",
     "conflicting constraints are bounded by pass counts and are not claimed to converge globally",
+    "the shared activity-gate and collision-isolation wrappers still cover only the earlier five families and are not direction-lock aware",
     "no angular inertia, rotating local anchors, hinge, full slider/prismatic, rotational weld, motor or gear semantics",
     "post-core projection can move bodies after donor-core contact evidence was generated",
     "not scientific validation"
@@ -66,25 +70,30 @@
     {
       "command": "node capabilities/physics-core/constraint-composer-selftest.js",
       "proves": [
-        "the five-family contract shares exactly one donor-core integration step",
-        "bounded family pass and iteration budgets include axis limits",
-        "existing family semantics remain intact when axisLimits is empty",
+        "the six-family contract shares exactly one donor-core integration step",
+        "fixed-direction locks are appended after the prior five-family order without replacing earlier semantics",
+        "bounded family pass and iteration budgets include direction locks",
+        "fixed-direction projection is restored while perpendicular translation remains free",
         "same-runtime deterministic replay"
       ]
     },
     {
+      "command": "node capabilities/physics-core/direction-locks-selftest.js",
+      "proves": ["the reused fixed-direction primitive preserves its standalone projection-lock contract"]
+    },
+    {
       "command": "node capabilities/physics-core/axis-lock-integration-selftest.js",
-      "proves": ["axis locks remain composed with guarded activity and component-isolation paths after the fifth family is appended"]
+      "proves": ["axis locks retain their existing guarded activity and component-isolation behavior after the composer gains a sixth direct-only family"]
     },
     {
       "command": "node capabilities/physics-core/axis-limit-integration-selftest.js",
-      "proves": ["axis limits compose with bounded residuals, slack range semantics, guarded activity and component isolation without a second donor-core step"]
+      "proves": ["axis limits retain bounded residuals, slack range semantics, guarded activity and component isolation without a second donor-core step"]
     }
   ],
   "root_fit": {
-    "truth": {"fit": true, "basis": "The composer names ordering bias, translation-only scope, slack-range semantics, contact-evidence timing and the non-prismatic nature of axis locks/limits."},
-    "agency": {"fit": true, "basis": "Callers choose family data, bounded budgets, activity and convergence tolerances explicitly."},
-    "continuity": {"fit": true, "basis": "Axis limits are appended after the existing four-family order while the donor source and prior family semantics remain preserved."},
-    "wisdom-before-speed": {"fit": true, "basis": "The integration reuses the bounded one-step composer rather than chaining standalone wrappers and accidentally integrating physics twice."}
+    "truth": {"fit": true, "basis": "The composer names ordering bias, translation-only scope, slack-range semantics, contact-evidence timing, fixed-world direction semantics and the remaining activity/isolation wrapper boundary."},
+    "agency": {"fit": true, "basis": "Callers choose family data, fixed direction vectors, bounded budgets, activity state and convergence tolerances explicitly."},
+    "continuity": {"fit": true, "basis": "Direction locks are appended after the existing five-family order while the donor source and prior family semantics remain preserved."},
+    "wisdom-before-speed": {"fit": true, "basis": "The integration reuses the direction-lock primitive inside the bounded one-step composer rather than chaining standalone step wrappers and accidentally integrating physics twice; activity/isolation integration remains deferred until it can be handled explicitly."}
   }
 }
