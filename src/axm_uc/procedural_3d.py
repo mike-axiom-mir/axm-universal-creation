@@ -37,7 +37,7 @@ def procedural_3d_summary() -> dict[str, Any]:
         "primitive_grammar": ["box", "pyramid", "cylinder"],
         "maximum_primitives": MAX_PRIMITIVES,
         "maximum_cylinder_segments": MAX_CYLINDER_SEGMENTS,
-        "materials": "base-color metallic-roughness; surface meshes may opt into KHR_materials_unlit",
+        "materials": "base-color metallic-roughness plus optional emissive factor; surface meshes may opt into KHR_materials_unlit",
         "container_and_buffer_ranges_reverified_after_publish": True,
         "rendered_appearance_or_host_compatibility_proven": False,
     }
@@ -136,8 +136,17 @@ def _normalize_spec(raw: Any) -> dict[str, Any]:
             primitive["material"],
             f"{label}.material",
             required={"color", "metallic", "roughness"},
+            optional={"emissive"},
         )
         color, _rgba = _color(material["color"], f"{label}.material.color")
+        normalized_material = {
+            "color": color,
+            "metallic": _number(material["metallic"], f"{label}.material.metallic", 0.0, 1.0),
+            "roughness": _number(material["roughness"], f"{label}.material.roughness", 0.0, 1.0),
+        }
+        if "emissive" in material:
+            normalized_material["emissive"] = _color(
+                material["emissive"], f"{label}.material.emissive")[0]
         primitives.append(
             {
                 "id": primitive_id,
@@ -147,11 +156,7 @@ def _normalize_spec(raw: Any) -> dict[str, Any]:
                     primitive["translation"], f"{label}.translation", -100_000.0, 100_000.0
                 ),
                 "segments": segments if kind == "cylinder" else None,
-                "material": {
-                    "color": color,
-                    "metallic": _number(material["metallic"], f"{label}.material.metallic", 0.0, 1.0),
-                    "roughness": _number(material["roughness"], f"{label}.material.roughness", 0.0, 1.0),
-                },
+                "material": normalized_material,
             }
         )
     return {"schema": SPEC_SCHEMA, "name": spec["name"].strip(), "primitives": primitives}
@@ -290,7 +295,7 @@ def _normalize_surface_spec(raw: Any) -> dict[str, Any]:
                 raise Procedural3DError(f"{label} must contain {width} values")
             return [_number(value, label, low, high) for value in row]
         material = _object(group["material"], "surface material",
-                           required={"color", "metallic", "roughness"}, optional={"unlit"})
+                           required={"color", "metallic", "roughness"}, optional={"unlit", "emissive"})
         unlit = material.get("unlit", False)
         if type(unlit) is not bool:
             raise Procedural3DError("surface material.unlit must be a boolean")
@@ -299,6 +304,8 @@ def _normalize_surface_spec(raw: Any) -> dict[str, Any]:
                                "roughness": _number(material["roughness"], "roughness", 0, 1)}
         if unlit:
             normalized_material["unlit"] = True
+        if "emissive" in material:
+            normalized_material["emissive"] = _color(material["emissive"], "surface emissive")[0]
         normalized = {"id": name, "type": "surface", "size": [1, 1, 1], "translation": [0, 0, 0],
                       "positions": [vector(row, "position", -100000, 100000) for row in positions],
                       "normals": [vector(row, "normal", -1, 1) for row in normals], "indices": list(indices),
@@ -387,6 +394,9 @@ def _encode_glb(spec: dict[str, Any]) -> dict[str, Any]:
         }
         if primitive["material"].get("unlit", False):
             material["extensions"] = {"KHR_materials_unlit": {}}
+        if "emissive" in primitive["material"]:
+            material["emissiveFactor"] = _color(
+                primitive["material"]["emissive"], "material.emissive")[1][:3]
         materials.append(material)
         mesh_index = len(meshes)
         meshes.append({
@@ -523,6 +533,7 @@ def verify_glb(body: bytes, *, expected_spec_digest: str | None = None) -> dict[
             or not set(required) <= set(used)):
         raise Procedural3DError("generated GLB extension declarations are invalid")
     unlit_materials = 0
+    emissive_materials = 0
     for index, material in enumerate(materials):
         extensions = material.get("extensions", {}) if isinstance(material, dict) else None
         if not isinstance(extensions, dict) or set(extensions) - {"KHR_materials_unlit"}:
@@ -531,6 +542,13 @@ def verify_glb(body: bytes, *, expected_spec_digest: str | None = None) -> dict[
             if extensions["KHR_materials_unlit"] != {} or "KHR_materials_unlit" not in required:
                 raise Procedural3DError("generated GLB unlit material is not explicitly required", {"index": index})
             unlit_materials += 1
+        emissive = material.get("emissiveFactor") if isinstance(material, dict) else None
+        if emissive is not None:
+            if (not isinstance(emissive, list) or len(emissive) != 3
+                    or any(isinstance(value, bool) or not isinstance(value, (int, float))
+                           or not math.isfinite(value) or not 0 <= value <= 1 for value in emissive)):
+                raise Procedural3DError("generated GLB emissive factor is invalid", {"index": index})
+            emissive_materials += 1
     if "KHR_materials_unlit" in used and not unlit_materials:
         raise Procedural3DError("generated GLB declares an unused unlit extension")
 
@@ -593,6 +611,7 @@ def verify_glb(body: bytes, *, expected_spec_digest: str | None = None) -> dict[
         "nodes": len(nodes),
         "materials": len(materials),
         "unlit_materials": unlit_materials,
+        "emissive_materials": emissive_materials,
         "triangles": decoded_triangles,
         "geometry_validation": {
             "decoded_triangle_count": decoded_triangles,
