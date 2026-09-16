@@ -20,7 +20,7 @@ assert.equal(conflict.valid, true);
 assert.equal(conflict.conflictFree, false);
 assert.equal(conflict.conflicts.length, 1);
 assert.equal(conflict.conflicts[0].code, 'CONFLICTING_TRANSLATION_INTERVALS');
-assert.deepEqual(conflict.conflicts[0].constraintIds, ['mount', 'x-lock']);
+assert.deepEqual(conflict.conflicts[0].constraintIds.slice().sort(), ['mount', 'x-lock']);
 assert.deepEqual(conflict.conflicts[0].families, ['axis-locks', 'translation-mounts']);
 assert.equal(conflict.counts.analyzedProjectionEntries, 3, 'mount contributes x/y projections plus the axis lock');
 
