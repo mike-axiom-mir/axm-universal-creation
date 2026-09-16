@@ -1,13 +1,14 @@
 {
   "id": "AXM-CAP-PHYSICS-DISTANCE-JOINTS",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "status": "candidate",
-  "purpose": "Add deterministic translation-only center-to-center distance joints around the preserved AXM Physics Core without pretending that angular anchors or a full rigid-joint system already exist.",
+  "purpose": "Add deterministic translation-only center-to-center distance joints around the preserved AXM Physics Core, with bounded pre-core constraint projection and post-core stabilization, without pretending that angular anchors or a full rigid-joint system already exist.",
   "handles": [
     "distance-joint",
     "fixed-distance-constraint",
     "translation-joint",
-    "kinematic-follow-link"
+    "kinematic-follow-link",
+    "post-core-joint-stabilization"
   ],
   "input_contract": {
     "required": ["world", "joints"],
@@ -15,18 +16,21 @@
       "world": "axm.physics-world/v1 world",
       "joints": "bounded array of center-to-center distance constraints",
       "dt": "core step delta",
-      "options": "optional bounded positionIterations and velocityIterations"
+      "options": "optional bounded positionIterations, velocityIterations, postPositionIterations and postVelocityIterations; post iteration counts may be zero to disable the second-stage stabilization explicitly"
     }
   },
   "output_contract": {
-    "kind": "axm.uc-distance-joint-step/v0.1",
+    "kind": "axm.uc-distance-joint-step/v0.2",
     "contains": [
-      "constrained world",
+      "stabilized final world",
       "normalized joints",
-      "position and velocity solve receipts",
-      "post-core distance error diagnostics",
-      "imported core collision and integration evidence",
-      "state checksum"
+      "pre-core position and velocity receipts",
+      "core-stage world before post stabilization",
+      "post-core position and velocity stabilization receipts",
+      "distance error before and after stabilization",
+      "imported core collision/integration evidence",
+      "final state checksum",
+      "explicit contact-evidence basis"
     ]
   },
   "dependencies": ["AXM-CAP-PHYSICS-FABRIC"],
@@ -52,7 +56,7 @@
     "no angular inertia or angular response",
     "no hinge, slider, weld, motor or gear constraints",
     "connected-body collision suppression is not implemented",
-    "constraint projection occurs before the imported core collision/integration step, so forces can create bounded distance error until the next solve",
+    "post-core joint projection can change positions after collision/contact evidence was generated; core-stage events and contact geometry are retained and labeled as pre-post-stabilization evidence instead of being silently relabeled",
     "not scientific validation"
   ],
   "persistent_state": "joint definitions are explicit caller-owned JSON data",
@@ -62,6 +66,9 @@
       "proves": [
         "initial position error projection",
         "relative axis velocity locking",
+        "bounded post-core correction of gravity-induced distance drift",
+        "explicit zero-iteration disable path for post stabilization",
+        "core-stage versus stabilized-final-state evidence separation",
         "kinematic-anchor following",
         "truthful handling of two immovable bodies",
         "same-runtime deterministic replay"
@@ -71,19 +78,19 @@
   "root_fit": {
     "truth": {
       "fit": true,
-      "basis": "The capability is explicitly translation-only and distinguishes projected distance joints from soft springs and from unsupported angular joint families."
+      "basis": "The capability remains explicitly translation-only, distinguishes projected joints from soft springs and unsupported angular joint families, and now labels core-stage contact evidence separately from the later stabilized final state."
     },
     "agency": {
       "fit": true,
-      "basis": "Joint endpoints, length, correction bounds and solver iteration counts remain caller-controlled explicit data."
+      "basis": "Joint endpoints, length, correction bounds and all pre/post solver iteration counts remain caller-controlled explicit data, including the ability to set post passes to zero."
     },
     "continuity": {
       "fit": true,
-      "basis": "The donor physics core remains byte-for-byte preserved; this is an additive layer exposed through the same physics capsule."
+      "basis": "The donor physics core remains byte-for-byte preserved; v0.2 changes only the additive UC joint layer and keeps the core-stage world inspectable alongside the stabilized final world."
     },
     "wisdom-before-speed": {
       "fit": true,
-      "basis": "The first rigid-constraint step is deliberately bounded to one auditable joint family before attempting rotation, anchored joints or larger constraint systems."
+      "basis": "The second wave repairs a measured single-family drift seam before attempting new angular joint families, and preserves the resulting contact-evidence limitation instead of hiding it."
     }
   }
 }
