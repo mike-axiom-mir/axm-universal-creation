@@ -1,0 +1,97 @@
+{
+  "id": "AXM-CAP-PHYSICS-CONSTRAINT-ACTIVITY-GATE",
+  "version": "0.1.0",
+  "status": "candidate",
+  "purpose": "Provide an explicit additive front door that keeps disabled translation mounts, exact distance joints and distance limits in validated evidence while excluding them from solver residuals and collision-isolation topology before delegating to the established one-step composer path.",
+  "handles": [
+    "constraint-activity-gate",
+    "disabled-constraint-inert-semantics",
+    "active-constraint-filter",
+    "disabled-topology-exclusion"
+  ],
+  "input_contract": {
+    "required": ["world", "constraints", "dt"],
+    "properties": {
+      "world": "axm.physics-world/v1 world",
+      "constraints": "translation mounts, exact distance joints and/or distance limits, each optionally enabled=false",
+      "dt": "donor-core step delta",
+      "options": "optional isolateCollisions boolean plus nested composer or isolation delegate options"
+    }
+  },
+  "output_contract": {
+    "kind": "axm.uc-constraint-activity-step/v0.1",
+    "contains": [
+      "final world from exactly one established composer/donor-core step",
+      "validated normalized constraints including disabled definitions",
+      "active-only delegated constraints",
+      "active and disabled ids/counts by family",
+      "explicit solve/topology exclusion flags",
+      "delegate evidence and final checksum"
+    ]
+  },
+  "dependencies": [
+    "AXM-CAP-PHYSICS-CONSTRAINT-COMPOSER",
+    "AXM-CAP-PHYSICS-CONSTRAINT-COLLISION-ISOLATION"
+  ],
+  "relationships": [
+    {
+      "type": "guards",
+      "target": "capabilities/physics-core/uc-constraint-composer.js",
+      "basis": "Disabled definitions are removed before delegation so they cannot contribute stale residuals to convergence diagnostics."
+    },
+    {
+      "type": "guards",
+      "target": "capabilities/physics-core/uc-constraint-collision-isolation.js",
+      "basis": "Disabled edges are removed before topology discovery so they cannot suppress collisions inside components they should not connect."
+    },
+    {
+      "type": "preserves",
+      "target": "capabilities/physics-core/source/axm-physics-core.js",
+      "basis": "The imported donor core remains byte-for-byte untouched."
+    }
+  ],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "capabilities/physics-core/uc-constraint-activity-gate.js",
+    "selftest": "node capabilities/physics-core/constraint-activity-gate-selftest.js"
+  },
+  "limitations": [
+    "this is an additive safe front door; direct lower-level composer/isolation calls retain their existing compatibility behavior",
+    "disabled definitions are still normalized and therefore must reference valid bodies",
+    "collision isolation remains component-wide across enabled edges when requested",
+    "no angular inertia, rotating anchors, hinge, slider, rotational weld, motor or gear semantics",
+    "not scientific validation"
+  ],
+  "persistent_state": "none; activity partition is derived deterministically for each step",
+  "tests": [
+    {
+      "command": "node capabilities/physics-core/constraint-activity-gate-selftest.js",
+      "proves": [
+        "disabled constraints do not enter convergence residuals",
+        "disabled edges do not create collision-isolation components",
+        "disabled constraints do not suppress ordinary donor-core contacts",
+        "enabled constraints continue through component isolation",
+        "disabled definitions still undergo source-integrity/body-reference validation",
+        "same-runtime deterministic replay"
+      ]
+    }
+  ],
+  "root_fit": {
+    "truth": {
+      "fit": true,
+      "basis": "The gate distinguishes retained disabled definitions from the active subset actually solved and used for isolation topology."
+    },
+    "agency": {
+      "fit": true,
+      "basis": "Caller enabled=false choices are honored as inert rather than silently affecting convergence or collision suppression."
+    },
+    "continuity": {
+      "fit": true,
+      "basis": "The existing composer, isolation layer and donor source remain intact; this is an additive guarded route."
+    },
+    "wisdom-before-speed": {
+      "fit": true,
+      "basis": "The correction is bounded to an explicit activity partition instead of rewriting mature lower-level modules mid-lane."
+    }
+  }
+}
