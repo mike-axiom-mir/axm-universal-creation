@@ -6,8 +6,11 @@ on:
     paths:
       - 'examples/requests/island_plastic_boat.json'
       - 'examples/requests/island_plastic_boat_motion.json'
+      - 'examples/requests/layered_game_material_example.json'
       - 'src/axm_uc/rich_game_materials.py'
+      - 'src/axm_uc/layered_game_materials.py'
       - 'src/axm_uc/rich_game_material_bridge.py'
+      - 'src/axm_uc/rich_game_material_cli.py'
       - 'tests/test_rich_game_materials.py'
       - 'tools/blender/build_island_plastic_boat.py'
       - 'tools/blender/build_island_plastic_boat_rich.py'
@@ -37,7 +40,7 @@ jobs:
           python -m pip install .
           python -m pip install pytest
 
-      - name: Verify rich material generator
+      - name: Verify rich and layered material generator
         run: python -m pytest -q tests/test_rich_game_materials.py
 
       - name: Install Blender headless runtime
@@ -62,10 +65,10 @@ jobs:
             "${{ runner.temp }}/boat-motion/vehicle-motion.json" \
             "${{ runner.temp }}/island-boat"
 
-      - name: Independently verify exported GLB animation game nodes and PBR textures
+      - name: Independently verify exported GLB animation game nodes PBR textures and layer evidence
         run: |
           python - <<'PY'
-          import json, struct
+          import hashlib, json, struct
           from pathlib import Path
 
           root = Path('${{ runner.temp }}') / 'island-boat'
@@ -101,14 +104,31 @@ jobs:
           assert manifest['truth']['actual_glb'] is True
           assert manifest['truth']['actual_exported_animation'] is True
           assert manifest['truth']['actual_portable_pbr_textures'] is True
+          assert manifest['truth']['actual_layered_surface_authoring'] is True
           assert manifest['truth']['final_visual_acceptance'] is False
+          assert manifest['surface_system']['schema'] == 'axm.layered-game-material-realization/v0.1'
+          assert manifest['surface_system']['preserved_layer_masks'] is True
           assert manifest['surface_system']['texture_size'] == 512
           assert len(manifest['surface_system']['materials']) >= 8
+          layered_roles = 0
+          mask_count = 0
           for role, record in manifest['surface_system']['materials'].items():
               folder = root / record['bundle']
               assert (folder / 'base_color.png').stat().st_size > 100
               assert (folder / 'normal.png').stat().st_size > 100
               assert (folder / 'orm.png').stat().st_size > 100
+              if record['bundle_kind'] == 'layered':
+                  layered_roles += 1
+                  layer_manifest = json.loads((folder / 'layered-game-material.json').read_text())
+                  assert layer_manifest['layers'], role
+                  for layer in layer_manifest['layers']:
+                      mask = folder / layer['file']
+                      payload = mask.read_bytes()
+                      assert len(payload) > 100, (role, layer['type'])
+                      assert hashlib.sha256(payload).hexdigest() == layer['sha256']
+                      mask_count += 1
+          assert layered_roles >= 8, layered_roles
+          assert mask_count >= 16, mask_count
 
           tris = [manifest['lods'][name]['triangles'] for name in ('lod0','lod1','lod2')]
           assert tris[0] > tris[1] > tris[2] > 0, tris
@@ -119,6 +139,8 @@ jobs:
               'rich_materials': [m.get('name') for m in rich_materials],
               'embedded_images': len(document.get('images', [])),
               'embedded_textures': len(document.get('textures', [])),
+              'layered_roles': layered_roles,
+              'preserved_layer_masks': mask_count,
               'lod_triangles': tris,
               'motion_video_bytes': (root / 'TinyPlasticBoat_motion.mp4').stat().st_size
           }, indent=2))
