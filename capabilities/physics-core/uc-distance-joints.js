@@ -2,9 +2,9 @@
 
 const Core = require('./source/axm-physics-core.js');
 
-const VERSION = '0.1.0';
+const VERSION = '0.2.0';
 const JOINT_SCHEMA = 'axm.uc-distance-joint/v0.1';
-const STEP_SCHEMA = 'axm.uc-distance-joint-step/v0.1';
+const STEP_SCHEMA = 'axm.uc-distance-joint-step/v0.2';
 const MAX_JOINTS = 4096;
 
 function clone(value) {
@@ -18,6 +18,10 @@ function finite(value, fallback) {
 
 function bounded(value, min, max, fallback) {
   return Math.max(min, Math.min(max, finite(value, fallback)));
+}
+
+function iterationCount(value, fallback) {
+  return Math.round(bounded(value, 0, 32, fallback));
 }
 
 function round(value) {
@@ -176,65 +180,125 @@ function solveVelocity(world, joint) {
   };
 }
 
-function prepareWorld(world, joints, options) {
-  const out = clone(world);
-  const normalized = normalizeJoints(joints, out);
-  const positionIterations = Math.round(bounded(options && options.positionIterations, 1, 32, 8));
-  const velocityIterations = Math.round(bounded(options && options.velocityIterations, 1, 32, 4));
+function solveIterations(world, normalized, positionIterations, velocityIterations) {
   const positionReceipts = [];
   const velocityReceipts = [];
   for (let iteration = 0; iteration < positionIterations; iteration++) {
-    normalized.forEach(joint => positionReceipts.push(Object.assign({ iteration: iteration + 1 }, solvePosition(out, joint))));
+    normalized.forEach(joint => positionReceipts.push(Object.assign({ iteration: iteration + 1 }, solvePosition(world, joint))));
   }
   for (let iteration = 0; iteration < velocityIterations; iteration++) {
-    normalized.forEach(joint => velocityReceipts.push(Object.assign({ iteration: iteration + 1 }, solveVelocity(out, joint))));
+    normalized.forEach(joint => velocityReceipts.push(Object.assign({ iteration: iteration + 1 }, solveVelocity(world, joint))));
   }
-  out.bodies.forEach(item => {
+  world.bodies.forEach(item => {
     item.position.x = round(item.position.x);
     item.position.y = round(item.position.y);
     item.velocity.x = round(item.velocity.x);
     item.velocity.y = round(item.velocity.y);
   });
-  return { world: out, joints: normalized, positionIterations, velocityIterations, positionReceipts, velocityReceipts };
+  return { positionReceipts, velocityReceipts };
+}
+
+function prepareWorld(world, joints, options) {
+  const out = clone(world);
+  const normalized = normalizeJoints(joints, out);
+  const positionIterations = iterationCount(options && options.positionIterations, 8);
+  const velocityIterations = iterationCount(options && options.velocityIterations, 4);
+  const initial = normalized.map(joint => measureJoint(out, joint));
+  const receipts = solveIterations(out, normalized, positionIterations, velocityIterations);
+  const afterPreSolve = normalized.map(joint => measureJoint(out, joint));
+  return {
+    world: out,
+    joints: normalized,
+    positionIterations,
+    velocityIterations,
+    initial,
+    afterPreSolve,
+    positionReceipts: receipts.positionReceipts,
+    velocityReceipts: receipts.velocityReceipts
+  };
+}
+
+function refreshDiagnostics(world, coreDiagnostics, beforeCoreDiagnostics) {
+  const refreshed = Core.measure(
+    world,
+    coreDiagnostics.substeps,
+    coreDiagnostics.maxPenetration,
+    coreDiagnostics.broadphasePairs,
+    {
+      overflowBodies: coreDiagnostics.broadphaseOverflowBodies,
+      cellEntries: coreDiagnostics.broadphaseCellEntries,
+      occupiedCells: coreDiagnostics.broadphaseOccupiedCells,
+      warmStartedContacts: coreDiagnostics.warmStartedContacts,
+      warmStartAppliedImpulse: coreDiagnostics.warmStartAppliedImpulse,
+      warmStartCorrectionImpulse: coreDiagnostics.warmStartCorrectionImpulse,
+      detectedUniqueContacts: coreDiagnostics.detectedUniqueContacts
+    }
+  );
+  refreshed.energyDelta = round(refreshed.totalEnergy - beforeCoreDiagnostics.totalEnergy);
+  refreshed.constraintPostStabilized = true;
+  refreshed.contactEvidenceBasis = 'CORE_STAGE_BEFORE_POST_CONSTRAINT_STABILIZATION';
+  world.diagnostics = refreshed;
+  return refreshed;
 }
 
 function step(world, joints, dt, options) {
   const validation = Core.validate(world);
   if (!validation.ok) throw new Error(validation.errors.join('; '));
-  const prepared = prepareWorld(world, joints, options || {});
-  const before = prepared.joints.map(joint => measureJoint(prepared.world, joint));
+  options = options || {};
+  const prepared = prepareWorld(world, joints, options);
+  const beforeCoreDiagnostics = Core.measure(prepared.world, 0, 0);
   const coreStep = Core.step(prepared.world, dt);
-  const after = prepared.joints.map(joint => measureJoint(coreStep.world, joint));
-  const maxError = after.reduce((max, item) => Math.max(max, Math.abs(item.error)), 0);
+  const afterCore = prepared.joints.map(joint => measureJoint(coreStep.world, joint));
+  const maxErrorAfterCoreStep = afterCore.reduce((max, item) => Math.max(max, Math.abs(item.error)), 0);
+
+  const postWorld = clone(coreStep.world);
+  const postPositionIterations = iterationCount(options.postPositionIterations, 4);
+  const postVelocityIterations = iterationCount(options.postVelocityIterations, 2);
+  const postReceipts = solveIterations(postWorld, prepared.joints, postPositionIterations, postVelocityIterations);
+  const after = prepared.joints.map(joint => measureJoint(postWorld, joint));
+  const maxErrorAfterStabilization = after.reduce((max, item) => Math.max(max, Math.abs(item.error)), 0);
+  const finalDiagnostics = refreshDiagnostics(postWorld, coreStep.diagnostics, beforeCoreDiagnostics);
+
   return {
     schema: STEP_SCHEMA,
     ok: true,
-    world: coreStep.world,
+    world: postWorld,
     joints: clone(prepared.joints),
     jointDiagnostics: {
       positionIterations: prepared.positionIterations,
       velocityIterations: prepared.velocityIterations,
-      maxErrorAfterCoreStep: round(maxError),
-      before,
+      postPositionIterations,
+      postVelocityIterations,
+      maxErrorAfterCoreStep: round(maxErrorAfterCoreStep),
+      maxErrorAfterStabilization: round(maxErrorAfterStabilization),
+      initial: prepared.initial,
+      afterPreSolve: prepared.afterPreSolve,
+      afterCore,
       after,
       positionReceipts: prepared.positionReceipts,
-      velocityReceipts: prepared.velocityReceipts
+      velocityReceipts: prepared.velocityReceipts,
+      postPositionReceipts: postReceipts.positionReceipts,
+      postVelocityReceipts: postReceipts.velocityReceipts,
+      contactEvidenceBasis: finalDiagnostics.contactEvidenceBasis
     },
     core: {
       diagnostics: clone(coreStep.diagnostics),
-      events: clone(coreStep.events)
+      events: clone(coreStep.events),
+      worldBeforePostConstraintStabilization: clone(coreStep.world)
     },
     evidence: [
       prepared.joints.length + ' translation-only distance joint(s) normalized in deterministic id order',
       prepared.positionIterations + ' projected position iteration(s) executed before the core step',
       prepared.velocityIterations + ' relative-axis velocity iteration(s) executed before the core step',
       'AXM Physics Core v' + Core.VERSION + ' executed collisions and integration from the constrained start state',
-      'Post-core maximum distance error ' + round(maxError),
-      'State checksum ' + Core.checksum(coreStep.world)
+      postPositionIterations + ' projected position stabilization iteration(s) executed after the core step',
+      postVelocityIterations + ' relative-axis velocity stabilization iteration(s) executed after the core step',
+      'Distance error changed from ' + round(maxErrorAfterCoreStep) + ' after core integration to ' + round(maxErrorAfterStabilization) + ' after post-core stabilization',
+      'Final state checksum ' + Core.checksum(postWorld)
     ],
     limitations: [
       'Distance joints constrain body centers only; local anchors and angular response are not implemented.',
-      'Joint projection occurs before the imported core collision/integration step, so external forces can create bounded distance error until the next joint solve.',
+      'Post-core joint projection can change positions after collision/contact evidence was generated; returned core events and contact geometry therefore describe the core stage before post-constraint stabilization.',
       'Connected-body collision suppression is not implemented.',
       'This is game/prototype physics evidence, not scientific validation.'
     ]
@@ -250,14 +314,14 @@ function simulate(world, joints, steps, dt, options) {
     out = last.world;
   }
   return {
-    schema: 'axm.uc-distance-joint-simulation/v0.1',
+    schema: 'axm.uc-distance-joint-simulation/v0.2',
     ok: true,
     steps: count,
     world: out,
     joints: last ? last.joints : normalizeJoints(joints, out),
     jointDiagnostics: last ? last.jointDiagnostics : null,
     checksum: Core.checksum(out),
-    evidence: (last ? last.evidence : []).concat([count + ' distance-joint step(s) completed'])
+    evidence: (last ? last.evidence : []).concat([count + ' stabilized distance-joint step(s) completed'])
   };
 }
 
@@ -275,7 +339,8 @@ function validate(world, joints) {
     jointCount: normalized.length,
     warnings: [
       'This solver provides translation-only center-to-center distance constraints, not angular or anchored rigid joints.',
-      'Constraint projection is intentionally layered around the imported v0.3.1 core instead of silently rewriting donor source.'
+      'Post-core stabilization is additive around the imported v0.3.1 core; core-stage contact evidence is not silently relabeled as post-stabilization contact truth.',
+      'Constraint projection remains intentionally layered around the imported v0.3.1 core instead of silently rewriting donor source.'
     ]
   };
 }
