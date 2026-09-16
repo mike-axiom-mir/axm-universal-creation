@@ -32,8 +32,10 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install UC package
-        run: python -m pip install .
+      - name: Install UC package and test runner
+        run: |
+          python -m pip install .
+          python -m pip install pytest
 
       - name: Verify rich material generator
         run: python -m pytest -q tests/test_rich_game_materials.py
