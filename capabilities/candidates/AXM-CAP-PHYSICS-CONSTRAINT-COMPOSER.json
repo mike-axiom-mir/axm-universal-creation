@@ -1,13 +1,14 @@
 {
   "id": "AXM-CAP-PHYSICS-CONSTRAINT-COMPOSER",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "status": "candidate",
-  "purpose": "Compose translation mounts and center-to-center distance joints around one shared donor-core integration step so callers can use both bounded constraint families without accidentally advancing physics time twice.",
+  "purpose": "Compose translation mounts and center-to-center distance joints around one shared donor-core integration step, with bounded convergence-aware early exit so already-satisfied constraint passes do not consume the full configured budget.",
   "handles": [
     "mixed-constraint-step",
     "single-integration-constraint-composition",
     "translation-mount-plus-distance-joint",
-    "bounded-mixed-constraint-stabilization"
+    "bounded-mixed-constraint-stabilization",
+    "convergence-aware-constraint-pass"
   ],
   "input_contract": {
     "required": ["world", "constraints", "dt"],
@@ -16,7 +17,7 @@
       "constraints.mounts": "bounded translation-mount array",
       "constraints.distanceJoints": "bounded center-to-center distance-joint array",
       "dt": "one donor-core step delta",
-      "options": "bounded family pass counts plus bounded per-family position/velocity iteration counts"
+      "options": "bounded family pass counts, bounded per-family position/velocity iteration counts, optional early-exit enablement, and explicit position/velocity convergence tolerances"
     }
   },
   "output_contract": {
@@ -26,7 +27,9 @@
       "normalized constraint definitions",
       "fixed family-order evidence",
       "pre/core/post constraint measurements",
-      "bounded pass summaries",
+      "position and constrained-relative-velocity residuals",
+      "bounded pass summaries with convergence evidence",
+      "configured versus executed pass counts and avoided-pass accounting",
       "preserved core-stage contact evidence",
       "final state checksum"
     ]
@@ -63,12 +66,20 @@
   "bounds": {
     "max_family_passes_per_stage": 16,
     "max_position_iterations_per_family_pass": 32,
-    "max_velocity_iterations_per_family_pass": 32
+    "max_velocity_iterations_per_family_pass": 32,
+    "max_position_tolerance": 1000000,
+    "max_velocity_tolerance": 1000000
+  },
+  "defaults": {
+    "early_exit": true,
+    "position_tolerance": 1e-8,
+    "velocity_tolerance": 1e-8
   },
   "limitations": [
     "supports only the existing translation-mount and center-to-center distance-joint families",
     "fixed deterministic family order introduces ordering bias",
     "conflicting constraints are bounded by pass counts and are not claimed to converge globally",
+    "early exit means only that measured position and constrained relative-velocity residuals satisfied configured thresholds at a pass boundary; it is not proof of equilibrium or global convergence",
     "no angular inertia or rotating local anchors",
     "no hinge, slider, weld, motor or gear constraints",
     "connected constrained bodies can still collide unless caller filters suppress that pair",
@@ -82,6 +93,10 @@
         "translation mounts and distance joints share one donor-core integration per composed step",
         "post-core mixed-family stabilization repairs gravity-induced drift for independent constraints",
         "family passes and nested solver iterations remain bounded",
+        "already-satisfied constraints deterministically stop after one pass when early exit is enabled",
+        "disabling early exit executes the full bounded pass budget and preserves the same settled final state",
+        "conflicting constraints consume their configured pass budget instead of being falsely reported as converged",
+        "position and constrained relative-velocity residuals are both visible in convergence evidence",
         "core-stage contact evidence remains separately inspectable",
         "same-runtime deterministic replay"
       ]
@@ -90,19 +105,19 @@
   "root_fit": {
     "truth": {
       "fit": true,
-      "basis": "The composer names its fixed ordering bias, bounded convergence limits and core-stage contact evidence boundary rather than presenting composition as a complete rigid-body solver."
+      "basis": "The composer names its fixed ordering bias, bounded convergence limits, tolerance-based early-exit meaning and core-stage contact evidence boundary rather than presenting composition as a complete rigid-body solver."
     },
     "agency": {
       "fit": true,
-      "basis": "Callers explicitly choose constraint data and bounded pass/iteration budgets while the default order remains inspectable and deterministic."
+      "basis": "Callers explicitly choose constraint data, bounded pass/iteration budgets, whether early exit is enabled, and the convergence tolerances used to skip redundant passes."
     },
     "continuity": {
       "fit": true,
-      "basis": "The donor core and both existing constraint capabilities are reused without replacement; this is an additive orchestration layer."
+      "basis": "The donor core and both existing constraint capabilities are reused without replacement; the optimization is confined to additive orchestration and diagnostics."
     },
     "wisdom-before-speed": {
       "fit": true,
-      "basis": "The capability solves the concrete double-integration composition gap before adding new joint families or claiming a generalized constraint engine."
+      "basis": "The optimization skips work only after both positional and constrained-velocity residual checks pass; unresolved or conflicting constraints retain the full bounded budget rather than being declared solved for speed."
     }
   }
 }
