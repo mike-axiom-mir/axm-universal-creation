@@ -1,0 +1,108 @@
+{
+  "id": "AXM-CAP-PHYSICS-CONSTRAINT-COMPOSER",
+  "version": "0.1.0",
+  "status": "candidate",
+  "purpose": "Compose translation mounts and center-to-center distance joints around one shared donor-core integration step so callers can use both bounded constraint families without accidentally advancing physics time twice.",
+  "handles": [
+    "mixed-constraint-step",
+    "single-integration-constraint-composition",
+    "translation-mount-plus-distance-joint",
+    "bounded-mixed-constraint-stabilization"
+  ],
+  "input_contract": {
+    "required": ["world", "constraints", "dt"],
+    "properties": {
+      "world": "axm.physics-world/v1 world",
+      "constraints.mounts": "bounded translation-mount array",
+      "constraints.distanceJoints": "bounded center-to-center distance-joint array",
+      "dt": "one donor-core step delta",
+      "options": "bounded family pass counts plus bounded per-family position/velocity iteration counts"
+    }
+  },
+  "output_contract": {
+    "kind": "axm.uc-constraint-composer-step/v0.1",
+    "contains": [
+      "final composed world",
+      "normalized constraint definitions",
+      "fixed family-order evidence",
+      "pre/core/post constraint measurements",
+      "bounded pass summaries",
+      "preserved core-stage contact evidence",
+      "final state checksum"
+    ]
+  },
+  "dependencies": [
+    "AXM-CAP-PHYSICS-FABRIC",
+    "AXM-CAP-PHYSICS-DISTANCE-JOINTS",
+    "AXM-CAP-PHYSICS-TRANSLATION-MOUNTS"
+  ],
+  "relationships": [
+    {
+      "type": "composes",
+      "target": "AXM-CAP-PHYSICS-DISTANCE-JOINTS"
+    },
+    {
+      "type": "composes",
+      "target": "AXM-CAP-PHYSICS-TRANSLATION-MOUNTS"
+    },
+    {
+      "type": "preserves",
+      "target": "capabilities/physics-core/source/axm-physics-core.js",
+      "basis": "The imported donor source remains unchanged; the composer performs one donor-core integration between additive pre- and post-constraint stages."
+    }
+  ],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "capabilities/physics-core/uc-constraint-composer.js",
+    "selftest": "node capabilities/physics-core/constraint-composer-selftest.js"
+  },
+  "family_order": [
+    "translation-mounts",
+    "distance-joints"
+  ],
+  "bounds": {
+    "max_family_passes_per_stage": 16,
+    "max_position_iterations_per_family_pass": 32,
+    "max_velocity_iterations_per_family_pass": 32
+  },
+  "limitations": [
+    "supports only the existing translation-mount and center-to-center distance-joint families",
+    "fixed deterministic family order introduces ordering bias",
+    "conflicting constraints are bounded by pass counts and are not claimed to converge globally",
+    "no angular inertia or rotating local anchors",
+    "no hinge, slider, weld, motor or gear constraints",
+    "connected constrained bodies can still collide unless caller filters suppress that pair",
+    "post-core projection can move bodies after donor-core contact evidence was generated",
+    "not scientific validation"
+  ],
+  "tests": [
+    {
+      "command": "node capabilities/physics-core/constraint-composer-selftest.js",
+      "proves": [
+        "translation mounts and distance joints share one donor-core integration per composed step",
+        "post-core mixed-family stabilization repairs gravity-induced drift for independent constraints",
+        "family passes and nested solver iterations remain bounded",
+        "core-stage contact evidence remains separately inspectable",
+        "same-runtime deterministic replay"
+      ]
+    }
+  ],
+  "root_fit": {
+    "truth": {
+      "fit": true,
+      "basis": "The composer names its fixed ordering bias, bounded convergence limits and core-stage contact evidence boundary rather than presenting composition as a complete rigid-body solver."
+    },
+    "agency": {
+      "fit": true,
+      "basis": "Callers explicitly choose constraint data and bounded pass/iteration budgets while the default order remains inspectable and deterministic."
+    },
+    "continuity": {
+      "fit": true,
+      "basis": "The donor core and both existing constraint capabilities are reused without replacement; this is an additive orchestration layer."
+    },
+    "wisdom-before-speed": {
+      "fit": true,
+      "basis": "The capability solves the concrete double-integration composition gap before adding new joint families or claiming a generalized constraint engine."
+    }
+  }
+}
