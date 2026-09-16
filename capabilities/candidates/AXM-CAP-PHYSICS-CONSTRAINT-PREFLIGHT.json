@@ -1,0 +1,61 @@
+{
+  "id": "AXM-CAP-PHYSICS-CONSTRAINT-PREFLIGHT",
+  "version": "0.1.0",
+  "status": "candidate",
+  "purpose": "Provide a deterministic conservative preflight that detects provable local conflicts among translation mounts and axis/fixed-direction translation locks and limits that constrain the same normalized projection.",
+  "handles": ["constraint-preflight", "overconstraint-check", "projected-interval-conflict", "constraint-truth-audit"],
+  "input_contract": {
+    "required": ["world", "constraints"],
+    "properties": {
+      "constraints": "existing UC translation mounts, axis locks/limits, fixed-direction locks/limits, with distance families accepted only for unsupported-family reporting",
+      "options.tolerance": "bounded non-negative local interval-conflict tolerance"
+    }
+  },
+  "output_contract": {
+    "kind": "axm.uc-constraint-preflight/v0.1",
+    "contains": ["validation state", "deterministically canonicalized projection groups", "local interval intersections", "provable conflict receipts", "unsupported-family receipts", "evidence checksum", "explicit limitations"]
+  },
+  "dependencies": [
+    "AXM-CAP-PHYSICS-FABRIC",
+    "AXM-CAP-PHYSICS-TRANSLATION-MOUNTS",
+    "AXM-CAP-PHYSICS-AXIS-LOCKS",
+    "AXM-CAP-PHYSICS-AXIS-LIMITS",
+    "AXM-CAP-PHYSICS-DIRECTION-LOCKS",
+    "AXM-CAP-PHYSICS-DIRECTION-LIMITS"
+  ],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "capabilities/physics-core/uc-constraint-preflight.js",
+    "selftest": "node capabilities/physics-core/constraint-preflight-selftest.js"
+  },
+  "limitations": [
+    "conservative local projected-translation check only",
+    "does not prove global satisfiability, convergence, stability or physical correctness",
+    "distance joints and distance limits are reported but not analyzed in v0.1",
+    "near-parallel but non-identical directions are intentionally not merged",
+    "disabled analyzed constraints are validated but excluded from conflict intersections",
+    "does not change solver order, world state, collision behavior or donor source",
+    "not scientific validation"
+  ],
+  "tests": [
+    {
+      "command": "node capabilities/physics-core/constraint-preflight-selftest.js",
+      "proves": [
+        "translation mounts conflict-check against aligned axis locks",
+        "overlapping axis ranges remain conflict-free",
+        "axis and scaled fixed-direction constraints share an exact normalized projection group",
+        "body-order and direction-sign reversal canonicalization",
+        "disabled conflicting constraints remain inert while invalid references still fail validation",
+        "nonlinear distance families are reported without unsupported classification claims",
+        "near-parallel non-identical directions remain separate",
+        "same-runtime report checksum replay is deterministic"
+      ]
+    }
+  ],
+  "root_fit": {
+    "truth": {"fit": true, "basis": "Only conflicts proven by interval intersection on exactly matched normalized projections are reported; unsupported nonlinear and near-parallel cases remain explicit non-claims."},
+    "agency": {"fit": true, "basis": "The preflight is advisory evidence; it does not silently mutate constraints or block the caller from choosing a repair."},
+    "continuity": {"fit": true, "basis": "It reuses existing constraint normalizers and leaves the byte-for-byte donor physics source and existing solver behavior unchanged."},
+    "wisdom-before-speed": {"fit": true, "basis": "It surfaces locally provable contradictions before callers spend bounded solver passes on constraints that cannot share one projected interval."}
+  }
+}
