@@ -261,6 +261,21 @@ def _register_extension_builtins() -> None:
         except (ProfessionCrewError, StepwiseWorkflowError, CandidateAdoptionLockError, ValueError, TypeError, OSError) as exc:
             raise _capabilities.CapabilityError(str(exc)) from exc
 
+    def static_asset_target_evidence_surface(root, inputs):
+        from .profession_crew import _target
+        from .profession_target_evidence import assess_target_evidence
+        try:
+            return assess_target_evidence(_target(root, inputs.get("path")), inputs)
+        except (ValueError, TypeError, OSError) as exc:
+            raise _capabilities.CapabilityError(str(exc)) from exc
+
+    def profession_clearance_repair_surface(root, inputs):
+        from .profession_clearance_repair import run_repair
+        try:
+            return run_repair(root, inputs)
+        except (ValueError, TypeError, OSError, RuntimeError) as exc:
+            raise _capabilities.CapabilityError(str(exc)) from exc
+
     _capabilities.BUILTINS["builtin:specialist_tournament"] = multi_perspective_orchestration
     _capabilities.BUILTINS["builtin:simulate_creation"] = adaptive_simulation_surface
     _capabilities.BUILTINS["builtin:design_fabric"] = design_fabric_surface
@@ -273,6 +288,8 @@ def _register_extension_builtins() -> None:
     _capabilities.BUILTINS["builtin:evolution_aftertouch"] = evolution_aftertouch_surface
     _capabilities.BUILTINS["builtin:inspect_fabric_sources"] = fabric_source_surface
     _capabilities.BUILTINS["builtin:profession_crew"] = profession_crew_surface
+    _capabilities.BUILTINS["builtin:static_asset_target_evidence"] = static_asset_target_evidence_surface
+    _capabilities.BUILTINS["builtin:profession_clearance_repair"] = profession_clearance_repair_surface
 
 
 _register_extension_builtins()
