@@ -11,7 +11,7 @@ orchestration machinery.
 | Product | Product-specific work in the plan | Executable draft recipe in this change |
 | --- | --- | --- |
 | Material | Surface intent, maps/layers, map checks, look development | Generate maps, independently reopen/check them, preserve source and delivery manifest |
-| Static 3D | Blockout, geometry, UVs, materials, assembly, LOD/collision | Generate/check materials, bind them to supplied UV geometry, measure density/coverage, render two light setups |
+| Static 3D | Blockout, geometry, UVs, materials, assembly, LOD/collision | Generate/check materials; bind supplied UV geometry or automatically unwrap UV-less triangle geometry into padded atlases; measure density/coverage; render two light setups |
 | Animated 3D | Static production plus rig, deformation, timing and playback | Plan exported to existing stepwise workflow; automatic end-to-end animation recipe remains open |
 | Game | Playable loop, rules, world, asset production, audio and playtests | Plan with explicit evidence and owners; existing game capabilities need selected bindings |
 | Software | Brief, architecture, implementation and behavior checks | Publish supplied source and independently run supported project checks |
@@ -37,9 +37,10 @@ specialists executed or that the product passed their judgment.
 - `verify`: reopen a `delivery.json` and recheck artifacts and crew observations.
 
 The compiled draft sequence is source/brief -> material generation -> map checks
--> textured assembly -> geometry/UV checks -> studio preview -> garage preview
--> delivery manifest. Missing/failed checks stop downstream work. Images prove a
-render exists; artistic acceptance remains an explicit later step.
+-> supplied-UV binding **or** automatic unwrap/bake -> geometry/UV checks ->
+studio preview -> garage preview -> delivery manifest. Missing/failed checks stop
+downstream work. Images prove a render exists; artistic acceptance remains an
+explicit later step.
 
 Repeating the same crew/run request returns its record and rechecks freshness.
 An interrupted run does not silently repeat uncertain writes. A changed request
@@ -77,6 +78,7 @@ Other families reject these metal-specific controls rather than ignoring them.
 | `generate-game-material` | Existing deterministic map bundle from explicit recipe |
 | `inspect-game-material` | Fresh PNG/integrity/colour-space, map size, normal length, byte-budget and optional opposite-edge checks |
 | `bind-textured-asset` | Native GLB from supplied surface geometry/UVs and verified named bundles |
+| `auto-unwrap-bake-asset` | UV-less triangle geometry -> unique triangle charts, explicit pixel gutters, baked base/normal/ORM atlases, embedded GLB and fresh receipt |
 | `inspect-textured-asset` | Decoded geometry, texture coverage, actual UV texel density and optional maximum world dimensions |
 | `render-asset-preview` | Actual embedded GLB maps rendered by UC, with exact source/PNG receipts |
 
@@ -84,7 +86,25 @@ The `axm.surface-3d/v0.1` encoder accepts optional `texcoords` per vertex and a
 `textures` object per material group. That object requires base64 RGB PNG values
 for `base_color`, `normal` and `orm`, plus `normal_convention: "tangent +Y"` and
 `wrap: "clamp"` or `"repeat"`. Missing/collapsed UVs and unsupported encoding
-fail before publication. Existing untextured specifications retain their form.
+fail before publication when using the direct binding route. Existing untextured
+specifications retain their form.
+
+For static-3D product recipes, a specification whose surface groups all omit
+`texcoords` now selects the bounded automatic fallback. Each indexed triangle is
+given its own chart in a deterministic grid atlas; vertices are duplicated only
+where this chart separation requires seams. UVs are inset by `padding_px` and the
+surrounding cell is filled by clamped edge dilation, so the receipt can verify
+chart separation and a real pixel gutter. Base colour, tangent normal and packed
+ORM are baked into the new atlas and embedded into the GLB. `unwrap_bake` accepts
+only `atlas_size` (32..2048, default 256) and `padding_px` (1..64, default 4).
+Mixed supplied-UV and UV-less groups are refused rather than silently rewritten.
+
+This is intentionally a minimum technical path: each face samples the verified
+source material in chart-local 0..1 space. It is useful for making raw geometry
+texturable offline, but it is not smart seam placement, density-optimal packing,
+mesh-aware procedural projection or a high-to-low bake. The output directory
+keeps `asset.glb`, the exact baked atlases and `receipt.json`; fresh observation
+recomputes all of them from the preserved source geometry and material bundles.
 
 The encoder embeds image bytes, `TEXCOORD_0`, core material bindings and samplers.
 Occlusion shares the packed ORM image with metallic/roughness. The source bundle
@@ -114,23 +134,25 @@ The workflow records these requirements instead of implying they are solved:
 | Area | Remaining work |
 | --- | --- |
 | Art direction | Per-product references, silhouette/composition judgment, coherent detail hierarchy and actual user acceptance |
-| UV authoring | Automatic unwrap, atlas/UDIM workflows, overlap/padding analysis, seam repair and density-aware packing |
-| Baking | Mesh-derived curvature/AO/thickness, high-to-low detail transfer, cage control and MikkTSpace tangent agreement |
+| UV authoring | Smarter seam grouping, chart merging, density-aware packing, atlas efficiency, UDIM workflows and repair of authored UVs |
+| Baking | Mesh-derived curvature/AO/thickness, high-to-low detail transfer, cage control, projection controls and MikkTSpace tangent agreement |
 | Materials | Mesh-aware edge wear, authored decals, richer material graphs, perceptually seamless tiling and compressed texture delivery |
 | Rendering | Environment/image-based lighting, reflections, transparency, anisotropic filtering and target-renderer comparison |
 | Animation | Rig/deformation extremes, secondary motion, contacts, transitions and continuous target playback |
 | Games/software | Real controls and full loops, sound, accessibility, recovery and measured device performance |
 | Refinement | Defect-led revisions, representative comparisons, dependency-aware partial rebuilds and semantic review |
 
-Opposite-edge pixel agreement is only a bounded tiling check. The demo's UVs are
-explicit per-polygon projections with intentional shared texture space, not an
-automatic unique atlas. The field case is an original inspection fixture, not
-a claim of cinematic realism or a finished game asset.
+Opposite-edge pixel agreement is only a bounded tiling check. The field-case demo
+continues to exercise the supplied-UV route; the automatic fallback is separately
+tested with UV-less geometry, padding receipts, draft failure preservation and
+artifact-tamper re-verification. Neither route claims cinematic realism or a
+finished-game-asset result.
 
 The output status is `DRAFT_BUILT_REVIEW_REQUIRED` after its automatic recipe
 passes. `delivery.json` preserves per-stage observed/partial/declared/pending
 status and `released: false`. Technical PASS does not imply all lifecycle work
-or professional acceptance is complete.
+or professional acceptance is complete. Both the unwrap/bake receipt and product
+manifest retain `visual_quality: NOT_TESTED` / `professional_acceptance: NOT_TESTED`.
 
 ## Sources consulted
 
