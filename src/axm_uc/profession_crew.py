@@ -15,6 +15,13 @@ from typing import Any
 
 from .adoption_lock import candidate_adoption_lock
 from .atomic import atomic_write_json
+from .profession_target_evidence import (
+    ACTION_KIND as TARGET_EVIDENCE_KIND,
+    EVIDENCE_SCOPE,
+    LANE_OWNERS,
+    assess_target_evidence,
+    target_contract,
+)
 from .stepwise_workflow import validate_step_plan
 
 SCHEMA = "axm.uc-profession-crew.v1"
@@ -35,7 +42,7 @@ TEAMS = {
 PROJECT_KINDS = {"software-project", "python-project", "static-web-project"}
 GLB_KINDS = {"procedural-3d-asset", "procedural-glb-asset", "deterministic-3d-model", "glb-scene-asset"}
 TEXT_KINDS = {"text-file", "json-file"}
-SUPPORTED = PROJECT_KINDS | GLB_KINDS | TEXT_KINDS | {"verify-project"}
+SUPPORTED = PROJECT_KINDS | GLB_KINDS | TEXT_KINDS | {"verify-project", TARGET_EVIDENCE_KIND}
 
 
 class ProfessionCrewError(ValueError):
@@ -128,6 +135,12 @@ def _observe(root: Path, action: dict) -> dict:
     from .procedural_3d import build_glb, verify_glb
     kind, inputs = action["kind"], action["inputs"]
     path = _target(root, inputs.get("path"))
+    if kind == TARGET_EVIDENCE_KIND:
+        report = assess_target_evidence(path, inputs)
+        return {"status": report["status"], "artifact": str(path),
+                "artifact_digest": report["artifact_sha256"], "target_evidence": report,
+                "evidence_origin": "EXTERNAL_EVIDENCE_PACKET", "limitations": report["nonclaims"],
+                "visual_quality": "NOT_TESTED", "professional_acceptance": "NOT_TESTED"}
     if kind in PROJECT_KINDS | {"verify-project"}:
         report = validate_project(path, project_type=_project_type(kind, inputs), checks=inputs.get("checks"),
                                   expected_files=inputs.get("files", inputs.get("expected_files")), expected_file_digests=inputs.get("expected_file_digests"))
@@ -169,7 +182,7 @@ def plan_crew(root: Path, inputs: dict) -> dict:
     raw_steps = inputs.get("steps")
     if not isinstance(raw_steps, list) or not 1 <= len(raw_steps) <= MAX_STEPS:
         raise ProfessionCrewError(f"steps must contain 1..{MAX_STEPS} explicit stations")
-    steps, stations, assignments = [], [], []
+    steps, stations, assignments, handoff_professions = [], [], [], []
     for index, raw in enumerate(raw_steps):
         if not isinstance(raw, dict):
             raise ProfessionCrewError("each station must be an object")
@@ -196,6 +209,12 @@ def plan_crew(root: Path, inputs: dict) -> dict:
         binding = {"work_type": work_type, "context": context, "profession": profession, "skill": skill,
                    "kind": kind, "project_type": action["inputs"].get("project_type"),
                    "runtime": runtime, "catalog": catalog_digest}
+        if kind == TARGET_EVIDENCE_KIND:
+            binding["target_contract"] = target_contract(action["inputs"])
+            packet = action["inputs"]["packet"]
+            lanes = (set(binding["target_contract"]["required_lanes"]) | set(packet["lanes"])
+                     | {lane.strip() for lane in packet["required_lanes"]})
+            handoff_professions.extend(LANE_OWNERS[lane] for lane in sorted(lanes))
         key = _hash(binding)
         practice = copy.deepcopy(state["practice"].get(key, {}))
         learned_preflight = kind in PROJECT_KINDS and bool(practice.get("failed_cases"))
@@ -209,6 +228,8 @@ def plan_crew(root: Path, inputs: dict) -> dict:
                    "automatic_execution": automatic, "action": action,
                    "judgment": raw.get("judgment", "NOT_TESTED"),
                    "fit_basis": "explicit work-type ownership table and caller-selected/default body skill; not a competence claim"}
+        if kind == TARGET_EVIDENCE_KIND:
+            station["evidence_scope"] = EVIDENCE_SCOPE
         if station["judgment"] not in {"NOT_TESTED", "REQUIRED"}:
             raise ProfessionCrewError("judgment must be NOT_TESTED or REQUIRED; machine cannot claim supplied approval")
         stations.append(station)
@@ -219,7 +240,7 @@ def plan_crew(root: Path, inputs: dict) -> dict:
                       "stop_condition": "Failure, unsupported observer or required judgment holds the job"})
     plan = validate_step_plan({"goal": inputs.get("goal"), "steps": steps}, maximum=MAX_STEPS)
     crew = []
-    for profession in dict.fromkeys(TEAMS[work_type] + assignments):
+    for profession in dict.fromkeys(TEAMS[work_type] + assignments + handoff_professions):
         row = catalog[profession]
         body = row["body"]
         crew.append({"id": profession, "status": body["status"], "scope": body["scope"],
@@ -244,6 +265,10 @@ def _preflight(action: dict) -> dict:
 
 
 def _learn(state: dict, station: dict, observation: dict) -> None:
+    # Even malformed packets or provider exceptions are not locally performed
+    # target tests. Do not let a declaration teach either success or failure.
+    if station["action"]["kind"] == TARGET_EVIDENCE_KIND:
+        return
     if observation["status"] not in {"PASS", "FAIL"}:
         return
     # Repeating the same work under different run ids cannot manufacture growth.
@@ -311,11 +336,18 @@ def run_crew(root: Path, inputs: dict) -> dict:
                 observed = {"status": "FAIL", "checks": [{"type": "execution-or-observation", "passed": False}],
                             "error": f"{type(exc).__name__}: {exc}", "side_effects": "inspect target; partial output may exist"}
             observed["station"] = station["id"]
+            if action["kind"] == TARGET_EVIDENCE_KIND:
+                observed["evidence_origin"] = "EXTERNAL_EVIDENCE_PACKET"
             record["observations"].append(observed)
             _learn(state, station, observed)
             atomic_write_json(path, state)
             if observed["status"] != "PASS":
-                record["status"] = "HOLD_FAILED_CHECK"
+                record["status"] = "HOLD_TARGET_EVIDENCE" if observed["status"] == "HOLD" else "HOLD_FAILED_CHECK"
+                if action["kind"] == TARGET_EVIDENCE_KIND:
+                    record["handoff"] = {"station": station["id"], "profession_id": station["profession_id"],
+                        "reason": "Supply or correct exact-artifact target evidence; no target test was independently reproduced",
+                        "requirements": observed.get("target_evidence", {}).get("handoff_requirements", [
+                            {"lane": None, "profession_id": "technical-artist", "reason": "EXECUTION_OR_OBSERVATION_ERROR"}])}
                 break
         else:
             record["status"] = "COMPLETE_BOUNDED_CHECKS"

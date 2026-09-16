@@ -7,7 +7,8 @@ each explicit station to a profession, a body skill and an existing UC tool.
 The first bundle contains 18 existing professions. No new profession was needed.
 Work-type recipes cover software, web, 3D, animation, games, audio and documents.
 These are ownership and consultation maps: automatic execution currently covers
-text/JSON, basic text projects, project verification and bounded procedural GLB.
+text/JSON, basic text projects, project verification, bounded procedural GLB and
+validation of supplied static GLB target evidence against job requirements.
 Other stations report a capability gap. A `judgment: "REQUIRED"` station stops
 before execution and identifies its owner; it cannot invent approval.
 
@@ -104,6 +105,47 @@ registered deterministic artifact observers.
 
 ## Evidence ceilings and next adapters
 
+### Target evidence and specialist handoffs
+
+The `verify-static-asset-target` capability also works as a crew station. Its
+inputs are `path` (an existing GLB), `packet` (the existing
+`axm.static-asset-target-evidence/v0.1` packet), `target` (the job's expected
+engine, optional version and context), and `required_lanes` (the job's minimum
+requirements). See `docs/STATIC_ASSET_TARGET_EVIDENCE.md` for the packet format.
+
+The expected target is compared exactly after whitespace normalization. The
+packet cannot weaken the job by removing required lanes. Different targets or
+requirements have different station bindings. The artifact is reopened during
+crew observation and verification; a stale file cannot keep its earlier PASS.
+
+Missing or weak evidence produces `HOLD_TARGET_EVIDENCE`; an artifact mismatch
+or declared target failure produces `HOLD_FAILED_CHECK`. Both stop later steps.
+Each unresolved requirement identifies a profession, whose original contract is
+included in the crew's consultation cards:
+
+| Target work | Owning profession |
+| --- | --- |
+| Engine import, scale/pivot, materials/shaders, sidedness | Technical artist |
+| Collision, target runtime integration | Gameplay engineer |
+| Navigation | World/encounter designer |
+| Resource budget, device performance | Graphics engineer |
+| Perceptual LOD equivalence | Art director |
+
+These are declared ownership assignments, not proof that any specialist ran.
+The adapter performs **external packet validation only**: it does not open or
+authenticate evidence source locators, launch an engine, run collision or
+navigation, render/review an asset or measure a device. Even an adequate packet
+has `independently_reproduced: false`. Its declarations, failures and adapter
+errors never add crew practice. Actual local project observations still teach
+the existing preflight behavior. Professional acceptance and visual quality
+remain `NOT_TESTED`.
+
+`python tools/profession_crew_demo.py` also generates a real GLB, observes missing
+import/collision/navigation evidence and names its owners without inventing
+target tests. The target demo retains zero practice entries.
+
+### Remaining ceilings
+
 - All imported professions remain **EXPERIMENTAL**.
 - `COMPLETE_BOUNDED_CHECKS` means the selected automatic stations completed and
   their bounded artifact checks passed. It does not mean professional acceptance.
@@ -130,5 +172,7 @@ The design was informed by `axm-factual-space-simulator` at
 is role -> observed situation -> specific skill evidence -> changed next action.
 No simulator code or its reward/promotion/ledger machinery was copied into UC.
 
-This lane extends UC main `49ef11ca42b2079dffbd595daa8ea8626b99d2ab` and preserves
-the separate aftertouch and physics lanes. It does not claim those PRs are merged.
+The initial crew implementation merged as PR #143 at main
+`8dd55d7186aa99911ca8d28af303f31d2c05fad4`. The manual target-evidence improvement
+continues the same working branch. The aftertouch and physics PRs remain separate;
+this work does not claim their adoption.

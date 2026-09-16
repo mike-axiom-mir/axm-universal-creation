@@ -16,6 +16,6 @@ jobs:
       - name: Verify profession crews and existing specialist workflows
         env:
           PYTHONPATH: src:tests
-        run: python -m unittest test_profession_crew test_stepwise_workflow test_specialist_tournament test_machine test_procedural_3d -q
+        run: python -m unittest test_profession_crew test_profession_target_evidence test_stepwise_workflow test_specialist_tournament test_machine test_procedural_3d test_static_asset_target_evidence -q
       - name: Observe real failure, learning, repair and re-verification
         run: python tools/profession_crew_demo.py
