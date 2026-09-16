@@ -30,7 +30,7 @@ const corrected = Joints.step(worldWithAnchor(), [joint], 0.01);
 const mass = corrected.world.bodies.find(item => item.id === 'mass');
 assert.ok(Math.abs(mass.position.x - 1) < 1e-8, 'projected distance joint must correct initial position error before the core step');
 assert.ok(Math.abs(corrected.jointDiagnostics.after[0].error) < 1e-8, 'zero-force step should retain the target distance');
-assert.match(corrected.limitations.join(' '), /translation-only/i);
+assert.match(corrected.limitations.join(' '), /body centers only/i);
 assert.match(corrected.limitations.join(' '), /not scientific validation/i);
 
 let kicked = worldWithAnchor({ x: 1, y: 0 });
