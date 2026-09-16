@@ -107,11 +107,14 @@ UV-less groups are refused rather than silently rewritten.
 
 This remains a minimum technical path. Connected locally planar faces sample the
 verified source material through one planar chart, reducing unnecessary seams and
-vertex duplication compared with the original triangle-per-chart fallback. It is
-not global seam optimization, density-optimal packing, mesh-aware procedural
-projection or a high-to-low bake. The output directory keeps `asset.glb`, the
-exact baked atlases and `receipt.json`; fresh observation recomputes all of them
-from the preserved source geometry and material bundles.
+vertex duplication compared with the original triangle-per-chart fallback. The
+atlas proves that **different charts** occupy separate cells, but projected
+triangle overlap or distortion **inside one shared chart is not yet measured** and
+is recorded as `NOT_TESTED`. It is not global seam optimization, density-optimal
+packing, mesh-aware procedural projection or a high-to-low bake. The output
+directory keeps `asset.glb`, the exact baked atlases and `receipt.json`; fresh
+observation recomputes all of them from the preserved source geometry and material
+bundles.
 
 The encoder embeds image bytes, `TEXCOORD_0`, core material bindings and samplers.
 Occlusion shares the packed ORM image with metallic/roughness. The source bundle
@@ -141,7 +144,7 @@ The workflow records these requirements instead of implying they are solved:
 | Area | Remaining work |
 | --- | --- |
 | Art direction | Per-product references, silhouette/composition judgment, coherent detail hierarchy and actual user acceptance |
-| UV authoring | Global seam optimization, density-aware packing, atlas efficiency, UDIM workflows, curved-chart distortion control and repair of authored UVs |
+| UV authoring | Global seam optimization, density-aware packing, atlas efficiency, UDIM workflows, curved-chart distortion/overlap checks and repair of authored UVs |
 | Baking | Mesh-derived curvature/AO/thickness, high-to-low detail transfer, cage control, projection controls and MikkTSpace tangent agreement |
 | Materials | Mesh-aware edge wear, authored decals, richer material graphs, perceptually seamless tiling and compressed texture delivery |
 | Rendering | Environment/image-based lighting, reflections, transparency, anisotropic filtering and target-renderer comparison |
