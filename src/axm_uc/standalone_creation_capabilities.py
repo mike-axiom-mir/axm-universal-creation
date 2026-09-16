@@ -187,6 +187,45 @@ def register_standalone_creation_builtins(
             raise capability_error("precision cutting cannot rewrite the live machine body")
         if "replace" in inputs and not isinstance(inputs["replace"], bool):
             raise capability_error("precision cutter replace must be a boolean")
+
+        if "source_path" in inputs:
+            from .mesh_precision_cutter import (
+                MeshPrecisionCutterError,
+                publish_source_mesh_cut,
+            )
+
+            source = resolve_output_path(root, str(inputs["source_path"]))
+            if is_machine_body_path(root, source):
+                raise capability_error(
+                    "existing-mesh precision cutting cannot read the protected live machine body as source material"
+                )
+            if source == target:
+                raise capability_error(
+                    "existing-mesh precision cutting requires distinct source and output paths"
+                )
+            specification = inputs["specification"]
+            schema = specification.get("schema") if isinstance(specification, dict) else None
+            try:
+                if schema == "axm.mesh-precision-cutter/v0.3":
+                    from .oriented_mesh_precision_cutter import publish_oriented_source_mesh_cut
+
+                    return publish_oriented_source_mesh_cut(
+                        source,
+                        target,
+                        specification,
+                        expected_source_sha256=inputs.get("expected_source_sha256"),
+                        replace=inputs.get("replace", False),
+                    )
+                return publish_source_mesh_cut(
+                    source,
+                    target,
+                    specification,
+                    expected_source_sha256=inputs.get("expected_source_sha256"),
+                    replace=inputs.get("replace", False),
+                )
+            except MeshPrecisionCutterError as exc:
+                raise capability_error(str(exc), exc.details) from exc
+
         try:
             return publish_precision_cut(
                 target,
