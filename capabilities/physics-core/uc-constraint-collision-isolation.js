@@ -3,7 +3,7 @@
 const Core = require('./source/axm-physics-core.js');
 const Composer = require('./uc-constraint-composer.js');
 
-const VERSION = '0.4.0';
+const VERSION = '0.5.0';
 const STEP_SCHEMA = 'axm.uc-constraint-collision-isolation-step/v0.1';
 const SIMULATION_SCHEMA = 'axm.uc-constraint-collision-isolation-simulation/v0.1';
 const MAX_TEMP_GROUPS = 32768;
@@ -21,6 +21,7 @@ function constraintEdges(normalized) {
   (normalized.distanceLimits || []).forEach(item => edges.push({ family: 'distance-limits', id: item.id, a: item.a, b: item.b }));
   (normalized.axisLocks || []).forEach(item => edges.push({ family: 'axis-locks', id: item.id, a: item.a, b: item.b }));
   (normalized.axisLimits || []).forEach(item => edges.push({ family: 'axis-limits', id: item.id, a: item.a, b: item.b }));
+  (normalized.directionLocks || []).forEach(item => edges.push({ family: 'direction-locks', id: item.id, a: item.a, b: item.b }));
   return edges.sort((left, right) => {
     const pairLeft = [left.a, left.b].sort().join('\u0000') + '\u0000' + left.family + '\u0000' + left.id;
     const pairRight = [right.a, right.b].sort().join('\u0000') + '\u0000' + right.family + '\u0000' + right.id;
@@ -130,7 +131,7 @@ function validate(world, constraints, options) {
     errors,
     componentCount: prepared ? prepared.components.length : 0,
     warnings: (composer.warnings || []).concat([
-      'Collision isolation is component-wide across translation mounts, distance joints, distance limits, axis locks and axis limits: every body in one connected constraint component temporarily shares one negative collision group during the donor-core collision stage.',
+      'Collision isolation is component-wide across translation mounts, distance joints, distance limits, axis locks, axis limits and fixed-direction locks: every body in one connected constraint component temporarily shares one negative collision group during the donor-core collision stage.',
       'This is not edge-only pair suppression; bodies connected indirectly through the same constraint component also do not collide with each other during that stage.',
       'A component containing any nonzero caller collision.group is skipped rather than silently overriding existing group semantics.',
       'Temporary groups are chosen deterministically from unused negative group ids and restored on the returned world.',
@@ -161,7 +162,7 @@ function step(world, constraints, dt, options) {
     composerDiagnostics: clone(composed.composerDiagnostics),
     core: { diagnostics: clone(composed.core.diagnostics), events: clone(composed.core.events), worldAsIntegratedWithTemporaryGroups: collisionStageWorld },
     evidence: [
-      prepared.components.length + ' connected constraint component(s) discovered across five supported translation-only constraint families in deterministic body-id order',
+      prepared.components.length + ' connected constraint component(s) discovered across six supported translation-only constraint families in deterministic body-id order',
       prepared.appliedComponents + ' component(s) received unused temporary negative collision groups for the donor-core collision stage',
       prepared.skippedComponents + ' component(s) skipped isolation rather than overriding existing collision-group semantics',
       'Composer executed one preserved AXM Physics Core v' + Core.VERSION + ' collision/integration step',
@@ -173,10 +174,11 @@ function step(world, constraints, dt, options) {
       'Components containing any nonzero caller collision.group are intentionally skipped.',
       'Category and mask filters are preserved; this layer only uses temporary negative group ids that were unused in the caller world.',
       'Core contact evidence describes the collision stage while temporary groups were active; the returned world has caller groups restored afterward.',
-      'Translation mounts, center-to-center distance joints, center-distance limits, world-axis translation locks and world-axis translation limits are understood; no additional joint families are implied.',
+      'Translation mounts, center-to-center distance joints, center-distance limits, world-axis translation locks, world-axis translation limits and fixed world-space direction locks are understood; no additional joint families are implied.',
       'Distance-limit slack semantics remain unchanged: a limit edge participates in component discovery even while its range interior is physically unconstrained.',
       'Axis-lock edges participate in component topology even though their orthogonal translation remains physically free.',
       'Axis-limit edges participate in component topology even while their allowed interval is physically slack.',
+      'Direction-lock edges participate in component topology even though perpendicular translation remains physically free and the direction stays fixed in world space.',
       'No angular inertia, rotating local anchors, hinge, full slider/prismatic, rotational weld, motor or gear semantics are implemented.',
       'This is game/prototype physics evidence, not scientific validation.'
     ]
