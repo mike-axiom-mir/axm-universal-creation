@@ -8,6 +8,7 @@ on:
       - 'capabilities/candidates/AXM-CAP-PHYSICS-DISTANCE-JOINTS.json'
       - 'capabilities/candidates/AXM-CAP-PHYSICS-TRANSLATION-MOUNTS.json'
       - 'capabilities/candidates/AXM-CAP-PHYSICS-CONSTRAINT-COMPOSER.json'
+      - 'capabilities/candidates/AXM-CAP-PHYSICS-CONSTRAINT-COLLISION-ISOLATION.json'
       - '.github/workflows/physics-core-graft.yml'
   workflow_dispatch:
 
@@ -32,3 +33,5 @@ jobs:
         run: node capabilities/physics-core/translation-mounts-selftest.js
       - name: Verify mixed constraint composer
         run: node capabilities/physics-core/constraint-composer-selftest.js
+      - name: Verify constraint component collision isolation
+        run: node capabilities/physics-core/constraint-collision-isolation-selftest.js
