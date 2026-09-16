@@ -49,3 +49,5 @@ jobs:
         run: node capabilities/physics-core/constraint-activity-gate-selftest.js
       - name: Verify axis-lock composer gate and isolation integration
         run: node capabilities/physics-core/axis-lock-integration-selftest.js
+      - name: Verify axis-limit composer gate and isolation integration
+        run: node capabilities/physics-core/axis-limit-integration-selftest.js
