@@ -21,7 +21,7 @@ function overlapWorld() {
 }
 
 const activeAxis = {
-  mounts: [], distanceJoints: [], distanceLimits: [], axisLimits: [],
+  mounts: [], distanceJoints: [], distanceLimits: [], axisLimits: [], directionLocks: [], directionLimits: [],
   axisLocks: [{ id: 'x-lock', a: 'root', b: 'payload', axis: 'x', offset: 0.5 }]
 };
 
@@ -30,7 +30,8 @@ assert.equal(composerValidation.ok, true);
 assert.equal(composerValidation.axisLockCount, 1);
 assert.equal(composerValidation.axisLimitCount, 0);
 assert.equal(composerValidation.directionLockCount, 0);
-assert.deepEqual(Composer.FAMILY_ORDER, ['translation-mounts', 'distance-joints', 'distance-limits', 'axis-locks', 'axis-limits', 'direction-locks']);
+assert.equal(composerValidation.directionLimitCount, 0);
+assert.deepEqual(Composer.FAMILY_ORDER, ['translation-mounts', 'distance-joints', 'distance-limits', 'axis-locks', 'axis-limits', 'direction-locks', 'direction-limits']);
 
 let freeWorld = overlapWorld();
 freeWorld = Core.applyImpulse(freeWorld, 'payload', { x: 3, y: 4 });
@@ -40,6 +41,7 @@ assert.ok(composed.composerDiagnostics.after.maxAxisLockError < 1e-8, 'composed 
 assert.ok(composed.composerDiagnostics.after.maxAxisLockRelativeSpeed < 1e-8, 'composed axis lock must stabilize selected-axis relative velocity');
 assert.equal(composed.composerDiagnostics.after.maxAxisLimitError, 0);
 assert.equal(composed.composerDiagnostics.after.maxDirectionLockError, 0);
+assert.equal(composed.composerDiagnostics.after.maxDirectionLimitError, 0);
 assert.ok(composed.world.bodies.find(item => item.id === 'payload').position.y > 0.3, 'orthogonal translation must remain free inside the mixed composer');
 
 const baseline = Composer.step(overlapWorld(), activeAxis, 0.01);
@@ -53,7 +55,7 @@ assert.equal(hasPairContact(isolated.core.worldAsIntegratedWithTemporaryGroups, 
 assert.equal(isolated.constraints.axisLocks.length, 1);
 
 const disabledAxis = {
-  mounts: [], distanceJoints: [], distanceLimits: [], axisLimits: [],
+  mounts: [], distanceJoints: [], distanceLimits: [], axisLimits: [], directionLocks: [], directionLimits: [],
   axisLocks: [{ id: 'disabled-x-lock', a: 'root', b: 'payload', axis: 'x', offset: 0.5, enabled: false }]
 };
 const disabled = Gate.step(overlapWorld(), disabledAxis, 0.01, { isolateCollisions: true });
@@ -72,7 +74,7 @@ assert.equal(hasPairContact(enabled.core.worldAsIntegratedWithTemporaryGroups, '
 
 const replayA = Gate.step(overlapWorld(), activeAxis, 1 / 60, { isolateCollisions: true });
 const replayB = Gate.step(overlapWorld(), activeAxis, 1 / 60, { isolateCollisions: true });
-assert.equal(Core.checksum(replayA.world), Core.checksum(replayB.world), 'five-family guarded axis-lock path must replay deterministically in one JS runtime');
+assert.equal(Core.checksum(replayA.world), Core.checksum(replayB.world), 'seven-family guarded axis-lock path must replay deterministically in one JS runtime');
 assert.match(enabled.limitations.join(' '), /not scientific validation/i);
 
-console.log('UC Axis Lock Integration selftest: PASS (single-step composition, five-family activity/isolation filtering, orthogonal freedom and deterministic replay under the extended composer order)');
+console.log('UC Axis Lock Integration selftest: PASS (single-step composition, seven-family activity/isolation filtering, orthogonal freedom and deterministic replay under the extended composer order)');
