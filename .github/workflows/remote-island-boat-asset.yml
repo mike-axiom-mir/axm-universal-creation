@@ -9,9 +9,11 @@ on:
       - 'examples/requests/layered_game_material_example.json'
       - 'src/axm_uc/rich_game_materials.py'
       - 'src/axm_uc/layered_game_materials.py'
+      - 'src/axm_uc/finished_layered_game_materials.py'
       - 'src/axm_uc/rich_game_material_bridge.py'
       - 'src/axm_uc/rich_game_material_cli.py'
       - 'tests/test_rich_game_materials.py'
+      - 'tests/test_finished_layered_game_materials.py'
       - 'tools/blender/build_island_plastic_boat.py'
       - 'tools/blender/build_island_plastic_boat_rich.py'
       - '.github/workflows/remote-island-boat-asset.yml'
@@ -35,13 +37,11 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install UC package and test runner
-        run: |
-          python -m pip install .
-          python -m pip install pytest
+      - name: Install UC package
+        run: python -m pip install .
 
-      - name: Verify rich and layered material generator
-        run: python -m pytest -q tests/test_rich_game_materials.py
+      - name: Verify rich layered and finished material generators
+        run: python -m unittest discover -s tests -p 'test_*game_material*.py'
 
       - name: Install Blender headless runtime
         run: |
@@ -65,7 +65,7 @@ jobs:
             "${{ runner.temp }}/boat-motion/vehicle-motion.json" \
             "${{ runner.temp }}/island-boat"
 
-      - name: Independently verify exported GLB animation game nodes PBR textures and layer evidence
+      - name: Independently verify exported GLB animation game nodes PBR textures layers and finishes
         run: |
           python - <<'PY'
           import hashlib, json, struct
@@ -105,22 +105,28 @@ jobs:
           assert manifest['truth']['actual_exported_animation'] is True
           assert manifest['truth']['actual_portable_pbr_textures'] is True
           assert manifest['truth']['actual_layered_surface_authoring'] is True
+          assert manifest['truth']['actual_game_finish_maps'] is True
           assert manifest['truth']['final_visual_acceptance'] is False
           assert manifest['surface_system']['schema'] == 'axm.layered-game-material-realization/v0.1'
           assert manifest['surface_system']['preserved_layer_masks'] is True
           assert manifest['surface_system']['texture_size'] == 512
           assert len(manifest['surface_system']['materials']) >= 8
           layered_roles = 0
+          finished_roles = 0
           mask_count = 0
           for role, record in manifest['surface_system']['materials'].items():
               folder = root / record['bundle']
               assert (folder / 'base_color.png').stat().st_size > 100
               assert (folder / 'normal.png').stat().st_size > 100
               assert (folder / 'orm.png').stat().st_size > 100
-              if record['bundle_kind'] == 'layered':
+              if record['bundle_kind'] in ('layered', 'layered-finished'):
                   layered_roles += 1
                   layer_manifest = json.loads((folder / 'layered-game-material.json').read_text())
                   assert layer_manifest['layers'], role
+                  if record['bundle_kind'] == 'layered-finished':
+                      finished_roles += 1
+                      assert layer_manifest['game_finish'] == record['finish']
+                      assert layer_manifest['game_finish'] != 'realistic'
                   for layer in layer_manifest['layers']:
                       mask = folder / layer['file']
                       payload = mask.read_bytes()
@@ -128,6 +134,7 @@ jobs:
                       assert hashlib.sha256(payload).hexdigest() == layer['sha256']
                       mask_count += 1
           assert layered_roles >= 8, layered_roles
+          assert finished_roles >= 8, finished_roles
           assert mask_count >= 16, mask_count
 
           tris = [manifest['lods'][name]['triangles'] for name in ('lod0','lod1','lod2')]
@@ -140,6 +147,7 @@ jobs:
               'embedded_images': len(document.get('images', [])),
               'embedded_textures': len(document.get('textures', [])),
               'layered_roles': layered_roles,
+              'finished_roles': finished_roles,
               'preserved_layer_masks': mask_count,
               'lod_triangles': tris,
               'motion_video_bytes': (root / 'TinyPlasticBoat_motion.mp4').stat().st_size
