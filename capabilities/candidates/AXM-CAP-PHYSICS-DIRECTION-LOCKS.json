@@ -1,0 +1,47 @@
+{
+  "id": "AXM-CAP-PHYSICS-DIRECTION-LOCKS",
+  "version": "0.1.0",
+  "status": "candidate",
+  "purpose": "Provide deterministic translation-only locks along an arbitrary fixed world-space direction while leaving perpendicular translation unconstrained.",
+  "handles": ["direction-lock", "fixed-direction-translation-lock", "projected-translation-lock"],
+  "input_contract": {
+    "required": ["world", "locks"],
+    "properties": {
+      "locks": "bounded explicit body pairs with finite non-zero world-space direction vectors and projected offsets",
+      "dt": "donor-core step delta",
+      "options": "bounded pre/post position and velocity iteration counts"
+    }
+  },
+  "output_contract": {
+    "kind": "axm.uc-direction-lock-step/v0.1",
+    "contains": ["constrained world", "normalized direction locks", "pre/post solve receipts", "projection diagnostics", "preserved donor-core evidence", "final checksum"]
+  },
+  "dependencies": ["AXM-CAP-PHYSICS-FABRIC"],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "capabilities/physics-core/uc-direction-locks.js",
+    "selftest": "node capabilities/physics-core/direction-locks-selftest.js"
+  },
+  "limitations": [
+    "fixed world-space direction only",
+    "perpendicular translation remains unconstrained",
+    "direction does not rotate with bodies",
+    "not a full prismatic or slider joint",
+    "standalone v0.1 is not yet integrated into the shared mixed composer/activity/isolation stack",
+    "no angular inertia, rotating anchors, angular limits or motors",
+    "post-core projection can change positions after donor contact evidence was produced",
+    "not scientific validation"
+  ],
+  "tests": [
+    {
+      "command": "node capabilities/physics-core/direction-locks-selftest.js",
+      "proves": ["arbitrary fixed-direction projection locking", "perpendicular freedom", "inverse-mass correction sharing", "post-core stabilization", "bounded iterations", "invalid direction rejection", "deterministic replay"]
+    }
+  ],
+  "root_fit": {
+    "truth": {"fit": true, "basis": "The capability is named and evidenced as a fixed world-space projected translation constraint, not a rotating local-axis or full prismatic joint."},
+    "agency": {"fit": true, "basis": "Callers choose body pair, direction, projected offset, activity state and bounded solver parameters."},
+    "continuity": {"fit": true, "basis": "The donor core remains untouched and the new primitive is additive through the existing physics-core export surface."},
+    "wisdom-before-speed": {"fit": true, "basis": "Mixed-stack integration is explicitly deferred instead of chaining wrappers and risking a hidden second donor-core step."}
+  }
+}

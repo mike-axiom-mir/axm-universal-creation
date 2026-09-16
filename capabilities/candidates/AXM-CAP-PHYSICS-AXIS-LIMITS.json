@@ -1,0 +1,66 @@
+{
+  "id": "AXM-CAP-PHYSICS-AXIS-LIMITS",
+  "version": "0.2.0",
+  "status": "candidate",
+  "purpose": "Provide deterministic translation-only min/max limits on one caller-selected world-space x or y relative offset while preserving slack motion inside the interval and free orthogonal translation, with explicit standalone and shared one-step composer paths.",
+  "handles": ["axis-limit", "x-translation-limit", "y-translation-limit", "one-sided-axis-stop", "slack-axis-range", "shared-axis-limit-composition"],
+  "input_contract": {
+    "required": ["world", "limits"],
+    "properties": {
+      "limits": "bounded explicit x/y world-axis limits with minOffset and/or maxOffset",
+      "dt": "donor-core step delta",
+      "options": "bounded pre/post position and velocity iteration counts"
+    }
+  },
+  "output_contract": {
+    "kind": "axm.uc-axis-limit-step/v0.1",
+    "contains": ["constrained world", "normalized axis limits", "slack/boundary state", "pre/post solve receipts", "preserved donor-core evidence", "final checksum"]
+  },
+  "dependencies": ["AXM-CAP-PHYSICS-FABRIC"],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "capabilities/physics-core/uc-axis-limits.js",
+    "selftest": "node capabilities/physics-core/axis-limits-selftest.js"
+  },
+  "limitations": [
+    "world-space x/y axis only",
+    "orthogonal translation remains unconstrained",
+    "slack motion inside the allowed interval is intentionally free",
+    "axis does not rotate with bodies",
+    "not a full prismatic or slider joint",
+    "no angular inertia, rotating anchors, angular limits or motors",
+    "the standalone wrapper still performs its own donor-core step; callers needing mixed families must use the shared composer/activity/isolation path rather than chaining wrappers",
+    "post-core projection can change positions after donor contact evidence was produced",
+    "not scientific validation"
+  ],
+  "tests": [
+    {
+      "command": "node capabilities/physics-core/axis-limits-selftest.js",
+      "proves": [
+        "one-sided and ranged world-axis limits",
+        "slack motion inside the allowed interval",
+        "outward boundary velocity blocking",
+        "orthogonal translation freedom",
+        "inverse-mass correction sharing",
+        "immovable truth receipts",
+        "bounded solver iterations",
+        "same-runtime deterministic replay"
+      ]
+    },
+    {
+      "command": "node capabilities/physics-core/axis-limit-integration-selftest.js",
+      "proves": [
+        "axis limits participate in the shared composer without a second donor-core step",
+        "slack axis-limit edges can join explicit isolation topology without becoming physical locks",
+        "disabled axis limits remain validated evidence but are excluded from guarded solve and topology",
+        "orthogonal freedom and same-runtime deterministic replay survive shared-stack integration"
+      ]
+    }
+  ],
+  "root_fit": {
+    "truth": {"fit": true, "basis": "The capability is explicitly a translation-only world-axis range primitive and is not relabeled as a full prismatic joint; slack physical semantics are separated from optional isolation topology."},
+    "agency": {"fit": true, "basis": "Callers choose axis, min/max bounds, activity state, isolation use and bounded solver factors/iterations."},
+    "continuity": {"fit": true, "basis": "The donor core and standalone primitive remain intact while the established shared composer consumes the same primitive additively."},
+    "wisdom-before-speed": {"fit": true, "basis": "Mixed-family use goes through the tested single-integration composer instead of chaining wrappers and accidentally advancing donor physics twice."}
+  }
+}

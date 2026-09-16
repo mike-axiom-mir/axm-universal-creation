@@ -6,8 +6,14 @@ on:
       - 'capabilities/physics-core/**'
       - 'capabilities/candidates/AXM-CAP-PHYSICS-FABRIC.json'
       - 'capabilities/candidates/AXM-CAP-PHYSICS-DISTANCE-JOINTS.json'
+      - 'capabilities/candidates/AXM-CAP-PHYSICS-DISTANCE-LIMITS.json'
       - 'capabilities/candidates/AXM-CAP-PHYSICS-TRANSLATION-MOUNTS.json'
+      - 'capabilities/candidates/AXM-CAP-PHYSICS-AXIS-LOCKS.json'
+      - 'capabilities/candidates/AXM-CAP-PHYSICS-AXIS-LIMITS.json'
+      - 'capabilities/candidates/AXM-CAP-PHYSICS-DIRECTION-LOCKS.json'
       - 'capabilities/candidates/AXM-CAP-PHYSICS-CONSTRAINT-COMPOSER.json'
+      - 'capabilities/candidates/AXM-CAP-PHYSICS-CONSTRAINT-COLLISION-ISOLATION.json'
+      - 'capabilities/candidates/AXM-CAP-PHYSICS-CONSTRAINT-ACTIVITY-GATE.json'
       - '.github/workflows/physics-core-graft.yml'
   workflow_dispatch:
 
@@ -28,7 +34,23 @@ jobs:
         run: node capabilities/physics-core/selftest.js
       - name: Verify projected distance joints
         run: node capabilities/physics-core/distance-joints-selftest.js
+      - name: Verify bounded distance limits
+        run: node capabilities/physics-core/distance-limits-selftest.js
       - name: Verify translation mounts
         run: node capabilities/physics-core/translation-mounts-selftest.js
+      - name: Verify single-axis translation locks
+        run: node capabilities/physics-core/axis-locks-selftest.js
+      - name: Verify bounded world-axis translation limits
+        run: node capabilities/physics-core/axis-limits-selftest.js
+      - name: Verify fixed-direction translation locks
+        run: node capabilities/physics-core/direction-locks-selftest.js
       - name: Verify mixed constraint composer
         run: node capabilities/physics-core/constraint-composer-selftest.js
+      - name: Verify constraint component collision isolation
+        run: node capabilities/physics-core/constraint-collision-isolation-selftest.js
+      - name: Verify disabled constraint activity gate
+        run: node capabilities/physics-core/constraint-activity-gate-selftest.js
+      - name: Verify axis-lock composer gate and isolation integration
+        run: node capabilities/physics-core/axis-lock-integration-selftest.js
+      - name: Verify axis-limit composer gate and isolation integration
+        run: node capabilities/physics-core/axis-limit-integration-selftest.js

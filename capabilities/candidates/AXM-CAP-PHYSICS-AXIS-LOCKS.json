@@ -1,0 +1,41 @@
+{
+  "id": "AXM-CAP-PHYSICS-AXIS-LOCKS",
+  "version": "0.2.0",
+  "status": "candidate",
+  "purpose": "Provide deterministic translation-only single-axis locks so one world-space x or y offset can be constrained while orthogonal translation remains free, including explicit integration into the shared mixed composer, activity gate and component-isolation path.",
+  "handles": ["axis-lock", "x-translation-lock", "y-translation-lock", "single-axis-constraint", "mixed-axis-lock-constraint"],
+  "input_contract": {
+    "required": ["world", "locks"],
+    "properties": {"locks": "bounded explicit x/y world-axis translation locks", "dt": "donor-core step delta", "options": "bounded pre/post position and velocity iteration counts"}
+  },
+  "output_contract": {
+    "kind": "axm.uc-axis-lock-step/v0.1",
+    "contains": ["constrained world", "normalized axis locks", "pre/post solve receipts", "locked-axis diagnostics", "preserved donor-core evidence", "final checksum"]
+  },
+  "dependencies": ["AXM-CAP-PHYSICS-FABRIC", "AXM-CAP-PHYSICS-CONSTRAINT-COMPOSER"],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "capabilities/physics-core/uc-axis-locks.js",
+    "selftest": "node capabilities/physics-core/axis-locks-selftest.js"
+  },
+  "limitations": [
+    "world-space x/y axis only",
+    "orthogonal translation remains unconstrained",
+    "axis does not rotate with bodies",
+    "not a full prismatic or slider joint",
+    "no angular inertia, rotating anchors, angular limits or motors",
+    "component collision isolation is optional and component-wide rather than an intrinsic property of the lock",
+    "post-core projection can change positions after donor contact evidence was produced",
+    "not scientific validation"
+  ],
+  "tests": [
+    {"command": "node capabilities/physics-core/axis-locks-selftest.js", "proves": ["standalone axis locking, orthogonal freedom, mass sharing, kinematic following, immovable truth and replay"]},
+    {"command": "node capabilities/physics-core/axis-lock-integration-selftest.js", "proves": ["single-step composer integration, disabled activity filtering, component-isolation participation and deterministic replay"]}
+  ],
+  "root_fit": {
+    "truth": {"fit": true, "basis": "The capability remains explicitly world-axis translation only and is not relabeled as a full prismatic joint."},
+    "agency": {"fit": true, "basis": "Callers choose axis, offset, activity state, solver bounds and whether component collision isolation is requested."},
+    "continuity": {"fit": true, "basis": "The standalone primitive remains available while the established one-step composer/gate/isolation paths now understand it additively."},
+    "wisdom-before-speed": {"fit": true, "basis": "Mixed integration uses the shared composer rather than chaining standalone wrappers and accidentally advancing donor physics twice."}
+  }
+}
