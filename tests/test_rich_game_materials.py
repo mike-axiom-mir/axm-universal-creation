@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 import sys
 
@@ -13,6 +14,7 @@ from axm_uc.rich_game_materials import (
     rich_game_material_fields,
 )
 from axm_uc.rich_game_material_bridge import load_rich_material_bundle
+from axm_uc.rich_game_material_cli import main as rich_material_cli
 
 
 def test_rich_catalog_exposes_broad_game_surface_range():
@@ -62,3 +64,24 @@ def test_bundle_roundtrip_and_tamper_detection(tmp_path):
     base.write_bytes(base.read_bytes() + b"x")
     with pytest.raises(ValueError, match="digest mismatch"):
         load_rich_material_bundle(folder)
+
+
+def test_rich_material_cli_catalog_is_normal_uc_surface(capsys):
+    assert rich_material_cli(["catalog"]) == 0
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["schema"] == "axm.rich-game-material-catalog/v0.1"
+    assert len(payload["profiles"]) >= 18
+
+
+def test_rich_material_cli_creates_immutable_portable_bundle(tmp_path, capsys):
+    target = tmp_path / "canvas"
+    assert rich_material_cli([
+        "create", "canvas", str(target), "--size", "16", "--seed", "44", "--color", "150", "82", "57"
+    ]) == 0
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["profile"] == "canvas"
+    assert payload["size"] == 16
+    assert payload["color"] == [150, 82, 57]
+    assert set(payload["maps"]) == {"base_color", "roughness", "metallic", "height", "normal", "ao", "orm"}
+    for record in payload["maps"].values():
+        assert (target / record["file"]).is_file()
