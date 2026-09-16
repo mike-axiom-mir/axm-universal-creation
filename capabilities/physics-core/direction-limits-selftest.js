@@ -43,7 +43,7 @@ assert.equal(stepped.world.diagnostics.checksum, Core.checksum(stepped.world));
 assert.equal(stepped.directionLimitDiagnostics.contactEvidenceBasis, 'CORE_STAGE_BEFORE_POST_DIRECTION_LIMIT_STABILIZATION');
 assert.ok(stepped.core.worldBeforePostDirectionLimitStabilization);
 assert.match(stepped.limitations.join(' '), /not a full prismatic\/slider joint/i);
-assert.match(stepped.limitations.join(' '), /not yet integrated/i);
+assert.match(stepped.limitations.join(' '), /shared composer\/activity\/isolation stack/i);
 assert.match(stepped.limitations.join(' '), /not scientific validation/i);
 
 const slackStart = { x: 3, y: -2.5 };
