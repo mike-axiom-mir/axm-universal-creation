@@ -10,8 +10,8 @@ const AxisLimits = require('./uc-axis-limits.js');
 const DirectionLocks = require('./uc-direction-locks.js');
 const DirectionLimits = require('./uc-direction-limits.js');
 
-const VERSION = '0.2.0';
-const REPORT_SCHEMA = 'axm.uc-constraint-preflight/v0.2';
+const VERSION = '0.3.0';
+const REPORT_SCHEMA = 'axm.uc-constraint-preflight/v0.3';
 const DEFAULT_TOLERANCE = 1e-9;
 const MAX_TOLERANCE = 1e6;
 
@@ -30,6 +30,7 @@ function round(value) { return Math.round(value * 1e9) / 1e9; }
 function cleanZero(value) { return Math.abs(value) <= Number.EPSILON ? 0 : value; }
 function directionKey(direction) { return cleanZero(direction.x).toString() + ',' + cleanZero(direction.y).toString(); }
 function negateInterval(min, max) { return { min: -max, max: -min }; }
+function pairKey(a, b) { return a + '\u0000' + b; }
 
 function canonicalPair(a, b) {
   return a.localeCompare(b) <= 0
@@ -58,7 +59,8 @@ function canonicalProjectionEntry(input) {
   }
   const direction = projected.direction;
   return {
-    key: pair.a + '\u0000' + pair.b + '\u0000' + directionKey(direction),
+    key: pairKey(pair.a, pair.b) + '\u0000' + directionKey(direction),
+    pairKey: pairKey(pair.a, pair.b),
     a: pair.a,
     b: pair.b,
     direction: { x: direction.x, y: direction.y },
@@ -99,7 +101,7 @@ function rangeProjectionEntry(family, item, direction, source) {
 function radialEntry(family, item, min, max, source) {
   const pair = canonicalPair(item.a, item.b);
   return {
-    key: pair.a + '\u0000' + pair.b,
+    key: pairKey(pair.a, pair.b),
     a: pair.a,
     b: pair.b,
     min,
@@ -180,6 +182,7 @@ function analyzeProjectionGroups(entries, tolerance) {
   });
 
   const groups = [];
+  const rawGroups = [];
   const conflicts = [];
   Array.from(grouped.keys()).sort().forEach(key => {
     const items = grouped.get(key);
@@ -191,6 +194,17 @@ function analyzeProjectionGroups(entries, tolerance) {
     });
     const first = items[0];
     const conflict = min > max + tolerance;
+    rawGroups.push({
+      key,
+      pairKey: first.pairKey,
+      a: first.a,
+      b: first.b,
+      direction: clone(first.direction),
+      min,
+      max,
+      conflict,
+      constraints: items
+    });
     const summary = {
       a: first.a,
       b: first.b,
@@ -222,7 +236,7 @@ function analyzeProjectionGroups(entries, tolerance) {
       });
     }
   });
-  return { groups, conflicts };
+  return { groups, rawGroups, conflicts };
 }
 
 function analyzeRadialGroups(entries, tolerance) {
@@ -233,6 +247,7 @@ function analyzeRadialGroups(entries, tolerance) {
   });
 
   const groups = [];
+  const rawGroups = [];
   const conflicts = [];
   Array.from(grouped.keys()).sort().forEach(key => {
     const items = grouped.get(key);
@@ -244,6 +259,15 @@ function analyzeRadialGroups(entries, tolerance) {
     });
     const first = items[0];
     const conflict = min > max + tolerance;
+    rawGroups.push({
+      key,
+      a: first.a,
+      b: first.b,
+      min,
+      max,
+      conflict,
+      constraints: items
+    });
     const summary = {
       a: first.a,
       b: first.b,
@@ -273,7 +297,59 @@ function analyzeRadialGroups(entries, tolerance) {
       });
     }
   });
-  return { groups, conflicts };
+  return { groups, rawGroups, conflicts };
+}
+
+function minimumAbsoluteInterval(min, max) {
+  if (min <= 0 && max >= 0) return 0;
+  return Math.min(Math.abs(min), Math.abs(max));
+}
+
+function analyzeProjectionRadialCoupling(projectedGroups, radialGroups, tolerance) {
+  const radialByPair = new Map();
+  radialGroups.forEach(group => { radialByPair.set(group.key, group); });
+  const checks = [];
+  const conflicts = [];
+
+  projectedGroups.forEach(projected => {
+    if (projected.conflict) return;
+    const radial = radialByPair.get(projected.pairKey);
+    if (!radial || radial.conflict || !Number.isFinite(radial.max)) return;
+
+    const minimumRequiredDistance = minimumAbsoluteInterval(projected.min, projected.max);
+    const maximumAllowedDistance = radial.max;
+    const conflict = minimumRequiredDistance > maximumAllowedDistance + tolerance;
+    const projectionConstraintIds = projected.constraints.map(item => item.id);
+    const radialConstraintIds = radial.constraints.map(item => item.id);
+    const constraintIds = Array.from(new Set(projectionConstraintIds.concat(radialConstraintIds))).sort();
+    const families = Array.from(new Set(
+      projected.constraints.concat(radial.constraints).map(item => item.family)
+    )).sort();
+    const summary = {
+      a: projected.a,
+      b: projected.b,
+      direction: { x: round(projected.direction.x), y: round(projected.direction.y) },
+      projectionIntersection: {
+        min: Number.isFinite(projected.min) ? round(projected.min) : projected.min,
+        max: Number.isFinite(projected.max) ? round(projected.max) : projected.max
+      },
+      distanceIntersection: {
+        min: Number.isFinite(radial.min) ? round(radial.min) : radial.min,
+        max: Number.isFinite(radial.max) ? round(radial.max) : radial.max
+      },
+      minimumRequiredDistance: Number.isFinite(minimumRequiredDistance) ? round(minimumRequiredDistance) : minimumRequiredDistance,
+      maximumAllowedDistance: round(maximumAllowedDistance),
+      conflict,
+      constraintIds,
+      families
+    };
+    checks.push(summary);
+    if (conflict) {
+      conflicts.push(Object.assign({ code: 'PROJECTION_EXCEEDS_DISTANCE_MAX' }, clone(summary)));
+    }
+  });
+
+  return { checks, conflicts };
 }
 
 function countDisabled(normalized) {
@@ -290,6 +366,7 @@ function reportChecksum(report) {
     counts: report.counts,
     groups: report.groups,
     radialGroups: report.radialGroups,
+    projectionRadialChecks: report.projectionRadialChecks,
     conflicts: report.conflicts,
     unsupportedFamilies: report.unsupportedFamilies,
     errors: report.errors
@@ -320,7 +397,8 @@ function analyze(world, constraints, options) {
   const radialEntries = errors.length ? [] : buildRadialEntries(normalized);
   const projected = analyzeProjectionGroups(projectionEntries, tolerance);
   const radial = analyzeRadialGroups(radialEntries, tolerance);
-  const conflicts = projected.conflicts.concat(radial.conflicts);
+  const coupled = analyzeProjectionRadialCoupling(projected.rawGroups, radial.rawGroups, tolerance);
+  const conflicts = projected.conflicts.concat(radial.conflicts, coupled.conflicts);
   const unsupportedFamilies = [];
   const report = {
     schema: REPORT_SCHEMA,
@@ -335,14 +413,17 @@ function analyze(world, constraints, options) {
       projectionGroups: projected.groups.length,
       analyzedRadialEntries: radialEntries.length,
       radialGroups: radial.groups.length,
+      projectionRadialChecks: coupled.checks.length,
       conflicts: conflicts.length,
       projectionConflicts: projected.conflicts.length,
       radialConflicts: radial.conflicts.length,
+      projectionRadialConflicts: coupled.conflicts.length,
       disabledConstraints: countDisabled(normalized),
       unsupportedConstraints: 0
     },
     groups: projected.groups,
     radialGroups: radial.groups,
+    projectionRadialChecks: coupled.checks,
     conflicts,
     unsupportedFamilies,
     errors,
@@ -351,12 +432,15 @@ function analyze(world, constraints, options) {
       projected.groups.length + ' exact normalized projection group(s) intersected with tolerance ' + tolerance,
       radialEntries.length + ' enabled center-distance interval(s) canonicalized in deterministic body-pair order',
       radial.groups.length + ' exact same-pair radial distance group(s) intersected with tolerance ' + tolerance,
+      coupled.checks.length + ' same-pair projection/radial upper-bound check(s) evaluated using |projection| <= center distance',
       conflicts.length + ' provable local constraint conflict(s) found'
     ],
     limitations: [
-      'This preflight is a conservative local check for translation mounts plus axis/fixed-direction locks and limits that share exactly the same normalized projection, and for distance joints/limits that constrain exactly the same body pair.',
+      'This preflight is a conservative local check for translation mounts plus axis/fixed-direction locks and limits that share exactly the same normalized projection, for distance joints/limits that constrain exactly the same body pair, and for same-pair cases where one projected interval alone requires more center distance than a finite radial maximum permits.',
+      'The projection/radial coupling proof uses only the geometric necessity |projection| <= center distance; it does not combine two or more independent projected directions into a stronger radial lower bound.',
+      'A radial minimum does not by itself conflict with a projected interval because unconstrained perpendicular translation may satisfy the minimum distance.',
       'It does not prove global constraint satisfiability, convergence, stability or physical correctness.',
-      'Distance analysis proves only same-body-pair scalar distance interval contradictions; it does not reason across triangles, loops, coupled directions or other multi-constraint geometry.',
+      'Distance analysis does not reason across triangles, loops, multi-pair geometry or other coupled constraints beyond the bounded same-pair upper-bound proof described above.',
       'Near-parallel but non-identical directions are intentionally kept in separate groups to avoid inventing equivalence.',
       'Disabled constraints are validated for source/body integrity but excluded from conflict intersections.',
       'The report does not change world state, solver order, collision behavior or the donor physics source.',
