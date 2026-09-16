@@ -10,6 +10,7 @@ on:
       - 'capabilities/candidates/AXM-CAP-PHYSICS-TRANSLATION-MOUNTS.json'
       - 'capabilities/candidates/AXM-CAP-PHYSICS-AXIS-LOCKS.json'
       - 'capabilities/candidates/AXM-CAP-PHYSICS-AXIS-LIMITS.json'
+      - 'capabilities/candidates/AXM-CAP-PHYSICS-DIRECTION-LOCKS.json'
       - 'capabilities/candidates/AXM-CAP-PHYSICS-CONSTRAINT-COMPOSER.json'
       - 'capabilities/candidates/AXM-CAP-PHYSICS-CONSTRAINT-COLLISION-ISOLATION.json'
       - 'capabilities/candidates/AXM-CAP-PHYSICS-CONSTRAINT-ACTIVITY-GATE.json'
@@ -41,6 +42,8 @@ jobs:
         run: node capabilities/physics-core/axis-locks-selftest.js
       - name: Verify bounded world-axis translation limits
         run: node capabilities/physics-core/axis-limits-selftest.js
+      - name: Verify fixed-direction translation locks
+        run: node capabilities/physics-core/direction-locks-selftest.js
       - name: Verify mixed constraint composer
         run: node capabilities/physics-core/constraint-composer-selftest.js
       - name: Verify constraint component collision isolation
