@@ -23,6 +23,7 @@
     "pontoon": {
       "profile": "sun-faded-plastic",
       "color": "plastic_yellow",
+      "finish": "comic-salvage",
       "layers": [
         {"type": "salt", "amount": 0.30, "scale": 8.0},
         {"type": "scuff", "amount": 0.28, "scale": 20.0},
@@ -32,6 +33,7 @@
     "deck": {
       "profile": "scratched-fiberglass",
       "color": "plastic_blue",
+      "finish": "comic-salvage",
       "layers": [
         {"type": "salt", "amount": 0.22, "scale": 7.0},
         {"type": "scuff", "amount": 0.35, "scale": 22.0},
@@ -41,6 +43,7 @@
     "bumper": {
       "profile": "weathered-rubber",
       "color": "salvage_red",
+      "finish": "comic-salvage",
       "layers": [
         {"type": "scuff", "amount": 0.38, "scale": 24.0},
         {"type": "dirt", "amount": 0.16, "scale": 5.0}
@@ -49,6 +52,7 @@
     "frame": {
       "profile": "weathered-aluminum",
       "color": "dark_metal",
+      "finish": "comic-salvage",
       "layers": [
         {"type": "salt", "amount": 0.24, "scale": 9.0},
         {"type": "scuff", "amount": 0.22, "scale": 26.0}
@@ -57,6 +61,7 @@
     "canopy": {
       "profile": "canvas",
       "color": "salvage_red",
+      "finish": "painted-adventure",
       "layers": [
         {"type": "sun-bleach", "amount": 0.22, "scale": 2.0},
         {"type": "dirt", "amount": 0.14, "scale": 5.0}
@@ -65,6 +70,7 @@
     "sail": {
       "profile": "sailcloth",
       "color": "cloth",
+      "finish": "painted-adventure",
       "layers": [
         {"type": "sun-bleach", "amount": 0.20, "scale": 2.0},
         {"type": "salt", "amount": 0.12, "scale": 8.0},
@@ -74,6 +80,7 @@
     "life_ring": {
       "profile": "sun-faded-plastic",
       "color": "salvage_red",
+      "finish": "comic-salvage",
       "layers": [
         {"type": "salt", "amount": 0.18, "scale": 8.0},
         {"type": "scuff", "amount": 0.26, "scale": 19.0},
@@ -83,6 +90,7 @@
     "duck": {
       "profile": "molded-plastic",
       "color": "plastic_yellow",
+      "finish": "painted-adventure",
       "layers": [
         {"type": "scuff", "amount": 0.14, "scale": 18.0},
         {"type": "salt", "amount": 0.06, "scale": 9.0}
@@ -91,6 +99,7 @@
     "duck_beak": {
       "profile": "molded-plastic",
       "rgb": [242, 86, 18],
+      "finish": "painted-adventure",
       "layers": [
         {"type": "scuff", "amount": 0.12, "scale": 18.0}
       ]
@@ -99,7 +108,7 @@
   "design": {
     "tone": ["funny", "weathered", "lovable", "improvised", "game-readable", "stylized-detailed"],
     "must_read_as": ["fragile survival boat", "two-player craft", "sun-worn plastic and fiberglass", "island salvage", "2.5d adventure game asset"],
-    "signature_details": ["yellow inflatable pontoons", "patchwork shade canopy", "smiley cloth sail", "life ring", "rubber duck", "cargo crate", "layered salt/scuff/wetness/dirt surface breakup"],
+    "signature_details": ["yellow inflatable pontoons", "patchwork shade canopy", "smiley cloth sail", "life ring", "rubber duck", "cargo crate", "layered salt/scuff/wetness/dirt surface breakup", "graphic game-finish value breakup"],
     "avoid": ["realistic military boat", "pirate ship", "flat image card", "non-animated render-only output", "uniform toy-plastic shading", "single-flat-color materials"]
   },
   "required_game_sockets": [
@@ -118,9 +127,10 @@
     "Blender source",
     "portable PBR textures",
     "preserved layer masks",
+    "explicit game finish receipt",
     "PNG proof",
     "MP4 motion proof",
     "manifest"
   ],
-  "truth_boundary": "This asset proves authored geometry, exportable animation, LOD/collision bodies, game attachment sockets, UC-authored portable PBR material maps and preserved authored layer masks. Layer masks are not mesh-curvature/contact/simulation evidence. It does not prove final game balance, engine controller integration, buoyancy simulation or final art-direction acceptance."
+  "truth_boundary": "This asset proves authored geometry, exportable animation, LOD/collision bodies, game attachment sockets, UC-authored portable PBR material maps, preserved authored layer masks and explicit map-level game finishes. Layer masks are not mesh-curvature/contact/simulation evidence and finishes are not cel lighting or outlines. It does not prove final game balance, engine controller integration, buoyancy simulation or final art-direction acceptance."
 }
