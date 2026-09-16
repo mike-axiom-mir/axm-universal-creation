@@ -5,6 +5,10 @@ import argparse
 import json
 from pathlib import Path
 
+from .finished_layered_game_materials import (
+    FINISH_BY_NAME,
+    generate_finished_layered_game_material,
+)
 from .layered_game_materials import generate_layered_game_material, layered_game_material_catalog
 from .rich_game_materials import PROFILE_BY_NAME, generate_rich_game_material, rich_game_material_catalog
 
@@ -25,8 +29,14 @@ def build_parser() -> argparse.ArgumentParser:
     create.add_argument("--seed", type=int, default=1)
     create.add_argument("--color", type=int, nargs=3, metavar=("R", "G", "B"))
 
-    layered = sub.add_parser("layer-create", help="compose an immutable layered material from a JSON recipe")
-    layered.add_argument("recipe", help="JSON recipe with base_profile/layers and optional size/seed/color")
+    layered = sub.add_parser(
+        "layer-create",
+        help="compose an immutable layered material from a JSON recipe; optional game finish is preserved",
+    )
+    layered.add_argument(
+        "recipe",
+        help="JSON recipe with base_profile/layers and optional size/seed/color/finish",
+    )
     layered.add_argument("path", help="new output directory; existing paths are never overwritten")
     return parser
 
@@ -36,6 +46,9 @@ def _load_layer_recipe(path: str) -> dict:
     data = json.loads(recipe_path.read_text(encoding="utf-8"))
     if not isinstance(data, dict) or data.get("schema") != "axm.layered-game-material-request/v0.1":
         raise ValueError("unsupported layered material request schema")
+    finish = data.get("finish", "realistic")
+    if finish not in FINISH_BY_NAME:
+        raise ValueError(f"unknown game finish: {finish}")
     return data
 
 
@@ -47,6 +60,11 @@ def main(argv: list[str] | None = None) -> int:
             result = rich_game_material_catalog()
         elif args.command == "layer-catalog":
             result = layered_game_material_catalog()
+            result = dict(result)
+            result["game_finishes"] = sorted(FINISH_BY_NAME)
+            result["finish_truth"] = (
+                "Optional finishes alter portable material maps only; they are not lighting, outlines, geometry detail or aesthetic acceptance."
+            )
         elif args.command == "create":
             color = tuple(args.color) if args.color is not None else None
             result = generate_rich_game_material(
@@ -56,14 +74,19 @@ def main(argv: list[str] | None = None) -> int:
             recipe = _load_layer_recipe(args.recipe)
             raw_color = recipe.get("color")
             color = tuple(raw_color) if raw_color is not None else None
-            result = generate_layered_game_material(
-                Path(args.path),
-                recipe["base_profile"],
-                recipe.get("layers", []),
+            finish = recipe.get("finish", "realistic")
+            kwargs = dict(
+                path=Path(args.path),
+                base_profile=recipe["base_profile"],
+                layers=recipe.get("layers", []),
                 size=int(recipe.get("size", 256)),
                 seed=int(recipe.get("seed", 1)),
                 color=color,
             )
+            if finish == "realistic":
+                result = generate_layered_game_material(**kwargs)
+            else:
+                result = generate_finished_layered_game_material(**kwargs, finish=finish)
     except (FileExistsError, OSError, ValueError, KeyError, json.JSONDecodeError) as exc:
         parser.error(str(exc))
     print(json.dumps(result, indent=2, sort_keys=True))
