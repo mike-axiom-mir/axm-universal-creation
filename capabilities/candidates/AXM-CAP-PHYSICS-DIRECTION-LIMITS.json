@@ -1,9 +1,9 @@
 {
   "id": "AXM-CAP-PHYSICS-DIRECTION-LIMITS",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "status": "candidate",
-  "purpose": "Provide deterministic translation-only min/max limits on one caller-selected fixed world-space direction projection while preserving slack motion inside the interval and free perpendicular translation.",
-  "handles": ["direction-limit", "projected-translation-limit", "fixed-direction-stop", "slack-direction-range"],
+  "purpose": "Provide deterministic translation-only min/max limits on one caller-selected fixed world-space direction projection while preserving slack motion inside the interval and free perpendicular translation, including one-step shared composer/activity/isolation integration.",
+  "handles": ["direction-limit", "projected-translation-limit", "fixed-direction-stop", "slack-direction-range", "shared-direction-limit-composition"],
   "input_contract": {
     "required": ["world", "limits"],
     "properties": {
@@ -16,7 +16,7 @@
     "kind": "axm.uc-direction-limit-step/v0.1",
     "contains": ["constrained world", "normalized directions and limits", "slack/boundary state", "pre/post solve receipts", "preserved donor-core evidence", "final checksum"]
   },
-  "dependencies": ["AXM-CAP-PHYSICS-FABRIC"],
+  "dependencies": ["AXM-CAP-PHYSICS-FABRIC", "AXM-CAP-PHYSICS-CONSTRAINT-COMPOSER", "AXM-CAP-PHYSICS-CONSTRAINT-ACTIVITY-GATE", "AXM-CAP-PHYSICS-CONSTRAINT-COLLISION-ISOLATION"],
   "implementation": {
     "kind": "DETERMINISTIC_SOURCE",
     "entrypoint": "capabilities/physics-core/uc-direction-limits.js",
@@ -29,7 +29,8 @@
     "direction does not rotate with bodies",
     "not a full prismatic or slider joint",
     "no angular inertia, rotating anchors, angular limits or motors",
-    "the standalone wrapper performs its own donor-core step and is not yet integrated into the shared composer/activity/isolation stack",
+    "the standalone step entrypoint still performs its own donor-core step; mixed-family callers must use the shared composer/activity/isolation path to preserve the one-step contract",
+    "component isolation is topology-wide even while a direction-limit interval is physically slack",
     "post-core projection can change positions after donor contact evidence was produced",
     "not scientific validation"
   ],
@@ -46,12 +47,22 @@
         "bounded solver iterations",
         "same-runtime deterministic replay"
       ]
+    },
+    {
+      "command": "node capabilities/physics-core/direction-limit-integration-selftest.js",
+      "proves": [
+        "direction limits are the seventh deterministic composer family around exactly one donor-core step",
+        "disabled direction limits are excluded by the activity gate",
+        "enabled direction-limit edges can join component isolation even while slack",
+        "caller collision groups are restored after the donor collision stage",
+        "same-runtime guarded replay remains deterministic"
+      ]
     }
   ],
   "root_fit": {
-    "truth": {"fit": true, "basis": "The capability is explicitly a fixed world-space projected translation range primitive and is not relabeled as a rotating prismatic joint."},
-    "agency": {"fit": true, "basis": "Callers choose direction, min/max bounds, activity state and bounded solver factors/iterations."},
-    "continuity": {"fit": true, "basis": "The donor core remains byte-for-byte preserved while this capability is added as an additive wrapper."},
-    "wisdom-before-speed": {"fit": true, "basis": "Shared-stack integration is left as a later explicit gate instead of chaining standalone wrappers and risking a second donor-core step."}
+    "truth": {"fit": true, "basis": "The capability remains explicitly a fixed world-space projected translation range primitive and is not relabeled as a rotating prismatic joint; slack topology and physical correction are kept distinct."},
+    "agency": {"fit": true, "basis": "Callers choose direction, min/max bounds, activity state, isolation request and bounded solver factors/iterations."},
+    "continuity": {"fit": true, "basis": "The donor core remains byte-for-byte preserved while existing direction-limit primitives are reused inside the shared one-step stack."},
+    "wisdom-before-speed": {"fit": true, "basis": "Shared integration calls the existing prepare/measure primitives around one donor-core step rather than chaining standalone wrappers and risking a second integration."}
   }
 }

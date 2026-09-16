@@ -43,7 +43,8 @@ const constraints = {
   distanceLimits: [{ id: 'range-tether', a: 'limit-root', b: 'limited', maxLength: 2 }],
   axisLocks: [{ id: 'vertical-lock', a: 'axis-root', b: 'slider', axis: 'y', offset: 0 }],
   axisLimits: [],
-  directionLocks: [{ id: 'diagonal-lock', a: 'direction-root', b: 'direction-slider', direction: { x: 1, y: 1 }, offset: Math.SQRT2 }]
+  directionLocks: [{ id: 'diagonal-lock', a: 'direction-root', b: 'direction-slider', direction: { x: 1, y: 1 }, offset: Math.SQRT2 }],
+  directionLimits: []
 };
 
 const validation = Composer.validate(mixedWorld(), constraints);
@@ -54,9 +55,10 @@ assert.equal(validation.distanceLimitCount, 1);
 assert.equal(validation.axisLockCount, 1);
 assert.equal(validation.axisLimitCount, 0);
 assert.equal(validation.directionLockCount, 1);
-assert.deepEqual(Composer.FAMILY_ORDER, ['translation-mounts', 'distance-joints', 'distance-limits', 'axis-locks', 'axis-limits', 'direction-locks']);
+assert.equal(validation.directionLimitCount, 0);
+assert.deepEqual(Composer.FAMILY_ORDER, ['translation-mounts', 'distance-joints', 'distance-limits', 'axis-locks', 'axis-limits', 'direction-locks', 'direction-limits']);
 assert.match(validation.warnings.join(' '), /not full prismatic joints/i);
-assert.match(validation.warnings.join(' '), /activity-gate and collision-isolation wrappers support all six composer families/i);
+assert.match(validation.warnings.join(' '), /activity-gate and collision-isolation wrappers support all seven composer families/i);
 
 const stepped = Composer.step(mixedWorld(), constraints, 0.1);
 assert.equal(stepped.world.stepIndex, 1, 'all active constraint families must share exactly one donor-core integration step');
@@ -66,14 +68,17 @@ assert.ok(stepped.composerDiagnostics.afterCore.maxDistanceLimitError > 1e-4);
 assert.ok(stepped.composerDiagnostics.afterCore.maxAxisLockError > 1e-4, 'gravity should create measurable locked-y drift during the shared core step');
 assert.equal(stepped.composerDiagnostics.afterCore.maxAxisLimitError, 0);
 assert.ok(stepped.composerDiagnostics.afterCore.maxDirectionLockError > 1e-4, 'gravity should create measurable fixed-direction drift during the shared core step');
+assert.equal(stepped.composerDiagnostics.afterCore.maxDirectionLimitError, 0);
 assert.ok(stepped.composerDiagnostics.after.maxMountError < 1e-8);
 assert.ok(stepped.composerDiagnostics.after.maxDistanceError < 1e-8);
 assert.ok(stepped.composerDiagnostics.after.maxDistanceLimitError < 1e-8);
 assert.ok(stepped.composerDiagnostics.after.maxAxisLockError < 1e-8);
 assert.equal(stepped.composerDiagnostics.after.maxAxisLimitError, 0);
 assert.ok(stepped.composerDiagnostics.after.maxDirectionLockError < 1e-8);
+assert.equal(stepped.composerDiagnostics.after.maxDirectionLimitError, 0);
 assert.ok(stepped.composerDiagnostics.after.maxAxisLockRelativeSpeed <= Composer.DEFAULT_VELOCITY_TOLERANCE);
 assert.ok(stepped.composerDiagnostics.after.maxDirectionLockRelativeSpeed <= Composer.DEFAULT_VELOCITY_TOLERANCE);
+assert.equal(stepped.composerDiagnostics.after.maxDirectionLimitRelativeSpeed, 0);
 const slider = stepped.world.bodies.find(item => item.id === 'slider');
 assert.ok(slider.position.x > 16.1, 'axis-lock integration must leave orthogonal x translation free');
 const directionInitial = stepped.composerDiagnostics.initial.directionLocks[0];
@@ -83,19 +88,20 @@ assert.equal(stepped.composerDiagnostics.contactEvidenceBasis, 'CORE_STAGE_BEFOR
 assert.equal(stepped.world.diagnostics.checksum, Core.checksum(stepped.world));
 assert.match(stepped.limitations.join(' '), /ordering bias/i);
 assert.match(stepped.limitations.join(' '), /not a full slider\/prismatic joint/i);
-assert.match(stepped.limitations.join(' '), /activity-gate and collision-isolation wrappers route all six families/i);
+assert.match(stepped.limitations.join(' '), /activity-gate and collision-isolation wrappers route all seven families/i);
 assert.match(stepped.limitations.join(' '), /not scientific validation/i);
 
 const bounded = Composer.step(mixedWorld(), constraints, 0.1, {
   prePasses: 999, postPasses: 999, mountPositionIterations: 999, distancePositionIterations: 999,
   limitPositionIterations: 999, axisLockPositionIterations: 999, axisLimitPositionIterations: 999,
-  directionLockPositionIterations: 999, earlyExit: false
+  directionLockPositionIterations: 999, directionLimitPositionIterations: 999, earlyExit: false
 });
 assert.equal(bounded.composerDiagnostics.preConfig.passes, Composer.MAX_FAMILY_PASSES);
 assert.equal(bounded.composerDiagnostics.postConfig.passes, Composer.MAX_FAMILY_PASSES);
 assert.equal(bounded.composerDiagnostics.preConfig.axisLocks.positionIterations, 32, 'nested axis-lock iterations must retain the bounded solver limit');
 assert.equal(bounded.composerDiagnostics.preConfig.axisLimits.positionIterations, 32, 'nested axis-limit iterations must retain the bounded solver limit');
 assert.equal(bounded.composerDiagnostics.preConfig.directionLocks.positionIterations, 32, 'nested direction-lock iterations must retain the bounded solver limit');
+assert.equal(bounded.composerDiagnostics.preConfig.directionLimits.positionIterations, 32, 'nested direction-limit iterations must retain the bounded solver limit');
 
 const adaptive = Composer.step(settledWorld(), constraints, 0.01, {
   prePasses: Composer.MAX_FAMILY_PASSES,
@@ -108,17 +114,18 @@ assert.equal(adaptive.composerDiagnostics.earlyExitTriggered, true);
 
 const simA = Composer.simulate(mixedWorld(), constraints, 30, 1 / 60);
 const simB = Composer.simulate(mixedWorld(), constraints, 30, 1 / 60);
-assert.equal(simA.checksum, simB.checksum, 'six-family-capable composition must replay deterministically in one JS runtime');
+assert.equal(simA.checksum, simB.checksum, 'seven-family-capable composition must replay deterministically in one JS runtime');
 assert.equal(simA.world.stepIndex, 30);
 assert.ok(simA.composerDiagnostics.after.maxAxisLockError < 1e-8);
 assert.equal(simA.composerDiagnostics.after.maxAxisLimitError, 0);
 assert.ok(simA.composerDiagnostics.after.maxDirectionLockError < 1e-8);
+assert.equal(simA.composerDiagnostics.after.maxDirectionLimitError, 0);
 
 const invalid = Composer.validate(mixedWorld(), {
-  mounts: [], distanceJoints: [], distanceLimits: [], axisLimits: [], directionLocks: [],
+  mounts: [], distanceJoints: [], distanceLimits: [], axisLimits: [], directionLocks: [], directionLimits: [],
   axisLocks: [{ id: 'bad-axis', a: 'missing', b: 'slider', axis: 'x', offset: 0 }]
 });
 assert.equal(invalid.ok, false);
 assert.match(invalid.errors.join(' '), /body not found/i);
 
-console.log('UC Constraint Composer selftest: PASS (single integration, six-family contract, axis/direction orthogonal freedom, bounded convergence and deterministic replay)');
+console.log('UC Constraint Composer selftest: PASS (single integration, seven-family contract, axis/direction orthogonal freedom, bounded convergence and deterministic replay)');

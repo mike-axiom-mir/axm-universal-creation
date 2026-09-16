@@ -59,3 +59,5 @@ jobs:
         run: node capabilities/physics-core/axis-limit-integration-selftest.js
       - name: Verify fixed-direction lock activity and isolation integration
         run: node capabilities/physics-core/direction-lock-integration-selftest.js
+      - name: Verify fixed-direction limit composer gate and isolation integration
+        run: node capabilities/physics-core/direction-limit-integration-selftest.js

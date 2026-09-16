@@ -68,7 +68,7 @@ assert.match(invalidDisabled.errors.join(' '), /body not found/i);
 const replayA = Gate.step(overlapWorld(), active, 1 / 60, { isolateCollisions: true });
 const replayB = Gate.step(overlapWorld(), active, 1 / 60, { isolateCollisions: true });
 assert.equal(Core.checksum(replayA.world), Core.checksum(replayB.world), 'guarded isolated direction-lock path must replay deterministically in one JS runtime');
-assert.match(replayA.limitations.join(' '), /fixed-direction locks remain fixed in world space/i);
+assert.match(replayA.limitations.join(' '), /fixed-direction locks and limits remain fixed in world space/i);
 assert.match(replayA.limitations.join(' '), /not scientific validation/i);
 
 console.log('UC Direction Lock Integration selftest: PASS (activity filtering, component isolation, one-step composition, group restoration and deterministic replay)');
