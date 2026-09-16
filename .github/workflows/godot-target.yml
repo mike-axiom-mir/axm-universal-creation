@@ -1,0 +1,48 @@
+name: Actual Godot target verification
+on:
+  pull_request:
+    paths:
+      - 'src/axm_uc/**'
+      - 'capabilities/live/**'
+      - 'tests/test_godot_target.py'
+      - 'tools/godot_target_demo.py'
+      - '.github/workflows/godot-target.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  godot-target:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install optional pinned Godot and verify official checksums
+        working-directory: ${{ runner.temp }}
+        run: |
+          curl --fail --location --retry 2 -O https://github.com/godotengine/godot/releases/download/4.4.1-stable/Godot_v4.4.1-stable_linux.x86_64.zip
+          curl --fail --location --retry 2 -O https://github.com/godotengine/godot/releases/download/4.4.1-stable/SHA512-SUMS.txt
+          sha512sum --check --ignore-missing SHA512-SUMS.txt
+          unzip -q Godot_v4.4.1-stable_linux.x86_64.zip
+          chmod +x Godot_v4.4.1-stable_linux.x86_64
+          echo "AXM_GODOT=${RUNNER_TEMP}/Godot_v4.4.1-stable_linux.x86_64" >> "$GITHUB_ENV"
+          sudo apt-get update -qq
+          sudo apt-get install -y xvfb libgl1-mesa-dri libxrandr2 libxinerama1 libxcursor1 libxi6 libasound2t64
+      - name: Run real import, skin, playback, renders, failures and fresh observers
+        env:
+          PYTHONPATH: src:tests
+          LIBGL_ALWAYS_SOFTWARE: '1'
+        run: xvfb-run -a python -m unittest test_godot_target -v
+      - name: Preserve reviewable static and animated target evidence
+        env:
+          LIBGL_ALWAYS_SOFTWARE: '1'
+        run: xvfb-run -a python tools/godot_target_demo.py "${RUNNER_TEMP}/godot-evidence"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: godot-target-evidence
+          path: ${{ runner.temp }}/godot-evidence
+          if-no-files-found: warn
+          retention-days: 30

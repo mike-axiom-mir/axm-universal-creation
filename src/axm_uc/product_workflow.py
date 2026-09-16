@@ -142,8 +142,23 @@ def compile_draft(root, inputs):
     crew_id, run_id = _id(inputs.get("crew_id", "products"), "crew_id"), _id(inputs.get("run_id"), "run_id")
     steps, artifacts = [], []
     production = inputs.get("production", {})
-    if not isinstance(production, dict) or set(production) - {"uv", "bake", "target", "deformation"}:
-        raise ValueError("production accepts uv, bake, target and deformation contracts")
+    if not isinstance(production, dict) or set(production) - {"uv", "bake", "target", "targets", "deformation"}:
+        raise ValueError("production accepts uv, bake, target/targets and deformation contracts")
+    if "target" in production and "targets" in production:
+        raise ValueError("use target or targets, not both")
+    targets = production.get("targets", [production["target"]] if "target" in production else [])
+    if not isinstance(targets, list) or len(targets) > 4 or ("targets" in production and not targets):
+        raise ValueError("targets requires 1..4 explicit engine contracts")
+    engines = []
+    for target in targets:
+        if not isinstance(target, dict):
+            raise ValueError("each target requires an engine options object")
+        engine = target.get("engine", "blender-cycles")
+        if engine not in {"blender-cycles", "godot"}:
+            raise ValueError("No verified adapter for target " + str(engine) + ". Unity/Unreal require their own editor integration and real execution; Blender/Godot evidence cannot certify them.")
+        if engine in engines:
+            raise ValueError("duplicate target engine")
+        engines.append(engine)
     if production and kind not in {"static-3d", "animated-3d"}:
         raise ValueError("mesh production requires a 3D product")
     if kind == "animated-3d" and set(production) & {"uv", "bake"}:
@@ -159,6 +174,13 @@ def compile_draft(root, inputs):
         if action_kind == "generate-game-material":
             steps[-1]["skill_id"] = "surface-authoring"
         artifacts.append(destination)
+    def add_targets(asset):
+        for options, engine in zip(targets, engines):
+            suffix = "-" + engine if "targets" in production else ""
+            destination = "targets/" + engine if "targets" in production else "target"
+            action = "validate-blender-target" if engine == "blender-cycles" else "validate-godot-target"
+            add("target-import-render" + suffix, "software-qa-playtest", action, destination,
+                asset=asset, options=options)
     parent = None
     if inputs.get("refines"):
         previous = _target(root, inputs["refines"])
@@ -214,18 +236,14 @@ def compile_draft(root, inputs):
             for light in ("studio", "garage"):
                 add("preview-"+light, "graphics-engineer", "render-asset-preview", "previews/"+light+".png",
                     asset=final_asset, options={**options, "lighting": light})
-            if "target" in production:
-                add("target-import-render", "software-qa-playtest", "validate-blender-target", "target",
-                    asset=final_asset, options=production["target"])
+            add_targets(final_asset)
     elif kind == "animated-3d":
         if not inputs.get("asset"):
             raise ValueError("animated recipe requires an authored rigged GLB asset; it does not invent a rig")
         add("animation-source", "technical-artist", "copy-animation-asset", "asset.glb", asset=inputs["asset"])
         add("deformation-check", "technical-artist", "inspect-deformation", "checks/deformation.json",
             asset=str(path/"asset.glb"), policy=production.get("deformation", {}))
-        if "target" in production:
-            add("target-import-render", "software-qa-playtest", "validate-blender-target", "target",
-                asset=str(path/"asset.glb"), options=production["target"])
+        add_targets(str(path/"asset.glb"))
     else:
         project_type = "python" if kind == "software" else "static-web"
         action = "python-project" if kind == "software" else "static-web-project"
@@ -308,9 +326,12 @@ def _stage_observations(kind, plan, record):
         if identity == "rig-deformation" and "deformation-check" in observed:
             status, station_ids = "PARTIAL", ["animation-source", "deformation-check"]
             scope = "Supplied rig, authored keys plus subdivisions, weight validity, collapse/stretch and declared loops/contacts"
-        if identity in {"target-validation", "motion-inspection"} and "target-import-render" in observed:
-            status, station_ids = "PARTIAL", ["target-import-render"]
-            scope = "Fresh Blender/Cycles imports and renders; pose/triangle comparison and image decode. Gameplay and device performance remain separate."
+        if identity in {"target-validation", "motion-inspection"}:
+            station_ids = sorted(s for s in observed if s.startswith("target-import-render"))
+            if station_ids:
+                status = "PARTIAL"
+                actions = [s["action"]["kind"] for s in record["plan"]["stations"] if s["id"] in station_ids]
+                scope = "Actual target observations: " + ", ".join(actions) + "; posed geometry, texture decode and renders; optional stepped playback. Gameplay, artistic acceptance and device performance remain separate."
         if identity == "implementation" and "implementation" in observed:
             status, station_ids = "OBSERVED_BOUNDED", ["implementation"]
             scope = "Supplied source published and checked; generated source is not semantic acceptance"

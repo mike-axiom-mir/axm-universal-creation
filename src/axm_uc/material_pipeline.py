@@ -16,10 +16,10 @@ from .procedural_3d import build_glb, publish_glb, verify_glb
 from .software_glb_preview import publish_glb_preview, render_glb_preview
 from .material_uv_evidence import inspect_material_uv_density
 from .game_pose_runtime import GamePoseAsset
-from . import mesh_production
+from . import mesh_production, godot_target
 
 KINDS = {"generate-game-material", "inspect-game-material", "bind-textured-asset",
-         "inspect-textured-asset", "render-asset-preview"} | mesh_production.KINDS
+         "inspect-textured-asset", "render-asset-preview"} | mesh_production.KINDS | godot_target.KINDS
 
 
 def _target(root, value):
@@ -140,6 +140,8 @@ def asset_quality(root, inputs):
 
 
 def validate_station(root, kind, inputs):
+    if kind in godot_target.KINDS:
+        return godot_target.validate_station(root, kind, inputs)
     if kind in mesh_production.KINDS:
         return mesh_production.validate_station(root, kind, inputs)
     if kind not in KINDS or not isinstance(inputs, dict):
@@ -158,6 +160,8 @@ def validate_station(root, kind, inputs):
 
 
 def run_station(root, kind, inputs):
+    if kind in godot_target.KINDS:
+        return godot_target.run_station(root, kind, inputs)
     if kind in mesh_production.KINDS:
         return mesh_production.run_station(root, kind, inputs)
     validate_station(root, kind, inputs)
@@ -177,6 +181,8 @@ def run_station(root, kind, inputs):
 
 
 def observe_station(root, kind, inputs):
+    if kind in godot_target.KINDS:
+        return godot_target.observe_station(root, kind, inputs)
     if kind in mesh_production.KINDS:
         return mesh_production.observe_station(root, kind, inputs)
     validate_station(root, kind, inputs)

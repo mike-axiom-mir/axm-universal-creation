@@ -1,12 +1,16 @@
 {
   "id": "AXM-CAP-MESH-PRECISION-CUTTER",
-  "version": "0.2.0",
+  "version": "0.4.0",
   "status": "live",
-  "purpose": "Cut bounded subtractive features directly into one observed existing rigid static UC GLB rectangular-prism mesh, preserving exact supported material factors and revalidating topology and published GLB geometry.",
+  "purpose": "Cut bounded subtractive features directly into observed existing rigid static UC GLB rectangular-prism meshes, including rotated stock and hash-linked cumulative fabrication chains that recompile prior state before appending another verified cut.",
   "handles": [
     "mesh-precision-cut-3d",
     "mesh-laser-through-hole",
-    "mesh-laser-box-notch"
+    "mesh-laser-box-notch",
+    "mesh-laser-oriented-hole",
+    "mesh-laser-oriented-notch",
+    "mesh-fabrication-chain",
+    "mesh-laser-cut-chain"
   ],
   "input_contract": {
     "required": [
@@ -17,8 +21,11 @@
     "properties": {
       "source_path": "existing ordinary .glb creation outside protected live machine body",
       "path": "distinct target .glb path outside protected live machine body",
-      "specification": "closed axm.mesh-precision-cutter/v0.2 recipe using round-through-hole or box-notch",
+      "specification": "closed v0.2 axis-aligned cut recipe, v0.3 oriented cut recipe, or axm.mesh-fabrication-chain/v0.4 cumulative box-notch recipe",
       "expected_source_sha256": "optional exact lowercase SHA-256 binding, with optional sha256: prefix",
+      "lineage_path": "v0.4 optional prior fabrication-lineage JSON receipt when appending to a previous chain output",
+      "receipt_path": "v0.4 optional distinct output JSON receipt path; defaults beside the output GLB",
+      "expected_lineage_sha256": "v0.4 optional exact prior lineage SHA-256 binding",
       "replace": "optional boolean; defaults false"
     }
   },
@@ -26,10 +33,13 @@
     "kind": "validated-existing-mesh-precision-cut-glb",
     "contains": [
       "exact source GLB SHA-256 and source byte count",
-      "source closed edge-topology evidence before cutting",
-      "measured rectangular-prism recognition and volume evidence",
-      "cut recipe digest bound to exact source digest",
-      "kerf-aware round-hole or box-notch metrics",
+      "source closed edge-topology evidence before initial cutting",
+      "measured rectangular-prism frame/corner/volume evidence",
+      "right-handed orthonormal source-frame axes and frame digest for rotated stock",
+      "cut recipe digests bound to exact source/frame state",
+      "v0.4 hash-linked cumulative cut/step lineage and final receipt digest",
+      "v0.4 deterministic reconstruction of the prior cumulative output before any resume append",
+      "kerf-aware cut metrics and cumulative cut count",
       "output closed edge-topology evidence before publication",
       "existing procedural-3D post-publication GLB validation",
       "explicit unsupported/not-tested boundaries"
@@ -40,9 +50,13 @@
     "AXM-CAP-GENERATE-PROCEDURAL-3D"
   ],
   "relationships": [
-    "reads actual existing GLB triangles through UC's static geometry decoder before calculating a cut",
-    "reuses UC seam-weld topology evidence before and after surgery",
-    "reuses the v0.1 cutter geometry constructors for the supported cut shapes",
+    "reads actual existing GLB triangles through UC's static geometry decoder before calculating the first cut",
+    "reuses UC seam-weld topology evidence before and after fabrication",
+    "derives an orthonormal local frame from the observed eight stock corners instead of assuming world-axis alignment",
+    "binds an explicit world-space fabrication axis to exactly one proven source-frame axis",
+    "v0.4 preserves that proven source frame as lineage instead of relaxing rectangular-stock recognition after the first subtraction",
+    "v0.4 verifies prior receipt hashes, prior output digest and deterministic prior-output reconstruction before appending new cuts",
+    "v0.4 builds cumulative non-overlapping box notches from the proven original stock state and emits a new append-only receipt",
     "reuses the existing deterministic surface-to-GLB publisher and validator",
     "keeps source bytes separate from the new output and refuses in-place cutting"
   ],
@@ -50,31 +64,32 @@
   "implementation": {
     "kind": "DETERMINISTIC_SOURCE",
     "entrypoint": "builtin:precision_cutter",
-    "source": "src/axm_uc/mesh_precision_cutter.py"
+    "source": "src/axm_uc/mesh_fabrication_chain.py"
   },
   "limitations": [
-    "v0.2 proves the existing-mesh path on exactly one rigid static closed consistently oriented axis-aligned rectangular-prism primitive. General arbitrary-mesh boolean surgery remains unavailable.",
-    "Only principal-axis round through-holes and open box notches are supported. Rotated stock, multiple primitives/components, skins, animation, morphs, UVs, textures, tangents, vertex colours, joints and other extra vertex attributes are rejected rather than silently discarded.",
-    "Supported PBR colour/emissive factors must be exactly representable by the existing 8-bit colour surface grammar; unsupported material features are rejected.",
-    "Edge-manifold topology is checked, but self-intersection, visual quality, structural strength, real manufacturing behavior and host-engine import are not proven."
+    "v0.4 cumulative chaining is bounded to at most 32 non-overlapping/non-touching box-notch cuts on one proven fabrication axis of one rigid rectangular-prism root stock. Round-hole chaining and cross-axis chains remain unavailable.",
+    "v0.3 single cuts still support round through-holes and box notches on rotated/transformed rectangular stock; arbitrary free-angle cutters relative to the proven stock frame remain rejected.",
+    "Multiple primitives/components, skins, animation, morphs, UVs, textures, tangents, vertex colours, joints and unsupported material state remain rejected rather than silently discarded.",
+    "A v0.4 lineage receipt is content-hashed and exact-output-bound, but it is not a cryptographic authorship signature or an external trust anchor against a coordinated rewrite of both receipt and artifact.",
+    "General arbitrary-mesh boolean surgery remains unavailable. Edge-manifold topology is checked, but self-intersection, visual quality, structural strength, real manufacturing behavior and host-engine import are not proven."
   ],
   "persistent_state": null,
   "root_fit": {
     "truth": {
       "fit": true,
-      "basis": "The exact source bytes, topology, measured stock, cut parameters, output topology, output digest and unsupported boundaries are explicit."
+      "basis": "Exact source bytes, source frame, cumulative cut recipes, parent/child step hashes, deterministic prior-output reconstruction, output topology, output digest, receipt digest and unsupported boundaries remain inspectable."
     },
     "agency": {
       "fit": true,
-      "basis": "The caller chooses the existing source, output path, cut axis, location, shape, dimensions, kerf and replacement decision; no design intent is silently selected."
+      "basis": "The caller chooses source, output, fabrication axis, cut locations/dimensions/kerf, resume receipt and replacement decision; the machine refuses unsupported overlap, cross-axis and freeform requests instead of inventing geometry."
     },
     "continuity": {
       "fit": true,
-      "basis": "The source is read-only, in-place mutation is rejected, output publication reuses UC atomic GLB behavior, and protected machine-body paths remain unavailable."
+      "basis": "Source artifacts are read-only, resume receipts are append-only, prior output is deterministically reconstructed before continuation, in-place mutation is rejected and output/receipt publication retains rollback behavior."
     },
     "wisdom-before-speed": {
       "fit": true,
-      "basis": "The cutter rejects unsupported source structure and material state, proves closed source topology and rectangular-prism scope before subtraction, then proves closed output topology and published GLB structure."
+      "basis": "The cutter proves initial stock topology/frame, validates every lineage hash and exact prior output on resume, rejects overlapping cumulative cuts, then proves closed output topology and published GLB structure before claiming a validated chain."
     }
   }
 }
