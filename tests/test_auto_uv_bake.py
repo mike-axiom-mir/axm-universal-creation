@@ -19,6 +19,20 @@ def uvless_panel():
     return spec
 
 
+def hard_fold():
+    return {
+        "schema": "axm.surface-3d/v0.1",
+        "name": "hard fold",
+        "primitives": [{
+            "id": "paint",
+            "positions": [[0, 0, 0], [1, 0, 0], [0, 1, 0], [0, 0, 1]],
+            "normals": [[0, 0, 1]] * 4,
+            "indices": [0, 1, 2, 0, 2, 3],
+            "material": {"color": "#ffffff", "metallic": 1, "roughness": 1},
+        }],
+    }
+
+
 class AutoUvBakeTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
@@ -48,7 +62,7 @@ class AutoUvBakeTests(unittest.TestCase):
     def call(self, **request):
         return operate_product_workflow(self.root, request)
 
-    def test_uvless_static_asset_gets_real_atlas_receipt_and_stays_review_required(self):
+    def test_uvless_static_asset_groups_planar_faces_into_one_real_chart(self):
         result = self.call(**self.request())
         self.assertEqual(result["status"], "DRAFT_BUILT_REVIEW_REQUIRED", result)
         folder = self.root / "creations/auto/auto-bake"
@@ -56,14 +70,45 @@ class AutoUvBakeTests(unittest.TestCase):
         self.assertTrue((folder / "atlases/paint-base_color.png").is_file())
         receipt = json.loads((folder / "receipt.json").read_text())
         self.assertEqual(receipt["schema"], "axm.auto-unwrap-bake/v1")
-        self.assertEqual(receipt["method"], "triangle-chart-grid-v1")
-        self.assertTrue(receipt["groups"][0]["overlap_free_by_construction"])
-        self.assertEqual(receipt["groups"][0]["padding_px"], 4)
+        self.assertEqual(receipt["method"], "connected-planar-chart-grid-v2")
+        group = receipt["groups"][0]
+        self.assertTrue(group["overlap_free_by_construction"])
+        self.assertEqual(group["triangle_count"], 2)
+        self.assertEqual(group["chart_count"], 1)
+        self.assertEqual(group["baked_vertices"], 4)
+        self.assertEqual(group["saved_vertex_duplicates_vs_triangle_fallback"], 2)
+        self.assertEqual(group["padding_px"], 4)
+        self.assertEqual(group["charts"][0]["triangles"], [0, 1])
         self.assertEqual(receipt["visual_quality"], "NOT_TESTED")
         self.assertEqual(result["manifest"]["visual_quality"], "NOT_TESTED")
         self.assertEqual(result["manifest"]["professional_acceptance"], "NOT_TESTED")
         verified = self.call(operation="verify", path=result["delivery"])
         self.assertEqual(verified["status"], "PASS", verified)
+
+    def test_hard_fold_remains_two_charts_at_default_seam_angle(self):
+        request = self.request("creations/fold", "fold-1")
+        request["specification"] = hard_fold()
+        result = self.call(**request)
+        self.assertEqual(result["status"], "DRAFT_BUILT_REVIEW_REQUIRED", result)
+        receipt = json.loads((self.root / "creations/fold/auto-bake/receipt.json").read_text())
+        group = receipt["groups"][0]
+        self.assertEqual(group["triangle_count"], 2)
+        self.assertEqual(group["chart_count"], 2)
+        self.assertEqual([row["triangles"] for row in group["charts"]], [[0], [1]])
+        self.assertEqual(group["seam_angle_degrees"], 35.0)
+
+    def test_seam_angle_is_bounded_and_receipted(self):
+        request = self.request("creations/angle", "angle-1")
+        request["unwrap_bake"]["seam_angle_degrees"] = 12
+        result = self.call(**request)
+        self.assertEqual(result["status"], "DRAFT_BUILT_REVIEW_REQUIRED", result)
+        receipt = json.loads((self.root / "creations/angle/auto-bake/receipt.json").read_text())
+        self.assertEqual(receipt["options"]["seam_angle_degrees"], 12.0)
+        bad = self.request("creations/bad-angle", "bad-angle-1")
+        bad["unwrap_bake"]["seam_angle_degrees"] = 90
+        result = self.call(**bad)
+        self.assertEqual(result["status"], "HOLD_FAILED_CHECK", result)
+        self.assertFalse((self.root / "creations/bad-angle/auto-bake").exists())
 
     def test_existing_supplied_uv_route_is_preserved(self):
         request = self.request("creations/supplied", "supplied-1")
