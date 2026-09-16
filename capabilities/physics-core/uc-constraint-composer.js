@@ -5,11 +5,12 @@ const DistanceJoints = require('./uc-distance-joints.js');
 const DistanceLimits = require('./uc-distance-limits.js');
 const TranslationMounts = require('./uc-translation-mounts.js');
 const AxisLocks = require('./uc-axis-locks.js');
+const AxisLimits = require('./uc-axis-limits.js');
 
-const VERSION = '0.4.0';
+const VERSION = '0.5.0';
 const STEP_SCHEMA = 'axm.uc-constraint-composer-step/v0.1';
 const SIMULATION_SCHEMA = 'axm.uc-constraint-composer-simulation/v0.1';
-const FAMILY_ORDER = Object.freeze(['translation-mounts', 'distance-joints', 'distance-limits', 'axis-locks']);
+const FAMILY_ORDER = Object.freeze(['translation-mounts', 'distance-joints', 'distance-limits', 'axis-locks', 'axis-limits']);
 const MAX_FAMILY_PASSES = 16;
 const DEFAULT_POSITION_TOLERANCE = 1e-8;
 const DEFAULT_VELOCITY_TOLERANCE = 1e-8;
@@ -30,7 +31,8 @@ function normalizeConstraints(world, constraints) {
     mounts: TranslationMounts.normalizeMounts(constraints.mounts || [], world),
     distanceJoints: DistanceJoints.normalizeJoints(constraints.distanceJoints || [], world),
     distanceLimits: DistanceLimits.normalizeLimits(constraints.distanceLimits || [], world),
-    axisLocks: AxisLocks.normalizeLocks(constraints.axisLocks || [], world)
+    axisLocks: AxisLocks.normalizeLocks(constraints.axisLocks || [], world),
+    axisLimits: AxisLimits.normalizeLimits(constraints.axisLimits || [], world)
   };
 }
 
@@ -65,6 +67,10 @@ function stageOptions(options, stage) {
     axisLocks: {
       positionIterations: iterationCount(options[post ? 'postAxisLockPositionIterations' : 'axisLockPositionIterations'], post ? 2 : 4),
       velocityIterations: iterationCount(options[post ? 'postAxisLockVelocityIterations' : 'axisLockVelocityIterations'], post ? 1 : 2)
+    },
+    axisLimits: {
+      positionIterations: iterationCount(options[post ? 'postAxisLimitPositionIterations' : 'axisLimitPositionIterations'], post ? 2 : 4),
+      velocityIterations: iterationCount(options[post ? 'postAxisLimitVelocityIterations' : 'axisLimitVelocityIterations'], post ? 1 : 2)
     }
   };
 }
@@ -98,30 +104,40 @@ function axisLockRelativeSpeed(world, lock) {
   return Math.abs(finite(b.velocity && b.velocity[lock.axis], 0) - finite(a.velocity && a.velocity[lock.axis], 0));
 }
 
+function axisLimitRelativeSpeed(world, limit) {
+  if (!limit.enabled) return 0;
+  const violation = AxisLimits.velocityViolation(world, limit);
+  return violation.active ? Math.abs(violation.relativeSpeed) : 0;
+}
+
 function measure(world, normalized) {
   const mounts = normalized.mounts.map(mount => TranslationMounts.measureMount(world, mount));
   const distanceJoints = normalized.distanceJoints.map(joint => DistanceJoints.measureJoint(world, joint));
   const distanceLimits = normalized.distanceLimits.map(limit => DistanceLimits.measureLimit(world, limit));
   const axisLocks = normalized.axisLocks.map(lock => AxisLocks.measureLock(world, lock));
+  const axisLimits = normalized.axisLimits.map(limit => AxisLimits.measureLimit(world, limit));
   return {
     mounts,
     distanceJoints,
     distanceLimits,
     axisLocks,
+    axisLimits,
     maxMountError: round(mounts.reduce((max, item) => Math.max(max, item.errorDistance), 0)),
     maxDistanceError: round(distanceJoints.reduce((max, item) => Math.max(max, Math.abs(item.error)), 0)),
     maxDistanceLimitError: round(distanceLimits.reduce((max, item) => item.enabled ? Math.max(max, Math.abs(item.error)) : max, 0)),
     maxAxisLockError: round(axisLocks.reduce((max, item, index) => normalized.axisLocks[index].enabled ? Math.max(max, Math.abs(item.error)) : max, 0)),
+    maxAxisLimitError: round(axisLimits.reduce((max, item, index) => normalized.axisLimits[index].enabled ? Math.max(max, Math.abs(item.error)) : max, 0)),
     maxMountRelativeSpeed: round(normalized.mounts.reduce((max, mount) => Math.max(max, mountRelativeSpeed(world, mount)), 0)),
     maxDistanceRelativeSpeed: round(normalized.distanceJoints.reduce((max, joint) => Math.max(max, distanceRelativeSpeed(world, joint)), 0)),
     maxDistanceLimitRelativeSpeed: round(normalized.distanceLimits.reduce((max, limit) => Math.max(max, distanceLimitRelativeSpeed(world, limit)), 0)),
-    maxAxisLockRelativeSpeed: round(normalized.axisLocks.reduce((max, lock) => Math.max(max, axisLockRelativeSpeed(world, lock)), 0))
+    maxAxisLockRelativeSpeed: round(normalized.axisLocks.reduce((max, lock) => Math.max(max, axisLockRelativeSpeed(world, lock)), 0)),
+    maxAxisLimitRelativeSpeed: round(normalized.axisLimits.reduce((max, limit) => Math.max(max, axisLimitRelativeSpeed(world, limit)), 0))
   };
 }
 
 function convergence(measurement, stageConfig) {
-  const maxPositionError = round(Math.max(measurement.maxMountError, measurement.maxDistanceError, measurement.maxDistanceLimitError, measurement.maxAxisLockError));
-  const maxVelocityError = round(Math.max(measurement.maxMountRelativeSpeed, measurement.maxDistanceRelativeSpeed, measurement.maxDistanceLimitRelativeSpeed, measurement.maxAxisLockRelativeSpeed));
+  const maxPositionError = round(Math.max(measurement.maxMountError, measurement.maxDistanceError, measurement.maxDistanceLimitError, measurement.maxAxisLockError, measurement.maxAxisLimitError));
+  const maxVelocityError = round(Math.max(measurement.maxMountRelativeSpeed, measurement.maxDistanceRelativeSpeed, measurement.maxDistanceLimitRelativeSpeed, measurement.maxAxisLockRelativeSpeed, measurement.maxAxisLimitRelativeSpeed));
   return {
     converged: maxPositionError <= stageConfig.positionTolerance && maxVelocityError <= stageConfig.velocityTolerance,
     maxPositionError,
@@ -146,7 +162,9 @@ function solveFamilies(world, normalized, stageConfig) {
       distanceLimitPositionReceiptCount: 0,
       distanceLimitVelocityReceiptCount: 0,
       axisLockPositionReceiptCount: 0,
-      axisLockVelocityReceiptCount: 0
+      axisLockVelocityReceiptCount: 0,
+      axisLimitPositionReceiptCount: 0,
+      axisLimitVelocityReceiptCount: 0
     };
     if (normalized.mounts.length) {
       const prepared = TranslationMounts.prepareWorld(out, normalized.mounts, stageConfig.mounts);
@@ -163,6 +181,10 @@ function solveFamilies(world, normalized, stageConfig) {
     if (normalized.axisLocks.length) {
       const prepared = AxisLocks.prepareWorld(out, normalized.axisLocks, stageConfig.axisLocks);
       out = prepared.world; summary.axisLockPositionReceiptCount = prepared.positionReceipts.length; summary.axisLockVelocityReceiptCount = prepared.velocityReceipts.length;
+    }
+    if (normalized.axisLimits.length) {
+      const prepared = AxisLimits.prepareWorld(out, normalized.axisLimits, stageConfig.axisLimits);
+      out = prepared.world; summary.axisLimitPositionReceiptCount = prepared.positionReceipts.length; summary.axisLimitVelocityReceiptCount = prepared.velocityReceipts.length;
     }
     summary.after = measure(out, normalized);
     summary.convergence = convergence(summary.after, stageConfig);
@@ -194,21 +216,22 @@ function refreshDiagnostics(world, coreDiagnostics, beforeCoreDiagnostics) {
 function validate(world, constraints) {
   const core = Core.validate(world);
   const errors = (core.errors || []).slice();
-  let normalized = { mounts: [], distanceJoints: [], distanceLimits: [], axisLocks: [] };
+  let normalized = { mounts: [], distanceJoints: [], distanceLimits: [], axisLocks: [], axisLimits: [] };
   if (core.ok) {
     try { normalized = normalizeConstraints(world, constraints); } catch (error) { errors.push(error.message); }
   }
   const warnings = [
-    'Constraint families execute in fixed deterministic order: translation mounts, then distance joints, then distance limits, then axis locks.',
+    'Constraint families execute in fixed deterministic order: translation mounts, then distance joints, then distance limits, then axis locks, then axis limits.',
     'Distance-limit range interiors remain slack; only violated position bounds or outward-moving active boundaries contribute residuals and correction.',
     'Axis locks preserve one world-space x or y offset while orthogonal translation remains intentionally free; they are not full prismatic joints.',
+    'Axis-limit range interiors remain slack on one world-space x or y offset; only violated position bounds or outward-moving active boundaries contribute residuals and correction.',
     'The composer combines existing translation-only constraint families around one donor-core integration step; it does not add angular joint semantics.',
     'Convergence-aware early exit is tolerance-based and requires both position and constrained relative-velocity residuals to satisfy caller-visible thresholds; it is not proof of global convergence.',
     'Conflicting constraints can retain residual error because this bounded composer does not claim a globally convergent rigid-body constraint solution.',
     'Post-core projection can move bodies after contact evidence was generated; core contacts remain explicitly tied to the pre-post-stabilization core stage.',
     'The imported donor source remains untouched.'
   ];
-  if (!normalized.mounts.length && !normalized.distanceJoints.length && !normalized.distanceLimits.length && !normalized.axisLocks.length) warnings.push('No constraints were supplied; the composer would reduce to one donor-core step.');
+  if (!normalized.mounts.length && !normalized.distanceJoints.length && !normalized.distanceLimits.length && !normalized.axisLocks.length && !normalized.axisLimits.length) warnings.push('No constraints were supplied; the composer would reduce to one donor-core step.');
   return {
     ok: errors.length === 0,
     errors,
@@ -216,6 +239,7 @@ function validate(world, constraints) {
     distanceJointCount: normalized.distanceJoints.length,
     distanceLimitCount: normalized.distanceLimits.length,
     axisLockCount: normalized.axisLocks.length,
+    axisLimitCount: normalized.axisLimits.length,
     warnings
   };
 }
@@ -255,20 +279,21 @@ function step(world, constraints, dt, options) {
     },
     core: { diagnostics: clone(coreStep.diagnostics), events: clone(coreStep.events), worldBeforePostCompositeStabilization: clone(coreStep.world) },
     evidence: [
-      normalized.mounts.length + ' translation mount(s), ' + normalized.distanceJoints.length + ' distance joint(s), ' + normalized.distanceLimits.length + ' distance limit(s), and ' + normalized.axisLocks.length + ' axis lock(s) normalized once from the caller input state',
+      normalized.mounts.length + ' translation mount(s), ' + normalized.distanceJoints.length + ' distance joint(s), ' + normalized.distanceLimits.length + ' distance limit(s), ' + normalized.axisLocks.length + ' axis lock(s), and ' + normalized.axisLimits.length + ' axis limit(s) normalized once from the caller input state',
       'Constraint family order fixed as ' + FAMILY_ORDER.join(' -> '),
       pre.passesExecuted + ' of ' + preConfig.passes + ' bounded pre-core family pass(es) executed',
       'AXM Physics Core v' + Core.VERSION + ' executed exactly one collision/integration step',
       post.passesExecuted + ' of ' + postConfig.passes + ' bounded post-core family pass(es) executed without a second integration step',
       'Convergence-aware early exit avoided ' + totalPassesAvoided + ' of ' + totalPassBudget + ' configured family pass(es)',
-      'Final maximum errors: mounts ' + after.maxMountError + '; distance joints ' + after.maxDistanceError + '; distance limits ' + after.maxDistanceLimitError + '; axis locks ' + after.maxAxisLockError,
-      'Final constrained relative-speed maxima: mounts ' + after.maxMountRelativeSpeed + '; distance joints ' + after.maxDistanceRelativeSpeed + '; active distance limits ' + after.maxDistanceLimitRelativeSpeed + '; axis locks ' + after.maxAxisLockRelativeSpeed,
+      'Final maximum errors: mounts ' + after.maxMountError + '; distance joints ' + after.maxDistanceError + '; distance limits ' + after.maxDistanceLimitError + '; axis locks ' + after.maxAxisLockError + '; axis limits ' + after.maxAxisLimitError,
+      'Final constrained relative-speed maxima: mounts ' + after.maxMountRelativeSpeed + '; distance joints ' + after.maxDistanceRelativeSpeed + '; active distance limits ' + after.maxDistanceLimitRelativeSpeed + '; axis locks ' + after.maxAxisLockRelativeSpeed + '; active axis limits ' + after.maxAxisLimitRelativeSpeed,
       'Final state checksum ' + Core.checksum(post.world)
     ],
     limitations: [
-      'The composer supports translation mounts, center-to-center distance joints, center-distance limits and world-axis translation locks only.',
-      'Distance-limit range interiors are intentionally slack and are not treated as zero-error exact joints.',
+      'The composer supports translation mounts, center-to-center distance joints, center-distance limits, world-axis translation locks and world-axis translation limits only.',
+      'Distance-limit and axis-limit range interiors are intentionally slack and are not treated as zero-error exact joints.',
       'Axis locks constrain one world-space x or y component only; the axis does not rotate with bodies and this is not a full slider/prismatic joint.',
+      'Axis limits bound one world-space x or y relative offset only; orthogonal translation remains intentionally free.',
       'Family order is deterministic but introduces ordering bias; conflicting constraints are bounded by pass counts rather than claimed to converge globally.',
       'Early exit only means configured position and constrained relative-velocity tolerances were satisfied at a pass boundary; it is not proof of physical equilibrium or global convergence.',
       'No angular inertia, rotating local anchors, hinge, full slider/prismatic, rotational weld, motor or gear semantics are implemented.',
