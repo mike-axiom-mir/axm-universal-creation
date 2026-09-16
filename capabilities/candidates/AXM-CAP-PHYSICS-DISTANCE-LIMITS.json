@@ -41,6 +41,16 @@
       "basis": "Exact distance joints continuously lock one center distance; distance limits leave configured range interiors slack and constrain only violated or outward-moving boundaries."
     },
     {
+      "type": "composed-by",
+      "target": "AXM-CAP-PHYSICS-CONSTRAINT-COMPOSER",
+      "basis": "Distance limits can now share the composer's single donor-core integration step with translation mounts and exact distance joints while retaining slack-range semantics."
+    },
+    {
+      "type": "isolation-topology-input",
+      "target": "AXM-CAP-PHYSICS-CONSTRAINT-COLLISION-ISOLATION",
+      "basis": "A distance-limit edge participates in connected-component collision isolation even while its physical range interior is slack; this topology effect is explicit rather than hidden."
+    },
+    {
       "type": "preserves",
       "target": "capabilities/physics-core/source/axm-physics-core.js",
       "basis": "The donor source remains byte-for-byte untouched; limit projection is an additive caller-side layer around one donor collision/integration step."
@@ -54,7 +64,8 @@
   "limitations": [
     "center-to-center translation limits only",
     "range interiors are intentionally slack and do not transmit tension/compression until a boundary is active",
-    "not yet integrated into the mixed constraint composer or component collision-isolation wrapper",
+    "composer integration preserves slack semantics but inherits deterministic family-order bias and bounded-pass convergence limits",
+    "component collision isolation treats a configured distance-limit edge as connectivity even while the limit is slack",
     "no local anchors, angular inertia or angular response",
     "no hinge, slider, rotational weld, motor or gear constraints",
     "post-core projection can move bodies after donor contact evidence was generated",
@@ -74,24 +85,39 @@
         "truthful handling of two immovable violating bodies",
         "same-runtime deterministic replay"
       ]
+    },
+    {
+      "command": "node capabilities/physics-core/constraint-composer-selftest.js",
+      "proves": [
+        "distance limits share one donor-core integration with the other composer families",
+        "active distance-limit residuals participate in convergence checks",
+        "slack interiors remain unconstrained inside the composer"
+      ]
+    },
+    {
+      "command": "node capabilities/physics-core/constraint-collision-isolation-selftest.js",
+      "proves": [
+        "distance-limit-only components are recognized by collision isolation",
+        "component topology does not silently convert slack limits into active physical constraints"
+      ]
     }
   ],
   "root_fit": {
     "truth": {
       "fit": true,
-      "basis": "The capability distinguishes slack range limits from exact distance joints and explicitly names its current non-composition and contact-evidence boundaries."
+      "basis": "The capability distinguishes slack range limits from exact distance joints and explicitly separates physical slack semantics from component-topology effects used by collision isolation."
     },
     "agency": {
       "fit": true,
-      "basis": "Minimum/maximum lengths, correction strength, impulse caps and iteration counts remain explicit caller-controlled data."
+      "basis": "Minimum/maximum lengths, correction strength, impulse caps and iteration counts remain explicit caller-controlled data; composition and collision isolation remain caller-selected wrappers."
     },
     "continuity": {
       "fit": true,
-      "basis": "It grows beside the existing distance-joint lane while preserving the donor core byte-for-byte and leaving old exact-joint behavior unchanged."
+      "basis": "It grows through the existing composer and isolation lanes while preserving the donor core byte-for-byte and leaving standalone distance-limit behavior unchanged."
     },
     "wisdom-before-speed": {
       "fit": true,
-      "basis": "The first range-constraint step is bounded to center-distance limits with explicit slack semantics before attempting angular or generalized joint machinery."
+      "basis": "The integration reuses the bounded three-family pass system and preserves slack semantics rather than flattening range limits into simpler exact joints for implementation convenience."
     }
   }
 }
