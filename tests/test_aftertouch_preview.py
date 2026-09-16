@@ -23,10 +23,12 @@ class AftertouchPreviewTests(unittest.TestCase):
         root = parent / "machine"
         registry = root / "reference/AXM_Universal_Creation_Map_v0.1/registry"
         registry.mkdir(parents=True)
-        shutil.copy2(
-            ROOT / "reference/AXM_Universal_Creation_Map_v0.1/registry/master_registry.json",
-            registry / "master_registry.json",
-        )
+        for name in ("master_registry.json", "core_build_seed.json"):
+            shutil.copy2(
+                ROOT / "reference/AXM_Universal_Creation_Map_v0.1/registry" / name,
+                registry / name,
+            )
+        shutil.copytree(ROOT / "capabilities/live", root / "capabilities/live", dirs_exist_ok=True)
         return root
 
     @staticmethod
