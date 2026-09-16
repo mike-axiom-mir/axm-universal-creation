@@ -1,8 +1,8 @@
 {
   "id": "AXM-CAP-PHYSICS-DIRECTION-LOCKS",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "status": "candidate",
-  "purpose": "Provide deterministic translation-only locks along an arbitrary fixed world-space direction while leaving perpendicular translation unconstrained.",
+  "purpose": "Provide deterministic translation-only locks along an arbitrary fixed world-space direction while leaving perpendicular translation unconstrained, with direct integration into the shared one-step constraint composer.",
   "handles": ["direction-lock", "fixed-direction-translation-lock", "projected-translation-lock"],
   "input_contract": {
     "required": ["world", "locks"],
@@ -27,7 +27,7 @@
     "perpendicular translation remains unconstrained",
     "direction does not rotate with bodies",
     "not a full prismatic or slider joint",
-    "standalone v0.1 is not yet integrated into the shared mixed composer/activity/isolation stack",
+    "shared composer integration is direct-only in v0.2; the activity-gate and collision-isolation wrappers still cover the earlier five families and are not direction-lock aware",
     "no angular inertia, rotating anchors, angular limits or motors",
     "post-core projection can change positions after donor contact evidence was produced",
     "not scientific validation"
@@ -36,12 +36,16 @@
     {
       "command": "node capabilities/physics-core/direction-locks-selftest.js",
       "proves": ["arbitrary fixed-direction projection locking", "perpendicular freedom", "inverse-mass correction sharing", "post-core stabilization", "bounded iterations", "invalid direction rejection", "deterministic replay"]
+    },
+    {
+      "command": "node capabilities/physics-core/constraint-composer-selftest.js",
+      "proves": ["fixed-direction locks can participate as the appended sixth family around exactly one donor-core integration step while preserving perpendicular freedom and deterministic replay"]
     }
   ],
   "root_fit": {
-    "truth": {"fit": true, "basis": "The capability is named and evidenced as a fixed world-space projected translation constraint, not a rotating local-axis or full prismatic joint."},
+    "truth": {"fit": true, "basis": "The capability is named and evidenced as a fixed world-space projected translation constraint, not a rotating local-axis or full prismatic joint, and the remaining wrapper boundary is explicit."},
     "agency": {"fit": true, "basis": "Callers choose body pair, direction, projected offset, activity state and bounded solver parameters."},
-    "continuity": {"fit": true, "basis": "The donor core remains untouched and the new primitive is additive through the existing physics-core export surface."},
-    "wisdom-before-speed": {"fit": true, "basis": "Mixed-stack integration is explicitly deferred instead of chaining wrappers and risking a hidden second donor-core step."}
+    "continuity": {"fit": true, "basis": "The donor core remains untouched and the primitive is reused by the existing composer rather than replaced or silently reimplemented."},
+    "wisdom-before-speed": {"fit": true, "basis": "Composer integration reuses the primitive without chaining step wrappers, preventing a hidden second donor-core integration; activity/isolation integration remains deferred until those wrappers explicitly support the sixth family."}
   }
 }
