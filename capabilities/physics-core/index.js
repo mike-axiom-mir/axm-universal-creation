@@ -5,6 +5,7 @@ module.exports = {
   sourceAdapter: require('./source/axm-physics-adapter.js'),
   fabric: require('./uc-physics-fabric.js'),
   distanceJoints: require('./uc-distance-joints.js'),
+  distanceLimits: require('./uc-distance-limits.js'),
   translationMounts: require('./uc-translation-mounts.js'),
   constraintComposer: require('./uc-constraint-composer.js'),
   constraintCollisionIsolation: require('./uc-constraint-collision-isolation.js')
