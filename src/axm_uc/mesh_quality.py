@@ -60,6 +60,13 @@ def _segment_distance(a, b, c, d):
     return min(_point_segment(a,c,d), _point_segment(b,c,d), _point_segment(c,a,b), _point_segment(d,a,b))
 
 
+def _safe_mip_levels(padding_px):
+    """Conservative 2x reductions that retain at least one padding pixel."""
+    if padding_px < 1:
+        return 0
+    return max(0, int(math.floor(math.log2(padding_px + 1e-9))))
+
+
 def inspect_uv_layout(specification, resolution, padding_px):
     number(resolution, "resolution", 16, 2048, True)
     number(padding_px, "padding_px", 0, resolution/8)
@@ -125,16 +132,25 @@ def inspect_uv_layout(specification, resolution, padding_px):
                     raise ValueError("UV pair-work budget exceeded")
                 nearest = min(nearest, _segment_distance(a,b,c,d))
         collapsed = sum(_area(t) <= 1e-12 for t in triangles)
+        island_padding = nearest*resolution
+        conservative_padding = max(0., min(border, island_padding))
+        safe_mips = _safe_mip_levels(conservative_padding)
         checks = {"noncollapsed": collapsed == 0, "no_positive_area_overlap": overlaps == 0,
                   "atlas_border_padding": border+1e-4 >= padding_px,
-                  "island_padding": nearest*resolution+1e-4 >= padding_px}
+                  "island_padding": island_padding+1e-4 >= padding_px,
+                  "first_mip_padding": conservative_padding/2+1e-4 >= 1}
         groups.append({"id": group["id"], "triangles": len(triangles), "islands": len({root(i) for i in parent}),
                        "overlapping_pairs": overlaps, "overlap_area_uv": overlap_area, "collapsed_triangles": collapsed,
                        "used_area_fraction": sum(_area(t) for t in triangles), "border_padding_px": border,
-                       "island_padding_px_capped_at_requirement": nearest*resolution, "checks": checks})
+                       "island_padding_px_capped_at_requirement": island_padding,
+                       "conservative_padding_px": conservative_padding,
+                       "safe_mip_reductions_conservative": safe_mips,
+                       "padding_px_by_safe_level": [conservative_padding/(2**level) for level in range(safe_mips+1)],
+                       "checks": checks})
     return {"schema": "axm.uv-layout-quality/v1", "status": "PASS" if groups and all(all(g["checks"].values()) for g in groups) else "FAIL",
-            "resolution": resolution, "required_padding_px": padding_px, "groups": groups,
-            "scope": "One unique 0..1 atlas per material. Geometric overlap and base-level padding; no UDIM or all-mip guarantee."}
+            "resolution": resolution, "required_padding_px": padding_px, "minimum_first_mip_padding_px": 1,
+            "groups": groups,
+            "scope": "One unique 0..1 atlas per material. Geometric overlap, base-level padding and a mandatory first 2x mip guard. Conservative safe mip reductions are reported; no guarantee below the reported level, no UDIM."}
 
 
 def _area3(a,b,c):
