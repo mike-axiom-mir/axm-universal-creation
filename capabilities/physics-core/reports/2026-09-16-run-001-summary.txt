@@ -1,0 +1,1 @@
+Run 001: added projected translation-only distance joints, dedicated tests, CI coverage, candidate registration, and explicit limitations. Initial graft PR had merged during this run; subsequent hourly work continues on a persistent physics-growth lane.
