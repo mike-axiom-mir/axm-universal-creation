@@ -267,6 +267,54 @@ def _install_machine_creation_contract() -> None:
     UniversalCreationMachine._growth_lane_compat_installed = True
 
 
+def _install_aftertouch_preview_contract() -> None:
+    from . import capabilities
+    from .aftertouch_preview import (
+        AftertouchPreviewError,
+        bind_advance_preview,
+        bind_prepare_preview,
+        operate_aftertouch_preview,
+        preflight_preview_advance,
+    )
+
+    original = capabilities.BUILTINS.get("builtin:evolution_aftertouch")
+    if original is None or getattr(original, "_aftertouch_preview_wrapped", False):
+        return
+
+    preview_operations = {
+        "inspect-preview",
+        "preview-summary",
+        "inspect-preview-policy",
+        "capture-preview",
+        "preview-candidate",
+        "capture-intermediate-preview",
+        "record-preview-feedback",
+        "review-preview",
+        "record-user-preview",
+    }
+    prepare_operations = {"prepare", "start", "prepare-chamber"}
+    advance_operations = {"advance", "advance-round", "judge-round"}
+
+    def preview_aware_aftertouch(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+        operation = str(inputs.get("operation", "prepare")).strip().casefold()
+        try:
+            if operation in preview_operations:
+                return operate_aftertouch_preview(root, inputs)
+            preflight_preview_advance(inputs)
+            result = original(root, inputs)
+            if operation in prepare_operations:
+                return bind_prepare_preview(inputs, result)
+            if operation in advance_operations:
+                return bind_advance_preview(root, inputs, result)
+            return result
+        except AftertouchPreviewError as exc:
+            raise capabilities.CapabilityError(str(exc), exc.details) from exc
+
+    preview_aware_aftertouch._aftertouch_preview_wrapped = True
+    capabilities.BUILTINS["builtin:evolution_aftertouch"] = preview_aware_aftertouch
+    capabilities.BUILTINS.setdefault("builtin:aftertouch_preview", operate_aftertouch_preview)
+
+
 def install_growth_lane_compatibility() -> None:
     """Install only the framework seams required by recovered growth-lane capabilities.
 
@@ -275,3 +323,4 @@ def install_growth_lane_compatibility() -> None:
     """
     _install_project_checks()
     _install_machine_creation_contract()
+    _install_aftertouch_preview_contract()

@@ -7,6 +7,7 @@ def _register_extension_builtins() -> None:
     """Register small runtime extensions without giving proposals self-authority."""
     from . import capabilities as _capabilities
     from . import specialist_pool as _specialist_pool
+    from .aftertouch_media_observers import AftertouchMediaObserverError, media_self_test_candidate
     from .chameleon import ChameleonError, operate_chameleon
     from .design_browser import DesignBrowserError, operate_design_browser
     from .design_cdp import DesignCdpError, operate_design_cdp
@@ -19,6 +20,7 @@ def _register_extension_builtins() -> None:
     from .design_visual import DesignVisualError, operate_design_visual
     from .design_workshop import DesignWorkshopError, operate_design_workshop
     from .design_workshop_construction import DesignWorkshopConstructionError, operate_workshop_construction
+    from .evolution_aftertouch import EvolutionAftertouchError, operate_evolution_aftertouch
     from .fabric_sources import FabricSourceError, inspect_fabric_sources
     from .profession_crew import ProfessionCrewError, operate_profession_crew, prepare_profession_specialists
     from .simulation import SimulationError, operate_simulation
@@ -228,6 +230,18 @@ def _register_extension_builtins() -> None:
             details = getattr(exc, "details", {})
             raise _capabilities.CapabilityError(str(exc), details) from exc
 
+    def evolution_aftertouch_surface(root, inputs):
+        operation = str(inputs.get("operation", "prepare")).strip().casefold()
+        try:
+            if operation in {"self-test", "self-test-candidate", "test-candidate"}:
+                media_result = media_self_test_candidate(root, inputs.get("candidate"))
+                if media_result is not None:
+                    return media_result
+            return operate_evolution_aftertouch(root, inputs)
+        except (EvolutionAftertouchError, AftertouchMediaObserverError, ValueError, TypeError) as exc:
+            details = getattr(exc, "details", {})
+            raise _capabilities.CapabilityError(str(exc), details) from exc
+
     def fabric_source_surface(root, inputs):
         overrides = inputs.get("overrides")
         if overrides is not None and not isinstance(overrides, dict):
@@ -271,6 +285,7 @@ def _register_extension_builtins() -> None:
     _capabilities.BUILTINS["builtin:sticker_clearance_contact"] = sticker_clearance_contact_surface
     _capabilities.BUILTINS["builtin:workshop_bounded_planner"] = workshop_bounded_planner_surface
     _capabilities.BUILTINS["builtin:sticker_multiplier"] = sticker_multiplier_surface
+    _capabilities.BUILTINS["builtin:evolution_aftertouch"] = evolution_aftertouch_surface
     _capabilities.BUILTINS["builtin:inspect_fabric_sources"] = fabric_source_surface
     _capabilities.BUILTINS["builtin:profession_crew"] = profession_crew_surface
     _capabilities.BUILTINS["builtin:static_asset_target_evidence"] = static_asset_target_evidence_surface

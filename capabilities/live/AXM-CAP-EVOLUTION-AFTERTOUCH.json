@@ -1,0 +1,123 @@
+{
+  "id": "AXM-CAP-EVOLUTION-AFTERTOUCH",
+  "version": "0.3.0",
+  "status": "live",
+  "purpose": "Evolve one creation through seven evidence-bearing parallel creative rounds, retain exactly two judged survivors after every round, bind real 3D/game observations into self-test, and optionally retain intermediate visual previews for machine, AI and user adjustment before final output without auto-accepting or auto-canonizing either finalist.",
+  "handles": [
+    "creative-evolution-chamber",
+    "evolution-aftertouch",
+    "seven-round-aftertouch",
+    "deep-aftertouch",
+    "self-test-candidate",
+    "aftertouch-preview",
+    "capture-intermediate-preview"
+  ],
+  "input_contract": {
+    "required": [],
+    "required_by_operation": {
+      "prepare": ["challenge"],
+      "start": ["challenge"],
+      "prepare-chamber": ["challenge"],
+      "advance": ["chamber", "submissions", "judgements"],
+      "advance-round": ["chamber", "submissions", "judgements"],
+      "judge-round": ["chamber", "submissions", "judgements"],
+      "self-test": ["candidate"],
+      "self-test-candidate": ["candidate"],
+      "test-candidate": ["candidate"],
+      "capture-preview": ["candidate"],
+      "preview-candidate": ["candidate"],
+      "capture-intermediate-preview": ["candidate"],
+      "record-preview-feedback": ["chamber", "feedback"],
+      "review-preview": ["chamber", "feedback"],
+      "record-user-preview": ["chamber", "feedback"]
+    },
+    "properties": {
+      "operation": "inspect/prepare/advance-round/self-test-candidate/capture-preview/record-preview-feedback",
+      "challenge": "concrete creation goal",
+      "criteria": "optional existing specialist-tournament weighted judging criteria",
+      "pool_size": "8..40 specialist profiles used by each round tournament",
+      "team_size": "3..6 specialists per creative team",
+      "max_teams": "4..64 isolated creative teams per round",
+      "seed": "optional deterministic chamber seed",
+      "preview_policy": "optional {mode: off|internal|user-milestones|user-every-round, milestone_rounds, retain_artifacts, ai_review}; default keeps internal machine previews on and AI/user interruption off",
+      "chamber": "exact digest-bound axm.evolution-aftertouch-chamber/v0.1 state",
+      "submissions": "complete object keyed by every current round team_id",
+      "judgements": "complete independent existing tournament judgements keyed by team_id",
+      "candidate": "candidate or artifact body for deterministic self-test/preview; 3D artifacts may name preview_image_path in addition to asset/required_sockets/animation_expected, and playable games may name path/entrypoint/browser_executable/interaction_recipes/allow_synthetic_activation",
+      "feedback": "for a pending user checkpoint, exact object keyed by both retained candidate ids containing user preview observations, continue|adjust|hold decision, and optional requested_changes"
+    }
+  },
+  "output_contract": {
+    "kind": "seven-round-evolution-aftertouch",
+    "contains": [
+      "seven fixed creation/aftertouch phases",
+      "parallel context-specific creative-team packets from the existing specialist tournament",
+      "two exact evidence-bearing survivor outputs after every completed round",
+      "survivor-to-next-round lineage binding",
+      "simulation/test/observe/repair/re-test protocol",
+      "visual-thought and generic project verification adapters",
+      "real GLB structure/pose/skin/socket/animation observations when supported",
+      "real local headless-browser execution, screenshot bytes, runtime probes and optional bounded interaction/reset-recovery observations for playable browser games",
+      "intermediate preview checkpoints with digest-bound retained pixel/render artifacts when available",
+      "machine observation context always available when preview mode is active, AI review only when explicitly enabled, and user feedback gates only under user-selected preview modes",
+      "preview feedback propagated into the next round parent/creative-team context before another candidate is judged",
+      "explicit NOT_TESTED/HOLD state for unsupported evidence or preview surfaces",
+      "two retained final outputs with structural, functional, visual, experience, context, adversarial and polish evidence lanes"
+    ]
+  },
+  "dependencies": [
+    "AXM-CAP-SPECIALIST-TOURNAMENT",
+    "AXM-CAP-SIMULATE-CREATION",
+    "AXM-CAP-VERIFY-PROJECT"
+  ],
+  "relationships": [
+    "composes the existing specialist tournament instead of creating a second parallel-team ontology",
+    "uses the existing deterministic simulation and project-verification surfaces when the artifact kind is supported",
+    "reuses the existing pure-Python game-pose runtime for bounded GLB geometry/animation/skin/socket evidence instead of inventing a second 3D parser",
+    "reuses the existing offline design-browser observer for actual local browser execution, screenshot/runtime measurements and caller-authorized bounded interaction recipes",
+    "intermediate previews are retained under creation evidence space so a later machine/AI/user reviewer can inspect the exact bytes instead of relying on a prose claim",
+    "the default preview policy does not call AI or interrupt the user; AI review and user checkpoints are explicit user-controlled choices",
+    "user-every-round and user-milestones modes block further round advancement until preview feedback for both survivors is recorded",
+    "continue/adjust/hold preview decisions and requested changes are carried into the exact survivor parent context for the next creative round",
+    "creative outputs and semantic judgements remain externally supplied evidence rather than faked deterministic cognition",
+    "the best two complete judged outputs remain live after each round and become explicit parents for the next round",
+    "deep aftertouch is a final evidence-bearing creation pass rather than a decorative label after generation",
+    "finalists are retained but never automatically accepted, merged, canonized, or called perfect"
+  ],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:evolution_aftertouch",
+    "source": "src/axm_uc/__init__.py + src/axm_uc/growth_lane_compat.py"
+  },
+  "limitations": [
+    "creative-team packets do not imply that a team reasoned, built, rendered, played or tested until concrete executor evidence is supplied",
+    "GLB observation proves only the supported bounded file/pose/skin/socket/geometry facts; pixel review for 3D still requires a renderer-produced preview image until an explicit renderer executor is available",
+    "browser-game preview requires a caller-supplied local Chromium-compatible executable unless PATH discovery is explicitly enabled; synthetic activation is disabled unless explicitly authorized",
+    "a captured screenshot or render preview is real visual evidence but is never automatic aesthetic PASS; machine measurements can diagnose known facts while AI/human perceptual judgments remain separately sourced",
+    "AI preview review defaults off to preserve local/offline behavior and requires explicit preview_policy.ai_review=true",
+    "user checkpoint modes can stop the workflow for review, but off/internal modes never manufacture a user decision",
+    "bounded browser interaction is programmatic focus/synthetic activation on a temporary offline copy, not trusted user input or a complete playtest/usability study",
+    "independent tournament judgements remain evidence inputs and can be poor or biased; the chamber preserves their declared basis rather than treating scores as objective truth",
+    "seven rounds and two survivors remain fixed v0.3 policy to preserve the requested creative evolution shape",
+    "all-PASS final evidence does not prove perfection, universal aesthetic quality, semantic correctness outside tested claims, or human acceptance"
+  ],
+  "persistent_state": "Chamber state, round history, survivor lineage, preview policy, preview receipts and recorded feedback are explicit digest-bound caller-carried state; retained preview files live under creations/.aftertouch-previews and no hidden chat state is required.",
+  "root_fit": {
+    "truth": {
+      "fit": true,
+      "basis": "Unsupported or unobserved evidence stays NOT_TESTED/HOLD; screenshot capture is separated from perceptual judgment and feedback records identify their reviewer."
+    },
+    "agency": {
+      "fit": true,
+      "basis": "The user controls whether previews are internal, milestone-interrupting, every-round, or off; AI review is opt-in; two finalists remain unaccepted and non-CANON automatically."
+    },
+    "continuity": {
+      "fit": true,
+      "basis": "Every retained preview has exact artifact/digest provenance and its review/requested changes are carried with the survivor into the next round instead of disappearing into hidden chat context."
+    },
+    "wisdom-before-speed": {
+      "fit": true,
+      "basis": "The machine can inspect visual evidence and adjust before output, while explicit user checkpoint modes intentionally trade speed for review when the user wants it."
+    }
+  }
+}
