@@ -5,8 +5,8 @@ const Core = require('./source/axm-physics-core.js');
 const Composer = require('./uc-constraint-composer.js');
 const Preflight = require('./uc-constraint-preflight.js');
 
-const VERSION = '0.2.0';
-const STEP_SCHEMA = 'axm.uc-constraint-preflight-guard-step/v0.2';
+const VERSION = '0.3.0';
+const STEP_SCHEMA = 'axm.uc-constraint-preflight-guard-step/v0.3';
 
 function clone(value) {
   if (Array.isArray(value)) return value.map(clone);
@@ -49,8 +49,9 @@ function resultBase(world, composerValidation, preflight) {
     composer: null,
     limitations: [
       'This is an opt-in fail-closed wrapper around the existing constraint composer; the composer itself is unchanged.',
-      'Only invalid composer input or conflicts proven by the conservative local projection/same-pair-distance preflight are blocked.',
-      'Distance proof is limited to constraints on the exact same body pair; multi-pair geometric contradictions remain outside the proof.',
+      'Only invalid composer input or conflicts proven by the conservative local projected, same-pair radial, or same-pair projection-versus-radial-maximum preflight are blocked.',
+      'The coupled proof is limited to the geometric necessity |projection| <= center distance for one projection group and one finite radial maximum on the exact same body pair.',
+      'It does not combine multiple independent projected directions, use radial minima as projected contradictions, or establish satisfiability across triangles, loops or multi-pair geometry.',
       'A successful preflight is not proof of global satisfiability, convergence, stability or physical correctness.',
       'The accepted path delegates to the existing seven-family composer and therefore retains its fixed ordering, bounded-pass and contact-evidence boundaries.',
       'The imported donor source is not modified by this wrapper.',
@@ -112,7 +113,7 @@ function step(world, constraints, dt, options) {
     evidence: [
       'Constraint composer validation passed.',
       preflight.counts.conflicts + ' conservative local conflict(s) found by preflight.',
-      preflight.counts.projectionGroups + ' projected translation group(s) and ' + preflight.counts.radialGroups + ' same-pair radial distance group(s) checked.',
+      preflight.counts.projectionGroups + ' projected translation group(s), ' + preflight.counts.radialGroups + ' same-pair radial distance group(s), and ' + preflight.counts.projectionRadialChecks + ' bounded projection/radial coupling check(s) evaluated.',
       'Accepted input delegated exactly once to the existing constraint composer.',
       'Final world checksum ' + Core.checksum(composer.world)
     ]
