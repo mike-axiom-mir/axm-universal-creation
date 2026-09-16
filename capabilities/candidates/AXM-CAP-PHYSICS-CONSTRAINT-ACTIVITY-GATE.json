@@ -1,13 +1,13 @@
 {
   "id": "AXM-CAP-PHYSICS-CONSTRAINT-ACTIVITY-GATE",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "status": "candidate",
-  "purpose": "Keep disabled translation mounts, exact distance joints, distance limits and world-axis translation locks in validated evidence while excluding them from solver residuals and collision-isolation topology before one-step delegation.",
+  "purpose": "Keep disabled translation mounts, exact distance joints, distance limits, world-axis translation locks and world-axis translation limits in validated evidence while excluding them from solver residuals and collision-isolation topology before one-step delegation.",
   "handles": ["constraint-activity-gate", "disabled-constraint-inert-semantics", "active-constraint-filter", "disabled-topology-exclusion"],
   "input_contract": {
     "required": ["world", "constraints", "dt"],
     "properties": {
-      "constraints": "any supported four-family translation constraint set with optional enabled=false",
+      "constraints": "any supported five-family translation constraint set with optional enabled=false",
       "options": "optional isolateCollisions boolean plus nested composer/isolation options"
     }
   },
@@ -15,7 +15,7 @@
     "kind": "axm.uc-constraint-activity-step/v0.1",
     "contains": ["validated normalized constraints", "active-only delegated constraints", "active/disabled ids by family", "solve/topology exclusion flags", "single-step delegate evidence", "final checksum"]
   },
-  "dependencies": ["AXM-CAP-PHYSICS-CONSTRAINT-COMPOSER", "AXM-CAP-PHYSICS-CONSTRAINT-COLLISION-ISOLATION", "AXM-CAP-PHYSICS-AXIS-LOCKS"],
+  "dependencies": ["AXM-CAP-PHYSICS-CONSTRAINT-COMPOSER", "AXM-CAP-PHYSICS-CONSTRAINT-COLLISION-ISOLATION", "AXM-CAP-PHYSICS-AXIS-LOCKS", "AXM-CAP-PHYSICS-AXIS-LIMITS"],
   "implementation": {
     "kind": "DETERMINISTIC_SOURCE",
     "entrypoint": "capabilities/physics-core/uc-constraint-activity-gate.js",
@@ -24,17 +24,18 @@
   "limitations": [
     "direct lower-level composer/isolation entrypoints retain their own compatibility semantics",
     "disabled definitions are still normalized and therefore must reference valid bodies",
-    "axis-lock filtering does not imply rotating axes, angular limits or motor semantics",
+    "axis-lock and axis-limit filtering does not imply rotating axes, angular limits or motor semantics",
     "collision isolation remains component-wide across enabled edges when requested",
     "not scientific validation"
   ],
   "tests": [
     {"command": "node capabilities/physics-core/constraint-activity-gate-selftest.js", "proves": ["disabled legacy-family constraints remain physically and topologically inert through the guarded route"]},
-    {"command": "node capabilities/physics-core/axis-lock-integration-selftest.js", "proves": ["disabled axis locks are retained in evidence but excluded from solving and isolation topology"]}
+    {"command": "node capabilities/physics-core/axis-lock-integration-selftest.js", "proves": ["disabled axis locks are retained in evidence but excluded from solving and isolation topology"]},
+    {"command": "node capabilities/physics-core/axis-limit-integration-selftest.js", "proves": ["disabled axis limits are retained in evidence but excluded from solving and isolation topology"]}
   ],
   "root_fit": {
-    "truth": {"fit": true, "basis": "The gate distinguishes validated retained definitions from the active subset actually delegated."},
-    "agency": {"fit": true, "basis": "Caller enabled=false choices are honored as inert across all four supported families."},
+    "truth": {"fit": true, "basis": "The gate distinguishes validated retained definitions from the active subset actually delegated across all five families."},
+    "agency": {"fit": true, "basis": "Caller enabled=false choices are honored as inert across all five supported families."},
     "continuity": {"fit": true, "basis": "The guarded route grows with the composer while preserving donor source and prior family behavior."},
     "wisdom-before-speed": {"fit": true, "basis": "Filtering remains explicit and bounded instead of hiding disabled edges inside residual or topology calculations."}
   }
