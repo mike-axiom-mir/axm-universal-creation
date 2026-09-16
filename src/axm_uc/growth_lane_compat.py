@@ -315,6 +315,69 @@ def _install_aftertouch_preview_contract() -> None:
     capabilities.BUILTINS.setdefault("builtin:aftertouch_preview", operate_aftertouch_preview)
 
 
+def _install_precision_cutter_v06() -> None:
+    """Layer only the v0.6 sweep schema over the already-registered cutter builtin."""
+    from . import capabilities
+    from .mesh_general_hole_chain import GENERAL_HOLE_CHAIN_SCHEMA, publish_general_hole_chain
+    from .mesh_precision_cutter import MeshPrecisionCutterError
+
+    original = capabilities.BUILTINS.get("builtin:precision_cutter")
+    if original is None or getattr(original, "_v06_hole_sweep_wrapped", False):
+        return
+
+    def v06_aware_precision_cutter(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+        specification = inputs.get("specification")
+        schema = specification.get("schema") if isinstance(specification, dict) else None
+        if schema != GENERAL_HOLE_CHAIN_SCHEMA:
+            return original(root, inputs)
+        if "source_path" not in inputs or "path" not in inputs:
+            return original(root, inputs)
+        replace = inputs.get("replace", False)
+        if not isinstance(replace, bool):
+            raise capabilities.CapabilityError("precision cutter replace must be a boolean")
+        source = capabilities._resolve_output_path(root, str(inputs["source_path"]))
+        target = capabilities._resolve_output_path(root, str(inputs["path"]))
+        if capabilities._is_machine_body_path(root, source):
+            raise capabilities.CapabilityError(
+                "v0.6 hole sweep cannot read the protected live machine body as source material"
+            )
+        if capabilities._is_machine_body_path(root, target):
+            raise capabilities.CapabilityError(
+                "v0.6 hole sweep cannot rewrite the protected live machine body"
+            )
+        lineage = None
+        if "lineage_path" in inputs:
+            lineage = capabilities._resolve_output_path(root, str(inputs["lineage_path"]))
+            if capabilities._is_machine_body_path(root, lineage):
+                raise capabilities.CapabilityError(
+                    "v0.6 hole-sweep lineage must stay on an ordinary creation surface"
+                )
+        if "receipt_path" in inputs:
+            receipt = capabilities._resolve_output_path(root, str(inputs["receipt_path"]))
+        else:
+            receipt = target.with_suffix(target.suffix + ".hole-sweep.json")
+        if capabilities._is_machine_body_path(root, receipt):
+            raise capabilities.CapabilityError(
+                "v0.6 hole-sweep receipt cannot rewrite the live machine body"
+            )
+        try:
+            return publish_general_hole_chain(
+                source,
+                target,
+                specification,
+                lineage_path=lineage,
+                receipt_path=receipt,
+                expected_source_sha256=inputs.get("expected_source_sha256"),
+                expected_lineage_sha256=inputs.get("expected_lineage_sha256"),
+                replace=replace,
+            )
+        except MeshPrecisionCutterError as exc:
+            raise capabilities.CapabilityError(str(exc), exc.details) from exc
+
+    v06_aware_precision_cutter._v06_hole_sweep_wrapped = True
+    capabilities.BUILTINS["builtin:precision_cutter"] = v06_aware_precision_cutter
+
+
 def install_growth_lane_compatibility() -> None:
     """Install only the framework seams required by recovered growth-lane capabilities.
 
@@ -324,3 +387,4 @@ def install_growth_lane_compatibility() -> None:
     _install_project_checks()
     _install_machine_creation_contract()
     _install_aftertouch_preview_contract()
+    _install_precision_cutter_v06()
