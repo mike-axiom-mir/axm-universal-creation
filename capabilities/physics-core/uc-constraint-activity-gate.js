@@ -4,14 +4,14 @@ const Core = require('./source/axm-physics-core.js');
 const Composer = require('./uc-constraint-composer.js');
 const Isolation = require('./uc-constraint-collision-isolation.js');
 
-const VERSION = '0.4.0';
+const VERSION = '0.5.0';
 const STEP_SCHEMA = 'axm.uc-constraint-activity-step/v0.1';
-const FAMILY_KEYS = Object.freeze(['mounts', 'distanceJoints', 'distanceLimits', 'axisLocks', 'axisLimits', 'directionLocks']);
+const FAMILY_KEYS = Object.freeze(['mounts', 'distanceJoints', 'distanceLimits', 'axisLocks', 'axisLimits', 'directionLocks', 'directionLimits']);
 
 function clone(value) { return JSON.parse(JSON.stringify(value)); }
 
 function emptyFamilies() {
-  return { mounts: [], distanceJoints: [], distanceLimits: [], axisLocks: [], axisLimits: [], directionLocks: [] };
+  return { mounts: [], distanceJoints: [], distanceLimits: [], axisLocks: [], axisLimits: [], directionLocks: [], directionLimits: [] };
 }
 
 function partition(normalized) {
@@ -56,7 +56,7 @@ function validate(world, constraints) {
     activeCount: prepared ? prepared.diagnostics.activeCount : 0,
     disabledCount: prepared ? prepared.diagnostics.disabledCount : 0,
     warnings: (composer.warnings || []).concat([
-      'Disabled mounts, distance joints, distance limits, axis locks, axis limits and fixed-direction locks are still normalized and validated for source/body-reference integrity, but this gate excludes them from solver residuals and collision-isolation topology before delegation.',
+      'Disabled mounts, distance joints, distance limits, axis locks, axis limits, fixed-direction locks and fixed-direction limits are still normalized and validated for source/body-reference integrity, but this gate excludes them from solver residuals and collision-isolation topology before delegation.',
       'This is an additive safe front door; direct calls to the lower-level composer/isolation modules retain their existing compatibility behavior.',
       'The donor physics source remains untouched.'
     ])
@@ -103,8 +103,8 @@ function step(world, constraints, dt, options) {
     limitations: [
       'This gate provides explicit disabled-constraint semantics without silently rewriting the existing lower-level composer or isolation entrypoints.',
       'Disabled constraints are still required to reference valid bodies because normalization/source-integrity validation occurs before activity filtering.',
-      'Axis-lock, axis-limit and fixed-direction-lock activity filtering does not imply rotating axes, angular limits or motor semantics.',
-      'Fixed-direction locks remain fixed in world space and leave perpendicular translation intentionally free.',
+      'Axis-lock, axis-limit, fixed-direction-lock and fixed-direction-limit activity filtering does not imply rotating axes, angular limits or motor semantics.',
+      'Fixed-direction locks and limits remain fixed in world space and leave perpendicular translation intentionally free; direction-limit range interiors remain slack.',
       'The gate does not add angular inertia, rotating anchors, hinge, full slider/prismatic, rotational weld, motor or gear semantics.',
       'Collision isolation remains component-wide for enabled constraint edges when isolation mode is requested.',
       'This is game/prototype physics evidence, not scientific validation.'
