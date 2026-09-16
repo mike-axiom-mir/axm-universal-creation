@@ -36,8 +36,6 @@ from .precision_cutter import (
     ANGLE_EPSILON,
     MAX_HOLE_SEGMENTS,
     _append_face,
-    _canonical,
-    _deduplicate_angles,
     _number,
     _ray_to_rectangle,
     _surface_specification,
@@ -56,7 +54,7 @@ def hole_chain_summary() -> dict[str, Any]:
         "operation": "round-through-hole-chain",
         "maximum_holes": MAX_CHAIN_CUTS,
         "source_scope": "one proven rigid rectangular-prism source frame, then exact hash-bound cumulative outputs",
-        "resume_contract": "deterministically recompile the complete prior hole set and require exact previous GLB digest match before append",
+        "resume_contract": "recompile complete prior hole geometry and require an exact previous GLB digest match before append",
         "rotated_translated_source_supported": True,
         "projection_separable_multi_hole_layouts": True,
         "notch_and_hole_mixing": False,
@@ -162,16 +160,12 @@ def _resolve_hole(
         raise MeshPrecisionCutterError(
             f"hole {hole['id']} must stay strictly inside the stock cross-section"
         )
-    segment_angles = [
-        2.0 * math.pi * index / int(hole["segments"])
-        for index in range(int(hole["segments"]))
-    ]
     polygon = [
         (
-            center[0] + effective_radius * math.cos(angle),
-            center[2] + effective_radius * math.sin(angle),
+            center[0] + effective_radius * math.cos(2.0 * math.pi * index / int(hole["segments"])),
+            center[2] + effective_radius * math.sin(2.0 * math.pi * index / int(hole["segments"])),
         )
-        for angle in segment_angles
+        for index in range(int(hole["segments"]))
     ]
     result = {
         "id": hole["id"],
@@ -193,9 +187,7 @@ def _resolve_hole(
     return result
 
 
-def _validate_holes(
-    holes: list[dict[str, Any]], frame: dict[str, Any]
-) -> None:
+def _validate_holes(holes: list[dict[str, Any]], frame: dict[str, Any]) -> None:
     if not 1 <= len(holes) <= MAX_CHAIN_CUTS:
         raise MeshPrecisionCutterError(
             f"cumulative hole chain must contain 1 through {MAX_CHAIN_CUTS} holes"
@@ -210,8 +202,7 @@ def _validate_holes(
         for second in holes[index + 1 :]:
             bx, _by, bz = second["center_canonical"]
             br = float(second["effective_radius"])
-            distance = math.hypot(float(ax) - float(bx), float(az) - float(bz))
-            if distance <= ar + br + tolerance:
+            if math.hypot(float(ax) - float(bx), float(az) - float(bz)) <= ar + br + tolerance:
                 raise MeshPrecisionCutterError(
                     "v0.5 refuses overlapping or touching cumulative round holes",
                     {"first_hole": first["id"], "second_hole": second["id"]},
@@ -241,12 +232,21 @@ def _choose_partition_axis(holes: list[dict[str, Any]], frame: dict[str, Any]) -
     if _projection_is_separable(holes, 2, tolerance):
         return "v"
     raise MeshPrecisionCutterError(
-        "v0.5 multi-hole layout must be separable along canonical u or v so deterministic slab seams can be proven",
+        "v0.5 multi-hole layout must be separable along canonical u or v so slab seams can be proven",
         {
             "hole_ids": [hole["id"] for hole in holes],
             "general_polygon_with_holes_triangulation": "NOT_YET_SUPPORTED",
         },
     )
+
+
+def _unique_linear_angles(values: list[float]) -> list[float]:
+    ordered = sorted(values)
+    unique: list[float] = []
+    for value in ordered:
+        if not unique or value - unique[-1] > ANGLE_EPSILON:
+            unique.append(value)
+    return unique
 
 
 def _slab_hole_geometry(
@@ -295,25 +295,14 @@ def _slab_hole_geometry(
 
     for index, start in enumerate(base_angles):
         end = base_angles[index + 1] if index + 1 < segments else tau
-        events = [start]
-        for value in event_angles:
-            candidate = value
-            if index == segments - 1 and candidate < start:
+        events = [start, end]
+        for raw in event_angles:
+            candidate = raw
+            if candidate < start - ANGLE_EPSILON:
                 candidate += tau
             if start + ANGLE_EPSILON < candidate < end - ANGLE_EPSILON:
                 events.append(candidate)
-        events.append(end)
-        events = _deduplicate_angles(events)
-        if index == segments - 1:
-            normalized: list[float] = []
-            for value in events:
-                adjusted = value
-                if adjusted < start - ANGLE_EPSILON:
-                    adjusted += tau
-                if not normalized or adjusted - normalized[-1] > ANGLE_EPSILON:
-                    normalized.append(adjusted)
-            events = normalized
-        events = sorted(events)
+        events = _unique_linear_angles(events)
         outer = [
             _ray_to_rectangle(center, angle % tau, half_width, half_depth)
             for angle in events
@@ -386,7 +375,6 @@ def _slab_hole_geometry(
             (0.0, -1.0, 0.0),
         )
         middle_angle = (start + end) / 2.0
-        inner_normal = (-math.cos(middle_angle), 0.0, -math.sin(middle_angle))
         _append_face(
             positions,
             normals,
@@ -397,7 +385,7 @@ def _slab_hole_geometry(
                 (next_inner[0], top, next_inner[1]),
                 (current_inner[0], top, current_inner[1]),
             ],
-            inner_normal,
+            (-math.cos(middle_angle), 0.0, -math.sin(middle_angle)),
         )
     return positions, normals, indices, inner, outer_points
 
@@ -416,27 +404,33 @@ def _compile_state(
     depth = float(frame["extents"][order[2]])
     partition = _choose_partition_axis(holes, frame)
     if partition == "u":
-        minimum, maximum = -width / 2.0, width / 2.0
-        full_other = depth
-        partition_coordinate = lambda hole: float(hole["center_canonical"][0])
-        other_coordinate = lambda hole: float(hole["center_canonical"][2])
+        minimum, maximum, full_other = -width / 2.0, width / 2.0, depth
 
-        def local_point_to_canonical(point: tuple[float, float, float], slab_center: float) -> tuple[float, float, float]:
+        def partition_coordinate(hole: dict[str, Any]) -> float:
+            return float(hole["center_canonical"][0])
+
+        def other_coordinate(hole: dict[str, Any]) -> float:
+            return float(hole["center_canonical"][2])
+
+        def local_point(point: tuple[float, float, float], slab_center: float) -> tuple[float, float, float]:
             return (point[0] + slab_center, point[1], point[2])
 
-        def local_normal_to_canonical(normal: tuple[float, float, float]) -> tuple[float, float, float]:
+        def local_normal(normal: tuple[float, float, float]) -> tuple[float, float, float]:
             return normal
 
     else:
-        minimum, maximum = -depth / 2.0, depth / 2.0
-        full_other = width
-        partition_coordinate = lambda hole: float(hole["center_canonical"][2])
-        other_coordinate = lambda hole: -float(hole["center_canonical"][0])
+        minimum, maximum, full_other = -depth / 2.0, depth / 2.0, width
 
-        def local_point_to_canonical(point: tuple[float, float, float], slab_center: float) -> tuple[float, float, float]:
+        def partition_coordinate(hole: dict[str, Any]) -> float:
+            return float(hole["center_canonical"][2])
+
+        def other_coordinate(hole: dict[str, Any]) -> float:
+            return -float(hole["center_canonical"][0])
+
+        def local_point(point: tuple[float, float, float], slab_center: float) -> tuple[float, float, float]:
             return (-point[2], point[1], slab_center + point[0])
 
-        def local_normal_to_canonical(normal: tuple[float, float, float]) -> tuple[float, float, float]:
+        def local_normal(normal: tuple[float, float, float]) -> tuple[float, float, float]:
             return (-normal[2], normal[1], normal[0])
 
     ordered_holes = sorted(holes, key=lambda hole: (partition_coordinate(hole), hole["id"]))
@@ -452,44 +446,37 @@ def _compile_state(
         first[1] >= second[0] - tolerance
         for first, second in zip(intervals, intervals[1:])
     ):
-        raise MeshPrecisionCutterError(
-            "chosen v0.5 slab partition axis is not strictly separable"
-        )
-    slab_bounds = [minimum]
-    slab_bounds.extend(
+        raise MeshPrecisionCutterError("chosen v0.5 slab partition axis is not strictly separable")
+    bounds = [minimum]
+    bounds.extend(
         (first[1] + second[0]) / 2.0
         for first, second in zip(intervals, intervals[1:])
     )
-    slab_bounds.append(maximum)
+    bounds.append(maximum)
 
     initial: list[dict[str, Any]] = []
     for index, hole in enumerate(ordered_holes):
-        low, high = slab_bounds[index], slab_bounds[index + 1]
+        low, high = bounds[index], bounds[index + 1]
         slab_width = high - low
         slab_center = (low + high) / 2.0
-        geometry = _slab_hole_geometry(
-            (slab_width, full_other),
-            (
-                partition_coordinate(hole) - slab_center,
-                other_coordinate(hole),
-            ),
-            float(hole["effective_radius"]),
-            int(hole["segments"]),
-            thickness,
-        )
         initial.append(
             {
                 "slab_width": slab_width,
                 "slab_center": slab_center,
-                "geometry": geometry,
+                "geometry": _slab_hole_geometry(
+                    (slab_width, full_other),
+                    (partition_coordinate(hole) - slab_center, other_coordinate(hole)),
+                    float(hole["effective_radius"]),
+                    int(hole["segments"]),
+                    thickness,
+                ),
             }
         )
 
     seam_values: list[list[float]] = []
     for index in range(len(ordered_holes) - 1):
         values = {-full_other / 2.0, full_other / 2.0}
-        left = initial[index]
-        right = initial[index + 1]
+        left, right = initial[index], initial[index + 1]
         left_half = float(left["slab_width"]) / 2.0
         right_half = float(right["slab_width"]) / 2.0
         for x, z in left["geometry"][4]:
@@ -504,17 +491,8 @@ def _compile_state(
     normals: list[tuple[float, float, float]] = []
     indices: list[int] = []
 
-    def append_triangle(
-        triangle_points: list[tuple[float, float, float]],
-        triangle_normals: list[tuple[float, float, float]],
-    ) -> None:
-        start = len(positions)
-        positions.extend(triangle_points)
-        normals.extend(triangle_normals)
-        indices.extend((start, start + 1, start + 2))
-
     for index, hole in enumerate(ordered_holes):
-        low, high = slab_bounds[index], slab_bounds[index + 1]
+        low, high = bounds[index], bounds[index + 1]
         slab_width = high - low
         slab_center = (low + high) / 2.0
         extra: list[tuple[float, float]] = []
@@ -524,10 +502,7 @@ def _compile_state(
             extra.extend((slab_width / 2.0, value) for value in seam_values[index])
         local_positions, local_normals, local_indices, inner, _outer = _slab_hole_geometry(
             (slab_width, full_other),
-            (
-                partition_coordinate(hole) - slab_center,
-                other_coordinate(hole),
-            ),
+            (partition_coordinate(hole) - slab_center, other_coordinate(hole)),
             float(hole["effective_radius"]),
             int(hole["segments"]),
             thickness,
@@ -547,35 +522,19 @@ def _compile_state(
             include = True
             if abs(float(normal[1])) < 0.5:
                 x_values = [float(point[0]) for point in triangle_points]
-                if all(
-                    abs(value + slab_width / 2.0) <= tolerance * 4.0
-                    for value in x_values
-                ):
+                if all(abs(value + slab_width / 2.0) <= tolerance * 4.0 for value in x_values):
                     include = index == 0
-                elif all(
-                    abs(value - slab_width / 2.0) <= tolerance * 4.0
-                    for value in x_values
-                ):
+                elif all(abs(value - slab_width / 2.0) <= tolerance * 4.0 for value in x_values):
                     include = index + 1 == len(ordered_holes)
             if not include:
                 continue
-            canonical_points = [
-                local_point_to_canonical(point, slab_center)
-                for point in triangle_points
-            ]
-            canonical_normals = [
-                local_normal_to_canonical(normal_row)
-                for normal_row in triangle_normals
-            ]
-            world_points = [
-                _canonical_to_world(point, frame, order)
-                for point in canonical_points
-            ]
-            world_normals = [
-                _canonical_normal_to_world(normal_row, frame, order)
-                for normal_row in canonical_normals
-            ]
-            append_triangle(world_points, world_normals)
+            start = len(positions)
+            for point, normal_row in zip(triangle_points, triangle_normals):
+                canonical_point = local_point(point, slab_center)
+                canonical_normal = local_normal(normal_row)
+                positions.append(_canonical_to_world(canonical_point, frame, order))
+                normals.append(_canonical_normal_to_world(canonical_normal, frame, order))
+            indices.extend((start, start + 1, start + 2))
 
     try:
         topology = inspect_mesh_topology(
@@ -591,8 +550,8 @@ def _compile_state(
             "v0.5 cumulative hole output did not remain one closed oriented component",
             {"topology": topology},
         )
-    volume = _signed_volume(positions, indices)
     source_volume = float(frame["box_volume"])
+    volume = _signed_volume(positions, indices)
     polygonized_area = sum(float(hole["polygonized_removed_area"]) for hole in holes)
     expected_volume = source_volume - polygonized_area * thickness
     volume_tolerance = max(source_volume * 1e-5, 1e-8)
@@ -607,11 +566,9 @@ def _compile_state(
         )
     surface = _surface_specification(name, positions, normals, indices, material)
     glb = build_glb(surface)
-    body = glb["body"]
     return {
         "surface_specification": surface,
-        "glb_body": body,
-        "glb_sha256": hashlib.sha256(body).hexdigest(),
+        "glb_sha256": hashlib.sha256(glb["body"]).hexdigest(),
         "specification_sha256": glb["specification_sha256"],
         "topology": topology,
         "partition_axis": partition,
@@ -670,6 +627,44 @@ def _root_from_source(
     }
 
 
+def _verify_lineage_steps(
+    root_sha256: str,
+    holes: list[dict[str, Any]],
+    steps: list[dict[str, Any]],
+) -> None:
+    if len(holes) != len(steps) or not holes:
+        raise MeshPrecisionCutterError("hole lineage hole/step history is inconsistent")
+    parent_state = root_sha256
+    for index, (hole, step) in enumerate(zip(holes, steps), start=1):
+        if not isinstance(hole, dict) or not isinstance(step, dict):
+            raise MeshPrecisionCutterError("hole lineage entries must be objects")
+        claimed_hole_sha = hole.get("resolved_hole_sha256")
+        if claimed_hole_sha != _digest(
+            {key: value for key, value in hole.items() if key != "resolved_hole_sha256"}
+        ):
+            raise MeshPrecisionCutterError(f"hole lineage digest is invalid at step {index}")
+        expected = {
+            "step": index,
+            "hole_id": hole.get("id"),
+            "hole_sha256": claimed_hole_sha,
+            "parent_state_sha256": parent_state,
+        }
+        state_sha = _digest(expected)
+        if any(
+            (
+                step.get("step") != index,
+                step.get("hole_id") != hole.get("id"),
+                step.get("hole_sha256") != claimed_hole_sha,
+                step.get("parent_state_sha256") != parent_state,
+                step.get("state_sha256") != state_sha,
+            )
+        ):
+            raise MeshPrecisionCutterError(
+                f"hole lineage step hash chain is invalid at step {index}"
+            )
+        parent_state = state_sha
+
+
 def _load_parent_lineage(
     source_path: Path,
     lineage_path: Path,
@@ -690,19 +685,16 @@ def _load_parent_lineage(
             "hole lineage digest does not match expected_lineage_sha256",
             {"expected": expected, "observed": observed_lineage_digest},
         )
-    required = {"root", "axis", "holes", "steps", "output"}
-    if not required <= set(lineage):
-        raise MeshPrecisionCutterError("hole lineage receipt is missing required state")
-    root, axis = lineage["root"], lineage["axis"]
-    holes, steps, output = lineage["holes"], lineage["steps"], lineage["output"]
-    if (
-        not isinstance(root, dict)
-        or not isinstance(axis, dict)
-        or not isinstance(holes, list)
-        or not isinstance(steps, list)
-        or not isinstance(output, dict)
-        or len(holes) != len(steps)
-        or not holes
+    root, axis = lineage.get("root"), lineage.get("axis")
+    holes, steps, output = lineage.get("holes"), lineage.get("steps"), lineage.get("output")
+    if not all(
+        (
+            isinstance(root, dict),
+            isinstance(axis, dict),
+            isinstance(holes, list),
+            isinstance(steps, list),
+            isinstance(output, dict),
+        )
     ):
         raise MeshPrecisionCutterError("hole lineage state has invalid structural types")
     claimed_root_sha = root.get("root_sha256")
@@ -710,42 +702,13 @@ def _load_parent_lineage(
         {key: value for key, value in root.items() if key != "root_sha256"}
     ):
         raise MeshPrecisionCutterError("hole lineage root digest is invalid")
-    parent_state = claimed_root_sha
-    for index, (hole, step) in enumerate(zip(holes, steps), start=1):
-        if not isinstance(hole, dict) or not isinstance(step, dict):
-            raise MeshPrecisionCutterError("hole lineage entries must be objects")
-        claimed_hole_sha = hole.get("resolved_hole_sha256")
-        if claimed_hole_sha != _digest(
-            {key: value for key, value in hole.items() if key != "resolved_hole_sha256"}
-        ):
-            raise MeshPrecisionCutterError(
-                f"hole lineage digest is invalid at step {index}"
-            )
-        state = {
-            "step": index,
-            "hole_id": hole.get("id"),
-            "hole_sha256": claimed_hole_sha,
-            "parent_state_sha256": parent_state,
-        }
-        expected_state = _digest(state)
-        if (
-            step.get("step") != index
-            or step.get("hole_id") != hole.get("id")
-            or step.get("hole_sha256") != claimed_hole_sha
-            or step.get("parent_state_sha256") != parent_state
-            or step.get("state_sha256") != expected_state
-        ):
-            raise MeshPrecisionCutterError(
-                f"hole lineage step hash chain is invalid at step {index}"
-            )
-        parent_state = expected_state
+    _verify_lineage_steps(claimed_root_sha, holes, steps)
     if lineage.get("cumulative_recipe_sha256") != _digest(holes):
         raise MeshPrecisionCutterError("hole lineage cumulative recipe digest is invalid")
     if len(holes) >= MAX_CHAIN_CUTS:
         raise MeshPrecisionCutterError("hole lineage already reached the v0.5 limit")
 
-    raw = source_path.read_bytes()
-    current_sha = hashlib.sha256(raw).hexdigest()
+    current_sha = hashlib.sha256(source_path.read_bytes()).hexdigest()
     if current_sha != output.get("sha256"):
         raise MeshPrecisionCutterError(
             "resume source GLB does not match the hole lineage final output digest",
@@ -759,8 +722,9 @@ def _load_parent_lineage(
     frame = root.get("frame")
     if not isinstance(frame, dict):
         raise MeshPrecisionCutterError("hole lineage root frame is invalid")
-    frame_body = {key: value for key, value in frame.items() if key != "frame_sha256"}
-    if frame.get("frame_sha256") != _digest(frame_body):
+    if frame.get("frame_sha256") != _digest(
+        {key: value for key, value in frame.items() if key != "frame_sha256"}
+    ):
         raise MeshPrecisionCutterError("hole lineage root frame digest is invalid")
     order_raw = axis.get("canonical_order")
     cut_axis = axis.get("frame_axis_index")
@@ -824,22 +788,17 @@ def _resolve_new_holes(
     resolved: list[dict[str, Any]] = []
     for hole in specification["holes"]:
         if hole["id"] in existing_ids or any(row["id"] == hole["id"] for row in resolved):
-            raise MeshPrecisionCutterError(
-                f"hole id already exists in lineage: {hole['id']}"
-            )
+            raise MeshPrecisionCutterError(f"hole id already exists in lineage: {hole['id']}")
         resolved.append(_resolve_hole(hole, frame=frame, order=order))
     cumulative = existing + resolved
     if len(cumulative) > MAX_CHAIN_CUTS:
-        raise MeshPrecisionCutterError(
-            f"cumulative hole chain exceeds {MAX_CHAIN_CUTS} holes"
-        )
+        raise MeshPrecisionCutterError(f"cumulative hole chain exceeds {MAX_CHAIN_CUTS} holes")
     _validate_holes(cumulative, frame)
     _choose_partition_axis(cumulative, frame)
     return resolved
 
 
 def _steps_for_append(
-    *,
     root_sha256: str,
     previous_steps: list[dict[str, Any]],
     new_holes: list[dict[str, Any]],
@@ -860,7 +819,6 @@ def _steps_for_append(
 
 
 def _build_lineage(
-    *,
     specification: dict[str, Any],
     base: dict[str, Any],
     cumulative_holes: list[dict[str, Any]],
@@ -937,17 +895,15 @@ def build_hole_fabrication_chain(
             spec,
             expected_lineage_sha256,
         )
-    resolved_new = _resolve_new_holes(
+    new_holes = _resolve_new_holes(
         spec,
         frame=base["frame"],
         order=base["order"],
         existing=base["resolved_holes"],
     )
-    cumulative = base["resolved_holes"] + resolved_new
+    cumulative = base["resolved_holes"] + new_holes
     steps = _steps_for_append(
-        root_sha256=base["root"]["root_sha256"],
-        previous_steps=base["steps"],
-        new_holes=resolved_new,
+        base["root"]["root_sha256"], base["steps"], new_holes
     )
     compiled = _compile_state(
         name=spec["name"],
@@ -956,13 +912,7 @@ def build_hole_fabrication_chain(
         material=base["root"]["material"],
         holes=cumulative,
     )
-    lineage = _build_lineage(
-        specification=spec,
-        base=base,
-        cumulative_holes=cumulative,
-        steps=steps,
-        compiled=compiled,
-    )
+    lineage = _build_lineage(spec, base, cumulative, steps, compiled)
     return {
         "schema": HOLE_CHAIN_SCHEMA,
         "specification": spec,
@@ -971,11 +921,11 @@ def build_hole_fabrication_chain(
                 "schema": HOLE_CHAIN_SCHEMA,
                 "parent_lineage_sha256": base["parent_lineage_sha256"],
                 "root_sha256": base["root"]["root_sha256"],
-                "new_holes": resolved_new,
+                "new_holes": new_holes,
             }
         ),
         "parent_lineage_sha256": base["parent_lineage_sha256"],
-        "resolved_new_holes": resolved_new,
+        "resolved_new_holes": new_holes,
         "cumulative_hole_count": len(cumulative),
         "surface_specification": compiled["surface_specification"],
         "predicted_glb_sha256": compiled["glb_sha256"],
@@ -1049,9 +999,7 @@ def publish_hole_fabrication_chain(
         _restore_bytes(receipt, previous_receipt)
         if isinstance(exc, MeshPrecisionCutterError):
             raise
-        raise MeshPrecisionCutterError(
-            str(exc), getattr(exc, "details", {})
-        ) from exc
+        raise MeshPrecisionCutterError(str(exc), getattr(exc, "details", {})) from exc
     source_after = hashlib.sha256(source_path.read_bytes()).hexdigest()
     source_unchanged = source_before == source_after
     return {
