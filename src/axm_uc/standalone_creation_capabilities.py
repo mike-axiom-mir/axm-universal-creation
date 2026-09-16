@@ -179,6 +179,23 @@ def register_standalone_creation_builtins(
         except Procedural3DError as exc:
             raise capability_error(str(exc), exc.details) from exc
 
+    def precision_cutter(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+        from .precision_cutter import PrecisionCutterError, publish_precision_cut
+
+        target = resolve_output_path(root, str(inputs["path"]))
+        if is_machine_body_path(root, target):
+            raise capability_error("precision cutting cannot rewrite the live machine body")
+        if "replace" in inputs and not isinstance(inputs["replace"], bool):
+            raise capability_error("precision cutter replace must be a boolean")
+        try:
+            return publish_precision_cut(
+                target,
+                inputs["specification"],
+                replace=inputs.get("replace", False),
+            )
+        except PrecisionCutterError as exc:
+            raise capability_error(str(exc), exc.details) from exc
+
     def creative_flow(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
         from .creative_flow import CreativeFlowError, run_creative_flow
 
@@ -245,6 +262,7 @@ def register_standalone_creation_builtins(
         "builtin:browser_game": browser_game,
         "builtin:creation_growth": creation_growth,
         "builtin:procedural_3d": procedural_3d,
+        "builtin:precision_cutter": precision_cutter,
         "builtin:creative_flow": creative_flow,
         "builtin:native_visual_runtime": native_visual_runtime,
         "builtin:external_visual_tools": external_visual_tools,
