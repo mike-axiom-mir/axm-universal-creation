@@ -1,8 +1,8 @@
 {
   "id": "AXM-CAP-EVOLUTION-AFTERTOUCH",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "status": "live",
-  "purpose": "Evolve one creation through seven evidence-bearing parallel creative rounds, retain exactly two judged survivors after every round, run applicable UC self-tests before output, and finish with a deep-aftertouch evidence gate without auto-accepting or auto-canonizing either finalist.",
+  "purpose": "Evolve one creation through seven evidence-bearing parallel creative rounds, retain exactly two judged survivors after every round, and bind richer real 3D/game observations into self-test before the final deep-aftertouch gate without auto-accepting or auto-canonizing either finalist.",
   "handles": [
     "creative-evolution-chamber",
     "evolution-aftertouch",
@@ -34,7 +34,7 @@
       "chamber": "exact digest-bound axm.evolution-aftertouch-chamber/v0.1 state",
       "submissions": "complete object keyed by every current round team_id",
       "judgements": "complete independent existing tournament judgements keyed by team_id",
-      "candidate": "candidate or artifact body for a registered deterministic self-test adapter"
+      "candidate": "candidate or artifact body for a registered deterministic self-test adapter; 3D artifacts may name asset/required_sockets/animation_expected and playable games may name path/entrypoint/browser_executable/interaction_recipes/allow_synthetic_activation"
     }
   },
   "output_contract": {
@@ -45,7 +45,9 @@
       "two exact evidence-bearing survivor outputs after every completed round",
       "survivor-to-next-round lineage binding",
       "simulation/test/observe/repair/re-test protocol",
-      "direct visual-thought and project verification self-test adapters",
+      "visual-thought and generic project verification adapters",
+      "real GLB structure/pose/skin/socket/animation observations when supported",
+      "real local headless-browser execution, screenshot bytes, runtime probes and optional bounded interaction/reset-recovery observations for playable browser games",
       "explicit NOT_TESTED state for unsupported evidence surfaces",
       "two retained final outputs with structural, functional, visual, experience, context, adversarial and polish evidence lanes"
     ]
@@ -58,6 +60,8 @@
   "relationships": [
     "composes the existing specialist tournament instead of creating a second parallel-team ontology",
     "uses the existing deterministic simulation and project-verification surfaces when the artifact kind is supported",
+    "reuses the existing pure-Python game-pose runtime for bounded GLB geometry/animation/skin/socket evidence instead of inventing a second 3D parser",
+    "reuses the existing offline design-browser observer for actual local browser execution, screenshot/runtime measurements and caller-authorized bounded interaction recipes",
     "creative outputs and semantic judgements remain externally supplied evidence rather than faked deterministic cognition",
     "the best two complete judged outputs remain live after each round and become explicit parents for the next round",
     "deep aftertouch is a final evidence-bearing creation pass rather than a decorative label after generation",
@@ -66,32 +70,35 @@
   "implementation": {
     "kind": "DETERMINISTIC_SOURCE",
     "entrypoint": "builtin:evolution_aftertouch",
-    "source": "src/axm_uc/evolution_aftertouch.py"
+    "source": "src/axm_uc/__init__.py"
   },
   "limitations": [
-    "the chamber prepares creative-team packets but does not claim a team reasoned, built, rendered, played or tested until concrete executor evidence is supplied",
-    "v0.1 direct self-test adapters cover visual/Paintgun thought simulation and project/software/game project verification; other media remain NOT_TESTED until an adapter or external evidence provider is attached",
-    "independent tournament judgements are evidence inputs and can still be poor or biased; the chamber preserves their exact declared basis rather than treating the score as objective truth",
-    "seven rounds and two survivors are fixed v0.1 policy to preserve the requested creative evolution shape",
+    "creative-team packets do not imply that a team reasoned, built, rendered, played or tested until concrete executor evidence is supplied",
+    "GLB observation proves only the supported bounded file/pose/skin/socket/geometry facts; it does not render materials, prove game-engine playback, collision behavior, readability, aesthetics or polish",
+    "browser-game observation requires a caller-supplied local Chromium-compatible executable unless PATH discovery is explicitly enabled; synthetic activation is disabled unless explicitly authorized",
+    "a captured screenshot is real visual evidence but is HOLD rather than automatic aesthetic PASS; perceptual visual quality and polish need an observer that can actually judge those claims",
+    "bounded browser interaction is programmatic focus/synthetic activation on a temporary offline copy, not trusted user input or a complete playtest/usability study",
+    "independent tournament judgements remain evidence inputs and can be poor or biased; the chamber preserves their declared basis rather than treating scores as objective truth",
+    "seven rounds and two survivors remain fixed v0.2 policy to preserve the requested creative evolution shape",
     "all-PASS final evidence does not prove perfection, universal aesthetic quality, semantic correctness outside tested claims, or human acceptance"
   ],
-  "persistent_state": "Chamber state, round history, survivor lineage and evidence are carried explicitly by the caller in v0.1; no hidden chat state is required.",
+  "persistent_state": "Chamber state, round history, survivor lineage and evidence are carried explicitly by the caller; media observations are returned as digest-bound receipts and no hidden chat state is required.",
   "root_fit": {
     "truth": {
       "fit": true,
-      "basis": "Unsupported tests remain NOT_TESTED, complete independent judging is required before survivor selection, and final PASS is explicitly bounded to declared evidence lanes."
+      "basis": "Unsupported or unobserved evidence stays NOT_TESTED/HOLD; GLB/browser claims are bounded to actual measurements and screenshot presence is never promoted to aesthetic proof."
     },
     "agency": {
       "fit": true,
-      "basis": "Two finalists remain available after the seventh round and neither becomes accepted or CANON automatically."
+      "basis": "Two finalists remain available after the seventh round and neither becomes accepted or CANON automatically; synthetic browser activation also requires explicit authorization."
     },
     "continuity": {
       "fit": true,
-      "basis": "Every survivor carries parent identity, candidate digest, team origin, evidence, unknowns and exact round lineage into the next state."
+      "basis": "Every survivor retains parent identity, digest, team origin, evidence and unknowns; media observations retain their exact artifact/runtime evidence boundary."
     },
     "wisdom-before-speed": {
       "fit": true,
-      "basis": "The chamber deliberately spends seven bounded rounds on creation, simulation, observation, repair, stress and aftertouch before treating output as final-candidate material."
+      "basis": "The chamber spends seven bounded rounds on creation, real applicable simulation/observation, repair, stress and aftertouch instead of stopping at first technically valid output."
     }
   }
 }
