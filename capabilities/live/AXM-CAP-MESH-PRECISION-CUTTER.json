@@ -1,12 +1,14 @@
 {
   "id": "AXM-CAP-MESH-PRECISION-CUTTER",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "status": "live",
-  "purpose": "Cut bounded subtractive features directly into one observed existing rigid static UC GLB rectangular-prism mesh, preserving exact supported material factors and revalidating topology and published GLB geometry.",
+  "purpose": "Cut bounded subtractive features directly into observed existing rigid static UC GLB rectangular-prism meshes, including rotated/translated stock through a proven local source frame, while preserving exact supported material factors and revalidating topology and published GLB geometry.",
   "handles": [
     "mesh-precision-cut-3d",
     "mesh-laser-through-hole",
-    "mesh-laser-box-notch"
+    "mesh-laser-box-notch",
+    "mesh-laser-oriented-hole",
+    "mesh-laser-oriented-notch"
   ],
   "input_contract": {
     "required": [
@@ -17,7 +19,7 @@
     "properties": {
       "source_path": "existing ordinary .glb creation outside protected live machine body",
       "path": "distinct target .glb path outside protected live machine body",
-      "specification": "closed axm.mesh-precision-cutter/v0.2 recipe using round-through-hole or box-notch",
+      "specification": "closed axm.mesh-precision-cutter/v0.2 recipe for axis-aligned stock, or axm.mesh-precision-cutter/v0.3 recipe with world-space axis_vector matched to a proven oriented source frame",
       "expected_source_sha256": "optional exact lowercase SHA-256 binding, with optional sha256: prefix",
       "replace": "optional boolean; defaults false"
     }
@@ -27,8 +29,9 @@
     "contains": [
       "exact source GLB SHA-256 and source byte count",
       "source closed edge-topology evidence before cutting",
-      "measured rectangular-prism recognition and volume evidence",
-      "cut recipe digest bound to exact source digest",
+      "measured rectangular-prism frame/corner/volume evidence",
+      "v0.3 right-handed orthonormal source-frame axes and frame digest for rotated stock",
+      "cut recipe digest bound to exact source digest and source frame",
       "kerf-aware round-hole or box-notch metrics",
       "output closed edge-topology evidence before publication",
       "existing procedural-3D post-publication GLB validation",
@@ -42,7 +45,9 @@
   "relationships": [
     "reads actual existing GLB triangles through UC's static geometry decoder before calculating a cut",
     "reuses UC seam-weld topology evidence before and after surgery",
-    "reuses the v0.1 cutter geometry constructors for the supported cut shapes",
+    "v0.3 derives an orthonormal local frame from the observed eight box corners instead of assuming world-axis alignment",
+    "v0.3 binds an explicit world-space axis vector to exactly one proven source-frame axis before cutting",
+    "reuses the v0.1 cutter geometry constructors for supported cut shapes",
     "reuses the existing deterministic surface-to-GLB publisher and validator",
     "keeps source bytes separate from the new output and refuses in-place cutting"
   ],
@@ -50,23 +55,25 @@
   "implementation": {
     "kind": "DETERMINISTIC_SOURCE",
     "entrypoint": "builtin:precision_cutter",
-    "source": "src/axm_uc/mesh_precision_cutter.py"
+    "source": "src/axm_uc/oriented_mesh_precision_cutter.py"
   },
   "limitations": [
-    "v0.2 proves the existing-mesh path on exactly one rigid static closed consistently oriented axis-aligned rectangular-prism primitive. General arbitrary-mesh boolean surgery remains unavailable.",
-    "Only principal-axis round through-holes and open box notches are supported. Rotated stock, multiple primitives/components, skins, animation, morphs, UVs, textures, tangents, vertex colours, joints and other extra vertex attributes are rejected rather than silently discarded.",
+    "v0.3 extends the existing-mesh path to one rigid static closed consistently oriented rectangular-prism primitive under arbitrary rigid rotation/translation. General arbitrary-mesh boolean surgery remains unavailable.",
+    "v0.3 cut axes must align with one proven source-frame axis; arbitrary diagonal cuts relative to the stock are rejected rather than approximated.",
+    "Only round through-holes and open box notches are supported. Multiple primitives/components, skins, animation, morphs, UVs, textures, tangents, vertex colours, joints and other extra vertex attributes remain rejected rather than silently discarded.",
     "Supported PBR colour/emissive factors must be exactly representable by the existing 8-bit colour surface grammar; unsupported material features are rejected.",
+    "Output from one cut is not yet accepted as arbitrary input to another general cut; chaining beyond the proven rectangular-prism source family remains a future gate.",
     "Edge-manifold topology is checked, but self-intersection, visual quality, structural strength, real manufacturing behavior and host-engine import are not proven."
   ],
   "persistent_state": null,
   "root_fit": {
     "truth": {
       "fit": true,
-      "basis": "The exact source bytes, topology, measured stock, cut parameters, output topology, output digest and unsupported boundaries are explicit."
+      "basis": "The exact source bytes, seam topology, measured source frame, frame digest, cut axis binding, cut parameters, output topology, output digest and unsupported boundaries are explicit."
     },
     "agency": {
       "fit": true,
-      "basis": "The caller chooses the existing source, output path, cut axis, location, shape, dimensions, kerf and replacement decision; no design intent is silently selected."
+      "basis": "The caller chooses the existing source, output path, cut world-axis vector, location, shape, dimensions, kerf and replacement decision; the machine does not invent unsupported free-angle geometry."
     },
     "continuity": {
       "fit": true,
@@ -74,7 +81,7 @@
     },
     "wisdom-before-speed": {
       "fit": true,
-      "basis": "The cutter rejects unsupported source structure and material state, proves closed source topology and rectangular-prism scope before subtraction, then proves closed output topology and published GLB structure."
+      "basis": "The cutter rejects unsupported source/material state, proves closed source topology plus an orthonormal box frame before subtraction, binds the requested axis to that frame, then proves closed output topology and published GLB structure."
     }
   }
 }
