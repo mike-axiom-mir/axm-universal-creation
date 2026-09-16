@@ -206,6 +206,34 @@ def register_standalone_creation_builtins(
             specification = inputs["specification"]
             schema = specification.get("schema") if isinstance(specification, dict) else None
             try:
+                if schema == "axm.mesh-fabrication-chain/v0.4":
+                    from .mesh_fabrication_chain import publish_fabrication_chain
+
+                    lineage = None
+                    if "lineage_path" in inputs:
+                        lineage = resolve_output_path(root, str(inputs["lineage_path"]))
+                        if is_machine_body_path(root, lineage):
+                            raise capability_error(
+                                "fabrication-chain lineage must stay on an ordinary creation surface"
+                            )
+                    if "receipt_path" in inputs:
+                        receipt = resolve_output_path(root, str(inputs["receipt_path"]))
+                    else:
+                        receipt = target.with_suffix(target.suffix + ".fabrication.json")
+                    if is_machine_body_path(root, receipt):
+                        raise capability_error(
+                            "fabrication-chain receipt cannot rewrite the live machine body"
+                        )
+                    return publish_fabrication_chain(
+                        source,
+                        target,
+                        specification,
+                        lineage_path=lineage,
+                        receipt_path=receipt,
+                        expected_source_sha256=inputs.get("expected_source_sha256"),
+                        expected_lineage_sha256=inputs.get("expected_lineage_sha256"),
+                        replace=inputs.get("replace", False),
+                    )
                 if schema == "axm.mesh-precision-cutter/v0.3":
                     from .oriented_mesh_precision_cutter import publish_oriented_source_mesh_cut
 
