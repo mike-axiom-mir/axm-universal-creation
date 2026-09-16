@@ -20,20 +20,86 @@
   "material_texture_size": 512,
   "material_seed": 9137,
   "material_profiles": {
-    "pontoon": {"profile": "sun-faded-plastic", "color": "plastic_yellow"},
-    "deck": {"profile": "scratched-fiberglass", "color": "plastic_blue"},
-    "bumper": {"profile": "weathered-rubber", "color": "salvage_red"},
-    "frame": {"profile": "weathered-aluminum", "color": "dark_metal"},
-    "canopy": {"profile": "canvas", "color": "salvage_red"},
-    "sail": {"profile": "sailcloth", "color": "cloth"},
-    "life_ring": {"profile": "sun-faded-plastic", "color": "salvage_red"},
-    "duck": {"profile": "molded-plastic", "color": "plastic_yellow"},
-    "duck_beak": {"profile": "molded-plastic", "rgb": [242, 86, 18]}
+    "pontoon": {
+      "profile": "sun-faded-plastic",
+      "color": "plastic_yellow",
+      "layers": [
+        {"type": "salt", "amount": 0.30, "scale": 8.0},
+        {"type": "scuff", "amount": 0.28, "scale": 20.0},
+        {"type": "wetness", "amount": 0.08, "scale": 3.0}
+      ]
+    },
+    "deck": {
+      "profile": "scratched-fiberglass",
+      "color": "plastic_blue",
+      "layers": [
+        {"type": "salt", "amount": 0.22, "scale": 7.0},
+        {"type": "scuff", "amount": 0.35, "scale": 22.0},
+        {"type": "wetness", "amount": 0.14, "scale": 3.5}
+      ]
+    },
+    "bumper": {
+      "profile": "weathered-rubber",
+      "color": "salvage_red",
+      "layers": [
+        {"type": "scuff", "amount": 0.38, "scale": 24.0},
+        {"type": "dirt", "amount": 0.16, "scale": 5.0}
+      ]
+    },
+    "frame": {
+      "profile": "weathered-aluminum",
+      "color": "dark_metal",
+      "layers": [
+        {"type": "salt", "amount": 0.24, "scale": 9.0},
+        {"type": "scuff", "amount": 0.22, "scale": 26.0}
+      ]
+    },
+    "canopy": {
+      "profile": "canvas",
+      "color": "salvage_red",
+      "layers": [
+        {"type": "sun-bleach", "amount": 0.22, "scale": 2.0},
+        {"type": "dirt", "amount": 0.14, "scale": 5.0}
+      ]
+    },
+    "sail": {
+      "profile": "sailcloth",
+      "color": "cloth",
+      "layers": [
+        {"type": "sun-bleach", "amount": 0.20, "scale": 2.0},
+        {"type": "salt", "amount": 0.12, "scale": 8.0},
+        {"type": "dirt", "amount": 0.10, "scale": 4.0}
+      ]
+    },
+    "life_ring": {
+      "profile": "sun-faded-plastic",
+      "color": "salvage_red",
+      "layers": [
+        {"type": "salt", "amount": 0.18, "scale": 8.0},
+        {"type": "scuff", "amount": 0.26, "scale": 19.0},
+        {"type": "decal-stripe", "amount": 0.18, "scale": 4.0, "color": [238, 225, 190]}
+      ]
+    },
+    "duck": {
+      "profile": "molded-plastic",
+      "color": "plastic_yellow",
+      "layers": [
+        {"type": "scuff", "amount": 0.14, "scale": 18.0},
+        {"type": "salt", "amount": 0.06, "scale": 9.0}
+      ]
+    },
+    "duck_beak": {
+      "profile": "molded-plastic",
+      "rgb": [242, 86, 18],
+      "layers": [
+        {"type": "scuff", "amount": 0.12, "scale": 18.0}
+      ]
+    }
   },
   "design": {
     "tone": ["funny", "weathered", "lovable", "improvised", "game-readable", "stylized-detailed"],
     "must_read_as": ["fragile survival boat", "two-player craft", "sun-worn plastic and fiberglass", "island salvage", "2.5d adventure game asset"],
-    "signature_details": ["yellow inflatable pontoons", "patchwork shade canopy", "smiley cloth sail", "life ring", "rubber duck", "cargo crate", "visible material wear and surface breakup"],
+    "signature_details": ["yellow inflatable pontoons", "patchwork shade canopy", "smiley cloth sail", "life ring", "rubber duck", "cargo crate", "layered salt/scuff/wetness/dirt surface breakup"],
     "avoid": ["realistic military boat", "pirate ship", "flat image card", "non-animated render-only output", "uniform toy-plastic shading", "single-flat-color materials"]
   },
   "required_game_sockets": [
@@ -51,9 +117,10 @@
     "collision GLB",
     "Blender source",
     "portable PBR textures",
+    "preserved layer masks",
     "PNG proof",
     "MP4 motion proof",
     "manifest"
   ],
-  "truth_boundary": "This asset proves authored geometry, exportable animation, LOD/collision bodies, game attachment sockets and UC-authored portable PBR material maps. It does not prove final game balance, engine controller integration, buoyancy simulation or final art-direction acceptance."
+  "truth_boundary": "This asset proves authored geometry, exportable animation, LOD/collision bodies, game attachment sockets, UC-authored portable PBR material maps and preserved authored layer masks. Layer masks are not mesh-curvature/contact/simulation evidence. It does not prove final game balance, engine controller integration, buoyancy simulation or final art-direction acceptance."
 }
