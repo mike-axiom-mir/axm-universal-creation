@@ -1,8 +1,8 @@
 {
   "id": "AXM-CAP-UNWRAP-SURFACE-UV",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "status": "live",
-  "purpose": "Automatic unique UV charts and packing with native overlap/padding observation",
+  "purpose": "Automatic unique UV charts and packing with native overlap, base-padding and first-mip padding observation",
   "handles": [
     "unwrap-surface-uv"
   ],
@@ -23,6 +23,8 @@
   },
   "limitations": [
     "Runtime backend: Blender 4.3+. Explicit local installation; no automatic downloads.",
+    "A PASS requires enough measured atlas/island padding to retain at least one pixel after the first 2x mip reduction; deeper safe levels are conservatively reported, not universally guaranteed.",
+    "This does not prove target-engine sampler behavior, anisotropic filtering, compression behavior or every possible mip level.",
     "Bounded technical evidence only. No automatic product or artistic acceptance."
   ]
 }
