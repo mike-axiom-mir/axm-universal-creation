@@ -17,6 +17,12 @@ active task slots occupied. No existing task was paused or replaced. Mike then
 requested one cycle now. RUN_001.md records that manual cycle; no autonomous
 continuation is active and no eight-cycle completion is claimed.
 
+After cycle 001, Mike requested web research and then authorized the recommended
+complete learning example. RUN_002.md records that separately authorized work:
+one static wheel/chassis repair on existing UC vehicles, with a persisted
+parameterized procedure reused after a process restart. No recurring task was
+created by this follow-up either.
+
 Manual cycle 001 connects the existing static GLB target evidence gate to live
 capability routing and professional stations. Job requirements are separate from
 the submitted packet. Missing evidence names its owning profession. Packets are
@@ -65,9 +71,10 @@ Priority candidates (adaptive order; these are not completion claims):
    mismatch and handoff tests; keep weak keyword inference visible.
 5. Improve cold recovery/portable crew state using UC snapshots and explicit
    migration. Do not introduce a mandatory machine ledger or hash authority.
-6. Turn observed recurring defects into bounded reusable checks or repair
-   proposals; test corrected work and unseen contexts. Never silently overwrite
-   accepted sources or creative intent.
+6. Initial example completed in cycle 002: actual triangle-based clearance
+   repair learns a tested built-in parameterized rule, then reuses it on a
+   differently sized vehicle. Broader repair kinds and applicability remain
+   future work. Preserve accepted sources and creative intent.
 7. Inspect real rendered outputs for quality claims. Source/GLB tests alone cannot
    certify visuals, motion, material quality, gameplay or professional mastery.
 8. Integrate, retest and summarize achieved changes and the next genuine gap.
@@ -81,15 +88,17 @@ canon. Report any access/test blocker exactly. Maintain concise user updates.
 ## Verification commands
 
 ```sh
-PYTHONPATH=src:tests python -m unittest test_profession_crew test_profession_target_evidence test_stepwise_workflow test_specialist_tournament test_machine test_procedural_3d test_static_asset_target_evidence -q
+PYTHONPATH=src:tests python -m unittest test_profession_crew test_profession_target_evidence test_profession_clearance_repair test_sticker_clearance_contact test_software_glb_preview test_stepwise_workflow test_specialist_tournament test_machine test_procedural_3d test_static_asset_target_evidence -q
 python tools/profession_crew_demo.py
+python tools/profession_clearance_demo.py creations/clearance-demo
 git diff --check
 ```
 
 Initial local environment: Python 3.12.14 on Linux. Initial final selected suite:
 61 tests passed. A wheel built and cold-imported all 18 bundled professions.
 Initial PR #143's Python 3.11/3.13 crew CI passed before its merge. Manual cycle
-001 passed 77 selected tests locally; its own remote checks must be read fresh.
+001 passed 77 selected tests locally and in its Python 3.11/3.13 crew CI. Cycle
+002 passed 105 selected tests locally; its new remote checks must be read fresh.
 The full UC suite, Windows, actual rendered quality, live gameplay, animation,
 audio and autonomous cognitive specialists were not verified by this lane.
 

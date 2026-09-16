@@ -9,6 +9,8 @@ Work-type recipes cover software, web, 3D, animation, games, audio and documents
 These are ownership and consultation maps: automatic execution currently covers
 text/JSON, basic text projects, project verification, bounded procedural GLB and
 validation of supplied static GLB target evidence against job requirements.
+Crews also perform bounded static sticker-clearance repair and can retain a
+verified parameterized procedure for later matching jobs.
 Other stations report a capability gap. A `judgment: "REQUIRED"` station stops
 before execution and identifies its owner; it cannot invent approval.
 
@@ -25,6 +27,53 @@ This is deterministic adaptation through experience. It is not neural training,
 autonomous professional reasoning, a points system or evidence of artistic
 mastery. Repeating identical work under new run IDs does not add new experience.
 Source/context changes invalidate transfer without deleting the older practice.
+
+### Reusable clearance procedures
+
+`repair-sticker-clearance` starts from an exact immutable sticker assembly. The
+caller names one movable direct child, one permitted signed axis, 1..8 fixed
+children, a positive minimum gap and a hard movement limit. UC measures actual
+transformed triangles, searches at most 16 candidate translations, and checks a
+reusable `separate-bounds` rule against the measured result before retention.
+
+The crew reopens the output, reconstructs both assemblies from their portable
+libraries, checks that exported GLBs match them, and repeats the measurements.
+Only that fresh observation can add a procedure to its scoped practice. An
+unchanged source repaired into a new destination does not add duplicate practice.
+
+On a matching later job, the stored procedure computes a new translation from
+the new geometry's bounds and the current minimum gap. It still respects that
+job's movement limit and passes fresh triangle checks. It does not replay the
+first offset. Work context, profession, skill, axis, selected part roles,
+minimum gap, runtime and catalog bind reuse. Changed geometry may be tested
+inside that explicit scope; success on one geometry is not assumed on another.
+
+This learns which built-in parameterized procedure is verified for the context.
+It does not generate new executable code, train neural weights or promote a
+profession. If the source is unsupported or no candidate meets the movement
+limit, the job holds with its owner identified and adds no successful procedure.
+
+Sources stay intact. Results contain `source-library.json`, `before.glb`,
+`repair.json` and, when a candidate exists, `repaired-library.json` and
+`after.glb`. Only the selected child's translation changes in a new assembly;
+other definitions, source meshes, materials and metadata are preserved.
+
+Run the complete existing-vehicle demonstration in a fresh destination:
+
+```sh
+python tools/profession_clearance_demo.py creations/clearance-demo
+```
+
+It uses the original near-detail scrap buggy and convoy truck recipes, grouping
+the real chassis faces separately for measurement. Each crew job and verification
+runs in a fresh Python process, so the second job must recover its procedure from
+disk. The native software renderer creates front/top before-and-after PNGs from
+the actual exported GLBs. `--no-render` runs only the geometry/learning portion.
+
+This capability checks **static clearance for named pairs only**. It does not
+verify other contacts, a safe movement path, steering, suspension, axle mounts,
+vehicle dynamics or visual acceptance. See `docs/profession-crew-growth/RUN_002.md`
+for the actual two-vehicle measurements and render evidence.
 
 Jobs and compact practice live in `state/profession-crews/<crew_id>.json`.
 The normal UC snapshot/recovery mechanism covers this state. No simulator reward

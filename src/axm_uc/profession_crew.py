@@ -15,6 +15,11 @@ from typing import Any
 
 from .adoption_lock import candidate_adoption_lock
 from .atomic import atomic_write_json
+from .profession_clearance_repair import (
+    ACTION_KIND as CLEARANCE_REPAIR_KIND,
+    observe_repair,
+    validate_request as validate_clearance_repair,
+)
 from .profession_target_evidence import (
     ACTION_KIND as TARGET_EVIDENCE_KIND,
     EVIDENCE_SCOPE,
@@ -42,7 +47,7 @@ TEAMS = {
 PROJECT_KINDS = {"software-project", "python-project", "static-web-project"}
 GLB_KINDS = {"procedural-3d-asset", "procedural-glb-asset", "deterministic-3d-model", "glb-scene-asset"}
 TEXT_KINDS = {"text-file", "json-file"}
-SUPPORTED = PROJECT_KINDS | GLB_KINDS | TEXT_KINDS | {"verify-project", TARGET_EVIDENCE_KIND}
+SUPPORTED = PROJECT_KINDS | GLB_KINDS | TEXT_KINDS | {"verify-project", TARGET_EVIDENCE_KIND, CLEARANCE_REPAIR_KIND}
 
 
 class ProfessionCrewError(ValueError):
@@ -135,6 +140,11 @@ def _observe(root: Path, action: dict) -> dict:
     from .procedural_3d import build_glb, verify_glb
     kind, inputs = action["kind"], action["inputs"]
     path = _target(root, inputs.get("path"))
+    if kind == CLEARANCE_REPAIR_KIND:
+        result = observe_repair(root, inputs)
+        return {**result, "artifact": str(path), "artifact_digest": _fingerprint(path),
+                "checks": [{"type": "fresh-static-clearance", "passed": result["status"] == "PASS"}],
+                "evidence_origin": "LOCAL_TRIANGLE_MEASUREMENT"}
     if kind == TARGET_EVIDENCE_KIND:
         report = assess_target_evidence(path, inputs)
         return {"status": report["status"], "artifact": str(path),
@@ -215,8 +225,18 @@ def plan_crew(root: Path, inputs: dict) -> dict:
             lanes = (set(binding["target_contract"]["required_lanes"]) | set(packet["lanes"])
                      | {lane.strip() for lane in packet["required_lanes"]})
             handoff_professions.extend(LANE_OWNERS[lane] for lane in sorted(lanes))
+        if kind == CLEARANCE_REPAIR_KIND:
+            repair = validate_clearance_repair(action["inputs"])
+            _target(root, action["inputs"].get("database"))
+            binding["repair_scope"] = {"axis": repair["axis"], "minimum_m": repair["minimum_m"],
+                                       "moving": repair["moving"], "fixed": repair["fixed"],
+                                       "scope": "STATIC_RIGID_TRANSLATION"}
         key = _hash(binding)
         practice = copy.deepcopy(state["practice"].get(key, {}))
+        reused_procedure = kind == CLEARANCE_REPAIR_KIND and bool(practice.get("procedure"))
+        if reused_procedure:
+            action["inputs"]["procedure"] = copy.deepcopy(practice["procedure"])
+            validate_clearance_repair(action["inputs"])
         learned_preflight = kind in PROJECT_KINDS and bool(practice.get("failed_cases"))
         if automatic:
             _target(root, action["inputs"].get("path"))
@@ -230,6 +250,9 @@ def plan_crew(root: Path, inputs: dict) -> dict:
                    "fit_basis": "explicit work-type ownership table and caller-selected/default body skill; not a competence claim"}
         if kind == TARGET_EVIDENCE_KIND:
             station["evidence_scope"] = EVIDENCE_SCOPE
+        if kind == CLEARANCE_REPAIR_KIND:
+            station["reused_procedure"] = reused_procedure
+            station["evidence_scope"] = "LOCAL_STATIC_TRIANGLE_CLEARANCE"
         if station["judgment"] not in {"NOT_TESTED", "REQUIRED"}:
             raise ProfessionCrewError("judgment must be NOT_TESTED or REQUIRED; machine cannot claim supplied approval")
         stations.append(station)
@@ -276,12 +299,20 @@ def _learn(state: dict, station: dict, observation: dict) -> None:
     action["inputs"].pop("path", None)
     action["inputs"].pop("replace", None)
     case = _hash({"action": action, "artifact": observation.get("artifact_digest"), "status": observation["status"]})
+    if action["kind"] == CLEARANCE_REPAIR_KIND:
+        # A new destination/assembly name or search-vs-reuse selection cannot
+        # make the same measured source repair into a new experience.
+        case = _hash({"source": action["inputs"]["assembly"], "binding": station["binding"],
+                      "distance_m": observation.get("distance_m"), "status": observation["status"]})
     row = state["practice"].setdefault(station["practice_key"], {
         "binding": station["binding"], "passed_cases": [], "failed_cases": [], "failure_checks": [],
         "interpretation": "Distinct local observed cases; not a score, incentive, profession promotion or generalized competence."})
     field = "passed_cases" if observation["status"] == "PASS" else "failed_cases"
     if case not in row[field]:
         row[field].append(case)
+    if station["action"]["kind"] == CLEARANCE_REPAIR_KIND and observation["status"] == "PASS" and observation.get("learned_procedure"):
+        row["procedure"] = copy.deepcopy(observation["learned_procedure"])
+        row["procedure_basis"] = "Fresh before/after triangle measurements and independently rechecked parameterized translation; no claim beyond this binding."
     for check in observation.get("checks", []):
         if check.get("passed") is False and check.get("type") not in row["failure_checks"]:
             row["failure_checks"].append(check.get("type"))
@@ -342,7 +373,12 @@ def run_crew(root: Path, inputs: dict) -> dict:
             _learn(state, station, observed)
             atomic_write_json(path, state)
             if observed["status"] != "PASS":
-                record["status"] = "HOLD_TARGET_EVIDENCE" if observed["status"] == "HOLD" else "HOLD_FAILED_CHECK"
+                record["status"] = "HOLD_FAILED_CHECK"
+                if observed["status"] == "HOLD":
+                    record["status"] = "HOLD_TARGET_EVIDENCE" if action["kind"] == TARGET_EVIDENCE_KIND else "HOLD_REPAIR_BOUNDARY"
+                if action["kind"] == CLEARANCE_REPAIR_KIND:
+                    record["handoff"] = {"station": station["id"], "profession_id": station["profession_id"],
+                        "reason": "No verified repair within the declared static geometry and movement limits; inspect the observation before changing the contract"}
                 if action["kind"] == TARGET_EVIDENCE_KIND:
                     record["handoff"] = {"station": station["id"], "profession_id": station["profession_id"],
                         "reason": "Supply or correct exact-artifact target evidence; no target test was independently reproduced",

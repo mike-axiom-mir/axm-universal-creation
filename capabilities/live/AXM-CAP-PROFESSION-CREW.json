@@ -24,10 +24,11 @@
   "persistent_state": "state/profession-crews/<crew_id>.json",
   "limitations": [
     "Professional Bodies remain EXPERIMENTAL. Consultation/handoff cards are not executed cognitive agents.",
-    "Automatic adapters cover text/JSON, basic text projects, project verification, bounded procedural GLB and supplied static GLB target-evidence validation. Other actions hold for adapter work.",
+    "Automatic adapters cover text/JSON, basic text projects, project verification, bounded procedural GLB, supplied static GLB target-evidence validation and bounded static sticker-clearance repair. Other actions hold for adapter work.",
     "Target evidence is validated against job requirements and exact bytes, never independently reproduced or credited as crew practice.",
     "Artifact checks do not prove visual quality, gameplay feel, semantic adequacy or professional acceptance.",
     "Learning is scoped deterministic practice memory and learned preflight, not neural training or self-canonization.",
+    "A verified static clearance repair can retain a built-in parameterized procedure; reuse recalculates from new geometry and rechecks actual triangle clearance within the current movement limit.",
     "Completed, failed and interrupted jobs stay inspectable. At 256 jobs, preserve the crew and choose a new identifier."
   ]
 }
