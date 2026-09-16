@@ -2,7 +2,7 @@
 
 const Core = require('./source/axm-physics-core.js');
 
-const VERSION = '0.1.0';
+const VERSION = '0.1.1';
 const LIMIT_SCHEMA = 'axm.uc-direction-limit/v0.1';
 const STEP_SCHEMA = 'axm.uc-direction-limit-step/v0.1';
 const SIMULATION_SCHEMA = 'axm.uc-direction-limit-simulation/v0.1';
@@ -321,8 +321,8 @@ function step(world, limits, dt, options) {
       'Slack motion inside the allowed interval is intentionally unconstrained; only violated or outward-moving boundaries activate.',
       'No angular inertia, rotating anchors, angular limits or motors are implemented.',
       'Post-core projection can move bodies after collision/contact evidence was generated; returned core events and contact geometry describe the donor-core stage before post-direction-limit stabilization.',
-      'Connected limited bodies can still collide unless caller collision filters suppress that pair or a separate isolation wrapper later supports this family.',
-      'This standalone v0.1.0 entrypoint performs its own donor-core step; it is not yet integrated into the shared composer/activity/isolation stack.',
+      'Connected limited bodies can still collide unless caller collision filters suppress that pair or the shared component-isolation route is explicitly used.',
+      'This standalone entrypoint performs its own donor-core step; mixed-family callers must use the shared composer/activity/isolation stack, which reuses prepareWorld around one shared donor-core integration step rather than chaining standalone step calls.',
       'This is game/prototype physics evidence, not scientific validation.'
     ]
   };
@@ -363,7 +363,7 @@ function validate(world, limits) {
     warnings: [
       'Direction limits bound one fixed caller-selected world-space translation projection while perpendicular translation remains intentionally unconstrained.',
       'Slack motion inside min/max bounds is intentionally free; the direction does not rotate with bodies and this is not a full prismatic/slider joint.',
-      'The donor physics source remains untouched; this standalone v0.1.0 entrypoint is not yet integrated into the shared composer/activity/isolation stack.'
+      'The donor physics source remains untouched; the standalone entrypoint performs one donor-core step, while mixed-family callers can use the shared composer/activity/isolation stack without a second integration step.'
     ]
   };
 }
