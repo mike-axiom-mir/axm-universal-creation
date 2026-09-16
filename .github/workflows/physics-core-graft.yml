@@ -10,6 +10,7 @@ on:
       - 'capabilities/candidates/AXM-CAP-PHYSICS-TRANSLATION-MOUNTS.json'
       - 'capabilities/candidates/AXM-CAP-PHYSICS-CONSTRAINT-COMPOSER.json'
       - 'capabilities/candidates/AXM-CAP-PHYSICS-CONSTRAINT-COLLISION-ISOLATION.json'
+      - 'capabilities/candidates/AXM-CAP-PHYSICS-CONSTRAINT-ACTIVITY-GATE.json'
       - '.github/workflows/physics-core-graft.yml'
   workflow_dispatch:
 
@@ -38,3 +39,5 @@ jobs:
         run: node capabilities/physics-core/constraint-composer-selftest.js
       - name: Verify constraint component collision isolation
         run: node capabilities/physics-core/constraint-collision-isolation-selftest.js
+      - name: Verify disabled constraint activity gate
+        run: node capabilities/physics-core/constraint-activity-gate-selftest.js
