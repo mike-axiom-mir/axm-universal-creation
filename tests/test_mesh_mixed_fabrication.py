@@ -38,7 +38,7 @@ def rotation_matrix(rx=0.31, ry=-0.47, rz=0.22):
     cz, sz = math.cos(rz), math.sin(rz)
     x = [[1.0, 0.0, 0.0], [0.0, cx, -sx], [0.0, sx, cx]]
     y = [[cy, 0.0, sy], [0.0, 1.0, 0.0], [-sy, 0.0, cy]]
-    z = [[cz, -sz, 0.0], [sz, cz, -0.0], [0.0, 0.0, 1.0]]
+    z = [[cz, -sz, 0.0], [sz, cz, 0.0], [0.0, 0.0, 1.0]]
     return _matmul(z, _matmul(y, x))
 
 
