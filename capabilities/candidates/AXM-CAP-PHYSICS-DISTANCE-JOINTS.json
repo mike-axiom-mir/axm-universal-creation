@@ -1,0 +1,89 @@
+{
+  "id": "AXM-CAP-PHYSICS-DISTANCE-JOINTS",
+  "version": "0.1.0",
+  "status": "candidate",
+  "purpose": "Add deterministic translation-only center-to-center distance joints around the preserved AXM Physics Core without pretending that angular anchors or a full rigid-joint system already exist.",
+  "handles": [
+    "distance-joint",
+    "fixed-distance-constraint",
+    "translation-joint",
+    "kinematic-follow-link"
+  ],
+  "input_contract": {
+    "required": ["world", "joints"],
+    "properties": {
+      "world": "axm.physics-world/v1 world",
+      "joints": "bounded array of center-to-center distance constraints",
+      "dt": "core step delta",
+      "options": "optional bounded positionIterations and velocityIterations"
+    }
+  },
+  "output_contract": {
+    "kind": "axm.uc-distance-joint-step/v0.1",
+    "contains": [
+      "constrained world",
+      "normalized joints",
+      "position and velocity solve receipts",
+      "post-core distance error diagnostics",
+      "imported core collision and integration evidence",
+      "state checksum"
+    ]
+  },
+  "dependencies": ["AXM-CAP-PHYSICS-FABRIC"],
+  "relationships": [
+    {
+      "type": "extends",
+      "target": "capabilities/physics-core/source/axm-physics-core.js"
+    },
+    {
+      "type": "contrasts-with",
+      "target": "force-based spring-distance constraints",
+      "basis": "This capability projects a target center distance and constrains relative axis velocity; the existing spring path remains intentionally soft and force-based."
+    }
+  ],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "capabilities/physics-core/uc-distance-joints.js",
+    "selftest": "node capabilities/physics-core/distance-joints-selftest.js"
+  },
+  "limitations": [
+    "center-to-center translation constraint only",
+    "no local anchors",
+    "no angular inertia or angular response",
+    "no hinge, slider, weld, motor or gear constraints",
+    "connected-body collision suppression is not implemented",
+    "constraint projection occurs before the imported core collision/integration step, so forces can create bounded distance error until the next solve",
+    "not scientific validation"
+  ],
+  "persistent_state": "joint definitions are explicit caller-owned JSON data",
+  "tests": [
+    {
+      "command": "node capabilities/physics-core/distance-joints-selftest.js",
+      "proves": [
+        "initial position error projection",
+        "relative axis velocity locking",
+        "kinematic-anchor following",
+        "truthful handling of two immovable bodies",
+        "same-runtime deterministic replay"
+      ]
+    }
+  ],
+  "root_fit": {
+    "truth": {
+      "fit": true,
+      "basis": "The capability is explicitly translation-only and distinguishes projected distance joints from soft springs and from unsupported angular joint families."
+    },
+    "agency": {
+      "fit": true,
+      "basis": "Joint endpoints, length, correction bounds and solver iteration counts remain caller-controlled explicit data."
+    },
+    "continuity": {
+      "fit": true,
+      "basis": "The donor physics core remains byte-for-byte preserved; this is an additive layer exposed through the same physics capsule."
+    },
+    "wisdom-before-speed": {
+      "fit": true,
+      "basis": "The first rigid-constraint step is deliberately bounded to one auditable joint family before attempting rotation, anchored joints or larger constraint systems."
+    }
+  }
+}
