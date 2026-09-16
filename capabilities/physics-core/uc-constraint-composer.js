@@ -8,7 +8,7 @@ const AxisLocks = require('./uc-axis-locks.js');
 const AxisLimits = require('./uc-axis-limits.js');
 const DirectionLocks = require('./uc-direction-locks.js');
 
-const VERSION = '0.6.0';
+const VERSION = '0.6.1';
 const STEP_SCHEMA = 'axm.uc-constraint-composer-step/v0.1';
 const SIMULATION_SCHEMA = 'axm.uc-constraint-composer-simulation/v0.1';
 const FAMILY_ORDER = Object.freeze(['translation-mounts', 'distance-joints', 'distance-limits', 'axis-locks', 'axis-limits', 'direction-locks']);
@@ -254,7 +254,7 @@ function validate(world, constraints) {
     'Convergence-aware early exit is tolerance-based and requires both position and constrained relative-velocity residuals to satisfy caller-visible thresholds; it is not proof of global convergence.',
     'Conflicting constraints can retain residual error because this bounded composer does not claim a globally convergent rigid-body constraint solution.',
     'Post-core projection can move bodies after contact evidence was generated; core contacts remain explicitly tied to the pre-post-stabilization core stage.',
-    'The shared activity-gate and collision-isolation wrappers still cover the earlier five families only; directionLocks are supported through this direct composer path until those wrappers receive explicit sixth-family handling.',
+    'The shared activity-gate and collision-isolation wrappers support all six composer families; disabled direction locks are filtered before delegation and enabled direction-lock edges can join component isolation topology.',
     'The imported donor source remains untouched.'
   ];
   if (!normalized.mounts.length && !normalized.distanceJoints.length && !normalized.distanceLimits.length && !normalized.axisLocks.length && !normalized.axisLimits.length && !normalized.directionLocks.length) warnings.push('No constraints were supplied; the composer would reduce to one donor-core step.');
@@ -327,7 +327,7 @@ function step(world, constraints, dt, options) {
       'No angular inertia, rotating local anchors, hinge, full slider/prismatic, rotational weld, motor or gear semantics are implemented.',
       'Post-core projection can change positions after collision/contact evidence was generated; returned core events and contact geometry describe the core stage before post-composite stabilization.',
       'Connected constrained bodies can still collide unless caller collision filters or the separate component-isolation wrapper suppress that component.',
-      'The shared activity-gate and collision-isolation wrappers are not extended by composer v0.6; they still route the earlier five families and must not be described as direction-lock aware.',
+      'The shared activity-gate and collision-isolation wrappers route all six families; direction-lock isolation is component-wide rather than direct-edge-only and does not change perpendicular physical freedom.',
       'This is game/prototype physics evidence, not scientific validation.'
     ]
   };
