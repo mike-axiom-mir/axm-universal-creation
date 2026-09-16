@@ -3,8 +3,8 @@
 const crypto = require('crypto');
 const BasePreflight = require('./uc-constraint-preflight.js');
 
-const VERSION = '0.1.0';
-const REPORT_SCHEMA = 'axm.uc-orthogonal-projection-preflight/v0.1';
+const VERSION = '0.2.0';
+const REPORT_SCHEMA = 'axm.uc-orthogonal-projection-preflight/v0.2';
 const DEFAULT_ORTHOGONALITY_TOLERANCE = 1e-9;
 const MAX_ORTHOGONALITY_TOLERANCE = 1e-6;
 
@@ -34,6 +34,11 @@ function round(value) {
 function minimumAbsoluteInterval(interval) {
   if (interval.min <= 0 && interval.max >= 0) return 0;
   return Math.min(Math.abs(interval.min), Math.abs(interval.max));
+}
+
+function maximumAbsoluteInterval(interval) {
+  if (!Number.isFinite(interval.min) || !Number.isFinite(interval.max)) return Infinity;
+  return Math.max(Math.abs(interval.min), Math.abs(interval.max));
 }
 
 function directionNormSquared(direction) {
@@ -89,10 +94,14 @@ function analyze(world, constraints, options) {
   const tolerance = base.tolerance;
   const checks = [];
   const additionalConflicts = [];
+  let radialMaximumChecks = 0;
+  let radialMaximumConflicts = 0;
+  let radialMinimumChecks = 0;
+  let radialMinimumConflicts = 0;
 
   if (base.valid) {
     const projections = (base.groups || []).filter(group => !group.conflict);
-    const radials = (base.radialGroups || []).filter(group => !group.conflict && Number.isFinite(group.intersection.max));
+    const radials = (base.radialGroups || []).filter(group => !group.conflict);
 
     radials.forEach(radial => {
       const samePairProjections = projections.filter(group => samePair(group, radial));
@@ -106,15 +115,8 @@ function analyze(world, constraints, options) {
 
           const firstMinimum = minimumAbsoluteInterval(first.intersection);
           const secondMinimum = minimumAbsoluteInterval(second.intersection);
-          const maximumAllowedDistance = radial.intersection.max;
-
-          // The base preflight already proves either one-dimensional violation alone.
-          // Skip those here so this layer reports only genuinely combined evidence.
-          if (firstMinimum > maximumAllowedDistance + tolerance) continue;
-          if (secondMinimum > maximumAllowedDistance + tolerance) continue;
-
-          const minimumRequiredDistance = Math.hypot(firstMinimum, secondMinimum);
-          const conflict = minimumRequiredDistance > maximumAllowedDistance + tolerance;
+          const firstMaximum = maximumAbsoluteInterval(first.intersection);
+          const secondMaximum = maximumAbsoluteInterval(second.intersection);
           const involved = [first, second, radial];
           const summary = {
             a: radial.a,
@@ -123,19 +125,87 @@ function analyze(world, constraints, options) {
             projectionIntersections: [clone(first.intersection), clone(second.intersection)],
             distanceIntersection: clone(radial.intersection),
             minimumProjectionMagnitudes: [round(firstMinimum), round(secondMinimum)],
-            minimumRequiredDistance: round(minimumRequiredDistance),
-            maximumAllowedDistance: round(maximumAllowedDistance),
+            maximumProjectionMagnitudes: [
+              Number.isFinite(firstMaximum) ? round(firstMaximum) : firstMaximum,
+              Number.isFinite(secondMaximum) ? round(secondMaximum) : secondMaximum
+            ],
             orthogonalityDot: round(dot(first.direction, second.direction)),
-            conflict,
             constraintIds: constraintIds(involved),
-            families: families(involved)
+            families: families(involved),
+            radialMaximumCheck: null,
+            radialMinimumCheck: null
           };
-          checks.push(summary);
-          if (conflict) {
-            additionalConflicts.push(Object.assign({
-              code: 'ORTHOGONAL_PROJECTIONS_EXCEED_DISTANCE_MAX'
-            }, clone(summary)));
+
+          if (Number.isFinite(radial.intersection.max)) {
+            const maximumAllowedDistance = radial.intersection.max;
+
+            // The base preflight already proves either one-dimensional violation alone.
+            // Skip those here so this layer reports only genuinely combined evidence.
+            if (firstMinimum <= maximumAllowedDistance + tolerance &&
+                secondMinimum <= maximumAllowedDistance + tolerance) {
+              const minimumRequiredDistance = Math.hypot(firstMinimum, secondMinimum);
+              const conflict = minimumRequiredDistance > maximumAllowedDistance + tolerance;
+              summary.radialMaximumCheck = {
+                minimumRequiredDistance: round(minimumRequiredDistance),
+                maximumAllowedDistance: round(maximumAllowedDistance),
+                conflict
+              };
+              radialMaximumChecks += 1;
+              if (conflict) {
+                radialMaximumConflicts += 1;
+                additionalConflicts.push({
+                  code: 'ORTHOGONAL_PROJECTIONS_EXCEED_DISTANCE_MAX',
+                  a: summary.a,
+                  b: summary.b,
+                  directions: clone(summary.directions),
+                  projectionIntersections: clone(summary.projectionIntersections),
+                  distanceIntersection: clone(summary.distanceIntersection),
+                  minimumProjectionMagnitudes: clone(summary.minimumProjectionMagnitudes),
+                  minimumRequiredDistance: round(minimumRequiredDistance),
+                  maximumAllowedDistance: round(maximumAllowedDistance),
+                  orthogonalityDot: summary.orthogonalityDot,
+                  constraintIds: clone(summary.constraintIds),
+                  families: clone(summary.families)
+                });
+              }
+            }
           }
+
+          // In 2D, two orthonormal projected coordinates fully determine the
+          // displacement magnitude. If both projected intervals are bounded,
+          // their largest possible magnitudes therefore give a safe radial
+          // upper bound. A radial minimum above that bound is locally impossible.
+          if (Number.isFinite(radial.intersection.min) &&
+              Number.isFinite(firstMaximum) && Number.isFinite(secondMaximum)) {
+            const minimumAllowedDistance = radial.intersection.min;
+            const maximumPossibleDistance = Math.hypot(firstMaximum, secondMaximum);
+            const conflict = minimumAllowedDistance > maximumPossibleDistance + tolerance;
+            summary.radialMinimumCheck = {
+              minimumAllowedDistance: round(minimumAllowedDistance),
+              maximumPossibleDistance: round(maximumPossibleDistance),
+              conflict
+            };
+            radialMinimumChecks += 1;
+            if (conflict) {
+              radialMinimumConflicts += 1;
+              additionalConflicts.push({
+                code: 'DISTANCE_MIN_EXCEEDS_ORTHOGONAL_PROJECTION_MAX',
+                a: summary.a,
+                b: summary.b,
+                directions: clone(summary.directions),
+                projectionIntersections: clone(summary.projectionIntersections),
+                distanceIntersection: clone(summary.distanceIntersection),
+                maximumProjectionMagnitudes: clone(summary.maximumProjectionMagnitudes),
+                maximumPossibleDistance: round(maximumPossibleDistance),
+                minimumAllowedDistance: round(minimumAllowedDistance),
+                orthogonalityDot: summary.orthogonalityDot,
+                constraintIds: clone(summary.constraintIds),
+                families: clone(summary.families)
+              });
+            }
+          }
+
+          if (summary.radialMaximumCheck || summary.radialMinimumCheck) checks.push(summary);
         }
       }
     });
@@ -156,6 +226,10 @@ function analyze(world, constraints, options) {
       baseConflicts: (base.conflicts || []).length,
       orthogonalProjectionRadialChecks: checks.length,
       orthogonalProjectionRadialConflicts: additionalConflicts.length,
+      radialMaximumChecks,
+      radialMaximumConflicts,
+      radialMinimumChecks,
+      radialMinimumConflicts,
       conflicts: conflicts.length,
       unsupportedConstraints: base.counts ? base.counts.unsupportedConstraints : 0
     },
@@ -163,16 +237,17 @@ function analyze(world, constraints, options) {
     conflicts,
     errors: clone(base.errors || []),
     evidence: [
-      checks.length + ' same-pair orthogonal two-projection/radial upper-bound check(s) evaluated',
-      additionalConflicts.length + ' additional bounded orthogonal projection conflict(s) proven',
+      checks.length + ' same-pair orthogonal two-projection/radial check pair(s) evaluated',
+      radialMaximumConflicts + ' combined projection-lower-bound/radial-maximum conflict(s) proven',
+      radialMinimumConflicts + ' combined projection-upper-bound/radial-minimum conflict(s) proven',
       'Accepted directions must each be unit-length and mutually orthogonal within tolerance ' + orthogonalityTolerance,
       'The proof uses the 2D orthonormal identity distance^2 = projectionA^2 + projectionB^2 only for one exact body pair.'
     ],
     limitations: [
       'This is an optional stronger layer over the existing conservative preflight; the base preflight and solver are unchanged.',
       'It combines exactly two same-body-pair projected intervals only when their normalized directions are unit-length and mutually orthogonal within the configured strict tolerance.',
-      'It does not combine oblique or merely near-orthogonal directions, more than two projected directions, or constraints from different body pairs.',
-      'It uses only a finite radial maximum. A radial minimum is not treated as contradictory because remaining geometric freedom may satisfy it.',
+      'It does not combine oblique or merely near-orthogonal directions, more than two projected directions at once, or constraints from different body pairs.',
+      'A radial maximum can be checked from projection lower bounds; a radial minimum is checked only when both orthogonal projection intervals have finite upper magnitudes.',
       'It does not prove global constraint satisfiability, convergence, stability or physical correctness and does not reason across triangles or loops.',
       'It is 2D game/prototype correctness evidence, not scientific validation or a 3D physics claim.'
     ]
