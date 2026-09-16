@@ -1,0 +1,88 @@
+{
+  "id": "AXM-CAP-PHYSICS-CONSTRAINT-COLLISION-ISOLATION",
+  "version": "0.1.0",
+  "status": "candidate",
+  "purpose": "Allow translation-only constrained assemblies to opt into deterministic intra-component collision isolation during the preserved donor-core collision stage without rewriting the donor solver or silently overwriting caller collision-group semantics.",
+  "handles": [
+    "constraint-component-collision-isolation",
+    "assembly-self-collision-suppression",
+    "temporary-negative-collision-groups"
+  ],
+  "input_contract": {
+    "required": ["world", "constraints", "dt"],
+    "properties": {
+      "world": "axm.physics-world/v1 world",
+      "constraints": "constraint-composer translation mounts and/or distance joints",
+      "dt": "donor-core step delta",
+      "options": "optional isolation enabled flag plus nested composer options"
+    }
+  },
+  "output_contract": {
+    "kind": "axm.uc-constraint-collision-isolation-step/v0.1",
+    "contains": [
+      "restored final world",
+      "component-isolation receipts",
+      "temporary-group donor-core collision-stage world",
+      "composer diagnostics",
+      "restored-world checksum"
+    ]
+  },
+  "dependencies": [
+    "AXM-CAP-PHYSICS-CONSTRAINT-COMPOSER"
+  ],
+  "relationships": [
+    {
+      "type": "extends",
+      "target": "capabilities/physics-core/uc-constraint-composer.js"
+    },
+    {
+      "type": "preserves",
+      "target": "capabilities/physics-core/source/axm-physics-core.js",
+      "basis": "The donor core remains byte-for-byte untouched; isolation is expressed by a temporary caller-side collision-group projection around the donor collision step."
+    }
+  ],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "capabilities/physics-core/uc-constraint-collision-isolation.js",
+    "selftest": "node capabilities/physics-core/constraint-collision-isolation-selftest.js"
+  },
+  "limitations": [
+    "isolation applies to whole connected constraint components rather than direct constraint edges only",
+    "components containing any nonzero caller collision.group are skipped rather than overridden",
+    "only translation mounts and center-to-center distance joints are understood",
+    "no angular inertia, rotating local anchors, hinge, slider, rotational weld, motor or gear semantics",
+    "core contact evidence describes the temporary-group collision stage before caller groups are restored",
+    "not scientific validation"
+  ],
+  "persistent_state": "none; temporary collision groups are derived per step and caller groups are restored before returning",
+  "tests": [
+    {
+      "command": "node capabilities/physics-core/constraint-collision-isolation-selftest.js",
+      "proves": [
+        "overlapping constrained bodies can be excluded from donor-core contacts when isolation is eligible",
+        "caller collision groups are restored on the final world",
+        "existing nonzero caller group semantics cause an explicit skip rather than silent override",
+        "temporary negative groups are allocated deterministically while avoiding ids already present in the world",
+        "same-runtime deterministic replay"
+      ]
+    }
+  ],
+  "root_fit": {
+    "truth": {
+      "fit": true,
+      "basis": "The capability names its component-wide behavior, exposes skipped components and preserves the exact donor collision-stage world used for contact evidence."
+    },
+    "agency": {
+      "fit": true,
+      "basis": "Isolation is explicit and caller-controlled, and existing nonzero collision-group choices are not overwritten."
+    },
+    "continuity": {
+      "fit": true,
+      "basis": "It composes around the existing mixed-constraint lane and preserved donor source rather than replacing either."
+    },
+    "wisdom-before-speed": {
+      "fit": true,
+      "basis": "The first collision-suppression step is deliberately bounded to deterministic connected components and declines ambiguous existing group semantics instead of guessing."
+    }
+  }
+}
