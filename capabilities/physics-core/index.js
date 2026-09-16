@@ -6,5 +6,6 @@ module.exports = {
   fabric: require('./uc-physics-fabric.js'),
   distanceJoints: require('./uc-distance-joints.js'),
   translationMounts: require('./uc-translation-mounts.js'),
-  constraintComposer: require('./uc-constraint-composer.js')
+  constraintComposer: require('./uc-constraint-composer.js'),
+  constraintCollisionIsolation: require('./uc-constraint-collision-isolation.js')
 };
