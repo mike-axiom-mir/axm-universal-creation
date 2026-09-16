@@ -29,6 +29,7 @@ on:
       - 'src/axm_uc/visual_template_mission.py'
       - 'src/axm_uc/visual_template_hud.py'
       - 'src/axm_uc/visual_template_lighting.py'
+      - 'src/axm_uc/visual_template_camera.py'
       - 'src/axm_uc/visual_templates_cli.py'
       - 'tests/test_visual_templates.py'
       - 'tools/visual_template_proof.py'
@@ -55,6 +56,7 @@ on:
       - 'MISSION_TEMPLATE_PACK.md'
       - 'HUD_TEMPLATE_PACK.md'
       - 'LIGHTING_TEMPLATE_PACK.md'
+      - 'CAMERA_TEMPLATE_PACK.md'
       - 'pyproject.toml'
       - '.github/workflows/visual-template-fabric.yml'
   pull_request:
@@ -85,6 +87,7 @@ on:
       - 'src/axm_uc/visual_template_mission.py'
       - 'src/axm_uc/visual_template_hud.py'
       - 'src/axm_uc/visual_template_lighting.py'
+      - 'src/axm_uc/visual_template_camera.py'
       - 'src/axm_uc/visual_templates_cli.py'
       - 'tests/test_visual_templates.py'
       - 'tools/visual_template_proof.py'
@@ -111,6 +114,7 @@ on:
       - 'MISSION_TEMPLATE_PACK.md'
       - 'HUD_TEMPLATE_PACK.md'
       - 'LIGHTING_TEMPLATE_PACK.md'
+      - 'CAMERA_TEMPLATE_PACK.md'
       - 'pyproject.toml'
       - '.github/workflows/visual-template-fabric.yml'
   workflow_dispatch:
