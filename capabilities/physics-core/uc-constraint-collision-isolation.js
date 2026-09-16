@@ -3,7 +3,7 @@
 const Core = require('./source/axm-physics-core.js');
 const Composer = require('./uc-constraint-composer.js');
 
-const VERSION = '0.1.0';
+const VERSION = '0.2.0';
 const STEP_SCHEMA = 'axm.uc-constraint-collision-isolation-step/v0.1';
 const SIMULATION_SCHEMA = 'axm.uc-constraint-collision-isolation-simulation/v0.1';
 const MAX_TEMP_GROUPS = 32768;
@@ -26,6 +26,7 @@ function constraintEdges(normalized) {
   const edges = [];
   (normalized.mounts || []).forEach(item => edges.push({ family: 'translation-mounts', id: item.id, a: item.a, b: item.b }));
   (normalized.distanceJoints || []).forEach(item => edges.push({ family: 'distance-joints', id: item.id, a: item.a, b: item.b }));
+  (normalized.distanceLimits || []).forEach(item => edges.push({ family: 'distance-limits', id: item.id, a: item.a, b: item.b }));
   return edges.sort((left, right) => {
     const pairLeft = [left.a, left.b].sort().join('\u0000') + '\u0000' + left.family + '\u0000' + left.id;
     const pairRight = [right.a, right.b].sort().join('\u0000') + '\u0000' + right.family + '\u0000' + right.id;
@@ -187,7 +188,7 @@ function validate(world, constraints, options) {
     errors,
     componentCount: prepared ? prepared.components.length : 0,
     warnings: (composer.warnings || []).concat([
-      'Collision isolation is component-wide: every body in one connected constraint component temporarily shares one negative collision group during the donor-core collision stage.',
+      'Collision isolation is component-wide across translation mounts, distance joints and distance limits: every body in one connected constraint component temporarily shares one negative collision group during the donor-core collision stage.',
       'This is not edge-only pair suppression; bodies connected indirectly through the same constraint component also do not collide with each other during that stage.',
       'A component containing any nonzero caller collision.group is skipped rather than silently overriding existing group semantics.',
       'Temporary groups are chosen deterministically from unused negative group ids and restored on the returned world.',
@@ -229,7 +230,7 @@ function step(world, constraints, dt, options) {
       worldAsIntegratedWithTemporaryGroups: collisionStageWorld
     },
     evidence: [
-      prepared.components.length + ' connected constraint component(s) discovered in deterministic body-id order',
+      prepared.components.length + ' connected constraint component(s) discovered across the three supported translation-only constraint families in deterministic body-id order',
       prepared.appliedComponents + ' component(s) received unused temporary negative collision groups for the donor-core collision stage',
       prepared.skippedComponents + ' component(s) skipped isolation rather than overriding existing collision-group semantics',
       'Composer executed one preserved AXM Physics Core v' + Core.VERSION + ' collision/integration step',
@@ -241,7 +242,8 @@ function step(world, constraints, dt, options) {
       'Components containing any nonzero caller collision.group are intentionally skipped.',
       'Category and mask filters are preserved; this layer only uses temporary negative group ids that were unused in the caller world.',
       'Core contact evidence describes the collision stage while temporary groups were active; the returned world has caller groups restored afterward.',
-      'Only translation mounts and center-to-center distance joints are understood because those are the constraint families currently exposed by the composer.',
+      'Translation mounts, center-to-center distance joints and center-distance limits are understood; no additional joint families are implied.',
+      'Distance-limit slack semantics remain unchanged: a limit edge participates in component discovery even while its range interior is physically unconstrained.',
       'No angular inertia, rotating local anchors, hinge, slider, rotational weld, motor or gear semantics are implemented.',
       'This is game/prototype physics evidence, not scientific validation.'
     ]
