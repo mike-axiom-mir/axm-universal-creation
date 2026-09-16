@@ -11,7 +11,7 @@ orchestration machinery.
 | Product | Product-specific work in the plan | Executable draft recipe in this change |
 | --- | --- | --- |
 | Material | Surface intent, maps/layers, map checks, look development | Generate maps, independently reopen/check them, preserve source and delivery manifest |
-| Static 3D | Blockout, geometry, UVs, materials, assembly, LOD/collision | Generate/check materials, optional automatic UVs and mesh baking, measure density/coverage, native previews and optional Blender/Cycles target |
+| Static 3D | Blockout, geometry, UVs, materials, assembly, LOD/collision | Generate/check materials, optional automatic UVs and mesh baking, measure density/coverage, native previews and optional Blender/Cycles or Godot targets |
 | Animated 3D | Static production plus rig, deformation, timing and playback | Preserve supplied rigged GLB, check sampled deformation/declared contacts and loops; optional fresh Blender/Cycles imports and renders |
 | Game | Playable loop, rules, world, asset production, audio and playtests | Plan with explicit evidence and owners; existing game capabilities need selected bindings |
 | Software | Brief, architecture, implementation and behavior checks | Publish supplied source and independently run supported project checks |
@@ -106,7 +106,9 @@ better art. Native PNG decoding accepts all five standard scanline filters.
 
 No Blender, GPU, network connection or AI is required for the native route.
 The optional production route now adds automatic UVs, mesh baking, physically
-lit reflection rendering and target observations using local Blender/Cycles.
+lit reflection rendering using local Blender/Cycles, plus real Godot import,
+render and stepped-animation observations. Use `production.targets` to require
+multiple independently observed engines.
 See [Mesh production](MESH_PRODUCTION.md) for requests, runtime setup and limits.
 
 ## Quality work still needed
@@ -119,8 +121,8 @@ The workflow records these requirements instead of implying they are solved:
 | UV authoring | UDIM, painted-atlas repacking, seam editing and all-mip padding; automatic per-material unwrap and overlap/base-padding checks now execute |
 | Baking | Curvature/thickness, explicit cage meshes and universal tangent parity; AO/high-to-low normals with extrusion/distance hit checks now execute |
 | Materials | Mesh-aware edge wear, authored decals, richer material graphs, perceptually seamless tiling and compressed texture delivery |
-| Rendering | Transparency, anisotropic filtering and additional engine comparisons; environment/reflections and a Blender/Cycles target now execute |
-| Animation | Automatic rig creation, secondary motion, self-intersection, transition quality and continuous playback; sampled collapse/stretch and declared contacts/loops now execute |
+| Rendering | Transparency, anisotropic filtering and additional engine comparisons; environment/reflections and Blender/Cycles and Godot target observation now execute |
+| Animation | Automatic rig creation, secondary motion, self-intersection, transition quality and real-time continuous playback; actual stepped Godot playback, sampled collapse/stretch and declared contacts/loops now execute |
 | Games/software | Real controls and full loops, sound, accessibility, recovery and measured device performance |
 | Refinement | Defect-led revisions, representative comparisons, dependency-aware partial rebuilds and semantic review |
 

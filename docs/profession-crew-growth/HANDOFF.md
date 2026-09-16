@@ -159,3 +159,27 @@ Still bounded: unique per-material atlases rather than UDIM; AO/normal rather
 than curvature/thickness; supplied rigs rather than automatic rig authoring;
 sampled keys/contacts/loops rather than self-intersection or continuous playback;
 Blender/Cycles rather than Unity/Unreal/Godot gameplay. Products remain drafts.
+
+## Run 005 continuation — target evidence
+
+The user asked to clear the remaining gaps. Same branch and PR #150. Read
+RUN_005.md. Added one actual Godot capability to the existing crew, optional
+stepped AnimationPlayer playback, explicit multiple-engine recipes and failure
+artifact retention. Blender still works. Unity and Unreal are unimplemented and
+unverified; no local editor/runtime/project integration exists for them here.
+Earlier UV/bake/rig/quality extensions remain bounded as documented.
+
+Godot 4.4.1/Xvfb/Mesa CI executed 11 tests without skips, two larger demos and
+exact fresh observers. Geometry, texture decode, asset-mask rendering and all
+25 rig playback frames passed. Engine PNG metadata initially broke UC's strict
+decoder: fixed by validating CRCs and preserving scanlines while stripping
+ancillary chunks. Do not weaken the decoder or relabel that failed run PASS.
+The exact good artifact ZIP, selected views/GIF and reports are under
+evidence/product-005; the GIF is a viewing derivative, not the original frames.
+
+The formerly skipped workshop renderer is enabled on this lane. Its actual
+build/import/render/verification passed; front/rear/detail images were inspected.
+This is existing UC artwork reverified, not a new asset authored in Run 005.
+Code head e4271a9ba2f20992979dab874bafff45f3304f59 passed all 22 GitHub checks,
+with none skipped. Final documentation/evidence publication has its own checks.
+No merge, release or hourly task was performed.
