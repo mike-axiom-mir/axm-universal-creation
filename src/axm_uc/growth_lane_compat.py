@@ -378,6 +378,69 @@ def _install_precision_cutter_v06() -> None:
     capabilities.BUILTINS["builtin:precision_cutter"] = v06_aware_precision_cutter
 
 
+def _install_precision_cutter_v07() -> None:
+    """Layer only the v0.7 mixed same-axis schema over the v0.6-aware cutter."""
+    from . import capabilities
+    from .mesh_mixed_fabrication import MIXED_FABRICATION_SCHEMA, publish_mixed_fabrication
+    from .mesh_precision_cutter import MeshPrecisionCutterError
+
+    original = capabilities.BUILTINS.get("builtin:precision_cutter")
+    if original is None or getattr(original, "_v07_mixed_fabrication_wrapped", False):
+        return
+
+    def v07_aware_precision_cutter(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+        specification = inputs.get("specification")
+        schema = specification.get("schema") if isinstance(specification, dict) else None
+        if schema != MIXED_FABRICATION_SCHEMA:
+            return original(root, inputs)
+        if "source_path" not in inputs or "path" not in inputs:
+            return original(root, inputs)
+        replace = inputs.get("replace", False)
+        if not isinstance(replace, bool):
+            raise capabilities.CapabilityError("precision cutter replace must be a boolean")
+        source = capabilities._resolve_output_path(root, str(inputs["source_path"]))
+        target = capabilities._resolve_output_path(root, str(inputs["path"]))
+        if capabilities._is_machine_body_path(root, source):
+            raise capabilities.CapabilityError(
+                "v0.7 mixed fabrication cannot read the protected live machine body as source material"
+            )
+        if capabilities._is_machine_body_path(root, target):
+            raise capabilities.CapabilityError(
+                "v0.7 mixed fabrication cannot rewrite the protected live machine body"
+            )
+        lineage = None
+        if "lineage_path" in inputs:
+            lineage = capabilities._resolve_output_path(root, str(inputs["lineage_path"]))
+            if capabilities._is_machine_body_path(root, lineage):
+                raise capabilities.CapabilityError(
+                    "v0.7 mixed lineage must stay on an ordinary creation surface"
+                )
+        if "receipt_path" in inputs:
+            receipt = capabilities._resolve_output_path(root, str(inputs["receipt_path"]))
+        else:
+            receipt = target.with_suffix(target.suffix + ".mixed-fabrication.json")
+        if capabilities._is_machine_body_path(root, receipt):
+            raise capabilities.CapabilityError(
+                "v0.7 mixed fabrication receipt cannot rewrite the live machine body"
+            )
+        try:
+            return publish_mixed_fabrication(
+                source,
+                target,
+                specification,
+                lineage_path=lineage,
+                receipt_path=receipt,
+                expected_source_sha256=inputs.get("expected_source_sha256"),
+                expected_lineage_sha256=inputs.get("expected_lineage_sha256"),
+                replace=replace,
+            )
+        except MeshPrecisionCutterError as exc:
+            raise capabilities.CapabilityError(str(exc), exc.details) from exc
+
+    v07_aware_precision_cutter._v07_mixed_fabrication_wrapped = True
+    capabilities.BUILTINS["builtin:precision_cutter"] = v07_aware_precision_cutter
+
+
 def install_growth_lane_compatibility() -> None:
     """Install only the framework seams required by recovered growth-lane capabilities.
 
@@ -388,3 +451,4 @@ def install_growth_lane_compatibility() -> None:
     _install_machine_creation_contract()
     _install_aftertouch_preview_contract()
     _install_precision_cutter_v06()
+    _install_precision_cutter_v07()
