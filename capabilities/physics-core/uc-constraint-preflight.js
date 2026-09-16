@@ -3,17 +3,27 @@
 const crypto = require('crypto');
 const Core = require('./source/axm-physics-core.js');
 const TranslationMounts = require('./uc-translation-mounts.js');
+const DistanceJoints = require('./uc-distance-joints.js');
+const DistanceLimits = require('./uc-distance-limits.js');
 const AxisLocks = require('./uc-axis-locks.js');
 const AxisLimits = require('./uc-axis-limits.js');
 const DirectionLocks = require('./uc-direction-locks.js');
 const DirectionLimits = require('./uc-direction-limits.js');
 
-const VERSION = '0.1.0';
-const REPORT_SCHEMA = 'axm.uc-constraint-preflight/v0.1';
+const VERSION = '0.2.0';
+const REPORT_SCHEMA = 'axm.uc-constraint-preflight/v0.2';
 const DEFAULT_TOLERANCE = 1e-9;
 const MAX_TOLERANCE = 1e6;
 
-function clone(value) { return JSON.parse(JSON.stringify(value)); }
+function clone(value) {
+  if (Array.isArray(value)) return value.map(clone);
+  if (value && typeof value === 'object') {
+    const out = {};
+    Object.keys(value).forEach(key => { out[key] = clone(value[key]); });
+    return out;
+  }
+  return value;
+}
 function finite(value, fallback) { const number = Number(value); return Number.isFinite(number) ? number : fallback; }
 function bounded(value, min, max, fallback) { return Math.max(min, Math.min(max, finite(value, fallback))); }
 function round(value) { return Math.round(value * 1e9) / 1e9; }
@@ -36,7 +46,7 @@ function canonicalDirection(direction) {
     : { direction: { x, y }, flipped: false };
 }
 
-function canonicalEntry(input) {
+function canonicalProjectionEntry(input) {
   const pair = canonicalPair(input.a, input.b);
   const projected = canonicalDirection(input.direction);
   let min = input.min;
@@ -60,8 +70,8 @@ function canonicalEntry(input) {
   };
 }
 
-function exactEntry(family, item, direction, offset, source) {
-  return canonicalEntry({
+function exactProjectionEntry(family, item, direction, offset, source) {
+  return canonicalProjectionEntry({
     family,
     id: item.id,
     a: item.a,
@@ -73,8 +83,8 @@ function exactEntry(family, item, direction, offset, source) {
   });
 }
 
-function rangeEntry(family, item, direction, source) {
-  return canonicalEntry({
+function rangeProjectionEntry(family, item, direction, source) {
+  return canonicalProjectionEntry({
     family,
     id: item.id,
     a: item.a,
@@ -86,10 +96,26 @@ function rangeEntry(family, item, direction, source) {
   });
 }
 
+function radialEntry(family, item, min, max, source) {
+  const pair = canonicalPair(item.a, item.b);
+  return {
+    key: pair.a + '\u0000' + pair.b,
+    a: pair.a,
+    b: pair.b,
+    min,
+    max,
+    family,
+    id: item.id,
+    source
+  };
+}
+
 function normalizeAnalyzed(world, constraints) {
   constraints = constraints || {};
   return {
     mounts: TranslationMounts.normalizeMounts(constraints.mounts || [], world),
+    distanceJoints: DistanceJoints.normalizeJoints(constraints.distanceJoints || [], world),
+    distanceLimits: DistanceLimits.normalizeLimits(constraints.distanceLimits || [], world),
     axisLocks: AxisLocks.normalizeLocks(constraints.axisLocks || [], world),
     axisLimits: AxisLimits.normalizeLimits(constraints.axisLimits || [], world),
     directionLocks: DirectionLocks.normalizeLocks(constraints.directionLocks || [], world),
@@ -97,28 +123,28 @@ function normalizeAnalyzed(world, constraints) {
   };
 }
 
-function buildEntries(normalized) {
+function buildProjectionEntries(normalized) {
   const entries = [];
   normalized.mounts.forEach(item => {
     if (!item.enabled) return;
-    entries.push(exactEntry('translation-mounts', item, { x: 1, y: 0 }, item.offset.x, 'mount-x'));
-    entries.push(exactEntry('translation-mounts', item, { x: 0, y: 1 }, item.offset.y, 'mount-y'));
+    entries.push(exactProjectionEntry('translation-mounts', item, { x: 1, y: 0 }, item.offset.x, 'mount-x'));
+    entries.push(exactProjectionEntry('translation-mounts', item, { x: 0, y: 1 }, item.offset.y, 'mount-y'));
   });
   normalized.axisLocks.forEach(item => {
     if (!item.enabled) return;
-    entries.push(exactEntry('axis-locks', item, item.axis === 'x' ? { x: 1, y: 0 } : { x: 0, y: 1 }, item.offset, 'axis-' + item.axis));
+    entries.push(exactProjectionEntry('axis-locks', item, item.axis === 'x' ? { x: 1, y: 0 } : { x: 0, y: 1 }, item.offset, 'axis-' + item.axis));
   });
   normalized.axisLimits.forEach(item => {
     if (!item.enabled) return;
-    entries.push(rangeEntry('axis-limits', item, item.axis === 'x' ? { x: 1, y: 0 } : { x: 0, y: 1 }, 'axis-' + item.axis));
+    entries.push(rangeProjectionEntry('axis-limits', item, item.axis === 'x' ? { x: 1, y: 0 } : { x: 0, y: 1 }, 'axis-' + item.axis));
   });
   normalized.directionLocks.forEach(item => {
     if (!item.enabled) return;
-    entries.push(exactEntry('direction-locks', item, item.direction, item.offset, 'fixed-direction'));
+    entries.push(exactProjectionEntry('direction-locks', item, item.direction, item.offset, 'fixed-direction'));
   });
   normalized.directionLimits.forEach(item => {
     if (!item.enabled) return;
-    entries.push(rangeEntry('direction-limits', item, item.direction, 'fixed-direction'));
+    entries.push(rangeProjectionEntry('direction-limits', item, item.direction, 'fixed-direction'));
   });
   return entries.sort((left, right) =>
     left.key.localeCompare(right.key) ||
@@ -128,7 +154,25 @@ function buildEntries(normalized) {
   );
 }
 
-function analyzeGroups(entries, tolerance) {
+function buildRadialEntries(normalized) {
+  const entries = [];
+  normalized.distanceJoints.forEach(item => {
+    if (!item.enabled) return;
+    entries.push(radialEntry('distance-joints', item, item.length, item.length, 'center-distance-equality'));
+  });
+  normalized.distanceLimits.forEach(item => {
+    if (!item.enabled) return;
+    entries.push(radialEntry('distance-limits', item, item.minLength, item.maxLength, 'center-distance-range'));
+  });
+  return entries.sort((left, right) =>
+    left.key.localeCompare(right.key) ||
+    left.family.localeCompare(right.family) ||
+    left.id.localeCompare(right.id) ||
+    left.source.localeCompare(right.source)
+  );
+}
+
+function analyzeProjectionGroups(entries, tolerance) {
   const grouped = new Map();
   entries.forEach(entry => {
     if (!grouped.has(entry.key)) grouped.set(entry.key, []);
@@ -181,18 +225,59 @@ function analyzeGroups(entries, tolerance) {
   return { groups, conflicts };
 }
 
-function countDisabled(normalized) {
-  return Object.values(normalized).reduce((sum, items) => sum + items.filter(item => !item.enabled).length, 0);
+function analyzeRadialGroups(entries, tolerance) {
+  const grouped = new Map();
+  entries.forEach(entry => {
+    if (!grouped.has(entry.key)) grouped.set(entry.key, []);
+    grouped.get(entry.key).push(entry);
+  });
+
+  const groups = [];
+  const conflicts = [];
+  Array.from(grouped.keys()).sort().forEach(key => {
+    const items = grouped.get(key);
+    let min = -Infinity;
+    let max = Infinity;
+    items.forEach(item => {
+      min = Math.max(min, item.min);
+      max = Math.min(max, item.max);
+    });
+    const first = items[0];
+    const conflict = min > max + tolerance;
+    const summary = {
+      a: first.a,
+      b: first.b,
+      constraintCount: items.length,
+      intersection: {
+        min: Number.isFinite(min) ? round(min) : min,
+        max: Number.isFinite(max) ? round(max) : max
+      },
+      conflict,
+      constraints: items.map(item => ({
+        family: item.family,
+        id: item.id,
+        source: item.source,
+        min: Number.isFinite(item.min) ? round(item.min) : item.min,
+        max: Number.isFinite(item.max) ? round(item.max) : item.max
+      }))
+    };
+    groups.push(summary);
+    if (conflict) {
+      conflicts.push({
+        code: 'CONFLICTING_DISTANCE_INTERVALS',
+        a: summary.a,
+        b: summary.b,
+        intersection: clone(summary.intersection),
+        constraintIds: summary.constraints.map(item => item.id),
+        families: Array.from(new Set(summary.constraints.map(item => item.family))).sort()
+      });
+    }
+  });
+  return { groups, conflicts };
 }
 
-function unsupported(constraints) {
-  constraints = constraints || {};
-  const rows = [];
-  const distanceJoints = Array.isArray(constraints.distanceJoints) ? constraints.distanceJoints.length : 0;
-  const distanceLimits = Array.isArray(constraints.distanceLimits) ? constraints.distanceLimits.length : 0;
-  if (distanceJoints) rows.push({ family: 'distance-joints', count: distanceJoints, reason: 'nonlinear radial equality is outside v0.1 projected-interval proof' });
-  if (distanceLimits) rows.push({ family: 'distance-limits', count: distanceLimits, reason: 'nonlinear radial range is outside v0.1 projected-interval proof' });
-  return rows;
+function countDisabled(normalized) {
+  return Object.values(normalized).reduce((sum, items) => sum + items.filter(item => !item.enabled).length, 0);
 }
 
 function reportChecksum(report) {
@@ -204,6 +289,7 @@ function reportChecksum(report) {
     tolerance: report.tolerance,
     counts: report.counts,
     groups: report.groups,
+    radialGroups: report.radialGroups,
     conflicts: report.conflicts,
     unsupportedFamilies: report.unsupportedFamilies,
     errors: report.errors
@@ -215,47 +301,64 @@ function analyze(world, constraints, options) {
   options = options || {};
   const coreValidation = Core.validate(world);
   const errors = (coreValidation.errors || []).slice();
-  let normalized = { mounts: [], axisLocks: [], axisLimits: [], directionLocks: [], directionLimits: [] };
+  let normalized = {
+    mounts: [],
+    distanceJoints: [],
+    distanceLimits: [],
+    axisLocks: [],
+    axisLimits: [],
+    directionLocks: [],
+    directionLimits: []
+  };
   if (coreValidation.ok) {
     try { normalized = normalizeAnalyzed(world, constraints); }
     catch (error) { errors.push(error.message); }
   }
 
   const tolerance = bounded(options.tolerance, 0, MAX_TOLERANCE, DEFAULT_TOLERANCE);
-  const entries = errors.length ? [] : buildEntries(normalized);
-  const grouped = analyzeGroups(entries, tolerance);
-  const unsupportedFamilies = unsupported(constraints);
+  const projectionEntries = errors.length ? [] : buildProjectionEntries(normalized);
+  const radialEntries = errors.length ? [] : buildRadialEntries(normalized);
+  const projected = analyzeProjectionGroups(projectionEntries, tolerance);
+  const radial = analyzeRadialGroups(radialEntries, tolerance);
+  const conflicts = projected.conflicts.concat(radial.conflicts);
+  const unsupportedFamilies = [];
   const report = {
     schema: REPORT_SCHEMA,
     version: VERSION,
-    ok: errors.length === 0 && grouped.conflicts.length === 0,
+    ok: errors.length === 0 && conflicts.length === 0,
     valid: errors.length === 0,
-    conflictFree: errors.length === 0 && grouped.conflicts.length === 0,
+    conflictFree: errors.length === 0 && conflicts.length === 0,
     tolerance,
     counts: {
       normalizedConstraints: Object.values(normalized).reduce((sum, items) => sum + items.length, 0),
-      analyzedProjectionEntries: entries.length,
-      projectionGroups: grouped.groups.length,
-      conflicts: grouped.conflicts.length,
+      analyzedProjectionEntries: projectionEntries.length,
+      projectionGroups: projected.groups.length,
+      analyzedRadialEntries: radialEntries.length,
+      radialGroups: radial.groups.length,
+      conflicts: conflicts.length,
+      projectionConflicts: projected.conflicts.length,
+      radialConflicts: radial.conflicts.length,
       disabledConstraints: countDisabled(normalized),
-      unsupportedConstraints: unsupportedFamilies.reduce((sum, item) => sum + item.count, 0)
+      unsupportedConstraints: 0
     },
-    groups: grouped.groups,
-    conflicts: grouped.conflicts,
+    groups: projected.groups,
+    radialGroups: radial.groups,
+    conflicts,
     unsupportedFamilies,
     errors,
     evidence: [
-      entries.length + ' enabled projected translation interval(s) canonicalized in deterministic pair/direction order',
-      grouped.groups.length + ' exact normalized projection group(s) intersected with tolerance ' + tolerance,
-      grouped.conflicts.length + ' provable local projected-translation conflict(s) found',
-      unsupportedFamilies.length ? 'Nonlinear distance families were reported but not analyzed in v0.1' : 'No unsupported nonlinear distance families were supplied'
+      projectionEntries.length + ' enabled projected translation interval(s) canonicalized in deterministic pair/direction order',
+      projected.groups.length + ' exact normalized projection group(s) intersected with tolerance ' + tolerance,
+      radialEntries.length + ' enabled center-distance interval(s) canonicalized in deterministic body-pair order',
+      radial.groups.length + ' exact same-pair radial distance group(s) intersected with tolerance ' + tolerance,
+      conflicts.length + ' provable local constraint conflict(s) found'
     ],
     limitations: [
-      'This preflight is a conservative local check for translation mounts plus axis/fixed-direction locks and limits that share exactly the same normalized projection.',
+      'This preflight is a conservative local check for translation mounts plus axis/fixed-direction locks and limits that share exactly the same normalized projection, and for distance joints/limits that constrain exactly the same body pair.',
       'It does not prove global constraint satisfiability, convergence, stability or physical correctness.',
-      'Distance joints and distance limits are reported but not analyzed because their radial constraints are nonlinear in this v0.1 check.',
+      'Distance analysis proves only same-body-pair scalar distance interval contradictions; it does not reason across triangles, loops, coupled directions or other multi-constraint geometry.',
       'Near-parallel but non-identical directions are intentionally kept in separate groups to avoid inventing equivalence.',
-      'Disabled analyzed constraints are validated for source/body integrity but excluded from conflict intersections.',
+      'Disabled constraints are validated for source/body integrity but excluded from conflict intersections.',
       'The report does not change world state, solver order, collision behavior or the donor physics source.',
       'This is game/prototype correctness evidence, not scientific validation.'
     ]

@@ -5,8 +5,8 @@ const Core = require('./source/axm-physics-core.js');
 const Composer = require('./uc-constraint-composer.js');
 const Preflight = require('./uc-constraint-preflight.js');
 
-const VERSION = '0.1.0';
-const STEP_SCHEMA = 'axm.uc-constraint-preflight-guard-step/v0.1';
+const VERSION = '0.2.0';
+const STEP_SCHEMA = 'axm.uc-constraint-preflight-guard-step/v0.2';
 
 function clone(value) {
   if (Array.isArray(value)) return value.map(clone);
@@ -49,8 +49,8 @@ function resultBase(world, composerValidation, preflight) {
     composer: null,
     limitations: [
       'This is an opt-in fail-closed wrapper around the existing constraint composer; the composer itself is unchanged.',
-      'Only invalid composer input or conflicts proven by the conservative projected-translation preflight are blocked.',
-      'Distance joints and distance limits remain outside the preflight proof and are delegated when otherwise valid; unsupported does not mean conflicting.',
+      'Only invalid composer input or conflicts proven by the conservative local projection/same-pair-distance preflight are blocked.',
+      'Distance proof is limited to constraints on the exact same body pair; multi-pair geometric contradictions remain outside the proof.',
       'A successful preflight is not proof of global satisfiability, convergence, stability or physical correctness.',
       'The accepted path delegates to the existing seven-family composer and therefore retains its fixed ordering, bounded-pass and contact-evidence boundaries.',
       'The imported donor source is not modified by this wrapper.',
@@ -90,7 +90,7 @@ function step(world, constraints, dt, options) {
       blocked: true,
       reason: 'PROVABLE_LOCAL_CONFLICT',
       evidence: [
-        preflight.conflicts.length + ' conservative projected-translation conflict(s) blocked before donor integration.',
+        preflight.conflicts.length + ' conservative local constraint conflict(s) blocked before donor integration.',
         'World state remained unchanged at checksum ' + base.worldChecksumBefore,
         'No donor-core step was executed.'
       ]
@@ -111,8 +111,8 @@ function step(world, constraints, dt, options) {
     composer,
     evidence: [
       'Constraint composer validation passed.',
-      preflight.counts.conflicts + ' conservative projected-translation conflict(s) found by preflight.',
-      preflight.counts.unsupportedConstraints + ' nonlinear distance constraint(s) remained outside the local preflight proof without being treated as conflicts.',
+      preflight.counts.conflicts + ' conservative local conflict(s) found by preflight.',
+      preflight.counts.projectionGroups + ' projected translation group(s) and ' + preflight.counts.radialGroups + ' same-pair radial distance group(s) checked.',
       'Accepted input delegated exactly once to the existing constraint composer.',
       'Final world checksum ' + Core.checksum(composer.world)
     ]

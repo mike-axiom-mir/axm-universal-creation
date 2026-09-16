@@ -68,15 +68,46 @@ const invalidDisabled = Preflight.analyze(baseWorld(), {
 assert.equal(invalidDisabled.valid, false, 'disabled constraints must still be source/body-reference validated');
 assert.match(invalidDisabled.errors.join(' '), /body not found/i);
 
-const unsupported = Preflight.analyze(baseWorld(), {
-  distanceJoints: [{ id: 'distance', a: 'a', b: 'b', distance: 1 }],
-  distanceLimits: [{ id: 'rope', a: 'a', b: 'b', minDistance: 0, maxDistance: 2 }]
+const radialCompatible = Preflight.analyze(baseWorld(), {
+  distanceJoints: [{ id: 'distance', a: 'a', b: 'b', length: 2 }],
+  distanceLimits: [{ id: 'rope', a: 'a', b: 'b', minLength: 1, maxLength: 3 }]
 });
-assert.equal(unsupported.ok, true, 'unsupported families are reported rather than falsely classified as conflicting');
-assert.equal(unsupported.counts.unsupportedConstraints, 2);
-assert.deepEqual(unsupported.unsupportedFamilies.map(item => item.family), ['distance-joints', 'distance-limits']);
-assert.match(unsupported.limitations.join(' '), /does not prove global constraint satisfiability/i);
-assert.match(unsupported.limitations.join(' '), /not scientific validation/i);
+assert.equal(radialCompatible.ok, true, 'same-pair distance equality inside a distance range must remain conflict-free');
+assert.equal(radialCompatible.radialGroups.length, 1);
+assert.equal(radialCompatible.radialGroups[0].constraintCount, 2);
+assert.deepEqual(radialCompatible.radialGroups[0].intersection, { min: 2, max: 2 });
+assert.equal(radialCompatible.counts.analyzedRadialEntries, 2);
+assert.equal(radialCompatible.counts.unsupportedConstraints, 0);
+assert.deepEqual(radialCompatible.unsupportedFamilies, []);
+
+const radialConflict = Preflight.analyze(baseWorld(), {
+  distanceJoints: [{ id: 'distance-three', a: 'a', b: 'b', length: 3 }],
+  distanceLimits: [{ id: 'max-two', a: 'a', b: 'b', maxLength: 2 }]
+});
+assert.equal(radialConflict.valid, true);
+assert.equal(radialConflict.conflictFree, false);
+assert.equal(radialConflict.counts.radialConflicts, 1);
+assert.equal(radialConflict.conflicts[0].code, 'CONFLICTING_DISTANCE_INTERVALS');
+assert.deepEqual(radialConflict.conflicts[0].constraintIds, ['distance-three', 'max-two']);
+assert.deepEqual(radialConflict.conflicts[0].families, ['distance-joints', 'distance-limits']);
+
+const reversedRadialConflict = Preflight.analyze(baseWorld(), {
+  distanceJoints: [{ id: 'forward-distance', a: 'a', b: 'b', length: 1 }],
+  distanceLimits: [{ id: 'reverse-distance', a: 'b', b: 'a', minLength: 2, maxLength: 4 }]
+});
+assert.equal(reversedRadialConflict.conflicts.length, 1, 'distance constraints must canonicalize reversed body pairs without sign inversion');
+assert.equal(reversedRadialConflict.conflicts[0].code, 'CONFLICTING_DISTANCE_INTERVALS');
+
+const disabledRadial = Preflight.analyze(baseWorld(), {
+  distanceJoints: [
+    { id: 'live-distance', a: 'a', b: 'b', length: 2 },
+    { id: 'off-distance', a: 'a', b: 'b', length: 9, enabled: false }
+  ],
+  distanceLimits: [{ id: 'distance-band', a: 'a', b: 'b', minLength: 1, maxLength: 3 }]
+});
+assert.equal(disabledRadial.ok, true);
+assert.equal(disabledRadial.counts.disabledConstraints, 1);
+assert.equal(disabledRadial.radialGroups[0].constraintCount, 2, 'disabled distance constraints must not enter radial intersections');
 
 const nearParallel = Preflight.analyze(baseWorld(), {
   directionLocks: [
@@ -91,19 +122,27 @@ const tolerance = Preflight.analyze(baseWorld(), {
   axisLimits: [
     { id: 'left', a: 'a', b: 'b', axis: 'x', minOffset: 0, maxOffset: 1 },
     { id: 'right', a: 'a', b: 'b', axis: 'x', minOffset: 1.0000000005, maxOffset: 2 }
+  ],
+  distanceLimits: [
+    { id: 'radial-left', a: 'a', b: 'b', minLength: 0, maxLength: 2 },
+    { id: 'radial-right', a: 'a', b: 'b', minLength: 2.0000000005, maxLength: 4 }
   ]
 }, { tolerance: 1e-9 });
-assert.equal(tolerance.conflictFree, true, 'configured bounded tolerance may absorb sub-tolerance interval separation');
+assert.equal(tolerance.conflictFree, true, 'configured bounded tolerance may absorb sub-tolerance projection and radial interval separation');
 
 const replayA = Preflight.analyze(baseWorld(), {
   mounts: [{ id: 'mount', a: 'a', b: 'b', offset: { x: 0, y: 2 } }],
-  axisLocks: [{ id: 'x-lock', a: 'a', b: 'b', axis: 'x', offset: 1 }]
+  axisLocks: [{ id: 'x-lock', a: 'a', b: 'b', axis: 'x', offset: 1 }],
+  distanceJoints: [{ id: 'distance-three', a: 'a', b: 'b', length: 3 }],
+  distanceLimits: [{ id: 'max-two', a: 'a', b: 'b', maxLength: 2 }]
 });
 const replayB = Preflight.analyze(baseWorld(), {
   mounts: [{ id: 'mount', a: 'a', b: 'b', offset: { x: 0, y: 2 } }],
-  axisLocks: [{ id: 'x-lock', a: 'a', b: 'b', axis: 'x', offset: 1 }]
+  axisLocks: [{ id: 'x-lock', a: 'a', b: 'b', axis: 'x', offset: 1 }],
+  distanceJoints: [{ id: 'distance-three', a: 'a', b: 'b', length: 3 }],
+  distanceLimits: [{ id: 'max-two', a: 'a', b: 'b', maxLength: 2 }]
 });
 assert.equal(replayA.checksum, replayB.checksum, 'preflight evidence must replay deterministically in one JS runtime');
 assert.deepEqual(replayA.conflicts, replayB.conflicts);
 
-console.log('UC Constraint Preflight selftest: PASS (conservative projected-interval conflicts, canonical body/direction handling, disabled validation, unsupported-family truth and deterministic evidence)');
+console.log('UC Constraint Preflight selftest: PASS (projected and same-pair radial interval conflicts, canonical body/direction handling, disabled validation, bounded tolerance and deterministic evidence)');

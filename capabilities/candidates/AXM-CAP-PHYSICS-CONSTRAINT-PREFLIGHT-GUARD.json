@@ -1,8 +1,8 @@
 {
   "id": "AXM-CAP-PHYSICS-CONSTRAINT-PREFLIGHT-GUARD",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "status": "candidate",
-  "purpose": "Provide an opt-in fail-closed step wrapper that blocks invalid constraints or locally provable projected-translation conflicts before donor integration, while delegating accepted inputs unchanged to the existing seven-family constraint composer.",
+  "purpose": "Provide an opt-in fail-closed step wrapper that blocks invalid constraints or locally provable projected-translation/same-pair-distance conflicts before donor integration, while delegating accepted inputs unchanged to the existing seven-family constraint composer.",
   "handles": ["constraint-preflight-guard", "fail-closed-physics-step", "conflict-blocking-step", "constraint-safety-gate"],
   "input_contract": {
     "required": ["world", "constraints", "dt"],
@@ -12,7 +12,7 @@
     }
   },
   "output_contract": {
-    "kind": "axm.uc-constraint-preflight-guard-step/v0.1",
+    "kind": "axm.uc-constraint-preflight-guard-step/v0.2",
     "contains": ["accept/block decision", "composer validation", "preflight report", "input/output world checksums", "core-step execution flag", "composer receipt on accepted paths", "deterministic decision checksum", "explicit limitations"]
   },
   "dependencies": [
@@ -27,8 +27,8 @@
   },
   "limitations": [
     "opt-in wrapper only; existing composer behavior is not changed",
-    "blocks invalid composer input and only conflicts proven by the conservative projected-translation preflight",
-    "distance joints and distance limits remain outside the local conflict proof and are delegated when otherwise valid",
+    "blocks invalid composer input and only conflicts proven by conservative exact-projection or exact-same-pair distance interval checks",
+    "same-pair distance proof does not establish satisfiability across triangles, loops or other coupled geometry",
     "successful preflight is not proof of global satisfiability, convergence, stability or physical correctness",
     "accepted paths retain the existing deterministic family order, bounded-pass behavior and contact-evidence boundaries",
     "does not alter the imported donor physics source",
@@ -39,18 +39,19 @@
       "command": "node capabilities/physics-core/constraint-preflight-guard-selftest.js",
       "proves": [
         "provable local projected conflicts are blocked before donor integration",
+        "provable same-pair distance interval conflicts are blocked before donor integration",
         "invalid full-composer constraints are blocked before donor integration",
         "blocked paths preserve caller world state and checksum",
         "accepted paths are byte-for-byte world-equivalent to direct composer delegation for the same inputs and options",
-        "valid distance constraints outside the preflight proof are delegated rather than misclassified as conflicts",
+        "compatible same-pair distance constraints are delegated unchanged",
         "blocked decision evidence replays deterministically in one JS runtime"
       ]
     }
   ],
   "root_fit": {
-    "truth": {"fit": true, "basis": "The guard blocks only invalid input or contradictions already proven by the conservative preflight; unsupported nonlinear families stay explicit non-claims."},
+    "truth": {"fit": true, "basis": "The guard blocks only invalid input or contradictions proven by conservative local interval checks; global coupled geometry remains an explicit non-claim."},
     "agency": {"fit": true, "basis": "The wrapper is opt-in and returns explicit block evidence without mutating constraints or silently changing the existing composer."},
     "continuity": {"fit": true, "basis": "Accepted work delegates to the existing composer unchanged and leaves the byte-for-byte donor source untouched."},
-    "wisdom-before-speed": {"fit": true, "basis": "Known-invalid or locally contradictory work is rejected before spending a donor integration step while valid work follows the established path."}
+    "wisdom-before-speed": {"fit": true, "basis": "Known-invalid or locally contradictory projected/radial work is rejected before spending a donor integration step while valid work follows the established path."}
   }
 }
