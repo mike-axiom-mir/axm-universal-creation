@@ -13,5 +13,6 @@ module.exports = {
   directionLimits: require('./uc-direction-limits.js'),
   constraintComposer: require('./uc-constraint-composer.js'),
   constraintCollisionIsolation: require('./uc-constraint-collision-isolation.js'),
-  constraintActivityGate: require('./uc-constraint-activity-gate.js')
+  constraintActivityGate: require('./uc-constraint-activity-gate.js'),
+  constraintPreflight: require('./uc-constraint-preflight.js')
 };
