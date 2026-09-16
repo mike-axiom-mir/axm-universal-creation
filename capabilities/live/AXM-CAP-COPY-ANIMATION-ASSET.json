@@ -1,0 +1,28 @@
+{
+  "id": "AXM-CAP-COPY-ANIMATION-ASSET",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Preserve an explicitly supplied embedded rigged GLB for a product recipe",
+  "handles": [
+    "copy-animation-asset"
+  ],
+  "input_contract": {
+    "required": [
+      "path",
+      "asset"
+    ]
+  },
+  "output_contract": {
+    "kind": "mesh-production-artifact-or-measurement"
+  },
+  "dependencies": [],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:copy_animation_asset",
+    "source": "src/axm_uc/mesh_production.py"
+  },
+  "limitations": [
+    "Runtime backend: stdlib. Explicit local installation; no automatic downloads.",
+    "Bounded technical evidence only. No automatic product or artistic acceptance."
+  ]
+}

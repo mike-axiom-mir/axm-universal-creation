@@ -16,10 +16,32 @@ jobs:
       - name: Verify profession crews and existing specialist workflows
         env:
           PYTHONPATH: src:tests
-        run: python -m unittest test_profession_crew test_profession_target_evidence test_profession_clearance_repair test_sticker_clearance_contact test_software_glb_preview test_stepwise_workflow test_specialist_tournament test_machine test_procedural_3d test_static_asset_target_evidence test_native_textures test_product_workflow test_surface_workshop test_material_uv_evidence test_game_material_styles test_game_material_layers test_game_material_bridge test_aftertouch_media_observers test_aftertouch_preview test_evolution_aftertouch -q
+        run: python -m unittest test_profession_crew test_profession_target_evidence test_profession_clearance_repair test_sticker_clearance_contact test_software_glb_preview test_stepwise_workflow test_specialist_tournament test_machine test_procedural_3d test_static_asset_target_evidence test_native_textures test_product_workflow test_surface_workshop test_material_uv_evidence test_game_material_styles test_game_material_layers test_game_material_bridge test_aftertouch_media_observers test_aftertouch_preview test_evolution_aftertouch test_mesh_quality test_mesh_production -q
       - name: Observe real failure, learning, repair and re-verification
         run: python tools/profession_crew_demo.py
       - name: Reuse a verified repair on two actual UC vehicle recipes
         run: python tools/profession_clearance_demo.py "${RUNNER_TEMP}/vehicle-clearance-${{ matrix.python }}" --no-render
       - name: Build, inspect and refine a textured product through its profession workflow
         run: python tools/product_workflow_demo.py "${RUNNER_TEMP}/product-workflow-${{ matrix.python }}" --quick
+  blender-production:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Obtain pinned optional Blender runtime and verify publisher checksums
+        working-directory: ${{ runner.temp }}
+        run: |
+          curl --fail --location --retry 2 -O https://download.blender.org/release/Blender4.3/blender-4.3.2-linux-x64.tar.xz
+          curl --fail --location --retry 2 -O https://download.blender.org/release/Blender4.3/blender-4.3.2.sha256
+          sha256sum --check --ignore-missing blender-4.3.2.sha256
+          tar -xf blender-4.3.2-linux-x64.tar.xz
+          echo "AXM_BLENDER=${RUNNER_TEMP}/blender-4.3.2-linux-x64/blender" >> "$GITHUB_ENV"
+      - name: Exercise actual unwrap, projection misses, baking, target renders and fresh observers
+        env:
+          PYTHONPATH: src:tests
+        run: python -m unittest test_mesh_quality test_mesh_production -q
+      - name: Run static and animated products through real backend stations
+        run: python tools/mesh_production_demo.py "${RUNNER_TEMP}/mesh-production" --quick

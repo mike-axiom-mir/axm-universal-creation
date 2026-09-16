@@ -1,0 +1,28 @@
+{
+  "id": "AXM-CAP-INSPECT-DEFORMATION",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Sample authored animation keys and intervals for geometric/contact/loop defects",
+  "handles": [
+    "inspect-deformation"
+  ],
+  "input_contract": {
+    "required": [
+      "path",
+      "asset"
+    ]
+  },
+  "output_contract": {
+    "kind": "mesh-production-artifact-or-measurement"
+  },
+  "dependencies": [],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:inspect_deformation",
+    "source": "src/axm_uc/mesh_production.py"
+  },
+  "limitations": [
+    "Runtime backend: stdlib. Explicit local installation; no automatic downloads.",
+    "Bounded technical evidence only. No automatic product or artistic acceptance."
+  ]
+}

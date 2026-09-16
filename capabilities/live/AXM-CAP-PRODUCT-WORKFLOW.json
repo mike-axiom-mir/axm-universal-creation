@@ -1,6 +1,6 @@
 {
   "id": "AXM-CAP-PRODUCT-WORKFLOW",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "status": "live",
   "purpose": "Product-specific production plans and native executable draft recipes through existing profession crews",
   "handles": [
@@ -44,8 +44,8 @@
     "source": "src/axm_uc/product_workflow.py"
   },
   "limitations": [
-    "Eight lifecycle profiles; executable draft recipes currently cover material, static-3d, software and web.",
-    "Semantic direction, target runtime tests and release review require actual evidence. No automatic acceptance.",
+    "Eight lifecycle profiles; executable draft recipes cover material, static-3d, supplied animated-3d, software and web.",
+    "Optional Blender backend for automatic UVs, mesh baking and actual Cycles target renders. Other engines, semantic direction and release require their own evidence.",
     "Uses existing crew practice and replay handling. Refine creates a new product version preserving the previous artifact."
   ]
 }

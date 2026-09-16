@@ -1,0 +1,28 @@
+{
+  "id": "AXM-CAP-UNWRAP-SURFACE-UV",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Automatic unique UV charts and packing with native overlap/padding observation",
+  "handles": [
+    "unwrap-surface-uv"
+  ],
+  "input_contract": {
+    "required": [
+      "path",
+      "specification"
+    ]
+  },
+  "output_contract": {
+    "kind": "mesh-production-artifact-or-measurement"
+  },
+  "dependencies": [],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:unwrap_surface_uv",
+    "source": "src/axm_uc/mesh_production.py"
+  },
+  "limitations": [
+    "Runtime backend: Blender 4.3+. Explicit local installation; no automatic downloads.",
+    "Bounded technical evidence only. No automatic product or artistic acceptance."
+  ]
+}

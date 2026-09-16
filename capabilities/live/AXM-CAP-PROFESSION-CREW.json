@@ -1,6 +1,6 @@
 {
   "id": "AXM-CAP-PROFESSION-CREW",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "status": "live",
   "purpose": "Bind source-backed profession bodies and workflows to explicit UC stations, with artifact observations and scoped deterministic practice memory.",
   "handles": [
@@ -52,8 +52,8 @@
   "persistent_state": "state/profession-crews/<crew_id>.json",
   "limitations": [
     "Professional Bodies remain EXPERIMENTAL. Consultation/handoff cards are not executed cognitive agents.",
-    "Automatic adapters cover text/JSON, basic projects, procedural GLB, supplied target evidence, bounded static clearance repair, generated material bundles, material/UV quality checks, native texture binding and exact preview rendering. Other actions hold for adapter work.",
-    "Target evidence is validated against job requirements and exact bytes, never independently reproduced or credited as crew practice.",
+    "Automatic adapters cover text/JSON, basic projects, procedural GLB, supplied target evidence, bounded static clearance repair, generated material bundles, material/UV quality checks, native texture binding and exact preview rendering. Other actions hold for adapter work. Mesh stations add optional Blender UV/bake/target work and native deformation observations.",
+    "Supplied external target packets are contract-checked without execution credit; the separate Blender target adapter reruns the actual backend and retains bounded local observations.",
     "Artifact checks do not prove visual quality, gameplay feel, semantic adequacy or professional acceptance.",
     "Learning is scoped deterministic practice memory and learned preflight, not neural training or self-canonization.",
     "A verified static clearance repair can retain a built-in parameterized procedure; reuse recalculates from new geometry and rechecks actual triangle clearance within the current movement limit.",

@@ -1,0 +1,28 @@
+{
+  "id": "AXM-CAP-VALIDATE-BLENDER-TARGET",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Fresh target import, pose/geometry comparison and physically lit Cycles renders",
+  "handles": [
+    "validate-blender-target"
+  ],
+  "input_contract": {
+    "required": [
+      "path",
+      "asset"
+    ]
+  },
+  "output_contract": {
+    "kind": "mesh-production-artifact-or-measurement"
+  },
+  "dependencies": [],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:validate_blender_target",
+    "source": "src/axm_uc/mesh_production.py"
+  },
+  "limitations": [
+    "Runtime backend: Blender 4.3+ Cycles CPU. Explicit local installation; no automatic downloads.",
+    "Bounded technical evidence only. No automatic product or artistic acceptance."
+  ]
+}
