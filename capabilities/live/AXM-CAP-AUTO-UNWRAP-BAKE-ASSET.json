@@ -1,0 +1,33 @@
+{
+  "id": "AXM-CAP-AUTO-UNWRAP-BAKE-ASSET",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "automatically unwrap UV-less surface geometry into deterministic padded triangle charts and bake verified UC material maps into a native offline atlas",
+  "handles": [
+    "auto-unwrap-bake-asset"
+  ],
+  "input_contract": {
+    "required": [
+      "path",
+      "specification",
+      "materials"
+    ]
+  },
+  "output_contract": {
+    "kind": "auto-unwrap-bake-directory-with-glb-atlases-and-receipt"
+  },
+  "dependencies": [
+    "AXM-CAP-GENERATE-GAME-MATERIAL",
+    "AXM-CAP-INSPECT-GAME-MATERIAL"
+  ],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:auto_unwrap_bake_asset",
+    "source": "src/axm_uc/auto_uv_bake.py"
+  },
+  "limitations": [
+    "Offline triangle-per-chart fallback only; no smart seam optimization, UDIMs, high-to-low cage baking, AO/curvature/thickness synthesis or MikkTSpace parity.",
+    "Generated chart separation and pixel gutters are technical evidence, not aesthetic acceptance.",
+    "Sources and failed product drafts remain preserved; existing outputs are refused."
+  ]
+}
