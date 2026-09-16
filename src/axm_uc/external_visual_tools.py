@@ -12,13 +12,13 @@ MAX_TIMEOUT_SECONDS = 600
 EXTERNAL_VISUAL_TOOLS: dict[str, dict[str, Any]] = {
     "blender": {"label": "Blender", "categories": ["3d", "modeling", "animation", "rendering"], "binary_candidates": ["blender"], "probe_args": ["--version"]},
     "godot": {"label": "Godot", "categories": ["game-engine", "scene-runtime", "rendering"], "binary_candidates": ["godot", "godot4"], "probe_args": ["--version"]},
-    "unreal": {"label": "Unreal Engine", "categories": ["game-engine", "scene-runtime", "rendering"], "binary_candidates": ["UnrealEditor-Cmd", "UnrealEditor", "UE4Editor-Cmd", "UE4Editor"], "probe_args": null},
+    "unreal": {"label": "Unreal Engine", "categories": ["game-engine", "scene-runtime", "rendering"], "binary_candidates": ["UnrealEditor-Cmd", "UnrealEditor", "UE4Editor-Cmd", "UE4Editor"], "probe_args": None},
     "krita": {"label": "Krita", "categories": ["2d", "painting", "textures"], "binary_candidates": ["krita"], "probe_args": ["--version"]},
     "gimp": {"label": "GIMP", "categories": ["2d", "image-processing", "compositing"], "binary_candidates": ["gimp", "gimp-3.0"], "probe_args": ["--version"]},
     "imagemagick": {"label": "ImageMagick", "categories": ["2d", "image-processing", "compositing"], "binary_candidates": ["magick", "convert"], "probe_args": ["-version"]},
     "ffmpeg": {"label": "FFmpeg", "categories": ["video", "audio", "compositing"], "binary_candidates": ["ffmpeg"], "probe_args": ["-version"]},
     "openscad": {"label": "OpenSCAD", "categories": ["3d", "parametric", "cad"], "binary_candidates": ["openscad"], "probe_args": ["--version"]},
-    "houdini": {"label": "Houdini", "categories": ["3d", "procedural", "vfx", "simulation"], "binary_candidates": ["hython", "houdini"], "probe_args": null},
+    "houdini": {"label": "Houdini", "categories": ["3d", "procedural", "vfx", "simulation"], "binary_candidates": ["hython", "houdini"], "probe_args": None},
     "inkscape": {"label": "Inkscape", "categories": ["2d", "vector", "svg"], "binary_candidates": ["inkscape"], "probe_args": ["--version"]},
 }
 
