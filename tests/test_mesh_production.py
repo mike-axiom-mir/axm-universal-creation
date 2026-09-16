@@ -8,6 +8,7 @@ import unittest
 from unittest.mock import patch
 
 from axm_uc.mesh_production import blender_executable, observe_station, run_station
+from axm_uc.mesh_quality import inspect_uv_layout
 from axm_uc.native_textures import decode_png
 from axm_uc.product_workflow import operate_product_workflow
 from test_native_textures import maps, panel
@@ -66,6 +67,20 @@ class NativeProductionTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 run_station(self.root,"validate-blender-target",{"path":"creations/target","asset":"creations/rig.glb","options":options})
 
+    def test_uv_quality_requires_first_mip_padding_and_reports_safe_levels(self):
+        spec = panel()
+        spec["primitives"][0]["texcoords"] = [[.25,.75],[.75,.75],[.75,.25],[.25,.25]]
+        weak = inspect_uv_layout(spec,16,1)
+        self.assertEqual(weak["status"],"FAIL")
+        self.assertFalse(weak["groups"][0]["checks"]["first_mip_padding"])
+        strong = inspect_uv_layout(spec,16,2)
+        self.assertEqual(strong["status"],"PASS",strong)
+        group = strong["groups"][0]
+        self.assertTrue(group["checks"]["first_mip_padding"])
+        self.assertGreaterEqual(group["conservative_padding_px"],2)
+        self.assertGreaterEqual(group["safe_mip_reductions_conservative"],1)
+        self.assertGreaterEqual(group["padding_px_by_safe_level"][1],1)
+
 
 @unittest.skipUnless(BLENDER,"optional real Blender backend not configured")
 class BlenderProductionTests(unittest.TestCase):
@@ -99,7 +114,7 @@ class BlenderProductionTests(unittest.TestCase):
             p[2] = .04+p[0]*.03
         high["primitives"][0]["normals"] = [[-.0299865,0,.9995503]]*4
         request = {"path":"creations/baked","specification":spec,"high_specification":high,
-                   "options":{"size":16,"margin_px":1,"samples":2,"cage_extrusion":.08,"max_ray_distance":.2}}
+                   "options":{"size":16,"margin_px":2,"samples":2,"cage_extrusion":.08,"max_ray_distance":.2}}
         r = run_station(self.root,"bake-mesh-maps",request)
         self.assertEqual(r["status"],"PASS",r)
         data = decode_png((self.root/"creations/baked/paint.001-normal.png").read_bytes())[2]
@@ -119,7 +134,7 @@ class BlenderProductionTests(unittest.TestCase):
             "brief":{"purpose":"Test ordered production","target":"blender-cycles","quality_intent":"Explicit small technical fixture"},
             "specification":spec,"recipe":{"paint":{"family":"painted-metal","size":16}},
             "material_policy":{"minimum_size":16},"minimum_texels_per_m":1,"preview":{"width":64,"height":64},
-            "production":{"uv":{"resolution":16,"padding_px":1},"bake":{"size":16,"margin_px":1,"samples":1},
+            "production":{"uv":{"resolution":16,"padding_px":2},"bake":{"size":16,"margin_px":2,"samples":1},
                           "target":{"width":64,"height":64,"samples":1,"views":[{"yaw":.4,"elevation":.2}]}}}
         result = operate_product_workflow(self.root,request)
         self.assertEqual(result["status"],"DRAFT_BUILT_REVIEW_REQUIRED",result)
