@@ -46,14 +46,15 @@ assert.match(stepped.limitations.join(' '), /not a full prismatic\/slider joint/
 assert.match(stepped.limitations.join(' '), /not yet integrated/i);
 assert.match(stepped.limitations.join(' '), /not scientific validation/i);
 
-const slackWorld = staticDynamicWorld({ x: 0.25, y: 0.25 }, { x: 1, y: -1 });
+const slackStart = { x: 3, y: -2.5 };
+const slackWorld = staticDynamicWorld(slackStart, { x: 1, y: -1 });
 const slackPrepared = DirectionLimits.prepareWorld(slackWorld, [range], { positionIterations: 1, velocityIterations: 1 });
 assert.equal(slackPrepared.initial[0].state, 'SLACK');
 assert.equal(slackPrepared.positionReceipts[0].constrained, false, 'position inside projected range must remain slack');
 assert.equal(slackPrepared.velocityReceipts[0].constrained, false, 'velocity inside projected range must remain slack');
 const slackStep = DirectionLimits.step(slackWorld, [range], 0.1);
 const slackBody = slackStep.world.bodies.find(item => item.id === 'body');
-assert.ok(Math.abs(projection(slackBody.position, diagonal) - projection({ x: 0.25, y: 0.25 }, diagonal)) < 1e-8, 'pure perpendicular slack motion must preserve projected offset');
+assert.ok(Math.abs(projection(slackBody.position, diagonal) - projection(slackStart, diagonal)) < 1e-8, 'pure perpendicular slack motion must preserve projected offset');
 assert.ok(Math.abs(slackBody.velocity.x - 1) < 1e-8 && Math.abs(slackBody.velocity.y + 1) < 1e-8, 'slack perpendicular velocity must remain unconstrained');
 
 const minLimit = { id: 'diag-min', a: 'root', b: 'body', direction: diagonal, minOffset: -diagonalMax };
@@ -112,9 +113,10 @@ assert.equal(bounded.positionIterations, 32);
 assert.equal(bounded.velocityIterations, 32);
 
 const start = Math.SQRT1_2;
+const gravityStart = { x: 0.5 - 3 * Math.SQRT1_2, y: 0.5 + 3 * Math.SQRT1_2 };
 let gravityWorld = Core.createWorld({ gravity: { x: 10, y: 10 }, bounds: false, sleep: { enabled: false } });
 gravityWorld = add(gravityWorld, { id: 'anchor', type: 'static', position: { x: 0, y: 0 } });
-gravityWorld = add(gravityWorld, { id: 'payload', type: 'dynamic', position: { x: start / 2, y: start / 2 }, mass: 1, linearDamping: 0 });
+gravityWorld = add(gravityWorld, { id: 'payload', type: 'dynamic', position: gravityStart, mass: 1, linearDamping: 0 });
 const gravityLimit = { id: 'gravity-diag', a: 'anchor', b: 'payload', direction: diagonal, minOffset: 0, maxOffset: start };
 const gravityStep = DirectionLimits.step(gravityWorld, [gravityLimit], 0.1);
 assert.ok(gravityStep.directionLimitDiagnostics.maxViolationAfterCoreStep > 1e-4, 'diagonal gravity should create a measurable projected max-bound violation during donor-core integration');
