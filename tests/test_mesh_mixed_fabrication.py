@@ -38,7 +38,7 @@ def rotation_matrix(rx=0.31, ry=-0.47, rz=0.22):
     cz, sz = math.cos(rz), math.sin(rz)
     x = [[1.0, 0.0, 0.0], [0.0, cx, -sx], [0.0, sx, cx]]
     y = [[cy, 0.0, sy], [0.0, 1.0, 0.0], [-sy, 0.0, cy]]
-    z = [[cz, -sz, 0.0], [sz, cz, 0.0], [0.0, 0.0, 1.0]]
+    z = [[cz, -sz, 0.0], [sz, cz, -0.0], [0.0, 0.0, 1.0]]
     return _matmul(z, _matmul(y, x))
 
 
@@ -90,6 +90,12 @@ def hole(operation_id, local_center, rotation, radius=0.30, segments=20):
         "segments": segments,
         "kerf": 0.02,
     }
+
+
+def legacy_hole(operation_id, local_center, rotation, radius=0.30, segments=20):
+    body = hole(operation_id, local_center, rotation, radius=radius, segments=segments)
+    body.pop("operation")
+    return body
 
 
 def notch(operation_id, local_center, rotation, side="u-max", span=0.52, depth=0.34):
@@ -251,7 +257,7 @@ class MixedFabricationTests(unittest.TestCase):
                             "schema": "axm.mesh-hole-fabrication-chain/v0.6",
                             "name": "Old hole",
                             "axis_vector": axes[1],
-                            "holes": [hole("hole-a", [-0.85, 0.0, 0.55], rotation)],
+                            "holes": [legacy_hole("hole-a", [-0.85, 0.0, 0.55], rotation)],
                         },
                     },
                 }
