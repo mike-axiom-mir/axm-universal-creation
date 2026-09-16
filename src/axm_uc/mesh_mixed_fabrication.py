@@ -77,7 +77,9 @@ def _normalize_operation(raw: Any, index: int) -> dict[str, Any]:
         raise MeshPrecisionCutterError(f"operations[{index}] must be an object")
     operation = str(raw.get("operation", "")).strip().casefold()
     if operation == "round-through-hole":
-        return _normalize_hole(raw, index)
+        legacy_hole = dict(raw)
+        legacy_hole.pop("operation", None)
+        return _normalize_hole(legacy_hole, index)
     if operation == "box-notch":
         return _normalize_notch(raw, index)
     raise MeshPrecisionCutterError(
