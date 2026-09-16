@@ -1,0 +1,405 @@
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import shutil
+import subprocess
+import sys
+from pathlib import Path
+from typing import Any
+
+LIVE_CREATION_SCHEMA = "axm-live-creation/v0"
+RECEIPT_SCHEMA = "axm-live-creation-receipt/v0"
+MAX_ITERATIONS = 8
+MAX_TIMEOUT_SECONDS = 60
+
+
+class LiveCreationError(ValueError):
+    """Raised when a live-creation request is malformed or escapes its declared boundary."""
+
+
+def _inside(base: Path, relative: str, *, label: str) -> Path:
+    if not isinstance(relative, str) or not relative.strip():
+        raise LiveCreationError(f"{label} must be a non-empty relative path")
+    candidate = Path(relative)
+    if candidate.is_absolute():
+        raise LiveCreationError(f"{label} must be relative")
+    base_resolved = base.resolve()
+    resolved = (base_resolved / candidate).resolve()
+    try:
+        resolved.relative_to(base_resolved)
+    except ValueError as exc:
+        raise LiveCreationError(f"{label} escapes its allowed root") from exc
+    return resolved
+
+
+def _safe_run_id(raw: Any, manifest: dict[str, Any]) -> str:
+    if raw is None:
+        encoded = json.dumps(manifest, sort_keys=True, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+        return f"run-{hashlib.sha256(encoded).hexdigest()[:16]}"
+    if not isinstance(raw, str) or not raw or len(raw) > 80:
+        raise LiveCreationError("run_id must be a non-empty string of at most 80 characters")
+    allowed = set("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.")
+    if any(ch not in allowed for ch in raw):
+        raise LiveCreationError("run_id may contain only letters, digits, '-', '_' and '.'")
+    if raw in {".", ".."}:
+        raise LiveCreationError("run_id may not be '.' or '..'")
+    return raw
+
+
+def _validate_manifest(manifest: Any) -> dict[str, Any]:
+    if not isinstance(manifest, dict):
+        raise LiveCreationError("manifest must be a JSON object")
+    if manifest.get("schema") != LIVE_CREATION_SCHEMA:
+        raise LiveCreationError(f"schema must be {LIVE_CREATION_SCHEMA!r}")
+    if not isinstance(manifest.get("source"), str):
+        raise LiveCreationError("source must be a relative directory path")
+    domain = manifest.get("domain", "generic")
+    if not isinstance(domain, str) or not domain.strip():
+        raise LiveCreationError("domain must be a non-empty string")
+    max_iterations = manifest.get("max_iterations", 3)
+    if isinstance(max_iterations, bool) or not isinstance(max_iterations, int) or not (1 <= max_iterations <= MAX_ITERATIONS):
+        raise LiveCreationError(f"max_iterations must be an integer from 1 to {MAX_ITERATIONS}")
+    for key in ("execute", "observe", "repairs"):
+        value = manifest.get(key, [])
+        if not isinstance(value, list):
+            raise LiveCreationError(f"{key} must be a list")
+    policy = manifest.get("policy", {})
+    if not isinstance(policy, dict):
+        raise LiveCreationError("policy must be an object")
+    repair_scope = policy.get("repair_scope", "workspace")
+    if repair_scope not in {"workspace", "workspace-and-source"}:
+        raise LiveCreationError("policy.repair_scope must be 'workspace' or 'workspace-and-source'")
+    allowed = policy.get("allowed_executables", [])
+    if not isinstance(allowed, list) or any(not isinstance(item, str) or not item for item in allowed):
+        raise LiveCreationError("policy.allowed_executables must be a list of executable names")
+    return manifest
+
+
+def _copy_source(source: Path, workspace: Path) -> dict[str, Any]:
+    if not source.exists() or not source.is_dir():
+        raise LiveCreationError(f"source directory does not exist: {source}")
+    if workspace.exists():
+        shutil.rmtree(workspace)
+    workspace.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copytree(source, workspace)
+    files = sorted(path.relative_to(workspace).as_posix() for path in workspace.rglob("*") if path.is_file())
+    return {
+        "status": "ASSEMBLED",
+        "file_count": len(files),
+        "files": files,
+    }
+
+
+def _resolve_executable(argv: list[str], allowed: set[str]) -> list[str]:
+    if not argv or any(not isinstance(part, str) or not part for part in argv):
+        raise LiveCreationError("each execute step argv must be a non-empty list of non-empty strings")
+    resolved = list(argv)
+    if resolved[0] == "@python":
+        resolved[0] = sys.executable
+        return resolved
+    executable_name = Path(resolved[0]).name
+    if executable_name not in allowed:
+        raise LiveCreationError(
+            f"executable {executable_name!r} is not allowed; add it explicitly to policy.allowed_executables"
+        )
+    return resolved
+
+
+def _execute_steps(workspace: Path, steps: list[dict[str, Any]], policy: dict[str, Any]) -> list[dict[str, Any]]:
+    allowed = set(policy.get("allowed_executables", []))
+    results: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    for index, step in enumerate(steps):
+        if not isinstance(step, dict):
+            raise LiveCreationError("each execute step must be an object")
+        step_id = step.get("id", f"step-{index + 1}")
+        if not isinstance(step_id, str) or not step_id or step_id in seen:
+            raise LiveCreationError("execute step ids must be unique non-empty strings")
+        seen.add(step_id)
+        argv = _resolve_executable(step.get("argv", []), allowed)
+        cwd = _inside(workspace, step.get("cwd", "."), label=f"execute[{step_id}].cwd")
+        if not cwd.exists() or not cwd.is_dir():
+            raise LiveCreationError(f"execute[{step_id}].cwd does not exist")
+        timeout = step.get("timeout_seconds", 20)
+        if isinstance(timeout, bool) or not isinstance(timeout, int) or not (1 <= timeout <= MAX_TIMEOUT_SECONDS):
+            raise LiveCreationError(
+                f"execute[{step_id}].timeout_seconds must be an integer from 1 to {MAX_TIMEOUT_SECONDS}"
+            )
+        try:
+            completed = subprocess.run(
+                argv,
+                cwd=cwd,
+                stdin=subprocess.DEVNULL,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                timeout=timeout,
+                shell=False,
+                check=False,
+            )
+            results.append(
+                {
+                    "id": step_id,
+                    "argv": step.get("argv", []),
+                    "cwd": cwd.relative_to(workspace).as_posix(),
+                    "exit_code": completed.returncode,
+                    "passed": completed.returncode == 0,
+                    "stdout": completed.stdout[-4000:],
+                    "stderr": completed.stderr[-4000:],
+                }
+            )
+        except subprocess.TimeoutExpired as exc:
+            results.append(
+                {
+                    "id": step_id,
+                    "argv": step.get("argv", []),
+                    "cwd": cwd.relative_to(workspace).as_posix(),
+                    "exit_code": None,
+                    "passed": False,
+                    "timed_out": True,
+                    "stdout": (exc.stdout or "")[-4000:] if isinstance(exc.stdout, str) else "",
+                    "stderr": (exc.stderr or "")[-4000:] if isinstance(exc.stderr, str) else "",
+                }
+            )
+    return results
+
+
+def _observe_one(workspace: Path, check: dict[str, Any], index: int) -> dict[str, Any]:
+    if not isinstance(check, dict):
+        raise LiveCreationError("each observation must be an object")
+    check_id = check.get("id", f"check-{index + 1}")
+    if not isinstance(check_id, str) or not check_id:
+        raise LiveCreationError("observation ids must be non-empty strings")
+    kind = check.get("kind")
+    if kind not in {"exists", "absent", "contains", "not-contains", "json-valid", "sha256"}:
+        raise LiveCreationError(f"unsupported observation kind for {check_id!r}: {kind!r}")
+    path = _inside(workspace, check.get("path", ""), label=f"observe[{check_id}].path")
+    result: dict[str, Any] = {
+        "id": check_id,
+        "kind": kind,
+        "path": path.relative_to(workspace).as_posix(),
+    }
+    if kind == "exists":
+        result["passed"] = path.exists()
+    elif kind == "absent":
+        result["passed"] = not path.exists()
+    elif kind in {"contains", "not-contains"}:
+        value = check.get("value")
+        if not isinstance(value, str):
+            raise LiveCreationError(f"observe[{check_id}].value must be a string")
+        if not path.is_file():
+            result.update({"passed": False, "reason": "file missing"})
+        else:
+            text = path.read_text(encoding="utf-8")
+            present = value in text
+            result["passed"] = present if kind == "contains" else not present
+            result["value"] = value
+    elif kind == "json-valid":
+        if not path.is_file():
+            result.update({"passed": False, "reason": "file missing"})
+        else:
+            try:
+                json.loads(path.read_text(encoding="utf-8"))
+            except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+                result.update({"passed": False, "reason": str(exc)})
+            else:
+                result["passed"] = True
+    elif kind == "sha256":
+        expected = check.get("value")
+        if not isinstance(expected, str) or len(expected) != 64:
+            raise LiveCreationError(f"observe[{check_id}].value must be a 64-character sha256 hex digest")
+        if not path.is_file():
+            result.update({"passed": False, "reason": "file missing"})
+        else:
+            actual = hashlib.sha256(path.read_bytes()).hexdigest()
+            result.update({"passed": actual == expected.lower(), "actual": actual, "expected": expected.lower()})
+    return result
+
+
+def _observe(workspace: Path, checks: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    results = [_observe_one(workspace, check, index) for index, check in enumerate(checks)]
+    ids = [item["id"] for item in results]
+    if len(ids) != len(set(ids)):
+        raise LiveCreationError("observation ids must be unique")
+    return results
+
+
+def _apply_repair(target_root: Path, repair: dict[str, Any]) -> dict[str, Any]:
+    operation = repair.get("operation")
+    path = _inside(target_root, repair.get("path", ""), label="repair.path")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    if operation == "write_text":
+        text = repair.get("text")
+        if not isinstance(text, str):
+            raise LiveCreationError("write_text repair requires string text")
+        path.write_text(text, encoding="utf-8")
+        return {"operation": operation, "path": path.relative_to(target_root).as_posix(), "changed": True}
+    if operation == "replace_text":
+        old = repair.get("old")
+        new = repair.get("new")
+        if not isinstance(old, str) or not old or not isinstance(new, str):
+            raise LiveCreationError("replace_text repair requires non-empty string old and string new")
+        if not path.is_file():
+            return {
+                "operation": operation,
+                "path": path.relative_to(target_root).as_posix(),
+                "changed": False,
+                "reason": "file missing",
+            }
+        text = path.read_text(encoding="utf-8")
+        if old not in text:
+            return {
+                "operation": operation,
+                "path": path.relative_to(target_root).as_posix(),
+                "changed": False,
+                "reason": "old text not found",
+            }
+        path.write_text(text.replace(old, new), encoding="utf-8")
+        return {"operation": operation, "path": path.relative_to(target_root).as_posix(), "changed": True}
+    if operation == "delete_file":
+        if path.exists() and path.is_file():
+            path.unlink()
+            return {"operation": operation, "path": path.relative_to(target_root).as_posix(), "changed": True}
+        return {
+            "operation": operation,
+            "path": path.relative_to(target_root).as_posix(),
+            "changed": False,
+            "reason": "file missing",
+        }
+    raise LiveCreationError(f"unsupported repair operation: {operation!r}")
+
+
+def _repair(
+    workspace: Path,
+    source: Path,
+    failed_observation_ids: set[str],
+    repairs: list[dict[str, Any]],
+    policy: dict[str, Any],
+) -> list[dict[str, Any]]:
+    applied: list[dict[str, Any]] = []
+    scope = policy.get("repair_scope", "workspace")
+    for repair in repairs:
+        if not isinstance(repair, dict):
+            raise LiveCreationError("each repair must be an object")
+        when = repair.get("when")
+        if not isinstance(when, str) or not when:
+            raise LiveCreationError("each repair requires a non-empty 'when' observation id")
+        if when not in failed_observation_ids:
+            continue
+        workspace_result = _apply_repair(workspace, repair)
+        row = {"when": when, "workspace": workspace_result}
+        if scope == "workspace-and-source" and workspace_result.get("changed"):
+            row["source"] = _apply_repair(source, repair)
+        applied.append(row)
+    return applied
+
+
+def run_live_creation(root: Path | str, raw_manifest: dict[str, Any]) -> dict[str, Any]:
+    root = Path(root).resolve()
+    manifest = _validate_manifest(raw_manifest)
+    source = _inside(root, manifest["source"], label="source")
+    run_id = _safe_run_id(manifest.get("run_id"), manifest)
+    run_root = root / ".axm" / "live-creation" / "runs" / run_id
+    workspace = run_root / "workspace"
+    receipt_path = run_root / "receipt.json"
+    policy = dict(manifest.get("policy", {}))
+    if run_root.exists():
+        if policy.get("replace_existing_run") is not True:
+            raise LiveCreationError(
+                f"run already exists: {run_id}; set policy.replace_existing_run=true to replace its disposable runtime copy"
+            )
+        shutil.rmtree(run_root)
+    assembly = _copy_source(source, workspace)
+    iterations: list[dict[str, Any]] = []
+    status = "HOLD"
+    stop_reason = "maximum iterations reached"
+
+    for number in range(1, manifest.get("max_iterations", 3) + 1):
+        executions = _execute_steps(workspace, manifest.get("execute", []), policy)
+        observations = _observe(workspace, manifest.get("observe", []))
+        execution_passed = all(item["passed"] for item in executions)
+        observation_passed = all(item["passed"] for item in observations)
+        row: dict[str, Any] = {
+            "iteration": number,
+            "executions": executions,
+            "observations": observations,
+            "passed": execution_passed and observation_passed,
+            "repairs": [],
+        }
+        iterations.append(row)
+        if row["passed"]:
+            status = "COMPLETE"
+            stop_reason = "declared execution and observation evidence passed"
+            break
+        failed_ids = {item["id"] for item in observations if not item["passed"]}
+        repairs = _repair(workspace, source, failed_ids, manifest.get("repairs", []), policy)
+        row["repairs"] = repairs
+        if not any(repair.get("workspace", {}).get("changed") for repair in repairs):
+            stop_reason = "evidence failed and no declared repair changed the runtime body"
+            break
+
+    receipt = {
+        "schema": RECEIPT_SCHEMA,
+        "status": status,
+        "run_id": run_id,
+        "domain": manifest.get("domain", "generic"),
+        "source": source.relative_to(root).as_posix(),
+        "runtime_workspace": workspace.relative_to(root).as_posix(),
+        "assembly": assembly,
+        "iterations": iterations,
+        "canonical_source_changed": policy.get("repair_scope") == "workspace-and-source"
+        and any(
+            repair.get("source", {}).get("changed")
+            for iteration in iterations
+            for repair in iteration.get("repairs", [])
+        ),
+        "stop_reason": stop_reason,
+        "truth_boundary": [
+            "v0 observes declared process exit status and deterministic file evidence; it does not yet observe rendered pixels, audio quality, gameplay feel, or semantic visual quality",
+            "external engines and tools are invoked only by explicit argv with shell disabled; non-Python executables require explicit policy.allowed_executables",
+            "repairs are limited to declared deterministic file edits; no model-generated hidden rewrite occurs inside this loop",
+            "workspace-only repair is the default; canonical source changes only when policy.repair_scope is explicitly workspace-and-source",
+            "COMPLETE means the declared execution and observation evidence passed, not that the creation is globally finished",
+        ],
+    }
+    run_root.mkdir(parents=True, exist_ok=True)
+    receipt_path.write_text(json.dumps(receipt, indent=2, ensure_ascii=False, sort_keys=True) + "\n", encoding="utf-8")
+    receipt["receipt_path"] = receipt_path.relative_to(root).as_posix()
+    return receipt
+
+
+def _load_manifest(path: Path) -> dict[str, Any]:
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+        raise LiveCreationError(f"unable to read manifest: {exc}") from exc
+    if not isinstance(value, dict):
+        raise LiveCreationError("manifest must decode to an object")
+    return value
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="python -m axm_uc.live_creation",
+        description="Run AXM Universal Creation's experimental native assemble -> execute -> observe -> repair loop.",
+    )
+    parser.add_argument("manifest", type=Path, help="axm-live-creation/v0 JSON manifest")
+    parser.add_argument("--root", type=Path, default=Path.cwd(), help="Universal Creation machine root")
+    return parser
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = build_parser().parse_args(argv)
+    try:
+        receipt = run_live_creation(args.root, _load_manifest(args.manifest))
+    except (LiveCreationError, OSError) as exc:
+        print(json.dumps({"type": "LIVE_CREATION_ERROR", "reason": str(exc)}, ensure_ascii=False))
+        return 2
+    print(json.dumps(receipt, indent=2, ensure_ascii=False, sort_keys=True))
+    return 0 if receipt["status"] == "COMPLETE" else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
