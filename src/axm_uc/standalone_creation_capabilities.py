@@ -216,6 +216,25 @@ def register_standalone_creation_builtins(
         except (TypeError, ValueError, FileExistsError) as exc:
             raise capability_error(str(exc)) from exc
 
+    def external_visual_tools(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+        from .external_visual_tools import ExternalVisualToolError, operate_external_visual_tool
+
+        normalized = dict(inputs)
+        operation = str(inputs.get("operation", "catalog")).strip().casefold()
+        if operation == "execute":
+            if "cwd" not in inputs:
+                raise capability_error("external visual tool execution requires an explicit cwd")
+            cwd = resolve_output_path(root, str(inputs["cwd"]))
+            if is_machine_body_path(root, cwd):
+                raise capability_error(
+                    "external visual tools cannot execute with the live machine body as their working directory"
+                )
+            normalized["cwd"] = str(cwd)
+        try:
+            return operate_external_visual_tool(root, normalized)
+        except ExternalVisualToolError as exc:
+            raise capability_error(str(exc), exc.details) from exc
+
     return {
         "builtin:local_creation_provider": local_creation_provider,
         "builtin:host_evidence": host_evidence,
@@ -228,4 +247,5 @@ def register_standalone_creation_builtins(
         "builtin:procedural_3d": procedural_3d,
         "builtin:creative_flow": creative_flow,
         "builtin:native_visual_runtime": native_visual_runtime,
+        "builtin:external_visual_tools": external_visual_tools,
     }
