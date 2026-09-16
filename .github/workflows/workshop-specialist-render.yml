@@ -48,8 +48,8 @@ jobs:
           PYTHONPATH=src python -m axm_uc rts-workshop-polish /tmp/workshop-specialist-evidence \
             --python "$(command -v python)" \
             --font /usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf \
-            --resolution 768 \
-            --samples 16
+            --resolution 1100 \
+            --samples 48
 
       - name: Run independent GLB and game-readiness verifier
         run: |
@@ -70,7 +70,7 @@ jobs:
           print(json.dumps(gates, indent=2))
           PY
 
-      - name: Stage bounded visual and LOD evidence artifact
+      - name: Stage bounded visual, source and runtime evidence artifact
         run: |
           mkdir -p workshop-specialist-evidence
           cp /tmp/workshop-specialist-evidence/workshop-hero.png workshop-specialist-evidence/
@@ -80,18 +80,17 @@ jobs:
           cp /tmp/workshop-specialist-evidence/lod-ladder-build.json workshop-specialist-evidence/
           cp /tmp/workshop-specialist-evidence/glb-inspection.json workshop-specialist-evidence/
           cp /tmp/workshop-specialist-evidence/game-readiness-gates.json workshop-specialist-evidence/
-          sha256sum \
-            /tmp/workshop-specialist-evidence/improvised-workshop.glb \
-            /tmp/workshop-specialist-evidence/improvised-workshop-lod1.glb \
-            /tmp/workshop-specialist-evidence/improvised-workshop-tactical.glb \
-            /tmp/workshop-specialist-evidence/improvised-workshop-rts.glb \
-            /tmp/workshop-specialist-evidence/improvised-workshop-far.glb \
-            > workshop-specialist-evidence/glb-sha256.txt
+          cp /tmp/workshop-specialist-evidence/improvised-workshop.glb workshop-specialist-evidence/
+          cp /tmp/workshop-specialist-evidence/improvised-workshop-lod1.glb workshop-specialist-evidence/
+          cp /tmp/workshop-specialist-evidence/improvised-workshop-tactical.glb workshop-specialist-evidence/
+          cp /tmp/workshop-specialist-evidence/improvised-workshop-rts.glb workshop-specialist-evidence/
+          cp /tmp/workshop-specialist-evidence/improvised-workshop-far.glb workshop-specialist-evidence/
+          sha256sum workshop-specialist-evidence/*.glb > workshop-specialist-evidence/glb-sha256.txt
 
-      - name: Upload workshop evidence
+      - name: Upload workshop evidence and runtime candidates
         uses: actions/upload-artifact@v4
         with:
-          name: workshop-specialist-pass-001-evidence
+          name: workshop-specialist-rts-rebuild-evidence
           path: workshop-specialist-evidence
           if-no-files-found: error
           retention-days: 14
