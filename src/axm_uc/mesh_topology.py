@@ -23,7 +23,11 @@ class MeshTopologyError(ValueError):
 
 
 def _point(value: Sequence[float], label: str) -> Point:
-    if not isinstance(value, (list, tuple)) or len(value) != 3 or any(isinstance(item, bool) for item in value):
+    if (
+        not isinstance(value, (list, tuple))
+        or len(value) != 3
+        or any(isinstance(item, bool) or not isinstance(item, (int, float)) for item in value)
+    ):
         raise MeshTopologyError(f"{label} must contain exactly three finite coordinates")
     point = tuple(float(item) for item in value)
     if not all(math.isfinite(item) for item in point):
@@ -46,47 +50,39 @@ def _indices(raw: Iterable[int]) -> tuple[int, ...]:
 
 
 def _weld_vertices(vertices: tuple[Point, ...], tolerance: float) -> tuple[tuple[Point, ...], tuple[int, ...]]:
-    """Weld source vertices through a bounded spatial hash and deterministic union-find."""
-    parent = list(range(len(vertices)))
+    """Cluster source vertices around first-seen representatives within tolerance.
+
+    Representative clustering is deliberately non-transitive: a chain of vertices
+    cannot bridge a seam wider than the requested tolerance through intermediate
+    points. Source order makes the clustering deterministic without editing source
+    coordinates.
+    """
     grid: dict[tuple[int, int, int], list[int]] = defaultdict(list)
+    welded: list[Point] = []
+    source_to_welded: list[int] = []
     tolerance2 = tolerance * tolerance
 
-    def find(item: int) -> int:
-        while parent[item] != item:
-            parent[item] = parent[parent[item]]
-            item = parent[item]
-        return item
-
-    def union(first: int, second: int) -> None:
-        root_first, root_second = find(first), find(second)
-        if root_first == root_second:
-            return
-        if root_first < root_second:
-            parent[root_second] = root_first
-        else:
-            parent[root_first] = root_second
-
-    for index, point in enumerate(vertices):
+    for point in vertices:
         cell = tuple(math.floor(axis / tolerance) for axis in point)
+        candidates: list[tuple[float, int]] = []
         for dx in (-1, 0, 1):
             for dy in (-1, 0, 1):
                 for dz in (-1, 0, 1):
-                    for other in grid.get((cell[0] + dx, cell[1] + dy, cell[2] + dz), ()):
-                        candidate = vertices[other]
-                        distance2 = sum((point[axis] - candidate[axis]) ** 2 for axis in range(3))
+                    for candidate in grid.get((cell[0] + dx, cell[1] + dy, cell[2] + dz), ()):
+                        reference = welded[candidate]
+                        distance2 = sum((point[axis] - reference[axis]) ** 2 for axis in range(3))
                         if distance2 <= tolerance2:
-                            union(index, other)
-        grid[cell].append(index)
+                            candidates.append((distance2, candidate))
+        if candidates:
+            _distance2, selected = min(candidates, key=lambda item: (item[0], item[1]))
+            source_to_welded.append(selected)
+            continue
 
-    roots = [find(index) for index in range(len(vertices))]
-    root_ids: dict[int, int] = {}
-    welded: list[Point] = []
-    source_to_welded: list[int] = []
-    for root in roots:
-        if root not in root_ids:
-            root_ids[root] = len(welded)
-            welded.append(vertices[root])
-        source_to_welded.append(root_ids[root])
+        selected = len(welded)
+        welded.append(point)
+        source_to_welded.append(selected)
+        grid[cell].append(selected)
+
     return tuple(welded), tuple(source_to_welded)
 
 
@@ -99,7 +95,7 @@ def inspect_mesh_topology(
     """Return seam-welded edge-topology evidence for one triangle mesh.
 
     ``indices`` is a flat triangle index list. Coincident source vertices are
-    welded by Euclidean distance before edge incidence is measured, which lets
+    clustered by Euclidean distance before edge incidence is measured, which lets
     hard-normal/material seams be diagnosed as one geometric surface without
     rewriting the source mesh.
     """
@@ -225,7 +221,8 @@ def inspect_mesh_topology(
             "orientation_conflict_edges": [list(edge) for edge in orientation_conflicts[:MAX_EXAMPLES]],
         },
         "truth_boundary": {
-            "seam_welded_by_position": True,
+            "seam_clustered_by_position": True,
+            "source_geometry_rewritten": False,
             "edge_incidence_checked": True,
             "shared_edge_orientation_checked": True,
             "vertex_manifoldness_checked": False,
