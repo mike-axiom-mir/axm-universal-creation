@@ -1,0 +1,97 @@
+{
+  "id": "AXM-CAP-EVOLUTION-AFTERTOUCH",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Evolve one creation through seven evidence-bearing parallel creative rounds, retain exactly two judged survivors after every round, run applicable UC self-tests before output, and finish with a deep-aftertouch evidence gate without auto-accepting or auto-canonizing either finalist.",
+  "handles": [
+    "creative-evolution-chamber",
+    "evolution-aftertouch",
+    "seven-round-aftertouch",
+    "deep-aftertouch",
+    "self-test-candidate"
+  ],
+  "input_contract": {
+    "required": [],
+    "required_by_operation": {
+      "prepare": ["challenge"],
+      "start": ["challenge"],
+      "prepare-chamber": ["challenge"],
+      "advance": ["chamber", "submissions", "judgements"],
+      "advance-round": ["chamber", "submissions", "judgements"],
+      "judge-round": ["chamber", "submissions", "judgements"],
+      "self-test": ["candidate"],
+      "self-test-candidate": ["candidate"],
+      "test-candidate": ["candidate"]
+    },
+    "properties": {
+      "operation": "inspect/prepare/advance-round/self-test-candidate",
+      "challenge": "concrete creation goal",
+      "criteria": "optional existing specialist-tournament weighted judging criteria",
+      "pool_size": "8..40 specialist profiles used by each round tournament",
+      "team_size": "3..6 specialists per creative team",
+      "max_teams": "4..64 isolated creative teams per round",
+      "seed": "optional deterministic chamber seed",
+      "chamber": "exact digest-bound axm.evolution-aftertouch-chamber/v0.1 state",
+      "submissions": "complete object keyed by every current round team_id",
+      "judgements": "complete independent existing tournament judgements keyed by team_id",
+      "candidate": "candidate or artifact body for a registered deterministic self-test adapter"
+    }
+  },
+  "output_contract": {
+    "kind": "seven-round-evolution-aftertouch",
+    "contains": [
+      "seven fixed creation/aftertouch phases",
+      "parallel context-specific creative-team packets from the existing specialist tournament",
+      "two exact evidence-bearing survivor outputs after every completed round",
+      "survivor-to-next-round lineage binding",
+      "simulation/test/observe/repair/re-test protocol",
+      "direct visual-thought and project verification self-test adapters",
+      "explicit NOT_TESTED state for unsupported evidence surfaces",
+      "two retained final outputs with structural, functional, visual, experience, context, adversarial and polish evidence lanes"
+    ]
+  },
+  "dependencies": [
+    "AXM-CAP-SPECIALIST-TOURNAMENT",
+    "AXM-CAP-SIMULATE-CREATION",
+    "AXM-CAP-VERIFY-PROJECT"
+  ],
+  "relationships": [
+    "composes the existing specialist tournament instead of creating a second parallel-team ontology",
+    "uses the existing deterministic simulation and project-verification surfaces when the artifact kind is supported",
+    "creative outputs and semantic judgements remain externally supplied evidence rather than faked deterministic cognition",
+    "the best two complete judged outputs remain live after each round and become explicit parents for the next round",
+    "deep aftertouch is a final evidence-bearing creation pass rather than a decorative label after generation",
+    "finalists are retained but never automatically accepted, merged, canonized, or called perfect"
+  ],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:evolution_aftertouch",
+    "source": "src/axm_uc/evolution_aftertouch.py"
+  },
+  "limitations": [
+    "the chamber prepares creative-team packets but does not claim a team reasoned, built, rendered, played or tested until concrete executor evidence is supplied",
+    "v0.1 direct self-test adapters cover visual/Paintgun thought simulation and project/software/game project verification; other media remain NOT_TESTED until an adapter or external evidence provider is attached",
+    "independent tournament judgements are evidence inputs and can still be poor or biased; the chamber preserves their exact declared basis rather than treating the score as objective truth",
+    "seven rounds and two survivors are fixed v0.1 policy to preserve the requested creative evolution shape",
+    "all-PASS final evidence does not prove perfection, universal aesthetic quality, semantic correctness outside tested claims, or human acceptance"
+  ],
+  "persistent_state": "Chamber state, round history, survivor lineage and evidence are carried explicitly by the caller in v0.1; no hidden chat state is required.",
+  "root_fit": {
+    "truth": {
+      "fit": true,
+      "basis": "Unsupported tests remain NOT_TESTED, complete independent judging is required before survivor selection, and final PASS is explicitly bounded to declared evidence lanes."
+    },
+    "agency": {
+      "fit": true,
+      "basis": "Two finalists remain available after the seventh round and neither becomes accepted or CANON automatically."
+    },
+    "continuity": {
+      "fit": true,
+      "basis": "Every survivor carries parent identity, candidate digest, team origin, evidence, unknowns and exact round lineage into the next state."
+    },
+    "wisdom-before-speed": {
+      "fit": true,
+      "basis": "The chamber deliberately spends seven bounded rounds on creation, simulation, observation, repair, stress and aftertouch before treating output as final-candidate material."
+    }
+  }
+}
