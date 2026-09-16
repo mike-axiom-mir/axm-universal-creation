@@ -50,6 +50,20 @@ assert.equal(radialBlocked.preflight.conflicts[0].code, 'CONFLICTING_DISTANCE_IN
 assert.equal(radialBlocked.worldChecksumBefore, radialBlocked.worldChecksumAfter);
 assert.equal(JSON.stringify(radialConflictInput), radialConflictSnapshot, 'radial conflict block must preserve caller world state');
 
+const coupledConflictInput = baseWorld();
+const coupledConflictSnapshot = JSON.stringify(coupledConflictInput);
+const coupledBlocked = Guard.step(coupledConflictInput, {
+  directionLocks: [{ id: 'right-three', a: 'a', b: 'b', direction: { x: 1, y: 0 }, offset: 3 }],
+  distanceLimits: [{ id: 'radius-two', a: 'a', b: 'b', maxLength: 2 }]
+}, 1 / 60);
+assert.equal(coupledBlocked.blocked, true, 'same-pair projection magnitude above the finite radial maximum must fail closed before donor integration');
+assert.equal(coupledBlocked.reason, 'PROVABLE_LOCAL_CONFLICT');
+assert.equal(coupledBlocked.coreStepExecuted, false);
+assert.equal(coupledBlocked.preflight.counts.projectionRadialConflicts, 1);
+assert.equal(coupledBlocked.preflight.conflicts[0].code, 'PROJECTION_EXCEEDS_DISTANCE_MAX');
+assert.equal(coupledBlocked.worldChecksumBefore, coupledBlocked.worldChecksumAfter);
+assert.equal(JSON.stringify(coupledConflictInput), coupledConflictSnapshot, 'coupled conflict block must preserve caller world state');
+
 const invalid = Guard.step(baseWorld(), {
   distanceJoints: [{ id: 'bad-distance', a: 'a', b: 'missing', length: 1 }]
 }, 1 / 60);
@@ -89,4 +103,15 @@ assert.equal(guardedDistance.coreStepExecuted, true);
 assert.deepEqual(guardedDistance.composer, directDistance, 'accepted distance path must remain exact composer delegation');
 assert.match(guardedDistance.evidence.join(' '), /radial distance group/i);
 
-console.log('UC Constraint Preflight Guard selftest: PASS (fail-closed invalid/projected/radial conflict blocking, zero-step preservation, accepted composer equivalence and deterministic decision evidence)');
+const compatibleCoupledConstraints = {
+  axisLocks: [{ id: 'x-one', a: 'a', b: 'b', axis: 'x', offset: 1 }],
+  distanceLimits: [{ id: 'radius-two', a: 'a', b: 'b', maxLength: 2 }]
+};
+const guardedCoupled = Guard.step(baseWorld(), compatibleCoupledConstraints, 1 / 60, { composer: composerOptions });
+const directCoupled = Composer.step(baseWorld(), compatibleCoupledConstraints, 1 / 60, composerOptions);
+assert.equal(guardedCoupled.accepted, true, 'compatible projection versus radial maximum must still delegate to the composer');
+assert.equal(guardedCoupled.preflight.counts.projectionRadialChecks, 1);
+assert.equal(guardedCoupled.preflight.counts.projectionRadialConflicts, 0);
+assert.deepEqual(guardedCoupled.composer, directCoupled, 'accepted coupled path must remain exact composer delegation');
+
+console.log('UC Constraint Preflight Guard selftest: PASS (fail-closed invalid/projected/radial/coupled conflict blocking, zero-step preservation, accepted composer equivalence and deterministic decision evidence)');
