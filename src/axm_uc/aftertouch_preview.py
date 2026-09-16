@@ -61,10 +61,26 @@ def normalize_preview_policy(raw: Any = None) -> dict[str, Any]:
         raw = {}
     if not isinstance(raw, dict):
         raise AftertouchPreviewError("preview_policy must be an object")
-    allowed = {"mode", "milestone_rounds", "retain_artifacts", "ai_review"}
+    # A normalized policy is deliberately accepted as input on later round
+    # transitions. Derived fields are never trusted: they are recomputed below.
+    allowed = {
+        "mode",
+        "milestone_rounds",
+        "retain_artifacts",
+        "ai_review",
+        "schema",
+        "machine_observation",
+        "user_feedback_policy",
+        "ai_review_is_opt_in",
+    }
     unexpected = sorted(set(raw) - allowed)
     if unexpected:
         raise AftertouchPreviewError("preview_policy has unsupported fields", {"unsupported": unexpected})
+    if "schema" in raw and raw.get("schema") != PREVIEW_POLICY_SCHEMA:
+        raise AftertouchPreviewError(
+            "preview_policy schema is unsupported",
+            {"schema": raw.get("schema"), "expected": PREVIEW_POLICY_SCHEMA},
+        )
     mode = str(raw.get("mode", "internal")).strip().casefold()
     if mode not in MODES:
         raise AftertouchPreviewError("preview_policy.mode is unsupported", {"supported": sorted(MODES)})
