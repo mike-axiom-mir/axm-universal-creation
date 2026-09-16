@@ -15,5 +15,7 @@ module.exports = {
   constraintCollisionIsolation: require('./uc-constraint-collision-isolation.js'),
   constraintActivityGate: require('./uc-constraint-activity-gate.js'),
   constraintPreflight: require('./uc-constraint-preflight.js'),
-  constraintPreflightGuard: require('./uc-constraint-preflight-guard.js')
+  constraintPreflightGuard: require('./uc-constraint-preflight-guard.js'),
+  orthogonalProjectionPreflight: require('./uc-orthogonal-projection-preflight.js'),
+  orthogonalProjectionPreflightGuard: require('./uc-orthogonal-projection-preflight-guard.js')
 };
