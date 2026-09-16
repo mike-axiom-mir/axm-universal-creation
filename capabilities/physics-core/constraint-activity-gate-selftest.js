@@ -56,7 +56,7 @@ const validation = Gate.validate(overlapWorld(), disabledConstraints);
 assert.equal(validation.ok, true);
 assert.equal(validation.activeCount, 0);
 assert.equal(validation.disabledCount, 3);
-assert.match(validation.warnings.join(' '), /excluded from solver residuals/i);
+assert.match(validation.warnings.join(' '), /excludes them from solver residuals/i);
 assert.match(validation.warnings.join(' '), /donor physics source remains untouched/i);
 
 const disabledOnly = Gate.step(overlapWorld(), disabledConstraints, 0.01, { isolateCollisions: true });
