@@ -1,0 +1,76 @@
+{
+  "id": "AXM-CAP-PRECISION-CUTTER",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Perform bounded deterministic calculation-driven subtractive 3D fabrication: extruded profile cuts, round through-holes, and tolerance-aware round sockets with explicit kerf and evidence receipts.",
+  "handles": [
+    "precision-cut-3d",
+    "laser-cut-profile",
+    "laser-through-hole",
+    "laser-socket-cut"
+  ],
+  "input_contract": {
+    "required": [
+      "path",
+      "specification"
+    ],
+    "properties": {
+      "path": "target .glb file outside the protected live machine body",
+      "specification": "closed axm.precision-cutter/v0.1 recipe using profile-cut, round-through-hole, or round-socket",
+      "replace": "optional boolean; defaults false"
+    }
+  },
+  "output_contract": {
+    "kind": "validated-deterministic-precision-cut-glb",
+    "contains": [
+      "normalized cutter specification and SHA-256",
+      "exact output GLB bytes and SHA-256",
+      "existing procedural-3D post-publication geometry validation",
+      "cut geometry vertex and triangle counts",
+      "profile, removed-area, kerf, or socket-clearance metrics as applicable",
+      "explicit NOT_TESTED boundaries for visual quality, UV continuity, structural strength, and physical laser behavior"
+    ]
+  },
+  "dependencies": [
+    "AXM-CAP-GENERATE-PROCEDURAL-3D"
+  ],
+  "relationships": [
+    "reuses the existing bounded surface-to-GLB encoder and geometry validator rather than introducing a second mesh publication path",
+    "acts as a subtractive Creative Hand alongside additive primitive, sticker, and assembly workflows",
+    "round-socket converts source radius plus requested clearance and kerf into measurable receiving geometry",
+    "outputs ordinary GLB assets that can enter existing observers, aftertouch, games, stickers, and profession workflows",
+    "does not duplicate executable-anatomy coverage already proven by AXM-CAP-GENERATE-PROCEDURAL-3D; its dependency and source remain explicit instead"
+  ],
+  "anatomy_refs": [],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:precision_cutter",
+    "source": "src/axm_uc/precision_cutter.py"
+  },
+  "limitations": [
+    "v0.1 is a bounded software fabrication cutter, not general arbitrary-mesh CSG. It creates new cut solids from explicit profiles or rectangular stock rather than subtracting directly from an imported arbitrary GLB.",
+    "profile-cut supports arbitrary simple 2D profiles extruded through Y thickness but does not yet offset arbitrary polygon boundaries for kerf; kerf is applied to round holes and sockets.",
+    "round-through-hole and round-socket currently support one round cutout per recipe in rectangular stock, with 8..128 radial segments.",
+    "UVs, texture continuity, material seam finishing, physical strength, heat effects, real laser-machine parameters, rendered appearance, and host-engine compatibility are not proven by this capability.",
+    "cut geometry is exact relative to the declared polygonized recipe; circular boundaries are finite-segment approximations and both analytic and polygonized measurements remain visible."
+  ],
+  "persistent_state": null,
+  "root_fit": {
+    "truth": {
+      "fit": true,
+      "basis": "Every cutter recipe, kerf/clearance input, generated surface, exact GLB digest, measured cut metric, and untested quality boundary remains explicit."
+    },
+    "agency": {
+      "fit": true,
+      "basis": "The caller controls the cut operation, dimensions, profile, kerf, clearance, material, destination, and replacement decision; the cutter does not silently select design intent."
+    },
+    "continuity": {
+      "fit": true,
+      "basis": "Output publication reuses UC's atomic GLB path and rollback behavior; the live machine body remains protected."
+    },
+    "wisdom-before-speed": {
+      "fit": true,
+      "basis": "Recipes are bounded and fail closed on invalid/self-intersecting profiles, impossible round cuts, malformed materials, unsafe output paths, and generated GLB verification failures."
+    }
+  }
+}
