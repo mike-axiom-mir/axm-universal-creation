@@ -1,0 +1,12 @@
+{
+  "kind": "product-workflow",
+  "inputs": {
+    "operation": "plan",
+    "product_type": "animated-3d",
+    "brief": {
+      "purpose": "Build an expressive animated industrial robot",
+      "target": "Editable offline GLB; runtime target to be selected",
+      "quality_intent": "Readable silhouette, coherent metal/rubber materials, stable contacts and clear curious motion"
+    }
+  }
+}

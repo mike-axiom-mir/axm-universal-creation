@@ -1,0 +1,51 @@
+{
+  "id": "AXM-CAP-PRODUCT-WORKFLOW",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Product-specific production plans and native executable draft recipes through existing profession crews",
+  "handles": [
+    "product-workflow"
+  ],
+  "input_contract": {
+    "required": [],
+    "required_by_operation": {
+      "plan": [
+        "product_type",
+        "brief"
+      ],
+      "build": [
+        "product_type",
+        "brief",
+        "run_id",
+        "path"
+      ],
+      "refine": [
+        "product_type",
+        "brief",
+        "run_id",
+        "path",
+        "refines",
+        "revision_reason"
+      ],
+      "verify": [
+        "path"
+      ]
+    }
+  },
+  "output_contract": {
+    "kind": "product-plan-draft-or-verification"
+  },
+  "dependencies": [
+    "AXM-CAP-PROFESSION-CREW"
+  ],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:product_workflow",
+    "source": "src/axm_uc/product_workflow.py"
+  },
+  "limitations": [
+    "Eight lifecycle profiles; executable draft recipes currently cover material, static-3d, software and web.",
+    "Semantic direction, target runtime tests and release review require actual evidence. No automatic acceptance.",
+    "Uses existing crew practice and replay handling. Refine creates a new product version preserving the previous artifact."
+  ]
+}

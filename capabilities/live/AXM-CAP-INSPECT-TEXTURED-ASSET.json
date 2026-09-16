@@ -1,0 +1,28 @@
+{
+  "id": "AXM-CAP-INSPECT-TEXTURED-ASSET",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "inspect textured asset using native offline material machinery and exact artifact observation",
+  "handles": [
+    "inspect-textured-asset"
+  ],
+  "input_contract": {
+    "required": [
+      "path",
+      "asset"
+    ]
+  },
+  "output_contract": {
+    "kind": "material-station-artifact-or-measurement"
+  },
+  "dependencies": [],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:inspect_textured_asset",
+    "source": "src/axm_uc/material_pipeline.py"
+  },
+  "limitations": [
+    "Native bounded PNG/core glTF subset. No automatic aesthetic, seamlessness or target-engine acceptance.",
+    "Sources are preserved; existing outputs are refused."
+  ]
+}

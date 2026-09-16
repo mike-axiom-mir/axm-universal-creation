@@ -104,3 +104,27 @@ audio and autonomous cognitive specialists were not verified by this lane.
 
 Do not infer future execution from this handoff. There is no active schedule for
 this lane. Stop after the requested manual cycle unless Mike requests more.
+
+## Product-workflow continuation — 2026-09-16
+
+Mike requested front-to-end product-specific workflows and broader quality,
+especially textures. The continuation stays in PR #144 on the same branch.
+It adds eight product plans, four executable draft recipes, native UV/texture
+embedding and filtered material preview, map/UV/dimension checks and preserved
+refinement versions. Read `PRODUCT_WORKFLOWS.md` and `RUN_003.md`.
+
+The product compiler uses the existing crew runner and stepwise plan contract.
+PR #144 and aftertouch PR #141 merged during this cycle. The implementation was
+reconciled with main `ea6dfc86003380558f38579ffaeb9128de5138f3`, including all ten
+changed/added main files and merged runtime registration. Publication therefore
+uses a successor PR in the same branch. Physics PR #140 and workshop PR #145
+subsequently merged into `6ac748d78fec88c6b201d12bc5fd9fdc67fac376`; that later
+18-file delta does not overlap this product change and is preserved as the
+publication base. It does not change the tested Python/material source.
+No new agent coordinator, schedule or automatic product release is enabled.
+
+The visual inspection caught an X/Z dimension convention mismatch in the
+demo's reuse of SurfaceBuilder.box. Its local adapter now uses explicit XYZ;
+existing authored workshop recipes are preserved. A world-dimension regression
+guards the new product path. Quality still needs actual target and aesthetic
+review; the machine exposes those stages as pending or partial.

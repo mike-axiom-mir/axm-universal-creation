@@ -1,0 +1,29 @@
+{
+  "id": "AXM-CAP-BIND-TEXTURED-ASSET",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "bind textured asset using native offline material machinery and exact artifact observation",
+  "handles": [
+    "bind-textured-asset"
+  ],
+  "input_contract": {
+    "required": [
+      "path",
+      "specification",
+      "materials"
+    ]
+  },
+  "output_contract": {
+    "kind": "material-station-artifact-or-measurement"
+  },
+  "dependencies": [],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:bind_textured_asset",
+    "source": "src/axm_uc/material_pipeline.py"
+  },
+  "limitations": [
+    "Native bounded PNG/core glTF subset. No automatic aesthetic, seamlessness or target-engine acceptance.",
+    "Sources are preserved; existing outputs are refused."
+  ]
+}

@@ -215,9 +215,9 @@ def apply_layered_wear(fields, size, seed=1, layer=WearLayer(), protected_mask=N
 
 
 def layered_game_material_fields(family, size=128, seed=1, finish="realistic", color=None,
-                                 layer=WearLayer(), protected_mask=None, wear_mask=None):
+                                 layer=WearLayer(), protected_mask=None, wear_mask=None, surface_parameters=None):
     """Build top coat, then add an opt-in removable layer with source-family orientation."""
-    fields = game_material_fields(family, size, seed, finish, color)
+    fields = game_material_fields(family, size, seed, finish, color, surface_parameters)
     convention = "tangent -Y" if family in ("painted-metal", "woven-fabric") else "tangent +Y"
     return apply_layered_wear(fields, size, seed, layer, protected_mask, wear_mask, convention)
 
@@ -365,16 +365,34 @@ def apply_finish(fields, size, finish="realistic", seed=1):
     return result
 
 
-def game_material_fields(family, size=128, seed=1, finish="realistic", color=None):
+def _surface_parameters(family, raw):
+    if raw is None:
+        return {}
+    ranges = {"wear": (0,1), "scratches": (0,128), "grain_scale": (2,256),
+              "paint_roughness": (0,1), "metal_roughness": (0,1), "normal_strength": (0,8),
+              "height_grain_amplitude": (0,1), "height_broad_amplitude": (0,1),
+              "height_scratch_depth": (0,1), "height_pit_depth": (0,1),
+              "pit_wear_strength": (0,1), "base_grain_variation": (0,1), "roughness_grain_variation": (0,1)}
+    if family != "painted-metal" or not isinstance(raw, dict) or set(raw)-ranges.keys():
+        raise ValueError("surface_parameters currently supports named painted-metal controls only")
+    for name, value in raw.items():
+        low, high = ranges[name]
+        if type(value) not in (int,float) or not math.isfinite(value) or not low <= value <= high or (name == "scratches" and type(value) is not int):
+            raise ValueError("invalid painted-metal surface parameter: " + name)
+    return dict(raw)
+
+
+def game_material_fields(family, size=128, seed=1, finish="realistic", color=None, surface_parameters=None):
     _inputs(size, seed)
     _finish(finish)
     if family not in FAMILIES:
         raise ValueError(f"unknown material family: {family}")
+    controls = _surface_parameters(family, surface_parameters)
     color = DEFAULT_COLORS[family] if color is None else color
     if not isinstance(color, (tuple, list)) or len(color) != 3 or any(type(c) is not int or not 0 <= c <= 255 for c in color):
         raise ValueError("color requires three integer sRGB bytes")
     if family == "painted-metal":
-        fields = painted_metal_fields(size, seed, PaintedMetalSpec(paint_rgb=tuple(color)))
+        fields = painted_metal_fields(size, seed, PaintedMetalSpec(paint_rgb=tuple(color), **controls))
     elif family == "woven-fabric":
         fields = fabric_fields(size, seed, FabricSpec(base_rgb=tuple(color)))
     else:
@@ -394,11 +412,11 @@ def game_material_catalog():
 
 def game_material_request(path, family, size=128, seed=1, finish="realistic", color=None,
                           layer=None, protected_mask=None, wear_mask=None,
-                          protected_mask_source=None, wear_mask_source=None):
+                          protected_mask_source=None, wear_mask_source=None, surface_parameters=None):
     if layer is None:
         if any(value is not None for value in (protected_mask, wear_mask, protected_mask_source, wear_mask_source)):
             raise ValueError("wear/protection inputs require a WearLayer")
-        fields = game_material_fields(family, size, seed, finish, color)
+        fields = game_material_fields(family, size, seed, finish, color, surface_parameters)
     else:
         _wear_layer(layer)
         if protected_mask is not None and not protected_mask_source:
@@ -410,7 +428,7 @@ def game_material_request(path, family, size=128, seed=1, finish="realistic", co
             if value is not None and (not isinstance(value, str) or not value.strip() or len(value) > 100):
                 raise ValueError(f"{name} must be a short non-empty label")
         fields = layered_game_material_fields(family, size, seed, finish, color, layer,
-                                              protected_mask, wear_mask)
+                                              protected_mask, wear_mask, surface_parameters)
     binaries, maps = {}, {}
     for name, (channels, pixels) in fields.items():
         data = png_bytes(size, size, channels, pixels)
@@ -427,6 +445,8 @@ def game_material_request(path, family, size=128, seed=1, finish="realistic", co
                 "normal_convention": "tangent -Y" if family in ("painted-metal", "woven-fabric") else "tangent +Y",
                 "truth": "Authored procedural fields, not scanned material. No mesh-aware edge wear, seamless tiling, lighting or engine acceptance claimed.",
                 "height_usage": "Authoring proxy; finish modifies normals independently. Re-baking normal from height replaces that finish choice."}
+    if surface_parameters is not None:
+        manifest["surface_parameters"] = _surface_parameters(family, surface_parameters)
     if layer is not None:
         manifest["layers"] = [{"type": "removable-top-coat", "parameters": asdict(layer),
                                "wear_mask_source": wear_mask_source or "procedural-uv",
@@ -444,9 +464,9 @@ def game_material_request(path, family, size=128, seed=1, finish="realistic", co
 
 def generate_game_material(path, family, size=128, seed=1, finish="realistic", color=None,
                            layer=None, protected_mask=None, wear_mask=None,
-                           protected_mask_source=None, wear_mask_source=None):
+                           protected_mask_source=None, wear_mask_source=None, surface_parameters=None):
     request = game_material_request(path, family, size, seed, finish, color, layer,
-                                    protected_mask, wear_mask, protected_mask_source, wear_mask_source)
+                                    protected_mask, wear_mask, protected_mask_source, wear_mask_source, surface_parameters)
     inputs = dict(request["inputs"])
     target = Path(inputs.pop("path"))
     return build_mixed_project(target, **inputs)

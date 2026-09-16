@@ -28,6 +28,7 @@ from .profession_target_evidence import (
     target_contract,
 )
 from .stepwise_workflow import validate_step_plan
+from .material_pipeline import KINDS as MATERIAL_KINDS, observe_station, validate_station
 
 SCHEMA = "axm.uc-profession-crew.v1"
 MAX_RUNS = 256
@@ -47,7 +48,7 @@ TEAMS = {
 PROJECT_KINDS = {"software-project", "python-project", "static-web-project"}
 GLB_KINDS = {"procedural-3d-asset", "procedural-glb-asset", "deterministic-3d-model", "glb-scene-asset"}
 TEXT_KINDS = {"text-file", "json-file"}
-SUPPORTED = PROJECT_KINDS | GLB_KINDS | TEXT_KINDS | {"verify-project", TARGET_EVIDENCE_KIND, CLEARANCE_REPAIR_KIND}
+SUPPORTED = PROJECT_KINDS | GLB_KINDS | TEXT_KINDS | MATERIAL_KINDS | {"verify-project", TARGET_EVIDENCE_KIND, CLEARANCE_REPAIR_KIND}
 
 
 class ProfessionCrewError(ValueError):
@@ -140,6 +141,10 @@ def _observe(root: Path, action: dict) -> dict:
     from .procedural_3d import build_glb, verify_glb
     kind, inputs = action["kind"], action["inputs"]
     path = _target(root, inputs.get("path"))
+    if kind in MATERIAL_KINDS:
+        result = observe_station(root, kind, inputs)
+        return {**result, "artifact": str(path), "artifact_digest": _fingerprint(path),
+                "evidence_origin": "LOCAL_MATERIAL_GEOMETRY_RENDER_OBSERVATION"}
     if kind == CLEARANCE_REPAIR_KIND:
         result = observe_repair(root, inputs)
         return {**result, "artifact": str(path), "artifact_digest": _fingerprint(path),
@@ -231,6 +236,9 @@ def plan_crew(root: Path, inputs: dict) -> dict:
             binding["repair_scope"] = {"axis": repair["axis"], "minimum_m": repair["minimum_m"],
                                        "moving": repair["moving"], "fixed": repair["fixed"],
                                        "scope": "STATIC_RIGID_TRANSLATION"}
+        if kind in MATERIAL_KINDS:
+            validate_station(root, kind, action["inputs"])
+            binding["quality_policy"] = action["inputs"].get("policy", {})
         key = _hash(binding)
         practice = copy.deepcopy(state["practice"].get(key, {}))
         reused_procedure = kind == CLEARANCE_REPAIR_KIND and bool(practice.get("procedure"))

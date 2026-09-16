@@ -272,7 +272,7 @@ def _normalize_surface_spec(raw: Any) -> dict[str, Any]:
         raise Procedural3DError("surface requires 1..128 material groups")
     groups, seen, total_vertices, total_indices = [], set(), 0, 0
     for raw_group in spec["primitives"]:
-        group = _object(raw_group, "surface group", required={"id", "positions", "normals", "indices", "material"}, optional={"colors"})
+        group = _object(raw_group, "surface group", required={"id", "positions", "normals", "indices", "material"}, optional={"colors", "texcoords", "textures"})
         name = group["id"]
         if not isinstance(name, str) or not _ID_RE.fullmatch(name) or name in seen:
             raise Procedural3DError("surface group IDs must be unique portable identifiers")
@@ -315,7 +315,22 @@ def _normalize_surface_spec(raw: Any) -> dict[str, Any]:
             if not isinstance(colors, list) or len(colors) != len(positions):
                 raise Procedural3DError("surface color count must match positions")
             normalized["colors"] = [vector(row, "linear vertex color", 0, 1, 4) for row in colors]
+        if "texcoords" in group:
+            if not isinstance(group["texcoords"], list) or len(group["texcoords"]) != len(positions):
+                raise Procedural3DError("surface texcoord count must match positions")
+            normalized["texcoords"] = [vector(row, "UV coordinate", -10000, 10000, 2) for row in group["texcoords"]]
+        if "textures" in group:
+            from .native_textures import normalize_texture_set
+            if "texcoords" not in normalized or unlit:
+                raise Procedural3DError("textured native surfaces require UVs and a lit material")
+            try:
+                normalized["textures"] = normalize_texture_set(group["textures"])
+            except ValueError as exc:
+                raise Procedural3DError(str(exc)) from exc
         groups.append(normalized)
+    from .native_textures import MAX_TEXTURE_BYTES, SLOTS
+    if sum(len(g.get("textures", {}).get(slot, "")) for g in groups for slot in SLOTS) > MAX_TEXTURE_BYTES * 4 // 3:
+        raise Procedural3DError("surface texture payload budget exceeded")
     return {"schema": SURFACE_SCHEMA, "name": spec["name"].strip(), "primitives": groups}
 
 
@@ -335,14 +350,18 @@ def _encode_glb(spec: dict[str, Any]) -> dict[str, Any]:
     meshes: list[dict[str, Any]] = []
     materials: list[dict[str, Any]] = []
     nodes: list[dict[str, Any]] = []
+    images, textures, samplers, image_cache = [], [], [], {}
 
-    def append_buffer(data: bytes, *, target: int) -> int:
+    def append_buffer(data: bytes, *, target: int | None) -> int:
         while len(binary) % 4:
             binary.append(0)
         offset = len(binary)
         binary.extend(data)
         index = len(buffer_views)
-        buffer_views.append({"buffer": 0, "byteOffset": offset, "byteLength": len(data), "target": target})
+        view = {"buffer": 0, "byteOffset": offset, "byteLength": len(data)}
+        if target is not None:
+            view["target"] = target
+        buffer_views.append(view)
         return index
 
     for primitive in spec["primitives"]:
@@ -377,6 +396,11 @@ def _encode_glb(spec: dict[str, Any]) -> dict[str, Any]:
             "max": [max(indices)],
         })
         attributes = {"POSITION": position_accessor, "NORMAL": normal_accessor}
+        if "texcoords" in primitive:
+            uv_view = append_buffer(b"".join(struct.pack("<ff", *uv) for uv in primitive["texcoords"]), target=34962)
+            attributes["TEXCOORD_0"] = len(accessors)
+            accessors.append({"bufferView": uv_view, "componentType": 5126,
+                              "count": len(primitive["texcoords"]), "type": "VEC2"})
         if "colors" in primitive:
             color_view = append_buffer(b"".join(struct.pack("<ffff", *color) for color in primitive["colors"]), target=34962)
             attributes["COLOR_0"] = len(accessors)
@@ -397,6 +421,11 @@ def _encode_glb(spec: dict[str, Any]) -> dict[str, Any]:
         if "emissive" in primitive["material"]:
             material["emissiveFactor"] = _color(
                 primitive["material"]["emissive"], "material.emissive")[1][:3]
+        if "textures" in primitive:
+            from .native_textures import embed_texture_set
+            refs = embed_texture_set(primitive["textures"], (images, textures, samplers, image_cache), append_buffer)
+            material["pbrMetallicRoughness"].update(baseColorTexture=refs["base_color"], metallicRoughnessTexture=refs["orm"])
+            material.update(normalTexture=refs["normal"], occlusionTexture=refs["orm"])
         materials.append(material)
         mesh_index = len(meshes)
         meshes.append({
@@ -435,6 +464,8 @@ def _encode_glb(spec: dict[str, Any]) -> dict[str, Any]:
     if any(material.get("extensions", {}).get("KHR_materials_unlit") == {} for material in materials):
         document["extensionsUsed"] = ["KHR_materials_unlit"]
         document["extensionsRequired"] = ["KHR_materials_unlit"]
+    if images:
+        document.update(images=images, textures=textures, samplers=samplers)
     json_bytes = _canonical(document)
     json_padded = json_bytes + b" " * ((-len(json_bytes)) % 4)
     binary_padded = bytes(binary) + b"\x00" * ((-len(binary)) % 4)
@@ -500,7 +531,7 @@ def verify_glb(body: bytes, *, expected_spec_digest: str | None = None) -> dict[
             raise Procedural3DError("generated GLB accessor is invalid", {"index": index})
         if not 0 <= accessor["bufferView"] < len(views) or accessor.get("componentType") not in {5123, 5126}:
             raise Procedural3DError("generated GLB accessor reference or component type is invalid", {"index": index})
-        if not isinstance(accessor.get("count"), int) or accessor["count"] <= 0 or accessor.get("type") not in {"SCALAR", "VEC3", "VEC4"}:
+        if not isinstance(accessor.get("count"), int) or accessor["count"] <= 0 or accessor.get("type") not in {"SCALAR", "VEC2", "VEC3", "VEC4"}:
             raise Procedural3DError("generated GLB accessor shape is invalid", {"index": index})
     def decode_accessor(ref: int, component_type: int, shape: str) -> list[tuple]:
         accessor = accessors[ref]
@@ -509,7 +540,7 @@ def verify_glb(body: bytes, *, expected_spec_digest: str | None = None) -> dict[
         if "sparse" in accessor or accessor.get("normalized", False):
             raise Procedural3DError("generated GLB geometry accessor uses unsupported encoding")
         view = views[accessor["bufferView"]]
-        fmt = {"VEC3": "<fff", "VEC4": "<ffff", "SCALAR": "<H"}[shape]
+        fmt = {"VEC2": "<ff", "VEC3": "<fff", "VEC4": "<ffff", "SCALAR": "<H"}[shape]
         width = struct.calcsize(fmt)
         start = accessor.get("byteOffset", 0)
         stride = view.get("byteStride", width)
@@ -553,6 +584,7 @@ def verify_glb(body: bytes, *, expected_spec_digest: str | None = None) -> dict[
         raise Procedural3DError("generated GLB declares an unused unlit extension")
 
     decoded_triangles = 0
+    texture_cache, textured_primitives = {}, 0
     for index, mesh in enumerate(meshes):
         primitives = mesh.get("primitives") if isinstance(mesh, dict) else None
         if not isinstance(primitives, list) or len(primitives) != 1:
@@ -568,6 +600,27 @@ def verify_glb(body: bytes, *, expected_spec_digest: str | None = None) -> dict[
         positions = decode_accessor(refs[0], 5126, "VEC3")
         normals = decode_accessor(refs[1], 5126, "VEC3")
         indices = [row[0] for row in decode_accessor(refs[2], 5123, "SCALAR")]
+        from .native_textures import material_textures
+        try:
+            bindings = material_textures(document, bin_bytes, materials[material], cache=texture_cache, build_mips=False)
+        except ValueError as exc:
+            raise Procedural3DError(str(exc)) from exc
+        if bindings and "TEXCOORD_0" not in attributes:
+            raise Procedural3DError("textured primitive has no TEXCOORD_0")
+        if "TEXCOORD_0" in attributes:
+            uv_ref = attributes["TEXCOORD_0"]
+            if type(uv_ref) is not int or not 0 <= uv_ref < len(accessors):
+                raise Procedural3DError("invalid UV accessor reference")
+            uvs = decode_accessor(uv_ref, 5126, "VEC2")
+            if len(uvs) != len(positions):
+                raise Procedural3DError("UV and position counts differ")
+            for offset in range(0, len(indices), 3):
+                if len(indices[offset:offset+3]) != 3 or any(i >= len(uvs) for i in indices[offset:offset+3]):
+                    raise Procedural3DError("invalid textured triangle indices")
+                a, b, c = (uvs[i] for i in indices[offset:offset+3])
+                if bindings and abs((b[0]-a[0])*(c[1]-a[1])-(b[1]-a[1])*(c[0]-a[0])) < 1e-12:
+                    raise Procedural3DError("textured triangle has collapsed UVs")
+        textured_primitives += bool(bindings)
         if "COLOR_0" in attributes:
             color_ref = attributes["COLOR_0"]
             if type(color_ref) is not int or not 0 <= color_ref < len(accessors):
@@ -613,6 +666,8 @@ def verify_glb(body: bytes, *, expected_spec_digest: str | None = None) -> dict[
         "unlit_materials": unlit_materials,
         "emissive_materials": emissive_materials,
         "triangles": decoded_triangles,
+        "textured_primitives": textured_primitives,
+        "texture_validation": "Embedded RGB PNG decode, core bindings and noncollapsed UVs; no seam, unwrap, tangent parity or visual acceptance claim",
         "geometry_validation": {
             "decoded_triangle_count": decoded_triangles,
             "finite_positions_and_normals": True,

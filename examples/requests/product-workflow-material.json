@@ -1,0 +1,38 @@
+{
+  "kind": "product-workflow",
+  "inputs": {
+    "operation": "build",
+    "product_type": "material",
+    "crew_id": "material-products",
+    "run_id": "ochre-01",
+    "path": "creations/ochre-material-01",
+    "brief": {
+      "purpose": "Create a reusable warm painted metal surface",
+      "target": "Offline native UC material bundle",
+      "quality_intent": "Controlled worn paint over a distinct metal substrate; preserve editability and map conventions"
+    },
+    "recipe": {
+      "paint": {
+        "family": "painted-metal",
+        "size": 128,
+        "seed": 21,
+        "color": [
+          201,
+          137,
+          42
+        ],
+        "layer": {
+          "amount": 0.24,
+          "substrate_rgb": [
+            87,
+            98,
+            108
+          ]
+        }
+      }
+    },
+    "material_policy": {
+      "minimum_size": 128
+    }
+  }
+}

@@ -290,6 +290,22 @@ def _register_extension_builtins() -> None:
     _capabilities.BUILTINS["builtin:profession_crew"] = profession_crew_surface
     _capabilities.BUILTINS["builtin:static_asset_target_evidence"] = static_asset_target_evidence_surface
     _capabilities.BUILTINS["builtin:profession_clearance_repair"] = profession_clearance_repair_surface
+    from .material_pipeline import KINDS, run_station
+    for station_kind in KINDS:
+        def material_station_surface(root, inputs, kind=station_kind):
+            try:
+                return run_station(root, kind, inputs)
+            except (ValueError, TypeError, KeyError, OSError, RuntimeError) as exc:
+                raise _capabilities.CapabilityError(str(exc)) from exc
+        _capabilities.BUILTINS["builtin:" + station_kind.replace("-", "_")] = material_station_surface
+
+    def product_workflow_surface(root, inputs):
+        from .product_workflow import operate_product_workflow
+        try:
+            return operate_product_workflow(root, inputs)
+        except (ValueError, TypeError, KeyError, OSError, RuntimeError) as exc:
+            raise _capabilities.CapabilityError(str(exc)) from exc
+    _capabilities.BUILTINS["builtin:product_workflow"] = product_workflow_surface
 
 
 _register_extension_builtins()
