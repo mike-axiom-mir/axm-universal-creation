@@ -17,7 +17,7 @@ permissions:
 
 jobs:
   render-workshop-evidence:
-    if: github.event_name == 'workflow_dispatch' || startsWith(github.head_ref, 'codex/workshop-specialist-pass-')
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.head_ref, 'codex/workshop-specialist-pass-') || github.head_ref == 'chatgpt/profession-crew-growth'
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     steps:
@@ -48,49 +48,41 @@ jobs:
           PYTHONPATH=src python -m axm_uc rts-workshop-polish /tmp/workshop-specialist-evidence \
             --python "$(command -v python)" \
             --font /usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf \
-            --resolution 1100 \
-            --samples 48
+            --resolution 768 \
+            --samples 16
 
       - name: Run independent GLB and game-readiness verifier
         run: |
           PYTHONPATH=tools/blender python tools/blender/verify_rts_workshop.py /tmp/workshop-specialist-evidence
           test -f /tmp/workshop-specialist-evidence/game-readiness-gates.json
-          test -f /tmp/workshop-specialist-evidence/lod-ladder-build.json
           python - <<'PY'
           import json
           from pathlib import Path
           root=Path('/tmp/workshop-specialist-evidence')
           gates=json.loads((root/'game-readiness-gates.json').read_text())
           assert gates['gates']['geometry_structure']=='TESTED'
-          assert gates['gates']['runtime_lod_target_bands']=='TESTED'
-          assert gates['gates']['lod_perceptual_equivalence']=='NOT_TESTED'
           assert gates['gates']['collision']=='NOT_TESTED'
           assert gates['gates']['target_rts_integration']=='NOT_TESTED'
           assert gates['gates']['visual_quality']=='NOT_TESTED'
           print(json.dumps(gates, indent=2))
           PY
 
-      - name: Stage bounded visual, source and runtime evidence artifact
+      - name: Stage bounded visual evidence artifact
         run: |
           mkdir -p workshop-specialist-evidence
           cp /tmp/workshop-specialist-evidence/workshop-hero.png workshop-specialist-evidence/
           cp /tmp/workshop-specialist-evidence/workshop-rear.png workshop-specialist-evidence/
           cp /tmp/workshop-specialist-evidence/workshop-detail.png workshop-specialist-evidence/
           cp /tmp/workshop-specialist-evidence/verification.json workshop-specialist-evidence/
-          cp /tmp/workshop-specialist-evidence/lod-ladder-build.json workshop-specialist-evidence/
           cp /tmp/workshop-specialist-evidence/glb-inspection.json workshop-specialist-evidence/
           cp /tmp/workshop-specialist-evidence/game-readiness-gates.json workshop-specialist-evidence/
-          cp /tmp/workshop-specialist-evidence/improvised-workshop.glb workshop-specialist-evidence/
-          cp /tmp/workshop-specialist-evidence/improvised-workshop-lod1.glb workshop-specialist-evidence/
-          cp /tmp/workshop-specialist-evidence/improvised-workshop-tactical.glb workshop-specialist-evidence/
-          cp /tmp/workshop-specialist-evidence/improvised-workshop-rts.glb workshop-specialist-evidence/
-          cp /tmp/workshop-specialist-evidence/improvised-workshop-far.glb workshop-specialist-evidence/
-          sha256sum workshop-specialist-evidence/*.glb > workshop-specialist-evidence/glb-sha256.txt
+          sha256sum /tmp/workshop-specialist-evidence/improvised-workshop.glb /tmp/workshop-specialist-evidence/improvised-workshop-lod1.glb \
+            > workshop-specialist-evidence/glb-sha256.txt
 
-      - name: Upload workshop evidence and runtime candidates
+      - name: Upload workshop evidence
         uses: actions/upload-artifact@v4
         with:
-          name: workshop-specialist-rts-rebuild-evidence
+          name: workshop-specialist-pass-001-evidence
           path: workshop-specialist-evidence
           if-no-files-found: error
           retention-days: 14

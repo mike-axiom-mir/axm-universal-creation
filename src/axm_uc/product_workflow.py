@@ -33,6 +33,7 @@ ASSET = [
     _stage("geometry", "3d-artist", "Primary/secondary forms, normals, winding, pivots, sockets and topology"),
     _stage("uv-layout", "technical-artist", "Noncollapsed UVs, texel density, seams, overlaps, padding and scale"),
     *MATERIAL,
+    _stage("mesh-baking", "technical-artist", "Mesh-derived AO, explicit high-to-low normal transfer and cage coverage when requested"),
     _stage("assembly", "technical-artist", "Textures bound to exact parts; contacts, clearances and mounts inspected"),
 ]
 ENDING = [
@@ -128,18 +129,42 @@ def plan_product(root, inputs):
     return {"schema": "axm.product-workflow-plan/v1", "product_type": kind, "brief": brief,
             "stages": profile["stages"], "unbound_stages": gaps,
             "stepwise_plan": validate_step_plan({"goal": brief["purpose"], "steps": steps}),
-            "draft_recipe_available": kind in {"material", "static-3d", "software", "web"},
+            "draft_recipe_available": kind in {"material", "static-3d", "animated-3d", "software", "web"},
             "status": "PLANNED", "truth": "Product-specific work contracts. Unbound stages are work to do, not executed specialists or acceptance."}
 
 
 def compile_draft(root, inputs):
     plan = plan_product(root, inputs)
     kind, brief = inputs["product_type"], plan["brief"]
-    if kind not in {"material", "static-3d", "software", "web"}:
+    if kind not in {"material", "static-3d", "animated-3d", "software", "web"}:
         raise ValueError("this product currently has a plan; supply actions to the stepwise workflow for execution")
     path = _target(root, inputs.get("path"))
     crew_id, run_id = _id(inputs.get("crew_id", "products"), "crew_id"), _id(inputs.get("run_id"), "run_id")
     steps, artifacts = [], []
+    production = inputs.get("production", {})
+    if not isinstance(production, dict) or set(production) - {"uv", "bake", "target", "targets", "deformation"}:
+        raise ValueError("production accepts uv, bake, target/targets and deformation contracts")
+    if "target" in production and "targets" in production:
+        raise ValueError("use target or targets, not both")
+    targets = production.get("targets", [production["target"]] if "target" in production else [])
+    if not isinstance(targets, list) or len(targets) > 4 or ("targets" in production and not targets):
+        raise ValueError("targets requires 1..4 explicit engine contracts")
+    engines = []
+    for target in targets:
+        if not isinstance(target, dict):
+            raise ValueError("each target requires an engine options object")
+        engine = target.get("engine", "blender-cycles")
+        if engine not in {"blender-cycles", "godot"}:
+            raise ValueError("No verified adapter for target " + str(engine) + ". Unity/Unreal require their own editor integration and real execution; Blender/Godot evidence cannot certify them.")
+        if engine in engines:
+            raise ValueError("duplicate target engine")
+        engines.append(engine)
+    if production and kind not in {"static-3d", "animated-3d"}:
+        raise ValueError("mesh production requires a 3D product")
+    if kind == "animated-3d" and set(production) & {"uv", "bake"}:
+        raise ValueError("animated recipe preserves supplied rigged GLB; unwrap/bake its static source before rigging")
+    if kind == "static-3d" and "deformation" in production:
+        raise ValueError("deformation requires an animated product")
     def add(identity, owner, action_kind, destination, **params):
         artifact = path / destination
         steps.append({"id": identity, "profession_id": owner,
@@ -149,6 +174,13 @@ def compile_draft(root, inputs):
         if action_kind == "generate-game-material":
             steps[-1]["skill_id"] = "surface-authoring"
         artifacts.append(destination)
+    def add_targets(asset):
+        for options, engine in zip(targets, engines):
+            suffix = "-" + engine if "targets" in production else ""
+            destination = "targets/" + engine if "targets" in production else "target"
+            action = "validate-blender-target" if engine == "blender-cycles" else "validate-godot-target"
+            add("target-import-render" + suffix, "software-qa-playtest", action, destination,
+                asset=asset, options=options)
     parent = None
     if inputs.get("refines"):
         previous = _target(root, inputs["refines"])
@@ -164,11 +196,18 @@ def compile_draft(root, inputs):
     canonical = {"schema": "axm.product-source/v1", "product_type": kind, "brief": brief,
                  "recipe": copy.deepcopy(inputs.get("recipe", {})), "specification": copy.deepcopy(inputs.get("specification")),
                  "files": copy.deepcopy(inputs.get("files")), "parent": parent,
+                 "production": copy.deepcopy(production), "asset": inputs.get("asset"),
+                 "high_specification": copy.deepcopy(inputs.get("high_specification")),
                  "quality_contract": {k: copy.deepcopy(inputs.get(k)) for k in ("material_policy", "minimum_texels_per_m", "maximum_size_m", "preview", "checks")},
                  "source_status": "DECLARED_INTENT; not an aesthetic approval"}
-    owner = {"software": "software-architect", "web": "visual-designer"}.get(kind, "art-director")
+    owner = {"software": "software-architect", "web": "visual-designer", "animated-3d": "technical-artist"}.get(kind, "art-director")
     add("brief-source", owner, "json-file", "source.json", value=canonical)
     if kind in {"material", "static-3d"}:
+        specification = inputs.get("specification")
+        if "uv" in production:
+            add("automatic-uv-layout", "technical-artist", "unwrap-surface-uv", "uv",
+                specification=specification, options=production["uv"])
+            specification = str(path/"uv/surface.json")
         recipes = inputs.get("recipe")
         if not isinstance(recipes, dict) or not 1 <= len(recipes) <= 8:
             raise ValueError("recipe maps 1..8 named materials to generator parameters")
@@ -182,15 +221,29 @@ def compile_draft(root, inputs):
             bindings[name] = {"path": str(path/destination), "wrap": "clamp"}
         if kind == "static-3d":
             add("textured-assembly", "technical-artist", "bind-textured-asset", "asset.glb",
-                specification=inputs.get("specification"), materials=bindings)
+                specification=specification, materials=bindings)
+            final_asset = str(path/"asset.glb")
+            if "bake" in production:
+                add("mesh-bake", "technical-artist", "bake-mesh-maps", "baked",
+                    specification=specification, materials=bindings, options=production["bake"],
+                    high_specification=inputs.get("high_specification"))
+                final_asset = str(path/"baked/asset.glb")
             add("uv-geometry-check", "technical-artist", "inspect-textured-asset", "checks/asset.json",
-                asset=str(path/"asset.glb"), minimum_texels_per_m=inputs.get("minimum_texels_per_m", 64))
+                asset=final_asset, minimum_texels_per_m=inputs.get("minimum_texels_per_m", 64))
             if "maximum_size_m" in inputs:
                 steps[-1]["action"]["inputs"]["maximum_size_m"] = copy.deepcopy(inputs["maximum_size_m"])
             options = {"width": 480, "height": 360, "supersample": 1, **inputs.get("preview", {})}
             for light in ("studio", "garage"):
                 add("preview-"+light, "graphics-engineer", "render-asset-preview", "previews/"+light+".png",
-                    asset=str(path/"asset.glb"), options={**options, "lighting": light})
+                    asset=final_asset, options={**options, "lighting": light})
+            add_targets(final_asset)
+    elif kind == "animated-3d":
+        if not inputs.get("asset"):
+            raise ValueError("animated recipe requires an authored rigged GLB asset; it does not invent a rig")
+        add("animation-source", "technical-artist", "copy-animation-asset", "asset.glb", asset=inputs["asset"])
+        add("deformation-check", "technical-artist", "inspect-deformation", "checks/deformation.json",
+            asset=str(path/"asset.glb"), policy=production.get("deformation", {}))
+        add_targets(str(path/"asset.glb"))
     else:
         project_type = "python" if kind == "software" else "static-web"
         action = "python-project" if kind == "software" else "static-web-project"
@@ -264,6 +317,21 @@ def _stage_observations(kind, plan, record):
         if identity == "look-development" and {"preview-studio", "preview-garage"} <= observed:
             status, station_ids = "PARTIAL", ["preview-studio", "preview-garage"]
             scope = "Exact texture renders in two lighting profiles; aesthetic judgment remains open"
+        if identity == "uv-layout" and "automatic-uv-layout" in observed:
+            status, station_ids = "OBSERVED_BOUNDED", ["automatic-uv-layout"]
+            scope = "Automatic unique per-material atlas; independent overlap, collapse and base-level padding checks"
+        if identity == "mesh-baking" and "mesh-bake" in observed:
+            status, station_ids = "OBSERVED_BOUNDED", ["mesh-bake"]
+            scope = "Cycles mesh AO and requested high-to-low tangent normals; source preserved and fresh backend reproduction"
+        if identity == "rig-deformation" and "deformation-check" in observed:
+            status, station_ids = "PARTIAL", ["animation-source", "deformation-check"]
+            scope = "Supplied rig, authored keys plus subdivisions, weight validity, collapse/stretch and declared loops/contacts"
+        if identity in {"target-validation", "motion-inspection"}:
+            station_ids = sorted(s for s in observed if s.startswith("target-import-render"))
+            if station_ids:
+                status = "PARTIAL"
+                actions = [s["action"]["kind"] for s in record["plan"]["stations"] if s["id"] in station_ids]
+                scope = "Actual target observations: " + ", ".join(actions) + "; posed geometry, texture decode and renders; optional stepped playback. Gameplay, artistic acceptance and device performance remain separate."
         if identity == "implementation" and "implementation" in observed:
             status, station_ids = "OBSERVED_BOUNDED", ["implementation"]
             scope = "Supplied source published and checked; generated source is not semantic acceptance"
@@ -299,7 +367,7 @@ def operate_product_workflow(root, inputs):
     operation = inputs.get("operation", "catalog")
     if operation == "catalog":
         return {"schema": "axm.product-workflow-catalog/v1", "products": copy.deepcopy(PROFILES),
-                "draft_recipes": ["material", "static-3d", "software", "web"],
+                "draft_recipes": ["material", "static-3d", "animated-3d", "software", "web"],
                 "orchestration": "Existing profession crews and stepwise workflows; no autonomous aesthetic judgment"}
     if operation == "plan":
         return plan_product(root, inputs)

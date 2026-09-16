@@ -242,3 +242,11 @@ observations; this does not create automatic artistic judgment or new code.
 
 See [PRODUCT_WORKFLOWS.md](PRODUCT_WORKFLOWS.md) for contracts, runnable examples,
 rendering limits and the remaining quality work.
+
+## Mesh production continuation
+
+Five additional stations now connect automatic UV layout, actual mesh AO/normal
+baking, Blender/Cycles target observation and native deformation inspection to
+the same crew runner. Technical artists own source/UV/bake/rig checks; QA owns
+target observation. Current inputs, bounded options, backend identity and fresh
+results remain explicit. See [Mesh production](MESH_PRODUCTION.md).

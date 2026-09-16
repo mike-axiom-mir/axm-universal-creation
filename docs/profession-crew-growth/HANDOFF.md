@@ -128,3 +128,58 @@ demo's reuse of SurfaceBuilder.box. Its local adapter now uses explicit XYZ;
 existing authored workshop recipes are preserved. A world-dimension regression
 guards the new product path. Quality still needs actual target and aesthetic
 review; the machine exposes those stages as pending or partial.
+
+## Run 004 continuation — 2026-09-16
+
+User authorized implementing the remaining UV/bake/reflection/deformation/target
+steps. PR #146 has merged; the active successor is PR #150 on the same branch,
+`chatgpt/profession-crew-growth`. Do not merge it without further authorization.
+Main advanced through the precision cutter (#147) and existing-mesh cutter (#149);
+their source is preserved. No scheduled task is active.
+
+Read RUN_004.md and MESH_PRODUCTION.md. Five new ordinary capability stations
+use the existing crew runner. Native deformation/copy need only Python; actual
+unwrap/bake/Cycles target stations require optional local Blender (AXM_BLENDER
+or PATH). Tested Blender: 4.3.2, CPU. Requests never install it automatically.
+
+The authoritative large evidence run is production-verified, with immutable
+copies under evidence/product-004. Both static and supplied-animation workflows
+passed fresh observers. Four final target images were inspected; object masks,
+GLBs, source, QA reports and hashes are retained. Earlier smoke/visual/release
+scratch directories are development runs and are not final evidence.
+
+The independent ray check is essential: a missed high-to-low bake can be blue
+rather than black. Likewise force Blender image pixels before checking has_data,
+and use internal temporary group names to avoid Blender truncation/renumbering.
+Final render checks include actual object-index coverage, not background variance
+alone. Optional backend CI executes these paths; no engine/aesthetic acceptance
+is inferred from a caller-supplied PASS.
+
+Still bounded: unique per-material atlases rather than UDIM; AO/normal rather
+than curvature/thickness; supplied rigs rather than automatic rig authoring;
+sampled keys/contacts/loops rather than self-intersection or continuous playback;
+Blender/Cycles rather than Unity/Unreal/Godot gameplay. Products remain drafts.
+
+## Run 005 continuation — target evidence
+
+The user asked to clear the remaining gaps. Same branch and PR #150. Read
+RUN_005.md. Added one actual Godot capability to the existing crew, optional
+stepped AnimationPlayer playback, explicit multiple-engine recipes and failure
+artifact retention. Blender still works. Unity and Unreal are unimplemented and
+unverified; no local editor/runtime/project integration exists for them here.
+Earlier UV/bake/rig/quality extensions remain bounded as documented.
+
+Godot 4.4.1/Xvfb/Mesa CI executed 11 tests without skips, two larger demos and
+exact fresh observers. Geometry, texture decode, asset-mask rendering and all
+25 rig playback frames passed. Engine PNG metadata initially broke UC's strict
+decoder: fixed by validating CRCs and preserving scanlines while stripping
+ancillary chunks. Do not weaken the decoder or relabel that failed run PASS.
+The exact good artifact ZIP, selected views/GIF and reports are under
+evidence/product-005; the GIF is a viewing derivative, not the original frames.
+
+The formerly skipped workshop renderer is enabled on this lane. Its actual
+build/import/render/verification passed; front/rear/detail images were inspected.
+This is existing UC artwork reverified, not a new asset authored in Run 005.
+Code head e4271a9ba2f20992979dab874bafff45f3304f59 passed all 22 GitHub checks,
+with none skipped. Final documentation/evidence publication has its own checks.
+No merge, release or hourly task was performed.
