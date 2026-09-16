@@ -1,0 +1,25 @@
+name: Physics Core Graft
+
+on:
+  pull_request:
+    paths:
+      - 'capabilities/physics-core/**'
+      - 'capabilities/candidates/AXM-CAP-PHYSICS-FABRIC.json'
+      - '.github/workflows/physics-core-graft.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  physics-core-graft:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify imported core and UC physics fabric
+        run: node capabilities/physics-core/selftest.js
