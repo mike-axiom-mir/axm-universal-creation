@@ -164,7 +164,7 @@ class MaterialUVEvidenceTests(unittest.TestCase):
         doc, binary = fixture()
         view = doc["images"][0]["bufferView"]
         offset = doc["bufferViews"][view]["byteOffset"]
-        binary = bytearray(binary); binary[offset:offset+8] = b"not a png"
+        binary = bytearray(binary); binary[offset:offset+8] = b"notapng!"
         result = self.inspect(doc, bytes(binary))
         self.assertEqual(result["status"], "HOLD")
         self.assertIn("INVALID_IMAGE", {row["code"] for row in result["findings"]})
