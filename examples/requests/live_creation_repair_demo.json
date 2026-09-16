@@ -1,0 +1,34 @@
+{
+  "schema": "axm-live-creation/v0",
+  "run_id": "repair-demo",
+  "domain": "software",
+  "source": "examples/live_creation_repair_demo",
+  "max_iterations": 3,
+  "policy": {
+    "repair_scope": "workspace",
+    "replace_existing_run": true
+  },
+  "execute": [
+    {
+      "id": "verify",
+      "argv": ["@python", "verify.py"]
+    }
+  ],
+  "observe": [
+    {
+      "id": "status-ready",
+      "kind": "contains",
+      "path": "status.txt",
+      "value": "ready"
+    }
+  ],
+  "repairs": [
+    {
+      "when": "status-ready",
+      "operation": "replace_text",
+      "path": "status.txt",
+      "old": "broken",
+      "new": "ready"
+    }
+  ]
+}
