@@ -1,79 +1,66 @@
 # Seven-Round Evolution + Deep Aftertouch Chamber
 
-UC now has a bounded orchestration layer for the pattern:
+UC uses this bounded path:
 
-`brief -> parallel creative teams -> simulate/test/observe -> repair -> re-test -> independently judge -> keep two -> repeat x7 -> retain two finalists with evidence`
+`brief -> parallel creative teams -> simulate/test/observe -> diagnose -> repair -> re-test -> independently judge -> keep two -> repeat x7 -> retain two finalists with evidence`
 
-The implementation is `src/axm_uc/evolution_aftertouch.py` and the live capability is `AXM-CAP-EVOLUTION-AFTERTOUCH`.
-
-## Why it exists
-
-Creation depth and tool count do not guarantee a finished result. A creator can stop as soon as an object is technically valid even when detail, use quality, context behavior, or final polish is still thin. This chamber makes repeated evidence-bearing aftertouch an explicit part of the creation path.
-
-It deliberately reuses the existing UC specialist tournament instead of inventing another agent/team ontology. Every round prepares multiple isolated creative-team packets. The deterministic machine does **not** pretend those teams reasoned or built anything until a cognition provider, human, or other executor returns concrete submissions and evidence.
+The chamber lives in `src/axm_uc/evolution_aftertouch.py`; richer media evidence is provided by `src/axm_uc/aftertouch_media_observers.py`. The live capability is `AXM-CAP-EVOLUTION-AFTERTOUCH`.
 
 ## Fixed seven rounds
 
 1. **Foundation** — structure, function, interfaces, feasibility.
-2. **Composition** — shape, layout, hierarchy, spatial/system composition.
+2. **Composition** — shape, layout, hierarchy and whole-result arrangement.
 3. **Detail** — secondary/tertiary construction and detail density.
 4. **Experience** — actual use/play/interaction, readability and recovery.
 5. **Stress** — edge cases, bad inputs, collisions, load, failure/retry and regression pressure.
-6. **Creative elevation** — search beyond the obvious local optimum without discarding proven working behavior.
+6. **Creative elevation** — search beyond the obvious local optimum while preserving proven working behavior.
 7. **Deep aftertouch** — structural, functional, visual, experience, context, adversarial and polish passes followed by re-test.
 
-Each completed round keeps **exactly two** judged survivor outputs. Those exact survivors become the two parent bodies for the next round; new teams are deterministically assigned one parent so both outputs remain live rather than being silently collapsed into one.
+Every completed round keeps **exactly two** judged survivors and binds both forward as parents. No early collapse to one branch is allowed.
 
-## Team workflow
+## Real self-observation adapters
 
-Each round packet asks its team to:
+The chamber does not treat source validity as equivalent to experienced output. `self-test-candidate` routes applicable artifacts into existing UC evidence machinery.
 
-`create concrete candidate -> self-test/simulate -> observe actual result -> diagnose -> repair -> re-run same tests -> submit evidence`
+### 3D / GLB
 
-Available UC evidence surfaces can be used as appropriate. The v0.1 chamber has direct self-test adapters for:
+For `3d`, `3d-asset`, `glb`, `game-asset`, `animated-3d` and `animated-3d-asset`, UC reuses the existing pure-Python GLB game-pose runtime. It can directly observe:
 
-- visual/Paintgun thoughts through the existing UC simulation loop;
-- project/software/game directories through the existing project verifier.
+- bounded GLB validity and exact source digest;
+- nodes, clips, skins, primitives and vertex counts;
+- static and sampled animated world transforms;
+- sampled skinned vertex positions and geometry bounds;
+- real movement across sampled animation times;
+- required named socket nodes and their scene-space positions;
+- animation-presence requirements when requested.
 
-Unknown media are returned as **NOT_TESTED**. The chamber never converts missing evidence into a fake PASS.
+That is **real 3D structural/pose evidence**, not a render. Materials, shading, engine playback, collision clearance, gameplay-distance readability, visual quality, experience and polish remain HOLD/NOT_TESTED until an applicable observer supplies those facts.
 
-## Two-survivor tournament
+### Playable browser games
 
-The chamber composes the existing context-learning specialist tournament. Independent judgements must cover the complete parallel field before a round can advance. The two finalists in that ranking become the two survivor candidates. Scores are the supplied declared-criterion judgements; UC does not invent missing performance.
+For `game`, `browser-game`, `playable-game` and `offline-browser-game`, UC first runs the normal project verifier, then can reuse the existing offline headless-browser observer. With a local Chromium-compatible executable it can directly collect:
 
-A survivor records:
+- actual browser execution of the local game;
+- real screenshot bytes and DOM/runtime artifacts;
+- runtime JavaScript error counts;
+- viewport overflow and other bounded runtime measurements;
+- explicit focus/interaction recipes;
+- optional bounded synthetic activation of visible button-like controls, only when the caller explicitly authorizes it;
+- reset/recovery interaction evidence when the expected controls exist.
 
-- parent candidate (after round one);
-- concrete proposal/output body;
-- evidence;
-- verification receipts;
-- dissent and unknowns;
-- criterion judgements and judged score;
-- exact candidate digest and lineage identity.
+For UC's bounded browser arena, default recipes recognize the existing session/fire/target/reload/reset controls. Focus-only observation remains HOLD for experience; activation-authorized recipes may PASS the exact tested interaction path when no probe errors occur.
 
-## Final aftertouch evidence gate
+A screenshot existing is **not** an aesthetic PASS. The visual lane stays HOLD until a perceptual observer actually judges the rendered result. Runtime interaction also does not pretend to be a complete human playtest.
 
-After round seven, both finalists are retained. Their verification receipts are summarized across:
+## Truth boundary
 
-- structural;
-- functional;
-- visual;
-- experience;
-- context;
-- adversarial;
-- polish.
+Missing browser executors, unsupported GLB features, unavailable interaction paths, perceptual quality and any other unobserved claim remain explicit HOLD/NOT_TESTED. The system never converts missing evidence into success.
 
-Possible final states are:
-
-- `TWO_FINALISTS_RETAINED_ALL_DECLARED_AFTERTOUCH_GATES_PASS`
-- `TWO_FINALISTS_RETAINED_WITH_EXPLICIT_TEST_GAPS`
-- `TWO_FINALISTS_RETAINED_FINAL_GATE_FAILED`
-
-Even an all-PASS packet means only that the declared evidence lanes passed. It is not a claim of perfection, universal aesthetic quality, semantic omniscience, or human acceptance.
+The final evidence gate still spans structural, functional, visual, experience, context, adversarial and polish. Even an all-PASS packet means only that the declared evidence lanes passed; it is not perfection or human acceptance.
 
 ## Authority boundary
 
-The chamber never auto-accepts a finalist, never auto-canonizes one, and never gives a winning team hidden authority. Both finalists remain inspectable outputs with lineage and evidence so a human or higher-level workflow can choose, combine, continue, or reject them explicitly.
+The chamber never auto-accepts a finalist, auto-merges it, auto-canonizes it, or gives winning specialists hidden authority. Both finalists stay inspectable with lineage and evidence for an explicit later choice or continuation.
 
 ## Operations
 
@@ -82,4 +69,4 @@ The chamber never auto-accepts a finalist, never auto-canonizes one, and never g
 - `advance-round`
 - `self-test-candidate`
 
-A normal machine request can route with `kind: "creative-evolution-chamber"` or the other handles declared in the capability manifest.
+A normal machine request routes with `kind: "creative-evolution-chamber"` or the other handles declared in the capability manifest.
