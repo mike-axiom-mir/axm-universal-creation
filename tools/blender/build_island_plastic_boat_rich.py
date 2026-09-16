@@ -1,8 +1,8 @@
-"""Rich-material realization wrapper for the proven Tiny Plastic Boat builder.
+"""Rich/layered-material realization wrapper for the Tiny Plastic Boat builder.
 
 The underlying geometry, animation, LOD, socket and collision exporter remains
-unchanged. This wrapper adds UC-generated portable PBR material bundles, smart UVs
-and a surface receipt before delegating to the proven exporter.
+unchanged. This wrapper adds UC-generated portable PBR bundles, optional authored
+surface layers, smart UVs and a surface receipt before delegating to the exporter.
 """
 from __future__ import annotations
 
@@ -16,6 +16,7 @@ import bpy
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 
+from axm_uc.layered_game_materials import generate_layered_game_material
 from axm_uc.rich_game_materials import generate_rich_game_material
 from axm_uc.rich_game_material_bridge import blender_rich_game_material
 
@@ -89,7 +90,11 @@ def _profile_specs(request):
             rgb = tuple(source["rgb"])
         else:
             rgb = _rgba_to_rgb(palette[source["color"]])
-        specs[role] = {"profile": profile, "rgb": rgb}
+        specs[role] = {
+            "profile": profile,
+            "rgb": rgb,
+            "layers": list(source.get("layers", [])),
+        }
     return specs
 
 
@@ -101,18 +106,26 @@ def _build_rich_materials(out, request):
     records = {}
     for index, (role, spec) in enumerate(specs.items()):
         folder = root / role
-        manifest = generate_rich_game_material(
-            folder,
-            spec["profile"],
-            size=int(request.get("material_texture_size", 256)),
-            seed=int(request.get("material_seed", 9137)) + index * 101,
-            color=tuple(spec["rgb"]),
-        )
+        kwargs = {
+            "size": int(request.get("material_texture_size", 256)),
+            "seed": int(request.get("material_seed", 9137)) + index * 101,
+            "color": tuple(spec["rgb"]),
+        }
+        if spec["layers"]:
+            manifest = generate_layered_game_material(
+                folder, spec["profile"], spec["layers"], **kwargs
+            )
+            bundle_kind = "layered"
+        else:
+            manifest = generate_rich_game_material(folder, spec["profile"], **kwargs)
+            bundle_kind = "rich"
         material = blender_rich_game_material(folder, "UC_BOAT_" + role.upper())
         materials[role] = material
         records[role] = {
             "profile": spec["profile"],
             "rgb": list(spec["rgb"]),
+            "bundle_kind": bundle_kind,
+            "layers": spec["layers"],
             "bundle": str(Path("materials") / role),
             "maps": sorted(manifest["maps"]),
         }
@@ -158,17 +171,22 @@ def _update_delivery_manifest(out):
     path = out / "manifest.json"
     manifest = json.loads(path.read_text(encoding="utf-8"))
     manifest["surface_system"] = {
-        "schema": "axm.rich-game-material-realization/v0.1",
+        "schema": "axm.layered-game-material-realization/v0.1",
         "texture_size": int(REQUEST.get("material_texture_size", 256)),
         "uv_layout": "per-mesh smart-projected game UVs with 0.018 island margin",
         "materials": OUTPUT_SURFACE_RECORDS,
         "portable_maps": ["base_color", "normal", "orm"],
+        "preserved_layer_masks": True,
         "truth": (
             "UC-authored packed PBR textures are connected to exported glTF materials. "
-            "Procedural wear/stains are UV-space authoring fields, not mesh-derived physical evidence."
+            "Optional salt/dirt/wetness/scuff/decal/etc. masks are preserved as authored UV-space evidence; "
+            "they are not mesh-curvature, contact, world-space simulation or automatic art acceptance."
         ),
     }
     manifest["truth"]["actual_portable_pbr_textures"] = True
+    manifest["truth"]["actual_layered_surface_authoring"] = any(
+        record.get("layers") for record in OUTPUT_SURFACE_RECORDS.values()
+    )
     manifest["truth"]["final_visual_acceptance"] = False
     path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
 
