@@ -5,6 +5,8 @@ on:
     paths:
       - 'capabilities/physics-core/**'
       - 'capabilities/candidates/AXM-CAP-PHYSICS-FABRIC.json'
+      - 'capabilities/candidates/AXM-CAP-PHYSICS-DISTANCE-JOINTS.json'
+      - 'capabilities/candidates/AXM-CAP-PHYSICS-TRANSLATION-MOUNTS.json'
       - '.github/workflows/physics-core-graft.yml'
   workflow_dispatch:
 
@@ -23,3 +25,7 @@ jobs:
           node-version: '22'
       - name: Verify imported core and UC physics fabric
         run: node capabilities/physics-core/selftest.js
+      - name: Verify projected distance joints
+        run: node capabilities/physics-core/distance-joints-selftest.js
+      - name: Verify translation mounts
+        run: node capabilities/physics-core/translation-mounts-selftest.js
