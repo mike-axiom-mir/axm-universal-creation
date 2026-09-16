@@ -138,7 +138,8 @@ const radialMinimumDoesNotConflict = Preflight.analyze(baseWorld(), {
   distanceLimits: [{ id: 'radius-min-five', a: 'a', b: 'b', minLength: 5 }]
 });
 assert.equal(radialMinimumDoesNotConflict.ok, true, 'radial minimum alone cannot contradict one projected coordinate because perpendicular freedom may satisfy it');
-assert.equal(radialMinimumDoesNotConflict.counts.projectionRadialChecks, 0, 'no finite radial maximum means no bounded upper-distance coupling proof is attempted');
+assert.equal(radialMinimumDoesNotConflict.counts.projectionRadialChecks, 1, 'the normalized distance-limit contract carries its bounded MAX_LENGTH ceiling even when only minLength is supplied');
+assert.equal(radialMinimumDoesNotConflict.counts.projectionRadialConflicts, 0);
 
 const nearParallel = Preflight.analyze(baseWorld(), {
   directionLocks: [
