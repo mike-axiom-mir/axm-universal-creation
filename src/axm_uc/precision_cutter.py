@@ -13,6 +13,7 @@ SURFACE_SCHEMA = "axm.surface-3d/v0.1"
 MAX_PROFILE_POINTS = 256
 MAX_HOLE_SEGMENTS = 128
 EPSILON = 1e-9
+ANGLE_EPSILON = 1e-10
 
 
 class PrecisionCutterError(RuntimeError):
@@ -36,7 +37,13 @@ def precision_cutter_summary() -> dict[str, Any]:
 
 def _canonical(value: Any) -> bytes:
     try:
-        return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"), allow_nan=False).encode("utf-8")
+        return json.dumps(
+            value,
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+            allow_nan=False,
+        ).encode("utf-8")
     except (TypeError, ValueError) as exc:
         raise PrecisionCutterError("precision cutter state must be finite JSON") from exc
 
@@ -50,7 +57,12 @@ def _number(value: Any, label: str, minimum: float, maximum: float) -> float:
     return result
 
 
-def _vec2(value: Any, label: str, minimum: float = -100000.0, maximum: float = 100000.0) -> tuple[float, float]:
+def _vec2(
+    value: Any,
+    label: str,
+    minimum: float = -100000.0,
+    maximum: float = 100000.0,
+) -> tuple[float, float]:
     if not isinstance(value, list) or len(value) != 2:
         raise PrecisionCutterError(f"{label} must contain exactly two numbers")
     return (
@@ -101,30 +113,47 @@ def _material(value: Any) -> dict[str, Any]:
 
 def _signed_area(profile: list[tuple[float, float]]) -> float:
     return 0.5 * sum(
-        profile[i][0] * profile[(i + 1) % len(profile)][1]
-        - profile[(i + 1) % len(profile)][0] * profile[i][1]
-        for i in range(len(profile))
+        profile[index][0] * profile[(index + 1) % len(profile)][1]
+        - profile[(index + 1) % len(profile)][0] * profile[index][1]
+        for index in range(len(profile))
     )
 
 
-def _cross2(a: tuple[float, float], b: tuple[float, float], c: tuple[float, float]) -> float:
+def _cross2(
+    a: tuple[float, float],
+    b: tuple[float, float],
+    c: tuple[float, float],
+) -> float:
     return (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])
 
 
-def _orientation(a: tuple[float, float], b: tuple[float, float], c: tuple[float, float]) -> int:
+def _orientation(
+    a: tuple[float, float],
+    b: tuple[float, float],
+    c: tuple[float, float],
+) -> int:
     value = _cross2(a, b, c)
     return 1 if value > EPSILON else -1 if value < -EPSILON else 0
 
 
-def _on_segment(a: tuple[float, float], b: tuple[float, float], p: tuple[float, float]) -> bool:
+def _on_segment(
+    a: tuple[float, float],
+    b: tuple[float, float],
+    point: tuple[float, float],
+) -> bool:
     return (
-        min(a[0], b[0]) - EPSILON <= p[0] <= max(a[0], b[0]) + EPSILON
-        and min(a[1], b[1]) - EPSILON <= p[1] <= max(a[1], b[1]) + EPSILON
-        and abs(_cross2(a, b, p)) <= EPSILON
+        min(a[0], b[0]) - EPSILON <= point[0] <= max(a[0], b[0]) + EPSILON
+        and min(a[1], b[1]) - EPSILON <= point[1] <= max(a[1], b[1]) + EPSILON
+        and abs(_cross2(a, b, point)) <= EPSILON
     )
 
 
-def _segments_intersect(a: tuple[float, float], b: tuple[float, float], c: tuple[float, float], d: tuple[float, float]) -> bool:
+def _segments_intersect(
+    a: tuple[float, float],
+    b: tuple[float, float],
+    c: tuple[float, float],
+    d: tuple[float, float],
+) -> bool:
     o1, o2, o3, o4 = (
         _orientation(a, b, c),
         _orientation(a, b, d),
@@ -134,8 +163,8 @@ def _segments_intersect(a: tuple[float, float], b: tuple[float, float], c: tuple
     if o1 != o2 and o3 != o4 and 0 not in {o1, o2, o3, o4}:
         return True
     return any(
-        o == 0 and _on_segment(x, y, point)
-        for o, x, y, point in (
+        orientation == 0 and _on_segment(x, y, point)
+        for orientation, x, y, point in (
             (o1, a, b, c),
             (o2, a, b, d),
             (o3, c, d, a),
@@ -151,14 +180,14 @@ def _normalize_profile(raw: Any) -> list[tuple[float, float]]:
     if len(set(profile)) != len(profile):
         raise PrecisionCutterError("profile points must be unique")
     count = len(profile)
-    for i in range(count):
-        a, b = profile[i], profile[(i + 1) % count]
+    for index in range(count):
+        a, b = profile[index], profile[(index + 1) % count]
         if math.dist(a, b) <= EPSILON:
             raise PrecisionCutterError("profile edges must have non-zero length")
-        for j in range(i + 1, count):
-            if j in {i, (i + 1) % count} or (j + 1) % count in {i, (i + 1) % count}:
+        for other in range(index + 1, count):
+            if other in {index, (index + 1) % count} or (other + 1) % count in {index, (index + 1) % count}:
                 continue
-            c, d = profile[j], profile[(j + 1) % count]
+            c, d = profile[other], profile[(other + 1) % count]
             if _segments_intersect(a, b, c, d):
                 raise PrecisionCutterError("profile must be a simple non-self-intersecting polygon")
     area = _signed_area(profile)
@@ -175,10 +204,10 @@ def _point_in_triangle(
     b: tuple[float, float],
     c: tuple[float, float],
 ) -> bool:
-    c1 = _cross2(a, b, point)
-    c2 = _cross2(b, c, point)
-    c3 = _cross2(c, a, point)
-    return c1 >= -EPSILON and c2 >= -EPSILON and c3 >= -EPSILON
+    first = _cross2(a, b, point)
+    second = _cross2(b, c, point)
+    third = _cross2(c, a, point)
+    return first >= -EPSILON and second >= -EPSILON and third >= -EPSILON
 
 
 def _triangulate(profile: list[tuple[float, float]]) -> list[tuple[int, int, int]]:
@@ -208,7 +237,7 @@ def _triangulate(profile: list[tuple[float, float]]) -> list[tuple[int, int, int
             raise PrecisionCutterError("profile triangulation could not find a valid ear")
     if len(remaining) != 3:
         raise PrecisionCutterError("profile triangulation exceeded its bounded work budget")
-    triangles.append(tuple(remaining))
+    triangles.append((remaining[0], remaining[1], remaining[2]))
     return triangles
 
 
@@ -238,27 +267,27 @@ def _append_face(
     normal: tuple[float, float, float],
 ) -> None:
     start = len(positions)
-    normalized_points = [tuple(map(float, point)) for point in points]
-    if len(normalized_points) == 3:
+    normalized = [tuple(map(float, point)) for point in points]
+    if len(normalized) == 3:
+        observed = _triangle_normal(normalized[0], normalized[1], normalized[2])
         order = [0, 1, 2]
-        observed = _triangle_normal(normalized_points[0], normalized_points[1], normalized_points[2])
-        if sum(observed[i] * normal[i] for i in range(3)) < 0:
+        if sum(observed[index] * normal[index] for index in range(3)) < 0:
             order = [0, 2, 1]
-        positions.extend(normalized_points)
+        positions.extend(normalized)
         normals.extend([normal] * 3)
-        indices.extend([start + index for index in order])
+        indices.extend(start + index for index in order)
         return
-    if len(normalized_points) != 4:
+    if len(normalized) != 4:
         raise PrecisionCutterError("internal cutter face must contain three or four points")
-    observed = _triangle_normal(normalized_points[0], normalized_points[1], normalized_points[2])
+    observed = _triangle_normal(normalized[0], normalized[1], normalized[2])
     order = (
         [0, 1, 2, 0, 2, 3]
-        if sum(observed[i] * normal[i] for i in range(3)) > 0
+        if sum(observed[index] * normal[index] for index in range(3)) > 0
         else [0, 2, 1, 0, 3, 2]
     )
-    positions.extend(normalized_points)
+    positions.extend(normalized)
     normals.extend([normal] * 4)
-    indices.extend([start + index for index in order])
+    indices.extend(start + index for index in order)
 
 
 def _extrude_profile(
@@ -289,7 +318,8 @@ def _extrude_profile(
         )
     for index, p0 in enumerate(profile):
         p1 = profile[(index + 1) % len(profile)]
-        dx, dz = p1[0] - p0[0], p1[1] - p0[1]
+        dx = p1[0] - p0[0]
+        dz = p1[1] - p0[1]
         length = math.hypot(dx, dz)
         normal = (dz / length, 0.0, -dx / length)
         _append_face(
@@ -337,6 +367,25 @@ def _ray_to_rectangle(
     return (x, z)
 
 
+def _deduplicate_angles(values: list[float]) -> list[float]:
+    """Collapse numerically equivalent radial events, including the 0/tau seam.
+
+    Rectangle-corner angles can be mathematically identical to a requested radial
+    segment while differing by a few floating-point ulps. Treating them as two
+    events creates a zero-area ring face, so identity is tolerance based here.
+    """
+
+    tau = 2.0 * math.pi
+    ordered = sorted(value % tau for value in values)
+    unique: list[float] = []
+    for value in ordered:
+        if not unique or value - unique[-1] > ANGLE_EPSILON:
+            unique.append(value)
+    if len(unique) > 1 and unique[0] + tau - unique[-1] <= ANGLE_EPSILON:
+        unique.pop()
+    return unique
+
+
 def _round_hole_geometry(
     stock_size: tuple[float, float],
     center: tuple[float, float],
@@ -356,22 +405,30 @@ def _round_hole_geometry(
     available = min(half_width - abs(cx), half_depth - abs(cz))
     if radius <= 0 or radius >= available - EPSILON:
         raise PrecisionCutterError("round cutout must stay strictly inside the rectangular stock")
-    angles = {2.0 * math.pi * index / segments for index in range(segments)}
-    for corner in (
-        (-half_width, -half_depth),
-        (-half_width, half_depth),
-        (half_width, -half_depth),
-        (half_width, half_depth),
-    ):
-        angles.add(math.atan2(corner[1] - cz, corner[0] - cx) % (2.0 * math.pi))
-    ordered = sorted(angles)
+
+    angles = [2.0 * math.pi * index / segments for index in range(segments)]
+    angles.extend(
+        math.atan2(corner_z - cz, corner_x - cx)
+        for corner_x, corner_z in (
+            (-half_width, -half_depth),
+            (-half_width, half_depth),
+            (half_width, -half_depth),
+            (half_width, half_depth),
+        )
+    )
+    ordered = _deduplicate_angles(angles)
+    if len(ordered) < segments:
+        raise PrecisionCutterError("round cut radial event normalization lost required resolution")
+
     inner = [(cx + radius * math.cos(angle), cz + radius * math.sin(angle)) for angle in ordered]
     outer = [_ray_to_rectangle(center, angle, half_width, half_depth) for angle in ordered]
     positions: list[tuple[float, float, float]] = []
     normals: list[tuple[float, float, float]] = []
     indices: list[int] = []
-    top, bottom = thickness / 2.0, -thickness / 2.0
+    top = thickness / 2.0
+    bottom = -top
     count = len(ordered)
+
     for index in range(count):
         nxt = (index + 1) % count
         _append_face(
@@ -398,6 +455,7 @@ def _round_hole_geometry(
             ],
             (0.0, -1.0, 0.0),
         )
+
         outer_dx = outer[nxt][0] - outer[index][0]
         outer_dz = outer[nxt][1] - outer[index][1]
         outer_length = math.hypot(outer_dx, outer_dz)
@@ -415,6 +473,7 @@ def _round_hole_geometry(
                 ],
                 outer_normal,
             )
+
         middle_angle = math.atan2(
             (inner[index][1] + inner[nxt][1]) / 2.0 - cz,
             (inner[index][0] + inner[nxt][0]) / 2.0 - cx,
@@ -432,6 +491,7 @@ def _round_hole_geometry(
             ],
             inner_normal,
         )
+
     return positions, normals, indices, inner, outer
 
 
@@ -481,6 +541,7 @@ def prepare_cut(raw: Any) -> dict[str, Any]:
             "unsupported precision cutter operation",
             {"supported": sorted(supported)},
         )
+
     thickness = _number(raw["thickness"], "thickness", 0.0001, 10000.0)
     kerf = _number(raw.get("kerf", 0.0), "kerf", 0.0, 1000.0)
     material = _material(raw["material"])
@@ -492,6 +553,7 @@ def prepare_cut(raw: Any) -> dict[str, Any]:
         "kerf": kerf,
         "material": material,
     }
+
     if operation == "profile-cut":
         if "profile" not in raw or any(key in raw for key in ("stock_size", "hole", "socket")):
             raise PrecisionCutterError("profile-cut requires only profile geometry")
@@ -512,18 +574,27 @@ def prepare_cut(raw: Any) -> dict[str, Any]:
     definition = raw[key]
     if not isinstance(definition, dict):
         raise PrecisionCutterError(f"{key} must be an object")
-    required_fields = {"center", "segments"} | ({"radius"} if key == "hole" else {"source_radius", "clearance"})
+    required_fields = {"center", "segments"} | (
+        {"radius"} if key == "hole" else {"source_radius", "clearance"}
+    )
     if set(definition) != required_fields:
         raise PrecisionCutterError(f"{key} fields do not match the bounded grammar")
     segments = definition["segments"]
     if type(segments) is not int or not 8 <= segments <= MAX_HOLE_SEGMENTS:
-        raise PrecisionCutterError(f"{key}.segments must be an integer from 8 through {MAX_HOLE_SEGMENTS}")
+        raise PrecisionCutterError(
+            f"{key}.segments must be an integer from 8 through {MAX_HOLE_SEGMENTS}"
+        )
     center = _vec2(definition["center"], f"{key}.center")
     if key == "hole":
         radius = _number(definition["radius"], "hole.radius", 0.0001, 100000.0)
         normalized[key] = {"center": list(center), "radius": radius, "segments": segments}
     else:
-        source_radius = _number(definition["source_radius"], "socket.source_radius", 0.0001, 100000.0)
+        source_radius = _number(
+            definition["source_radius"],
+            "socket.source_radius",
+            0.0001,
+            100000.0,
+        )
         clearance = _number(definition["clearance"], "socket.clearance", 0.0, 1000.0)
         normalized[key] = {
             "center": list(center),
@@ -539,12 +610,12 @@ def build_cut(raw: Any) -> dict[str, Any]:
     operation = specification["operation"]
     material = specification["material"]
     thickness = specification["thickness"]
-    metrics: dict[str, Any]
+
     if operation == "profile-cut":
         profile = [tuple(row) for row in specification["profile"]]
         positions, normals, indices, top_triangles = _extrude_profile(profile, thickness)
         area = abs(_signed_area(profile))
-        metrics = {
+        metrics: dict[str, Any] = {
             "profile_area": area,
             "solid_volume": area * thickness,
             "profile_points": len(profile),
@@ -553,7 +624,11 @@ def build_cut(raw: Any) -> dict[str, Any]:
         }
     else:
         stock = tuple(specification["stock_size"])
-        definition = specification["hole"] if operation == "round-through-hole" else specification["socket"]
+        definition = (
+            specification["hole"]
+            if operation == "round-through-hole"
+            else specification["socket"]
+        )
         if operation == "round-through-hole":
             requested_radius = definition["radius"]
             source_radius = None
@@ -562,6 +637,7 @@ def build_cut(raw: Any) -> dict[str, Any]:
             source_radius = definition["source_radius"]
             clearance = definition["clearance"]
             requested_radius = source_radius + clearance
+
         effective_radius = requested_radius + specification["kerf"] / 2.0
         positions, normals, indices, inner, _outer = _round_hole_geometry(
             stock,
@@ -591,7 +667,14 @@ def build_cut(raw: Any) -> dict[str, Any]:
                     "geometric_radial_clearance": effective_radius - source_radius,
                 }
             )
-    surface = _surface_specification(specification["name"], positions, normals, indices, material)
+
+    surface = _surface_specification(
+        specification["name"],
+        positions,
+        normals,
+        indices,
+        material,
+    )
     return {
         "schema": CUTTER_SCHEMA,
         "operation": operation,
@@ -613,10 +696,19 @@ def build_cut(raw: Any) -> dict[str, Any]:
     }
 
 
-def publish_precision_cut(target: Path, specification: Any, *, replace: bool = False) -> dict[str, Any]:
+def publish_precision_cut(
+    target: Path,
+    specification: Any,
+    *,
+    replace: bool = False,
+) -> dict[str, Any]:
     built = build_cut(specification)
     try:
-        publication = publish_glb(target, built["surface_specification"], replace=replace)
+        publication = publish_glb(
+            target,
+            built["surface_specification"],
+            replace=replace,
+        )
     except Procedural3DError as exc:
         raise PrecisionCutterError(str(exc), getattr(exc, "details", {})) from exc
     return {
