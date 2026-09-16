@@ -302,7 +302,7 @@ def setup_preview_scene(root):
         except Exception:
             pass
     scene.render.resolution_x = 720
-    scene.render.resolution_y = 405
+    scene.render.resolution_y = 406
     scene.render.resolution_percentage = 100
     scene.render.film_transparent = False
     scene.world.color = (0.055, 0.12, 0.18)
