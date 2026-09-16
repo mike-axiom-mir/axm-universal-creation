@@ -369,7 +369,7 @@ function step(world, limits, dt, options) {
       'Slack motion inside the allowed interval is intentionally unconstrained; only violated or outward-moving boundaries activate.',
       'No angular inertia, rotating anchors, angular limits or motors are implemented.',
       'Post-core projection can move bodies after collision/contact evidence was generated; returned core events and contact geometry describe the donor-core stage before post-axis-limit stabilization.',
-      'Axis limits are standalone in v0.1.0 and are not yet part of the mixed composer/activity/isolation stack; chaining wrappers would advance donor physics twice.',
+      'The standalone v0.1.0 entrypoint performs its own donor-core step; mixed-family callers must use the shared composer/activity/isolation path rather than chaining wrappers.',
       'This is game/prototype physics evidence, not scientific validation.'
     ]
   };
@@ -410,7 +410,7 @@ function validate(world, limits) {
     warnings: [
       'Axis limits bound one world-space x or y relative offset while orthogonal translation remains intentionally unconstrained.',
       'Slack motion inside min/max bounds is intentionally free; this is not a rotational or full prismatic/slider joint.',
-      'The donor physics source remains untouched, and this standalone v0.1.0 wrapper is not yet integrated into the mixed composer.'
+      'The donor physics source remains untouched; this standalone v0.1.0 entrypoint is also consumed by the shared composer without a second donor-core step.'
     ]
   };
 }
