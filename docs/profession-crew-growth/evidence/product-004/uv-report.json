@@ -1,0 +1,89 @@
+{
+  "artifacts": {
+    "surface.json": "9b1a37a7d5d203af331af232877d0180db6f86002b360fd0eb55518dda1caa85"
+  },
+  "backend": {
+    "build": "32f5fdce0a0a",
+    "version": "4.3.2",
+    "worker_sha256": "5014919bdb389dfe042a840a1f2d0f89c8bc5f7fa76a0db14f1895ceb6e29cb9"
+  },
+  "checks": [
+    {
+      "passed": true,
+      "type": "source-geometry-preserved"
+    },
+    {
+      "passed": true,
+      "type": "unique-atlas-and-padding"
+    }
+  ],
+  "kind": "unwrap-surface-uv",
+  "options": {
+    "angle_limit_degrees": 66,
+    "padding_px": 2,
+    "resolution": 256
+  },
+  "schema": "axm.mesh-production/v1",
+  "source_sha256": "d0e4908156fe0ee076b3fcaf6d9385259009807d142a60f64e0b2a0187f3f8cb",
+  "status": "PASS",
+  "uv": {
+    "groups": [
+      {
+        "border_padding_px": 5.9999847412109375,
+        "checks": {
+          "atlas_border_padding": true,
+          "island_padding": true,
+          "no_positive_area_overlap": true,
+          "noncollapsed": true
+        },
+        "collapsed_triangles": 0,
+        "id": "paint",
+        "island_padding_px_capped_at_requirement": 2.0,
+        "islands": 30,
+        "overlap_area_uv": 0.0,
+        "overlapping_pairs": 0,
+        "triangles": 76,
+        "used_area_fraction": 0.5069645058502242
+      },
+      {
+        "border_padding_px": 5.999992720782757,
+        "checks": {
+          "atlas_border_padding": true,
+          "island_padding": true,
+          "no_positive_area_overlap": true,
+          "noncollapsed": true
+        },
+        "collapsed_triangles": 0,
+        "id": "rubber",
+        "island_padding_px_capped_at_requirement": 2.0,
+        "islands": 88,
+        "overlap_area_uv": 0.0,
+        "overlapping_pairs": 0,
+        "triangles": 232,
+        "used_area_fraction": 0.39317656209741325
+      },
+      {
+        "border_padding_px": 5.999979577958584,
+        "checks": {
+          "atlas_border_padding": true,
+          "island_padding": true,
+          "no_positive_area_overlap": true,
+          "noncollapsed": true
+        },
+        "collapsed_triangles": 0,
+        "id": "steel",
+        "island_padding_px_capped_at_requirement": 2.0,
+        "islands": 126,
+        "overlap_area_uv": 0.0,
+        "overlapping_pairs": 0,
+        "triangles": 348,
+        "used_area_fraction": 0.28802192419012723
+      }
+    ],
+    "required_padding_px": 2,
+    "resolution": 256,
+    "schema": "axm.uv-layout-quality/v1",
+    "scope": "One unique 0..1 atlas per material. Geometric overlap and base-level padding; no UDIM or all-mip guarantee.",
+    "status": "PASS"
+  }
+}

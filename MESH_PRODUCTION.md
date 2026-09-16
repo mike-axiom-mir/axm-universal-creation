@@ -79,6 +79,10 @@ A `static-3d` request may add:
 }
 ```
 
+A complete machine request is in
+`examples/requests/product-workflow-blender.json`; invoke it with
+`PYTHONPATH=src python -m axm_uc create examples/requests/product-workflow-blender.json`.
+
 The sequence is brief/source -> unwrap/check -> generate/check materials ->
 bind -> mesh bake/check -> geometry/density -> native previews -> actual target
 import/render -> delivery record. UV and bake controls must agree with map size

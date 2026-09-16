@@ -1,0 +1,2115 @@
+{
+  "schema": "axm.mesh-production-demo/v1",
+  "status": "PASS",
+  "static": {
+    "schema": "axm.product-delivery/v1",
+    "product_type": "static-3d",
+    "status": "DRAFT_BUILT_REVIEW_REQUIRED",
+    "crew_id": "products",
+    "run_id": "case-production",
+    "parent": null,
+    "artifacts": [
+      {
+        "path": "source.json",
+        "fingerprint": "0c5dbdbc9df96804f51219f74c1a9d43bddb27b4e738db92b0d4dd73e2d9dde6"
+      },
+      {
+        "path": "uv",
+        "fingerprint": "a341cb3d346854fd7276e355f1ed1b3c72d771ec54f84b461e246d1dcc970fde"
+      },
+      {
+        "path": "materials/paint",
+        "fingerprint": "6a22d8df571397e7fe829e4f47715046bcff8eef2436b737dc9107c78ce0d9e0"
+      },
+      {
+        "path": "checks/paint.json",
+        "fingerprint": "7cd94663edacb6c6efe0ef0d973b0fb5bb0639357993bb21a6b6d4ebfd647a67"
+      },
+      {
+        "path": "materials/rubber",
+        "fingerprint": "9d4ea32887009a237585688082c281826a86e3a444c8e0f257c8d1eea3b19ab4"
+      },
+      {
+        "path": "checks/rubber.json",
+        "fingerprint": "9d4f8390591778cb9f99609ea19dd5bd79c9982933b1ac68dfd3de0beda59c89"
+      },
+      {
+        "path": "materials/steel",
+        "fingerprint": "d99e40ba1c8611e4e2d8c02f8294012c676d305f3dc711bed0a24b823fa84ed0"
+      },
+      {
+        "path": "checks/steel.json",
+        "fingerprint": "bf15e92f64ef072eff7f6ee3af9b480f2da7e029bc90bb2102a2d585f112b8fe"
+      },
+      {
+        "path": "asset.glb",
+        "fingerprint": "576417bb176953ed19a09b0aaa2ec281a2ce8245480d5adfb3cb402c95341ea5"
+      },
+      {
+        "path": "baked",
+        "fingerprint": "e1aab48f47d7d9192cd5e3aaa63a3992050f7c4f99987c6503c7c67b4e7ddf04"
+      },
+      {
+        "path": "checks/asset.json",
+        "fingerprint": "df55e73cf78f8d14696ab72d53bfe2af64d6e502ff49eecdd7bf51f4de3306a6"
+      },
+      {
+        "path": "previews/studio.png",
+        "fingerprint": "693f7502c90e0783d4d12a674cb91dcebf217d1550d46a7fafeb78566b67eb5c"
+      },
+      {
+        "path": "previews/garage.png",
+        "fingerprint": "a865994552bb59345fa9d2ce6452f2b02d6d3474fbcb4393241905dbc2140fb5"
+      },
+      {
+        "path": "target",
+        "fingerprint": "c24d2ec33c2db9fc4f1a6bf7538099d076d38ba301381d73e951d394209bb556"
+      }
+    ],
+    "plan": {
+      "schema": "axm.product-workflow-plan/v1",
+      "product_type": "static-3d",
+      "brief": {
+        "purpose": "Prepare the industrial field case from source geometry through target rendering",
+        "target": "Blender 4.3 Cycles CPU and native GLB",
+        "quality_intent": "Restrained ochre coating, rubber seals and satin steel; mesh contact darkening, coherent scale, readable silhouette"
+      },
+      "stages": [
+        {
+          "id": "brief",
+          "profession_id": "art-director",
+          "expected_evidence": "Purpose, audience, target device, units, budget and explicit acceptance conditions",
+          "gate": "declared",
+          "professional_scope": {
+            "owns": [
+              "Visual direction, style systems, reference/target boards and cross-asset coherence decisions within delegated creative scope.",
+              "Visual hierarchy, mood, palette/form language and review criteria for creative output.",
+              "Direction change records, dissent/tradeoff documentation and bounded visual acceptance evidence."
+            ],
+            "does_not_own": [
+              "Technical/runtime certification, product/user truth, individual craft execution, legal/IP decisions or constitutional authority.",
+              "Presenting subjective direction as universal aesthetic truth."
+            ],
+            "escalates_when": [
+              "Direction conflicts with gameplay/readability/accessibility/performance constraints.",
+              "Creative-source provenance, user impact or product intent is unresolved."
+            ]
+          }
+        },
+        {
+          "id": "direction",
+          "profession_id": "art-director",
+          "expected_evidence": "References/provenance, composition, palette, material identity and detail hierarchy",
+          "gate": "review",
+          "professional_scope": {
+            "owns": [
+              "Visual direction, style systems, reference/target boards and cross-asset coherence decisions within delegated creative scope.",
+              "Visual hierarchy, mood, palette/form language and review criteria for creative output.",
+              "Direction change records, dissent/tradeoff documentation and bounded visual acceptance evidence."
+            ],
+            "does_not_own": [
+              "Technical/runtime certification, product/user truth, individual craft execution, legal/IP decisions or constitutional authority.",
+              "Presenting subjective direction as universal aesthetic truth."
+            ],
+            "escalates_when": [
+              "Direction conflicts with gameplay/readability/accessibility/performance constraints.",
+              "Creative-source provenance, user impact or product intent is unresolved."
+            ]
+          }
+        },
+        {
+          "id": "blockout",
+          "profession_id": "3d-artist",
+          "expected_evidence": "Silhouette, dimensions, primary forms and assembly relationships",
+          "gate": "review",
+          "professional_scope": {
+            "owns": [
+              "3D modeling, sculpting, topology, UV/layout, surface/material authoring and authored asset variants.",
+              "Silhouette, proportion, form readability and asset-level visual craft within accepted direction.",
+              "Source/editable asset continuity and visual comparison across revisions."
+            ],
+            "does_not_own": [
+              "Engine integration acceptance, collision/navigation behavior, final optimization targets, animation systems or product/gameplay authority.",
+              "Calling a render or clean mesh game-ready without integration evidence."
+            ],
+            "escalates_when": [
+              "Technical budgets, rig/deformation, collision or runtime constraints require specialist changes.",
+              "Direction or readability goals conflict materially with optimization."
+            ]
+          }
+        },
+        {
+          "id": "geometry",
+          "profession_id": "3d-artist",
+          "expected_evidence": "Primary/secondary forms, normals, winding, pivots, sockets and topology",
+          "gate": "observe",
+          "professional_scope": {
+            "owns": [
+              "3D modeling, sculpting, topology, UV/layout, surface/material authoring and authored asset variants.",
+              "Silhouette, proportion, form readability and asset-level visual craft within accepted direction.",
+              "Source/editable asset continuity and visual comparison across revisions."
+            ],
+            "does_not_own": [
+              "Engine integration acceptance, collision/navigation behavior, final optimization targets, animation systems or product/gameplay authority.",
+              "Calling a render or clean mesh game-ready without integration evidence."
+            ],
+            "escalates_when": [
+              "Technical budgets, rig/deformation, collision or runtime constraints require specialist changes.",
+              "Direction or readability goals conflict materially with optimization."
+            ]
+          }
+        },
+        {
+          "id": "uv-layout",
+          "profession_id": "technical-artist",
+          "expected_evidence": "Noncollapsed UVs, texel density, seams, overlaps, padding and scale",
+          "gate": "observe",
+          "professional_scope": {
+            "owns": [
+              "Art-to-engine asset pipeline contracts, import/export validation and technical visual constraints.",
+              "Shader/material setup, rig/asset technical support and performance-aware asset preparation.",
+              "LOD, batching, texture/material budget evidence and artist-facing tooling within accepted targets."
+            ],
+            "does_not_own": [
+              "Final aesthetic direction, engine architecture, gameplay rules, source-art authorship or target-device performance certification.",
+              "Calling a technically valid import visually good or gameplay-ready without adjacent evidence."
+            ],
+            "escalates_when": [
+              "Optimization materially changes silhouette, readability, deformation or authored intent.",
+              "Engine/runtime constraints require architecture changes or target-device evidence is missing."
+            ]
+          }
+        },
+        {
+          "id": "surface-intent",
+          "profession_id": "3d-artist",
+          "expected_evidence": "Physical scale, substrate/coating, channel meanings and colour-space contract",
+          "gate": "declared",
+          "professional_scope": {
+            "owns": [
+              "3D modeling, sculpting, topology, UV/layout, surface/material authoring and authored asset variants.",
+              "Silhouette, proportion, form readability and asset-level visual craft within accepted direction.",
+              "Source/editable asset continuity and visual comparison across revisions."
+            ],
+            "does_not_own": [
+              "Engine integration acceptance, collision/navigation behavior, final optimization targets, animation systems or product/gameplay authority.",
+              "Calling a render or clean mesh game-ready without integration evidence."
+            ],
+            "escalates_when": [
+              "Technical budgets, rig/deformation, collision or runtime constraints require specialist changes.",
+              "Direction or readability goals conflict materially with optimization."
+            ]
+          }
+        },
+        {
+          "id": "maps",
+          "profession_id": "3d-artist",
+          "expected_evidence": "Base colour, normal, roughness, metallic, AO, height and optional protected wear layers",
+          "gate": "observe",
+          "professional_scope": {
+            "owns": [
+              "3D modeling, sculpting, topology, UV/layout, surface/material authoring and authored asset variants.",
+              "Silhouette, proportion, form readability and asset-level visual craft within accepted direction.",
+              "Source/editable asset continuity and visual comparison across revisions."
+            ],
+            "does_not_own": [
+              "Engine integration acceptance, collision/navigation behavior, final optimization targets, animation systems or product/gameplay authority.",
+              "Calling a render or clean mesh game-ready without integration evidence."
+            ],
+            "escalates_when": [
+              "Technical budgets, rig/deformation, collision or runtime constraints require specialist changes.",
+              "Direction or readability goals conflict materially with optimization."
+            ]
+          }
+        },
+        {
+          "id": "map-checks",
+          "profession_id": "technical-artist",
+          "expected_evidence": "Decoded images, normal direction/length, budgets and declared tiling policy",
+          "gate": "observe",
+          "professional_scope": {
+            "owns": [
+              "Art-to-engine asset pipeline contracts, import/export validation and technical visual constraints.",
+              "Shader/material setup, rig/asset technical support and performance-aware asset preparation.",
+              "LOD, batching, texture/material budget evidence and artist-facing tooling within accepted targets."
+            ],
+            "does_not_own": [
+              "Final aesthetic direction, engine architecture, gameplay rules, source-art authorship or target-device performance certification.",
+              "Calling a technically valid import visually good or gameplay-ready without adjacent evidence."
+            ],
+            "escalates_when": [
+              "Optimization materially changes silhouette, readability, deformation or authored intent.",
+              "Engine/runtime constraints require architecture changes or target-device evidence is missing."
+            ]
+          }
+        },
+        {
+          "id": "look-development",
+          "profession_id": "graphics-engineer",
+          "expected_evidence": "Actual maps rendered on the product at intended scale under multiple lights",
+          "gate": "observe",
+          "professional_scope": {
+            "owns": [
+              "Rendering architecture, graphics APIs, shader/material execution, geometry/visibility/lighting pipelines and graphics-specific performance evidence.",
+              "Renderer correctness, artifact diagnosis, GPU/CPU resource boundaries and reproducible render evidence."
+            ],
+            "does_not_own": [
+              "Art direction, visual taste, asset authorship, gameplay/system design, product priority, hardware-driver correctness or accessibility acceptance by default.",
+              "Declaring a render aesthetically successful merely because the pipeline executes."
+            ],
+            "escalates_when": [
+              "A technical rendering change alters art direction, gameplay readability or accessibility intent.",
+              "Observed artifacts may originate in driver/hardware/asset-authoring surfaces outside renderer ownership."
+            ]
+          }
+        },
+        {
+          "id": "mesh-baking",
+          "profession_id": "technical-artist",
+          "expected_evidence": "Mesh-derived AO, explicit high-to-low normal transfer and cage coverage when requested",
+          "gate": "observe",
+          "professional_scope": {
+            "owns": [
+              "Art-to-engine asset pipeline contracts, import/export validation and technical visual constraints.",
+              "Shader/material setup, rig/asset technical support and performance-aware asset preparation.",
+              "LOD, batching, texture/material budget evidence and artist-facing tooling within accepted targets."
+            ],
+            "does_not_own": [
+              "Final aesthetic direction, engine architecture, gameplay rules, source-art authorship or target-device performance certification.",
+              "Calling a technically valid import visually good or gameplay-ready without adjacent evidence."
+            ],
+            "escalates_when": [
+              "Optimization materially changes silhouette, readability, deformation or authored intent.",
+              "Engine/runtime constraints require architecture changes or target-device evidence is missing."
+            ]
+          }
+        },
+        {
+          "id": "assembly",
+          "profession_id": "technical-artist",
+          "expected_evidence": "Textures bound to exact parts; contacts, clearances and mounts inspected",
+          "gate": "observe",
+          "professional_scope": {
+            "owns": [
+              "Art-to-engine asset pipeline contracts, import/export validation and technical visual constraints.",
+              "Shader/material setup, rig/asset technical support and performance-aware asset preparation.",
+              "LOD, batching, texture/material budget evidence and artist-facing tooling within accepted targets."
+            ],
+            "does_not_own": [
+              "Final aesthetic direction, engine architecture, gameplay rules, source-art authorship or target-device performance certification.",
+              "Calling a technically valid import visually good or gameplay-ready without adjacent evidence."
+            ],
+            "escalates_when": [
+              "Optimization materially changes silhouette, readability, deformation or authored intent.",
+              "Engine/runtime constraints require architecture changes or target-device evidence is missing."
+            ]
+          }
+        },
+        {
+          "id": "lod-collision",
+          "profession_id": "technical-artist",
+          "expected_evidence": "Distance/detail comparison, collision representation and placement checks",
+          "gate": "observe",
+          "professional_scope": {
+            "owns": [
+              "Art-to-engine asset pipeline contracts, import/export validation and technical visual constraints.",
+              "Shader/material setup, rig/asset technical support and performance-aware asset preparation.",
+              "LOD, batching, texture/material budget evidence and artist-facing tooling within accepted targets."
+            ],
+            "does_not_own": [
+              "Final aesthetic direction, engine architecture, gameplay rules, source-art authorship or target-device performance certification.",
+              "Calling a technically valid import visually good or gameplay-ready without adjacent evidence."
+            ],
+            "escalates_when": [
+              "Optimization materially changes silhouette, readability, deformation or authored intent.",
+              "Engine/runtime constraints require architecture changes or target-device evidence is missing."
+            ]
+          }
+        },
+        {
+          "id": "refinement",
+          "profession_id": "art-director",
+          "expected_evidence": "Defect-led revision with preserved source, previous version and fresh downstream checks",
+          "gate": "review",
+          "professional_scope": {
+            "owns": [
+              "Visual direction, style systems, reference/target boards and cross-asset coherence decisions within delegated creative scope.",
+              "Visual hierarchy, mood, palette/form language and review criteria for creative output.",
+              "Direction change records, dissent/tradeoff documentation and bounded visual acceptance evidence."
+            ],
+            "does_not_own": [
+              "Technical/runtime certification, product/user truth, individual craft execution, legal/IP decisions or constitutional authority.",
+              "Presenting subjective direction as universal aesthetic truth."
+            ],
+            "escalates_when": [
+              "Direction conflicts with gameplay/readability/accessibility/performance constraints.",
+              "Creative-source provenance, user impact or product intent is unresolved."
+            ]
+          }
+        },
+        {
+          "id": "target-validation",
+          "profession_id": "software-qa-playtest",
+          "expected_evidence": "Actual target import/runtime, budgets, accessibility and required edge cases",
+          "gate": "target",
+          "professional_scope": {
+            "owns": [
+              "Reproduction quality and exact-version/environment capture.",
+              "Regression-test design for observed behavior and failures.",
+              "Boundary, state-transition, input-event, retry, and failure-path probing.",
+              "Evidence classification and truth boundaries for QA claims.",
+              "Detection of contradictions between accepted behavior, tests, and candidate behavior.",
+              "QA risk handoffs and explicit HOLD recommendations when evidence is insufficient."
+            ],
+            "does_not_own": [
+              "Product identity, feature direction, business priority, or roadmap authority.",
+              "Final game balance or systems-design decisions.",
+              "Gameplay feel tuning except as observed evidence supplied to Gameplay.",
+              "Visual/art direction except as observed evidence supplied to Experience or Design.",
+              "Security acceptance, legal interpretation, or other specialist domains merely because a test can touch them.",
+              "Changing implementation solely so an existing test becomes green."
+            ],
+            "escalates_when": [
+              "Expected behavior is ambiguous, contradictory, or not grounded in accepted state.",
+              "A candidate intentionally changes an accepted contract and the owning profession has not resolved the new expectation.",
+              "A suspected safety, security, legal, privacy, or data-loss issue crosses QA ownership.",
+              "The available environment cannot reproduce the relevant execution surface honestly.",
+              "A failure appears to originate in the test harness rather than the product."
+            ]
+          }
+        },
+        {
+          "id": "delivery",
+          "profession_id": "integration-release-engineer",
+          "expected_evidence": "Editable source, artifacts, dependencies, licenses, instructions and unresolved limits",
+          "gate": "review",
+          "professional_scope": {
+            "owns": [
+              "Dependency ordering and exact composition mechanics.",
+              "Semantic-overlap detection across concurrent software changes.",
+              "Preservation of newer accepted state while carrying bounded stale-branch deltas forward.",
+              "Exact-candidate structural/build/package verification and integration evidence.",
+              "Release candidate identity, rollback continuity, and accepted-state synchronization."
+            ],
+            "does_not_own": [
+              "Product identity, feature direction, game/system rules, UX/art decisions, security acceptance, legal interpretation, or business priority.",
+              "Changing another profession's accepted expectation merely to make composition easy.",
+              "Calling a candidate professionally correct because Git reports it mergeable or CI is green."
+            ],
+            "escalates_when": [
+              "Two changes encode contradictory domain expectations.",
+              "A candidate cannot be verified on its exact composition.",
+              "Landing would overwrite newer accepted state or lose provenance.",
+              "Release or migration cannot be rolled back or otherwise recovered within the declared continuity contract.",
+              "Security, privacy, legal, safety, or other specialist acceptance is required beyond integration evidence."
+            ]
+          }
+        },
+        {
+          "id": "retained-practice",
+          "profession_id": "technical-artist",
+          "expected_evidence": "Distinct local observations; transfer only within compatible context",
+          "gate": "observe",
+          "professional_scope": {
+            "owns": [
+              "Art-to-engine asset pipeline contracts, import/export validation and technical visual constraints.",
+              "Shader/material setup, rig/asset technical support and performance-aware asset preparation.",
+              "LOD, batching, texture/material budget evidence and artist-facing tooling within accepted targets."
+            ],
+            "does_not_own": [
+              "Final aesthetic direction, engine architecture, gameplay rules, source-art authorship or target-device performance certification.",
+              "Calling a technically valid import visually good or gameplay-ready without adjacent evidence."
+            ],
+            "escalates_when": [
+              "Optimization materially changes silhouette, readability, deformation or authored intent.",
+              "Engine/runtime constraints require architecture changes or target-device evidence is missing."
+            ]
+          }
+        }
+      ],
+      "unbound_stages": [
+        {
+          "stage": "brief",
+          "owner": "art-director",
+          "needed": "Purpose, audience, target device, units, budget and explicit acceptance conditions"
+        },
+        {
+          "stage": "direction",
+          "owner": "art-director",
+          "needed": "References/provenance, composition, palette, material identity and detail hierarchy"
+        },
+        {
+          "stage": "blockout",
+          "owner": "3d-artist",
+          "needed": "Silhouette, dimensions, primary forms and assembly relationships"
+        },
+        {
+          "stage": "geometry",
+          "owner": "3d-artist",
+          "needed": "Primary/secondary forms, normals, winding, pivots, sockets and topology"
+        },
+        {
+          "stage": "uv-layout",
+          "owner": "technical-artist",
+          "needed": "Noncollapsed UVs, texel density, seams, overlaps, padding and scale"
+        },
+        {
+          "stage": "surface-intent",
+          "owner": "3d-artist",
+          "needed": "Physical scale, substrate/coating, channel meanings and colour-space contract"
+        },
+        {
+          "stage": "maps",
+          "owner": "3d-artist",
+          "needed": "Base colour, normal, roughness, metallic, AO, height and optional protected wear layers"
+        },
+        {
+          "stage": "map-checks",
+          "owner": "technical-artist",
+          "needed": "Decoded images, normal direction/length, budgets and declared tiling policy"
+        },
+        {
+          "stage": "look-development",
+          "owner": "graphics-engineer",
+          "needed": "Actual maps rendered on the product at intended scale under multiple lights"
+        },
+        {
+          "stage": "mesh-baking",
+          "owner": "technical-artist",
+          "needed": "Mesh-derived AO, explicit high-to-low normal transfer and cage coverage when requested"
+        },
+        {
+          "stage": "assembly",
+          "owner": "technical-artist",
+          "needed": "Textures bound to exact parts; contacts, clearances and mounts inspected"
+        },
+        {
+          "stage": "lod-collision",
+          "owner": "technical-artist",
+          "needed": "Distance/detail comparison, collision representation and placement checks"
+        },
+        {
+          "stage": "refinement",
+          "owner": "art-director",
+          "needed": "Defect-led revision with preserved source, previous version and fresh downstream checks"
+        },
+        {
+          "stage": "target-validation",
+          "owner": "software-qa-playtest",
+          "needed": "Actual target import/runtime, budgets, accessibility and required edge cases"
+        },
+        {
+          "stage": "delivery",
+          "owner": "integration-release-engineer",
+          "needed": "Editable source, artifacts, dependencies, licenses, instructions and unresolved limits"
+        },
+        {
+          "stage": "retained-practice",
+          "owner": "technical-artist",
+          "needed": "Distinct local observations; transfer only within compatible context"
+        }
+      ],
+      "stepwise_plan": {
+        "schema": "axm.stepwise-perspective-plan/v0.1",
+        "goal": "Prepare the industrial field case from source geometry through target rendering",
+        "steps": [
+          {
+            "id": "brief",
+            "purpose": "Purpose, audience, target device, units, budget and explicit acceptance conditions",
+            "mode": "analysis",
+            "expected_evidence": [
+              "Purpose, audience, target device, units, budget and explicit acceptance conditions"
+            ],
+            "stop_condition": "Unresolved evidence or required judgment holds this stage",
+            "depends_on": [],
+            "split_depth": 0,
+            "perspective_focus": "art-director"
+          },
+          {
+            "id": "direction",
+            "purpose": "References/provenance, composition, palette, material identity and detail hierarchy",
+            "mode": "analysis",
+            "expected_evidence": [
+              "References/provenance, composition, palette, material identity and detail hierarchy"
+            ],
+            "stop_condition": "Unresolved evidence or required judgment holds this stage",
+            "depends_on": [
+              "brief"
+            ],
+            "split_depth": 0,
+            "perspective_focus": "art-director"
+          },
+          {
+            "id": "blockout",
+            "purpose": "Silhouette, dimensions, primary forms and assembly relationships",
+            "mode": "analysis",
+            "expected_evidence": [
+              "Silhouette, dimensions, primary forms and assembly relationships"
+            ],
+            "stop_condition": "Unresolved evidence or required judgment holds this stage",
+            "depends_on": [
+              "direction"
+            ],
+            "split_depth": 0,
+            "perspective_focus": "3d-artist"
+          },
+          {
+            "id": "geometry",
+            "purpose": "Primary/secondary forms, normals, winding, pivots, sockets and topology",
+            "mode": "analysis",
+            "expected_evidence": [
+              "Primary/secondary forms, normals, winding, pivots, sockets and topology"
+            ],
+            "stop_condition": "Unresolved evidence or required judgment holds this stage",
+            "depends_on": [
+              "blockout"
+            ],
+            "split_depth": 0,
+            "perspective_focus": "3d-artist"
+          },
+          {
+            "id": "uv-layout",
+            "purpose": "Noncollapsed UVs, texel density, seams, overlaps, padding and scale",
+            "mode": "analysis",
+            "expected_evidence": [
+              "Noncollapsed UVs, texel density, seams, overlaps, padding and scale"
+            ],
+            "stop_condition": "Unresolved evidence or required judgment holds this stage",
+            "depends_on": [
+              "geometry"
+            ],
+            "split_depth": 0,
+            "perspective_focus": "technical-artist"
+          },
+          {
+            "id": "surface-intent",
+            "purpose": "Physical scale, substrate/coating, channel meanings and colour-space contract",
+            "mode": "analysis",
+            "expected_evidence": [
+              "Physical scale, substrate/coating, channel meanings and colour-space contract"
+            ],
+            "stop_condition": "Unresolved evidence or required judgment holds this stage",
+            "depends_on": [
+              "uv-layout"
+            ],
+            "split_depth": 0,
+            "perspective_focus": "3d-artist"
+          },
+          {
+            "id": "maps",
+            "purpose": "Base colour, normal, roughness, metallic, AO, height and optional protected wear layers",
+            "mode": "analysis",
+            "expected_evidence": [
+              "Base colour, normal, roughness, metallic, AO, height and optional protected wear layers"
+            ],
+            "stop_condition": "Unresolved evidence or required judgment holds this stage",
+            "depends_on": [
+              "surface-intent"
+            ],
+            "split_depth": 0,
+            "perspective_focus": "3d-artist"
+          },
+          {
+            "id": "map-checks",
+            "purpose": "Decoded images, normal direction/length, budgets and declared tiling policy",
+            "mode": "analysis",
+            "expected_evidence": [
+              "Decoded images, normal direction/length, budgets and declared tiling policy"
+            ],
+            "stop_condition": "Unresolved evidence or required judgment holds this stage",
+            "depends_on": [
+              "maps"
+            ],
+            "split_depth": 0,
+            "perspective_focus": "technical-artist"
+          },
+          {
+            "id": "look-development",
+            "purpose": "Actual maps rendered on the product at intended scale under multiple lights",
+            "mode": "analysis",
+            "expected_evidence": [
+              "Actual maps rendered on the product at intended scale under multiple lights"
+            ],
+            "stop_condition": "Unresolved evidence or required judgment holds this stage",
+            "depends_on": [
+              "map-checks"
+            ],
+            "split_depth": 0,
+            "perspective_focus": "graphics-engineer"
+          },
+          {
+            "id": "mesh-baking",
+            "purpose": "Mesh-derived AO, explicit high-to-low normal transfer and cage coverage when requested",
+            "mode": "analysis",
+            "expected_evidence": [
+              "Mesh-derived AO, explicit high-to-low normal transfer and cage coverage when requested"
+            ],
+            "stop_condition": "Unresolved evidence or required judgment holds this stage",
+            "depends_on": [
+              "look-development"
+            ],
+            "split_depth": 0,
+            "perspective_focus": "technical-artist"
+          },
+          {
+            "id": "assembly",
+            "purpose": "Textures bound to exact parts; contacts, clearances and mounts inspected",
+            "mode": "analysis",
+            "expected_evidence": [
+              "Textures bound to exact parts; contacts, clearances and mounts inspected"
+            ],
+            "stop_condition": "Unresolved evidence or required judgment holds this stage",
+            "depends_on": [
+              "mesh-baking"
+            ],
+            "split_depth": 0,
+            "perspective_focus": "technical-artist"
+          },
+          {
+            "id": "lod-collision",
+            "purpose": "Distance/detail comparison, collision representation and placement checks",
+            "mode": "analysis",
+            "expected_evidence": [
+              "Distance/detail comparison, collision representation and placement checks"
+            ],
+            "stop_condition": "Unresolved evidence or required judgment holds this stage",
+            "depends_on": [
+              "assembly"
+            ],
+            "split_depth": 0,
+            "perspective_focus": "technical-artist"
+          },
+          {
+            "id": "refinement",
+            "purpose": "Defect-led revision with preserved source, previous version and fresh downstream checks",
+            "mode": "analysis",
+            "expected_evidence": [
+              "Defect-led revision with preserved source, previous version and fresh downstream checks"
+            ],
+            "stop_condition": "Unresolved evidence or required judgment holds this stage",
+            "depends_on": [
+              "lod-collision"
+            ],
+            "split_depth": 0,
+            "perspective_focus": "art-director"
+          },
+          {
+            "id": "target-validation",
+            "purpose": "Actual target import/runtime, budgets, accessibility and required edge cases",
+            "mode": "analysis",
+            "expected_evidence": [
+              "Actual target import/runtime, budgets, accessibility and required edge cases"
+            ],
+            "stop_condition": "Unresolved evidence or required judgment holds this stage",
+            "depends_on": [
+              "refinement"
+            ],
+            "split_depth": 0,
+            "perspective_focus": "software-qa-playtest"
+          },
+          {
+            "id": "delivery",
+            "purpose": "Editable source, artifacts, dependencies, licenses, instructions and unresolved limits",
+            "mode": "analysis",
+            "expected_evidence": [
+              "Editable source, artifacts, dependencies, licenses, instructions and unresolved limits"
+            ],
+            "stop_condition": "Unresolved evidence or required judgment holds this stage",
+            "depends_on": [
+              "target-validation"
+            ],
+            "split_depth": 0,
+            "perspective_focus": "integration-release-engineer"
+          },
+          {
+            "id": "retained-practice",
+            "purpose": "Distinct local observations; transfer only within compatible context",
+            "mode": "analysis",
+            "expected_evidence": [
+              "Distinct local observations; transfer only within compatible context"
+            ],
+            "stop_condition": "Unresolved evidence or required judgment holds this stage",
+            "depends_on": [
+              "delivery"
+            ],
+            "split_depth": 0,
+            "perspective_focus": "technical-artist"
+          }
+        ],
+        "planning_truth": "this is the selected explicit step plan; step size and semantic adequacy remain revisable through perspective checkpoints",
+        "plan_digest": "sha256:699aea292ddeed1844a237f0335b8b84df8243352108576b49e740231431b2b5"
+      },
+      "draft_recipe_available": true,
+      "status": "PLANNED",
+      "truth": "Product-specific work contracts. Unbound stages are work to do, not executed specialists or acceptance."
+    },
+    "fresh_verification": "PASS",
+    "observed_stations": [
+      "brief-source",
+      "automatic-uv-layout",
+      "generate-paint",
+      "check-paint",
+      "generate-rubber",
+      "check-rubber",
+      "generate-steel",
+      "check-steel",
+      "textured-assembly",
+      "mesh-bake",
+      "uv-geometry-check",
+      "preview-studio",
+      "preview-garage",
+      "target-import-render"
+    ],
+    "stage_observations": [
+      {
+        "stage": "brief",
+        "profession_id": "art-director",
+        "status": "DECLARED",
+        "observed_stations": [
+          "brief-source"
+        ],
+        "scope": "Purpose, audience, target device, units, budget and explicit acceptance conditions"
+      },
+      {
+        "stage": "direction",
+        "profession_id": "art-director",
+        "status": "DECLARED",
+        "observed_stations": [
+          "brief-source"
+        ],
+        "scope": "References/provenance, composition, palette, material identity and detail hierarchy"
+      },
+      {
+        "stage": "blockout",
+        "profession_id": "3d-artist",
+        "status": "PENDING",
+        "observed_stations": [],
+        "scope": "Silhouette, dimensions, primary forms and assembly relationships"
+      },
+      {
+        "stage": "geometry",
+        "profession_id": "3d-artist",
+        "status": "PARTIAL",
+        "observed_stations": [
+          "textured-assembly",
+          "uv-geometry-check"
+        ],
+        "scope": "Geometry, texture coverage and UV density measured; topology/seams/overlaps/padding/mounts remain unverified"
+      },
+      {
+        "stage": "uv-layout",
+        "profession_id": "technical-artist",
+        "status": "OBSERVED_BOUNDED",
+        "observed_stations": [
+          "automatic-uv-layout"
+        ],
+        "scope": "Automatic unique per-material atlas; independent overlap, collapse and base-level padding checks"
+      },
+      {
+        "stage": "surface-intent",
+        "profession_id": "3d-artist",
+        "status": "DECLARED",
+        "observed_stations": [
+          "brief-source"
+        ],
+        "scope": "Physical scale, substrate/coating, channel meanings and colour-space contract"
+      },
+      {
+        "stage": "maps",
+        "profession_id": "3d-artist",
+        "status": "OBSERVED_BOUNDED",
+        "observed_stations": [
+          "generate-paint",
+          "generate-rubber",
+          "generate-steel"
+        ],
+        "scope": "Exact generated maps; no artistic acceptance"
+      },
+      {
+        "stage": "map-checks",
+        "profession_id": "technical-artist",
+        "status": "OBSERVED_BOUNDED",
+        "observed_stations": [
+          "check-paint",
+          "check-rubber",
+          "check-steel"
+        ],
+        "scope": "Fresh map quality checks against explicit policy"
+      },
+      {
+        "stage": "look-development",
+        "profession_id": "graphics-engineer",
+        "status": "PARTIAL",
+        "observed_stations": [
+          "preview-studio",
+          "preview-garage"
+        ],
+        "scope": "Exact texture renders in two lighting profiles; aesthetic judgment remains open"
+      },
+      {
+        "stage": "mesh-baking",
+        "profession_id": "technical-artist",
+        "status": "OBSERVED_BOUNDED",
+        "observed_stations": [
+          "mesh-bake"
+        ],
+        "scope": "Cycles mesh AO and requested high-to-low tangent normals; source preserved and fresh backend reproduction"
+      },
+      {
+        "stage": "assembly",
+        "profession_id": "technical-artist",
+        "status": "PARTIAL",
+        "observed_stations": [
+          "textured-assembly",
+          "uv-geometry-check"
+        ],
+        "scope": "Geometry, texture coverage and UV density measured; topology/seams/overlaps/padding/mounts remain unverified"
+      },
+      {
+        "stage": "lod-collision",
+        "profession_id": "technical-artist",
+        "status": "PENDING",
+        "observed_stations": [],
+        "scope": "Distance/detail comparison, collision representation and placement checks"
+      },
+      {
+        "stage": "refinement",
+        "profession_id": "art-director",
+        "status": "PENDING",
+        "observed_stations": [],
+        "scope": "Defect-led revision with preserved source, previous version and fresh downstream checks"
+      },
+      {
+        "stage": "target-validation",
+        "profession_id": "software-qa-playtest",
+        "status": "PARTIAL",
+        "observed_stations": [
+          "target-import-render"
+        ],
+        "scope": "Fresh Blender/Cycles imports and renders; pose/triangle comparison and image decode. Gameplay and device performance remain separate."
+      },
+      {
+        "stage": "delivery",
+        "profession_id": "integration-release-engineer",
+        "status": "PENDING",
+        "observed_stations": [],
+        "scope": "Editable source, artifacts, dependencies, licenses, instructions and unresolved limits"
+      },
+      {
+        "stage": "retained-practice",
+        "profession_id": "technical-artist",
+        "status": "OBSERVED_BOUNDED",
+        "observed_stations": [
+          "automatic-uv-layout",
+          "brief-source",
+          "check-paint",
+          "check-rubber",
+          "check-steel",
+          "generate-paint",
+          "generate-rubber",
+          "generate-steel",
+          "mesh-bake",
+          "preview-garage",
+          "preview-studio",
+          "target-import-render",
+          "textured-assembly",
+          "uv-geometry-check"
+        ],
+        "scope": "Existing crew stores distinct local observations; no rank or automatic recipe synthesis"
+      }
+    ],
+    "remaining_work": [
+      {
+        "stage": "brief",
+        "profession_id": "art-director",
+        "status": "DECLARED",
+        "observed_stations": [
+          "brief-source"
+        ],
+        "scope": "Purpose, audience, target device, units, budget and explicit acceptance conditions"
+      },
+      {
+        "stage": "direction",
+        "profession_id": "art-director",
+        "status": "DECLARED",
+        "observed_stations": [
+          "brief-source"
+        ],
+        "scope": "References/provenance, composition, palette, material identity and detail hierarchy"
+      },
+      {
+        "stage": "blockout",
+        "profession_id": "3d-artist",
+        "status": "PENDING",
+        "observed_stations": [],
+        "scope": "Silhouette, dimensions, primary forms and assembly relationships"
+      },
+      {
+        "stage": "geometry",
+        "profession_id": "3d-artist",
+        "status": "PARTIAL",
+        "observed_stations": [
+          "textured-assembly",
+          "uv-geometry-check"
+        ],
+        "scope": "Geometry, texture coverage and UV density measured; topology/seams/overlaps/padding/mounts remain unverified"
+      },
+      {
+        "stage": "surface-intent",
+        "profession_id": "3d-artist",
+        "status": "DECLARED",
+        "observed_stations": [
+          "brief-source"
+        ],
+        "scope": "Physical scale, substrate/coating, channel meanings and colour-space contract"
+      },
+      {
+        "stage": "look-development",
+        "profession_id": "graphics-engineer",
+        "status": "PARTIAL",
+        "observed_stations": [
+          "preview-studio",
+          "preview-garage"
+        ],
+        "scope": "Exact texture renders in two lighting profiles; aesthetic judgment remains open"
+      },
+      {
+        "stage": "assembly",
+        "profession_id": "technical-artist",
+        "status": "PARTIAL",
+        "observed_stations": [
+          "textured-assembly",
+          "uv-geometry-check"
+        ],
+        "scope": "Geometry, texture coverage and UV density measured; topology/seams/overlaps/padding/mounts remain unverified"
+      },
+      {
+        "stage": "lod-collision",
+        "profession_id": "technical-artist",
+        "status": "PENDING",
+        "observed_stations": [],
+        "scope": "Distance/detail comparison, collision representation and placement checks"
+      },
+      {
+        "stage": "refinement",
+        "profession_id": "art-director",
+        "status": "PENDING",
+        "observed_stations": [],
+        "scope": "Defect-led revision with preserved source, previous version and fresh downstream checks"
+      },
+      {
+        "stage": "target-validation",
+        "profession_id": "software-qa-playtest",
+        "status": "PARTIAL",
+        "observed_stations": [
+          "target-import-render"
+        ],
+        "scope": "Fresh Blender/Cycles imports and renders; pose/triangle comparison and image decode. Gameplay and device performance remain separate."
+      },
+      {
+        "stage": "delivery",
+        "profession_id": "integration-release-engineer",
+        "status": "PENDING",
+        "observed_stations": [],
+        "scope": "Editable source, artifacts, dependencies, licenses, instructions and unresolved limits"
+      }
+    ],
+    "professional_acceptance": "NOT_TESTED",
+    "visual_quality": "NOT_TESTED",
+    "released": false,
+    "truth": "Executable draft recipe completed only where observed. Product lifecycle planning does not certify artistic, target or final delivery acceptance."
+  },
+  "animated": {
+    "schema": "axm.product-delivery/v1",
+    "product_type": "animated-3d",
+    "status": "DRAFT_BUILT_REVIEW_REQUIRED",
+    "crew_id": "products",
+    "run_id": "flex-production",
+    "parent": null,
+    "artifacts": [
+      {
+        "path": "source.json",
+        "fingerprint": "7749f9e19bc196429325a5e33f18351b3e1537687f4c0936f91f06791fc2e1ea"
+      },
+      {
+        "path": "asset.glb",
+        "fingerprint": "7ba5e8a5316d952a1be90314bd429185ba982c5c95ad82121be84715e5da6a8a"
+      },
+      {
+        "path": "checks/deformation.json",
+        "fingerprint": "7001b9aaa75f0e67ad1cbecb564ae84a0428eaef30abe929f2b01ec80fba6c30"
+      },
+      {
+        "path": "target",
+        "fingerprint": "e4771cd714bfdd155d8a45ad92b2ce26dccff22c54aedf826d494465edfb0b7a"
+      }
+    ],
+    "plan": {
+      "schema": "axm.product-workflow-plan/v1",
+      "product_type": "animated-3d",
+      "brief": {
+        "purpose": "Preserve and validate an authored two-joint flex clip",
+        "target": "Blender 4.3 Cycles CPU",
+        "quality_intent": "Closed bend without triangle collapse, excessive stretch or movement at its fixed base"
+      },
+      "stages": [
+        {
+          "id": "brief",
+          "profession_id": "art-director",
+          "expected_evidence": "Purpose, audience, target device, units, budget and explicit acceptance conditions",
+          "gate": "declared",
+          "professional_scope": {
+            "owns": [
+              "Visual direction, style systems, reference/target boards and cross-asset coherence decisions within delegated creative scope.",
+              "Visual hierarchy, mood, palette/form language and review criteria for creative output.",
+              "Direction change records, dissent/tradeoff documentation and bounded visual acceptance evidence."
+            ],
+            "does_not_own": [
+              "Technical/runtime certification, product/user truth, individual craft execution, legal/IP decisions or constitutional authority.",
+              "Presenting subjective direction as universal aesthetic truth."
+            ],
+            "escalates_when": [
+              "Direction conflicts with gameplay/readability/accessibility/performance constraints.",
+              "Creative-source provenance, user impact or product intent is unresolved."
+            ]
+          }
+        },
+        {
+          "id": "direction",
+          "profession_id": "art-director",
+          "expected_evidence": "References/provenance, composition, palette, material identity and detail hierarchy",
+          "gate": "review",
+          "professional_scope": {
+            "owns": [
+              "Visual direction, style systems, reference/target boards and cross-asset coherence decisions within delegated creative scope.",
+              "Visual hierarchy, mood, palette/form language and review criteria for creative output.",
+              "Direction change records, dissent/tradeoff documentation and bounded visual acceptance evidence."
+            ],
+            "does_not_own": [
+              "Technical/runtime certification, product/user truth, individual craft execution, legal/IP decisions or constitutional authority.",
+              "Presenting subjective direction as universal aesthetic truth."
+            ],
+            "escalates_when": [
+              "Direction conflicts with gameplay/readability/accessibility/performance constraints.",
+              "Creative-source provenance, user impact or product intent is unresolved."
+            ]
+          }
+        },
+        {
+          "id": "blockout",
+          "profession_id": "3d-artist",
+          "expected_evidence": "Silhouette, dimensions, primary forms and assembly relationships",
+          "gate": "review",
+          "professional_scope": {
+            "owns": [
+              "3D modeling, sculpting, topology, UV/layout, surface/material authoring and authored asset variants.",
+              "Silhouette, proportion, form readability and asset-level visual craft within accepted direction.",
+              "Source/editable asset continuity and visual comparison across revisions."
+            ],
+            "does_not_own": [
+              "Engine integration acceptance, collision/navigation behavior, final optimization targets, animation systems or product/gameplay authority.",
+              "Calling a render or clean mesh game-ready without integration evidence."
+            ],
+            "escalates_when": [
+              "Technical budgets, rig/deformation, collision or runtime constraints require specialist changes.",
+              "Direction or readability goals conflict materially with optimization."
+            ]
+          }
+        },
+        {
+          "id": "geometry",
+          "profession_id": "3d-artist",
+          "expected_evidence": "Primary/secondary forms, normals, winding, pivots, sockets and topology",
+          "gate": "observe",
+          "professional_scope": {
+            "owns": [
+              "3D modeling, sculpting, topology, UV/layout, surface/material authoring and authored asset variants.",
+              "Silhouette, proportion, form readability and asset-level visual craft within accepted direction.",
+              "Source/editable asset continuity and visual comparison across revisions."
+            ],
+            "does_not_own": [
+              "Engine integration acceptance, collision/navigation behavior, final optimization targets, animation systems or product/gameplay authority.",
+              "Calling a render or clean mesh game-ready without integration evidence."
+            ],
+            "escalates_when": [
+              "Technical budgets, rig/deformation, collision or runtime constraints require specialist changes.",
+              "Direction or readability goals conflict materially with optimization."
+            ]
+          }
+        },
+        {
+          "id": "uv-layout",
+          "profession_id": "technical-artist",
+          "expected_evidence": "Noncollapsed UVs, texel density, seams, overlaps, padding and scale",
+          "gate": "observe",
+          "professional_scope": {
+            "owns": [
+              "Art-to-engine asset pipeline contracts, import/export validation and technical visual constraints.",
+              "Shader/material setup, rig/asset technical support and performance-aware asset preparation.",
+              "LOD, batching, texture/material budget evidence and artist-facing tooling within accepted targets."
+            ],
+            "does_not_own": [
+              "Final aesthetic direction, engine architecture, gameplay rules, source-art authorship or target-device performance certification.",
+              "Calling a technically valid import visually good or gameplay-ready without adjacent evidence."
+            ],
+            "escalates_when": [
+              "Optimization materially changes silhouette, readability, deformation or authored intent.",
+              "Engine/runtime constraints require architecture changes or target-device evidence is missing."
+            ]
+          }
+        },
+        {
+          "id": "surface-intent",
+          "profession_id": "3d-artist",
+          "expected_evidence": "Physical scale, substrate/coating, channel meanings and colour-space contract",
+          "gate": "declared",
+          "professional_scope": {
+            "owns": [
+              "3D modeling, sculpting, topology, UV/layout, surface/material authoring and authored asset variants.",
+              "Silhouette, proportion, form readability and asset-level visual craft within accepted direction.",
+              "Source/editable asset continuity and visual comparison across revisions."
+            ],
+            "does_not_own": [
+              "Engine integration acceptance, collision/navigation behavior, final optimization targets, animation systems or product/gameplay authority.",
+              "Calling a render or clean mesh game-ready without integration evidence."
+            ],
+            "escalates_when": [
+              "Technical budgets, rig/deformation, collision or runtime constraints require specialist changes.",
+              "Direction or readability goals conflict materially with optimization."
+            ]
+          }
+        },
+        {
+          "id": "maps",
+          "profession_id": "3d-artist",
+          "expected_evidence": "Base colour, normal, roughness, metallic, AO, height and optional protected wear layers",
+          "gate": "observe",
+          "professional_scope": {
+            "owns": [
+              "3D modeling, sculpting, topology, UV/layout, surface/material authoring and authored asset variants.",
+              "Silhouette, proportion, form readability and asset-level visual craft within accepted direction.",
+              "Source/editable asset continuity and visual comparison across revisions."
+            ],
+            "does_not_own": [
+              "Engine integration acceptance, collision/navigation behavior, final optimization targets, animation systems or product/gameplay authority.",
+              "Calling a render or clean mesh game-ready without integration evidence."
+            ],
+            "escalates_when": [
+              "Technical budgets, rig/deformation, collision or runtime constraints require specialist changes.",
+              "Direction or readability goals conflict materially with optimization."
+            ]
+          }
+        },
+        {
+          "id": "map-checks",
+          "profession_id": "technical-artist",
+          "expected_evidence": "Decoded images, normal direction/length, budgets and declared tiling policy",
+          "gate": "observe",
+          "professional_scope": {
+            "owns": [
+              "Art-to-engine asset pipeline contracts, import/export validation and technical visual constraints.",
+              "Shader/material setup, rig/asset technical support and performance-aware asset preparation.",
+              "LOD, batching, texture/material budget evidence and artist-facing tooling within accepted targets."
+            ],
+            "does_not_own": [
+              "Final aesthetic direction, engine architecture, gameplay rules, source-art authorship or target-device performance certification.",
+              "Calling a technically valid import visually good or gameplay-ready without adjacent evidence."
+            ],
+            "escalates_when": [
+              "Optimization materially changes silhouette, readability, deformation or authored intent.",
+              "Engine/runtime constraints require architecture changes or target-device evidence is missing."
+            ]
+          }
+        },
+        {
+          "id": "look-development",
+          "profession_id": "graphics-engineer",
+          "expected_evidence": "Actual maps rendered on the product at intended scale under multiple lights",
+          "gate": "observe",
+          "professional_scope": {
+            "owns": [
+              "Rendering architecture, graphics APIs, shader/material execution, geometry/visibility/lighting pipelines and graphics-specific performance evidence.",
+              "Renderer correctness, artifact diagnosis, GPU/CPU resource boundaries and reproducible render evidence."
+            ],
+            "does_not_own": [
+              "Art direction, visual taste, asset authorship, gameplay/system design, product priority, hardware-driver correctness or accessibility acceptance by default.",
+              "Declaring a render aesthetically successful merely because the pipeline executes."
+            ],
+            "escalates_when": [
+              "A technical rendering change alters art direction, gameplay readability or accessibility intent.",
+              "Observed artifacts may originate in driver/hardware/asset-authoring surfaces outside renderer ownership."
+            ]
+          }
+        },
+        {
+          "id": "mesh-baking",
+          "profession_id": "technical-artist",
+          "expected_evidence": "Mesh-derived AO, explicit high-to-low normal transfer and cage coverage when requested",
+          "gate": "observe",
+          "professional_scope": {
+            "owns": [
+              "Art-to-engine asset pipeline contracts, import/export validation and technical visual constraints.",
+              "Shader/material setup, rig/asset technical support and performance-aware asset preparation.",
+              "LOD, batching, texture/material budget evidence and artist-facing tooling within accepted targets."
+            ],
+            "does_not_own": [
+              "Final aesthetic direction, engine architecture, gameplay rules, source-art authorship or target-device performance certification.",
+              "Calling a technically valid import visually good or gameplay-ready without adjacent evidence."
+            ],
+            "escalates_when": [
+              "Optimization materially changes silhouette, readability, deformation or authored intent.",
+              "Engine/runtime constraints require architecture changes or target-device evidence is missing."
+            ]
+          }
+        },
+        {
+          "id": "assembly",
+          "profession_id": "technical-artist",
+          "expected_evidence": "Textures bound to exact parts; contacts, clearances and mounts inspected",
+          "gate": "observe",
+          "professional_scope": {
+            "owns": [
+              "Art-to-engine asset pipeline contracts, import/export validation and technical visual constraints.",
+              "Shader/material setup, rig/asset technical support and performance-aware asset preparation.",
+              "LOD, batching, texture/material budget evidence and artist-facing tooling within accepted targets."
+            ],
+            "does_not_own": [
+              "Final aesthetic direction, engine architecture, gameplay rules, source-art authorship or target-device performance certification.",
+              "Calling a technically valid import visually good or gameplay-ready without adjacent evidence."
+            ],
+            "escalates_when": [
+              "Optimization materially changes silhouette, readability, deformation or authored intent.",
+              "Engine/runtime constraints require architecture changes or target-device evidence is missing."
+            ]
+          }
+        },
+        {
+          "id": "rig-deformation",
+          "profession_id": "technical-artist",
+          "expected_evidence": "Hierarchy, bind pose, weights, deformation extremes and attachment stability",
+          "gate": "observe",
+          "professional_scope": {
+            "owns": [
+              "Art-to-engine asset pipeline contracts, import/export validation and technical visual constraints.",
+              "Shader/material setup, rig/asset technical support and performance-aware asset preparation.",
+              "LOD, batching, texture/material budget evidence and artist-facing tooling within accepted targets."
+            ],
+            "does_not_own": [
+              "Final aesthetic direction, engine architecture, gameplay rules, source-art authorship or target-device performance certification.",
+              "Calling a technically valid import visually good or gameplay-ready without adjacent evidence."
+            ],
+            "escalates_when": [
+              "Optimization materially changes silhouette, readability, deformation or authored intent.",
+              "Engine/runtime constraints require architecture changes or target-device evidence is missing."
+            ]
+          }
+        },
+        {
+          "id": "motion",
+          "profession_id": "motion-designer",
+          "expected_evidence": "Timing, contact, arcs, secondary motion, loops and transitions",
+          "gate": "observe",
+          "professional_scope": {
+            "owns": [
+              "Motion language, transition timing, choreography and state-change feedback.",
+              "Animation prototypes/specifications tied to exact UI or visual states.",
+              "Reduced-motion alternatives and bounded perceptual evidence."
+            ],
+            "does_not_own": [
+              "Interaction rules, frontend implementation acceptance, accessibility conformance or final art direction.",
+              "Calling smooth motion usable or accessible without relevant evidence."
+            ],
+            "escalates_when": [
+              "Motion changes interaction timing/meaning or conflicts with reduced-motion/accessibility needs.",
+              "Runtime performance or rendering constraints change the designed behavior."
+            ]
+          }
+        },
+        {
+          "id": "motion-inspection",
+          "profession_id": "software-qa-playtest",
+          "expected_evidence": "Multiple sampled poses and live continuous playback in the target",
+          "gate": "target",
+          "professional_scope": {
+            "owns": [
+              "Reproduction quality and exact-version/environment capture.",
+              "Regression-test design for observed behavior and failures.",
+              "Boundary, state-transition, input-event, retry, and failure-path probing.",
+              "Evidence classification and truth boundaries for QA claims.",
+              "Detection of contradictions between accepted behavior, tests, and candidate behavior.",
+              "QA risk handoffs and explicit HOLD recommendations when evidence is insufficient."
+            ],
+            "does_not_own": [
+              "Product identity, feature direction, business priority, or roadmap authority.",
+              "Final game balance or systems-design decisions.",
+              "Gameplay feel tuning except as observed evidence supplied to Gameplay.",
+              "Visual/art direction except as observed evidence supplied to Experience or Design.",
+              "Security acceptance, legal interpretation, or other specialist domains merely because a test can touch them.",
+              "Changing implementation solely so an existing test becomes green."
+            ],
+            "escalates_when": [
+              "Expected behavior is ambiguous, contradictory, or not grounded in accepted state.",
+              "A candidate intentionally changes an accepted contract and the owning profession has not resolved the new expectation.",
+              "A suspected safety, security, legal, privacy, or data-loss issue crosses QA ownership.",
+              "The available environment cannot reproduce the relevant execution surface honestly.",
+              "A failure appears to originate in the test harness rather than the product."
+            ]
+          }
+        },
+        {
+          "id": "refinement",
+          "profession_id": "art-director",
+          "expected_evidence": "Defect-led revision with preserved source, previous version and fresh downstream checks",
+          "gate": "review",
+          "professional_scope": {
+            "owns": [
+              "Visual direction, style systems, reference/target boards and cross-asset coherence decisions within delegated creative scope.",
+              "Visual hierarchy, mood, palette/form language and review criteria for creative output.",
+              "Direction change records, dissent/tradeoff documentation and bounded visual acceptance evidence."
+            ],
+            "does_not_own": [
+              "Technical/runtime certification, product/user truth, individual craft execution, legal/IP decisions or constitutional authority.",
+              "Presenting subjective direction as universal aesthetic truth."
+            ],
+            "escalates_when": [
+              "Direction conflicts with gameplay/readability/accessibility/performance constraints.",
+              "Creative-source provenance, user impact or product intent is unresolved."
+            ]
+          }
+        },
+        {
+          "id": "target-validation",
+          "profession_id": "software-qa-playtest",
+          "expected_evidence": "Actual target import/runtime, budgets, accessibility and required edge cases",
+          "gate": "target",
+          "professional_scope": {
+            "owns": [
+              "Reproduction quality and exact-version/environment capture.",
+              "Regression-test design for observed behavior and failures.",
+              "Boundary, state-transition, input-event, retry, and failure-path probing.",
+              "Evidence classification and truth boundaries for QA claims.",
+              "Detection of contradictions between accepted behavior, tests, and candidate behavior.",
+              "QA risk handoffs and explicit HOLD recommendations when evidence is insufficient."
+            ],
+            "does_not_own": [
+              "Product identity, feature direction, business priority, or roadmap authority.",
+              "Final game balance or systems-design decisions.",
+              "Gameplay feel tuning except as observed evidence supplied to Gameplay.",
+              "Visual/art direction except as observed evidence supplied to Experience or Design.",
+              "Security acceptance, legal interpretation, or other specialist domains merely because a test can touch them.",
+              "Changing implementation solely so an existing test becomes green."
+            ],
+            "escalates_when": [
+              "Expected behavior is ambiguous, contradictory, or not grounded in accepted state.",
+              "A candidate intentionally changes an accepted contract and the owning profession has not resolved the new expectation.",
+              "A suspected safety, security, legal, privacy, or data-loss issue crosses QA ownership.",
+              "The available environment cannot reproduce the relevant execution surface honestly.",
+              "A failure appears to originate in the test harness rather than the product."
+            ]
+          }
+        },
+        {
+          "id": "delivery",
+          "profession_id": "integration-release-engineer",
+          "expected_evidence": "Editable source, artifacts, dependencies, licenses, instructions and unresolved limits",
+          "gate": "review",
+          "professional_scope": {
+            "owns": [
+              "Dependency ordering and exact composition mechanics.",
+              "Semantic-overlap detection across concurrent software changes.",
+              "Preservation of newer accepted state while carrying bounded stale-branch deltas forward.",
+              "Exact-candidate structural/build/package verification and integration evidence.",
+              "Release candidate identity, rollback continuity, and accepted-state synchronization."
+            ],
+            "does_not_own": [
+              "Product identity, feature direction, game/system rules, UX/art decisions, security acceptance, legal interpretation, or business priority.",
+              "Changing another profession's accepted expectation merely to make composition easy.",
+              "Calling a candidate professionally correct because Git reports it mergeable or CI is green."
+            ],
+            "escalates_when": [
+              "Two changes encode contradictory domain expectations.",
+              "A candidate cannot be verified on its exact composition.",
+              "Landing would overwrite newer accepted state or lose provenance.",
+              "Release or migration cannot be rolled back or otherwise recovered within the declared continuity contract.",
+              "Security, privacy, legal, safety, or other specialist acceptance is required beyond integration evidence."
+            ]
+          }
+        },
+        {
+          "id": "retained-practice",
+          "profession_id": "technical-artist",
+          "expected_evidence": "Distinct local observations; transfer only within compatible context",
+          "gate": "observe",
+          "professional_scope": {
+            "owns": [
+              "Art-to-engine asset pipeline contracts, import/export validation and technical visual constraints.",
+              "Shader/material setup, rig/asset technical support and performance-aware asset preparation.",
+              "LOD, batching, texture/material budget evidence and artist-facing tooling within accepted targets."
+            ],
+            "does_not_own": [
+              "Final aesthetic direction, engine architecture, gameplay rules, source-art authorship or target-device performance certification.",
+              "Calling a technically valid import visually good or gameplay-ready without adjacent evidence."
+            ],
+            "escalates_when": [
+              "Optimization materially changes silhouette, readability, deformation or authored intent.",
+              "Engine/runtime constraints require architecture changes or target-device evidence is missing."
+            ]
+          }
+        }
+      ],
+      "unbound_stages": [
+        {
+          "stage": "brief",
+          "owner": "art-director",
+          "needed": "Purpose, audience, target device, units, budget and explicit acceptance conditions"
+        },
+        {
+          "stage": "direction",
+          "owner": "art-director",
+          "needed": "References/provenance, composition, palette, material identity and detail hierarchy"
+        },
+        {
+          "stage": "blockout",
+          "owner": "3d-artist",
+          "needed": "Silhouette, dimensions, primary forms and assembly relationships"
+        },
+        {
+          "stage": "geometry",
+          "owner": "3d-artist",
+          "needed": "Primary/secondary forms, normals, winding, pivots, sockets and topology"
+        },
+        {
+          "stage": "uv-layout",
+          "owner": "technical-artist",
+          "needed": "Noncollapsed UVs, texel density, seams, overlaps, padding and scale"
+        },
+        {
+          "stage": "surface-intent",
+          "owner": "3d-artist",
+          "needed": "Physical scale, substrate/coating, channel meanings and colour-space contract"
+        },
+        {
+          "stage": "maps",
+          "owner": "3d-artist",
+          "needed": "Base colour, normal, roughness, metallic, AO, height and optional protected wear layers"
+        },
+        {
+          "stage": "map-checks",
+          "owner": "technical-artist",
+          "needed": "Decoded images, normal direction/length, budgets and declared tiling policy"
+        },
+        {
+          "stage": "look-development",
+          "owner": "graphics-engineer",
+          "needed": "Actual maps rendered on the product at intended scale under multiple lights"
+        },
+        {
+          "stage": "mesh-baking",
+          "owner": "technical-artist",
+          "needed": "Mesh-derived AO, explicit high-to-low normal transfer and cage coverage when requested"
+        },
+        {
+          "stage": "assembly",
+          "owner": "technical-artist",
+          "needed": "Textures bound to exact parts; contacts, clearances and mounts inspected"
+        },
+        {
+          "stage": "rig-deformation",
+          "owner": "technical-artist",
+          "needed": "Hierarchy, bind pose, weights, deformation extremes and attachment stability"
+        },
+        {
+          "stage": "motion",
+          "owner": "motion-designer",
+          "needed": "Timing, contact, arcs, secondary motion, loops and transitions"
+        },
+        {
+          "stage": "motion-inspection",
+          "owner": "software-qa-playtest",
+          "needed": "Multiple sampled poses and live continuous playback in the target"
+        },
+        {
+          "stage": "refinement",
+          "owner": "art-director",
+          "needed": "Defect-led revision with preserved source, previous version and fresh downstream checks"
+        },
+        {
+          "stage": "target-validation",
+          "owner": "software-qa-playtest",
+          "needed": "Actual target import/runtime, budgets, accessibility and required edge cases"
+        },
+        {
+          "stage": "delivery",
+          "owner": "integration-release-engineer",
+          "needed": "Editable source, artifacts, dependencies, licenses, instructions and unresolved limits"
+        },
+        {
+          "stage": "retained-practice",
+          "owner": "technical-artist",
+          "needed": "Distinct local observations; transfer only within compatible context"
+        }
+      ],
+      "stepwise_plan": {
+        "schema": "axm.stepwise-perspective-plan/v0.1",
+        "goal": "Preserve and validate an authored two-joint flex clip",
+        "steps": [
+          {
+            "id": "brief",
+            "purpose": "Purpose, audience, target device, units, budget and explicit acceptance conditions",
+            "mode": "analysis",
+            "expected_evidence": [
+              "Purpose, audience, target device, units, budget and explicit acceptance conditions"
+            ],
+            "stop_condition": "Unresolved evidence or required judgment holds this stage",
+            "depends_on": [],
+            "split_depth": 0,
+            "perspective_focus": "art-director"
+          },
+          {
+            "id": "direction",
+            "purpose": "References/provenance, composition, palette, material identity and detail hierarchy",
+            "mode": "analysis",
+            "expected_evidence": [
+              "References/provenance, composition, palette, material identity and detail hierarchy"
+            ],
+            "stop_condition": "Unresolved evidence or required judgment holds this stage",
+            "depends_on": [
+              "brief"
+            ],
+            "split_depth": 0,
+            "perspective_focus": "art-director"
+          },
+          {
+            "id": "blockout",
+            "purpose": "Silhouette, dimensions, primary forms and assembly relationships",
+            "mode": "analysis",
+            "expected_evidence": [
+              "Silhouette, dimensions, primary forms and assembly relationships"
+            ],
+            "stop_condition": "Unresolved evidence or required judgment holds this stage",
+            "depends_on": [
+              "direction"
+            ],
+            "split_depth": 0,
+            "perspective_focus": "3d-artist"
+          },
+          {
+            "id": "geometry",
+            "purpose": "Primary/secondary forms, normals, winding, pivots, sockets and topology",
+            "mode": "analysis",
+            "expected_evidence": [
+              "Primary/secondary forms, normals, winding, pivots, sockets and topology"
+            ],
+            "stop_condition": "Unresolved evidence or required judgment holds this stage",
+            "depends_on": [
+              "blockout"
+            ],
+            "split_depth": 0,
+            "perspective_focus": "3d-artist"
+          },
+          {
+            "id": "uv-layout",
+            "purpose": "Noncollapsed UVs, texel density, seams, overlaps, padding and scale",
+            "mode": "analysis",
+            "expected_evidence": [
+              "Noncollapsed UVs, texel density, seams, overlaps, padding and scale"
+            ],
+            "stop_condition": "Unresolved evidence or required judgment holds this stage",
+            "depends_on": [
+              "geometry"
+            ],
+            "split_depth": 0,
+            "perspective_focus": "technical-artist"
+          },
+          {
+            "id": "surface-intent",
+            "purpose": "Physical scale, substrate/coating, channel meanings and colour-space contract",
+            "mode": "analysis",
+            "expected_evidence": [
+              "Physical scale, substrate/coating, channel meanings and colour-space contract"
+            ],
+            "stop_condition": "Unresolved evidence or required judgment holds this stage",
+            "depends_on": [
+              "uv-layout"
+            ],
+            "split_depth": 0,
+            "perspective_focus": "3d-artist"
+          },
+          {
+            "id": "maps",
+            "purpose": "Base colour, normal, roughness, metallic, AO, height and optional protected wear layers",
+            "mode": "analysis",
+            "expected_evidence": [
+              "Base colour, normal, roughness, metallic, AO, height and optional protected wear layers"
+            ],
+            "stop_condition": "Unresolved evidence or required judgment holds this stage",
+            "depends_on": [
+              "surface-intent"
+            ],
+            "split_depth": 0,
+            "perspective_focus": "3d-artist"
+          },
+          {
+            "id": "map-checks",
+            "purpose": "Decoded images, normal direction/length, budgets and declared tiling policy",
+            "mode": "analysis",
+            "expected_evidence": [
+              "Decoded images, normal direction/length, budgets and declared tiling policy"
+            ],
+            "stop_condition": "Unresolved evidence or required judgment holds this stage",
+            "depends_on": [
+              "maps"
+            ],
+            "split_depth": 0,
+            "perspective_focus": "technical-artist"
+          },
+          {
+            "id": "look-development",
+            "purpose": "Actual maps rendered on the product at intended scale under multiple lights",
+            "mode": "analysis",
+            "expected_evidence": [
+              "Actual maps rendered on the product at intended scale under multiple lights"
+            ],
+            "stop_condition": "Unresolved evidence or required judgment holds this stage",
+            "depends_on": [
+              "map-checks"
+            ],
+            "split_depth": 0,
+            "perspective_focus": "graphics-engineer"
+          },
+          {
+            "id": "mesh-baking",
+            "purpose": "Mesh-derived AO, explicit high-to-low normal transfer and cage coverage when requested",
+            "mode": "analysis",
+            "expected_evidence": [
+              "Mesh-derived AO, explicit high-to-low normal transfer and cage coverage when requested"
+            ],
+            "stop_condition": "Unresolved evidence or required judgment holds this stage",
+            "depends_on": [
+              "look-development"
+            ],
+            "split_depth": 0,
+            "perspective_focus": "technical-artist"
+          },
+          {
+            "id": "assembly",
+            "purpose": "Textures bound to exact parts; contacts, clearances and mounts inspected",
+            "mode": "analysis",
+            "expected_evidence": [
+              "Textures bound to exact parts; contacts, clearances and mounts inspected"
+            ],
+            "stop_condition": "Unresolved evidence or required judgment holds this stage",
+            "depends_on": [
+              "mesh-baking"
+            ],
+            "split_depth": 0,
+            "perspective_focus": "technical-artist"
+          },
+          {
+            "id": "rig-deformation",
+            "purpose": "Hierarchy, bind pose, weights, deformation extremes and attachment stability",
+            "mode": "analysis",
+            "expected_evidence": [
+              "Hierarchy, bind pose, weights, deformation extremes and attachment stability"
+            ],
+            "stop_condition": "Unresolved evidence or required judgment holds this stage",
+            "depends_on": [
+              "assembly"
+            ],
+            "split_depth": 0,
+            "perspective_focus": "technical-artist"
+          },
+          {
+            "id": "motion",
+            "purpose": "Timing, contact, arcs, secondary motion, loops and transitions",
+            "mode": "analysis",
+            "expected_evidence": [
+              "Timing, contact, arcs, secondary motion, loops and transitions"
+            ],
+            "stop_condition": "Unresolved evidence or required judgment holds this stage",
+            "depends_on": [
+              "rig-deformation"
+            ],
+            "split_depth": 0,
+            "perspective_focus": "motion-designer"
+          },
+          {
+            "id": "motion-inspection",
+            "purpose": "Multiple sampled poses and live continuous playback in the target",
+            "mode": "analysis",
+            "expected_evidence": [
+              "Multiple sampled poses and live continuous playback in the target"
+            ],
+            "stop_condition": "Unresolved evidence or required judgment holds this stage",
+            "depends_on": [
+              "motion"
+            ],
+            "split_depth": 0,
+            "perspective_focus": "software-qa-playtest"
+          },
+          {
+            "id": "refinement",
+            "purpose": "Defect-led revision with preserved source, previous version and fresh downstream checks",
+            "mode": "analysis",
+            "expected_evidence": [
+              "Defect-led revision with preserved source, previous version and fresh downstream checks"
+            ],
+            "stop_condition": "Unresolved evidence or required judgment holds this stage",
+            "depends_on": [
+              "motion-inspection"
+            ],
+            "split_depth": 0,
+            "perspective_focus": "art-director"
+          },
+          {
+            "id": "target-validation",
+            "purpose": "Actual target import/runtime, budgets, accessibility and required edge cases",
+            "mode": "analysis",
+            "expected_evidence": [
+              "Actual target import/runtime, budgets, accessibility and required edge cases"
+            ],
+            "stop_condition": "Unresolved evidence or required judgment holds this stage",
+            "depends_on": [
+              "refinement"
+            ],
+            "split_depth": 0,
+            "perspective_focus": "software-qa-playtest"
+          },
+          {
+            "id": "delivery",
+            "purpose": "Editable source, artifacts, dependencies, licenses, instructions and unresolved limits",
+            "mode": "analysis",
+            "expected_evidence": [
+              "Editable source, artifacts, dependencies, licenses, instructions and unresolved limits"
+            ],
+            "stop_condition": "Unresolved evidence or required judgment holds this stage",
+            "depends_on": [
+              "target-validation"
+            ],
+            "split_depth": 0,
+            "perspective_focus": "integration-release-engineer"
+          },
+          {
+            "id": "retained-practice",
+            "purpose": "Distinct local observations; transfer only within compatible context",
+            "mode": "analysis",
+            "expected_evidence": [
+              "Distinct local observations; transfer only within compatible context"
+            ],
+            "stop_condition": "Unresolved evidence or required judgment holds this stage",
+            "depends_on": [
+              "delivery"
+            ],
+            "split_depth": 0,
+            "perspective_focus": "technical-artist"
+          }
+        ],
+        "planning_truth": "this is the selected explicit step plan; step size and semantic adequacy remain revisable through perspective checkpoints",
+        "plan_digest": "sha256:b75ca8e14867c9594cb7d49697f3e10f1b1b2a07b394b95b9f79ccb95e610854"
+      },
+      "draft_recipe_available": true,
+      "status": "PLANNED",
+      "truth": "Product-specific work contracts. Unbound stages are work to do, not executed specialists or acceptance."
+    },
+    "fresh_verification": "PASS",
+    "observed_stations": [
+      "brief-source",
+      "animation-source",
+      "deformation-check",
+      "target-import-render"
+    ],
+    "stage_observations": [
+      {
+        "stage": "brief",
+        "profession_id": "art-director",
+        "status": "DECLARED",
+        "observed_stations": [
+          "brief-source"
+        ],
+        "scope": "Purpose, audience, target device, units, budget and explicit acceptance conditions"
+      },
+      {
+        "stage": "direction",
+        "profession_id": "art-director",
+        "status": "DECLARED",
+        "observed_stations": [
+          "brief-source"
+        ],
+        "scope": "References/provenance, composition, palette, material identity and detail hierarchy"
+      },
+      {
+        "stage": "blockout",
+        "profession_id": "3d-artist",
+        "status": "PENDING",
+        "observed_stations": [],
+        "scope": "Silhouette, dimensions, primary forms and assembly relationships"
+      },
+      {
+        "stage": "geometry",
+        "profession_id": "3d-artist",
+        "status": "PENDING",
+        "observed_stations": [],
+        "scope": "Primary/secondary forms, normals, winding, pivots, sockets and topology"
+      },
+      {
+        "stage": "uv-layout",
+        "profession_id": "technical-artist",
+        "status": "PENDING",
+        "observed_stations": [],
+        "scope": "Noncollapsed UVs, texel density, seams, overlaps, padding and scale"
+      },
+      {
+        "stage": "surface-intent",
+        "profession_id": "3d-artist",
+        "status": "DECLARED",
+        "observed_stations": [
+          "brief-source"
+        ],
+        "scope": "Physical scale, substrate/coating, channel meanings and colour-space contract"
+      },
+      {
+        "stage": "maps",
+        "profession_id": "3d-artist",
+        "status": "PENDING",
+        "observed_stations": [],
+        "scope": "Base colour, normal, roughness, metallic, AO, height and optional protected wear layers"
+      },
+      {
+        "stage": "map-checks",
+        "profession_id": "technical-artist",
+        "status": "PENDING",
+        "observed_stations": [],
+        "scope": "Decoded images, normal direction/length, budgets and declared tiling policy"
+      },
+      {
+        "stage": "look-development",
+        "profession_id": "graphics-engineer",
+        "status": "PENDING",
+        "observed_stations": [],
+        "scope": "Actual maps rendered on the product at intended scale under multiple lights"
+      },
+      {
+        "stage": "mesh-baking",
+        "profession_id": "technical-artist",
+        "status": "PENDING",
+        "observed_stations": [],
+        "scope": "Mesh-derived AO, explicit high-to-low normal transfer and cage coverage when requested"
+      },
+      {
+        "stage": "assembly",
+        "profession_id": "technical-artist",
+        "status": "PENDING",
+        "observed_stations": [],
+        "scope": "Textures bound to exact parts; contacts, clearances and mounts inspected"
+      },
+      {
+        "stage": "rig-deformation",
+        "profession_id": "technical-artist",
+        "status": "PARTIAL",
+        "observed_stations": [
+          "animation-source",
+          "deformation-check"
+        ],
+        "scope": "Supplied rig, authored keys plus subdivisions, weight validity, collapse/stretch and declared loops/contacts"
+      },
+      {
+        "stage": "motion",
+        "profession_id": "motion-designer",
+        "status": "PENDING",
+        "observed_stations": [],
+        "scope": "Timing, contact, arcs, secondary motion, loops and transitions"
+      },
+      {
+        "stage": "motion-inspection",
+        "profession_id": "software-qa-playtest",
+        "status": "PARTIAL",
+        "observed_stations": [
+          "target-import-render"
+        ],
+        "scope": "Fresh Blender/Cycles imports and renders; pose/triangle comparison and image decode. Gameplay and device performance remain separate."
+      },
+      {
+        "stage": "refinement",
+        "profession_id": "art-director",
+        "status": "PENDING",
+        "observed_stations": [],
+        "scope": "Defect-led revision with preserved source, previous version and fresh downstream checks"
+      },
+      {
+        "stage": "target-validation",
+        "profession_id": "software-qa-playtest",
+        "status": "PARTIAL",
+        "observed_stations": [
+          "target-import-render"
+        ],
+        "scope": "Fresh Blender/Cycles imports and renders; pose/triangle comparison and image decode. Gameplay and device performance remain separate."
+      },
+      {
+        "stage": "delivery",
+        "profession_id": "integration-release-engineer",
+        "status": "PENDING",
+        "observed_stations": [],
+        "scope": "Editable source, artifacts, dependencies, licenses, instructions and unresolved limits"
+      },
+      {
+        "stage": "retained-practice",
+        "profession_id": "technical-artist",
+        "status": "OBSERVED_BOUNDED",
+        "observed_stations": [
+          "animation-source",
+          "brief-source",
+          "deformation-check",
+          "target-import-render"
+        ],
+        "scope": "Existing crew stores distinct local observations; no rank or automatic recipe synthesis"
+      }
+    ],
+    "remaining_work": [
+      {
+        "stage": "brief",
+        "profession_id": "art-director",
+        "status": "DECLARED",
+        "observed_stations": [
+          "brief-source"
+        ],
+        "scope": "Purpose, audience, target device, units, budget and explicit acceptance conditions"
+      },
+      {
+        "stage": "direction",
+        "profession_id": "art-director",
+        "status": "DECLARED",
+        "observed_stations": [
+          "brief-source"
+        ],
+        "scope": "References/provenance, composition, palette, material identity and detail hierarchy"
+      },
+      {
+        "stage": "blockout",
+        "profession_id": "3d-artist",
+        "status": "PENDING",
+        "observed_stations": [],
+        "scope": "Silhouette, dimensions, primary forms and assembly relationships"
+      },
+      {
+        "stage": "geometry",
+        "profession_id": "3d-artist",
+        "status": "PENDING",
+        "observed_stations": [],
+        "scope": "Primary/secondary forms, normals, winding, pivots, sockets and topology"
+      },
+      {
+        "stage": "uv-layout",
+        "profession_id": "technical-artist",
+        "status": "PENDING",
+        "observed_stations": [],
+        "scope": "Noncollapsed UVs, texel density, seams, overlaps, padding and scale"
+      },
+      {
+        "stage": "surface-intent",
+        "profession_id": "3d-artist",
+        "status": "DECLARED",
+        "observed_stations": [
+          "brief-source"
+        ],
+        "scope": "Physical scale, substrate/coating, channel meanings and colour-space contract"
+      },
+      {
+        "stage": "maps",
+        "profession_id": "3d-artist",
+        "status": "PENDING",
+        "observed_stations": [],
+        "scope": "Base colour, normal, roughness, metallic, AO, height and optional protected wear layers"
+      },
+      {
+        "stage": "map-checks",
+        "profession_id": "technical-artist",
+        "status": "PENDING",
+        "observed_stations": [],
+        "scope": "Decoded images, normal direction/length, budgets and declared tiling policy"
+      },
+      {
+        "stage": "look-development",
+        "profession_id": "graphics-engineer",
+        "status": "PENDING",
+        "observed_stations": [],
+        "scope": "Actual maps rendered on the product at intended scale under multiple lights"
+      },
+      {
+        "stage": "mesh-baking",
+        "profession_id": "technical-artist",
+        "status": "PENDING",
+        "observed_stations": [],
+        "scope": "Mesh-derived AO, explicit high-to-low normal transfer and cage coverage when requested"
+      },
+      {
+        "stage": "assembly",
+        "profession_id": "technical-artist",
+        "status": "PENDING",
+        "observed_stations": [],
+        "scope": "Textures bound to exact parts; contacts, clearances and mounts inspected"
+      },
+      {
+        "stage": "rig-deformation",
+        "profession_id": "technical-artist",
+        "status": "PARTIAL",
+        "observed_stations": [
+          "animation-source",
+          "deformation-check"
+        ],
+        "scope": "Supplied rig, authored keys plus subdivisions, weight validity, collapse/stretch and declared loops/contacts"
+      },
+      {
+        "stage": "motion",
+        "profession_id": "motion-designer",
+        "status": "PENDING",
+        "observed_stations": [],
+        "scope": "Timing, contact, arcs, secondary motion, loops and transitions"
+      },
+      {
+        "stage": "motion-inspection",
+        "profession_id": "software-qa-playtest",
+        "status": "PARTIAL",
+        "observed_stations": [
+          "target-import-render"
+        ],
+        "scope": "Fresh Blender/Cycles imports and renders; pose/triangle comparison and image decode. Gameplay and device performance remain separate."
+      },
+      {
+        "stage": "refinement",
+        "profession_id": "art-director",
+        "status": "PENDING",
+        "observed_stations": [],
+        "scope": "Defect-led revision with preserved source, previous version and fresh downstream checks"
+      },
+      {
+        "stage": "target-validation",
+        "profession_id": "software-qa-playtest",
+        "status": "PARTIAL",
+        "observed_stations": [
+          "target-import-render"
+        ],
+        "scope": "Fresh Blender/Cycles imports and renders; pose/triangle comparison and image decode. Gameplay and device performance remain separate."
+      },
+      {
+        "stage": "delivery",
+        "profession_id": "integration-release-engineer",
+        "status": "PENDING",
+        "observed_stations": [],
+        "scope": "Editable source, artifacts, dependencies, licenses, instructions and unresolved limits"
+      }
+    ],
+    "professional_acceptance": "NOT_TESTED",
+    "visual_quality": "NOT_TESTED",
+    "released": false,
+    "truth": "Executable draft recipe completed only where observed. Product lifecycle planning does not certify artistic, target or final delivery acceptance."
+  },
+  "collapsed_extreme": "FAIL",
+  "source_preserved": true,
+  "sources": {
+    "tools/mesh_production_demo.py": "b24634eab00cb6b5215a559ea026def2389540ea917b0981d7eb17e14dd7ce9e",
+    "src/axm_uc/mesh_production.py": "2aef0cccab937cef49de0e9384fa6a63d42f38ef3d0926f7ac152c56d65d2eea",
+    "src/axm_uc/mesh_quality.py": "c7656dee9c814f7d1513cb0728ea496d8b56ab30399bebc0fa14771860c329aa",
+    "src/axm_uc/blender_production_worker.py": "5014919bdb389dfe042a840a1f2d0f89c8bc5f7fa76a0db14f1895ceb6e29cb9",
+    "src/axm_uc/product_workflow.py": "55b3761c9a27f6c12d3190e2adb259d9bd6a83998d436b90d8c27a1ba033e715"
+  }
+}

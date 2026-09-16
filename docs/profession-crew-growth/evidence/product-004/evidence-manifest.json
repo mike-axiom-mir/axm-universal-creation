@@ -1,0 +1,94 @@
+{
+  "schema": "axm.production-evidence/v1",
+  "source_hashes": {
+    "tools/mesh_production_demo.py": "b24634eab00cb6b5215a559ea026def2389540ea917b0981d7eb17e14dd7ce9e",
+    "src/axm_uc/mesh_production.py": "2aef0cccab937cef49de0e9384fa6a63d42f38ef3d0926f7ac152c56d65d2eea",
+    "src/axm_uc/mesh_quality.py": "c7656dee9c814f7d1513cb0728ea496d8b56ab30399bebc0fa14771860c329aa",
+    "src/axm_uc/blender_production_worker.py": "5014919bdb389dfe042a840a1f2d0f89c8bc5f7fa76a0db14f1895ceb6e29cb9",
+    "src/axm_uc/product_workflow.py": "55b3761c9a27f6c12d3190e2adb259d9bd6a83998d436b90d8c27a1ba033e715"
+  },
+  "artifacts": [
+    {
+      "path": "case-front.png",
+      "bytes": 480772,
+      "sha256": "5985c4983d72dd08ab8ccf15058b7615a9b9a4099b1fe36d540802b95e30d693"
+    },
+    {
+      "path": "case-back.png",
+      "bytes": 454160,
+      "sha256": "d9f8cef5b15c10a15d4b2967f3bbb16388e7ac1ee008af2ce527ac416a5f0bc3"
+    },
+    {
+      "path": "case-front-coverage.png",
+      "bytes": 9101,
+      "sha256": "3b6e5dbe381d712e5c03b5e705f21c7818d338e373f6bcfb437cac0f348541af"
+    },
+    {
+      "path": "native-studio.png",
+      "bytes": 147908,
+      "sha256": "693f7502c90e0783d4d12a674cb91dcebf217d1550d46a7fafeb78566b67eb5c"
+    },
+    {
+      "path": "field-service-case.glb",
+      "bytes": 627616,
+      "sha256": "fcde9aeeb9dd3dac9190a3e2abfabc8e021fa2e65af6ee816a6e14af54f10c20"
+    },
+    {
+      "path": "flex.glb",
+      "bytes": 8384,
+      "sha256": "7ba5e8a5316d952a1be90314bd429185ba982c5c95ad82121be84715e5da6a8a"
+    },
+    {
+      "path": "flex-rest.png",
+      "bytes": 239118,
+      "sha256": "c79f8863e58c79f64e1a333cc094c64b06a8dbadc4b7ab54fb6bb9f9e26d8371"
+    },
+    {
+      "path": "flex-bent.png",
+      "bytes": 246602,
+      "sha256": "77c19ee3a47bac494307962b8be4d7415492ad0e26d1fe96ffe4b49fcf19e384"
+    },
+    {
+      "path": "production-report.json",
+      "bytes": 95547,
+      "sha256": "bbcb9de7b2ca5e0bc58ec2ef3920448477ba13475d788ffb17d52801cd073977"
+    },
+    {
+      "path": "uv-report.json",
+      "bytes": 2555,
+      "sha256": "cd118413601a23c58c692c3ad15a05f7673410e87141ed87a94696cf3d64e036"
+    },
+    {
+      "path": "bake-report.json",
+      "bytes": 1559,
+      "sha256": "0c7a119a6a642a0277b0f9a79b3fe037912ec2c3f8e8a5ab2c038338e32f949f"
+    },
+    {
+      "path": "target-case.json",
+      "bytes": 2128,
+      "sha256": "772dafb178c254225aa267bf951080af3cf38667d7548db0330b3e1f7b59f9f6"
+    },
+    {
+      "path": "deformation-report.json",
+      "bytes": 1910,
+      "sha256": "7001b9aaa75f0e67ad1cbecb564ae84a0428eaef30abe929f2b01ec80fba6c30"
+    },
+    {
+      "path": "target-flex.json",
+      "bytes": 2579,
+      "sha256": "523d9091b731ded400ea4a15c6461bfa4cafa9ff74ce06d485a0ba734329e870"
+    },
+    {
+      "path": "collapsed-extreme.json",
+      "bytes": 1366,
+      "sha256": "b4e3612b88002d4275d3f0c56365add972c7ae08d66062253d5b8fe1616110cf"
+    },
+    {
+      "path": "case-source.json",
+      "bytes": 389699,
+      "sha256": "0c5dbdbc9df96804f51219f74c1a9d43bddb27b4e738db92b0d4dd73e2d9dde6"
+    }
+  ],
+  "observed": "Linux, Python 3.12.14, Blender 4.3.2 build 32f5fdce0a0a, Cycles CPU, two threads",
+  "scope": "Exact source, per-material atlas, actual bake, actual target import/render and bounded sampled deformation; no automatic art acceptance."
+}

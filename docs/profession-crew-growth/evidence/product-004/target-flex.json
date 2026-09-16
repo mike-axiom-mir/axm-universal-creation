@@ -1,0 +1,104 @@
+{
+  "artifacts": {
+    "coverage-00.png": "d2fcc4f0bc8f8de4b51b6a41c167f1dea54f559fe0bc07dca4440b46847b91f4",
+    "coverage-01.png": "ed710357ab372a1950d6459810339c6bd6ac40fa9b2ff33e723ba02a71d288ae",
+    "view-00.png": "c79f8863e58c79f64e1a333cc094c64b06a8dbadc4b7ab54fb6bb9f9e26d8371",
+    "view-01.png": "77c19ee3a47bac494307962b8be4d7415492ad0e26d1fe96ffe4b49fcf19e384"
+  },
+  "backend": {
+    "build": "32f5fdce0a0a",
+    "version": "4.3.2",
+    "worker_sha256": "5014919bdb389dfe042a840a1f2d0f89c8bc5f7fa76a0db14f1895ceb6e29cb9"
+  },
+  "checks": [
+    {
+      "passed": true,
+      "type": "all-target-poses-observed"
+    },
+    {
+      "passed": true,
+      "type": "native-target-geometry-agreement"
+    },
+    {
+      "passed": true,
+      "type": "target-material-images-decoded"
+    },
+    {
+      "passed": true,
+      "type": "target-views-rendered"
+    }
+  ],
+  "images": [
+    {
+      "asset_visible_pixels": 36860,
+      "channel_range": 229,
+      "file": "view-00.png",
+      "height": 600,
+      "mask_dimensions_match": true,
+      "width": 480
+    },
+    {
+      "asset_visible_pixels": 46454,
+      "channel_range": 227,
+      "file": "view-01.png",
+      "height": 600,
+      "mask_dimensions_match": true,
+      "width": 480
+    }
+  ],
+  "kind": "validate-blender-target",
+  "options": {
+    "denoise": true,
+    "engine": "blender-cycles",
+    "environment_strength": 0.5,
+    "height": 600,
+    "pose_samples": 3,
+    "samples": 32,
+    "views": [
+      {
+        "clip": "Flex",
+        "elevation": 0.3,
+        "time_s": 0,
+        "yaw": 0.5
+      },
+      {
+        "clip": "Flex",
+        "elevation": 0.3,
+        "time_s": 0.5,
+        "yaw": 0.5
+      }
+    ],
+    "width": 480
+  },
+  "pose_comparison": [
+    {
+      "bounds_error_m": 0.0,
+      "clip": null,
+      "time_s": 0.0,
+      "triangles_match": true
+    },
+    {
+      "bounds_error_m": 0.0,
+      "clip": "Flex",
+      "time_s": 0.0,
+      "triangles_match": true
+    },
+    {
+      "bounds_error_m": 2.258831697243835e-07,
+      "clip": "Flex",
+      "time_s": 0.5,
+      "triangles_match": true
+    },
+    {
+      "bounds_error_m": 0.0,
+      "clip": "Flex",
+      "time_s": 1.0,
+      "triangles_match": true
+    }
+  ],
+  "schema": "axm.mesh-production/v1",
+  "scope": "Fresh Blender imports, native-vs-target pose bounds/triangle counts, image decode and Cycles renders. No Unity/Unreal/Godot, game controls or device performance claim.",
+  "source_sha256": "7ba5e8a5316d952a1be90314bd429185ba982c5c95ad82121be84715e5da6a8a",
+  "status": "PASS",
+  "target": "blender-cycles"
+}

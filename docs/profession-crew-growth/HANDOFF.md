@@ -128,3 +128,34 @@ demo's reuse of SurfaceBuilder.box. Its local adapter now uses explicit XYZ;
 existing authored workshop recipes are preserved. A world-dimension regression
 guards the new product path. Quality still needs actual target and aesthetic
 review; the machine exposes those stages as pending or partial.
+
+## Run 004 continuation — 2026-09-16
+
+User authorized implementing the remaining UV/bake/reflection/deformation/target
+steps. PR #146 has merged; the active successor is PR #150 on the same branch,
+`chatgpt/profession-crew-growth`. Do not merge it without further authorization.
+Main advanced through the precision cutter (#147) and existing-mesh cutter (#149);
+their source is preserved. No scheduled task is active.
+
+Read RUN_004.md and MESH_PRODUCTION.md. Five new ordinary capability stations
+use the existing crew runner. Native deformation/copy need only Python; actual
+unwrap/bake/Cycles target stations require optional local Blender (AXM_BLENDER
+or PATH). Tested Blender: 4.3.2, CPU. Requests never install it automatically.
+
+The authoritative large evidence run is production-verified, with immutable
+copies under evidence/product-004. Both static and supplied-animation workflows
+passed fresh observers. Four final target images were inspected; object masks,
+GLBs, source, QA reports and hashes are retained. Earlier smoke/visual/release
+scratch directories are development runs and are not final evidence.
+
+The independent ray check is essential: a missed high-to-low bake can be blue
+rather than black. Likewise force Blender image pixels before checking has_data,
+and use internal temporary group names to avoid Blender truncation/renumbering.
+Final render checks include actual object-index coverage, not background variance
+alone. Optional backend CI executes these paths; no engine/aesthetic acceptance
+is inferred from a caller-supplied PASS.
+
+Still bounded: unique per-material atlases rather than UDIM; AO/normal rather
+than curvature/thickness; supplied rigs rather than automatic rig authoring;
+sampled keys/contacts/loops rather than self-intersection or continuous playback;
+Blender/Cycles rather than Unity/Unreal/Godot gameplay. Products remain drafts.
