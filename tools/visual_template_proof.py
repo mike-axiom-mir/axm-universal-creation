@@ -8,7 +8,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src'))
 from axm_uc import visual_templates as vt
 
 SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
-PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell","visual.keyart.core","visual.cards.core","visual.cinematic.core","visual.broadcast.core","visual.diagram.core","visual.atlas.core","visual.novel.core","visual.showroom.core","visual.music.core","visual.presentation.core","visual.character.core","visual.configurator.core","visual.motion.core","visual.brand.core","visual.environment.core","visual.vfx.core","visual.mission.core","visual.hud.core","visual.look.core")
+PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell","visual.keyart.core","visual.cards.core","visual.cinematic.core","visual.broadcast.core","visual.diagram.core","visual.atlas.core","visual.novel.core","visual.showroom.core","visual.music.core","visual.presentation.core","visual.character.core","visual.configurator.core","visual.motion.core","visual.brand.core","visual.environment.core","visual.vfx.core","visual.mission.core","visual.hud.core","visual.look.core","visual.camera.core")
 
 def _write(project,target):
     target.mkdir(); out=[]
@@ -25,7 +25,7 @@ def main(argv):
     out.mkdir(parents=True)
     try:
         counts=vt.validate_catalog()
-        if counts!={'styles':31,'primitives':256,'screens':294,'products':29}: raise AssertionError(counts)
+        if counts!={'styles':32,'primitives':266,'screens':304,'products':30}: raise AssertionError(counts)
         evidence=[]
         for pid in PRODUCTS:
             expected=vt.get(pid)
@@ -64,33 +64,34 @@ def main(argv):
             ('visual.mission.core',1920,1080,'mission','AXM Quest and Mission Flow Foundation'),
             ('visual.hud.core',1920,1080,'hud','AXM Source-Bound HUD Theme Foundation'),
             ('visual.look.core',1920,1080,'lighting-look','AXM Lighting and Post-Process Look Foundation'),
+            ('visual.camera.core',1920,1080,'camera','AXM Camera and Shot Reference Foundation'),
         )
         outputs=[]
         for pid,w,h,folder,title in galleries: outputs+=_write(vt.product_project(pid,w,h,title),out/folder)
         outputs+=_write(vt.screen_project('product.mobile.home',1080,1920,'AXM Mobile Foundation'),out/'mobile-home')
-        product=vt.get('visual.look.core')
-        required={'visual.look.project-hub','visual.look.exposure-tone','visual.look.color-grade','visual.look.fog-atmosphere','visual.look.bloom-glare','visual.look.layer-stack','visual.look.scene-bindings','visual.look.platform-performance','visual.look.compare-preview','visual.look.review-export'}
-        if set(product['screens'])!=required: raise AssertionError('lighting look pack lost required surfaces')
+        product=vt.get('visual.camera.core')
+        required={'visual.camera.project-hub','visual.camera.rig-editor','visual.camera.target-framing','visual.camera.lens-fov','visual.camera.constraints','visual.camera.transitions','visual.camera.runtime-bindings','visual.camera.platform-variants','visual.camera.compare-preview','visual.camera.review-export'}
+        if set(product['screens'])!=required: raise AssertionError('camera pack lost required surfaces')
         checks={
-            'look_identity_source_context':vt.PRIMITIVES['look-source']['identity_source_version_context_required'],
-            'exposure_value_range_source_context':vt.PRIMITIVES['exposure-state']['value_range_source_context_required'],
-            'tone_operator_parameters_output_source':vt.PRIMITIVES['tone-map-state']['operator_parameters_output_source_required'],
-            'grade_transform_spaces_intensity_source':vt.PRIMITIVES['color-grade-state']['transform_spaces_intensity_source_required'],
-            'fog_density_range_scattering_source':vt.PRIMITIVES['fog-atmosphere-state']['density_range_scattering_source_required'],
-            'bloom_threshold_intensity_radius_source':vt.PRIMITIVES['bloom-glare-state']['threshold_intensity_radius_source_required'],
-            'layer_identity_parameters_blend_order_scope':vt.PRIMITIVES['postprocess-layer']['identity_parameters_blend_order_scope_required'],
-            'scene_binding_target_look_source_activation':vt.PRIMITIVES['scene-look-binding']['target_look_source_activation_required'],
-            'variant_base_delta_platform_context':vt.PRIMITIVES['look-platform-variant']['base_delta_platform_context_required'],
-            'export_requirements_visible':vt.PRIMITIVES['look-export-target']['requirements_must_be_visible'],
+            'camera_identity_source_owner':vt.PRIMITIVES['camera-source']['identity_source_version_owner_required'],
+            'rig_identity_parent_transform_source':vt.PRIMITIVES['camera-rig']['identity_parent_transform_source_required'],
+            'target_anchor_source_status':vt.PRIMITIVES['camera-target']['target_anchor_source_status_required'],
+            'lens_projection_fov_source':vt.PRIMITIVES['lens-state']['projection_lens_fov_source_required'],
+            'framing_viewport_target_guide_source':vt.PRIMITIVES['framing-guide']['viewport_target_guide_source_required'],
+            'transition_from_to_trigger_duration':vt.PRIMITIVES['camera-transition']['from_to_trigger_duration_required'],
+            'constraint_subject_rule_source_status':vt.PRIMITIVES['camera-constraint']['subject_rule_source_status_required'],
+            'runtime_binding_state_camera_source_authority':vt.PRIMITIVES['camera-runtime-binding']['state_camera_source_authority_required'],
+            'platform_base_delta_input':vt.PRIMITIVES['camera-platform-variant']['base_delta_platform_input_required'],
+            'export_requirements_visible':vt.PRIMITIVES['camera-export-target']['requirements_must_be_visible'],
         }
-        if not all(checks.values()): raise AssertionError('lighting look source/binding contract failed')
+        if not all(checks.values()): raise AssertionError('camera source/authority contract failed')
         retained={
+            'look_source':vt.PRIMITIVES['look-source']['identity_source_version_context_required'],
+            'scene_look_binding':vt.PRIMITIVES['scene-look-binding']['target_look_source_activation_required'],
             'hud_source':vt.PRIMITIVES['hud-source']['identity_source_version_context_required'],
             'hud_binding':vt.PRIMITIVES['hud-data-binding']['subject_field_source_freshness_required'],
             'mission_source':vt.PRIMITIVES['mission-source']['identity_source_version_context_required'],
-            'objective_state':vt.PRIMITIVES['objective-state']['identity_type_status_source_required'],
             'vfx_source':vt.PRIMITIVES['vfx-source']['identity_source_version_purpose_required'],
-            'vfx_interaction':vt.PRIMITIVES['vfx-interaction-hook']['subject_event_response_source_required'],
             'environment_source':vt.PRIMITIVES['environment-source']['identity_source_version_scope_required'],
             'brand_asset':vt.PRIMITIVES['brand-asset-source']['identity_source_version_provenance_required'],
             'motion_state':vt.PRIMITIVES['motion-state']['source_target_identity_required'],
@@ -103,7 +104,7 @@ def main(argv):
             'atlas_coordinate':vt.PRIMITIVES['map-coordinate']['system_source_precision_required'],
         }
         if not all(retained.values()): raise AssertionError('prior visual source boundary failed')
-        receipt={'schema':'axm.visual-template-proof/v25','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'lighting_checks':checks,'retained_checks':retained,'truth':'Offline structural evidence only. Physical lighting correctness, calibrated color output, accessibility acceptance, GPU cost, target-engine parity and aesthetic quality were not observed.'}
+        receipt={'schema':'axm.visual-template-proof/v26','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'camera_checks':checks,'retained_checks':retained,'truth':'Offline structural evidence only. Camera feel, motion comfort, collision behavior, target-engine parity, gameplay suitability and aesthetic quality were not observed.'}
         (out/'receipt.json').write_text(json.dumps(receipt,indent=2,sort_keys=True),encoding='utf-8')
         print(json.dumps(receipt,indent=2,sort_keys=True))
     except BaseException:
