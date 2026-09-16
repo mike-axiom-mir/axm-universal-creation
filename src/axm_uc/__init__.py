@@ -20,6 +20,7 @@ def _register_extension_builtins() -> None:
     from .design_workshop import DesignWorkshopError, operate_design_workshop
     from .design_workshop_construction import DesignWorkshopConstructionError, operate_workshop_construction
     from .fabric_sources import FabricSourceError, inspect_fabric_sources
+    from .profession_crew import ProfessionCrewError, operate_profession_crew, prepare_profession_specialists
     from .simulation import SimulationError, operate_simulation
     from .specialist_pool_extension import build_specialist_pool as _contextual_pool_builder
     from .stepwise_workflow import StepwiseWorkflowError, operate_stepwise_workflow
@@ -127,6 +128,11 @@ def _register_extension_builtins() -> None:
             operation == "prepare" and ("goal" in inputs or "request" in inputs)
         )
         try:
+            if operation == "prepare" and "profession_workflow" in inputs:
+                professional = inputs["profession_workflow"]
+                if not isinstance(professional, dict):
+                    raise ValueError("profession_workflow must be an explicit professional job object")
+                return prepare_profession_specialists(root, {**inputs, **professional})
             if is_stepwise:
                 return operate_stepwise_workflow(root, inputs)
             return _specialist_pool.operate_specialist_tournament(root, inputs)
@@ -234,6 +240,13 @@ def _register_extension_builtins() -> None:
         except (FabricSourceError, ValueError, TypeError) as exc:
             raise _capabilities.CapabilityError(str(exc)) from exc
 
+    def profession_crew_surface(root, inputs):
+        from .adoption_lock import CandidateAdoptionLockError
+        try:
+            return operate_profession_crew(root, inputs)
+        except (ProfessionCrewError, StepwiseWorkflowError, CandidateAdoptionLockError, ValueError, TypeError, OSError) as exc:
+            raise _capabilities.CapabilityError(str(exc)) from exc
+
     _capabilities.BUILTINS["builtin:specialist_tournament"] = multi_perspective_orchestration
     _capabilities.BUILTINS["builtin:simulate_creation"] = adaptive_simulation_surface
     _capabilities.BUILTINS["builtin:design_fabric"] = design_fabric_surface
@@ -244,6 +257,7 @@ def _register_extension_builtins() -> None:
     _capabilities.BUILTINS["builtin:workshop_bounded_planner"] = workshop_bounded_planner_surface
     _capabilities.BUILTINS["builtin:sticker_multiplier"] = sticker_multiplier_surface
     _capabilities.BUILTINS["builtin:inspect_fabric_sources"] = fabric_source_surface
+    _capabilities.BUILTINS["builtin:profession_crew"] = profession_crew_surface
 
 
 _register_extension_builtins()
