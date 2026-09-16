@@ -1,0 +1,32 @@
+{
+  "id": "AXM-CAP-PROFESSION-CREW",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Bind source-backed profession bodies and workflows to explicit UC stations, with artifact observations and scoped deterministic practice memory.",
+  "handles": ["profession-crew", "profession-workflow"],
+  "input_contract": {
+    "required": [],
+    "required_by_operation": {"plan": ["goal", "work_type", "steps"], "run": ["run_id", "goal", "work_type", "steps"], "verify": ["run_id"]},
+    "properties": {
+      "operation": "catalog, inspect, plan, run, verify, prepare-specialists",
+      "crew_id": "local persistent crew identifier; defaults to default",
+      "work_type": "software, web, 3d, animation, game, audio, document",
+      "context": "exact task context; experience does not transfer across different context",
+      "steps": "1..32 explicit action stations; each may name profession_id, skill_id, dependencies and a REQUIRED judgment boundary",
+      "run_id": "idempotent job identifier; interrupted jobs hold instead of replaying uncertain writes"
+    }
+  },
+  "output_contract": {"kind": "professional-station-plan-or-observed-run", "professional_acceptance": "NOT_TESTED"},
+  "dependencies": [],
+  "relationships": ["uses existing UC capability routing and stepwise plan validation", "carries 18 pinned Profession Fabric bodies with original workflow cards"],
+  "anatomy_refs": [],
+  "implementation": {"kind": "DETERMINISTIC_SOURCE", "entrypoint": "builtin:profession_crew", "source": "src/axm_uc/profession_crew.py"},
+  "persistent_state": "state/profession-crews/<crew_id>.json",
+  "limitations": [
+    "Professional Bodies remain EXPERIMENTAL. Consultation/handoff cards are not executed cognitive agents.",
+    "Automatic adapters cover text/JSON, basic text projects, project verification and bounded procedural GLB. Other actions hold for adapter work.",
+    "Artifact checks do not prove visual quality, gameplay feel, semantic adequacy or professional acceptance.",
+    "Learning is scoped deterministic practice memory and learned preflight, not neural training or self-canonization.",
+    "Completed, failed and interrupted jobs stay inspectable. At 256 jobs, preserve the crew and choose a new identifier."
+  ]
+}

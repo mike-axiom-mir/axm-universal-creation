@@ -1,0 +1,28 @@
+{
+  "kind": "profession-crew",
+  "inputs": {
+    "operation": "run",
+    "crew_id": "software-crew",
+    "run_id": "hello-001",
+    "work_type": "software",
+    "goal": "Build a small local Python project and inspect its exact output",
+    "context": {"target": "local-python", "purpose": "minimal-example"},
+    "steps": [{
+      "id": "implementation",
+      "profession_id": "backend-engineer",
+      "action": {"kind": "python-project", "inputs": {
+        "path": "creations/profession-hello",
+        "files": {"main.py": "print('Hello from the UC profession crew')\n"}
+      }}
+    }, {
+      "id": "verification",
+      "profession_id": "software-qa-playtest",
+      "depends_on": ["implementation"],
+      "action": {"kind": "verify-project", "inputs": {
+        "path": "creations/profession-hello",
+        "project_type": "python",
+        "expected_files": {"main.py": "print('Hello from the UC profession crew')\n"}
+      }}
+    }]
+  }
+}
