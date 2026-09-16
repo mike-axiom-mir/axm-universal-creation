@@ -76,6 +76,7 @@ class AftertouchPreviewTests(unittest.TestCase):
         self.assertTrue(policy["machine_observation"])
         self.assertFalse(policy["ai_review"])
         self.assertEqual(policy["user_feedback_policy"], "never")
+        self.assertEqual(normalize_preview_policy(policy), policy)
 
     def test_caller_preview_image_is_retained_and_bound_for_user_checkpoint(self):
         with tempfile.TemporaryDirectory() as td:
