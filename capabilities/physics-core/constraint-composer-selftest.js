@@ -56,7 +56,7 @@ assert.equal(validation.axisLimitCount, 0);
 assert.equal(validation.directionLockCount, 1);
 assert.deepEqual(Composer.FAMILY_ORDER, ['translation-mounts', 'distance-joints', 'distance-limits', 'axis-locks', 'axis-limits', 'direction-locks']);
 assert.match(validation.warnings.join(' '), /not full prismatic joints/i);
-assert.match(validation.warnings.join(' '), /activity-gate and collision-isolation wrappers still cover the earlier five families/i);
+assert.match(validation.warnings.join(' '), /activity-gate and collision-isolation wrappers support all six composer families/i);
 
 const stepped = Composer.step(mixedWorld(), constraints, 0.1);
 assert.equal(stepped.world.stepIndex, 1, 'all active constraint families must share exactly one donor-core integration step');
@@ -83,6 +83,7 @@ assert.equal(stepped.composerDiagnostics.contactEvidenceBasis, 'CORE_STAGE_BEFOR
 assert.equal(stepped.world.diagnostics.checksum, Core.checksum(stepped.world));
 assert.match(stepped.limitations.join(' '), /ordering bias/i);
 assert.match(stepped.limitations.join(' '), /not a full slider\/prismatic joint/i);
+assert.match(stepped.limitations.join(' '), /activity-gate and collision-isolation wrappers route all six families/i);
 assert.match(stepped.limitations.join(' '), /not scientific validation/i);
 
 const bounded = Composer.step(mixedWorld(), constraints, 0.1, {
