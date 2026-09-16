@@ -1,0 +1,74 @@
+{
+  "id": "AXM-CAP-NATIVE-VISUAL-RUNTIME",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Compile deterministic inspectable 3D scene state into a self-contained AXM-owned WebGL2 visual runtime without requiring an external creative application.",
+  "handles": [
+    "native-visual-scene",
+    "native-visual-runtime",
+    "coded-visual-scene",
+    "webgl-visual-preview"
+  ],
+  "input_contract": {
+    "required": ["operation"],
+    "required_by_operation": {
+      "compile": ["scene"],
+      "bundle": ["path", "scene"],
+      "demo": ["path"]
+    },
+    "properties": {
+      "operation": "inspect, compile, bundle, or demo",
+      "scene": "AXM native visual scene object; required for compile and bundle",
+      "path": "caller-selected output directory outside the protected live machine body; required for bundle and demo",
+      "replace": "optional boolean; defaults false"
+    }
+  },
+  "output_contract": {
+    "kind": "deterministic-native-visual-runtime",
+    "contains": [
+      "normalized scene state and SHA-256",
+      "self-contained WebGL2 HTML runtime",
+      "bundle receipt with file digests",
+      "explicit host-render evidence boundary",
+      "portable native scene state that optional external adapters may consume"
+    ]
+  },
+  "dependencies": [],
+  "relationships": [
+    "is an AXM-owned visual execution path and remains available when external creative tools are absent",
+    "may share camera, transforms, basic material values, lights and world state with optional external adapters",
+    "keeps browser pixel observation separate from deterministic source compilation and JavaScript syntax evidence",
+    "refuses silent writes into non-empty output directories unless replace is explicit",
+    "does not classify Blender-backed or other third-party execution as native"
+  ],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:native_visual_runtime",
+    "source": "src/axm_uc/native_visual_engine.py"
+  },
+  "limitations": [
+    "the native renderer currently supports boxes, spheres, cylinders and planes rather than arbitrary imported meshes",
+    "WebGL2 execution and rendered visual quality require browser or authorized host evidence",
+    "native geometry, rigging, texturing, simulation and rendering breadth is still substantially smaller than mature external creative suites",
+    "optional external adapters may currently provide capabilities the native runtime has not implemented yet, but those adapters remain external dependencies rather than native AXM capability"
+  ],
+  "persistent_state": null,
+  "root_fit": {
+    "truth": {
+      "fit": true,
+      "basis": "Compiled scene state, hashes, generated source, absent host pixels and external-tool execution remain explicitly distinguishable."
+    },
+    "agency": {
+      "fit": true,
+      "basis": "The caller selects the operation, scene, output path and replacement choice; the runtime is self-contained and makes no network calls."
+    },
+    "continuity": {
+      "fit": true,
+      "basis": "The scene JSON is deterministic, inspectable and remains usable without any third-party creative executable."
+    },
+    "wisdom-before-speed": {
+      "fit": true,
+      "basis": "Schema validation, bounded scene size, deterministic hashing, source checks and explicit host evidence gates precede visual-quality claims."
+    }
+  }
+}

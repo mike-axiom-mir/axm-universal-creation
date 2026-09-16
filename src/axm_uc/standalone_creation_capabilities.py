@@ -187,6 +187,54 @@ def register_standalone_creation_builtins(
         except CreativeFlowError as exc:
             raise capability_error(str(exc), exc.details) from exc
 
+    def native_visual_runtime(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+        from .native_visual_engine import catalog_native_visual, compile_scene, demo_scene, write_visual_bundle
+
+        operation = str(inputs.get("operation", "inspect")).strip().casefold()
+        if operation == "inspect":
+            return catalog_native_visual()
+        if operation == "compile":
+            if "scene" not in inputs:
+                raise capability_error("native visual compile requires scene")
+            return compile_scene(inputs["scene"])
+        if operation not in {"bundle", "demo"}:
+            raise capability_error(
+                f"unsupported native visual operation: {operation}",
+                {"supported_operations": ["inspect", "compile", "bundle", "demo"]},
+            )
+        target = resolve_output_path(root, str(inputs.get("path", "")))
+        if is_machine_body_path(root, target):
+            raise capability_error("native visual bundles cannot rewrite the live machine body")
+        replace = inputs.get("replace", False)
+        if not isinstance(replace, bool):
+            raise capability_error("native visual replace must be a boolean")
+        if operation == "bundle" and "scene" not in inputs:
+            raise capability_error("native visual bundle requires scene")
+        scene = demo_scene() if operation == "demo" else inputs["scene"]
+        try:
+            return write_visual_bundle(target, scene, replace=replace)
+        except (TypeError, ValueError, FileExistsError) as exc:
+            raise capability_error(str(exc)) from exc
+
+    def external_visual_tools(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+        from .external_visual_tools import ExternalVisualToolError, operate_external_visual_tool
+
+        normalized = dict(inputs)
+        operation = str(inputs.get("operation", "catalog")).strip().casefold()
+        if operation == "execute":
+            if "cwd" not in inputs:
+                raise capability_error("external visual tool execution requires an explicit cwd")
+            cwd = resolve_output_path(root, str(inputs["cwd"]))
+            if is_machine_body_path(root, cwd):
+                raise capability_error(
+                    "external visual tools cannot execute with the live machine body as their working directory"
+                )
+            normalized["cwd"] = str(cwd)
+        try:
+            return operate_external_visual_tool(root, normalized)
+        except ExternalVisualToolError as exc:
+            raise capability_error(str(exc), exc.details) from exc
+
     return {
         "builtin:local_creation_provider": local_creation_provider,
         "builtin:host_evidence": host_evidence,
@@ -198,4 +246,6 @@ def register_standalone_creation_builtins(
         "builtin:creation_growth": creation_growth,
         "builtin:procedural_3d": procedural_3d,
         "builtin:creative_flow": creative_flow,
+        "builtin:native_visual_runtime": native_visual_runtime,
+        "builtin:external_visual_tools": external_visual_tools,
     }

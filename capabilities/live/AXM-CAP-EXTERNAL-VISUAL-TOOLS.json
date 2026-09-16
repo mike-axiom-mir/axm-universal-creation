@@ -1,0 +1,89 @@
+{
+  "id": "AXM-CAP-EXTERNAL-VISUAL-TOOLS",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Expose installed third-party visual tools through one explicit optional connector boundary without classifying any external executable as AXM-native capability.",
+  "handles": [
+    "external-visual-tool",
+    "external-visual-connector",
+    "visual-tool-bus",
+    "third-party-visual-tool"
+  ],
+  "input_contract": {
+    "required": ["operation"],
+    "required_by_operation": {
+      "inspect": ["tool"],
+      "probe": ["tool"],
+      "execute": ["tool", "cwd", "args", "allow_execute"]
+    },
+    "properties": {
+      "operation": "catalog, inspect, probe, or execute",
+      "tool": "one declared connector id",
+      "cwd": "explicit working directory outside the protected live machine body; required for execute",
+      "args": "argument vector passed directly to the selected executable without a shell; required for execute",
+      "allow_execute": "must be boolean true for execute",
+      "timeout": "optional bounded process timeout"
+    }
+  },
+  "output_contract": {
+    "kind": "truth-labeled-external-tool-receipt",
+    "contains": [
+      "native=false",
+      "dependency_class=EXTERNAL_OPTIONAL",
+      "resolved executable path when found",
+      "actual argv for observed executions",
+      "return code and captured-output SHA-256 receipts",
+      "separate tool-execution and visual-output observation claims"
+    ]
+  },
+  "dependencies": [],
+  "external_connectors": [
+    "Blender",
+    "Godot",
+    "Unreal Engine",
+    "Krita",
+    "GIMP",
+    "ImageMagick",
+    "FFmpeg",
+    "OpenSCAD",
+    "Houdini",
+    "Inkscape"
+  ],
+  "relationships": [
+    "AXM native visual runtime remains a separate AXM-owned execution path and does not depend on this capability",
+    "Blender is represented here as an external optional tool even though legacy Blender-backed forge code also exists in the repository",
+    "the connector bus performs no downloads or installations",
+    "external execution is explicit and never uses a command shell"
+  ],
+  "implementation": {
+    "kind": "EXTERNAL_EVIDENCE_BOUNDARY",
+    "entrypoint": "builtin:external_visual_tools",
+    "source": "src/axm_uc/external_visual_tools.py"
+  },
+  "limitations": [
+    "a connector being declared does not mean the corresponding software is installed",
+    "PATH discovery proves only that a candidate executable path was found; it does not make the software native to AXM",
+    "tool execution does not by itself prove that a visual result was rendered correctly",
+    "Unreal Engine and Houdini intentionally have no guessed default version probe; they can be inspected and explicitly executed when present",
+    "third-party licenses, updates and runtime behavior remain outside AXM authority"
+  ],
+  "persistent_state": null,
+  "root_fit": {
+    "truth": {
+      "fit": true,
+      "basis": "Every result names the external boundary, native=false, availability evidence, actual executable and observed process result without converting external capability into an AXM claim."
+    },
+    "agency": {
+      "fit": true,
+      "basis": "The caller chooses the tool and arguments; execution requires allow_execute=true and an explicit working directory."
+    },
+    "continuity": {
+      "fit": true,
+      "basis": "The AXM-owned native runtime remains independently routable; missing external tools do not remove the native capability."
+    },
+    "wisdom-before-speed": {
+      "fit": true,
+      "basis": "Inspection and conservative probes are separate from execution, shell invocation is disabled, process time is bounded, and visual output is not inferred from exit status."
+    }
+  }
+}
