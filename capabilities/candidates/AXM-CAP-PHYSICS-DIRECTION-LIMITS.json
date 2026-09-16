@@ -1,0 +1,57 @@
+{
+  "id": "AXM-CAP-PHYSICS-DIRECTION-LIMITS",
+  "version": "0.1.0",
+  "status": "candidate",
+  "purpose": "Provide deterministic translation-only min/max limits on one caller-selected fixed world-space direction projection while preserving slack motion inside the interval and free perpendicular translation.",
+  "handles": ["direction-limit", "projected-translation-limit", "fixed-direction-stop", "slack-direction-range"],
+  "input_contract": {
+    "required": ["world", "limits"],
+    "properties": {
+      "limits": "bounded explicit fixed world-space directions with minOffset and/or maxOffset",
+      "dt": "donor-core step delta",
+      "options": "bounded pre/post position and velocity iteration counts"
+    }
+  },
+  "output_contract": {
+    "kind": "axm.uc-direction-limit-step/v0.1",
+    "contains": ["constrained world", "normalized directions and limits", "slack/boundary state", "pre/post solve receipts", "preserved donor-core evidence", "final checksum"]
+  },
+  "dependencies": ["AXM-CAP-PHYSICS-FABRIC"],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "capabilities/physics-core/uc-direction-limits.js",
+    "selftest": "node capabilities/physics-core/direction-limits-selftest.js"
+  },
+  "limitations": [
+    "fixed world-space direction only",
+    "perpendicular translation remains unconstrained",
+    "slack motion inside the allowed interval is intentionally free",
+    "direction does not rotate with bodies",
+    "not a full prismatic or slider joint",
+    "no angular inertia, rotating anchors, angular limits or motors",
+    "the standalone wrapper performs its own donor-core step and is not yet integrated into the shared composer/activity/isolation stack",
+    "post-core projection can change positions after donor contact evidence was produced",
+    "not scientific validation"
+  ],
+  "tests": [
+    {
+      "command": "node capabilities/physics-core/direction-limits-selftest.js",
+      "proves": [
+        "normalized fixed-direction one-sided and ranged limits",
+        "slack motion inside the projected interval",
+        "outward projected boundary velocity blocking",
+        "perpendicular translation freedom",
+        "inverse-mass correction sharing",
+        "immovable truth receipts",
+        "bounded solver iterations",
+        "same-runtime deterministic replay"
+      ]
+    }
+  ],
+  "root_fit": {
+    "truth": {"fit": true, "basis": "The capability is explicitly a fixed world-space projected translation range primitive and is not relabeled as a rotating prismatic joint."},
+    "agency": {"fit": true, "basis": "Callers choose direction, min/max bounds, activity state and bounded solver factors/iterations."},
+    "continuity": {"fit": true, "basis": "The donor core remains byte-for-byte preserved while this capability is added as an additive wrapper."},
+    "wisdom-before-speed": {"fit": true, "basis": "Shared-stack integration is left as a later explicit gate instead of chaining standalone wrappers and risking a second donor-core step."}
+  }
+}
