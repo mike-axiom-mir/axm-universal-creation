@@ -25,6 +25,7 @@ MAP_CHANNELS = {
     "height": 1,
 }
 REQUIRED = set(MAP_CHANNELS)
+GLTF_OUTPUT_GROUP = "glTF Material Output"
 
 
 def load_rich_material_bundle(folder):
@@ -78,6 +79,25 @@ def load_rich_material_bundle(folder):
     }
 
 
+def _get_gltf_material_output_group(bpy):
+    """Return the one canonical glTF exporter helper group for every material.
+
+    Blender's exporter recognizes the exact ``glTF Material Output`` node-group
+    contract. Creating a fresh group per material makes Blender suffix later names
+    (``.001``, ``.002`` ...), which causes AO/occlusion to disappear from those
+    exported materials. Reusing one shared group keeps every material on the same
+    exporter-recognized contract.
+    """
+    group = bpy.data.node_groups.get(GLTF_OUTPUT_GROUP)
+    created = False
+    if group is None:
+        group = bpy.data.node_groups.new(GLTF_OUTPUT_GROUP, "ShaderNodeTree")
+        group.interface.new_socket(name="Occlusion", in_out="INPUT", socket_type="NodeSocketFloat")
+        group.nodes.new("NodeGroupInput")
+        created = True
+    return group, created
+
+
 def blender_rich_game_material(folder, name=None):
     bundle = load_rich_material_bundle(folder)
     import bpy
@@ -87,6 +107,7 @@ def blender_rich_game_material(folder, name=None):
     images = []
     material = None
     group = None
+    created_group = False
     try:
         material = bpy.data.materials.new(label)
         material.use_nodes = True
@@ -125,9 +146,7 @@ def blender_rich_game_material(folder, name=None):
         links.new(split.outputs["Green"], shader.inputs["Roughness"])
         links.new(split.outputs["Blue"], shader.inputs["Metallic"])
 
-        group = bpy.data.node_groups.new("glTF Material Output", "ShaderNodeTree")
-        group.interface.new_socket(name="Occlusion", in_out="INPUT", socket_type="NodeSocketFloat")
-        group.nodes.new("NodeGroupInput")
+        group, created_group = _get_gltf_material_output_group(bpy)
         ao = nodes.new("ShaderNodeGroup")
         ao.node_tree = group
         ao.location = (0, -300)
@@ -150,6 +169,6 @@ def blender_rich_game_material(folder, name=None):
         for image in images:
             if image.name in bpy.data.images:
                 bpy.data.images.remove(image)
-        if group is not None:
+        if created_group and group is not None and group.name in bpy.data.node_groups:
             bpy.data.node_groups.remove(group)
         raise
