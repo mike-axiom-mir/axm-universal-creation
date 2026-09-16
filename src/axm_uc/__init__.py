@@ -17,10 +17,16 @@ def _register_extension_builtins() -> None:
     from .design_geometry import DesignGeometryError, operate_design_geometry
     from .design_observer import DesignObserverError, operate_design_observer
     from .design_visual import DesignVisualError, operate_design_visual
+    from .design_workshop import DesignWorkshopError, operate_design_workshop
+    from .design_workshop_construction import DesignWorkshopConstructionError, operate_workshop_construction
     from .fabric_sources import FabricSourceError, inspect_fabric_sources
     from .simulation import SimulationError, operate_simulation
     from .specialist_pool_extension import build_specialist_pool as _contextual_pool_builder
     from .stepwise_workflow import StepwiseWorkflowError, operate_stepwise_workflow
+    from .sticker_clearance_contact import StickerClearanceContactError, operate_sticker_clearance_contact
+    from .sticker_geometry_calipers import StickerGeometryCaliperError, operate_sticker_geometry_calipers
+    from .sticker_multiplier import StickerMultiplierError, operate_sticker_multiplier
+    from .workshop_bounded_planner import WorkshopBoundedPlannerError, operate_workshop_bounded_planner
 
     # The universal body contains twenty reusable lenses. Allow up to twenty
     # challenge-derived registry specialists so the declared 40-person maximum
@@ -174,6 +180,48 @@ def _register_extension_builtins() -> None:
             details = getattr(exc, "details", {})
             raise _capabilities.CapabilityError(str(exc), details) from exc
 
+    def design_workshop_surface(root, inputs):
+        try:
+            return operate_design_workshop(root, inputs)
+        except (DesignWorkshopError, ValueError, TypeError) as exc:
+            details = getattr(exc, "details", {})
+            raise _capabilities.CapabilityError(str(exc), details) from exc
+
+    def workshop_construction_surface(root, inputs):
+        try:
+            return operate_workshop_construction(root, inputs)
+        except (DesignWorkshopConstructionError, ValueError, TypeError) as exc:
+            details = getattr(exc, "details", {})
+            raise _capabilities.CapabilityError(str(exc), details) from exc
+
+    def sticker_geometry_calipers_surface(root, inputs):
+        try:
+            return operate_sticker_geometry_calipers(root, inputs)
+        except (StickerGeometryCaliperError, ValueError, TypeError) as exc:
+            details = getattr(exc, "details", {})
+            raise _capabilities.CapabilityError(str(exc), details) from exc
+
+    def sticker_clearance_contact_surface(root, inputs):
+        try:
+            return operate_sticker_clearance_contact(root, inputs)
+        except (StickerClearanceContactError, ValueError, TypeError) as exc:
+            details = getattr(exc, "details", {})
+            raise _capabilities.CapabilityError(str(exc), details) from exc
+
+    def workshop_bounded_planner_surface(root, inputs):
+        try:
+            return operate_workshop_bounded_planner(root, inputs)
+        except (WorkshopBoundedPlannerError, ValueError, TypeError) as exc:
+            details = getattr(exc, "details", {})
+            raise _capabilities.CapabilityError(str(exc), details) from exc
+
+    def sticker_multiplier_surface(root, inputs):
+        try:
+            return operate_sticker_multiplier(root, inputs)
+        except (StickerMultiplierError, ValueError, TypeError) as exc:
+            details = getattr(exc, "details", {})
+            raise _capabilities.CapabilityError(str(exc), details) from exc
+
     def fabric_source_surface(root, inputs):
         overrides = inputs.get("overrides")
         if overrides is not None and not isinstance(overrides, dict):
@@ -189,6 +237,12 @@ def _register_extension_builtins() -> None:
     _capabilities.BUILTINS["builtin:specialist_tournament"] = multi_perspective_orchestration
     _capabilities.BUILTINS["builtin:simulate_creation"] = adaptive_simulation_surface
     _capabilities.BUILTINS["builtin:design_fabric"] = design_fabric_surface
+    _capabilities.BUILTINS["builtin:design_workshop"] = design_workshop_surface
+    _capabilities.BUILTINS["builtin:workshop_construction_loop"] = workshop_construction_surface
+    _capabilities.BUILTINS["builtin:sticker_geometry_calipers"] = sticker_geometry_calipers_surface
+    _capabilities.BUILTINS["builtin:sticker_clearance_contact"] = sticker_clearance_contact_surface
+    _capabilities.BUILTINS["builtin:workshop_bounded_planner"] = workshop_bounded_planner_surface
+    _capabilities.BUILTINS["builtin:sticker_multiplier"] = sticker_multiplier_surface
     _capabilities.BUILTINS["builtin:inspect_fabric_sources"] = fabric_source_surface
 
 
