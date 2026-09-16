@@ -1,0 +1,26 @@
+name: Rigid scene graph contract
+
+on:
+  pull_request:
+    paths:
+      - 'src/axm_uc/rigid_scene_graph.py'
+      - 'tests/test_rigid_scene_graph.py'
+      - '.github/workflows/rigid-scene-graph.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        python-version: ['3.11', '3.13']
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Run bounded rigid scene-graph tests
+        run: python -m unittest -v tests.test_rigid_scene_graph
