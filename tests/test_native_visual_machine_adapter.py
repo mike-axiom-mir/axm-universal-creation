@@ -62,6 +62,41 @@ class NativeVisualMachineAdapterTests(unittest.TestCase):
             with self.assertRaises(AdapterError):
                 fn(root, {"operation": "demo", "path": "."})
 
+    def test_external_visual_builtin_is_separate_and_never_native(self):
+        fn = self.builtins()["builtin:external_visual_tools"]
+        with tempfile.TemporaryDirectory() as temporary:
+            result = fn(Path(temporary), {"operation": "catalog"})
+        self.assertEqual(result["truth_status"], "EXTERNAL_OPTIONAL_CONNECTOR_CATALOG")
+        self.assertFalse(result["native"])
+        self.assertTrue(all(item["native"] is False for item in result["tools"]))
+
+    def test_external_visual_live_manifest_routes_separately(self):
+        machine = UniversalCreationMachine(ROOT)
+        result = machine.create({
+            "kind": "external-visual-tool",
+            "inputs": {"operation": "catalog"},
+        })
+        self.assertEqual(result["type"], "CREATION_RESULT")
+        self.assertEqual(result["capability"], "AXM-CAP-EXTERNAL-VISUAL-TOOLS")
+        self.assertEqual(result["result"]["truth_status"], "EXTERNAL_OPTIONAL_CONNECTOR_CATALOG")
+        self.assertFalse(result["result"]["native"])
+
+    def test_external_execution_cannot_use_live_body_as_cwd(self):
+        fn = self.builtins()["builtin:external_visual_tools"]
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            with self.assertRaises(AdapterError):
+                fn(
+                    root,
+                    {
+                        "operation": "execute",
+                        "tool": "ffmpeg",
+                        "cwd": ".",
+                        "args": ["-version"],
+                        "allow_execute": True,
+                    },
+                )
+
 
 if __name__ == "__main__":
     unittest.main()
