@@ -33,7 +33,8 @@ def tower_spec() -> dict:
                 "size": [2.4, 5, 2.4],
                 "translation": [0, 3.3, 0],
                 "segments": 20,
-                "material": {"color": "#20CFC4FF", "metallic": 0.4, "roughness": 0.28},
+                "material": {"color": "#20CFC4FF", "metallic": 0.4, "roughness": 0.28,
+                             "emissive": "#0D7775FF"},
             },
             {
                 "id": "roof",
@@ -114,7 +115,10 @@ class Procedural3DTests(unittest.TestCase):
         self.assertTrue(receipt["passed"])
         self.assertEqual(receipt["primitives"], 3)
         self.assertEqual(receipt["nodes"], 3)
+        self.assertEqual(receipt["emissive_materials"], 1)
         self.assertGreater(receipt["triangles"], 20)
+        document, _ = self._decoded_asset(first["body"])
+        self.assertEqual(document["materials"][1]["emissiveFactor"], [13 / 255, 119 / 255, 117 / 255])
 
     def test_live_capability_publishes_and_reparses_exact_asset(self):
         with tempfile.TemporaryDirectory() as td:

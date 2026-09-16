@@ -21,6 +21,7 @@ axm-create-parallel = "axm_uc.parallel_create:main"
 axm-create-surface = "axm_uc.surface_creation:main"
 axm-visual-templates = "axm_uc.visual_templates_cli:main"
 axm-native-visual = "axm_uc.native_visual_engine:main"
+axm-math-create = "axm_uc.math_creation:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
