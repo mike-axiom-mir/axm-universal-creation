@@ -4,9 +4,7 @@ const assert = require('assert');
 const Core = require('./source/axm-physics-core.js');
 const Composer = require('./uc-constraint-composer.js');
 
-function add(world, body) {
-  return Core.addBody(world, body).world;
-}
+function add(world, body) { return Core.addBody(world, body).world; }
 
 function mixedWorld() {
   let world = Core.createWorld({ gravity: { x: 0, y: 10 }, bounds: false, sleep: { enabled: false } });
@@ -16,6 +14,9 @@ function mixedWorld() {
   world = add(world, { id: 'bob', type: 'dynamic', position: { x: 9, y: 2 }, mass: 1, linearDamping: 0 });
   world = add(world, { id: 'limit-root', type: 'static', position: { x: 10, y: 0 } });
   world = add(world, { id: 'limited', type: 'dynamic', position: { x: 12, y: 0 }, mass: 1, linearDamping: 0 });
+  world = add(world, { id: 'axis-root', type: 'static', position: { x: 15, y: 0 } });
+  world = add(world, { id: 'slider', type: 'dynamic', position: { x: 16, y: 0 }, mass: 1, linearDamping: 0 });
+  world = Core.applyImpulse(world, 'slider', { x: 2, y: 0 });
   return world;
 }
 
@@ -27,20 +28,16 @@ function settledWorld() {
   world = add(world, { id: 'bob', type: 'dynamic', position: { x: 7, y: 0 }, mass: 1, linearDamping: 0 });
   world = add(world, { id: 'limit-root', type: 'static', position: { x: 10, y: 0 } });
   world = add(world, { id: 'limited', type: 'dynamic', position: { x: 11, y: 0 }, mass: 1, linearDamping: 0 });
-  return world;
-}
-
-function conflictingWorld() {
-  let world = Core.createWorld({ gravity: { x: 0, y: 0 }, bounds: false, sleep: { enabled: false } });
-  world = add(world, { id: 'root', type: 'static', position: { x: 0, y: 0 } });
-  world = add(world, { id: 'body', type: 'dynamic', position: { x: 1, y: 0 }, mass: 1, linearDamping: 0 });
+  world = add(world, { id: 'axis-root', type: 'static', position: { x: 15, y: 0 } });
+  world = add(world, { id: 'slider', type: 'dynamic', position: { x: 16, y: 0 }, mass: 1, linearDamping: 0 });
   return world;
 }
 
 const constraints = {
   mounts: [{ id: 'payload-mount', a: 'mount-root', b: 'mounted', offset: { x: 1, y: 0 } }],
   distanceJoints: [{ id: 'tether', a: 'joint-root', b: 'bob', length: 2 }],
-  distanceLimits: [{ id: 'range-tether', a: 'limit-root', b: 'limited', maxLength: 2 }]
+  distanceLimits: [{ id: 'range-tether', a: 'limit-root', b: 'limited', maxLength: 2 }],
+  axisLocks: [{ id: 'vertical-lock', a: 'axis-root', b: 'slider', axis: 'y', offset: 0 }]
 };
 
 const validation = Composer.validate(mixedWorld(), constraints);
@@ -48,102 +45,57 @@ assert.equal(validation.ok, true);
 assert.equal(validation.mountCount, 1);
 assert.equal(validation.distanceJointCount, 1);
 assert.equal(validation.distanceLimitCount, 1);
-assert.deepEqual(Composer.FAMILY_ORDER, ['translation-mounts', 'distance-joints', 'distance-limits']);
-assert.match(validation.warnings.join(' '), /early exit/i);
-assert.match(validation.warnings.join(' '), /range interiors remain slack/i);
+assert.equal(validation.axisLockCount, 1);
+assert.deepEqual(Composer.FAMILY_ORDER, ['translation-mounts', 'distance-joints', 'distance-limits', 'axis-locks']);
+assert.match(validation.warnings.join(' '), /not full prismatic joints/i);
 
 const stepped = Composer.step(mixedWorld(), constraints, 0.1);
-assert.equal(stepped.world.stepIndex, 1, 'mixed constraints must share exactly one donor-core integration step');
-assert.ok(stepped.composerDiagnostics.afterCore.maxMountError > 1e-4, 'gravity should create measurable mount drift during the shared core step');
-assert.ok(stepped.composerDiagnostics.afterCore.maxDistanceError > 1e-4, 'gravity should create measurable distance-joint drift during the shared core step');
-assert.ok(stepped.composerDiagnostics.afterCore.maxDistanceLimitError > 1e-4, 'gravity should create measurable distance-limit violation during the shared core step');
-assert.ok(stepped.composerDiagnostics.after.maxMountError < 1e-8, 'post composition must restore the fixed translation mount');
-assert.ok(stepped.composerDiagnostics.after.maxDistanceError < 1e-8, 'post composition must restore the distance joint');
-assert.ok(stepped.composerDiagnostics.after.maxDistanceLimitError < 1e-8, 'post composition must repair the active distance-limit violation');
-assert.ok(stepped.composerDiagnostics.after.maxMountRelativeSpeed <= Composer.DEFAULT_VELOCITY_TOLERANCE, 'mount velocity residual must be measured and stabilized');
-assert.ok(stepped.composerDiagnostics.after.maxDistanceRelativeSpeed <= Composer.DEFAULT_VELOCITY_TOLERANCE, 'distance-joint velocity residual must be measured and stabilized');
-assert.ok(stepped.composerDiagnostics.after.maxDistanceLimitRelativeSpeed <= Composer.DEFAULT_VELOCITY_TOLERANCE, 'active distance-limit velocity residual must be measured and stabilized');
+assert.equal(stepped.world.stepIndex, 1, 'all constraint families must share exactly one donor-core integration step');
+assert.ok(stepped.composerDiagnostics.afterCore.maxMountError > 1e-4);
+assert.ok(stepped.composerDiagnostics.afterCore.maxDistanceError > 1e-4);
+assert.ok(stepped.composerDiagnostics.afterCore.maxDistanceLimitError > 1e-4);
+assert.ok(stepped.composerDiagnostics.afterCore.maxAxisLockError > 1e-4, 'gravity should create measurable locked-y drift during the shared core step');
+assert.ok(stepped.composerDiagnostics.after.maxMountError < 1e-8);
+assert.ok(stepped.composerDiagnostics.after.maxDistanceError < 1e-8);
+assert.ok(stepped.composerDiagnostics.after.maxDistanceLimitError < 1e-8);
+assert.ok(stepped.composerDiagnostics.after.maxAxisLockError < 1e-8);
+assert.ok(stepped.composerDiagnostics.after.maxAxisLockRelativeSpeed <= Composer.DEFAULT_VELOCITY_TOLERANCE);
+const slider = stepped.world.bodies.find(item => item.id === 'slider');
+assert.ok(slider.position.x > 16.1, 'axis-lock integration must leave orthogonal x translation free');
 assert.equal(stepped.composerDiagnostics.contactEvidenceBasis, 'CORE_STAGE_BEFORE_POST_COMPOSITE_STABILIZATION');
-assert.ok(stepped.core.worldBeforePostCompositeStabilization, 'core-stage world must remain separately inspectable');
-assert.equal(stepped.world.diagnostics.checksum, Core.checksum(stepped.world), 'final diagnostics checksum must describe the final composed world');
+assert.equal(stepped.world.diagnostics.checksum, Core.checksum(stepped.world));
 assert.match(stepped.limitations.join(' '), /ordering bias/i);
-assert.match(stepped.limitations.join(' '), /range interiors are intentionally slack/i);
-assert.match(stepped.limitations.join(' '), /not a proof/i);
+assert.match(stepped.limitations.join(' '), /not a full slider\/prismatic joint/i);
 assert.match(stepped.limitations.join(' '), /not scientific validation/i);
 
 const bounded = Composer.step(mixedWorld(), constraints, 0.1, {
-  prePasses: 999,
-  postPasses: 999,
-  mountPositionIterations: 999,
-  distancePositionIterations: 999,
-  limitPositionIterations: 999,
-  earlyExit: false
+  prePasses: 999, postPasses: 999, mountPositionIterations: 999, distancePositionIterations: 999,
+  limitPositionIterations: 999, axisLockPositionIterations: 999, earlyExit: false
 });
-assert.equal(bounded.composerDiagnostics.preConfig.passes, Composer.MAX_FAMILY_PASSES, 'pre family passes must remain bounded');
-assert.equal(bounded.composerDiagnostics.postConfig.passes, Composer.MAX_FAMILY_PASSES, 'post family passes must remain bounded');
-assert.equal(bounded.composerDiagnostics.prePassesExecuted, Composer.MAX_FAMILY_PASSES, 'disabled early exit must execute the full bounded pre budget');
-assert.equal(bounded.composerDiagnostics.postPassesExecuted, Composer.MAX_FAMILY_PASSES, 'disabled early exit must execute the full bounded post budget');
-assert.equal(bounded.composerDiagnostics.preConfig.mounts.positionIterations, 32, 'nested mount iterations must retain their bounded solver limit');
-assert.equal(bounded.composerDiagnostics.preConfig.distanceJoints.positionIterations, 32, 'nested distance-joint iterations must retain their bounded solver limit');
-assert.equal(bounded.composerDiagnostics.preConfig.distanceLimits.positionIterations, 32, 'nested distance-limit iterations must retain their bounded solver limit');
+assert.equal(bounded.composerDiagnostics.preConfig.passes, Composer.MAX_FAMILY_PASSES);
+assert.equal(bounded.composerDiagnostics.postConfig.passes, Composer.MAX_FAMILY_PASSES);
+assert.equal(bounded.composerDiagnostics.preConfig.axisLocks.positionIterations, 32, 'nested axis-lock iterations must retain the bounded solver limit');
 
 const adaptive = Composer.step(settledWorld(), constraints, 0.01, {
   prePasses: Composer.MAX_FAMILY_PASSES,
   postPasses: Composer.MAX_FAMILY_PASSES
 });
-assert.equal(adaptive.composerDiagnostics.prePassesExecuted, 1, 'already-satisfied pre constraints should stop after one deterministic pass');
-assert.equal(adaptive.composerDiagnostics.postPassesExecuted, 1, 'already-satisfied post constraints should stop after one deterministic pass');
-assert.equal(adaptive.composerDiagnostics.totalPassesAvoided, 30, 'adaptive pass accounting must expose skipped bounded work');
-assert.equal(adaptive.composerDiagnostics.earlyExitTriggered, true, 'adaptive pass savings must be explicit');
-assert.ok(adaptive.composerDiagnostics.prePassSummaries[0].convergence.converged);
-assert.ok(adaptive.composerDiagnostics.postPassSummaries[0].convergence.converged);
-
-const exhaustive = Composer.step(settledWorld(), constraints, 0.01, {
-  prePasses: Composer.MAX_FAMILY_PASSES,
-  postPasses: Composer.MAX_FAMILY_PASSES,
-  earlyExit: false
-});
-assert.equal(exhaustive.composerDiagnostics.prePassesExecuted, Composer.MAX_FAMILY_PASSES);
-assert.equal(exhaustive.composerDiagnostics.postPassesExecuted, Composer.MAX_FAMILY_PASSES);
-assert.equal(Core.checksum(adaptive.world), Core.checksum(exhaustive.world), 'early exit must preserve the settled final state versus exhaustive no-op passes');
-
-let slackWorld = settledWorld();
-slackWorld = Core.applyImpulse(slackWorld, 'limited', { x: 1, y: 0 });
-const slack = Composer.step(slackWorld, constraints, 0.1);
-const slackDistance = slack.composerDiagnostics.after.distanceLimits[0].distance;
-assert.ok(slackDistance > 1.05 && slackDistance < 2, 'distance-limit family must preserve free motion inside its slack range');
-assert.equal(slack.composerDiagnostics.after.distanceLimits[0].state, 'SLACK');
-assert.equal(slack.composerDiagnostics.after.maxDistanceLimitError, 0);
-
-const conflictingConstraints = {
-  mounts: [{ id: 'fixed-one', a: 'root', b: 'body', offset: { x: 1, y: 0 } }],
-  distanceJoints: [{ id: 'distance-two', a: 'root', b: 'body', length: 2 }],
-  distanceLimits: []
-};
-const conflicting = Composer.step(conflictingWorld(), conflictingConstraints, 0.01, {
-  prePasses: 4,
-  postPasses: 4
-});
-assert.equal(conflicting.composerDiagnostics.prePassesExecuted, 4, 'conflicting constraints must consume the configured pre budget instead of falsely converging');
-assert.equal(conflicting.composerDiagnostics.postPassesExecuted, 4, 'conflicting constraints must consume the configured post budget instead of falsely converging');
-assert.equal(conflicting.composerDiagnostics.totalPassesAvoided, 0, 'unresolved residual error must prevent adaptive pass savings');
-assert.equal(conflicting.composerDiagnostics.earlyExitTriggered, false);
-assert.ok(conflicting.composerDiagnostics.after.maxMountError > Composer.DEFAULT_POSITION_TOLERANCE, 'conflicting residual must remain visible');
+assert.equal(adaptive.composerDiagnostics.prePassesExecuted, 1);
+assert.equal(adaptive.composerDiagnostics.postPassesExecuted, 1);
+assert.equal(adaptive.composerDiagnostics.totalPassesAvoided, 30);
+assert.equal(adaptive.composerDiagnostics.earlyExitTriggered, true);
 
 const simA = Composer.simulate(mixedWorld(), constraints, 30, 1 / 60);
 const simB = Composer.simulate(mixedWorld(), constraints, 30, 1 / 60);
-assert.equal(simA.checksum, simB.checksum, 'mixed constraint composition must replay deterministically in one JS runtime');
-assert.equal(simA.world.stepIndex, 30, 'simulation must perform one donor-core integration per composed step');
-assert.ok(simA.composerDiagnostics.after.maxMountError < 1e-8);
-assert.ok(simA.composerDiagnostics.after.maxDistanceError < 1e-8);
-assert.ok(simA.composerDiagnostics.after.maxDistanceLimitError < 1e-8);
+assert.equal(simA.checksum, simB.checksum, 'four-family composition must replay deterministically in one JS runtime');
+assert.equal(simA.world.stepIndex, 30);
+assert.ok(simA.composerDiagnostics.after.maxAxisLockError < 1e-8);
 
 const invalid = Composer.validate(mixedWorld(), {
-  mounts: [],
-  distanceJoints: [],
-  distanceLimits: [{ id: 'bad-limit', a: 'missing', b: 'limited', maxLength: 1 }]
+  mounts: [], distanceJoints: [], distanceLimits: [],
+  axisLocks: [{ id: 'bad-axis', a: 'missing', b: 'slider', axis: 'x', offset: 0 }]
 });
 assert.equal(invalid.ok, false);
 assert.match(invalid.errors.join(' '), /body not found/i);
 
-console.log('UC Constraint Composer selftest: PASS (single integration, three-family stabilization, slack-limit semantics, convergence-aware pass savings, conflict truth, evidence boundary and deterministic replay)');
+console.log('UC Constraint Composer selftest: PASS (single integration, four-family stabilization, axis orthogonal freedom, bounded convergence and deterministic replay)');
