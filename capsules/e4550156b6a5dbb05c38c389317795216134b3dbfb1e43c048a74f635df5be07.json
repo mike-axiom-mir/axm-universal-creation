@@ -1,0 +1,137 @@
+{
+  "capsule_id": "e4550156b6a5dbb05c38c389317795216134b3dbfb1e43c048a74f635df5be07",
+  "evidence": {
+    "files": [
+      {
+        "additions": 33,
+        "binary": false,
+        "content_sha256": "fb69e4ed1cdbb3f6d8e9dc7a02563f76950cf01c2e7f6f4f619a716d507d285d",
+        "deletions": 0,
+        "path": "GAME_STYLE_GROWTH.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Deterministic parallel creation \u2014 2026-09-15",
+          "Reusable sticker assemblies \u2014 2026-09-15"
+        ]
+      },
+      {
+        "additions": 112,
+        "binary": false,
+        "content_sha256": "e9e2f1e51f6409acc8ee55c95c0e7100bc752463760a291af889fba13b9e2d99",
+        "deletions": 0,
+        "path": "docs/PARALLEL_CREATION.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Parallel creative parts"
+        ]
+      },
+      {
+        "additions": 262,
+        "binary": false,
+        "content_sha256": "626221a4665e8d3e07d07b1ec129b156650fa27f7baa9625f77204513dcaaaa5",
+        "deletions": 0,
+        "path": "src/axm_uc/parallel_create.py",
+        "status": "A",
+        "symbols": [
+          "encode",
+          "sha",
+          "read",
+          "write",
+          "references",
+          "validate_plan",
+          "resolve_references",
+          "run_worker",
+          "CreationFailed",
+          "build",
+          "main"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 134,
+        "binary": false,
+        "content_sha256": "e624c37e05d51fb8ad4998a88dfdfb4fd1f9e00e81c34d7cef942f153e509e1a",
+        "deletions": 0,
+        "path": "tests/test_parallel_create.py",
+        "status": "A",
+        "symbols": [
+          "plan",
+          "ParallelCreationTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 76,
+        "binary": false,
+        "content_sha256": "c52e52292d5d9b3635ee95e0bab80fc80ee3dbdff52cfd287c059317b27fd2de",
+        "deletions": 0,
+        "path": "tools/parallel_creation_proof.py",
+        "status": "A",
+        "symbols": [
+          "graph",
+          "main"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "a03fa2e8e4eb393e144af7adc229162961e31f82088b50b6eddca79700ef5883"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 6,
+    "kinds": [
+      "code",
+      "knowledge",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "assemblies",
+      "assembly",
+      "axm",
+      "build",
+      "create",
+      "creation",
+      "creation-machine",
+      "creative",
+      "deterministic",
+      "encode",
+      "failed",
+      "game",
+      "graph",
+      "growth",
+      "parallel",
+      "parts",
+      "plan",
+      "proof",
+      "read",
+      "references",
+      "resolve",
+      "reusable",
+      "run",
+      "sha",
+      "standalone",
+      "sticker",
+      "style",
+      "tools",
+      "universal-creation",
+      "validate",
+      "with",
+      "worker",
+      "write"
+    ]
+  },
+  "source": {
+    "base": "b5023a88af1cdd4c8a24f73c6606dc7621ce5ffe",
+    "commit_subject": "Build creative parts in parallel with deterministic assembly (#82)",
+    "head": "c3684070cf8c71f03414023dbd884b69c1dca3db",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

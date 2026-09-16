@@ -1,0 +1,113 @@
+{
+  "capsule_id": "018a6114932f153f1f1628cfcb84e38a5388a81b321f7e46503f0603431f1768",
+  "evidence": {
+    "files": [
+      {
+        "additions": 243,
+        "binary": false,
+        "content_sha256": "bd824c0a70939a2385bf59b7b9c9a8d4c6e907d0cf715d1a0286193976b9ee72",
+        "deletions": 0,
+        "path": "docs/CREATIVE_ANIMATION_WAVE10.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Creative Animation Wave 10 \u2014 canonical rigging and animation body",
+          "Public capability growth",
+          "Skeleton state",
+          "Pose state",
+          "Skin state and deformation",
+          "Skinning truth boundary",
+          "Blendshapes",
+          "Animation clips and keyframes",
+          "Clip truth boundary",
+          "Two-bone IK",
+          "Creative Flow integration",
+          "Explicit non-claims / next animation depth",
+          "Verification"
+        ]
+      },
+      {
+        "additions": 6,
+        "binary": false,
+        "content_sha256": "01f0b82b12538342bdd3ca5b349c216f7464e36f7f0e1531bb80fcf34cc2017b",
+        "deletions": 0,
+        "path": "tests/test_creative_precision_fabric.py",
+        "status": "M",
+        "symbols": [
+          "CreativePrecisionFabricTests"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "2bf88a0208d3ac7672e60003037993923ad8fe3b97fe59b0182d0e88c93924f5"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "animation",
+      "axiom",
+      "axm",
+      "blendshapes",
+      "body",
+      "bone",
+      "boundary",
+      "canonical",
+      "capability",
+      "chatgpt",
+      "claims",
+      "clip",
+      "clips",
+      "creation-machine",
+      "creative",
+      "deformation",
+      "depth",
+      "explicit",
+      "fabric",
+      "flow",
+      "from",
+      "growth",
+      "integration",
+      "keyframes",
+      "merge",
+      "mike",
+      "mir",
+      "next",
+      "non",
+      "pose",
+      "precision",
+      "pull",
+      "request",
+      "rigging",
+      "skeleton",
+      "skin",
+      "skinning",
+      "standalone",
+      "state",
+      "truth",
+      "two",
+      "universal-creation",
+      "verification",
+      "wave",
+      "wave10"
+    ]
+  },
+  "source": {
+    "base": "c054f3d23ffdafba977eb70b86909dfe1bcb9f2d",
+    "commit_subject": "Merge pull request #95 from mike-axiom-mir/chatgpt/creative-animation-wave10",
+    "head": "c5496a17b9580abf870432ed2fed324b86d1fa37",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

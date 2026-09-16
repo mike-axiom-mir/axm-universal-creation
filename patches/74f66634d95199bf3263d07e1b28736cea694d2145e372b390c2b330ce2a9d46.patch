@@ -1,0 +1,573 @@
+diff --git a/CHARACTER_REFERENCE_TEMPLATE_PACK.md b/CHARACTER_REFERENCE_TEMPLATE_PACK.md
+new file mode 100644
+index 0000000..fd39674
+--- /dev/null
++++ b/CHARACTER_REFERENCE_TEMPLATE_PACK.md
+@@ -0,0 +1,35 @@
++# Editable Character / Creature Reference Template Pack
++
++`visual.character.core` is a source-first character/creature reference-sheet foundation for games, comics, animation, 3D asset work and design handoff.
++
++## Surfaces
++
++- project / character hub
++- turnaround editor
++- proportions / measurement editor
++- expression sheet editor
++- pose / action reference editor
++- materials / surfaces editor
++- feature / equipment callouts
++- scale / variant editor
++- source / reference board
++- review / export
++
++## Source-first contracts
++
++- `character-source` preserves exact character identity plus source/version.
++- `turnaround-view` binds named views to exact identity and camera/view state.
++- `proportion-guide` keeps anchors, values, units, source and precision explicit.
++- `expression-state` keeps expression identity/source separate from canonical character identity.
++- `pose-reference` keeps pose, anchors/skeleton state and provenance explicit.
++- `character-material` binds exact body/gear parts to exact material sources.
++- `character-callout` binds annotations to exact anatomy/gear/feature targets.
++- `scale-reference` keeps reference identity, value, unit and source/assumption state explicit.
++- `character-variant` preserves base identity, deltas and status.
++- `reference-export-target` keeps required views/dimensions/variants/callouts/provenance visible.
++
++## Truth boundary
++
++A polished reference sheet is not proof that proportions, scale, anatomy, materials or 3D geometry are correct. Presentation views cannot silently redefine the canonical character identity. Approximate/derived measurements remain distinct from exact values. Inspiration/reference material is not treated as canonical character source unless explicitly bound as such.
++
++Deterministic proof can establish responsive layout and structural/editability contracts. It does not prove anatomy quality, modelability, rig compatibility, art quality, physical scale correctness or aesthetic acceptance.
+diff --git a/VISUAL_TEMPLATE_FABRIC.md b/VISUAL_TEMPLATE_FABRIC.md
+index 39e68fe..5e461ca 100644
+--- a/VISUAL_TEMPLATE_FABRIC.md
++++ b/VISUAL_TEMPLATE_FABRIC.md
+@@ -2,47 +2,47 @@
+ 
+ Universal Creation contains one deterministic library of **known visual archetypes** between low-level format scaffolds and finished products. Templates are editable structural starting points, not finished art and not automatic canon.
+ 
+-The public module remains `axm_uc.visual_templates`. Explicit extension packs now cover games/product plumbing, creative editors, comics, AXM system surfaces, key art, cards/decks, cinematic overlays, broadcast/video overlays, evidence-aware diagrams, world-map/lore-atlas editing, branching visual novels, 3D showroom/gallery presentation, music visuals/album art and source-bound presentation/explainer systems. Sticker Fabric remains the immutable/versioned registry bridge. Mathematical work can enrich declared ratios/ranges through `math_hooks` without replacing template identity.
++The public module remains `axm_uc.visual_templates`. Explicit extension packs now cover games/product plumbing, creative editors, comics, AXM system surfaces, key art, cards/decks, cinematic overlays, broadcast/video overlays, evidence-aware diagrams, world-map/lore-atlas editing, branching visual novels, 3D showroom/gallery presentation, music visuals/album art, source-bound presentation/explainers and character/creature reference systems. Sticker Fabric remains the immutable/versioned registry bridge. Mathematical work can enrich declared ratios/ranges through `math_hooks` without replacing template identity.
+ 
+-## Current v14 candidate census
++## Current v15 candidate census
+ 
+-- **166 reusable visual/state primitives**
+-- **22 coherent style systems**
+-- **204 responsive screen archetypes**
+-- **20 whole-product archetypes**
+-- **224 exact screen/product definitions** when explicitly installed into Sticker Registry
++- **176 reusable visual/state primitives**
++- **23 coherent style systems**
++- **214 responsive screen archetypes**
++- **21 whole-product archetypes**
++- **235 exact screen/product definitions** when explicitly installed into Sticker Registry
+ 
+ Every major family provides compact, standard and wide normalized layouts. Unknown requested variants fail rather than silently falling back.
+ 
+-## Presentation / explainer foundation
++## Character / creature reference foundation
+ 
+-`visual.presentation.core` provides ten source-first surfaces:
++`visual.character.core` provides ten source-first production-reference surfaces:
+ 
+-- project / presentation hub;
+-- page editor;
+-- narrative outline / section editor;
+-- content block editor;
+-- figure / reusable-artifact editor;
+-- source / citation / evidence editor;
+-- emphasis / layout variants;
+-- speaker notes / review;
+-- sequence / transition preview;
+-- export matrix.
++- project / character hub;
++- turnaround editor;
++- proportions / measurement editor;
++- expression sheet editor;
++- pose / action reference editor;
++- materials / surfaces editor;
++- feature / equipment callouts;
++- scale / variant editor;
++- source / reference board;
++- review / export.
+ 
+-Its `visual.presentation.story` style is replaceable. Communication structure remains distinct from source truth:
++Its `visual.character.reference` style is replaceable. Character identity and production truth remain explicit:
+ 
+-- `presentation-page` preserves exact page identity, role and order;
+-- `content-block` keeps type, content/source identity and semantic role explicit;
+-- `source-footnote` binds exact claims/figures/blocks to source plus evidence status;
+-- `figure-frame` preserves exact source and caption identity;
+-- `presentation-section` preserves ordered membership;
+-- `emphasis-cue` may alter visual emphasis but cannot rewrite source meaning;
+-- `speaker-note` remains non-rendered note state bound to an exact target/source;
+-- `embed-binding` preserves exact artifact identity/version/view;
+-- `presentation-transition` stays derived between exact pages and cannot change page order;
+-- `presentation-export-target` keeps page range/aspect/assets/source/provenance requirements visible.
++- `character-source` preserves exact character/creature identity plus source/version;
++- `turnaround-view` binds named views to exact identity and view/camera state;
++- `proportion-guide` preserves anchors, values, units, source and precision;
++- `expression-state` keeps expression identity/source separate from canonical identity;
++- `pose-reference` keeps pose/action state and provenance explicit;
++- `character-material` binds exact body/gear parts to exact material sources;
++- `character-callout` binds annotations to exact anatomy/gear/feature targets;
++- `scale-reference` preserves exact comparison reference, value, unit and source/assumption state;
++- `character-variant` preserves base identity, deltas and status;
++- `reference-export-target` keeps required views/dimensions/variants/callouts/provenance visible.
+ 
+-A polished explainer is not evidence that its claims are true or adequately sourced. Layout, emphasis, sequence and transitions can shape communication but cannot create evidence or silently alter included source meaning.
++A polished reference sheet is not proof that anatomy, proportions, scale, materials, riggability or 3D geometry are correct. Presentation views cannot silently redefine canonical character identity, and inspiration/reference material is not treated as canonical source unless explicitly bound.
+ 
+ ## Registry and identity
+ 
+@@ -52,8 +52,8 @@ Every built-in screen/product can be wrapped as an immutable Sticker definition.
+ 
+ ```sh
+ axm-visual-templates catalog
+-axm-visual-templates show visual.presentation.core
+-axm-visual-templates render visual.presentation.core creations/presentation --width 1920 --height 1080
++axm-visual-templates show visual.character.core
++axm-visual-templates render visual.character.core creations/character --width 1920 --height 1080
+ ```
+ 
+ Preview/export remains derived inspection output, never authoritative source.
+@@ -65,19 +65,19 @@ python -m unittest discover -s tests -p 'test_visual_templates.py' -v
+ python tools/visual_template_proof.py /new/output/path
+ ```
+ 
+-The v14 gate requires:
++The v15 gate requires:
+ 
+-- exact census: 22 styles / 166 primitives / 204 screens / 20 products;
+-- all 204 screens stay within six representative viewport shapes;
++- exact census: 23 styles / 176 primitives / 214 screens / 21 products;
++- all 214 screens stay within six representative viewport shapes;
+ - exact product screen order and flows resolve across those viewports;
+-- parseable galleries for all prior proof products plus `visual.presentation.core`;
+-- all 224 screen/product definitions install through Sticker Registry;
+-- exact page/order, content/source, citation/evidence, figure identity, section membership, speaker-note, embed identity/version/view, semantic-preserving emphasis and transition-order contracts remain present;
+-- prior music/showroom/visual-novel/atlas/diagram/broadcast/cinematic/card/key-art/comic/game/AXM source boundaries remain intact;
++- parseable galleries for all prior proof products plus `visual.character.core`;
++- all 235 screen/product definitions install through Sticker Registry;
++- exact identity/source/version, view/camera, measurement anchors/value/unit/source, expression and pose provenance, material-part bindings, callout targets, scale references and variant state remain present;
++- prior presentation/music/showroom/visual-novel/atlas/diagram/broadcast/cinematic/card/key-art/comic/game/AXM source boundaries remain intact;
+ - copy safety, strict variant rejection, invalid-geometry rejection and exact Sticker-slot binding remain intact.
+ 
+ ## Truth boundary
+ 
+-Current evidence proves deterministic structural/editability contracts only. It does **not** prove claim truth, source reliability, audience understanding, speaking quality, accessibility compliance or aesthetic acceptance.
++Current evidence proves deterministic structural/editability contracts only. It does **not** prove anatomy quality, modelability, rig compatibility, art quality, physical scale correctness or aesthetic acceptance.
+ 
+-Consuming products must provide real content/source state. Unknown, disputed, derived and missing information stays distinguishable. Richer editable source remains authoritative over previews/exports.
++Consuming products must provide real character/reference state. Unknown, approximate, derived and missing information stays distinguishable. Richer editable source remains authoritative over previews/exports.
+diff --git a/VISUAL_TEMPLATE_PRIORITY_MAP.md b/VISUAL_TEMPLATE_PRIORITY_MAP.md
+index bfffa0d..db4286d 100644
+--- a/VISUAL_TEMPLATE_PRIORITY_MAP.md
++++ b/VISUAL_TEMPLATE_PRIORITY_MAP.md
+@@ -1,6 +1,6 @@
+ # AXM Visual Template Expansion Priority Map
+ 
+-Status: v14 growth lane after verified v1–v13 merges.
++Status: v15 growth lane after verified v1–v14 merges.
+ 
+ The visual-template fabric grows where Universal Creation is likely to reuse the knowledge soon. This is a build priority, not canon: templates remain editable foundations and may be replaced when evidence supports a better structure.
+ 
+@@ -16,48 +16,49 @@ The visual-template fabric grows where Universal Creation is likely to reuse the
+ - world-map / lore-atlas editor;
+ - interactive visual-novel / branching narrative editor;
+ - 3D showroom / gallery presentation;
+-- music visualizer / album-art editor.
++- music visualizer / album-art editor;
++- presentation / explainer page systems.
+ 
+-## Presentation / explainer page systems — IMPLEMENTED IN THIS LANE
++## Character / creature reference-sheet editor — IMPLEMENTED IN THIS LANE
+ 
+-Product: `visual.presentation.core`
++Product: `visual.character.core`
+ 
+ Implemented screens:
+ 
+-- `visual.presentation.project-hub`
+-- `visual.presentation.page-editor`
+-- `visual.presentation.outline-editor`
+-- `visual.presentation.block-editor`
+-- `visual.presentation.figure-editor`
+-- `visual.presentation.source-editor`
+-- `visual.presentation.emphasis-layout`
+-- `visual.presentation.notes-review`
+-- `visual.presentation.sequence-preview`
+-- `visual.presentation.export`
++- `visual.character.project-hub`
++- `visual.character.turnaround`
++- `visual.character.proportions`
++- `visual.character.expressions`
++- `visual.character.poses`
++- `visual.character.materials`
++- `visual.character.callouts`
++- `visual.character.scale-variants`
++- `visual.character.reference-board`
++- `visual.character.review-export`
+ 
+ New primitives:
+ 
+-- `presentation-page`
+-- `content-block`
+-- `source-footnote`
+-- `figure-frame`
+-- `presentation-section`
+-- `emphasis-cue`
+-- `speaker-note`
+-- `embed-binding`
+-- `presentation-transition`
+-- `presentation-export-target`
++- `character-source`
++- `turnaround-view`
++- `proportion-guide`
++- `expression-state`
++- `pose-reference`
++- `character-material`
++- `character-callout`
++- `scale-reference`
++- `character-variant`
++- `reference-export-target`
+ 
+-Style: `visual.presentation.story`.
++Style: `visual.character.reference`.
+ 
+-The central rule is source/meaning continuity: page order, content, citations, figure identity and embedded artifact versions stay exact. Layout/emphasis/transition choices can improve communication but cannot manufacture evidence, rewrite source meaning or silently reorder the story.
++The central rule is character/reference truth: canonical identity, views, proportions, expressions, poses, materials, callouts, scale and variants remain distinct editable state. Approximate/derived measurements stay distinct from exact values, and inspiration/reference material never becomes canonical source merely because it is visually nearby.
+ 
+ ## Next high-value visual/creation families
+ 
+-1. **Character / creature reference-sheet editor** — turnaround views, expressions, materials, proportions, callouts and source/reference state for games/comics.
+-2. **Vehicle / weapon configuration presentation** — attachment sockets, stat comparison, exploded/detail presentation and exact source/configuration identity for garages/loadouts.
+-3. **UI motion / transition archetypes** — reusable state transitions, focus motion, spatial continuity and reduced-motion variants across software/game products.
+-4. **Brand / identity system editor** — exact logos, typography, icon families, spacing rules, usage variants and provenance-backed export packs.
++1. **Vehicle / weapon configuration presentation** — attachment sockets, exact configuration identity, stat comparison, exploded/detail views and source-bound garage/loadout presentation.
++2. **UI motion / transition archetypes** — reusable state transitions, focus motion, spatial continuity and reduced-motion variants across software/game products.
++3. **Brand / identity system editor** — exact logos, typography, icon families, spacing rules, usage variants and provenance-backed export packs.
++4. **Environment / level reference boards** — modular location identity, scale, materials, props, lighting references, traversal annotations and source provenance for game-world production.
+ 
+ ## Cross-cutting rules
+ 
+@@ -73,7 +74,7 @@ Every family preserves the existing visual-template contract:
+ 
+ ## Immediate build order
+ 
+-1. exact-head verify `visual.presentation.core`;
+-2. merge v14 only when template + repository checks pass;
+-3. begin character / creature reference-sheet editing from fresh main;
++1. exact-head verify `visual.character.core`;
++2. merge v15 only when template + repository checks pass;
++3. begin vehicle / weapon configuration presentation from fresh main;
+ 4. keep prioritizing reusable source-first editors over flat one-off outputs.
+diff --git a/src/axm_uc/visual_template_character_reference.py b/src/axm_uc/visual_template_character_reference.py
+new file mode 100644
+index 0000000..69c472b
+--- /dev/null
++++ b/src/axm_uc/visual_template_character_reference.py
+@@ -0,0 +1,88 @@
++"""Editable character, creature and asset reference-sheet foundations."""
++from __future__ import annotations
++from copy import deepcopy
++from typing import Any
++
++
++def _merge(target: dict[str, Any], additions: dict[str, Any], label: str) -> None:
++    overlap=sorted(set(target)&set(additions))
++    if overlap: raise RuntimeError(f"character-reference {label} collision: {', '.join(overlap)}")
++    target.update(deepcopy(additions))
++
++
++def extend_character_reference_catalog(namespace: dict[str, Any]) -> None:
++    styles=namespace['STYLE_SYSTEMS']; primitives=namespace['PRIMITIVES']
++    screens=namespace['SCREEN_TEMPLATES']; products=namespace['PRODUCT_ARCHETYPES']
++    screen=namespace['_screen']; origin=namespace['_origin']
++
++    _merge(styles,{'visual.character.reference':{
++        'intent':'production reference clarity with exact character identity, proportions, views, materials and source provenance separated from presentation polish',
++        'tokens':{'canvas':'#0e1012','surface':'#191d21','surface_raised':'#242b31','text':'#f2f3ef','muted':'#a7adae','accent':'#8fc7bb','warning':'#deb86d','danger':'#d87578','line':'#454d50'},
++        'shape':{'panel_radius_ratio':0.010,'cut_ratio':0.002,'line_ratio':0.0011},
++        'type':{'display_weight':735,'body_weight':500,'metric_scale':1.48,'tracking':0.010},
++        'depth':{'layers':6,'shadow':'subtle','glass':'none'},
++        'motion':{'fast_ms':80,'standard_ms':160,'slow_ms':280,'principle':'reference identity and measurement truth before flourish'},
++    }},'style')
++
++    _merge(primitives,{
++        'character-source':{'role':'exact character/creature identity with source/version/digest and ownership/reference state','states':['known','selected','missing','unknown'],'identity_source_version_required':True},
++        'turnaround-view':{'role':'named orthographic/perspective reference view bound to exact identity and camera/view state','states':['front','side','back','three-quarter','custom'],'identity_view_camera_required':True},
++        'proportion-guide':{'role':'measurement/proportion guide with exact anchors, values, unit and source/precision','states':['exact','approximate','derived','unknown'],'anchors_value_unit_source_required':True},
++        'expression-state':{'role':'named expression/emotion reference with exact character identity and source/derivation state','states':['neutral','active','selected','unknown'],'identity_name_source_required':True},
++        'pose-reference':{'role':'named pose/action reference with exact identity, skeleton/anchor state and provenance','states':['rest','action','selected','unknown'],'identity_pose_source_required':True},
++        'character-material':{'role':'material/surface/color assignment bound to exact body/gear part and source','states':['bound','selected','missing','unknown'],'part_material_source_required':True},
++        'character-callout':{'role':'annotation bound to exact anatomical/gear/feature target with source/status','states':['visible','selected','hidden','unresolved'],'target_content_source_required':True},
++        'scale-reference':{'role':'scale comparison with exact reference object/person, unit and source/assumption state','states':['exact','approximate','derived','unknown'],'reference_value_unit_source_required':True},
++        'character-variant':{'role':'exact character/creature variant with base identity, deltas and availability/status','states':['active','alternate','archived','unknown'],'base_delta_status_required':True},
++        'reference-export-target':{'role':'output target with exact views, dimensions, variants, callouts, sources and provenance requirements','states':['ready','warning','blocked','exported'],'requirements_must_be_visible':True},
++    },'primitive')
++
++    q=['character identity, turnaround views, proportions, expressions, poses, materials and variants remain separately editable','presentation views never silently rewrite the canonical character/creature identity','measurements and scale retain unit, source and precision/assumption state','callouts stay bound to exact anatomical, gear or feature targets','derived reference sheets and exports never replace richer character source state']
++    def v(c,s,w): return {'compact':c,'standard':s,'wide':w}
++    additions={
++      'visual.character.project-hub':screen('visual.character.project-hub','Character reference project hub','creative.character','visual.character.reference','browse exact characters/creatures, variants, reference coverage, source completeness and outputs',v(
++        {'header':(.03,.03,.94,.08),'characters':(.03,.14,.94,.30),'variants':(.03,.47,.45,.38),'coverage':(.51,.47,.46,.27),'actions':(.51,.77,.46,.08)},
++        {'header':(.02,.03,.96,.075),'characters':(.02,.14,.22,.82),'variants':(.27,.14,.46,.82),'coverage':(.76,.14,.22,.55),'actions':(.76,.72,.22,.14)},
++        {'header':(.015,.03,.97,.07),'characters':(.015,.13,.20,.84),'variants':(.24,.13,.50,.84),'coverage':(.77,.13,.215,.57),'actions':(.77,.73,.215,.14)}),tags=['visual','character','creature','reference'],quality=q),
++      'visual.character.turnaround':screen('visual.character.turnaround','Character turnaround editor','creative.character','visual.character.reference','edit front/side/back/three-quarter reference views bound to exact character identity and view state',v(
++        {'header':(.03,.03,.94,.08),'views':(.03,.14,.94,.50),'guide':(.03,.67,.45,.20),'details':(.51,.67,.46,.20),'actions':(.03,.90,.94,.07)},
++        {'header':(.02,.03,.96,.075),'list':(.02,.14,.18,.72),'views':(.225,.14,.55,.72),'details':(.80,.14,.18,.54),'actions':(.80,.71,.18,.15)},
++        {'header':(.015,.03,.97,.07),'list':(.015,.13,.16,.74),'views':(.195,.13,.58,.74),'details':(.795,.13,.19,.55),'actions':(.795,.71,.19,.16)}),tags=['visual','character','turnaround','view'],math_hooks={'figure_height_ratio':[0.55,0.88],'view_gap_ratio':[0.015,0.08]},quality=q),
++      'visual.character.proportions':screen('visual.character.proportions','Proportion and measurement editor','creative.character','visual.character.reference','edit exact measurement anchors, proportion guides, units, precision and source while showing character reference view',v(
++        {'header':(.03,.03,.94,.08),'figure':(.03,.14,.94,.36),'guides':(.03,.53,.55,.34),'details':(.61,.53,.36,.25),'actions':(.61,.81,.36,.06)},
++        {'header':(.02,.03,.96,.075),'guides':(.02,.14,.25,.72),'figure':(.30,.14,.45,.72),'details':(.78,.14,.20,.54),'actions':(.78,.71,.20,.15)},
++        {'header':(.015,.03,.97,.07),'guides':(.015,.13,.23,.74),'figure':(.265,.13,.49,.74),'details':(.78,.13,.205,.55),'actions':(.78,.71,.205,.16)}),tags=['visual','character','proportion','measurement'],quality=q),
++      'visual.character.expressions':screen('visual.character.expressions','Expression sheet editor','creative.character','visual.character.reference','edit named expression references, identity and source state without flattening expression into character identity',v(
++        {'header':(.03,.03,.94,.08),'grid':(.03,.14,.94,.50),'list':(.03,.67,.45,.20),'details':(.51,.67,.46,.20),'actions':(.03,.90,.94,.07)},
++        {'header':(.02,.03,.96,.075),'list':(.02,.14,.20,.72),'grid':(.245,.14,.50,.72),'details':(.77,.14,.21,.54),'actions':(.77,.71,.21,.15)},
++        {'header':(.015,.03,.97,.07),'list':(.015,.13,.18,.74),'grid':(.215,.13,.54,.74),'details':(.775,.13,.21,.55),'actions':(.775,.71,.21,.16)}),tags=['visual','character','expression','face'],quality=q),
++      'visual.character.poses':screen('visual.character.poses','Pose and action reference editor','creative.character','visual.character.reference','edit exact pose/action references, skeleton/anchor state and provenance with canonical identity preserved',v(
++        {'header':(.03,.03,.94,.08),'stage':(.03,.14,.94,.40),'poses':(.03,.57,.45,.30),'details':(.51,.57,.46,.22),'actions':(.51,.82,.46,.05)},
++        {'header':(.02,.03,.96,.075),'poses':(.02,.14,.20,.72),'stage':(.245,.14,.50,.72),'details':(.77,.14,.21,.54),'actions':(.77,.71,.21,.15)},
++        {'header':(.015,.03,.97,.07),'poses':(.015,.13,.18,.74),'stage':(.215,.13,.54,.74),'details':(.775,.13,.21,.55),'actions':(.775,.71,.21,.16)}),tags=['visual','character','pose','action'],quality=q),
++      'visual.character.materials':screen('visual.character.materials','Character material and surface editor','creative.character','visual.character.reference','bind exact body/gear parts to material/surface/color sources while keeping assignment identity explicit',v(
++        {'header':(.03,.03,.94,.08),'figure':(.03,.14,.94,.36),'parts':(.03,.53,.45,.34),'materials':(.51,.53,.46,.25),'actions':(.51,.81,.46,.06)},
++        {'header':(.02,.03,.96,.075),'parts':(.02,.14,.22,.72),'figure':(.27,.14,.48,.72),'materials':(.78,.14,.20,.54),'actions':(.78,.71,.20,.15)},
++        {'header':(.015,.03,.97,.07),'parts':(.015,.13,.20,.74),'figure':(.24,.13,.51,.74),'materials':(.775,.13,.21,.55),'actions':(.775,.71,.21,.16)}),tags=['visual','character','material','surface'],quality=q),
++      'visual.character.callouts':screen('visual.character.callouts','Feature and equipment callout editor','creative.character','visual.character.reference','bind annotations to exact anatomy, gear or feature targets with source/status visible',v(
++        {'header':(.03,.03,.94,.08),'figure':(.03,.14,.94,.39),'callouts':(.03,.56,.45,.31),'details':(.51,.56,.46,.31),'actions':(.03,.90,.94,.07)},
++        {'header':(.02,.03,.96,.075),'callouts':(.02,.14,.20,.72),'figure':(.245,.14,.50,.72),'details':(.77,.14,.21,.54),'actions':(.77,.71,.21,.15)},
++        {'header':(.015,.03,.97,.07),'callouts':(.015,.13,.18,.74),'figure':(.215,.13,.54,.74),'details':(.775,.13,.21,.55),'actions':(.775,.71,.21,.16)}),tags=['visual','character','callout','gear'],quality=q),
++      'visual.character.scale-variants':screen('visual.character.scale-variants','Scale and character-variant editor','creative.character','visual.character.reference','compare scale against exact references and edit variants as explicit deltas from canonical identity',v(
++        {'header':(.03,.03,.94,.08),'comparison':(.03,.14,.94,.36),'scale':(.03,.53,.45,.34),'variants':(.51,.53,.46,.25),'actions':(.51,.81,.46,.06)},
++        {'header':(.02,.03,.96,.075),'scale':(.02,.14,.22,.72),'comparison':(.27,.14,.48,.72),'variants':(.78,.14,.20,.54),'actions':(.78,.71,.20,.15)},
++        {'header':(.015,.03,.97,.07),'scale':(.015,.13,.20,.74),'comparison':(.24,.13,.51,.74),'variants':(.775,.13,.21,.55),'actions':(.775,.71,.21,.16)}),tags=['visual','character','scale','variant'],quality=q),
++      'visual.character.reference-board':screen('visual.character.reference-board','Character source/reference board','creative.character','visual.character.reference','organize source/reference material with role, provenance and exact relation to character features without treating inspiration as canonical source',v(
++        {'header':(.03,.03,.94,.08),'board':(.03,.14,.94,.43),'references':(.03,.60,.55,.27),'details':(.61,.60,.36,.27),'actions':(.03,.90,.94,.07)},
++        {'header':(.02,.03,.96,.075),'references':(.02,.14,.23,.72),'board':(.28,.14,.47,.72),'details':(.78,.14,.20,.54),'actions':(.78,.71,.20,.15)},
++        {'header':(.015,.03,.97,.07),'references':(.015,.13,.21,.74),'board':(.26,.13,.49,.74),'details':(.78,.13,.205,.55),'actions':(.78,.71,.205,.16)}),tags=['visual','character','reference','source'],quality=q),
++      'visual.character.review-export':screen('visual.character.review-export','Character reference review and export','creative.character','visual.character.reference','review missing views, inconsistent measurements, unresolved callouts/materials, variants and source requirements before derived export',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.30),'checks':(.03,.47,.58,.39),'targets':(.64,.47,.33,.27),'actions':(.64,.77,.33,.09)},
++        {'header':(.02,.03,.96,.075),'preview':(.02,.14,.38,.72),'checks':(.43,.14,.34,.72),'targets':(.79,.14,.19,.48),'actions':(.79,.65,.19,.21)},
++        {'header':(.015,.03,.97,.07),'preview':(.015,.13,.36,.74),'checks':(.40,.13,.37,.74),'targets':(.79,.13,.195,.49),'actions':(.79,.65,.195,.22)}),tags=['visual','character','review','export'],quality=q),
++    }
++    _merge(screens,additions,'screen')
++    ids=list(additions)
++    product={'schema':'axm.visual-product/v1','id':'visual.character.core','version':1,'name':'Editable character and creature reference core','kind':'product','domain':'creative.character','tags':['visual','character','creature','reference','product'],'origin':origin(),'style':'visual.character.reference','intent':'source-first character/creature reference editing with exact identity, views, proportions, expressions, poses, materials, callouts, scale and variants','screens':ids,'flow':[
++      ['visual.character.project-hub','visual.character.turnaround','edit-turnaround'],['visual.character.turnaround','visual.character.proportions','edit-proportions'],['visual.character.project-hub','visual.character.expressions','edit-expressions'],['visual.character.project-hub','visual.character.poses','edit-poses'],['visual.character.turnaround','visual.character.materials','edit-materials'],['visual.character.turnaround','visual.character.callouts','edit-callouts'],['visual.character.project-hub','visual.character.scale-variants','edit-scale-variants'],['visual.character.project-hub','visual.character.reference-board','inspect-references'],['visual.character.project-hub','visual.character.review-export','review-export']], 'quality':q}
++    _merge(products,{'visual.character.core':product},'product')
+diff --git a/src/axm_uc/visual_templates.py b/src/axm_uc/visual_templates.py
+index d180492..f0a6a4e 100644
+--- a/src/axm_uc/visual_templates.py
++++ b/src/axm_uc/visual_templates.py
+@@ -23,8 +23,9 @@ from .visual_template_novel import extend_novel_catalog as _extend_novel_catalog
+ from .visual_template_showroom import extend_showroom_catalog as _extend_showroom_catalog
+ from .visual_template_music import extend_music_catalog as _extend_music_catalog
+ from .visual_template_presentation import extend_presentation_catalog as _extend_presentation_catalog
++from .visual_template_character_reference import extend_character_reference_catalog as _extend_character_reference_catalog
+ 
+-_COMPOSITION=("visual_template_growth","visual_template_game_systems","visual_template_creative_narrative","visual_template_axm_system","visual_template_game_shared","visual_template_keyart","visual_template_cards","visual_template_cinematic","visual_template_video_overlay","visual_template_diagram","visual_template_atlas","visual_template_novel","visual_template_showroom","visual_template_music","visual_template_presentation")
++_COMPOSITION=("visual_template_growth","visual_template_game_systems","visual_template_creative_narrative","visual_template_axm_system","visual_template_game_shared","visual_template_keyart","visual_template_cards","visual_template_cinematic","visual_template_video_overlay","visual_template_diagram","visual_template_atlas","visual_template_novel","visual_template_showroom","visual_template_music","visual_template_presentation","visual_template_character_reference")
+ _applied=getattr(_core,"_AXM_VISUAL_COMPOSITION",None)
+ if _applied is None:
+     _extend_catalog(vars(_core))
+@@ -42,6 +43,7 @@ if _applied is None:
+     _extend_showroom_catalog(vars(_core))
+     _extend_music_catalog(vars(_core))
+     _extend_presentation_catalog(vars(_core))
++    _extend_character_reference_catalog(vars(_core))
+     _core._AXM_VISUAL_COMPOSITION=_COMPOSITION
+ elif _applied != _COMPOSITION:
+     raise RuntimeError("visual template composition changed inside a live process; restart with one exact catalog")
+diff --git a/tests/test_visual_templates.py b/tests/test_visual_templates.py
+index 8cda8d5..751ce94 100644
+--- a/tests/test_visual_templates.py
++++ b/tests/test_visual_templates.py
+@@ -8,18 +8,18 @@ from axm_stickers import Registry
+ from axm_uc import visual_templates as vt
+ 
+ SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
+-PRODUCTS=('game.racing.full','game.coop.action','game.rts.command','game.system.shell','game.shared.core','editor.creative.core','comic.narrative.core','axm.system.shell','visual.keyart.core','visual.cards.core','visual.cinematic.core','visual.broadcast.core','visual.diagram.core','visual.atlas.core','visual.novel.core','visual.showroom.core','visual.music.core','visual.presentation.core')
++PRODUCTS=('game.racing.full','game.coop.action','game.rts.command','game.system.shell','game.shared.core','editor.creative.core','comic.narrative.core','axm.system.shell','visual.keyart.core','visual.cards.core','visual.cinematic.core','visual.broadcast.core','visual.diagram.core','visual.atlas.core','visual.novel.core','visual.showroom.core','visual.music.core','visual.presentation.core','visual.character.core')
+ 
+ class VisualTemplateTests(unittest.TestCase):
+     def test_catalog_counts_and_products(self):
+         counts=vt.validate_catalog()
+-        self.assertEqual(counts,{'styles':22,'primitives':166,'screens':204,'products':20})
++        self.assertEqual(counts,{'styles':23,'primitives':176,'screens':214,'products':21})
+         self.assertEqual(vt.CATALOG_COMPOSITION['counts'],counts)
+         ids={p['id'] for p in vt.catalog()['products']}
+         self.assertTrue(set(PRODUCTS)|{'game.racing.performance','software.creator.studio'} <= ids)
+ 
+     def test_all_geometry_and_major_variants(self):
+-        prefixes=('game.','editor.creative.','comic.narrative.','axm.system.','visual.keyart.','visual.cards.','visual.cinematic.','visual.broadcast.','visual.diagram.','visual.atlas.','visual.novel.','visual.showroom.','visual.music.','visual.presentation.')
++        prefixes=('game.','editor.creative.','comic.narrative.','axm.system.','visual.keyart.','visual.cards.','visual.cinematic.','visual.broadcast.','visual.diagram.','visual.atlas.','visual.novel.','visual.showroom.','visual.music.','visual.presentation.','visual.character.')
+         for tid,definition in vt.SCREEN_TEMPLATES.items():
+             if tid.startswith(prefixes): self.assertEqual(set(definition['variants']),{'compact','standard','wide'},tid)
+             for width,height in SIZES:
+@@ -29,21 +29,21 @@ class VisualTemplateTests(unittest.TestCase):
+                     self.assertLessEqual(x+w,width+1e-6); self.assertLessEqual(y+h,height+1e-6)
+ 
+     def test_existing_product_depth_is_retained(self):
+-        expected={'game.racing.full':19,'game.system.shell':18,'game.shared.core':12,'editor.creative.core':12,'comic.narrative.core':10,'axm.system.shell':12,'visual.keyart.core':10,'visual.cards.core':11,'visual.cinematic.core':10,'visual.broadcast.core':10,'visual.diagram.core':10,'visual.atlas.core':10,'visual.novel.core':10,'visual.showroom.core':10,'visual.music.core':10}
++        expected={'game.racing.full':19,'game.system.shell':18,'game.shared.core':12,'editor.creative.core':12,'comic.narrative.core':10,'axm.system.shell':12,'visual.keyart.core':10,'visual.cards.core':11,'visual.cinematic.core':10,'visual.broadcast.core':10,'visual.diagram.core':10,'visual.atlas.core':10,'visual.novel.core':10,'visual.showroom.core':10,'visual.music.core':10,'visual.presentation.core':10}
+         for pid,count in expected.items(): self.assertEqual(len(vt.get(pid)['screens']),count)
+ 
+-    def test_presentation_product_preserves_content_source_and_order_truth(self):
+-        product=vt.get('visual.presentation.core')
+-        required={'visual.presentation.project-hub','visual.presentation.page-editor','visual.presentation.outline-editor','visual.presentation.block-editor','visual.presentation.figure-editor','visual.presentation.source-editor','visual.presentation.emphasis-layout','visual.presentation.notes-review','visual.presentation.sequence-preview','visual.presentation.export'}
++    def test_character_product_preserves_identity_measurement_and_reference_truth(self):
++        product=vt.get('visual.character.core')
++        required={'visual.character.project-hub','visual.character.turnaround','visual.character.proportions','visual.character.expressions','visual.character.poses','visual.character.materials','visual.character.callouts','visual.character.scale-variants','visual.character.reference-board','visual.character.review-export'}
+         self.assertEqual(set(product['screens']),required)
+-        self.assertEqual(product['style'],'visual.presentation.story')
++        self.assertEqual(product['style'],'visual.character.reference')
+         quality=' '.join(product['quality']).lower()
+         self.assertIn('separately editable',quality)
+-        self.assertIn('never rewrite exact source meaning',quality)
+-        self.assertIn('exact identity/version/view bindings',quality)
+-        self.assertIn('missing or disputed source state',quality)
+-        self.assertIn('richer presentation source state',quality)
+-        self.assertIn('page_safe_ratio',vt.get('visual.presentation.page-editor')['math_hooks'])
++        self.assertIn('canonical character/creature identity',quality)
++        self.assertIn('unit, source and precision/assumption state',quality)
++        self.assertIn('exact anatomical, gear or feature targets',quality)
++        self.assertIn('richer character source state',quality)
++        self.assertIn('figure_height_ratio',vt.get('visual.character.turnaround')['math_hooks'])
+ 
+     def test_products_resolve_and_previews_parse(self):
+         for pid in PRODUCTS:
+@@ -60,28 +60,31 @@ class VisualTemplateTests(unittest.TestCase):
+         with tempfile.TemporaryDirectory() as td:
+             with Registry(Path(td)/'stickers.sqlite') as registry:
+                 pins=vt.install_builtins(registry)
+-                self.assertEqual(len(pins),224)
+-                presentation=registry.search(adapter=vt.ADAPTER,tag='presentation',limit=100)['entries']
+-                self.assertEqual(len(presentation),10)
+-                d=registry.get('visual.visual.presentation.page-editor',1)
++                self.assertEqual(len(pins),235)
++                character=registry.search(adapter=vt.ADAPTER,tag='character',limit=100)['entries']
++                self.assertEqual(len(character),12)
++                expected={f'visual.visual.character.{name}' for name in ('project-hub','turnaround','proportions','expressions','poses','materials','callouts','scale-variants','reference-board','review-export')}
++                self.assertTrue(expected <= {entry['id'] for entry in character})
++                d=registry.get('visual.visual.character.turnaround',1)
+                 self.assertEqual(d['recipe']['visual_template']['schema'],vt.SCHEMA)
+                 self.assertNotIn('"latest"',json.dumps(d,sort_keys=True))
+ 
+-    def test_presentation_source_embed_notes_order_and_export_contracts(self):
+-        required={'presentation-page','content-block','source-footnote','figure-frame','presentation-section','emphasis-cue','speaker-note','embed-binding','presentation-transition','presentation-export-target'}
++    def test_character_source_view_measurement_material_scale_and_export_contracts(self):
++        required={'character-source','turnaround-view','proportion-guide','expression-state','pose-reference','character-material','character-callout','scale-reference','character-variant','reference-export-target'}
+         self.assertTrue(required <= set(vt.PRIMITIVES))
+-        self.assertTrue(vt.PRIMITIVES['presentation-page']['identity_role_order_required'])
+-        self.assertTrue(vt.PRIMITIVES['content-block']['type_content_source_required'])
+-        self.assertTrue(vt.PRIMITIVES['source-footnote']['target_source_status_required'])
+-        self.assertTrue(vt.PRIMITIVES['figure-frame']['source_caption_identity_required'])
+-        self.assertTrue(vt.PRIMITIVES['presentation-section']['membership_order_required'])
+-        self.assertTrue(vt.PRIMITIVES['emphasis-cue']['must_not_rewrite_source_meaning'])
+-        self.assertTrue(vt.PRIMITIVES['speaker-note']['target_and_source_required'])
+-        self.assertTrue(vt.PRIMITIVES['embed-binding']['identity_version_view_required'])
+-        self.assertTrue(vt.PRIMITIVES['presentation-transition']['must_not_change_page_order'])
+-        self.assertTrue(vt.PRIMITIVES['presentation-export-target']['requirements_must_be_visible'])
++        self.assertTrue(vt.PRIMITIVES['character-source']['identity_source_version_required'])
++        self.assertTrue(vt.PRIMITIVES['turnaround-view']['identity_view_camera_required'])
++        self.assertTrue(vt.PRIMITIVES['proportion-guide']['anchors_value_unit_source_required'])
++        self.assertTrue(vt.PRIMITIVES['expression-state']['identity_name_source_required'])
++        self.assertTrue(vt.PRIMITIVES['pose-reference']['identity_pose_source_required'])
++        self.assertTrue(vt.PRIMITIVES['character-material']['part_material_source_required'])
++        self.assertTrue(vt.PRIMITIVES['character-callout']['target_content_source_required'])
++        self.assertTrue(vt.PRIMITIVES['scale-reference']['reference_value_unit_source_required'])
++        self.assertTrue(vt.PRIMITIVES['character-variant']['base_delta_status_required'])
++        self.assertTrue(vt.PRIMITIVES['reference-export-target']['requirements_must_be_visible'])
+ 
+     def test_prior_source_boundaries_remain_present(self):
++        self.assertTrue(vt.PRIMITIVES['presentation-page']['identity_role_order_required'])
+         self.assertTrue(vt.PRIMITIVES['music-track-source']['identity_source_digest_duration_required'])
+         self.assertTrue(vt.PRIMITIVES['showroom-object']['source_identity_version_required'])
+         self.assertTrue(vt.PRIMITIVES['save-checkpoint']['state_identity_digest_required'])
+@@ -94,12 +97,12 @@ class VisualTemplateTests(unittest.TestCase):
+         self.assertTrue(vt.PRIMITIVES['truth-state']['source_must_be_visible'])
+ 
+     def test_copy_safety_variant_rejection_and_bad_geometry(self):
+-        a=vt.resolve('visual.presentation.page-editor',1920,1080); b=vt.resolve('visual.presentation.page-editor',1920,1080)
++        a=vt.resolve('visual.character.turnaround',1920,1080); b=vt.resolve('visual.character.turnaround',1920,1080)
+         self.assertEqual(a,b)
+-        copy=vt.get('visual.presentation.page-editor'); copy['name']='changed'
+-        self.assertNotEqual(vt.get('visual.presentation.page-editor')['name'],'changed')
+-        with self.assertRaises(ValueError): vt.resolve('visual.presentation.page-editor',1920,1080,variant='unknown')
+-        bad=vt.get('visual.presentation.page-editor'); bad['variants']['standard']['page']=[.9,.9,.2,.2]
++        copy=vt.get('visual.character.turnaround'); copy['name']='changed'
++        self.assertNotEqual(vt.get('visual.character.turnaround')['name'],'changed')
++        with self.assertRaises(ValueError): vt.resolve('visual.character.turnaround',1920,1080,variant='unknown')
++        bad=vt.get('visual.character.turnaround'); bad['variants']['standard']['views']=[.9,.9,.2,.2]
+         with self.assertRaises(ValueError): vt.validate_screen(bad)
+ 
+     def test_exact_sticker_slot_binding_is_retained(self):
+diff --git a/tools/visual_template_proof.py b/tools/visual_template_proof.py
+index 737f957..88d943b 100644
+--- a/tools/visual_template_proof.py
++++ b/tools/visual_template_proof.py
+@@ -8,7 +8,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src'))
+ from axm_uc import visual_templates as vt
+ 
+ SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
+-PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell","visual.keyart.core","visual.cards.core","visual.cinematic.core","visual.broadcast.core","visual.diagram.core","visual.atlas.core","visual.novel.core","visual.showroom.core","visual.music.core","visual.presentation.core")
++PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell","visual.keyart.core","visual.cards.core","visual.cinematic.core","visual.broadcast.core","visual.diagram.core","visual.atlas.core","visual.novel.core","visual.showroom.core","visual.music.core","visual.presentation.core","visual.character.core")
+ 
+ def _write(project,target):
+     target.mkdir(); out=[]
+@@ -25,7 +25,7 @@ def main(argv):
+     out.mkdir(parents=True)
+     try:
+         counts=vt.validate_catalog()
+-        if counts!={'styles':22,'primitives':166,'screens':204,'products':20}: raise AssertionError(counts)
++        if counts!={'styles':23,'primitives':176,'screens':214,'products':21}: raise AssertionError(counts)
+         evidence=[]
+         for pid in PRODUCTS:
+             expected=vt.get(pid)
+@@ -55,27 +55,28 @@ def main(argv):
+             ('visual.showroom.core',1920,1080,'showroom','AXM 3D Showroom and Gallery Foundation'),
+             ('visual.music.core',1920,1080,'music','AXM Music Visualizer and Album-Art Foundation'),
+             ('visual.presentation.core',1920,1080,'presentation','AXM Presentation and Explainer Foundation'),
++            ('visual.character.core',1920,1080,'character-reference','AXM Character and Creature Reference Foundation'),
+         )
+         outputs=[]
+         for pid,w,h,folder,title in galleries: outputs+=_write(vt.product_project(pid,w,h,title),out/folder)
+         outputs+=_write(vt.screen_project('product.mobile.home',1080,1920,'AXM Mobile Foundation'),out/'mobile-home')
+-        product=vt.get('visual.presentation.core')
+-        required={'visual.presentation.project-hub','visual.presentation.page-editor','visual.presentation.outline-editor','visual.presentation.block-editor','visual.presentation.figure-editor','visual.presentation.source-editor','visual.presentation.emphasis-layout','visual.presentation.notes-review','visual.presentation.sequence-preview','visual.presentation.export'}
+-        if set(product['screens'])!=required: raise AssertionError('presentation pack lost required surfaces')
++        product=vt.get('visual.character.core')
++        required={'visual.character.project-hub','visual.character.turnaround','visual.character.proportions','visual.character.expressions','visual.character.poses','visual.character.materials','visual.character.callouts','visual.character.scale-variants','visual.character.reference-board','visual.character.review-export'}
++        if set(product['screens'])!=required: raise AssertionError('character reference pack lost required surfaces')
+         checks={
+-            'page_identity_role_order':vt.PRIMITIVES['presentation-page']['identity_role_order_required'],
+-            'content_type_source':vt.PRIMITIVES['content-block']['type_content_source_required'],
+-            'citation_target_source_status':vt.PRIMITIVES['source-footnote']['target_source_status_required'],
+-            'figure_source_caption_identity':vt.PRIMITIVES['figure-frame']['source_caption_identity_required'],
+-            'section_membership_order':vt.PRIMITIVES['presentation-section']['membership_order_required'],
+-            'emphasis_preserves_meaning':vt.PRIMITIVES['emphasis-cue']['must_not_rewrite_source_meaning'],
+-            'speaker_note_target_source':vt.PRIMITIVES['speaker-note']['target_and_source_required'],
+-            'embed_identity_version_view':vt.PRIMITIVES['embed-binding']['identity_version_view_required'],
+-            'transition_preserves_order':vt.PRIMITIVES['presentation-transition']['must_not_change_page_order'],
+-            'export_requirements_visible':vt.PRIMITIVES['presentation-export-target']['requirements_must_be_visible'],
++            'character_identity_source_version':vt.PRIMITIVES['character-source']['identity_source_version_required'],
++            'turnaround_identity_view_camera':vt.PRIMITIVES['turnaround-view']['identity_view_camera_required'],
++            'proportion_anchor_value_unit_source':vt.PRIMITIVES['proportion-guide']['anchors_value_unit_source_required'],
++            'expression_identity_name_source':vt.PRIMITIVES['expression-state']['identity_name_source_required'],
++            'pose_identity_source':vt.PRIMITIVES['pose-reference']['identity_pose_source_required'],
++            'material_part_source':vt.PRIMITIVES['character-material']['part_material_source_required'],
++            'callout_target_source':vt.PRIMITIVES['character-callout']['target_content_source_required'],
++            'scale_reference_value_unit_source':vt.PRIMITIVES['scale-reference']['reference_value_unit_source_required'],
++            'variant_base_delta_status':vt.PRIMITIVES['character-variant']['base_delta_status_required'],
++            'export_requirements_visible':vt.PRIMITIVES['reference-export-target']['requirements_must_be_visible'],
+         }
+-        if not all(checks.values()): raise AssertionError('presentation source/order contract failed')
+-        receipt={'schema':'axm.visual-template-proof/v16','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'presentation_checks':checks,'truth':'Offline structural evidence only. Claim truth, source reliability, audience understanding, speaking quality, accessibility compliance and aesthetic acceptance were not observed.'}
++        if not all(checks.values()): raise AssertionError('character reference source/measurement contract failed')
++        receipt={'schema':'axm.visual-template-proof/v17','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'character_reference_checks':checks,'truth':'Offline structural evidence only. Anatomy quality, modelability, rig compatibility, art quality, physical scale correctness and aesthetic acceptance were not observed.'}
+         (out/'receipt.json').write_text(json.dumps(receipt,indent=2,sort_keys=True),encoding='utf-8')
+         print(json.dumps(receipt,indent=2,sort_keys=True))
+     except BaseException:

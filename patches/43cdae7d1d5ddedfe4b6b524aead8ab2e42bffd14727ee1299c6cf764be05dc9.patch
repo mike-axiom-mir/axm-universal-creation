@@ -1,0 +1,1524 @@
+diff --git a/RTS_REFERENCE_FOUNDRY.md b/RTS_REFERENCE_FOUNDRY.md
+new file mode 100644
+index 0000000..66f9050
+--- /dev/null
++++ b/RTS_REFERENCE_FOUNDRY.md
+@@ -0,0 +1,93 @@
++# RTS reference foundry
++
++The eight supplied AXM Global State RTS concept sheets now have an authored
++83-design catalog and an executable local 3D creation path. Seven repeated
++labels on the overview sheet resolve to existing designs. Header panoramas,
++palette swatches and silhouette legends are reference context, not extra assets.
++
++```bash
++PYTHONPATH=src python -m axm_uc rts-reference-pack OUTPUT
++PYTHONPATH=src python -m axm_uc rts-reference-pack OUTPUT --asset crew-worker --asset bathtub-turret
++```
++
++`rts_foundry.reference_pack_request(path, asset_ids=None)` is a normal mixed-project
++request builder. It is visible in the pipeline mapper, alongside the previous
++workshop path. The old workshop recipe and its exact-output tests are unchanged.
++
++## What the machine gained
++
++- Dependency-free ellipsoids, beveled boxes, revolved profiles, elliptic hollow
++  tubs, parabolic dishes, tires and track modules, corrugated panels, vegetation,
++  lamps, fasteners, patch plates, tied cargo and geometric stencil lettering.
++- Shared small detail operations improve every relevant authored asset family.
++- Exact attribute welding reduces repeated vertices without merging distinct
++  normals/colors or altering triangle topology. Far views remove bevels and
++  reduce surface/ring/cloth subdivisions and small detail.
++- Named component pivots and bounded glTF rotation clips. Crew have rigid limb
++  walk cycles; wheeled vehicles have drive clips; turrets have aim clips; gates,
++  scanners and drills have the applicable bounded mechanism clips.
++- Linear PBR material factors, weathered vertex colors and emitted lamp/meteor
++  material factors. The export does not require external textures or models.
++- Explicit collision/placement proxies and sockets, separate from visual meshes.
++  Gate-closed collision is conditional. The market gate leaves its passage open.
++  Props do not automatically become navigation obstacles.
++- A local file-picker WebGL viewer reads the actual GLBs, including rigid node
++  clips. It never fetches files or scripts from a server.
++
++The catalog holds the original reference filenames and SHA-256 values. The
++models are assistant-authored interpretations of the supplied images, with
++inferred unseen sides. Pixels from those images are not used as fake 3D panels.
++Source images remain unchanged. No claim of automatic image reconstruction is
++made: explicit recipes bridge visual interpretation to deterministic machinery.
++
++## Publication and limits
++
++Small selections publish loose files through the existing transactional mixed
++project writer. Above 50 MiB, the same builder packages the validated files into
++a deterministic ZIP with fixed entry metadata. The writer then publishes the ZIP
++and a small download page. The generic 64 MiB project / 16 MiB file limits remain
++unchanged. The reference archive also refuses more than 256 MiB uncompressed or
++16 MiB compressed. Select smaller subsets if an expanded catalog reaches either
++limit. No automatic extraction or overwrite is performed by the machine.
++
++An extracted complete pack contains 166 visual GLBs (near/far), 69 collision
++GLBs, the offline viewer, catalog, manifest and README. Supplied dimensions use
++meters, Y up and Z forward. The game controls LOD distance, hit detection,
++pathfinding, animation scheduling, scaling and terrain alignment.
++
++## Evidence and boundaries
++
++The encoder decodes all emitted triangles, normals, indices and colors. The
++assembly verifier checks local pivots against the declared bind transforms,
++finite animation time arrays, normalized quaternions, valid targets and clip
++identity. Tests independently check positive volume of closed helper surfaces,
++repeatability, bind-pose reconstruction, nonconstant limb animation, malformed
++clip rejection, all 83 near/far exports and existing-output preservation.
++
++`tools/review_rts_foundry.py` independently decodes the exported GLBs with NumPy,
++rasterizes their actual triangles with depth testing and backface culling, and
++produces eight family contact sheets plus three sampled animation GIFs. Pillow
++and NumPy are optional review dependencies; creation itself stays standard-library
++only. Review images are evidence of those software-rendered meshes, not browser,
++physics engine or target RTS behavior. The viewer JavaScript is syntax-checked.
++The earlier cloud-browser local-file policy block remains in force; this work
++uses no workaround and does not claim browser observation.
++
++These are stylized geometric first-edition interpretations. They do not equal
++the illustration detail or finish of the references. There is no skinned human
++rig, full combat animation set, UV texture baking, transparent glass, measured
++GPU budget or certified target-engine import. A GLB that parses does not prove
++its game integration. Coarse colliders are not detailed walkable interiors.
++
++## Root review
++
++Truth: all counts come from the explicit catalog/exports; prototype visual
++fidelity and runtime limitations remain visible. Agency: local explicit calls,
++no service dependency or overwrite, and no silent edits to the RTS project.
++Continuity: source references, aliases, material intent, old workshop outputs and
++other main material integrations are retained. Wisdom before speed: real shared
++geometry, validation and handoff data provide reusable capability; no claim of
++400 completed organs or AAA quality follows from the catalog size.
++
++Root fit supports integration after the final repository checks pass. This
++review does not substitute for those checks or for the target-game acceptance.
+diff --git a/src/axm_uc/cli.py b/src/axm_uc/cli.py
+index 76d4049..332b2d0 100644
+--- a/src/axm_uc/cli.py
++++ b/src/axm_uc/cli.py
+@@ -33,6 +33,9 @@ def build_parser() -> argparse.ArgumentParser:
+     pipelines.add_argument('--search-budget', type=int, default=10000)
+     workshop = sub.add_parser('survivor-workshop', help='build both detail levels of the authored custom-surface workshop with an offline viewer')
+     workshop.add_argument('path')
++    rts = sub.add_parser('rts-reference-pack', help='build the 83-design survivor RTS reference collection')
++    rts.add_argument('path')
++    rts.add_argument('--asset', action='append', default=None, help='select a catalog asset ID; repeat to build a subset')
+ 
+     timeline = sub.add_parser('sample-track', help='sample a local integer animation track at a frame')
+     timeline.add_argument('track_file')
+@@ -162,6 +165,12 @@ def main(argv: list[str] | None = None) -> int:
+     args = build_parser().parse_args(argv)
+     root = find_machine_root(args.root) if args.root else find_machine_root()
+     machine = UniversalCreationMachine(root)
++    if args.command == 'rts-reference-pack':
++        from .rts_foundry import reference_pack_request
++        result = machine.create(reference_pack_request(args.path, args.asset))
++        _print(result)
++        return 0 if result.get('type') == 'CREATION_RESULT' else 1
++
+     if args.command == 'survivor-workshop':
+         from .workshop_project import workshop_request
+         result = machine.create(workshop_request(args.path))
+diff --git a/src/axm_uc/pipeline_map.py b/src/axm_uc/pipeline_map.py
+index 164be7c..60fa7c8 100644
+--- a/src/axm_uc/pipeline_map.py
++++ b/src/axm_uc/pipeline_map.py
+@@ -16,6 +16,7 @@ REQUEST_BUILDERS = (
+     ('bitmap-label', 'src/axm_uc/media_workbench.py', 'label_request', 'Transparent bitmap labels'),
+     ('normalize-wav', 'src/axm_uc/media_workbench.py', 'wav_request', 'PCM WAV normalization'),
+     ('fabric', 'src/axm_uc/fabric_material.py', 'fabric_request', 'Woven fabric maps'),
++    ('rts-reference-pack', 'src/axm_uc/rts_foundry.py', 'reference_pack_request', '83 authored RTS reference designs: articulated GLBs, detail levels, collision proxies and offline viewer'),
+     ('survivor-workshop', 'src/axm_uc/workshop_project.py', 'workshop_request', 'Authored survivor workshop: verified surface GLBs and offline preview'),
+ )
+ BOUNDARY = 'Read-only candidate connections. No pipeline execution, compatibility proof, installation or automatic adoption.'
+@@ -64,7 +65,7 @@ def installed_nodes(root):
+         nodes.append({'id':name,'module':'request-builder','description':description,
+                       'source':{'path':source,'function':fn,'sha256':sources[source]},
+                       'accepts':[], 'requires':[], 'provides':['request.kind.mixed-media-project'],
+-                      'required_parameters':'Caller supplies path and function-specific arguments; see MEDIA_WORKBENCH.md, DONOR_ABSORPTION.md and WORKSHOP_PIPELINE.md.',
++                      'required_parameters':'Caller supplies path and function-specific arguments; see MEDIA_WORKBENCH.md, DONOR_ABSORPTION.md WORKSHOP_PIPELINE.md and RTS_REFERENCE_FOUNDRY.md.',
+                       'evidence_status':'explicit_source_adapter_not_executed'})
+     # The manifest content, including implementation declarations, participates in identity.
+     digest=hashlib.sha256(json.dumps({'nodes':nodes,'sources':sources,'excluded':excluded},sort_keys=True).encode()).hexdigest()
+diff --git a/src/axm_uc/rts_detail.py b/src/axm_uc/rts_detail.py
+new file mode 100644
+index 0000000..59accc4
+--- /dev/null
++++ b/src/axm_uc/rts_detail.py
+@@ -0,0 +1,127 @@
++"""Authored small-scale salvage details and geometric sign lettering."""
++import math
++from .surface_geometry import add
++
++# Original hand-entered 3x5 stencil alphabet; each run becomes two real triangles.
++FONT=dict(zip('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',[
++'010101111101101','110101110101110','011100100100011','110101101101110','111100110100111','111100110100100','011100101101011','101101111101101','111010010010111','001001001101010','101101110101101','100100100100111','101111111101101','101111111111101','010101101101010','110101110100100','010101101111011','110101110101101','011100010001110','111010010010010','101101101101111','101101101101010','101101111111101','101101010101101','101101010010010','111001010100111',
++'111101101101111','010110010010111','110001010100111','110001010001110','101101111001001','111100110001110','011100111101111','111001010010010','111101111101111','111101111001110']))
++
++def lettering(f,lines,c,w=1,h=1):
++ x,y,z=c;maxchars=max(map(len,lines));cell=min(w/(maxchars*4),h/(len(lines)*6));total=len(lines)*6*cell
++ for row,text in enumerate(lines):
++  left=x-len(text)*4*cell/2;top=y+total/2-row*6*cell
++  for k,ch in enumerate(text):
++   bits=FONT.get(ch,'0'*15)
++   for r in range(5):
++    for col in range(3):
++     if bits[r*3+col]=='1':
++      xx=left+(k*4+col)*cell;yy=top-r*cell
++      f.face('rubber',[(xx,yy-cell,z),(xx+cell*.90,yy-cell,z),(xx+cell*.90,yy,z),(xx,yy,z)],'stencil-letter',False)
++
++def sign(f,c,lines,w=1.15,h=1.5,mat='ivory'):
++ x,y,z=c;f.roundbox('salvaged-sign',c,(w,h,.065),mat,.025)
++ if f.far:f.smile((x,y,z+.04),min(w,h)*.25)
++ else:
++  lettering(f,lines,(x,y+h*.13,z+.037),w*.83,h*.58);f.smile((x,y-h*.30,z+.04),w*.14)
++  for dx in [-w*.43,w*.43]:
++   for dy in [-h*.44,h*.44]:f.pipe('sign-bolt',[(x+dx,y+dy,z+.035),(x+dx,y+dy,z+.057)],.028,'iron',6)
++
++def patches(f,c,w,h,axis='z'):
++ x,y,z=c
++ for j in range(3 if f.far else 8):
++  dx=math.sin(j*2.4)*w*.35;dy=math.cos(j*1.7)*h*.37;ww=w*(.14+.06*(j%2));hh=h*(.13+.08*(j%3))
++  pos=(x+dx,y+dy,z+.052) if axis=='z' else (x+.052,y+dy,z+dx)
++  size=(ww,hh,.035) if axis=='z' else (.035,hh,ww)
++  f.roundbox('welded-repair-plate',pos,size,['rust','tin','ivory','paint'][j%4],.008)
++  if not f.far:
++   for a in [-1,1]:
++    q=(pos[0]+a*ww*.38,pos[1]+hh*.35,pos[2]+.022) if axis=='z' else (pos[0]+.022,pos[1]+hh*.35,pos[2]+a*ww*.38)
++    f.ellipsoid('patch-fastener',q,(.037,.037,.037),'tin',6,3)
++
++def cargo(f,c=(0,1,0),s=1):
++ f.crate(c,s)
++ for y in [-.20,0,.20]:f.box('crate-plank-seam',add(c,(0,y*s,.33*s)),(.98*s,.023*s,.02*s),'soil')
++ for x in [-.32,.32]:f.pipe('cargo-rope',[add(c,(x*s,-.37*s,.38*s)),add(c,(x*s,.42*s,.36*s)),add(c,(x*s,.42*s,-.36*s)),add(c,(x*s,-.37*s,-.38*s))],.019*s,'canvas',5)
++
++def dress(f,a):
++ id=a['id'];family=a['family']
++ if family=='crew':
++  # Smaller seams and hardware live in their existing moving component.
++  for s in [-1,1]:
++   name='leg-'+str(s).replace('-','m')
++   with f.part(name,(s*.18,.92,0)):
++    for yy in [.35,.68,.79]:f.beam('trouser-seam',(s*.18-.10,yy,.135),(s*.18+.10,yy-.016,.135),.02,.014,'wood')
++    for yy in [.16,.22,.27]:f.beam('boot-lacing',(s*.18-.07,yy,.315),(s*.18+.07,yy+.045,.315),.014,.012,'tin')
++   with f.part('arm-'+str(s).replace('-','m'),(s*.37,1.38,0)):
++    f.ellipsoid('shoulder-armor',(s*.40,1.38,.09),(.27,.24,.24),'tin' if id=='heavy-vehicle-operator' else 'wood')
++    f.smile((s*.42,1.36,.223),.065)
++  for y in [1.08,1.20,1.32,1.44]:f.pipe('coat-button',[(.045,y,.216),(.045,y,.237)],.025,'tin',6)
++  for x in [-.20,.20]:
++   f.roundbox('chest-pocket',(x,1.23,.25),(.19,.22,.065),'darkcloth',.021)
++   f.box('pocket-flap',(x,1.32,.295),(.20,.047,.019),'wood')
++  f.pipe('canteen',[(-.42,.93,-.22),(-.42,1.22,-.22)],.10,'paint',8)
++  f.pipe('radio',[(-.27,1.60,-.36),(-.27,2.16,-.36)],.013,'iron',5)
++  with f.part('head',(0,1.55,0)):
++   f.ellipsoid('nose',(0,1.66,.265),(.105,.14,.12),'skin')
++   for x in [-.2,.2]:f.pipe('helmet-rivet',[(x,1.96,.23),(x,1.96,.25)],.025,'tin',6)
++   if id=='shotgun-raider':
++    for x in [-.20,0,.20]:f.lathe('helmet-spike',(x,2.04,0),[(.055,0),(0,.18)],'tin',n=7)
++   if id in ['mercenary-ex-mil','licensed-driver']:
++    f.ellipsoid('beard',(0,1.56,.25),(.33,.25,.18),'wood' if id=='licensed-driver' else 'tin')
++  if id=='heavy-vehicle-operator':
++   for x in [-.15,.15]:f.roundbox('chest-plate',(x,1.21,.28),(.27,.41,.055),'signal',.04)
++  return
++ if family=='vehicles':
++  length=4.8 if id in ['flatbed-convoy-truck','armored-bus','cargo-trailer','mercenary-carrier','crane-truck','drill-rig-vehicle'] else 3.1
++  width=1.85 if length>4 else 1.5
++  if id in ['scout-trike','push-cart']:return
++  if id in ['scrap-buggy']:
++   for x in [-.51,.51]:
++    f.pipe('front-suspension',[(x,.45,1),(x,.94,.7)],.055,'tin',7)
++    for j in range(5):f.ring('spring-coil',(x,.51+j*.07,.97-j*.045),.09,.022,'iron')
++   f.roundbox('exposed-engine',(0,1.0,-.95),(.7,.43,.45),'iron')
++   for x in [-.25,-.08,.08,.25]:f.pipe('intake-pipe',[(x,1.1,-.95),(x,1.35,-.95)],.065,'tin',8)
++  else:
++   for s in [-1,1]:
++    patches(f,(s*width*.48,1.05,0),length*.65,.62,axis='x')
++    f.pipe('side-step',[(s*width*.57,.71,-.7),(s*width*.57,.71,.8)],.06,'tin',8)
++   for x in [-.27,.27]:f.beam('windshield-wiper',(x,1.40,length*.47+.02),(x+.19,1.79,length*.47+.02),.023,.019,'rubber')
++  f.pipe('bullbar',[(-width*.45,.85,length*.5+.22),(-width*.45,1.30,length*.5+.22),(width*.45,1.30,length*.5+.22),(width*.45,.85,length*.5+.22)],.05,'iron',8)
++  if id in ['armored-bus','mercenary-carrier']:
++   for s in [-1,1]:
++    for j in range(6):
++     zz=-1.7+j*.64;f.beam('window-cage',(s*width*.49,1.43,zz),(s*width*.49,2.05,zz+.15),.035,.035,'iron')
++   cargo(f,(0,2.44,.7),.74)
++  elif id not in ['cargo-trailer','tow-crawler','crane-truck','drill-rig-vehicle']:cargo(f,(0,1.75,-length*.3),.64)
++  return
++ if family in ['buildings','industry']:
++  # Yard clutter, functional plumbing and repair details keep large surfaces from
++  # reducing to pristine boxes. Every family keeps its distinct silhouette.
++  f.barrel((-2.20,.20,1.60),.29,.79,'paint');cargo(f,(1.9,.51,1.8),.70)
++  for j in range(2):f.ring('yard-tire',(2.05,.24+j*.20,-1.4),.34,.09,'rubber')
++  if family=='buildings':
++   if id not in ['refinery-shack','training-yard']:patches(f,(2.05,1.2,-.2),2.5,1.7,axis='x')
++   messages={'settlement-hub':['PEOPLE','KEEP','PEOPLE','GOING'],'civic-shelter':['SAME','MESS','NEW','DAY'],'improvised-workshop':['GOOD','STUFF','LASTS'],'command-signal-hall':['FARTHER','TOGETHER'],'training-yard':['PRACTICE','SURVIVES'],'repair-garage':['FIX','IT','AGAIN'],'storage-hall':['SUPPLIES','TOMORROW'],'refinery-shack':['NOT','WASTE','FUEL'],'power-core-building':['SMALL','POWER','BIG','PEOPLE'],'machine-shop':['OLD','TOOLS','NEW','DAYS']}
++   sign(f,(-1.05,1.58,1.86),messages[id],1.1,1.4)
++  else:
++   messages={'open-crop-terrace':['DIRT','FOOD','HOPE'],'bus-window-greenhouse':['GREENER','DAYS','AHEAD'],'fungal-shed':['SHROOMS','FEED','PEOPLE'],'livestock-pen':['HAPPY','STOMACHS'],'water-catcher':['EVERY','DROP','COUNTS'],'scrap-sorting-yard':['TRASH','INTO','TOMORROW'],'shallow-mine-entrance':['DIG','A LITTLE','LIVE','A LOT'],'deep-mine-head':['GO','DEEPER'],'asteroid-extraction-rig':['SPACE','PAYS'],'battery-fuel-station':['CHARGE','REFUEL'],'clustered-storage-bins':['FOOD','METAL','SUPPLIES']}
++   sign(f,(1.4,1.25,1.93),messages[id],.95,1.35)
++ elif family=='defenses':
++  if id in ['comic-book-wall','car-door-wall','fridge-barricade','signplate-barricade']:
++   patches(f,(-1.2,.85,.08 if id!='fridge-barricade' else .46),1.0,1.0)
++   patches(f,(1.2,.9,.08 if id!='fridge-barricade' else .46),1.0,1.25)
++   sign(f,(0,1.26,.56 if id=='fridge-barricade' else .15),{'comic-book-wall':['TAKE','THAT'],'car-door-wall':['STILL','DRIVES','US HOME'],'fridge-barricade':['COLD','HARD','SAFER'],'signplate-barricade':['GO','AROUND']}[id],.82,1.1)
++   for j in range(8):f.ring('wire-loop',(-1.7+j*.48,2.57,0),.11,.013,'iron',axis='z')
++   f.barrel((-1.65,.2,.73),.25,.65,'paint');f.lantern((1.95,2.85,0),.55)
++  elif id=='bathtub-turret':
++   with f.part('turret',(0,.8,0)):
++    for x in [-.70,.70]:f.pipe('tub-plumbing',[(x,1.03,0),(x*1.25,1.05,0),(x*1.25,1.73,0)],.055,'rust',8)
++    for j in range(8):
++     a=j*math.tau/8;f.ellipsoid('tub-rivet',(.91*math.cos(a),1.57,.61*math.sin(a)),(.07,.07,.07),'iron',6,3)
++   for s in [-1,1]:f.beam('turret-brace',(s*.73,.35,.6),(s*.32,.85,.3),.15,.18,'signal')
++  else:
++   sign(f,(1.45,1.03,1),['STILL','HERE'],.72,1.0);f.barrel((-1.5,.2,.7),.24,.65)
++ elif family=='world':
++  for x in [-2.6,2.6]:f.barrel((x,.2,1.9),.27,.85);cargo(f,(x,.55,1),.7)
++  sign(f,(-1.9,1.3,2.0),['OLD','WORLD','NEW','IDEAS'],1.15,1.6)
+diff --git a/src/axm_uc/rts_foundry.py b/src/axm_uc/rts_foundry.py
+new file mode 100644
+index 0000000..7168a2f
+--- /dev/null
++++ b/src/axm_uc/rts_foundry.py
+@@ -0,0 +1,213 @@
++"""Reference catalog -> deterministic articulated GLBs -> transactional RTS pack.
++
++The surface encoder remains authoritative for geometry. This bounded assembly
++layer adds explicit local pivots, rigid animation and engine-neutral handoff data.
++"""
++from __future__ import annotations
++import base64
++import copy
++import hashlib
++import json
++import io
++import zipfile
++import math
++import struct
++from pathlib import Path
++from .procedural_3d import build_glb, verify_glb
++from .rts_recipes import build_reference_mesh
++from .rts_mesh import SalvageMesh
++
++DATA=Path(__file__).parent/'data'
++
++def catalog():
++ return json.loads((DATA/'rts/catalog.json').read_text(encoding='utf-8'))
++
++def unpack_glb(raw):
++ if len(raw)<28 or struct.unpack_from('<4sII',raw)!=(b'glTF',2,len(raw)):raise ValueError('invalid GLB header')
++ n,kind=struct.unpack_from('<II',raw,12)
++ if kind!=0x4e4f534a or n%4 or 28+n>len(raw):raise ValueError('invalid GLB JSON')
++ doc=json.loads(raw[20:20+n]);size,kind=struct.unpack_from('<II',raw,20+n)
++ if kind!=0x004e4942 or 28+n+size!=len(raw):raise ValueError('invalid GLB binary')
++ return doc,bytearray(raw[28+n:28+n+doc['buffers'][0]['byteLength']])
++
++def pack_glb(doc,blob):
++ doc=copy.deepcopy(doc);doc['buffers'][0]['byteLength']=len(blob)
++ js=json.dumps(doc,sort_keys=True,separators=(',',':'),allow_nan=False).encode();js+=b' '*((-len(js))%4)
++ blob=bytes(blob);blob+=b'\0'*((-len(blob))%4)
++ return struct.pack('<4sII',b'glTF',2,28+len(js)+len(blob))+struct.pack('<II',len(js),0x4e4f534a)+js+struct.pack('<II',len(blob),0x004e4942)+blob
++
++def read_accessor(doc,blob,index):
++ a=doc['accessors'][index];v=doc['bufferViews'][a['bufferView']]
++ width={'SCALAR':1,'VEC3':3,'VEC4':4}[a['type']];code={5126:'f',5123:'H'}[a['componentType']]
++ fmt='<'+code*width;size=struct.calcsize(fmt);offset=v.get('byteOffset',0)+a.get('byteOffset',0)
++ if offset+size*a['count']>v.get('byteOffset',0)+v['byteLength'] or offset+size*a['count']>len(blob):raise ValueError('accessor out of bounds')
++ return [struct.unpack_from(fmt,blob,offset+i*size) for i in range(a['count'])]
++
++def articulated_glb(f,name):
++ spec=f.surface_spec(name)
++ for group in spec['primitives']:
++  pivot=f.pivots[group['id'].split('__')[0]]
++  group['positions']=[[p[i]-pivot[i] for i in range(3)] for p in group['positions']]
++ built=build_glb(spec);doc,blob=unpack_glb(built['body'])
++ motion_by_clip={}
++ for i,node in enumerate(doc['nodes']):
++  component,mat=node['name'].split('__');node['translation']=list(f.pivots[component]);node['extras']={'component':component}
++  if mat=='glow':doc['materials'][i]['emissiveFactor']=[1,.56,.14]
++  if mat=='cyan':doc['materials'][i]['emissiveFactor']=[.06,.78,.84]
++  motion=f.motion.get(component)
++  if motion:motion_by_clip.setdefault(motion['clip'],[]).append((i,motion))
++ def accessor(values,shape):
++  while len(blob)%4:blob.append(0)
++  offset=len(blob);width={'SCALAR':1,'VEC4':4}[shape]
++  blob.extend(b''.join(struct.pack('<'+'f'*width,*v) for v in values));view=len(doc['bufferViews'])
++  doc['bufferViews'].append({'buffer':0,'byteOffset':offset,'byteLength':len(blob)-offset})
++  idx=len(doc['accessors']);a={'bufferView':view,'componentType':5126,'count':len(values),'type':shape}
++  if shape=='SCALAR':a.update(min=[min(v[0] for v in values)],max=[max(v[0] for v in values)])
++  doc['accessors'].append(a);return idx
++ for clip,channels in sorted(motion_by_clip.items()):
++  anim={'name':clip,'samplers':[],'channels':[]};cache={}
++  for node,m in channels:
++   key=json.dumps(m,sort_keys=True)
++   if key not in cache:
++    n=len(m['angles']);times=[(m['duration']*j/(n-1),) for j in range(n)];axis=m['axis'];le=math.sqrt(sum(v*v for v in axis))
++    values=[tuple(v/le*math.sin(a/2) for v in axis)+(math.cos(a/2),) for a in m['angles']]
++    sam=len(anim['samplers']);anim['samplers'].append({'input':accessor(times,'SCALAR'),'output':accessor(values,'VEC4'),'interpolation':'LINEAR'});cache[key]=sam
++   anim['channels'].append({'sampler':cache[key],'target':{'node':node,'path':'rotation'}})
++  doc.setdefault('animations',[]).append(anim)
++ assembly={'schema':'axm.rts-rigid-assembly/v0.1','pivots':f.pivots,'motion':f.motion,'sockets':f.sockets}
++ doc['extras']['axmAssembly']=assembly
++ doc['extras']['axmAssemblySha256']=hashlib.sha256(json.dumps(assembly,sort_keys=True,separators=(',',':')).encode()).hexdigest()
++ body=pack_glb(doc,blob);verification=verify_articulated_glb(body)
++ return body,verification
++
++def verify_articulated_glb(body):
++ report=verify_glb(body);doc,blob=unpack_glb(body)
++ assembly=doc['extras']['axmAssembly']
++ if hashlib.sha256(json.dumps(assembly,sort_keys=True,separators=(',',':')).encode()).hexdigest()!=doc['extras']['axmAssemblySha256']:raise ValueError('assembly digest mismatch')
++ bounds=[]
++ for node in doc['nodes']:
++  component=node['extras']['component'];pivot=assembly['pivots'][component]
++  if node['translation']!=pivot or node['scale']!=[1,1,1]:raise ValueError('component bind transform mismatch')
++  if any(not math.isfinite(v) for v in pivot):raise ValueError('non-finite pivot')
++  p=doc['meshes'][node['mesh']]['primitives'][0]
++  bounds.extend(tuple(row[i]+pivot[i] for i in range(3)) for row in read_accessor(doc,blob,p['attributes']['POSITION']))
++ seen_clips=set()
++ for clip in doc.get('animations',[]):
++  if clip['name'] in seen_clips:raise ValueError('duplicate animation')
++  seen_clips.add(clip['name']);targets=set()
++  for channel in clip['channels']:
++   target=channel['target'];idx=target['node']
++   if type(idx)!=int or not 0<=idx<len(doc['nodes']) or target['path']!='rotation' or idx in targets:raise ValueError('invalid animation target')
++   targets.add(idx);s=clip['samplers'][channel['sampler']]
++   times=[t[0] for t in read_accessor(doc,blob,s['input'])];values=read_accessor(doc,blob,s['output'])
++   if len(times)!=len(values) or len(times)<2 or times[0]!=0 or not all(math.isfinite(t) for t in times) or any(b<=a for a,b in zip(times,times[1:])):raise ValueError('invalid animation times')
++   if any(len(q)!=4 or not all(math.isfinite(v) for v in q) or abs(sum(v*v for v in q)-1)>1e-5 for q in values):raise ValueError('invalid rotation quaternion')
++   m=assembly['motion'][doc['nodes'][idx]['extras']['component']]
++   if m['clip']!=clip['name'] or abs(times[-1]-m['duration'])>1e-5:raise ValueError('animation and assembly disagree')
++ report.update(bounds={'min':[min(p[i] for p in bounds) for i in range(3)],'max':[max(p[i] for p in bounds) for i in range(3)]},clips=sorted(seen_clips),components=len(assembly['pivots']),animation_validation='Decoded time/quaternion/target checks; rigid articulation, no skinned deformation',animation_channels=sum(len(a['channels']) for a in doc.get('animations',[])))
++ return report
++
++def collision_contract(asset,bounds):
++ family=asset['family'];id=asset['id'];lo,hi=bounds['min'],bounds['max']
++ h=max(.1,hi[1]-max(0,lo[1]));w=hi[0]-lo[0];d=hi[2]-lo[2]
++ boxes=[]
++ def box(c,s,role='solid'):boxes.append({'shape':'box','center':c,'size':s,'role':role})
++ if family=='crew':box([0,1.0,0],[.70,2.0,.65],'unit-proxy')
++ elif family=='equipment':pass
++ elif family=='vehicles':box([0,h*.48,0],[w*.88,h*.88,d*.80],'vehicle-proxy')
++ elif id=='spike-gate':
++  for x in [-1.7,1.7]:box([x,1.1,0],[.48,2,.6])
++  box([0,1.1,0],[2.9,1.8,.45],'gate-closed-only')
++ elif id=='regional-scrap-market-gate':
++  for x in [-2.1,2.1]:box([x,1.4,0],[1.35,2.4,2])
++ elif id in ['rail-checkpoint','bridge-fragment','bridge-kit']:
++  if id=='rail-checkpoint':box([1.8,1.4,-.7],[1.5,2.5,1.5])
++  elif id=='bridge-fragment':
++   for x in [-2,2]:box([x,1.65,0],[.8,3,1.6])
++ else:box([(lo[0]+hi[0])*.5,h*.5,(lo[2]+hi[2])*.5],[max(.1,w*.80),h,max(.1,d*.72)],'coarse-placement-proxy')
++ return {'schema':'axm.rts-collision/v0.1','basis':'Authored coarse gameplay proxies; no automatic collider fitting or physics-engine test',
++  'boxes':boxes,'navigation_polygons_xz':[[[b['center'][0]+sx*b['size'][0]/2,b['center'][2]+sz*b['size'][2]/2] for sx,sz in [(-1,-1),(1,-1),(1,1),(-1,1)]] for b in boxes],
++  'conditional_roles':{'gate-closed-only':'Disable when gate is open; animation alone does not change collision'},'equipment_blocks_navigation':False}
++
++def collision_glb(contract,name):
++ f=SalvageMesh(True)
++ for j,b in enumerate(contract['boxes']):f.box('collision-'+str(j),b['center'],b['size'],'signal')
++ if not f.groups:return None
++ return build_glb(f.surface_spec(name+'-collision'))['body']
++
++def reference_pack_request(path,asset_ids=None):
++ source=catalog();all_assets={a['id']:a for a in source['assets']}
++ selected=list(all_assets) if asset_ids is None else list(asset_ids)
++ if not selected or len(selected)!=len(set(selected)) or any(id not in all_assets for id in selected):raise ValueError('select unique known reference asset IDs')
++ binaries={};items=[]
++ def binary(name,body):
++  digest=hashlib.sha256(body).hexdigest();binaries[name]={'encoding':'base64','content':base64.b64encode(body).decode(),'sha256':digest,'media_type':'model/gltf-binary'};return digest
++ for id in selected:
++  asset=all_assets[id];item=dict(asset);item['lods']=[]
++  for lod in ('near','far'):
++   f=build_reference_mesh(asset,lod);body,check=articulated_glb(f,id+'-'+lod);name=f'assets/{id}/{id}'+('-lod1' if lod=='far' else '')+'.glb'
++   digest=binary(name,body);item['lods'].append({'lod':lod,'path':name,'sha256':digest,'bytes':len(body),'verification':check})
++   if lod=='near':item['sockets']=f.sockets;item['collision']=collision_contract(asset,check['bounds'])
++  proxy=collision_glb(item['collision'],id)
++  if proxy:
++   name=f'assets/{id}/{id}-collision.glb';item['collision']['path']=name;item['collision']['sha256']=binary(name,proxy)
++  items.append(item)
++ manifest={'schema':'axm.rts-reference-pack/v0.1','status':'CREATED','units':'meters','up':'+Y','forward':'+Z','origin':'Ground-centered authored origin; props use attachment origin',
++  'references':source['references'],'overview_aliases':source['overview_aliases'],'items':items,
++  'provenance':'Assistant-authored geometric interpretations of user-supplied sheets; no source pixels baked onto meshes. Hidden sides are inferred.',
++  'quality_scope':'Stylized geometric first edition, not a pixel-identical reconstruction or certified final art.',
++  'boundaries':{'target_game_imported':False,'browser_observed_by_generation':False,'physics_engine_tested':False,'performance_measured':False,'skinned_characters':False,'uv_textures':False},
++  'sources':{n:hashlib.sha256((Path(__file__).parent/n).read_bytes()).hexdigest() for n in ['rts_mesh.py','rts_recipes.py','rts_detail.py','rts_foundry.py','data/rts/catalog.json']}}
++ readme='''AXM RTS / BRIGHTER PEOPLE — Reference foundry 0.1
++
++83 distinct designs across eight user-supplied reference sheets.
++GLB 2.0, meters, Y up, Z forward. Each item has near and far authored geometry.
++Material colors are linear PBR factors with vertex weathering. Lamps and meteor
++seams have emissive factors; your game supplies lighting/bloom. Glass is opaque
++stylized geometry. No downloaded art, image billboards, textures or UVs.
++
++VIEW: Open index.html. Choose the exported assets folder with the folder picker
++(or choose individual GLBs). Select a model and a clip. All processing is local.
++No server, account, CDN, model or network is needed.
++
++IMPORT: Load the near GLB with your engine's glTF loader. Choose the -lod1 file
++for far views. LOD switching distances are a game decision. Component nodes are
++named component__material; keep all nodes of a component together. Crew walk,
++vehicle wheel drive, turret aim and selected mechanisms are rigid node animation
++clips, not a deforming human skeleton or a full animation set. No root motion.
++See manifest.json for every asset, bounds, sockets, clip names and collider proxy.
++The separate collision GLB is for physics import only: do not render it. Equipment
++has mount sockets and intentionally no navigation obstacle. Most building
++colliders are coarse placement proxies, not interiors. Gate collision must be
++switched by the game, independently of its open animation. Bridge traversal and
++terrain placement require game logic. Resources, health, attacks and pathfinding
++remain owned by your RTS. Files have not been installed or tested in that RTS.
++
++REBUILD: PYTHONPATH=src python -m axm_uc rts-reference-pack OUTPUT
++Optional: --asset crew-worker --asset bathtub-turret
++The output directory must not already exist. The standard transactional mixed
++project publisher protects existing projects. catalog.json records all references
++and repeated-sheet aliases. Inferred backs/interiors are authored interpretations.
++This first edition does not reproduce all fine reference details or sign lettering.
++'''
++ page=(DATA/'rts/viewer.html').read_text(encoding='utf-8')
++ text_files={'index.html':page,'manifest.json':json.dumps(manifest,indent=2),'catalog.json':json.dumps(source,indent=2),'README.txt':readme}
++ total=sum(len(base64.b64decode(v['content'])) for v in binaries.values())+sum(len(v.encode()) for v in text_files.values())
++ if total>50*1024*1024:
++  # A large asset library is a compressed handoff, not an increase to the
++  # generic project's publication ceiling. Every GLB was validated above.
++  if total>256*1024*1024:raise ValueError('reference archive exceeds 256 MiB unpacked bound')
++  stream=io.BytesIO()
++  with zipfile.ZipFile(stream,'w',compression=zipfile.ZIP_DEFLATED,compresslevel=6) as archive:
++   files={n:v.encode() for n,v in text_files.items()}
++   files.update({n:base64.b64decode(v['content']) for n,v in binaries.items()})
++   for n,body in sorted(files.items()):
++    info=zipfile.ZipInfo(n,(1980,1,1,0,0,0));info.compress_type=zipfile.ZIP_DEFLATED;info.external_attr=0o644<<16;archive.writestr(info,body)
++  body=stream.getvalue()
++  if len(body)>16*1024*1024:raise ValueError('compressed pack exceeds per-file bound; select a smaller asset subset')
++  binaries={'rts-brighter-people-assets.zip':{'encoding':'base64','content':base64.b64encode(body).decode(),'sha256':hashlib.sha256(body).hexdigest(),'media_type':'application/zip'}}
++  text_files={'index.html':'<!doctype html><html lang="en"><meta charset="utf-8"><title>AXM RTS 3D assets</title><h1>Brighter People / 83-design foundry</h1><p>Download and extract the asset pack, then open its index.html for the offline model viewer.</p><a href="rts-brighter-people-assets.zip" download>Download the 3D asset pack</a></html>',
++   'manifest.json':json.dumps({'schema':'axm.rts-archive-handoff/v0.1','archive':'rts-brighter-people-assets.zip','sha256':hashlib.sha256(body).hexdigest(),'unpacked_bytes':total,'files':len(files),'assets':len(items),'validated_visual_glbs':2*len(items),'contents_manifest':'manifest.json inside archive'},indent=2),
++   'README.txt':'Extract rts-brighter-people-assets.zip first. It contains all GLBs, colliders, catalog, manifest and offline viewer.\n'+readme}
++ return {'kind':'mixed-media-project','direction':'Build reusable 3D RTS interpretations of the complete survivor reference catalog',
++ 'inputs':{'path':str(path),'project_type':'static-web','binary_files':binaries,'text_files':text_files,'checks':[{'type':'file-exists','path':n} for n in ['index.html','manifest.json',*binaries]]}}
+diff --git a/src/axm_uc/rts_mesh.py b/src/axm_uc/rts_mesh.py
+new file mode 100644
+index 0000000..6bf8e4f
+--- /dev/null
++++ b/src/axm_uc/rts_mesh.py
+@@ -0,0 +1,159 @@
++"""Reusable, dependency-free salvage surfaces and named rigid articulation.
++
++All coordinates are meters, Y up, Z forward. References are interpreted by an
++explicit authored recipe; this module does not reconstruct unseen image geometry.
++"""
++import math
++from contextlib import contextmanager
++from .surface_geometry import SurfaceBuilder, add, sub, mul, cross, norm
++from .survivor_workshop import lin
++
++PALETTE = {
++ 'iron':('#424b4c',.75,.58), 'rust':('#985034',.35,.86),
++ 'tin':('#aeb6ad',.65,.48), 'paint':('#337e82',.45,.66),
++ 'canvas':('#386c7c',0,.96), 'wood':('#8e6b44',0,.94),
++ 'rubber':('#242c30',0,.92), 'concrete':('#929083',0,.94),
++ 'glass':('#77b7b6',.25,.16), 'signal':('#edb63e',.25,.53),
++ 'ivory':('#e0d5b7',.12,.78), 'red':('#b64437',.28,.7),
++ 'skin':('#bd8d69',0,.85), 'cloth':('#606f59',0,.95),
++ 'darkcloth':('#434c41',0,.94), 'leaf':('#647c36',0,.9),
++ 'leaflight':('#96ad4b',0,.91), 'soil':('#504135',0,1),
++ 'glow':('#ffd080',0,.25), 'cyan':('#37d9dc',.15,.23),
++}
++
++class SalvageMesh(SurfaceBuilder):
++ def __init__(self, far=False):
++  super().__init__(far); self.active='body'; self.pivots={'body':(0,0,0)}; self.motion={}; self.sockets={}
++ def face(self,mat,verts,tag,weather=True):
++  # SurfaceBuilder generates deterministic vertex weathering; keep that palette
++  # lookup separate from the component/group key.
++  stash=self.groups; self.groups={}
++  super().face(mat,verts,tag,weather)
++  emitted=self.groups; self.groups=stash
++  key=self.active+'__'+mat
++  for g in emitted.values():
++   target=self.groups.setdefault(key,{'p':[],'n':[],'i':[],'c':[]})
++   offset=len(target['p']);target['p'].extend(g['p']);target['n'].extend(g['n']);target['c'].extend(g['c']);target['i'].extend(i+offset for i in g['i'])
++ @contextmanager
++ def part(self,name,pivot,motion=None):
++  old=self.active;self.active=name
++  if name in self.pivots and tuple(pivot)!=tuple(self.pivots[name]):raise ValueError('conflicting component pivot')
++  self.pivots[name]=tuple(pivot)
++  if motion:self.motion[name]=motion
++  try:yield self
++  finally:self.active=old
++ def ellipsoid(self,tag,c,size,mat='iron',segments=None,rings=None):
++  n=segments or (8 if self.far else 14);m=rings or (5 if self.far else 8)
++  def p(i,j):
++   t=math.pi*j/m;a=math.tau*i/n
++   return(c[0]+size[0]*.5*math.sin(t)*math.cos(a),c[1]+size[1]*.5*math.cos(t),c[2]+size[2]*.5*math.sin(t)*math.sin(a))
++  for j in range(m):
++   for i in range(n):self.face(mat,[p(i,j),p(i+1,j),p(i+1,j+1),p(i,j+1)],tag)
++ def lathe(self,tag,c,profile,mat='iron',n=None,axis='y'):
++  n=n or (10 if self.far else 18)
++  def p(i,j):
++   r,y=profile[j];a=math.tau*i/n;v=(r*math.cos(a),y,r*math.sin(a))
++   if axis=='z':v=(v[0],-v[2],v[1])
++   if axis=='x':v=(v[1],v[2],v[0])
++   return add(c,v)
++  for j in range(len(profile)-1):
++   for i in range(n):self.face(mat,[p(i+1,j),p(i,j),p(i,j+1),p(i+1,j+1)],tag)
++ def roundbox(self,tag,c,size,mat='iron',bevel=.10):
++  # Convex box with a beveled eight-point perimeter and inset top/bottom.
++  if self.far:
++   self.box(tag,c,size,mat);return
++  w,h,d=size; b=min(bevel,w*.24,h*.24,d*.24)
++  shape=[(-w/2+b,-d/2),(w/2-b,-d/2),(w/2,-d/2+b),(w/2,d/2-b),(w/2-b,d/2),(-w/2+b,d/2),(-w/2,d/2-b),(-w/2,-d/2+b)]
++  rings=[]
++  for y,inset in [(-h/2,b),(-h/2+b,0),(h/2-b,0),(h/2,b)]:
++   rings.append([(c[0]+x*(1-2*inset/w),c[1]+y,c[2]+z*(1-2*inset/d)) for x,z in shape])
++  self.face(mat,rings[0],tag);self.face(mat,list(reversed(rings[-1])),tag)
++  for j in range(3):
++   for i in range(8):k=(i+1)%8;self.face(mat,[rings[j][k],rings[j][i],rings[j+1][i],rings[j+1][k]],tag)
++ def ring(self,tag,c,r,tube,mat='iron',axis='y',ratio=1):
++  n=10 if self.far else 20;m=4 if self.far else 6
++  def p(i,j):
++   a=i*math.tau/n;b=j*math.tau/m;rr=r+tube*math.cos(b);v=(rr*math.cos(a),tube*math.sin(b),rr*math.sin(a)*ratio)
++   if axis=='x':v=(v[1],v[2],v[0])
++   if axis=='z':v=(v[0],-v[2],v[1])
++   return add(c,v)
++  for i in range(n):
++   for j in range(m):self.face(mat,[p(i,j+1),p(i+1,j+1),p(i+1,j),p(i,j)],tag)
++ def wheel(self,name,c,r=.48,width=.30,animated=True):
++  motion={'clip':'drive','axis':[1,0,0],'angles':[0,math.pi/2,math.pi,math.pi*1.5,math.tau],'duration':1} if animated else None
++  with self.part(name,c,motion):
++   self.ring('rubber-tire',c,r*.76,r*.24,'rubber',axis='x')
++   self.pipe('wheel-hub',[(c[0]-width/2,c[1],c[2]),(c[0]+width/2,c[1],c[2])],r*.52,'iron',10)
++   for s in [-1,1]:
++    x=c[0]+s*width*.53;self.pipe('hubcap',[(x,c[1],c[2]),(x+s*.025,c[1],c[2])],r*.28,'signal',10)
++    if not self.far:
++     for j in range(6):
++      a=j*math.tau/6;self.ellipsoid('lug',(x+s*.034,c[1]+r*.38*math.cos(a),c[2]+r*.38*math.sin(a)),(.045,.045,.045),'tin',6,3)
++   for j in range(10 if self.far else 18):
++    a=j*math.tau/(10 if self.far else 18);d=.13
++    self.beam('tread',(c[0]-width*.44,c[1]+r*.94*math.cos(a-d),c[2]+r*.94*math.sin(a-d)),(c[0]+width*.44,c[1]+r*.94*math.cos(a+d),c[2]+r*.94*math.sin(a+d)),r*.15,r*.10,'rubber')
++ def panel(self,tag,c,w,h,mat='paint',axis='z'):
++  n=max(3,int(w*(3 if self.far else 7)))
++  for i in range(n):
++   x0=-w/2+w*i/n;x1=-w/2+w*(i+1)/n
++   def p(x,y):
++    z=.035*math.cos((x+w/2)*math.pi*n/w);v=(x,y,z)
++    if axis=='x':v=(z,y,-x)
++    return add(c,v)
++   self.double(mat,[p(x0,-h/2),p(x1,-h/2),p(x1,h/2),p(x0,h/2)],tag)
++  if not self.far:
++   for x in [-w*.43,w*.43]:
++    for y in [-h*.42,h*.42]:
++     v=(x,y,.048) if axis=='z' else (.048,y,-x)
++     self.ellipsoid('panel-rivet',add(c,v),(.05,.05,.05),'tin',6,3)
++ def smile(self,c,r=.25):
++  self.pipe('smile-badge',[add(c,(0,0,-.012)),add(c,(0,0,.012))],r,'signal',16)
++  for s in [-1,1]:self.ellipsoid('smile-eye',add(c,(s*r*.32,r*.25,.018)),(r*.17,r*.24,.022),'rubber',6,4)
++  self.pipe('smile-mouth',[add(c,(r*.60*math.cos(t),r*.58*math.sin(t),.034)) for t in [math.pi+j*math.pi/9 for j in range(10)]],r*.053,'rubber',5)
++ def lantern(self,c,s=1):
++  self.pipe('lantern-core',[add(c,(0,-.22*s,0)),add(c,(0,.22*s,0))],.12*s,'glow',8)
++  for y,r in [(-.26,.22),(.26,.22),(.32,.15)]:self.pipe('lantern-cap',[add(c,(0,y*s,0)),add(c,(0,(y+.045)*s,0))],r*s,'iron',10)
++  for j in range(4):
++   a=math.tau*j/4;self.pipe('lantern-cage',[add(c,(.18*s*math.cos(a),-.27*s,.18*s*math.sin(a))),add(c,(.18*s*math.cos(a),.29*s,.18*s*math.sin(a)))],.017*s,'tin',5)
++  self.ring('lantern-handle',add(c,(0,.41*s,0)),.08*s,.018*s,'iron',axis='z')
++ def crate(self,c,s=1,mat='wood'):
++  self.roundbox('supply-box',c,(s,.7*s,.65*s),mat,.04*s)
++  for x in [-.41,.41]:self.box('crate-strap',add(c,(x*s,0,0)),(.08*s,.74*s,.69*s),'iron')
++  self.box('crate-latch',add(c,(0,.11*s,.35*s)),(.15*s,.15*s,.04*s),'tin')
++ def barrel(self,c,r=.32,h=.85,mat='paint'):
++  self.lathe('barrel',c,[(0,0),(r*.92,0),(r,h*.08),(r,h*.92),(r*.92,h),(0,h)],mat)
++  for y in [.1,.32,.74,.94]:self.ring('barrel-hoop',add(c,(0,y*h,0)),r,.023,'iron')
++ def flag(self,c,s=1):
++  self.pipe('flag-pole',[c,add(c,(0,2*s,0))],.03*s,'iron',6)
++  x,y,z=add(c,(0,1.9*s,0));self.cloth('flag',[(x,y,z),(x+s,y-.09*s,z+.1*s),(x,y-.62*s,z),(x+s,y-.7*s,z+.1*s)],.05*s,'signal')
++  self.smile((x+.48*s,y-.31*s,z+.085*s),.19*s)
++ def plant(self,c,s=1):
++  self.pipe('stem',[c,add(c,(0,.72*s,0))],.025*s,'leaf',5)
++  for j in range(4 if self.far else 7):
++   a=j*2.4;y=.13+j*.08;v=(math.cos(a),.5,math.sin(a));center=add(c,(0,y*s,0));tip=add(center,mul(v,.45*s));side=(-v[2]*.11*s,.02*s,v[0]*.11*s)
++   self.double('leaflight' if j%2 else 'leaf',[center,add(mul(add(center,tip),.5),side),tip,sub(mul(add(center,tip),.5),side)],'leaf')
++ def ladder(self,x,z,height,y=0):
++  for s in [-1,1]:self.beam('ladder-rail',(x+s*.23,y,z+.35),(x+s*.23,y+height,z),.06,.06,'wood')
++  for j in range(max(2,int(height/.32))):
++   yy=.2+j*.32;zz=z+.35*(1-yy/height);self.beam('ladder-rung',(x-.23,y+yy,zz),(x+.23,y+yy,zz),.055,.075,'tin')
++ def dish(self,c,r=1):
++  # Parabolic bowl faces +Y; supporting feed and rim distinguish it from a disk.
++  self.lathe('dish-bowl',c,[(0,0),(r*.3,r*.035),(r*.65,r*.16),(r,r*.40),(r,r*.43),(r*.65,r*.19),(r*.3,r*.065),(0,r*.03)],'ivory')
++  self.ring('dish-rim',add(c,(0,r*.415,0)),r,.026,'iron')
++  for j in range(3):
++   a=j*math.tau/3;self.beam('dish-feed-support',add(c,(r*.9*math.cos(a),r*.35,r*.9*math.sin(a))),add(c,(0,r*1.05,0)),.025,.025,'iron')
++  self.ellipsoid('dish-feed',add(c,(0,r*1.05,0)),(.17*r,.22*r,.17*r),'tin')
++ def surface_spec(self,name):
++  groups=[]
++  for key,g in self.groups.items():
++   component,mat=key.split('__');color,metal,rough=PALETTE[mat]
++   rgb=[lin(int(color[i:i+2],16)/255) for i in (1,3,5)]
++   # Exact welding preserves sharp edges and all authored vertex attributes.
++   unique={};positions=[];normals=[];colors=[];indices=[]
++   for i in g['i']:
++    item=tuple(g['p'][i])+tuple(g['n'][i])+tuple(g['c'][i])
++    if item not in unique:
++     unique[item]=len(positions);positions.append(g['p'][i]);normals.append(g['n'][i]);colors.append(g['c'][i])
++    indices.append(unique[item])
++   groups.append({'id':key,'positions':positions,'normals':normals,'indices':indices,'colors':colors,'material':{'color':'#'+''.join(f'{round(v*255):02x}' for v in rgb)+'ff','metallic':metal,'roughness':rough}})
++  return {'schema':'axm.surface-3d/v0.1','name':name,'primitives':groups}
+diff --git a/src/axm_uc/rts_recipes.py b/src/axm_uc/rts_recipes.py
+new file mode 100644
+index 0000000..fa59da6
+--- /dev/null
++++ b/src/axm_uc/rts_recipes.py
+@@ -0,0 +1,634 @@
++"""Authored 83-design reference collection built from reusable salvage operations."""
++import math
++from .rts_mesh import SalvageMesh, add
++
++def platform(f,w=5,d=4):
++ for x in [-w*.25,w*.25]:
++  for z in [-d*.25,d*.25]:f.roundbox('foundation',(x,.10,z),(w*.49,.20,d*.49),'concrete',.12)
++ if not f.far:
++  for j in range(12):
++   a=j*2.4;x=math.cos(a)*w*.49;z=math.sin(a)*d*.49
++   f.ellipsoid('rubble',(x,.13,z),(.26+.13*math.sin(j)**2,.24,.29),'concrete',7,4)
++  for x,z in [(-w*.43,d*.43),(w*.4,-d*.4),(w*.36,d*.38)]:f.plant((x,.15,z),.55)
++
++def canopy(f,c=(0,2.8,1),w=4,d=2,mat='canvas'):
++ x,y,z=c;corners=[(x-w/2,y+.30,z-d/2),(x+w/2,y+.40,z-d/2),(x-w/2-.2,y-.20,z+d/2),(x+w/2+.15,y-.08,z+d/2)]
++ f.cloth('sagged-canopy',corners,.16,mat)
++ for p in corners:
++  f.pipe('canopy-pole',[(p[0],.2,p[2]),p],.045,'iron',6)
++  f.pipe('tie-rope',[p,(p[0]*1.1,.15,p[2]*1.13)],.013,'wood',4)
++ f.lantern((x,y-.55,z),.8)
++
++def tank(f,c,r=.65,h=2,mat='paint'):
++ x,y,z=c;f.lathe('pressure-tank',c,[(0,0),(r*.7,0),(r,.18),(r,h-.18),(r*.7,h),(0,h)],mat)
++ for yy in [.24,h*.5,h-.24]:f.ring('tank-band',(x,y+yy,z),r+.01,.035,'iron')
++ f.pipe('tank-feed',[(x,y+h,z),(x,y+h+.22,z),(x+r*.6,y+h+.22,z)],.07,'tin',8)
++ f.pipe('tank-tap',[(x,y+.3,z+r),(x,y+.3,z+r+.2)],.065,'iron',8)
++ f.smile((x,y+h*.58,z+r+.01),r*.32)
++
++def shed(f,w=4,d=3,h=2.7,style='flat',open_front=True):
++ for x in [-w/2,w/2]:
++  for z in [-d/2,d/2]:f.beam('structure-post',(x,.2,z),(x,h,z),.12,.12,'iron')
++ for x in [-w/2,w/2]:f.panel('patched-side',(x,h*.48,0),d,h*.87,'paint',axis='x')
++ f.panel('rear-wall',(0,h*.48,-d/2),w,h*.87,'rust')
++ if not open_front:f.panel('front-wall',(0,h*.48,d/2),w,h*.87,'paint')
++ if style=='arch':
++  for j in range(5 if f.far else 8):
++   z=-d/2+j*d/(4 if f.far else 7)
++   arc=[(w*.5*math.cos(a),h-1+1.4*math.sin(a),z) for a in [math.pi*i/12 for i in range(13)]]
++   f.pipe('roof-rib',arc,.06,'iron',6)
++  for j in range(8):
++   a=j*math.pi/8;b=(j+1)*math.pi/8
++   f.double('tin' if j%3 else 'paint',[(w*.5*math.cos(a),h-1+1.4*math.sin(a),-d/2),(w*.5*math.cos(b),h-1+1.4*math.sin(b),-d/2),(w*.5*math.cos(b),h-1+1.4*math.sin(b),d/2),(w*.5*math.cos(a),h-1+1.4*math.sin(a),d/2)],'arched-roof-skin')
++ else:
++  for j in range(5):
++   x=-w*.5+(j+.5)*w/5;f.roundbox('roof-sheet',(x,h+.03*math.sin(j),0),(w/5+.04,.09,d+.28),'tin' if j%2 else 'paint',.02)
++ for x in [-w/2,w/2]:f.beam('roof-rail',(x,h,-d/2),(x,h,d/2),.14,.14,'iron')
++ f.lantern((-.75,h-.5,d/2+.08),.8)
++ f.roundbox('entry-threshold',(0,.23,d/2+.12),(1.3,.13,.5),'wood')
++
++def bench(f,c=(0,.95,0),width=1.6):
++ x,y,z=c;f.roundbox('workbench',c,(width,.15,.75),'wood',.04)
++ for dx in [-width*.42,width*.42]:f.beam('bench-leg',(x+dx,.20,z),(x+dx,y,z),.10,.57,'iron')
++ f.roundbox('vise',(x+.35,y+.20,z),(.30,.28,.27),'iron',.03)
++ f.pipe('vise-handle',[(x+.15,y+.2,z+.20),(x+.55,y+.2,z+.20)],.023,'tin',6)
++
++def crane(f,c=(0,0,0),h=4,length=3):
++ x,y,z=c
++ for dx in [-.32,.32]:f.beam('crane-mast',(x+dx,y+.2,z),(x+dx,y+h,z),.17,.17,'signal')
++ start=(x,y+h,z);end=(x+length,y+h+length*.4,z)
++ for dz in [-.18,.18]:
++  f.beam('crane-boom',add(start,(0,0,dz)),add(end,(0,0,dz)),.17,.17,'signal')
++ for j in range(6):
++  t=j/6;u=(j+1)/6
++  f.beam('boom-crossbrace',add(start,(length*t,length*.4*t,-.18)),add(start,(length*u,length*.4*u,.18)),.06,.06,'iron')
++ f.pipe('load-cable',[end,(end[0],y+1.5,z)],.027,'iron',6)
++ f.pipe('crane-hook',[(end[0],y+1.5,z),(end[0]-.1,y+1.3,z),(end[0]+.1,y+1.2,z),(end[0]+.18,y+1.36,z)],.07,'iron',7)
++ f.pipe('hydraulic',[(x,y+h*.5,z),(x+length*.5,y+h+length*.2,z)],.095,'tin',8)
++
++def tower(f,h=4,spot=False):
++ for x,z in [(-.65,-.6),(.65,-.6),(-.65,.6),(.65,.6)]:f.beam('tower-leg',(x*1.25,.2,z*1.25),(x,h,z),.15,.15,'signal')
++ for y in [1,2,3]:
++  if y>=h:continue
++  for z in [-.6,.6]:
++   f.beam('crossbrace',(-.65,y-.6,z),(.65,y+.35,z),.085,.085,'iron')
++   f.beam('crossbrace',(.65,y-.6,z),(-.65,y+.35,z),.085,.085,'iron')
++ f.roundbox('tower-platform',(0,h,0),(2,.18,1.8),'iron')
++ if not spot:
++  for z in [-.8,.8]:
++   for x in [-.9,.9]:f.beam('railpost',(x,h,z),(x,h+.8,z),.06,.06,'iron')
++   f.beam('guardrail',(-.9,h+.8,z),(.9,h+.8,z),.06,.06,'iron')
++  canopy(f,(0,h+1.1,0),1.8,1.5)
++ else:
++  for x in [-.65,0,.65]:
++   f.lathe('spotlight',(x,h+.45,.1),[(0,0),(.25,0),(.32,.27),(.27,.29),(0,.29)],'iron',axis='z')
++   f.pipe('light-lens',[(x,h+.45,.401),(x,h+.45,.405)],.245,'glow',14)
++ f.ladder(.35,.9,h)
++
++def solar(f,c=(0,1,0),w=1.8,h=1.1):
++ x,y,z=c
++ f.roundbox('solar-frame',c,(w,h,.10),'iron',.025)
++ for i in range(5):
++  for j in range(3):f.box('photovoltaic-cell',(x-w*.4+i*w*.2,y-h*.33+j*h*.33,z+.06),(w*.18,h*.28,.025),'glass')
++ f.beam('solar-support',(x,.2,z-.4),(x,y+h*.4,z),.1,.1,'iron')
++
++def meteor(f,c=(0,1,0),s=1):
++ x,y,z=c
++ f.ellipsoid('faceted-meteor',c,(1.45*s,2*s,1.35*s),'iron',7,5)
++ for j in range(7):
++  a=j*math.tau/7
++  path=[]
++  for k in range(5):
++   yy=-.65+k*.32;rr=math.sqrt(max(.1,1-yy*yy));aa=a+.14*math.sin(k*4+j)
++   path.append((x+.735*s*rr*math.cos(aa),y+yy*s,z+.685*s*rr*math.sin(aa)))
++  f.pipe('luminous-fracture',path,.025*s,'cyan',5)
++ for dx in [-.75,.75]:
++  f.beam('meteor-clamp',(x+dx*s,y-.7*s,z),(x+dx*.72*s,y+.2*s,z),.20*s,.25*s,'tin')
++  f.pipe('coolant-hose',[(x+dx*s,y-.6*s,z),(x+dx*1.35*s,y-.1*s,z+.1*s),(x+dx*s,y+.35*s,z)],.08*s,'rubber',8)
++
++def track(f,c=(0,.48,0),length=2):
++ x,y,z=c
++ f.roundbox('track-belt',c,(.40,.7,length),'rubber',.19)
++ for j in range(5):
++  zz=z-length*.38+j*length*.19;f.pipe('track-roller',[(x-.23,y,zz),(x+.23,y,zz)],.27,'iron',10)
++  f.pipe('roller-hub',[(x-.25,y,zz),(x+.25,y,zz)],.09,'tin',8)
++ for zz in range(9 if f.far else 15):
++  p=-length*.47+length*.94*zz/(8 if f.far else 14)
++  for yy in [-.37,.37]:f.box('track-shoe',(x,y+yy,z+p),(.49,.09,length*.065),'iron')
++
++def gun(f,c=(0,0,0),kind='rifle',s=1):
++ x,y,z=c
++ def p(a,b,d):return(x+a*s,y+b*s,z+d*s)
++ f.roundbox('receiver',p(0,0,0),(.19*s,.25*s,.64*s),'iron',.035*s)
++ if kind=='smg':
++  f.pipe('folding-stock',[p(-.10,0,-.2),p(-.10,0,-.57),p(-.10,-.20,-.57)],.025*s,'iron',7)
++  f.roundbox('magazine-well',p(0,-.18,.06),(.17*s,.30*s,.15*s),'paint',.025*s)
++ else:f.roundbox('stock',p(0,-.035,-.52),(.17*s,.23*s,.47*s),'wood',.04*s)
++ f.beam('pistol-grip',p(0,-.05,-.14),p(0,-.32,-.25),.13*s,.12*s,'wood')
++ f.roundbox('magazine',p(0,-.24,.18),(.115*s,.38*s,.20*s),'iron',.018*s)
++ r=.06 if kind!='launcher' else .18
++ if kind=='rotary':
++  for i in range(6):
++   a=i*math.tau/6;xx=.13*math.cos(a);yy=.13*math.sin(a)
++   f.pipe('rotary-barrel',[p(xx,yy,.25),p(xx,yy,1.15)],.042*s,'iron',8)
++  for zz in [.35,.85]:f.ring('barrel-collar',p(0,0,zz),.15*s,.045*s,'tin',axis='z')
++ else:
++  for xx in ([-.055,.055] if kind=='shotgun' else [0]):
++   f.pipe('barrel',[p(xx,.04,.28),p(xx,.04,.64 if kind=='smg' else .99)],r*s,'iron',10)
++   f.pipe('dark-bore',[p(xx,.04,.641 if kind=='smg' else .991),p(xx,.04,.651 if kind=='smg' else 1.001)],r*.70*s,'rubber',10)
++  f.ring('muzzle-band',p(0,.04,.60 if kind=='smg' else .91),r*1.08*s,.018*s,'tin',axis='z')
++ if kind=='launcher':f.ellipsoid('rocket-nose',p(0,.04,1.02),(.32*s,.32*s,.46*s),'red')
++ if kind in ['rifle','smg']:
++  f.pipe('optic',[p(0,.22,-.05),p(0,.22,.3)],.056*s,'iron',8)
++  f.pipe('optic-lens',[p(0,.22,.301),p(0,.22,.31)],.047*s,'glass',8)
++ for zz in [-.15,.1,.25]:
++  for xx in [-.105,.105]:f.pipe('receiver-rivet',[p(xx,0,zz),p(xx*1.08,0,zz)],.020*s,'tin',6)
++ for zz in [.38,.5,.62]:
++  if kind not in ['launcher','rotary']:f.ring('foregrip-wrap',p(0,.04,zz),.079*s,.015*s,'wood',axis='z')
++ f.pipe('trigger-guard',[p(0,-.14,-.05),p(0,-.27,-.05),p(0,-.27,.10),p(0,-.14,.10)],.020*s,'iron',6)
++ f.sockets['muzzle']={'position':list(p(0,.04,.67 if kind=='smg' else 1.03)),'forward':[0,0,1],'component':f.active,'space':'bind-world'}
++
++
++def crew(f,id):
++ # Deliberately exaggerated but anatomical rigid figure: articulated coat/boots,
++ # helmet shell, wrapped collar, pouches, lenses and role-specific carried gear.
++ mat='paint' if id=='mechanic-repair-crew' else ('ivory' if id=='field-medic' else 'cloth')
++ f.ellipsoid('coat-body',(0,1.14,0),(.67,.77,.41),mat)
++ f.roundbox('belt',(0,.91,0),(.68,.13,.44),'wood',.03)
++ f.roundbox('belt-buckle',(0,.92,.24),(.15,.13,.035),'tin',.02)
++ for side in [-1,1]:
++  with f.part('leg-'+str(side).replace('-','m'),(side*.18,.92,0),{'clip':'walk','axis':[1,0,0],'angles':[0,side*.40,0,-side*.40,0],'duration':.9}):
++   f.ellipsoid('trouser-leg',(side*.18,.59,0),(.28,.63,.28),mat)
++   f.roundbox('knee-pad',(side*.18,.48,.16),(.23,.21,.075),'iron',.045)
++   f.roundbox('boot',(side*.18,.17,.09),(.30,.30,.48),'rubber',.065)
++   for yy in [.20,.28]:f.box('boot-strap',(side*.18,yy,.305),(.22,.035,.025),'wood')
++  with f.part('arm-'+str(side).replace('-','m'),(side*.37,1.38,0),{'clip':'walk','axis':[1,0,0],'angles':[0,-side*.2,0,side*.2,0],'duration':.9}):
++   f.ellipsoid('sleeve',(side*.39,1.22,.02),(.26,.41,.28),mat)
++   f.beam('forearm',(side*.44,1.10,.08),(side*.35,.98,.30),.20,.20,mat)
++   f.ellipsoid('glove',(side*.35,.99,.32),(.22,.22,.23),'rubber')
++   f.roundbox('wrist-guard',(side*.40,1.05,.22),(.22,.11,.18),'wood',.025)
++  f.roundbox('belt-pouch',(side*.28,.94,.24),(.18,.22,.13),'wood',.025)
++ f.roundbox('backpack',(0,1.27,-.32),(.56,.63,.25),'wood',.07)
++ for x in [-.19,.19]:f.beam('backpack-strap',(x,.99,.235),(x,1.53,.16),.065,.045,'wood')
++ f.pipe('bedroll',[(-.31,1.65,-.34),(.31,1.65,-.34)],.13,'darkcloth',10)
++ for x in [-.21,.21]:f.ring('bedroll-strap',(x,1.65,-.34),.13,.023,'wood',axis='x')
++ with f.part('head',(0,1.55,0)):
++  f.ellipsoid('head',(0,1.70,0),(.53,.57,.48),'skin')
++  f.ellipsoid('scarf',(0,1.52,.11),(.58,.23,.48),'red' if id not in ['crew-worker','field-medic'] else 'canvas')
++  f.ellipsoid('helmet',(0,1.93,-.02),(.64,.37,.57),'ivory' if id=='field-medic' else ('red' if id=='shotgun-raider' else 'cloth'))
++  f.roundbox('helmet-brim',(0,1.88,.085),(.68,.055,.64),'iron',.09)
++  for x in [-.145,.145]:
++   f.pipe('goggle-housing',[(x,1.76,.23),(x,1.76,.29)],.125,'rubber',12)
++   f.pipe('goggle-lens',[(x,1.76,.291),(x,1.76,.305)],.095,'glass',12)
++   f.pipe('lens-glint',[(x-.024,1.796,.307),(x-.024,1.796,.308)],.025,'ivory',6)
++  f.beam('goggle-bridge',(-.035,1.77,.31),(.035,1.77,.31),.04,.04,'tin')
++  f.smile((0,1.96,.278),.105)
++ if id in ['scavenger','mercenary-free-agent']:
++  f.cloth('ragged-hood-cape',[(-.4,1.88,-.12),(.4,1.88,-.12),(-.55,.72,-.40),(.55,.77,-.40)],.12,'darkcloth')
++ if id=='citizen-harvester':
++  f.ring('straw-hat-brim',(0,1.89,0),.37,.065,'wood')
++  f.crate((0,1.00,.49),.65)
++  for x in [-.20,0,.2]:f.plant((x,1.23,.5),.45)
++ elif id=='crew-worker':f.crate((0,1.02,.51),.65);f.smile((0,1.03,.73),.13)
++ elif id in ['rifle-guard','shotgun-raider','mercenary-ex-mil','mercenary-free-agent']:
++  gun(f,(.08,1.02,.46),'shotgun' if id=='shotgun-raider' else 'rifle',.7)
++ elif id=='mechanic-repair-crew':
++  f.crate((.38,.67,.37),.40,'red');f.beam('wrench',(-.34,1.20,-.37),(-.45,2.18,-.37),.10,.10,'tin');f.ring('wrench-jaw',(-.45,2.18,-.37),.16,.055,'tin',axis='z')
++ elif id=='field-medic':
++  f.roundbox('medical-bag',(.4,.75,.40),(.34,.32,.22),'ivory',.035)
++  for w,h in [(.22,.065),(.065,.22)]:f.box('medical-cross',(.4,.75,.52),(w,h,.015),'red')
++ elif id=='scout':f.lantern((.38,.69,.40),.63);f.pipe('radio-aerial',[(-.24,1.5,-.4),(-.24,2.4,-.4)],.012,'iron',5)
++ elif id=='heavy-vehicle-operator':f.roundbox('welding-visor',(0,1.74,.31),(.4,.36,.11),'iron',.06)
++ elif id=='licensed-driver':f.ring('key-ring',(.37,.85,.4),.07,.012,'tin',axis='z')
++ elif id=='scavenger':f.pipe('salvage-probe',[(.36,.99,.38),(.58,.22,.85)],.025,'iron',6);f.ring('detector-head',(.58,.16,.85),.18,.027,'iron')
++ f.sockets['hand-right']={'position':[.35,.99,.32],'forward':[0,0,1]}
++ f.sockets['backpack']={'position':[0,1.3,-.47],'forward':[0,0,-1]}
++
++def vehicle(f,id):
++ length=4.8 if id in ['flatbed-convoy-truck','armored-bus','cargo-trailer','mercenary-carrier','crane-truck','drill-rig-vehicle'] else 3.1
++ width=1.85 if length>4 else 1.5
++ if id=='push-cart':
++  f.roundbox('cart-bed',(0,.75,0),(1.25,.18,1.45),'paint')
++  for x in [-.64,.64]:f.panel('cart-side',(x,1.04,0),1.45,.45,'paint',axis='x');f.wheel('wheel-'+str(x).replace('-','m').replace('.','d'),(x,.38,0),.37,.23)
++  for x in [-.5,.5]:f.pipe('cart-handle',[(x,.8,-.6),(x,1.05,-1.3)],.04,'iron',7)
++  f.crate((0,1.10,0),.82);f.barrel((.34,.88,-.36),.20,.65,'red');f.flag((-.52,.88,-.5),.55);return
++ if id=='scout-trike':
++  f.beam('motorcycle-spine',(0,.55,-1),(0,.67,1),.14,.15,'iron')
++  for j,(x,z) in enumerate([(0,.95),(-.58,-.72),(.58,-.72)]):f.wheel('wheel-'+str(j),(x,.43,z),.43,.25)
++  for x in [-.15,.15]:f.pipe('front-fork',[(x,.43,.95),(x,1.15,.64)],.035,'tin',8)
++  f.pipe('handlebar',[(-.46,1.20,.63),(-.25,1.17,.75),(.25,1.17,.75),(.46,1.20,.63)],.033,'iron',8)
++  f.ellipsoid('fuel-tank',(0,.92,.20),(.48,.38,.57),'ivory');f.smile((0,.95,.49),.14)
++  f.roundbox('motorcycle-seat',(0,.88,-.35),(.45,.16,.65),'rubber',.065)
++  f.roundbox('engine',(0,.58,.03),(.35,.35,.40),'iron')
++  for y in [.46,.52,.58,.64]:f.box('engine-fin',(0,y,.03),(.43,.025,.42),'tin')
++  f.roundbox('rear-cargo',(0,.79,-.9),(1.0,.17,.66),'paint');f.crate((0,1.05,-.87),.60);f.dish((.37,1.45,-1),.25)
++  f.pipe('headlamp',[(0,1.13,.73),(0,1.13,.89)],.14,'iron',10);f.pipe('headlamp-glass',[(0,1.13,.90),(0,1.13,.91)],.11,'glow',10)
++  return
++ f.roundbox('chassis',(0,.62,0),(width,.22,length),'iron',.10)
++ f.pipe('exhaust',[(width*.43,.60,-length*.35),(width*.5,1.1,-length*.36),(width*.5,1.95,-length*.35)],.065,'rust',9)
++ zfront=length*.31;zback=-length*.32;r=.53 if length>4 else .46
++ if id=='tow-crawler':
++  for s in [-1,1]:track(f,(s*.83,.46,0),2.85)
++ else:
++  wheels=[(-1,zfront),(1,zfront),(-1,zback),(1,zback)]
++  if id=='scout-trike':wheels=[(0,zfront),(-1,zback),(1,zback)]
++  if id=='cargo-trailer':wheels=[(-1,zback),(1,zback),(-1,zback+.7),(1,zback+.7)]
++  if length>4 and id not in ['armored-bus','mercenary-carrier']:wheels += [(-1,zback+.72),(1,zback+.72)]
++  for j,(s,z) in enumerate(wheels):
++   x=s*(width*.53);f.wheel('wheel-'+str(j),(x,r,z),r,.34)
++   if s:f.roundbox('mudguard',(x,r*1.94,z),(.48,.11,.85),'paint',.045)
++  for zz in [zfront,zback]:f.pipe('axle',[(-width*.56,r,zz),(width*.56,r,zz)],.075,'iron',8)
++ openframe=id in ['scrap-buggy','scout-trike']
++ trailer=id=='cargo-trailer'
++ if trailer:
++  canopy(f,(0,2.0,0),width,length,'canvas')
++  f.beam('trailer-drawbar',(0,.6,length*.5),(0,.6,length*.5+.8),.16,.13,'iron')
++ elif openframe:
++  for x in [-width*.43,width*.43]:
++   f.pipe('roll-cage',[(x,.8,-.65),(x,1.78,-.60),(x,1.91,.48),(x,.88,1.02)],.06,'iron',8)
++  for z in [-.6,.48]:f.pipe('roof-crossbar',[(-width*.43,1.85,z),(width*.43,1.85,z)],.06,'iron',8)
++  f.roundbox('hood',(0,.94,zfront),(.95,.27,.72),'paint',.10)
++  for x in [-.27,.27]:f.roundbox('seat',(x,1.1,-.1),(.40,.52,.44),'rubber',.10)
++  f.ring('steering-wheel',(-.28,1.40,.40),.17,.027,'iron',axis='z')
++ else:
++  cabz=length*.26
++  cablen=length*.86 if id in ['armored-bus','field-ambulance-van','mercenary-carrier'] else 1.3
++  cabz=0 if cablen>2 else cabz
++  f.roundbox('cab',(0,1.37,cabz),(width*.91,1.36,cablen),'ivory' if id=='field-ambulance-van' else 'paint',.15)
++  front=cabz+cablen*.5
++  # Solid colored glass panels are stylized windows, not a transparency claim.
++  for x in [-width*.22,width*.22]:f.roundbox('windshield',(x,1.65,front+.007),(width*.39,.51,.025),'glass',.025)
++  f.roundbox('front-grille',(0,.98,front+.045),(width*.58,.35,.06),'rubber',.025)
++  for j in range(7):f.box('grille-slot',(-width*.24+j*width*.08,.98,front+.08),(.035,.29,.025),'tin')
++  for s in [-1,1]:
++   for j in range(max(1,int(cablen/.7))):
++    z=cabz-cablen*.37+j*.7;f.roundbox('side-window',(s*width*.458,1.69,z),(.025,.43,.54),'glass',.008)
++   f.box('door-handle',(s*width*.48,1.25,cabz+.05),(.04,.065,.20),'tin')
++   f.pipe('mirror-arm',[(s*width*.44,1.59,front-.1),(s*width*.66,1.59,front-.1)],.024,'iron',6)
++   f.roundbox('mirror',(s*width*.66,1.63,front-.1),(.12,.22,.06),'tin',.02)
++  if cablen>2:
++   for j in range(5):
++    zz=-cablen*.4+j*cablen*.2;f.pipe('roof-rack',[(-width*.47,2.13,zz),(width*.47,2.13,zz)],.035,'iron',6)
++   f.crate((0,2.25,-cablen*.24),.8)
++  else:
++   f.roundbox('load-bed',(0,.95,-length*.22),(width,.19,length*.46),'wood',.04)
++   for s in [-1,1]:f.panel('load-rail',(s*width*.5,1.2,-length*.22),length*.48,.46,'paint',axis='x')
++ f.roundbox('bumper',(0,.72,length*.5+.08),(width+.16,.20,.17),'iron',.04)
++ for x in [-width*.35,width*.35]:
++  f.pipe('headlamp',[(x,1.02,length*.50),(x,1.02,length*.5+.12)],.15,'iron',10)
++  f.pipe('headlamp-lens',[(x,1.02,length*.5+.121),(x,1.02,length*.5+.13)],.12,'glow',10)
++ f.smile((0,1.12,length*.50+.14),.19)
++ if id in ['crane-truck','tow-crawler']:crane(f,(0,.83,-.65),2.5,2)
++ elif id=='drill-rig-vehicle':
++  for x in [-.30,.30]:f.beam('drill-mast',(x,.9,-1.2),(x,3.7,-1.2),.14,.14,'signal')
++  for y in [1.2,1.8,2.4,3.0,3.6]:f.beam('mast-brace',(-.3,y,-1.2),(.3,y,-1.2),.07,.07,'iron')
++  f.lathe('auger',(0,.9,-1.2),[(.0,0),(.20,.3),(.22,1.7),(.14,2.7)],'iron')
++  for y in [1.3,1.6,1.9,2.2]:f.ring('drill-flight',(0,y,-1.2),.25,.045,'tin')
++ elif id=='field-ambulance-van':
++  for w,h in [(.7,.17),(.17,.7)]:f.box('medical-cross',(0,1.15,length*.46+.02),(w,h,.025),'red')
++  f.roundbox('emergency-beacon',(0,2.14,.35),(.7,.15,.27),'red',.04)
++ elif id=='mercenary-carrier':
++  with f.part('turret',(0,2.20,-.3),{'clip':'aim','axis':[0,1,0],'angles':[-.5,.5,-.5],'duration':4}):gun(f,(0,2.40,-.3),'rotary',.85)
++ elif not openframe and not trailer:
++  f.crate((0,1.37,-length*.32),.8);f.barrel((width*.29,1.0,-length*.29),.22,.7,'red')
++ if id not in ['field-ambulance-van','tow-crawler']:f.flag((-width*.43,1.04,-length*.39),.60)
++ f.sockets['hitch']={'position':[0,.60,-length*.5-.12],'forward':[0,0,-1]}
++
++def greenhouse(f):
++ w,d=4,3;h=2.3
++ for x in [-2,2]:
++  for z in [-1.5,-.5,.5,1.5]:f.beam('bus-window-frame',(x,.3,z),(x,h,z),.09,.09,'iron')
++  for y in [.35,1.25,h]:f.beam('window-horizontal',(x,y,-1.5),(x,y,1.5),.085,.085,'iron')
++  for z in [-1,0,1]:
++   f.roundbox('window-glass',(x,1.75,z),(.025,.87,.89),'glass',.01)
++   f.roundbox('window-glass',(x,.78,z),(.025,.77,.89),'glass',.01)
++ for z in [-1.5,-.5,.5,1.5]:
++  f.beam('gable',(-2,h,z),(0,3.3,z),.095,.095,'iron');f.beam('gable',(0,3.3,z),(2,h,z),.095,.095,'iron')
++ for s in [-1,1]:
++  for z in [-1,0,1]:
++   f.double('glass',[(s*.06,3.27,z-.43),(s*1.94,2.33,z-.43),(s*1.94,2.33,z+.43),(s*.06,3.27,z+.43)],'greenhouse-roof-glass')
++ f.beam('ridge',(0,3.3,-1.5),(0,3.3,1.5),.12,.12,'iron')
++ for x in [-1.55,1.55]:
++  f.roundbox('raised-planter',(x,.43,0),(.55,.43,2.6),'wood')
++  for z in [-1,-.5,0,.5,1]:f.plant((x,.64,z),1)
++ for x in [-1.45,1.45]:
++  f.roundbox('front-window',(x,1.3,1.51),(.92,1.7,.035),'glass',.015)
++ for x in [-.72,.72]:f.beam('door-frame',(x,.2,1.54),(x,2.4,1.54),.12,.12,'tin')
++ f.barrel((2.42,.2,-.8),.38,1.15,'ivory');f.pipe('irrigation',[(2.42,1.3,-.8),(2.42,2.3,-.8),(1.8,2.3,-.8)],.055,'iron',8)
++ f.lantern((0,2.4,1.48),.8);f.smile((1.45,.48,1.56),.20)
++
++def industry(f,id):
++ platform(f,5,4)
++ if id=='bus-window-greenhouse':greenhouse(f)
++ elif id=='open-crop-terrace':
++  for row in range(3):
++   z=-1.1+row*1.05;y=.45+(2-row)*.50
++   f.roundbox('terrace-bed',(0,y,z),(3.8,.45,.88),'wood',.07)
++   f.box('earth',(0,y+.24,z),(3.6,.08,.7),'soil')
++   for x in [-1.5,-.9,-.3,.3,.9,1.5]:f.plant((x,y+.27,z),.75)
++  f.flag((1.9,.25,-1.45),1)
++ elif id=='fungal-shed':
++  shed(f,3.8,2.8,2.8);canopy(f,(0,3.0,.7),3.9,2.9)
++  for y in [.55,1.25,1.95]:
++   f.box('mushroom-shelf',(0,y,-.65),(3.3,.10,.65),'wood')
++   for j in range(5):
++    x=-1.35+j*.67;s=.17+.03*(j%3)
++    f.pipe('mushroom-stalk',[(x,y,-.62),(x,y+.27,-.62)],s*.3,'ivory',7)
++    f.ellipsoid('mushroom-cap',(x,y+.28,-.62),(s*2.5,s*.9,s*2.5),'signal',10,5)
++  bench(f,(.7,.75,.65));f.barrel((-2,.2,1),.3,.8)
++ elif id=='livestock-pen':
++  for z in [-1.5,1.5]:
++   for x in [-2,-1,0,1,2]:f.beam('fence-post',(x,.2,z),(x,1.25,z),.13,.13,'wood')
++   for y in [.52,.96]:f.beam('fence-rail',(-2,y,z),(2,y,z),.11,.11,'wood')
++  for x in [-2,2]:
++   for y in [.52,.96]:f.beam('fence-rail',(x,y,-1.5),(x,y,1.5),.11,.11,'wood')
++  for x,scale,mat in [(-.7,1,'ivory'),(.85,.65,'skin')]:
++   f.ellipsoid('livestock-body',(x,1.06,0),(1.25*scale,.85*scale,.65*scale),mat)
++   for dx in [-.4,.4]:
++    for z in [-.2,.2]:f.beam('livestock-leg',(x+dx*scale,.27,z),(x+dx*scale,.99,z),.12*scale,.12*scale,mat)
++   f.ellipsoid('animal-head',(x+.55*scale,1.25,.1),(.43*scale,.56*scale,.40*scale),mat)
++   for z in [-.17,.17]:f.ellipsoid('ear',(x+.50*scale,1.50,z),(.22*scale,.10*scale,.14*scale),'rubber')
++  canopy(f,(0,2.7,-.5),4,2,'red')
++ elif id=='water-catcher':
++  for x in [-1.8,.2]:f.beam('water-tower-post',(x,.2,-.7),(x,3.6,-.7),.15,.15,'wood')
++  f.cloth('catchment-tarp',[(-1.9,3.6,-1.1),(.3,3.6,-1.1),(-1.9,3.35,.9),(.3,3.35,.9)],.80,'canvas')
++  f.pipe('collector-spout',[(-.8,2.7,.7),(-.8,2.5,1),(1.3,2.5,1),(1.3,2.25,.7)],.08,'tin',8)
++  tank(f,(1.2,.2,.5),.83,2.2,'tin');f.ladder(-1.55,.1,3.1)
++ elif id=='scrap-sorting-yard':
++  for x,mat in [(-1.5,'paint'),(0,'ivory'),(1.5,'red')]:
++   f.roundbox('sorting-bin',(x,.6,.9),(1.3,.8,1.2),mat)
++   for j in range(6):
++    f.roundbox('scrap',(x+.3*math.sin(j),1.0+.13*(j%3),.9+.3*math.cos(j)),(.5,.18,.4),'rust' if j%2 else 'iron',.025)
++  crane(f,(-1.7,.2,-1.2),2.7,2.8)
++ elif id in ['shallow-mine-entrance','deep-mine-head']:
++  if id=='shallow-mine-entrance':
++   for j in range(10):
++    a=j*math.pi/9;f.ellipsoid('rock-arch',(2*math.cos(a),.7+2.3*math.sin(a),-.6),(.95,1.0,1.5),'concrete',7,4)
++   for x in [-1.25,1.25]:f.beam('mine-timber',(x,.2,-.2),(x,2.05,-.2),.22,.24,'wood')
++   f.beam('mine-lintel',(-1.4,2,-.2),(1.4,2,-.2),.3,.25,'wood')
++  else:
++   tower(f,4.5);f.ring('mine-sheave',(0,4.8,0),.5,.10,'iron',axis='z')
++   f.pipe('hoist-cable',[(0,4.8,0),(0,.25,0)],.033,'iron',6)
++  for x in [-.4,.4]:f.beam('mine-rail',(x,.23,-1.2),(x,.23,1.8),.065,.085,'iron')
++  f.roundbox('mine-cart',(0,.68,.9),(1,.6,.8),'iron');f.lantern((-1.2,1.65,.35))
++ elif id=='asteroid-extraction-rig':
++  f.ellipsoid('asteroid',(-.6,1.6,0),(2.7,2.5,2.4),'concrete',9,6)
++  for j in range(8):
++   a=j*2.4;f.ring('asteroid-crater',(-.6+math.sin(a)*.8,1.6+math.cos(a)*.8,1),.14+.05*(j%3),.035,'iron',axis='z')
++  crane(f,(1.45,.2,-.5),3.0,-2.4);f.crate((1.6,.7,.9),1,'ivory');meteor(f,(-.6,1.7,0),.65)
++ elif id=='battery-fuel-station':
++  tank(f,(-1.2,.2,0),.75,2.0,'ivory');canopy(f,(1,2.7,.3),2.2,2.3)
++  for x,mat in [(.4,'red'),(1.4,'signal')]:
++   f.roundbox('fuel-pump',(x,1.0,.7),(.62,1.6,.55),mat,.10)
++   f.roundbox('pump-meter',(x,1.4,1),(.43,.3,.03),'rubber',.02)
++   f.pipe('fuel-hose',[(x+.36,1.5,.7),(x+.54,.4,.7),(x+.64,.55,1),(x+.40,1.2,1)],.044,'rubber',8)
++ elif id=='clustered-storage-bins':
++  for x,z,r,h,mat in [(-1.3,-.65,.6,2.4,'signal'),(0,-.7,.62,2.0,'red'),(1.35,-.65,.62,2.8,'paint'),(-.8,.8,.65,1.6,'paint'),(.85,.8,.73,1.55,'ivory')]:tank(f,(x,.2,z),r,h,mat)
++
++def building(f,id):
++ w=6 if id=='settlement-hub' else 5
++ platform(f,w,4.8)
++ if id in ['civic-shelter','storage-hall']:
++  shed(f,4.4,3.3,3.1,'arch');canopy(f,(.8,2.8,1.5),2.5,1.8)
++  for x in [-1.8,1.8]:tank(f,(x,.2,1.65),.37,1.1,'ivory')
++  if id=='storage-hall':
++   for x in [-1.35,0,1.35]:
++    for y in [.6,1.3]:f.crate((x,y,-.8),1)
++ elif id=='settlement-hub':
++  shed(f,5,3.5,2.6);canopy(f,(0,2.75,1.7),5.5,1.8)
++  with f.part('upper-storey',(0,0,0)):
++   # Explicit upper room preserves a single foundation and a usable entrance.
++   f.roundbox('upper-container',(0,3.2,-.6),(3.1,1.35,2.1),'paint',.12)
++   for x in [-.9,0,.9]:f.roundbox('upper-window',(x,3.4,.47),(.59,.55,.045),'glow',.025)
++   f.roundbox('upper-roof',(0,3.94,-.6),(3.35,.12,2.35),'tin')
++  f.ladder(2,1.5,3.8);f.flag((-1,3.95,-.6),.85);f.crate((-2,.65,1.8),.85,'red')
++ elif id=='improvised-workshop':
++  shed(f,4,3.1,2.6);canopy(f,(.1,2.9,1.65),4.6,2.1)
++  bench(f,(-.6,1,1.4),2.2);f.crate((1.6,.55,1.8),.9,'red');tank(f,(-2.15,.2,1),.32,.85)
++  f.pipe('chimney',[(1.55,.2,-.8),(1.55,3.9,-.8)],.17,'tin',12)
++  for y in [2.8,3.2,3.7]:f.ring('chimney-band',(1.55,y,-.8),.19,.028,'iron')
++  f.dish((-1.25,2.75,-.7),.55);crane(f,(.8,.2,-.6),2.8,-1.1)
++ elif id=='command-signal-hall':
++  shed(f,4.5,3.2,2.7);canopy(f,(-.7,2.95,.4),2.8,2)
++  f.dish((1.3,3,-.35),.90);f.ladder(.65,1.8,2.9)
++  f.pipe('radio-mast',[(-1.5,2.7,-1),(-1.5,5,-1)],.075,'iron',8)
++  for y in [3.4,4.0,4.6]:f.beam('antenna',(-2,y,-1),(-1,y,-1),.035,.035,'tin')
++  f.lantern((-1.5,5,-1),.6)
++ elif id=='training-yard':
++  for x in [-2,-1,0,1,2]:f.panel('yard-wall',(x,1.4,-1.8),.9,2.4,'wood')
++  for x in [-1.4,0,1.4]:
++   f.beam('target-post',(x,.2,0),(x,1.8,0),.09,.09,'wood');f.smile((x,1.55,.06),.37)
++  for x in [-1.8,-1.1]:
++   for y in [.35,.6,.85]:f.ring('tire-stack',(x,y,1.3),.38,.11,'rubber')
++  f.flag((1.9,.2,-1.8),1.2)
++ elif id=='repair-garage':
++  canopy(f,(0,3.5,0),4.4,3.4);crane(f,(-1.8,.2,-.8),3.4,2)
++  f.roundbox('repair-chassis',(0,.6,.1),(1.7,.2,2.5),'iron')
++  for i,(x,z) in enumerate([(-.9,-.8),(.9,-.8),(-.9,1),(.9,1)]):f.wheel('service-wheel-'+str(i),(x,.48,z),.47,.3,False)
++  f.roundbox('stripped-cab',(0,1.35,.45),(1.3,1.1,.9),'ivory');f.roundbox('garage-windscreen',(0,1.58,.91),(1.1,.5,.04),'glass')
++  bench(f,(1.55,1,-.8),1.3)
++ elif id=='refinery-shack':
++  for x,h in [(-1.1,2.8),(.9,2.3)]:tank(f,(x,.2,0),.67,h,'tin')
++  for y in [1,1.7,2.6]:f.pipe('refinery-pipe',[(-1.1,y,.7),(-1.1,y,.96),(.9,y,.96),(.9,y,.7)],.08,'iron',8)
++  f.pipe('flare-stack',[(1.7,.2,-1),(1.7,4.1,-1)],.14,'rust',9);f.ellipsoid('flare',(1.7,4.35,-1),(.28,.65,.28),'glow')
++ elif id=='power-core-building':
++  shed(f,2.8,2.6,1.9);f.lantern((0,3.1,0),2.6);solar(f,(-1.6,1.5,1.45),1.6,1.0)
++  f.pipe('power-conduit',[(.7,.2,1.2),(.7,2.2,1.2),(0,2.4,.4)],.095,'iron',9)
++ elif id=='machine-shop':
++  shed(f,3.7,3,2.5);canopy(f,(.2,2.8,1.3),3.9,2);crane(f,(-1.5,.2,-1),3.5,3)
++  bench(f,(0,1,1.2),2.3);f.lathe('lathe-machine',(.2,1.3,1.2),[(.18,-.5),(.2,.5)],'tin',axis='x');f.crate((-1.7,.55,1.5),.8,'red')
++ f.smile((0,2.0,1.65),.28)
++ f.sockets['entrance']={'position':[0,.2,2.5],'forward':[0,0,1]}
++
++
++def defense(f,id):
++ platform(f,4.3,2.8)
++ if id in ['comic-book-wall','car-door-wall','fridge-barricade','signplate-barricade']:
++  for j,mat in enumerate(['red','ivory','paint']):
++   x=(j-1)*1.23
++   if id=='fridge-barricade':
++    f.roundbox('salvaged-fridge',(x,1.25,0),(1.13,2.05+.20*(j%2),.83),mat,.13)
++    f.roundbox('freezer-door',(x,1.86,.435),(1.03,.66,.07),mat,.035)
++    f.box('fridge-handle',(x+.36,1.1,.5),(.055,.46,.05),'iron')
++   elif id=='car-door-wall':
++    f.roundbox('car-door',(x,1.12,0),(1.18,1.62,.11),mat,.1)
++    f.roundbox('car-window',(x,1.67,.07),(.93,.57,.035),'glass',.03)
++    f.box('door-handle',(x+.35,1.18,.10),(.20,.06,.035),'tin')
++   else:
++    f.panel('salvage-wall',(x,1.3,0),1.16,2.2,mat if id=='signplate-barricade' else 'paint')
++    if id=='signplate-barricade':f.roundbox('traffic-sign',(x,1.8,.1),(.96,.9,.06),mat,.16)
++  f.smile((0,1.3,.5 if id=='fridge-barricade' else .13),.5)
++  for x in [-2,2]:f.beam('barrier-post',(x,.2,0),(x,2.65,0),.16,.18,'iron')
++  f.pipe('top-cable',[(-2,2.65,0),(0,2.35,0),(2,2.65,0)],.025,'iron',6)
++ elif id=='bathtub-turret':
++  f.roundbox('turret-foot',(0,.38,0),(1.9,.5,1.65),'iron',.18)
++  f.ring('traverse-bearing',(0,.78,0),.65,.13,'tin')
++  with f.part('turret',(0,.8,0),{'clip':'aim','axis':[0,1,0],'angles':[-.7,.7,-.7],'duration':4}):
++   # Elliptic open tub: continuous outer wall, rolled rim and inner bowl.
++   profile=[(0,0),(.45,0),(.71,.2),(.93,.72),(1,.82),(.97,.90),(.87,.86),(.63,.25),(.35,.17),(0,.17)]
++   n=12 if f.far else 24
++   for j in range(len(profile)-1):
++    def p(i,k):r,y=profile[k];a=i*math.tau/n;return(r*math.cos(a),.85+y,r*.66*math.sin(a))
++    for i in range(n):f.face('ivory',[p(i+1,j),p(i,j),p(i,j+1),p(i+1,j+1)],'open-bathtub')
++   f.smile((0,1.33,.65),.25);gun(f,(0,1.92,.15),'rotary',1.1)
++   f.ellipsoid('rubber-duck',(-.65,1.91,.12),(.26,.21,.25),'signal');f.ellipsoid('duck-head',(-.65,2.06,.19),(.15,.16,.15),'signal');f.roundbox('duck-beak',(-.65,2.03,.29),(.12,.05,.10),'red',.012)
++ elif id=='crane-section-watchtower':tower(f,3.8);f.flag((.7,4,0),.8)
++ elif id=='spotlight-tower':tower(f,3.5,True);solar(f,(-1,1.2,.7),1.5,1)
++ elif id=='scrap-bunker':
++  shed(f,3.2,2,1.8);canopy(f,(0,2.1,0),3.4,2.2)
++  for x in [-1.2,1.2]:f.panel('bunker-front',(x,.85,1.12),.85,1.45,'tin')
++  gun(f,(0,1.33,.9),'rotary',1.1)
++ elif id=='spike-gate':
++  for x in [-1.7,1.7]:f.roundbox('gate-pillar',(x,1.1,0),(.48,2,.6),'concrete');f.lantern((x,2.25,0),.75)
++  with f.part('gate',(-1.45,.25,0),{'clip':'open','axis':[0,1,0],'angles':[0,-math.pi/2],'duration':1.5}):
++   for x in [-1.2,-.6,0,.6,1.2]:f.beam('gate-spike',(x,.3,.3),(x,1.9,-.05),.15,.15,'iron')
++   for y in [.5,1.75]:f.beam('gate-crossbar',(-1.45,y,0),(1.45,y,0),.17,.17,'signal')
++ elif id=='mine-marker':
++  f.beam('mine-sign-post',(0,.2,0),(0,1.6,0),.12,.12,'red');f.roundbox('danger-sign',(0,1.4,.06),(1,.8,.07),'red');f.smile((0,1.4,.11),.26);f.lantern((0,2,0),.5)
++ elif id=='sandbag-scrap-firing-nest':
++  for j in range(12):
++   a=j*math.pi/11
++   for k in range(3):f.roundbox('sandbag',(1.25*math.cos(a),.35+k*.25,.6*math.sin(a)),(.56,.28,.4),'wood',.12)
++  gun(f,(0,1.30,.25),'rotary',1.05)
++ elif id=='improvised-anti-vehicle-barrier':
++  for z in [-.4,.5]:
++   for s in [-1,1]:f.beam('steel-hedgehog',(-s*1.1,.2,z),(s*1.1,1.8,z),.21,.24,'rust')
++  f.ring('discarded-tire',(.85,.5,.5),.39,.13,'rubber',axis='z')
++
++def equipment(f,id):
++ if id in ['scrap-rifle','pipe-shotgun','compact-smg','improvised-launcher','rotary-gun']:
++  gun(f,(0,.40,0),{'scrap-rifle':'rifle','pipe-shotgun':'shotgun','compact-smg':'smg','improvised-launcher':'launcher','rotary-gun':'rotary'}[id]);return
++ if id=='wheel-module':f.wheel('wheel',(0,.63,0),.62,.4);return
++ if id=='track-module':track(f,(0,.44,0),2.2);return
++ if id=='engine-block':
++  f.roundbox('engine-block',(0,.55,0),(1.1,.9,.85),'iron')
++  for x in [-.4,-.14,.14,.4]:
++   f.pipe('engine-cylinder',[(x,.88,0),(x,1.18,0)],.10,'tin',8)
++   f.pipe('exhaust-header',[(x,.73,.43),(x,.83,.72),(.5,.4,.73)],.04,'rust',6)
++  f.ring('flywheel',(0,.60,.53),.43,.065,'tin',axis='z')
++  for j in range(6):
++   a=j*math.tau/6;f.beam('fan-blade',(0,.6,.54),(.36*math.cos(a),.6+.36*math.sin(a),.54),.10,.035,'iron')
++ elif id=='repair-welder':
++  tank(f,(-.45,0,0),.3,1.15,'red');f.crate((.3,.38,0),.65,'signal')
++  f.pipe('welder-hose',[(-.45,1.16,0),(-.7,1.4,.25),(0,1.25,.4),(.6,.95,.7)],.045,'rubber',8)
++  f.pipe('welding-torch',[(.55,.95,.65),(.75,.95,1)],.065,'tin',8)
++ elif id=='mining-drill':
++  track(f,(-.4,.3,0),1.4);track(f,(.4,.3,0),1.4)
++  f.roundbox('drill-body',(0,.83,0),(.9,.62,1.2),'signal')
++  with f.part('auger',(0,.9,.55),{'clip':'operate','axis':[0,0,1],'angles':[0,math.pi/2,math.pi,math.pi*1.5,math.tau],'duration':1}):
++   f.lathe('drill-cone',(0,.9,.55),[(.38,0),(.35,.3),(.26,.6),(.12,.95),(0,1.2)],'tin',axis='z')
++   for j in range(6):f.ring('drill-flight',(0,.9,.65+j*.15),.37-j*.05,.04,'iron',axis='z')
++ elif id=='lantern-scanner':
++  for x,z in [(-.4,-.3),(.4,-.3),(0,.5)]:f.beam('scanner-tripod',(x,0,z),(0,1.2,0),.07,.07,'iron')
++  f.lantern((0,1.65,0),1.2);f.roundbox('scanner-screen',(.45,1.5,0),(.55,.65,.16),'paint');f.roundbox('scan-display',(.45,1.5,.09),(.41,.45,.025),'cyan');f.dish((.45,1.9,0),.28)
++ elif id=='bridge-kit':
++  for x in [-.85,.85]:
++   f.beam('bridge-girder',(x,.24,-2),(x,.24,2),.20,.32,'iron')
++   for j in range(4):f.beam('bridge-web',(x,.12,-2+j),(x,.58,-1+j),.075,.075,'iron')
++  for j in range(12):f.roundbox('deck-plank',(0,.64,-1.85+j*.335),(1.95,.13,.30),'wood',.035)
++ elif id=='turret-module':
++  f.roundbox('turret-foot',(0,.24,0),(1.2,.45,1.1),'iron');f.ring('bearing',(0,.55,0),.46,.09,'tin')
++  with f.part('turret',(0,.55,0),{'clip':'aim','axis':[0,1,0],'angles':[-.6,.6,-.6],'duration':4}):
++   f.roundbox('turret-armor',(0,.91,0),(.9,.67,.7),'ivory');gun(f,(0,1.02,.3),'rotary',.8);f.smile((0,.88,.37),.21)
++ elif id=='meteor-power-cell':
++  f.roundbox('power-cell-base',(0,.25,0),(1.65,.50,1.3),'paint');meteor(f,(0,1.23,0),.7)
++ f.sockets.setdefault('mount',{'position':[0,0,0],'forward':[0,0,1]})
++
++def ruins(f,c=(0,0,0),w=3,h=4):
++ x,y,z=c
++ for s in [-1,1]:
++  f.panel('broken-building-side',(x+s*w/2,y+h*.4,z),2,h*.8,'concrete',axis='x')
++  for k in range(3):
++   xx=x+s*w/2;zz=z-.9+k*.65;f.roundbox('broken-parapet',(xx,y+h*.8+.16*(k%2),zz),(.20,.38,.46),'concrete',.04)
++ for yy in [1.2,2.5,3.8]:
++  if yy>h:continue
++  f.roundbox('broken-floor',(x,y+yy,z),(w,.16,1.9),'concrete')
++  for xx in [-w*.38,0,w*.38]:
++   f.beam('exposed-rebar',(x+xx,y+yy,z+.93),(x+xx+.05,y+yy+.6,z+1.0),.021,.021,'iron')
++ for yy in [1.8,3.1]:
++  if yy>h:continue
++  for xx in [-w*.4,w*.4]:f.roundbox('window-pier',(x+xx,y+yy,z+.95),(.24,1.25,.22),'concrete')
++ f.roundbox('back-wall',(x,y+h*.4,z-.95),(w,h*.8,.15),'concrete')
++
++def world(f,id):
++ platform(f,7,5.7)
++ if id=='ruined-town-block':
++  ruins(f,(-.9,.2,-.7),2.8,4.1);ruins(f,(1.7,.2,-.9),1.7,2.5)
++  f.roundbox('abandoned-car',(-1,.65,1.7),(1.6,.7,.85),'red');f.roundbox('car-roof',(-1,1.07,1.6),(.9,.39,.7),'rust')
++ elif id=='survivor-outpost-cluster':
++  shed(f,3,2.5,2.4);canopy(f,(0,2.7,1.5),4.8,1.8)
++  # Watch post intentionally smaller than standalone watchtower.
++  for x in [2,2.8]:
++   for z in [-1.5,-.7]:f.beam('outpost-tower-leg',(x,.2,z),(x,3.6,z),.13,.13,'wood')
++  f.roundbox('outpost-watchroom',(2.4,3.4,-1.1),(1.2,.8,1.2),'paint');f.roundbox('watch-window',(2.4,3.6,-.48),(.8,.35,.025),'glow');f.flag((2.7,3.9,-1.2),.8)
++  for x in [-2.3,1.8]:f.barrel((x,.2,1.8));f.crate((x,.65,1),.9)
++ elif id=='regional-scrap-market-gate':
++  for x in [-2.1,2.1]:
++   f.roundbox('market-container',(x,1.4,0),(1.35,2.4,2),'paint' if x<0 else 'red')
++   f.panel('container-ribs',(x,1.4,1.02),1.25,2.3,'paint' if x<0 else 'red')
++  f.beam('market-lintel',(-2.5,3.1,0),(2.5,3.1,0),.35,.4,'iron');canopy(f,(0,3.1,.4),2.7,2.2,'ivory')
++  f.smile((0,2.92,1.55),.28)
++ elif id=='rail-checkpoint':
++  for x in [-.55,.55]:f.beam('rail',(x,.22,-2.5),(x,.22,2.5),.08,.13,'iron')
++  for z in [-2,-1.5,-1,-.5,0,.5,1,1.5,2]:f.box('rail-sleeper',(0,.18,z),(1.7,.14,.19),'wood')
++  for x in [1.3,2.3]:
++   for z in [-1.2,-.2]:f.beam('signal-hut-leg',(x,.2,z),(x,2,z),.14,.14,'iron')
++  f.roundbox('signal-hut',(1.8,2.4,-.7),(1.5,1.1,1.5),'paint');f.roundbox('hut-window',(1.8,2.6,.07),(1.15,.45,.03),'glow')
++  with f.part('barrier',(1.2,1,.9),{'clip':'open','axis':[0,0,1],'angles':[0,-1.45],'duration':1.8}):
++   f.beam('crossing-arm',(-1.3,1,.9),(1.2,1,.9),.16,.16,'ivory')
++   for x in [-1,-.3,.4]:f.box('warning-stripe',(x,1,.99),(.3,.17,.025),'red')
++ elif id=='bridge-fragment':
++  for x in [-2,2]:f.roundbox('bridge-pier',(x,1.65,0),(.8,3,1.6),'concrete')
++  for x in [-1.6,-.8,0,.8,1.6]:f.roundbox('bridge-deck',(x,3.2,0),(.77,.25,2.4),'concrete')
++  for z in [-1.0,1.0]:f.beam('bridge-rail',(-2.6,3.9,z),(2.6,3.9,z),.08,.08,'iron')
++  for x in [-2.3,-1,1,2.3]:
++   for z in [-1,1]:f.beam('railpost',(x,3.2,z),(x,3.9,z),.06,.06,'iron')
++ elif id=='major-city-wall-section':
++  for x in [-2.4,0,2.4]:
++   f.roundbox('city-buttress',(x,2.5,0),(.75,4.6,1.4),'concrete')
++   if x:f.roundbox('guard-box',(x,5,0),(1.3,.95,1.8),'paint');f.roundbox('guard-window',(x,5.1,.92),(.9,.42,.03),'glow')
++  for x in [-1.2,1.2]:f.panel('city-wall',(x,2.3,0),1.75,4.1,'concrete')
++  f.smile((0,3.15,.74),.65)
++ elif id=='major-city-tower-district':
++  for x,z,h in [(-1.8,-.7,3.7),(0,-.9,5.6),(1.8,-.5,4.3)]:
++   f.roundbox('stacked-habitat',(x,h/2+.2,z),(1.6,h,1.8),'paint')
++   for yy in range(1,int(h)):
++    for dx in [-.42,.42]:f.roundbox('district-window',(x+dx,yy+.4,z+.92),(.38,.42,.035),'glow' if yy%2 else 'glass')
++   f.roundbox('roof-slab',(x,h+.25,z),(1.9,.17,2),'tin')
++  crane(f,(1.5,4.5,-.5),1.8,-3.7)
++ elif id=='asteroid-impact-crater-rig':
++  for j in range(14):
++   a=j*math.tau/14;f.ellipsoid('crater-rim',(2.55*math.cos(a),.75+math.sin(a)**2*.8,1.85*math.sin(a)),(.95,1.35,.95),'concrete',7,4)
++  meteor(f,(0,1.35,0),.85);crane(f,(2.1,.2,.9),3.5,-2);f.ladder(-1.5,1.4,2.1)
++ elif id=='meteor-reactor':
++  f.roundbox('reactor-plinth',(0,.6,0),(3.4,.8,2.7),'paint');meteor(f,(0,2.6,0),1.5)
++  for x in [-2.2,2.2]:tank(f,(x,.2,0),.45,2.2,'tin');f.lantern((x,3,0),1)
++ elif id=='sky-tracker-dish':
++  shed(f,3.7,3,2.1);f.pipe('dish-pedestal',[(0,2.1,0),(0,3.2,0)],.27,'iron',12)
++  with f.part('dish',(0,3,0),{'clip':'scan','axis':[0,1,0],'angles':[-.4,.4,-.4],'duration':7}):f.dish((0,3,0),2.1)
++ elif id=='strange-late-tech-salvage-structure':
++  for r,z in [(2,-.5),(1.1,1.3)]:
++   f.ring('alien-housing',(0,2.35,z),r,.32,'tin',axis='z');f.ring('alien-inner-conduit',(0,2.35,z+.10),r*.83,.10,'cyan',axis='z')
++   for j in range(8):
++    a=j*math.tau/8;f.roundbox('ancient-mechanism',(r*math.cos(a),2.35+r*math.sin(a),z),(.38,.43,.7),'iron')
++  canopy(f,(1.6,2.5,1.1),2.3,2.4);f.crate((2.1,.7,1.5),.9)
++
++
++def build_reference_mesh(asset,lod='near'):
++ if lod not in ('near','far'):raise ValueError('lod must be near or far')
++ f=SalvageMesh(lod=='far');family=asset['family'];id=asset['id']
++ route={'crew':crew,'vehicles':vehicle,'industry':industry,'buildings':building,'defenses':defense,'equipment':equipment,'world':world}
++ if family=='utilities':
++  platform(f,3,3)
++  for x,z in [(-.65,-.5),(.65,-.5),(0,.8)]:f.beam('light-tripod',(x,.2,z),(0,3.3,0),.10,.10,'iron')
++  f.lantern((0,3.6,0),2);solar(f,(-.6,1.2,.7),1.2,.9)
++ else:route[family](f,id)
++ from .rts_detail import dress
++ dress(f,asset)
++ if family=='equipment':
++  floor=min(p[1] for g in f.groups.values() for p in g['p'])
++  for g in f.groups.values():g['p']=[(p[0],p[1]-floor,p[2]) for p in g['p']]
++  f.pivots={k:(p[0],p[1]-floor,p[2]) for k,p in f.pivots.items()}
++  for socket in f.sockets.values():socket['position'][1]-=floor
++ if not f.groups:raise ValueError('reference recipe emitted no geometry')
++ return f
+diff --git a/tests/test_pipeline_map.py b/tests/test_pipeline_map.py
+index afef6bb..f8a6e81 100644
+--- a/tests/test_pipeline_map.py
++++ b/tests/test_pipeline_map.py
+@@ -19,9 +19,9 @@ class PipelineMapTests(unittest.TestCase):
+         before=(ROOT/'state/machine.json').read_bytes()
+         with patch.object(CapabilityStore,'invoke',side_effect=AssertionError('must not execute')):
+             r=map_capabilities(ROOT,'result.kind.mixed-project-directory')
+-        self.assertEqual(len(r['pipelines']),5)
++        self.assertEqual(len(r['pipelines']),6)
+         self.assertEqual({p['nodes'][0] for p in r['pipelines']},
+-                         {'request-builder::'+n for n in ('metal','fabric','bitmap-label','normalize-wav','survivor-workshop')})
++                         {'request-builder::'+n for n in ('metal','fabric','bitmap-label','normalize-wav','survivor-workshop','rts-reference-pack')})
+         self.assertTrue(all(p['status']=='declared_contract_path_not_tested' for p in r['pipelines']))
+         self.assertEqual(before,(ROOT/'state/machine.json').read_bytes())
+         self.assertEqual(r,map_capabilities(ROOT,'result.kind.mixed-project-directory'))
+@@ -72,7 +72,7 @@ class PipelineMapTests(unittest.TestCase):
+             # CapabilityStore's Registry requires its baseline; avoid initialization only here.
+             with patch.object(CapabilityStore,'__init__',return_value=None), patch.object(ExecutableOrganLibrary,'__init__',return_value=None):
+                 ns,identity=installed_nodes(root)
+-                self.assertEqual(ns,[]);self.assertEqual(len(identity['excluded_adapters']),5)
++                self.assertEqual(ns,[]);self.assertEqual(len(identity['excluded_adapters']),6)
+                 path=root/'src/axm_uc/fabric_material.py';path.parent.mkdir(parents=True)
+                 path.write_text('def fabric_request():\n    pass\n')
+                 ns,new=installed_nodes(root)
+diff --git a/tests/test_rts_foundry.py b/tests/test_rts_foundry.py
+new file mode 100644
+index 0000000..3bd13ef
+--- /dev/null
++++ b/tests/test_rts_foundry.py
+@@ -0,0 +1,92 @@
++import copy
++import hashlib
++import json
++import math
++from pathlib import Path
++import struct
++import tempfile
++import unittest
++from axm_uc.rts_foundry import (catalog, articulated_glb, verify_articulated_glb,
++    unpack_glb, pack_glb, read_accessor, reference_pack_request, collision_contract)
++from axm_uc.rts_recipes import build_reference_mesh
++from axm_uc.rts_mesh import SalvageMesh
++from axm_uc.procedural_3d import build_glb, verify_glb
++
++class RTSFoundryTests(unittest.TestCase):
++ def test_all_reference_designs_export_two_real_detail_levels(self):
++  data=catalog();assets=data['assets'];ids={a['id'] for a in assets}
++  self.assertEqual(len(assets),83);self.assertEqual(len(ids),83)
++  self.assertEqual(len(data['references']),8)
++  self.assertTrue(set(data['overview_aliases'].values())<=ids)
++  for asset in assets:
++   counts=[]
++   for lod in ('near','far'):
++    with self.subTest(asset=asset['id'],lod=lod):
++     f=build_reference_mesh(asset,lod);body,check=articulated_glb(f,asset['id']+'-'+lod)
++     counts.append(check['triangles']);self.assertTrue(check['passed']);self.assertLess(check['triangles'],40000)
++     self.assertGreater(len(body),1000)
++   self.assertLess(counts[1],counts[0],asset['id'])
++
++ def test_welded_surfaces_preserve_triangles_and_outward_volume(self):
++  for operation in ('ellipsoid','roundbox','lathe','ring'):
++   f=SalvageMesh()
++   if operation=='ellipsoid':f.ellipsoid('test',(0,0,0),(2,2,2))
++   if operation=='roundbox':f.roundbox('test',(0,0,0),(2,2,2))
++   if operation=='lathe':f.lathe('test',(0,0,0),[(0,-1),(1,-1),(1,1),(0,1)])
++   if operation=='ring':f.ring('test',(0,0,0),1,.2)
++   spec=f.surface_spec('test');g=spec['primitives'][0]
++   self.assertLess(len(g['positions']),len(f.groups['body__iron']['p']))
++   volume=0
++   for k in range(0,len(g['indices']),3):
++    a,b,c=[g['positions'][i] for i in g['indices'][k:k+3]]
++    volume+=sum(a[i]*(b[(i+1)%3]*c[(i+2)%3]-b[(i+2)%3]*c[(i+1)%3]) for i in range(3))/6
++   self.assertGreater(volume,0,operation)
++   verify_glb(build_glb(spec)['body'])
++
++ def test_articulation_preserves_bind_geometry_and_real_movement(self):
++  asset=next(a for a in catalog()['assets'] if a['id']=='crew-worker')
++  f=build_reference_mesh(asset);before=copy.deepcopy(f.groups)
++  raw,check=articulated_glb(f,'crew');self.assertEqual(f.groups,before)
++  self.assertEqual(raw,articulated_glb(f,'crew')[0]);self.assertIn('walk',check['clips'])
++  doc,blob=unpack_glb(raw)
++  original_spec=f.surface_spec('crew')
++  for node in doc['nodes']:
++   p=doc['meshes'][node['mesh']]['primitives'][0];local=read_accessor(doc,blob,p['attributes']['POSITION']);original=original_spec['primitives'][node['mesh']]['positions']
++   for a,b in zip(local,original):
++    for j in range(3):self.assertAlmostEqual(a[j]+node['translation'][j],b[j],places=5)
++  targets=[]
++  for c in doc['animations'][0]['channels']:
++   values=read_accessor(doc,blob,doc['animations'][0]['samplers'][c['sampler']]['output'])
++   self.assertNotEqual(values[0],values[1]);targets.append(doc['nodes'][c['target']['node']]['name'])
++  self.assertTrue(any(n.startswith('leg-m1') for n in targets));self.assertTrue(any(n.startswith('leg-1') for n in targets))
++
++ def test_bad_animation_and_pivots_fail(self):
++  asset=next(a for a in catalog()['assets'] if a['id']=='scrap-buggy')
++  raw,_=articulated_glb(build_reference_mesh(asset),'buggy');doc,blob=unpack_glb(raw)
++  bad=copy.deepcopy(doc);bad['nodes'][0]['translation'][0]=100
++  with self.assertRaises(ValueError):verify_articulated_glb(pack_glb(bad,blob))
++  bad=copy.deepcopy(doc);bad['animations'][0]['channels'][0]['target']['node']=999999
++  with self.assertRaises(ValueError):verify_articulated_glb(pack_glb(bad,blob))
++  badblob=bytearray(blob);ref=doc['animations'][0]['samplers'][0]['output'];a=doc['accessors'][ref];v=doc['bufferViews'][a['bufferView']];struct.pack_into('<f',badblob,v['byteOffset'],5)
++  with self.assertRaises(ValueError):verify_articulated_glb(pack_glb(doc,badblob))
++
++ def test_collision_keeps_gate_and_market_passages_explicit(self):
++  assets={a['id']:a for a in catalog()['assets']};bounds={'min':[-3,0,-2],'max':[3,4,2]}
++  gate=collision_contract(assets['spike-gate'],bounds)
++  self.assertEqual([b['role'] for b in gate['boxes']],['solid','solid','gate-closed-only'])
++  market=collision_contract(assets['regional-scrap-market-gate'],bounds)
++  self.assertTrue(all(abs(b['center'][0])-b['size'][0]/2>1 for b in market['boxes']))
++  self.assertEqual(collision_contract(assets['scrap-rifle'],bounds)['boxes'],[])
++
++ def test_pack_uses_existing_no_overwrite_publication(self):
++  with tempfile.TemporaryDirectory() as tmp:
++   target=Path(tmp)/'pack';request=reference_pack_request(target,['bathtub-turret']);inp=request['inputs']
++   from axm_uc.machine import UniversalCreationMachine
++   machine=UniversalCreationMachine(Path(__file__).resolve().parents[1])
++   result=machine.create(request);self.assertEqual(result['type'],'CREATION_RESULT',result)
++   raw=(target/'manifest.json').read_bytes();second=machine.create(request)
++   self.assertEqual(second['type'],'CREATION_ERROR');self.assertEqual((target/'manifest.json').read_bytes(),raw)
++   for entry in json.loads(raw)['items'][0]['lods']:
++    self.assertEqual(hashlib.sha256((target/entry['path']).read_bytes()).hexdigest(),entry['sha256'])
++  for ids in [[],['no-such-asset'],['crew-worker','crew-worker']]:
++   with self.assertRaises(ValueError):reference_pack_request('unused',ids)
+diff --git a/tools/review_rts_foundry.py b/tools/review_rts_foundry.py
+new file mode 100644
+index 0000000..8eff765
+--- /dev/null
++++ b/tools/review_rts_foundry.py
+@@ -0,0 +1,91 @@
++"""Independent decoded-GLB inspection and software depth-buffer previews.
++
++Optional authoring tool requires numpy and Pillow, not needed by the foundry.
++Reads exported files, including rigid animations; never substitutes reference art.
++"""
++import argparse
++import hashlib
++import json
++import math
++import struct
++from pathlib import Path
++import numpy as np
++from PIL import Image, ImageDraw, ImageFont
++
++
++def decode(path,clip=None,phase=0):
++ raw=path.read_bytes();assert struct.unpack_from('<4sII',raw)==(b'glTF',2,len(raw))
++ n,typ=struct.unpack_from('<II',raw,12);assert typ==0x4e4f534a
++ d=json.loads(raw[20:20+n]);length,typ=struct.unpack_from('<II',raw,20+n);assert typ==0x004e4942
++ blob=raw[28+n:];assert len(blob)==length
++ def acc(ref):
++  a=d['accessors'][ref];v=d['bufferViews'][a['bufferView']];width={'SCALAR':1,'VEC3':3,'VEC4':4}[a['type']];dt={5126:'<f4',5123:'<u2'}[a['componentType']]
++  off=v.get('byteOffset',0)+a.get('byteOffset',0);size=np.dtype(dt).itemsize*a['count']*width
++  assert off+size<=v.get('byteOffset',0)+v['byteLength']<=len(blob)
++  a=np.frombuffer(blob,dtype=dt,count=a['count']*width,offset=off).reshape(-1,width).astype(float);assert np.isfinite(a).all();return a
++ rotations={}
++ if clip:
++  a=next(a for a in d['animations'] if a['name']==clip)
++  for ch in a['channels']:
++   s=a['samplers'][ch['sampler']];ts=acc(s['input']).ravel();vs=acc(s['output']);t=phase*ts[-1];k=max(0,min(len(ts)-2,int(np.searchsorted(ts,t,side='right')-1)));f=(t-ts[k])/(ts[k+1]-ts[k]);a0=vs[k];b=vs[k+1];dot=a0@b
++   if dot<0:b=-b;dot=-dot
++   if dot>.9995:q=a0*(1-f)+b*f
++   else:
++    theta=np.arccos(min(1,dot));q=(a0*np.sin((1-f)*theta)+b*np.sin(f*theta))/np.sin(theta)
++   q=q/np.linalg.norm(q);rotations[ch['target']['node']]=q
++ polys=[];colors=[];emissions=[]
++ for i,node in enumerate(d['nodes']):
++  q=rotations.get(i,node.get('rotation',[0,0,0,1]));x,y,z,w=q
++  R=np.array([[1-2*y*y-2*z*z,2*x*y-2*z*w,2*x*z+2*y*w],[2*x*y+2*z*w,1-2*x*x-2*z*z,2*y*z-2*x*w],[2*x*z-2*y*w,2*y*z+2*x*w,1-2*x*x-2*y*y]])
++  for p in d['meshes'][node['mesh']]['primitives']:
++   v=acc(p['attributes']['POSITION']);idx=acc(p['indices']).astype(int).ravel().reshape(-1,3);assert idx.min()>=0 and idx.max()<len(v)
++   normals=acc(p['attributes']['NORMAL']);tri=v[idx];cross=np.cross(tri[:,1]-tri[:,0],tri[:,2]-tri[:,0]);assert np.all(np.sum(cross*normals[idx].mean(1),axis=1)>0)
++   vv=(v*np.array(node.get('scale',[1,1,1])))@R.T+np.array(node.get('translation',[0,0,0]));polys.append(vv[idx]);mat=d['materials'][p['material']]
++   vc=acc(p['attributes']['COLOR_0'])[idx,:3].mean(1) if 'COLOR_0' in p['attributes'] else np.ones((len(idx),3));assert np.all((vc>=0)&(vc<=1))
++   colors.append(vc*np.array(mat['pbrMetallicRoughness']['baseColorFactor'][:3]));emissions.append(np.repeat([mat.get('emissiveFactor',[0,0,0])],len(idx),axis=0))
++ return np.concatenate(polys),np.concatenate(colors),np.concatenate(emissions),d
++
++
++def raster(path,W=430,H=370,yaw=.6,elev=.42,clip=None,phase=0):
++ tris,base,emission,d=decode(path,clip,phase)
++ right=np.array([math.cos(yaw),0,-math.sin(yaw)]);up=np.array([-math.sin(yaw)*math.sin(elev),math.cos(elev),-math.cos(yaw)*math.sin(elev)]);forward=np.cross(right,up)
++ proj=np.stack([tris@right,tris@up,tris@forward],axis=-1);lo=proj[:,:,:2].min((0,1));hi=proj[:,:,:2].max((0,1));scale=min((W-38)/max(.1,hi[0]-lo[0]),(H-35)/max(.1,hi[1]-lo[1]));center=(lo+hi)/2
++ proj[:,:,0]=(proj[:,:,0]-center[0])*scale+W/2;proj[:,:,1]=H/2-(proj[:,:,1]-center[1])*scale
++ normal=np.cross(tris[:,1]-tris[:,0],tris[:,2]-tris[:,0]);normal/=np.linalg.norm(normal,axis=1)[:,None]
++ key=np.array([-.45,.9,.7]);key/=np.linalg.norm(key);rim=np.array([.8,.4,-.5]);rim/=np.linalg.norm(rim)
++ shading=.30+.62*np.maximum(0,normal@key)+.20*np.maximum(0,normal@rim)
++ colors=np.clip((base*shading[:,None]+emission*.45)**(1/2.2),0,1)
++ image=np.zeros((H,W,3),dtype=np.uint8);image[:]=[14,31,38];depth=np.full((H,W),-np.inf)
++ visible=0
++ for i,(tri,color) in enumerate(zip(proj,colors)):
++  if normal[i]@forward<=0:continue
++  minx=max(0,int(np.floor(tri[:,0].min())));maxx=min(W-1,int(np.ceil(tri[:,0].max())));miny=max(0,int(np.floor(tri[:,1].min())));maxy=min(H-1,int(np.ceil(tri[:,1].max())))
++  if minx>maxx or miny>maxy:continue
++  x,y=np.meshgrid(np.arange(minx,maxx+1)+.5,np.arange(miny,maxy+1)+.5);a,b,c=tri;den=(b[1]-c[1])*(a[0]-c[0])+(c[0]-b[0])*(a[1]-c[1])
++  if abs(den)<1e-9:continue
++  u=((b[1]-c[1])*(x-c[0])+(c[0]-b[0])*(y-c[1]))/den;v=((c[1]-a[1])*(x-c[0])+(a[0]-c[0])*(y-c[1]))/den;w=1-u-v;z=u*a[2]+v*b[2]+w*c[2];dep=depth[miny:maxy+1,minx:maxx+1];mask=(u>=0)&(v>=0)&(w>=0)&(z>dep);dep[mask]=z[mask];image[miny:maxy+1,minx:maxx+1][mask]=(color*255).astype(np.uint8);visible+=int(mask.sum())
++ assert visible>0,'blank model render'
++ return Image.fromarray(image)
++
++
++def main():
++ p=argparse.ArgumentParser();p.add_argument('pack',type=Path);p.add_argument('--family');args=p.parse_args();root=args.pack
++ manifest=json.loads((root/'manifest.json').read_text());pre=root/'previews';pre.mkdir(exist_ok=True)
++ font='/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf';F=lambda s:ImageFont.truetype(font,s)
++ families=list(dict.fromkeys(a['family'] for a in manifest['items']));receipts=[]
++ for family in families:
++  if args.family and family!=args.family:continue
++  items=[a for a in manifest['items'] if a['family']==family];cols=4;rows=math.ceil(len(items)/cols);W,H=420,380
++  board=Image.new('RGB',(W*cols,H*rows+138),(14,31,38));draw=ImageDraw.Draw(board);draw.text((26,20),'AXM / '+family.upper(),font=F(29),fill='#e3d4aa');draw.text((26,66),'Actual exported 3D geometry · Brighter People / first edition',font=F(18),fill='#90b2b9')
++  for j,item in enumerate(items):
++   path=root/item['lods'][0]['path'];assert hashlib.sha256(path.read_bytes()).hexdigest()==item['lods'][0]['sha256']
++   img=raster(path,W,H-44,elev=.23 if family=='crew' else .43);x=j%cols*W;y=103+j//cols*H;board.paste(img,(x,y));draw.text((x+16,y+H-41),item['name'],font=F(16),fill='#e5dabb')
++   receipts.append({'asset':item['id'],'sha256':item['lods'][0]['sha256'],'render':'software triangle raster with backface culling and depth test'})
++  board.save(pre/(family+'.png'));print('Rendered',family,len(items),flush=True)
++ # Inspection filmstrip has real clip samples: no inference of browser behavior.
++ if not args.family:
++  for id,clip in [('crew-worker','walk'),('scrap-buggy','drive'),('bathtub-turret','aim')]:
++   path=root/'assets'/id/(id+'.glb');frames=[raster(path,460,420,clip=clip,phase=j/12) for j in range(12)]
++   frames[0].save(pre/(id+'-'+clip+'.gif'),save_all=True,append_images=frames[1:],duration=85,loop=0)
++  (pre/'render-receipts.json').write_text(json.dumps({'scope':'Decoded mesh rasterization and animation samples, not browser or target RTS execution','items':receipts},indent=2))
++if __name__=='__main__':main()

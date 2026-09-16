@@ -1,0 +1,209 @@
+{
+  "capsule_id": "65df6c70fe65a977a8a30c912ac90b26e5c9f5d67bbb2d5027cd9d7c9ceec516",
+  "evidence": {
+    "files": [
+      {
+        "additions": 42,
+        "binary": false,
+        "content_sha256": "359b580243353e411e05e69bb473cbe859a5463f71298676b46ffefc8bb12b92",
+        "deletions": 1,
+        "path": "GAME_STYLE_GROWTH.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Current checkpoint",
+          "Character expression and stance pass \u2014 2026-09-13",
+          "Portable render-style pass \u2014 2026-09-13"
+        ]
+      },
+      {
+        "additions": 68,
+        "binary": false,
+        "content_sha256": "9e70b2432205ff96ad3d1b59c545b263ac2f247ea42f05d779bb46f9362f4da4",
+        "deletions": 0,
+        "path": "docs/GAME_CHARACTER_EXPRESSION.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Game character expressions and stances",
+          "Available controls",
+          "Identity contract",
+          "Usage",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 432,
+        "binary": false,
+        "content_sha256": "7eea18062f48d5444bd2400c0e3a86f1b37e0845a4548a7a8e55671708e8f257",
+        "deletions": 0,
+        "path": "src/axm_uc/game_character_expression.py",
+        "status": "A",
+        "symbols": [
+          "ExpressionProfile",
+          "StanceProfile",
+          "_canonical",
+          "_digest",
+          "_number",
+          "_vec3",
+          "_component",
+          "_profile",
+          "game_character_expression_catalog",
+          "_mesh_components",
+          "_part_specs",
+          "_identity_matrix",
+          "_multiply",
+          "_translation",
+          "_scale",
+          "_rotation",
+          "_about",
+          "_point",
+          "_normal",
+          "_stance_local",
+          "_expression_local",
+          "_component_matrices",
+          "_radial_signature",
+          "apply_character_expression",
+          "publish_character_expression"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 18,
+        "binary": false,
+        "content_sha256": "8a6b66bf7e0ae51d5cd3e7f32cbced459ede5951724e004b0547677742c918c9",
+        "deletions": 0,
+        "path": "src/axm_uc/visual_assets_cli.py",
+        "status": "M",
+        "symbols": [
+          "combined_catalog",
+          "build_parser",
+          "main"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 159,
+        "binary": false,
+        "content_sha256": "f6df14c9156aad1d825d9dd5d7030402f918d743696f412e857d8e77cb5304f8",
+        "deletions": 0,
+        "path": "tests/test_game_character_expression.py",
+        "status": "A",
+        "symbols": [
+          "fixture",
+          "specs",
+          "CharacterExpressionTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 279,
+        "binary": false,
+        "content_sha256": "3f1ece7ca92240dee8f3f2f65fd9cda5383479ae858d713fd0a84a682df7a0b2",
+        "deletions": 0,
+        "path": "tools/blender/character_expression_roundtrip.py",
+        "status": "A",
+        "symbols": [
+          "character_mesh",
+          "part_specs",
+          "glb_chunks",
+          "accessor",
+          "add_text",
+          "import_variants",
+          "scene_setup",
+          "build",
+          "verify"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "962ffbdfac4080b1b5b15b0afca4d73716846b0be1552729348be1833a5334cc"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 6,
+    "kinds": [
+      "code",
+      "knowledge",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "about",
+      "accessor",
+      "add",
+      "apply",
+      "available",
+      "axm",
+      "blender",
+      "boundary",
+      "build",
+      "canonical",
+      "catalog",
+      "character",
+      "checkpoint",
+      "chunks",
+      "cli",
+      "combined",
+      "component",
+      "components",
+      "contract",
+      "controls",
+      "creation-machine",
+      "current",
+      "digest",
+      "expression",
+      "expressions",
+      "fixture",
+      "game",
+      "glb",
+      "growth",
+      "identity",
+      "import",
+      "local",
+      "matrices",
+      "matrix",
+      "merge",
+      "mesh",
+      "multiply",
+      "normal",
+      "number",
+      "parser",
+      "part",
+      "pass",
+      "point",
+      "portable",
+      "profile",
+      "protected",
+      "publish",
+      "radial",
+      "render",
+      "rotation",
+      "roundtrip",
+      "scale",
+      "scene",
+      "setup",
+      "signature",
+      "stance",
+      "stances",
+      "standalone",
+      "storytelling",
+      "style",
+      "text",
+      "tools",
+      "translation",
+      "truth"
+    ]
+  },
+  "source": {
+    "base": "6ca9d30a0d9e913f67e5c28a8aec642d659f011a",
+    "commit_subject": "Merge protected character expressions and storytelling stances (#65)",
+    "head": "f41d73acb3610dc5b557e60fba44f09653d27433",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

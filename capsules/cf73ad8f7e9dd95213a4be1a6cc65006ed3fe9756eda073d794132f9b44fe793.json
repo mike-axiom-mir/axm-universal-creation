@@ -1,0 +1,177 @@
+{
+  "capsule_id": "cf73ad8f7e9dd95213a4be1a6cc65006ed3fe9756eda073d794132f9b44fe793",
+  "evidence": {
+    "files": [
+      {
+        "additions": 37,
+        "binary": false,
+        "content_sha256": "199bfcb2124e6753492e23039e01203a87e9739f9734d740d4299f7ffc2b4993",
+        "deletions": 0,
+        "path": "LIGHTING_TEMPLATE_PACK.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Source-Bound Lighting / Post-Process Look Template Pack",
+          "Surfaces",
+          "Source-truth contract",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 40,
+        "binary": false,
+        "content_sha256": "f2a1f6733c767d1504c9a8556e44f89e724a78ea53a9e3e67b19cce429353e3b",
+        "deletions": 40,
+        "path": "VISUAL_TEMPLATE_FABRIC.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Current v23 candidate census",
+          "Source-bound lighting / post-process look foundation",
+          "Registry and identity",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 34,
+        "binary": false,
+        "content_sha256": "5a40460d50316f5799d88839e28b47a95245d2ec09c45af85760c0d77140793b",
+        "deletions": 33,
+        "path": "VISUAL_TEMPLATE_PRIORITY_MAP.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "AXM Visual Template Expansion Priority Map",
+          "Lighting / post-process look systems \u2014 IMPLEMENTED IN THIS LANE",
+          "Next high-value visual/creation families",
+          "Cross-cutting rules",
+          "Immediate build order"
+        ]
+      },
+      {
+        "additions": 88,
+        "binary": false,
+        "content_sha256": "924d527dd083836894570cc0db805741608c06fcc01449474f6e283a1f9d63fc",
+        "deletions": 0,
+        "path": "src/axm_uc/visual_template_lighting.py",
+        "status": "A",
+        "symbols": [
+          "_merge",
+          "extend_lighting_catalog"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 3,
+        "binary": false,
+        "content_sha256": "f55b8f8ee7c51ed818e0354da546c3fffd40267bdc723777ffe0f6f0a4fe312f",
+        "deletions": 1,
+        "path": "src/axm_uc/visual_templates.py",
+        "status": "M",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 41,
+        "binary": false,
+        "content_sha256": "44c7ce3de744ef94c50fae98ee581b0bd1bd3a41e61f8c6b2bca2dd91d8e6a19",
+        "deletions": 40,
+        "path": "tests/test_visual_templates.py",
+        "status": "M",
+        "symbols": [
+          "VisualTemplateTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 20,
+        "binary": false,
+        "content_sha256": "a2443706d566fedb8959fb507f44665fcbae54f2a8aa0bac0c00af8f6c9e0690",
+        "deletions": 17,
+        "path": "tools/visual_template_proof.py",
+        "status": "M",
+        "symbols": [
+          "_write",
+          "main"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "4cd7d702021ab0383bab2abadc17b40a9edc352265c466d26ab08854ded1fd0e"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "add",
+      "axm",
+      "bound",
+      "boundary",
+      "build",
+      "candidate",
+      "catalog",
+      "census",
+      "contract",
+      "creation",
+      "creation-machine",
+      "cross",
+      "current",
+      "cutting",
+      "expansion",
+      "extend",
+      "fabric",
+      "families",
+      "foundation",
+      "high",
+      "identity",
+      "immediate",
+      "implemented",
+      "lane",
+      "lighting",
+      "look",
+      "map",
+      "merge",
+      "next",
+      "order",
+      "pack",
+      "post",
+      "priority",
+      "process",
+      "proof",
+      "registry",
+      "rules",
+      "source",
+      "standalone",
+      "surfaces",
+      "systems",
+      "template",
+      "templates",
+      "this",
+      "tools",
+      "truth",
+      "universal-creation",
+      "v23",
+      "value",
+      "visual",
+      "write"
+    ]
+  },
+  "source": {
+    "base": "0145a646009ade55e2a452c1074b2a43ea690ff7",
+    "commit_subject": "Add source-bound lighting and post-process look templates",
+    "head": "05e062b13f3c4f7f6b06954f97f856368b71ea32",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

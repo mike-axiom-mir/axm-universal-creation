@@ -1,0 +1,232 @@
+{
+  "capsule_id": "db3cb17b2aac5e2b17d9eab81d2a08ea154de627050255a3e883fe1e1d722b20",
+  "evidence": {
+    "files": [
+      {
+        "additions": 44,
+        "binary": false,
+        "content_sha256": "0369996864aa2791e17e38ab9eda42c47956c4265c103fb53d3de3ac8b5a7b8c",
+        "deletions": 0,
+        "path": "GAME_STYLE_GROWTH.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Current checkpoint",
+          "Studio donor recovery and executable layers \u2014 2026-09-15",
+          "Offline pose execution pass \u2014 2026-09-15"
+        ]
+      },
+      {
+        "additions": 126,
+        "binary": false,
+        "content_sha256": "f82c74c8a5734af77e1b4c72e30778feb672ec94ae8b9651a96be101a6942237",
+        "deletions": 0,
+        "path": "docs/STUDIO_DONOR.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Studio layers and effects in Universal Creation",
+          "Create and edit",
+          "Editable output",
+          "Bounded behavior and limitations",
+          "Verification"
+        ]
+      },
+      {
+        "additions": 67,
+        "binary": false,
+        "content_sha256": "e1650709da66200b68223bfbd6e70465b4743549126f5766e7023eedbeed9625",
+        "deletions": 0,
+        "path": "donors/collaboration-studio/README.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Recovered Studio and Universal Component Protocol",
+          "What is usable now",
+          "What is preserved, not presented as integrated",
+          "UCP and skins"
+        ]
+      },
+      {
+        "additions": 47,
+        "binary": false,
+        "content_sha256": "3969e3e5b274889a3af620d1b81047de1fc1658cbc537b1a58669193548f712e",
+        "deletions": 0,
+        "path": "donors/collaboration-studio/source/tools/studio/COMMAND_DECK_EVIDENCE.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Studio Command Deck visual verification",
+          "Claim 1 \u2014 core commands are discoverable and reach real Studio controls",
+          "Claim 2 \u2014 advanced access remains available and contextual",
+          "Claim 3 \u2014 the command layer and creative workspace remain usable on mobile"
+        ]
+      },
+      {
+        "additions": 58,
+        "binary": false,
+        "content_sha256": "3738e27a4396b81f4a4dd4e61455dd9eb42a4037189c094af5a0e8d255650958",
+        "deletions": 0,
+        "path": "donors/collaboration-studio/source/tools/studio/README.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "AXM Studio v2.3",
+          "Modes",
+          "Shared Creation Hands",
+          "Boundaries"
+        ]
+      },
+      {
+        "additions": 218,
+        "binary": false,
+        "content_sha256": "0fa3652f1bc120431037d4929cf16c4890473905f52d95549ae259bbda1599c8",
+        "deletions": 0,
+        "path": "src/axm_uc/studio_compositor.py",
+        "status": "A",
+        "symbols": [
+          "_sha",
+          "_encode",
+          "_run",
+          "studio_compositor_catalog",
+          "_dimension",
+          "_read_png",
+          "compose_studio_project",
+          "edit_studio_layers",
+          "publish_studio_project"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 26,
+        "binary": false,
+        "content_sha256": "315e903c4661a03b61c4d758cf839b237ee31ac41c0f52a9b695ceafea83d0cc",
+        "deletions": 0,
+        "path": "src/axm_uc/visual_assets_cli.py",
+        "status": "M",
+        "symbols": [
+          "combined_catalog",
+          "build_parser",
+          "main"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 253,
+        "binary": false,
+        "content_sha256": "5825310494623e810870cc86d9277b45f57741555750c7552aa461df96d29659",
+        "deletions": 0,
+        "path": "tests/test_studio_compositor.py",
+        "status": "A",
+        "symbols": [
+          "project",
+          "pixels",
+          "StudioRecoveryTests",
+          "StudioCompositorTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 90,
+        "binary": false,
+        "content_sha256": "f41ea3d851053ec1a045119a4881584e3097e43d6ccc523ad0f3da634b87edee",
+        "deletions": 0,
+        "path": "tools/studio_compositor_proof.py",
+        "status": "A",
+        "symbols": [
+          "segment_distance",
+          "build"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "db1afba37b161fa9f4572af63a2a9c2475d57041eede471d06dc3daae287b40c"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 6,
+    "kinds": [
+      "code",
+      "knowledge",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "access",
+      "add",
+      "advanced",
+      "are",
+      "available",
+      "axm",
+      "behavior",
+      "boundaries",
+      "bounded",
+      "build",
+      "catalog",
+      "checkpoint",
+      "claim",
+      "cli",
+      "collaboration",
+      "combined",
+      "command",
+      "commands",
+      "component",
+      "compose",
+      "composition",
+      "compositor",
+      "contextual",
+      "controls",
+      "create",
+      "creation",
+      "creation-machine",
+      "creative",
+      "current",
+      "deck",
+      "dimension",
+      "discoverable",
+      "distance",
+      "donor",
+      "donors",
+      "edit",
+      "editable",
+      "effects",
+      "encode",
+      "evidence",
+      "executable",
+      "execution",
+      "game",
+      "growth",
+      "hands",
+      "integrated",
+      "layer",
+      "layers",
+      "limitations",
+      "mobile",
+      "modes",
+      "not",
+      "now",
+      "offline",
+      "original",
+      "output",
+      "parser",
+      "pass",
+      "pixels",
+      "png",
+      "pose",
+      "presented",
+      "preserved",
+      "project"
+    ]
+  },
+  "source": {
+    "base": "964ff1b28f000188bef14dab21337722ba6fc6c4",
+    "commit_subject": "Recover original Studio/UCP and add editable layer composition (#74)",
+    "head": "2ddf368da3bd02cfacf9529de6b5c646fb2b187f",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

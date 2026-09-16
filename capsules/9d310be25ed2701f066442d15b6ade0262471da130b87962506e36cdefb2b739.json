@@ -1,0 +1,177 @@
+{
+  "capsule_id": "9d310be25ed2701f066442d15b6ade0262471da130b87962506e36cdefb2b739",
+  "evidence": {
+    "files": [
+      {
+        "additions": 72,
+        "binary": false,
+        "content_sha256": "4b4942a692b31be49e0c68853ff4bbe2a64bde320543505d390f82441c2bc1e3",
+        "deletions": 0,
+        "path": "capabilities/live/AXM-CAP-CREATIVE-FLOW-SPINE.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 215,
+        "binary": false,
+        "content_sha256": "b42f7962ce393a7d563405c06e9655c46e29441e924fa754f47eeb93ad90735f",
+        "deletions": 0,
+        "path": "docs/CREATIVE_FLOW_WAVE8.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Creative Flow \u2014 machine-use spine (Wave 8)",
+          "Current body",
+          "Machine route",
+          "V1 flow",
+          "Discovery",
+          "Plan steps",
+          "Dependency inference",
+          "Candidate-state transaction",
+          "Cross-registry proof",
+          "Bounds",
+          "What Wave 8 changes strategically",
+          "Next depth"
+        ]
+      },
+      {
+        "additions": 84,
+        "binary": false,
+        "content_sha256": "f00b8b41bc26dd4307c8710eea076b137da9083bb37bb388309907c9a8a0cfe2",
+        "deletions": 0,
+        "path": "examples/requests/creative_flow_mesh.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 87,
+        "binary": false,
+        "content_sha256": "ebb65bd7175328c9be5b25260d9b953eea2fa592326a637970faacfba41ab82e",
+        "deletions": 0,
+        "path": "src/axm_uc/creative_flow.py",
+        "status": "A",
+        "symbols": [
+          "CreativeFlowError",
+          "integration_summary",
+          "run_creative_flow"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 9,
+        "binary": false,
+        "content_sha256": "30145dd6b1a43f3aa6759215e40d403c40da198711cc29023a97e0e72273a0cf",
+        "deletions": 0,
+        "path": "src/axm_uc/standalone_creation_capabilities.py",
+        "status": "M",
+        "symbols": [
+          "register_standalone_creation_builtins"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 106,
+        "binary": false,
+        "content_sha256": "55336283d5b13302b16ebb8b67c688f2b7bed50f768c5580d726b66552150de8",
+        "deletions": 0,
+        "path": "tests/test_creative_flow.py",
+        "status": "A",
+        "symbols": [
+          "CreativeFlowMachineTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 3,
+        "binary": false,
+        "content_sha256": "1ec21ac751e61ffe61720fa2423a8a29d5fbe9a5b26055975afc17214b621acd",
+        "deletions": 0,
+        "path": "tests/test_creative_precision_fabric.py",
+        "status": "M",
+        "symbols": [
+          "CreativePrecisionFabricTests"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "8559b753b6078df241b5bff980603ac374449151f9f1e2ec0a2d2206f96a6fa3"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "configuration",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "axm",
+      "body",
+      "bounds",
+      "builtins",
+      "candidate",
+      "cap",
+      "capabilities",
+      "changes",
+      "creation",
+      "creation-machine",
+      "creative",
+      "cross",
+      "current",
+      "dependency",
+      "depth",
+      "deterministic",
+      "discovery",
+      "error",
+      "examples",
+      "fabric",
+      "flow",
+      "hands",
+      "inference",
+      "integration",
+      "into",
+      "json",
+      "live",
+      "machine",
+      "mesh",
+      "next",
+      "plan",
+      "precision",
+      "proof",
+      "register",
+      "registry",
+      "requests",
+      "route",
+      "run",
+      "spine",
+      "standalone",
+      "state",
+      "steps",
+      "strategically",
+      "summary",
+      "transaction",
+      "universal-creation",
+      "use",
+      "wave",
+      "wave8",
+      "what",
+      "wire"
+    ]
+  },
+  "source": {
+    "base": "2238a104073fc655c4eac8de58a9d78e17e746ac",
+    "commit_subject": "Wire Creative Hands into deterministic machine flow (#91)",
+    "head": "c71f6c181b60526c46c09372e6b674783b7f7eae",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

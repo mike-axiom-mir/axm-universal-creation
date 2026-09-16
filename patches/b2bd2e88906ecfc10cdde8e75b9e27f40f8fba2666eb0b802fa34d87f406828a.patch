@@ -1,0 +1,214 @@
+diff --git a/capabilities/candidates/AXM-CAP-PHYSICS-FABRIC.json b/capabilities/candidates/AXM-CAP-PHYSICS-FABRIC.json
+new file mode 100644
+index 0000000..8507b77
+--- /dev/null
++++ b/capabilities/candidates/AXM-CAP-PHYSICS-FABRIC.json
+@@ -0,0 +1,99 @@
++{
++  "id": "AXM-CAP-PHYSICS-FABRIC",
++  "version": "0.1.0",
++  "status": "candidate",
++  "purpose": "Create, compose, step and replay bounded deterministic 2D physics scenes inside Universal Creation by preserving the existing platform physics core and adding creation-level materials, force fields, spring forces, drivers and scheduled actions around it.",
++  "handles": [
++    "physics-fabric",
++    "2d-physics-scene",
++    "physics-materials",
++    "force-fields",
++    "spring-distance",
++    "physics-replay"
++  ],
++  "input_contract": {
++    "required": [],
++    "properties": {
++      "capability": "create-fabric, add-body, add-bodies, step-fabric, simulate-fabric, inspect-fabric, query-point, or raycast",
++      "world": "AXM Physics Core world configuration",
++      "materials": "optional named material definitions",
++      "bodies": "optional deterministic body definitions",
++      "fields": "optional uniform, radial, vortex, or drag field definitions",
++      "springs": "optional force-based spring-distance definitions",
++      "drivers": "optional velocity or seek driver definitions",
++      "actions": "optional deterministic step-indexed physics actions"
++    }
++  },
++  "output_contract": {
++    "kind": "axm.uc-physics-fabric/v0.1 result",
++    "contains": [
++      "authoritative imported core world",
++      "UC composition state",
++      "step receipts",
++      "core diagnostics and events",
++      "same-runtime checksum evidence"
++    ]
++  },
++  "dependencies": [],
++  "relationships": [
++    {
++      "type": "preserves-and-extends",
++      "target": "mike-axiom-mir/axm-collaboration-platform:shared/physics/axm-physics-core.js@0.3.1"
++    }
++  ],
++  "anatomy_refs": [
++    {
++      "id": "AXM-15-SIMULATION-XR-O-001-physics-engine",
++      "role": "implements-runtime-candidate",
++      "basis": "Introduces an executable UC physics capsule while preserving the exact imported platform solver as the collision/integration authority."
++    }
++  ],
++  "implementation": {
++    "kind": "DETERMINISTIC_SOURCE",
++    "entrypoint": "capabilities/physics-core/uc-physics-fabric.js",
++    "capsule_index": "capabilities/physics-core/index.js",
++    "source_manifest": "capabilities/physics-core/SOURCE_MANIFEST.json",
++    "selftest": "node capabilities/physics-core/selftest.js"
++  },
++  "limitations": [
++    "candidate is not yet registered as a central UC live builtin",
++    "physics remains 2D and translation-only at the donor-core level",
++    "spring-distance constraints are force-based springs, not hard rigid joints",
++    "no scientific validation claim",
++    "no continuous rigid-body rotation, angular inertia, deformables, fluids or 3D solver yet",
++    "cross-JavaScript-engine deterministic equivalence is not claimed"
++  ],
++  "persistent_state": "explicit fabric JSON supplied and retained by the caller",
++  "tests": [
++    {
++      "command": "node capabilities/physics-core/selftest.js",
++      "proves": [
++        "donor core and adapter blob integrity",
++        "material-derived mass",
++        "uniform radial vortex and drag fields",
++        "spring force application",
++        "velocity and seek drivers",
++        "scheduled actions",
++        "same-runtime deterministic replay"
++      ]
++    }
++  ],
++  "root_fit": {
++    "truth": {
++      "fit": true,
++      "basis": "The original platform solver is copied byte-for-byte with recorded Git blob hashes, and unsupported rotation, rigid joints, 3D and scientific-validation claims remain explicit limitations."
++    },
++    "agency": {
++      "fit": true,
++      "basis": "Materials, bodies, fields, springs, drivers, actions and stepping are explicit caller-controlled data rather than hidden policy."
++    },
++    "continuity": {
++      "fit": true,
++      "basis": "The donor source remains untouched in a dedicated source directory while UC growth is additive and source lineage is retained in SOURCE_MANIFEST.json."
++    },
++    "wisdom-before-speed": {
++      "fit": true,
++      "basis": "The first growth wave composes bounded useful 2D capabilities around the proven core instead of pretending missing 3D, rotation or rigid-joint work is already solved."
++    }
++  }
++}
+diff --git a/capabilities/physics-core/README.md b/capabilities/physics-core/README.md
+new file mode 100644
+index 0000000..737530b
+--- /dev/null
++++ b/capabilities/physics-core/README.md
+@@ -0,0 +1,70 @@
++# AXM Universal Creation Physics Core
++
++This capsule pulls the real AXM Physics Core out of `mike-axiom-mir/axm-collaboration-platform` and grows it inside Universal Creation without rewriting the donor source.
++
++## Source integrity
++
++The imported files under `source/` are byte-for-byte copies:
++
++- `source/axm-physics-core.js` — AXM Physics Core v0.3.1, Git blob `b21b5d71f93c532b26e580766a7f5505024c8cfd`
++- `source/axm-physics-adapter.js` — shared physics adapter, Git blob `666587df5a8849be3bf0ad8708c63679f7366adb`
++
++`SOURCE_MANIFEST.json` records the donor repository, observed source commit and exact blob lineage. `selftest.js` recomputes both Git blob hashes before exercising the UC extension.
++
++The donor core remains the collision/integration authority. UC-specific growth lives beside it in `uc-physics-fabric.js`.
++
++## What the imported core already gives UC
++
++The source core provides deterministic-order 2D prototype physics with fixed stepping, adaptive substeps, dynamic/static/kinematic bodies, circle and axis-aligned box collision, gravity, forces, impulses, damping, restitution, friction, sensors, collision filtering, contact lifecycle, sleeping/waking, spatial-hash broadphase, persistent contact manifolds, optional warm starting, diagnostics, checksums, replay traces, point queries and raycasts.
++
++## UC Physics Fabric v0.1
++
++`uc-physics-fabric.js` adds composable creation-level controls around that core:
++
++- named materials with friction, restitution, damping, gravity scale, explicit mass or density-derived mass;
++- batch body construction using those materials;
++- uniform, radial, vortex and drag force fields, optionally bounded to circle or box regions;
++- force-based spring-distance constraints with stiffness, damping and force caps;
++- explicit velocity and seek drivers for dynamic or kinematic bodies;
++- deterministic scheduled actions for force, impulse, velocity, gravity, enable/disable and teleport operations;
++- one-step and multi-step simulation with UC receipts layered over the core evidence;
++- bounded sampled traces and final core checksums;
++- point query, raycast and inspection routes;
++- a small adapter surface so humans, recipes or AI orchestration can invoke the same deterministic capabilities.
++
++## Boundary
++
++This is a real increase in UC capability, but it is not a claim that physics is finished.
++
++The imported v0.3.1 core does **not** claim scientific validation, continuous rigid-body rotation, angular inertia, hard rigid joints, deformables, fluids, 3D physics or deterministic agreement across different JavaScript engines. The UC spring-distance layer is deliberately labeled as a force-based spring rather than pretending to be a hard joint solver.
++
++Those missing branches are future physics work and should be added with their own evidence instead of being implied by this graft.
++
++## Use
++
++```js
++const Physics = require('./capabilities/physics-core');
++
++let fabric = Physics.fabric.createFabric({
++  world: { gravity: { x: 0, y: 9.81 }, bounds: false },
++  materials: [{ id: 'rubber', density: 1.1, restitution: 0.75, friction: 0.9 }],
++  bodies: [
++    { id: 'ball', material: 'rubber', shape: { kind: 'circle', radius: 0.4 }, position: { x: 0, y: 0 } }
++  ],
++  fields: [
++    { id: 'side-wind', kind: 'uniform', acceleration: { x: 1.5, y: 0 } }
++  ]
++});
++
++const result = Physics.fabric.stepFabric(fabric, 1 / 60);
++fabric = result.fabric;
++console.log(result.world.bodies[0].position, result.diagnostics.checksum);
++```
++
++Run the capsule check with:
++
++```bash
++node capabilities/physics-core/selftest.js
++```
++
++The selftest verifies source hashes first, then exercises materials, all four field types, springs, drivers, scheduled actions, stepping and deterministic same-runtime replay.
+diff --git a/capabilities/physics-core/SOURCE_MANIFEST.json b/capabilities/physics-core/SOURCE_MANIFEST.json
+new file mode 100644
+index 0000000..d210747
+--- /dev/null
++++ b/capabilities/physics-core/SOURCE_MANIFEST.json
+@@ -0,0 +1,27 @@
++{
++  "schema": "axm.uc-source-intake/v1",
++  "imported_at": "2026-09-16",
++  "source_repository": "mike-axiom-mir/axm-collaboration-platform",
++  "source_branch": "main",
++  "source_commit_observed": "27757ace6133b243a200b0463e427c8b04d5a8e3",
++  "copy_policy": "BYTE_FOR_BYTE_DONOR_SOURCE_PRESERVED",
++  "files": [
++    {
++      "source_path": "shared/physics/axm-physics-core.js",
++      "target_path": "capabilities/physics-core/source/axm-physics-core.js",
++      "git_blob_sha": "b21b5d71f93c532b26e580766a7f5505024c8cfd",
++      "source_version": "0.3.1"
++    },
++    {
++      "source_path": "shared/physics/axm-physics-adapter.js",
++      "target_path": "capabilities/physics-core/source/axm-physics-adapter.js",
++      "git_blob_sha": "666587df5a8849be3bf0ad8708c63679f7366adb",
++      "source_version": "0.3.1"
++    }
++  ],
++  "extension_policy": {
++    "donor_source_is_modified": false,
++    "uc_growth_entrypoint": "capabilities/physics-core/uc-physics-fabric.js",
++    "reason": "Preserve exact platform provenance while allowing Universal Creation to grow composable physics authoring and simulation capabilities around the proven donor core."
++  }
++}

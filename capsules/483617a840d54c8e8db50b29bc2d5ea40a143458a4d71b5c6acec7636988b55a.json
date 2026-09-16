@@ -1,0 +1,177 @@
+{
+  "capsule_id": "483617a840d54c8e8db50b29bc2d5ea40a143458a4d71b5c6acec7636988b55a",
+  "evidence": {
+    "files": [
+      {
+        "additions": 35,
+        "binary": false,
+        "content_sha256": "a5a9fcc32af085813095f368dd7dc8c45d54f9765a8fd83f2d3d5e7049ba2aff",
+        "deletions": 0,
+        "path": "PRESENTATION_TEMPLATE_PACK.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Editable Presentation / Explainer Template Pack",
+          "Surfaces",
+          "Source-first contracts",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 42,
+        "binary": false,
+        "content_sha256": "76a25c760455416e0051c17b620b8776717454f49ceedab70ecafcd1ff962dfe",
+        "deletions": 42,
+        "path": "VISUAL_TEMPLATE_FABRIC.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Current v14 candidate census",
+          "Presentation / explainer foundation",
+          "Registry and identity",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 34,
+        "binary": false,
+        "content_sha256": "58f89398c0fd933ad85c99c10dde7859e8c91245024972ed1633043ccbaf9eac",
+        "deletions": 33,
+        "path": "VISUAL_TEMPLATE_PRIORITY_MAP.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "AXM Visual Template Expansion Priority Map",
+          "Presentation / explainer page systems \u2014 IMPLEMENTED IN THIS LANE",
+          "Next high-value visual/creation families",
+          "Cross-cutting rules",
+          "Immediate build order"
+        ]
+      },
+      {
+        "additions": 88,
+        "binary": false,
+        "content_sha256": "46a8e922bcf2b5d676f4c20a8959c7909f54598db07c50283eefecc6661947fc",
+        "deletions": 0,
+        "path": "src/axm_uc/visual_template_presentation.py",
+        "status": "A",
+        "symbols": [
+          "_merge",
+          "extend_presentation_catalog"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 3,
+        "binary": false,
+        "content_sha256": "4ecd2f71f5e8a572a9f96ad47052c73df174dfa3149024c63411fe0e609ed518",
+        "deletions": 1,
+        "path": "src/axm_uc/visual_templates.py",
+        "status": "M",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 35,
+        "binary": false,
+        "content_sha256": "44f22ffa168c53e80033cb13c13e48774b04f476547b314161644e7704cd85c5",
+        "deletions": 35,
+        "path": "tests/test_visual_templates.py",
+        "status": "M",
+        "symbols": [
+          "VisualTemplateTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 18,
+        "binary": false,
+        "content_sha256": "4b8ed71ec268ed96bc2d70b5b6aca8e5912b5ebda0fe4322132ad2e124ed0d66",
+        "deletions": 17,
+        "path": "tools/visual_template_proof.py",
+        "status": "M",
+        "symbols": [
+          "_write",
+          "main"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "857a80dcd8ab1835b956a28465f58ae743f4a0c9098f22c025a27c735533fcef"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "add",
+      "axm",
+      "boundary",
+      "build",
+      "candidate",
+      "catalog",
+      "census",
+      "contracts",
+      "creation",
+      "creation-machine",
+      "cross",
+      "current",
+      "cutting",
+      "editable",
+      "expansion",
+      "explainer",
+      "extend",
+      "fabric",
+      "families",
+      "first",
+      "foundation",
+      "high",
+      "identity",
+      "immediate",
+      "implemented",
+      "lane",
+      "map",
+      "merge",
+      "next",
+      "order",
+      "pack",
+      "page",
+      "presentation",
+      "priority",
+      "proof",
+      "registry",
+      "rules",
+      "source",
+      "standalone",
+      "surfaces",
+      "systems",
+      "template",
+      "templates",
+      "this",
+      "tools",
+      "truth",
+      "universal-creation",
+      "v14",
+      "value",
+      "visual",
+      "write"
+    ]
+  },
+  "source": {
+    "base": "32843526c54b69399c3708242c69ca3b959cefb7",
+    "commit_subject": "Add editable presentation and explainer templates",
+    "head": "b769f1b7454e3a9847e8e63b244e960f9d5a5848",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

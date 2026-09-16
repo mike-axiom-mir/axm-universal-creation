@@ -1,0 +1,150 @@
+{
+  "capsule_id": "c64c3be19a43f499a074d7ecacaa6884d0cca49ca5a8c69e89225a3d216a0bcb",
+  "evidence": {
+    "files": [
+      {
+        "additions": 93,
+        "binary": false,
+        "content_sha256": "dfcde259351a0bcd0dc15dbce1d89c9792426cf278550d97316acbdaa1b5595c",
+        "deletions": 0,
+        "path": "MATERIAL_CAPABILITY_FULL_INTAKE.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Material Capability Full Intake v0.19",
+          "What is adopted",
+          "material-entry / material-family",
+          "sprite-candidate",
+          "recipe",
+          "pattern",
+          "Feedback",
+          "CLI",
+          "Cross-repo circulation fixture",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 429,
+        "binary": false,
+        "content_sha256": "c5ea9bca33bc5e303f1c30676375d7fddaf183caa2d7ee195e065cef768c1232",
+        "deletions": 0,
+        "path": "src/axm_uc/material_capability_full_intake.py",
+        "status": "A",
+        "symbols": [
+          "FullMaterialCapabilityError",
+          "_json_size",
+          "_require_bounded",
+          "_projection_id",
+          "_number",
+          "_normalized_bounds",
+          "project_sprite_candidate",
+          "project_recipe",
+          "project_pattern",
+          "_feedback_event",
+          "_create_feedback",
+          "validate_full_material_use_feedback",
+          "consume_material_capability_pack_full"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 118,
+        "binary": false,
+        "content_sha256": "e8c8834d3724187faa63283f8fe157b7d43f9ecdabf4bfa21c2e22475b22be80",
+        "deletions": 0,
+        "path": "tests/test_material_capability_full_intake.py",
+        "status": "A",
+        "symbols": [
+          "FullMaterialCapabilityIntakeTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 72,
+        "binary": false,
+        "content_sha256": "1cdc981a1018518d744c8995d3f1db5890703e6955424b2d1ae3caaab3a4fa8a",
+        "deletions": 0,
+        "path": "tools/import_material_capability_pack_full.py",
+        "status": "A",
+        "symbols": [
+          "parse_args",
+          "write_json",
+          "main"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "0ffc004f4df4e17f6049f8693fa0bfbcbe5b4e3469e9c8afef508c07d6c92f12"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "adopt",
+      "adopted",
+      "args",
+      "axm",
+      "boundary",
+      "bounded",
+      "bounds",
+      "candidate",
+      "capabilities",
+      "capability",
+      "circulation",
+      "cli",
+      "consume",
+      "create",
+      "creation-machine",
+      "cross",
+      "entry",
+      "error",
+      "event",
+      "family",
+      "feedback",
+      "fixture",
+      "full",
+      "import",
+      "intake",
+      "json",
+      "material",
+      "normalized",
+      "number",
+      "pack",
+      "parse",
+      "pattern",
+      "project",
+      "projection",
+      "recipe",
+      "repo",
+      "require",
+      "size",
+      "sprite",
+      "standalone",
+      "tools",
+      "truth",
+      "universal-creation",
+      "use",
+      "validate",
+      "what",
+      "write"
+    ]
+  },
+  "source": {
+    "base": "94be5a6729c390c28cf43661fb74139190bfadd9",
+    "commit_subject": "Adopt sprite, recipe, and pattern material capabilities (#42)",
+    "head": "88cfd8364cc4d2032e5db43702ede5cb56917e7c",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

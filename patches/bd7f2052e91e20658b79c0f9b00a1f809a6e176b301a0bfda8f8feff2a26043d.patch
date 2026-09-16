@@ -1,0 +1,53 @@
+diff --git a/tests/test_material_capability_full_intake.py b/tests/test_material_capability_full_intake.py
+index e5ed541..50c5c07 100644
+--- a/tests/test_material_capability_full_intake.py
++++ b/tests/test_material_capability_full_intake.py
+@@ -21,11 +21,13 @@ from axm_uc.material_capability_full_intake import (
+ 
+ ROOT = Path(__file__).resolve().parents[1]
+ FIXTURE = ROOT / "examples" / "material-capability-packs" / "full-circulation-v0.18.json"
++FEEDBACK_FIXTURE = ROOT / "examples" / "material-capability-packs" / "full-circulation-v0.18-feedback.json"
+ 
+ 
+ class FullMaterialCapabilityIntakeTests(unittest.TestCase):
+     def setUp(self) -> None:
+         self.pack = json.loads(FIXTURE.read_text(encoding="utf-8"))
++        self.expected_feedback = json.loads(FEEDBACK_FIXTURE.read_text(encoding="utf-8"))
+         self.by_kind = {row["kind"]: row for row in self.pack["capabilities"]}
+ 
+     def test_full_circulation_fixture_matches_v018_contract(self) -> None:
+@@ -61,21 +63,23 @@ class FullMaterialCapabilityIntakeTests(unittest.TestCase):
+         self.assertEqual(sprite["atlasId"], "rust-corrosion")
+         self.assertEqual(sprite["normalizedBounds"]["x"], 0.125)
+         self.assertEqual(sprite["normalizedBounds"]["height"], 0.28125)
+-        self.assertTrue(sprite["id"].startswith("uc-sprite-"))
++        self.assertEqual(sprite["id"], "uc-sprite-052e2cac")
+ 
+         recipe = projections[RECIPE_SCHEMA]
+         self.assertTrue(recipe["transparent"])
+         self.assertEqual(recipe["layerCount"], 2)
+         self.assertEqual(recipe["recipeFingerprint"], "2e2e0454")
+-        self.assertTrue(recipe["id"].startswith("uc-recipe-"))
++        self.assertEqual(recipe["id"], "uc-recipe-922067f2")
+ 
+         pattern = projections[PATTERN_SCHEMA]
+         self.assertEqual(pattern["support"], 2)
+         self.assertEqual(pattern["slotCount"], 2)
+-        self.assertTrue(pattern["id"].startswith("uc-pattern-"))
++        self.assertEqual(pattern["id"], "uc-pattern-49da0176")
+ 
+         feedback = result["feedback"]
+         validate_full_material_use_feedback(feedback, self.pack)
++        self.assertEqual(feedback, self.expected_feedback)
++        self.assertEqual(feedback["id"], "material-use-feedback-4e1937b3")
+         self.assertEqual(len(feedback["events"]), 5)
+         for event in feedback["events"]:
+             self.assertEqual(event["action"], "adopted")
+@@ -86,6 +90,7 @@ class FullMaterialCapabilityIntakeTests(unittest.TestCase):
+         first = consume_material_capability_pack_full(self.pack, strict=True)
+         second = consume_material_capability_pack_full(self.pack, strict=True)
+         self.assertEqual(first, second)
++        self.assertEqual(first["feedback"], self.expected_feedback)
+ 
+     def test_sprite_projection_refuses_bounds_outside_atlas(self) -> None:
+         capability = copy.deepcopy(self.by_kind["sprite-candidate"])

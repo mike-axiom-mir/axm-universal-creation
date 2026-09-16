@@ -1,0 +1,1628 @@
+diff --git a/capabilities/live/AXM-CAP-EXTERNAL-VISUAL-TOOLS.json b/capabilities/live/AXM-CAP-EXTERNAL-VISUAL-TOOLS.json
+new file mode 100644
+index 0000000..9f61c6d
+--- /dev/null
++++ b/capabilities/live/AXM-CAP-EXTERNAL-VISUAL-TOOLS.json
+@@ -0,0 +1,89 @@
++{
++  "id": "AXM-CAP-EXTERNAL-VISUAL-TOOLS",
++  "version": "0.1.0",
++  "status": "live",
++  "purpose": "Expose installed third-party visual tools through one explicit optional connector boundary without classifying any external executable as AXM-native capability.",
++  "handles": [
++    "external-visual-tool",
++    "external-visual-connector",
++    "visual-tool-bus",
++    "third-party-visual-tool"
++  ],
++  "input_contract": {
++    "required": ["operation"],
++    "required_by_operation": {
++      "inspect": ["tool"],
++      "probe": ["tool"],
++      "execute": ["tool", "cwd", "args", "allow_execute"]
++    },
++    "properties": {
++      "operation": "catalog, inspect, probe, or execute",
++      "tool": "one declared connector id",
++      "cwd": "explicit working directory outside the protected live machine body; required for execute",
++      "args": "argument vector passed directly to the selected executable without a shell; required for execute",
++      "allow_execute": "must be boolean true for execute",
++      "timeout": "optional bounded process timeout"
++    }
++  },
++  "output_contract": {
++    "kind": "truth-labeled-external-tool-receipt",
++    "contains": [
++      "native=false",
++      "dependency_class=EXTERNAL_OPTIONAL",
++      "resolved executable path when found",
++      "actual argv for observed executions",
++      "return code and captured-output SHA-256 receipts",
++      "separate tool-execution and visual-output observation claims"
++    ]
++  },
++  "dependencies": [],
++  "external_connectors": [
++    "Blender",
++    "Godot",
++    "Unreal Engine",
++    "Krita",
++    "GIMP",
++    "ImageMagick",
++    "FFmpeg",
++    "OpenSCAD",
++    "Houdini",
++    "Inkscape"
++  ],
++  "relationships": [
++    "AXM native visual runtime remains a separate AXM-owned execution path and does not depend on this capability",
++    "Blender is represented here as an external optional tool even though legacy Blender-backed forge code also exists in the repository",
++    "the connector bus performs no downloads or installations",
++    "external execution is explicit and never uses a command shell"
++  ],
++  "implementation": {
++    "kind": "EXTERNAL_EVIDENCE_BOUNDARY",
++    "entrypoint": "builtin:external_visual_tools",
++    "source": "src/axm_uc/external_visual_tools.py"
++  },
++  "limitations": [
++    "a connector being declared does not mean the corresponding software is installed",
++    "PATH discovery proves only that a candidate executable path was found; it does not make the software native to AXM",
++    "tool execution does not by itself prove that a visual result was rendered correctly",
++    "Unreal Engine and Houdini intentionally have no guessed default version probe; they can be inspected and explicitly executed when present",
++    "third-party licenses, updates and runtime behavior remain outside AXM authority"
++  ],
++  "persistent_state": null,
++  "root_fit": {
++    "truth": {
++      "fit": true,
++      "basis": "Every result names the external boundary, native=false, availability evidence, actual executable and observed process result without converting external capability into an AXM claim."
++    },
++    "agency": {
++      "fit": true,
++      "basis": "The caller chooses the tool and arguments; execution requires allow_execute=true and an explicit working directory."
++    },
++    "continuity": {
++      "fit": true,
++      "basis": "The AXM-owned native runtime remains independently routable; missing external tools do not remove the native capability."
++    },
++    "wisdom-before-speed": {
++      "fit": true,
++      "basis": "Inspection and conservative probes are separate from execution, shell invocation is disabled, process time is bounded, and visual output is not inferred from exit status."
++    }
++  }
++}
+diff --git a/capabilities/live/AXM-CAP-NATIVE-VISUAL-RUNTIME.json b/capabilities/live/AXM-CAP-NATIVE-VISUAL-RUNTIME.json
+new file mode 100644
+index 0000000..f0f4fea
+--- /dev/null
++++ b/capabilities/live/AXM-CAP-NATIVE-VISUAL-RUNTIME.json
+@@ -0,0 +1,74 @@
++{
++  "id": "AXM-CAP-NATIVE-VISUAL-RUNTIME",
++  "version": "0.1.0",
++  "status": "live",
++  "purpose": "Compile deterministic inspectable 3D scene state into a self-contained AXM-owned WebGL2 visual runtime without requiring an external creative application.",
++  "handles": [
++    "native-visual-scene",
++    "native-visual-runtime",
++    "coded-visual-scene",
++    "webgl-visual-preview"
++  ],
++  "input_contract": {
++    "required": ["operation"],
++    "required_by_operation": {
++      "compile": ["scene"],
++      "bundle": ["path", "scene"],
++      "demo": ["path"]
++    },
++    "properties": {
++      "operation": "inspect, compile, bundle, or demo",
++      "scene": "AXM native visual scene object; required for compile and bundle",
++      "path": "caller-selected output directory outside the protected live machine body; required for bundle and demo",
++      "replace": "optional boolean; defaults false"
++    }
++  },
++  "output_contract": {
++    "kind": "deterministic-native-visual-runtime",
++    "contains": [
++      "normalized scene state and SHA-256",
++      "self-contained WebGL2 HTML runtime",
++      "bundle receipt with file digests",
++      "explicit host-render evidence boundary",
++      "portable native scene state that optional external adapters may consume"
++    ]
++  },
++  "dependencies": [],
++  "relationships": [
++    "is an AXM-owned visual execution path and remains available when external creative tools are absent",
++    "may share camera, transforms, basic material values, lights and world state with optional external adapters",
++    "keeps browser pixel observation separate from deterministic source compilation and JavaScript syntax evidence",
++    "refuses silent writes into non-empty output directories unless replace is explicit",
++    "does not classify Blender-backed or other third-party execution as native"
++  ],
++  "implementation": {
++    "kind": "DETERMINISTIC_SOURCE",
++    "entrypoint": "builtin:native_visual_runtime",
++    "source": "src/axm_uc/native_visual_engine.py"
++  },
++  "limitations": [
++    "the native renderer currently supports boxes, spheres, cylinders and planes rather than arbitrary imported meshes",
++    "WebGL2 execution and rendered visual quality require browser or authorized host evidence",
++    "native geometry, rigging, texturing, simulation and rendering breadth is still substantially smaller than mature external creative suites",
++    "optional external adapters may currently provide capabilities the native runtime has not implemented yet, but those adapters remain external dependencies rather than native AXM capability"
++  ],
++  "persistent_state": null,
++  "root_fit": {
++    "truth": {
++      "fit": true,
++      "basis": "Compiled scene state, hashes, generated source, absent host pixels and external-tool execution remain explicitly distinguishable."
++    },
++    "agency": {
++      "fit": true,
++      "basis": "The caller selects the operation, scene, output path and replacement choice; the runtime is self-contained and makes no network calls."
++    },
++    "continuity": {
++      "fit": true,
++      "basis": "The scene JSON is deterministic, inspectable and remains usable without any third-party creative executable."
++    },
++    "wisdom-before-speed": {
++      "fit": true,
++      "basis": "Schema validation, bounded scene size, deterministic hashing, source checks and explicit host evidence gates precede visual-quality claims."
++    }
++  }
++}
+diff --git a/docs/NATIVE_VISUAL_ENGINE.md b/docs/NATIVE_VISUAL_ENGINE.md
+new file mode 100644
+index 0000000..c89203c
+--- /dev/null
++++ b/docs/NATIVE_VISUAL_ENGINE.md
+@@ -0,0 +1,82 @@
++# AXM Native Visual Engine
++
++Universal Creation now separates two things that must not be confused:
++
++1. **AXM-native visual capability** — code owned and executed by AXM without requiring Blender, Godot, Unreal, Krita, GIMP, FFmpeg, or another creative application.
++2. **External visual connectors** — optional third-party executables AXM may use when they are installed and explicitly selected.
++
++`native` means the capability still exists when every external connector is absent.
++
++## AXM-native visual runtime
++
++`src/axm_uc/native_visual_engine.py` compiles an inspectable scene contract into a self-contained WebGL2 page. It has no external JavaScript dependency and does not require Blender.
++
++Current runtime features:
++
++- scene graph with boxes, spheres, cylinders, and planes;
++- position, rotation, scale, visibility;
++- PBR-inspired base color / metallic / roughness / emissive materials;
++- ambient, directional, and point lights;
++- perspective camera;
++- mouse/touch orbit and wheel zoom;
++- spin, bob, and orbit procedural animation;
++- tone mapping, fog, depth testing, back-face culling;
++- deterministic scene hashing and build receipts.
++
++This is real AXM-native code, but it is still an early renderer. It does **not** currently equal the geometry, rigging, simulation, texture, animation, or rendering breadth of mature external creative applications. That missing breadth is a native AXM growth target, not a reason to relabel an external dependency as native.
++
++## Optional external connector boundary
++
++`src/axm_uc/external_visual_tools.py` exposes a truth-labeled connector bus for installed third-party tools:
++
++- Blender
++- Godot
++- Unreal Engine
++- Krita
++- GIMP
++- ImageMagick
++- FFmpeg
++- OpenSCAD
++- Houdini
++- Inkscape
++
++Every connector reports `native=false` and `dependency_class=EXTERNAL_OPTIONAL`. The bus can catalog connectors, inspect PATH availability, run conservative probes where declared, and execute an explicitly selected tool when `allow_execute=true` is supplied.
++
++External execution:
++
++- performs no automatic download or installation;
++- never uses a command shell;
++- records the resolved executable and argv;
++- records return code plus stdout/stderr digests;
++- does not treat successful process execution as proof that rendered pixels are visually correct;
++- cannot use the protected live Machine body as its execution working directory through the Machine adapter.
++
++The live Machine capability is `AXM-CAP-EXTERNAL-VISUAL-TOOLS`.
++
++## Blender-backed code is external
++
++The existing `tools/blender/...` scripts and `tools/blender/axm_blender_pro.py` remain useful code, but their execution requires Blender/`bpy`. They are therefore **Blender-backed external tooling**, not an AXM-native Blender implementation.
++
++The native scene-to-Blender bridge can preserve shared scene intent when Blender is available. That is an optional conversion path; it does not define the native runtime and does not claim pixel parity.
++
++## Run the native demo
++
++```bash
++axm-native-visual --demo --output out/native-visual-demo
++```
++
++Then open `out/native-visual-demo/index.html` in a WebGL2-capable browser.
++
++For a custom scene:
++
++```bash
++axm-native-visual --scene my-scene.json --output out/my-scene
++```
++
++## Machine routing
++
++The native runtime is registered as live capability `AXM-CAP-NATIVE-VISUAL-RUNTIME`, routing creation kinds such as `native-visual-scene`, `native-visual-runtime`, `coded-visual-scene`, and `webgl-visual-preview`.
++
++The external connector bus is registered separately as `AXM-CAP-EXTERNAL-VISUAL-TOOLS`, routing `external-visual-tool`, `external-visual-connector`, `visual-tool-bus`, and `third-party-visual-tool`.
++
++That separation is deliberate: the Machine can use external software when useful without treating it as part of AXM's native capability or making the native path disappear when a vendor tool is unavailable.
+diff --git a/src/axm_uc/external_visual_tools.py b/src/axm_uc/external_visual_tools.py
+new file mode 100644
+index 0000000..d6c226d
+--- /dev/null
++++ b/src/axm_uc/external_visual_tools.py
+@@ -0,0 +1,227 @@
++from __future__ import annotations
++
++import hashlib
++import shutil
++import subprocess
++from pathlib import Path
++from typing import Any
++
++MAX_CAPTURE_CHARS = 65536
++MAX_TIMEOUT_SECONDS = 600
++
++EXTERNAL_VISUAL_TOOLS: dict[str, dict[str, Any]] = {
++    "blender": {"label": "Blender", "categories": ["3d", "modeling", "animation", "rendering"], "binary_candidates": ["blender"], "probe_args": ["--version"]},
++    "godot": {"label": "Godot", "categories": ["game-engine", "scene-runtime", "rendering"], "binary_candidates": ["godot", "godot4"], "probe_args": ["--version"]},
++    "unreal": {"label": "Unreal Engine", "categories": ["game-engine", "scene-runtime", "rendering"], "binary_candidates": ["UnrealEditor-Cmd", "UnrealEditor", "UE4Editor-Cmd", "UE4Editor"], "probe_args": None},
++    "krita": {"label": "Krita", "categories": ["2d", "painting", "textures"], "binary_candidates": ["krita"], "probe_args": ["--version"]},
++    "gimp": {"label": "GIMP", "categories": ["2d", "image-processing", "compositing"], "binary_candidates": ["gimp", "gimp-3.0"], "probe_args": ["--version"]},
++    "imagemagick": {"label": "ImageMagick", "categories": ["2d", "image-processing", "compositing"], "binary_candidates": ["magick", "convert"], "probe_args": ["-version"]},
++    "ffmpeg": {"label": "FFmpeg", "categories": ["video", "audio", "compositing"], "binary_candidates": ["ffmpeg"], "probe_args": ["-version"]},
++    "openscad": {"label": "OpenSCAD", "categories": ["3d", "parametric", "cad"], "binary_candidates": ["openscad"], "probe_args": ["--version"]},
++    "houdini": {"label": "Houdini", "categories": ["3d", "procedural", "vfx", "simulation"], "binary_candidates": ["hython", "houdini"], "probe_args": None},
++    "inkscape": {"label": "Inkscape", "categories": ["2d", "vector", "svg"], "binary_candidates": ["inkscape"], "probe_args": ["--version"]},
++}
++
++
++class ExternalVisualToolError(RuntimeError):
++    def __init__(self, message: str, details: dict[str, Any] | None = None):
++        super().__init__(message)
++        self.details = details or {}
++
++
++def _normalize_tool(tool: Any) -> str:
++    value = str(tool or "").strip().casefold()
++    if value not in EXTERNAL_VISUAL_TOOLS:
++        raise ExternalVisualToolError(
++            f"unsupported external visual tool: {value or '<empty>'}",
++            {"supported_tools": sorted(EXTERNAL_VISUAL_TOOLS)},
++        )
++    return value
++
++
++def _resolve_executable(tool: str) -> str | None:
++    spec = EXTERNAL_VISUAL_TOOLS[tool]
++    for candidate in spec["binary_candidates"]:
++        resolved = shutil.which(candidate)
++        if resolved:
++            return str(Path(resolved).resolve())
++    return None
++
++
++def _tool_record(tool: str) -> dict[str, Any]:
++    spec = EXTERNAL_VISUAL_TOOLS[tool]
++    executable = _resolve_executable(tool)
++    return {
++        "tool": tool,
++        "label": spec["label"],
++        "categories": list(spec["categories"]),
++        "binary_candidates": list(spec["binary_candidates"]),
++        "available": executable is not None,
++        "resolved_executable": executable,
++        "native": False,
++        "dependency_class": "EXTERNAL_OPTIONAL",
++        "identity_claim": "candidate executable discovered by PATH only; semantic identity is not inferred beyond the selected connector",
++    }
++
++
++def catalog_external_visual_tools() -> dict[str, Any]:
++    return {
++        "truth_status": "EXTERNAL_OPTIONAL_CONNECTOR_CATALOG",
++        "native": False,
++        "dependency_class": "EXTERNAL_OPTIONAL",
++        "network_install_performed": False,
++        "tools": [_tool_record(tool) for tool in sorted(EXTERNAL_VISUAL_TOOLS)],
++        "boundary": (
++            "These connectors do not make external software part of AXM's native capability. "
++            "They only expose installed third-party executables through an explicit, receipted boundary."
++        ),
++    }
++
++
++def inspect_external_visual_tool(tool: Any) -> dict[str, Any]:
++    normalized = _normalize_tool(tool)
++    result = _tool_record(normalized)
++    result["truth_status"] = "EXTERNAL_CONNECTOR_INSPECTED"
++    result["probe_executed"] = False
++    return result
++
++
++def _capture_digest(value: str) -> str:
++    return hashlib.sha256(value.encode("utf-8", errors="replace")).hexdigest()
++
++
++def _run(*, tool: str, executable: str, args: list[str], cwd: Path | None, timeout: int, operation: str) -> dict[str, Any]:
++    command = [executable, *args]
++    try:
++        completed = subprocess.run(
++            command,
++            cwd=str(cwd) if cwd is not None else None,
++            capture_output=True,
++            text=True,
++            timeout=timeout,
++            check=False,
++            shell=False,
++        )
++    except subprocess.TimeoutExpired as exc:
++        raise ExternalVisualToolError(
++            f"{tool} {operation} timed out after {timeout}s",
++            {"tool": tool, "operation": operation, "timeout_seconds": timeout},
++        ) from exc
++    except OSError as exc:
++        raise ExternalVisualToolError(
++            f"{tool} {operation} could not start: {exc}",
++            {"tool": tool, "operation": operation, "executable": executable},
++        ) from exc
++
++    stdout = completed.stdout or ""
++    stderr = completed.stderr or ""
++    return {
++        "truth_status": "EXTERNAL_TOOL_EXECUTION_OBSERVED",
++        "operation": operation,
++        "tool": tool,
++        "native": False,
++        "dependency_class": "EXTERNAL_OPTIONAL",
++        "external_dependency_used": True,
++        "resolved_executable": executable,
++        "argv": command,
++        "cwd": str(cwd) if cwd is not None else None,
++        "returncode": int(completed.returncode),
++        "success": completed.returncode == 0,
++        "stdout": stdout[:MAX_CAPTURE_CHARS],
++        "stderr": stderr[:MAX_CAPTURE_CHARS],
++        "stdout_truncated": len(stdout) > MAX_CAPTURE_CHARS,
++        "stderr_truncated": len(stderr) > MAX_CAPTURE_CHARS,
++        "stdout_sha256": _capture_digest(stdout),
++        "stderr_sha256": _capture_digest(stderr),
++        "tool_execution_observed": True,
++        "visual_output_observed": False,
++        "network_install_performed": False,
++    }
++
++
++def probe_external_visual_tool(tool: Any, *, timeout: int = 10) -> dict[str, Any]:
++    normalized = _normalize_tool(tool)
++    spec = EXTERNAL_VISUAL_TOOLS[normalized]
++    executable = _resolve_executable(normalized)
++    if executable is None:
++        return {**_tool_record(normalized), "truth_status": "EXTERNAL_CONNECTOR_UNAVAILABLE", "probe_executed": False}
++    probe_args = spec.get("probe_args")
++    if not probe_args:
++        return {
++            **_tool_record(normalized),
++            "truth_status": "EXTERNAL_CONNECTOR_AVAILABLE_UNPROBED",
++            "probe_executed": False,
++            "reason": "no conservative default probe is declared for this connector",
++        }
++    bounded_timeout = max(1, min(int(timeout), 30))
++    result = _run(
++        tool=normalized,
++        executable=executable,
++        args=[str(item) for item in probe_args],
++        cwd=None,
++        timeout=bounded_timeout,
++        operation="probe",
++    )
++    result["probe_executed"] = True
++    return result
++
++
++def execute_external_visual_tool(tool: Any, *, args: Any, cwd: Path, allow_execute: Any, timeout: Any = 120) -> dict[str, Any]:
++    normalized = _normalize_tool(tool)
++    if allow_execute is not True:
++        raise ExternalVisualToolError(
++            "external visual tool execution requires allow_execute=true",
++            {"tool": normalized},
++        )
++    if not isinstance(args, list) or not all(isinstance(item, str) for item in args):
++        raise ExternalVisualToolError("external visual tool args must be a list of strings")
++    if any("\x00" in item for item in args):
++        raise ExternalVisualToolError("external visual tool args cannot contain NUL bytes")
++    executable = _resolve_executable(normalized)
++    if executable is None:
++        raise ExternalVisualToolError(
++            f"external visual tool is not installed or not visible on PATH: {normalized}",
++            {"tool": normalized, "binary_candidates": EXTERNAL_VISUAL_TOOLS[normalized]["binary_candidates"]},
++        )
++    if not cwd.is_dir():
++        raise ExternalVisualToolError(f"external visual tool cwd does not exist: {cwd}")
++    try:
++        bounded_timeout = max(1, min(int(timeout), MAX_TIMEOUT_SECONDS))
++    except (TypeError, ValueError) as exc:
++        raise ExternalVisualToolError("external visual tool timeout must be an integer") from exc
++    return _run(
++        tool=normalized,
++        executable=executable,
++        args=args,
++        cwd=cwd,
++        timeout=bounded_timeout,
++        operation="execute",
++    )
++
++
++def operate_external_visual_tool(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
++    operation = str(inputs.get("operation", "catalog")).strip().casefold()
++    if operation == "catalog":
++        return catalog_external_visual_tools()
++    if operation == "inspect":
++        return inspect_external_visual_tool(inputs.get("tool"))
++    if operation == "probe":
++        return probe_external_visual_tool(inputs.get("tool"), timeout=inputs.get("timeout", 10))
++    if operation == "execute":
++        cwd_raw = str(inputs.get("cwd", "creations"))
++        cwd = Path(cwd_raw).expanduser()
++        if not cwd.is_absolute():
++            cwd = (root / cwd).resolve()
++        else:
++            cwd = cwd.resolve()
++        return execute_external_visual_tool(
++            inputs.get("tool"),
++            args=inputs.get("args", []),
++            cwd=cwd,
++            allow_execute=inputs.get("allow_execute", False),
++            timeout=inputs.get("timeout", 120),
++        )
++    raise ExternalVisualToolError(
++        f"unsupported external visual tool operation: {operation}",
++        {"supported_operations": ["catalog", "inspect", "probe", "execute"]},
++    )
+diff --git a/src/axm_uc/native_visual_engine.py b/src/axm_uc/native_visual_engine.py
+new file mode 100644
+index 0000000..b698ffd
+--- /dev/null
++++ b/src/axm_uc/native_visual_engine.py
+@@ -0,0 +1,322 @@
++from __future__ import annotations
++
++import argparse
++import hashlib
++import json
++import math
++from pathlib import Path
++from typing import Any
++
++
++SCENE_SCHEMA = "axm.native-visual-scene/v0.1"
++RECEIPT_SCHEMA = "axm.native-visual-receipt/v0.1"
++ENGINE_ID = "axm-native-webgl2"
++MAX_OBJECTS = 1024
++MAX_LIGHTS = 8
++SUPPORTED_PRIMITIVES = {"box", "sphere", "cylinder", "plane"}
++SUPPORTED_ANIMATIONS = {"none", "spin", "bob", "orbit"}
++
++
++def _finite(value: Any, field: str) -> float:
++    try:
++        number = float(value)
++    except (TypeError, ValueError) as exc:
++        raise ValueError(f"{field} must be numeric") from exc
++    if not math.isfinite(number):
++        raise ValueError(f"{field} must be finite")
++    return number
++
++
++def _bounded(value: Any, field: str, low: float, high: float) -> float:
++    number = _finite(value, field)
++    if not low <= number <= high:
++        raise ValueError(f"{field} must be between {low} and {high}")
++    return number
++
++
++def _vec(value: Any, field: str, length: int, default: tuple[float, ...]) -> list[float]:
++    raw = default if value is None else value
++    if not isinstance(raw, (list, tuple)) or len(raw) != length:
++        raise ValueError(f"{field} must contain exactly {length} numbers")
++    return [_finite(item, f"{field}[{index}]") for index, item in enumerate(raw)]
++
++
++def _color(value: Any, field: str, default: tuple[float, float, float, float]) -> list[float]:
++    rgba = _vec(value, field, 4, default)
++    for index, channel in enumerate(rgba):
++        if not 0.0 <= channel <= 1.0:
++            raise ValueError(f"{field}[{index}] must be between 0 and 1")
++    return rgba
++
++
++def _rgb(value: Any, field: str, default: tuple[float, float, float]) -> list[float]:
++    raw = default if value is None else value
++    if not isinstance(raw, (list, tuple)) or len(raw) not in {3, 4}:
++        raise ValueError(f"{field} must contain 3 RGB or 4 RGBA numbers")
++    rgb = [_finite(item, f"{field}[{index}]") for index, item in enumerate(raw[:3])]
++    for index, channel in enumerate(rgb):
++        if not 0.0 <= channel <= 1.0:
++            raise ValueError(f"{field}[{index}] must be between 0 and 1")
++    return rgb
++
++
++def _identifier(value: Any, field: str) -> str:
++    text = str(value or "").strip()
++    if not text:
++        raise ValueError(f"{field} must be non-empty")
++    if len(text) > 96:
++        raise ValueError(f"{field} exceeds 96 characters")
++    return text
++
++
++def _material(raw: Any, field: str) -> dict[str, Any]:
++    data = raw if isinstance(raw, dict) else {}
++    return {
++        "base_color": _color(data.get("base_color"), f"{field}.base_color", (0.48, 0.55, 0.62, 1.0)),
++        "metallic": _bounded(data.get("metallic", 0.05), f"{field}.metallic", 0.0, 1.0),
++        "roughness": _bounded(data.get("roughness", 0.48), f"{field}.roughness", 0.04, 1.0),
++        "emissive": _rgb(data.get("emissive"), f"{field}.emissive", (0.0, 0.0, 0.0)),
++        "emissive_strength": _bounded(data.get("emissive_strength", 0.0), f"{field}.emissive_strength", 0.0, 32.0),
++    }
++
++
++def _animation(raw: Any, field: str) -> dict[str, Any]:
++    data = raw if isinstance(raw, dict) else {}
++    kind = str(data.get("kind", "none")).strip().casefold()
++    if kind not in SUPPORTED_ANIMATIONS:
++        raise ValueError(f"{field}.kind must be one of {sorted(SUPPORTED_ANIMATIONS)}")
++    return {
++        "kind": kind,
++        "speed": _finite(data.get("speed", 18.0 if kind == "spin" else 1.0), f"{field}.speed"),
++        "amplitude": _bounded(data.get("amplitude", 0.2), f"{field}.amplitude", 0.0, 1000.0),
++        "radius": _bounded(data.get("radius", 1.0), f"{field}.radius", 0.0, 10000.0),
++    }
++
++
++def compile_scene(raw: Any) -> dict[str, Any]:
++    """Normalize and validate one deterministic native visual scene.
++
++    This is deliberately a small, inspectable scene contract rather than a hidden
++    editor state. The same values are suitable for adaptation into Blender or a
++    game runtime later, while this module can render them immediately in WebGL2.
++    """
++    if not isinstance(raw, dict):
++        raise TypeError("native visual scene must be an object")
++
++    title = str(raw.get("title", "AXM Native Visual Scene")).strip() or "AXM Native Visual Scene"
++    if len(title) > 160:
++        raise ValueError("title exceeds 160 characters")
++
++    camera_raw = raw.get("camera") if isinstance(raw.get("camera"), dict) else {}
++    camera = {
++        "position": _vec(camera_raw.get("position"), "camera.position", 3, (7.2, 5.0, 8.6)),
++        "target": _vec(camera_raw.get("target"), "camera.target", 3, (0.0, 1.0, 0.0)),
++        "fov_degrees": _bounded(camera_raw.get("fov_degrees", 44.0), "camera.fov_degrees", 15.0, 100.0),
++        "near": _bounded(camera_raw.get("near", 0.05), "camera.near", 0.001, 100.0),
++        "far": _bounded(camera_raw.get("far", 500.0), "camera.far", 1.0, 100000.0),
++        "orbit_enabled": bool(camera_raw.get("orbit_enabled", True)),
++    }
++    if camera["near"] >= camera["far"]:
++        raise ValueError("camera.near must be smaller than camera.far")
++
++    lights_raw = raw.get("lights")
++    if lights_raw is None:
++        lights_raw = [
++            {"id": "key", "kind": "directional", "direction": [-0.45, -0.8, -0.35], "color": [1.0, 0.88, 0.74, 1.0], "intensity": 2.4},
++            {"id": "fill", "kind": "directional", "direction": [0.7, -0.35, 0.5], "color": [0.42, 0.65, 1.0, 1.0], "intensity": 1.25},
++            {"id": "rim", "kind": "directional", "direction": [0.15, -0.15, -1.0], "color": [0.35, 0.95, 1.0, 1.0], "intensity": 1.45},
++        ]
++    if not isinstance(lights_raw, list) or len(lights_raw) > MAX_LIGHTS:
++        raise ValueError(f"lights must be a list with at most {MAX_LIGHTS} entries")
++    lights: list[dict[str, Any]] = []
++    light_ids: set[str] = set()
++    for index, entry in enumerate(lights_raw):
++        if not isinstance(entry, dict):
++            raise ValueError(f"lights[{index}] must be an object")
++        light_id = _identifier(entry.get("id", f"light-{index}"), f"lights[{index}].id")
++        if light_id in light_ids:
++            raise ValueError(f"duplicate light id: {light_id}")
++        light_ids.add(light_id)
++        kind = str(entry.get("kind", "directional")).strip().casefold()
++        if kind not in {"directional", "point"}:
++            raise ValueError(f"lights[{index}].kind must be directional or point")
++        lights.append({
++            "id": light_id,
++            "kind": kind,
++            "direction": _vec(entry.get("direction"), f"lights[{index}].direction", 3, (-0.4, -0.7, -0.3)),
++            "position": _vec(entry.get("position"), f"lights[{index}].position", 3, (4.0, 6.0, 4.0)),
++            "color": _rgb(entry.get("color"), f"lights[{index}].color", (1.0, 1.0, 1.0)),
++            "intensity": _bounded(entry.get("intensity", 1.0), f"lights[{index}].intensity", 0.0, 1000.0),
++            "range": _bounded(entry.get("range", 25.0), f"lights[{index}].range", 0.01, 100000.0),
++        })
++
++    objects_raw = raw.get("objects", [])
++    if not isinstance(objects_raw, list) or len(objects_raw) > MAX_OBJECTS:
++        raise ValueError(f"objects must be a list with at most {MAX_OBJECTS} entries")
++    objects: list[dict[str, Any]] = []
++    object_ids: set[str] = set()
++    for index, entry in enumerate(objects_raw):
++        if not isinstance(entry, dict):
++            raise ValueError(f"objects[{index}] must be an object")
++        object_id = _identifier(entry.get("id"), f"objects[{index}].id")
++        if object_id in object_ids:
++            raise ValueError(f"duplicate object id: {object_id}")
++        object_ids.add(object_id)
++        primitive = str(entry.get("primitive", "box")).strip().casefold()
++        if primitive not in SUPPORTED_PRIMITIVES:
++            raise ValueError(f"objects[{index}].primitive must be one of {sorted(SUPPORTED_PRIMITIVES)}")
++        scale = _vec(entry.get("scale"), f"objects[{index}].scale", 3, (1.0, 1.0, 1.0))
++        if any(abs(value) < 1e-6 for value in scale):
++            raise ValueError(f"objects[{index}].scale components must be non-zero")
++        objects.append({
++            "id": object_id,
++            "primitive": primitive,
++            "position": _vec(entry.get("position"), f"objects[{index}].position", 3, (0.0, 0.0, 0.0)),
++            "rotation_degrees": _vec(entry.get("rotation_degrees"), f"objects[{index}].rotation_degrees", 3, (0.0, 0.0, 0.0)),
++            "scale": scale,
++            "material": _material(entry.get("material"), f"objects[{index}].material"),
++            "animation": _animation(entry.get("animation"), f"objects[{index}].animation"),
++            "visible": bool(entry.get("visible", True)),
++        })
++
++    scene = {
++        "schema": SCENE_SCHEMA,
++        "engine": ENGINE_ID,
++        "title": title,
++        "background": _color(raw.get("background"), "background", (0.015, 0.022, 0.035, 1.0)),
++        "ambient": {
++            "color": _rgb((raw.get("ambient") or {}).get("color") if isinstance(raw.get("ambient"), dict) else None, "ambient.color", (0.18, 0.22, 0.3)),
++            "intensity": _bounded((raw.get("ambient") or {}).get("intensity", 0.42) if isinstance(raw.get("ambient"), dict) else 0.42, "ambient.intensity", 0.0, 10.0),
++        },
++        "camera": camera,
++        "lights": lights,
++        "objects": objects,
++        "render": {
++            "exposure": _bounded((raw.get("render") or {}).get("exposure", 1.0) if isinstance(raw.get("render"), dict) else 1.0, "render.exposure", 0.05, 16.0),
++            "fog_density": _bounded((raw.get("render") or {}).get("fog_density", 0.012) if isinstance(raw.get("render"), dict) else 0.012, "render.fog_density", 0.0, 1.0),
++            "grid": bool((raw.get("render") or {}).get("grid", True) if isinstance(raw.get("render"), dict) else True),
++        },
++        "truth": {
++            "runtime": "browser-webgl2",
++            "offline_after_bundle_creation": True,
++            "external_javascript_dependencies": False,
++            "final_asset_authoring_replacement": False,
++            "purpose": "fast deterministic scene preview, coded visuals, camera/light/material iteration",
++        },
++    }
++    scene["scene_sha256"] = scene_sha256(scene)
++    return scene
++
++
++def catalog_native_visual() -> dict[str, Any]:
++    return {
++        "schema": "axm.native-visual-catalog/v0.1",
++        "truth_status": "EXECUTABLE_CODED_VISUAL_RUNTIME",
++        "engine": ENGINE_ID,
++        "scene_schema": SCENE_SCHEMA,
++        "primitives": sorted(SUPPORTED_PRIMITIVES),
++        "animations": sorted(SUPPORTED_ANIMATIONS),
++        "lighting": ["ambient", "directional", "point"],
++        "materials": ["base_color", "metallic", "roughness", "emissive"],
++        "outputs": ["scene.json", "index.html", "receipt.json"],
++        "bridge": {
++            "target": "Blender bpy",
++            "helper": "tools/blender/axm_blender_pro.py::apply_native_scene",
++            "shared_state": ["camera", "transforms", "basic-materials", "lights", "world"],
++            "pixel_parity_claimed": False,
++        },
++        "truth": {
++            "bundle_is_self_contained": True,
++            "external_javascript_dependencies": False,
++            "live_pixels_require_webgl2_host_evidence": True,
++            "replaces_blender_final_authoring": False,
++        },
++    }
++
++
++def scene_sha256(scene: dict[str, Any]) -> str:
++    payload = dict(scene)
++    payload.pop("scene_sha256", None)
++    encoded = json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
++    return hashlib.sha256(encoded).hexdigest()
++
++
++def demo_scene() -> dict[str, Any]:
++    return compile_scene({
++        "title": "AXM Native Visual Engine — Forge Bay",
++        "camera": {"position": [8.6, 5.2, 10.8], "target": [0.0, 1.4, 0.0], "fov_degrees": 42},
++        "objects": [
++            {"id": "floor", "primitive": "plane", "position": [0, 0, 0], "scale": [12, 1, 12], "material": {"base_color": [0.055, 0.065, 0.08, 1], "metallic": 0.65, "roughness": 0.58}},
++            {"id": "core", "primitive": "cylinder", "position": [0, 1.5, 0], "scale": [1.7, 2.8, 1.7], "material": {"base_color": [0.12, 0.16, 0.2, 1], "metallic": 0.82, "roughness": 0.24}, "animation": {"kind": "spin", "speed": 9}},
++            {"id": "energy", "primitive": "sphere", "position": [0, 2.1, 0], "scale": [0.72, 0.72, 0.72], "material": {"base_color": [0.08, 0.42, 0.66, 1], "metallic": 0.2, "roughness": 0.16, "emissive": [0.02, 0.7, 1.0, 1], "emissive_strength": 2.7}, "animation": {"kind": "bob", "speed": 1.4, "amplitude": 0.18}},
++            {"id": "left-pylon", "primitive": "box", "position": [-3.0, 1.0, -0.4], "rotation_degrees": [0, -18, 0], "scale": [0.75, 2.0, 0.9], "material": {"base_color": [0.18, 0.2, 0.23, 1], "metallic": 0.72, "roughness": 0.32, "emissive": [0.0, 0.32, 0.9, 1], "emissive_strength": 0.55}},
++            {"id": "right-pylon", "primitive": "box", "position": [3.0, 1.0, -0.4], "rotation_degrees": [0, 18, 0], "scale": [0.75, 2.0, 0.9], "material": {"base_color": [0.18, 0.2, 0.23, 1], "metallic": 0.72, "roughness": 0.32, "emissive": [0.95, 0.24, 0.05, 1], "emissive_strength": 0.42}},
++        ],
++    })
++
++
++_HTML_TEMPLATE = r'''<!doctype html>
++<html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>__TITLE__</title><style>
++html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#05070a;color:#e8eef7;font-family:system-ui,sans-serif}canvas{display:block;width:100%;height:100%;touch-action:none}#hud{position:fixed;left:14px;top:14px;padding:10px 12px;border:1px solid #ffffff24;border-radius:10px;background:#07101ac9;backdrop-filter:blur(10px);font-size:12px;line-height:1.45;max-width:360px;pointer-events:none}#hud b{font-size:13px}#truth{opacity:.68;margin-top:4px}.ok{color:#8df4c7}</style></head><body>
++<canvas id="view"></canvas><div id="hud"><b>__TITLE__</b><div id="stats"></div><div id="truth" class="ok">AXM native WebGL2 preview · local bundle · no external JS</div></div><script id="axm-scene" type="application/json">__SCENE_JSON__</script><script>
++'use strict';const scene=JSON.parse(document.getElementById('axm-scene').textContent);const canvas=document.getElementById('view');const gl=canvas.getContext('webgl2',{antialias:true,alpha:scene.background[3]<1});if(!gl){document.getElementById('truth').textContent='WebGL2 unavailable on this device/browser';throw new Error('WebGL2 unavailable');}
++const VERT=`#version 300 es
++precision highp float;layout(location=0) in vec3 aPos;layout(location=1) in vec3 aNormal;uniform mat4 uModel,uView,uProj;out vec3 vWorld;out vec3 vNormal;void main(){vec4 w=uModel*vec4(aPos,1.0);vWorld=w.xyz;vNormal=normalize(transpose(inverse(mat3(uModel)))*aNormal);gl_Position=uProj*uView*w;}`;
++const FRAG=`#version 300 es
++precision highp float;in vec3 vWorld;in vec3 vNormal;out vec4 outColor;uniform vec3 uCamera,uAmbientColor,uEmissive;uniform float uAmbientIntensity,uMetallic,uRoughness,uEmissiveStrength,uExposure,uFogDensity;uniform vec4 uBase;uniform int uLightCount;uniform vec4 uLightPosType[8];uniform vec4 uLightColorIntensity[8];uniform float uLightRange[8];void main(){vec3 n=normalize(vNormal),v=normalize(uCamera-vWorld);vec3 base=uBase.rgb;vec3 c=base*uAmbientColor*uAmbientIntensity;float shininess=mix(96.0,5.0,uRoughness);vec3 f0=mix(vec3(.04),base,uMetallic);for(int i=0;i<8;i++){if(i>=uLightCount)break;vec3 l;float attenuation=1.0;if(uLightPosType[i].w>.5){vec3 d=uLightPosType[i].xyz-vWorld;float dist=length(d);l=d/max(dist,.0001);float r=max(uLightRange[i],.001);attenuation=1.0/(1.0+(dist*dist)/(r*r));}else{l=normalize(-uLightPosType[i].xyz);}float ndl=max(dot(n,l),0.0);vec3 h=normalize(l+v);float spec=pow(max(dot(n,h),0.0),shininess)*(1.0-uRoughness*.6);vec3 lc=uLightColorIntensity[i].rgb*uLightColorIntensity[i].a*attenuation;c+=(base*(1.0-uMetallic)*ndl+f0*spec)*lc;}c+=uEmissive*uEmissiveStrength;float dist=length(uCamera-vWorld);float fog=1.0-exp(-uFogDensity*dist);vec3 fogColor=vec3(.018,.026,.042);c=mix(c,fogColor,clamp(fog,0.0,.72));c*=uExposure;c=c/(vec3(1.0)+c);c=pow(max(c,vec3(0.0)),vec3(1.0/2.2));outColor=vec4(c,uBase.a);}`;
++function shader(type,src){const s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(s));return s}const program=gl.createProgram();gl.attachShader(program,shader(gl.VERTEX_SHADER,VERT));gl.attachShader(program,shader(gl.FRAGMENT_SHADER,FRAG));gl.linkProgram(program);if(!gl.getProgramParameter(program,gl.LINK_STATUS))throw new Error(gl.getProgramInfoLog(program));gl.useProgram(program);const U={};['uModel','uView','uProj','uCamera','uAmbientColor','uAmbientIntensity','uEmissive','uMetallic','uRoughness','uEmissiveStrength','uExposure','uFogDensity','uBase','uLightCount','uLightPosType[0]','uLightColorIntensity[0]','uLightRange[0]'].forEach(n=>U[n]=gl.getUniformLocation(program,n));
++const M={I:()=>new Float32Array([1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]),mul:(a,b)=>{const o=new Float32Array(16);for(let c=0;c<4;c++)for(let r=0;r<4;r++)o[c*4+r]=a[0*4+r]*b[c*4+0]+a[1*4+r]*b[c*4+1]+a[2*4+r]*b[c*4+2]+a[3*4+r]*b[c*4+3];return o},T:(x,y,z)=>{const m=M.I();m[12]=x;m[13]=y;m[14]=z;return m},S:(x,y,z)=>new Float32Array([x,0,0,0,0,y,0,0,0,0,z,0,0,0,0,1]),Rx:a=>{let c=Math.cos(a),s=Math.sin(a);return new Float32Array([1,0,0,0,0,c,s,0,0,-s,c,0,0,0,0,1])},Ry:a=>{let c=Math.cos(a),s=Math.sin(a);return new Float32Array([c,0,-s,0,0,1,0,0,s,0,c,0,0,0,0,1])},Rz:a=>{let c=Math.cos(a),s=Math.sin(a);return new Float32Array([c,s,0,0,-s,c,0,0,0,0,1,0,0,0,0,1])},persp:(fov,aspect,n,f)=>{let t=1/Math.tan(fov/2),nf=1/(n-f);return new Float32Array([t/aspect,0,0,0,0,t,0,0,0,0,(f+n)*nf,-1,0,0,2*f*n*nf,0])},look:(eye,target,up=[0,1,0])=>{let z=norm(sub(eye,target)),x=norm(cross(up,z)),y=cross(z,x);return new Float32Array([x[0],y[0],z[0],0,x[1],y[1],z[1],0,x[2],y[2],z[2],0,-dot(x,eye),-dot(y,eye),-dot(z,eye),1])}};const sub=(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]],dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2],cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],norm=a=>{let l=Math.hypot(...a)||1;return a.map(v=>v/l)};
++function mesh(vertices,indices){const vao=gl.createVertexArray();gl.bindVertexArray(vao);const vbo=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,vbo);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(vertices),gl.STATIC_DRAW);gl.enableVertexAttribArray(0);gl.vertexAttribPointer(0,3,gl.FLOAT,false,24,0);gl.enableVertexAttribArray(1);gl.vertexAttribPointer(1,3,gl.FLOAT,false,24,12);const ibo=gl.createBuffer();gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,ibo);gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,new Uint32Array(indices),gl.STATIC_DRAW);return{vao,count:indices.length}}
++function box(){const f=[[1,0,0],[-1,0,0],[0,-1,0],[0,1,0],[0,0,1],[0,0,-1]];let v=[],i=[];const faces=[[[1,-1,-1],[1,-1,1],[1,1,1],[1,1,-1]],[[-1,-1,1],[-1,-1,-1],[-1,1,-1],[-1,1,1]],[[-1,-1,1],[1,-1,1],[1,-1,-1],[-1,-1,-1]],[[-1,1,-1],[1,1,-1],[1,1,1],[-1,1,1]],[[1,-1,1],[-1,-1,1],[-1,1,1],[1,1,1]],[[-1,-1,-1],[1,-1,-1],[1,1,-1],[-1,1,-1]]];faces.forEach((q,k)=>{let n=f[k];let b=v.length/6;q.forEach(p=>v.push(...p.map(x=>x*.5),...n));i.push(b,b+1,b+2,b,b+2,b+3)});return mesh(v,i)}function plane(){return mesh([-.5,0,-.5,0,1,0,.5,0,-.5,0,1,0,.5,0,.5,0,1,0,-.5,0,.5,0,1,0],[0,1,2,0,2,3])}function sphere(seg=28,rings=18){let v=[],i=[];for(let y=0;y<=rings;y++){let a=y*Math.PI/rings,sy=Math.cos(a),sr=Math.sin(a);for(let x=0;x<=seg;x++){let b=x*2*Math.PI/seg,n=[sr*Math.cos(b),sy,sr*Math.sin(b)];v.push(n[0]*.5,n[1]*.5,n[2]*.5,...n)}}for(let y=0;y<rings;y++)for(let x=0;x<seg;x++){let a=y*(seg+1)+x,b=a+seg+1;i.push(a,b,a+1,b,b+1,a+1)}return mesh(v,i)}function cylinder(seg=32){let v=[],i=[];for(let y=0;y<2;y++)for(let x=0;x<=seg;x++){let a=x*2*Math.PI/seg,n=[Math.cos(a),0,Math.sin(a)];v.push(n[0]*.5,(y-.5),n[2]*.5,...n)}for(let x=0;x<seg;x++){let a=x,b=x+seg+1;i.push(a,b,a+1,b,b+1,a+1)};for(let side of [-1,1]){let center=v.length/6;v.push(0,side*.5,0,0,side,0);let start=v.length/6;for(let x=0;x<=seg;x++){let a=x*2*Math.PI/seg;v.push(Math.cos(a)*.5,side*.5,Math.sin(a)*.5,0,side,0)}for(let x=0;x<seg;x++)side>0?i.push(center,start+x+1,start+x):i.push(center,start+x,start+x+1)}return mesh(v,i)}const meshes={box:box(),plane:plane(),sphere:sphere(),cylinder:cylinder()};
++let cam={pos:[...scene.camera.position],target:[...scene.camera.target]};let d=sub(cam.pos,cam.target),radius=Math.hypot(...d),yaw=Math.atan2(d[0],d[2]),pitch=Math.asin(d[1]/radius),drag=false,last=[0,0];function updateCam(){cam.pos=[cam.target[0]+radius*Math.cos(pitch)*Math.sin(yaw),cam.target[1]+radius*Math.sin(pitch),cam.target[2]+radius*Math.cos(pitch)*Math.cos(yaw)]}if(scene.camera.orbit_enabled){canvas.addEventListener('pointerdown',e=>{drag=true;last=[e.clientX,e.clientY];canvas.setPointerCapture(e.pointerId)});canvas.addEventListener('pointerup',()=>drag=false);canvas.addEventListener('pointermove',e=>{if(!drag)return;yaw-=(e.clientX-last[0])*.006;pitch=Math.max(-1.45,Math.min(1.45,pitch-(e.clientY-last[1])*.006));last=[e.clientX,e.clientY];updateCam()});canvas.addEventListener('wheel',e=>{e.preventDefault();radius=Math.max(.5,Math.min(250,radius*Math.exp(e.deltaY*.001)));updateCam()},{passive:false})}
++function resize(){let dpr=Math.min(devicePixelRatio||1,2),w=Math.max(1,Math.floor(innerWidth*dpr)),h=Math.max(1,Math.floor(innerHeight*dpr));if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;gl.viewport(0,0,w,h)}}function modelFor(o,t){let p=[...o.position],rot=o.rotation_degrees.map(x=>x*Math.PI/180),a=o.animation;if(a.kind==='spin')rot[1]+=t*a.speed*Math.PI/180;if(a.kind==='bob')p[1]+=Math.sin(t*a.speed*Math.PI*2)*a.amplitude;if(a.kind==='orbit'){p[0]+=Math.sin(t*a.speed)*a.radius;p[2]+=Math.cos(t*a.speed)*a.radius}return M.mul(M.T(...p),M.mul(M.Rz(rot[2]),M.mul(M.Ry(rot[1]),M.mul(M.Rx(rot[0]),M.S(...o.scale)))))}function frame(ms){resize();let t=ms*.001;gl.enable(gl.DEPTH_TEST);gl.enable(gl.CULL_FACE);gl.clearColor(...scene.background);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.useProgram(program);let proj=M.persp(scene.camera.fov_degrees*Math.PI/180,canvas.width/canvas.height,scene.camera.near,scene.camera.far),view=M.look(cam.pos,cam.target);gl.uniformMatrix4fv(U.uView,false,view);gl.uniformMatrix4fv(U.uProj,false,proj);gl.uniform3fv(U.uCamera,cam.pos);gl.uniform3fv(U.uAmbientColor,scene.ambient.color);gl.uniform1f(U.uAmbientIntensity,scene.ambient.intensity);gl.uniform1f(U.uExposure,scene.render.exposure);gl.uniform1f(U.uFogDensity,scene.render.fog_density);let lp=new Float32Array(32),lc=new Float32Array(32),lr=new Float32Array(8);scene.lights.forEach((l,k)=>{let q=k*4,v=l.kind==='point'?l.position:l.direction;lp.set([v[0],v[1],v[2],l.kind==='point'?1:0],q);lc.set([l.color[0],l.color[1],l.color[2],l.intensity],q);lr[k]=l.range});gl.uniform1i(U.uLightCount,scene.lights.length);gl.uniform4fv(U['uLightPosType[0]'],lp);gl.uniform4fv(U['uLightColorIntensity[0]'],lc);gl.uniform1fv(U['uLightRange[0]'],lr);for(const o of scene.objects){if(!o.visible)continue;let m=meshes[o.primitive],mat=o.material;gl.uniformMatrix4fv(U.uModel,false,modelFor(o,t));gl.uniform4fv(U.uBase,mat.base_color);gl.uniform1f(U.uMetallic,mat.metallic);gl.uniform1f(U.uRoughness,mat.roughness);gl.uniform3fv(U.uEmissive,mat.emissive);gl.uniform1f(U.uEmissiveStrength,mat.emissive_strength);gl.bindVertexArray(m.vao);gl.drawElements(gl.TRIANGLES,m.count,gl.UNSIGNED_INT,0)}requestAnimationFrame(frame)}document.getElementById('stats').textContent=`${scene.objects.length} objects · ${scene.lights.length} lights · drag orbit · wheel zoom`;requestAnimationFrame(frame);
++</script></body></html>'''
++
++
++def render_html(scene: dict[str, Any]) -> str:
++    normalized = compile_scene(scene)
++    encoded = json.dumps(normalized, sort_keys=True, separators=(",", ":"), ensure_ascii=False).replace("</", "<\\/")
++    title = normalized["title"].replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
++    return _HTML_TEMPLATE.replace("__TITLE__", title).replace("__SCENE_JSON__", encoded)
++
++
++def write_visual_bundle(output_dir: str | Path, raw_scene: Any, *, replace: bool = False) -> dict[str, Any]:
++    output = Path(output_dir).expanduser().resolve()
++    if output.exists() and any(output.iterdir()) and not replace:
++        raise FileExistsError(f"native visual output is not empty: {output}")
++    output.mkdir(parents=True, exist_ok=True)
++    scene = compile_scene(raw_scene)
++    scene_path, html_path, receipt_path = output / "scene.json", output / "index.html", output / "receipt.json"
++    scene_bytes = (json.dumps(scene, indent=2, sort_keys=True, ensure_ascii=False) + "\n").encode("utf-8")
++    html_bytes = render_html(scene).encode("utf-8")
++    scene_path.write_bytes(scene_bytes)
++    html_path.write_bytes(html_bytes)
++    receipt = {
++        "schema": RECEIPT_SCHEMA,
++        "status": "NATIVE_VISUAL_BUNDLE_COMPILED",
++        "engine": ENGINE_ID,
++        "scene_sha256": scene["scene_sha256"],
++        "files": {"scene.json": hashlib.sha256(scene_bytes).hexdigest(), "index.html": hashlib.sha256(html_bytes).hexdigest()},
++        "counts": {"objects": len(scene["objects"]), "lights": len(scene["lights"])},
++        "truth": {"webgl_execution_tested_here": False, "bundle_is_self_contained": True, "requires_webgl2_browser": True, "replaces_blender_final_authoring": False},
++    }
++    receipt_path.write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n", encoding="utf-8")
++    return receipt
++
++
++def main(argv: list[str] | None = None) -> int:
++    parser = argparse.ArgumentParser(description="Compile a self-contained AXM native WebGL2 visual scene")
++    source = parser.add_mutually_exclusive_group(required=True)
++    source.add_argument("--scene", type=Path, help="JSON scene input")
++    source.add_argument("--demo", action="store_true", help="Compile the built-in forge-bay demo")
++    parser.add_argument("--output", type=Path, required=True, help="Output bundle directory")
++    parser.add_argument("--replace", action="store_true", help="Replace AXM native visual bundle files in a non-empty output directory")
++    args = parser.parse_args(argv)
++    scene = demo_scene() if args.demo else json.loads(args.scene.read_text(encoding="utf-8"))
++    receipt = write_visual_bundle(args.output, scene, replace=args.replace)
++    print(json.dumps(receipt, indent=2, sort_keys=True))
++    return 0
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
+diff --git a/src/axm_uc/standalone_creation_capabilities.py b/src/axm_uc/standalone_creation_capabilities.py
+index fd506fd..e249aca 100644
+--- a/src/axm_uc/standalone_creation_capabilities.py
++++ b/src/axm_uc/standalone_creation_capabilities.py
+@@ -187,6 +187,54 @@ def register_standalone_creation_builtins(
+         except CreativeFlowError as exc:
+             raise capability_error(str(exc), exc.details) from exc
+ 
++    def native_visual_runtime(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
++        from .native_visual_engine import catalog_native_visual, compile_scene, demo_scene, write_visual_bundle
++
++        operation = str(inputs.get("operation", "inspect")).strip().casefold()
++        if operation == "inspect":
++            return catalog_native_visual()
++        if operation == "compile":
++            if "scene" not in inputs:
++                raise capability_error("native visual compile requires scene")
++            return compile_scene(inputs["scene"])
++        if operation not in {"bundle", "demo"}:
++            raise capability_error(
++                f"unsupported native visual operation: {operation}",
++                {"supported_operations": ["inspect", "compile", "bundle", "demo"]},
++            )
++        target = resolve_output_path(root, str(inputs.get("path", "")))
++        if is_machine_body_path(root, target):
++            raise capability_error("native visual bundles cannot rewrite the live machine body")
++        replace = inputs.get("replace", False)
++        if not isinstance(replace, bool):
++            raise capability_error("native visual replace must be a boolean")
++        if operation == "bundle" and "scene" not in inputs:
++            raise capability_error("native visual bundle requires scene")
++        scene = demo_scene() if operation == "demo" else inputs["scene"]
++        try:
++            return write_visual_bundle(target, scene, replace=replace)
++        except (TypeError, ValueError, FileExistsError) as exc:
++            raise capability_error(str(exc)) from exc
++
++    def external_visual_tools(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
++        from .external_visual_tools import ExternalVisualToolError, operate_external_visual_tool
++
++        normalized = dict(inputs)
++        operation = str(inputs.get("operation", "catalog")).strip().casefold()
++        if operation == "execute":
++            if "cwd" not in inputs:
++                raise capability_error("external visual tool execution requires an explicit cwd")
++            cwd = resolve_output_path(root, str(inputs["cwd"]))
++            if is_machine_body_path(root, cwd):
++                raise capability_error(
++                    "external visual tools cannot execute with the live machine body as their working directory"
++                )
++            normalized["cwd"] = str(cwd)
++        try:
++            return operate_external_visual_tool(root, normalized)
++        except ExternalVisualToolError as exc:
++            raise capability_error(str(exc), exc.details) from exc
++
+     return {
+         "builtin:local_creation_provider": local_creation_provider,
+         "builtin:host_evidence": host_evidence,
+@@ -198,4 +246,6 @@ def register_standalone_creation_builtins(
+         "builtin:creation_growth": creation_growth,
+         "builtin:procedural_3d": procedural_3d,
+         "builtin:creative_flow": creative_flow,
++        "builtin:native_visual_runtime": native_visual_runtime,
++        "builtin:external_visual_tools": external_visual_tools,
+     }
+diff --git a/tests/test_blender_pro_source.py b/tests/test_blender_pro_source.py
+new file mode 100644
+index 0000000..a5fa304
+--- /dev/null
++++ b/tests/test_blender_pro_source.py
+@@ -0,0 +1,30 @@
++from __future__ import annotations
++
++import ast
++import sys
++import unittest
++from pathlib import Path
++
++ROOT = Path(__file__).resolve().parents[1]
++
++
++class BlenderProSourceTests(unittest.TestCase):
++    def test_blender_pro_helper_is_syntax_valid_and_truth_bounded(self):
++        source = (ROOT / "tools" / "blender" / "axm_blender_pro.py").read_text(encoding="utf-8")
++        ast.parse(source)
++        self.assertIn('"preview"', source)
++        self.assertIn('"lookdev"', source)
++        self.assertIn('"hero"', source)
++        self.assertIn('"proof"', source)
++        self.assertIn("visual_acceptance_requires_rendered_review", source)
++        self.assertIn("structural_scene_checks_only", source)
++        self.assertIn("NATIVE_SCENE_SCHEMA", source)
++        self.assertIn("def apply_native_scene", source)
++        self.assertIn("shared_scene_contract_realized", source)
++        self.assertIn("renderer_pixel_parity_claimed", source)
++        self.assertIn("def main(argv:", source)
++        self.assertIn("bpy.ops.wm.save_as_mainfile", source)
++
++
++if __name__ == "__main__":
++    unittest.main()
+diff --git a/tests/test_external_visual_tools.py b/tests/test_external_visual_tools.py
+new file mode 100644
+index 0000000..b635c72
+--- /dev/null
++++ b/tests/test_external_visual_tools.py
+@@ -0,0 +1,78 @@
++from __future__ import annotations
++
++import subprocess
++import sys
++import tempfile
++import unittest
++from pathlib import Path
++from unittest.mock import patch
++
++ROOT = Path(__file__).resolve().parents[1]
++sys.path.insert(0, str(ROOT / "src"))
++
++from axm_uc.external_visual_tools import (
++    EXTERNAL_VISUAL_TOOLS,
++    ExternalVisualToolError,
++    catalog_external_visual_tools,
++    execute_external_visual_tool,
++    probe_external_visual_tool,
++)
++
++
++class ExternalVisualToolTests(unittest.TestCase):
++    def test_catalog_marks_every_connector_external_not_native(self):
++        with patch("axm_uc.external_visual_tools.shutil.which", return_value=None):
++            catalog = catalog_external_visual_tools()
++        self.assertEqual(catalog["truth_status"], "EXTERNAL_OPTIONAL_CONNECTOR_CATALOG")
++        self.assertFalse(catalog["native"])
++        self.assertEqual(len(catalog["tools"]), len(EXTERNAL_VISUAL_TOOLS))
++        self.assertTrue(all(item["native"] is False for item in catalog["tools"]))
++        self.assertTrue(all(item["dependency_class"] == "EXTERNAL_OPTIONAL" for item in catalog["tools"]))
++
++    def test_connector_set_contains_declared_visual_tools(self):
++        self.assertTrue(
++            {"blender", "godot", "unreal", "krita", "gimp", "imagemagick", "ffmpeg", "openscad", "houdini", "inkscape"}
++            <= set(EXTERNAL_VISUAL_TOOLS)
++        )
++
++    @patch("axm_uc.external_visual_tools.subprocess.run")
++    @patch("axm_uc.external_visual_tools.shutil.which", return_value="/opt/ffmpeg")
++    def test_probe_receipts_actual_external_execution(self, _which, run):
++        run.return_value = subprocess.CompletedProcess(["/opt/ffmpeg", "-version"], 0, "ffmpeg fake\n", "")
++        result = probe_external_visual_tool("ffmpeg")
++        self.assertEqual(result["truth_status"], "EXTERNAL_TOOL_EXECUTION_OBSERVED")
++        self.assertFalse(result["native"])
++        self.assertTrue(result["external_dependency_used"])
++        self.assertTrue(result["probe_executed"])
++        self.assertFalse(result["visual_output_observed"])
++        self.assertFalse(run.call_args.kwargs["shell"])
++
++    def test_execute_requires_explicit_permission(self):
++        with tempfile.TemporaryDirectory() as temporary:
++            with self.assertRaises(ExternalVisualToolError):
++                execute_external_visual_tool(
++                    "ffmpeg",
++                    args=["-version"],
++                    cwd=Path(temporary),
++                    allow_execute=False,
++                )
++
++    @patch("axm_uc.external_visual_tools.subprocess.run")
++    @patch("axm_uc.external_visual_tools.shutil.which", return_value="/opt/ffmpeg")
++    def test_execute_never_uses_shell_and_hashes_output(self, _which, run):
++        run.return_value = subprocess.CompletedProcess(["/opt/ffmpeg", "-version"], 0, "ok", "warn")
++        with tempfile.TemporaryDirectory() as temporary:
++            result = execute_external_visual_tool(
++                "ffmpeg",
++                args=["-version"],
++                cwd=Path(temporary),
++                allow_execute=True,
++            )
++        self.assertTrue(result["success"])
++        self.assertEqual(len(result["stdout_sha256"]), 64)
++        self.assertEqual(len(result["stderr_sha256"]), 64)
++        self.assertFalse(run.call_args.kwargs["shell"])
++
++
++if __name__ == "__main__":
++    unittest.main()
+diff --git a/tests/test_native_visual_engine.py b/tests/test_native_visual_engine.py
+new file mode 100644
+index 0000000..409edf4
+--- /dev/null
++++ b/tests/test_native_visual_engine.py
+@@ -0,0 +1,86 @@
++from __future__ import annotations
++
++import json
++import sys
++import tempfile
++import unittest
++from pathlib import Path
++
++ROOT = Path(__file__).resolve().parents[1]
++sys.path.insert(0, str(ROOT / "src"))
++
++from axm_uc.native_visual_engine import (
++    ENGINE_ID,
++    SCENE_SCHEMA,
++    catalog_native_visual,
++    compile_scene,
++    demo_scene,
++    render_html,
++    scene_sha256,
++    write_visual_bundle,
++)
++
++
++class NativeVisualEngineTests(unittest.TestCase):
++    def test_catalog_declares_blender_bridge_without_pixel_parity_claim(self):
++        catalog = catalog_native_visual()
++        self.assertEqual(catalog["truth_status"], "EXECUTABLE_CODED_VISUAL_RUNTIME")
++        self.assertEqual(catalog["bridge"]["target"], "Blender bpy")
++        self.assertFalse(catalog["bridge"]["pixel_parity_claimed"])
++        self.assertTrue(catalog["truth"]["live_pixels_require_webgl2_host_evidence"])
++
++    def test_scene_contract_is_deterministic_and_truth_bounded(self):
++        first = demo_scene()
++        second = compile_scene(first)
++        self.assertEqual(first["schema"], SCENE_SCHEMA)
++        self.assertEqual(first["engine"], ENGINE_ID)
++        self.assertEqual(first["scene_sha256"], second["scene_sha256"])
++        self.assertEqual(first["scene_sha256"], scene_sha256(first))
++        self.assertFalse(first["truth"]["final_asset_authoring_replacement"])
++        self.assertTrue(first["truth"]["external_javascript_dependencies"] is False)
++
++    def test_invalid_or_ambiguous_scene_state_is_rejected(self):
++        with self.assertRaises(ValueError):
++            compile_scene({"objects": [{"id": "same"}, {"id": "same"}]})
++        with self.assertRaises(ValueError):
++            compile_scene({"objects": [{"id": "bad", "primitive": "teapot"}]})
++        with self.assertRaises(ValueError):
++            compile_scene({"objects": [{"id": "flat", "scale": [1, 0, 1]}]})
++        with self.assertRaises(ValueError):
++            compile_scene({"camera": {"near": 10, "far": 1}})
++
++    def test_html_is_self_contained_webgl2_runtime(self):
++        html = render_html(demo_scene())
++        self.assertIn("getContext('webgl2'", html)
++        self.assertIn("#version 300 es", html)
++        self.assertIn("AXM native WebGL2 preview", html)
++        self.assertNotIn("<script src=", html)
++        self.assertNotIn("https://", html)
++        self.assertNotIn("http://", html)
++
++    def test_bundle_writes_scene_html_and_hash_receipt(self):
++        with tempfile.TemporaryDirectory() as temporary:
++            receipt = write_visual_bundle(temporary, demo_scene())
++            root = Path(temporary)
++            scene = json.loads((root / "scene.json").read_text(encoding="utf-8"))
++            html = (root / "index.html").read_text(encoding="utf-8")
++            stored = json.loads((root / "receipt.json").read_text(encoding="utf-8"))
++        self.assertEqual(receipt, stored)
++        self.assertEqual(receipt["status"], "NATIVE_VISUAL_BUNDLE_COMPILED")
++        self.assertEqual(scene["scene_sha256"], receipt["scene_sha256"])
++        self.assertIn(scene["title"], html)
++        self.assertTrue(receipt["truth"]["bundle_is_self_contained"])
++        self.assertFalse(receipt["truth"]["webgl_execution_tested_here"])
++
++    def test_bundle_refuses_nonempty_output_without_replace(self):
++        with tempfile.TemporaryDirectory() as temporary:
++            root = Path(temporary)
++            (root / "keep.txt").write_text("do not silently overwrite", encoding="utf-8")
++            with self.assertRaises(FileExistsError):
++                write_visual_bundle(root, demo_scene())
++            receipt = write_visual_bundle(root, demo_scene(), replace=True)
++        self.assertEqual(receipt["status"], "NATIVE_VISUAL_BUNDLE_COMPILED")
++
++
++if __name__ == "__main__":
++    unittest.main()
+diff --git a/tests/test_native_visual_machine_adapter.py b/tests/test_native_visual_machine_adapter.py
+new file mode 100644
+index 0000000..e2153bb
+--- /dev/null
++++ b/tests/test_native_visual_machine_adapter.py
+@@ -0,0 +1,102 @@
++from __future__ import annotations
++
++import sys
++import tempfile
++import unittest
++from pathlib import Path
++
++ROOT = Path(__file__).resolve().parents[1]
++sys.path.insert(0, str(ROOT / "src"))
++
++from axm_uc.machine import UniversalCreationMachine
++from axm_uc.standalone_creation_capabilities import register_standalone_creation_builtins
++
++
++class AdapterError(RuntimeError):
++    def __init__(self, message: str, details=None):
++        super().__init__(message)
++        self.details = details or {}
++
++
++class NativeVisualMachineAdapterTests(unittest.TestCase):
++    def builtins(self):
++        return register_standalone_creation_builtins(
++            capability_error=AdapterError,
++            resolve_output_path=lambda root, raw: (root / raw).resolve() if not Path(raw).is_absolute() else Path(raw).resolve(),
++            is_machine_body_path=lambda root, target: target == root.resolve(),
++            grammar_inventory=lambda path: {},
++            project_error=RuntimeError,
++        )
++
++    def test_native_visual_builtin_is_registered_and_inspectable(self):
++        fn = self.builtins()["builtin:native_visual_runtime"]
++        with tempfile.TemporaryDirectory() as temporary:
++            result = fn(Path(temporary), {"operation": "inspect"})
++        self.assertEqual(result["truth_status"], "EXECUTABLE_CODED_VISUAL_RUNTIME")
++
++    def test_live_manifest_routes_through_universal_creation_machine(self):
++        machine = UniversalCreationMachine(ROOT)
++        result = machine.create({
++            "kind": "native-visual-scene",
++            "inputs": {"operation": "inspect"},
++        })
++        self.assertEqual(result["type"], "CREATION_RESULT")
++        self.assertEqual(result["capability"], "AXM-CAP-NATIVE-VISUAL-RUNTIME")
++        self.assertEqual(result["result"]["truth_status"], "EXECUTABLE_CODED_VISUAL_RUNTIME")
++
++    def test_machine_adapter_can_compile_and_bundle_demo(self):
++        fn = self.builtins()["builtin:native_visual_runtime"]
++        with tempfile.TemporaryDirectory() as temporary:
++            root = Path(temporary)
++            compiled = fn(root, {"operation": "compile", "scene": {"objects": [{"id": "unit"}]}})
++            receipt = fn(root, {"operation": "demo", "path": "creations/native-demo"})
++            html_exists = (root / "creations" / "native-demo" / "index.html").is_file()
++        self.assertEqual(compiled["objects"][0]["id"], "unit")
++        self.assertEqual(receipt["status"], "NATIVE_VISUAL_BUNDLE_COMPILED")
++        self.assertTrue(html_exists)
++
++    def test_machine_adapter_rejects_live_body_write(self):
++        fn = self.builtins()["builtin:native_visual_runtime"]
++        with tempfile.TemporaryDirectory() as temporary:
++            root = Path(temporary)
++            with self.assertRaises(AdapterError):
++                fn(root, {"operation": "demo", "path": "."})
++
++    def test_external_visual_builtin_is_separate_and_never_native(self):
++        fn = self.builtins()["builtin:external_visual_tools"]
++        with tempfile.TemporaryDirectory() as temporary:
++            result = fn(Path(temporary), {"operation": "catalog"})
++        self.assertEqual(result["truth_status"], "EXTERNAL_OPTIONAL_CONNECTOR_CATALOG")
++        self.assertFalse(result["native"])
++        self.assertTrue(all(item["native"] is False for item in result["tools"]))
++
++    def test_external_visual_live_manifest_routes_separately(self):
++        machine = UniversalCreationMachine(ROOT)
++        result = machine.create({
++            "kind": "external-visual-tool",
++            "inputs": {"operation": "catalog"},
++        })
++        self.assertEqual(result["type"], "CREATION_RESULT")
++        self.assertEqual(result["capability"], "AXM-CAP-EXTERNAL-VISUAL-TOOLS")
++        self.assertEqual(result["result"]["truth_status"], "EXTERNAL_OPTIONAL_CONNECTOR_CATALOG")
++        self.assertFalse(result["result"]["native"])
++
++    def test_external_execution_cannot_use_live_body_as_cwd(self):
++        fn = self.builtins()["builtin:external_visual_tools"]
++        with tempfile.TemporaryDirectory() as temporary:
++            root = Path(temporary)
++            with self.assertRaises(AdapterError):
++                fn(
++                    root,
++                    {
++                        "operation": "execute",
++                        "tool": "ffmpeg",
++                        "cwd": ".",
++                        "args": ["-version"],
++                        "allow_execute": True,
++                    },
++                )
++
++
++if __name__ == "__main__":
++    unittest.main()
+diff --git a/tools/blender/axm_blender_pro.py b/tools/blender/axm_blender_pro.py
+new file mode 100644
+index 0000000..82eba10
+--- /dev/null
++++ b/tools/blender/axm_blender_pro.py
+@@ -0,0 +1,412 @@
++from __future__ import annotations
++
++"""Reusable high-quality Blender helpers for AXM Universal Creation.
++
++This module is intentionally additive. Existing forge scripts can adopt these
++helpers progressively instead of being rewritten. It centralizes the pieces
++that had drifted across many bpy scripts: render profiles, color management,
++world setup, camera aim, light rigs, PBR materials, deterministic seeds, and
++pre-render scene validation.
++"""
++
++import json
++import math
++from pathlib import Path
++from typing import Any
++
++import bpy
++from mathutils import Vector
++
++
++NATIVE_SCENE_SCHEMA = "axm.native-visual-scene/v0.1"
++
++
++RENDER_PROFILES: dict[str, dict[str, Any]] = {
++    "preview": {
++        "engine": "BLENDER_EEVEE_NEXT",
++        "resolution": 640,
++        "samples": 32,
++        "denoise": False,
++        "bounces": 3,
++    },
++    "lookdev": {
++        "engine": "BLENDER_EEVEE_NEXT",
++        "resolution": 960,
++        "samples": 64,
++        "denoise": False,
++        "bounces": 4,
++    },
++    "hero": {
++        "engine": "CYCLES",
++        "resolution": 1280,
++        "samples": 96,
++        "denoise": True,
++        "bounces": 7,
++    },
++    "proof": {
++        "engine": "CYCLES",
++        "resolution": 900,
++        "samples": 64,
++        "denoise": True,
++        "bounces": 6,
++    },
++}
++
++
++def configure_render(
++    profile: str = "hero",
++    *,
++    resolution: int | None = None,
++    transparent: bool = False,
++    seed: int = 42,
++) -> dict[str, Any]:
++    key = str(profile).strip().casefold()
++    if key not in RENDER_PROFILES:
++        raise ValueError(f"unknown render profile: {profile}")
++    spec = dict(RENDER_PROFILES[key])
++    if resolution is not None:
++        spec["resolution"] = max(128, min(8192, int(resolution)))
++
++    scene = bpy.context.scene
++    scene.render.engine = spec["engine"]
++    scene.render.resolution_x = spec["resolution"]
++    scene.render.resolution_y = spec["resolution"]
++    scene.render.resolution_percentage = 100
++    scene.render.image_settings.file_format = "PNG"
++    scene.render.image_settings.color_mode = "RGBA"
++    scene.render.film_transparent = bool(transparent)
++
++    if spec["engine"] == "CYCLES":
++        scene.cycles.samples = spec["samples"]
++        scene.cycles.use_denoising = spec["denoise"]
++        scene.cycles.seed = int(seed)
++        scene.cycles.max_bounces = spec["bounces"]
++        scene.cycles.diffuse_bounces = min(4, spec["bounces"])
++        scene.cycles.glossy_bounces = min(4, spec["bounces"])
++
++    try:
++        scene.view_settings.look = "AgX - Medium High Contrast"
++    except (TypeError, ValueError):
++        # Keep the helper usable across Blender versions whose AgX labels differ.
++        pass
++    scene.view_settings.exposure = 0.0
++    scene.view_settings.gamma = 1.0
++    return {"profile": key, **spec, "transparent": bool(transparent), "seed": int(seed)}
++
++
++def configure_world(
++    color: tuple[float, float, float] = (0.012, 0.018, 0.032),
++    *,
++    strength: float = 0.24,
++) -> bpy.types.World:
++    world = bpy.context.scene.world or bpy.data.worlds.new("AXM_World")
++    bpy.context.scene.world = world
++    world.use_nodes = True
++    nodes = world.node_tree.nodes
++    background = nodes.get("Background")
++    if background is None:
++        background = nodes.new("ShaderNodeBackground")
++    background.inputs["Color"].default_value = (*color, 1.0)
++    background.inputs["Strength"].default_value = max(0.0, float(strength))
++    return world
++
++
++def aim_at(obj: bpy.types.Object, target: tuple[float, float, float] | Vector) -> None:
++    vector = Vector(target) - obj.location
++    if vector.length <= 1e-8:
++        raise ValueError("camera/light cannot aim at its own location")
++    obj.rotation_euler = vector.to_track_quat("-Z", "Y").to_euler()
++
++
++def make_camera(
++    *,
++    name: str = "AXM_HeroCamera",
++    location: tuple[float, float, float] = (7.5, 5.0, 9.0),
++    target: tuple[float, float, float] = (0.0, 1.4, 0.0),
++    lens_mm: float = 58.0,
++) -> bpy.types.Object:
++    data = bpy.data.cameras.new(f"{name}_Data")
++    camera = bpy.data.objects.new(name, data)
++    bpy.context.collection.objects.link(camera)
++    camera.location = location
++    data.lens = float(lens_mm)
++    data.sensor_width = 36.0
++    aim_at(camera, target)
++    bpy.context.scene.camera = camera
++    return camera
++
++
++def _area_light(
++    name: str,
++    location: tuple[float, float, float],
++    target: tuple[float, float, float],
++    *,
++    energy: float,
++    color: tuple[float, float, float],
++    size: float,
++) -> bpy.types.Object:
++    data = bpy.data.lights.new(f"{name}_Data", type="AREA")
++    data.energy = float(energy)
++    data.color = color
++    data.shape = "DISK"
++    data.size = float(size)
++    light = bpy.data.objects.new(name, data)
++    bpy.context.collection.objects.link(light)
++    light.location = location
++    aim_at(light, target)
++    return light
++
++
++def three_point_lighting(
++    *,
++    target: tuple[float, float, float] = (0.0, 1.4, 0.0),
++    scale: float = 1.0,
++) -> list[bpy.types.Object]:
++    s = max(0.1, float(scale))
++    return [
++        _area_light(
++            "AXM_Key", (4.8 * s, 7.2 * s, 5.5 * s), target,
++            energy=1050 * s, color=(1.0, 0.78, 0.62), size=4.2 * s,
++        ),
++        _area_light(
++            "AXM_Fill", (-5.5 * s, 4.0 * s, 2.8 * s), target,
++            energy=620 * s, color=(0.38, 0.58, 1.0), size=5.0 * s,
++        ),
++        _area_light(
++            "AXM_Rim", (0.6 * s, 5.8 * s, -5.8 * s), target,
++            energy=880 * s, color=(0.35, 0.92, 1.0), size=3.4 * s,
++        ),
++    ]
++
++
++def pbr_material(
++    name: str,
++    *,
++    base_color: tuple[float, float, float, float] = (0.35, 0.4, 0.46, 1.0),
++    metallic: float = 0.0,
++    roughness: float = 0.45,
++    emission: tuple[float, float, float] = (0.0, 0.0, 0.0),
++    emission_strength: float = 0.0,
++) -> bpy.types.Material:
++    material = bpy.data.materials.new(name)
++    material.use_nodes = True
++    node = material.node_tree.nodes.get("Principled BSDF")
++    if node is None:
++        raise RuntimeError("Principled BSDF node unavailable")
++    node.inputs["Base Color"].default_value = base_color
++    node.inputs["Metallic"].default_value = max(0.0, min(1.0, float(metallic)))
++    node.inputs["Roughness"].default_value = max(0.04, min(1.0, float(roughness)))
++    emission_socket = node.inputs.get("Emission Color") or node.inputs.get("Emission")
++    if emission_socket is not None:
++        emission_socket.default_value = (*emission, 1.0)
++    strength_socket = node.inputs.get("Emission Strength")
++    if strength_socket is not None:
++        strength_socket.default_value = max(0.0, float(emission_strength))
++    return material
++
++
++def _clear_native_scene_objects() -> None:
++    for obj in list(bpy.context.scene.objects):
++        if obj.get("axm_native_scene"):
++            bpy.data.objects.remove(obj, do_unlink=True)
++
++
++def _native_primitive(entry: dict[str, Any]) -> bpy.types.Object:
++    primitive = entry["primitive"]
++    if primitive == "box":
++        bpy.ops.mesh.primitive_cube_add(size=1.0)
++    elif primitive == "sphere":
++        bpy.ops.mesh.primitive_uv_sphere_add(segments=48, ring_count=24, radius=0.5)
++    elif primitive == "cylinder":
++        bpy.ops.mesh.primitive_cylinder_add(vertices=48, radius=0.5, depth=1.0)
++    elif primitive == "plane":
++        bpy.ops.mesh.primitive_plane_add(size=1.0)
++    else:
++        raise ValueError(f"unsupported native primitive: {primitive}")
++    obj = bpy.context.active_object
++    obj.name = f"AXM_NV_{entry['id']}"
++    obj.location = entry["position"]
++    obj.rotation_euler = tuple(math.radians(float(value)) for value in entry["rotation_degrees"])
++    obj.scale = entry["scale"]
++    obj["axm_native_scene"] = True
++    obj["axm_native_id"] = entry["id"]
++    material_spec = entry["material"]
++    material = pbr_material(
++        f"AXM_NV_MAT_{entry['id']}",
++        base_color=tuple(material_spec["base_color"]),
++        metallic=material_spec["metallic"],
++        roughness=material_spec["roughness"],
++        emission=tuple(material_spec["emissive"]),
++        emission_strength=material_spec["emissive_strength"],
++    )
++    obj.data.materials.append(material)
++    return obj
++
++
++def apply_native_scene(scene_data: dict[str, Any], *, clear_previous: bool = True) -> dict[str, Any]:
++    """Realize the AXM native visual scene contract inside Blender.
++
++    The coded WebGL runtime and Blender therefore share camera, object,
++    material, light, and world state. This bridge deliberately does not claim
++    equivalent pixels or equivalent visual quality between renderers.
++    """
++    if not isinstance(scene_data, dict) or scene_data.get("schema") != NATIVE_SCENE_SCHEMA:
++        raise ValueError(f"scene_data must use {NATIVE_SCENE_SCHEMA}")
++    if clear_previous:
++        _clear_native_scene_objects()
++
++    world = configure_world(
++        tuple(scene_data["background"][:3]),
++        strength=max(0.0, float(scene_data["ambient"]["intensity"])),
++    )
++    world["axm_native_scene"] = True
++    created: list[str] = []
++    for entry in scene_data.get("objects", []):
++        if not entry.get("visible", True):
++            continue
++        created.append(_native_primitive(entry).name)
++
++    camera_spec = scene_data["camera"]
++    camera = make_camera(
++        name="AXM_NV_Camera",
++        location=tuple(camera_spec["position"]),
++        target=tuple(camera_spec["target"]),
++        lens_mm=50.0,
++    )
++    camera.data.angle = math.radians(float(camera_spec["fov_degrees"]))
++    camera.data.clip_start = float(camera_spec["near"])
++    camera.data.clip_end = float(camera_spec["far"])
++    camera["axm_native_scene"] = True
++
++    light_names: list[str] = []
++    for entry in scene_data.get("lights", []):
++        kind = entry["kind"]
++        data = bpy.data.lights.new(
++            f"AXM_NV_{entry['id']}_Data",
++            type="POINT" if kind == "point" else "SUN",
++        )
++        data.color = tuple(entry["color"])
++        data.energy = max(0.0, float(entry["intensity"])) * (120.0 if kind == "point" else 1.6)
++        if kind == "point":
++            data.shadow_soft_size = max(0.05, min(float(entry.get("range", 25.0)) * 0.025, 4.0))
++        light = bpy.data.objects.new(f"AXM_NV_{entry['id']}", data)
++        bpy.context.collection.objects.link(light)
++        light["axm_native_scene"] = True
++        if kind == "point":
++            light.location = entry["position"]
++        else:
++            direction = Vector(entry["direction"])
++            if direction.length <= 1e-8:
++                raise ValueError(f"native directional light {entry['id']} has zero direction")
++            light.rotation_euler = direction.to_track_quat("-Z", "Y").to_euler()
++        light_names.append(light.name)
++
++    return {
++        "schema": "axm.native-visual-to-blender/v0.1",
++        "source_scene_sha256": scene_data.get("scene_sha256"),
++        "created_objects": created,
++        "camera": camera.name,
++        "lights": light_names,
++        "truth": {
++            "shared_scene_contract_realized": True,
++            "renderer_pixel_parity_claimed": False,
++            "visual_acceptance_requires_rendered_review": True,
++        },
++    }
++
++
++def validate_scene(*, require_camera: bool = True, require_mesh: bool = True) -> dict[str, Any]:
++    scene = bpy.context.scene
++    meshes = [obj for obj in scene.objects if obj.type == "MESH"]
++    cameras = [obj for obj in scene.objects if obj.type == "CAMERA"]
++    lights = [obj for obj in scene.objects if obj.type == "LIGHT"]
++    materials = {slot.material.name for obj in meshes for slot in obj.material_slots if slot.material}
++    issues: list[str] = []
++    if require_camera and scene.camera is None:
++        issues.append("scene has no active camera")
++    if require_mesh and not meshes:
++        issues.append("scene has no mesh objects")
++    for obj in meshes:
++        if any(abs(component) < 1e-8 for component in obj.scale):
++            issues.append(f"{obj.name}: zero scale component")
++        if obj.data and len(obj.data.polygons) == 0:
++            issues.append(f"{obj.name}: mesh has no polygons")
++    for material in bpy.data.materials:
++        if material.users and not material.use_nodes:
++            issues.append(f"{material.name}: material is not node based")
++    return {
++        "schema": "axm.blender-scene-validation/v0.1",
++        "status": "PASS" if not issues else "FAIL",
++        "counts": {
++            "meshes": len(meshes),
++            "cameras": len(cameras),
++            "lights": len(lights),
++            "materials": len(materials),
++        },
++        "issues": issues,
++        "truth": {"visual_quality_judged": False, "structural_scene_checks_only": True},
++    }
++
++
++def proof_angles(count: int = 4, *, offset_degrees: float = 32.0) -> list[float]:
++    count = int(count)
++    if count < 1 or count > 36:
++        raise ValueError("proof angle count must be between 1 and 36")
++    step = 360.0 / count
++    return [round((float(offset_degrees) + step * index) % 360.0, 6) for index in range(count)]
++
++
++def write_scene_receipt(
++    path: str | Path,
++    *,
++    render_profile: dict[str, Any] | None = None,
++) -> dict[str, Any]:
++    validation = validate_scene()
++    receipt = {
++        "schema": "axm.blender-pro-scene-receipt/v0.1",
++        "validation": validation,
++        "render_profile": render_profile,
++        "proof_angles": proof_angles(4),
++        "truth": {
++            "bpy_scene_executed": True,
++            "visual_acceptance_requires_rendered_review": True,
++            "receipt_is_not_a_quality_claim": True,
++        },
++    }
++    Path(path).write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n", encoding="utf-8")
++    return receipt
++
++
++def main(argv: list[str] | None = None) -> int:
++    import argparse
++
++    parser = argparse.ArgumentParser(description="Realize an AXM native visual scene in Blender")
++    parser.add_argument("--native-scene", type=Path, required=True, help="Compiled AXM native scene JSON")
++    parser.add_argument("--output-blend", type=Path, required=True, help="Destination .blend file")
++    parser.add_argument("--receipt", type=Path, required=True, help="Destination Blender scene receipt JSON")
++    parser.add_argument("--profile", choices=sorted(RENDER_PROFILES), default="hero")
++    parser.add_argument("--resolution", type=int)
++    parser.add_argument("--transparent", action="store_true")
++    args = parser.parse_args(argv)
++
++    scene_data = json.loads(args.native_scene.read_text(encoding="utf-8"))
++    bridge = apply_native_scene(scene_data)
++    profile = configure_render(
++        args.profile,
++        resolution=args.resolution,
++        transparent=args.transparent,
++    )
++    validation = validate_scene()
++    if validation["status"] != "PASS":
++        raise RuntimeError(f"native scene failed Blender structural validation: {validation['issues']}")
++    args.output_blend.parent.mkdir(parents=True, exist_ok=True)
++    args.receipt.parent.mkdir(parents=True, exist_ok=True)
++    bpy.ops.wm.save_as_mainfile(filepath=str(args.output_blend.resolve()))
++    receipt = write_scene_receipt(args.receipt, render_profile=profile)
++    receipt["native_scene_bridge"] = bridge
++    args.receipt.write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n", encoding="utf-8")
++    return 0
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())

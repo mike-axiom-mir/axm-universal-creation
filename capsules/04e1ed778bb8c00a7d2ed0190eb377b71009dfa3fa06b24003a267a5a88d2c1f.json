@@ -1,0 +1,210 @@
+{
+  "capsule_id": "04e1ed778bb8c00a7d2ed0190eb377b71009dfa3fa06b24003a267a5a88d2c1f",
+  "evidence": {
+    "files": [
+      {
+        "additions": 42,
+        "binary": false,
+        "content_sha256": "3e1dc46767dfa4989f6d1089e07b7e1cb8c2f7016a51a3d664bf13c152bf7640",
+        "deletions": 1,
+        "path": "GAME_STYLE_GROWTH.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Current checkpoint",
+          "Game runtime realization pass \u2014 2026-09-13",
+          "Secondary motion pass \u2014 2026-09-13"
+        ]
+      },
+      {
+        "additions": 60,
+        "binary": false,
+        "content_sha256": "40d413826d118620879854f123d137db713f0219909d244666f9c328a08384e1",
+        "deletions": 0,
+        "path": "docs/GAME_RUNTIME_REALIZATION.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Game runtime realization",
+          "Evidence contract",
+          "Real export proof",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 297,
+        "binary": false,
+        "content_sha256": "2dff4e121bf5516d6c524c6225dd69e1a0829f94b427dc73d3a381543777aac6",
+        "deletions": 0,
+        "path": "src/axm_uc/game_runtime_realization.py",
+        "status": "A",
+        "symbols": [
+          "_canonical",
+          "_digest",
+          "_number",
+          "_integer",
+          "_name",
+          "_vec3",
+          "game_runtime_realization_catalog",
+          "_anchor",
+          "_features",
+          "_source",
+          "_request",
+          "_angle",
+          "_anchor_receipts",
+          "compose_game_runtime_realization",
+          "publish_game_runtime_realization"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 14,
+        "binary": false,
+        "content_sha256": "550b38e3340850ae2394886398d750182f8a0f62017f781edb1c344a274d131f",
+        "deletions": 0,
+        "path": "src/axm_uc/visual_assets_cli.py",
+        "status": "M",
+        "symbols": [
+          "combined_catalog",
+          "build_parser",
+          "main"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 157,
+        "binary": false,
+        "content_sha256": "bbb2608af2323fb161b6c2edfde5b7ffa4109f1e1f284bbcdf469e3a40f7ba7d",
+        "deletions": 0,
+        "path": "tests/test_game_runtime_realization.py",
+        "status": "A",
+        "symbols": [
+          "anchor",
+          "source",
+          "request",
+          "RuntimeRealizationTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 415,
+        "binary": false,
+        "content_sha256": "10287f0cbdf54c1a49db8ff998566587d0c696aa47d256214623e44d569766ce",
+        "deletions": 0,
+        "path": "tools/blender/game_runtime_realization_roundtrip.py",
+        "status": "A",
+        "symbols": [
+          "sha256",
+          "add_realization_bones",
+          "feature_surfaces",
+          "secondary_feature_surfaces",
+          "bvh",
+          "maximum_surface_deviation",
+          "export_lods",
+          "build",
+          "action_by_prefix",
+          "bone_frame",
+          "closest_surface_distance",
+          "feature_counts",
+          "imported_surface_deviation",
+          "studio",
+          "render_view",
+          "pixel_comparison",
+          "verify",
+          "sheet",
+          "main"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "6d2ca3edb466d3f65fab3bda21ef85c616462e2049443968568b352439060f56"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "action",
+      "add",
+      "anchor",
+      "angle",
+      "axm",
+      "blender",
+      "bone",
+      "bones",
+      "boundary",
+      "build",
+      "bvh",
+      "canonical",
+      "catalog",
+      "checkpoint",
+      "cli",
+      "closest",
+      "combined",
+      "comparison",
+      "compose",
+      "contract",
+      "counts",
+      "creation-machine",
+      "current",
+      "deviation",
+      "digest",
+      "distance",
+      "evidence",
+      "export",
+      "feature",
+      "features",
+      "frame",
+      "game",
+      "gated",
+      "growth",
+      "imported",
+      "integer",
+      "lods",
+      "maximum",
+      "merge",
+      "motion",
+      "name",
+      "number",
+      "parser",
+      "pass",
+      "pixel",
+      "prefix",
+      "proof",
+      "publish",
+      "real",
+      "realization",
+      "receipts",
+      "render",
+      "request",
+      "roundtrip",
+      "runtime",
+      "secondary",
+      "sha256",
+      "sheet",
+      "source",
+      "standalone",
+      "studio",
+      "style",
+      "surface",
+      "surfaces"
+    ]
+  },
+  "source": {
+    "base": "228708d58bb9c7c2470b53b5ba837bc8133a0bbe",
+    "commit_subject": "Merge evidence-gated game runtime realization (#68)",
+    "head": "d93faaaa39f9c270e8b4f45c55a01642fa8f5b05",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

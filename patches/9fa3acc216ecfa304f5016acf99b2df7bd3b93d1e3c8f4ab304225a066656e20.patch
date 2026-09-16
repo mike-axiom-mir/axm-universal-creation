@@ -1,0 +1,935 @@
+diff --git a/GAME_STYLE_GROWTH.md b/GAME_STYLE_GROWTH.md
+index cc0a2ba..c32d1df 100644
+--- a/GAME_STYLE_GROWTH.md
++++ b/GAME_STYLE_GROWTH.md
+@@ -1,3 +1,34 @@
++### Reusable sticker assemblies — 2026-09-15
++
++- UC remains standalone: its installed package includes both registry and creation
++  commands. The new axm-sticker-fabric repository is an optional sharing/growth
++  surface; UC does not fetch/import it at runtime.
++- Completed save/reuse of nested rigid assemblies, exact dependency-closure
++  library export/import, atomic batch registration, and the same JSON authoring
++  commands for human, script and AI callers. Create procedural 3D parts, capture
++  existing GLBs/Studio layers, save groups and export actual animated assemblies.
++- Export shares geometry/material/image resources per exact source while giving
++  each placement independent nodes. Selected source clips and explicit local
++  socket traces compose into AssemblyMotion; original clips/source remain intact.
++- Local evidence: 23 sticker tests pass (13 existing + 10 new); captured material
++  texture channels remap to exact embedded bytes. Rivetwing proof expands 277
++  records (272 rigid leaves), uses 15 GLB/mesh resources, 826 nodes, 206104 bytes;
++  local export ~0.10 seconds. Fresh portable-registry rebuild is byte-identical.
++  Four sampled poses verify exact loop closure and actual nonzero motion.
++- Preview inspected: articulated wings/gear eyes and repeated rivets remain
++  visible in three decoded GLB poses. Repaired floating-point endpoint residue
++  before claiming exact loop closure. This is offline flat-color geometry
++  inspection, not shaded/continuous engine playback, physics or LOD acceptance.
++- Reproduce: tools/sticker_assembly_proof.py; tests/test_sticker_assemblies.py;
++  docs/STICKER_ASSEMBLIES.md. CI publishes registry, GLB, editable requests/library,
++  preview and receipts. Next: interactive placement/source editing, surface
++  projection, bounded LOD selection, skinned parts after separate verification.
++- Active lane codex/rts-reference-foundry, base main 741eb6c (PR #79 merged).
++  Root gate: Truth scopes evidence; Agency gives equal explicit creation controls;
++  Continuity preserves editable source and pins; Wisdom shares resources and
++  bounds expansion. Actual-head CI results determine merge readiness.
++
++
+ # Game style growth
+ 
+ Mike's 2026-09-13 direction: retain the existing realistic/product-design
+diff --git a/docs/STICKER_ASSEMBLIES.md b/docs/STICKER_ASSEMBLIES.md
+new file mode 100644
+index 0000000..98710f7
+--- /dev/null
++++ b/docs/STICKER_ASSEMBLIES.md
+@@ -0,0 +1,103 @@
++# Create, save and assemble reusable parts
++
++UC is standalone. Its own installation contains the local registry, creation
++commands and render adapters. `axm-sticker-fabric` is an optional catalog/tool
++sharing repository; UC needs neither that checkout nor a network service.
++
++Humans, deterministic scripts and AI orchestrators use exactly the same requests:
++
++```sh
++axm-sticker-create parts.sqlite request.json
++axm-stickers parts.sqlite registry-request.json
++```
++
++`axm-sticker-create` accepts these operations:
++
++| Operation | Inputs besides `operation` | Result |
++| --- | --- | --- |
++| `create_3d` | `spec`, `id`, `name`, `socket`, `author`, `license`, `source` | Procedural GLB saved with exact editable JSON source |
++| `save_glb` | `file`, optional `editable_source_file`, same metadata | Existing rigid GLB captured as a reusable part |
++| `save_2d` | `project`, `id`, `name`, `author`, `license`, `source` | Editable Studio layers and source images captured |
++| `instance` | `sticker_id`, `version`, `id`, optional `overrides`, `placement` | Explicit pinned independent instance |
++| `save_assembly` | `id`, `name`, `children`, `origin`, optional `ver`, `socket`, `anchor`, `tags`, `parameters` | Group saved as another reusable sticker |
++| `export_assembly` | `id`, `ver`, `output` | Actual GLB and measured receipt |
++| `export_library` | `id`, `ver`, `output` | Root, transitive definitions and all exact assets |
++| `import_library` | `bundle` | Atomic verified import of portable library |
++| `search` | optional `tag`, `adapter`, `socket`, `after`, `limit` | Indexed discovery |
++
++Paths resolve relative to the request file. Existing outputs are refused. Core
++`axm-stickers` also exposes `save_assembly`, `library_bundle`, `import_library`,
++`instance`, `register_many` and its prior registry operations. These commands
++are an authoring interface, not a claim that a drag-and-drop editor exists.
++
++## Composition contract
++
++A child is `{instance, target, motion, clip}`. `instance` is the ordinary pinned
++sticker instance. `target` is `{space: "3d", socket: "mount", frame: [...]}`.
++Frames are proper rigid row-major matrices multiplying column vectors. Target
++frames are local to the saved parent's original source coordinates. A sticker's
++anchor and instance offset/uniform scale remain explicit. `motion` is null or
++2..240 local `{time, frame}` samples starting at zero with the declared target.
++`clip` is null or the exact leaf GLB clip name to participate in AssemblyMotion.
++Assemblies may contain assemblies; unique child IDs are scoped to each group.
++
++The exporter shares mesh, material, texture, sampler and binary resources for
++identical GLB source bytes. Placements have independent nodes and inherited
++parent transforms. All original leaf clips are retained under path-qualified
++names. Only explicitly selected clips join the combined clip; source clocks
++are preserved without resampling, retiming or automatic loop repair. Short
++tracks hold their endpoint while longer tracks continue. Do not play a retained
++source clip and AssemblyMotion on the same nodes simultaneously.
++
++The exported GLB is a derivative. Its extras contain pins/origin and its receipt
++maps source paths to nodes. The portable library contains every original GLB,
++editable source and definition, including the saved assembly tree. Shared assets
++appear once in a library. No expensive output replaces the original recipe.
++
++## Reproduce a complete original example
++
++```sh
++python tools/sticker_assembly_proof.py /new/output/directory
++python tools/sticker_assembly_proof.py preview /new/output/directory
++```
++
++Rivetwing is a mechanical dispatch beacon built from saved gear-eye and wing
++assemblies: 277 expanded records / 272 rigid leaf placements, 15 unique source
++GLBs, 826 nodes, 206104-byte animated GLB. `create-requests.json` contains the
++ordinary authoring requests in dependency order. A person can edit them, or a
++machine can generate them. Replay with the same public function:
++
++```python
++import json
++from axm_stickers import Registry
++from axm_uc.sticker_create import execute
++with Registry('new-parts.sqlite') as registry:
++    for request in json.load(open('create-requests.json')):
++        execute(registry, request, '.')
++    execute(registry, {'operation':'export_assembly', 'id':'rivetwing',
++                      'ver':1, 'output':'rivetwing.glb'}, '.')
++```
++
++Change an existing source by saving a new version, then explicitly repin selected
++instances. A model is optional; the registry does not invent parts or silently
++promote practice output. Learning sessions can call these same save commands.
++
++## Evidence and current bounds
++
++Tests decode exported hierarchy, sampled source/socket motion, shared resources,
++material texture references, atomic failure, exact bundle rebuild, independent
++instances, invalid sockets/pins and recursive expansion limits. Source and cheap
++realizations remain separate. Preview is offline flat-color decoded geometry,
++not material rendering, continuous playback, physics or aesthetic acceptance.
++
++Assembly planning is bounded to 4096 expanded records and 16 levels. This GLB
++realizer inherits the stricter pose intake: 2048 nodes, 250000 instantiated
++vertices, 128 clips, bounded decoded scalars and 64 MiB output. Resources are
++bounded to 32 MiB; unsupported extensions, skins, morphs, cameras and external
++resources fail rather than being discarded. PBR core texture slots and unlit
++materials are remapped; no surface wrapping, cloth solver, collision, mesh fusion
++or automatic LOD is claimed. Bound exhaustion is explicit, never truncation.
++
++Batch registration commits all entries once or none; it does not weaken exact
++source verification. A portable library exports exactly the root's dependency
++closure. Its import rejects missing, conflicting, corrupt or unrelated content.
+diff --git a/src/axm_stickers/__main__.py b/src/axm_stickers/__main__.py
+index 201096d..7b2f92d 100644
+--- a/src/axm_stickers/__main__.py
++++ b/src/axm_stickers/__main__.py
+@@ -2,7 +2,8 @@
+ import argparse
+ import json
+ from pathlib import Path
+-from .core import Registry
++from .core import Registry, instance
++from .assembly import save_assembly, library_bundle, import_library
+ 
+ 
+ def main(argv=None):
+@@ -15,10 +16,15 @@ def main(argv=None):
+     request = json.loads(raw)
+     if not isinstance(request,dict): parser.error('request must be an object')
+     operation = request.pop('operation',None)
+-    if operation not in {'search','get','register','bundle','import_bundle'}:
++    if operation not in {'search','get','register','register_many','bundle','import_bundle','save_assembly','library_bundle','import_library','instance'}:
+         parser.error('unknown operation')
+     with Registry(args.database) as registry:
+-        result = getattr(registry,operation)(**request)
++        functions={'save_assembly':save_assembly,'library_bundle':library_bundle,'import_library':import_library}
++        if operation in functions: result=functions[operation](registry,**request)
++        elif operation=='instance':
++            d=registry.get(request.pop('sticker_id'),request.pop('version'))
++            result=instance(d,**request)
++        else: result = getattr(registry,operation)(**request)
+     print(json.dumps(result,ensure_ascii=False,allow_nan=False))
+ 
+ 
+diff --git a/src/axm_stickers/assembly.py b/src/axm_stickers/assembly.py
+new file mode 100644
+index 0000000..2130dbb
+--- /dev/null
++++ b/src/axm_stickers/assembly.py
+@@ -0,0 +1,129 @@
++"""Saved rigid assemblies: reusable parts, explicit motion, portable closure.
++
++All commands accept the same data regardless of human/machine authorship.
++A saved group is a normal immutable sticker whose children have exact pins.
++"""
++import base64
++import copy
++import math
++from .core import (SCHEMA, MAX_ASSETS, Registry, digest, encode, identifier,
++                   instance, resolve, validate)
++from .placement import identity, rigid, attachment_matrix
++
++ASSEMBLY = 'axm.sticker.assembly-3d/v1'
++LIBRARY = 'axm.sticker-library/v1'
++MAX_PARTS = 4096
++MAX_DEPTH = 16
++
++
++def motion_samples(motion, target):
++    if motion is None: return
++    if not isinstance(motion,list) or not 2 <= len(motion) <= 240:
++        raise ValueError('motion requires 2..240 samples')
++    previous = -1
++    for sample in motion:
++        if not isinstance(sample,dict) or set(sample) != {'time','frame'}:
++            raise ValueError('motion requires time and rigid frame')
++        t = sample['time']
++        if type(t) not in (int,float) or not math.isfinite(t) or not previous < t <= 3600:
++            raise ValueError('motion times must strictly increase in 0..3600')
++        rigid(sample['frame']); previous = t
++    if motion[0]['time'] != 0 or motion[0]['frame'] != target['frame']:
++        raise ValueError('motion starts at zero with declared target')
++
++
++def expand(registry, definition):
++    """Parent-before-child records; hierarchy and exact source remain explicit."""
++    records=[]
++    cache={}
++    def visit(d, placed, target, parent, path, motion, clip, ancestors):
++        if len(records) >= MAX_PARTS or len(ancestors) >= MAX_DEPTH:
++            raise ValueError('assembly expansion budget exceeded')
++        key=digest(d)
++        if key in ancestors: raise ValueError('cyclic assembly')
++        recipe=resolve(d,placed)
++        attachment_matrix(d,placed,target); motion_samples(motion,target)
++        if clip is not None and (not isinstance(clip,str) or not clip or len(clip)>120):
++            raise ValueError('invalid source clip name')
++        index=len(records)
++        records.append({'definition':d,'instance':placed,'target':target,'parent':parent,
++                        'path':path,'motion':motion,'clip':clip})
++        if d['adapter'] != ASSEMBLY: return
++        if clip is not None or set(recipe) != {'children'}:
++            raise ValueError('assembly uses child motions, not an implicit source clip')
++        children=recipe['children']
++        if not isinstance(children,list) or not 1 <= len(children) <= MAX_PARTS:
++            raise ValueError('assembly requires 1..4096 children')
++        seen=set()
++        for child in children:
++            if not isinstance(child,dict) or set(child) != {'instance','target','motion','clip'}:
++                raise ValueError('child requires instance, target, motion and clip')
++            p=child['instance']
++            if not isinstance(p,dict) or not isinstance(p.get('sticker'),dict):
++                raise ValueError('invalid child instance')
++            identifier(p.get('id'))
++            if p['id'] in seen: raise ValueError('duplicate child instance')
++            seen.add(p['id']); pin=p['sticker']; lookup=(pin.get('id'),pin.get('version'))
++            if lookup not in cache: cache[lookup]=registry.get(*lookup)
++            visit(cache[lookup],p,child['target'],index,path+'/'+p['id'],child['motion'],
++                  child['clip'],ancestors+(key,))
++    visit(validate(definition),instance(definition,'root'),
++          {'space':'3d','socket':definition['attachment']['socket'],'frame':identity()},
++          None,'root',None,None,())
++    return records
++
++
++def save_assembly(registry, *, id, name, children, origin, ver=1, socket='mount',
++                  anchor=None, tags=None, parameters=None):
++    d=validate({'schema':SCHEMA,'id':id,'version':ver,'name':name,'origin':origin,
++                'tags':tags or [],'adapter':ASSEMBLY,
++                'attachment':{'space':'3d','socket':socket,'anchor':anchor or identity()},
++                'recipe':{'children':copy.deepcopy(children)},'assets':{},'parameters':parameters or {}})
++    expand(registry,d)  # No incomplete or incompatible group is committed.
++    registry.register(d)
++    return d
++
++
++def library_bundle(registry,id,ver):
++    """Closure includes every source once, not per placement."""
++    root=registry.get(id,ver)
++    records=expand(registry,root) if root['adapter']==ASSEMBLY else [{'definition':root}]
++    definitions={digest(r['definition']):r['definition'] for r in records}
++    refs={s for d in definitions.values() for s in d['assets'].values()}
++    assets={}; total=0
++    for key in sorted(refs):
++        body=registry.asset(key); total+=len(body)
++        if total>MAX_ASSETS: raise ValueError('library assets exceed 32 MiB')
++        assets[key]=base64.b64encode(body).decode('ascii')
++    return {'schema':LIBRARY,'root':{'id':root['id'],'version':root['version'],'digest':digest(root)},
++            'definitions':list(definitions.values()),'assets':assets}
++
++
++def import_library(registry,bundle):
++    if not isinstance(bundle,dict) or set(bundle) != {'schema','root','definitions','assets'} or bundle['schema'] != LIBRARY:
++        raise ValueError('invalid sticker library')
++    definitions=bundle['definitions']; assets=bundle['assets']
++    if not isinstance(definitions,list) or not 1 <= len(definitions) <= MAX_PARTS:
++        raise ValueError('invalid library definitions')
++    selected={}
++    for d in definitions:
++        validate(d); key=(d['id'],d['version'])
++        if key in selected: raise ValueError('duplicate library definition')
++        selected[key]=d
++    class Lookup:
++        def get(self,id,ver):
++            try: return selected[(id,ver)]
++            except (KeyError,TypeError): raise ValueError('missing library dependency') from None
++    pin=bundle['root']
++    if not isinstance(pin,dict): raise ValueError('invalid library root')
++    d=Lookup().get(pin.get('id'),pin.get('version'))
++    p=instance(d,'check'); p['sticker']=pin; resolve(d,p)
++    records=expand(Lookup(),d) if d['adapter']==ASSEMBLY else [{'definition':d}]
++    if {digest(r['definition']) for r in records} != {digest(x) for x in definitions}:
++        raise ValueError('library includes unrelated definitions')
++    refs={s for d in definitions for s in d['assets'].values()}
++    if not isinstance(assets,dict) or set(assets)!=refs or any(not isinstance(v,str) for v in assets.values()):
++        raise ValueError('library must contain exactly referenced assets')
++    if sum(map(len,assets.values()))>45*1024*1024: raise ValueError('library asset budget exceeded')
++    registry.register_many(definitions,{s:base64.b64decode(v,validate=True) for s,v in assets.items()})
++    return pin
+diff --git a/src/axm_stickers/core.py b/src/axm_stickers/core.py
+index 5bf5793..5fde635 100644
+--- a/src/axm_stickers/core.py
++++ b/src/axm_stickers/core.py
+@@ -229,33 +229,47 @@ class Registry:
+     def __exit__(self,*args): self.db.close()
+ 
+     def register(self,definition,assets=None):
+-        definition = validate(definition)
++        return self.register_many([definition],assets)[0]
++
++    def register_many(self,definitions,assets=None):
++        """Explicit bounded batch, one atomic durable commit, shared exact bytes."""
++        if not isinstance(definitions,list) or not 1 <= len(definitions) <= 4096:
++            raise ValueError('batch requires 1..4096 definitions')
++        definitions = [validate(d) for d in definitions]
++        if sum(len(encode(d)) for d in definitions) > 16*MAX_JSON:
++            raise ValueError('batch definition byte budget exceeded')
+         assets = {} if assets is None else assets
+-        if not isinstance(assets,dict) or set(assets)-set(definition['assets'].values()):
++        declared = {s for d in definitions for s in d['assets'].values()}
++        if not isinstance(assets,dict) or set(assets)-declared:
+             raise ValueError('supplied assets must be referenced digests')
+         if any(not isinstance(v,bytes) for v in assets.values()) or sum(map(len,assets.values())) > MAX_ASSETS:
+             raise ValueError('asset bytes exceed 32 MiB')
+         with self._write():
+-            existing = self.db.execute('SELECT digest FROM stickers WHERE id=? AND version=?',
+-                                       (definition['id'],definition['version'])).fetchone()
+-            key = digest(definition)
+-            if existing and existing[0] != key:
+-                raise ValueError('immutable version conflict; register a new version')
+-            total_bytes = 0
+-            for reference in set(definition['assets'].values()):
+-                if reference in assets:
+-                    body = assets[reference]
+-                    if hashlib.sha256(body).hexdigest() != reference: raise ValueError('asset digest mismatch')
+-                    self.db.execute('INSERT OR IGNORE INTO assets VALUES (?,?)',(reference,body))
+-                total_bytes += len(self.asset(reference))
+-                if total_bytes > MAX_ASSETS: raise ValueError('referenced assets exceed 32 MiB')
+-            self.db.execute('INSERT OR IGNORE INTO stickers VALUES (?,?,?,?,?,?)',
+-                            (definition['id'],definition['version'],key,definition['adapter'],
+-                             definition['attachment']['socket'],encode(definition).decode()))
+-            for tag in definition['tags']:
+-                self.db.execute('INSERT OR IGNORE INTO tags VALUES (?,?,?)',
+-                                (definition['id'],definition['version'],tag))
+-            return {'id':definition['id'],'version':definition['version'],'digest':key}
++            return [self._register(d,{s:assets[s] for s in set(d['assets'].values()) if s in assets})
++                    for d in definitions]
++
++    def _register(self,definition,assets):
++        existing = self.db.execute('SELECT digest FROM stickers WHERE id=? AND version=?',
++                                   (definition['id'],definition['version'])).fetchone()
++        key = digest(definition)
++        if existing and existing[0] != key:
++            raise ValueError('immutable version conflict; register a new version')
++        total_bytes = 0
++        for reference in set(definition['assets'].values()):
++            if reference in assets:
++                body = assets[reference]
++                if hashlib.sha256(body).hexdigest() != reference: raise ValueError('asset digest mismatch')
++                self.db.execute('INSERT OR IGNORE INTO assets VALUES (?,?)',(reference,body))
++            total_bytes += len(self.asset(reference))
++            if total_bytes > MAX_ASSETS: raise ValueError('referenced assets exceed 32 MiB')
++        self.db.execute('INSERT OR IGNORE INTO stickers VALUES (?,?,?,?,?,?)',
++                        (definition['id'],definition['version'],key,definition['adapter'],
++                         definition['attachment']['socket'],encode(definition).decode()))
++        for tag in definition['tags']:
++            self.db.execute('INSERT OR IGNORE INTO tags VALUES (?,?,?)',
++                            (definition['id'],definition['version'],tag))
++        return {'id':definition['id'],'version':definition['version'],'digest':key}
++
+ 
+     def get(self,id,ver):
+         identifier(id); version(ver)
+diff --git a/src/axm_uc/sticker_assembly.py b/src/axm_uc/sticker_assembly.py
+new file mode 100644
+index 0000000..fd70c3d
+--- /dev/null
++++ b/src/axm_uc/sticker_assembly.py
+@@ -0,0 +1,165 @@
++"""UC-owned realization of reusable rigid sticker assemblies into actual GLB.
++
++Resources are copied once per exact source asset; each placement receives its
++own node hierarchy. Explicit source clips and socket traces join AssemblyMotion.
++"""
++import copy
++import json
++import struct
++from axm_stickers import resolve
++from axm_stickers.assembly import ASSEMBLY, expand
++from axm_stickers.placement import identity, attachment_matrix
++from .sticker_adapter import GLB, _trs
++from .game_pose_runtime import GamePoseAsset, _parse
++
++
++def export_assembly(registry,id,ver):
++    d=registry.get(id,ver)
++    if d['adapter'] != ASSEMBLY: raise ValueError('expected saved assembly')
++    records=expand(registry,d)
++    doc={'asset':{'version':'2.0','generator':'AXM UC sticker assembly'},'scene':0,
++         'scenes':[{'nodes':[]}],'nodes':[],'buffers':[{'byteLength':0}],
++         'bufferViews':[],'accessors':[],'meshes':[],'materials':[],
++         'images':[],'textures':[],'samplers':[],'animations':[]}
++    binary=bytearray(); cache={}; holders={}; mappings={}
++    combined={'name':'AssemblyMotion','samplers':[],'channels':[]}
++
++    def index(value,seq,label):
++        if type(value) is not int or not 0 <= value < len(seq): raise ValueError('invalid '+label+' reference')
++        return value
++
++    def supported(value):
++        if isinstance(value,dict):
++            if 'extensions' in value and set(value['extensions'])-{'KHR_materials_unlit'}:
++                raise ValueError('assembly cannot remap this glTF extension')
++            for v in value.values(): supported(v)
++        elif isinstance(value,list):
++            for v in value: supported(v)
++
++    def load_source(reference):
++        if reference in cache: return cache[reference]
++        source=registry.asset(reference); GamePoseAsset(source); src,raw=_parse(source)
++        supported(src)
++        if src.get('skins') or src.get('cameras') or len(src.get('scenes',[]))!=1 or src.get('scene',0)!=0:
++            raise ValueError('assembly supports one rigid scene without cameras/skins')
++        if set(src.get('extensionsRequired',[]))-{'KHR_materials_unlit'}:
++            raise ValueError('unsupported required extension')
++        for mesh in src.get('meshes',[]):
++            for prim in mesh['primitives']:
++                if prim.get('targets'): raise ValueError('morph targets unsupported')
++        while len(binary)%4: binary.append(0)
++        start=len(binary); binary.extend(raw)
++        if len(binary)>32*1024*1024: raise ValueError('assembly source budget exceeded')
++        offsets={k:len(doc[k]) for k in ('bufferViews','accessors','meshes','materials','images','textures','samplers')}
++        def remap(value,kind): return offsets[kind]+index(value,src.get(kind,[]),kind)
++        for view in src.get('bufferViews',[]):
++            if view.get('buffer',0)!=0: raise ValueError('external buffer')
++            v=copy.deepcopy(view); v['byteOffset']=v.get('byteOffset',0)+start; doc['bufferViews'].append(v)
++        for accessor in src.get('accessors',[]):
++            if 'sparse' in accessor: raise ValueError('sparse accessor unsupported')
++            a=copy.deepcopy(accessor); a['bufferView']=remap(a['bufferView'],'bufferViews'); doc['accessors'].append(a)
++        for image in src.get('images',[]):
++            if 'uri' in image: raise ValueError('external image unsupported')
++            im=copy.deepcopy(image); im['bufferView']=remap(im['bufferView'],'bufferViews'); doc['images'].append(im)
++        doc['samplers'].extend(copy.deepcopy(src.get('samplers',[])))
++        for texture in src.get('textures',[]):
++            t=copy.deepcopy(texture)
++            if 'source' not in t: raise ValueError('texture source required')
++            t['source']=remap(t['source'],'images')
++            if 'sampler' in t: t['sampler']=remap(t['sampler'],'samplers')
++            doc['textures'].append(t)
++        for material in src.get('materials',[]):
++            m=copy.deepcopy(material)
++            for container,keys in ((m,('normalTexture','occlusionTexture','emissiveTexture')),
++                    (m.get('pbrMetallicRoughness',{}),('baseColorTexture','metallicRoughnessTexture'))):
++                for key in keys:
++                    if key in container: container[key]['index']=remap(container[key]['index'],'textures')
++            doc['materials'].append(m)
++        for mesh in src.get('meshes',[]):
++            m=copy.deepcopy(mesh)
++            for p in m['primitives']:
++                p['attributes']={k:remap(v,'accessors') for k,v in p['attributes'].items()}
++                if 'indices' in p: p['indices']=remap(p['indices'],'accessors')
++                if 'material' in p: p['material']=remap(p['material'],'materials')
++            doc['meshes'].append(m)
++        used=set(doc.get('extensionsUsed',[]))|set(src.get('extensionsUsed',[]))
++        if used: doc['extensionsUsed']=sorted(used)
++        required=set(doc.get('extensionsRequired',[]))|set(src.get('extensionsRequired',[]))
++        if required: doc['extensionsRequired']=sorted(required)
++        cache[reference]=(src,offsets)
++        return src,offsets
++
++    def add_track(rows,shape):
++        while len(binary)%4: binary.append(0)
++        start=len(binary); values=[x for row in rows for x in row]
++        binary.extend(struct.pack('<'+'f'*len(values),*values))
++        view=len(doc['bufferViews']); doc['bufferViews'].append({'buffer':0,'byteOffset':start,'byteLength':len(binary)-start})
++        at=len(doc['accessors']); doc['accessors'].append({'bufferView':view,'componentType':5126,'count':len(rows),'type':shape,
++            'min':[min(r[i] for r in rows) for i in range(len(rows[0]))],'max':[max(r[i] for r in rows) for i in range(len(rows[0]))]})
++        return at
++
++    def join(animation):
++        offset=len(combined['samplers']); combined['samplers'].extend(copy.deepcopy(animation['samplers']))
++        for channel in animation['channels']:
++            c=copy.deepcopy(channel); c['sampler']+=offset; combined['channels'].append(c)
++
++    for i,record in enumerate(records):
++        definition=record['definition']; p=record['instance']; path=record['path']; target=record['target']
++        local=attachment_matrix(definition,p,dict(target,frame=identity()))
++        socket=len(doc['nodes']); tr,rot=_trs(target['frame']); holder=socket+1
++        doc['nodes'].extend([{'name':path+'.socket','translation':tr,'rotation':rot,'children':[holder]},
++                            {'name':path+'.mount','matrix':[local[r*4+c] for c in range(4) for r in range(4)],'children':[]}])
++        parent=record['parent']
++        if parent is None: doc['scenes'][0]['nodes'].append(socket)
++        else: doc['nodes'][holders[parent]]['children'].append(socket)
++        holders[i]=holder; mappings[path]={'socket':socket,'mount':holder,'source_nodes':[]}
++        if record['motion']:
++            motion=record['motion']; positions=[]; rotations=[]
++            for sample in motion:
++                tr,qr=_trs(sample['frame'])
++                if rotations and sum(a*b for a,b in zip(rotations[-1],qr))<0: qr=[-x for x in qr]
++                positions.append(tr); rotations.append(qr)
++            clock=add_track([[s['time']] for s in motion],'SCALAR')
++            pos=add_track(positions,'VEC3'); rot=add_track(rotations,'VEC4')
++            join({'samplers':[{'input':clock,'output':pos,'interpolation':'LINEAR'},
++                              {'input':clock,'output':rot,'interpolation':'LINEAR'}],
++                  'channels':[{'sampler':0,'target':{'node':socket,'path':'translation'}},
++                              {'sampler':1,'target':{'node':socket,'path':'rotation'}}]})
++        if definition['adapter']==ASSEMBLY: continue
++        if definition['adapter']!=GLB or resolve(definition,p)!={'model':'model'}:
++            raise ValueError('assembly leaf requires rigid GLB sticker')
++        src,offsets=load_source(definition['assets']['model']); node_start=len(doc['nodes'])
++        def node_ref(v): return node_start+index(v,src['nodes'],'node')
++        for j,node in enumerate(src['nodes']):
++            n=copy.deepcopy(node); n['name']=path+'/'+str(n.get('name',j))
++            if 'mesh' in n: n['mesh']=offsets['meshes']+index(n['mesh'],src.get('meshes',[]),'mesh')
++            if 'children' in n: n['children']=[node_ref(v) for v in n['children']]
++            if 'skin' in n or 'camera' in n: raise ValueError('unsupported node binding')
++            doc['nodes'].append(n)
++        doc['nodes'][holder]['children']=[node_ref(v) for v in src['scenes'][0]['nodes']]
++        mappings[path]['source_nodes']=list(range(node_start,len(doc['nodes'])))
++        found=False; names=set()
++        for j,animation in enumerate(src.get('animations',[])):
++            a=copy.deepcopy(animation); name=a.get('name',str(j))
++            if name in names: raise ValueError('ambiguous source clip name')
++            names.add(name); a['name']=path+'::'+name
++            for sampler in a['samplers']:
++                for key in ('input','output'): sampler[key]=offsets['accessors']+index(sampler[key],src['accessors'],'accessor')
++            for channel in a['channels']: channel['target']['node']=node_ref(channel['target']['node'])
++            doc['animations'].append(a)
++            if record['clip']==name: join(a); found=True
++        if record['clip'] is not None and not found: raise ValueError('unknown source clip')
++        if len(doc['nodes'])>2048: raise ValueError('assembly GLB node budget exceeded')
++    if combined['channels']: doc['animations'].append(combined)
++    doc['extras']={'axm_assembly':{'id':id,'version':ver,'source_preserved':True,
++                                 'parts':[{'path':r['path'],'pin':r['instance']['sticker'],'origin':r['definition']['origin']} for r in records]}}
++    doc['buffers'][0]['byteLength']=len(binary)
++    encoded=json.dumps(doc,separators=(',',':'),allow_nan=False).encode(); encoded+=b' '*(-len(encoded)%4)
++    binary.extend(b'\0'*(-len(binary)%4))
++    body=struct.pack('<4sII',b'glTF',2,28+len(encoded)+len(binary))
++    body+=struct.pack('<II',len(encoded),0x4E4F534A)+encoded+struct.pack('<II',len(binary),0x004E4942)+binary
++    GamePoseAsset(body)
++    return {'body':body,'receipt':{'expanded_parts':len(records),'unique_source_glbs':len(cache),
++            'mesh_resources':len(doc['meshes']),'nodes':len(doc['nodes']),'bytes':len(body),
++            'clip':'AssemblyMotion' if combined['channels'] else None,'mappings':mappings,
++            'source_preserved':True,'continuous_playback_verified':False}}
+diff --git a/src/axm_uc/sticker_create.py b/src/axm_uc/sticker_create.py
+new file mode 100644
+index 0000000..2bf9255
+--- /dev/null
++++ b/src/axm_uc/sticker_create.py
+@@ -0,0 +1,60 @@
++"""One JSON authoring interface for people, scripts and AI orchestration.
++
++UC includes the registry and realizers; no fabric checkout/service is required.
++Paths are relative to the request file. Existing output files are never replaced.
++"""
++import argparse
++import json
++from pathlib import Path
++from axm_stickers import Registry, instance
++from axm_stickers.assembly import save_assembly, library_bundle, import_library
++from .sticker_adapter import register_glb, register_studio
++from .sticker_assembly import export_assembly
++from .procedural_3d import build_glb
++
++
++def execute(registry,request,root):
++    request=dict(request); operation=request.pop('operation',None); root=Path(root)
++    if operation=='create_3d':
++        spec=request.pop('spec')
++        body=build_glb(spec)['body']
++        return register_glb(registry,body,editable_source=json.dumps(spec,indent=2,allow_nan=False).encode(),**request)
++    if operation=='save_glb':
++        file=root/request.pop('file')
++        with file.open('rb') as f: body=f.read(32*1024*1024+1)
++        if len(body)>32*1024*1024: raise ValueError('source GLB exceeds 32 MiB')
++        source=request.pop('editable_source_file',None); editable=None
++        if source is not None:
++            with (root/source).open('rb') as f: editable=f.read(32*1024*1024+1)
++            if len(editable)>32*1024*1024: raise ValueError('editable source exceeds 32 MiB')
++        return register_glb(registry,body,editable_source=editable,**request)
++    if operation=='save_2d':
++        project=request.pop('project')
++        return register_studio(registry,project,root,**request)
++    if operation=='save_assembly': return save_assembly(registry,**request)
++    if operation=='instance':
++        d=registry.get(request.pop('sticker_id'),request.pop('version'))
++        return instance(d,**request)
++    if operation in ('export_assembly','export_library'):
++        output=root/request.pop('output')
++        if output.exists(): raise FileExistsError(output)
++        result=export_assembly(registry,**request) if operation=='export_assembly' else library_bundle(registry,**request)
++        body=result['body'] if operation=='export_assembly' else json.dumps(result,indent=2,allow_nan=False).encode()
++        with output.open('xb') as f: f.write(body)
++        return result['receipt'] if operation=='export_assembly' else {'output':str(output),'definitions':len(result['definitions'])}
++    if operation=='import_library': return import_library(registry,**request)
++    if operation=='search': return registry.search(**request)
++    raise ValueError('unknown creation operation')
++
++
++def main(argv=None):
++    parser=argparse.ArgumentParser(description='UC sticker creation: the same saved requests for humans and machines')
++    parser.add_argument('database',type=Path); parser.add_argument('request',type=Path)
++    args=parser.parse_args(argv)
++    with args.request.open('rb') as f: body=f.read(48*1024*1024+1)
++    if len(body)>48*1024*1024: parser.error('request exceeds 48 MiB')
++    with Registry(args.database) as registry: result=execute(registry,json.loads(body),args.request.parent)
++    print(json.dumps(result,indent=2,allow_nan=False))
++
++
++if __name__=='__main__': main()
+diff --git a/tests/test_sticker_assemblies.py b/tests/test_sticker_assemblies.py
+new file mode 100644
+index 0000000..e450b9b
+--- /dev/null
++++ b/tests/test_sticker_assemblies.py
+@@ -0,0 +1,161 @@
++"""Saved recursive parts, atomic portability and decoded animated geometry."""
++import copy
++import json
++import math
++import os
++from pathlib import Path
++import subprocess
++import sys
++import tempfile
++import unittest
++
++sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src'))
++from axm_stickers import Registry,instance
++from axm_stickers.assembly import save_assembly,expand,library_bundle,import_library,ASSEMBLY
++from axm_stickers.placement import identity
++from axm_uc.sticker_create import execute
++from axm_uc.sticker_adapter import attach_glb,register_glb
++from axm_uc.sticker_assembly import export_assembly
++from axm_uc.game_pose_runtime import GamePoseAsset,_parse
++
++ORIGIN={'author':'AXM','license':'CC0-1.0','source':'Original assembly analytical fixture'}
++
++def frame(x=0,y=0):
++    m=identity();m[3]=x;m[7]=y;return m
++
++def child(d,id,x=0,*,motion=None,clip=None):
++    return {'instance':instance(d,id),'target':{'space':'3d','socket':'mount','frame':frame(x)},'motion':motion,'clip':clip}
++
++def create(registry,id='bolt',color='#B07825'):
++    return execute(registry,{'operation':'create_3d','id':id,'name':'Reusable bolt','socket':'mount',**ORIGIN,
++        'spec':{'schema':'axm.procedural-3d/v0.1','name':'Original bolt',
++                'primitives':[{'id':'body','type':'box','size':[.2,.2,.2],'translation':[0,0,0],
++                               'material':{'color':color,'metallic':.5,'roughness':.6}}]}},'.')
++
++class AssemblyTests(unittest.TestCase):
++    def setUp(self):
++        self.temp=tempfile.TemporaryDirectory();self.addCleanup(self.temp.cleanup)
++        self.root=Path(self.temp.name);self.r=Registry(self.root/'r.sqlite');self.addCleanup(self.r.db.close)
++        self.d=create(self.r)
++    def group(self,id,children):
++        return save_assembly(self.r,id=id,name=id,children=children,origin=ORIGIN)
++
++    def test_nested_group_is_editable_and_instances_have_independent_motion(self):
++        group=self.group('pair',[child(self.d,'a'),child(self.d,'b',1)])
++        trace=[{'time':0,'frame':frame(3)},{'time':1,'frame':frame(4)},{'time':2,'frame':frame(3)}]
++        root=self.group('machine',[child(group,'fixed',0),child(group,'moving',3,motion=trace)])
++        before=library_bundle(self.r,'machine',1)
++        result=export_assembly(self.r,'machine',1); asset=GamePoseAsset(result['body'])
++        for t,x in [(0,4),(.5,4.5),(1,5),(2,4)]:
++            pose=asset.sample('AssemblyMotion',t,vertices=True)
++            at=result['receipt']['mappings']['root/moving/b']['mount']
++            self.assertAlmostEqual(asset.point(pose,at)[0],x)
++            at=result['receipt']['mappings']['root/fixed/b']['mount']
++            self.assertAlmostEqual(asset.point(pose,at)[0],1)
++        self.assertEqual(library_bundle(self.r,'machine',1),before)
++        self.assertEqual(result['receipt']['unique_source_glbs'],1)
++        self.assertEqual(result['receipt']['mesh_resources'],1)
++        self.assertEqual(asset.sample('AssemblyMotion',0)['world_matrices'],asset.sample('AssemblyMotion',2)['world_matrices'])
++
++    def test_library_closure_reimports_without_original_database(self):
++        g=self.group('cluster',[child(self.d,'bolt')]); self.group('asset',[child(g,'left'),child(g,'right',3)])
++        bundle=library_bundle(self.r,'asset',1)
++        self.assertEqual(len(bundle['definitions']),3)
++        with Registry(self.root/'portable.sqlite') as other:
++            import_library(other,bundle)
++            self.assertEqual(export_assembly(other,'asset',1)['body'],export_assembly(self.r,'asset',1)['body'])
++            self.assertEqual(other.asset(self.d['assets']['editable-source']),self.r.asset(self.d['assets']['editable-source']))
++
++    def test_bad_library_is_atomic_and_cannot_smuggle_unrelated_definitions(self):
++        self.group('group',[child(self.d,'bolt')]);bundle=library_bundle(self.r,'group',1)
++        with Registry(self.root/'portable.sqlite') as other:
++            bad=copy.deepcopy(bundle);bad['assets'][next(iter(bad['assets']))]='YmFk'
++            with self.assertRaises(ValueError): import_library(other,bad)
++            self.assertEqual(other.search()['entries'],[])
++            self.assertEqual(other.db.execute('SELECT count(*) FROM assets').fetchone()[0],0)
++            bad=copy.deepcopy(bundle);bad['definitions']=bad['definitions'][:1]
++            with self.assertRaises(ValueError): import_library(other,bad)
++            bad=copy.deepcopy(bundle);extra=copy.deepcopy(self.d);extra['id']='unrelated';bad['definitions'].append(extra)
++            with self.assertRaises(ValueError): import_library(other,bad)
++
++    def test_invalid_groups_not_saved_and_expansion_is_bounded(self):
++        c=child(self.d,'same')
++        with self.assertRaises(ValueError): self.group('duplicate',[c,c])
++        c=child(self.d,'wrong');c['target']['socket']='incompatible'
++        with self.assertRaises(ValueError): self.group('wrong',[c])
++        c=child(self.d,'pin');c['instance']['sticker']['digest']='0'*64
++        with self.assertRaises(ValueError): self.group('pin',[c])
++        group=self.d
++        for i in range(15): group=self.group('depth'+str(i),[child(group,'nested')])
++        with self.assertRaisesRegex(ValueError,'budget'): self.group('too-deep',[child(group,'nested')])
++        with self.assertRaises(ValueError): self.r.get('too-deep',1)
++
++    def test_many_geometry_instances_share_resources(self):
++        self.group('hundreds',[child(self.d,'bolt'+str(i),i*.3) for i in range(300)])
++        result=export_assembly(self.r,'hundreds',1);doc,_=_parse(result['body'])
++        self.assertEqual(len(doc['meshes']),1)
++        self.assertEqual(sum('mesh' in n for n in doc['nodes']),300)
++        self.assertLess(result['receipt']['nodes'],1000)
++        GamePoseAsset(result['body'])
++
++    def test_selected_source_animation_retained_in_assembly_clip(self):
++        trace=[{'time':0,'frame':frame()},{'time':1,'frame':frame(2)}]
++        animated=attach_glb(self.r,instance(self.d,'moving'),{'space':'3d','socket':'mount','frame':frame()},motion=trace,clip='Slide')['body']
++        d=register_glb(self.r,animated,id='slider',name='Slider',socket='mount',**ORIGIN)
++        self.group('machine',[child(d,'arm',3,clip='Slide')])
++        result=export_assembly(self.r,'machine',1);asset=GamePoseAsset(result['body']);doc,_=_parse(result['body'])
++        n=next(i for i,n in enumerate(doc['nodes']) if n.get('name')=='root/arm/moving.socket')
++        self.assertAlmostEqual(asset.point(asset.sample('AssemblyMotion',.5),n)[0],4)
++        self.assertIn('root/arm::Slide',[a['name'] for a in doc['animations']])
++        bad=self.group('missing-clip',[child(d,'arm',clip='missing')])
++        with self.assertRaisesRegex(ValueError,'unknown source clip'): export_assembly(self.r,bad['id'],1)
++
++    def test_two_source_resource_offsets_preserve_material_and_vertices(self):
++        other=create(self.r,'blue','#2040F0');self.group('mixed',[child(self.d,'a'),child(other,'b',3)])
++        result=export_assembly(self.r,'mixed',1);doc,_=_parse(result['body'])
++        self.assertEqual(len(doc['meshes']),2)
++        self.assertNotEqual(doc['meshes'][0]['primitives'][0]['material'],doc['meshes'][1]['primitives'][0]['material'])
++        pose=GamePoseAsset(result['body']).sample(None,0,vertices=True)
++        centers=[sum(p[0] for p in m['positions'])/len(m['positions']) for m in pose['meshes']]
++        self.assertAlmostEqual(centers[1]-centers[0],3)
++
++    def test_embedded_texture_channels_remap_to_second_source_exactly(self):
++        import struct
++        from axm_uc.fabric_noise import png_bytes
++        doc,raw=_parse(self.r.asset(self.d['assets']['model']))
++        image=png_bytes(1,1,4,bytes([15,190,120,255]));start=len(raw)
++        raw+=image
++        view=len(doc['bufferViews']);doc['bufferViews'].append({'buffer':0,'byteOffset':start,'byteLength':len(image)})
++        doc['images']=[{'bufferView':view,'mimeType':'image/png'}];doc['textures']=[{'source':0,'sampler':0}];doc['samplers']=[{}]
++        mat=doc['materials'][0];mat['pbrMetallicRoughness']['baseColorTexture']={'index':0}
++        mat['pbrMetallicRoughness']['metallicRoughnessTexture']={'index':0}
++        for key in ('normalTexture','occlusionTexture','emissiveTexture'): mat[key]={'index':0}
++        doc['buffers'][0]['byteLength']=len(raw)
++        js=json.dumps(doc).encode();js+=b' '*(-len(js)%4);raw+=b'\0'*(-len(raw)%4)
++        body=struct.pack('<4sII',b'glTF',2,28+len(js)+len(raw))+struct.pack('<II',len(js),0x4E4F534A)+js+struct.pack('<II',len(raw),0x004E4942)+raw
++        textured=register_glb(self.r,body,id='textured',name='Textured',socket='mount',**ORIGIN)
++        self.group('textures',[child(self.d,'plain'),child(textured,'paint',3)])
++        result=export_assembly(self.r,'textures',1);out,binary=_parse(result['body'])
++        m=out['materials'][out['meshes'][1]['primitives'][0]['material']]
++        for container,key in [(m,k) for k in ('normalTexture','occlusionTexture','emissiveTexture')]+[(m['pbrMetallicRoughness'],k) for k in ('baseColorTexture','metallicRoughnessTexture')]:
++            tex=out['textures'][container[key]['index']];im=out['images'][tex['source']];v=out['bufferViews'][im['bufferView']]
++            self.assertEqual(binary[v['byteOffset']:v['byteOffset']+v['byteLength']],image)
++
++    def test_human_and_machine_cli_save_and_reload_the_same_requests(self):
++        request={'operation':'save_assembly','id':'saved','name':'Saved group','children':[child(self.d,'part')],'origin':ORIGIN}
++        path=self.root/'request.json';path.write_text(json.dumps(request))
++        run=subprocess.run([sys.executable,'-m','axm_stickers',str(self.root/'r.sqlite'),str(path)],cwd=self.root,
++            env={**os.environ,'PYTHONPATH':str(Path(__file__).resolve().parents[1]/'src')},capture_output=True,text=True)
++        self.assertEqual(run.returncode,0,run.stderr)
++        self.assertEqual(json.loads(run.stdout),self.r.get('saved',1))
++        execute(self.r,{'operation':'export_assembly','id':'saved','ver':1,'output':'asset.glb'},self.root)
++        GamePoseAsset((self.root/'asset.glb').read_bytes())
++        with self.assertRaises(FileExistsError): execute(self.r,{'operation':'export_assembly','id':'saved','ver':1,'output':'asset.glb'},self.root)
++
++    def test_batch_collision_rolls_back_all_prior_items(self):
++        a=copy.deepcopy(self.d);a['id']='new';bad=copy.deepcopy(self.d);bad['name']='conflict'
++        with self.assertRaises(ValueError): self.r.register_many([a,bad])
++        with self.assertRaises(ValueError): self.r.get('new',1)
++        self.assertEqual(self.r.get(self.d['id'],1),self.d)
++
++if __name__=='__main__': unittest.main()
+diff --git a/tools/sticker_assembly_proof.py b/tools/sticker_assembly_proof.py
+new file mode 100644
+index 0000000..301d95e
+--- /dev/null
++++ b/tools/sticker_assembly_proof.py
+@@ -0,0 +1,136 @@
++"""Original Rivetwing dispatch beacon: nested reusable animated mechanical parts."""
++import json
++import math
++from pathlib import Path
++import struct
++import sys
++import time
++sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src'))
++from axm_stickers import Registry,instance
++from axm_stickers.assembly import save_assembly,library_bundle,import_library
++from axm_uc.sticker_create import execute
++from axm_uc.sticker_assembly import export_assembly
++from axm_uc.game_pose_runtime import GamePoseAsset,_parse
++
++ORIGIN={'author':'AXM','license':'CC0-1.0','source':'Original Rivetwing dispatch beacon, tools/sticker_assembly_proof.py'}
++
++def frame(x=0,y=0,z=0,a=0):
++    c,s=math.cos(a),math.sin(a)
++    return [c,-s,0,x,s,c,0,y,0,0,1,z,0,0,0,1]
++
++def make(root):
++    root=Path(root);root.mkdir(parents=True,exist_ok=False)
++    requests=[]
++    with Registry(root/'stickers.sqlite') as r:
++        def part(id,size,color,metal=.6,kind='box'):
++            spec={'schema':'axm.procedural-3d/v0.1','name':id,'primitives':[
++                {'id':id,'type':kind,'size':size,'translation':[0,0,0],
++                 'material':{'color':color,'metallic':metal,'roughness':.58}}]}
++            req={'operation':'create_3d','id':id,'name':id,'socket':'mount','spec':spec,**ORIGIN}
++            requests.append(req);return execute(r,req,root)
++        rivet=part('steel-rivet',[.055,.055,.07],'#C2CED1',.85)
++        tooth=part('brass-tooth',[.07,.13,.10],'#D9A24A')
++        feather=part('wing-feather',[.13,.63,.08],'#406D7C')
++        stripe=part('feather-tip',[.13,.08,.095],'#C6A25C')
++        plate=part('body-shell',[1.38,1.5,.46],'#B8782C')
++        inset=part('body-inset',[1.17,1.27,.12],'#233C50')
++        visor=part('brow',[.57,.13,.10],'#D4A34B')
++        hub=part('gear-hub',[.42,.42,.1],'#304453')
++        eye=part('signal-eye',[.18,.25,.12],'#40D8CF',.1)
++        beak=part('beak',[.27,.35,.29],'#C36A38',.4,kind='pyramid')
++        leg=part('leg',[.14,.48,.17],'#526679')
++        boot=part('boot',[.42,.16,.36],'#293843',.2)
++        antenna=part('antenna',[.045,.50,.06],'#87979F')
++        lamp=part('antenna-lamp',[.15,.15,.12],'#D25138',.1)
++        label=part('mail-slot',[.65,.08,.09],'#172B38',.2)
++        def c(d,id,x=0,y=0,z=0,a=0,motion=None):
++            return {'instance':instance(d,id),'target':{'space':'3d','socket':'mount','frame':frame(x,y,z,a)},'motion':motion,'clip':None}
++        def group(id,children):
++            req={'operation':'save_assembly','id':id,'name':id,'children':children,'origin':ORIGIN}
++            requests.append(req);return execute(r,req,root)
++        gearparts=[c(hub,'hub'),c(eye,'signal',z=.09)]
++        for i in range(24):
++            a=i*math.tau/24
++            gearparts += [c(tooth,'tooth'+str(i),.30*math.cos(a),.30*math.sin(a),a=a-math.pi/2),
++                          c(rivet,'pin'+str(i),.22*math.cos(a),.22*math.sin(a),.1)]
++        gear=group('signal-gear',gearparts)
++        wings=[]
++        for side in (-1,1):
++            parts=[]
++            for i in range(12):
++                x=side*(.15+i*.07);y=-.1-i*.035;a=-side*.25
++                parts.extend([c(feather,'fin'+str(i),x,y,0,a),c(stripe,'tip'+str(i),x-side*.066,y-.27,.015,a)])
++                for j in range(3):parts.append(c(rivet,f'pin-{i}-{j}',x+side*(j-1)*.037,y+.17-j*.11,.065))
++            wings.append(group('wing-left' if side<0 else 'wing-right',parts))
++        children=[c(plate,'shell'),c(inset,'inset',z=.28),c(beak,'beak',y=.08,z=.42),c(label,'slot',y=-.35,z=.36)]
++        for i in range(40):
++            a=i*math.tau/40
++            # Rectangular rim with evenly distributed sides.
++            side=i//10;t=(i%10)/9
++            x,y=[(-.64+1.28*t,.68),(.64,.68-1.36*t),(.64-1.28*t,-.68),(-.64,-.68+1.36*t)][side]
++            children.append(c(rivet,'rim'+str(i),x,y,.28))
++        for side in (-1,1):
++            # Return to exact starting orientation; a readable half-turn and settle.
++            trace=[{'time':i/8,'frame':frame(side*.36,.35,.38,side*.6*(0 if i in (0,16) else math.sin(i/8*math.pi)))} for i in range(17)]
++            children.append(c(gear,'gear-left' if side<0 else 'gear-right',side*.36,.35,.38,motion=trace))
++            children.append(c(visor,'brow'+str(side),side*.38,.71,.49,a=side*.18))
++            trace=[{'time':i/8,'frame':frame(side*.71,.17,0,side*.28*(0 if i in (0,16) else math.sin(i/8*math.pi)))} for i in range(17)]
++            children.append(c(wings[0 if side<0 else 1],'wing-left' if side<0 else 'wing-right',side*.71,.17,0,motion=trace))
++            children.extend([c(leg,'leg'+str(side),side*.43,-.96),c(boot,'boot'+str(side),side*.43,-1.22,.08)])
++        children.extend([c(antenna,'antenna',.38,1.04,0,a=-.15),c(lamp,'lamp',.42,1.29,0)])
++        machine=group('rivetwing',children)
++        start=time.perf_counter();result=export_assembly(r,'rivetwing',1);elapsed=time.perf_counter()-start
++        (root/'rivetwing.glb').write_bytes(result['body'])
++        bundle=library_bundle(r,'rivetwing',1)
++        (root/'rivetwing-library.json').write_text(json.dumps(bundle,indent=2)+'\n')
++        (root/'create-requests.json').write_text(json.dumps(requests,indent=2)+'\n')
++        (root/'assembly.json').write_text(json.dumps(machine,indent=2)+'\n')
++        with Registry(root/'reimport.sqlite') as other:
++            import_library(other,bundle)
++            replay=export_assembly(other,'rivetwing',1)
++            assert replay['body']==result['body']
++        asset=GamePoseAsset(result['body']);poses=[asset.sample('AssemblyMotion',t,vertices=True) for t in (0,.5,1.5,2)]
++        assert poses[0]['world_matrices']==poses[-1]['world_matrices']
++        assert poses[0]['world_matrices']!=poses[1]['world_matrices']
++        receipt=result['receipt']|{'build_seconds':elapsed,'portable_rebuild_byte_exact':True,
++            'loop_world_matrices_exact':True,'sampled_frames':[0,.5,1.5,2],
++            'limits':'Original assembly proof; offline geometry inspection, no continuous engine playback or physics acceptance.'}
++        (root/'receipt.json').write_text(json.dumps(receipt,indent=2)+'\n')
++        (root/'README.md').write_text('''# Rivetwing dispatch beacon
++
++Original reusable rigid 3D parts, saved subassemblies and named AssemblyMotion.
++`rivetwing.glb` is the actual animated realization. `assembly.json`, the portable
++library and `create-requests.json` retain exact editable source and every part.
++Run each request through `axm_uc.sticker_create.execute(registry, request, root)`
++or write a single request file and call `axm-sticker-create DB REQUEST.json`.
++No fabric repository, service or AI is required by UC. Geometry is shared across
++instances; this is not a skin, cloth simulation, collision or LOD proof.
++''')
++        return {k:v for k,v in receipt.items() if k!='mappings'}
++
++def preview(root):
++    import matplotlib
++    matplotlib.use('Agg')
++    import matplotlib.pyplot as plt
++    from mpl_toolkits.mplot3d.art3d import Poly3DCollection
++    root=Path(root);body=(root/'rivetwing.glb').read_bytes();asset=GamePoseAsset(body);doc,raw=_parse(body)
++    fig=plt.figure(figsize=(14,6),facecolor='#101B29')
++    for k,t in enumerate((0,.5,1.5),1):
++        ax=fig.add_subplot(1,3,k,projection='3d');triangles=[];colors=[]
++        for m in asset.sample('AssemblyMotion',t,vertices=True)['meshes']:
++            p=doc['meshes'][doc['nodes'][m['node']]['mesh']]['primitives'][m['primitive']]
++            a=doc['accessors'][p['indices']];v=doc['bufferViews'][a['bufferView']]
++            ids=struct.unpack_from('<'+{5123:'H',5125:'I'}[a['componentType']]*a['count'],raw,v.get('byteOffset',0)+a.get('byteOffset',0))
++            color=doc['materials'][p['material']]['pbrMetallicRoughness']['baseColorFactor']
++            for j in range(0,len(ids),3):triangles.append([m['positions'][i] for i in ids[j:j+3]]);colors.append(color)
++        ax.add_collection3d(Poly3DCollection(triangles,facecolors=colors,edgecolors='#172330',linewidths=.15))
++        ax.set(xlim=(-1.9,1.9),ylim=(-1.55,1.65),zlim=(-.5,.8));ax.set_box_aspect((3.8,3.2,1.3))
++        ax.view_init(elev=74,azim=-78);ax.set_axis_off();ax.set_facecolor('#101B29')
++        ax.set_title(f'ASSEMBLY MOTION / {t:.1f}s',color='#C7DAE5')
++    fig.suptitle('RIVETWING / SAVED PARTS → MOVING SUBASSEMBLIES → REUSABLE CREATURE',color='white',fontsize=14)
++    fig.text(.5,.08,'Actual exported GLB geometry • shared meshes • exact portable rebuild • offline flat-colour inspection',ha='center',color='#AFBFCE')
++    fig.tight_layout(rect=(0,.12,1,.92));fig.savefig(root/'rivetwing.png',dpi=140,facecolor=fig.get_facecolor());plt.close(fig)
++
++if __name__=='__main__':
++    if sys.argv[1]=='preview':preview(sys.argv[2])
++    else:print(json.dumps(make(sys.argv[1]),indent=2))

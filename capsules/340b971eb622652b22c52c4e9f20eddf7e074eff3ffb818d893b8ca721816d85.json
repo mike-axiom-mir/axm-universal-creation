@@ -1,0 +1,180 @@
+{
+  "capsule_id": "340b971eb622652b22c52c4e9f20eddf7e074eff3ffb818d893b8ca721816d85",
+  "evidence": {
+    "files": [
+      {
+        "additions": 51,
+        "binary": false,
+        "content_sha256": "441f5f6ae78ebbb48b4a7168972fd0d86e2e192397286bc69764954da0edf3f3",
+        "deletions": 0,
+        "path": "CONFIGURATOR_TEMPLATE_PACK.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Editable Equipment / Vehicle / Weapon Configurator Template Pack",
+          "Surfaces",
+          "Source-truth contract",
+          "Candidate census after composition",
+          "Evidence"
+        ]
+      },
+      {
+        "additions": 41,
+        "binary": false,
+        "content_sha256": "30aa077b5298064a54eb1dac82c42b624dfc74173d430cbb80639569a6699470",
+        "deletions": 41,
+        "path": "VISUAL_TEMPLATE_FABRIC.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Current v16 candidate census",
+          "Equipment / vehicle / weapon configurator foundation",
+          "Registry and identity",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 34,
+        "binary": false,
+        "content_sha256": "651c1856deba1cdf48153069bdfd7edf301931d621eb4558675e26646cc50b70",
+        "deletions": 33,
+        "path": "VISUAL_TEMPLATE_PRIORITY_MAP.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "AXM Visual Template Expansion Priority Map",
+          "Vehicle / weapon / equipment configurator \u2014 IMPLEMENTED IN THIS LANE",
+          "Next high-value visual/creation families",
+          "Cross-cutting rules",
+          "Immediate build order"
+        ]
+      },
+      {
+        "additions": 88,
+        "binary": false,
+        "content_sha256": "75c37693b8fbac32920bc92acb7fad73d556ba8746c7de7bdd2e58d3ccf05ee0",
+        "deletions": 0,
+        "path": "src/axm_uc/visual_template_configurator.py",
+        "status": "A",
+        "symbols": [
+          "_merge",
+          "extend_configurator_catalog"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 3,
+        "binary": false,
+        "content_sha256": "2efbcce41140b3600b294b15d8965805c6aa8bbe296adbf7d765dd40c86a438b",
+        "deletions": 1,
+        "path": "src/axm_uc/visual_templates.py",
+        "status": "M",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 43,
+        "binary": false,
+        "content_sha256": "d6787aafd24c1ece9c55d6885aff94765a04c94ba691faaaeccb3789409a33ca",
+        "deletions": 15,
+        "path": "tests/test_visual_templates.py",
+        "status": "M",
+        "symbols": [
+          "VisualTemplateTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 27,
+        "binary": false,
+        "content_sha256": "ef498d3560136b0de97f964ccc2f87bfff88661e84567ecd2955ca609d150348",
+        "deletions": 16,
+        "path": "tools/visual_template_proof.py",
+        "status": "M",
+        "symbols": [
+          "_write",
+          "main"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "b08aae821e5049dff125a45a183b68d9fc49c1b7e7b5ceee71f9dc4be357fc82"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "add",
+      "after",
+      "axm",
+      "boundary",
+      "build",
+      "candidate",
+      "catalog",
+      "census",
+      "composition",
+      "configurator",
+      "contract",
+      "creation",
+      "creation-machine",
+      "cross",
+      "current",
+      "cutting",
+      "editable",
+      "equipment",
+      "evidence",
+      "expansion",
+      "extend",
+      "fabric",
+      "families",
+      "foundation",
+      "high",
+      "identity",
+      "immediate",
+      "implemented",
+      "lane",
+      "map",
+      "merge",
+      "next",
+      "order",
+      "pack",
+      "priority",
+      "proof",
+      "registry",
+      "rules",
+      "source",
+      "standalone",
+      "surfaces",
+      "template",
+      "templates",
+      "this",
+      "tools",
+      "truth",
+      "universal-creation",
+      "v16",
+      "value",
+      "vehicle",
+      "visual",
+      "weapon",
+      "write"
+    ]
+  },
+  "source": {
+    "base": "a308bbdc1d65d346cf045f2974bb5c50900d96e8",
+    "commit_subject": "Add editable equipment vehicle and weapon configurator templates",
+    "head": "4ba02b85f0154110a478491067b772dc35d4c1cb",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

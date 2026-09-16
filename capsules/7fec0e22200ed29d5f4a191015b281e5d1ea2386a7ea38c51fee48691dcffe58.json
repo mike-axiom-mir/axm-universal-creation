@@ -1,0 +1,176 @@
+{
+  "capsule_id": "7fec0e22200ed29d5f4a191015b281e5d1ea2386a7ea38c51fee48691dcffe58",
+  "evidence": {
+    "files": [
+      {
+        "additions": 37,
+        "binary": false,
+        "content_sha256": "7e6ebebee535cf2e41b674152edeef77abd4ebf2478ba4c955bf076680ada683",
+        "deletions": 0,
+        "path": "HUD_TEMPLATE_PACK.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Source-Bound HUD Theme / Skin Template Pack",
+          "Surfaces",
+          "Source-truth contract",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 41,
+        "binary": false,
+        "content_sha256": "a155a41fee3f2ee4f0400b50e2716963281e0369bb9fb37893a19dcc474526c2",
+        "deletions": 41,
+        "path": "VISUAL_TEMPLATE_FABRIC.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Current v22 candidate census",
+          "Source-bound HUD theme / skin foundation",
+          "Registry and identity",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 34,
+        "binary": false,
+        "content_sha256": "ef05ce4f44bc9bc9f42cac900ba3a753e1ad967324bca202b02eb291d26b2d75",
+        "deletions": 33,
+        "path": "VISUAL_TEMPLATE_PRIORITY_MAP.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "AXM Visual Template Expansion Priority Map",
+          "HUD theme / skin systems \u2014 IMPLEMENTED IN THIS LANE",
+          "Next high-value visual/creation families",
+          "Cross-cutting rules",
+          "Immediate build order"
+        ]
+      },
+      {
+        "additions": 88,
+        "binary": false,
+        "content_sha256": "236fcd2d1e312c32771bb8c1c7eda9027ec88d764e73ed5a83d504a673ab2d4b",
+        "deletions": 0,
+        "path": "src/axm_uc/visual_template_hud.py",
+        "status": "A",
+        "symbols": [
+          "_merge",
+          "extend_hud_catalog"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 3,
+        "binary": false,
+        "content_sha256": "e2d66c3f29f0280ad2f5d59769adfa0c3e76dfea439e050d27f63fa0d44f51cc",
+        "deletions": 1,
+        "path": "src/axm_uc/visual_templates.py",
+        "status": "M",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 42,
+        "binary": false,
+        "content_sha256": "269072aeb2d8a62987c5120de1ba4c081b427bf92805efaabbe173aa3c8a4bce",
+        "deletions": 42,
+        "path": "tests/test_visual_templates.py",
+        "status": "M",
+        "symbols": [
+          "VisualTemplateTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 20,
+        "binary": false,
+        "content_sha256": "d2b0f05e19a0c8a375f2fe8e093b6ed92b3c0faab12e1dca5df728977b194518",
+        "deletions": 19,
+        "path": "tools/visual_template_proof.py",
+        "status": "M",
+        "symbols": [
+          "_write",
+          "main"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "1ec99cccbd5f89d59a097ad8c2cd735c4ddd22c4aca91bdd30fec3d733f8b010"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "add",
+      "axm",
+      "bound",
+      "boundary",
+      "build",
+      "candidate",
+      "catalog",
+      "census",
+      "contract",
+      "creation",
+      "creation-machine",
+      "cross",
+      "current",
+      "cutting",
+      "expansion",
+      "extend",
+      "fabric",
+      "families",
+      "foundation",
+      "high",
+      "hud",
+      "identity",
+      "immediate",
+      "implemented",
+      "lane",
+      "map",
+      "merge",
+      "next",
+      "order",
+      "pack",
+      "priority",
+      "proof",
+      "registry",
+      "rules",
+      "skin",
+      "source",
+      "standalone",
+      "surfaces",
+      "systems",
+      "template",
+      "templates",
+      "theme",
+      "this",
+      "tools",
+      "truth",
+      "universal-creation",
+      "v22",
+      "value",
+      "visual",
+      "write"
+    ]
+  },
+  "source": {
+    "base": "04f1acb6fab0e175445b3a55f387b86c59b21115",
+    "commit_subject": "Add source-bound HUD theme and skin templates",
+    "head": "0145a646009ade55e2a452c1074b2a43ea690ff7",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

@@ -1,0 +1,211 @@
+{
+  "capsule_id": "a7884cf5e0f2dc42bc90ac722f5b3ca039476fc254c14a34b7d8208d466a0f53",
+  "evidence": {
+    "files": [
+      {
+        "additions": 45,
+        "binary": false,
+        "content_sha256": "fefd1d62a98762cf4a6480c6ec43ab295c74780db3d5d09746065eb35b9e28e7",
+        "deletions": 2,
+        "path": "GAME_STYLE_GROWTH.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Current checkpoint",
+          "Portable render-style pass \u2014 2026-09-13",
+          "Expressive form pass \u2014 2026-09-13"
+        ]
+      },
+      {
+        "additions": 55,
+        "binary": false,
+        "content_sha256": "cca0323ca6935abcdb50b045a4d444e7b9a2edcff4f6357a6a1413b11255e324",
+        "deletions": 0,
+        "path": "docs/GAME_RENDER_STYLES.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Portable game render styles",
+          "Usage",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 249,
+        "binary": false,
+        "content_sha256": "9d7f9c31c7b9b083abe39cdb17e641596e593b9c8b33aba32162ef8665779544",
+        "deletions": 0,
+        "path": "src/axm_uc/game_render_styles.py",
+        "status": "A",
+        "symbols": [
+          "RenderStyle",
+          "_canonical",
+          "_digest",
+          "_profile",
+          "_number",
+          "_vector",
+          "_unit",
+          "_rgba",
+          "_validate",
+          "game_render_style_catalog",
+          "_mix",
+          "_quantize",
+          "_tone",
+          "apply_game_render_style",
+          "publish_game_render_style"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 39,
+        "binary": false,
+        "content_sha256": "2c4b71f525b1f1a70dbc9c07ab0ed84a35e6ad05a7bdaf1ca0d910e52cc62983",
+        "deletions": 7,
+        "path": "src/axm_uc/procedural_3d.py",
+        "status": "M",
+        "symbols": [
+          "procedural_3d_summary",
+          "_normalize_surface_spec",
+          "_encode_glb",
+          "verify_glb"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 19,
+        "binary": false,
+        "content_sha256": "76bc9254658fc0e2d3e0fa5e4c174644a11d86405a5721f6334ab3e0fdcc0f1d",
+        "deletions": 0,
+        "path": "src/axm_uc/visual_assets_cli.py",
+        "status": "M",
+        "symbols": [
+          "combined_catalog",
+          "build_parser",
+          "main"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 126,
+        "binary": false,
+        "content_sha256": "68300cc7f5ff84f6fddf669cac6308b205fc21acebb538d203a721aac7f89413",
+        "deletions": 0,
+        "path": "tests/test_game_render_styles.py",
+        "status": "A",
+        "symbols": [
+          "fixture",
+          "glb_document",
+          "GameRenderStyleTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 257,
+        "binary": false,
+        "content_sha256": "70d1b8bc6359fd5da2e6c92d5aa3bfaaeff5b06b2f1165cddba1dc218fe7c777",
+        "deletions": 0,
+        "path": "tools/blender/game_render_style_roundtrip.py",
+        "status": "A",
+        "symbols": [
+          "courier_mesh",
+          "form_parts",
+          "glb_chunks",
+          "accessor",
+          "add_text",
+          "scene_setup",
+          "import_variants",
+          "build",
+          "verify"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "da4f4ae9656fa642656bd2aed565cd8b7b9aa87b20081b5a8e92605eff0a7042"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 6,
+    "kinds": [
+      "code",
+      "knowledge",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "accessor",
+      "add",
+      "apply",
+      "axm",
+      "blender",
+      "boundary",
+      "build",
+      "canonical",
+      "catalog",
+      "checkpoint",
+      "chunks",
+      "cli",
+      "combined",
+      "courier",
+      "creation-machine",
+      "current",
+      "digest",
+      "document",
+      "encode",
+      "expressive",
+      "fixture",
+      "form",
+      "game",
+      "glb",
+      "graphic",
+      "growth",
+      "import",
+      "merge",
+      "mesh",
+      "mix",
+      "normalize",
+      "number",
+      "painterly",
+      "parser",
+      "parts",
+      "pass",
+      "portable",
+      "procedural",
+      "profile",
+      "publish",
+      "quantize",
+      "render",
+      "rgba",
+      "roundtrip",
+      "scene",
+      "setup",
+      "standalone",
+      "style",
+      "styles",
+      "summary",
+      "surface",
+      "text",
+      "tone",
+      "tools",
+      "truth",
+      "unit",
+      "universal-creation",
+      "usage",
+      "validate",
+      "variants",
+      "vector",
+      "verify",
+      "visual"
+    ]
+  },
+  "source": {
+    "base": "b98776a3ab619852fc846ea282870a079bb3c5c7",
+    "commit_subject": "Merge portable graphic and painterly render styles (#64)",
+    "head": "6ca9d30a0d9e913f67e5c28a8aec642d659f011a",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

@@ -1,0 +1,142 @@
+{
+  "capsule_id": "41640f03c6cad55abaccac1fccf58680aa91a92ff2dbcfe424f32528814064c8",
+  "evidence": {
+    "files": [
+      {
+        "additions": 102,
+        "binary": false,
+        "content_sha256": "6dc3142aed5f62889f5a67891486989569d68cc105bcbe5cdd376a62089b8124",
+        "deletions": 0,
+        "path": "LIVE_CREATION_RUNTIME.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "UC Live Creation Runtime v0",
+          "Run it",
+          "Manifest v0",
+          "Repair scope",
+          "Current observations",
+          "What COMPLETE means",
+          "Truth boundary / next capability"
+        ]
+      },
+      {
+        "additions": 34,
+        "binary": false,
+        "content_sha256": "ceaa4ea0b7faa21c40b7b1db00902ed24e82bca9672213608b12acdd53ff9c88",
+        "deletions": 0,
+        "path": "examples/requests/live_creation_repair_demo.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 405,
+        "binary": false,
+        "content_sha256": "b81ca64e4a92ffa1a4d915f02fc3c2ed56e5347e2b305333f1e2d3c6fa2fb257",
+        "deletions": 0,
+        "path": "src/axm_uc/live_creation.py",
+        "status": "A",
+        "symbols": [
+          "LiveCreationError",
+          "_inside",
+          "_safe_run_id",
+          "_validate_manifest",
+          "_copy_source",
+          "_resolve_executable",
+          "_execute_steps",
+          "_observe_one",
+          "_observe",
+          "_apply_repair",
+          "_repair",
+          "run_live_creation",
+          "_load_manifest",
+          "build_parser",
+          "main"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 111,
+        "binary": false,
+        "content_sha256": "0edb904783f087f42672a89345176e37fa495ec75247ad4bd2850d4a2bf49ff5",
+        "deletions": 0,
+        "path": "tests/test_live_creation.py",
+        "status": "A",
+        "symbols": [
+          "LiveCreationRuntimeTests"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "c122414e79079d48501ca6be45686c7bb749ce7085bae3b7e6b6d76b4d1c2824"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "configuration",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "add",
+      "apply",
+      "axm",
+      "boundary",
+      "build",
+      "capability",
+      "complete",
+      "copy",
+      "creation",
+      "creation-machine",
+      "current",
+      "demo",
+      "error",
+      "examples",
+      "executable",
+      "execute",
+      "inside",
+      "json",
+      "live",
+      "load",
+      "loop",
+      "manifest",
+      "means",
+      "native",
+      "next",
+      "observations",
+      "observe",
+      "one",
+      "parser",
+      "repair",
+      "requests",
+      "resolve",
+      "run",
+      "runtime",
+      "safe",
+      "scope",
+      "source",
+      "standalone",
+      "steps",
+      "truth",
+      "universal-creation",
+      "validate",
+      "what"
+    ]
+  },
+  "source": {
+    "base": "4e70e45a4523e26cd5a37e027a3570286c2230a2",
+    "commit_subject": "Add native Live Creation Runtime v0 loop",
+    "head": "e2016cf30b8f7b409137d138abed91dfcc885f60",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

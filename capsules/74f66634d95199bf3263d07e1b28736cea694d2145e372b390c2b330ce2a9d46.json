@@ -1,0 +1,178 @@
+{
+  "capsule_id": "74f66634d95199bf3263d07e1b28736cea694d2145e372b390c2b330ce2a9d46",
+  "evidence": {
+    "files": [
+      {
+        "additions": 35,
+        "binary": false,
+        "content_sha256": "2b8770780ebea2eaf0c7ab147ba3960675c777fa8b97bbe3149567f4f9321069",
+        "deletions": 0,
+        "path": "CHARACTER_REFERENCE_TEMPLATE_PACK.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Editable Character / Creature Reference Template Pack",
+          "Surfaces",
+          "Source-first contracts",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 42,
+        "binary": false,
+        "content_sha256": "6415ca35c354945fefe15c8f7eba0e838136142f1b7279be9f2944257b749042",
+        "deletions": 42,
+        "path": "VISUAL_TEMPLATE_FABRIC.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Current v15 candidate census",
+          "Character / creature reference foundation",
+          "Registry and identity",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 34,
+        "binary": false,
+        "content_sha256": "b2790653ecb36eaa4f82fb00f8f60665b0dbb6081b7a8bf257ea992ca50910e8",
+        "deletions": 33,
+        "path": "VISUAL_TEMPLATE_PRIORITY_MAP.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "AXM Visual Template Expansion Priority Map",
+          "Character / creature reference-sheet editor \u2014 IMPLEMENTED IN THIS LANE",
+          "Next high-value visual/creation families",
+          "Cross-cutting rules",
+          "Immediate build order"
+        ]
+      },
+      {
+        "additions": 88,
+        "binary": false,
+        "content_sha256": "e554a62831e8ad3b2bfa934c43a589dc6cc8574fe1befefbec1fc45e59810fe9",
+        "deletions": 0,
+        "path": "src/axm_uc/visual_template_character_reference.py",
+        "status": "A",
+        "symbols": [
+          "_merge",
+          "extend_character_reference_catalog"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 3,
+        "binary": false,
+        "content_sha256": "0664190b7eb2b48ef3d075e4f1c7fb57640660a756bc714b700ccb377d205040",
+        "deletions": 1,
+        "path": "src/axm_uc/visual_templates.py",
+        "status": "M",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 37,
+        "binary": false,
+        "content_sha256": "23b8b0383b9a8fbeb135f79df3625dfdea7f6868694697b381b416773ae97ce0",
+        "deletions": 34,
+        "path": "tests/test_visual_templates.py",
+        "status": "M",
+        "symbols": [
+          "VisualTemplateTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 18,
+        "binary": false,
+        "content_sha256": "4d4fb55c74304ed99cec0429a53d930e9ce576769075fc712000d8c4ff1802e6",
+        "deletions": 17,
+        "path": "tools/visual_template_proof.py",
+        "status": "M",
+        "symbols": [
+          "_write",
+          "main"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "3a63519207fb6e1a21f6de1b66709c4d34c4166fc88a954da4fd2a04b8cf94c6"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "add",
+      "axm",
+      "boundary",
+      "build",
+      "candidate",
+      "catalog",
+      "census",
+      "character",
+      "contracts",
+      "creation",
+      "creation-machine",
+      "creature",
+      "cross",
+      "current",
+      "cutting",
+      "editable",
+      "editor",
+      "expansion",
+      "extend",
+      "fabric",
+      "families",
+      "first",
+      "foundation",
+      "high",
+      "identity",
+      "immediate",
+      "implemented",
+      "lane",
+      "map",
+      "merge",
+      "next",
+      "order",
+      "pack",
+      "priority",
+      "proof",
+      "reference",
+      "registry",
+      "rules",
+      "sheet",
+      "source",
+      "standalone",
+      "surfaces",
+      "template",
+      "templates",
+      "this",
+      "tools",
+      "truth",
+      "universal-creation",
+      "v15",
+      "value",
+      "visual",
+      "write"
+    ]
+  },
+  "source": {
+    "base": "b769f1b7454e3a9847e8e63b244e960f9d5a5848",
+    "commit_subject": "Add editable character and creature reference templates",
+    "head": "a308bbdc1d65d346cf045f2974bb5c50900d96e8",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

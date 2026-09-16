@@ -1,0 +1,92 @@
+{
+  "capsule_id": "efad4aa5177ebe62290de7065163c61a7176ab9666ab27669499baf3a7744cf8",
+  "evidence": {
+    "files": [
+      {
+        "additions": 25,
+        "binary": false,
+        "content_sha256": "42d4f1f561bed2d84ea3fd110a643f3a550702c0165bb75c1f46f8fd69de3e5e",
+        "deletions": 0,
+        "path": "capabilities/special-effect-hands/README.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Special-effect Hands donor capsule",
+          "What UC gains",
+          "Boundary"
+        ]
+      },
+      {
+        "additions": 14,
+        "binary": false,
+        "content_sha256": "a7589c50ce4663e2cc8379d2583fbb737d1a5cce879e121c3c1a378a6ba393a6",
+        "deletions": 0,
+        "path": "capabilities/special-effect-hands/SOURCE_INTAKE.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 13,
+        "binary": false,
+        "content_sha256": "333726816a047f578ff5d8724ff07d4eb5f741f2fa5ce0723351ddae1502c23d",
+        "deletions": 0,
+        "path": "capabilities/special-effect-hands/package.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "10dfab63b1ce5a51a389deb60db28ebcaa812f4f3d0c0f1e74355976c39400cd"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 5,
+    "kinds": [
+      "configuration",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "axiom",
+      "axm",
+      "boundary",
+      "capabilities",
+      "capsule",
+      "chatgpt",
+      "creation-machine",
+      "donor",
+      "effect",
+      "from",
+      "gains",
+      "hands",
+      "intake",
+      "json",
+      "merge",
+      "mike",
+      "mir",
+      "package",
+      "pull",
+      "readme",
+      "request",
+      "source",
+      "special",
+      "standalone",
+      "universal-creation",
+      "what"
+    ]
+  },
+  "source": {
+    "base": "210ba77528cb03c7812dfed06bf605360cca77d0",
+    "commit_subject": "Merge pull request #78 from mike-axiom-mir/chatgpt/special-effect-hands-donor",
+    "head": "90148a8cde5349bb4b3801b3256859a631fbf9a6",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

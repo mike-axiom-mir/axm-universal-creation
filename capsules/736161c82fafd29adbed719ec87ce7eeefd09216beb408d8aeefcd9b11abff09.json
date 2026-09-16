@@ -1,0 +1,87 @@
+{
+  "capsule_id": "736161c82fafd29adbed719ec87ce7eeefd09216beb408d8aeefcd9b11abff09",
+  "evidence": {
+    "files": [
+      {
+        "additions": 44,
+        "binary": false,
+        "content_sha256": "207278a103c06625d14a17074c70b15109717ec51e5f8d33431e714ce241d2df",
+        "deletions": 0,
+        "path": "docs/CREATIVE_QUALITY_GAUNTLET.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Creative Quality Gauntlet",
+          "Quality levels",
+          "What is measured",
+          "Truth boundary",
+          "Orchestration finding under test",
+          "Verification"
+        ]
+      },
+      {
+        "additions": 6,
+        "binary": false,
+        "content_sha256": "29fa5bae359e07d918ab4a60d5dba46185e72855b13e4ad3522930a023b6a2ee",
+        "deletions": 1,
+        "path": "tests/test_creative_precision_fabric.py",
+        "status": "M",
+        "symbols": [
+          "CreativePrecisionFabricTests"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "798dda90c7c74e8cbca48107f702888a999dc1272c3228ea6c1401e942257ed3"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "axiom",
+      "axm",
+      "boundary",
+      "chatgpt",
+      "creation-machine",
+      "creative",
+      "fabric",
+      "finding",
+      "from",
+      "gauntlet",
+      "levels",
+      "measured",
+      "merge",
+      "mike",
+      "mir",
+      "orchestration",
+      "precision",
+      "pull",
+      "quality",
+      "request",
+      "standalone",
+      "truth",
+      "under",
+      "universal-creation",
+      "verification",
+      "what"
+    ]
+  },
+  "source": {
+    "base": "02d483bca089f72a10c04f88aa941dc8b08b66eb",
+    "commit_subject": "Merge pull request #103 from mike-axiom-mir/chatgpt/creative-quality-gauntlet",
+    "head": "6737d79e6f9734a5dce49f7a8e6554a77d4ab54e",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

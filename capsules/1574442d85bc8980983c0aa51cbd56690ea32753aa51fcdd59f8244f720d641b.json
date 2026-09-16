@@ -1,0 +1,98 @@
+{
+  "capsule_id": "1574442d85bc8980983c0aa51cbd56690ea32753aa51fcdd59f8244f720d641b",
+  "evidence": {
+    "files": [
+      {
+        "additions": 149,
+        "binary": false,
+        "content_sha256": "9a3fd52e7506aafca05d07d07cb16ea730f7d8a446c0865b9c842ed43a71a154",
+        "deletions": 0,
+        "path": "docs/CREATIVE_PRECISION_WAVE3.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Creative Precision Fabric \u2014 executable hand wave 3",
+          "Exact installed creative-hand body",
+          "Advanced mask / matting",
+          "Liquify / field transforms",
+          "Advanced raster / photo",
+          "Material-channel body",
+          "Audio micro-operations",
+          "Timeline / video editing state",
+          "Public evidence"
+        ]
+      },
+      {
+        "additions": 3,
+        "binary": false,
+        "content_sha256": "fab7aecf99475beff6ef540b506eeaca73b8b495f14870048b549a0e277e0266",
+        "deletions": 0,
+        "path": "tests/test_creative_precision_fabric.py",
+        "status": "M",
+        "symbols": [
+          "CreativePrecisionFabricTests"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "472e66fdbc076be96718d6d9215ba9478e4eb9fc49102e79c33d911d917cf743"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "advanced",
+      "audio",
+      "axm",
+      "body",
+      "channel",
+      "creation-machine",
+      "creative",
+      "editing",
+      "evidence",
+      "exact",
+      "executable",
+      "execute",
+      "fabric",
+      "field",
+      "hand",
+      "hands",
+      "installed",
+      "liquify",
+      "mask",
+      "material",
+      "matting",
+      "micro",
+      "operations",
+      "photo",
+      "precision",
+      "raster",
+      "standalone",
+      "state",
+      "timeline",
+      "transforms",
+      "universal-creation",
+      "video",
+      "wave",
+      "wave3"
+    ]
+  },
+  "source": {
+    "base": "6d36c725d8c0e2b12bab87ead25d4e22e87ae8da",
+    "commit_subject": "Execute 144 creative precision hands (#86)",
+    "head": "885329d85c69ca989d3ecf150be2c2f021696882",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

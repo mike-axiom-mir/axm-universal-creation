@@ -1,0 +1,97 @@
+{
+  "capsule_id": "e78476ae1e8dc844e3761042e9752f46ada5c34fa987b756f92ec08925b2bc47",
+  "evidence": {
+    "files": [
+      {
+        "additions": 35,
+        "binary": false,
+        "content_sha256": "e4136ab009f63595b5406ce3d9c078509f53e2b35be3f2879b93e305c6b81da8",
+        "deletions": 0,
+        "path": "GLOBE_COMPANION.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "AXM hovering globe companion"
+        ]
+      },
+      {
+        "additions": 205,
+        "binary": false,
+        "content_sha256": "83881c6c86add37c389e52fecabe111aad3c7f375b2be96f4dd71fae9f3df3cb",
+        "deletions": 0,
+        "path": "tools/blender/axm_globe_companion.py",
+        "status": "A",
+        "symbols": [
+          "front",
+          "build",
+          "animate",
+          "main"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 27,
+        "binary": false,
+        "content_sha256": "71714ebbd34d90ae63194565f5aeb413c0625fdb3e963b67e611dd717f46ce16",
+        "deletions": 0,
+        "path": "tools/blender/render_globe_companion.py",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 32,
+        "binary": false,
+        "content_sha256": "8eb9e80d3b031bee429a6b39f2018a5427aa484ce81d193ffe015ad228fabcf5",
+        "deletions": 0,
+        "path": "tools/blender/verify_globe_companion.py",
+        "status": "A",
+        "symbols": [
+          "inspect"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "15ff01298710d2bf7a8d436b7dbbfd4717a363eb4aa8bab71763f06527ec1c95"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 4,
+    "kinds": [
+      "code",
+      "knowledge"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "animate",
+      "axm",
+      "blender",
+      "build",
+      "companion",
+      "creation-machine",
+      "front",
+      "globe",
+      "hovering",
+      "inspect",
+      "merge",
+      "pipeline",
+      "production",
+      "render",
+      "standalone",
+      "tools",
+      "universal-creation",
+      "verify"
+    ]
+  },
+  "source": {
+    "base": "346111530ed007d644bd810eef326fd06f33dd66",
+    "commit_subject": "Merge globe companion production pipeline",
+    "head": "ce19a138392cbd23acffc3a46b01b76fd91b305a",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

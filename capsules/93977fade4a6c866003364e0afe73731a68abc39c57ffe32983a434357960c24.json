@@ -1,0 +1,194 @@
+{
+  "capsule_id": "93977fade4a6c866003364e0afe73731a68abc39c57ffe32983a434357960c24",
+  "evidence": {
+    "files": [
+      {
+        "additions": 45,
+        "binary": false,
+        "content_sha256": "b829de847b1f7411f3b070589f04358d165bc5063ebc0fd673e5e8e40b708731",
+        "deletions": 0,
+        "path": "CINEMATIC_TEMPLATE_PACK.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Editable Cinematic Title / Credits / Overlay Template Pack",
+          "Product surfaces",
+          "Exact source contracts",
+          "Format adaptation",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 46,
+        "binary": false,
+        "content_sha256": "06ac4dada1130ea4a1cd9feb121d189baad879a6d4fcb4dd68cd4ea43f561169",
+        "deletions": 41,
+        "path": "VISUAL_TEMPLATE_FABRIC.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Current v7 candidate census",
+          "Product foundations accumulated so far",
+          "Editable cards / decks / collectibles",
+          "Editable cinematic titles / credits / overlays",
+          "Registry and identity",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 39,
+        "binary": false,
+        "content_sha256": "b023935d6f7dc36d1e1433fa8101fb92c1e2ea13ae6e36d418d8c0686b954877",
+        "deletions": 37,
+        "path": "VISUAL_TEMPLATE_PRIORITY_MAP.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "AXM Visual Template Expansion Priority Map",
+          "Priority 5B \u2014 Card / deck editor \u2014 MERGED",
+          "Priority 5C \u2014 Cinematic title / credits / overlay editor \u2014 IMPLEMENTED IN THIS LANE",
+          "Priority 5D \u2014 Next high-value visual/creation families",
+          "Cross-cutting rules",
+          "Immediate build order"
+        ]
+      },
+      {
+        "additions": 88,
+        "binary": false,
+        "content_sha256": "64569e9a1808b4da9f5d9a4a21f106dd7e45d700bbc901e3cb4fe8caec5223fa",
+        "deletions": 0,
+        "path": "src/axm_uc/visual_template_cinematic.py",
+        "status": "A",
+        "symbols": [
+          "_merge",
+          "extend_cinematic_catalog"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 3,
+        "binary": false,
+        "content_sha256": "5be22bfb71e7647f317165edce8bfaedd8efb8d714c180a9e1600ebced06f307",
+        "deletions": 1,
+        "path": "src/axm_uc/visual_templates.py",
+        "status": "M",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 37,
+        "binary": false,
+        "content_sha256": "47ca3b87769b1b5336a1b685d7b82c9fe2879743f81d66884a43f34cb4750d39",
+        "deletions": 35,
+        "path": "tests/test_visual_templates.py",
+        "status": "M",
+        "symbols": [
+          "VisualTemplateTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 18,
+        "binary": false,
+        "content_sha256": "df11d18432f978293e93588a5f24deadddad8da18329dedf0a28d1c1e4ed8df7",
+        "deletions": 17,
+        "path": "tools/visual_template_proof.py",
+        "status": "M",
+        "symbols": [
+          "_write",
+          "main"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "53533d203a8a96c75d3f843c1699c57ca327da6545445c8cad5712357dec7db6"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "accumulated",
+      "adaptation",
+      "add",
+      "axm",
+      "boundary",
+      "build",
+      "candidate",
+      "card",
+      "cards",
+      "catalog",
+      "census",
+      "cinematic",
+      "collectibles",
+      "contracts",
+      "creation",
+      "creation-machine",
+      "credits",
+      "cross",
+      "current",
+      "cutting",
+      "deck",
+      "decks",
+      "editable",
+      "editor",
+      "exact",
+      "expansion",
+      "extend",
+      "fabric",
+      "families",
+      "far",
+      "format",
+      "foundations",
+      "high",
+      "identity",
+      "immediate",
+      "implemented",
+      "lane",
+      "map",
+      "merge",
+      "merged",
+      "next",
+      "order",
+      "overlay",
+      "overlays",
+      "pack",
+      "priority",
+      "product",
+      "proof",
+      "registry",
+      "rules",
+      "source",
+      "standalone",
+      "surfaces",
+      "template",
+      "templates",
+      "this",
+      "title",
+      "titles",
+      "tools",
+      "truth",
+      "universal-creation",
+      "value",
+      "visual",
+      "write"
+    ]
+  },
+  "source": {
+    "base": "45a37dedae18ce807f3c232a979e43dd0355e67e",
+    "commit_subject": "Add editable cinematic title credits and overlay templates",
+    "head": "74f03713f814c4373d5b5e0ab9b45ee8d85b3928",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

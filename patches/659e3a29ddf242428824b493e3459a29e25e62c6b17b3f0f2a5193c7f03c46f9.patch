@@ -1,0 +1,635 @@
+diff --git a/KEYART_TEMPLATE_PACK.md b/KEYART_TEMPLATE_PACK.md
+new file mode 100644
+index 0000000..dc32f9f
+--- /dev/null
++++ b/KEYART_TEMPLATE_PACK.md
+@@ -0,0 +1,44 @@
++# Editable Key Art / Poster / Cover Template Pack
++
++`visual.keyart.core` gives Universal Creation a source-first composition foundation for game key art, posters, covers, banners and related promotional/editorial visuals.
++
++The goal is not to generate one attractive flat image and lose control. The goal is to retain meaningful edit handles for the visual system.
++
++## Product surfaces
++
++The product contains ten responsive screens:
++
++- project hub;
++- composition editor;
++- hero subject staging;
++- title / typography editor;
++- lighting / effects editor;
++- background / atmosphere editor;
++- crop / format variants;
++- composition variant board;
++- review / comparison;
++- export matrix.
++
++## Editable composition contracts
++
++New primitives preserve distinct source state:
++
++- `hero-subject` — source, mask, crop/depth and transform remain editable;
++- `depth-layer` — foreground/midground/background order remains explicit;
++- `focal-mask` — focus guidance never replaces source art;
++- `title-lockup` — title text and layout remain separate;
++- `credit-block` — exact credits/legal/byline content and placement;
++- `lighting-pass` — effects remain derived contributions rather than source authority;
++- `crop-safe-frame` — target crop never rewrites source geometry;
++- `variant-card` — alternate compositions have exact identities;
++- `export-target` — dimensions/crop/quality/file expectations remain explicit.
++
++## Format adaptation
++
++The source composition can be inspected through portrait, landscape, square, banner and other output-safe regions while preserving the richer canonical composition. `math_hooks` expose focal/safe-area ratio ranges so the mathematics lane can later improve crop/layout derivation without changing template identity.
++
++## Truth boundary
++
++This pack proves deterministic visual structure, responsive regions, editability contracts and explicit output targets. It does not prove illustration quality, typography quality, lighting quality, print production, store-platform compliance, target renderer fidelity or aesthetic acceptance.
++
++A generated SVG gallery is inspection evidence for structure only. It is not the final key art and never replaces richer source state.
+diff --git a/VISUAL_TEMPLATE_FABRIC.md b/VISUAL_TEMPLATE_FABRIC.md
+index 81c1ce0..7cf223f 100644
+--- a/VISUAL_TEMPLATE_FABRIC.md
++++ b/VISUAL_TEMPLATE_FABRIC.md
+@@ -2,76 +2,73 @@
+ 
+ Universal Creation contains one deterministic library of **known visual archetypes** between low-level format scaffolds and finished products. Templates are editable structural starting points, not finished art and not automatic canon.
+ 
+-The public module remains `axm_uc.visual_templates`. The retained kernel is `visual_template_core.py`; explicit extension packs add game/product, creative/narrative, AXM-system and shared-game knowledge before the facade validates one composed v1 catalog. Sticker Fabric remains the immutable/versioned local registry bridge. Mathematical work can enrich declared ratios/ranges through `math_hooks` without replacing template identity.
++The public module remains `axm_uc.visual_templates`. The retained kernel is `visual_template_core.py`; explicit extension packs add game/product, creative/narrative, AXM-system, shared-game and key-art knowledge before the facade validates one composed v1 catalog. Sticker Fabric remains the immutable/versioned local registry bridge. Mathematical work can enrich declared ratios/ranges through `math_hooks` without replacing template identity.
+ 
+-## Current v4 candidate census
++## Current v5 candidate census
+ 
+-- **67 reusable visual/state primitives**
+-- **12 coherent style systems**
+-- **103 responsive screen archetypes**
+-- **10 whole-product archetypes**
+-- **113 exact screen/product definitions** when explicitly installed into Sticker Registry
++- **76 reusable visual/state primitives**
++- **13 coherent style systems**
++- **113 responsive screen archetypes**
++- **11 whole-product archetypes**
++- **124 exact screen/product definitions** when explicitly installed into Sticker Registry
+ 
+-Every major game/editor/comic/AXM family provides compact, standard and wide normalized layouts. Unknown requested variants fail rather than silently falling back.
++Every major game/editor/comic/AXM/key-art family provides compact, standard and wide normalized layouts. Unknown requested variants fail rather than silently falling back.
+ 
+ ## Product foundations accumulated so far
+ 
+ ### Games
+ 
+-- `game.racing.performance` — compact six-screen racing shell.
+-- `game.racing.full` — 19-screen professional racing product including selection, tuning, livery, loading, countdown, primary/split HUDs, recovery, replay, progression, settings and accessibility.
++- `game.racing.performance` — compact racing shell.
++- `game.racing.full` — professional 19-screen racing product.
+ - `game.coop.action` — reusable co-op action shell.
+ - `game.rts.command` — persistent-world RTS command shell.
+-- `game.system.shell` — 18 optional genre-neutral product surfaces such as profiles, party/seats, matchmaking/server browsing, controls, graphics/audio, saves, achievements, tutorial, photo mode, recovery, chat, privacy/consent and language.
+-- `game.shared.core` — 12 reusable gameplay-system surfaces for inventory, progression, mission/map/objectives, upgrades, lore, revive/boss/spectator state, session summaries and challenges.
++- `game.system.shell` — optional genre-neutral product plumbing.
++- `game.shared.core` — inventory, progression, missions/maps/objectives, upgrades, lore, revive/boss/spectator state, session summaries and challenges.
+ 
+ Optional online/account surfaces remain capabilities, not requirements for local/offline products.
+ 
+ ### Creative/editor
+ 
+-`editor.creative.core` provides twelve coordinated editing surfaces: project hub, assets, layers, timeline, node graph, inspector, animation, effects, cutscenes, materials, audio and review/export. Rich editable source stays authoritative over previews and exports.
++`editor.creative.core` provides twelve coordinated source-first editing surfaces spanning assets, layers, timeline, graph, inspector, animation, effects, cutscenes, materials, audio and review/export.
+ 
+ ### Comics / visual narrative
+ 
+-`comic.narrative.core` provides ten editable story surfaces: project library, page editor, panel editor, dialogue/lettering editor, character sheet, scene graph, storyboard, motion timeline, reader preview and export. Page geometry, panels, source art, dialogue, bubble body/tail, captions, references, reading order, branching beats and motion timing remain separate semantic state.
++`comic.narrative.core` provides ten editable story surfaces. Page geometry, panels, source art, dialogue, bubble body/tail, captions, references, reading order, branching beats and motion timing remain separate semantic state.
+ 
+ ### AXM system / monolith shell
+ 
+-`axm.system.shell` provides twelve AXM-native surfaces: home, registry, capability browser, cartridge loader, machine state, evidence review, workflow, specialists, workfloor, snapshots, settings and recovery. The `axm.machine.glass` visual language is a starting style, not canonical AXM identity. Human-facing views use progressive detail while source/version/evidence and recovery consequences remain inspectable.
++`axm.system.shell` provides twelve AXM-native surfaces for registry, capabilities, portable packages, state, evidence, workflow, specialists, workfloor, snapshots, settings and recovery. Human-facing views use progressive detail while source/version/evidence and recovery consequences remain inspectable.
+ 
+-## Shared gameplay-system pack
++### Editable key art / poster / cover composition
+ 
+-`game.shared.core` closes common near-term gaps without rebuilding product plumbing that already exists elsewhere.
++`visual.keyart.core` provides ten source-first composition surfaces:
+ 
+-Its screens are:
++- project hub;
++- composition editor;
++- hero subject staging;
++- title / typography editor;
++- lighting / effects editor;
++- background / atmosphere editor;
++- crop / format variants;
++- exact composition variant board;
++- review / comparison;
++- export matrix.
+ 
+-- `game.shared.inventory`
+-- `game.shared.skill-tree`
+-- `game.shared.mission-briefing`
+-- `game.shared.world-map`
+-- `game.shared.objective-log`
+-- `game.shared.upgrade-shop`
+-- `game.shared.codex`
+-- `game.shared.revive-overlay`
+-- `game.shared.boss-encounter-hud`
+-- `game.shared.spectator`
+-- `game.shared.end-session-summary`
+-- `game.shared.challenge-board`
++Its `visual.keyart.cinematic` style supplies a high-impact starting visual language while keeping structure replaceable.
+ 
+-The pack adds state-aware primitives instead of only rectangles:
++The key-art pack deliberately preserves edit handles:
+ 
+-- `inventory-slot` — quantity/ownership/equipped/compatibility state;
+-- `skill-node` — prerequisites, cost and unlock state;
+-- `objective-row` — objective lifecycle and progress;
+-- `shop-offer` — cost plus resulting ownership state;
+-- `codex-entry` — discovered versus unknown knowledge;
+-- `revive-state` — actor/time/revival lifecycle;
+-- `boss-phase` — phase/vulnerability state with non-color cues;
+-- `spectator-seat` — viewed target/control context;
+-- `challenge-card` — progress, expiry and reward;
+-- `session-stat` — metric plus personal/team scope.
++- `hero-subject` retains source, mask, crop/depth and transform state;
++- `depth-layer` keeps foreground/midground/background ordering explicit;
++- `focal-mask` guides attention without replacing source art;
++- `title-lockup` keeps text and layout separate;
++- `credit-block` retains exact credits/legal/byline content;
++- `lighting-pass` remains a derived contribution instead of source authority;
++- `crop-safe-frame` cannot rewrite source geometry;
++- `variant-card` pins alternate composition identity;
++- `export-target` exposes dimensions/crop/quality/file expectations.
+ 
+-The style `game.shared.adventure` is deliberately neutral enough to be replaced by a specific game's art direction while retaining these semantic contracts.
++`math_hooks` on composition and crop screens expose focal/safe-area ranges for later mathematical derivation without replacing template identity.
+ 
+ ## Registry and identity
+ 
+@@ -91,14 +88,15 @@ Definitions use exact id/version/digest identity. There is no floating `latest`,
+ 
+ ```sh
+ axm-visual-templates catalog
++axm-visual-templates show visual.keyart.core
+ axm-visual-templates show game.shared.core
+ axm-visual-templates show editor.creative.core
+ axm-visual-templates show comic.narrative.core
+ axm-visual-templates show axm.system.shell
+-axm-visual-templates render game.shared.core creations/game-shared --width 1920 --height 1080
++axm-visual-templates render visual.keyart.core creations/keyart --width 1920 --height 1080
+ ```
+ 
+-A product preview contains one structural SVG per screen plus exact `product.json` and local HTML gallery. Preview is derived inspection output, not authoritative source.
++A product preview contains one structural SVG per screen plus exact `product.json` and local HTML gallery. Preview/export is derived inspection output, not authoritative source.
+ 
+ ## Evidence gate
+ 
+@@ -109,19 +107,19 @@ python -m unittest discover -s tests -p 'test_visual_templates.py' -v
+ python tools/visual_template_proof.py /new/output/path
+ ```
+ 
+-The v4 candidate gate requires:
++The v5 candidate gate requires:
+ 
+-- exact census: 12 styles / 67 primitives / 103 screens / 10 products;
+-- all 103 screens inside six representative viewport shapes;
++- exact census: 13 styles / 76 primitives / 113 screens / 11 products;
++- all 113 screens inside six representative viewport shapes;
+ - exact product screen order and flow across those viewports;
+-- parseable galleries for racing, co-op, RTS, product systems, shared gameplay, creative editor, editable comics and AXM system shell;
+-- all 113 screen/product definitions install through the existing immutable Sticker Registry;
+-- explicit state contracts for inventory ownership, skill prerequisites/costs, unknown codex content, revive actor/time, boss phases and challenge progress/rewards;
++- parseable galleries for all prior proof products plus editable key art;
++- all 124 screen/product definitions install through the existing immutable Sticker Registry;
++- subject source/transform, depth ordering, focal masks, title separation, non-authoritative effects, crop-safe source preservation, exact variant identity and explicit export-target requirements remain present;
+ - copy safety, strict variant rejection, invalid-geometry rejection and exact Sticker slot binding remain intact.
+ 
+ ## Truth boundary
+ 
+-Current evidence proves deterministic structural knowledge and state vocabulary only. It does **not** prove target-engine rendering, gameplay feel, economy balance, progression fairness, encounter timing, network behavior, save reliability, authoring ergonomics, drawing quality, package mounting, recovery success, accessibility compliance or aesthetic acceptance.
++Current evidence proves deterministic structural knowledge and editability/state vocabulary only. It does **not** prove target-engine rendering, illustration quality, typography quality, lighting quality, print production, store-platform compliance, gameplay feel, authoring ergonomics or aesthetic acceptance.
+ 
+ Templates must be connected to actual runtime/project state by the consuming product. Unknown or unavailable state stays visibly unknown rather than being invented. Richer editable source remains authoritative over lossy previews/exports. Templates may be mutated, combined, replaced or ignored when better evidence and product intent support another solution.
+ 
+diff --git a/VISUAL_TEMPLATE_PRIORITY_MAP.md b/VISUAL_TEMPLATE_PRIORITY_MAP.md
+index 96208e4..e577780 100644
+--- a/VISUAL_TEMPLATE_PRIORITY_MAP.md
++++ b/VISUAL_TEMPLATE_PRIORITY_MAP.md
+@@ -1,70 +1,68 @@
+ # AXM Visual Template Expansion Priority Map
+ 
+-Status: v4 growth lane after verified v1 + v2 + v3 merges.
++Status: v5 growth lane after verified v1–v4 merges.
+ 
+-The visual-template fabric should grow where Universal Creation is most likely to reuse the knowledge soon. The order below is a build priority, not canon: templates remain editable foundations and may be replaced when evidence supports a better structure.
++The visual-template fabric grows where Universal Creation is likely to reuse the knowledge soon. This is a build priority, not canon: templates remain editable foundations and may be replaced when evidence supports a better structure.
+ 
+ ## Priority 1 — Creative editor core — MERGED
+ 
+-Product: `editor.creative.core` — project hub, assets, layers, timeline, graph, inspector, animation, effects, cutscenes, materials, audio and review/export.
++`editor.creative.core` — assets, layers, timeline, graphs, inspector, animation, effects, cutscenes, materials, audio and review/export.
+ 
+ ## Priority 2 — Editable comics and visual narrative — MERGED
+ 
+-Product: `comic.narrative.core` — library, page/panel/dialogue editing, characters, scene graph, storyboard, motion timeline, reader preview and export.
++`comic.narrative.core` — page/panel/dialogue editing, characters, scene graph, storyboard, motion timeline, reader preview and export.
+ 
+ ## Priority 3 — AXM software / monolith shell — MERGED
+ 
+-Product: `axm.system.shell` — home, registry, capabilities, cartridge loader, state, evidence, workflow, specialists, workfloor, snapshots, settings and recovery.
++`axm.system.shell` — registry, capabilities, cartridge loader, machine state, evidence, workflow, specialists, workfloor, snapshots and recovery.
+ 
+-## Priority 4 — Near-term shared gameplay gaps — IMPLEMENTED IN THIS LANE
++## Priority 4 — Shared gameplay systems — MERGED
+ 
+-Product: `game.shared.core`
++`game.shared.core` — inventory, progression, missions/maps/objectives, upgrades, codex, revive/boss/spectator state, session summaries and challenges.
+ 
+-Implemented IDs:
++## Priority 5A — Editable key art / poster / cover composition — IMPLEMENTED IN THIS LANE
+ 
+-- `game.shared.inventory`
+-- `game.shared.skill-tree`
+-- `game.shared.mission-briefing`
+-- `game.shared.world-map`
+-- `game.shared.objective-log`
+-- `game.shared.upgrade-shop`
+-- `game.shared.codex`
+-- `game.shared.revive-overlay`
+-- `game.shared.boss-encounter-hud`
+-- `game.shared.spectator`
+-- `game.shared.end-session-summary`
+-- `game.shared.challenge-board`
++Product: `visual.keyart.core`
+ 
+-New state-aware primitives:
++Implemented screens:
+ 
+-- `inventory-slot`
+-- `skill-node`
+-- `objective-row`
+-- `shop-offer`
+-- `codex-entry`
+-- `revive-state`
+-- `boss-phase`
+-- `spectator-seat`
+-- `challenge-card`
+-- `session-stat`
++- `visual.keyart.project-hub`
++- `visual.keyart.composition-editor`
++- `visual.keyart.subject-stage`
++- `visual.keyart.type-editor`
++- `visual.keyart.lighting-effects`
++- `visual.keyart.background-atmosphere`
++- `visual.keyart.crop-variants`
++- `visual.keyart.variant-board`
++- `visual.keyart.review-compare`
++- `visual.keyart.export`
+ 
+-Style: `game.shared.adventure`.
++New primitives:
+ 
+-These inherit existing product plumbing where possible rather than duplicating profile/settings/network/accessibility surfaces.
++- `hero-subject`
++- `depth-layer`
++- `focal-mask`
++- `title-lockup`
++- `credit-block`
++- `lighting-pass`
++- `crop-safe-frame`
++- `variant-card`
++- `export-target`
+ 
+-## Priority 5 — High-value visual/creation families — NEXT
++Style: `visual.keyart.cinematic`.
+ 
+-Potential next packs, ordered by likely reuse:
++The source-first rule is explicit: crop/output frames do not mutate source geometry, effects do not become source authority, text and layout remain separable, and alternate compositions have exact variant identity.
+ 
+-1. **Key art / poster / cover composition** — hero subject, title hierarchy, focal lighting, credits, variants and crop-safe outputs.
+-2. **Card/deck editor** — card faces/backs, rarity/state, deck building, stat/ability layouts and print/digital variants.
+-3. **Cinematic title / credits / trailer overlay system** — title cards, lower thirds, chapter cards, credits, subtitles and transition-safe zones.
+-4. **Video / stream overlay editor** — gameplay frame, cameras, alerts, chat, score, sponsor-free identity areas and responsive scene sets.
+-5. **Infographic / diagram editor** — nodes, relationships, legends, annotations, evidence/source panels and export layouts.
+-6. **World-map / lore-atlas editor** — regions, routes, layers, points of interest, time/state overlays and narrative references.
+-7. **Interactive visual-novel surfaces** — dialogue, choices, character staging, backgrounds, history/log, saves and branching state.
+-8. **3D showroom / gallery presentation** — hero object, comparison, annotations, material/variant selection and orbit/detail views.
+-9. **Music visualizer / album-art editor** — cover systems, track identity, waveform/beat-driven visual states and export crops.
++## Priority 5B — Next high-value visual/creation families
++
++1. **Card/deck editor** — card faces/backs, rarity/state, deck building, stat/ability layouts and print/digital variants.
++2. **Cinematic title / credits / trailer overlay system** — title cards, lower thirds, chapter cards, credits, subtitles and transition-safe zones.
++3. **Video / stream overlay editor** — gameplay frame, cameras, alerts, chat, score and responsive scene sets.
++4. **Infographic / diagram editor** — nodes, relationships, legends, annotations, evidence/source panels and export layouts.
++5. **World-map / lore-atlas editor** — regions, routes, layers, points of interest, time/state overlays and narrative references.
++6. **Interactive visual-novel surfaces** — dialogue, choices, character staging, backgrounds, history/log, saves and branching state.
++7. **3D showroom / gallery presentation** — hero object, comparison, annotations, material/variant selection and orbit/detail views.
++8. **Music visualizer / album-art editor** — cover systems, track identity, waveform/beat-driven visual states and export crops.
+ 
+ ## Cross-cutting rules
+ 
+@@ -74,13 +72,13 @@ Every new family should preserve the existing visual-template contract:
+ 2. exact identity/version/digest through the existing Sticker Registry bridge;
+ 3. no floating `latest` references or silent upgrades;
+ 4. richer editable source remains authoritative over preview/export derivatives;
+-5. selection, focus, ownership, errors and destructive consequences do not depend on color alone;
+-6. `math_hooks` remain available for the mathematics lane to improve ratios/ranges without replacing template identity;
++5. selection, focus, ownership, errors and consequences do not depend on color alone;
++6. `math_hooks` remain available for mathematical ratio/range growth without replacing template identity;
+ 7. templates are known foundations, never automatic canon.
+ 
+ ## Immediate build order
+ 
+-1. finish exact-head verification for `game.shared.core`;
+-2. merge v4 only when template + repository checks pass;
+-3. start the highest-value visual/creation family from fresh main;
+-4. prefer reusable editors over one-off flat output templates.
++1. exact-head verify `visual.keyart.core`;
++2. merge v5 only when template + repository checks pass;
++3. begin the card/deck editor from fresh main;
++4. keep prioritizing reusable editors over flat one-off output templates.
+diff --git a/src/axm_uc/visual_template_keyart.py b/src/axm_uc/visual_template_keyart.py
+new file mode 100644
+index 0000000..aeeeb88
+--- /dev/null
++++ b/src/axm_uc/visual_template_keyart.py
+@@ -0,0 +1,87 @@
++"""Editable key-art, poster and cover composition foundations for AXM visual templates."""
++from __future__ import annotations
++from copy import deepcopy
++from typing import Any
++
++
++def _merge(target: dict[str, Any], additions: dict[str, Any], label: str) -> None:
++    overlap=sorted(set(target)&set(additions))
++    if overlap: raise RuntimeError(f"keyart {label} collision: {', '.join(overlap)}")
++    target.update(deepcopy(additions))
++
++
++def extend_keyart_catalog(namespace: dict[str, Any]) -> None:
++    styles=namespace['STYLE_SYSTEMS']; primitives=namespace['PRIMITIVES']
++    screens=namespace['SCREEN_TEMPLATES']; products=namespace['PRODUCT_ARCHETYPES']
++    screen=namespace['_screen']; origin=namespace['_origin']
++
++    _merge(styles,{'visual.keyart.cinematic':{
++        'intent':'high-impact visual composition with strong focal hierarchy while preserving separately editable subject, atmosphere, type and export state',
++        'tokens':{'canvas':'#09090d','surface':'#15161d','surface_raised':'#20232d','text':'#f5f2ed','muted':'#afa9a0','accent':'#f0bd68','warning':'#ee9964','danger':'#e86f74','line':'#454955'},
++        'shape':{'panel_radius_ratio':0.010,'cut_ratio':0.003,'line_ratio':0.0012},
++        'type':{'display_weight':780,'body_weight':500,'metric_scale':1.65,'tracking':0.018},
++        'depth':{'layers':7,'shadow':'cinematic','glass':'restrained'},
++        'motion':{'fast_ms':80,'standard_ms':160,'slow_ms':300,'principle':'preserve focal hierarchy and editable composition state'},
++    }},'style')
++
++    _merge(primitives,{
++        'hero-subject':{'role':'primary visual subject with source, crop, depth and transform state','states':['active','selected','masked','occluded','missing-source'],'source_and_transform_must_remain_editable':True},
++        'depth-layer':{'role':'ordered foreground/midground/background layer with explicit depth relationship','states':['foreground','midground','background','selected','hidden'],'order_must_be_explicit':True},
++        'focal-mask':{'role':'editable focus/attention region used to protect composition hierarchy','states':['active','selected','disabled'],'mask_must_not_replace_source_art':True},
++        'title-lockup':{'role':'title/subtitle/logo grouping with hierarchy, alignment and safe-area state','states':['rest','selected','overflow','alternate'],'text_and_layout_remain_separate':True},
++        'credit-block':{'role':'credits/legal/byline block with exact content and placement','states':['rest','selected','overflow','hidden'],'content_must_remain_exact':True},
++        'lighting-pass':{'role':'separate lighting/effect contribution over composition source','states':['active','selected','muted','disabled'],'effect_must_remain_non_authoritative':True},
++        'crop-safe-frame':{'role':'target-format crop and protected content region','states':['portrait','landscape','square','banner','selected'],'crop_must_not_modify_source_geometry':True},
++        'variant-card':{'role':'one explicit alternate composition with pinned source state','states':['draft','selected','approved','rejected'],'variant_identity_must_be_exact':True},
++        'export-target':{'role':'one output target with dimensions, crop, quality and file-state expectations','states':['ready','warning','blocked','exported'],'target_requirements_must_be_visible':True},
++    },'primitive')
++
++    q=['hero subject, typography, atmosphere and effects remain separately editable','focal hierarchy survives crop variants unless explicitly changed','derived crop/export output never replaces richer source composition','title and credit overflow remain visible instead of silently clipping','alternate compositions remain exact variants rather than hidden random rewrites']
++    def v(c,s,w): return {'compact':c,'standard':s,'wide':w}
++    additions={
++      'visual.keyart.project-hub':screen('visual.keyart.project-hub','Key art project hub','creative.keyart','visual.keyart.cinematic','browse compositions, variants, target formats and source completeness before editing',v(
++        {'header':(.03,.03,.94,.08),'projects':(.03,.14,.94,.38),'variants':(.03,.55,.55,.31),'targets':(.61,.55,.36,.31),'actions':(.03,.89,.94,.08)},
++        {'header':(.02,.03,.96,.075),'projects':(.02,.14,.28,.72),'variants':(.33,.14,.42,.72),'targets':(.78,.14,.20,.50),'actions':(.78,.67,.20,.19)},
++        {'header':(.015,.03,.97,.07),'projects':(.015,.13,.25,.74),'variants':(.285,.13,.46,.74),'targets':(.765,.13,.22,.52),'actions':(.765,.69,.22,.18)}),tags=['visual','keyart','project','hub'],quality=q),
++      'visual.keyart.composition-editor':screen('visual.keyart.composition-editor','Key art composition editor','creative.keyart','visual.keyart.cinematic','compose hero subject, depth layers, title, effects and crop-safe hierarchy in one source-first workspace',v(
++        {'toolbar':(.02,.02,.96,.07),'canvas':(.12,.11,.76,.56),'layers':(.02,.11,.08,.56),'properties':(.90,.11,.08,.56),'variants':(.02,.70,.46,.28),'targets':(.51,.70,.47,.28)},
++        {'toolbar':(.015,.02,.97,.065),'layers':(.015,.105,.16,.75),'canvas':(.19,.105,.58,.75),'properties':(.79,.105,.195,.75),'variants':(.19,.88,.38,.10),'targets':(.59,.88,.395,.10)},
++        {'toolbar':(.012,.02,.976,.06),'layers':(.012,.10,.14,.77),'canvas':(.17,.10,.62,.77),'properties':(.805,.10,.183,.77),'variants':(.17,.90,.40,.08),'targets':(.59,.90,.398,.08)}),tags=['visual','keyart','composition','editor'],math_hooks={'hero_focus_ratio':[0.32,0.62],'title_safe_ratio':[0.06,0.20]},quality=q),
++      'visual.keyart.subject-stage':screen('visual.keyart.subject-stage','Hero subject staging','creative.keyart','visual.keyart.cinematic','edit subject source, mask, pose/crop, scale, overlap and depth without flattening the visual stack',v(
++        {'header':(.03,.03,.94,.08),'stage':(.03,.14,.94,.43),'sources':(.03,.60,.29,.28),'mask':(.35,.60,.29,.28),'transform':(.67,.60,.30,.28),'actions':(.03,.91,.94,.06)},
++        {'header':(.02,.03,.96,.075),'sources':(.02,.14,.17,.72),'stage':(.21,.14,.53,.72),'mask':(.765,.14,.215,.34),'transform':(.765,.51,.215,.35),'actions':(.21,.89,.77,.07)},
++        {'header':(.015,.03,.97,.07),'sources':(.015,.13,.15,.74),'stage':(.185,.13,.57,.74),'mask':(.78,.13,.205,.35),'transform':(.78,.51,.205,.36),'actions':(.185,.90,.80,.06)}),tags=['visual','keyart','subject','mask'],quality=q),
++      'visual.keyart.type-editor':screen('visual.keyart.type-editor','Title and typography editor','creative.keyart','visual.keyart.cinematic','edit title/subtitle/marks/credits with hierarchy, safe area and overflow visible against composition context',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.37),'hierarchy':(.03,.54,.29,.32),'type':(.35,.54,.30,.32),'credits':(.68,.54,.29,.32),'actions':(.03,.89,.94,.08)},
++        {'header':(.02,.03,.96,.075),'hierarchy':(.02,.14,.20,.72),'preview':(.245,.14,.49,.72),'type':(.76,.14,.22,.42),'credits':(.76,.59,.22,.27),'actions':(.245,.89,.735,.07)},
++        {'header':(.015,.03,.97,.07),'hierarchy':(.015,.13,.18,.74),'preview':(.215,.13,.53,.74),'type':(.765,.13,.22,.43),'credits':(.765,.59,.22,.28),'actions':(.215,.90,.77,.06)}),tags=['visual','keyart','typography','title'],quality=q),
++      'visual.keyart.lighting-effects':screen('visual.keyart.lighting-effects','Lighting and effects editor','creative.keyart','visual.keyart.cinematic','build separate lighting, glow, atmosphere and effect passes while keeping contribution order and intensity inspectable',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.39),'passes':(.03,.56,.42,.31),'properties':(.48,.56,.49,.31),'actions':(.03,.90,.94,.07)},
++        {'header':(.02,.03,.96,.075),'passes':(.02,.14,.20,.72),'preview':(.245,.14,.50,.72),'properties':(.77,.14,.21,.55),'actions':(.77,.72,.21,.14)},
++        {'header':(.015,.03,.97,.07),'passes':(.015,.13,.18,.74),'preview':(.215,.13,.54,.74),'properties':(.775,.13,.21,.56),'actions':(.775,.72,.21,.15)}),tags=['visual','keyart','lighting','effects'],quality=q),
++      'visual.keyart.background-atmosphere':screen('visual.keyart.background-atmosphere','Background and atmosphere editor','creative.keyart','visual.keyart.cinematic','edit environment, depth layers, haze/color atmosphere and supporting elements without competing with focal subject',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.39),'layers':(.03,.56,.42,.31),'atmosphere':(.48,.56,.49,.31),'actions':(.03,.90,.94,.07)},
++        {'header':(.02,.03,.96,.075),'layers':(.02,.14,.20,.72),'preview':(.245,.14,.50,.72),'atmosphere':(.77,.14,.21,.55),'actions':(.77,.72,.21,.14)},
++        {'header':(.015,.03,.97,.07),'layers':(.015,.13,.18,.74),'preview':(.215,.13,.54,.74),'atmosphere':(.775,.13,.21,.56),'actions':(.775,.72,.21,.15)}),tags=['visual','keyart','background','atmosphere'],quality=q),
++      'visual.keyart.crop-variants':screen('visual.keyart.crop-variants','Crop and format variants','creative.keyart','visual.keyart.cinematic','compare portrait, landscape, square and banner crops while protecting focal subject, title and credits',v(
++        {'header':(.03,.03,.94,.08),'source':(.03,.14,.94,.28),'crops':(.03,.45,.94,.33),'safe':(.03,.81,.55,.15),'actions':(.61,.81,.36,.15)},
++        {'header':(.02,.03,.96,.075),'source':(.02,.14,.38,.72),'crops':(.43,.14,.55,.50),'safe':(.43,.67,.31,.19),'actions':(.77,.67,.21,.19)},
++        {'header':(.015,.03,.97,.07),'source':(.015,.13,.36,.74),'crops':(.40,.13,.585,.51),'safe':(.40,.67,.34,.20),'actions':(.765,.67,.22,.20)}),tags=['visual','keyart','crop','variants'],math_hooks={'safe_inset_ratio':[0.04,0.12],'focal_keep_ratio':[0.55,0.90]},quality=q),
++      'visual.keyart.variant-board':screen('visual.keyart.variant-board','Composition variant board','creative.keyart','visual.keyart.cinematic','compare exact alternate compositions side by side with identity, notes and selection state visible',v(
++        {'header':(.03,.03,.94,.08),'variants':(.03,.14,.94,.56),'compare':(.03,.73,.58,.23),'actions':(.64,.73,.33,.23)},
++        {'header':(.02,.03,.96,.075),'filters':(.02,.14,.16,.82),'variants':(.20,.14,.55,.82),'compare':(.77,.14,.21,.56),'actions':(.77,.73,.21,.23)},
++        {'header':(.015,.03,.97,.07),'filters':(.015,.13,.14,.84),'variants':(.175,.13,.59,.84),'compare':(.785,.13,.20,.57),'actions':(.785,.73,.20,.24)}),tags=['visual','keyart','variant','compare'],quality=q),
++      'visual.keyart.review-compare':screen('visual.keyart.review-compare','Key art review and comparison','creative.keyart','visual.keyart.cinematic','review selected variants, focal hierarchy, crop safety, text overflow and source completeness before export approval',v(
++        {'header':(.03,.03,.94,.08),'primary':(.03,.14,.45,.45),'alternate':(.52,.14,.45,.45),'checks':(.03,.62,.58,.26),'actions':(.64,.62,.33,.26)},
++        {'header':(.02,.03,.96,.075),'primary':(.02,.14,.38,.63),'alternate':(.42,.14,.38,.63),'checks':(.82,.14,.16,.45),'actions':(.82,.62,.16,.15)},
++        {'header':(.015,.03,.97,.07),'primary':(.015,.13,.39,.65),'alternate':(.42,.13,.39,.65),'checks':(.825,.13,.16,.47),'actions':(.825,.63,.16,.15)}),tags=['visual','keyart','review','compare'],quality=q),
++      'visual.keyart.export':screen('visual.keyart.export','Key art export matrix','creative.keyart','visual.keyart.cinematic','review explicit output targets, dimensions, crop variants, quality state and filenames before publishing derived files',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.30),'targets':(.03,.47,.58,.39),'details':(.64,.47,.33,.27),'actions':(.64,.77,.33,.09)},
++        {'header':(.02,.03,.96,.075),'preview':(.02,.14,.38,.72),'targets':(.43,.14,.34,.72),'details':(.79,.14,.19,.48),'actions':(.79,.65,.19,.21)},
++        {'header':(.015,.03,.97,.07),'preview':(.015,.13,.36,.74),'targets':(.40,.13,.37,.74),'details':(.79,.13,.195,.49),'actions':(.79,.65,.195,.22)}),tags=['visual','keyart','export','target'],quality=q),
++    }
++    _merge(screens,additions,'screen')
++    ids=list(additions)
++    product={'schema':'axm.visual-product/v1','id':'visual.keyart.core','version':1,'name':'Editable key art composition core','kind':'product','domain':'creative.keyart','tags':['visual','keyart','poster','cover','product'],'origin':origin(),'style':'visual.keyart.cinematic','intent':'source-first key art, poster, cover and banner composition with editable subject, depth, type, atmosphere, effects, variants and crop-safe export targets','screens':ids,'flow':[
++      ['visual.keyart.project-hub','visual.keyart.composition-editor','open-composition'],['visual.keyart.composition-editor','visual.keyart.subject-stage','edit-subject'],['visual.keyart.composition-editor','visual.keyart.type-editor','edit-type'],['visual.keyart.composition-editor','visual.keyart.lighting-effects','edit-lighting'],['visual.keyart.composition-editor','visual.keyart.background-atmosphere','edit-background'],['visual.keyart.composition-editor','visual.keyart.crop-variants','adapt-formats'],['visual.keyart.crop-variants','visual.keyart.variant-board','compare-variants'],['visual.keyart.variant-board','visual.keyart.review-compare','review'],['visual.keyart.review-compare','visual.keyart.export','export']], 'quality':q}
++    _merge(products,{'visual.keyart.core':product},'product')
+diff --git a/src/axm_uc/visual_templates.py b/src/axm_uc/visual_templates.py
+index e3e005f..cdd24b3 100644
+--- a/src/axm_uc/visual_templates.py
++++ b/src/axm_uc/visual_templates.py
+@@ -13,8 +13,9 @@ from .visual_template_game_systems import extend_game_system_catalog as _extend_
+ from .visual_template_creative_narrative import extend_creative_narrative_catalog as _extend_creative_narrative_catalog
+ from .visual_template_axm_system import extend_axm_system_catalog as _extend_axm_system_catalog
+ from .visual_template_game_shared import extend_game_shared_catalog as _extend_game_shared_catalog
++from .visual_template_keyart import extend_keyart_catalog as _extend_keyart_catalog
+ 
+-_COMPOSITION=("visual_template_growth","visual_template_game_systems","visual_template_creative_narrative","visual_template_axm_system","visual_template_game_shared")
++_COMPOSITION=("visual_template_growth","visual_template_game_systems","visual_template_creative_narrative","visual_template_axm_system","visual_template_game_shared","visual_template_keyart")
+ _applied=getattr(_core,"_AXM_VISUAL_COMPOSITION",None)
+ if _applied is None:
+     _extend_catalog(vars(_core))
+@@ -22,6 +23,7 @@ if _applied is None:
+     _extend_creative_narrative_catalog(vars(_core))
+     _extend_axm_system_catalog(vars(_core))
+     _extend_game_shared_catalog(vars(_core))
++    _extend_keyart_catalog(vars(_core))
+     _core._AXM_VISUAL_COMPOSITION=_COMPOSITION
+ elif _applied != _COMPOSITION:
+     raise RuntimeError("visual template composition changed inside a live process; restart with one exact catalog")
+diff --git a/tests/test_visual_templates.py b/tests/test_visual_templates.py
+index df62866..3e65c95 100644
+--- a/tests/test_visual_templates.py
++++ b/tests/test_visual_templates.py
+@@ -8,19 +8,19 @@ from axm_stickers import Registry
+ from axm_uc import visual_templates as vt
+ 
+ SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
+-PRODUCTS=('game.racing.full','game.coop.action','game.rts.command','game.system.shell','game.shared.core','editor.creative.core','comic.narrative.core','axm.system.shell')
++PRODUCTS=('game.racing.full','game.coop.action','game.rts.command','game.system.shell','game.shared.core','editor.creative.core','comic.narrative.core','axm.system.shell','visual.keyart.core')
+ 
+ class VisualTemplateTests(unittest.TestCase):
+     def test_catalog_counts_and_products(self):
+         counts=vt.validate_catalog()
+-        self.assertEqual(counts,{'styles':12,'primitives':67,'screens':103,'products':10})
++        self.assertEqual(counts,{'styles':13,'primitives':76,'screens':113,'products':11})
+         self.assertEqual(vt.CATALOG_COMPOSITION['counts'],counts)
+         ids={p['id'] for p in vt.catalog()['products']}
+         self.assertTrue(set(PRODUCTS)|{'game.racing.performance','software.creator.studio'} <= ids)
+ 
+     def test_all_geometry_and_major_variants(self):
+         for tid,definition in vt.SCREEN_TEMPLATES.items():
+-            if tid.startswith(('game.','editor.creative.','comic.narrative.','axm.system.')):
++            if tid.startswith(('game.','editor.creative.','comic.narrative.','axm.system.','visual.keyart.')):
+                 self.assertEqual(set(definition['variants']),{'compact','standard','wide'},tid)
+             for width,height in SIZES:
+                 out=vt.resolve(tid,width,height)
+@@ -29,18 +29,20 @@ class VisualTemplateTests(unittest.TestCase):
+                     self.assertLessEqual(x+w,width+1e-6); self.assertLessEqual(y+h,height+1e-6)
+ 
+     def test_existing_product_depth_is_retained(self):
+-        expected={'game.racing.full':19,'game.system.shell':18,'editor.creative.core':12,'comic.narrative.core':10,'axm.system.shell':12}
++        expected={'game.racing.full':19,'game.system.shell':18,'game.shared.core':12,'editor.creative.core':12,'comic.narrative.core':10,'axm.system.shell':12}
+         for pid,count in expected.items(): self.assertEqual(len(vt.get(pid)['screens']),count)
+-        self.assertIn('game.racing.hud.split',vt.get('game.racing.full')['screens'])
+-        self.assertIn('comic.narrative.dialogue-editor',vt.get('comic.narrative.core')['screens'])
+ 
+-    def test_shared_gameplay_product_covers_near_term_gaps(self):
+-        product=vt.get('game.shared.core')
+-        required={'game.shared.inventory','game.shared.skill-tree','game.shared.mission-briefing','game.shared.world-map','game.shared.objective-log','game.shared.upgrade-shop','game.shared.codex','game.shared.revive-overlay','game.shared.boss-encounter-hud','game.shared.spectator','game.shared.end-session-summary','game.shared.challenge-board'}
++    def test_keyart_product_preserves_editable_composition(self):
++        product=vt.get('visual.keyart.core')
++        required={'visual.keyart.project-hub','visual.keyart.composition-editor','visual.keyart.subject-stage','visual.keyart.type-editor','visual.keyart.lighting-effects','visual.keyart.background-atmosphere','visual.keyart.crop-variants','visual.keyart.variant-board','visual.keyart.review-compare','visual.keyart.export'}
+         self.assertEqual(set(product['screens']),required)
+-        self.assertEqual(product['style'],'game.shared.adventure')
+-        self.assertIn('revive-expired',{c for _,_,c in product['flow']})
+-        self.assertIn('encounter-complete',{c for _,_,c in product['flow']})
++        self.assertEqual(product['style'],'visual.keyart.cinematic')
++        quality=' '.join(product['quality']).lower()
++        self.assertIn('separately editable',quality)
++        self.assertIn('source composition',quality)
++        self.assertIn('exact variants',quality)
++        self.assertIn('hero_focus_ratio',vt.get('visual.keyart.composition-editor')['math_hooks'])
++        self.assertIn('safe_inset_ratio',vt.get('visual.keyart.crop-variants')['math_hooks'])
+ 
+     def test_products_resolve_and_previews_parse(self):
+         for pid in PRODUCTS:
+@@ -57,31 +59,32 @@ class VisualTemplateTests(unittest.TestCase):
+         with tempfile.TemporaryDirectory() as td:
+             with Registry(Path(td)/'stickers.sqlite') as registry:
+                 pins=vt.install_builtins(registry)
+-                self.assertEqual(len(pins),113)
+-                self.assertEqual(len(registry.search(adapter=vt.ADAPTER,tag='axm',limit=100)['entries']),12)
+-                shared=registry.search(adapter=vt.ADAPTER,tag='shared',limit=100)['entries']
+-                self.assertGreaterEqual(len(shared),12)
+-                d=registry.get('visual.game.shared.inventory',1)
++                self.assertEqual(len(pins),124)
++                keyart=registry.search(adapter=vt.ADAPTER,tag='keyart',limit=100)['entries']
++                self.assertEqual(len(keyart),10)
++                d=registry.get('visual.visual.keyart.composition-editor',1)
+                 self.assertEqual(d['recipe']['visual_template']['schema'],vt.SCHEMA)
+                 self.assertNotIn('"latest"',json.dumps(d,sort_keys=True))
+ 
+     def test_reusable_state_contracts(self):
+-        required={'truth-state','registry-entry','layer-row','speech-bubble','inventory-slot','skill-node','objective-row','shop-offer','codex-entry','revive-state','boss-phase','spectator-seat','challenge-card','session-stat'}
++        required={'inventory-slot','truth-state','layer-row','speech-bubble','hero-subject','depth-layer','focal-mask','title-lockup','credit-block','lighting-pass','crop-safe-frame','variant-card','export-target'}
+         self.assertTrue(required <= set(vt.PRIMITIVES))
+-        self.assertTrue(vt.PRIMITIVES['inventory-slot']['ownership_must_be_explicit'])
+-        self.assertTrue(vt.PRIMITIVES['skill-node']['prerequisites_and_cost_must_be_visible'])
+-        self.assertTrue(vt.PRIMITIVES['codex-entry']['undiscovered_content_must_not_be_faked'])
+-        self.assertTrue(vt.PRIMITIVES['revive-state']['timer_and_actor_must_be_explicit'])
+-        self.assertTrue(vt.PRIMITIVES['boss-phase']['phase_change_needs_non_color_cue'])
+-        self.assertTrue(vt.PRIMITIVES['challenge-card']['progress_and_reward_must_be_explicit'])
++        self.assertTrue(vt.PRIMITIVES['hero-subject']['source_and_transform_must_remain_editable'])
++        self.assertTrue(vt.PRIMITIVES['depth-layer']['order_must_be_explicit'])
++        self.assertTrue(vt.PRIMITIVES['focal-mask']['mask_must_not_replace_source_art'])
++        self.assertTrue(vt.PRIMITIVES['title-lockup']['text_and_layout_remain_separate'])
++        self.assertTrue(vt.PRIMITIVES['lighting-pass']['effect_must_remain_non_authoritative'])
++        self.assertTrue(vt.PRIMITIVES['crop-safe-frame']['crop_must_not_modify_source_geometry'])
++        self.assertTrue(vt.PRIMITIVES['variant-card']['variant_identity_must_be_exact'])
++        self.assertTrue(vt.PRIMITIVES['export-target']['target_requirements_must_be_visible'])
+ 
+     def test_copy_safety_variant_rejection_and_bad_geometry(self):
+-        a=vt.resolve('game.shared.inventory',1920,1080); b=vt.resolve('game.shared.inventory',1920,1080)
++        a=vt.resolve('visual.keyart.composition-editor',1920,1080); b=vt.resolve('visual.keyart.composition-editor',1920,1080)
+         self.assertEqual(a,b)
+-        copy=vt.get('game.shared.inventory'); copy['name']='changed'
+-        self.assertNotEqual(vt.get('game.shared.inventory')['name'],'changed')
+-        with self.assertRaises(ValueError): vt.resolve('game.shared.inventory',1920,1080,variant='unknown')
+-        bad=vt.get('game.shared.world-map'); bad['variants']['standard']['map']=[.9,.9,.2,.2]
++        copy=vt.get('visual.keyart.composition-editor'); copy['name']='changed'
++        self.assertNotEqual(vt.get('visual.keyart.composition-editor')['name'],'changed')
++        with self.assertRaises(ValueError): vt.resolve('visual.keyart.composition-editor',1920,1080,variant='unknown')
++        bad=vt.get('visual.keyart.crop-variants'); bad['variants']['standard']['crops']=[.9,.9,.2,.2]
+         with self.assertRaises(ValueError): vt.validate_screen(bad)
+ 
+     def test_exact_sticker_slot_binding_is_retained(self):
+diff --git a/tools/visual_template_proof.py b/tools/visual_template_proof.py
+index d7b8806..d4e96f3 100644
+--- a/tools/visual_template_proof.py
++++ b/tools/visual_template_proof.py
+@@ -8,7 +8,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src'))
+ from axm_uc import visual_templates as vt
+ 
+ SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
+-PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell")
++PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell","visual.keyart.core")
+ 
+ def _write(project,target):
+     target.mkdir(); out=[]
+@@ -25,7 +25,7 @@ def main(argv):
+     out.mkdir(parents=True)
+     try:
+         counts=vt.validate_catalog()
+-        if counts!={'styles':12,'primitives':67,'screens':103,'products':10}: raise AssertionError(counts)
++        if counts!={'styles':13,'primitives':76,'screens':113,'products':11}: raise AssertionError(counts)
+         evidence=[]
+         for pid in PRODUCTS:
+             expected=vt.get(pid)
+@@ -45,23 +45,26 @@ def main(argv):
+             ('editor.creative.core',1920,1080,'creative-editor','AXM Creative Editor Foundation'),
+             ('comic.narrative.core',1920,1080,'comic-narrative','AXM Editable Comic Foundation'),
+             ('axm.system.shell',1920,1080,'axm-system','AXM System Shell Foundation'),
++            ('visual.keyart.core',1920,1080,'keyart','AXM Editable Key Art Foundation'),
+         )
+         outputs=[]
+         for pid,w,h,folder,title in galleries: outputs+=_write(vt.product_project(pid,w,h,title),out/folder)
+         outputs+=_write(vt.screen_project('product.mobile.home',1080,1920,'AXM Mobile Foundation'),out/'mobile-home')
+-        shared=vt.get('game.shared.core')
+-        required={'game.shared.inventory','game.shared.skill-tree','game.shared.mission-briefing','game.shared.world-map','game.shared.objective-log','game.shared.upgrade-shop','game.shared.codex','game.shared.revive-overlay','game.shared.boss-encounter-hud','game.shared.spectator','game.shared.end-session-summary','game.shared.challenge-board'}
+-        if set(shared['screens'])!=required: raise AssertionError('shared gameplay pack lost required surfaces')
++        keyart=vt.get('visual.keyart.core')
++        required={'visual.keyart.project-hub','visual.keyart.composition-editor','visual.keyart.subject-stage','visual.keyart.type-editor','visual.keyart.lighting-effects','visual.keyart.background-atmosphere','visual.keyart.crop-variants','visual.keyart.variant-board','visual.keyart.review-compare','visual.keyart.export'}
++        if set(keyart['screens'])!=required: raise AssertionError('key art pack lost required surfaces')
+         checks={
+-            'inventory_ownership':vt.PRIMITIVES['inventory-slot']['ownership_must_be_explicit'],
+-            'skill_prerequisites':vt.PRIMITIVES['skill-node']['prerequisites_and_cost_must_be_visible'],
+-            'codex_unknowns':vt.PRIMITIVES['codex-entry']['undiscovered_content_must_not_be_faked'],
+-            'revive_actor_timer':vt.PRIMITIVES['revive-state']['timer_and_actor_must_be_explicit'],
+-            'boss_phase_noncolor':vt.PRIMITIVES['boss-phase']['phase_change_needs_non_color_cue'],
+-            'challenge_progress_reward':vt.PRIMITIVES['challenge-card']['progress_and_reward_must_be_explicit'],
++            'subject_editable':vt.PRIMITIVES['hero-subject']['source_and_transform_must_remain_editable'],
++            'depth_order_explicit':vt.PRIMITIVES['depth-layer']['order_must_be_explicit'],
++            'mask_preserves_source':vt.PRIMITIVES['focal-mask']['mask_must_not_replace_source_art'],
++            'title_separable':vt.PRIMITIVES['title-lockup']['text_and_layout_remain_separate'],
++            'effects_non_authoritative':vt.PRIMITIVES['lighting-pass']['effect_must_remain_non_authoritative'],
++            'crop_preserves_source':vt.PRIMITIVES['crop-safe-frame']['crop_must_not_modify_source_geometry'],
++            'variant_identity_exact':vt.PRIMITIVES['variant-card']['variant_identity_must_be_exact'],
++            'export_requirements_visible':vt.PRIMITIVES['export-target']['target_requirements_must_be_visible'],
+         }
+-        if not all(checks.values()): raise AssertionError('shared gameplay contract failed')
+-        receipt={'schema':'axm.visual-template-proof/v6','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'game_shared_checks':checks,'truth':'Offline structural evidence only. Gameplay behavior, economy balance, progression tuning, encounter timing, runtime state and aesthetic acceptance were not observed.'}
++        if not all(checks.values()): raise AssertionError('key art editability contract failed')
++        receipt={'schema':'axm.visual-template-proof/v7','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'keyart_checks':checks,'truth':'Offline structural evidence only. Finished illustration quality, typography quality, lighting quality, store compliance, print production, target-renderer output and aesthetic acceptance were not observed.'}
+         (out/'receipt.json').write_text(json.dumps(receipt,indent=2,sort_keys=True),encoding='utf-8')
+         print(json.dumps(receipt,indent=2,sort_keys=True))
+     except BaseException:

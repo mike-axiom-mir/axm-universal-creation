@@ -1,0 +1,1014 @@
+diff --git a/GAME_STYLE_GROWTH.md b/GAME_STYLE_GROWTH.md
+index 4fd04f9..2795090 100644
+--- a/GAME_STYLE_GROWTH.md
++++ b/GAME_STYLE_GROWTH.md
+@@ -101,6 +101,50 @@ exports when those features change. Measure performance before making claims.
+ 
+ ## Current checkpoint
+ 
++### Studio donor recovery and executable layers — 2026-09-15
++
++- Mike redirected this pass to recover the actual old Studio from the paused
++  collaboration platform, then asked about UCP and layer editing. Donor platform
++  stays read-only. All 19 Studio files plus selected shared machinery are copied
++  from `27757ace6133b243a200b0463e427c8b04d5a8e3`; 34 original file payloads are
++  byte-verified against pinned Git blobs. Executable source is unchanged; one
++  Markdown hard-break repair retains exact original text in a JSON archive.
++  `donors/collaboration-studio/manifest.json`
++  records paths/provenance; Apache license and notices are retained.
++- UC now directly executes the original raster-compositor.js through a bounded
++  local Node adapter: 14 blends, 13 filters, ordered layers, alpha/luminance masks,
++  opacity, visibility and offsets. `studio-compose` saves replayable PNG projects;
++  `studio-edit` adds/changes/moves/removes layers into a new revision. Original
++  inputs and complete request remain intact alongside the normalized recipe.
++- UCP recovered with target-canvas and native-bridge-codec dependencies. Its
++  unchanged fixture passes. This validates component graph contracts, not renderer
++  dispatch. Recovered Studio has 84 unique actions and its three inline scripts
++  compile; original mirror bridge fixture passes. Whole Studio UI remains coupled
++  to sibling/shared platform modules and has not been browser-tested here.
++- Local verification: 16 focused tests pass with Python 3.12/Node 24. Analytical
++  alpha/blending/filter fixtures, masks, replay, source preservation, explicit layer
++  edits, failure cleanup, profile/path rejection and work bounds are covered.
++  Full UC verification belongs to actual-head CI; this partial local checkout
++  lacks unrelated registry fixtures. The new Studio CI also runs Node 22 and
++  tests the installed package outside the checkout. No existing gates weakened.
++- Original salvage-panel proof: `tools/studio_compositor_proof.py`; output replay
++  is byte-identical, protected nameplate pixels independently match via Pillow.
++  Static comparison shows layered cyan lightning/glow, changed paint and intact
++  logo, without framing loss. Artifacts: AXM-Studio-Donor-Proof.png and
++  AXM-Studio-Editable-Proof.zip. This is a 2D effect, not an animated/3D asset.
++- Limits: encoded-sRGB RGBA8 only; no ICC conversion, mesh projection, UI port or
++  animated compositor. Original straight-alpha blur behavior disclosed; alpha:false
++  refused because the donor does not flatten it. See docs/STUDIO_DONOR.md.
++- Roots: Truth preserves source-era evidence as historical and separates contract,
++  pixels and visual claims; Agency exposes opt-in human/machine commands without
++  remote services; Continuity preserves actual source, licenses and prior projects;
++  Wisdom keeps the platform paused and tests the donor before broader integration.
++- Lane: `codex/rts-reference-foundry`, based on main `964ff1b`; this pass's PR is
++  PR #74: "Recover Studio and UCP source; execute editable layers".
++  GitHub's final actual-head checks and merge state are authoritative. PR #54 is
++  unrelated and untouched. Next: bridge one UC operation into recovered UCP, then
++  connect the original layer panel/brush packets to the same editable state.
++
+ ### Offline pose execution pass — 2026-09-15
+ 
+ - Completed `game_pose_runtime.py`, `axm-assets pose-sample` and catalog:
+diff --git a/docs/STUDIO_DONOR.md b/docs/STUDIO_DONOR.md
+new file mode 100644
+index 0000000..70705b8
+--- /dev/null
++++ b/docs/STUDIO_DONOR.md
+@@ -0,0 +1,126 @@
++# Studio layers and effects in Universal Creation
++
++The original collaboration-platform raster compositor now runs directly in UC.
++Python handles PNG intake and publication; local Node executes the unchanged
++JavaScript. No browser, npm modules, AI service or platform server is required.
++Node 22 is exercised by CI. Core UC still has no required Python dependencies;
++Node is an optional runtime needed only for this compositor. The catalog works
++without Node. No automatic installation occurs.
++
++## Create and edit
++
++```sh
++axm-assets studio-compositor-catalog
++axm-assets studio-compose project.json output-directory
++axm-assets studio-edit output-directory/project.json edits.json revised-directory
++python tools/studio_compositor_proof.py /tmp/axm-studio-proof
++```
++
++A minimal project:
++
++```json
++{
++  "schema": "axm.studio-composition-project/v1",
++  "sources": {},
++  "recipe": {
++    "schema": "axm.raster-composition/v1",
++    "canvas": {"width": 128, "height": 128},
++    "layers": [
++      {"id": "base", "fill": "#263748"},
++      {"id": "paint", "fill": "#D99130", "opacity": 0.6, "blend_mode": "overlay"}
++    ]
++  }
++}
++```
++
++Layers composite from first/bottom to last/top. Replace `fill` with
++`source_artifact_id` and declare that ID in `sources` as a relative PNG path.
++Both humans and machines can use the same recipe or these explicit layer edits:
++
++```json
++[
++  {"op":"change", "id":"paint", "patch":{"opacity":0.3}},
++  {"op":"add", "layer":{"id":"highlight", "fill":"#80DDEE", "blend_mode":"screen", "opacity":0.15}},
++  {"op":"move", "id":"highlight", "before":"paint"}
++]
++```
++
++`remove` takes an `id`; omitting `before` places added/moved layers at the top.
++`change` replaces supplied top-level layer fields; it is not a recursive merge.
++Changing the layer ID, unknown IDs/operations and removing the last layer fail.
++Python `edit_studio_layers(project, operations)` returns a copy; donor validation
++and actual pixel execution occur during composition/publication. An invalid
++revision cannot overwrite the previous project.
++
++Layer controls include name, visibility, opacity, blend mode, integer x/y offset,
++filter list and a mask `{source_artifact_id, channel, invert}`. Mask channels are
++alpha or luminance and dimensions must match the source layer. A fill layer uses
++canvas dimensions. `global_filters` operate after the layer stack.
++
++| Filters | Parameters |
++| --- | --- |
++| brightness, contrast | `value`: -1..1 |
++| saturation | `value`: 0..3 |
++| hue | `value`: -180..180 degrees |
++| grayscale, invert | `amount`: 0..1 |
++| gamma | `value`: 0.1..4 |
++| threshold | `value`: 0..1 |
++| posterize | `levels`: 2..64 |
++| tint | `colour`: hex RGB/RGBA, `amount`: 0..1; donor uses tint RGB, preserves source alpha |
++| blur | `radius`: 1..12 |
++| sharpen | `amount`: 0..3 |
++| pixelate | `size`: 2..64 |
++
++## Editable output
++
++Each new directory contains `composition.png`, original source PNGs,
++`request.json` (the complete request), relocated `project.json` (replayable),
++`normalized-recipe.json` and `receipt.json`. Replaying project.json produces the
++same PNG. Donor normalization adds defaults and discards unknown extension fields;
++the original request and replay project retain them. Output and source SHA-256
++values supplement the donor's non-cryptographic internal receipt. Hashes prove
++byte identity, not appearance. Existing destination directories are refused.
++
++Canonical material/style/animation systems are not overwritten. A composed PNG
++can serve as a texture input; this pass does not implement mesh projection,
++normal/height conversion, animation compositing or Photoshop/GIMP interoperability.
++
++## Bounded behavior and limitations
++
++- RGBA8 in encoded sRGB, not linear-light blending. Untagged PNGs are treated as
++  sRGB. ICC, explicit chromaticity, non-sRGB gamma and APNG are rejected instead
++  of silently converted. Intake supports UC's 8-bit non-interlaced PNG formats.
++- Maximum canvas/source dimension 1024, 32 source images, 4,194,304 decoded source
++  pixels, 8 MiB per PNG, 32 MiB total compressed source bytes, 32 layers/64 filters.
++  A conservative filter-work cap rejects expensive blur stacks before composition.
++  Node has a 384 MiB heap flag and a 30-second timeout; these are not a total OS
++  memory guarantee or performance benchmark.
++- Source paths must stay under the project directory, including resolved symlinks.
++  Declared sources and masks must remain available, even for hidden layers.
++- Donor `alpha:false` has no flattening implementation and is refused. Add an
++  opaque bottom layer instead. Donor box blur averages straight-alpha channels;
++  invisible RGB may bleed. The proof uses opaque black screen-blend effect layers.
++- No original Studio UI, external connector, global launcher or remote service is
++  executed. The complete Studio source and UCP are recovered separately under
++  `donors/collaboration-studio`; see its README for dependency and truth boundaries.
++
++## Verification
++
++`tests/test_studio_compositor.py` checks pinned byte identity, analytical source-over
++alpha, layer ordering, blend examples, every filter family, masks, clipping,
++immutability, replay, layer editing, path/profile rejection, work limits,
++timeout/publication cleanup and CLI creation/revision. Sixteen focused tests pass
++locally with Node 24/Python 3.12. The dedicated CI requires Node 22 and Python 3.11,
++also installs the package and executes its shipped compositor outside the checkout.
++
++The unchanged UCP and mirror bridge fixtures pass. `tools/studio_donor_checks.cjs`
++checks the 84 action definitions and compiles recovered inline scripts without
++starting a browser. No claim is made that the original whole-platform suites pass
++in this partial extraction. Full UC suite results must come from the actual PR CI
++head: this local recovery lacks unrelated registry fixtures for a complete run.
++
++The original 384-pixel salvage-panel proof independently decodes with Pillow and
++retains identical pixels across its protected AXM nameplate. Static inspection of
++AXM-Studio-Donor-Proof.png shows a distinct cyan branched glow and paint overlay,
++legible nameplate and full panel framing. This is a 2D effect demonstration, not
++a 3D asset or continuous animation. No temporary visual crops were needed.
+diff --git a/donors/collaboration-studio/README.md b/donors/collaboration-studio/README.md
+new file mode 100644
+index 0000000..49b1abe
+--- /dev/null
++++ b/donors/collaboration-studio/README.md
+@@ -0,0 +1,67 @@
++# Recovered Studio and Universal Component Protocol
++
++Mike requested the actual old Studio source as a donor for Universal Creation.
++The collaboration platform remains read-only and paused. This directory recovers
++all 19 files of `tools/studio`, selected shared dependencies, and UCP from
++`mike-axiom-mir/axm-collaboration-platform` at
++`27757ace6133b243a200b0463e427c8b04d5a8e3`.
++
++All executable source is byte-identical to its pinned Git blob. Of 34 original
++file copies, 33 are unchanged. COMMAND_DECK_EVIDENCE.md uses backslash Markdown
++hard breaks to satisfy UC's existing whitespace gate; its exact original text is
++preserved losslessly in the JSON archive named by `manifest.json`. Tests verify
++the original Git blob and the precise three-line formatting conversion.
++The compositor itself lives in `src/axm_uc/data/studio/raster-compositor.js` so it
++ships in the Python package. The manifest records this relocation. Apache-2.0
++LICENSE, original notices, THIRD_PARTY and the referenced license registry are
++retained. The registry names Comlink, jsPDF and wasm-vips; their implementations
++are not imported by this extraction. No third-party seed meshes are included.
++
++## What is usable now
++
++- UC calls the original raster compositor through a separate bounded Node adapter:
++  layers, 14 blend modes, masks, 13 filters and editable PNG projects.
++- The original UCP JavaScript runs its unchanged fixture with its two local
++  dependencies: target-canvas and native-bridge-codec. UCP validates typed component
++  graphs and produces a contract receipt; it does not execute renderers.
++- The Studio mirror bridge's unchanged selftest runs standalone.
++- Studio core metadata and all 84 actions can be inspected. Inline scripts parse.
++
++## What is preserved, not presented as integrated
++
++The Studio folder contains the real canvas editor, paint/vector/pixel tools,
++layer ownership/visibility/locking/opacity/blending, per-layer undo, frame stacks,
++onion skin, spritesheet export and machine draw packets. These are original source
++capabilities, not a new claim that its UI works in UC or a browser tested here.
++
++The folder is a module but not a complete dependency bundle:
++
++| Source | External platform references |
++| --- | --- |
++| `engine.html` | Agent Command Center identity registry, hub identity router, profile client and two skin preview images |
++| `index.html` / `studio-shell.js` | Visual Actions (recovered), presentation spine CSS, hub module, continuity, Asset Vault and Asset Hands workbench |
++| Optional UI/skin/pack modes | UI/UX Builder, Skinner and Asset Pack Lab sibling modules |
++| `axm-foundation.js` | Optional local/remote AI connectors in original source; not started by UC |
++
++The original Studio `selftest.js`, `html-inline-syntax-test.js` and shared raster
++Hands selftest reference further platform files. They are retained unmodified;
++the entire suites were not executed. UC's focused syntax/action checks do not
++substitute for interactive verification. Historical evidence documents inside
++`source/` describe donor-era runs, not this extraction's observations.
++
++## UCP and skins
++
++UCP means Universal Component Protocol. It seals component versions/digests,
++resolves exact references, checks typed ports and acyclic graphs, checks canvas
++compatibility, aggregates declared resource requirements and records adapter
++losses. A skin can provide a different control surface for the same component
++graph; a texture/material skin can be one of the graph's components. Actual
++rendering still needs a matching creation hand/adapter. The included fixture
++explicitly asserts `executed: false` and `visually_approved: false`.
++
++This pass preserves and tests UCP as donor code. It does not replace UC's
++canonical contracts or yet wire UCP graph dispatch into UC. Next useful work:
++map one existing UC compositor operation into UCP ports/target canvas, then
++connect the recovered layer panel and brush draw packets to that operation.
++
++See `docs/STUDIO_DONOR.md` for execution, limits and verification.
+diff --git a/donors/collaboration-studio/source/tools/studio/COMMAND_DECK_EVIDENCE.md b/donors/collaboration-studio/source/tools/studio/COMMAND_DECK_EVIDENCE.md
+new file mode 100644
+index 0000000..6bc730b
+--- /dev/null
++++ b/donors/collaboration-studio/source/tools/studio/COMMAND_DECK_EVIDENCE.md
+@@ -0,0 +1,47 @@
++# Studio Command Deck visual verification
++
++Date: 2026-07-24\
++Surface: `http://127.0.0.1:8123/tools/studio/index.html` served from the local Workshop\
++Visual backend: `BROWSER_PRIMARY` (Codex in-app browser)\
++Capture policy: bounded semantic snapshots and screenshots only; no video or rolling buffer was required for these static interaction claims. The temporary browser tab was finalized and the local verification server was stopped.
++
++## Claim 1 — core commands are discoverable and reach real Studio controls
++
++- viewport: 1280 × 720
++- baseline: Studio rendered with its mode rail, canvas, tool panels, and a visible `Commands · Ctrl K` entry point.
++- action: opened Command Deck, searched `eraser`, selected `Select Eraser`.
++- expected: deck closes, named schema-checked route reaches the existing canvas control, Eraser becomes visibly active.
++- observed: deck closed; shell status became `Select Eraser ready`; the Eraser control gained the active outline; canvas status read `Tool selected: Eraser.`
++- typed observation: `{coreResults:32, disabledWhenCanvasReady:0, routedAction:"tool.eraser", visibleActiveTool:"Eraser"}`
++- verdict: **PASS**
++- named seams found and repaired: search focus/ready timing was checked; an explicit `axm-studio-canvas-ready` handshake now removes cached-iframe timing dependence.
++- temporary paths deleted: none created
++- cleanup complete: yes
++
++## Claim 2 — advanced access remains available and contextual
++
++- viewport: 1280 × 720
++- baseline: Command Deck opened with 32 core actions in Paint.
++- action: enabled `Advanced + specialist`, cleared search, switched to Vector through the deck, then searched `path`.
++- expected: advanced actions become available without replacing core actions; Vector exposes only relevant path controls plus the mode route.
++- observed: Paint expanded to 70 context-valid actions across core, advanced, and specialist levels. Vector search returned seven entries: close/open, delete, duplicate, finish, start, smooth, and the Vector mode route.
++- typed observation: `{paintExpandedResults:70, levels:["core","advanced","specialist"], vectorPathResults:7, bindingConflicts:0}`
++- verdict: **PASS**
++- named seam: none remaining in the tested route
++- temporary paths deleted: none created
++- cleanup complete: yes
++
++## Claim 3 — the command layer and creative workspace remain usable on mobile
++
++- viewport: 390 × 844
++- baseline: the previous desktop-only iframe columns overflowed and obscured the canvas during the first narrow observation.
++- action: added the narrow embedded layout, reloaded, opened the compact Command Deck, enabled advanced actions.
++- expected: no outer horizontal overflow; canvas visible first; tools and supporting panels preserved below it; Command Deck fully inside viewport with a stable spoken label.
++- observed: outer horizontal overflow was false; canvas rendered at the top; tools followed in the iframe scroll; Command Deck bounds were `{x:8,y:8,width:374,height:828}` inside the 390 × 844 viewport; 32 core and 77 Vector-context expanded actions were available; button name was `Open Command Deck`.
++- typed observation: `{horizontalOverflow:false, panelClipped:false, mobileCoreResults:32, mobileExpandedResults:77, commandButtonName:"Open Command Deck"}`
++- verdict: **PASS**
++- named seam found and repaired: `MOBILE_IFRAME_DESKTOP_COLUMNS`
++- temporary paths deleted: none created
++- cleanup complete: yes
++
++Next cheapest test: when a second visual tool adopts `shared/visual-actions`, run the same three checks against that host catalog and verify it declares no handler that the host cannot provide.
+diff --git a/donors/collaboration-studio/source/tools/studio/README.md b/donors/collaboration-studio/source/tools/studio/README.md
+new file mode 100644
+index 0000000..632aa05
+--- /dev/null
++++ b/donors/collaboration-studio/source/tools/studio/README.md
+@@ -0,0 +1,58 @@
++# AXM Studio v2.3
++
++AXM Studio is the single user-facing 2D and interface workspace.
++
++## Modes
++
++- Drawing & Painting
++- Vector Graphics
++- Pixel Art & Animation
++- Photo, Collage & Compositing
++- Textures & Patterns
++- Typography & Type Design
++- Graphic Design & Story Layout
++- UI/UX & Web Design
++- Skin Production
++- Asset Pack Production
++
++The first seven modes share the same persistent layered canvas in `engine.html`.
++UI/UX Builder, Skinner and Asset Pack Lab keep their existing storage formats and
++are mounted as Studio modes. Their old URLs remain compatibility routes.
++
++Vector mode has a non-destructive object layer. Paths are created point by point,
++remain node-editable, support open/closed, smooth, fill, stroke, duplication and
++SVG export, and are included in normal PNG composites.
++
++Pixel mode has a persistent frame timeline. Every frame retains the full raster
++layer stack and its own duration. Frames can be added, duplicated, deleted,
++onion-skinned and played, then exported as a PNG spritesheet plus JSON timing map.
++
++Asset Vault is opened as Studio's shared library drawer. It is a service behind
++the creative workflow, not another creative product a beginner must learn.
++
++## Shared Creation Hands
++
++Studio embeds the same Asset Hands workbench used by Asset Fabric and available
++to future Workshop modules. A versioned brief exposes only hands compatible with
++its asset kind, target canvas, required outputs, accepted schemas and available
++runtime capabilities.
++
++Studio supplies a target-canvas default for the active mode and preserves the
++result's target canvas, editable recipe and validation receipt on the created
++layer. SVG and raster image artifacts follow separate MIME-checked imports;
++JSON, DXF and other non-image containers are not disguised as SVG. Physical
++results can still be inspected and exported from the embedded workbench even
++when Studio's layered screen canvas cannot import them visually.
++
++Sending a result into Studio is always explicit. Layered-composition packets
++pass through Studio's existing reviewed draw-command engine. Project saves keep
++the hand ID/version, result/artifact digests, target canvas, creation recipe and
++validation receipt.
++
++## Boundaries
++
++- Studio proposals do not write directly into game packages.
++- UI/UX output remains proposal-only until reviewed.
++- Skins remain data and pass the existing safety/readability gate.
++- Asset packs remain honest manifest exports until an installer exists.
++- Existing local records and compatibility routes are preserved.
+diff --git a/src/axm_uc/studio_compositor.py b/src/axm_uc/studio_compositor.py
+new file mode 100644
+index 0000000..5e6ec62
+--- /dev/null
++++ b/src/axm_uc/studio_compositor.py
+@@ -0,0 +1,218 @@
++"""Use the pinned Studio raster donor directly, preserving editable source.
++
++Python handles bounded PNG intake/publication; Node executes original donor JS.
++No platform host, browser, npm dependency, account, or AI service is started.
++"""
++from __future__ import annotations
++import base64
++import copy
++import hashlib
++import json
++from pathlib import Path
++import re
++import shutil
++import struct
++import subprocess
++import tempfile
++
++from .atomic import atomic_write_bytes, atomic_write_json
++from .design_visual import DesignVisualError, _parse_png, _inflate_scanlines, _row_rgba
++from .fabric_noise import png_bytes
++
++SCHEMA = 'axm.studio-composition-project/v1'
++DONOR_COMMIT = '27757ace6133b243a200b0463e427c8b04d5a8e3'
++DATA = Path(__file__).parent / 'data' / 'studio'
++MAX_SOURCE_BYTES = 8 * 1024 * 1024
++MAX_SOURCE_PIXELS = 4 * 1024 * 1024
++
++
++def _sha(data):
++    return hashlib.sha256(data).hexdigest()
++
++
++def _encode(value):
++    return json.dumps(value, ensure_ascii=False, sort_keys=True, allow_nan=False).encode('utf-8')
++
++
++def _run(request):
++    node = shutil.which('node')
++    if not node:
++        raise RuntimeError('Studio compositor requires a local Node.js runtime; nothing was installed')
++    payload = _encode(request)
++    if len(payload) > 32 * 1024 * 1024:
++        raise ValueError('Studio request exceeds byte bound')
++    try:
++        result = subprocess.run([node, '--max-old-space-size=384', str(DATA / 'compose-runner.cjs')],
++                                input=payload, capture_output=True, timeout=30, check=False)
++    except subprocess.TimeoutExpired as exc:
++        raise RuntimeError('Studio composition exceeded its 30-second bound') from exc
++    if result.returncode:
++        raise ValueError('Studio donor rejected composition: ' + result.stderr.decode('utf-8', 'replace')[:1000])
++    return json.loads(result.stdout)
++
++
++def studio_compositor_catalog():
++    return {'schema':'axm.studio-compositor-catalog/v1', 'runtime':'Node.js (optional local runtime)',
++            'project_schema':SCHEMA, 'donor_commit':DONOR_COMMIT,
++            'blends':['normal','multiply','screen','overlay','darken','lighten','color-dodge','color-burn',
++                      'hard-light','soft-light','difference','exclusion','add','subtract'],
++            'filters':['brightness','contrast','saturation','hue','grayscale','invert','gamma','threshold',
++                       'posterize','tint','blur','sharpen','pixelate'],
++            'limits':{'dimension':1024,'sources':32,'decoded_source_pixels':MAX_SOURCE_PIXELS,'timeout_seconds':30},
++            'truth':'Original raster-compositor.js executes layers, masks and filters. Studio UI, brushes, '
++                    'animation and 3D projection are donor source only, not integrated by this adapter. '
++                    'Compositing is in encoded sRGB RGBA8; no ICC conversion or premultiplied-alpha blur repair.'}
++
++
++def _dimension(value):
++    if type(value) is not int or not 1 <= value <= 1024:
++        raise ValueError('Studio dimensions must be integers in 1..1024')
++    return value
++
++
++def _read_png(path):
++    with path.open('rb') as handle:
++        body = handle.read(MAX_SOURCE_BYTES + 1)
++    if len(body) > MAX_SOURCE_BYTES:
++        raise ValueError('source PNG exceeds byte bound')
++    try:
++        header, compressed, palette, transparency = _parse_png(body)
++    except DesignVisualError as exc:
++        raise ValueError(f'invalid source PNG: {exc}') from exc
++    _dimension(header['width']); _dimension(header['height'])
++    offset = 8
++    while offset < len(body):
++        length = struct.unpack_from('>I', body, offset)[0]
++        kind, data = body[offset+4:offset+8], body[offset+8:offset+8+length]
++        if kind in (b'iCCP', b'cHRM', b'acTL'):
++            raise ValueError('ICC/chromaticity conversion and animated PNG intake are unsupported')
++        if kind == b'gAMA' and (len(data) != 4 or struct.unpack('>I', data)[0] != 45455):
++            raise ValueError('source gamma must be sRGB-compatible; explicit conversion is required')
++        if kind == b'sRGB' and (len(data) != 1 or data[0] > 3):
++            raise ValueError('invalid sRGB chunk')
++        offset += 12 + length
++    return body, header, compressed, palette, transparency
++
++
++def compose_studio_project(project, source_root):
++    """Return result and original PNG bytes without writing caller state."""
++    if not isinstance(project, dict) or set(project) != {'schema','recipe','sources'} or project['schema'] != SCHEMA:
++        raise ValueError('project requires exactly schema, recipe and sources')
++    if len(_encode(project)) > 1024 * 1024:
++        raise ValueError('project JSON exceeds byte bound')
++    recipe = project['recipe']
++    if not isinstance(recipe, dict) or not isinstance(recipe.get('canvas'), dict):
++        raise ValueError('recipe requires a canvas')
++    for name in ('width','height'): _dimension(recipe['canvas'].get(name))
++    declared = project['sources']
++    if not isinstance(declared, dict) or len(declared) > 32:
++        raise ValueError('sources must map at most 32 IDs to relative PNG paths')
++    root = Path(source_root).resolve()
++    originals, sources, digests = {}, {}, {}
++    pixels, source_bytes = 0, 0
++    for id, relative in sorted(declared.items()):
++        if (not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_.-]{0,79}', id)
++                or id in {'constructor','prototype','toString','valueOf','hasOwnProperty',
++                          'isPrototypeOf','propertyIsEnumerable','toLocaleString'}):
++            raise ValueError('invalid source ID')
++        if not isinstance(relative, str) or '\\' in relative or Path(relative).is_absolute() or '..' in Path(relative).parts:
++            raise ValueError('source path must be relative and stay within source root')
++        path = (root / relative).resolve()
++        if not path.is_relative_to(root):
++            raise ValueError('source path escapes source root')
++        body, header, compressed, palette, transparency = _read_png(path)
++        pixels += header['width'] * header['height']; source_bytes += len(body)
++        if pixels > MAX_SOURCE_PIXELS or source_bytes > 32 * 1024 * 1024:
++            raise ValueError('total source budget exceeded')
++        try:
++            rows, _ = _inflate_scanlines(header, compressed)
++            rgba = bytes(channel for row in rows for pixel in _row_rgba(row, header['color_type'], palette, transparency) for channel in pixel)
++        except DesignVisualError as exc:
++            raise ValueError(f'invalid source PNG pixels: {exc}') from exc
++        originals[id] = body
++        digests[id] = {'png_sha256':_sha(body),'rgba_sha256':_sha(rgba),'width':header['width'],'height':header['height']}
++        sources[id] = {'width':header['width'],'height':header['height'],'rgba_base64':base64.b64encode(rgba).decode('ascii')}
++    result = _run({'recipe':recipe,'sources':sources})
++    rgba = base64.b64decode(result.pop('rgba_base64'), validate=True)
++    if len(rgba) != result['width'] * result['height'] * 4:
++        raise ValueError('donor output pixel size mismatch')
++    body = png_bytes(result['width'], result['height'], 4, rgba)
++    receipt = {'schema':'axm.studio-composition-receipt/v1','donor_commit':DONOR_COMMIT,
++               'donor_sha256':result['donor_sha256'],'request_sha256':_sha(_encode(project)),
++               'sources':digests,'output_png_sha256':_sha(body),'output_rgba_sha256':_sha(rgba),
++               'width':result['width'],'height':result['height'], 'donor_receipt':result['donor_receipt'],
++               'estimated_filter_work':result['estimated_filter_work'], 'source_preserved':True,
++               'visual_approval':False,'truth':studio_compositor_catalog()['truth']}
++    return {'png':body,'recipe':result['recipe'],'receipt':receipt,'sources':originals}
++
++
++def edit_studio_layers(project, operations):
++    """Apply ordered layer edits to a copy; rendering performs donor validation.
++
++    Source paths and original project remain untouched. Use a fresh publication
++    directory to retain both the previous project and this revision.
++    """
++    if not isinstance(project, dict) or project.get('schema') != SCHEMA:
++        raise ValueError('invalid Studio project')
++    if not isinstance(operations, list) or not 1 <= len(operations) <= 64:
++        raise ValueError('supply 1..64 layer edits')
++    if len(_encode(operations)) > 1024 * 1024:
++        raise ValueError('layer edit byte bound exceeded')
++    result = copy.deepcopy(project)
++    layers = result.get('recipe', {}).get('layers')
++    if not isinstance(layers, list): raise ValueError('project requires layers')
++
++    def index(id):
++        matches = [i for i, layer in enumerate(layers) if layer.get('id') == id]
++        if len(matches) != 1: raise ValueError(f'unknown or ambiguous layer: {id}')
++        return matches[0]
++
++    for edit in operations:
++        if not isinstance(edit, dict): raise ValueError('layer edit must be an object')
++        op = edit.get('op')
++        fields = {'add':{'op','layer','before'},'change':{'op','id','patch'},
++                  'move':{'op','id','before'},'remove':{'op','id'}}
++        if op not in fields or set(edit)-fields[op]: raise ValueError('unknown layer edit or fields')
++        if op == 'add':
++            layer = copy.deepcopy(edit.get('layer'))
++            if not isinstance(layer, dict) or not isinstance(layer.get('id'),str) or not layer['id'].strip():
++                raise ValueError('new layer requires an ID')
++            if any(item.get('id') == layer['id'] for item in layers): raise ValueError('duplicate layer ID')
++            layers.insert(index(edit['before']) if edit.get('before') is not None else len(layers),layer)
++        elif op == 'change':
++            changes = edit.get('patch')
++            if not isinstance(changes,dict) or 'id' in changes: raise ValueError('patch must preserve layer ID')
++            layers[index(edit.get('id'))].update(copy.deepcopy(changes))
++        elif op == 'remove': layers.pop(index(edit.get('id')))
++        else:
++            old = index(edit.get('id'))
++            if edit.get('before') == edit.get('id'): continue
++            if edit.get('before') is not None: index(edit['before'])
++            layer = layers.pop(old)
++            layers.insert(index(edit['before']) if edit.get('before') is not None else len(layers),layer)
++        if not 1 <= len(layers) <= 32: raise ValueError('layer count must remain in 1..32')
++    return result
++
++
++def publish_studio_project(path, project, source_root):
++    target = Path(path)
++    if target.exists(): raise FileExistsError(f'refusing to overwrite {target}')
++    result = compose_studio_project(project, source_root)
++    target.parent.mkdir(parents=True, exist_ok=True)
++    stage = Path(tempfile.mkdtemp(prefix='.axm-studio-', dir=target.parent))
++    try:
++        replay = copy.deepcopy(project)
++        for index, (id, body) in enumerate(result['sources'].items()):
++            relative = f'sources/{index:03d}.png'
++            atomic_write_bytes(stage / relative, body)
++            replay['sources'][id] = relative
++        atomic_write_bytes(stage / 'composition.png', result['png'])
++        atomic_write_json(stage / 'request.json', project)
++        atomic_write_json(stage / 'project.json', replay)
++        atomic_write_json(stage / 'normalized-recipe.json', result['recipe'])
++        atomic_write_json(stage / 'receipt.json', result['receipt'])
++        if target.exists(): raise FileExistsError(f'refusing to overwrite {target}')
++        stage.rename(target)
++    finally:
++        if stage.exists(): shutil.rmtree(stage)
++    return result['receipt']
+diff --git a/src/axm_uc/visual_assets_cli.py b/src/axm_uc/visual_assets_cli.py
+index 83f4e15..693123a 100644
+--- a/src/axm_uc/visual_assets_cli.py
++++ b/src/axm_uc/visual_assets_cli.py
+@@ -41,6 +41,7 @@ from .game_showcase_contract import game_showcase_catalog, publish_game_showcase
+ from .game_functional_motion import game_functional_motion_catalog, publish_game_functional_motion
+ from .game_animation_runtime import game_animation_runtime_catalog, publish_game_animation_replay
+ from .game_pose_runtime import game_pose_runtime_catalog, publish_game_pose
++from .studio_compositor import studio_compositor_catalog, publish_studio_project, edit_studio_layers
+ 
+ BASE_CATEGORIES = ["texture", "gradient", "material", "fixture", "decal", "palette"]
+ EXPANDED_CATEGORIES = ["surface", "pigment", "sprite", "mesh", "vector-part"]
+@@ -72,6 +73,7 @@ def combined_catalog() -> dict:
+         "game_functional_motion": game_functional_motion_catalog(),
+         "game_animation_runtime": game_animation_runtime_catalog(),
+         "game_pose_runtime": game_pose_runtime_catalog(),
++        "studio_compositor": studio_compositor_catalog(),
+     }
+ 
+ 
+@@ -97,6 +99,14 @@ def build_parser() -> argparse.ArgumentParser:
+     functional.add_argument("path", help="new output directory; existing paths are never overwritten")
+     sub.add_parser("animation-runtime-catalog", help="show deterministic clip clock and state execution")
+     sub.add_parser("pose-runtime-catalog", help="show offline GLB pose, attachment and skin evaluation")
++    sub.add_parser("studio-compositor-catalog", help="show imported Studio raster tools and runtime requirements")
++    studio = sub.add_parser("studio-compose", help="compose PNG layers using the original Studio donor")
++    studio.add_argument("project", help="editable Studio composition project JSON")
++    studio.add_argument("path", help="new output directory")
++    studio_edit = sub.add_parser("studio-edit", help="add, change, reorder or remove layers and publish a new revision")
++    studio_edit.add_argument("project", help="existing editable Studio project JSON")
++    studio_edit.add_argument("operations", help="JSON array of layer edits")
++    studio_edit.add_argument("path", help="new output directory")
+     pose = sub.add_parser("pose-sample", help="evaluate or blend an actual GLB pose without a renderer")
+     pose.add_argument("asset", help="embedded GLB with LINEAR or STEP TRS animation")
+     pose.add_argument("request", help="JSON clip, time_s and optional loop, blend, vertices")
+@@ -295,6 +305,22 @@ def main(argv: list[str] | None = None) -> int:
+         result = game_animation_runtime_catalog()
+     elif args.command == "pose-runtime-catalog":
+         result = game_pose_runtime_catalog()
++    elif args.command == "studio-compositor-catalog":
++        result = studio_compositor_catalog()
++    elif args.command in ("studio-compose", "studio-edit"):
++        project_path = Path(args.project)
++        with project_path.open("rb") as handle:
++            body = handle.read(1024 * 1024 + 1)
++        if len(body) > 1024 * 1024:
++            parser.error("Studio project exceeds byte bound")
++        project = json.loads(body)
++        if args.command == "studio-edit":
++            with Path(args.operations).open("rb") as handle:
++                edits = handle.read(1024 * 1024 + 1)
++            if len(edits) > 1024 * 1024:
++                parser.error("Studio edits exceed byte bound")
++            project = edit_studio_layers(project, json.loads(edits))
++        result = publish_studio_project(args.path, project, project_path.parent)
+     elif args.command == "pose-sample":
+         request = json.loads(Path(args.request).read_text(encoding="utf-8"))
+         result = publish_game_pose(args.path, args.asset, request)
+diff --git a/tests/test_studio_compositor.py b/tests/test_studio_compositor.py
+new file mode 100644
+index 0000000..a9e8959
+--- /dev/null
++++ b/tests/test_studio_compositor.py
+@@ -0,0 +1,253 @@
++"""Pixel fixtures and recovery checks against the actual pinned JavaScript."""
++import copy
++from contextlib import redirect_stdout
++import hashlib
++import io
++import json
++from pathlib import Path
++import shutil
++import struct
++import subprocess
++import sys
++import tempfile
++import unittest
++from unittest.mock import patch
++import zlib
++
++ROOT = Path(__file__).resolve().parents[1]
++sys.path.insert(0, str(ROOT / 'src'))
++from axm_uc import studio_compositor as studio
++from axm_uc.fabric_noise import png_bytes
++from axm_uc.visual_assets_cli import main
++
++
++def project(layers=None, width=1, height=1, sources=None):
++    return {'schema':studio.SCHEMA, 'sources':sources or {},
++            'recipe':{'schema':'axm.raster-composition/v1',
++                      'canvas':{'width':width,'height':height},
++                      'layers':layers or [{'id':'base','fill':'#204080'}]}}
++
++
++def pixels(body):
++    # Independent decoder for UC's unfiltered output PNG, not its intake decoder.
++    at, compressed, size = 8, b'', None
++    while at < len(body):
++        n = struct.unpack_from('>I', body, at)[0]
++        kind, data = body[at+4:at+8], body[at+8:at+8+n]
++        if kind == b'IHDR': size = struct.unpack('>IIBBBBB', data)[:2]
++        if kind == b'IDAT': compressed += data
++        at += n + 12
++    w, h = size
++    raw = zlib.decompress(compressed)
++    assert len(raw) == h * (4*w+1)
++    result = []
++    for y in range(h):
++        row = raw[y*(4*w+1):(y+1)*(4*w+1)]
++        assert row[0] == 0
++        result.extend(tuple(row[i:i+4]) for i in range(1, len(row), 4))
++    return result
++
++
++class StudioRecoveryTests(unittest.TestCase):
++    def test_layer_edits_preserve_project_and_source_links(self):
++        p = project(sources={'paint':'paint.png'})
++        original = copy.deepcopy(p)
++        edited = studio.edit_studio_layers(p,[{'op':'add','layer':{'id':'ink','fill':'#00FF00'}},
++                 {'op':'change','id':'ink','patch':{'opacity':0.5}},
++                 {'op':'move','id':'ink','before':'base'}])
++        self.assertEqual([x['id'] for x in edited['recipe']['layers']], ['ink','base'])
++        self.assertEqual(edited['recipe']['layers'][0]['opacity'], 0.5)
++        self.assertEqual(edited['sources'],original['sources'])
++        self.assertEqual(studio.edit_studio_layers(edited,[{'op':'remove','id':'ink'}]),p)
++        self.assertEqual(p,original)
++
++    def test_invalid_edit_is_transactional(self):
++        p=project(); original=copy.deepcopy(p)
++        for operation in [{'op':'remove','id':'missing'},{'op':'remove','id':'base'},
++                          {'op':'change','id':'base','patch':{'id':'renamed'}},
++                          {'op':'add','layer':{'id':'base','fill':'#FFFFFF'}},
++                          {'op':'move','id':'base','before':'missing'},{'op':'unknown'}]:
++            with self.subTest(operation=operation), self.assertRaises(ValueError):
++                studio.edit_studio_layers(p,[operation])
++        self.assertEqual(p,original)
++
++    def test_original_files_match_pinned_git_blobs(self):
++        manifest = json.loads((ROOT / 'donors/collaboration-studio/manifest.json').read_text())
++        self.assertEqual(manifest['commit'], studio.DONOR_COMMIT)
++        studio_paths = []
++        for item in manifest['files']:
++            body = (ROOT / item['local']).read_bytes()
++            if 'original_text_archive' in item:
++                archived = json.loads((ROOT / item['original_text_archive']).read_text())
++                original = archived['utf8'].encode('utf-8')
++                self.assertEqual(archived['source'],item['source'])
++                self.assertEqual(archived['commit'],manifest['commit'])
++                self.assertEqual(body,original.replace(b'  \n',b'\\\n'))
++                body = original
++            else:
++                self.assertEqual(item['modifications'], 'none')
++            digest = hashlib.sha1(b'blob ' + str(len(body)).encode() + b'\0' + body).hexdigest()
++            self.assertEqual(digest, item['git_blob_sha'], item['local'])
++            if item['source'].startswith('tools/studio/'): studio_paths.append(item['source'])
++        self.assertEqual(len(studio_paths), 19)
++
++    def test_catalog_and_missing_runtime_are_truthful(self):
++        self.assertIn('Node.js', studio.studio_compositor_catalog()['runtime'])
++        with patch.object(studio.shutil, 'which', return_value=None):
++            with self.assertRaisesRegex(RuntimeError, 'requires a local Node'):
++                studio.compose_studio_project(project(), '.')
++
++
++@unittest.skipUnless(shutil.which('node'), 'local Node runtime absent; dedicated CI supplies Node 22')
++class StudioCompositorTests(unittest.TestCase):
++    def setUp(self):
++        self.temp = tempfile.TemporaryDirectory()
++        self.addCleanup(self.temp.cleanup)
++        self.root = Path(self.temp.name)
++
++    def run_project(self, request):
++        return studio.compose_studio_project(request, self.root)
++
++    def source(self, name, values, width=None):
++        body = png_bytes(width or len(values), 1, 4, bytes(c for p in values for c in p))
++        (self.root / name).write_bytes(body)
++        return body
++
++    def test_catalog_matches_executed_donor(self):
++        actual = studio._run({'catalog':True})
++        for key in ('blends','filters'):
++            self.assertEqual(actual[key], studio.studio_compositor_catalog()[key])
++
++    def test_fractional_alpha_and_order(self):
++        layers = [{'id':'blue','fill':'#0000FF80'},{'id':'red','fill':'#FF000080'}]
++        self.assertEqual(pixels(self.run_project(project(layers))['png']), [(170,0,85,192)])
++        self.assertEqual(pixels(self.run_project(project(layers[::-1]))['png']), [(85,0,170,192)])
++
++    def test_blend_mode_analytical_fixtures(self):
++        for mode, expected in [('multiply',(32,32,16,255)),('screen',(160,160,144,255)),
++                               ('difference',(64,64,96,255)),('add',(192,192,160,255))]:
++            with self.subTest(mode=mode):
++                p = project([{'id':'base','fill':'#408080'},
++                             {'id':'ink','fill':'#804020','blend_mode':mode}])
++                self.assertEqual(pixels(self.run_project(p)['png']), [expected])
++
++    def test_masks_offsets_and_hidden_layer(self):
++        self.source('mask.png', [(255,255,255,255),(0,0,0,0)])
++        p = project([{'id':'base','fill':'#0000FF'},
++                     {'id':'ink','fill':'#FF0000','opacity':0.5,
++                      'mask':{'source_artifact_id':'mask','channel':'alpha'}},
++                     {'id':'hidden','fill':'#00FF00','visible':False}], width=2, sources={'mask':'mask.png'})
++        self.assertEqual(pixels(self.run_project(p)['png']), [(128,0,128,255),(0,0,255,255)])
++        p['recipe']['layers'][1]['mask'].update(channel='luminance',invert=True)
++        self.assertEqual(pixels(self.run_project(p)['png']), [(0,0,255,255),(128,0,128,255)])
++        p['recipe']['layers'][1]['offset'] = {'x':-1,'y':0}
++        self.assertEqual(pixels(self.run_project(p)['png']), [(128,0,128,255),(0,0,255,255)])
++
++    def test_point_filters_known_results(self):
++        cases = [({'type':'brightness','value':1},(255,255,255,255)),
++                 ({'type':'contrast','value':-1},(128,128,128,255)),
++                 ({'type':'saturation','value':0},(43,43,43,255)),
++                 ({'type':'grayscale','amount':1},(43,43,43,255)),
++                 ({'type':'hue','value':120},(0,200,0,255)),
++                 ({'type':'invert','amount':1},(55,255,255,255)),
++                 ({'type':'gamma','value':1},(200,0,0,255)),
++                 ({'type':'threshold','value':0.5},(0,0,0,255)),
++                 ({'type':'posterize','levels':2},(255,0,0,255)),
++                 ({'type':'tint','colour':'#102030','amount':1},(16,32,48,255))]
++        for effect, expected in cases:
++            with self.subTest(effect=effect):
++                p = project([{'id':'base','fill':'#C80000','filters':[effect]}])
++                self.assertEqual(pixels(self.run_project(p)['png']), [expected])
++
++    def test_spatial_filters_and_global_filter(self):
++        self.source('line.png', [(0,0,0,255),(255,255,255,255),(0,0,0,255)])
++        p = project([{'id':'line','source_artifact_id':'line','filters':[{'type':'blur','radius':1}]}],
++                    width=3, sources={'line':'line.png'})
++        self.assertEqual(pixels(self.run_project(p)['png']), [(128,128,128,255),(85,85,85,255),(128,128,128,255)])
++        p['recipe']['layers'][0]['filters'] = [{'type':'sharpen','amount':1}]
++        self.assertEqual(pixels(self.run_project(p)['png']), [(0,0,0,255),(255,255,255,255),(0,0,0,255)])
++        p['recipe']['layers'][0]['filters'] = [{'type':'pixelate','size':2}]
++        p['recipe']['global_filters'] = [{'type':'invert','amount':1}]
++        self.assertEqual(pixels(self.run_project(p)['png']), [(127,127,127,255),(127,127,127,255),(255,255,255,255)])
++
++    def test_publish_replays_and_preserves_exact_sources_and_request(self):
++        original = self.source('ink.png', [(20,100,230,180),(250,20,80,255)])
++        p = project([{'id':'ink','source_artifact_id':'ink','filters':[{'type':'invert','amount':0.5}]}],
++                    width=2, sources={'ink':'ink.png'})
++        p['recipe']['artist_extension'] = {'intent':'preserve this even when donor normalization omits it'}
++        before = copy.deepcopy(p)
++        target = self.root / 'published'
++        receipt = studio.publish_studio_project(target, p, self.root)
++        replay = json.loads((target / 'project.json').read_text())
++        replay_result = studio.compose_studio_project(replay, target)
++        self.assertEqual(replay_result['png'], (target / 'composition.png').read_bytes())
++        self.assertEqual((target / replay['sources']['ink']).read_bytes(), original)
++        self.assertEqual((self.root / 'ink.png').read_bytes(), original)
++        self.assertEqual(p, before)
++        self.assertEqual(json.loads((target / 'request.json').read_text()), before)
++        self.assertNotIn('artist_extension', json.loads((target / 'normalized-recipe.json').read_text()))
++        self.assertEqual(receipt['sources']['ink']['png_sha256'], hashlib.sha256(original).hexdigest())
++        self.assertFalse(receipt['visual_approval'])
++        with self.assertRaises(FileExistsError): studio.publish_studio_project(target, p, self.root)
++
++    def test_invalid_paths_and_reserved_source_ids(self):
++        for name in ('../escape.png','/outside.png','..\\escape.png'):
++            with self.subTest(name=name), self.assertRaises(ValueError):
++                self.run_project(project(sources={'ink':name}))
++        with self.assertRaisesRegex(ValueError,'invalid source ID'):
++            self.run_project(project(sources={'constructor':'ink.png'}))
++        outside = self.root.parent / (self.root.name + '-outside.png')
++        outside.write_bytes(png_bytes(1,1,4,bytes([1,2,3,255])))
++        self.addCleanup(outside.unlink)
++        try: (self.root / 'link.png').symlink_to(outside)
++        except OSError: return  # Windows may prohibit symlinks; traversal checks still ran.
++        with self.assertRaisesRegex(ValueError,'escapes'):
++            self.run_project(project(sources={'ink':'link.png'}))
++
++    def test_fail_closed_unsupported_and_budgets(self):
++        for update in ({'alpha':False},{'width':1025},{'width':True}):
++            p = project(); p['recipe']['canvas'].update(update)
++            with self.subTest(update=update), self.assertRaises(ValueError): self.run_project(p)
++        p = project(); p['recipe']['layers'][0]['filters'] = [{'type':'unknown'}]
++        with self.assertRaisesRegex(ValueError,'unsupported filter'): self.run_project(p)
++        p = project(width=1024,height=1024)
++        p['recipe']['layers'][0]['filters'] = [{'type':'blur','radius':12}]
++        with self.assertRaisesRegex(ValueError,'work budget'): self.run_project(p)
++        self.source('small.png',[(1,1,1,255)])
++        p = project([{'id':'offcanvas','fill':'#FFFFFF','offset':{'x':-10},
++                      'mask':{'source_artifact_id':'mask'}}],width=2,sources={'mask':'small.png'})
++        with self.assertRaisesRegex(ValueError,'mask dimensions'): self.run_project(p)
++
++    def test_profile_and_corrupt_png_rejected(self):
++        original = png_bytes(1,1,4,bytes([20,30,40,255]))
++        for kind, data in [(b'iCCP',b'profile'),(b'gAMA',struct.pack('>I',100000)),(b'acTL',struct.pack('>II',2,0))]:
++            chunk = struct.pack('>I',len(data))+kind+data+struct.pack('>I',zlib.crc32(kind+data)&0xffffffff)
++            (self.root / 'source.png').write_bytes(original[:33]+chunk+original[33:])
++            with self.subTest(kind=kind), self.assertRaises(ValueError):
++                self.run_project(project(sources={'ink':'source.png'}))
++        (self.root / 'source.png').write_bytes(original[:-1]+bytes([original[-1]^1]))
++        with self.assertRaises(ValueError): self.run_project(project(sources={'ink':'source.png'}))
++
++    def test_timeout_and_failed_publish_leave_no_output(self):
++        target = self.root / 'out'
++        with patch.object(studio.subprocess,'run',side_effect=subprocess.TimeoutExpired('node',30)):
++            with self.assertRaisesRegex(RuntimeError,'30-second'):
++                studio.publish_studio_project(target,project(),self.root)
++        with patch.object(studio,'atomic_write_json',side_effect=OSError('disk failure')):
++            with self.assertRaises(OSError): studio.publish_studio_project(target,project(),self.root)
++        self.assertFalse(target.exists())
++        self.assertEqual(list(self.root.iterdir()),[])
++
++    def test_cli_publication(self):
++        source = self.root / 'project.json'; source.write_text(json.dumps(project()))
++        with redirect_stdout(io.StringIO()): main(['studio-compose',str(source),str(self.root / 'cli')])
++        self.assertEqual(pixels((self.root / 'cli/composition.png').read_bytes()),[(32,64,128,255)])
++        edits = self.root / 'edits.json'
++        edits.write_text(json.dumps([{'op':'add','layer':{'id':'ink','fill':'#AABBCC'}}]))
++        with redirect_stdout(io.StringIO()):
++            main(['studio-edit',str(self.root / 'cli/project.json'),str(edits),str(self.root / 'revision')])
++        self.assertEqual(pixels((self.root / 'revision/composition.png').read_bytes()),[(170,187,204,255)])
++        self.assertEqual(pixels((self.root / 'cli/composition.png').read_bytes()),[(32,64,128,255)])
++
++
++if __name__ == '__main__': unittest.main()
+diff --git a/tools/studio_compositor_proof.py b/tools/studio_compositor_proof.py
+new file mode 100644
+index 0000000..bebcf26
+--- /dev/null
++++ b/tools/studio_compositor_proof.py
+@@ -0,0 +1,90 @@
++"""Original salvage-panel effect recipe, using the recovered Studio compositor.
++
++Run with Python + local Node, no browser, Pillow, network or AI dependency.
++Writes a fresh project directory; repeat into another directory to verify replay.
++"""
++import json
++import math
++from pathlib import Path
++import sys
++
++sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src'))
++from axm_uc.fabric_noise import png_bytes
++from axm_uc.studio_compositor import SCHEMA, compose_studio_project, publish_studio_project
++
++
++def segment_distance(x, y, a, b):
++    dx, dy = b[0]-a[0], b[1]-a[1]
++    t = max(0, min(1, ((x-a[0])*dx+(y-a[1])*dy)/(dx*dx+dy*dy)))
++    return math.hypot(x-a[0]-t*dx, y-a[1]-t*dy)
++
++
++def build(destination):
++    root = Path(destination)
++    if root.exists(): raise FileExistsError(root)
++    root.mkdir(parents=True)
++    size = 384
++    panel, spark, protection, paint = bytearray(), bytearray(), bytearray(), bytearray()
++    paths = [[(75,72),(152,97),(129,150),(226,121),(190,187),(303,205),(250,288),(317,328)],
++             [(129,150),(78,179),(93,218),(49,254)],[(226,121),(263,75),(325,87)],
++             [(190,187),(184,231),(219,256)]]
++    segments = [(a,b) for path in paths for a,b in zip(path,path[1:])]
++    letters = {'A':['01110','11011','11011','11111','11011','11011','11011'],
++               'X':['11011','11011','01110','00100','01110','11011','11011'],
++               'M':['10001','11011','11111','10101','10001','10001','10001']}
++    for y in range(size):
++        for x in range(size):
++            grain = ((x*73+y*131+(x*y)%53)%19)-9
++            rim = min(x,y,size-1-x,size-1-y)
++            rgb = [38+grain,49+grain,61+grain]
++            if rim < 10: rgb = [12,19,28]
++            elif rim < 17: rgb = [103+grain,116+grain,125+grain]
++            elif rim < 24: rgb = [23,30,37]
++            if 34 < x < 350 and (34 < y < 54 or 330 < y < 350):
++                rgb = [192+grain,124+grain,36] if (x+y)//19%2 else [32,33,31]
++            # Authored rivets, slotted vents, scratched finish and bolted nameplate.
++            for bx,by in ((32,32),(352,32),(32,352),(352,352)):
++                d=math.hypot(x-bx,y-by)
++                if d<8: rgb=[125+grain,137+grain,145+grain] if d<6 else [13,19,25]
++                if d<5 and abs(x-bx-y+by)<2: rgb=[14,23,31]
++            if 267<x<335 and 237<y<300 and y%12<5: rgb=[12,18,25]
++            if 115<x<256 and 245<y<310:
++                rgb=[194+grain,184+grain,152+grain] if 119<x<252 and 249<y<306 else [16,25,34]
++                lx, ly = (x-132)//6, (y-258)//6
++                if 0 <= ly < 7 and 0 <= lx < 17:
++                    letter, col = lx//6, lx%6
++                    if letter<3 and col<5 and letters['AXM'[letter]][ly][col]=='1': rgb=[25,36,42]
++            elif ((x*17+y*43)%1301<3) and rim>25: rgb=[135,145,142]
++            panel.extend([*rgb,255])
++            d=min(segment_distance(x,y,a,b) for a,b in segments)
++            rgb=[130,245,255] if d<1 else [15,153,235] if d<2.5 else [0,0,0]
++            spark.extend([*rgb,255])  # Opaque black protects blur from hidden-RGB alpha bleed.
++            protected = 110<x<261 and 240<y<315
++            protection.extend([0,0,0,0 if protected else 255])
++            amount=255 if 40<x<105 and 73<y<310 and (x*31+y*17)%107>16 else 0
++            paint.extend([0,0,0,amount])
++    for name, values in [('panel',panel),('lightning',spark),('protection',protection),('paint',paint)]:
++        (root/f'{name}.png').write_bytes(png_bytes(size,size,4,values))
++    mask={'source_artifact_id':'protection','channel':'alpha'}
++    p={'schema':SCHEMA,'sources':{k:f'{k}.png' for k in ('panel','lightning','protection','paint')},
++       'recipe':{'schema':'axm.raster-composition/v1','id':'AXM-salvage-storm-panel',
++                 'canvas':{'width':size,'height':size},
++                 'layers':[{'id':'canonical-panel','source_artifact_id':'panel'},
++                           {'id':'chipped-paint','fill':'#EC9930','opacity':0.68,'blend_mode':'overlay',
++                            'mask':{'source_artifact_id':'paint','channel':'alpha'}},
++                           {'id':'soft-corona','source_artifact_id':'lightning','blend_mode':'screen',
++                            'filters':[{'type':'blur','radius':8},{'type':'brightness','value':0.025}],
++                            'opacity':0.8,'mask':mask},
++                           {'id':'electrical-core','source_artifact_id':'lightning','blend_mode':'screen','mask':mask}],
++                 'notes':['Original procedural demonstration; 2D texture/effect only.',
++                          'The AXM nameplate remains pixel-exact; source images remain editable.']}}
++    (root/'input-project.json').write_text(json.dumps(p,indent=2)+'\n')
++    receipt=publish_studio_project(root/'editable',p,root)
++    replay=json.loads((root/'editable/project.json').read_text())
++    result=compose_studio_project(replay,root/'editable')
++    assert result['png']==(root/'editable/composition.png').read_bytes()
++    print(json.dumps({'output':str(root/'editable/composition.png'),'replay':'byte-identical',
++                      'sha256':receipt['output_png_sha256']},indent=2))
++
++
++if __name__=='__main__': build(sys.argv[1])

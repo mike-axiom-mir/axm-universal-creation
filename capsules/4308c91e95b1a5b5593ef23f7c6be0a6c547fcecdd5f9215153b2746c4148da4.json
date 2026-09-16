@@ -1,0 +1,176 @@
+{
+  "capsule_id": "4308c91e95b1a5b5593ef23f7c6be0a6c547fcecdd5f9215153b2746c4148da4",
+  "evidence": {
+    "files": [
+      {
+        "additions": 37,
+        "binary": false,
+        "content_sha256": "b92023f453ec1889019f640a9779321fa43eaadcaa004e4ffa918e24eb41fc30",
+        "deletions": 0,
+        "path": "CAMERA_TEMPLATE_PACK.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Source-Bound Camera / Shot Reference Template Pack",
+          "Surfaces",
+          "Source-truth contract",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 41,
+        "binary": false,
+        "content_sha256": "4885109de3515723f78d7130658f82f5b160deffe66d5b468fcfa402817a9166",
+        "deletions": 41,
+        "path": "VISUAL_TEMPLATE_FABRIC.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Current v24 candidate census",
+          "Source-bound camera / shot reference foundation",
+          "Registry and identity",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 34,
+        "binary": false,
+        "content_sha256": "1c5edb713fae39696e6143446eb750695daf490a6966f86c8e00a956888b36a1",
+        "deletions": 33,
+        "path": "VISUAL_TEMPLATE_PRIORITY_MAP.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "AXM Visual Template Expansion Priority Map",
+          "Camera / shot reference systems \u2014 IMPLEMENTED IN THIS LANE",
+          "Next high-value visual/creation families",
+          "Cross-cutting rules",
+          "Immediate build order"
+        ]
+      },
+      {
+        "additions": 47,
+        "binary": false,
+        "content_sha256": "fc1558a479d56c0f4cefc4b86c2c0c39bb6e92bfe8d11de4991ce74a1e644a8a",
+        "deletions": 0,
+        "path": "src/axm_uc/visual_template_camera.py",
+        "status": "A",
+        "symbols": [
+          "_merge",
+          "extend_camera_catalog"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 3,
+        "binary": false,
+        "content_sha256": "47c7297531edc7258944ca882b02542ad7937b1adfb1bab138bc487cd1b490cc",
+        "deletions": 1,
+        "path": "src/axm_uc/visual_templates.py",
+        "status": "M",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 41,
+        "binary": false,
+        "content_sha256": "cae243369d3e88ebca7f9b45d286ca2382c8d6bce2c3c8810da35a0c9e08a8fd",
+        "deletions": 41,
+        "path": "tests/test_visual_templates.py",
+        "status": "M",
+        "symbols": [
+          "VisualTemplateTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 20,
+        "binary": false,
+        "content_sha256": "1fb1ab3a26bbf78899bfc4fe093ff2189141f14750546809399acdb624a208b7",
+        "deletions": 19,
+        "path": "tools/visual_template_proof.py",
+        "status": "M",
+        "symbols": [
+          "_write",
+          "main"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "9e19e9eb889c628499c853487d1e7b56552fff12647d5dc163336934b6614767"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "add",
+      "axm",
+      "bound",
+      "boundary",
+      "build",
+      "camera",
+      "candidate",
+      "catalog",
+      "census",
+      "contract",
+      "creation",
+      "creation-machine",
+      "cross",
+      "current",
+      "cutting",
+      "expansion",
+      "extend",
+      "fabric",
+      "families",
+      "foundation",
+      "high",
+      "identity",
+      "immediate",
+      "implemented",
+      "lane",
+      "map",
+      "merge",
+      "next",
+      "order",
+      "pack",
+      "priority",
+      "proof",
+      "reference",
+      "registry",
+      "rules",
+      "shot",
+      "source",
+      "standalone",
+      "surfaces",
+      "systems",
+      "template",
+      "templates",
+      "this",
+      "tools",
+      "truth",
+      "universal-creation",
+      "v24",
+      "value",
+      "visual",
+      "write"
+    ]
+  },
+  "source": {
+    "base": "05e062b13f3c4f7f6b06954f97f856368b71ea32",
+    "commit_subject": "Add source-bound camera and shot reference templates",
+    "head": "4e70e45a4523e26cd5a37e027a3570286c2230a2",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

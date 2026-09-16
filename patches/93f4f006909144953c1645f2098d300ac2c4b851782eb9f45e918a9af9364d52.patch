@@ -1,0 +1,642 @@
+diff --git a/MOTION_TEMPLATE_PACK.md b/MOTION_TEMPLATE_PACK.md
+new file mode 100644
+index 0000000..75da760
+--- /dev/null
++++ b/MOTION_TEMPLATE_PACK.md
+@@ -0,0 +1,39 @@
++# Source-Bound UI Motion / Transition Template Pack
++
++`visual.motion.core` is the reusable motion-system foundation for games, software, editors and AXM surfaces.
++
++Motion is treated as a representation of state change, not as authority to create state.
++
++## Surfaces
++
++- project / motion-system hub
++- state-transition editor
++- focus / navigation motion editor
++- spatial / shared-element continuity editor
++- timing / easing editor
++- interruption / recovery editor
++- progress / loading motion editor
++- reduced-motion variant editor
++- trigger matrix
++- review / export
++
++## State-truth contract
++
++- `motion-state` — exact source and target state identities;
++- `transition-edge-state` — exact trigger, source, target, duration and completion semantics;
++- `timing-curve` — explicit duration/easing/bounded parameters;
++- `focus-motion-path` — exact prior/next focus identities and semantic order;
++- `spatial-anchor-transition` — exact source/target anchor identities;
++- `interruption-recovery` — interruption, cancellation and recovery/rollback destination;
++- `progress-motion-state` — observed progress/status source; animation cannot manufacture completion;
++- `reduced-motion-rule` — reduced/off variant preserves the same semantic state result;
++- `motion-trigger` — exact event/input/state-change source and repeat/suppression behavior;
++- `motion-export-target` — exact transition, timing, accessibility and runtime requirements.
++
++## Truth boundary
++
++A fade, slide, spring, progress pulse or celebratory effect is never evidence that the underlying state changed. Completion is not inferred from animation end. Focus order is not derived from screen position. Shared-element continuity requires exact source/target anchors rather than visual similarity. Interrupted transitions keep their recovery/rollback state explicit.
++
++Reduced-motion is first-class, not an afterthought. Its job is to preserve meaning and destination while reducing unnecessary travel, parallax, flashing or other motion burden.
++
++This pack proves deterministic structural/editability contracts only. It does not by itself prove perceptual quality, vestibular comfort, target-framework behavior, frame pacing, input latency or accessibility acceptance.
+\ No newline at end of file
+diff --git a/VISUAL_TEMPLATE_FABRIC.md b/VISUAL_TEMPLATE_FABRIC.md
+index e14a9ee..361dbad 100644
+--- a/VISUAL_TEMPLATE_FABRIC.md
++++ b/VISUAL_TEMPLATE_FABRIC.md
+@@ -2,47 +2,47 @@
+ 
+ Universal Creation contains one deterministic library of **known visual archetypes** between low-level format scaffolds and finished products. Templates are editable structural starting points, not finished art and not automatic canon.
+ 
+-The public module remains `axm_uc.visual_templates`. Explicit extension packs now cover games/product plumbing, creative editors, comics, AXM system surfaces, key art, cards/decks, cinematic overlays, broadcast/video overlays, evidence-aware diagrams, world-map/lore-atlas editing, branching visual novels, 3D showroom/gallery presentation, music visuals/album art, source-bound presentation/explainers, character/creature references, and equipment/vehicle/weapon configuration. Sticker Fabric remains the immutable/versioned registry bridge. Mathematical work can enrich declared ratios/ranges through `math_hooks` without replacing template identity.
++The public module remains `axm_uc.visual_templates`. Explicit extension packs cover games/product plumbing, creative editors, comics, AXM system surfaces, key art, cards/decks, cinematic/broadcast overlays, diagrams, atlas/map editing, branching narrative, 3D showroom, music, presentation/explainers, character reference, equipment configuration and source-bound UI motion. Sticker Fabric remains the immutable/versioned registry bridge. Mathematical work can enrich declared ratios/ranges through `math_hooks` without replacing template identity.
+ 
+-## Current v16 candidate census
++## Current v17 candidate census
+ 
+-- **186 reusable visual/state primitives**
+-- **24 coherent style systems**
+-- **224 responsive screen archetypes**
+-- **22 whole-product archetypes**
+-- **246 exact screen/product definitions** when explicitly installed into Sticker Registry
++- **196 reusable visual/state primitives**
++- **25 coherent style systems**
++- **234 responsive screen archetypes**
++- **23 whole-product archetypes**
++- **257 exact screen/product definitions** when explicitly installed into Sticker Registry
+ 
+ Every major family provides compact, standard and wide normalized layouts. Unknown requested variants fail rather than silently falling back.
+ 
+-## Equipment / vehicle / weapon configurator foundation
++## Source-bound UI motion foundation
+ 
+-`visual.configurator.core` provides ten source-first configuration surfaces:
++`visual.motion.core` provides ten state-first motion surfaces:
+ 
+-- project / configurator hub;
+-- configurable object stage;
+-- attachment socket editor;
+-- exploded component editor;
+-- configuration stat editor;
+-- variant / material editor;
+-- compatibility rule editor;
+-- configuration comparison;
+-- preset / loadout editor;
++- project / motion-system hub;
++- state-transition editor;
++- focus / navigation motion editor;
++- spatial / shared-element continuity editor;
++- timing / easing editor;
++- interruption / recovery editor;
++- progress / loading motion editor;
++- reduced-motion variant editor;
++- trigger matrix;
+ - review / export.
+ 
+-Its `visual.configurator.precision` style is replaceable. Configuration truth remains explicit:
++Its `visual.motion.system` style is replaceable. The contract is semantic state before animation:
+ 
+-- `configurable-source` preserves exact object identity, source and version;
+-- `attachment-socket` preserves socket identity/type/category/status;
+-- `component-part` preserves exact part source, parent socket and source transform;
+-- `compatibility-rule` preserves exact subject/target/rule/result/status;
+-- `config-stat-field` keeps value, unit, source and configuration context;
+-- `configuration-state` preserves base identity, attachment set, variants and digest;
+-- `exploded-view-state` uses derived presentation offsets that never replace source transforms;
+-- `config-material-variant` preserves exact target, variant source and availability;
+-- `config-annotation` binds exact targets to content/source/status;
+-- `configurator-export-target` keeps output requirements visible.
++- `motion-state` keeps exact source/target identities;
++- `transition-edge-state` keeps trigger, source, target, duration and completion semantics explicit;
++- `timing-curve` preserves explicit duration/easing parameters;
++- `focus-motion-path` preserves exact focus identities and semantic order;
++- `spatial-anchor-transition` requires exact source/target anchor IDs;
++- `interruption-recovery` keeps cancellation and rollback/recovery state explicit;
++- `progress-motion-state` binds motion to observed progress/status, never inferred completion;
++- `reduced-motion-rule` preserves the same semantic result while reducing unnecessary motion;
++- `motion-trigger` binds transitions to exact events/inputs/state changes;
++- `motion-export-target` keeps runtime/accessibility requirements visible.
+ 
+-A component looking like it fits a socket is never treated as compatibility evidence. Unknown compatibility remains unknown, conditional rules remain explicit, and invalid configurations stay visible. Derived exploded, comparison and export views cannot silently modify the authoritative configuration.
++Animation is never evidence that state changed. Animation completion cannot manufacture task completion. Visual proximity cannot define focus order or shared-element identity. Reduced-motion is first-class and must preserve the same destination/meaning.
+ 
+ ## Registry and identity
+ 
+@@ -52,8 +52,8 @@ Every built-in screen/product can be wrapped as an immutable Sticker definition.
+ 
+ ```sh
+ axm-visual-templates catalog
+-axm-visual-templates show visual.configurator.core
+-axm-visual-templates render visual.configurator.core creations/configurator --width 1920 --height 1080
++axm-visual-templates show visual.motion.core
++axm-visual-templates render visual.motion.core creations/motion --width 1920 --height 1080
+ ```
+ 
+ Preview/export remains derived inspection output, never authoritative source.
+@@ -65,19 +65,19 @@ python -m unittest discover -s tests -p 'test_visual_templates.py' -v
+ python tools/visual_template_proof.py /new/output/path
+ ```
+ 
+-The v16 gate requires:
++The v17 gate requires:
+ 
+-- exact census: 24 styles / 186 primitives / 224 screens / 22 products;
+-- all 224 screens stay within six representative viewport shapes;
++- exact census: 25 styles / 196 primitives / 234 screens / 23 products;
++- all 234 screens stay within six representative viewport shapes;
+ - exact product screen order and flows resolve across those viewports;
+-- parseable galleries for all prior proof products plus `visual.configurator.core`;
+-- all 246 screen/product definitions install through Sticker Registry;
+-- exact object identity/source/version, socket identity/type/status, component parent/source transform, compatibility rule state, stat value/unit/source/context, configuration digest, variant availability and derived exploded-view boundaries remain present;
+-- prior character/presentation/music/showroom/visual-novel/atlas/diagram/broadcast/cinematic/card/key-art/comic/game/AXM source boundaries remain intact;
++- parseable galleries for all prior proof products plus `visual.motion.core`;
++- all 257 screen/product definitions install through Sticker Registry;
++- exact state edge, trigger, timing, focus order, anchor identity, interruption/recovery, progress source and reduced-motion parity contracts remain present;
++- prior configurator/character/presentation/music/showroom/visual-novel/atlas/diagram/broadcast/cinematic/card/key-art/comic/game/AXM source boundaries remain intact;
+ - copy safety, strict variant rejection, invalid-geometry rejection and exact Sticker-slot binding remain intact.
+ 
+ ## Truth boundary
+ 
+-Current evidence proves deterministic structural/editability contracts only. It does **not** prove real-world attachment fit, mechanical compatibility, gameplay balance, stat correctness, physical dimensions, target-engine rendering or aesthetic acceptance.
++Current evidence proves deterministic structural/editability contracts only. It does **not** prove perceptual motion quality, vestibular comfort, target-framework behavior, frame pacing, input latency or accessibility acceptance.
+ 
+-Consuming products must provide real configuration state. Unknown, conditional, unavailable and invalid information stays distinguishable. Richer editable source remains authoritative over previews/exports.
++Consuming products must provide real state transitions and runtime evidence. Unknown, interrupted, stalled and incomplete state stays distinguishable. Richer editable source remains authoritative over previews/exports.
+diff --git a/VISUAL_TEMPLATE_PRIORITY_MAP.md b/VISUAL_TEMPLATE_PRIORITY_MAP.md
+index 80dc501..31d18e7 100644
+--- a/VISUAL_TEMPLATE_PRIORITY_MAP.md
++++ b/VISUAL_TEMPLATE_PRIORITY_MAP.md
+@@ -1,6 +1,6 @@
+ # AXM Visual Template Expansion Priority Map
+ 
+-Status: v16 growth lane after verified v1–v15 merges.
++Status: v17 growth lane after verified v1–v16 merges.
+ 
+ The visual-template fabric grows where Universal Creation is likely to reuse the knowledge soon. This is a build priority, not canon: templates remain editable foundations and may be replaced when evidence supports a better structure.
+ 
+@@ -8,58 +8,52 @@ The visual-template fabric grows where Universal Creation is likely to reuse the
+ 
+ - creative editor, editable comics and AXM system shell;
+ - racing/co-op/RTS/shared game systems;
+-- key art / poster / cover editor;
+-- card / deck editor;
+-- cinematic title / credits / overlay editor;
+-- video / program / stream overlay editor;
+-- evidence-aware infographic / diagram editor;
+-- world-map / lore-atlas editor;
+-- interactive visual-novel / branching narrative editor;
+-- 3D showroom / gallery presentation;
+-- music visualizer / album-art editor;
+-- presentation / explainer page systems;
+-- character / creature reference-sheet editor.
+-
+-## Vehicle / weapon / equipment configurator — IMPLEMENTED IN THIS LANE
+-
+-Product: `visual.configurator.core`
++- key art, cards/decks, cinematic and broadcast overlays;
++- evidence-aware diagrams and world-map/lore-atlas editing;
++- branching visual novel, 3D showroom, music and presentation/explainer systems;
++- character / creature reference sheets;
++- vehicle / weapon / equipment configurator.
++
++## UI motion / transition archetypes — IMPLEMENTED IN THIS LANE
++
++Product: `visual.motion.core`
+ 
+ Implemented screens:
+ 
+-- `visual.configurator.project-hub`
+-- `visual.configurator.object-stage`
+-- `visual.configurator.socket-editor`
+-- `visual.configurator.exploded-view`
+-- `visual.configurator.stat-editor`
+-- `visual.configurator.variant-material`
+-- `visual.configurator.compatibility`
+-- `visual.configurator.comparison`
+-- `visual.configurator.loadout-presets`
+-- `visual.configurator.review-export`
++- `visual.motion.project-hub`
++- `visual.motion.transition-editor`
++- `visual.motion.focus-navigation`
++- `visual.motion.spatial-continuity`
++- `visual.motion.timing-curves`
++- `visual.motion.interruption-recovery`
++- `visual.motion.progress-loading`
++- `visual.motion.reduced-motion`
++- `visual.motion.trigger-matrix`
++- `visual.motion.review-export`
+ 
+ New primitives:
+ 
+-- `configurable-source`
+-- `attachment-socket`
+-- `component-part`
+-- `compatibility-rule`
+-- `config-stat-field`
+-- `configuration-state`
+-- `exploded-view-state`
+-- `config-material-variant`
+-- `config-annotation`
+-- `configurator-export-target`
++- `motion-state`
++- `transition-edge-state`
++- `timing-curve`
++- `focus-motion-path`
++- `spatial-anchor-transition`
++- `interruption-recovery`
++- `progress-motion-state`
++- `reduced-motion-rule`
++- `motion-trigger`
++- `motion-export-target`
+ 
+-Style: `visual.configurator.precision`.
++Style: `visual.motion.system`.
+ 
+-The central rule is configuration truth: exact source object, sockets, attached components, compatibility rules, stats, variants and saved configuration identity remain separate editable state. Exploded/detail/comparison views are derived presentation and visual fit never implies compatibility.
++The central rule is state truth: motion explains exact transitions but never creates them. Animation end is not task completion, screen position is not semantic focus order, visual resemblance is not shared-element identity, and reduced-motion variants must preserve the same semantic destination.
+ 
+ ## Next high-value visual/creation families
+ 
+-1. **UI motion / transition archetypes** — reusable state transitions, focus motion, spatial continuity, interruption/recovery and reduced-motion variants across software/game products.
+-2. **Brand / identity system editor** — exact logos, typography, icon families, spacing rules, usage variants and provenance-backed export packs.
+-3. **Environment / level reference boards** — modular location identity, scale, materials, props, lighting references, traversal annotations and source provenance for game-world production.
+-4. **VFX / particle reference and authoring surfaces** — emitter/state identity, timing curves, spawn regions, layering, collision/interaction hooks and reduced-effect variants.
++1. **Brand / identity system editor** — exact logos, typography, icon families, spacing rules, usage variants and provenance-backed export packs.
++2. **Environment / level reference boards** — modular location identity, scale, materials, props, lighting references, traversal annotations and source provenance for game-world production.
++3. **VFX / particle reference and authoring surfaces** — emitter/state identity, timing curves, spawn regions, layering, collision/interaction hooks and reduced-effect variants.
++4. **Quest / mission flow reference systems** — objective identity, prerequisites, branches, state transitions, rewards, failure/retry and world/map references for game production.
+ 
+ ## Cross-cutting rules
+ 
+@@ -75,7 +69,7 @@ Every family preserves the existing visual-template contract:
+ 
+ ## Immediate build order
+ 
+-1. exact-head verify `visual.configurator.core`;
+-2. merge v16 only when template + repository checks pass;
+-3. begin UI motion / transition archetypes from fresh main;
++1. exact-head verify `visual.motion.core`;
++2. merge v17 only when template + repository checks pass;
++3. begin brand / identity system editing from fresh main;
+ 4. keep prioritizing reusable source-first editors over flat one-off outputs.
+diff --git a/src/axm_uc/visual_template_motion.py b/src/axm_uc/visual_template_motion.py
+new file mode 100644
+index 0000000..e1b2a81
+--- /dev/null
++++ b/src/axm_uc/visual_template_motion.py
+@@ -0,0 +1,88 @@
++"""Source-bound UI motion and transition archetypes."""
++from __future__ import annotations
++from copy import deepcopy
++from typing import Any
++
++
++def _merge(target: dict[str, Any], additions: dict[str, Any], label: str) -> None:
++    overlap=sorted(set(target)&set(additions))
++    if overlap: raise RuntimeError(f"motion {label} collision: {', '.join(overlap)}")
++    target.update(deepcopy(additions))
++
++
++def extend_motion_catalog(namespace: dict[str, Any]) -> None:
++    styles=namespace['STYLE_SYSTEMS']; primitives=namespace['PRIMITIVES']
++    screens=namespace['SCREEN_TEMPLATES']; products=namespace['PRODUCT_ARCHETYPES']
++    screen=namespace['_screen']; origin=namespace['_origin']
++
++    _merge(styles,{'visual.motion.system':{
++        'intent':'state-first interface motion with exact transition identity, timing, focus continuity, interruption/recovery and reduced-motion behavior',
++        'tokens':{'canvas':'#0c1014','surface':'#171d24','surface_raised':'#222b34','text':'#eff4f6','muted':'#a2adb6','accent':'#83c9bd','warning':'#e2b96d','danger':'#df7979','line':'#3d4b55'},
++        'shape':{'panel_radius_ratio':0.010,'cut_ratio':0.002,'line_ratio':0.0012},
++        'type':{'display_weight':735,'body_weight':500,'metric_scale':1.48,'tracking':0.010},
++        'depth':{'layers':6,'shadow':'subtle','glass':'restrained'},
++        'motion':{'fast_ms':80,'standard_ms':170,'slow_ms':320,'principle':'state change before animation; reduced motion preserves meaning'},
++    }},'style')
++
++    _merge(primitives,{
++        'motion-state':{'role':'exact source/target UI state identity for one motion edge','states':['source','target','active','unknown'],'source_target_identity_required':True},
++        'transition-edge-state':{'role':'transition contract with exact trigger, source, target, duration and completion semantics','states':['ready','running','cancelled','completed'],'trigger_source_target_duration_required':True},
++        'timing-curve':{'role':'explicit timing/easing curve with duration and bounded parameters','states':['linear','ease','spring','custom'],'duration_curve_parameters_required':True},
++        'focus-motion-path':{'role':'focus/navigation motion bound to exact prior/next focus identities and semantic order','states':['forward','backward','restored','unknown'],'focus_from_to_order_required':True},
++        'spatial-anchor-transition':{'role':'shared/spatial continuity transition bound to exact source and target anchors','states':['matched','entering','exiting','unresolved'],'source_target_anchor_required':True},
++        'interruption-recovery':{'role':'explicit interrupted/cancelled transition with recovery or rollback destination','states':['interruptible','interrupted','recovering','resolved'],'interrupt_recovery_state_required':True},
++        'progress-motion-state':{'role':'motion around observed loading/progress state without inventing completion','states':['idle','active','stalled','complete','unknown'],'progress_source_status_required':True},
++        'reduced-motion-rule':{'role':'behavior-preserving reduced-motion variant for exact transition family','states':['default','reduced','off'],'equivalent_state_result_required':True},
++        'motion-trigger':{'role':'exact event/input/state trigger for motion with provenance and debounce/repeat semantics','states':['armed','fired','suppressed','unknown'],'event_source_repeat_required':True},
++        'motion-export-target':{'role':'motion system export target with exact transitions, timing, accessibility and runtime requirements','states':['ready','warning','blocked','exported'],'requirements_must_be_visible':True},
++    },'primitive')
++
++    q=['source state, target state, trigger, timing, focus and recovery remain separately editable','animation never manufactures a state change or completion that source state has not observed','focus and spatial continuity stay bound to exact semantic identities rather than visual proximity','interruption, cancellation and rollback destinations remain explicit','reduced-motion variants preserve the same state result while reducing unnecessary motion']
++    def v(c,s,w): return {'compact':c,'standard':s,'wide':w}
++    additions={
++      'visual.motion.project-hub':screen('visual.motion.project-hub','Motion system project hub','creative.motion','visual.motion.system','browse transition families, state coverage, accessibility variants, interruptions and runtime/export targets',v(
++        {'header':(.03,.03,.94,.08),'families':(.03,.14,.94,.30),'coverage':(.03,.47,.45,.38),'accessibility':(.51,.47,.46,.27),'actions':(.51,.77,.46,.08)},
++        {'header':(.02,.03,.96,.075),'families':(.02,.14,.22,.82),'coverage':(.27,.14,.46,.82),'accessibility':(.76,.14,.22,.55),'actions':(.76,.72,.22,.14)},
++        {'header':(.015,.03,.97,.07),'families':(.015,.13,.20,.84),'coverage':(.24,.13,.50,.84),'accessibility':(.77,.13,.215,.57),'actions':(.77,.73,.215,.14)}),tags=['visual','motion','transition','project'],quality=q),
++      'visual.motion.transition-editor':screen('visual.motion.transition-editor','State transition editor','creative.motion','visual.motion.system','edit exact source/target state, trigger, timing and completion semantics for one transition',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.36),'states':(.03,.53,.45,.34),'contract':(.51,.53,.46,.25),'actions':(.51,.81,.46,.06)},
++        {'header':(.02,.03,.96,.075),'states':(.02,.14,.22,.72),'preview':(.27,.14,.48,.72),'contract':(.78,.14,.20,.54),'actions':(.78,.71,.20,.15)},
++        {'header':(.015,.03,.97,.07),'states':(.015,.13,.20,.74),'preview':(.24,.13,.51,.74),'contract':(.775,.13,.21,.55),'actions':(.775,.71,.21,.16)}),tags=['visual','motion','transition','state'],math_hooks={'travel_ratio':[0.0,0.24],'duration_ms':[60,650]},quality=q),
++      'visual.motion.focus-navigation':screen('visual.motion.focus-navigation','Focus and navigation motion editor','creative.motion','visual.motion.system','edit focus movement and navigation continuity while preserving exact semantic focus order and source/target identities',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.39),'path':(.03,.56,.45,.31),'details':(.51,.56,.46,.31),'actions':(.03,.90,.94,.07)},
++        {'header':(.02,.03,.96,.075),'path':(.02,.14,.20,.72),'preview':(.245,.14,.50,.72),'details':(.77,.14,.21,.54),'actions':(.77,.71,.21,.15)},
++        {'header':(.015,.03,.97,.07),'path':(.015,.13,.18,.74),'preview':(.215,.13,.54,.74),'details':(.775,.13,.21,.55),'actions':(.775,.71,.21,.16)}),tags=['visual','motion','focus','navigation'],quality=q),
++      'visual.motion.spatial-continuity':screen('visual.motion.spatial-continuity','Spatial continuity editor','creative.motion','visual.motion.system','bind shared-element and spatial transitions to exact source/target anchors rather than visual resemblance alone',v(
++        {'header':(.03,.03,.94,.08),'source':(.03,.14,.45,.42),'target':(.52,.14,.45,.42),'anchors':(.03,.59,.58,.28),'actions':(.64,.59,.33,.28)},
++        {'header':(.02,.03,.96,.075),'source':(.02,.14,.36,.63),'target':(.40,.14,.36,.63),'anchors':(.78,.14,.20,.48),'actions':(.78,.65,.20,.12)},
++        {'header':(.015,.03,.97,.07),'source':(.015,.13,.37,.65),'target':(.405,.13,.37,.65),'anchors':(.795,.13,.19,.49),'actions':(.795,.65,.19,.13)}),tags=['visual','motion','spatial','anchor'],quality=q),
++      'visual.motion.timing-curves':screen('visual.motion.timing-curves','Timing and easing editor','creative.motion','visual.motion.system','edit bounded timing/easing parameters, durations and motion family tokens without changing source/target state',v(
++        {'header':(.03,.03,.94,.08),'curve':(.03,.14,.94,.34),'presets':(.03,.51,.55,.34),'details':(.61,.51,.36,.25),'actions':(.61,.79,.36,.06)},
++        {'header':(.02,.03,.96,.075),'presets':(.02,.14,.28,.72),'curve':(.33,.14,.44,.72),'details':(.80,.14,.18,.54),'actions':(.80,.71,.18,.15)},
++        {'header':(.015,.03,.97,.07),'presets':(.015,.13,.26,.74),'curve':(.305,.13,.47,.74),'details':(.795,.13,.19,.55),'actions':(.795,.71,.19,.16)}),tags=['visual','motion','timing','easing'],quality=q),
++      'visual.motion.interruption-recovery':screen('visual.motion.interruption-recovery','Interruption and recovery editor','creative.motion','visual.motion.system','edit cancellation points, interruption behavior, rollback/recovery state and resumed transition identity explicitly',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.34),'interrupts':(.03,.51,.55,.34),'recovery':(.61,.51,.36,.25),'actions':(.61,.79,.36,.06)},
++        {'header':(.02,.03,.96,.075),'interrupts':(.02,.14,.28,.72),'preview':(.33,.14,.44,.72),'recovery':(.80,.14,.18,.54),'actions':(.80,.71,.18,.15)},
++        {'header':(.015,.03,.97,.07),'interrupts':(.015,.13,.26,.74),'preview':(.305,.13,.47,.74),'recovery':(.795,.13,.19,.55),'actions':(.795,.71,.19,.16)}),tags=['visual','motion','interrupt','recovery'],quality=q),
++      'visual.motion.progress-loading':screen('visual.motion.progress-loading','Progress and loading motion editor','creative.motion','visual.motion.system','edit loading/progress/stall/completion motion while binding every visual state to observed progress/status evidence',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.34),'states':(.03,.51,.55,.34),'source':(.61,.51,.36,.25),'actions':(.61,.79,.36,.06)},
++        {'header':(.02,.03,.96,.075),'states':(.02,.14,.28,.72),'preview':(.33,.14,.44,.72),'source':(.80,.14,.18,.54),'actions':(.80,.71,.18,.15)},
++        {'header':(.015,.03,.97,.07),'states':(.015,.13,.26,.74),'preview':(.305,.13,.47,.74),'source':(.795,.13,.19,.55),'actions':(.795,.71,.19,.16)}),tags=['visual','motion','progress','loading'],quality=q),
++      'visual.motion.reduced-motion':screen('visual.motion.reduced-motion','Reduced-motion variant editor','creative.motion','visual.motion.system','author reduced/off variants that preserve the same semantic state result while reducing travel, parallax, flashing or unnecessary motion',v(
++        {'header':(.03,.03,.94,.08),'default':(.03,.14,.45,.42),'reduced':(.52,.14,.45,.42),'rules':(.03,.59,.58,.28),'actions':(.64,.59,.33,.28)},
++        {'header':(.02,.03,.96,.075),'default':(.02,.14,.36,.63),'reduced':(.40,.14,.36,.63),'rules':(.78,.14,.20,.48),'actions':(.78,.65,.20,.12)},
++        {'header':(.015,.03,.97,.07),'default':(.015,.13,.37,.65),'reduced':(.405,.13,.37,.65),'rules':(.795,.13,.19,.49),'actions':(.795,.65,.19,.13)}),tags=['visual','motion','reduced-motion','accessibility'],quality=q),
++      'visual.motion.trigger-matrix':screen('visual.motion.trigger-matrix','Motion trigger matrix','creative.motion','visual.motion.system','bind exact events/inputs/state changes to transition identities with source, repeat/debounce and suppression behavior visible',v(
++        {'header':(.03,.03,.94,.08),'matrix':(.03,.14,.94,.36),'triggers':(.03,.53,.55,.34),'details':(.61,.53,.36,.25),'actions':(.61,.81,.36,.06)},
++        {'header':(.02,.03,.96,.075),'triggers':(.02,.14,.28,.72),'matrix':(.33,.14,.44,.72),'details':(.80,.14,.18,.54),'actions':(.80,.71,.18,.15)},
++        {'header':(.015,.03,.97,.07),'triggers':(.015,.13,.26,.74),'matrix':(.305,.13,.47,.74),'details':(.795,.13,.19,.55),'actions':(.795,.71,.19,.16)}),tags=['visual','motion','trigger','event'],quality=q),
++      'visual.motion.review-export':screen('visual.motion.review-export','Motion system review and export','creative.motion','visual.motion.system','review missing transitions, invalid state edges, inaccessible variants, unresolved interruptions and runtime/export requirements',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.30),'checks':(.03,.47,.58,.39),'targets':(.64,.47,.33,.27),'actions':(.64,.77,.33,.09)},
++        {'header':(.02,.03,.96,.075),'preview':(.02,.14,.38,.72),'checks':(.43,.14,.34,.72),'targets':(.79,.14,.19,.48),'actions':(.79,.65,.19,.21)},
++        {'header':(.015,.03,.97,.07),'preview':(.015,.13,.36,.74),'checks':(.40,.13,.37,.74),'targets':(.79,.13,.195,.49),'actions':(.79,.65,.195,.22)}),tags=['visual','motion','review','export'],quality=q),
++    }
++    _merge(screens,additions,'screen')
++    ids=list(additions)
++    product={'schema':'axm.visual-product/v1','id':'visual.motion.core','version':1,'name':'Source-bound UI motion and transition core','kind':'product','domain':'creative.motion','tags':['visual','motion','transition','accessibility','product'],'origin':origin(),'style':'visual.motion.system','intent':'state-first motion authoring with exact source/target states, triggers, timing, focus/spatial continuity, interruption/recovery and reduced-motion variants','screens':ids,'flow':[
++      ['visual.motion.project-hub','visual.motion.transition-editor','edit-transition'],['visual.motion.transition-editor','visual.motion.focus-navigation','edit-focus'],['visual.motion.transition-editor','visual.motion.spatial-continuity','edit-spatial'],['visual.motion.transition-editor','visual.motion.timing-curves','edit-timing'],['visual.motion.transition-editor','visual.motion.interruption-recovery','edit-recovery'],['visual.motion.transition-editor','visual.motion.progress-loading','edit-progress'],['visual.motion.transition-editor','visual.motion.reduced-motion','edit-reduced'],['visual.motion.project-hub','visual.motion.trigger-matrix','edit-triggers'],['visual.motion.project-hub','visual.motion.review-export','review-export']], 'quality':q}
++    _merge(products,{'visual.motion.core':product},'product')
+diff --git a/src/axm_uc/visual_templates.py b/src/axm_uc/visual_templates.py
+index 3022acb..6de6df3 100644
+--- a/src/axm_uc/visual_templates.py
++++ b/src/axm_uc/visual_templates.py
+@@ -25,8 +25,9 @@ from .visual_template_music import extend_music_catalog as _extend_music_catalog
+ from .visual_template_presentation import extend_presentation_catalog as _extend_presentation_catalog
+ from .visual_template_character_reference import extend_character_reference_catalog as _extend_character_reference_catalog
+ from .visual_template_configurator import extend_configurator_catalog as _extend_configurator_catalog
++from .visual_template_motion import extend_motion_catalog as _extend_motion_catalog
+ 
+-_COMPOSITION=("visual_template_growth","visual_template_game_systems","visual_template_creative_narrative","visual_template_axm_system","visual_template_game_shared","visual_template_keyart","visual_template_cards","visual_template_cinematic","visual_template_video_overlay","visual_template_diagram","visual_template_atlas","visual_template_novel","visual_template_showroom","visual_template_music","visual_template_presentation","visual_template_character_reference","visual_template_configurator")
++_COMPOSITION=("visual_template_growth","visual_template_game_systems","visual_template_creative_narrative","visual_template_axm_system","visual_template_game_shared","visual_template_keyart","visual_template_cards","visual_template_cinematic","visual_template_video_overlay","visual_template_diagram","visual_template_atlas","visual_template_novel","visual_template_showroom","visual_template_music","visual_template_presentation","visual_template_character_reference","visual_template_configurator","visual_template_motion")
+ _applied=getattr(_core,"_AXM_VISUAL_COMPOSITION",None)
+ if _applied is None:
+     _extend_catalog(vars(_core))
+@@ -46,6 +47,7 @@ if _applied is None:
+     _extend_presentation_catalog(vars(_core))
+     _extend_character_reference_catalog(vars(_core))
+     _extend_configurator_catalog(vars(_core))
++    _extend_motion_catalog(vars(_core))
+     _core._AXM_VISUAL_COMPOSITION=_COMPOSITION
+ elif _applied != _COMPOSITION:
+     raise RuntimeError("visual template composition changed inside a live process; restart with one exact catalog")
+diff --git a/tests/test_visual_templates.py b/tests/test_visual_templates.py
+index 4c0f8f0..7e84d51 100644
+--- a/tests/test_visual_templates.py
++++ b/tests/test_visual_templates.py
+@@ -8,18 +8,18 @@ from axm_stickers import Registry
+ from axm_uc import visual_templates as vt
+ 
+ SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
+-PRODUCTS=('game.racing.full','game.coop.action','game.rts.command','game.system.shell','game.shared.core','editor.creative.core','comic.narrative.core','axm.system.shell','visual.keyart.core','visual.cards.core','visual.cinematic.core','visual.broadcast.core','visual.diagram.core','visual.atlas.core','visual.novel.core','visual.showroom.core','visual.music.core','visual.presentation.core','visual.character.core','visual.configurator.core')
++PRODUCTS=('game.racing.full','game.coop.action','game.rts.command','game.system.shell','game.shared.core','editor.creative.core','comic.narrative.core','axm.system.shell','visual.keyart.core','visual.cards.core','visual.cinematic.core','visual.broadcast.core','visual.diagram.core','visual.atlas.core','visual.novel.core','visual.showroom.core','visual.music.core','visual.presentation.core','visual.character.core','visual.configurator.core','visual.motion.core')
+ 
+ class VisualTemplateTests(unittest.TestCase):
+     def test_catalog_counts_and_products(self):
+         counts=vt.validate_catalog()
+-        self.assertEqual(counts,{'styles':24,'primitives':186,'screens':224,'products':22})
++        self.assertEqual(counts,{'styles':25,'primitives':196,'screens':234,'products':23})
+         self.assertEqual(vt.CATALOG_COMPOSITION['counts'],counts)
+         ids={p['id'] for p in vt.catalog()['products']}
+         self.assertTrue(set(PRODUCTS)|{'game.racing.performance','software.creator.studio'} <= ids)
+ 
+     def test_all_geometry_and_major_variants(self):
+-        prefixes=('game.','editor.creative.','comic.narrative.','axm.system.','visual.keyart.','visual.cards.','visual.cinematic.','visual.broadcast.','visual.diagram.','visual.atlas.','visual.novel.','visual.showroom.','visual.music.','visual.presentation.','visual.character.','visual.configurator.')
++        prefixes=('game.','editor.creative.','comic.narrative.','axm.system.','visual.keyart.','visual.cards.','visual.cinematic.','visual.broadcast.','visual.diagram.','visual.atlas.','visual.novel.','visual.showroom.','visual.music.','visual.presentation.','visual.character.','visual.configurator.','visual.motion.')
+         for tid,definition in vt.SCREEN_TEMPLATES.items():
+             if tid.startswith(prefixes): self.assertEqual(set(definition['variants']),{'compact','standard','wide'},tid)
+             for width,height in SIZES:
+@@ -29,35 +29,21 @@ class VisualTemplateTests(unittest.TestCase):
+                     self.assertLessEqual(x+w,width+1e-6); self.assertLessEqual(y+h,height+1e-6)
+ 
+     def test_existing_product_depth_is_retained(self):
+-        expected={'game.racing.full':19,'game.system.shell':18,'game.shared.core':12,'editor.creative.core':12,'comic.narrative.core':10,'axm.system.shell':12,'visual.keyart.core':10,'visual.cards.core':11,'visual.cinematic.core':10,'visual.broadcast.core':10,'visual.diagram.core':10,'visual.atlas.core':10,'visual.novel.core':10,'visual.showroom.core':10,'visual.music.core':10,'visual.presentation.core':10,'visual.character.core':10}
++        expected={'game.racing.full':19,'game.system.shell':18,'game.shared.core':12,'editor.creative.core':12,'comic.narrative.core':10,'axm.system.shell':12,'visual.keyart.core':10,'visual.cards.core':11,'visual.cinematic.core':10,'visual.broadcast.core':10,'visual.diagram.core':10,'visual.atlas.core':10,'visual.novel.core':10,'visual.showroom.core':10,'visual.music.core':10,'visual.presentation.core':10,'visual.character.core':10,'visual.configurator.core':10}
+         for pid,count in expected.items(): self.assertEqual(len(vt.get(pid)['screens']),count)
+ 
+-    def test_character_product_preserves_identity_measurement_and_reference_truth(self):
+-        product=vt.get('visual.character.core')
+-        required={'visual.character.project-hub','visual.character.turnaround','visual.character.proportions','visual.character.expressions','visual.character.poses','visual.character.materials','visual.character.callouts','visual.character.scale-variants','visual.character.reference-board','visual.character.review-export'}
++    def test_motion_product_preserves_state_and_accessibility_truth(self):
++        product=vt.get('visual.motion.core')
++        required={'visual.motion.project-hub','visual.motion.transition-editor','visual.motion.focus-navigation','visual.motion.spatial-continuity','visual.motion.timing-curves','visual.motion.interruption-recovery','visual.motion.progress-loading','visual.motion.reduced-motion','visual.motion.trigger-matrix','visual.motion.review-export'}
+         self.assertEqual(set(product['screens']),required)
+-        self.assertEqual(product['style'],'visual.character.reference')
++        self.assertEqual(product['style'],'visual.motion.system')
+         quality=' '.join(product['quality']).lower()
+         self.assertIn('separately editable',quality)
+-        self.assertIn('canonical character/creature identity',quality)
+-        self.assertIn('unit, source and precision/assumption state',quality)
+-        self.assertIn('exact anatomical, gear or feature targets',quality)
+-        self.assertIn('richer character source state',quality)
+-        self.assertIn('figure_height_ratio',vt.get('visual.character.turnaround')['math_hooks'])
+-
+-    def test_configurator_product_preserves_source_configuration_truth(self):
+-        product=vt.get('visual.configurator.core')
+-        required={'visual.configurator.project-hub','visual.configurator.object-stage','visual.configurator.socket-editor','visual.configurator.exploded-view','visual.configurator.stat-editor','visual.configurator.variant-material','visual.configurator.compatibility','visual.configurator.comparison','visual.configurator.loadout-presets','visual.configurator.review-export'}
+-        self.assertEqual(set(product['screens']),required)
+-        self.assertEqual(product['style'],'visual.configurator.precision')
+-        quality=' '.join(product['quality']).lower()
+-        self.assertIn('separately editable',quality)
+-        self.assertIn('source object or equipped configuration',quality)
+-        self.assertIn('compatibility stays explicit',quality)
+-        self.assertIn('unit, source and configuration context/version state',quality)
+-        self.assertIn('richer configuration source state',quality)
+-        self.assertIn('hero_coverage_ratio',vt.get('visual.configurator.object-stage')['math_hooks'])
+-        self.assertIn('explode_spread_ratio',vt.get('visual.configurator.exploded-view')['math_hooks'])
++        self.assertIn('never manufactures a state change or completion',quality)
++        self.assertIn('semantic identities',quality)
++        self.assertIn('rollback destinations',quality)
++        self.assertIn('same state result',quality)
++        self.assertIn('duration_ms',vt.get('visual.motion.transition-editor')['math_hooks'])
+ 
+     def test_products_resolve_and_previews_parse(self):
+         for pid in PRODUCTS:
+@@ -74,44 +60,32 @@ class VisualTemplateTests(unittest.TestCase):
+         with tempfile.TemporaryDirectory() as td:
+             with Registry(Path(td)/'stickers.sqlite') as registry:
+                 pins=vt.install_builtins(registry)
+-                self.assertEqual(len(pins),246)
+-                configurator=registry.search(adapter=vt.ADAPTER,tag='configurator',limit=100)['entries']
+-                self.assertEqual(len(configurator),10)
+-                expected={f'visual.visual.configurator.{name}' for name in ('project-hub','object-stage','socket-editor','exploded-view','stat-editor','variant-material','compatibility','comparison','loadout-presets','review-export')}
+-                self.assertEqual(expected,{entry['id'] for entry in configurator})
+-                d=registry.get('visual.visual.configurator.object-stage',1)
++                self.assertEqual(len(pins),257)
++                motion=registry.search(adapter=vt.ADAPTER,tag='motion',limit=100)['entries']
++                expected={f'visual.visual.motion.{name}' for name in ('project-hub','transition-editor','focus-navigation','spatial-continuity','timing-curves','interruption-recovery','progress-loading','reduced-motion','trigger-matrix','review-export')}
++                self.assertTrue(expected <= {entry['id'] for entry in motion})
++                d=registry.get('visual.visual.motion.transition-editor',1)
+                 self.assertEqual(d['recipe']['visual_template']['schema'],vt.SCHEMA)
+                 self.assertNotIn('"latest"',json.dumps(d,sort_keys=True))
+ 
+-    def test_configurator_source_socket_component_compatibility_and_stat_contracts(self):
+-        required={'configurable-source','attachment-socket','component-part','compatibility-rule','config-stat-field','configuration-state','exploded-view-state','config-material-variant','config-annotation','configurator-export-target'}
++    def test_motion_state_trigger_focus_recovery_progress_and_reduced_contracts(self):
++        required={'motion-state','transition-edge-state','timing-curve','focus-motion-path','spatial-anchor-transition','interruption-recovery','progress-motion-state','reduced-motion-rule','motion-trigger','motion-export-target'}
+         self.assertTrue(required <= set(vt.PRIMITIVES))
+-        self.assertTrue(vt.PRIMITIVES['configurable-source']['identity_source_version_required'])
+-        self.assertTrue(vt.PRIMITIVES['attachment-socket']['socket_identity_type_status_required'])
+-        self.assertTrue(vt.PRIMITIVES['component-part']['source_parent_transform_required'])
+-        self.assertTrue(vt.PRIMITIVES['compatibility-rule']['subject_target_rule_status_required'])
+-        self.assertTrue(vt.PRIMITIVES['config-stat-field']['value_unit_source_context_required'])
+-        self.assertTrue(vt.PRIMITIVES['configuration-state']['base_attachment_variant_digest_required'])
+-        self.assertTrue(vt.PRIMITIVES['exploded-view-state']['source_part_offset_non_authoritative'])
+-        self.assertTrue(vt.PRIMITIVES['config-material-variant']['target_variant_source_availability_required'])
+-        self.assertTrue(vt.PRIMITIVES['config-annotation']['target_content_source_required'])
+-        self.assertTrue(vt.PRIMITIVES['configurator-export-target']['requirements_must_be_visible'])
++        self.assertTrue(vt.PRIMITIVES['motion-state']['source_target_identity_required'])
++        self.assertTrue(vt.PRIMITIVES['transition-edge-state']['trigger_source_target_duration_required'])
++        self.assertTrue(vt.PRIMITIVES['timing-curve']['duration_curve_parameters_required'])
++        self.assertTrue(vt.PRIMITIVES['focus-motion-path']['focus_from_to_order_required'])
++        self.assertTrue(vt.PRIMITIVES['spatial-anchor-transition']['source_target_anchor_required'])
++        self.assertTrue(vt.PRIMITIVES['interruption-recovery']['interrupt_recovery_state_required'])
++        self.assertTrue(vt.PRIMITIVES['progress-motion-state']['progress_source_status_required'])
++        self.assertTrue(vt.PRIMITIVES['reduced-motion-rule']['equivalent_state_result_required'])
++        self.assertTrue(vt.PRIMITIVES['motion-trigger']['event_source_repeat_required'])
++        self.assertTrue(vt.PRIMITIVES['motion-export-target']['requirements_must_be_visible'])
+ 
+-    def test_character_source_view_measurement_material_scale_and_export_contracts(self):
+-        required={'character-source','turnaround-view','proportion-guide','expression-state','pose-reference','character-material','character-callout','scale-reference','character-variant','reference-export-target'}
+-        self.assertTrue(required <= set(vt.PRIMITIVES))
++    def test_configurator_and_prior_source_boundaries_remain_present(self):
++        self.assertTrue(vt.PRIMITIVES['configuration-state']['base_attachment_variant_digest_required'])
++        self.assertTrue(vt.PRIMITIVES['compatibility-rule']['subject_target_rule_status_required'])
+         self.assertTrue(vt.PRIMITIVES['character-source']['identity_source_version_required'])
+-        self.assertTrue(vt.PRIMITIVES['turnaround-view']['identity_view_camera_required'])
+-        self.assertTrue(vt.PRIMITIVES['proportion-guide']['anchors_value_unit_source_required'])
+-        self.assertTrue(vt.PRIMITIVES['expression-state']['identity_name_source_required'])
+-        self.assertTrue(vt.PRIMITIVES['pose-reference']['identity_pose_source_required'])
+-        self.assertTrue(vt.PRIMITIVES['character-material']['part_material_source_required'])
+-        self.assertTrue(vt.PRIMITIVES['character-callout']['target_content_source_required'])
+-        self.assertTrue(vt.PRIMITIVES['scale-reference']['reference_value_unit_source_required'])
+-        self.assertTrue(vt.PRIMITIVES['character-variant']['base_delta_status_required'])
+-        self.assertTrue(vt.PRIMITIVES['reference-export-target']['requirements_must_be_visible'])
+-
+-    def test_prior_source_boundaries_remain_present(self):
+         self.assertTrue(vt.PRIMITIVES['presentation-page']['identity_role_order_required'])
+         self.assertTrue(vt.PRIMITIVES['music-track-source']['identity_source_digest_duration_required'])
+         self.assertTrue(vt.PRIMITIVES['showroom-object']['source_identity_version_required'])
+@@ -125,12 +99,12 @@ class VisualTemplateTests(unittest.TestCase):
+         self.assertTrue(vt.PRIMITIVES['truth-state']['source_must_be_visible'])
+ 
+     def test_copy_safety_variant_rejection_and_bad_geometry(self):
+-        a=vt.resolve('visual.configurator.object-stage',1920,1080); b=vt.resolve('visual.configurator.object-stage',1920,1080)
++        a=vt.resolve('visual.motion.transition-editor',1920,1080); b=vt.resolve('visual.motion.transition-editor',1920,1080)
+         self.assertEqual(a,b)
+-        copy=vt.get('visual.configurator.object-stage'); copy['name']='changed'
+-        self.assertNotEqual(vt.get('visual.configurator.object-stage')['name'],'changed')
+-        with self.assertRaises(ValueError): vt.resolve('visual.configurator.object-stage',1920,1080,variant='unknown')
+-        bad=vt.get('visual.configurator.object-stage'); bad['variants']['standard']['stage']=[.9,.9,.2,.2]
++        copy=vt.get('visual.motion.transition-editor'); copy['name']='changed'
++        self.assertNotEqual(vt.get('visual.motion.transition-editor')['name'],'changed')
++        with self.assertRaises(ValueError): vt.resolve('visual.motion.transition-editor',1920,1080,variant='unknown')
++        bad=vt.get('visual.motion.transition-editor'); bad['variants']['standard']['preview']=[.9,.9,.2,.2]
+         with self.assertRaises(ValueError): vt.validate_screen(bad)
+ 
+     def test_exact_sticker_slot_binding_is_retained(self):
+diff --git a/tools/visual_template_proof.py b/tools/visual_template_proof.py
+index 4fdca13..a0812bb 100644
+--- a/tools/visual_template_proof.py
++++ b/tools/visual_template_proof.py
+@@ -8,7 +8,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src'))
+ from axm_uc import visual_templates as vt
+ 
+ SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
+-PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell","visual.keyart.core","visual.cards.core","visual.cinematic.core","visual.broadcast.core","visual.diagram.core","visual.atlas.core","visual.novel.core","visual.showroom.core","visual.music.core","visual.presentation.core","visual.character.core","visual.configurator.core")
++PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell","visual.keyart.core","visual.cards.core","visual.cinematic.core","visual.broadcast.core","visual.diagram.core","visual.atlas.core","visual.novel.core","visual.showroom.core","visual.music.core","visual.presentation.core","visual.character.core","visual.configurator.core","visual.motion.core")
+ 
+ def _write(project,target):
+     target.mkdir(); out=[]
+@@ -25,7 +25,7 @@ def main(argv):
+     out.mkdir(parents=True)
+     try:
+         counts=vt.validate_catalog()
+-        if counts!={'styles':24,'primitives':186,'screens':224,'products':22}: raise AssertionError(counts)
++        if counts!={'styles':25,'primitives':196,'screens':234,'products':23}: raise AssertionError(counts)
+         evidence=[]
+         for pid in PRODUCTS:
+             expected=vt.get(pid)
+@@ -57,37 +57,40 @@ def main(argv):
+             ('visual.presentation.core',1920,1080,'presentation','AXM Presentation and Explainer Foundation'),
+             ('visual.character.core',1920,1080,'character-reference','AXM Character and Creature Reference Foundation'),
+             ('visual.configurator.core',1920,1080,'configurator','AXM Equipment and Vehicle Configurator Foundation'),
++            ('visual.motion.core',1920,1080,'motion','AXM Source-Bound UI Motion Foundation'),
+         )
+         outputs=[]
+         for pid,w,h,folder,title in galleries: outputs+=_write(vt.product_project(pid,w,h,title),out/folder)
+         outputs+=_write(vt.screen_project('product.mobile.home',1080,1920,'AXM Mobile Foundation'),out/'mobile-home')
+-        product=vt.get('visual.configurator.core')
+-        required={'visual.configurator.project-hub','visual.configurator.object-stage','visual.configurator.socket-editor','visual.configurator.exploded-view','visual.configurator.stat-editor','visual.configurator.variant-material','visual.configurator.compatibility','visual.configurator.comparison','visual.configurator.loadout-presets','visual.configurator.review-export'}
+-        if set(product['screens'])!=required: raise AssertionError('configurator pack lost required surfaces')
++        product=vt.get('visual.motion.core')
++        required={'visual.motion.project-hub','visual.motion.transition-editor','visual.motion.focus-navigation','visual.motion.spatial-continuity','visual.motion.timing-curves','visual.motion.interruption-recovery','visual.motion.progress-loading','visual.motion.reduced-motion','visual.motion.trigger-matrix','visual.motion.review-export'}
++        if set(product['screens'])!=required: raise AssertionError('motion pack lost required surfaces')
+         checks={
+-            'object_identity_source_version':vt.PRIMITIVES['configurable-source']['identity_source_version_required'],
+-            'socket_identity_type_status':vt.PRIMITIVES['attachment-socket']['socket_identity_type_status_required'],
+-            'component_source_parent_transform':vt.PRIMITIVES['component-part']['source_parent_transform_required'],
+-            'compatibility_subject_target_rule_status':vt.PRIMITIVES['compatibility-rule']['subject_target_rule_status_required'],
+-            'stat_value_unit_source_context':vt.PRIMITIVES['config-stat-field']['value_unit_source_context_required'],
+-            'configuration_base_attachment_variant_digest':vt.PRIMITIVES['configuration-state']['base_attachment_variant_digest_required'],
+-            'exploded_offset_non_authoritative':vt.PRIMITIVES['exploded-view-state']['source_part_offset_non_authoritative'],
+-            'variant_target_source_availability':vt.PRIMITIVES['config-material-variant']['target_variant_source_availability_required'],
+-            'annotation_target_source':vt.PRIMITIVES['config-annotation']['target_content_source_required'],
+-            'export_requirements_visible':vt.PRIMITIVES['configurator-export-target']['requirements_must_be_visible'],
++            'state_source_target_exact':vt.PRIMITIVES['motion-state']['source_target_identity_required'],
++            'transition_trigger_source_target_duration':vt.PRIMITIVES['transition-edge-state']['trigger_source_target_duration_required'],
++            'timing_curve_explicit':vt.PRIMITIVES['timing-curve']['duration_curve_parameters_required'],
++            'focus_from_to_order':vt.PRIMITIVES['focus-motion-path']['focus_from_to_order_required'],
++            'spatial_anchor_exact':vt.PRIMITIVES['spatial-anchor-transition']['source_target_anchor_required'],
++            'interruption_recovery_explicit':vt.PRIMITIVES['interruption-recovery']['interrupt_recovery_state_required'],
++            'progress_source_status':vt.PRIMITIVES['progress-motion-state']['progress_source_status_required'],
++            'reduced_same_state_result':vt.PRIMITIVES['reduced-motion-rule']['equivalent_state_result_required'],
++            'trigger_event_source_repeat':vt.PRIMITIVES['motion-trigger']['event_source_repeat_required'],
++            'export_requirements_visible':vt.PRIMITIVES['motion-export-target']['requirements_must_be_visible'],
+         }
+-        if not all(checks.values()): raise AssertionError('configurator source/configuration contract failed')
++        if not all(checks.values()): raise AssertionError('motion state/accessibility contract failed')
+         retained={
+-            'character_identity_source_version':vt.PRIMITIVES['character-source']['identity_source_version_required'],
+-            'presentation_page_identity_order':vt.PRIMITIVES['presentation-page']['identity_role_order_required'],
+-            'music_track_identity_digest':vt.PRIMITIVES['music-track-source']['identity_source_digest_duration_required'],
+-            'showroom_object_identity_version':vt.PRIMITIVES['showroom-object']['source_identity_version_required'],
+-            'novel_save_state_digest':vt.PRIMITIVES['save-checkpoint']['state_identity_digest_required'],
+-            'atlas_coordinate_source_precision':vt.PRIMITIVES['map-coordinate']['system_source_precision_required'],
+-            'diagram_relationship_identity':vt.PRIMITIVES['relationship-edge']['endpoints_and_relation_type_required'],
++            'config_digest':vt.PRIMITIVES['configuration-state']['base_attachment_variant_digest_required'],
++            'compatibility_explicit':vt.PRIMITIVES['compatibility-rule']['subject_target_rule_status_required'],
++            'character_identity':vt.PRIMITIVES['character-source']['identity_source_version_required'],
++            'presentation_page':vt.PRIMITIVES['presentation-page']['identity_role_order_required'],
++            'music_track':vt.PRIMITIVES['music-track-source']['identity_source_digest_duration_required'],
++            'showroom_object':vt.PRIMITIVES['showroom-object']['source_identity_version_required'],
++            'novel_save':vt.PRIMITIVES['save-checkpoint']['state_identity_digest_required'],
++            'atlas_coordinate':vt.PRIMITIVES['map-coordinate']['system_source_precision_required'],
++            'diagram_relationship':vt.PRIMITIVES['relationship-edge']['endpoints_and_relation_type_required'],
+         }
+         if not all(retained.values()): raise AssertionError('prior visual source boundary failed')
+-        receipt={'schema':'axm.visual-template-proof/v18','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'configurator_checks':checks,'retained_checks':retained,'truth':'Offline structural evidence only. Attachment fit, game balance, stat correctness, real-world compatibility, physical dimensions, renderer fidelity and aesthetic acceptance were not observed.'}
++        receipt={'schema':'axm.visual-template-proof/v19','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'motion_checks':checks,'retained_checks':retained,'truth':'Offline structural evidence only. Motion quality, perceptual comfort, accessibility acceptance, framework behavior, frame pacing and input latency were not observed.'}
+         (out/'receipt.json').write_text(json.dumps(receipt,indent=2,sort_keys=True),encoding='utf-8')
+         print(json.dumps(receipt,indent=2,sort_keys=True))
+     except BaseException:

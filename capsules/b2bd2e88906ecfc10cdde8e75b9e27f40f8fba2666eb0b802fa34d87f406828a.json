@@ -1,0 +1,101 @@
+{
+  "capsule_id": "b2bd2e88906ecfc10cdde8e75b9e27f40f8fba2666eb0b802fa34d87f406828a",
+  "evidence": {
+    "files": [
+      {
+        "additions": 99,
+        "binary": false,
+        "content_sha256": "753a22f8a260ddac5370bf8c1889d7187524c5cfaabc61c6f9877477804ef518",
+        "deletions": 0,
+        "path": "capabilities/candidates/AXM-CAP-PHYSICS-FABRIC.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 70,
+        "binary": false,
+        "content_sha256": "53be03f185e02b9f525b3e4fdb3dcaadb45d40f6470a2586b11af00ed31e09b3",
+        "deletions": 0,
+        "path": "capabilities/physics-core/README.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "AXM Universal Creation Physics Core",
+          "Source integrity",
+          "What the imported core already gives UC",
+          "UC Physics Fabric v0.1",
+          "Boundary",
+          "Use"
+        ]
+      },
+      {
+        "additions": 27,
+        "binary": false,
+        "content_sha256": "fed673b894246b5171e9f3ee7ef1ea027abf58b1238185b523145086b0b4c004",
+        "deletions": 0,
+        "path": "capabilities/physics-core/SOURCE_MANIFEST.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "a9ab721d3d5d24ac09d44e9f0297b40fa95ea0609fb2f265273afa2b560f6d02"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 4,
+    "kinds": [
+      "configuration",
+      "knowledge",
+      "organ-capability",
+      "protocol-state"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "already",
+      "axiom",
+      "axm",
+      "boundary",
+      "candidates",
+      "cap",
+      "capabilities",
+      "chatgpt",
+      "creation",
+      "creation-machine",
+      "fabric",
+      "from",
+      "gives",
+      "graft",
+      "imported",
+      "integrity",
+      "json",
+      "manifest",
+      "merge",
+      "mike",
+      "mir",
+      "physics",
+      "pull",
+      "readme",
+      "request",
+      "source",
+      "standalone",
+      "universal",
+      "universal-creation",
+      "use",
+      "wave1",
+      "what"
+    ]
+  },
+  "source": {
+    "base": "f7dd18a7ee88d9e623c7ee20b2ca97613c37506c",
+    "commit_subject": "Merge pull request #139 from mike-axiom-mir/chatgpt/physics-core-graft-wave1",
+    "head": "49ef11ca42b2079dffbd595daa8ea8626b99d2ab",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

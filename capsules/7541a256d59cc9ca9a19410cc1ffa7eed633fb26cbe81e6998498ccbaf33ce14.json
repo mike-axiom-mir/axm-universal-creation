@@ -1,0 +1,178 @@
+{
+  "capsule_id": "7541a256d59cc9ca9a19410cc1ffa7eed633fb26cbe81e6998498ccbaf33ce14",
+  "evidence": {
+    "files": [
+      {
+        "additions": 35,
+        "binary": false,
+        "content_sha256": "5c321fff0dda7d8714f78333d1fed470d7f1c5ac437fce30d1ff5d8ef3a872ba",
+        "deletions": 0,
+        "path": "MUSIC_TEMPLATE_PACK.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Editable Music Visualizer / Album-Art Template Pack",
+          "Surfaces",
+          "Source-first contracts",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 41,
+        "binary": false,
+        "content_sha256": "ce5b47d0e021bfec510096f851e7f2613d6b5de17fb6c4ca87a1abb2af311b80",
+        "deletions": 45,
+        "path": "VISUAL_TEMPLATE_FABRIC.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Current v13 candidate census",
+          "Music visual / album-art foundation",
+          "Registry and identity",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 34,
+        "binary": false,
+        "content_sha256": "bd7035785a195efa902ed6c57969cb18b616557b16bdeea181b90fc97eb4b8ca",
+        "deletions": 33,
+        "path": "VISUAL_TEMPLATE_PRIORITY_MAP.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "AXM Visual Template Expansion Priority Map",
+          "Music visualizer / album-art editor \u2014 IMPLEMENTED IN THIS LANE",
+          "Next high-value visual/creation families",
+          "Cross-cutting rules",
+          "Immediate build order"
+        ]
+      },
+      {
+        "additions": 88,
+        "binary": false,
+        "content_sha256": "4f65fadd2259097f8187ed7426135176242982dac2d1a0902ab2b4b210e91bf4",
+        "deletions": 0,
+        "path": "src/axm_uc/visual_template_music.py",
+        "status": "A",
+        "symbols": [
+          "_merge",
+          "extend_music_catalog"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 3,
+        "binary": false,
+        "content_sha256": "0713c12d765d75017b8bddc4e45ff93c6b3545f7425990f2736548194a5ed59e",
+        "deletions": 1,
+        "path": "src/axm_uc/visual_templates.py",
+        "status": "M",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 36,
+        "binary": false,
+        "content_sha256": "601bf85b4974a626f132f0091a2a24b6fb7f341eb2a65cb4ee919ee6e57a1bf6",
+        "deletions": 35,
+        "path": "tests/test_visual_templates.py",
+        "status": "M",
+        "symbols": [
+          "VisualTemplateTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 18,
+        "binary": false,
+        "content_sha256": "836ee961db7a53a944578024bb75e9fc329945e26ee8712956ee98f73e6c4c9f",
+        "deletions": 17,
+        "path": "tools/visual_template_proof.py",
+        "status": "M",
+        "symbols": [
+          "_write",
+          "main"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "aa2df9069bd4de850a101449d3611175872278d4b4915c1f3f0ba6cb8fa3198c"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "add",
+      "album",
+      "art",
+      "axm",
+      "boundary",
+      "build",
+      "candidate",
+      "catalog",
+      "census",
+      "contracts",
+      "creation",
+      "creation-machine",
+      "cross",
+      "current",
+      "cutting",
+      "editable",
+      "editor",
+      "expansion",
+      "extend",
+      "fabric",
+      "families",
+      "first",
+      "foundation",
+      "high",
+      "identity",
+      "immediate",
+      "implemented",
+      "lane",
+      "map",
+      "merge",
+      "music",
+      "next",
+      "order",
+      "pack",
+      "priority",
+      "proof",
+      "registry",
+      "rules",
+      "source",
+      "standalone",
+      "surfaces",
+      "template",
+      "templates",
+      "this",
+      "tools",
+      "truth",
+      "universal-creation",
+      "v13",
+      "value",
+      "visual",
+      "visualizer",
+      "write"
+    ]
+  },
+  "source": {
+    "base": "8584629d1abb0cecbf96cfcc84990b409bd140a9",
+    "commit_subject": "Add editable music visualizer and album-art templates",
+    "head": "32843526c54b69399c3708242c69ca3b959cefb7",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

@@ -1,0 +1,193 @@
+{
+  "capsule_id": "493598ca2c2b07d9c992a9bde9be60a9a5c86087c9a481f63ab878908140f95a",
+  "evidence": {
+    "files": [
+      {
+        "additions": 47,
+        "binary": false,
+        "content_sha256": "0ba507cc4977bfc2e0e5df059052aeb63d739c0bde19abc1e9a3b9ad69289709",
+        "deletions": 0,
+        "path": "AXM_SYSTEM_TEMPLATE_PACK.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "AXM System / Monolith Visual Template Pack",
+          "Surfaces",
+          "Progressive detail",
+          "Reusable contracts",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 49,
+        "binary": false,
+        "content_sha256": "01464f1b8defcd3e245d04b80c6f995fb8935749640e472b8e6e4bc122285c14",
+        "deletions": 26,
+        "path": "VISUAL_TEMPLATE_FABRIC.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "One composed catalog",
+          "Layers",
+          "Game foundations",
+          "Editable comics and visual narrative",
+          "AXM system / monolith shell",
+          "Responsive geometry",
+          "Sticker Fabric / registry bridge",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 31,
+        "binary": false,
+        "content_sha256": "afb78b4d48030a2699c9ecfe07a84807ae87bbd4436ac9671b984cb317e09f5a",
+        "deletions": 73,
+        "path": "VISUAL_TEMPLATE_PRIORITY_MAP.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "AXM Visual Template Expansion Priority Map",
+          "Priority 1 \u2014 Creative editor core \u2014 MERGED",
+          "Priority 2 \u2014 Editable comics and visual narrative \u2014 MERGED",
+          "Priority 3 \u2014 AXM software / monolith shell \u2014 IMPLEMENTED IN THIS LANE",
+          "Priority 4 \u2014 Remaining near-term game gaps \u2014 NEXT",
+          "Priority 5 \u2014 Later visual families",
+          "Immediate build order"
+        ]
+      },
+      {
+        "additions": 68,
+        "binary": false,
+        "content_sha256": "1658233b69f80b897efee6c7a14da14e97c07d97a593b960cbb4101016a763f7",
+        "deletions": 0,
+        "path": "src/axm_uc/visual_template_axm_system.py",
+        "status": "A",
+        "symbols": [
+          "_merge",
+          "extend_axm_system_catalog"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 3,
+        "binary": false,
+        "content_sha256": "4fe0ffb6ea53222f3aacfe5a59675723dbd167ba8da6ebac7901f5bc758e418a",
+        "deletions": 1,
+        "path": "src/axm_uc/visual_templates.py",
+        "status": "M",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 70,
+        "binary": false,
+        "content_sha256": "739a43443c3701b9e8ba74b6e28924f138c7df15acc4f00124dc5b49b3bebddb",
+        "deletions": 155,
+        "path": "tests/test_visual_templates.py",
+        "status": "M",
+        "symbols": [
+          "VisualTemplateTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 45,
+        "binary": false,
+        "content_sha256": "3a3e21c9024c69e7ae9ae99fb4017687032921ca269b4abddb01c7a8571e11e6",
+        "deletions": 105,
+        "path": "tools/visual_template_proof.py",
+        "status": "M",
+        "symbols": [
+          "_write",
+          "main"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "6d6e3c6b7ebc7ac53d5b165b0405f1f36fbd523605dac1f1260c6296e3e97e85"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "add",
+      "axm",
+      "boundary",
+      "bridge",
+      "build",
+      "catalog",
+      "comics",
+      "composed",
+      "contracts",
+      "creation-machine",
+      "creative",
+      "detail",
+      "editable",
+      "editor",
+      "expansion",
+      "extend",
+      "fabric",
+      "families",
+      "foundation",
+      "foundations",
+      "game",
+      "gaps",
+      "geometry",
+      "immediate",
+      "implemented",
+      "lane",
+      "later",
+      "layers",
+      "map",
+      "merge",
+      "merged",
+      "monolith",
+      "narrative",
+      "near",
+      "next",
+      "one",
+      "order",
+      "pack",
+      "priority",
+      "progressive",
+      "proof",
+      "registry",
+      "remaining",
+      "responsive",
+      "reusable",
+      "shell",
+      "software",
+      "standalone",
+      "sticker",
+      "surfaces",
+      "system",
+      "template",
+      "templates",
+      "term",
+      "this",
+      "tools",
+      "truth",
+      "universal-creation",
+      "visual",
+      "write"
+    ]
+  },
+  "source": {
+    "base": "4ce96ba829bcf02e4db848ac4ee28dcbd49961e6",
+    "commit_subject": "Add AXM system and monolith shell visual foundation",
+    "head": "308bda1fc25d72be71ac8e7215f24ae01c8b5586",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

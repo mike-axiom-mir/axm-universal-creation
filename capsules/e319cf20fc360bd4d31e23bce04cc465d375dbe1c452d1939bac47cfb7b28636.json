@@ -1,0 +1,96 @@
+{
+  "capsule_id": "e319cf20fc360bd4d31e23bce04cc465d375dbe1c452d1939bac47cfb7b28636",
+  "evidence": {
+    "files": [
+      {
+        "additions": 140,
+        "binary": false,
+        "content_sha256": "e20f334a31d1f6c6dbf2cad915138ecc6aeff54a63976e732caabbe268d33bbb",
+        "deletions": 0,
+        "path": "docs/CREATIVE_PRECISION_FABRIC.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Creative Precision Fabric",
+          "Purpose",
+          "Influence rule",
+          "Current executable foundation",
+          "Existing UC machinery to reuse, not duplicate",
+          "Influence families -> UC-native decomposition",
+          "Current machine-readable target space",
+          "Verification",
+          "Growth rule"
+        ]
+      },
+      {
+        "additions": 35,
+        "binary": false,
+        "content_sha256": "1df22ea8931e90b4db2f1fc6fadbc644edf6d440eb3a93be1a82c7d10b88f2eb",
+        "deletions": 0,
+        "path": "tests/test_creative_precision_fabric.py",
+        "status": "A",
+        "symbols": [
+          "CreativePrecisionFabricTests"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "27bc42a58df69139368b0501b24eb74b6d30dd77f099c9398a13a31ddc2ec2df"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "axm",
+      "build",
+      "creation-machine",
+      "creative",
+      "current",
+      "decomposition",
+      "duplicate",
+      "executable",
+      "existing",
+      "fabric",
+      "families",
+      "foundation",
+      "from",
+      "growth",
+      "influence",
+      "machine",
+      "machinery",
+      "mature",
+      "native",
+      "not",
+      "precision",
+      "primitives",
+      "purpose",
+      "readable",
+      "reuse",
+      "rule",
+      "space",
+      "standalone",
+      "target",
+      "tool",
+      "universal-creation",
+      "verification"
+    ]
+  },
+  "source": {
+    "base": "c3684070cf8c71f03414023dbd884b69c1dca3db",
+    "commit_subject": "Build creative precision primitives from mature-tool influence (#83)",
+    "head": "0cbe39fe2fe064eb366bc07f03b35aaf7e1bcd88",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

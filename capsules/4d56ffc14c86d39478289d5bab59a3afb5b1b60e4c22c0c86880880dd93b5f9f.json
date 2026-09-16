@@ -1,0 +1,192 @@
+{
+  "capsule_id": "4d56ffc14c86d39478289d5bab59a3afb5b1b60e4c22c0c86880880dd93b5f9f",
+  "evidence": {
+    "files": [
+      {
+        "additions": 46,
+        "binary": false,
+        "content_sha256": "a57de7ba89feb50d59181521a6fd3e9298d11cd3bc49562737e71f6a56ee75db",
+        "deletions": 0,
+        "path": "CARD_DECK_TEMPLATE_PACK.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Editable Card / Deck Template Pack",
+          "Product surfaces",
+          "Source contracts",
+          "Digital and physical variants",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 45,
+        "binary": false,
+        "content_sha256": "68aaf871622d47fd3329ee5d359f40df4906afc7f0711e76d4f57355ffb0e7da",
+        "deletions": 39,
+        "path": "VISUAL_TEMPLATE_FABRIC.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Current v6 candidate census",
+          "Product foundations accumulated so far",
+          "Editable key art / poster / cover composition",
+          "Editable cards / decks / collectibles",
+          "Registry and identity",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 41,
+        "binary": false,
+        "content_sha256": "28740c366283fdd5befc8fa0af1a40c9dc336f8a18b8ce79e1d1eada3ef3ab7e",
+        "deletions": 36,
+        "path": "VISUAL_TEMPLATE_PRIORITY_MAP.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "AXM Visual Template Expansion Priority Map",
+          "Priority 5A \u2014 Editable key art / poster / cover composition \u2014 MERGED",
+          "Priority 5B \u2014 Card / deck editor \u2014 IMPLEMENTED IN THIS LANE",
+          "Priority 5C \u2014 Next high-value visual/creation families",
+          "Cross-cutting rules",
+          "Immediate build order"
+        ]
+      },
+      {
+        "additions": 92,
+        "binary": false,
+        "content_sha256": "0957d6c216133f23fc793a637c73617038d2b7d03ad8e6fb94c2c58e1d174f40",
+        "deletions": 0,
+        "path": "src/axm_uc/visual_template_cards.py",
+        "status": "A",
+        "symbols": [
+          "_merge",
+          "extend_card_catalog"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 3,
+        "binary": false,
+        "content_sha256": "1452149b93f4a929d76eb8dc41e6dd0ec4b148d81854c3089bbb022937b2432a",
+        "deletions": 1,
+        "path": "src/axm_uc/visual_templates.py",
+        "status": "M",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 41,
+        "binary": false,
+        "content_sha256": "937a39d3a7bd23e656953c066fc5c9d8ba7548e8be582d8453e423e1f20c9412",
+        "deletions": 32,
+        "path": "tests/test_visual_templates.py",
+        "status": "M",
+        "symbols": [
+          "VisualTemplateTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 18,
+        "binary": false,
+        "content_sha256": "02a4ee20a0999b6ec63e217878bb6fed4ba02130f0b8af3bd7c6b82af57311f7",
+        "deletions": 15,
+        "path": "tools/visual_template_proof.py",
+        "status": "M",
+        "symbols": [
+          "_write",
+          "main"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "97c17690d0cdc7b33b24899349d3b0d6a4b6cfa3b737f72b5d0f769b7f70e6b1"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "accumulated",
+      "art",
+      "axm",
+      "boundary",
+      "build",
+      "candidate",
+      "card",
+      "cards",
+      "catalog",
+      "census",
+      "collectibles",
+      "composition",
+      "contracts",
+      "cover",
+      "creation",
+      "creation-machine",
+      "cross",
+      "current",
+      "cutting",
+      "deck",
+      "decks",
+      "digital",
+      "editable",
+      "editor",
+      "expansion",
+      "extend",
+      "fabric",
+      "families",
+      "far",
+      "foundations",
+      "high",
+      "identity",
+      "immediate",
+      "implemented",
+      "key",
+      "lane",
+      "map",
+      "merge",
+      "merged",
+      "next",
+      "order",
+      "pack",
+      "physical",
+      "poster",
+      "priority",
+      "product",
+      "proof",
+      "registry",
+      "rules",
+      "source",
+      "standalone",
+      "surfaces",
+      "template",
+      "templates",
+      "this",
+      "tools",
+      "truth",
+      "universal-creation",
+      "value",
+      "variants",
+      "visual",
+      "write"
+    ]
+  },
+  "source": {
+    "base": "6737d79e6f9734a5dce49f7a8e6554a77d4ab54e",
+    "commit_subject": "Merge editable card and deck visual templates",
+    "head": "45a37dedae18ce807f3c232a979e43dd0355e67e",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

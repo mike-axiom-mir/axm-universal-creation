@@ -1,0 +1,204 @@
+{
+  "capsule_id": "df85c278403610ddd3ede6eccf84b675b0e32f8b256aeed4419198a0faea5abf",
+  "evidence": {
+    "files": [
+      {
+        "additions": 52,
+        "binary": false,
+        "content_sha256": "3e449d513cb6890616fc3d731cdf5c736e0630d3200270c909c65c6036760527",
+        "deletions": 1,
+        "path": "GAME_STYLE_GROWTH.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Current checkpoint",
+          "Motion timing composition pass \u2014 2026-09-13",
+          "Character expression and stance pass \u2014 2026-09-13"
+        ]
+      },
+      {
+        "additions": 76,
+        "binary": false,
+        "content_sha256": "945f745cd7c8e53d0fc2d230a9de8e4d9a9122a4c18bf019cce38b7ce69b6a2a",
+        "deletions": 0,
+        "path": "docs/GAME_MOTION_TIMING.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Game motion timing",
+          "Request",
+          "Blender round trip"
+        ]
+      },
+      {
+        "additions": 323,
+        "binary": false,
+        "content_sha256": "57e26ce09c4035f6c059997c5b4aab747a5eb34b36e6b38faacaabe9fbb3c7fa",
+        "deletions": 0,
+        "path": "src/axm_uc/game_motion_timing.py",
+        "status": "A",
+        "symbols": [
+          "MotionTimingProfile",
+          "_canonical",
+          "_digest",
+          "_number",
+          "_vector",
+          "_normalize_quaternion",
+          "_profile",
+          "game_motion_timing_catalog",
+          "_request",
+          "_phase_frames",
+          "_smoothstep",
+          "_ease_out_quad",
+          "_weight",
+          "_slerp",
+          "_interpolate",
+          "_max_delta",
+          "_transform_error",
+          "compose_game_motion",
+          "publish_game_motion"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 13,
+        "binary": false,
+        "content_sha256": "5bf3e5353a1de83bc5347711da51422d3c93d117d378f4eaebf6f94467e49cf0",
+        "deletions": 0,
+        "path": "src/axm_uc/visual_assets_cli.py",
+        "status": "M",
+        "symbols": [
+          "combined_catalog",
+          "build_parser",
+          "main"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 130,
+        "binary": false,
+        "content_sha256": "4733a59cf0879c8df9f85fe3b68c23a7d95cc1d90b2ace58322149e9e1f045c1",
+        "deletions": 0,
+        "path": "tests/test_game_motion_timing.py",
+        "status": "A",
+        "symbols": [
+          "request",
+          "GameMotionTimingTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 426,
+        "binary": false,
+        "content_sha256": "9e0ec2ccc4b3645f2ac4251ae0a0033da8bab52476413f17dc07368b19c6d3bc",
+        "deletions": 0,
+        "path": "tools/blender/game_motion_timing_roundtrip.py",
+        "status": "A",
+        "symbols": [
+          "sha256",
+          "motion_request",
+          "new_hero",
+          "build_geometry",
+          "apply_track",
+          "author_actions",
+          "export_asset",
+          "build",
+          "studio",
+          "action_by_prefix",
+          "bone_position",
+          "verify",
+          "main"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "1ceb9ace01bc01b3102628faf0b7e9a8c8dc9d318835ce19c7a9e54be1377ace"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 6,
+    "kinds": [
+      "code",
+      "knowledge",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "action",
+      "actions",
+      "apply",
+      "asset",
+      "author",
+      "axm",
+      "blender",
+      "bone",
+      "build",
+      "canonical",
+      "catalog",
+      "character",
+      "checkpoint",
+      "cli",
+      "combined",
+      "compose",
+      "composition",
+      "creation-machine",
+      "current",
+      "delta",
+      "deterministic",
+      "digest",
+      "ease",
+      "error",
+      "export",
+      "expression",
+      "frames",
+      "game",
+      "geometry",
+      "growth",
+      "hero",
+      "interpolate",
+      "max",
+      "merge",
+      "motion",
+      "normalize",
+      "number",
+      "out",
+      "parser",
+      "pass",
+      "phase",
+      "position",
+      "prefix",
+      "profile",
+      "publish",
+      "quad",
+      "quaternion",
+      "request",
+      "round",
+      "roundtrip",
+      "sha256",
+      "slerp",
+      "smoothstep",
+      "stance",
+      "standalone",
+      "studio",
+      "style",
+      "timing",
+      "tools",
+      "track",
+      "transform",
+      "trip",
+      "universal-creation",
+      "vector"
+    ]
+  },
+  "source": {
+    "base": "f41d73acb3610dc5b557e60fba44f09653d27433",
+    "commit_subject": "Merge deterministic game motion timing composition (#66)",
+    "head": "6b68f0924d1e37e866dd7d551086f8766c779507",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

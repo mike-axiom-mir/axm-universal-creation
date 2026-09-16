@@ -1,0 +1,1073 @@
+diff --git a/GAME_STYLE_GROWTH.md b/GAME_STYLE_GROWTH.md
+index 5d0ae78..143fe08 100644
+--- a/GAME_STYLE_GROWTH.md
++++ b/GAME_STYLE_GROWTH.md
+@@ -78,7 +78,8 @@ bounded change before starting another; no quota of new files or assets.
+ 4. **Completed:** distinct graphic/painterly realizations that survive GLB
+    export through final linear vertex colours and `KHR_materials_unlit`, with
+    target-engine-only shader features stated explicitly.
+-5. Improve expressive character/robot face shapes and stances with identity checks.
++5. **Completed:** explicit character/robot face expressions and hierarchical
++   storytelling stances with protected rigid identity and eye-pivot checks.
+ 6. Expand animation composition for anticipation, acceleration, impact and settle.
+ 7. Add reusable secondary motion for springs, cloth, antennae and carried props.
+ 8. Improve contact, sockets, useful LOD selection and game-distance readability.
+@@ -94,6 +95,46 @@ exports when those features change. Measure performance before making claims.
+ 
+ ## Current checkpoint
+ 
++### Character expression and stance pass — 2026-09-13
++
++- Completed `game_character_expression.py`, the transactional
++  `axm-assets character-expression` publisher and catalog. Five expressions
++  reshape declared eyes, brows and mouths around authored pivots. Four stances
++  compose rigid body/head/arm/leg/prop transforms through an explicit acyclic
++  parent tree. Neutral/neutral is an exact identity.
++- Identity is caller-defined rather than guessed. Protected components cannot
++  receive local face or stance changes; the gate verifies their radial geometry,
++  pairwise pivot relationships and authored eye-pivot spacing. Canonical source,
++  semantic controls and receipts remain embedded. Inverse-transpose normal
++  transformation preserves authored shading through non-uniform face changes.
++- Actual verification: **31 focused tests pass** across nine new expression
++  tests plus form, render-style and native GLB regressions. Blender 4.3 exported
++  and freshly imported four actual 33-primitive/2,302-triangle GLBs. Maximum
++  decoded position error was 0.000000119 m; maximum protected identity error was
++  0.000000010 m; the editable-source/re-import render MAE was 0.0.
++- Visual repair: the first still visibly distinguished curious, mischief and
++  alarmed faces and poses, but clipped the victory arm. A wider final camera
++  retained every full silhouette. Static inspection then passed the bounded
++  claim that all four expressions/stances are visibly distinct and the monocle
++  ring/beak identity remains recognizable in this specimen.
++- Evidence: `tools/blender/character_expression_roundtrip.py`,
++  `docs/GAME_CHARACTER_EXPRESSION.md`, and
++  `docs/evidence/character-expression-roundtrip-2026-09-13.json`. The proof is
++  one original Patchwork Foreman and combines the existing portable painted
++  realization after posing; no donor mesh or external character source was used.
++- Limits: static geometry poses only—no skeleton, skin, clips, transitions,
++  deformation, contact/collision, target-engine, game-distance or performance
++  acceptance. Protected-pivot metrics do not prove general perceptual identity.
++- **Next useful step: priority 6**, reusable motion timing composition for
++  anticipation, acceleration, impact and settle over named animation tracks.
++- Active lane: `codex/rts-reference-foundry`, based on merged PR #64/main
++  `6ca9d30`; unrelated PR #54 remains outside this pass. Current-head checks are
++  required before merge; final GitHub state is authoritative.
++- Roots: Truth keeps static geometry, visual and animation claims separate;
++  Agency requires explicit caller semantics and optional profiles; Continuity
++  preserves canonical source and protected identity relationships; Wisdom
++  repaired normals and framing before publication.
++
+ ### Portable render-style pass — 2026-09-13
+ 
+ - Completed renderer-neutral `game_render_styles.py`, the
+diff --git a/docs/GAME_CHARACTER_EXPRESSION.md b/docs/GAME_CHARACTER_EXPRESSION.md
+new file mode 100644
+index 0000000..0b1e07d
+--- /dev/null
++++ b/docs/GAME_CHARACTER_EXPRESSION.md
+@@ -0,0 +1,68 @@
++# Game character expressions and stances
++
++`axm_uc.game_character_expression` derives explicit static face expressions
++and storytelling stances from a renderer-neutral `axm.surface-3d/v0.1` mesh.
++It requires caller-authored component roles, sides, parent relationships and
++pivots; it never guesses a face or skeleton from shape.
++
++## Available controls
++
++Expressions affect only declared eyes, brows and mouths:
++
++- `neutral`
++- `curious`
++- `mischief`
++- `alarmed`
++- `determined`
++
++Stances compose rigid transforms through the declared parent tree:
++
++- `neutral`
++- `mechanic-ready`
++- `comic-sneak`
++- `victory`
++
++Non-uniform eye and mouth changes transform existing authored normals with an
++inverse-transpose matrix instead of rebuilding them. This retains deliberate
++smooth/flat shading. The capability does not change materials, so realistic PBR
++and every opt-in render realization remain independently selectable.
++
++## Identity contract
++
++At least one caller-declared identity component is required. All protected
++identity components must share one parent transform. They cannot receive local
++expression or stance transforms, but may follow that parent's rigid pose. The
++derivation verifies:
++
++- each protected component's radial shape signature around its authored pivot;
++- pairwise distances between protected identity pivots;
++- pairwise spacing between authored eye pivots;
++- the validity of the actual derived GLB.
++
++These checks preserve explicitly declared rigid identity relationships. They do
++not establish perceptual character recognition in general, topology suitable
++for skinning, deformation quality, contact, collision or gameplay readability.
++
++## Usage
++
++```sh
++axm-assets character-expression-catalog
++axm-assets character-expression request.json output/mischief \
++  --expression mischief --stance comic-sneak
++```
++
++The request contains exactly `mesh` and `parts`. Publication is transactional,
++refuses overwrite, and emits canonical `source.json`, `realization.json`, a
++`character-expression.json` receipt and an actual `asset.glb`.
++
++The Blender proof in `tools/blender/character_expression_roundtrip.py` combines
++four checked poses with the existing portable painted realization, re-imports
++all GLBs into a fresh scene and renders both source and re-imported states. Its
++receipt is `docs/evidence/character-expression-roundtrip-2026-09-13.json`.
++
++## Truth boundary
++
++This is static geometry posing. It creates no skeleton, skin weights,
++animation clips, transitions or runtime controller. It does not prove contacts,
++collision clearance, engine compatibility, game-distance readability or
++performance. Animation timing and weight remain the next separate capability.
+diff --git a/src/axm_uc/game_character_expression.py b/src/axm_uc/game_character_expression.py
+new file mode 100644
+index 0000000..9b5ab9a
+--- /dev/null
++++ b/src/axm_uc/game_character_expression.py
+@@ -0,0 +1,432 @@
++"""Deterministic facial expression and storytelling stance composition.
++
++The capability operates on explicit component semantics and pivots.  It never
++infers a face or skeleton from geometry.  Protected identity components receive
++only their parent's rigid stance transform; expression scaling and local stance
++rules cannot rewrite them.  Canonical source and authored controls remain
++embedded beside the derived static pose.
++"""
++from __future__ import annotations
++
++import copy
++import hashlib
++import json
++import math
++import os
++from dataclasses import asdict, dataclass
++from pathlib import Path
++import tempfile
++
++from .atomic import atomic_write_bytes, atomic_write_json
++from .procedural_3d import build_glb
++
++
++CHARACTER_EXPRESSION_SCHEMA = "axm.game-character-expression/v0.1"
++ROLES = ("body", "head", "arm", "leg", "prop", "face-shell", "eye", "brow", "mouth", "identity", "detail")
++SIDES = ("left", "center", "right")
++
++
++@dataclass(frozen=True)
++class ExpressionProfile:
++    name: str
++    eye_scale_x: float
++    left_eye_scale_y: float
++    right_eye_scale_y: float
++    left_brow_degrees: float
++    right_brow_degrees: float
++    brow_lift: float
++    mouth_scale_x: float
++    mouth_scale_y: float
++    mouth_degrees: float
++    mouth_lift: float
++
++
++@dataclass(frozen=True)
++class StanceProfile:
++    name: str
++    body_translation: tuple[float, float, float]
++    body_degrees: tuple[float, float, float]
++    head_degrees: tuple[float, float, float]
++    left_arm_degrees: tuple[float, float, float]
++    right_arm_degrees: tuple[float, float, float]
++    left_leg_degrees: tuple[float, float, float]
++    right_leg_degrees: tuple[float, float, float]
++    prop_degrees: tuple[float, float, float]
++
++
++EXPRESSIONS = (
++    ExpressionProfile("neutral", 1, 1, 1, 0, 0, 0, 1, 1, 0, 0),
++    ExpressionProfile("curious", 1.08, 1.32, .78, -9, 13, .045, .76, .82, 7, -.015),
++    ExpressionProfile("mischief", 1.10, 1.02, .24, 12, -19, .015, 1.30, .62, -9, .018),
++    ExpressionProfile("alarmed", 1.24, 1.28, 1.28, -5, 5, .105, .68, 1.58, 0, -.035),
++    ExpressionProfile("determined", 1.02, .68, .68, -17, 17, -.025, .94, .44, 0, -.015),
++)
++
++STANCES = (
++    StanceProfile("neutral", (0, 0, 0), (0, 0, 0), (0, 0, 0),
++                  (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0)),
++    StanceProfile("mechanic-ready", (0, -.06, .08), (8, 0, 0), (-5, 0, 0),
++                  (0, 0, -28), (0, 0, 18), (0, 0, -5), (0, 0, 5), (0, 0, -12)),
++    StanceProfile("comic-sneak", (0, -.24, .16), (14, 0, -3), (-11, 0, 7),
++                  (0, 0, 24), (0, 0, -34), (0, 0, 13), (0, 0, -10), (0, 0, 18)),
++    StanceProfile("victory", (0, .09, 0), (-4, 0, 0), (0, 0, 7),
++                  (0, 0, -104), (0, 0, 104), (0, 0, -6), (0, 0, 6), (0, 0, 16)),
++)
++
++
++def _canonical(value):
++    return json.dumps(value, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()
++
++
++def _digest(value):
++    return hashlib.sha256(_canonical(value)).hexdigest()
++
++
++def _number(value, label, low=-100000.0, high=100000.0):
++    if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value):
++        raise ValueError(f"{label} must be a finite number")
++    value = float(value)
++    if not low <= value <= high:
++        raise ValueError(f"{label} must be from {low} to {high}")
++    return value
++
++
++def _vec3(value, label, low=-100000.0, high=100000.0):
++    if not isinstance(value, (list, tuple)) or len(value) != 3:
++        raise ValueError(f"{label} must have three coordinates")
++    return tuple(_number(item, f"{label}[{index}]", low, high) for index, item in enumerate(value))
++
++
++def _component(primitive):
++    identifier = primitive.get("id")
++    if not isinstance(identifier, str) or not identifier:
++        raise ValueError("every primitive needs a non-empty id")
++    return identifier.split("__", 1)[0]
++
++
++def _profile(items, name, label):
++    for item in items:
++        if item.name == name:
++            return item
++    raise ValueError(f"unknown {label}: {name}")
++
++
++def game_character_expression_catalog():
++    return {
++        "schema": "axm.game-character-expression-catalog/v0.1",
++        "expressions": [asdict(item) for item in EXPRESSIONS],
++        "stances": [asdict(item) for item in STANCES],
++        "roles": list(ROLES),
++        "sides": list(SIDES),
++        "canonical_source_preserved": True,
++        "identity_contract": (
++            "Caller-declared protected components keep rigid shape and pairwise pivot relationships; "
++            "authored eye pivots preserve spacing through expressions."
++        ),
++        "truth": (
++            "Produces deterministic static geometry poses from explicit semantics. It does not infer a rig, "
++            "prove animation deformation, contacts, collision, gameplay readability or artistic quality."
++        ),
++    }
++
++
++def _mesh_components(mesh):
++    if not isinstance(mesh, dict) or mesh.get("schema") != "axm.surface-3d/v0.1":
++        raise ValueError("mesh must use axm.surface-3d/v0.1")
++    primitives = mesh.get("primitives")
++    if not isinstance(primitives, list) or not 1 <= len(primitives) <= 512:
++        raise ValueError("mesh needs 1..512 primitives")
++    components = {}
++    for primitive in primitives:
++        if not isinstance(primitive, dict):
++            raise ValueError("primitive must be an object")
++        component = _component(primitive)
++        positions, normals = primitive.get("positions"), primitive.get("normals")
++        indices, colors, material = primitive.get("indices"), primitive.get("colors"), primitive.get("material")
++        if not isinstance(positions, list) or not positions or len(positions) > 1_000_000:
++            raise ValueError(f"{component} positions are missing or over limit")
++        checked = [_vec3(point, f"{component}.position") for point in positions]
++        if not isinstance(normals, list) or len(normals) != len(positions):
++            raise ValueError(f"{component} needs one normal per position")
++        for normal in normals:
++            _vec3(normal, f"{component}.normal", -1, 1)
++        if not isinstance(colors, list) or len(colors) != len(positions) or not isinstance(material, dict):
++            raise ValueError(f"{component} colors or material are missing")
++        if (not isinstance(indices, list) or not indices or len(indices) % 3 or
++                any(isinstance(i, bool) or not isinstance(i, int) or not 0 <= i < len(positions) for i in indices)):
++            raise ValueError(f"{component} indices must be bounded triangles")
++        components.setdefault(component, []).extend(checked)
++    build_glb(mesh)
++    return components
++
++
++def _part_specs(raw, components):
++    if not isinstance(raw, dict) or set(raw) != set(components):
++        missing, extra = sorted(set(components) - set(raw)), sorted(set(raw) - set(components))
++        raise ValueError(f"part specs must exactly cover components; missing={missing}, unexpected={extra}")
++    specs = {}
++    for name, value in raw.items():
++        if not isinstance(value, dict):
++            raise ValueError(f"part {name} must be an object")
++        extra = set(value) - {"role", "side", "parent", "pivot", "strength", "identity_protected"}
++        if extra:
++            raise ValueError(f"part {name} has unsupported fields: {sorted(extra)}")
++        role, side, parent = value.get("role"), value.get("side", "center"), value.get("parent")
++        if role not in ROLES or side not in SIDES:
++            raise ValueError(f"part {name} has unknown role or side")
++        if parent is not None and (not isinstance(parent, str) or parent not in components or parent == name):
++            raise ValueError(f"part {name} has invalid parent")
++        if role in ("eye", "brow") and side not in SIDES:
++            raise ValueError(f"part {name} needs a face side")
++        if role == "mouth" and side != "center":
++            raise ValueError(f"part {name} mouth must be center sided")
++        protected = value.get("identity_protected", False)
++        if type(protected) is not bool:
++            raise ValueError(f"part {name}.identity_protected must be boolean")
++        specs[name] = {
++            "role": role, "side": side, "parent": parent,
++            "pivot": _vec3(value.get("pivot"), f"part {name}.pivot"),
++            "strength": _number(value.get("strength", 1), f"part {name}.strength", 0, 1),
++            "identity_protected": protected,
++        }
++    if not any(spec["role"] == "body" for spec in specs.values()):
++        raise ValueError("character needs a body component")
++    if not any(spec["role"] == "eye" for spec in specs.values()) or not any(spec["role"] == "mouth" for spec in specs.values()):
++        raise ValueError("character needs explicit eye and mouth components")
++    protected = [spec for spec in specs.values() if spec["identity_protected"]]
++    if not protected:
++        raise ValueError("character needs at least one protected identity component")
++    if len({spec["parent"] for spec in protected}) != 1:
++        raise ValueError("protected identity components must share one parent transform")
++    visiting, visited = set(), set()
++    def visit(name):
++        if name in visiting:
++            raise ValueError("part parent graph contains a cycle")
++        if name in visited:
++            return
++        visiting.add(name)
++        parent = specs[name]["parent"]
++        if parent is not None:
++            visit(parent)
++        visiting.remove(name)
++        visited.add(name)
++    for name in specs:
++        visit(name)
++    return specs
++
++
++def _identity_matrix():
++    return ((1., 0., 0., 0.), (0., 1., 0., 0.), (0., 0., 1., 0.), (0., 0., 0., 1.))
++
++
++def _multiply(a, b):
++    return tuple(tuple(sum(a[row][k] * b[k][column] for k in range(4)) for column in range(4)) for row in range(4))
++
++
++def _translation(value):
++    x, y, z = value
++    return ((1., 0., 0., x), (0., 1., 0., y), (0., 0., 1., z), (0., 0., 0., 1.))
++
++
++def _scale(value):
++    x, y, z = value
++    return ((x, 0., 0., 0.), (0., y, 0., 0.), (0., 0., z, 0.), (0., 0., 0., 1.))
++
++
++def _rotation(degrees):
++    x, y, z = (math.radians(value) for value in degrees)
++    cx, sx, cy, sy, cz, sz = math.cos(x), math.sin(x), math.cos(y), math.sin(y), math.cos(z), math.sin(z)
++    rx = ((1, 0, 0, 0), (0, cx, -sx, 0), (0, sx, cx, 0), (0, 0, 0, 1))
++    ry = ((cy, 0, sy, 0), (0, 1, 0, 0), (-sy, 0, cy, 0), (0, 0, 0, 1))
++    rz = ((cz, -sz, 0, 0), (sz, cz, 0, 0), (0, 0, 1, 0), (0, 0, 0, 1))
++    return _multiply(rz, _multiply(ry, rx))
++
++
++def _about(pivot, scale=(1, 1, 1), degrees=(0, 0, 0), translation=(0, 0, 0)):
++    return _multiply(_translation(translation), _multiply(_translation(pivot),
++        _multiply(_rotation(degrees), _multiply(_scale(scale), _translation(tuple(-v for v in pivot))))))
++
++
++def _point(matrix, point):
++    out = tuple(sum(matrix[row][axis] * point[axis] for axis in range(3)) + matrix[row][3] for row in range(3))
++    return tuple(round(value, 9) for value in out)
++
++
++def _normal(matrix, normal):
++    """Transform an authored normal with the inverse transpose of affine 3x3."""
++    a, b, c = matrix[0][:3]
++    d, e, f = matrix[1][:3]
++    g, h, i = matrix[2][:3]
++    cofactors = (
++        (e * i - f * h, f * g - d * i, d * h - e * g),
++        (c * h - b * i, a * i - c * g, b * g - a * h),
++        (b * f - c * e, c * d - a * f, a * e - b * d),
++    )
++    det = a * cofactors[0][0] + b * cofactors[0][1] + c * cofactors[0][2]
++    if abs(det) <= 1e-12:
++        raise ValueError("character expression produced a singular normal transform")
++    transformed = tuple(sum(cofactors[row][axis] * normal[axis] for axis in range(3)) / det
++                        for row in range(3))
++    length = math.sqrt(sum(value * value for value in transformed))
++    if length <= 1e-12:
++        raise ValueError("character expression produced a zero normal")
++    return tuple(round(value / length, 9) for value in transformed)
++
++
++def _stance_local(spec, profile):
++    if spec["identity_protected"]:
++        return _identity_matrix()
++    role, side, strength = spec["role"], spec["side"], spec["strength"]
++    degrees, translation = (0, 0, 0), (0, 0, 0)
++    if role == "body":
++        degrees, translation = profile.body_degrees, profile.body_translation
++    elif role == "head":
++        degrees = profile.head_degrees
++    elif role == "arm":
++        degrees = profile.left_arm_degrees if side == "left" else profile.right_arm_degrees if side == "right" else (0, 0, 0)
++    elif role == "leg":
++        degrees = profile.left_leg_degrees if side == "left" else profile.right_leg_degrees if side == "right" else (0, 0, 0)
++    elif role == "prop":
++        degrees = profile.prop_degrees
++    degrees = tuple(value * strength for value in degrees)
++    translation = tuple(value * strength for value in translation)
++    return _about(spec["pivot"], degrees=degrees, translation=translation)
++
++
++def _expression_local(spec, profile):
++    if spec["identity_protected"]:
++        return _identity_matrix()
++    role, side, strength = spec["role"], spec["side"], spec["strength"]
++    scale, degrees, translation = (1, 1, 1), (0, 0, 0), (0, 0, 0)
++    if role == "eye":
++        vertical = (profile.left_eye_scale_y if side == "left" else
++                    profile.right_eye_scale_y if side == "right" else
++                    (profile.left_eye_scale_y + profile.right_eye_scale_y) * .5)
++        scale = (1 + (profile.eye_scale_x - 1) * strength, 1 + (vertical - 1) * strength, 1)
++    elif role == "brow":
++        angle = profile.left_brow_degrees if side == "left" else profile.right_brow_degrees if side == "right" else 0
++        degrees = (0, 0, angle * strength)
++        translation = (0, profile.brow_lift * strength, 0)
++    elif role == "mouth":
++        scale = (1 + (profile.mouth_scale_x - 1) * strength, 1 + (profile.mouth_scale_y - 1) * strength, 1)
++        degrees = (0, 0, profile.mouth_degrees * strength)
++        translation = (0, profile.mouth_lift * strength, 0)
++    return _about(spec["pivot"], scale=scale, degrees=degrees, translation=translation)
++
++
++def _component_matrices(specs, stance):
++    result = {}
++    def matrix(name):
++        if name in result:
++            return result[name]
++        spec = specs[name]
++        parent = _identity_matrix() if spec["parent"] is None else matrix(spec["parent"])
++        result[name] = _multiply(parent, _stance_local(spec, stance))
++        return result[name]
++    for name in specs:
++        matrix(name)
++    return result
++
++
++def _radial_signature(points, pivot):
++    return sorted(round(math.dist(point, pivot), 8) for point in points)
++
++
++def apply_character_expression(mesh, part_specs, expression="mischief", stance="mechanic-ready"):
++    """Return canonical source plus one checked static expression/stance realization."""
++    expression_profile = _profile(EXPRESSIONS, expression, "expression")
++    stance_profile = _profile(STANCES, stance, "stance")
++    components = _mesh_components(mesh)
++    specs = _part_specs(part_specs, components)
++    stance_matrices = _component_matrices(specs, stance_profile)
++    source = copy.deepcopy(mesh)
++    realization = copy.deepcopy(mesh)
++    transformed_components = {}
++    for primitive in realization["primitives"]:
++        name = _component(primitive)
++        if expression == "neutral" and stance == "neutral":
++            positions = copy.deepcopy(primitive["positions"])
++        else:
++            expression_matrix = _expression_local(specs[name], expression_profile)
++            composite = _multiply(stance_matrices[name], expression_matrix)
++            positions = [list(_point(composite, point)) for point in primitive["positions"]]
++            primitive["positions"] = positions
++            primitive["normals"] = [list(_normal(composite, normal)) for normal in primitive["normals"]]
++        transformed_components.setdefault(name, []).extend(tuple(point) for point in positions)
++    protected_names = sorted(name for name, spec in specs.items() if spec["identity_protected"])
++    radial_errors = []
++    for name in protected_names:
++        before = _radial_signature(components[name], specs[name]["pivot"])
++        after_pivot = _point(stance_matrices[name], specs[name]["pivot"])
++        after = _radial_signature(transformed_components[name], after_pivot)
++        radial_errors.append(max(abs(a - b) for a, b in zip(before, after)))
++    pair_errors = []
++    for index, left in enumerate(protected_names):
++        for right in protected_names[index + 1:]:
++            before = math.dist(specs[left]["pivot"], specs[right]["pivot"])
++            after = math.dist(_point(stance_matrices[left], specs[left]["pivot"]),
++                              _point(stance_matrices[right], specs[right]["pivot"]))
++            pair_errors.append(abs(before - after))
++    eye_rows = []
++    for name, spec in sorted(specs.items()):
++        if spec["role"] == "eye":
++            eye_rows.append({"component": name, "side": spec["side"],
++                             "before": list(spec["pivot"]),
++                             "after": list(_point(stance_matrices[name], spec["pivot"]))})
++    eye_spacing_error = 0.0
++    for index, left in enumerate(eye_rows):
++        for right in eye_rows[index + 1:]:
++            before, after = math.dist(left["before"], right["before"]), math.dist(left["after"], right["after"])
++            eye_spacing_error = max(eye_spacing_error, abs(before - after))
++    max_radial = max(radial_errors, default=0.0)
++    max_pair = max(pair_errors, default=0.0)
++    identity_pass = max_radial <= 1e-7 and max_pair <= 1e-7 and eye_spacing_error <= 1e-7
++    if not identity_pass:
++        raise ValueError("derived character failed protected identity invariants")
++    built = build_glb(realization)
++    return {
++        "schema": CHARACTER_EXPRESSION_SCHEMA,
++        "expression": asdict(expression_profile),
++        "stance": asdict(stance_profile),
++        "source_sha256": _digest(source),
++        "source": source,
++        "realization": realization,
++        "parts": copy.deepcopy(part_specs),
++        "identity_receipt": {
++            "protected_components": protected_names,
++            "maximum_protected_radial_signature_error": max_radial,
++            "maximum_protected_pairwise_pivot_distance_error": max_pair,
++            "maximum_authored_eye_pivot_spacing_error": eye_spacing_error,
++            "authored_eye_pivots": eye_rows,
++            "passed": identity_pass,
++        },
++        "gates": {"canonical-source-embedded": source == mesh,
++                  "protected-identity-preserved": identity_pass,
++                  "static-glb-valid": bool(built["body"])},
++        "truth": (
++            "A deterministic static geometry pose from caller-authored roles and pivots. Protected rigid identity "
++            "and eye-pivot spacing pass; rigging, animation, contacts, collision and target-engine use remain unproven."
++        ),
++    }
++
++
++def publish_character_expression(path, mesh, part_specs, expression="mischief", stance="mechanic-ready"):
++    """Transactionally publish canonical source, realization, receipt and actual GLB."""
++    target = Path(path).resolve()
++    if target.exists():
++        raise FileExistsError(f"character expression output already exists: {target}")
++    target.parent.mkdir(parents=True, exist_ok=True)
++    package = apply_character_expression(mesh, part_specs, expression, stance)
++    built = build_glb(package["realization"])
++    with tempfile.TemporaryDirectory(prefix=".axm-character-expression-", dir=target.parent) as temporary:
++        stage = Path(temporary) / "publication"
++        stage.mkdir()
++        atomic_write_json(stage / "source.json", package["source"])
++        atomic_write_json(stage / "realization.json", package["realization"])
++        manifest = {key: value for key, value in package.items() if key not in ("source", "realization")}
++        manifest["glb_sha256"] = hashlib.sha256(built["body"]).hexdigest()
++        manifest["glb_specification_sha256"] = built["specification_sha256"]
++        atomic_write_json(stage / "character-expression.json", manifest)
++        atomic_write_bytes(stage / "asset.glb", built["body"])
++        os.replace(stage, target)
++    return {**manifest, "path": str(target), "files": sorted(item.name for item in target.iterdir())}
+diff --git a/src/axm_uc/visual_assets_cli.py b/src/axm_uc/visual_assets_cli.py
+index 6aff9d9..b71bc24 100644
+--- a/src/axm_uc/visual_assets_cli.py
++++ b/src/axm_uc/visual_assets_cli.py
+@@ -32,6 +32,8 @@ from .game_material_styles import (FAMILIES, FINISHES, WearLayer, game_material_
+                                    generate_game_material, protected_regions_mask)
+ from .game_form_styles import FORM_STYLES, game_form_catalog, publish_game_form
+ from .game_render_styles import RENDER_STYLES, game_render_style_catalog, publish_game_render_style
++from .game_character_expression import (EXPRESSIONS, STANCES, game_character_expression_catalog,
++                                        publish_character_expression)
+ 
+ BASE_CATEGORIES = ["texture", "gradient", "material", "fixture", "decal", "palette"]
+ EXPANDED_CATEGORIES = ["surface", "pigment", "sprite", "mesh", "vector-part"]
+@@ -55,6 +57,7 @@ def combined_catalog() -> dict:
+         "game_materials": game_material_catalog(),
+         "game_forms": game_form_catalog(),
+         "game_render_styles": game_render_style_catalog(),
++        "game_character_expressions": game_character_expression_catalog(),
+     }
+ 
+ 
+@@ -66,6 +69,13 @@ def build_parser() -> argparse.ArgumentParser:
+     sub.add_parser("game-material-catalog", help="show material families and opt-in surface finishes")
+     sub.add_parser("game-form-catalog", help="show deterministic silhouette and proportion styles")
+     sub.add_parser("game-render-catalog", help="show portable baked graphic and painterly styles")
++    sub.add_parser("character-expression-catalog", help="show static face expressions and storytelling stances")
++    character_expression = sub.add_parser(
++        "character-expression", help="derive a checked static face expression and stance while retaining source")
++    character_expression.add_argument("request", help="JSON object containing mesh and exact component semantics")
++    character_expression.add_argument("path", help="new output directory; existing paths are never overwritten")
++    character_expression.add_argument("--expression", choices=[item.name for item in EXPRESSIONS], default="mischief")
++    character_expression.add_argument("--stance", choices=[item.name for item in STANCES], default="mechanic-ready")
+     render = sub.add_parser("game-render", help="bake a portable GLB lighting style while retaining source")
+     render.add_argument("request", help="JSON object containing exactly one surface mesh")
+     render.add_argument("path", help="new output directory; existing paths are never overwritten")
+@@ -213,6 +223,14 @@ def main(argv: list[str] | None = None) -> int:
+         result = game_form_catalog()
+     elif args.command == "game-render-catalog":
+         result = game_render_style_catalog()
++    elif args.command == "character-expression-catalog":
++        result = game_character_expression_catalog()
++    elif args.command == "character-expression":
++        request = json.loads(Path(args.request).read_text(encoding="utf-8"))
++        if not isinstance(request, dict) or set(request) != {"mesh", "parts"}:
++            parser.error("character-expression request must contain exactly mesh and parts")
++        result = publish_character_expression(args.path, request["mesh"], request["parts"],
++                                              args.expression, args.stance)
+     elif args.command == "game-render":
+         request = json.loads(Path(args.request).read_text(encoding="utf-8"))
+         if not isinstance(request, dict) or set(request) != {"mesh"}:
+diff --git a/tests/test_game_character_expression.py b/tests/test_game_character_expression.py
+new file mode 100644
+index 0000000..1191208
+--- /dev/null
++++ b/tests/test_game_character_expression.py
+@@ -0,0 +1,159 @@
++import copy
++import io
++import json
++import math
++import tempfile
++import unittest
++from contextlib import redirect_stdout
++from pathlib import Path
++
++from axm_uc.game_character_expression import (apply_character_expression,
++                                               game_character_expression_catalog,
++                                               publish_character_expression)
++from axm_uc.procedural_3d import verify_glb
++from axm_uc.rts_mesh import SalvageMesh
++from axm_uc.visual_assets_cli import main
++
++
++def fixture():
++    mesh = SalvageMesh()
++    with mesh.part("body", (0, 0, 0)):
++        mesh.roundbox("body", (0, .8, 0), (1.1, 1.2, .55), "paint", .1)
++    with mesh.part("head", (0, 1.65, 0)):
++        mesh.ellipsoid("head", (0, 1.65, 0), (1.0, .72, .58), "ivory", 10, 6)
++    with mesh.part("shell", (0, 1.65, .31)):
++        mesh.ring("identity-ring", (0, 1.65, .31), .30, .035, "signal", axis="z")
++    with mesh.part("nose", (0, 1.57, .38)):
++        mesh.ellipsoid("nose", (0, 1.57, .38), (.12, .10, .10), "signal", 7, 4)
++    for side, x in (("left", -.20), ("right", .20)):
++        with mesh.part(f"eye_{side}", (x, 1.73, .36)):
++            mesh.ellipsoid("eye", (x, 1.73, .36), (.20, .20, .08), "cyan", 8, 5)
++        with mesh.part(f"brow_{side}", (x, 1.90, .39)):
++            mesh.beam("brow", (x-.10, 1.90, .39), (x+.10, 1.90, .39), .035, .035, "rubber")
++    with mesh.part("mouth", (0, 1.46, .39)):
++        mesh.beam("mouth", (-.16, 1.46, .39), (.16, 1.46, .39), .045, .035, "red")
++    for side, x in (("left", -.64), ("right", .64)):
++        with mesh.part(f"arm_{side}", (x, 1.23, 0)):
++            mesh.beam("arm", (x, 1.23, 0), (x, .58, .04), .16, .16, "iron")
++        with mesh.part(f"leg_{side}", (x*.48, .28, 0)):
++            mesh.beam("leg", (x*.48, .28, 0), (x*.48, -.24, 0), .20, .22, "signal")
++    with mesh.part("prop", (-.64, .52, .04)):
++        mesh.ring("wrench", (-.64, .32, .04), .16, .045, "signal", axis="z", ratio=.7)
++    return mesh.surface_spec("character-expression-fixture")
++
++
++def specs(mesh=None):
++    return {
++        "body": {"role": "body", "side": "center", "parent": None, "pivot": [0, .2, 0]},
++        "head": {"role": "head", "side": "center", "parent": "body", "pivot": [0, 1.35, 0]},
++        "shell": {"role": "face-shell", "side": "center", "parent": "head", "pivot": [0, 1.65, .31], "identity_protected": True},
++        "nose": {"role": "identity", "side": "center", "parent": "head", "pivot": [0, 1.57, .38], "identity_protected": True},
++        "eye_left": {"role": "eye", "side": "left", "parent": "head", "pivot": [-.20, 1.73, .36]},
++        "eye_right": {"role": "eye", "side": "right", "parent": "head", "pivot": [.20, 1.73, .36]},
++        "brow_left": {"role": "brow", "side": "left", "parent": "head", "pivot": [-.20, 1.90, .39]},
++        "brow_right": {"role": "brow", "side": "right", "parent": "head", "pivot": [.20, 1.90, .39]},
++        "mouth": {"role": "mouth", "side": "center", "parent": "head", "pivot": [0, 1.46, .39]},
++        "arm_left": {"role": "arm", "side": "left", "parent": "body", "pivot": [-.64, 1.23, 0]},
++        "arm_right": {"role": "arm", "side": "right", "parent": "body", "pivot": [.64, 1.23, 0]},
++        "leg_left": {"role": "leg", "side": "left", "parent": "body", "pivot": [-.31, .28, 0]},
++        "leg_right": {"role": "leg", "side": "right", "parent": "body", "pivot": [.31, .28, 0]},
++        "prop": {"role": "prop", "side": "left", "parent": "arm_left", "pivot": [-.64, .52, .04]},
++    }
++
++
++class CharacterExpressionTests(unittest.TestCase):
++    def test_catalog_states_static_identity_and_animation_boundaries(self):
++        catalog = game_character_expression_catalog()
++        self.assertEqual({row["name"] for row in catalog["expressions"]},
++                         {"neutral", "curious", "mischief", "alarmed", "determined"})
++        self.assertIn("victory", {row["name"] for row in catalog["stances"]})
++        self.assertIn("does not infer a rig", catalog["truth"])
++
++    def test_neutral_expression_and_stance_are_exact_identity(self):
++        mesh = fixture()
++        result = apply_character_expression(mesh, specs(), "neutral", "neutral")
++        self.assertEqual(result["source"], mesh)
++        self.assertEqual(result["realization"], mesh)
++        self.assertTrue(result["identity_receipt"]["passed"])
++
++    def test_mischief_ready_changes_geometry_without_mutating_source(self):
++        mesh, parts = fixture(), specs()
++        original, authored = copy.deepcopy(mesh), copy.deepcopy(parts)
++        result = apply_character_expression(mesh, parts, "mischief", "mechanic-ready")
++        self.assertEqual(mesh, original)
++        self.assertEqual(parts, authored)
++        self.assertNotEqual(result["realization"], original)
++        self.assertTrue(result["gates"]["protected-identity-preserved"])
++
++    def test_nonuniform_expression_uses_inverse_transpose_authored_normals(self):
++        mesh = fixture()
++        eye = next(p for p in mesh["primitives"] if p["id"].startswith("eye_left__"))
++        eye["normals"][0] = [math.sqrt(.5), math.sqrt(.5), 0]
++        result = apply_character_expression(mesh, specs(), "curious", "neutral")
++        styled = next(p for p in result["realization"]["primitives"] if p["id"].startswith("eye_left__"))
++        normal = styled["normals"][0]
++        self.assertAlmostEqual(math.sqrt(sum(value * value for value in normal)), 1, places=7)
++        self.assertNotAlmostEqual(normal[0], normal[1], places=3)
++
++    def test_mischief_winks_and_preserves_authored_eye_spacing(self):
++        mesh = fixture()
++        result = apply_character_expression(mesh, specs(), "mischief", "neutral")
++        source = {p["id"].split("__", 1)[0]: p for p in mesh["primitives"]}
++        styled = {p["id"].split("__", 1)[0]: p for p in result["realization"]["primitives"]}
++        def span_y(primitive):
++            return max(p[1] for p in primitive["positions"]) - min(p[1] for p in primitive["positions"])
++        self.assertGreater(span_y(styled["eye_left"]), span_y(styled["eye_right"]) * 3)
++        self.assertAlmostEqual(result["identity_receipt"]["maximum_authored_eye_pivot_spacing_error"], 0)
++        self.assertNotEqual(styled["mouth"]["positions"], source["mouth"]["positions"])
++
++    def test_protected_identity_shape_and_relationship_survive_story_pose(self):
++        result = apply_character_expression(fixture(), specs(), "alarmed", "comic-sneak")
++        receipt = result["identity_receipt"]
++        self.assertEqual(receipt["protected_components"], ["nose", "shell"])
++        self.assertLessEqual(receipt["maximum_protected_radial_signature_error"], 1e-7)
++        self.assertLessEqual(receipt["maximum_protected_pairwise_pivot_distance_error"], 1e-7)
++
++    def test_all_expression_stance_pairs_are_deterministic_valid_glbs(self):
++        mesh, parts = fixture(), specs()
++        catalog = game_character_expression_catalog()
++        for expression in (row["name"] for row in catalog["expressions"]):
++            for stance in (row["name"] for row in catalog["stances"]):
++                one = apply_character_expression(mesh, parts, expression, stance)
++                two = apply_character_expression(mesh, parts, expression, stance)
++                self.assertEqual(one, two)
++                self.assertTrue(one["gates"]["static-glb-valid"])
++
++    def test_validation_rejects_cycle_missing_semantics_and_split_identity(self):
++        mesh, parts = fixture(), specs()
++        broken = copy.deepcopy(parts)
++        broken["body"]["parent"] = "head"
++        with self.assertRaisesRegex(ValueError, "cycle"):
++            apply_character_expression(mesh, broken)
++        broken = copy.deepcopy(parts)
++        broken.pop("mouth")
++        with self.assertRaisesRegex(ValueError, "exactly cover"):
++            apply_character_expression(mesh, broken)
++        broken = copy.deepcopy(parts)
++        broken["nose"]["parent"] = "body"
++        with self.assertRaisesRegex(ValueError, "share one parent"):
++            apply_character_expression(mesh, broken)
++
++    def test_publisher_and_cli_emit_actual_glb_and_refuse_overwrite(self):
++        with tempfile.TemporaryDirectory() as tmp:
++            direct = Path(tmp) / "direct"
++            result = publish_character_expression(direct, fixture(), specs(), "curious", "victory")
++            self.assertEqual(result["files"], ["asset.glb", "character-expression.json", "realization.json", "source.json"])
++            self.assertGreater(verify_glb((direct / "asset.glb").read_bytes())["triangles"], 0)
++            with self.assertRaises(FileExistsError):
++                publish_character_expression(direct, fixture(), specs())
++            request, target = Path(tmp) / "request.json", Path(tmp) / "cli"
++            request.write_text(json.dumps({"mesh": fixture(), "parts": specs()}))
++            with redirect_stdout(io.StringIO()):
++                self.assertEqual(main(["character-expression", str(request), str(target),
++                                       "--expression", "alarmed", "--stance", "comic-sneak"]), 0)
++            manifest = json.loads((target / "character-expression.json").read_text())
++            self.assertEqual(manifest["expression"]["name"], "alarmed")
++
++
++if __name__ == "__main__":
++    unittest.main()
+diff --git a/tools/blender/character_expression_roundtrip.py b/tools/blender/character_expression_roundtrip.py
+new file mode 100644
+index 0000000..5df8ec1
+--- /dev/null
++++ b/tools/blender/character_expression_roundtrip.py
+@@ -0,0 +1,279 @@
++"""Build and independently inspect one four-pose expressive character proof.
++
++The original character and all expression/stance geometry are generated by UC.
++Each final GLB combines the checked static pose with the portable painted style.
++This proves bounded geometry and import behavior, not skeletal animation.
++"""
++import argparse
++import hashlib
++import json
++import math
++from pathlib import Path
++import struct
++import sys
++
++ROOT = Path(__file__).resolve().parents[2]
++sys.path.insert(0, str(ROOT / "src"))
++
++from axm_uc.game_character_expression import apply_character_expression
++from axm_uc.game_render_styles import apply_game_render_style
++from axm_uc.procedural_3d import build_glb, verify_glb
++from axm_uc.rts_mesh import SalvageMesh
++
++
++VARIANTS = (
++    ("neutral", "neutral"),
++    ("curious", "mechanic-ready"),
++    ("mischief", "comic-sneak"),
++    ("alarmed", "victory"),
++)
++OFFSETS = {"neutral": -5.1, "curious": -1.7, "mischief": 1.7, "alarmed": 5.1}
++
++
++def character_mesh():
++    mesh = SalvageMesh()
++    with mesh.part("body", (0, 0, 0)):
++        mesh.roundbox("boiler-body", (0, 1.14, 0), (1.45, 1.45, .78), "paint", .16)
++        mesh.roundbox("belly-door", (0, 1.04, .45), (.92, .72, .12), "iron", .08)
++        mesh.smile((0, 1.04, .53), .22)
++        for x in (-.52, .52):
++            mesh.ellipsoid("body-rivet", (x, 1.62, .44), (.10, .10, .06), "tin", 7, 4)
++    with mesh.part("head", (0, 1.78, 0)):
++        mesh.ellipsoid("face-shell", (0, 2.02, .04), (1.42, 1.02, .88), "ivory", 16, 9)
++        mesh.roundbox("jaw-guard", (0, 1.72, .30), (.88, .28, .20), "paint", .06)
++    with mesh.part("identity_ring", (-.31, 2.10, .49)):
++        mesh.ring("signature-monocle", (-.31, 2.10, .49), .31, .055, "signal", axis="z", ratio=.92)
++        mesh.pipe("monocle-cable", [(-.54, 1.88, .47), (-.65, 1.64, .35)], .025, "rubber", 7)
++    with mesh.part("nose", (0, 1.91, .58)):
++        mesh.ellipsoid("duck-beak", (0, 1.91, .58), (.26, .14, .22), "signal", 9, 5)
++    with mesh.part("eye_left", (-.31, 2.10, .55)):
++        mesh.ellipsoid("big-optic", (-.31, 2.10, .55), (.42, .38, .12), "cyan", 11, 6)
++        mesh.ellipsoid("optic-pupil", (-.31, 2.10, .625), (.15, .15, .045), "rubber", 8, 5)
++    with mesh.part("eye_right", (.29, 2.10, .52)):
++        mesh.ellipsoid("small-optic", (.29, 2.10, .52), (.29, .26, .10), "cyan", 10, 6)
++        mesh.ellipsoid("optic-pupil", (.29, 2.10, .585), (.10, .10, .04), "rubber", 7, 4)
++    for side, x in (("left", -.31), ("right", .29)):
++        with mesh.part(f"brow_{side}", (x, 2.34, .59)):
++            mesh.beam("expressive-brow", (x-.17, 2.34, .59), (x+.17, 2.34, .59), .055, .055, "rubber")
++    with mesh.part("mouth", (0, 1.70, .57)):
++        mesh.pipe("grin", [(-.31, 1.75, .57), (-.17, 1.66, .61), (0, 1.62, .63),
++                            (.17, 1.66, .61), (.31, 1.75, .57)], .045, "red", 7)
++        for x in (-.17, 0, .17):
++            mesh.box("grin-tooth", (x, 1.70, .635), (.10, .12, .035), "ivory")
++    with mesh.part("arm_left", (-.82, 1.52, 0)):
++        mesh.beam("upper-arm", (-.82, 1.52, 0), (-1.02, .92, .06), .20, .20, "iron")
++        mesh.ellipsoid("elbow", (-1.02, .92, .06), (.28, .28, .28), "signal", 9, 5)
++        mesh.beam("forearm", (-1.02, .92, .06), (-.99, .45, .16), .18, .18, "tin")
++    with mesh.part("arm_right", (.82, 1.52, 0)):
++        mesh.beam("upper-arm", (.82, 1.52, 0), (1.02, .92, .06), .20, .20, "iron")
++        mesh.ellipsoid("elbow", (1.02, .92, .06), (.28, .28, .28), "red", 9, 5)
++        mesh.beam("forearm", (1.02, .92, .06), (.99, .45, .16), .18, .18, "tin")
++    with mesh.part("leg_left", (-.42, .48, 0)):
++        mesh.beam("spring-leg", (-.42, .48, 0), (-.48, -.06, .02), .24, .24, "signal")
++        mesh.roundbox("boot", (-.48, -.15, .14), (.52, .28, .72), "rubber", .09)
++    with mesh.part("leg_right", (.42, .48, 0)):
++        mesh.beam("spring-leg", (.42, .48, 0), (.48, -.06, .02), .24, .24, "signal")
++        mesh.roundbox("boot", (.48, -.15, .14), (.52, .28, .72), "rubber", .09)
++    with mesh.part("prop", (-.99, .45, .16)):
++        mesh.beam("wrench-handle", (-.99, .45, .16), (-1.08, -.18, .18), .12, .09, "signal")
++        mesh.ring("wrench-jaw", (-1.08, -.30, .18), .22, .065, "signal", axis="z", ratio=.70)
++    with mesh.part("backpack", (0, 1.25, -.45)):
++        mesh.roundbox("scrap-pack", (0, 1.28, -.49), (1.05, .92, .30), "red", .11)
++        mesh.pipe("exhaust", [(.36, 1.44, -.55), (.49, 2.01, -.51)], .08, "iron", 9)
++    with mesh.part("antenna", (.42, 2.42, .02)):
++        mesh.pipe("antenna", [(.42, 2.42, .02), (.55, 2.91, .02)], .032, "iron", 7)
++        mesh.ellipsoid("beacon", (.57, 2.98, .02), (.19, .19, .19), "red", 9, 5)
++    return mesh.surface_spec("patchwork-expression-foreman")
++
++
++def part_specs():
++    return {
++        "body": {"role": "body", "side": "center", "parent": None, "pivot": [0, .25, 0]},
++        "head": {"role": "head", "side": "center", "parent": "body", "pivot": [0, 1.60, 0]},
++        "identity_ring": {"role": "identity", "side": "left", "parent": "head", "pivot": [-.31, 2.10, .49], "identity_protected": True},
++        "nose": {"role": "identity", "side": "center", "parent": "head", "pivot": [0, 1.91, .58], "identity_protected": True},
++        "eye_left": {"role": "eye", "side": "left", "parent": "head", "pivot": [-.31, 2.10, .55]},
++        "eye_right": {"role": "eye", "side": "right", "parent": "head", "pivot": [.29, 2.10, .52]},
++        "brow_left": {"role": "brow", "side": "left", "parent": "head", "pivot": [-.31, 2.34, .59]},
++        "brow_right": {"role": "brow", "side": "right", "parent": "head", "pivot": [.29, 2.34, .59]},
++        "mouth": {"role": "mouth", "side": "center", "parent": "head", "pivot": [0, 1.70, .57]},
++        "arm_left": {"role": "arm", "side": "left", "parent": "body", "pivot": [-.82, 1.52, 0]},
++        "arm_right": {"role": "arm", "side": "right", "parent": "body", "pivot": [.82, 1.52, 0]},
++        "leg_left": {"role": "leg", "side": "left", "parent": "body", "pivot": [-.42, .48, 0]},
++        "leg_right": {"role": "leg", "side": "right", "parent": "body", "pivot": [.42, .48, 0]},
++        "prop": {"role": "prop", "side": "left", "parent": "arm_left", "pivot": [-.99, .45, .16]},
++        "backpack": {"role": "detail", "side": "center", "parent": "body", "pivot": [0, 1.25, -.45]},
++        "antenna": {"role": "detail", "side": "right", "parent": "head", "pivot": [.42, 2.42, .02]},
++    }
++
++
++def glb_chunks(path):
++    body = path.read_bytes()
++    magic, version, length = struct.unpack_from("<4sII", body)
++    assert (magic, version, length) == (b"glTF", 2, len(body))
++    json_length, kind = struct.unpack_from("<II", body, 12)
++    assert kind == 0x4E4F534A
++    document = json.loads(body[20:20 + json_length])
++    offset = 20 + json_length
++    binary_length, kind = struct.unpack_from("<II", body, offset)
++    assert kind == 0x004E4942
++    return body, document, body[offset + 8:offset + 8 + binary_length]
++
++
++def accessor(document, binary, ref):
++    item = document["accessors"][ref]
++    view = document["bufferViews"][item["bufferView"]]
++    widths, formats = {"SCALAR": 1, "VEC3": 3, "VEC4": 4}, {5123: "H", 5126: "f"}
++    width, code = widths[item["type"]], formats[item["componentType"]]
++    decoder = struct.Struct("<" + code * width)
++    start = view.get("byteOffset", 0) + item.get("byteOffset", 0)
++    stride = view.get("byteStride", decoder.size)
++    return [decoder.unpack_from(binary, start + index * stride) for index in range(item["count"])]
++
++
++def add_text(bpy, text, location, size=.16):
++    curve = bpy.data.curves.new(text, "FONT")
++    curve.body, curve.align_x, curve.align_y = text, "CENTER", "CENTER"
++    curve.size, curve.extrude, curve.bevel_depth = size, .008, .003
++    obj = bpy.data.objects.new(text, curve)
++    bpy.context.scene.collection.objects.link(obj)
++    obj.location, obj.rotation_euler = location, (math.pi / 2, 0, 0)
++    material = bpy.data.materials.get("Proof captions") or bpy.data.materials.new("Proof captions")
++    material.diffuse_color = (.72, .82, .92, 1)
++    obj.data.materials.append(material)
++
++
++def import_variants(bpy, output):
++    imported = {}
++    for expression, stance in VARIANTS:
++        before = set(bpy.data.objects)
++        bpy.ops.import_scene.gltf(filepath=str(output / f"{expression}__{stance}.glb"))
++        fresh = [obj for obj in bpy.data.objects if obj not in before]
++        root = bpy.data.objects.new(f"POSE__{expression}__{stance}", None)
++        bpy.context.scene.collection.objects.link(root)
++        root.location.x = OFFSETS[expression]
++        for obj in fresh:
++            if obj.parent is None:
++                obj.parent = root
++            if obj.type == "MESH":
++                obj["axm_expression"], obj["axm_stance"] = expression, stance
++        imported[expression] = [obj for obj in fresh if obj.type == "MESH"]
++    return imported
++
++
++def scene_setup(bpy, output):
++    from mathutils import Vector
++    scene = bpy.context.scene
++    scene.render.engine = "BLENDER_EEVEE_NEXT"
++    scene.render.resolution_x, scene.render.resolution_y, scene.render.resolution_percentage = 2100, 950, 100
++    scene.render.image_settings.file_format = "PNG"
++    scene.render.filepath = str(output)
++    scene.view_settings.look = "AgX - Medium High Contrast"
++    world = bpy.data.worlds.new("Character expression proof world")
++    world.color = (.016, .022, .034)
++    scene.world = world
++    bpy.ops.mesh.primitive_plane_add(size=26, location=(0, 0, -.36))
++    floor = bpy.context.object
++    floor.name = "PROOF_ONLY_FLOOR"
++    floor_material = bpy.data.materials.new("Proof floor")
++    floor_material.diffuse_color = (.035, .045, .065, 1)
++    floor_material.metallic, floor_material.roughness = .42, .34
++    floor.data.materials.append(floor_material)
++    bpy.ops.object.camera_add(location=(0, -24.6, 5.1))
++    camera = bpy.context.object
++    camera.rotation_euler = ((Vector((0, 0, 1.30)) - camera.location).to_track_quat("-Z", "Y").to_euler())
++    camera.data.lens = 58
++    scene.camera = camera
++    for location, power, size, color in [((-6, -5, 8), 1250, 4.5, (1.0, .70, .45)),
++                                          ((6, -3, 6), 900, 3.8, (.40, .70, 1.0))]:
++        bpy.ops.object.light_add(type="AREA", location=location)
++        light = bpy.context.object
++        light.data.energy, light.data.shape, light.data.size, light.data.color = power, "DISK", size, color
++        light.rotation_euler = ((Vector((0, 0, 1.3)) - light.location).to_track_quat("-Z", "Y").to_euler())
++    for expression, stance in VARIANTS:
++        add_text(bpy, expression.upper(), (OFFSETS[expression], -.38, 3.52), .17)
++        add_text(bpy, stance.replace("-", " ").upper(), (OFFSETS[expression], -.38, 3.25), .10)
++
++
++def build(output):
++    import bpy
++    output.mkdir(parents=True, exist_ok=False)
++    source, controls = character_mesh(), part_specs()
++    packages = {}
++    for expression, stance in VARIANTS:
++        pose = apply_character_expression(source, controls, expression, stance)
++        styled = apply_game_render_style(pose["realization"], "painted-adventure-baked", 471)
++        built = build_glb(styled["realization"])
++        assert verify_glb(built["body"])["unlit_materials"] == len(styled["realization"]["primitives"])
++        name = f"{expression}__{stance}"
++        (output / f"{name}.glb").write_bytes(built["body"])
++        packages[name] = {"pose": pose, "render": styled,
++                          "glb_sha256": hashlib.sha256(built["body"]).hexdigest()}
++    (output / "character-expression-packages.json").write_text(json.dumps(packages, indent=2) + "\n")
++    bpy.ops.wm.read_factory_settings(use_empty=True)
++    import_variants(bpy, output)
++    text = bpy.data.texts.new("AXM_CHARACTER_EXPRESSION_PACKAGES.json")
++    text.write(json.dumps(packages, indent=2))
++    scene_setup(bpy, output / "source.png")
++    bpy.ops.wm.save_as_mainfile(filepath=str(output / "character-expression-proof.blend"))
++    bpy.ops.render.render(write_still=True)
++
++
++def verify(output):
++    from PIL import Image
++    import bpy
++    packages = json.loads((output / "character-expression-packages.json").read_text())
++    rows, max_position_error = [], 0.0
++    for expression, stance in VARIANTS:
++        name = f"{expression}__{stance}"
++        body, document, binary = glb_chunks(output / f"{name}.glb")
++        expected = packages[name]["render"]["realization"]
++        for mesh, primitive in zip(document["meshes"], expected["primitives"]):
++            actual = accessor(document, binary, mesh["primitives"][0]["attributes"]["POSITION"])
++            max_position_error = max(max_position_error, *(abs(actual[row][axis] - primitive["positions"][row][axis])
++                                                            for row in range(len(actual)) for axis in range(3)))
++        receipt = packages[name]["pose"]["identity_receipt"]
++        assert receipt["passed"]
++        rows.append({"expression": expression, "stance": stance,
++                     "sha256": hashlib.sha256(body).hexdigest(),
++                     "primitives": len(document["meshes"]),
++                     "triangles": verify_glb(body)["triangles"],
++                     "protected_components": receipt["protected_components"],
++                     "identity_max_error": max(receipt["maximum_protected_radial_signature_error"],
++                                               receipt["maximum_protected_pairwise_pivot_distance_error"],
++                                               receipt["maximum_authored_eye_pivot_spacing_error"])})
++    assert max_position_error < 1e-6, max_position_error
++    bpy.ops.wm.open_mainfile(filepath=str(output / "character-expression-proof.blend"))
++    assert "AXM_CHARACTER_EXPRESSION_PACKAGES.json" in bpy.data.texts
++    editable_meshes = sum(obj.get("axm_expression") in OFFSETS for obj in bpy.data.objects if obj.type == "MESH")
++    bpy.ops.wm.read_factory_settings(use_empty=True)
++    imported = import_variants(bpy, output)
++    assert all(imported.values())
++    scene_setup(bpy, output / "reimport.png")
++    bpy.ops.render.render(write_still=True)
++    source = Image.open(output / "source.png").convert("RGB").tobytes()
++    restored = Image.open(output / "reimport.png").convert("RGB").tobytes()
++    mae = sum(abs(a - b) for a, b in zip(source, restored)) / len(source)
++    assert mae < 2, mae
++    report = {
++        "schema": "axm.character-expression-roundtrip/v0.1",
++        "blender": bpy.app.version_string,
++        "variants": rows,
++        "maximum_position_float_error": max_position_error,
++        "editable_source_variant_meshes": editable_meshes,
++        "source_reimport_render_mae": mae,
++        "limits": (
++            "Four static expression/stance specimens. No skeleton, clips, deformation, contact, collision, "
++            "game-distance, target-engine or performance acceptance."
++        ),
++    }
++    (output / "verification.json").write_text(json.dumps(report, indent=2) + "\n")
++    print(json.dumps(report))
++
++
++if __name__ == "__main__":
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("mode", choices=("build", "verify"))
++    parser.add_argument("output", type=Path)
++    args = parser.parse_args()
++    (build if args.mode == "build" else verify)(args.output.resolve())

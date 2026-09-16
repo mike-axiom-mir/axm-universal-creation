@@ -1,0 +1,584 @@
+diff --git a/MISSION_TEMPLATE_PACK.md b/MISSION_TEMPLATE_PACK.md
+new file mode 100644
+index 0000000..5c08dce
+--- /dev/null
++++ b/MISSION_TEMPLATE_PACK.md
+@@ -0,0 +1,37 @@
++# Source-Bound Quest / Mission Flow Template Pack
++
++`visual.mission.core` is the reusable mission/quest/reference foundation for games and interactive products.
++
++Visual flow is never treated as runtime truth. A graph edge does not prove a branch is reachable; an objective card does not prove completion; a reward icon does not prove the reward exists or was granted.
++
++## Surfaces
++
++- project / mission hub
++- objective editor
++- prerequisite / condition editor
++- branch / flow graph
++- world / map binding editor
++- rewards / outcomes editor
++- failure / retry / recovery editor
++- runtime-state / flag inspector
++- mission variant editor
++- review / export
++
++## Source-truth contract
++
++- `mission-source` — exact mission identity, source, version, digest and owning context;
++- `objective-state` — exact objective ID/type/status/completion source;
++- `mission-condition` — exact subject/operator/value/source and evaluation state;
++- `mission-edge` — exact from/to identities, transition type and condition references;
++- `mission-world-reference` — exact map/zone/POI/entity target plus source/status;
++- `mission-reward-reference` — exact reward/outcome identity, source, amount/state and delivery status;
++- `mission-failure-recovery` — exact failure condition, retry/recovery/checkpoint destination and consequences;
++- `mission-runtime-flag` — exact flag ID/value/source/freshness;
++- `mission-variant` — exact base mission, deltas, context and availability;
++- `mission-export-target` — exact objective/condition/branch/reference/reward/recovery requirements.
++
++## Truth boundary
++
++Map proximity does not create a mission binding. Branch lines do not establish reachability. Objective completion requires observed state. Reward presentation is not delivery evidence. Failure/retry/recovery consequences stay explicit.
++
++This pack proves deterministic structural/editability contracts only. It does not prove mission balance, narrative quality, branch reachability under a real runtime, reward correctness, map correctness or gameplay acceptance.
+\ No newline at end of file
+diff --git a/VISUAL_TEMPLATE_FABRIC.md b/VISUAL_TEMPLATE_FABRIC.md
+index b42b3be..27d1bd4 100644
+--- a/VISUAL_TEMPLATE_FABRIC.md
++++ b/VISUAL_TEMPLATE_FABRIC.md
+@@ -2,47 +2,47 @@
+ 
+ Universal Creation contains one deterministic library of **known visual archetypes** between low-level format scaffolds and finished products. Templates are editable structural starting points, not finished art and not automatic canon.
+ 
+-The public module remains `axm_uc.visual_templates`. Explicit extension packs cover games/product plumbing, creative editors, comics, AXM system surfaces, key art, cards/decks, cinematic/broadcast overlays, diagrams, atlas/map editing, branching narrative, 3D showroom, music, presentation/explainers, character reference, equipment configuration, source-bound UI motion, brand/identity systems, environment/level references, and VFX/particle authoring. Sticker Fabric remains the immutable/versioned registry bridge. Mathematical work can enrich declared ratios/ranges through `math_hooks` without replacing template identity.
++The public module remains `axm_uc.visual_templates`. Explicit extension packs cover games/product plumbing, creative editors, comics, AXM system surfaces, key art, cards/decks, cinematic/broadcast overlays, diagrams, atlas/map editing, branching narrative, 3D showroom, music, presentation/explainers, character reference, equipment configuration, source-bound UI motion, brand/identity systems, environment/level references, VFX/particle authoring, and quest/mission flow systems. Sticker Fabric remains the immutable/versioned registry bridge. Mathematical work can enrich declared ratios/ranges through `math_hooks` without replacing template identity.
+ 
+-## Current v20 candidate census
++## Current v21 candidate census
+ 
+-- **226 reusable visual/state primitives**
+-- **28 coherent style systems**
+-- **264 responsive screen archetypes**
+-- **26 whole-product archetypes**
+-- **290 exact screen/product definitions** when explicitly installed into Sticker Registry
++- **236 reusable visual/state primitives**
++- **29 coherent style systems**
++- **274 responsive screen archetypes**
++- **27 whole-product archetypes**
++- **301 exact screen/product definitions** when explicitly installed into Sticker Registry
+ 
+ Every major family provides compact, standard and wide normalized layouts. Unknown requested variants fail rather than silently falling back.
+ 
+-## Source-bound VFX / particle foundation
++## Source-bound quest / mission-flow foundation
+ 
+-`visual.vfx.core` provides ten effect-authoring surfaces:
++`visual.mission.core` provides ten mission-authoring surfaces:
+ 
+-- project / effect hub;
+-- effect stage;
+-- emitter-state editor;
+-- spawn-region editor;
+-- curves / timing editor;
+-- particle-module editor;
+-- layer / composite editor;
+-- runtime interaction-hook editor;
+-- reduced-effect / performance editor;
++- project / mission hub;
++- objective editor;
++- prerequisite / condition editor;
++- branch / flow graph;
++- world / map binding editor;
++- rewards / outcomes editor;
++- failure / retry / recovery editor;
++- runtime-state / flag inspector;
++- mission variant editor;
+ - review / export.
+ 
+-Its `visual.vfx.effect` style is replaceable. Effect truth stays explicit:
++Its `visual.mission.flow` style is replaceable. Mission truth stays explicit:
+ 
+-- `vfx-source` preserves exact effect identity, source, version and semantic purpose;
+-- `emitter-state` preserves trigger, lifetime, rate/burst and enabled state;
+-- `spawn-region` preserves exact shape, source transform, dimensions and distribution;
+-- `emission-curve` preserves an explicit channel and its time/value state;
+-- `particle-module` preserves module identity, parameters and order;
+-- `vfx-layer` preserves exact layer identity, blend/order/depth relationship and source state;
+-- `vfx-interaction-hook` binds exact subjects/events/responses to source/runtime state;
+-- `vfx-timing-event` preserves exact timeline markers and semantic purpose;
+-- `reduced-effect-rule` preserves required semantic feedback while reducing intensity;
+-- `vfx-export-target` keeps exact source/module/timing/hook/performance/accessibility requirements visible.
++- `mission-source` preserves exact mission/quest identity, source, version and owning context;
++- `objective-state` preserves exact objective ID/type/status and completion source;
++- `mission-condition` preserves exact subject/operator/value/source and evaluation state;
++- `mission-edge` preserves exact from/to identities, transition type and condition references;
++- `mission-world-reference` binds exact map/zone/POI/entity targets to source/status;
++- `mission-reward-reference` preserves exact reward/outcome source, amount/state and delivery status;
++- `mission-failure-recovery` preserves exact failure condition, retry/recovery/checkpoint destination and consequences;
++- `mission-runtime-flag` preserves exact flag identity/value/source/freshness;
++- `mission-variant` preserves exact base mission, deltas, context and availability;
++- `mission-export-target` keeps objective/condition/branch/reference/reward/recovery requirements visible.
+ 
+-A spectacular preview never proves that a collision, hit, damage event, gameplay trigger or other runtime state actually happened. Those semantics require exact source-bound interaction hooks. Spawn previews do not rewrite source spawn geometry, and compositing does not flatten canonical source layers.
++A flow line never proves a branch is reachable. Objective presentation never proves completion. Map proximity never creates a mission binding, and reward presentation never proves delivery. Runtime flags, failure consequences and recovery destinations stay explicit source state.
+ 
+ ## Registry and identity
+ 
+@@ -52,8 +52,8 @@ Every built-in screen/product can be wrapped as an immutable Sticker definition.
+ 
+ ```sh
+ axm-visual-templates catalog
+-axm-visual-templates show visual.vfx.core
+-axm-visual-templates render visual.vfx.core creations/vfx --width 1920 --height 1080
++axm-visual-templates show visual.mission.core
++axm-visual-templates render visual.mission.core creations/mission --width 1920 --height 1080
+ ```
+ 
+ Preview/export remains derived inspection output, never authoritative source.
+@@ -65,19 +65,19 @@ python -m unittest discover -s tests -p 'test_visual_templates.py' -v
+ python tools/visual_template_proof.py /new/output/path
+ ```
+ 
+-The v20 gate requires:
++The v21 gate requires:
+ 
+-- exact census: 28 styles / 226 primitives / 264 screens / 26 products;
+-- all 264 screens stay within six representative viewport shapes;
++- exact census: 29 styles / 236 primitives / 274 screens / 27 products;
++- all 274 screens stay within six representative viewport shapes;
+ - exact product screen order and flows resolve across those viewports;
+-- parseable galleries for all prior proof products plus `visual.vfx.core`;
+-- all 290 screen/product definitions install through Sticker Registry;
+-- exact effect identity/source/purpose, emitter, spawn geometry, curves, modules, layers, runtime hooks, timing events and reduced-effect semantic-feedback contracts remain present;
+-- prior environment/brand/motion/configurator/character/presentation/music/showroom/visual-novel/atlas/diagram/broadcast/cinematic/card/key-art/comic/game/AXM boundaries remain intact;
++- parseable galleries for all prior proof products plus `visual.mission.core`;
++- all 301 screen/product definitions install through Sticker Registry;
++- exact mission identity/source/context, objective completion source, conditions, branch edges, world references, reward delivery state, failure/recovery, runtime flags and variants remain present;
++- prior VFX/environment/brand/motion/configurator/character/presentation/music/showroom/visual-novel/atlas/diagram/broadcast/cinematic/card/key-art/comic/game/AXM boundaries remain intact;
+ - copy safety, strict variant rejection, invalid-geometry rejection and exact Sticker-slot binding remain intact.
+ 
+ ## Truth boundary
+ 
+-Current evidence proves deterministic structural/editability contracts only. It does **not** prove runtime integration, collision or damage correctness, gameplay balance, GPU cost, accessibility acceptance, frame pacing or aesthetic quality.
++Current evidence proves deterministic structural/editability contracts only. It does **not** prove mission balance, narrative quality, runtime branch reachability, reward correctness, map correctness or gameplay acceptance.
+ 
+-Consuming products must supply real runtime/gameplay state. Unknown, disabled, conditional and unresolved information stays distinguishishable. Richer editable source remains authoritative over previews/composites/exports.
++Consuming products must supply real mission/runtime state. Unknown, unresolved, blocked, stale, failed and undelivered information stays distinguishable. Richer editable source remains authoritative over graphs/previews/exports.
+diff --git a/VISUAL_TEMPLATE_PRIORITY_MAP.md b/VISUAL_TEMPLATE_PRIORITY_MAP.md
+index a3e693f..770f4d4 100644
+--- a/VISUAL_TEMPLATE_PRIORITY_MAP.md
++++ b/VISUAL_TEMPLATE_PRIORITY_MAP.md
+@@ -1,6 +1,6 @@
+ # AXM Visual Template Expansion Priority Map
+ 
+-Status: v20 growth lane after verified v1–v19 merges.
++Status: v21 growth lane after verified v1–v20 merges.
+ 
+ The visual-template fabric grows where Universal Creation is likely to reuse the knowledge soon. This is a build priority, not canon: templates remain editable foundations and may be replaced when evidence supports a better structure.
+ 
+@@ -15,48 +15,49 @@ The visual-template fabric grows where Universal Creation is likely to reuse the
+ - vehicle / weapon / equipment configurator;
+ - source-bound UI motion / transition systems;
+ - brand / identity system editor;
+-- environment / level reference boards.
++- environment / level reference boards;
++- VFX / particle reference-authoring.
+ 
+-## VFX / particle reference-authoring — IMPLEMENTED IN THIS LANE
++## Quest / mission flow reference systems — IMPLEMENTED IN THIS LANE
+ 
+-Product: `visual.vfx.core`
++Product: `visual.mission.core`
+ 
+ Implemented screens:
+ 
+-- `visual.vfx.project-hub`
+-- `visual.vfx.effect-stage`
+-- `visual.vfx.emitter-editor`
+-- `visual.vfx.spawn-region`
+-- `visual.vfx.curves-timing`
+-- `visual.vfx.modules`
+-- `visual.vfx.layers-composite`
+-- `visual.vfx.interaction-hooks`
+-- `visual.vfx.reduced-performance`
+-- `visual.vfx.review-export`
++- `visual.mission.project-hub`
++- `visual.mission.objectives`
++- `visual.mission.conditions`
++- `visual.mission.branch-flow`
++- `visual.mission.world-bindings`
++- `visual.mission.rewards-outcomes`
++- `visual.mission.failure-retry`
++- `visual.mission.runtime-state`
++- `visual.mission.variants`
++- `visual.mission.review-export`
+ 
+ New primitives:
+ 
+-- `vfx-source`
+-- `emitter-state`
+-- `spawn-region`
+-- `emission-curve`
+-- `particle-module`
+-- `vfx-layer`
+-- `vfx-interaction-hook`
+-- `vfx-timing-event`
+-- `reduced-effect-rule`
+-- `vfx-export-target`
++- `mission-source`
++- `objective-state`
++- `mission-condition`
++- `mission-edge`
++- `mission-world-reference`
++- `mission-reward-reference`
++- `mission-failure-recovery`
++- `mission-runtime-flag`
++- `mission-variant`
++- `mission-export-target`
+ 
+-Style: `visual.vfx.effect`.
++Style: `visual.mission.flow`.
+ 
+-The central rule is runtime truth: effects can communicate or decorate exact events but never prove those events occurred. Collision, damage, interaction and state-change semantics require explicit source-bound hooks; reduced-effect variants preserve required semantic feedback.
++The central rule is runtime/flow truth: graph lines do not prove reachability, objective presentation does not prove completion, map proximity does not create a mission binding, reward presentation does not prove delivery, and failure/retry/recovery consequences remain explicit source state.
+ 
+ ## Next high-value visual/creation families
+ 
+-1. **Quest / mission flow reference systems** — objective identity, prerequisites, branches, state transitions, rewards, failure/retry and world/map references for game production.
+-2. **HUD theme / skin systems** — source-bound component families, layout constraints, readability state, platform/input variants and per-game identity application.
+-3. **Lighting / post-process look systems** — source-bound exposure, tone, fog, grading, bloom and accessibility/performance variants without baking presentation into world state.
+-4. **Camera / shot reference systems** — exact camera rigs, targets, framing, lens/FOV, shot transitions and gameplay/cinematic ownership without treating preview framing as world state.
++1. **HUD theme / skin systems** — source-bound component families, layout constraints, readability state, platform/input variants and per-game identity application.
++2. **Lighting / post-process look systems** — source-bound exposure, tone, fog, grading, bloom and accessibility/performance variants without baking presentation into world state.
++3. **Camera / shot reference systems** — exact camera rigs, targets, framing, lens/FOV, shot transitions and gameplay/cinematic ownership without treating preview framing as world state.
++4. **Inventory / item-reference systems** — item identity, rarity/affordance presentation, equipment slots, stats, comparison, provenance and platform/input variants without turning iconography into gameplay truth.
+ 
+ ## Cross-cutting rules
+ 
+@@ -72,7 +73,7 @@ Every family preserves the existing visual-template contract:
+ 
+ ## Immediate build order
+ 
+-1. exact-head verify `visual.vfx.core`;
+-2. merge v20 only when template + repository checks pass;
+-3. begin quest / mission flow reference systems from fresh main;
++1. exact-head verify `visual.mission.core`;
++2. merge v21 only when template + repository checks pass;
++3. begin HUD theme / skin systems from fresh main;
+ 4. keep prioritizing reusable source-first editors over flat one-off outputs.
+diff --git a/src/axm_uc/visual_template_mission.py b/src/axm_uc/visual_template_mission.py
+new file mode 100644
+index 0000000..3910290
+--- /dev/null
++++ b/src/axm_uc/visual_template_mission.py
+@@ -0,0 +1,88 @@
++"""Source-bound quest, mission and objective-flow reference foundations."""
++from __future__ import annotations
++from copy import deepcopy
++from typing import Any
++
++
++def _merge(target: dict[str, Any], additions: dict[str, Any], label: str) -> None:
++    overlap=sorted(set(target)&set(additions))
++    if overlap: raise RuntimeError(f"mission {label} collision: {', '.join(overlap)}")
++    target.update(deepcopy(additions))
++
++
++def extend_mission_catalog(namespace: dict[str, Any]) -> None:
++    styles=namespace['STYLE_SYSTEMS']; primitives=namespace['PRIMITIVES']
++    screens=namespace['SCREEN_TEMPLATES']; products=namespace['PRODUCT_ARCHETYPES']
++    screen=namespace['_screen']; origin=namespace['_origin']
++
++    _merge(styles,{'visual.mission.flow':{
++        'intent':'source-bound quest and mission flow authoring with exact objectives, conditions, branches, world references, rewards, failure/retry and runtime state',
++        'tokens':{'canvas':'#0b1014','surface':'#172027','surface_raised':'#222d36','text':'#eef3f5','muted':'#a2adb5','accent':'#82c8ba','warning':'#e2b96b','danger':'#dc7678','line':'#40505a'},
++        'shape':{'panel_radius_ratio':0.010,'cut_ratio':0.003,'line_ratio':0.0012},
++        'type':{'display_weight':735,'body_weight':500,'metric_scale':1.5,'tracking':0.011},
++        'depth':{'layers':7,'shadow':'subtle','glass':'restrained'},
++        'motion':{'fast_ms':80,'standard_ms':165,'slow_ms':315,'principle':'objective and branch truth before presentation'},
++    }},'style')
++
++    _merge(primitives,{
++        'mission-source':{'role':'exact mission/quest identity with source/version/digest and owning context','states':['known','active','archived','unknown'],'identity_source_version_context_required':True},
++        'objective-state':{'role':'exact objective identity/type/status with completion source and ordering state','states':['locked','available','active','complete','failed','unknown'],'identity_type_status_source_required':True},
++        'mission-condition':{'role':'explicit prerequisite/condition with subject, operator, value, source and evaluation state','states':['true','false','unresolved','unknown'],'subject_operator_value_source_required':True},
++        'mission-edge':{'role':'exact flow/branch edge with from/to identity, transition type and condition references','states':['available','blocked','taken','unknown'],'from_to_type_conditions_required':True},
++        'mission-world-reference':{'role':'exact map/zone/poi/entity reference with source/status and optional spatial binding','states':['known','active','unavailable','unknown'],'target_source_status_required':True},
++        'mission-reward-reference':{'role':'exact reward/outcome reference with source, amount/state and delivery status','states':['planned','available','granted','failed','unknown'],'reward_source_amount_status_required':True},
++        'mission-failure-recovery':{'role':'failure condition with exact retry/recovery/checkpoint destination and state consequences','states':['armed','failed','retryable','terminal','unknown'],'condition_recovery_consequence_required':True},
++        'mission-runtime-flag':{'role':'exact mission runtime flag/value with source and freshness/version state','states':['set','unset','stale','unknown'],'identity_value_source_required':True},
++        'mission-variant':{'role':'mission variant/difficulty/state profile with exact base, deltas, context and availability','states':['active','alternate','restricted','archived'],'base_delta_context_required':True},
++        'mission-export-target':{'role':'mission package/export target with objectives, conditions, branches, references, rewards and recovery requirements','states':['ready','warning','blocked','exported'],'requirements_must_be_visible':True},
++    },'primitive')
++
++    q=['mission identity, objectives, conditions, branches, world references, rewards and runtime state remain separately editable','visual flow never implies that a branch is reachable or an objective is complete','map proximity never creates a mission/world binding without an exact reference','reward icons never prove a reward exists or was granted','failure, retry, recovery and checkpoint consequences remain explicit source state']
++    def v(c,s,w): return {'compact':c,'standard':s,'wide':w}
++    additions={
++      'visual.mission.project-hub':screen('visual.mission.project-hub','Mission project hub','creative.mission','visual.mission.flow','browse missions, source coverage, runtime state, variants and validation/export targets',v(
++        {'header':(.03,.03,.94,.08),'missions':(.03,.14,.94,.30),'coverage':(.03,.47,.45,.38),'state':(.51,.47,.46,.27),'actions':(.51,.77,.46,.08)},
++        {'header':(.02,.03,.96,.075),'missions':(.02,.14,.22,.82),'coverage':(.27,.14,.46,.82),'state':(.76,.14,.22,.55),'actions':(.76,.72,.22,.14)},
++        {'header':(.015,.03,.97,.07),'missions':(.015,.13,.20,.84),'coverage':(.24,.13,.50,.84),'state':(.77,.13,.215,.57),'actions':(.77,.73,.215,.14)}),tags=['visual','mission','quest','project'],quality=q),
++      'visual.mission.objectives':screen('visual.mission.objectives','Objective editor','creative.mission','visual.mission.flow','edit exact objective identity/type/order/status and completion source without inferring completion from presentation',v(
++        {'header':(.03,.03,.94,.08),'flow':(.03,.14,.94,.36),'objectives':(.03,.53,.55,.34),'details':(.61,.53,.36,.25),'actions':(.61,.81,.36,.06)},
++        {'header':(.02,.03,.96,.075),'objectives':(.02,.14,.28,.72),'flow':(.33,.14,.44,.72),'details':(.80,.14,.18,.54),'actions':(.80,.71,.18,.15)},
++        {'header':(.015,.03,.97,.07),'objectives':(.015,.13,.26,.74),'flow':(.305,.13,.47,.74),'details':(.795,.13,.19,.55),'actions':(.795,.71,.19,.16)}),tags=['visual','mission','objective','state'],quality=q),
++      'visual.mission.conditions':screen('visual.mission.conditions','Prerequisite and condition editor','creative.mission','visual.mission.flow','edit explicit prerequisite and branch conditions with subject/operator/value/source and unresolved state visible',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.34),'conditions':(.03,.51,.55,.34),'details':(.61,.51,.36,.25),'actions':(.61,.79,.36,.06)},
++        {'header':(.02,.03,.96,.075),'conditions':(.02,.14,.28,.72),'preview':(.33,.14,.44,.72),'details':(.80,.14,.18,.54),'actions':(.80,.71,.18,.15)},
++        {'header':(.015,.03,.97,.07),'conditions':(.015,.13,.26,.74),'preview':(.305,.13,.47,.74),'details':(.795,.13,.19,.55),'actions':(.795,.71,.19,.16)}),tags=['visual','mission','condition','prerequisite'],quality=q),
++      'visual.mission.branch-flow':screen('visual.mission.branch-flow','Mission branch and flow editor','creative.mission','visual.mission.flow','edit exact flow nodes and branch edges while keeping reachability dependent on explicit conditions/runtime state',v(
++        {'header':(.03,.03,.94,.08),'graph':(.03,.14,.94,.44),'nodes':(.03,.61,.45,.26),'edges':(.51,.61,.46,.26),'actions':(.03,.90,.94,.07)},
++        {'header':(.02,.03,.96,.075),'nodes':(.02,.14,.20,.72),'graph':(.245,.14,.50,.72),'edges':(.77,.14,.21,.54),'actions':(.77,.71,.21,.15)},
++        {'header':(.015,.03,.97,.07),'nodes':(.015,.13,.18,.74),'graph':(.215,.13,.54,.74),'edges':(.775,.13,.21,.55),'actions':(.775,.71,.21,.16)}),tags=['visual','mission','branch','flow'],math_hooks={'node_spacing_ratio':[0.02,0.12],'edge_clearance_ratio':[0.01,0.06]},quality=q),
++      'visual.mission.world-bindings':screen('visual.mission.world-bindings','World and map binding editor','creative.mission','visual.mission.flow','bind missions/objectives to exact map zones, POIs, entities or world references with source/status explicit',v(
++        {'header':(.03,.03,.94,.08),'world':(.03,.14,.94,.40),'bindings':(.03,.57,.55,.30),'details':(.61,.57,.36,.22),'actions':(.61,.82,.36,.05)},
++        {'header':(.02,.03,.96,.075),'bindings':(.02,.14,.22,.72),'world':(.27,.14,.48,.72),'details':(.78,.14,.20,.54),'actions':(.78,.71,.20,.15)},
++        {'header':(.015,.03,.97,.07),'bindings':(.015,.13,.20,.74),'world':(.24,.13,.51,.74),'details':(.775,.13,.21,.55),'actions':(.775,.71,.21,.16)}),tags=['visual','mission','world','map'],quality=q),
++      'visual.mission.rewards-outcomes':screen('visual.mission.rewards-outcomes','Rewards and outcomes editor','creative.mission','visual.mission.flow','edit exact reward/outcome references, amount/state, source and grant/delivery status without implying success from icons',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.34),'rewards':(.03,.51,.55,.34),'details':(.61,.51,.36,.25),'actions':(.61,.79,.36,.06)},
++        {'header':(.02,.03,.96,.075),'rewards':(.02,.14,.28,.72),'preview':(.33,.14,.44,.72),'details':(.80,.14,.18,.54),'actions':(.80,.71,.18,.15)},
++        {'header':(.015,.03,.97,.07),'rewards':(.015,.13,.26,.74),'preview':(.305,.13,.47,.74),'details':(.795,.13,.19,.55),'actions':(.795,.71,.19,.16)}),tags=['visual','mission','reward','outcome'],quality=q),
++      'visual.mission.failure-retry':screen('visual.mission.failure-retry','Failure retry and recovery editor','creative.mission','visual.mission.flow','edit exact failure conditions, retry/recovery targets, checkpoints and state consequences',v(
++        {'header':(.03,.03,.94,.08),'flow':(.03,.14,.94,.34),'failures':(.03,.51,.55,.34),'recovery':(.61,.51,.36,.25),'actions':(.61,.79,.36,.06)},
++        {'header':(.02,.03,.96,.075),'failures':(.02,.14,.28,.72),'flow':(.33,.14,.44,.72),'recovery':(.80,.14,.18,.54),'actions':(.80,.71,.18,.15)},
++        {'header':(.015,.03,.97,.07),'failures':(.015,.13,.26,.74),'flow':(.305,.13,.47,.74),'recovery':(.795,.13,.19,.55),'actions':(.795,.71,.19,.16)}),tags=['visual','mission','failure','retry'],quality=q),
++      'visual.mission.runtime-state':screen('visual.mission.runtime-state','Mission runtime state inspector','creative.mission','visual.mission.flow','inspect exact mission flags, objective state, branch state and freshness/version without manufacturing runtime truth',v(
++        {'header':(.03,.03,.94,.08),'timeline':(.03,.14,.94,.30),'flags':(.03,.47,.45,.40),'state':(.51,.47,.46,.40),'actions':(.03,.90,.94,.07)},
++        {'header':(.02,.03,.96,.075),'flags':(.02,.14,.24,.72),'timeline':(.29,.14,.46,.72),'state':(.78,.14,.20,.54),'actions':(.78,.71,.20,.15)},
++        {'header':(.015,.03,.97,.07),'flags':(.015,.13,.22,.74),'timeline':(.265,.13,.48,.74),'state':(.78,.13,.205,.55),'actions':(.78,.71,.205,.16)}),tags=['visual','mission','runtime','flag'],quality=q),
++      'visual.mission.variants':screen('visual.mission.variants','Mission variant editor','creative.mission','visual.mission.flow','edit difficulty/state/context variants as exact deltas from a named base mission without silently branching canon',v(
++        {'header':(.03,.03,.94,.08),'grid':(.03,.14,.94,.40),'variants':(.03,.57,.55,.30),'details':(.61,.57,.36,.22),'actions':(.61,.82,.36,.05)},
++        {'header':(.02,.03,.96,.075),'variants':(.02,.14,.22,.72),'grid':(.27,.14,.48,.72),'details':(.78,.14,.20,.54),'actions':(.78,.71,.20,.15)},
++        {'header':(.015,.03,.97,.07),'variants':(.015,.13,.20,.74),'grid':(.24,.13,.51,.74),'details':(.775,.13,.21,.55),'actions':(.775,.71,.21,.16)}),tags=['visual','mission','variant','difficulty'],quality=q),
++      'visual.mission.review-export':screen('visual.mission.review-export','Mission review and export','creative.mission','visual.mission.flow','review unresolved conditions, unreachable/unknown branches, missing world/reward refs and incomplete failure/recovery state before export',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.30),'checks':(.03,.47,.58,.39),'targets':(.64,.47,.33,.27),'actions':(.64,.77,.33,.09)},
++        {'header':(.02,.03,.96,.075),'preview':(.02,.14,.38,.72),'checks':(.43,.14,.34,.72),'targets':(.79,.14,.19,.48),'actions':(.79,.65,.19,.21)},
++        {'header':(.015,.03,.97,.07),'preview':(.015,.13,.36,.74),'checks':(.40,.13,.37,.74),'targets':(.79,.13,.195,.49),'actions':(.79,.65,.195,.22)}),tags=['visual','mission','review','export'],quality=q),
++    }
++    _merge(screens,additions,'screen')
++    ids=list(additions)
++    product={'schema':'axm.visual-product/v1','id':'visual.mission.core','version':1,'name':'Source-bound quest and mission flow core','kind':'product','domain':'creative.mission','tags':['visual','mission','quest','objective','product'],'origin':origin(),'style':'visual.mission.flow','intent':'source-first mission/quest authoring with exact objectives, conditions, branches, world references, rewards, failure/retry and runtime state','screens':ids,'flow':[
++      ['visual.mission.project-hub','visual.mission.objectives','edit-objectives'],['visual.mission.objectives','visual.mission.conditions','edit-conditions'],['visual.mission.objectives','visual.mission.branch-flow','edit-flow'],['visual.mission.project-hub','visual.mission.world-bindings','edit-world'],['visual.mission.project-hub','visual.mission.rewards-outcomes','edit-rewards'],['visual.mission.project-hub','visual.mission.failure-retry','edit-failure'],['visual.mission.project-hub','visual.mission.runtime-state','inspect-runtime'],['visual.mission.project-hub','visual.mission.variants','edit-variants'],['visual.mission.project-hub','visual.mission.review-export','review-export']], 'quality':q}
++    _merge(products,{'visual.mission.core':product},'product')
+diff --git a/src/axm_uc/visual_templates.py b/src/axm_uc/visual_templates.py
+index ae56771..8f56567 100644
+--- a/src/axm_uc/visual_templates.py
++++ b/src/axm_uc/visual_templates.py
+@@ -29,8 +29,9 @@ from .visual_template_motion import extend_motion_catalog as _extend_motion_cata
+ from .visual_template_brand import extend_brand_catalog as _extend_brand_catalog
+ from .visual_template_environment import extend_environment_catalog as _extend_environment_catalog
+ from .visual_template_vfx import extend_vfx_catalog as _extend_vfx_catalog
++from .visual_template_mission import extend_mission_catalog as _extend_mission_catalog
+ 
+-_COMPOSITION=("visual_template_growth","visual_template_game_systems","visual_template_creative_narrative","visual_template_axm_system","visual_template_game_shared","visual_template_keyart","visual_template_cards","visual_template_cinematic","visual_template_video_overlay","visual_template_diagram","visual_template_atlas","visual_template_novel","visual_template_showroom","visual_template_music","visual_template_presentation","visual_template_character_reference","visual_template_configurator","visual_template_motion","visual_template_brand","visual_template_environment","visual_template_vfx")
++_COMPOSITION=("visual_template_growth","visual_template_game_systems","visual_template_creative_narrative","visual_template_axm_system","visual_template_game_shared","visual_template_keyart","visual_template_cards","visual_template_cinematic","visual_template_video_overlay","visual_template_diagram","visual_template_atlas","visual_template_novel","visual_template_showroom","visual_template_music","visual_template_presentation","visual_template_character_reference","visual_template_configurator","visual_template_motion","visual_template_brand","visual_template_environment","visual_template_vfx","visual_template_mission")
+ _applied=getattr(_core,"_AXM_VISUAL_COMPOSITION",None)
+ if _applied is None:
+     _extend_catalog(vars(_core))
+@@ -54,6 +55,7 @@ if _applied is None:
+     _extend_brand_catalog(vars(_core))
+     _extend_environment_catalog(vars(_core))
+     _extend_vfx_catalog(vars(_core))
++    _extend_mission_catalog(vars(_core))
+     _core._AXM_VISUAL_COMPOSITION=_COMPOSITION
+ elif _applied != _COMPOSITION:
+     raise RuntimeError("visual template composition changed inside a live process; restart with one exact catalog")
+diff --git a/tests/test_visual_templates.py b/tests/test_visual_templates.py
+index e04a076..4495546 100644
+--- a/tests/test_visual_templates.py
++++ b/tests/test_visual_templates.py
+@@ -8,18 +8,18 @@ from axm_stickers import Registry
+ from axm_uc import visual_templates as vt
+ 
+ SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
+-PRODUCTS=('game.racing.full','game.coop.action','game.rts.command','game.system.shell','game.shared.core','editor.creative.core','comic.narrative.core','axm.system.shell','visual.keyart.core','visual.cards.core','visual.cinematic.core','visual.broadcast.core','visual.diagram.core','visual.atlas.core','visual.novel.core','visual.showroom.core','visual.music.core','visual.presentation.core','visual.character.core','visual.configurator.core','visual.motion.core','visual.brand.core','visual.environment.core','visual.vfx.core')
++PRODUCTS=('game.racing.full','game.coop.action','game.rts.command','game.system.shell','game.shared.core','editor.creative.core','comic.narrative.core','axm.system.shell','visual.keyart.core','visual.cards.core','visual.cinematic.core','visual.broadcast.core','visual.diagram.core','visual.atlas.core','visual.novel.core','visual.showroom.core','visual.music.core','visual.presentation.core','visual.character.core','visual.configurator.core','visual.motion.core','visual.brand.core','visual.environment.core','visual.vfx.core','visual.mission.core')
+ 
+ class VisualTemplateTests(unittest.TestCase):
+     def test_catalog_counts_and_products(self):
+         counts=vt.validate_catalog()
+-        self.assertEqual(counts,{'styles':28,'primitives':226,'screens':264,'products':26})
++        self.assertEqual(counts,{'styles':29,'primitives':236,'screens':274,'products':27})
+         self.assertEqual(vt.CATALOG_COMPOSITION['counts'],counts)
+         ids={p['id'] for p in vt.catalog()['products']}
+         self.assertTrue(set(PRODUCTS)|{'game.racing.performance','software.creator.studio'} <= ids)
+ 
+     def test_all_geometry_and_major_variants(self):
+-        prefixes=('game.','editor.creative.','comic.narrative.','axm.system.','visual.keyart.','visual.cards.','visual.cinematic.','visual.broadcast.','visual.diagram.','visual.atlas.','visual.novel.','visual.showroom.','visual.music.','visual.presentation.','visual.character.','visual.configurator.','visual.motion.','visual.brand.','visual.environment.','visual.vfx.')
++        prefixes=('game.','editor.creative.','comic.narrative.','axm.system.','visual.keyart.','visual.cards.','visual.cinematic.','visual.broadcast.','visual.diagram.','visual.atlas.','visual.novel.','visual.showroom.','visual.music.','visual.presentation.','visual.character.','visual.configurator.','visual.motion.','visual.brand.','visual.environment.','visual.vfx.','visual.mission.')
+         for tid,definition in vt.SCREEN_TEMPLATES.items():
+             if tid.startswith(prefixes): self.assertEqual(set(definition['variants']),{'compact','standard','wide'},tid)
+             for width,height in SIZES:
+@@ -29,7 +29,7 @@ class VisualTemplateTests(unittest.TestCase):
+                     self.assertLessEqual(x+w,width+1e-6); self.assertLessEqual(y+h,height+1e-6)
+ 
+     def test_existing_product_depth_is_retained(self):
+-        expected={'game.racing.full':19,'game.system.shell':18,'game.shared.core':12,'editor.creative.core':12,'comic.narrative.core':10,'axm.system.shell':12,'visual.keyart.core':10,'visual.cards.core':11,'visual.cinematic.core':10,'visual.broadcast.core':10,'visual.diagram.core':10,'visual.atlas.core':10,'visual.novel.core':10,'visual.showroom.core':10,'visual.music.core':10,'visual.presentation.core':10,'visual.character.core':10,'visual.configurator.core':10,'visual.motion.core':10,'visual.brand.core':10,'visual.environment.core':10}
++        expected={'game.racing.full':19,'game.system.shell':18,'game.shared.core':12,'editor.creative.core':12,'comic.narrative.core':10,'axm.system.shell':12,'visual.keyart.core':10,'visual.cards.core':11,'visual.cinematic.core':10,'visual.broadcast.core':10,'visual.diagram.core':10,'visual.atlas.core':10,'visual.novel.core':10,'visual.showroom.core':10,'visual.music.core':10,'visual.presentation.core':10,'visual.character.core':10,'visual.configurator.core':10,'visual.motion.core':10,'visual.brand.core':10,'visual.environment.core':10,'visual.vfx.core':10}
+         for pid,count in expected.items(): self.assertEqual(len(vt.get(pid)['screens']),count)
+ 
+     def test_vfx_product_preserves_effect_runtime_and_reduced_truth(self):
+@@ -45,6 +45,20 @@ class VisualTemplateTests(unittest.TestCase):
+         self.assertIn('semantic feedback',quality)
+         self.assertIn('timeline_duration_ratio',vt.get('visual.vfx.curves-timing')['math_hooks'])
+ 
++    def test_mission_product_preserves_objective_branch_and_runtime_truth(self):
++        product=vt.get('visual.mission.core')
++        required={'visual.mission.project-hub','visual.mission.objectives','visual.mission.conditions','visual.mission.branch-flow','visual.mission.world-bindings','visual.mission.rewards-outcomes','visual.mission.failure-retry','visual.mission.runtime-state','visual.mission.variants','visual.mission.review-export'}
++        self.assertEqual(set(product['screens']),required)
++        self.assertEqual(product['style'],'visual.mission.flow')
++        quality=' '.join(product['quality']).lower()
++        self.assertIn('separately editable',quality)
++        self.assertIn('branch is reachable',quality)
++        self.assertIn('objective is complete',quality)
++        self.assertIn('map proximity',quality)
++        self.assertIn('reward icons never prove',quality)
++        self.assertIn('checkpoint consequences',quality)
++        self.assertIn('node_spacing_ratio',vt.get('visual.mission.branch-flow')['math_hooks'])
++
+     def test_products_resolve_and_previews_parse(self):
+         for pid in PRODUCTS:
+             definition=vt.get(pid)
+@@ -60,29 +74,31 @@ class VisualTemplateTests(unittest.TestCase):
+         with tempfile.TemporaryDirectory() as td:
+             with Registry(Path(td)/'stickers.sqlite') as registry:
+                 pins=vt.install_builtins(registry)
+-                self.assertEqual(len(pins),290)
+-                vfx=registry.search(adapter=vt.ADAPTER,tag='vfx',limit=100)['entries']
+-                expected={f'visual.visual.vfx.{name}' for name in ('project-hub','effect-stage','emitter-editor','spawn-region','curves-timing','modules','layers-composite','interaction-hooks','reduced-performance','review-export')}
+-                self.assertTrue(expected <= {entry['id'] for entry in vfx})
+-                d=registry.get('visual.visual.vfx.effect-stage',1)
++                self.assertEqual(len(pins),301)
++                mission=registry.search(adapter=vt.ADAPTER,tag='mission',limit=100)['entries']
++                expected={f'visual.visual.mission.{name}' for name in ('project-hub','objectives','conditions','branch-flow','world-bindings','rewards-outcomes','failure-retry','runtime-state','variants','review-export')}
++                self.assertTrue(expected <= {entry['id'] for entry in mission})
++                d=registry.get('visual.visual.mission.objectives',1)
+                 self.assertEqual(d['recipe']['visual_template']['schema'],vt.SCHEMA)
+                 self.assertNotIn('"latest"',json.dumps(d,sort_keys=True))
+ 
+-    def test_vfx_source_emitter_spawn_curve_module_layer_hook_reduced_contracts(self):
+-        required={'vfx-source','emitter-state','spawn-region','emission-curve','particle-module','vfx-layer','vfx-interaction-hook','vfx-timing-event','reduced-effect-rule','vfx-export-target'}
++    def test_mission_source_objective_condition_edge_world_reward_failure_runtime_contracts(self):
++        required={'mission-source','objective-state','mission-condition','mission-edge','mission-world-reference','mission-reward-reference','mission-failure-recovery','mission-runtime-flag','mission-variant','mission-export-target'}
+         self.assertTrue(required <= set(vt.PRIMITIVES))
++        self.assertTrue(vt.PRIMITIVES['mission-source']['identity_source_version_context_required'])
++        self.assertTrue(vt.PRIMITIVES['objective-state']['identity_type_status_source_required'])
++        self.assertTrue(vt.PRIMITIVES['mission-condition']['subject_operator_value_source_required'])
++        self.assertTrue(vt.PRIMITIVES['mission-edge']['from_to_type_conditions_required'])
++        self.assertTrue(vt.PRIMITIVES['mission-world-reference']['target_source_status_required'])
++        self.assertTrue(vt.PRIMITIVES['mission-reward-reference']['reward_source_amount_status_required'])
++        self.assertTrue(vt.PRIMITIVES['mission-failure-recovery']['condition_recovery_consequence_required'])
++        self.assertTrue(vt.PRIMITIVES['mission-runtime-flag']['identity_value_source_required'])
++        self.assertTrue(vt.PRIMITIVES['mission-variant']['base_delta_context_required'])
++        self.assertTrue(vt.PRIMITIVES['mission-export-target']['requirements_must_be_visible'])
++
++    def test_vfx_environment_brand_motion_and_prior_boundaries_remain_present(self):
+         self.assertTrue(vt.PRIMITIVES['vfx-source']['identity_source_version_purpose_required'])
+-        self.assertTrue(vt.PRIMITIVES['emitter-state']['trigger_lifetime_rate_required'])
+-        self.assertTrue(vt.PRIMITIVES['spawn-region']['shape_transform_dimensions_required'])
+-        self.assertTrue(vt.PRIMITIVES['emission-curve']['channel_time_value_required'])
+-        self.assertTrue(vt.PRIMITIVES['particle-module']['identity_parameters_order_required'])
+-        self.assertTrue(vt.PRIMITIVES['vfx-layer']['identity_blend_order_required'])
+         self.assertTrue(vt.PRIMITIVES['vfx-interaction-hook']['subject_event_response_source_required'])
+-        self.assertTrue(vt.PRIMITIVES['vfx-timing-event']['time_event_source_required'])
+-        self.assertTrue(vt.PRIMITIVES['reduced-effect-rule']['equivalent_semantic_feedback_required'])
+-        self.assertTrue(vt.PRIMITIVES['vfx-export-target']['requirements_must_be_visible'])
+-
+-    def test_environment_brand_motion_and_prior_boundaries_remain_present(self):
+         self.assertTrue(vt.PRIMITIVES['environment-source']['identity_source_version_scope_required'])
+         self.assertTrue(vt.PRIMITIVES['environment-measurement']['value_unit_source_precision_required'])
+         self.assertTrue(vt.PRIMITIVES['brand-asset-source']['identity_source_version_provenance_required'])
+@@ -104,12 +120,12 @@ class VisualTemplateTests(unittest.TestCase):
+         self.assertTrue(vt.PRIMITIVES['truth-state']['source_must_be_visible'])
+ 
+     def test_copy_safety_variant_rejection_and_bad_geometry(self):
+-        a=vt.resolve('visual.vfx.effect-stage',1920,1080); b=vt.resolve('visual.vfx.effect-stage',1920,1080)
++        a=vt.resolve('visual.mission.branch-flow',1920,1080); b=vt.resolve('visual.mission.branch-flow',1920,1080)
+         self.assertEqual(a,b)
+-        copy=vt.get('visual.vfx.effect-stage'); copy['name']='changed'
+-        self.assertNotEqual(vt.get('visual.vfx.effect-stage')['name'],'changed')
+-        with self.assertRaises(ValueError): vt.resolve('visual.vfx.effect-stage',1920,1080,variant='unknown')
+-        bad=vt.get('visual.vfx.effect-stage'); bad['variants']['standard']['stage']=[.9,.9,.2,.2]
++        copy=vt.get('visual.mission.branch-flow'); copy['name']='changed'
++        self.assertNotEqual(vt.get('visual.mission.branch-flow')['name'],'changed')
++        with self.assertRaises(ValueError): vt.resolve('visual.mission.branch-flow',1920,1080,variant='unknown')
++        bad=vt.get('visual.mission.branch-flow'); bad['variants']['standard']['graph']=[.9,.9,.2,.2]
+         with self.assertRaises(ValueError): vt.validate_screen(bad)
+ 
+     def test_exact_sticker_slot_binding_is_retained(self):
+diff --git a/tools/visual_template_proof.py b/tools/visual_template_proof.py
+index 4362f76..8ba83be 100644
+--- a/tools/visual_template_proof.py
++++ b/tools/visual_template_proof.py
+@@ -8,7 +8,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src'))
+ from axm_uc import visual_templates as vt
+ 
+ SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
+-PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell","visual.keyart.core","visual.cards.core","visual.cinematic.core","visual.broadcast.core","visual.diagram.core","visual.atlas.core","visual.novel.core","visual.showroom.core","visual.music.core","visual.presentation.core","visual.character.core","visual.configurator.core","visual.motion.core","visual.brand.core","visual.environment.core","visual.vfx.core")
++PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell","visual.keyart.core","visual.cards.core","visual.cinematic.core","visual.broadcast.core","visual.diagram.core","visual.atlas.core","visual.novel.core","visual.showroom.core","visual.music.core","visual.presentation.core","visual.character.core","visual.configurator.core","visual.motion.core","visual.brand.core","visual.environment.core","visual.vfx.core","visual.mission.core")
+ 
+ def _write(project,target):
+     target.mkdir(); out=[]
+@@ -25,7 +25,7 @@ def main(argv):
+     out.mkdir(parents=True)
+     try:
+         counts=vt.validate_catalog()
+-        if counts!={'styles':28,'primitives':226,'screens':264,'products':26}: raise AssertionError(counts)
++        if counts!={'styles':29,'primitives':236,'screens':274,'products':27}: raise AssertionError(counts)
+         evidence=[]
+         for pid in PRODUCTS:
+             expected=vt.get(pid)
+@@ -61,27 +61,30 @@ def main(argv):
+             ('visual.brand.core',1920,1080,'brand','AXM Source-Bound Brand Identity Foundation'),
+             ('visual.environment.core',1920,1080,'environment','AXM Environment and Level Reference Foundation'),
+             ('visual.vfx.core',1920,1080,'vfx','AXM VFX and Particle Foundation'),
++            ('visual.mission.core',1920,1080,'mission','AXM Quest and Mission Flow Foundation'),
+         )
+         outputs=[]
+         for pid,w,h,folder,title in galleries: outputs+=_write(vt.product_project(pid,w,h,title),out/folder)
+         outputs+=_write(vt.screen_project('product.mobile.home',1080,1920,'AXM Mobile Foundation'),out/'mobile-home')
+-        product=vt.get('visual.vfx.core')
+-        required={'visual.vfx.project-hub','visual.vfx.effect-stage','visual.vfx.emitter-editor','visual.vfx.spawn-region','visual.vfx.curves-timing','visual.vfx.modules','visual.vfx.layers-composite','visual.vfx.interaction-hooks','visual.vfx.reduced-performance','visual.vfx.review-export'}
+-        if set(product['screens'])!=required: raise AssertionError('vfx pack lost required surfaces')
++        product=vt.get('visual.mission.core')
++        required={'visual.mission.project-hub','visual.mission.objectives','visual.mission.conditions','visual.mission.branch-flow','visual.mission.world-bindings','visual.mission.rewards-outcomes','visual.mission.failure-retry','visual.mission.runtime-state','visual.mission.variants','visual.mission.review-export'}
++        if set(product['screens'])!=required: raise AssertionError('mission pack lost required surfaces')
+         checks={
+-            'effect_identity_source_purpose':vt.PRIMITIVES['vfx-source']['identity_source_version_purpose_required'],
+-            'emitter_trigger_lifetime_rate':vt.PRIMITIVES['emitter-state']['trigger_lifetime_rate_required'],
+-            'spawn_shape_transform_dimensions':vt.PRIMITIVES['spawn-region']['shape_transform_dimensions_required'],
+-            'emission_channel_time_value':vt.PRIMITIVES['emission-curve']['channel_time_value_required'],
+-            'module_identity_params_order':vt.PRIMITIVES['particle-module']['identity_parameters_order_required'],
+-            'layer_identity_blend_order':vt.PRIMITIVES['vfx-layer']['identity_blend_order_required'],
+-            'interaction_subject_event_response_source':vt.PRIMITIVES['vfx-interaction-hook']['subject_event_response_source_required'],
+-            'timing_event_source':vt.PRIMITIVES['vfx-timing-event']['time_event_source_required'],
+-            'reduced_semantic_feedback':vt.PRIMITIVES['reduced-effect-rule']['equivalent_semantic_feedback_required'],
+-            'export_requirements_visible':vt.PRIMITIVES['vfx-export-target']['requirements_must_be_visible'],
++            'mission_identity_source_context':vt.PRIMITIVES['mission-source']['identity_source_version_context_required'],
++            'objective_identity_status_source':vt.PRIMITIVES['objective-state']['identity_type_status_source_required'],
++            'condition_subject_operator_value_source':vt.PRIMITIVES['mission-condition']['subject_operator_value_source_required'],
++            'edge_from_to_type_conditions':vt.PRIMITIVES['mission-edge']['from_to_type_conditions_required'],
++            'world_target_source_status':vt.PRIMITIVES['mission-world-reference']['target_source_status_required'],
++            'reward_source_amount_status':vt.PRIMITIVES['mission-reward-reference']['reward_source_amount_status_required'],
++            'failure_recovery_consequence':vt.PRIMITIVES['mission-failure-recovery']['condition_recovery_consequence_required'],
++            'runtime_flag_identity_value_source':vt.PRIMITIVES['mission-runtime-flag']['identity_value_source_required'],
++            'variant_base_delta_context':vt.PRIMITIVES['mission-variant']['base_delta_context_required'],
++            'export_requirements_visible':vt.PRIMITIVES['mission-export-target']['requirements_must_be_visible'],
+         }
+-        if not all(checks.values()): raise AssertionError('vfx source/runtime contract failed')
++        if not all(checks.values()): raise AssertionError('mission source/runtime contract failed')
+         retained={
++            'vfx_source':vt.PRIMITIVES['vfx-source']['identity_source_version_purpose_required'],
++            'vfx_interaction':vt.PRIMITIVES['vfx-interaction-hook']['subject_event_response_source_required'],
+             'environment_source':vt.PRIMITIVES['environment-source']['identity_source_version_scope_required'],
+             'environment_measurement':vt.PRIMITIVES['environment-measurement']['value_unit_source_precision_required'],
+             'brand_asset':vt.PRIMITIVES['brand-asset-source']['identity_source_version_provenance_required'],
+@@ -96,7 +99,7 @@ def main(argv):
+             'atlas_coordinate':vt.PRIMITIVES['map-coordinate']['system_source_precision_required'],
+         }
+         if not all(retained.values()): raise AssertionError('prior visual source boundary failed')
+-        receipt={'schema':'axm.visual-template-proof/v22','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'vfx_checks':checks,'retained_checks':retained,'truth':'Offline structural evidence only. Runtime integration, collision or damage correctness, gameplay balance, GPU cost, accessibility acceptance, frame pacing and aesthetic quality were not observed.'}
++        receipt={'schema':'axm.visual-template-proof/v23','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'mission_checks':checks,'retained_checks':retained,'truth':'Offline structural evidence only. Mission balance, narrative quality, runtime branch reachability, reward correctness, map correctness and gameplay acceptance were not observed.'}
+         (out/'receipt.json').write_text(json.dumps(receipt,indent=2,sort_keys=True),encoding='utf-8')
+         print(json.dumps(receipt,indent=2,sort_keys=True))
+     except BaseException:

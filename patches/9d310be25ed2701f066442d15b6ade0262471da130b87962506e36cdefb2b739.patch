@@ -1,0 +1,633 @@
+diff --git a/capabilities/live/AXM-CAP-CREATIVE-FLOW-SPINE.json b/capabilities/live/AXM-CAP-CREATIVE-FLOW-SPINE.json
+new file mode 100644
+index 0000000..4e39cc3
+--- /dev/null
++++ b/capabilities/live/AXM-CAP-CREATIVE-FLOW-SPINE.json
+@@ -0,0 +1,72 @@
++{
++  "id": "AXM-CAP-CREATIVE-FLOW-SPINE",
++  "version": "0.1.0",
++  "status": "live",
++  "purpose": "Discover, resolve, preflight and execute bounded multi-hand creative plans against the shared deterministic Creative Hands body without making AI the owner of those capabilities.",
++  "handles": [
++    "creative-flow",
++    "creative-hand-flow",
++    "creative-tool-orchestration"
++  ],
++  "input_contract": {
++    "required": [],
++    "properties": {
++      "mode": "summary, discover, plan or execute; defaults to execute when steps are supplied and discover otherwise",
++      "goal": "optional caller goal used only for deterministic token discovery in v1; prose alone never authorizes execution",
++      "discovery": "optional exact id/family/operation/query filters",
++      "state": "optional canonical candidate-state values available to plan steps",
++      "steps": "bounded explicit DAG steps using hand_id, recipe_id or a uniquely resolvable selector",
++      "expose": "optional named references to return alongside final candidate state"
++    }
++  },
++  "output_contract": {
++    "kind": "creative-flow-result",
++    "contains": [
++      "exact Creative Hands registry evidence",
++      "deterministic discovery or HOLD evidence",
++      "compiled dependency order and exact selected operation ids",
++      "per-step input/output digests and PASS receipts",
++      "candidate final-state digest on successful execution",
++      "explicit failure/HOLD without mutating supplied canonical state"
++    ]
++  },
++  "dependencies": [],
++  "relationships": [
++    "routes through PlatformHands.creativeHands rather than duplicating creative implementations",
++    "lets human code, deterministic recipes and AI-proposed plans use the same underlying hand body",
++    "keeps ambiguous selection and prose-only planning on HOLD rather than silently choosing"
++  ],
++  "anatomy_refs": [],
++  "implementation": {
++    "kind": "DETERMINISTIC_SOURCE",
++    "entrypoint": "builtin:creative_flow",
++    "source": "src/axm_uc/creative_flow.py",
++    "runtime_bridge": "capabilities/platform-hands/shared/asset-hands/creative-flow-bridge.js"
++  },
++  "limitations": [
++    "V1 does not invent an execution plan from arbitrary prose. A goal without explicit steps returns deterministic candidates and HOLD_PLAN_REQUIRED.",
++    "Compatibility preflight proves plan structure, exact operation existence, dependencies and state-reference availability; individual hand implementations remain authoritative for their own schema and parameter validation at execution.",
++    "Execution is an in-memory candidate transaction. V1 does not persist final creative state to a project file or machine canon by itself.",
++    "The local Node runtime used by Platform Hands must be available. No network access is required.",
++    "Maximum explicit flow length is 128 steps and maximum encoded request size is 64 MiB."
++  ],
++  "persistent_state": null,
++  "root_fit": {
++    "truth": {
++      "fit": true,
++      "basis": "Every resolved operation id, plan digest, state digest, step dependency and execution receipt remains inspectable; ambiguous discovery holds instead of being narrated as certainty."
++    },
++    "agency": {
++      "fit": true,
++      "basis": "The caller supplies or accepts the plan. AI may propose the same explicit plan format but does not gain hidden execution authority or ownership of the hands."
++    },
++    "continuity": {
++      "fit": true,
++      "basis": "The supplied canonical state is cloned into candidate state and is not mutated by the flow runtime; failed plans return HOLD evidence rather than partially committing state."
++    },
++    "wisdom-before-speed": {
++      "fit": true,
++      "basis": "Plans are bounded, dependency-sorted and structurally preflighted before execution; selectors must resolve uniquely and each hand still enforces its own bounded contract."
++    }
++  }
++}
+diff --git a/docs/CREATIVE_FLOW_WAVE8.md b/docs/CREATIVE_FLOW_WAVE8.md
+new file mode 100644
+index 0000000..03f57f1
+--- /dev/null
++++ b/docs/CREATIVE_FLOW_WAVE8.md
+@@ -0,0 +1,215 @@
++# Creative Flow — machine-use spine (Wave 8)
++
++Wave 8 turns the existing Creative Hands body from a callable toolbox into a first-class Universal Creation execution path.
++
++The important boundary is unchanged: the creative capabilities belong to the machine. A human, deterministic recipe, program or AI may propose the same explicit flow plan, but no AI owns or privately implements the hands.
++
++## Current body
++
++At this wave the public Creative Hands service exposes:
++
++- **314 executable creative hands**
++- **321 callable creative recipes**
++
++Creative Flow does not duplicate those implementations. It queries and invokes the existing `PlatformHands.creativeHands` service.
++
++## Machine route
++
++A new live capability handles:
++
++- `creative-flow`
++- `creative-hand-flow`
++- `creative-tool-orchestration`
++
++This means the existing `UniversalCreationMachine.create()` path can execute a Creative Flow without a special privileged branch in `machine.py`.
++
++Example:
++
++```bash
++PYTHONPATH=src python -m axm_uc create examples/requests/creative_flow_mesh.json
++```
++
++JavaScript hosts can use the same machinery through:
++
++```js
++const PlatformHands = require('./capabilities/platform-hands');
++PlatformHands.creativeFlow.run(request);
++```
++
++The Python live capability uses the local Node runtime through `creative-flow-bridge.js`. It requires no network access.
++
++## V1 flow
++
++The permanent conceptual path begins here:
++
++```text
++goal / explicit plan
++        ↓
++creative-hand discovery
++        ↓
++exact operation resolution
++        ↓
++dependency + state-reference compilation
++        ↓
++preflight
++        ↓
++deterministic DAG execution
++        ↓
++step receipts + candidate state
++```
++
++V1 intentionally stops short of pretending that arbitrary prose can already become a trustworthy full execution plan.
++
++A prose-only `mode: plan` request returns candidate hands and:
++
++`HOLD_PLAN_REQUIRED`
++
++An AI can propose the exact same explicit plan format that a human, recipe or program can provide. The deterministic machine then owns validation and execution.
++
++## Discovery
++
++Discovery can filter or rank by:
++
++- exact hand ID;
++- family;
++- operation;
++- deterministic token query.
++
++An execution selector must resolve uniquely. Equal best matches return `HOLD_AMBIGUOUS` rather than silently choosing one.
++
++## Plan steps
++
++Each step has exactly one operator source:
++
++- `hand_id`
++- `recipe_id`
++- `selector`
++
++A step may save its primary result into candidate state with `save_as`.
++
++Arguments may refer to candidate state:
++
++```json
++{"$state": "mesh"}
++```
++
++or to an earlier raw step execution result:
++
++```json
++{"$ref": "step-id.result"}
++```
++
++Literal objects that would otherwise look like references can be wrapped as:
++
++```json
++{"$literal": {"$state": "not-a-reference"}}
++```
++
++## Dependency inference
++
++Explicit `depends_on` remains supported, but callers do not need to repeat obvious state dependencies.
++
++If step `make` saves `mesh` and step `edit` consumes `{"$state":"mesh"}`, the compiler automatically adds `make` as a dependency of `edit`.
++
++V1 rejects:
++
++- duplicate step IDs;
++- missing dependencies;
++- cycles;
++- missing state producers;
++- self-consumption of a step's own output;
++- duplicate `save_as` names;
++- overwriting caller-supplied initial state through `save_as`;
++- steps that specify multiple operator sources.
++
++## Candidate-state transaction
++
++The supplied state is cloned before execution.
++
++A successful flow returns:
++
++- exact compiled plan digest;
++- initial state digest;
++- final candidate-state digest;
++- per-step operation ID;
++- dependency list;
++- input digest;
++- output digest;
++- PASS receipt;
++- final candidate state;
++- optional explicitly exposed outputs.
++
++If any hand fails, Creative Flow returns:
++
++`HOLD_EXECUTION_FAILED`
++
++with the successful receipts and failure evidence. It does **not** return a final candidate state and does not mutate the supplied source state.
++
++This is candidate-state atomicity, not a claim that arbitrary future hands with external side effects can always be rolled back. Current Creative Hands are in-memory deterministic creative operations; external publication remains a separate machine boundary.
++
++## Cross-registry proof
++
++The Wave 8 selftest executes a real chain spanning different creative organs:
++
++```text
++mesh primitive
++  → face selection
++  → region extrusion
++  → structural shear modifier
++  → mesh bounds analysis
++```
++
++State outputs from one registry become validated inputs to another through the same Creative Flow DAG.
++
++## Bounds
++
++V1 limits:
++
++- maximum 128 explicit steps;
++- maximum 64 MiB encoded input request;
++- local Node runtime required;
++- every selected hand remains authoritative for its own parameter, schema and resource bounds.
++
++The flow compiler currently proves structural compatibility: exact operator existence, unique selection, dependency acyclicity and state availability. It does not falsely claim a universal static type system for all 314 existing hand arguments. Runtime hand validation remains authoritative until richer accepted/produced schema metadata is added to every hand.
++
++## What Wave 8 changes strategically
++
++Before Wave 8:
++
++```text
++caller → knows hand ID → invoke hand
++```
++
++After Wave 8:
++
++```text
++caller / AI / recipe
++        ↓
++explicit shared plan contract
++        ↓
++Universal Creation live capability
++        ↓
++Creative Flow compiler/executor
++        ↓
++all Creative Hands registries
++        ↓
++candidate state + receipts
++```
++
++That is the spine later modeling, animation, rigging, UV/material, video, audio and vector waves should plug into.
++
++## Next depth
++
++Useful future orchestration growth includes:
++
++- accepted/produced schema metadata for every hand;
++- automatic schema-edge compatibility planning;
++- cost/resource estimates;
++- inspection and repair predicates;
++- persistent project-state checkpoints;
++- explicit undo/compensation contracts where external side effects exist;
++- deterministic recipe synthesis from known subgoals;
++- richer goal interpretation by optional AI without changing machine authority;
++- inspection-driven loops: execute → inspect → select repair → re-run.
++
++Wave 8 is therefore not a claim of autonomous artistic planning. It is the first real deterministic execution body that such planning can safely target.
+diff --git a/examples/requests/creative_flow_mesh.json b/examples/requests/creative_flow_mesh.json
+new file mode 100644
+index 0000000..8f79dd3
+--- /dev/null
++++ b/examples/requests/creative_flow_mesh.json
+@@ -0,0 +1,84 @@
++{
++  "kind": "creative-flow",
++  "direction": "exercise one deterministic multi-hand mesh creation flow",
++  "inputs": {
++    "mode": "execute",
++    "goal": "create a shallow edited plane and inspect its final bounds",
++    "state": {
++      "request_label": "creative-flow-wave8-example"
++    },
++    "steps": [
++      {
++        "id": "plane",
++        "hand_id": "creative.mesh-primitive.plane",
++        "args": {
++          "spec": {
++            "id": "example-plane",
++            "detail": 4
++          }
++        },
++        "save_as": "mesh"
++      },
++      {
++        "id": "faces",
++        "hand_id": "creative.mesh-face-select.all",
++        "args": {
++          "mesh": {
++            "$state": "mesh"
++          }
++        },
++        "save_as": "selection"
++      },
++      {
++        "id": "extrude",
++        "hand_id": "creative.mesh-face-edit.extrude-region",
++        "args": {
++          "mesh": {
++            "$state": "mesh"
++          },
++          "selection": {
++            "$state": "selection"
++          },
++          "spec": {
++            "distance": 0.5,
++            "direction": [0, 1, 0]
++          }
++        },
++        "save_as": "extruded"
++      },
++      {
++        "id": "shear",
++        "hand_id": "creative.mesh-modifier.shear",
++        "args": {
++          "mesh": {
++            "$state": "extruded"
++          },
++          "spec": {
++            "target_axis": "x",
++            "source_axis": "y",
++            "factor": 0.25
++          }
++        },
++        "save_as": "model"
++      },
++      {
++        "id": "inspect",
++        "recipe_id": "mesh-analysis.bounds",
++        "args": {
++          "mesh": {
++            "$state": "model"
++          }
++        },
++        "save_as": "bounds"
++      }
++    ],
++    "expose": {
++      "model": {
++        "$state": "model"
++      },
++      "bounds": {
++        "$state": "bounds"
++      }
++    }
++  }
++}
+diff --git a/src/axm_uc/creative_flow.py b/src/axm_uc/creative_flow.py
+new file mode 100644
+index 0000000..1de63b8
+--- /dev/null
++++ b/src/axm_uc/creative_flow.py
+@@ -0,0 +1,87 @@
++from __future__ import annotations
++
++import json
++import shutil
++import subprocess
++from pathlib import Path
++from typing import Any
++
++MAX_REQUEST_BYTES = 64 * 1024 * 1024
++DEFAULT_TIMEOUT_SECONDS = 180
++BRIDGE_RELATIVE = Path("capabilities/platform-hands/shared/asset-hands/creative-flow-bridge.js")
++
++
++class CreativeFlowError(RuntimeError):
++    def __init__(self, message: str, details: dict[str, Any] | None = None):
++        super().__init__(message)
++        self.details = details or {}
++
++
++def integration_summary(root: Path) -> dict[str, Any]:
++    root = Path(root).resolve()
++    bridge = root / BRIDGE_RELATIVE
++    return {
++        "type": "CREATIVE_FLOW_SPINE",
++        "version": "1.0.0",
++        "creation_kind": "creative-flow",
++        "bridge": str(BRIDGE_RELATIVE).replace("\\", "/"),
++        "bridge_present": bridge.is_file(),
++        "runtime": "node",
++        "machine_route": "live capability registry",
++        "policy": "explicit plan execution plus deterministic discovery; prose-only goals HOLD for a plan",
++        "source_state_mutation": False,
++    }
++
++
++def run_creative_flow(root: Path, request: dict[str, Any], *, timeout: int = DEFAULT_TIMEOUT_SECONDS) -> dict[str, Any]:
++    if not isinstance(request, dict):
++        raise CreativeFlowError("creative flow request must be an object")
++    root = Path(root).resolve()
++    bridge = root / BRIDGE_RELATIVE
++    if not bridge.is_file():
++        raise CreativeFlowError(
++            "creative flow bridge is missing",
++            {"bridge": str(bridge)},
++        )
++    node = shutil.which("node")
++    if node is None:
++        raise CreativeFlowError(
++            "creative flow requires the local Node runtime used by Platform Hands",
++            {"runtime": "node", "network_required": False},
++        )
++    payload = json.dumps(request, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
++    if len(payload) > MAX_REQUEST_BYTES:
++        raise CreativeFlowError(
++            "creative flow request exceeds 64 MiB",
++            {"bytes": len(payload), "maximum_bytes": MAX_REQUEST_BYTES},
++        )
++    try:
++        completed = subprocess.run(
++            [node, str(bridge)],
++            cwd=root,
++            input=payload,
++            capture_output=True,
++            timeout=timeout,
++            check=False,
++        )
++    except subprocess.TimeoutExpired as exc:
++        raise CreativeFlowError(
++            "creative flow runtime timed out",
++            {"timeout_seconds": timeout},
++        ) from exc
++    if completed.returncode != 0:
++        stderr = completed.stderr.decode("utf-8", errors="replace")[-8000:]
++        raise CreativeFlowError(
++            "creative flow runtime failed",
++            {"returncode": completed.returncode, "stderr": stderr},
++        )
++    try:
++        result = json.loads(completed.stdout.decode("utf-8"))
++    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
++        raise CreativeFlowError(
++            "creative flow runtime returned unreadable JSON",
++            {"stdout_bytes": len(completed.stdout)},
++        ) from exc
++    if not isinstance(result, dict):
++        raise CreativeFlowError("creative flow runtime must return an object")
++    return result
+diff --git a/src/axm_uc/standalone_creation_capabilities.py b/src/axm_uc/standalone_creation_capabilities.py
+index eccbce9..fd506fd 100644
+--- a/src/axm_uc/standalone_creation_capabilities.py
++++ b/src/axm_uc/standalone_creation_capabilities.py
+@@ -179,6 +179,14 @@ def register_standalone_creation_builtins(
+         except Procedural3DError as exc:
+             raise capability_error(str(exc), exc.details) from exc
+ 
++    def creative_flow(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
++        from .creative_flow import CreativeFlowError, run_creative_flow
++
++        try:
++            return run_creative_flow(root, inputs)
++        except CreativeFlowError as exc:
++            raise capability_error(str(exc), exc.details) from exc
++
+     return {
+         "builtin:local_creation_provider": local_creation_provider,
+         "builtin:host_evidence": host_evidence,
+@@ -189,4 +197,5 @@ def register_standalone_creation_builtins(
+         "builtin:browser_game": browser_game,
+         "builtin:creation_growth": creation_growth,
+         "builtin:procedural_3d": procedural_3d,
++        "builtin:creative_flow": creative_flow,
+     }
+diff --git a/tests/test_creative_flow.py b/tests/test_creative_flow.py
+new file mode 100644
+index 0000000..d05e0ea
+--- /dev/null
++++ b/tests/test_creative_flow.py
+@@ -0,0 +1,106 @@
++from __future__ import annotations
++
++import shutil
++import sys
++import unittest
++from pathlib import Path
++
++ROOT = Path(__file__).resolve().parents[1]
++sys.path.insert(0, str(ROOT / "src"))
++
++from axm_uc.machine import UniversalCreationMachine
++
++
++@unittest.skipUnless(shutil.which("node"), "Creative Flow uses the local Platform Hands Node runtime")
++class CreativeFlowMachineTests(unittest.TestCase):
++    def test_live_capability_routes_multi_hand_flow(self):
++        machine = UniversalCreationMachine(ROOT)
++        manifest = machine.capabilities.route("creative-flow")
++        self.assertIsNotNone(manifest)
++        self.assertEqual(manifest["id"], "AXM-CAP-CREATIVE-FLOW-SPINE")
++
++        result = machine.create({
++            "kind": "creative-flow",
++            "direction": "create a wider cube and inspect its exact bounds",
++            "inputs": {
++                "mode": "execute",
++                "goal": "create a wider cube and inspect its exact bounds",
++                "state": {"caller": "machine-test"},
++                "steps": [
++                    {
++                        "id": "make",
++                        "hand_id": "creative.mesh-primitive.cube",
++                        "args": {"spec": {"id": "machine-flow-cube", "detail": 8}},
++                        "save_as": "mesh",
++                    },
++                    {
++                        "id": "scale",
++                        "selector": {"family": "mesh-transform", "operation": "scale"},
++                        "args": {"mesh": {"$state": "mesh"}, "vector": [2, 1, 1]},
++                        "save_as": "scaled",
++                    },
++                    {
++                        "id": "bounds",
++                        "recipe_id": "mesh-analysis.bounds",
++                        "args": {"mesh": {"$state": "scaled"}},
++                        "save_as": "bounds",
++                    },
++                ],
++                "expose": {"bounds": {"$state": "bounds"}},
++            },
++        })
++        self.assertEqual(result["type"], "CREATION_RESULT")
++        self.assertEqual(result["capability"], "AXM-CAP-CREATIVE-FLOW-SPINE")
++        flow = result["result"]
++        self.assertEqual(flow["status"], "PASS")
++        self.assertTrue(flow["candidate_ready"])
++        self.assertFalse(flow["source_state_mutated"])
++        self.assertEqual(len(flow["receipts"]), 3)
++        self.assertEqual(flow["outputs"]["bounds"]["size"], [4, 2, 2])
++
++    def test_prose_goal_discovers_but_does_not_self_authorize_plan(self):
++        result = UniversalCreationMachine(ROOT).create({
++            "kind": "creative-flow",
++            "direction": "discover relevant creative hands",
++            "inputs": {
++                "mode": "plan",
++                "goal": "sculpt and smooth a mesh surface",
++            },
++        })
++        self.assertEqual(result["type"], "CREATION_RESULT")
++        flow = result["result"]
++        self.assertEqual(flow["status"], "HOLD_PLAN_REQUIRED")
++        self.assertTrue(flow["discovery"]["matches"])
++
++    def test_failed_step_does_not_publish_final_candidate_state(self):
++        result = UniversalCreationMachine(ROOT).create({
++            "kind": "creative-flow",
++            "inputs": {
++                "mode": "execute",
++                "state": {"caller": "source"},
++                "steps": [
++                    {
++                        "id": "make",
++                        "hand_id": "creative.mesh-primitive.cube",
++                        "args": {"spec": {"id": "failure-cube", "detail": 8}},
++                        "save_as": "mesh",
++                    },
++                    {
++                        "id": "bad-scale",
++                        "hand_id": "creative.mesh-transform.scale",
++                        "args": {"mesh": {"$state": "mesh"}, "vector": [-1, 1, 1]},
++                        "save_as": "scaled",
++                    },
++                ],
++            },
++        })
++        flow = result["result"]
++        self.assertEqual(flow["status"], "HOLD_EXECUTION_FAILED")
++        self.assertFalse(flow["candidate_ready"])
++        self.assertFalse(flow["source_state_mutated"])
++        self.assertNotIn("final_state", flow)
++        self.assertEqual(flow["failure"]["step_id"], "bad-scale")
++
++
++if __name__ == "__main__":
++    unittest.main()
+diff --git a/tests/test_creative_precision_fabric.py b/tests/test_creative_precision_fabric.py
+index 5bbd72f..bdb2763 100644
+--- a/tests/test_creative_precision_fabric.py
++++ b/tests/test_creative_precision_fabric.py
+@@ -51,6 +51,9 @@ class CreativePrecisionFabricTests(unittest.TestCase):
+     def test_sculpt_uv_topology_modifier_wave(self):
+         self.run_node('creative-mesh-advanced-hands-selftest.js')
+ 
++    def test_creative_flow_spine(self):
++        self.run_node('creative-flow-selftest.js')
++
+ 
+ if __name__ == '__main__':
+     unittest.main()

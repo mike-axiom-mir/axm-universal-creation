@@ -1,0 +1,209 @@
+{
+  "capsule_id": "a1606d31bb6eb8fb8832545d36521549150c0c2df617aab17df1370fe9515cd5",
+  "evidence": {
+    "files": [
+      {
+        "additions": 84,
+        "binary": false,
+        "content_sha256": "726babf4c2650520eee3d266fde9e2a547be0a56a0cebaeb6e4976dbd9a6254f",
+        "deletions": 0,
+        "path": "RTS_PLATE_RECONSTRUCTION.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "RTS plate-directed geometry reconstruction",
+          "Executable hands",
+          "Lossless compact distribution",
+          "Runtime and continuity boundaries"
+        ]
+      },
+      {
+        "additions": 41,
+        "binary": false,
+        "content_sha256": "669daa3ee6ec7b6a9de81357f2d44f9f07d451df69267259ea3e7274c041d1d9",
+        "deletions": 0,
+        "path": "tests/test_rts_shared_pack.py",
+        "status": "A",
+        "symbols": [
+          "SharedPackTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 704,
+        "binary": false,
+        "content_sha256": "21327c30901b11084947350da73d8e20c7f925edf419f6b7602b316ebd8aa44e",
+        "deletions": 0,
+        "path": "tools/blender/axm_rts_plate_architecture.py",
+        "status": "A",
+        "symbols": [
+          "base",
+          "sign",
+          "ladder",
+          "window",
+          "shell",
+          "canopy",
+          "roof_arch",
+          "tank",
+          "clutter",
+          "tower",
+          "dish",
+          "workshop_inside",
+          "building",
+          "industry",
+          "gun",
+          "rotary",
+          "engine",
+          "anomaly",
+          "equipment",
+          "sandbags",
+          "defense",
+          "utility",
+          "crew",
+          "ruins",
+          "world"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 50,
+        "binary": false,
+        "content_sha256": "04fe7b61edfc4f459818065ab55f5c8c72a529c40cec454bbbc859c5b03b1ec7",
+        "deletions": 0,
+        "path": "tools/blender/axm_rts_plate_forge.py",
+        "status": "A",
+        "symbols": [
+          "build"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 320,
+        "binary": false,
+        "content_sha256": "e465d392b2ce5052a00bbcf2b02538e5782ff3efcb6b622b24e86ed2424bfad2",
+        "deletions": 0,
+        "path": "tools/blender/axm_rts_vehicle_forge.py",
+        "status": "A",
+        "symbols": [
+          "badge",
+          "wheel",
+          "lamp",
+          "flag",
+          "cargo",
+          "chassis",
+          "tracks",
+          "cabin",
+          "crane",
+          "vehicle_fittings",
+          "truck",
+          "buggy",
+          "cart",
+          "build"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 80,
+        "binary": false,
+        "content_sha256": "733f5b4afe3008b3cef1de879d557b89db2dce6c676db2da14a68a28aba8b782",
+        "deletions": 0,
+        "path": "tools/blender/pack_rts_shared.py",
+        "status": "A",
+        "symbols": [
+          "sha",
+          "read_glb",
+          "convert"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "1bd86ca1e45d2812997b0ec3bb98be7bf2f20a4178c1f682378325a395372d79"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 6,
+    "kinds": [
+      "code",
+      "knowledge",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "anomaly",
+      "arch",
+      "architecture",
+      "asset",
+      "axm",
+      "badge",
+      "base",
+      "blender",
+      "boundaries",
+      "buggy",
+      "build",
+      "building",
+      "cabin",
+      "canopy",
+      "cargo",
+      "cart",
+      "chassis",
+      "clutter",
+      "compact",
+      "continuity",
+      "convert",
+      "crane",
+      "creation-machine",
+      "crew",
+      "defense",
+      "directed",
+      "dish",
+      "distribution",
+      "engine",
+      "equipment",
+      "executable",
+      "fittings",
+      "flag",
+      "forge",
+      "geometry",
+      "glb",
+      "gun",
+      "hands",
+      "industry",
+      "inside",
+      "ladder",
+      "lamp",
+      "lossless",
+      "merge",
+      "pack",
+      "packaging",
+      "plate",
+      "read",
+      "reconstruction",
+      "roof",
+      "rotary",
+      "rts",
+      "ruins",
+      "runtime",
+      "sandbags",
+      "sha",
+      "shared",
+      "shell",
+      "sign",
+      "standalone",
+      "tank",
+      "tools",
+      "tower",
+      "tracks"
+    ]
+  },
+  "source": {
+    "base": "f02f6fd772d77e50cdbe284d746bc29997e5bce4",
+    "commit_subject": "Merge RTS plate geometry reconstruction and compact asset packaging",
+    "head": "a5cc708457b7e8f33e794fdac648ae65d15a0fb4",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

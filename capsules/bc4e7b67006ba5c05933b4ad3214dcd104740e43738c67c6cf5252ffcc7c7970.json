@@ -1,0 +1,135 @@
+{
+  "capsule_id": "bc4e7b67006ba5c05933b4ad3214dcd104740e43738c67c6cf5252ffcc7c7970",
+  "evidence": {
+    "files": [
+      {
+        "additions": 109,
+        "binary": false,
+        "content_sha256": "16161d36a6a572b7e77f32870b511c38eaa257e3f8f795d33a057c66cd9fe428",
+        "deletions": 0,
+        "path": "GAME_STYLE_GROWTH.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Game style growth",
+          "Executable foundation",
+          "Next priorities",
+          "Current checkpoint"
+        ]
+      },
+      {
+        "additions": 252,
+        "binary": false,
+        "content_sha256": "9da0a8d992063d101083d71fd63daee86987b258ae3e1da07898ed06e263979f",
+        "deletions": 0,
+        "path": "src/axm_uc/game_material_styles.py",
+        "status": "A",
+        "symbols": [
+          "Finish",
+          "_u8",
+          "_inputs",
+          "_finish",
+          "_normal_from_height",
+          "_authored_fields",
+          "_validate_fields",
+          "_smooth_values",
+          "apply_finish",
+          "game_material_fields",
+          "game_material_catalog",
+          "game_material_request",
+          "generate_game_material"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 14,
+        "binary": false,
+        "content_sha256": "d5cc0c00e5110791aba201ad0fd19fbb9274b0c8da62967ec7781b41d9fcd5f9",
+        "deletions": 0,
+        "path": "src/axm_uc/visual_assets_cli.py",
+        "status": "M",
+        "symbols": [
+          "combined_catalog",
+          "build_parser",
+          "main"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 138,
+        "binary": false,
+        "content_sha256": "7ac68a6b9bfa644137e4cf86eb40abbbbd3da3b6c7b10d1e49b01f61f32646d5",
+        "deletions": 0,
+        "path": "tests/test_game_material_styles.py",
+        "status": "A",
+        "symbols": [
+          "GameMaterialStyleTests"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "42e2f142c5e19a456334e3e4df1b20611bb0a520ba2a4d16c331b7270402fbba"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 6,
+    "kinds": [
+      "code",
+      "knowledge",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "apply",
+      "authored",
+      "axm",
+      "build",
+      "catalog",
+      "checkpoint",
+      "cli",
+      "combined",
+      "creation-machine",
+      "current",
+      "executable",
+      "fields",
+      "finish",
+      "finishes",
+      "foundation",
+      "from",
+      "game",
+      "generate",
+      "growth",
+      "height",
+      "inputs",
+      "material",
+      "merge",
+      "next",
+      "normal",
+      "parser",
+      "preserve",
+      "priorities",
+      "realism",
+      "request",
+      "reusable",
+      "smooth",
+      "standalone",
+      "style",
+      "styles",
+      "universal-creation",
+      "validate",
+      "values",
+      "visual"
+    ]
+  },
+  "source": {
+    "base": "b6e77afca5dce48f42c41e73af3ec2f7709d6a6d",
+    "commit_subject": "Merge reusable game material finishes and preserve realism",
+    "head": "bf607a534b240522b919a39d8aecbc9f7ff665dd",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

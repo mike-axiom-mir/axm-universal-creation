@@ -1,0 +1,188 @@
+{
+  "capsule_id": "840c7a5b1bbbf404aeee3e3d204e9ae87d4c42c0ce5f714e66fd74ee99616ad4",
+  "evidence": {
+    "files": [
+      {
+        "additions": 45,
+        "binary": false,
+        "content_sha256": "198b97ea71be7e7e80e08925065a0c4c797fae18f7fd6eda13147c720d19ee4a",
+        "deletions": 0,
+        "path": "GAME_STYLE_GROWTH.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Current checkpoint",
+          "Offline pose execution pass \u2014 2026-09-15",
+          "Portable animation runtime pass \u2014 2026-09-13"
+        ]
+      },
+      {
+        "additions": 136,
+        "binary": false,
+        "content_sha256": "cc8eccd462b1ff1c87929506470f06053c8b98130882edb80e6130882ffc8976",
+        "deletions": 0,
+        "path": "docs/GAME_POSE_RUNTIME.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Offline game pose runtime",
+          "Portable coordinates and root ownership",
+          "Supported input and bounded failures",
+          "Evidence"
+        ]
+      },
+      {
+        "additions": 451,
+        "binary": false,
+        "content_sha256": "d962b8af59df3ef48f183353506849909b7d50719ba9b421b961e3bb4659f73d",
+        "deletions": 0,
+        "path": "src/axm_uc/game_pose_runtime.py",
+        "status": "A",
+        "symbols": [
+          "game_pose_runtime_catalog",
+          "_integer",
+          "_number",
+          "_vector",
+          "_quaternion",
+          "_slerp",
+          "_multiply",
+          "_transform",
+          "_trs",
+          "_matrix",
+          "_array",
+          "_parse",
+          "GamePoseAsset",
+          "load_game_pose_glb",
+          "publish_game_pose"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 12,
+        "binary": false,
+        "content_sha256": "728cca2618777a9505d1146aabcd53684defa388e6a20a206be1de8e210717c3",
+        "deletions": 0,
+        "path": "src/axm_uc/visual_assets_cli.py",
+        "status": "M",
+        "symbols": [
+          "combined_catalog",
+          "build_parser",
+          "main"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 254,
+        "binary": false,
+        "content_sha256": "9409602fc2ccc49381072693f0814e4c68f7bebfac773f799899fb0347c0065c",
+        "deletions": 0,
+        "path": "tests/test_game_pose_runtime.py",
+        "status": "A",
+        "symbols": [
+          "fixture",
+          "encode",
+          "GamePoseRuntimeTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 125,
+        "binary": false,
+        "content_sha256": "219f19b4586c253f76837be6381182ee4795ab6853f640129af61c9980a1643b",
+        "deletions": 0,
+        "path": "tools/blender/game_pose_runtime_roundtrip.py",
+        "status": "A",
+        "symbols": [
+          "blender_point",
+          "tree",
+          "compare",
+          "main"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "83d157b5852a40dc55c5db51da75679d45d5411d79c47c264099e650734880e7"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "animation",
+      "array",
+      "asset",
+      "axm",
+      "blender",
+      "bounded",
+      "build",
+      "catalog",
+      "checkpoint",
+      "cli",
+      "combined",
+      "compare",
+      "coordinates",
+      "creation-machine",
+      "current",
+      "encode",
+      "evidence",
+      "execution",
+      "failures",
+      "fixture",
+      "game",
+      "glb",
+      "growth",
+      "independently",
+      "input",
+      "integer",
+      "load",
+      "matrix",
+      "merge",
+      "multiply",
+      "number",
+      "offline",
+      "ownership",
+      "parse",
+      "parser",
+      "pass",
+      "point",
+      "portable",
+      "pose",
+      "positions",
+      "publish",
+      "quaternion",
+      "root",
+      "roundtrip",
+      "runtime",
+      "skin",
+      "slerp",
+      "standalone",
+      "style",
+      "supported",
+      "tools",
+      "transform",
+      "tree",
+      "trs",
+      "universal-creation",
+      "vector",
+      "verified",
+      "visual"
+    ]
+  },
+  "source": {
+    "base": "3ec310f4ad70874ce7535e60f46ca6a7fe0e5210",
+    "commit_subject": "Merge offline GLB pose execution and independently verified skin positions (#73)",
+    "head": "964ff1b28f000188bef14dab21337722ba6fc6c4",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

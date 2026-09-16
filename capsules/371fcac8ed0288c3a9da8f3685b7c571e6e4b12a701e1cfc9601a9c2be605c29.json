@@ -1,0 +1,187 @@
+{
+  "capsule_id": "371fcac8ed0288c3a9da8f3685b7c571e6e4b12a701e1cfc9601a9c2be605c29",
+  "evidence": {
+    "files": [
+      {
+        "additions": 39,
+        "binary": false,
+        "content_sha256": "c456d900456264717c0a68b32fd9432e57f88e625258149d3710043e99aefed9",
+        "deletions": 0,
+        "path": "ATLAS_TEMPLATE_PACK.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Editable World-Map / Lore-Atlas Template Pack",
+          "Product surfaces",
+          "Spatial and narrative contracts",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 48,
+        "binary": false,
+        "content_sha256": "86e46f17f66459eb789e7636e5f87b7ab422febf5369a3fad50e32626e9d11a7",
+        "deletions": 69,
+        "path": "VISUAL_TEMPLATE_FABRIC.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Current v10 candidate census",
+          "Product foundations",
+          "World-map / lore-atlas foundation",
+          "Registry and identity",
+          "CLI",
+          "Evidence gate",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 39,
+        "binary": false,
+        "content_sha256": "1b48950568e4879af62f30324faaaf0303488af099be0e049a01f81cf0a915ce",
+        "deletions": 40,
+        "path": "VISUAL_TEMPLATE_PRIORITY_MAP.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "AXM Visual Template Expansion Priority Map",
+          "Merged foundations",
+          "World-map / lore-atlas editor \u2014 IMPLEMENTED IN THIS LANE",
+          "Next high-value visual/creation families",
+          "Cross-cutting rules",
+          "Immediate build order"
+        ]
+      },
+      {
+        "additions": 88,
+        "binary": false,
+        "content_sha256": "c8a50cea1b13231233cb6306e54dd1e6ca9b281c2a81b93b31a8d52693e8957e",
+        "deletions": 0,
+        "path": "src/axm_uc/visual_template_atlas.py",
+        "status": "A",
+        "symbols": [
+          "_merge",
+          "extend_atlas_catalog"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 3,
+        "binary": false,
+        "content_sha256": "cc1466fc802fd0422d16e66f05caf8d844e5d7a5cd3d254b762142f1fc97e41c",
+        "deletions": 1,
+        "path": "src/axm_uc/visual_templates.py",
+        "status": "M",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 35,
+        "binary": false,
+        "content_sha256": "9674cd1dd747db3d15943d09a4236a2e65313737609b263e775892c1a8860467",
+        "deletions": 36,
+        "path": "tests/test_visual_templates.py",
+        "status": "M",
+        "symbols": [
+          "VisualTemplateTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 18,
+        "binary": false,
+        "content_sha256": "ae9949809a19e667090ac4351980599dbeae4704b3f0c3890a70025d9efce045",
+        "deletions": 17,
+        "path": "tools/visual_template_proof.py",
+        "status": "M",
+        "symbols": [
+          "_write",
+          "main"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "c4d522e0be8b5c4627162513b7acc3c9e82e09c251cfbaa255765b3a5fb7f13c"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "add",
+      "atlas",
+      "axm",
+      "boundary",
+      "build",
+      "candidate",
+      "catalog",
+      "census",
+      "cli",
+      "contracts",
+      "creation",
+      "creation-machine",
+      "cross",
+      "current",
+      "cutting",
+      "editable",
+      "editor",
+      "evidence",
+      "expansion",
+      "extend",
+      "fabric",
+      "families",
+      "foundation",
+      "foundations",
+      "gate",
+      "high",
+      "identity",
+      "immediate",
+      "implemented",
+      "lane",
+      "lore",
+      "map",
+      "merge",
+      "merged",
+      "narrative",
+      "next",
+      "order",
+      "pack",
+      "priority",
+      "product",
+      "proof",
+      "registry",
+      "rules",
+      "spatial",
+      "standalone",
+      "surfaces",
+      "template",
+      "templates",
+      "this",
+      "tools",
+      "truth",
+      "universal-creation",
+      "v10",
+      "value",
+      "visual",
+      "world",
+      "write"
+    ]
+  },
+  "source": {
+    "base": "63d42c86beb8ae01b6a8848d742fbfc71144cec7",
+    "commit_subject": "Add editable world-map and lore-atlas templates",
+    "head": "c89839485a6d09a3e70dbd633c5f1292348f37b1",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

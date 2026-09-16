@@ -1,0 +1,203 @@
+{
+  "capsule_id": "dbae668fff1da4c7ec85e146bd4f10d51518bcfc7db3a496c95e04504bdcf1c4",
+  "evidence": {
+    "files": [
+      {
+        "additions": 54,
+        "binary": false,
+        "content_sha256": "54142384c6577bedb648fa659387fa5d763b9f5aa434ae8adbf6f14f75ccc3e8",
+        "deletions": 6,
+        "path": "GAME_STYLE_GROWTH.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Current checkpoint",
+          "Layered wear pass \u2014 2026-09-13",
+          "Material realization pass \u2014 2026-09-13"
+        ]
+      },
+      {
+        "additions": 48,
+        "binary": false,
+        "content_sha256": "8335e1b7dae6c28e334117a7a7320d7fd87ad4e43df64c46741ccdfd156f4348",
+        "deletions": 3,
+        "path": "docs/GAME_MATERIAL_BLENDER.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Add a substrate layer and reserve a normalized UV rectangle around a logo:",
+          "Layered wear and readable regions",
+          "Limits and next work"
+        ]
+      },
+      {
+        "additions": 2,
+        "binary": false,
+        "content_sha256": "ee93d52bdeb508ec4c687b2d99b8ec3000733b2c746f974a2d5558b103bc5af1",
+        "deletions": 1,
+        "path": "src/axm_uc/game_material_bridge.py",
+        "status": "M",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 204,
+        "binary": false,
+        "content_sha256": "741a57336664c763600326ee92c07f7774a6cae498389798672d264d2e6dbdeb",
+        "deletions": 4,
+        "path": "src/axm_uc/game_material_styles.py",
+        "status": "M",
+        "symbols": [
+          "Finish",
+          "WearLayer",
+          "_inputs",
+          "_unit",
+          "_wear_layer",
+          "protected_regions_mask",
+          "_mask",
+          "_distance_to_segment",
+          "procedural_wear_mask",
+          "_srgb_linear",
+          "_linear_srgb",
+          "apply_layered_wear",
+          "layered_game_material_fields",
+          "_finish",
+          "game_material_catalog",
+          "game_material_request",
+          "generate_game_material"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 22,
+        "binary": false,
+        "content_sha256": "de0473c2238e0fd54f48040a7c18345d0f5c410dec7591ce1d295feffdc16ec9",
+        "deletions": 3,
+        "path": "src/axm_uc/visual_assets_cli.py",
+        "status": "M",
+        "symbols": [
+          "build_parser",
+          "main"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 144,
+        "binary": false,
+        "content_sha256": "576884bc9bc99f313b03d05523ba1aec2ac91af1e360d8cd406290bdb0e11195",
+        "deletions": 0,
+        "path": "tests/test_game_material_layers.py",
+        "status": "A",
+        "symbols": [
+          "LayeredGameMaterialTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 231,
+        "binary": false,
+        "content_sha256": "1bddec3ce63555efb8bffaa4be2d60ebef6d014a970b2caf2809fe97cc281e15",
+        "deletions": 0,
+        "path": "tools/blender/layered_wear_roundtrip.py",
+        "status": "A",
+        "symbols": [
+          "authored_wear_proposal",
+          "scene_setup",
+          "solid_material",
+          "add_label",
+          "build",
+          "glb_document",
+          "verify"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "1ebe47d24c684235805c794b8c540b16d35279a058603e5b0c786d6290e9f8ba"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 6,
+    "kinds": [
+      "code",
+      "knowledge",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "add",
+      "apply",
+      "around",
+      "authored",
+      "axm",
+      "blender",
+      "bridge",
+      "build",
+      "catalog",
+      "checkpoint",
+      "cli",
+      "creation-machine",
+      "current",
+      "distance",
+      "document",
+      "fields",
+      "finish",
+      "game",
+      "generate",
+      "glb",
+      "growth",
+      "inputs",
+      "label",
+      "layer",
+      "layered",
+      "layers",
+      "limits",
+      "linear",
+      "logo",
+      "mask",
+      "material",
+      "materials",
+      "merge",
+      "next",
+      "normalized",
+      "parser",
+      "pass",
+      "procedural",
+      "proposal",
+      "protected",
+      "readable",
+      "realization",
+      "rectangle",
+      "regions",
+      "request",
+      "reserve",
+      "roundtrip",
+      "scene",
+      "segment",
+      "setup",
+      "solid",
+      "srgb",
+      "standalone",
+      "style",
+      "styles",
+      "substrate",
+      "tools",
+      "unit",
+      "universal-creation",
+      "verify",
+      "visual",
+      "wear",
+      "work"
+    ]
+  },
+  "source": {
+    "base": "c20bcc4767694afc1199732c75a59a102f14ac35",
+    "commit_subject": "Merge protected layered wear and substrate materials (#62)",
+    "head": "2243cbb9af67df0a02049d74e8a02b46b7b840c6",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

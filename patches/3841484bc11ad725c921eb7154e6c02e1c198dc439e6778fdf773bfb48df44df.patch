@@ -1,0 +1,592 @@
+diff --git a/VFX_TEMPLATE_PACK.md b/VFX_TEMPLATE_PACK.md
+new file mode 100644
+index 0000000..c05d3ef
+--- /dev/null
++++ b/VFX_TEMPLATE_PACK.md
+@@ -0,0 +1,37 @@
++# Source-Bound VFX / Particle Template Pack
++
++`visual.vfx.core` is the reusable effect-authoring foundation for game effects, interface effects and visual storytelling.
++
++A spectacular preview is not evidence that a runtime/gameplay event occurred. Visual effects stay bound to explicit effect identity, emitters, timing, modules, layers and interaction hooks.
++
++## Surfaces
++
++- project / effect hub
++- effect stage
++- emitter-state editor
++- spawn-region editor
++- curves / timing editor
++- particle-module editor
++- layer / composite editor
++- runtime interaction-hook editor
++- reduced-effect / performance variant editor
++- review / export
++
++## Source-truth contract
++
++- `vfx-source` — exact effect identity, source, version, digest and semantic purpose;
++- `emitter-state` — exact trigger, lifetime, rate/burst and enabled state;
++- `spawn-region` — exact source shape/transform/dimensions/distribution;
++- `emission-curve` — explicit named channel plus time/value state;
++- `particle-module` — exact module identity, parameters, order and status;
++- `vfx-layer` — exact layer identity, blend/order/depth relation and source;
++- `vfx-interaction-hook` — exact subject/event/response/source and status;
++- `vfx-timing-event` — exact timeline event marker, source and semantic purpose;
++- `reduced-effect-rule` — reduced/minimal variant preserves required semantic feedback;
++- `vfx-export-target` — exact source/module/timing/hook/performance/accessibility requirements.
++
++## Truth boundary
++
++Particle motion, flashes, impacts or explosions do not prove damage, collision or gameplay events. Spawn previews do not rewrite source spawn geometry. Layer compositing does not flatten canonical source. Reduced-effect/performance variants preserve required information rather than simply removing effects blindly.
++
++This pack proves deterministic structural/editability contracts only. It does not prove runtime integration, game balance, collision/damage correctness, GPU cost, accessibility acceptance, frame pacing or aesthetic quality.
+\ No newline at end of file
+diff --git a/VISUAL_TEMPLATE_FABRIC.md b/VISUAL_TEMPLATE_FABRIC.md
+index 3c78fd8..b42b3be 100644
+--- a/VISUAL_TEMPLATE_FABRIC.md
++++ b/VISUAL_TEMPLATE_FABRIC.md
+@@ -2,47 +2,47 @@
+ 
+ Universal Creation contains one deterministic library of **known visual archetypes** between low-level format scaffolds and finished products. Templates are editable structural starting points, not finished art and not automatic canon.
+ 
+-The public module remains `axm_uc.visual_templates`. Explicit extension packs cover games/product plumbing, creative editors, comics, AXM system surfaces, key art, cards/decks, cinematic/broadcast overlays, diagrams, atlas/map editing, branching narrative, 3D showroom, music, presentation/explainers, character reference, equipment configuration, source-bound UI motion, brand/identity systems and environment/level references. Sticker Fabric remains the immutable/versioned registry bridge. Mathematical work can enrich declared ratios/ranges through `math_hooks` without replacing template identity.
++The public module remains `axm_uc.visual_templates`. Explicit extension packs cover games/product plumbing, creative editors, comics, AXM system surfaces, key art, cards/decks, cinematic/broadcast overlays, diagrams, atlas/map editing, branching narrative, 3D showroom, music, presentation/explainers, character reference, equipment configuration, source-bound UI motion, brand/identity systems, environment/level references, and VFX/particle authoring. Sticker Fabric remains the immutable/versioned registry bridge. Mathematical work can enrich declared ratios/ranges through `math_hooks` without replacing template identity.
+ 
+-## Current v19 candidate census
++## Current v20 candidate census
+ 
+-- **216 reusable visual/state primitives**
+-- **27 coherent style systems**
+-- **254 responsive screen archetypes**
+-- **25 whole-product archetypes**
+-- **279 exact screen/product definitions** when explicitly installed into Sticker Registry
++- **226 reusable visual/state primitives**
++- **28 coherent style systems**
++- **264 responsive screen archetypes**
++- **26 whole-product archetypes**
++- **290 exact screen/product definitions** when explicitly installed into Sticker Registry
+ 
+ Every major family provides compact, standard and wide normalized layouts. Unknown requested variants fail rather than silently falling back.
+ 
+-## Source-bound environment / level-reference foundation
++## Source-bound VFX / particle foundation
+ 
+-`visual.environment.core` provides ten production-reference surfaces:
++`visual.vfx.core` provides ten effect-authoring surfaces:
+ 
+-- project / location hub;
+-- environment identity board;
+-- zone / layout editor;
+-- scale / measurement editor;
+-- modular kit / prop editor;
+-- material / surface editor;
+-- lighting / weather / time reference editor;
+-- traversal / gameplay annotation editor;
+-- environment / biome variant editor;
++- project / effect hub;
++- effect stage;
++- emitter-state editor;
++- spawn-region editor;
++- curves / timing editor;
++- particle-module editor;
++- layer / composite editor;
++- runtime interaction-hook editor;
++- reduced-effect / performance editor;
+ - review / export.
+ 
+-Its `visual.environment.reference` style is replaceable. Environment truth remains explicit:
++Its `visual.vfx.effect` style is replaceable. Effect truth stays explicit:
+ 
+-- `environment-source` preserves exact location identity, source, version, digest and scope;
+-- `environment-zone` preserves exact geometry/source/status;
+-- `environment-measurement` preserves value, unit, source and precision/assumption state;
+-- `modular-environment-piece` preserves exact kit source, connection semantics and transform;
+-- `environment-prop` preserves prop identity/source, placement context and gameplay/visual status;
+-- `environment-material` preserves exact target/material/source/context;
+-- `environment-lighting-state` preserves source, time, weather and exposure/state;
+-- `traversal-reference` binds exact targets to traversal/gameplay type, source and status;
+-- `environment-variant` preserves exact base, deltas, context and source;
+-- `environment-export-target` keeps source-coverage, scale, material, prop, lighting and annotation requirements visible.
++- `vfx-source` preserves exact effect identity, source, version and semantic purpose;
++- `emitter-state` preserves trigger, lifetime, rate/burst and enabled state;
++- `spawn-region` preserves exact shape, source transform, dimensions and distribution;
++- `emission-curve` preserves an explicit channel and its time/value state;
++- `particle-module` preserves module identity, parameters and order;
++- `vfx-layer` preserves exact layer identity, blend/order/depth relationship and source state;
++- `vfx-interaction-hook` binds exact subjects/events/responses to source/runtime state;
++- `vfx-timing-event` preserves exact timeline markers and semantic purpose;
++- `reduced-effect-rule` preserves required semantic feedback while reducing intensity;
++- `vfx-export-target` keeps exact source/module/timing/hook/performance/accessibility requirements visible.
+ 
+-A beautiful reference board never becomes authoritative level geometry merely because it looks coherent. Physical scale is not inferred solely from perspective imagery. Prop proximity does not establish gameplay linkage. Lighting/weather/biome variants remain explicit state references rather than hidden rewrites of the base environment.
++A spectacular preview never proves that a collision, hit, damage event, gameplay trigger or other runtime state actually happened. Those semantics require exact source-bound interaction hooks. Spawn previews do not rewrite source spawn geometry, and compositing does not flatten canonical source layers.
+ 
+ ## Registry and identity
+ 
+@@ -52,8 +52,8 @@ Every built-in screen/product can be wrapped as an immutable Sticker definition.
+ 
+ ```sh
+ axm-visual-templates catalog
+-axm-visual-templates show visual.environment.core
+-axm-visual-templates render visual.environment.core creations/environment --width 1920 --height 1080
++axm-visual-templates show visual.vfx.core
++axm-visual-templates render visual.vfx.core creations/vfx --width 1920 --height 1080
+ ```
+ 
+ Preview/export remains derived inspection output, never authoritative source.
+@@ -65,19 +65,19 @@ python -m unittest discover -s tests -p 'test_visual_templates.py' -v
+ python tools/visual_template_proof.py /new/output/path
+ ```
+ 
+-The v19 gate requires:
++The v20 gate requires:
+ 
+-- exact census: 27 styles / 216 primitives / 254 screens / 25 products;
+-- all 254 screens stay within six representative viewport shapes;
++- exact census: 28 styles / 226 primitives / 264 screens / 26 products;
++- all 264 screens stay within six representative viewport shapes;
+ - exact product screen order and flows resolve across those viewports;
+-- parseable galleries for all prior proof products plus `visual.environment.core`;
+-- all 279 screen/product definitions install through Sticker Registry;
+-- exact environment identity/source/scope, zone geometry, measurements, modular kit, prop/material context, lighting state, traversal targets and environment variants remain present;
+-- prior brand/motion/configurator/character/presentation/music/showroom/visual-novel/atlas/diagram/broadcast/cinematic/card/key-art/comic/game/AXM boundaries remain intact;
++- parseable galleries for all prior proof products plus `visual.vfx.core`;
++- all 290 screen/product definitions install through Sticker Registry;
++- exact effect identity/source/purpose, emitter, spawn geometry, curves, modules, layers, runtime hooks, timing events and reduced-effect semantic-feedback contracts remain present;
++- prior environment/brand/motion/configurator/character/presentation/music/showroom/visual-novel/atlas/diagram/broadcast/cinematic/card/key-art/comic/game/AXM boundaries remain intact;
+ - copy safety, strict variant rejection, invalid-geometry rejection and exact Sticker-slot binding remain intact.
+ 
+ ## Truth boundary
+ 
+-Current evidence proves deterministic structural/editability contracts only. It does **not** prove final level geometry, physical scale, collision/navigation, gameplay quality, lighting correctness, performance or aesthetic acceptance.
++Current evidence proves deterministic structural/editability contracts only. It does **not** prove runtime integration, collision or damage correctness, gameplay balance, GPU cost, accessibility acceptance, frame pacing or aesthetic quality.
+ 
+-Consuming projects must supply real environment state. Unknown, estimated, decorative, optional, unavailable and unresolved information stays distinguishable. Richer editable source remains authoritative over reference boards/previews/exports.
++Consuming products must supply real runtime/gameplay state. Unknown, disabled, conditional and unresolved information stays distinguishishable. Richer editable source remains authoritative over previews/composites/exports.
+diff --git a/VISUAL_TEMPLATE_PRIORITY_MAP.md b/VISUAL_TEMPLATE_PRIORITY_MAP.md
+index fe5f4df..a3e693f 100644
+--- a/VISUAL_TEMPLATE_PRIORITY_MAP.md
++++ b/VISUAL_TEMPLATE_PRIORITY_MAP.md
+@@ -1,6 +1,6 @@
+ # AXM Visual Template Expansion Priority Map
+ 
+-Status: v19 growth lane after verified v1–v18 merges.
++Status: v20 growth lane after verified v1–v19 merges.
+ 
+ The visual-template fabric grows where Universal Creation is likely to reuse the knowledge soon. This is a build priority, not canon: templates remain editable foundations and may be replaced when evidence supports a better structure.
+ 
+@@ -14,48 +14,49 @@ The visual-template fabric grows where Universal Creation is likely to reuse the
+ - character / creature reference sheets;
+ - vehicle / weapon / equipment configurator;
+ - source-bound UI motion / transition systems;
+-- brand / identity system editor.
++- brand / identity system editor;
++- environment / level reference boards.
+ 
+-## Environment / level reference boards — IMPLEMENTED IN THIS LANE
++## VFX / particle reference-authoring — IMPLEMENTED IN THIS LANE
+ 
+-Product: `visual.environment.core`
++Product: `visual.vfx.core`
+ 
+ Implemented screens:
+ 
+-- `visual.environment.project-hub`
+-- `visual.environment.identity-board`
+-- `visual.environment.zones-layout`
+-- `visual.environment.scale-measurements`
+-- `visual.environment.modular-kit`
+-- `visual.environment.materials`
+-- `visual.environment.lighting-weather`
+-- `visual.environment.traversal-annotations`
+-- `visual.environment.variants`
+-- `visual.environment.review-export`
++- `visual.vfx.project-hub`
++- `visual.vfx.effect-stage`
++- `visual.vfx.emitter-editor`
++- `visual.vfx.spawn-region`
++- `visual.vfx.curves-timing`
++- `visual.vfx.modules`
++- `visual.vfx.layers-composite`
++- `visual.vfx.interaction-hooks`
++- `visual.vfx.reduced-performance`
++- `visual.vfx.review-export`
+ 
+ New primitives:
+ 
+-- `environment-source`
+-- `environment-zone`
+-- `environment-measurement`
+-- `modular-environment-piece`
+-- `environment-prop`
+-- `environment-material`
+-- `environment-lighting-state`
+-- `traversal-reference`
+-- `environment-variant`
+-- `environment-export-target`
++- `vfx-source`
++- `emitter-state`
++- `spawn-region`
++- `emission-curve`
++- `particle-module`
++- `vfx-layer`
++- `vfx-interaction-hook`
++- `vfx-timing-event`
++- `reduced-effect-rule`
++- `vfx-export-target`
+ 
+-Style: `visual.environment.reference`.
++Style: `visual.vfx.effect`.
+ 
+-The central rule is environment truth: reference boards guide production but do not become authoritative level geometry. Scale requires explicit measurements/source state, prop proximity is not gameplay linkage, and traversal/lighting/biome references remain exact source-bound annotations or variants.
++The central rule is runtime truth: effects can communicate or decorate exact events but never prove those events occurred. Collision, damage, interaction and state-change semantics require explicit source-bound hooks; reduced-effect variants preserve required semantic feedback.
+ 
+ ## Next high-value visual/creation families
+ 
+-1. **VFX / particle reference and authoring surfaces** — emitter/state identity, timing curves, spawn regions, layering, collision/interaction hooks and reduced-effect variants.
+-2. **Quest / mission flow reference systems** — objective identity, prerequisites, branches, state transitions, rewards, failure/retry and world/map references for game production.
+-3. **HUD theme / skin systems** — source-bound component families, layout constraints, readability state, platform/input variants and per-game identity application.
+-4. **Lighting / post-process look systems** — source-bound exposure, tone, fog, grading, bloom and accessibility/performance variants without baking presentation into world state.
++1. **Quest / mission flow reference systems** — objective identity, prerequisites, branches, state transitions, rewards, failure/retry and world/map references for game production.
++2. **HUD theme / skin systems** — source-bound component families, layout constraints, readability state, platform/input variants and per-game identity application.
++3. **Lighting / post-process look systems** — source-bound exposure, tone, fog, grading, bloom and accessibility/performance variants without baking presentation into world state.
++4. **Camera / shot reference systems** — exact camera rigs, targets, framing, lens/FOV, shot transitions and gameplay/cinematic ownership without treating preview framing as world state.
+ 
+ ## Cross-cutting rules
+ 
+@@ -71,7 +72,7 @@ Every family preserves the existing visual-template contract:
+ 
+ ## Immediate build order
+ 
+-1. exact-head verify `visual.environment.core`;
+-2. merge v19 only when template + repository checks pass;
+-3. begin VFX / particle reference-authoring from fresh main;
++1. exact-head verify `visual.vfx.core`;
++2. merge v20 only when template + repository checks pass;
++3. begin quest / mission flow reference systems from fresh main;
+ 4. keep prioritizing reusable source-first editors over flat one-off outputs.
+diff --git a/src/axm_uc/visual_template_vfx.py b/src/axm_uc/visual_template_vfx.py
+new file mode 100644
+index 0000000..3bb59fc
+--- /dev/null
++++ b/src/axm_uc/visual_template_vfx.py
+@@ -0,0 +1,88 @@
++"""Source-bound VFX and particle reference-authoring foundations."""
++from __future__ import annotations
++from copy import deepcopy
++from typing import Any
++
++
++def _merge(target: dict[str, Any], additions: dict[str, Any], label: str) -> None:
++    overlap=sorted(set(target)&set(additions))
++    if overlap: raise RuntimeError(f"vfx {label} collision: {', '.join(overlap)}")
++    target.update(deepcopy(additions))
++
++
++def extend_vfx_catalog(namespace: dict[str, Any]) -> None:
++    styles=namespace['STYLE_SYSTEMS']; primitives=namespace['PRIMITIVES']
++    screens=namespace['SCREEN_TEMPLATES']; products=namespace['PRODUCT_ARCHETYPES']
++    screen=namespace['_screen']; origin=namespace['_origin']
++
++    _merge(styles,{'visual.vfx.effect':{
++        'intent':'state-bound VFX/particle authoring with exact emitter identity, spawn/timing/module/layer state, interaction hooks and reduced-effect equivalents',
++        'tokens':{'canvas':'#090e13','surface':'#151d25','surface_raised':'#202b35','text':'#eef4f7','muted':'#9eabb4','accent':'#83c9dc','warning':'#e5b86a','danger':'#df7379','line':'#3b4c58'},
++        'shape':{'panel_radius_ratio':0.010,'cut_ratio':0.004,'line_ratio':0.0012},
++        'type':{'display_weight':735,'body_weight':500,'metric_scale':1.5,'tracking':0.011},
++        'depth':{'layers':8,'shadow':'subtle','glass':'restrained'},
++        'motion':{'fast_ms':70,'standard_ms':160,'slow_ms':300,'principle':'runtime/state truth before effect spectacle'},
++    }},'style')
++
++    _merge(primitives,{
++        'vfx-source':{'role':'exact effect identity with source/version/digest and semantic purpose','states':['known','active','deprecated','unknown'],'identity_source_version_purpose_required':True},
++        'emitter-state':{'role':'exact emitter identity/configuration with trigger, lifetime, rate/burst and enabled state','states':['idle','armed','emitting','disabled'],'trigger_lifetime_rate_required':True},
++        'spawn-region':{'role':'exact particle spawn region/shape with source transform, dimensions and distribution state','states':['point','line','surface','volume','mesh'],'shape_transform_dimensions_required':True},
++        'emission-curve':{'role':'bounded time/value curve for emission, size, opacity, color or other explicit channel','states':['constant','curve','event','unknown'],'channel_time_value_required':True},
++        'particle-module':{'role':'named particle behavior module with exact parameters, order and source/status','states':['enabled','disabled','conditional','unknown'],'identity_parameters_order_required':True},
++        'vfx-layer':{'role':'effect layer with exact identity, blend/order/depth relation and source state','states':['active','muted','solo','unknown'],'identity_blend_order_required':True},
++        'vfx-interaction-hook':{'role':'runtime interaction/collision/gameplay hook with exact subject/event/response/source status','states':['active','disabled','conditional','unknown'],'subject_event_response_source_required':True},
++        'vfx-timing-event':{'role':'exact event marker on effect timeline with trigger/source and semantic purpose','states':['armed','fired','suppressed','unknown'],'time_event_source_required':True},
++        'reduced-effect-rule':{'role':'reduced/off effect variant preserving required semantic feedback while lowering visual intensity','states':['default','reduced','minimal','off'],'equivalent_semantic_feedback_required':True},
++        'vfx-export-target':{'role':'effect export target with exact source, modules, timing, runtime hooks, performance/accessibility requirements','states':['ready','warning','blocked','exported'],'requirements_must_be_visible':True},
++    },'primitive')
++
++    q=['effect identity, emitters, spawn regions, curves, modules, layers and interaction hooks remain separately editable','a spectacular preview never proves that a runtime/gameplay event occurred','collision, damage, interaction or trigger semantics require exact source-bound hooks rather than visual implication','timing and emission curves remain explicit channels instead of hidden animation baked into preview output','reduced-effect variants preserve required semantic feedback while reducing visual intensity or clutter']
++    def v(c,s,w): return {'compact':c,'standard':s,'wide':w}
++    additions={
++      'visual.vfx.project-hub':screen('visual.vfx.project-hub','VFX project hub','creative.vfx','visual.vfx.effect','browse effects, runtime coverage, module sets, reduced-effect variants and output targets',v(
++        {'header':(.03,.03,.94,.08),'effects':(.03,.14,.94,.30),'coverage':(.03,.47,.45,.38),'variants':(.51,.47,.46,.27),'actions':(.51,.77,.46,.08)},
++        {'header':(.02,.03,.96,.075),'effects':(.02,.14,.22,.82),'coverage':(.27,.14,.46,.82),'variants':(.76,.14,.22,.55),'actions':(.76,.72,.22,.14)},
++        {'header':(.015,.03,.97,.07),'effects':(.015,.13,.20,.84),'coverage':(.24,.13,.50,.84),'variants':(.77,.13,.215,.57),'actions':(.77,.73,.215,.14)}),tags=['visual','vfx','particle','project'],quality=q),
++      'visual.vfx.effect-stage':screen('visual.vfx.effect-stage','VFX effect stage','creative.vfx','visual.vfx.effect','preview exact effect identity, layers and source state while keeping runtime/gameplay status separate from presentation',v(
++        {'header':(.03,.03,.94,.08),'stage':(.03,.14,.94,.48),'identity':(.03,.65,.45,.22),'runtime':(.51,.65,.46,.22),'actions':(.03,.90,.94,.07)},
++        {'header':(.02,.03,.96,.075),'identity':(.02,.14,.18,.72),'stage':(.225,.14,.55,.72),'runtime':(.80,.14,.18,.54),'actions':(.80,.71,.18,.15)},
++        {'header':(.015,.03,.97,.07),'identity':(.015,.13,.16,.74),'stage':(.195,.13,.58,.74),'runtime':(.795,.13,.19,.55),'actions':(.795,.71,.19,.16)}),tags=['visual','vfx','effect','stage'],math_hooks={'effect_coverage_ratio':[0.38,0.78],'safe_margin_ratio':[0.01,0.08]},quality=q),
++      'visual.vfx.emitter-editor':screen('visual.vfx.emitter-editor','Emitter state editor','creative.vfx','visual.vfx.effect','edit exact emitter trigger, lifetime, rate/burst, enabled state and source identity',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.36),'emitters':(.03,.53,.55,.34),'details':(.61,.53,.36,.25),'actions':(.61,.81,.36,.06)},
++        {'header':(.02,.03,.96,.075),'emitters':(.02,.14,.28,.72),'preview':(.33,.14,.44,.72),'details':(.80,.14,.18,.54),'actions':(.80,.71,.18,.15)},
++        {'header':(.015,.03,.97,.07),'emitters':(.015,.13,.26,.74),'preview':(.305,.13,.47,.74),'details':(.795,.13,.19,.55),'actions':(.795,.71,.19,.16)}),tags=['visual','vfx','emitter','state'],quality=q),
++      'visual.vfx.spawn-region':screen('visual.vfx.spawn-region','Particle spawn-region editor','creative.vfx','visual.vfx.effect','edit exact spawn shape, source transform, dimensions and distribution without conflating preview spread with source geometry',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.36),'regions':(.03,.53,.45,.34),'details':(.51,.53,.46,.25),'actions':(.51,.81,.46,.06)},
++        {'header':(.02,.03,.96,.075),'regions':(.02,.14,.22,.72),'preview':(.27,.14,.48,.72),'details':(.78,.14,.20,.54),'actions':(.78,.71,.20,.15)},
++        {'header':(.015,.03,.97,.07),'regions':(.015,.13,.20,.74),'preview':(.24,.13,.51,.74),'details':(.775,.13,.21,.55),'actions':(.775,.71,.21,.16)}),tags=['visual','vfx','spawn','region'],quality=q),
++      'visual.vfx.curves-timing':screen('visual.vfx.curves-timing','VFX curves and timing editor','creative.vfx','visual.vfx.effect','edit exact named channels, time/value curves and event markers with bounded values and semantic purpose',v(
++        {'header':(.03,.03,.94,.08),'curve':(.03,.14,.94,.34),'channels':(.03,.51,.55,.34),'events':(.61,.51,.36,.25),'actions':(.61,.79,.36,.06)},
++        {'header':(.02,.03,.96,.075),'channels':(.02,.14,.25,.72),'curve':(.30,.14,.45,.72),'events':(.78,.14,.20,.54),'actions':(.78,.71,.20,.15)},
++        {'header':(.015,.03,.97,.07),'channels':(.015,.13,.23,.74),'curve':(.265,.13,.49,.74),'events':(.78,.13,.205,.55),'actions':(.78,.71,.205,.16)}),tags=['visual','vfx','curve','timing'],math_hooks={'timeline_duration_ratio':[0.08,4.0],'curve_sample_ratio':[0.01,0.20]},quality=q),
++      'visual.vfx.modules':screen('visual.vfx.modules','Particle module editor','creative.vfx','visual.vfx.effect','edit exact ordered particle behavior modules and parameters with enable/conditional state visible',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.34),'modules':(.03,.51,.55,.34),'details':(.61,.51,.36,.25),'actions':(.61,.79,.36,.06)},
++        {'header':(.02,.03,.96,.075),'modules':(.02,.14,.28,.72),'preview':(.33,.14,.44,.72),'details':(.80,.14,.18,.54),'actions':(.80,.71,.18,.15)},
++        {'header':(.015,.03,.97,.07),'modules':(.015,.13,.26,.74),'preview':(.305,.13,.47,.74),'details':(.795,.13,.19,.55),'actions':(.795,.71,.19,.16)}),tags=['visual','vfx','module','particle'],quality=q),
++      'visual.vfx.layers-composite':screen('visual.vfx.layers-composite','VFX layer and composite editor','creative.vfx','visual.vfx.effect','edit exact layer identity, blend/order/depth relationships without flattening source layers into one canonical image',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.40),'layers':(.03,.57,.45,.30),'details':(.51,.57,.46,.22),'actions':(.51,.82,.46,.05)},
++        {'header':(.02,.03,.96,.075),'layers':(.02,.14,.22,.72),'preview':(.27,.14,.48,.72),'details':(.78,.14,.20,.54),'actions':(.78,.71,.20,.15)},
++        {'header':(.015,.03,.97,.07),'layers':(.015,.13,.20,.74),'preview':(.24,.13,.51,.74),'details':(.775,.13,.21,.55),'actions':(.775,.71,.21,.16)}),tags=['visual','vfx','layer','composite'],quality=q),
++      'visual.vfx.interaction-hooks':screen('visual.vfx.interaction-hooks','VFX runtime interaction-hook editor','creative.vfx','visual.vfx.effect','bind collision, impact, gameplay and state-change hooks to exact subjects/events/responses with source/status explicit',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.32),'hooks':(.03,.49,.58,.38),'details':(.64,.49,.33,.28),'actions':(.64,.80,.33,.07)},
++        {'header':(.02,.03,.96,.075),'hooks':(.02,.14,.28,.72),'preview':(.33,.14,.44,.72),'details':(.80,.14,.18,.54),'actions':(.80,.71,.18,.15)},
++        {'header':(.015,.03,.97,.07),'hooks':(.015,.13,.26,.74),'preview':(.305,.13,.47,.74),'details':(.795,.13,.19,.55),'actions':(.795,.71,.19,.16)}),tags=['visual','vfx','interaction','runtime'],quality=q),
++      'visual.vfx.reduced-performance':screen('visual.vfx.reduced-performance','Reduced-effect and performance variant editor','creative.vfx','visual.vfx.effect','author reduced/minimal variants that preserve required semantic feedback while controlling intensity, count and runtime budget',v(
++        {'header':(.03,.03,.94,.08),'default':(.03,.14,.45,.42),'reduced':(.52,.14,.45,.42),'rules':(.03,.59,.58,.28),'actions':(.64,.59,.33,.28)},
++        {'header':(.02,.03,.96,.075),'default':(.02,.14,.36,.63),'reduced':(.40,.14,.36,.63),'rules':(.78,.14,.20,.48),'actions':(.78,.65,.20,.12)},
++        {'header':(.015,.03,.97,.07),'default':(.015,.13,.37,.65),'reduced':(.405,.13,.37,.65),'rules':(.795,.13,.19,.49),'actions':(.795,.65,.19,.13)}),tags=['visual','vfx','reduced-effect','performance'],quality=q),
++      'visual.vfx.review-export':screen('visual.vfx.review-export','VFX review and export','creative.vfx','visual.vfx.effect','review missing hooks, unknown timing/state, layer/module coverage, semantic feedback variants and runtime/export requirements',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.30),'checks':(.03,.47,.58,.39),'targets':(.64,.47,.33,.27),'actions':(.64,.77,.33,.09)},
++        {'header':(.02,.03,.96,.075),'preview':(.02,.14,.38,.72),'checks':(.43,.14,.34,.72),'targets':(.79,.14,.19,.48),'actions':(.79,.65,.19,.21)},
++        {'header':(.015,.03,.97,.07),'preview':(.015,.13,.36,.74),'checks':(.40,.13,.37,.74),'targets':(.79,.13,.195,.49),'actions':(.79,.65,.195,.22)}),tags=['visual','vfx','review','export'],quality=q),
++    }
++    _merge(screens,additions,'screen')
++    ids=list(additions)
++    product={'schema':'axm.visual-product/v1','id':'visual.vfx.core','version':1,'name':'Source-bound VFX and particle authoring core','kind':'product','domain':'creative.vfx','tags':['visual','vfx','particle','effect','product'],'origin':origin(),'style':'visual.vfx.effect','intent':'source-first VFX/particle authoring with exact effect/emitter/spawn/timing/module/layer/interaction and reduced-effect state','screens':ids,'flow':[
++      ['visual.vfx.project-hub','visual.vfx.effect-stage','open-effect'],['visual.vfx.effect-stage','visual.vfx.emitter-editor','edit-emitter'],['visual.vfx.emitter-editor','visual.vfx.spawn-region','edit-spawn'],['visual.vfx.effect-stage','visual.vfx.curves-timing','edit-timing'],['visual.vfx.effect-stage','visual.vfx.modules','edit-modules'],['visual.vfx.effect-stage','visual.vfx.layers-composite','edit-layers'],['visual.vfx.effect-stage','visual.vfx.interaction-hooks','edit-hooks'],['visual.vfx.project-hub','visual.vfx.reduced-performance','edit-reduced'],['visual.vfx.project-hub','visual.vfx.review-export','review-export']], 'quality':q}
++    _merge(products,{'visual.vfx.core':product},'product')
+diff --git a/src/axm_uc/visual_templates.py b/src/axm_uc/visual_templates.py
+index 3ea8082..ae56771 100644
+--- a/src/axm_uc/visual_templates.py
++++ b/src/axm_uc/visual_templates.py
+@@ -28,8 +28,9 @@ from .visual_template_configurator import extend_configurator_catalog as _extend
+ from .visual_template_motion import extend_motion_catalog as _extend_motion_catalog
+ from .visual_template_brand import extend_brand_catalog as _extend_brand_catalog
+ from .visual_template_environment import extend_environment_catalog as _extend_environment_catalog
++from .visual_template_vfx import extend_vfx_catalog as _extend_vfx_catalog
+ 
+-_COMPOSITION=("visual_template_growth","visual_template_game_systems","visual_template_creative_narrative","visual_template_axm_system","visual_template_game_shared","visual_template_keyart","visual_template_cards","visual_template_cinematic","visual_template_video_overlay","visual_template_diagram","visual_template_atlas","visual_template_novel","visual_template_showroom","visual_template_music","visual_template_presentation","visual_template_character_reference","visual_template_configurator","visual_template_motion","visual_template_brand","visual_template_environment")
++_COMPOSITION=("visual_template_growth","visual_template_game_systems","visual_template_creative_narrative","visual_template_axm_system","visual_template_game_shared","visual_template_keyart","visual_template_cards","visual_template_cinematic","visual_template_video_overlay","visual_template_diagram","visual_template_atlas","visual_template_novel","visual_template_showroom","visual_template_music","visual_template_presentation","visual_template_character_reference","visual_template_configurator","visual_template_motion","visual_template_brand","visual_template_environment","visual_template_vfx")
+ _applied=getattr(_core,"_AXM_VISUAL_COMPOSITION",None)
+ if _applied is None:
+     _extend_catalog(vars(_core))
+@@ -52,6 +53,7 @@ if _applied is None:
+     _extend_motion_catalog(vars(_core))
+     _extend_brand_catalog(vars(_core))
+     _extend_environment_catalog(vars(_core))
++    _extend_vfx_catalog(vars(_core))
+     _core._AXM_VISUAL_COMPOSITION=_COMPOSITION
+ elif _applied != _COMPOSITION:
+     raise RuntimeError("visual template composition changed inside a live process; restart with one exact catalog")
+diff --git a/tests/test_visual_templates.py b/tests/test_visual_templates.py
+index 3c8a63c..e04a076 100644
+--- a/tests/test_visual_templates.py
++++ b/tests/test_visual_templates.py
+@@ -8,18 +8,18 @@ from axm_stickers import Registry
+ from axm_uc import visual_templates as vt
+ 
+ SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
+-PRODUCTS=('game.racing.full','game.coop.action','game.rts.command','game.system.shell','game.shared.core','editor.creative.core','comic.narrative.core','axm.system.shell','visual.keyart.core','visual.cards.core','visual.cinematic.core','visual.broadcast.core','visual.diagram.core','visual.atlas.core','visual.novel.core','visual.showroom.core','visual.music.core','visual.presentation.core','visual.character.core','visual.configurator.core','visual.motion.core','visual.brand.core','visual.environment.core')
++PRODUCTS=('game.racing.full','game.coop.action','game.rts.command','game.system.shell','game.shared.core','editor.creative.core','comic.narrative.core','axm.system.shell','visual.keyart.core','visual.cards.core','visual.cinematic.core','visual.broadcast.core','visual.diagram.core','visual.atlas.core','visual.novel.core','visual.showroom.core','visual.music.core','visual.presentation.core','visual.character.core','visual.configurator.core','visual.motion.core','visual.brand.core','visual.environment.core','visual.vfx.core')
+ 
+ class VisualTemplateTests(unittest.TestCase):
+     def test_catalog_counts_and_products(self):
+         counts=vt.validate_catalog()
+-        self.assertEqual(counts,{'styles':27,'primitives':216,'screens':254,'products':25})
++        self.assertEqual(counts,{'styles':28,'primitives':226,'screens':264,'products':26})
+         self.assertEqual(vt.CATALOG_COMPOSITION['counts'],counts)
+         ids={p['id'] for p in vt.catalog()['products']}
+         self.assertTrue(set(PRODUCTS)|{'game.racing.performance','software.creator.studio'} <= ids)
+ 
+     def test_all_geometry_and_major_variants(self):
+-        prefixes=('game.','editor.creative.','comic.narrative.','axm.system.','visual.keyart.','visual.cards.','visual.cinematic.','visual.broadcast.','visual.diagram.','visual.atlas.','visual.novel.','visual.showroom.','visual.music.','visual.presentation.','visual.character.','visual.configurator.','visual.motion.','visual.brand.','visual.environment.')
++        prefixes=('game.','editor.creative.','comic.narrative.','axm.system.','visual.keyart.','visual.cards.','visual.cinematic.','visual.broadcast.','visual.diagram.','visual.atlas.','visual.novel.','visual.showroom.','visual.music.','visual.presentation.','visual.character.','visual.configurator.','visual.motion.','visual.brand.','visual.environment.','visual.vfx.')
+         for tid,definition in vt.SCREEN_TEMPLATES.items():
+             if tid.startswith(prefixes): self.assertEqual(set(definition['variants']),{'compact','standard','wide'},tid)
+             for width,height in SIZES:
+@@ -29,21 +29,21 @@ class VisualTemplateTests(unittest.TestCase):
+                     self.assertLessEqual(x+w,width+1e-6); self.assertLessEqual(y+h,height+1e-6)
+ 
+     def test_existing_product_depth_is_retained(self):
+-        expected={'game.racing.full':19,'game.system.shell':18,'game.shared.core':12,'editor.creative.core':12,'comic.narrative.core':10,'axm.system.shell':12,'visual.keyart.core':10,'visual.cards.core':11,'visual.cinematic.core':10,'visual.broadcast.core':10,'visual.diagram.core':10,'visual.atlas.core':10,'visual.novel.core':10,'visual.showroom.core':10,'visual.music.core':10,'visual.presentation.core':10,'visual.character.core':10,'visual.configurator.core':10,'visual.motion.core':10,'visual.brand.core':10}
++        expected={'game.racing.full':19,'game.system.shell':18,'game.shared.core':12,'editor.creative.core':12,'comic.narrative.core':10,'axm.system.shell':12,'visual.keyart.core':10,'visual.cards.core':11,'visual.cinematic.core':10,'visual.broadcast.core':10,'visual.diagram.core':10,'visual.atlas.core':10,'visual.novel.core':10,'visual.showroom.core':10,'visual.music.core':10,'visual.presentation.core':10,'visual.character.core':10,'visual.configurator.core':10,'visual.motion.core':10,'visual.brand.core':10,'visual.environment.core':10}
+         for pid,count in expected.items(): self.assertEqual(len(vt.get(pid)['screens']),count)
+ 
+-    def test_environment_product_preserves_location_scale_and_gameplay_truth(self):
+-        product=vt.get('visual.environment.core')
+-        required={'visual.environment.project-hub','visual.environment.identity-board','visual.environment.zones-layout','visual.environment.scale-measurements','visual.environment.modular-kit','visual.environment.materials','visual.environment.lighting-weather','visual.environment.traversal-annotations','visual.environment.variants','visual.environment.review-export'}
++    def test_vfx_product_preserves_effect_runtime_and_reduced_truth(self):
++        product=vt.get('visual.vfx.core')
++        required={'visual.vfx.project-hub','visual.vfx.effect-stage','visual.vfx.emitter-editor','visual.vfx.spawn-region','visual.vfx.curves-timing','visual.vfx.modules','visual.vfx.layers-composite','visual.vfx.interaction-hooks','visual.vfx.reduced-performance','visual.vfx.review-export'}
+         self.assertEqual(set(product['screens']),required)
+-        self.assertEqual(product['style'],'visual.environment.reference')
++        self.assertEqual(product['style'],'visual.vfx.effect')
+         quality=' '.join(product['quality']).lower()
+         self.assertIn('separately editable',quality)
+-        self.assertIn('never silently becomes authoritative level geometry',quality)
+-        self.assertIn('perspective appearance',quality)
+-        self.assertIn('prop proximity does not imply gameplay linkage',quality)
+-        self.assertIn('hidden rewrites',quality)
+-        self.assertIn('hero_coverage_ratio',vt.get('visual.environment.identity-board')['math_hooks'])
++        self.assertIn('never proves that a runtime/gameplay event occurred',quality)
++        self.assertIn('source-bound hooks',quality)
++        self.assertIn('explicit channels',quality)
++        self.assertIn('semantic feedback',quality)
++        self.assertIn('timeline_duration_ratio',vt.get('visual.vfx.curves-timing')['math_hooks'])
+ 
+     def test_products_resolve_and_previews_parse(self):
+         for pid in PRODUCTS:
+@@ -60,35 +60,36 @@ class VisualTemplateTests(unittest.TestCase):
+         with tempfile.TemporaryDirectory() as td:
+             with Registry(Path(td)/'stickers.sqlite') as registry:
+                 pins=vt.install_builtins(registry)
+-                self.assertEqual(len(pins),279)
+-                env=registry.search(adapter=vt.ADAPTER,tag='environment',limit=100)['entries']
+-                expected={f'visual.visual.environment.{name}' for name in ('project-hub','identity-board','zones-layout','scale-measurements','modular-kit','materials','lighting-weather','traversal-annotations','variants','review-export')}
+-                self.assertTrue(expected <= {entry['id'] for entry in env})
+-                d=registry.get('visual.visual.environment.identity-board',1)
++                self.assertEqual(len(pins),290)
++                vfx=registry.search(adapter=vt.ADAPTER,tag='vfx',limit=100)['entries']
++                expected={f'visual.visual.vfx.{name}' for name in ('project-hub','effect-stage','emitter-editor','spawn-region','curves-timing','modules','layers-composite','interaction-hooks','reduced-performance','review-export')}
++                self.assertTrue(expected <= {entry['id'] for entry in vfx})
++                d=registry.get('visual.visual.vfx.effect-stage',1)
+                 self.assertEqual(d['recipe']['visual_template']['schema'],vt.SCHEMA)
+                 self.assertNotIn('"latest"',json.dumps(d,sort_keys=True))
+ 
+-    def test_environment_source_zone_scale_kit_prop_material_light_traversal_contracts(self):
+-        required={'environment-source','environment-zone','environment-measurement','modular-environment-piece','environment-prop','environment-material','environment-lighting-state','traversal-reference','environment-variant','environment-export-target'}
++    def test_vfx_source_emitter_spawn_curve_module_layer_hook_reduced_contracts(self):
++        required={'vfx-source','emitter-state','spawn-region','emission-curve','particle-module','vfx-layer','vfx-interaction-hook','vfx-timing-event','reduced-effect-rule','vfx-export-target'}
+         self.assertTrue(required <= set(vt.PRIMITIVES))
++        self.assertTrue(vt.PRIMITIVES['vfx-source']['identity_source_version_purpose_required'])
++        self.assertTrue(vt.PRIMITIVES['emitter-state']['trigger_lifetime_rate_required'])
++        self.assertTrue(vt.PRIMITIVES['spawn-region']['shape_transform_dimensions_required'])
++        self.assertTrue(vt.PRIMITIVES['emission-curve']['channel_time_value_required'])
++        self.assertTrue(vt.PRIMITIVES['particle-module']['identity_parameters_order_required'])
++        self.assertTrue(vt.PRIMITIVES['vfx-layer']['identity_blend_order_required'])
++        self.assertTrue(vt.PRIMITIVES['vfx-interaction-hook']['subject_event_response_source_required'])
++        self.assertTrue(vt.PRIMITIVES['vfx-timing-event']['time_event_source_required'])
++        self.assertTrue(vt.PRIMITIVES['reduced-effect-rule']['equivalent_semantic_feedback_required'])
++        self.assertTrue(vt.PRIMITIVES['vfx-export-target']['requirements_must_be_visible'])
++
++    def test_environment_brand_motion_and_prior_boundaries_remain_present(self):
+         self.assertTrue(vt.PRIMITIVES['environment-source']['identity_source_version_scope_required'])
+-        self.assertTrue(vt.PRIMITIVES['environment-zone']['geometry_source_status_required'])
+         self.assertTrue(vt.PRIMITIVES['environment-measurement']['value_unit_source_precision_required'])
+-        self.assertTrue(vt.PRIMITIVES['modular-environment-piece']['source_socket_transform_required'])
+-        self.assertTrue(vt.PRIMITIVES['environment-prop']['identity_source_context_status_required'])
+-        self.assertTrue(vt.PRIMITIVES['environment-material']['target_material_source_context_required'])
+-        self.assertTrue(vt.PRIMITIVES['environment-lighting-state']['source_time_weather_exposure_required'])
+-        self.assertTrue(vt.PRIMITIVES['traversal-reference']['target_type_source_status_required'])
+-        self.assertTrue(vt.PRIMITIVES['environment-variant']['base_delta_context_source_required'])
+-        self.assertTrue(vt.PRIMITIVES['environment-export-target']['requirements_must_be_visible'])
+-
+-    def test_brand_motion_configurator_and_prior_boundaries_remain_present(self):
+         self.assertTrue(vt.PRIMITIVES['brand-asset-source']['identity_source_version_provenance_required'])
+         self.assertTrue(vt.PRIMITIVES['brand-clearspace-rule']['target_measurement_basis_required'])
+         self.assertTrue(vt.PRIMITIVES['motion-state']['source_target_identity_required'])
+         self.assertTrue(vt.PRIMITIVES['reduced-motion-rule']['equivalent_state_result_required'])
+         self.assertTrue(vt.PRIMITIVES['configuration-state']['base_attachment_variant_digest_required'])
+-        self.assertTrue(vt.PRIMITIVES['compatibility-rule']['subject_target_rule_status_required'])
+         self.assertTrue(vt.PRIMITIVES['character-source']['identity_source_version_required'])
+         self.assertTrue(vt.PRIMITIVES['presentation-page']['identity_role_order_required'])
+         self.assertTrue(vt.PRIMITIVES['music-track-source']['identity_source_digest_duration_required'])
+@@ -103,12 +104,12 @@ class VisualTemplateTests(unittest.TestCase):
+         self.assertTrue(vt.PRIMITIVES['truth-state']['source_must_be_visible'])
+ 
+     def test_copy_safety_variant_rejection_and_bad_geometry(self):
+-        a=vt.resolve('visual.environment.identity-board',1920,1080); b=vt.resolve('visual.environment.identity-board',1920,1080)
++        a=vt.resolve('visual.vfx.effect-stage',1920,1080); b=vt.resolve('visual.vfx.effect-stage',1920,1080)
+         self.assertEqual(a,b)
+-        copy=vt.get('visual.environment.identity-board'); copy['name']='changed'
+-        self.assertNotEqual(vt.get('visual.environment.identity-board')['name'],'changed')
+-        with self.assertRaises(ValueError): vt.resolve('visual.environment.identity-board',1920,1080,variant='unknown')
+-        bad=vt.get('visual.environment.identity-board'); bad['variants']['standard']['hero']=[.9,.9,.2,.2]
++        copy=vt.get('visual.vfx.effect-stage'); copy['name']='changed'
++        self.assertNotEqual(vt.get('visual.vfx.effect-stage')['name'],'changed')
++        with self.assertRaises(ValueError): vt.resolve('visual.vfx.effect-stage',1920,1080,variant='unknown')
++        bad=vt.get('visual.vfx.effect-stage'); bad['variants']['standard']['stage']=[.9,.9,.2,.2]
+         with self.assertRaises(ValueError): vt.validate_screen(bad)
+ 
+     def test_exact_sticker_slot_binding_is_retained(self):
+diff --git a/tools/visual_template_proof.py b/tools/visual_template_proof.py
+index 4eafa81..4362f76 100644
+--- a/tools/visual_template_proof.py
++++ b/tools/visual_template_proof.py
+@@ -8,7 +8,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src'))
+ from axm_uc import visual_templates as vt
+ 
+ SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
+-PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell","visual.keyart.core","visual.cards.core","visual.cinematic.core","visual.broadcast.core","visual.diagram.core","visual.atlas.core","visual.novel.core","visual.showroom.core","visual.music.core","visual.presentation.core","visual.character.core","visual.configurator.core","visual.motion.core","visual.brand.core","visual.environment.core")
++PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell","visual.keyart.core","visual.cards.core","visual.cinematic.core","visual.broadcast.core","visual.diagram.core","visual.atlas.core","visual.novel.core","visual.showroom.core","visual.music.core","visual.presentation.core","visual.character.core","visual.configurator.core","visual.motion.core","visual.brand.core","visual.environment.core","visual.vfx.core")
+ 
+ def _write(project,target):
+     target.mkdir(); out=[]
+@@ -25,7 +25,7 @@ def main(argv):
+     out.mkdir(parents=True)
+     try:
+         counts=vt.validate_catalog()
+-        if counts!={'styles':27,'primitives':216,'screens':254,'products':25}: raise AssertionError(counts)
++        if counts!={'styles':28,'primitives':226,'screens':264,'products':26}: raise AssertionError(counts)
+         evidence=[]
+         for pid in PRODUCTS:
+             expected=vt.get(pid)
+@@ -60,27 +60,30 @@ def main(argv):
+             ('visual.motion.core',1920,1080,'motion','AXM Source-Bound UI Motion Foundation'),
+             ('visual.brand.core',1920,1080,'brand','AXM Source-Bound Brand Identity Foundation'),
+             ('visual.environment.core',1920,1080,'environment','AXM Environment and Level Reference Foundation'),
++            ('visual.vfx.core',1920,1080,'vfx','AXM VFX and Particle Foundation'),
+         )
+         outputs=[]
+         for pid,w,h,folder,title in galleries: outputs+=_write(vt.product_project(pid,w,h,title),out/folder)
+         outputs+=_write(vt.screen_project('product.mobile.home',1080,1920,'AXM Mobile Foundation'),out/'mobile-home')
+-        product=vt.get('visual.environment.core')
+-        required={'visual.environment.project-hub','visual.environment.identity-board','visual.environment.zones-layout','visual.environment.scale-measurements','visual.environment.modular-kit','visual.environment.materials','visual.environment.lighting-weather','visual.environment.traversal-annotations','visual.environment.variants','visual.environment.review-export'}
+-        if set(product['screens'])!=required: raise AssertionError('environment pack lost required surfaces')
++        product=vt.get('visual.vfx.core')
++        required={'visual.vfx.project-hub','visual.vfx.effect-stage','visual.vfx.emitter-editor','visual.vfx.spawn-region','visual.vfx.curves-timing','visual.vfx.modules','visual.vfx.layers-composite','visual.vfx.interaction-hooks','visual.vfx.reduced-performance','visual.vfx.review-export'}
++        if set(product['screens'])!=required: raise AssertionError('vfx pack lost required surfaces')
+         checks={
+-            'environment_identity_source_scope':vt.PRIMITIVES['environment-source']['identity_source_version_scope_required'],
+-            'zone_geometry_source_status':vt.PRIMITIVES['environment-zone']['geometry_source_status_required'],
+-            'measurement_value_unit_source_precision':vt.PRIMITIVES['environment-measurement']['value_unit_source_precision_required'],
+-            'kit_source_socket_transform':vt.PRIMITIVES['modular-environment-piece']['source_socket_transform_required'],
+-            'prop_identity_source_context':vt.PRIMITIVES['environment-prop']['identity_source_context_status_required'],
+-            'material_target_source_context':vt.PRIMITIVES['environment-material']['target_material_source_context_required'],
+-            'lighting_source_time_weather_exposure':vt.PRIMITIVES['environment-lighting-state']['source_time_weather_exposure_required'],
+-            'traversal_target_type_source_status':vt.PRIMITIVES['traversal-reference']['target_type_source_status_required'],
+-            'variant_base_delta_context_source':vt.PRIMITIVES['environment-variant']['base_delta_context_source_required'],
+-            'export_requirements_visible':vt.PRIMITIVES['environment-export-target']['requirements_must_be_visible'],
++            'effect_identity_source_purpose':vt.PRIMITIVES['vfx-source']['identity_source_version_purpose_required'],
++            'emitter_trigger_lifetime_rate':vt.PRIMITIVES['emitter-state']['trigger_lifetime_rate_required'],
++            'spawn_shape_transform_dimensions':vt.PRIMITIVES['spawn-region']['shape_transform_dimensions_required'],
++            'emission_channel_time_value':vt.PRIMITIVES['emission-curve']['channel_time_value_required'],
++            'module_identity_params_order':vt.PRIMITIVES['particle-module']['identity_parameters_order_required'],
++            'layer_identity_blend_order':vt.PRIMITIVES['vfx-layer']['identity_blend_order_required'],
++            'interaction_subject_event_response_source':vt.PRIMITIVES['vfx-interaction-hook']['subject_event_response_source_required'],
++            'timing_event_source':vt.PRIMITIVES['vfx-timing-event']['time_event_source_required'],
++            'reduced_semantic_feedback':vt.PRIMITIVES['reduced-effect-rule']['equivalent_semantic_feedback_required'],
++            'export_requirements_visible':vt.PRIMITIVES['vfx-export-target']['requirements_must_be_visible'],
+         }
+-        if not all(checks.values()): raise AssertionError('environment source/reference contract failed')
++        if not all(checks.values()): raise AssertionError('vfx source/runtime contract failed')
+         retained={
++            'environment_source':vt.PRIMITIVES['environment-source']['identity_source_version_scope_required'],
++            'environment_measurement':vt.PRIMITIVES['environment-measurement']['value_unit_source_precision_required'],
+             'brand_asset':vt.PRIMITIVES['brand-asset-source']['identity_source_version_provenance_required'],
+             'brand_clearspace':vt.PRIMITIVES['brand-clearspace-rule']['target_measurement_basis_required'],
+             'motion_state':vt.PRIMITIVES['motion-state']['source_target_identity_required'],
+@@ -93,7 +96,7 @@ def main(argv):
+             'atlas_coordinate':vt.PRIMITIVES['map-coordinate']['system_source_precision_required'],
+         }
+         if not all(retained.values()): raise AssertionError('prior visual source boundary failed')
+-        receipt={'schema':'axm.visual-template-proof/v21','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'environment_checks':checks,'retained_checks':retained,'truth':'Offline structural evidence only. Final level geometry, scale correctness, collision, navigation, gameplay quality, lighting correctness, performance and aesthetic acceptance were not observed.'}
++        receipt={'schema':'axm.visual-template-proof/v22','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'vfx_checks':checks,'retained_checks':retained,'truth':'Offline structural evidence only. Runtime integration, collision or damage correctness, gameplay balance, GPU cost, accessibility acceptance, frame pacing and aesthetic quality were not observed.'}
+         (out/'receipt.json').write_text(json.dumps(receipt,indent=2,sort_keys=True),encoding='utf-8')
+         print(json.dumps(receipt,indent=2,sort_keys=True))
+     except BaseException:

@@ -1,0 +1,893 @@
+diff --git a/GAME_STYLE_GROWTH.md b/GAME_STYLE_GROWTH.md
+index eec9137..f998155 100644
+--- a/GAME_STYLE_GROWTH.md
++++ b/GAME_STYLE_GROWTH.md
+@@ -41,12 +41,16 @@ No mesh-aware wear or seamless texture repetition is claimed.
+ axm-assets game-material-catalog
+ axm-assets game-material painted-metal out/comic-paint --finish comic-salvage --size 128 --seed 471
+ axm-assets game-material carved-wood out/painted-wood --finish painted-adventure --color 157 100 48
++axm-assets game-material painted-metal out/worn --finish comic-salvage --layered-wear .7 --protect .3 .3 .7 .7
+ ```
+ 
+ Each publication includes PNG base color, normal, AO, roughness, height and ORM
+ maps, plus a manifest with parameters, color spaces and file digests. Woven
+ fabric also retains its thickness map. ORM channels are occlusion, roughness,
+-metallic. Stylization never changes AO or conductivity. Height remains an
++metallic. Finish stylization never changes AO or conductivity. The opt-in
++removable-coat layer can expose a separately authored substrate and therefore
++changes correlated albedo, roughness, conductivity and paint-edge normals while
++retaining proposal/protection/exposure/coat masks. Height remains an
+ authoring proxy; rebuilding normals from it replaces the selected normal finish.
+ Normal orientation for existing donors is tangent -Y; new families use tangent
+ +Y. The opt-in Blender adapter now corrects inherited direction in packed
+@@ -66,8 +70,8 @@ bounded change before starting another; no quota of new files or assets.
+ 
+ 1. **Completed:** connect surface fields to the opt-in Blender adapter and
+    independently inspect actual GLBs, data color spaces and normal direction.
+-2. Add controllable layered paint, exposed-metal edges, roughness variation and
+-   protected readable regions; distinguish authored masks from mesh-derived wear.
++2. **Completed:** controllable layered paint, exposed-metal response, roughness
++   variation and protected readable regions, with attributed mask sources.
+ 3. Add reusable playful form controls: taper, squash, oversized functional parts,
+    asymmetry, large/medium/small detail hierarchy. Preserve rig/contact invariants.
+ 4. Build distinct graphic/painterly realization options that survive export;
+@@ -88,6 +92,51 @@ exports when those features change. Measure performance before making claims.
+ 
+ ## Current checkpoint
+ 
++### Layered wear pass — 2026-09-13
++
++- Completed opt-in `WearLayer`, deterministic UV chip/scratch proposals,
++  caller-supplied mask composition, normalized protected rectangles and CLI
++  controls. Protection is applied as an exact veto after proposed damage.
++  Runtime base color is blended in linear light; roughness, metallic response and
++  paint-edge normals change together. Original finish maps and authoring height
++  remain unchanged; proposal, protection, actual exposure and remaining coat are
++  retained as separate maps with declared sources in the manifest.
++- Actual local verification: **26 focused tests pass** across all six families ×
++  four finishes, exact protected-pixel invariants, source immutability, correlated
++  ORM, deterministic variation, normal convention, mask/source validation, CLI
++  publication and Blender bundle acceptance. Full repository checks are still
++  required at the actual proposed head.
++- Real Blender 4.3 evidence: `tools/blender/layered_wear_roundtrip.py` built a
++  three-panel specimen, exported actual GLB, independently matched its embedded
++  runtime textures, reopened nine packed images from editable `.blend`, re-imported
++  the GLB into an empty scene and rendered it. Source maps stayed byte-identical;
++  protected pixels had zero exposure; source/re-import render MAE was 0.002662.
++  Evidence: `docs/evidence/layered-wear-roundtrip-2026-09-13.json` and
++  `docs/GAME_MATERIAL_BLENDER.md`. Deliverable: `AXM-Layered-Wear-Proof.zip` plus
++  `AXM-Layered-Wear.png`.
++- Visual repair: the first specimen cropped two panels and smeared UV masks; a
++  wider camera and explicit front-planar UVs fixed both. A second render exposed
++  implausibly deep paint-edge normals; calibrated thickness-scale relief fixed
++  the false gouge while preserving exposed-metal readability. Final source and
++  re-imported stills visibly show the same wear proposal interrupted around the
++  protected M. This is visible evidence for this bounded specimen only.
++- Limits: static material specimen, not a complete game asset, animation, LOD,
++  performance or target-engine acceptance. Built-in wear is UV procedural, not
++  curvature/mesh derived. Caller source labels are provenance statements, not
++  independently proven authorship. The proof's analytic UV mask and unwrap are
++  authored specifically for inspection; seamless tiling is not claimed.
++- **Next useful step: priority 3**, reusable playful form controls (taper,
++  squash, functional exaggeration, asymmetry and detail hierarchy) while
++  preserving rig/contact invariants. A later geometry adapter can provide actual
++  mesh-baked wear masks without conflating them with this procedural proposal.
++- Active branch: `codex/rts-reference-foundry`, based on merged PR #61/main
++  `c20bcc4`; unrelated open PR #54 remains outside this pass. Require current-head
++  checks before merge; final GitHub state is authoritative.
++- Roots: Truth preserves mask source and evidence boundaries; Agency keeps the
++  layer optional/offline and prevents damage proposals overriding authored
++  protection; Continuity retains canonical inputs and editable masks; Wisdom
++  repaired visible UV/framing/relief faults before publishing.
++
+ ### Material realization pass — 2026-09-13
+ 
+ - Completed `src/axm_uc/game_material_bridge.py`: validated bounded UC bundles,
+@@ -117,9 +166,8 @@ exports when those features change. Measure performance before making claims.
+   unavailable (not requested); shared ORM/AO sampler warning was checked against
+   matching settings and actual GLB wrapping. Blender runtime recovered using
+   cached Python 3.11/bpy 4.3 with NumPy 1.26.4, not UC's Windows provisioner.
+-- **Next useful step: priority 2**, controllable layered paint/exposed substrate
+-  and protected readable regions, with this real export test retained. Then
+-  priority 3 form controls. Do not restart the completed bridge or duplicate it.
++- That pass's priority 2 is completed above. Continue with priority 3 form
++  controls; retain both real export tests and do not duplicate this layer work.
+ - Active branch: `codex/rts-reference-foundry`, based on `bf607a5`; unrelated open
+   PR #54 is outside this pass. Require current-head checks before merging this
+   change; the final GitHub PR state is authoritative for merge completion.
+diff --git a/docs/GAME_MATERIAL_BLENDER.md b/docs/GAME_MATERIAL_BLENDER.md
+index 540c720..58e6811 100644
+--- a/docs/GAME_MATERIAL_BLENDER.md
++++ b/docs/GAME_MATERIAL_BLENDER.md
+@@ -10,6 +10,9 @@ Generate a bundle using the existing portable CLI, then assign it in Blender:
+ 
+ ```sh
+ axm-assets game-material painted-metal out/comic-paint --finish comic-salvage --seed 471
++# Add a substrate layer and reserve a normalized UV rectangle around a logo:
++axm-assets game-material painted-metal out/worn-logo --finish comic-salvage \
++  --layered-wear .7 --substrate-color 92 101 105 --protect .3 .3 .7 .7
+ ```
+ 
+ ```python
+@@ -41,6 +44,42 @@ install a runtime, unwrap geometry or replace existing object materials.
+ - Material extras retain family, finish, original convention and manifest hash.
+   Keep the original bundle alongside the `.blend` when archiving a creation.
+ 
++## Layered wear and readable regions
++
++`WearLayer` is an optional post-finish composition. It changes correlated base
++color, roughness, metallic response and paint-edge normals, so it is not a color
++filter. The original surface fields are inputs and remain unmodified. Output
++retains four editable scalar maps:
++
++- `wear_mask`: proposed damage before protection;
++- `protection_mask`: authored veto; 255 preserves the top coat exactly;
++- `exposed_mask`: actual damage after that veto;
++- `coat_height`: remaining paint coverage, separate from original authoring
++  height so a later rebake cannot silently replace finish semantics.
++
++The built-in proposal is deterministic UV-space chip/scratch noise and is
++recorded as `procedural-uv`; it does not know mesh curvature or object history.
++Python callers can instead provide one byte per pixel as `wear_mask` and must
++provide `wear_mask_source` when publishing—for example `authored`,
++`projection-derived`, or `mesh-baked`. These labels preserve attribution but do
++not prove the caller's claim. Protection masks likewise require a source label.
++
++```python
++from axm_uc.game_material_styles import WearLayer, game_material_request
++
++request = game_material_request(
++    "out/panel", "painted-metal", finish="comic-salvage",
++    layer=WearLayer(amount=.65, substrate_rgb=(92, 101, 105)),
++    wear_mask=my_mesh_bake, wear_mask_source="mesh-baked:panel-v3",
++    protected_mask=my_logo_mask, protected_mask_source="authored:logo-safe-zone",
++)
++```
++
++CLI `--protect` rectangles are normalized UV coordinates and may be repeated.
++Arbitrary silhouettes use the Python byte-mask API. Protection applies after
++the damage proposal, so full protection leaves top-coat base, roughness,
++metallic and normal bytes unchanged even under full proposed wear.
++
+ New manifests explicitly identify normal direction. Existing v0.1 manifests
+ with the original inherited-donor wording remain accepted for the six known
+ families. Unknown schemas, conventions, maps, channel/color-space mismatches,
+@@ -80,6 +119,13 @@ requested. It also reports shared sampler selection for ORM/AO; this adapter
+ uses matching sampler settings and the GLB inspection verifies repeat wrapping.
+ Neither warning is hidden or converted into a claim of compressed delivery.
+ 
++`tools/blender/layered_wear_roundtrip.py` adds a smaller material-layer specimen:
++intact, an exposed-metal proposal, and the identical proposal with a protected
++mark. It exports GLB, reopens packed `.blend` data, decodes embedded maps,
++re-imports in a fresh scene and renders the result. The proof uses an attributed
++analytic UV mask so the protected result is unambiguous; it is not evidence of
++automatic mesh-edge wear.
++
+ ## Limits and next work
+ 
+ The graphic-toon option is flatter **PBR surface data**, not exported cel lighting.
+@@ -89,6 +135,5 @@ There are no rigs, animation clips or LODs in this material proof, deliberately.
+ No performance benchmark, target-engine gameplay test, hero UV/deformation test,
+ seamless tiling or mesh-aware edge wear is claimed.
+ 
+-Next: layered paint and exposed substrate with protected readable areas, followed
+-by expressive form controls. Retain this export test as a regression gate when
+-those material mechanisms change.
++Next: reusable expressive form controls, followed by a real mesh-bake adapter
++when a geometry source is available. Retain both export tests as regressions.
+diff --git a/src/axm_uc/game_material_bridge.py b/src/axm_uc/game_material_bridge.py
+index cbc1413..3f2d407 100644
+--- a/src/axm_uc/game_material_bridge.py
++++ b/src/axm_uc/game_material_bridge.py
+@@ -18,7 +18,8 @@ from .game_material_styles import FAMILIES, FINISHES
+ 
+ LEGACY_NORMAL = "inherited donor for painted-metal/woven-fabric; tangent +Y for other families"
+ MAP_CHANNELS = {"base_color": 3, "normal": 3, "orm": 3, "ao": 1,
+-                "roughness": 1, "height": 1, "metallic": 1, "thickness": 1}
++                "roughness": 1, "height": 1, "metallic": 1, "thickness": 1,
++                "wear_mask": 1, "protection_mask": 1, "exposed_mask": 1, "coat_height": 1}
+ REQUIRED_MAPS = {"base_color", "normal", "orm", "ao", "roughness", "height"}
+ 
+ 
+diff --git a/src/axm_uc/game_material_styles.py b/src/axm_uc/game_material_styles.py
+index af80dee..d96a3c9 100644
+--- a/src/axm_uc/game_material_styles.py
++++ b/src/axm_uc/game_material_styles.py
+@@ -9,6 +9,7 @@ import base64
+ import hashlib
+ import json
+ import math
++import random
+ from dataclasses import asdict, dataclass
+ from pathlib import Path
+ 
+@@ -28,6 +29,18 @@ class Finish:
+     brush_strength: float = 0.0
+ 
+ 
++@dataclass(frozen=True)
++class WearLayer:
++    """One removable top-coat layer over a physically distinct substrate."""
++    amount: float = 0.38
++    substrate_rgb: tuple[int, int, int] = (92, 101, 105)
++    substrate_roughness: float = 0.34
++    substrate_metallic: float = 1.0
++    chip_scale: float = 15.0
++    scratch_count: int = 14
++    edge_normal_strength: float = 0.014
++
++
+ FINISHES = (
+     Finish("realistic", 0, 0.0, 1.0, 0.0),
+     Finish("comic-salvage", 5, 0.65, 0.60, 0.44),
+@@ -53,6 +66,162 @@ def _inputs(size, seed):
+         raise ValueError("seed must be an integer from 0 to 2147483647")
+ 
+ 
++def _unit(value, name):
++    if type(value) not in (int, float) or not math.isfinite(value) or not 0 <= value <= 1:
++        raise ValueError(f"{name} must be finite from 0 to 1")
++    return float(value)
++
++
++def _wear_layer(layer):
++    if not isinstance(layer, WearLayer):
++        raise ValueError("layer must be WearLayer")
++    for name in ("amount", "substrate_roughness", "substrate_metallic", "edge_normal_strength"):
++        _unit(getattr(layer, name), name)
++    if (not isinstance(layer.substrate_rgb, (tuple, list)) or len(layer.substrate_rgb) != 3
++            or any(type(c) is not int or not 0 <= c <= 255 for c in layer.substrate_rgb)):
++        raise ValueError("substrate_rgb requires three integer sRGB bytes")
++    if type(layer.chip_scale) not in (int, float) or not math.isfinite(layer.chip_scale) or not 2 <= layer.chip_scale <= 128:
++        raise ValueError("chip_scale must be finite from 2 to 128")
++    if type(layer.scratch_count) is not int or not 0 <= layer.scratch_count <= 128:
++        raise ValueError("scratch_count must be an integer from 0 to 128")
++    return layer
++
++
++def protected_regions_mask(size, rectangles):
++    """Rasterize normalized authored rectangles; 255 vetoes all wear exactly."""
++    if type(size) is not int or not 16 <= size <= 512:
++        raise ValueError("size must be an integer from 16 to 512")
++    if not isinstance(rectangles, (tuple, list)) or len(rectangles) > 64:
++        raise ValueError("rectangles must be a list of at most 64 regions")
++    checked = []
++    for rect in rectangles:
++        if not isinstance(rect, (tuple, list)) or len(rect) != 4:
++            raise ValueError("each protected rectangle needs x0 y0 x1 y1")
++        x0, y0, x1, y1 = (_unit(value, "rectangle coordinate") for value in rect)
++        if x0 >= x1 or y0 >= y1:
++            raise ValueError("protected rectangle must have positive area")
++        checked.append((x0, y0, x1, y1))
++    return bytes(255 if any(x0 <= (x + .5) / size <= x1 and y0 <= (y + .5) / size <= y1
++                            for x0, y0, x1, y1 in checked) else 0
++                 for y in range(size) for x in range(size))
++
++
++def _mask(value, size, name):
++    if value is None:
++        return bytes(size * size)
++    if not isinstance(value, bytes) or len(value) != size * size:
++        raise ValueError(f"{name} must be one byte per pixel")
++    return value
++
++
++def _distance_to_segment(px, py, ax, ay, bx, by):
++    vx, vy, wx, wy = bx - ax, by - ay, px - ax, py - ay
++    length = vx * vx + vy * vy
++    if length <= 1e-12:
++        return math.hypot(wx, wy)
++    t = max(0, min(1, (wx * vx + wy * vy) / length))
++    return math.hypot(px - ax - t * vx, py - ay - t * vy)
++
++
++def procedural_wear_mask(size, seed=1, layer=WearLayer()):
++    """Return deterministic UV-space chip/scratch proposal; it is not mesh wear."""
++    _inputs(size, seed)
++    layer = _wear_layer(layer)
++    rng = random.Random(seed ^ 0xA4D6E29)
++    scratches = []
++    for _ in range(layer.scratch_count):
++        ax, ay = rng.random(), rng.random()
++        angle, length = rng.uniform(-math.pi, math.pi), rng.uniform(.06, .34)
++        scratches.append((ax, ay, ax + math.cos(angle) * length,
++                          ay + math.sin(angle) * length, rng.uniform(.002, .009)))
++    output = bytearray()
++    # Amount moves the chip threshold and scratch opacity; zero stays exact zero.
++    threshold = .77 - layer.amount * .22
++    for y in range(size):
++        v = (y + .5) / size
++        for x in range(size):
++            u = (x + .5) / size
++            broad = fbm(u * 4.7, v * 4.7, seed + 7103, 3)
++            chip = fbm(u * layer.chip_scale, v * layer.chip_scale, seed + 7207, 4)
++            islands = max(0, (chip * .78 + broad * .22 - threshold) / max(.04, 1 - threshold))
++            scratch = max((max(0, 1 - _distance_to_segment(u, v, *line[:4]) / line[4])
++                           for line in scratches), default=0)
++            damage = max(islands, scratch * (.35 + layer.amount * .65)) * layer.amount
++            output.append(_u8(min(1, damage)))
++    return bytes(output)
++
++
++def _srgb_linear(value):
++    value /= 255
++    return value / 12.92 if value <= .04045 else ((value + .055) / 1.055) ** 2.4
++
++
++def _linear_srgb(value):
++    value = max(0, min(1, value))
++    return _u8(value * 12.92 if value <= .0031308 else 1.055 * value ** (1 / 2.4) - .055)
++
++
++def apply_layered_wear(fields, size, seed=1, layer=WearLayer(), protected_mask=None, wear_mask=None,
++                       normal_convention="tangent +Y"):
++    """Composite paint loss without mutating the canonical top-coat fields.
++
++    A supplied wear mask is an untrusted proposal; callers must record whether it
++    was authored, projected or mesh-baked. Protection always wins and is retained.
++    Without a supplied mask the candidate is explicitly procedural UV damage.
++    """
++    _inputs(size, seed)
++    _validate_fields(fields, size)
++    layer = _wear_layer(layer)
++    protected = _mask(protected_mask, size, "protected_mask")
++    if normal_convention not in ("tangent +Y", "tangent -Y"):
++        raise ValueError("normal_convention must be tangent +Y or tangent -Y")
++    candidate = (bytes(round(value * layer.amount) for value in _mask(wear_mask, size, "wear_mask"))
++                 if wear_mask is not None else procedural_wear_mask(size, seed, layer))
++    exposed = bytes(round(candidate[i] * (255 - protected[i]) / 255) for i in range(size * size))
++    paint = bytes(255 - value for value in exposed)
++    coat_height = paint
++    overlay = _normal_from_height([value / 255 for value in coat_height], size, layer.edge_normal_strength)
++    if normal_convention == "tangent -Y":
++        overlay = bytes(255 - value if index % 3 == 1 else value for index, value in enumerate(overlay))
++    source_base, source_rough, source_normal = fields["base_color"][1], fields["roughness"][1], fields["normal"][1]
++    source_metal = fields.get("metallic", (1, fields["orm"][1][2::3]))[1]
++    base, rough, metal, normal = bytearray(), bytearray(), bytearray(), bytearray()
++    substrate = [_srgb_linear(value) for value in layer.substrate_rgb]
++    for i, byte in enumerate(exposed):
++        mix = byte / 255
++        if byte == 0:
++            base.extend(source_base[i * 3:i * 3 + 3])
++            rough.append(source_rough[i])
++            metal.append(source_metal[i])
++            normal.extend(source_normal[i * 3:i * 3 + 3])
++            continue
++        for channel in range(3):
++            top = _srgb_linear(source_base[i * 3 + channel])
++            base.append(_linear_srgb(top * (1 - mix) + substrate[channel] * mix))
++        rough.append(_u8(source_rough[i] / 255 * (1 - mix) + layer.substrate_roughness * mix))
++        metal.append(_u8(source_metal[i] / 255 * (1 - mix) + layer.substrate_metallic * mix))
++        source_xyz = [value / 127.5 - 1 for value in source_normal[i * 3:i * 3 + 3]]
++        overlay_xyz = [value / 127.5 - 1 for value in overlay[i * 3:i * 3 + 3]]
++        nx, ny, nz = source_xyz[0] + overlay_xyz[0], source_xyz[1] + overlay_xyz[1], source_xyz[2]
++        length = math.sqrt(nx * nx + ny * ny + nz * nz) or 1
++        normal.extend(_u8(value / length * .5 + .5) for value in (nx, ny, nz))
++    ao = fields["ao"][1]
++    orm = bytes(value for i in range(size * size) for value in (ao[i], rough[i], metal[i]))
++    result = dict(fields)
++    result.update(base_color=(3, bytes(base)), roughness=(1, bytes(rough)), metallic=(1, bytes(metal)),
++                  normal=(3, bytes(normal)), orm=(3, orm), wear_mask=(1, candidate),
++                  protection_mask=(1, protected), exposed_mask=(1, exposed), coat_height=(1, coat_height))
++    return result
++
++
++def layered_game_material_fields(family, size=128, seed=1, finish="realistic", color=None,
++                                 layer=WearLayer(), protected_mask=None, wear_mask=None):
++    """Build top coat, then add an opt-in removable layer with source-family orientation."""
++    fields = game_material_fields(family, size, seed, finish, color)
++    convention = "tangent -Y" if family in ("painted-metal", "woven-fabric") else "tangent +Y"
++    return apply_layered_wear(fields, size, seed, layer, protected_mask, wear_mask, convention)
++
++
+ def _finish(name):
+     for profile in FINISHES:
+         if profile.name == name:
+@@ -216,12 +385,32 @@ def game_material_fields(family, size=128, seed=1, finish="realistic", color=Non
+ def game_material_catalog():
+     return {"schema": "axm.game-material-styles/v0.1", "families": list(FAMILIES),
+             "finishes": [asdict(f) for f in FINISHES], "dependencies": [],
++            "optional_layers": [{"name": "removable-top-coat", "default_parameters": asdict(WearLayer()),
++                                 "mask_order": ["wear proposal", "protected-region veto", "actual exposure"],
++                                 "wear_sources": ["procedural-uv", "caller-declared authored/projected/mesh-baked"]}],
+             "preserves_existing_generators": True,
+             "truth": "Executable surface maps only. Not a complete game art style, cel shader, geometry or animation generator."}
+ 
+ 
+-def game_material_request(path, family, size=128, seed=1, finish="realistic", color=None):
+-    fields = game_material_fields(family, size, seed, finish, color)
++def game_material_request(path, family, size=128, seed=1, finish="realistic", color=None,
++                          layer=None, protected_mask=None, wear_mask=None,
++                          protected_mask_source=None, wear_mask_source=None):
++    if layer is None:
++        if any(value is not None for value in (protected_mask, wear_mask, protected_mask_source, wear_mask_source)):
++            raise ValueError("wear/protection inputs require a WearLayer")
++        fields = game_material_fields(family, size, seed, finish, color)
++    else:
++        _wear_layer(layer)
++        if protected_mask is not None and not protected_mask_source:
++            raise ValueError("protected_mask_source is required for supplied protection")
++        if wear_mask is not None and not wear_mask_source:
++            raise ValueError("wear_mask_source is required for supplied wear")
++        for value, name in ((protected_mask_source, "protected_mask_source"),
++                            (wear_mask_source, "wear_mask_source")):
++            if value is not None and (not isinstance(value, str) or not value.strip() or len(value) > 100):
++                raise ValueError(f"{name} must be a short non-empty label")
++        fields = layered_game_material_fields(family, size, seed, finish, color, layer,
++                                              protected_mask, wear_mask)
+     binaries, maps = {}, {}
+     for name, (channels, pixels) in fields.items():
+         data = png_bytes(size, size, channels, pixels)
+@@ -238,6 +427,14 @@ def game_material_request(path, family, size=128, seed=1, finish="realistic", co
+                 "normal_convention": "tangent -Y" if family in ("painted-metal", "woven-fabric") else "tangent +Y",
+                 "truth": "Authored procedural fields, not scanned material. No mesh-aware edge wear, seamless tiling, lighting or engine acceptance claimed.",
+                 "height_usage": "Authoring proxy; finish modifies normals independently. Re-baking normal from height replaces that finish choice."}
++    if layer is not None:
++        manifest["layers"] = [{"type": "removable-top-coat", "parameters": asdict(layer),
++                               "wear_mask_source": wear_mask_source or "procedural-uv",
++                               "protected_mask_source": protected_mask_source or "none",
++                               "maps": {"proposal": "wear_mask", "protected": "protection_mask",
++                                        "actual_exposure": "exposed_mask", "remaining_coat": "coat_height"},
++                               "truth": "Procedural UV wear is not mesh-derived. Supplied mask source is caller-declared; protection vetoes exposure."}]
++        manifest["truth"] = "Layered procedural material fields, not scans. Wear source is explicit; no automatic mesh-edge derivation, seamless tiling, lighting or engine acceptance claimed."
+     return {"kind": "mixed-media-project", "direction": "generate reusable game material maps",
+             "inputs": {"path": str(path), "project_type": "generic",
+                        "text_files": {"game-material.json": json.dumps(manifest, indent=2)},
+@@ -245,8 +442,11 @@ def game_material_request(path, family, size=128, seed=1, finish="realistic", co
+                        "checks": [{"type": "media-signature", "path": p, "format": "png"} for p in binaries]}}
+ 
+ 
+-def generate_game_material(path, family, size=128, seed=1, finish="realistic", color=None):
+-    request = game_material_request(path, family, size, seed, finish, color)
++def generate_game_material(path, family, size=128, seed=1, finish="realistic", color=None,
++                           layer=None, protected_mask=None, wear_mask=None,
++                           protected_mask_source=None, wear_mask_source=None):
++    request = game_material_request(path, family, size, seed, finish, color, layer,
++                                    protected_mask, wear_mask, protected_mask_source, wear_mask_source)
+     inputs = dict(request["inputs"])
+     target = Path(inputs.pop("path"))
+     return build_mixed_project(target, **inputs)
+diff --git a/src/axm_uc/visual_assets_cli.py b/src/axm_uc/visual_assets_cli.py
+index eadce5e..7142169 100644
+--- a/src/axm_uc/visual_assets_cli.py
++++ b/src/axm_uc/visual_assets_cli.py
+@@ -28,7 +28,8 @@ from .visual_3d_iteration import (
+     reject_3d_iteration, review_3d_iteration, start_3d_iteration,
+ )
+ from .rigged_characters import character_catalog, forge_rigged_character, inspect_rigged_character
+-from .game_material_styles import FAMILIES, FINISHES, game_material_catalog, generate_game_material
++from .game_material_styles import (FAMILIES, FINISHES, WearLayer, game_material_catalog,
++                                   generate_game_material, protected_regions_mask)
+ 
+ BASE_CATEGORIES = ["texture", "gradient", "material", "fixture", "decal", "palette"]
+ EXPANDED_CATEGORIES = ["surface", "pigment", "sprite", "mesh", "vector-part"]
+@@ -66,6 +67,11 @@ def build_parser() -> argparse.ArgumentParser:
+     material.add_argument("--size", type=int, default=128)
+     material.add_argument("--seed", type=int, default=1)
+     material.add_argument("--color", type=int, nargs=3, metavar=("R", "G", "B"))
++    material.add_argument("--layered-wear", type=float, metavar="AMOUNT")
++    material.add_argument("--substrate-color", type=int, nargs=3, metavar=("R", "G", "B"))
++    material.add_argument("--protect", type=float, nargs=4, action="append",
++                          metavar=("X0", "Y0", "X1", "Y1"),
++                          help="normalized authored rectangle; repeat for readable regions")
+     plan = sub.add_parser("plan", help="compile one structured visual request into a deterministic recipe")
+     plan.add_argument("request", help="path to a UTF-8 JSON visual request")
+     state_catalog = sub.add_parser("state-catalog", help="show the source-backed 99-command visual state atlas")
+@@ -176,7 +182,8 @@ def build_parser() -> argparse.ArgumentParser:
+ 
+ 
+ def main(argv: list[str] | None = None) -> int:
+-    args = build_parser().parse_args(argv)
++    parser = build_parser()
++    args = parser.parse_args(argv)
+     if args.command == "catalog":
+         result = combined_catalog()
+     elif args.command == "grammar-catalog":
+@@ -184,7 +191,19 @@ def main(argv: list[str] | None = None) -> int:
+     elif args.command == "game-material-catalog":
+         result = game_material_catalog()
+     elif args.command == "game-material":
+-        result = generate_game_material(args.path, args.family, args.size, args.seed, args.finish, args.color)
++        layer = None
++        protection = None
++        protection_source = None
++        if args.layered_wear is not None:
++            layer = WearLayer(amount=args.layered_wear,
++                              substrate_rgb=tuple(args.substrate_color or (92, 101, 105)))
++            if args.protect:
++                protection = protected_regions_mask(args.size, args.protect)
++                protection_source = "authored-cli-rectangles"
++        elif args.substrate_color or args.protect:
++            parser.error("--substrate-color/--protect require --layered-wear")
++        result = generate_game_material(args.path, args.family, args.size, args.seed, args.finish, args.color,
++                                        layer, protection, protected_mask_source=protection_source)
+     elif args.command == "plan":
+         request = json.loads(Path(args.request).read_text(encoding="utf-8"))
+         result = compile_visual_recipe(request)
+diff --git a/tests/test_game_material_layers.py b/tests/test_game_material_layers.py
+new file mode 100644
+index 0000000..ce1603d
+--- /dev/null
++++ b/tests/test_game_material_layers.py
+@@ -0,0 +1,144 @@
++import copy
++import io
++import json
++from pathlib import Path
++import sys
++import tempfile
++import unittest
++from contextlib import redirect_stderr, redirect_stdout
++
++sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src'))
++from axm_uc.game_material_bridge import load_material_bundle
++from axm_uc.game_material_styles import (
++    FAMILIES, FINISHES, WearLayer, apply_layered_wear, game_material_fields, game_material_request,
++    generate_game_material, layered_game_material_fields, protected_regions_mask,
++)
++from axm_uc.visual_assets_cli import main
++
++
++class LayeredGameMaterialTests(unittest.TestCase):
++    def test_every_family_finish_accepts_optional_layer_contract(self):
++        for family in FAMILIES:
++            for finish in FINISHES:
++                with self.subTest(family=family, finish=finish.name):
++                    result = layered_game_material_fields(family, 16, 17, finish.name,
++                                                          layer=WearLayer(amount=.7))
++                    self.assertEqual(result['orm'][1][0::3], result['ao'][1])
++                    self.assertEqual(result['orm'][1][1::3], result['roughness'][1])
++                    self.assertEqual(result['orm'][1][2::3], result['metallic'][1])
++                    self.assertEqual(result['coat_height'][1],
++                                     bytes(255 - v for v in result['exposed_mask'][1]))
++
++    def test_zero_wear_preserves_runtime_maps_and_source(self):
++        source = game_material_fields('painted-metal', 16, 5, 'comic-salvage')
++        before = copy.deepcopy(source)
++        result = apply_layered_wear(source, 16, 5, WearLayer(amount=0))
++        for name in ('base_color', 'roughness', 'metallic', 'normal', 'ao', 'orm', 'height'):
++            expected = source[name] if name in source else (1, source['orm'][1][2::3])
++            self.assertEqual(result[name], expected)
++        self.assertEqual(result['exposed_mask'][1], bytes(256))
++        self.assertEqual(source, before)
++
++    def test_protection_veto_is_exact_and_exposure_changes_pbr(self):
++        size = 16
++        source = game_material_fields('ceramic', size, 8, 'painted-adventure')
++        protection = protected_regions_mask(size, [(0.25, 0.25, 0.75, 0.75)])
++        result = apply_layered_wear(source, size, 8, WearLayer(amount=1), protection, bytes([255]) * 256)
++        changed_outside = 0
++        for i, protected in enumerate(protection):
++            if protected:
++                self.assertEqual(result['exposed_mask'][1][i], 0)
++                self.assertEqual(result['base_color'][1][i * 3:i * 3 + 3], source['base_color'][1][i * 3:i * 3 + 3])
++                self.assertEqual(result['roughness'][1][i], source['roughness'][1][i])
++                self.assertEqual(result['metallic'][1][i], source['metallic'][1][i])
++                self.assertEqual(result['normal'][1][i * 3:i * 3 + 3], source['normal'][1][i * 3:i * 3 + 3])
++            else:
++                changed_outside += result['base_color'][1][i * 3:i * 3 + 3] != source['base_color'][1][i * 3:i * 3 + 3]
++                self.assertEqual(result['metallic'][1][i], 255)
++        self.assertGreater(changed_outside, 100)
++        self.assertEqual(result['orm'][1][0::3], source['ao'][1])
++        self.assertEqual(result['orm'][1][1::3], result['roughness'][1])
++        self.assertEqual(result['orm'][1][2::3], result['metallic'][1])
++
++    def test_supplied_wear_amount_scales_and_normal_orientation_is_preserved(self):
++        size = 16
++        source = game_material_fields('rubber', size, 2, 'graphic-toon')
++        ramp = bytes(round(y / (size - 1) * 255) for y in range(size) for _ in range(size))
++        low = apply_layered_wear(source, size, 2, WearLayer(amount=.25), wear_mask=ramp)
++        high_plus = apply_layered_wear(source, size, 2, WearLayer(amount=1), wear_mask=ramp)
++        high_minus = apply_layered_wear(source, size, 2, WearLayer(amount=1), wear_mask=ramp,
++                                        normal_convention='tangent -Y')
++        self.assertLess(sum(low['exposed_mask'][1]), sum(high_plus['exposed_mask'][1]))
++        index = (8 * size + 8) * 3 + 1
++        self.assertLess(high_plus['normal'][1][index], 128)
++        self.assertGreater(high_minus['normal'][1][index], 127)
++
++    def test_procedural_layer_is_deterministic_distinct_and_not_only_color(self):
++        source = game_material_fields('painted-metal', 32, 10, 'comic-salvage')
++        a = apply_layered_wear(source, 32, 99, WearLayer(amount=.75))
++        b = apply_layered_wear(source, 32, 99, WearLayer(amount=.75))
++        c = apply_layered_wear(source, 32, 100, WearLayer(amount=.75))
++        self.assertEqual(a, b)
++        self.assertNotEqual(a['wear_mask'], c['wear_mask'])
++        self.assertNotEqual(a['roughness'], source['roughness'])
++        self.assertNotEqual(a['metallic'], source['metallic'])
++        self.assertNotEqual(a['normal'], source['normal'])
++        self.assertGreater(max(a['exposed_mask'][1]), 30)
++
++    def test_publication_retains_masks_and_declares_sources(self):
++        size = 16
++        protection = protected_regions_mask(size, [(.35, .35, .65, .65)])
++        with tempfile.TemporaryDirectory() as tmp:
++            folder = Path(tmp) / 'layered'
++            generate_game_material(folder, 'painted-metal', size, 31, 'comic-salvage',
++                                   layer=WearLayer(amount=.8), protected_mask=protection,
++                                   protected_mask_source='authored-test-logo')
++            bundle = load_material_bundle(folder)
++            manifest = bundle['manifest']
++            self.assertEqual(manifest['layers'][0]['wear_mask_source'], 'procedural-uv')
++            self.assertEqual(manifest['layers'][0]['protected_mask_source'], 'authored-test-logo')
++            for name in ('wear_mask', 'protection_mask', 'exposed_mask', 'coat_height'):
++                self.assertIn(name, manifest['maps'])
++                self.assertIn(name, bundle['pngs'])
++
++    def test_supplied_masks_require_attributed_sources(self):
++        mask = bytes(256)
++        with self.assertRaisesRegex(ValueError, 'protected_mask_source'):
++            game_material_request('out', 'rubber', 16, layer=WearLayer(), protected_mask=mask)
++        with self.assertRaisesRegex(ValueError, 'wear_mask_source'):
++            game_material_request('out', 'rubber', 16, layer=WearLayer(), wear_mask=mask)
++        with self.assertRaisesRegex(ValueError, 'require a WearLayer'):
++            game_material_request('out', 'rubber', 16, protected_mask=mask)
++
++    def test_cli_publishes_pro_layer_and_refuses_orphan_controls(self):
++        with tempfile.TemporaryDirectory() as tmp:
++            folder = Path(tmp) / 'cli'
++            with redirect_stdout(io.StringIO()):
++                self.assertEqual(main(['game-material', 'painted-metal', str(folder), '--size', '16',
++                                       '--finish', 'graphic-toon', '--layered-wear', '.7',
++                                       '--substrate-color', '80', '90', '100',
++                                       '--protect', '.3', '.3', '.7', '.7']), 0)
++            manifest = json.loads((folder / 'game-material.json').read_text())
++            self.assertEqual(manifest['layers'][0]['parameters']['amount'], .7)
++            self.assertEqual(manifest['layers'][0]['protected_mask_source'], 'authored-cli-rectangles')
++            with redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):
++                main(['game-material', 'rubber', str(Path(tmp) / 'bad'), '--protect', '0', '0', '1', '1'])
++
++    def test_invalid_layer_and_masks_are_rejected(self):
++        source = game_material_fields('rubber', 16)
++        bad_layers = [WearLayer(amount=-1), WearLayer(amount=float('nan')),
++                      WearLayer(substrate_rgb=(1, 2, 999)), WearLayer(scratch_count=True),
++                      WearLayer(chip_scale=1), WearLayer(edge_normal_strength=2)]
++        for layer in bad_layers:
++            with self.subTest(layer=layer), self.assertRaises(ValueError):
++                apply_layered_wear(source, 16, layer=layer)
++        for mask in (b'', bytes(255), bytearray(256)):
++            with self.subTest(mask=type(mask).__name__, length=len(mask)), self.assertRaises(ValueError):
++                apply_layered_wear(source, 16, protected_mask=mask)
++        for rectangles in ([(-1, 0, 1, 1)], [(0, 0, 0, 1)], [(0, 0, 1)], 'bad'):
++            with self.subTest(rectangles=rectangles), self.assertRaises(ValueError):
++                protected_regions_mask(16, rectangles)
++
++
++if __name__ == '__main__':
++    unittest.main()
+diff --git a/tools/blender/layered_wear_roundtrip.py b/tools/blender/layered_wear_roundtrip.py
+new file mode 100644
+index 0000000..4befa9e
+--- /dev/null
++++ b/tools/blender/layered_wear_roundtrip.py
+@@ -0,0 +1,231 @@
++"""Build and independently verify one layered-paint GLB material proof.
++
++Run build and verify as separate bpy 4.3 processes. The proof contrasts intact
++paint, an attributed wear proposal, and the same proposal after a protected-logo
++veto. It is a static integration specimen, not a complete game prop.
++"""
++import argparse
++import hashlib
++import io
++import json
++from pathlib import Path
++import struct
++import sys
++
++sys.path.insert(0, str(Path(__file__).resolve().parents[2] / 'src'))
++from axm_uc.game_material_bridge import blender_game_material, load_material_bundle
++from axm_uc.game_material_styles import WearLayer, generate_game_material, protected_regions_mask
++
++
++SURFACES = ('intact', 'exposed', 'protected')
++
++
++def authored_wear_proposal(size):
++    """A proof-only UV mask: borders, diagonal scrape and three chips."""
++    result = bytearray()
++    for y in range(size):
++        v = (y + .5) / size
++        for x in range(size):
++            u = (x + .5) / size
++            border = max(0, 1 - min(u, v, 1 - u, 1 - v) / .085)
++            diagonal = max(0, 1 - abs(v - (.20 + u * .62)) / .026)
++            chips = max(max(0, 1 - ((u - cx) ** 2 + (v - cy) ** 2) ** .5 / radius)
++                        for cx, cy, radius in ((.22, .68, .09), (.72, .32, .07), (.82, .74, .055)))
++            result.append(round(min(1, max(border, diagonal * .92, chips * .8)) * 255))
++    return bytes(result)
++
++
++def scene_setup(bpy, root, output_name):
++    from mathutils import Vector
++    scene = bpy.context.scene
++    scene.render.engine = 'CYCLES'
++    scene.cycles.samples = 28
++    scene.cycles.use_denoising = True
++    scene.render.threads_mode = 'FIXED'
++    scene.render.threads = 4
++    scene.render.resolution_x, scene.render.resolution_y = 1500, 820
++    scene.render.resolution_percentage = 100
++    scene.view_settings.view_transform = 'AgX'
++    scene.world = bpy.data.worlds.new('Wear proof world')
++    scene.world.color = (.025, .03, .045)
++    bpy.ops.object.camera_add(location=(0, -14, 1.25))
++    camera = bpy.context.object
++    camera.rotation_euler = ((Vector((0, 0, .2)) - camera.location).to_track_quat('-Z', 'Y').to_euler())
++    camera.data.lens = 48
++    scene.camera = camera
++    for location, power, size in [((-4, -4, 7), 1050, 4.5), ((5, -2, 4), 800, 3.5), ((0, 4, 6), 650, 3)]:
++        bpy.ops.object.light_add(type='AREA', location=location)
++        lamp = bpy.context.object
++        lamp.data.energy, lamp.data.shape, lamp.data.size = power, 'DISK', size
++        lamp.rotation_euler = ((Vector((0, 0, 0)) - lamp.location).to_track_quat('-Z', 'Y').to_euler())
++    scene.render.image_settings.file_format = 'PNG'
++    scene.render.filepath = str(root / output_name)
++
++
++def solid_material(bpy, name, color, metallic, roughness):
++    material = bpy.data.materials.new(name)
++    material.use_nodes = True
++    shader = material.node_tree.nodes.get('Principled BSDF')
++    shader.inputs['Base Color'].default_value = (*color, 1)
++    shader.inputs['Metallic'].default_value = metallic
++    shader.inputs['Roughness'].default_value = roughness
++    return material
++
++
++def add_label(bpy, body, location, size, material, extrude=.014):
++    curve = bpy.data.curves.new(body, 'FONT')
++    curve.body, curve.align_x, curve.align_y = body, 'CENTER', 'CENTER'
++    curve.size, curve.extrude, curve.bevel_depth = size, extrude, .005
++    obj = bpy.data.objects.new(body, curve)
++    bpy.context.scene.collection.objects.link(obj)
++    obj.location = location
++    obj.rotation_euler = (1.57079632679, 0, 0)
++    obj.data.materials.append(material)
++    bpy.context.view_layer.objects.active = obj
++    obj.select_set(True)
++    bpy.ops.object.convert(target='MESH')
++    obj.select_set(False)
++    return obj
++
++
++def build(root):
++    import bpy
++    root.mkdir(parents=True, exist_ok=False)
++    bpy.ops.wm.read_factory_settings(use_empty=True)
++    size, proposal = 256, authored_wear_proposal(256)
++    protection = protected_regions_mask(size, [(.27, .25, .73, .75)])
++    layer = WearLayer(amount=1, substrate_rgb=(88, 98, 104), substrate_roughness=.38,
++                      substrate_metallic=1, edge_normal_strength=.012)
++    generate_game_material(root / 'maps' / 'intact', 'painted-metal', size, 471, 'comic-salvage')
++    generate_game_material(root / 'maps' / 'exposed', 'painted-metal', size, 471, 'comic-salvage',
++                           layer=layer, wear_mask=proposal,
++                           wear_mask_source='authored-proof-panel-regions')
++    generate_game_material(root / 'maps' / 'protected', 'painted-metal', size, 471, 'comic-salvage',
++                           layer=layer, wear_mask=proposal, protected_mask=protection,
++                           wear_mask_source='authored-proof-panel-regions',
++                           protected_mask_source='authored-proof-logo-safe-zone')
++    source_digests = {str(path.relative_to(root)): hashlib.sha256(path.read_bytes()).hexdigest()
++                      for path in sorted((root / 'maps').rglob('*')) if path.is_file()}
++    materials = {name: blender_game_material(root / 'maps' / name, 'WearProof_' + name)
++                 for name in SURFACES}
++    dark = solid_material(bpy, 'Raised readable mark', (.018, .022, .027), .75, .32)
++    bolt = solid_material(bpy, 'Fasteners', (.13, .16, .18), .88, .24)
++    objects = []
++    for index, name in enumerate(SURFACES):
++        x = (index - 1) * 3.35
++        bpy.ops.mesh.primitive_cube_add(location=(x, 0, .1), scale=(1.42, .16, 1.52))
++        panel = bpy.context.object
++        panel.name = 'Panel_' + name
++        bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
++        bevel = panel.modifiers.new('Rolled armor edge', 'BEVEL')
++        bevel.width, bevel.segments = .13, 5
++        bpy.context.view_layer.objects.active = panel
++        bpy.ops.object.modifier_apply(modifier=bevel.name)
++        # Proof-camera planar mapping. This is deliberately not claimed as a
++        # general unwrap or mesh-curvature wear solution.
++        for loop in panel.data.loops:
++            position = panel.data.vertices[loop.vertex_index].co
++            panel.data.uv_layers.active.data[loop.index].uv = (position.x / 2.84 + .5,
++                                                               position.z / 3.04 + .5)
++        panel.data.materials.append(materials[name])
++        objects.append(panel)
++        for dx in (-1.17, 1.17):
++            for dz in (-1.25, 1.25):
++                bpy.ops.mesh.primitive_cylinder_add(vertices=24, radius=.10, depth=.08,
++                                                    location=(x + dx, -.22, .1 + dz),
++                                                    rotation=(1.57079632679, 0, 0))
++                fastener = bpy.context.object
++                fastener.name = 'Fastener'
++                fastener.data.materials.append(bolt)
++                objects.append(fastener)
++        objects.append(add_label(bpy, 'M', (x, -.22, .13), 1.25, dark, .025))
++    label = solid_material(bpy, 'Caption', (.72, .77, .83), .05, .9)
++    add_label(bpy, 'INTACT', (-3.35, -.24, 1.98), .24, label)
++    add_label(bpy, 'EXPOSED', (0, -.24, 1.98), .24, label)
++    add_label(bpy, 'PROTECTED MARK', (3.35, -.24, 1.98), .21, label)
++    add_label(bpy, 'SAME WEAR PROPOSAL  /  PROTECTION VETOES DAMAGE', (0, -.24, -1.93), .19, label)
++    scene_setup(bpy, root, 'source.png')
++    bpy.ops.wm.save_as_mainfile(filepath=str(root / 'layered-wear-proof.blend'))
++    bpy.ops.object.select_all(action='SELECT')
++    bpy.ops.export_scene.gltf(filepath=str(root / 'layered-wear-proof.glb'), export_format='GLB',
++                              use_selection=True, export_extras=True, export_image_format='AUTO')
++    current = {str(path.relative_to(root)): hashlib.sha256(path.read_bytes()).hexdigest()
++               for path in sorted((root / 'maps').rglob('*')) if path.is_file()}
++    assert current == source_digests
++    (root / 'source-digests.json').write_text(json.dumps(source_digests, indent=2) + '\n')
++    bpy.ops.render.render(write_still=True)
++
++
++def glb_document(path):
++    data = path.read_bytes()
++    magic, version, length = struct.unpack_from('<4sII', data)
++    assert (magic, version, length) == (b'glTF', 2, len(data))
++    json_length, json_kind = struct.unpack_from('<II', data, 12)
++    assert json_kind == 0x4E4F534A
++    doc = json.loads(data[20:20 + json_length])
++    offset = 20 + json_length
++    binary_length, binary_kind = struct.unpack_from('<II', data, offset)
++    assert binary_kind == 0x004E4942
++    return data, doc, data[offset + 8:offset + 8 + binary_length]
++
++
++def verify(root):
++    from PIL import Image
++    import bpy
++    data, doc, binary = glb_document(root / 'layered-wear-proof.glb')
++    materials = {material['name']: material for material in doc['materials']}
++    exact = []
++    for name in SURFACES:
++        bundle = load_material_bundle(root / 'maps' / name)
++        material = materials['WearProof_' + name]
++        pbr = material['pbrMetallicRoughness']
++        textures = [('base_color', pbr['baseColorTexture']), ('orm', pbr['metallicRoughnessTexture']),
++                    ('orm', material['occlusionTexture']), ('normal', material['normalTexture'])]
++        for key, texture in textures:
++            image = doc['images'][doc['textures'][texture['index']]['source']]
++            view = doc['bufferViews'][image['bufferView']]
++            offset = view.get('byteOffset', 0)
++            actual = Image.open(io.BytesIO(binary[offset:offset + view['byteLength']])).convert('RGB')
++            expected = Image.open(io.BytesIO(bundle['pngs'][key])).convert('RGB')
++            if key == 'normal' and bundle['normal_convention'] == 'tangent -Y':
++                r, g, b = expected.split()
++                expected = Image.merge('RGB', (r, g.point(lambda value: 255 - value), b))
++            assert actual.tobytes() == expected.tobytes(), (name, key)
++        exact.append(name)
++    exposed = Image.open(io.BytesIO(load_material_bundle(root / 'maps' / 'protected')['pngs']['exposed_mask'])).convert('L')
++    protection = Image.open(io.BytesIO(load_material_bundle(root / 'maps' / 'protected')['pngs']['protection_mask'])).convert('L')
++    for exposure, protected in zip(exposed.tobytes(), protection.tobytes()):
++        if protected == 255:
++            assert exposure == 0
++    source_digests = json.loads((root / 'source-digests.json').read_text())
++    current = {str(path.relative_to(root)): hashlib.sha256(path.read_bytes()).hexdigest()
++               for path in sorted((root / 'maps').rglob('*')) if path.is_file()}
++    assert current == source_digests
++    bpy.ops.wm.open_mainfile(filepath=str(root / 'layered-wear-proof.blend'))
++    assert sum(image.packed_file is not None for image in bpy.data.images) == 9
++    bpy.ops.wm.read_factory_settings(use_empty=True)
++    bpy.ops.import_scene.gltf(filepath=str(root / 'layered-wear-proof.glb'))
++    for name in SURFACES:
++        material = bpy.data.materials['WearProof_' + name]
++        assert material['axm_realized_normal_convention'] == 'tangent +Y'
++    scene_setup(bpy, root, 'reimport.png')
++    bpy.ops.render.render(write_still=True)
++    source = Image.open(root / 'source.png').convert('RGB').tobytes()
++    restored = Image.open(root / 'reimport.png').convert('RGB').tobytes()
++    mae = sum(abs(a - b) for a, b in zip(source, restored)) / len(source)
++    assert mae < 2, mae
++    report = {'schema': 'axm.layered-wear-roundtrip/v0.1', 'blender': bpy.app.version_string,
++              'glb_sha256': hashlib.sha256(data).hexdigest(), 'runtime_maps_exact': exact,
++              'protected_pixels_have_zero_exposure': True, 'source_maps_immutable': True,
++              'blend_packed_images': 9, 'source_reimport_render_mae': mae,
++              'limits': 'Static material integration specimen; no animation, LOD, engine gameplay, performance, automatic UVs or mesh-derived wear acceptance.'}
++    (root / 'verification.json').write_text(json.dumps(report, indent=2) + '\n')
++    print(json.dumps(report))
++
++
++if __name__ == '__main__':
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument('mode', choices=('build', 'verify'))
++    parser.add_argument('output', type=Path)
++    args = parser.parse_args()
++    (build if args.mode == 'build' else verify)(args.output.resolve())

@@ -1,0 +1,171 @@
+diff --git a/docs/CREATIVE_MATERIAL_WAVE11.md b/docs/CREATIVE_MATERIAL_WAVE11.md
+new file mode 100644
+index 0000000..4c7e385
+--- /dev/null
++++ b/docs/CREATIVE_MATERIAL_WAVE11.md
+@@ -0,0 +1,148 @@
++# Creative Production Wave 11 — UV, Material Stack and Texture Projection
++
++Wave 11 connects precision mesh geometry to non-destructive texture/material production while keeping geometry, UV state and material state separately inspectable.
++
++## Exact capability growth
++
++Wave 11 adds **53 executable hands** in a separate registry:
++
++| family | hands |
++| --- | ---: |
++| `uv-production` | 20 |
++| `material-stack` | 11 |
++| `material-anchor` | 7 |
++| `material-generator` | 9 |
++| `texture-projection` | 6 |
++| **total** | **53** |
++
++With the previously merged body this candidate exposes:
++
++- **441 executable creative hands**
++- **448 callable creative recipes**
++
++The registry joins the existing dynamic Creative Hands service. Creative Flow itself is unchanged.
++
++## Per-corner UV layout
++
++`axm.precision-uv-layout/v1` is bound to one exact `axm.precision-mesh/v1` digest and stores UV coordinates per triangle corner rather than forcing discontinuous UV seams into the indexed geometry.
++
++This allows the machine to represent real UV seams while the geometry remains one canonical mesh.
++
++Executable UV operations include:
++
++- create a layout from the mesh's current UVs or explicit corner UVs;
++- mark/unmark/clear exact mesh-edge seams;
++- mark indexed boundary edges as seams;
++- derive sharp seams from indexed face-normal angle;
++- discover seam-separated UV islands;
++- inspect one island;
++- translate, scale, rotate and integer-UDIM-shift one island;
++- dominant-axis planar projection for one island;
++- project all islands;
++- deterministic grid packing with padding;
++- texel-density measurement and scaling;
++- per-triangle relative area-distortion evidence;
++- exact positive-area triangle overlap audit for bounded meshes;
++- explicit materialization into a mesh whose vertices are split only where one indexed geometry vertex needs different corner UVs.
++
++### UV truth boundary
++
++This is not an LSCM, ABF, conformal or angle-preserving unwrap implementation. `project-island` selects the dominant geometry axis and performs normalized planar projection. It is useful, deterministic and inspectable, but it must not be represented as a production conformal unwrap.
++
++Packing is deterministic grid-cell packing, not a bin-packing/rotation optimizer. It prioritizes reproducibility and no overlap over maximum texture occupancy.
++
++Texel-density evidence is area based. Distortion evidence reports relative triangle area scaling; it does not yet measure angular/conformal distortion.
++
++The overlap audit computes positive-area UV triangle intersections and fails closed above 2,000 faces because the current implementation is quadratic.
++
++`materialize-split-mesh` intentionally changes indexed topology where UV discontinuities require duplicate vertices. The source geometry remains unchanged; the materialized mesh records the originating UV layout digest.
++
++## Non-destructive material stacks
++
++`axm.precision-material-stack/v1` wraps the existing `axm.precision-material/v1` channel body with ordered layers.
++
++Each layer has:
++
++- stable ID;
++- one or more precision-raster channels;
++- optional precision mask;
++- one of the existing deterministic blend modes;
++- bounded opacity;
++- enabled/disabled state;
++- explicit metadata.
++
++Executable stack operations include create/add/remove/duplicate/move, opacity/blend/mask/channel editing, enable/disable and deterministic flattening back into the existing precision-material body.
++
++Flattening is real pixel execution through the existing alpha-correct precision compositor. Missing destination channels begin from a deterministic black opaque raster before a new channel layer is composited.
++
++## Anchors
++
++Anchors are explicit image snapshots, not invisible live graph references.
++
++An anchor records:
++
++- one exact image snapshot;
++- whether it came from a flattened stack or a named layer/channel;
++- the source stack/material evidence at capture time.
++
++Anchors can produce luminance, edge or named-channel masks; copy their snapshot into another layer channel; or drive a layer mask.
++
++Changing a layer later does **not** silently rewrite an existing anchor. A fresh anchor must be created when fresh source state is intended.
++
++## Material generators
++
++The stack can add:
++
++- constant channel fills;
++- the existing deterministic procedural raster generators;
++- decal layers;
++- wear, dust and scratch masks derived from the current flattened material;
++- those generated masks directly onto a selected layer.
++
++These reuse the existing material/raster engines instead of introducing a parallel texture generator.
++
++Wear remains an edge-derived mask from height/normal/base-colour evidence. Dust and scratches are bounded deterministic procedural masks. They are not physically simulated aging.
++
++## Geometry-to-texture projection
++
++The texture projection engine rasterizes mesh triangles through the per-corner UV layout with a bounded barycentric rasterizer.
++
++It executes:
++
++- normalized world-position map;
++- interpolated world-normal map;
++- stable island-ID map;
++- directional slope mask;
++- axis height mask;
++- triplanar texture projection into UV texture space.
++
++The rasterizer is bounded to 4,194,304 output pixels and 32,000,000 triangle-bounding-box pixel tests per invocation.
++
++Triplanar projection samples explicit X/Y/Z images (or one shared image), wraps source texture coordinates, blends them by absolute interpolated world normal, and writes an ordinary precision raster. It is a baked UV-space texture operation, not a runtime shader node or renderer claim.
++
++## Creative Flow proof
++
++The Wave 11 selftest uses the unchanged Creative Flow spine to execute:
++
++`cube -> weld -> UV layout -> sharp seams -> island projection -> pack -> world-normal texture map`
++
++The seven steps cross the existing mesh registry and the new Wave 11 registry without any material-specific planner path.
++
++## Explicit non-claims
++
++Wave 11 does not claim:
++
++- LSCM/ABF/conformal unwrap;
++- optimized UV island packing;
++- angular stretch optimization;
++- high-volume overlap detection beyond the declared bound;
++- automatic seam intelligence or aesthetic seam placement;
++- Substance Painter/Designer smart-material inference;
++- physically simulated dirt/wear;
++- renderer shader graphs;
++- ray-traced baking, curvature, AO or thickness from geometry;
++- live dependency anchors;
++- arbitrary projection-camera/decal perspective solving;
++- texture or material artistic quality judgment.
++
++Those can be added as later executable organs without changing the UV-layout/material-stack contracts established here.
+diff --git a/tests/test_creative_precision_fabric.py b/tests/test_creative_precision_fabric.py
+index 0cd1cda..596d90f 100644
+--- a/tests/test_creative_precision_fabric.py
++++ b/tests/test_creative_precision_fabric.py
+@@ -63,6 +63,12 @@ class CreativePrecisionFabricTests(unittest.TestCase):
+     def test_rigging_animation_fail_closed_contracts(self):
+         self.run_node('creative-animation-contract-selftest.js')
+ 
++    def test_uv_material_texture_production_wave(self):
++        self.run_node('creative-material-production-hands-selftest.js')
++
++    def test_uv_material_texture_fail_closed_contracts(self):
++        self.run_node('creative-material-production-contract-selftest.js')
++
+ 
+ if __name__ == '__main__':
+     unittest.main()

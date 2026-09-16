@@ -1,0 +1,898 @@
+diff --git a/GAME_STYLE_GROWTH.md b/GAME_STYLE_GROWTH.md
+index 0c84196..e633803 100644
+--- a/GAME_STYLE_GROWTH.md
++++ b/GAME_STYLE_GROWTH.md
+@@ -1,3 +1,38 @@
++### Creation controls and editable creative outputs — 2026-09-15
++
++- UC creates reusable assets for humans, deterministic machines and AI. Humans can
++  use a creation request/control and continue editing in the existing Studio.
++  Internal task graphs remain available to machine/AI orchestration.
++- Added create_material, create_effect, compose_layers and edit_layers to parallel
++  workers. One create_surface request compiles a four-task charged-surface creation.
++  Typed PNG dependencies capture exact inputs without arbitrary source paths.
++  Existing material families and finishes, including realistic, remain selectable.
++- Outputs: finished PNG, replayable Studio project, original PBR maps, effect
++  graph/SVG, intermediate compositions and complete immutable dependency library.
++  Libraries import without UC/renderers; shared sources stay deduplicated and
++  depth bounded. Worker cancellation now includes nested local tools.
++- Local verification: five creative integration tests, six worker tests, 27 sticker
++  tests and 16 unchanged donor JS tests pass. Stormpost proof independently restores
++  four definitions and reproduces PNG bytes; Studio replay is byte-exact; a further
++  opacity edit changes pixels without modifying source. Eleven material maps load;
++  all 141 original effect edges remain editable.
++- Static inspection: painted surface, separate branching arc, finished composition
++  and visibly reduced-charge Studio edit. This proves generated pixels/source replay,
++  not live editor interaction, animation or 3D projection. Artistic overlays do not
++  silently replace physically consistent PBR maps.
++- Reproduce: tools/creative_surface_proof.py, tests/test_creative_tasks.py,
++  docs/CREATIVE_OUTPUTS.md. Linux/Windows CI runs installed commands and publishes
++  proof under parallel-creation artifacts. Actual head checks govern merge readiness.
++- Next: more bounded creation compositions, compatible precision tools from main,
++  explicit 3D/channel binding with separate evidence. Free-form prompt interpretation
++  is not implemented by this deterministic control.
++- Lane: codex/rts-reference-foundry; PR #84. Base includes
++  independent PR #83 without modifying its files.
++- Roots: Truth scopes claims to executed generation/replay and visible stills;
++  Agency retains equal callable controls and Studio editing; Continuity preserves
++  original sources; Wisdom bounds work and rejects incomplete libraries. UC stays
++  standalone.
++
+ ### Deterministic parallel creation — 2026-09-15
+ 
+ - Reused the exact Apache-2.0 scheduler from axm-parallel-capability at
+diff --git a/docs/CREATIVE_OUTPUTS.md b/docs/CREATIVE_OUTPUTS.md
+new file mode 100644
+index 0000000..f6f68cb
+--- /dev/null
++++ b/docs/CREATIVE_OUTPUTS.md
+@@ -0,0 +1,84 @@
++# Creation first, editable assets afterward
++
++UC creates assets through machine capabilities. A human can request a creation
++through a prompt interface or click a creation control; the machine handles the
++internal steps. AI may compose those steps too. This adds no Photoshop-like UI.
++Studio remains the existing hands-on editor. Finished assets can be reused to
++build something else or edited further there.
++
++`axm-create-surface REQUEST.json NEW_DIRECTORY` and
++`axm_uc.surface_creation.create_surface(request, output)` demonstrate that route.
++The request contains creation controls, not a hand-written sequence of tool jobs:
++
++```json
++{
++  "schema": "axm.surface-creation/v1",
++  "name": "Stormpost coil housing",
++  "seed": 41,
++  "size": 256,
++  "family": "painted-metal",
++  "finish": "comic-salvage",
++  "color": [40, 78, 88],
++  "effect_color": "#b5eeff",
++  "wear": 0.32,
++  "charge": 0.95
++}
++```
++
++A prompt interpreter or existing clickable front door can pass these controls.
++This module does not itself interpret arbitrary natural-language prompts. The
++current high-level composition is a charged surface; it is an executable example
++of reusable internal tool composition, not a claim to automatically create any
++possible asset. `axm-create-surface catalog` exposes the supported controls.
++
++| Output | Purpose |
++| --- | --- |
++| `asset.png` | Finished surface that other creations can use |
++| `studio-project.json` + `input.*.png` | Editable layer project and exact captured source images |
++| `sources/` + `source-index.json` | Original material bundle, effect graph/SVG and earlier composition |
++| `library.json` | Complete portable dependency closure with exact content pins |
++| `stickers.sqlite` | Every successful task saved for reuse |
++| `plan.json` / `receipt.json` | Inspectable machine execution and evidence |
++
++The proof calls existing Studio layer tools afterward, lowers the charge opacity,
++and saves that separate revision. The saved Studio project exactly reproduces
++the finished PNG. The underlying material bundle still loads through the existing
++material bridge with its normal, ORM, height, wear and protection maps intact.
++This verifies the programmatic Studio handoff, not live UI interaction or native
++PSD/XCF export. A PNG is widely usable; the rich layer file is AXM Studio's format.
++
++## Internal tool wiring
++
++- `create_material`: existing six material families and four finishes, optional
++  WearLayer controls and normalized protected rectangles. Outputs original PBR
++  maps and manifest. The realistic option remains selectable.
++- `create_effect`: existing electric-arc topology, canonical recipe and SVG;
++  new bounded transparent PNG realization for layer composition. PNG uses radial
++  segment coverage and a soft halo, while SVG keeps its original Gaussian blur.
++- `compose_layers`: existing Studio masks, blend modes, opacity and filters. Its
++  source map uses `{"$asset":{"task":"material","key":"base_color"}}` references
++  to exact completed PNG outputs, never caller filesystem paths.
++- `edit_layers`: a `{"$task":"composition"}` source plus the existing add/change/
++  move/remove edits. Produces a new saved creation and preserves the earlier one.
++
++These operations coexist with procedural 3D parts and animated assembly jobs.
++Each task carries id, name and origin; optional version and tags are explicit.
++The machine resolves typed references only to declared completed dependencies.
++Wrong media, missing inputs, bad pins or conflicting definitions reject the run.
++
++Creative outputs use `axm.sticker.creative-task/v1`; their `recipe.dependencies`
++contains exact sticker pins. The independent registry library walker retains that
++closure without executing UC. Shared sources are stored once in the portable
++bundle, including diamond-shaped dependency graphs. Existing 16-depth, 4096-item
++and 32 MiB asset limits remain; the limits are never silently truncated.
++
++Workers have separate registries. Timeout/cancellation terminates the worker tool
++tree, including Studio's Node subprocess (Linux process groups; Windows taskkill).
++This is trusted local execution, not a hostile-code sandbox or enforced RAM quota.
++Effect rasterization additionally caps dimensions at 512 and pixel visits at
++16 MiB. Source PNGs and composition retain Studio's existing limits.
++
++The composited color image does not automatically replace an entire physically
++consistent PBR material: its artistic overlay has no corresponding new normal or
++roughness interpretation. Original material channels remain separate. Explicit
++3D projection/binding and more high-level creation compositions are next steps.
+diff --git a/docs/PARALLEL_CREATION.md b/docs/PARALLEL_CREATION.md
+index d026e55..284afad 100644
+--- a/docs/PARALLEL_CREATION.md
++++ b/docs/PARALLEL_CREATION.md
+@@ -13,10 +13,11 @@ axm-create-parallel plan.json new-asset-directory --workers 4 --timeout 120
+ ```
+ 
+ Python callers use `axm_uc.parallel_create.build(plan, output, workers=4)`.
+-Humans, deterministic software and AI use the same explicit JSON contract. The
+-current adapters are `create_3d` and `save_assembly`, using the existing sticker
+-creator's parameters. This is two wired operation families, not a claim that
+-hundreds of tool adapters are already available.
++This is the internal machine contract. A human-facing prompt interpreter or
++creation control invokes it underneath; people need not author task steps.
++`axm-create-surface` demonstrates a single creation request compiled to the graph.
++Adapters now include `create_3d`, `save_assembly`, `create_material`,
++`create_effect`, `compose_layers`, and `edit_layers`. See CREATIVE_OUTPUTS.md.
+ 
+ Each task runs in a separate Python process with a private SQLite registry.
+ Independent tasks can run concurrently. Assembly tasks wait for exact completed
+@@ -76,7 +77,7 @@ the actual completed definition. Saved groups can be dependencies of larger
+ groups. Children accept the existing explicit socket animation traces and source
+ clip selection; the executor does not alter animation, material or style intent.
+ 
+-Successful output contains `asset.glb`, `library.json`, `stickers.sqlite`,
++Successful output contains `asset.glb` or `asset.png`, `library.json`, `stickers.sqlite`,
+ `plan.json`, and `receipt.json`. The library contains the chosen asset's closure;
+ the registry retains every successful task so unused parts remain reusable too.
+ Source dictionary order is preserved because existing authoring tools save that
+@@ -101,7 +102,8 @@ transactional. Interrupts cancel queued jobs and terminate active child workers.
+ The donor supports pause/resume and checkpointing internally, but this UC adapter
+ does not expose checkpoint reuse: safe persistent reuse also needs exact tool and
+ artifact lifetime binding. Nor does this adapter accept arbitrary shell commands,
+-plugins, remote workers or file-reading tools. Add further tool families through
++plugins, remote workers or arbitrary file-reading tools. Composition sources
++are typed PNG outputs of declared dependencies. Add further tool families through
+ explicit validated adapters, with their input capture and output merge rules.
+ 
+ `python tools/parallel_creation_proof.py NEW_DIRECTORY` constructs Rivetwing as
+diff --git a/src/axm_stickers/assembly.py b/src/axm_stickers/assembly.py
+index 2130dbb..4a54bcd 100644
+--- a/src/axm_stickers/assembly.py
++++ b/src/axm_stickers/assembly.py
+@@ -11,6 +11,7 @@ from .core import (SCHEMA, MAX_ASSETS, Registry, digest, encode, identifier,
+ from .placement import identity, rigid, attachment_matrix
+ 
+ ASSEMBLY = 'axm.sticker.assembly-3d/v1'
++CREATIVE = 'axm.sticker.creative-task/v1'
+ LIBRARY = 'axm.sticker-library/v1'
+ MAX_PARTS = 4096
+ MAX_DEPTH = 16
+@@ -84,11 +85,46 @@ def save_assembly(registry, *, id, name, children, origin, ver=1, socket='mount'
+     return d
+ 
+ 
++def library_definitions(registry, root):
++    """Exact dependency closure for assemblies and typed creative task outputs.
++
++    Creative dependencies are data pins, never executable code or render rules.
++    """
++    selected = {}; heights = {}
++    def visit(d, ancestors):
++        key = digest(d)
++        if key in ancestors or len(ancestors) >= MAX_DEPTH:
++            raise ValueError('cyclic or too-deep library dependency')
++        if key in heights:
++            if len(ancestors) + heights[key] > MAX_DEPTH:
++                raise ValueError('too-deep library dependency')
++            return heights[key]
++        if len(selected) >= MAX_PARTS: raise ValueError('library dependency budget exceeded')
++        selected[key] = d
++        height = 1
++        if d['adapter'] == ASSEMBLY:
++            for record in expand(registry, d)[1:]:
++                height = max(height, 1 + visit(record['definition'], ancestors + (key,)))
++        elif d['adapter'] == CREATIVE:
++            pins = d['recipe'].get('dependencies')
++            if not isinstance(pins, list) or len(pins) > 256:
++                raise ValueError('creative task requires bounded dependency pins')
++            for pin in pins:
++                if not isinstance(pin, dict): raise ValueError('invalid creative dependency pin')
++                source = registry.get(pin.get('id'), pin.get('version'))
++                placed = instance(source, 'dependency'); placed['sticker'] = pin
++                resolve(source, placed)
++                height = max(height, 1 + visit(source, ancestors + (key,)))
++        heights[key] = height
++        return height
++    visit(root, ())
++    return list(selected.values())
++
++
+ def library_bundle(registry,id,ver):
+     """Closure includes every source once, not per placement."""
+     root=registry.get(id,ver)
+-    records=expand(registry,root) if root['adapter']==ASSEMBLY else [{'definition':root}]
+-    definitions={digest(r['definition']):r['definition'] for r in records}
++    definitions={digest(d):d for d in library_definitions(registry, root)}
+     refs={s for d in definitions.values() for s in d['assets'].values()}
+     assets={}; total=0
+     for key in sorted(refs):
+@@ -118,8 +154,7 @@ def import_library(registry,bundle):
+     if not isinstance(pin,dict): raise ValueError('invalid library root')
+     d=Lookup().get(pin.get('id'),pin.get('version'))
+     p=instance(d,'check'); p['sticker']=pin; resolve(d,p)
+-    records=expand(Lookup(),d) if d['adapter']==ASSEMBLY else [{'definition':d}]
+-    if {digest(r['definition']) for r in records} != {digest(x) for x in definitions}:
++    if {digest(r) for r in library_definitions(Lookup(), d)} != {digest(x) for x in definitions}:
+         raise ValueError('library includes unrelated definitions')
+     refs={s for d in definitions for s in d['assets'].values()}
+     if not isinstance(assets,dict) or set(assets)!=refs or any(not isinstance(v,str) for v in assets.values()):
+diff --git a/src/axm_uc/creative_tasks.py b/src/axm_uc/creative_tasks.py
+new file mode 100644
+index 0000000..318dcde
+--- /dev/null
++++ b/src/axm_uc/creative_tasks.py
+@@ -0,0 +1,193 @@
++"""Internal creative tools: materials, effect topology and editable compositions.
++
++Creation controls compile these steps for people; machines/AI may also compose
++the same explicit graph. No new editor UI or natural-language model is required.
++"""
++import base64
++import copy
++import hashlib
++import json
++import math
++from pathlib import Path
++
++from axm_stickers import digest, instance
++from axm_stickers.assembly import CREATIVE, library_definitions
++from .sticker_adapter import definition
++from .game_material_styles import game_material_request, WearLayer, protected_regions_mask
++from .procedural_effects import build_electric_arc, _svg
++from .fabric_noise import png_bytes
++from . import studio_compositor as studio
++
++OPERATIONS = ('create_material', 'create_effect', 'compose_layers', 'edit_layers')
++
++
++def encoded(value):
++    return json.dumps(value, ensure_ascii=False, separators=(',', ':'), allow_nan=False).encode('utf-8')
++
++
++def raster_arc(result):
++    """Bounded antialiased segment coverage; independent from SVG Gaussian glow.
++
++    Preserve the original graph/SVG. PNG uses max coverage across shared edges
++    to avoid bright segment joints. Its soft radial halo is not a light simulation.
++    """
++    recipe = result['recipe']; real = recipe['realization']
++    w, h = recipe['canvas']['width'], recipe['canvas']['height']
++    if w > 512 or h > 512: raise ValueError('effect raster requires dimensions <=512')
++    alpha = [0.0] * (w*h); work = 0
++    for edge in result['graph']['edges']:
++        ax, ay = edge['a'][0]*w, edge['a'][1]*h
++        bx, by = edge['b'][0]*w, edge['b'][1]*h
++        weight = edge['intensity']; core = real['core_width']*(.55+.9*weight)/2
++        halo = real['glow_width']*(.35+.65*weight)/2 if real['glow_strength'] else 0
++        radius = core + halo + 1
++        x0, x1 = max(0, math.floor(min(ax,bx)-radius)), min(w, math.ceil(max(ax,bx)+radius))
++        y0, y1 = max(0, math.floor(min(ay,by)-radius)), min(h, math.ceil(max(ay,by)+radius))
++        work += (x1-x0)*(y1-y0)
++        if work > 16*1024*1024: raise ValueError('effect raster work budget exceeded')
++        dx, dy = bx-ax, by-ay; length = dx*dx+dy*dy
++        for y in range(y0,y1):
++            for x in range(x0,x1):
++                t = max(0, min(1, ((x+.5-ax)*dx+(y+.5-ay)*dy)/length)) if length else 0
++                distance = math.hypot(x+.5-ax-t*dx, y+.5-ay-t*dy)
++                coverage = max(0, min(1, core+.5-distance))*(.35+.65*weight)
++                if halo: coverage = max(coverage, max(0, 1-distance/(core+halo))**2*real['glow_strength']*.65)
++                at = y*w+x; alpha[at] = max(alpha[at], coverage)
++    color = bytes.fromhex(real['color'][1:]); background = real['background']
++    pixels = bytearray()
++    for a in alpha:
++        if background:
++            bg = bytes.fromhex(background[1:])
++            pixels.extend(round(c*a+b*(1-a)) for c,b in zip(color,bg)); pixels.append(255)
++        else:
++            pixels.extend(color if a else bytes(3)); pixels.append(round(a*255))
++    return png_bytes(w,h,4,bytes(pixels)), work
++
++
++def _source(ref, dependencies, key=True):
++    marker = '$asset' if key else '$task'
++    if not isinstance(ref, dict) or set(ref) != {marker}: raise ValueError('expected typed dependency reference')
++    value = ref[marker]
++    if key:
++        if not isinstance(value, dict) or set(value) != {'task','key'}: raise ValueError('asset reference requires task and key')
++        task = value['task']
++    else: task = value
++    if not isinstance(task, str) or task not in dependencies: raise ValueError('unknown declared dependency')
++    d = dependencies[task]
++    if d['adapter'] != CREATIVE: raise ValueError('dependency requires creative-task output')
++    if key:
++        name = value['key']
++        if not isinstance(name,str) or d['recipe']['outputs'].get(name) != 'image/png':
++            raise ValueError('layer input must name a declared PNG output')
++        return d, name
++    return d
++
++
++def execute_creative(registry, request, root, dependencies):
++    request = copy.deepcopy(request); root = Path(root)
++    operation = request.get('operation')
++    fields = {'create_material': {'settings'}, 'create_effect': {'settings'},
++              'compose_layers': {'project'}, 'edit_layers': {'source','edits'}}
++    common = {'operation','id','name','origin','version','tags'}
++    if operation not in fields or set(request)-common-fields[operation] or not {'id','name','origin'} <= set(request):
++        raise ValueError('invalid creative task request')
++    bodies = {}; outputs = {}; extra = {}; project = None
++    def put(key, body, media):
++        if not isinstance(body, bytes): raise ValueError('creative output must be bytes')
++        bodies[key] = body; outputs[key] = media
++    if operation == 'create_material':
++        settings = dict(request['settings']); layer = settings.pop('layer', None)
++        regions = settings.pop('protected_regions', None)
++        allowed = {'family','size','seed','finish','color'}
++        if set(settings)-allowed: raise ValueError('unknown material controls')
++        if layer is not None: settings['layer'] = WearLayer(**layer)
++        if regions is not None:
++            settings['protected_mask'] = protected_regions_mask(settings.get('size',128),regions)
++            settings['protected_mask_source'] = 'authored normalized rectangles'
++        material = game_material_request('unused', **settings)['inputs']
++        manifest = json.loads(material['text_files']['game-material.json'])
++        put('material', encoded(manifest), 'application/json')
++        for name, entry in manifest['maps'].items():
++            put(name, base64.b64decode(material['binary_files'][entry['file']]['content'],validate=True), 'image/png')
++        primary = 'base_color'
++    elif operation == 'create_effect':
++        result = build_electric_arc(request['settings'])
++        body, work = raster_arc(result)
++        put('image', body, 'image/png'); put('graph', encoded(result['graph']), 'application/json')
++        put('svg', _svg(result).encode(), 'image/svg+xml'); put('effect_recipe', encoded(result['recipe']), 'application/json')
++        extra['raster_pixel_visits'] = work; primary = 'image'
++    else:
++        if operation == 'compose_layers':
++            project = copy.deepcopy(request['project'])
++            if not isinstance(project,dict) or set(project) != {'schema','recipe','sources'} or not isinstance(project['sources'],dict):
++                raise ValueError('invalid composition project')
++            source_bytes = {}
++            for name, ref in project['sources'].items():
++                d, key = _source(ref, dependencies)
++                source_bytes[name] = registry.asset(d['assets'][key])
++        else:
++            d = _source(request['source'], dependencies, False)
++            if 'project' not in d['recipe']: raise ValueError('layer editing requires a saved composition')
++            project = studio.edit_studio_layers(d['recipe']['project'], request['edits'])
++            source_bytes = {name: registry.asset(d['assets']['input.'+name]) for name in project['sources']}
++        # Only exact completed PNG outputs become local files; never arbitrary paths.
++        for i, (name, body) in enumerate(source_bytes.items()):
++            filename = f'input-{i}.png'; (root/filename).write_bytes(body)
++            project['sources'][name] = filename
++            put('input.'+name, body, 'image/png')
++        rendered = studio.compose_studio_project(project, root)
++        put('image', rendered['png'], 'image/png'); put('project', encoded(project), 'application/json')
++        extra['composition'] = rendered['receipt']; primary = 'image'
++    put('request', encoded(request), 'application/json')
++    recipe = {'dependencies': [instance(d,'dependency')['sticker'] for d in dependencies.values()],
++              'outputs': outputs, 'primary': primary, 'operation': operation, 'evidence': extra}
++    if project is not None: recipe['project'] = project
++    origin = request['origin']
++    if not isinstance(origin,dict) or set(origin) != {'author','license','source'}: raise ValueError('origin requires author/license/source')
++    d = definition(request['id'], request['name'], CREATIVE,
++        {'space':'2d','socket':'surface','anchor':[0,0]}, recipe,
++        {key:hashlib.sha256(body).hexdigest() for key,body in bodies.items()},
++        ver=request.get('version',1), tags=request.get('tags',[]), **origin)
++    library_definitions(registry,d)  # Validate all retained dependencies before save.
++    registry.register(d,{hashlib.sha256(body).hexdigest():body for body in bodies.values()})
++    return d
++
++
++def export_creative(registry, d, destination):
++    """Publish original named outputs; PNG is a derivative of retained source."""
++    if d['adapter'] != CREATIVE: raise ValueError('unsupported creative output')
++    extensions = {'image/png':'.png','image/svg+xml':'.svg','application/json':'.json'}
++    outputs = d['recipe']['outputs']; primary = d['recipe']['primary']
++    if not isinstance(outputs,dict) or set(outputs) != set(d['assets']) or primary not in outputs:
++        raise ValueError('invalid creative output manifest')
++    exported = {}
++    for key, media in outputs.items():
++        if media not in extensions: raise ValueError('unknown creative output media')
++        name = key+extensions[media]; body = registry.asset(d['assets'][key])
++        (Path(destination)/name).write_bytes(body); exported[key] = name
++    # Stable top-level realization name for the selected task.
++    body = registry.asset(d['assets'][primary]); name = 'asset'+extensions[outputs[primary]]
++    (Path(destination)/name).write_bytes(body)
++    if 'project' in d['recipe']:
++        replay = copy.deepcopy(d['recipe']['project'])
++        replay['sources'] = {key:exported['input.'+key] for key in replay['sources']}
++        (Path(destination)/'studio-project.json').write_bytes(encoded(replay))
++    if d['recipe']['operation'] == 'create_material':
++        (Path(destination)/'game-material.json').write_bytes(registry.asset(d['assets']['material']))
++    return {'primary':name,'sha256':hashlib.sha256(body).hexdigest(), 'outputs':exported,
++            'source_preserved':True, 'visual_approval':False,
++            'limits':'Authored maps, path effects and encoded-sRGB layer composition; no 3D projection or physical lighting claim.'}
++
++
++def export_creative_sources(registry, root, destination):
++    """Openable source folders alongside the portable immutable library."""
++    entries = []
++    for i, d in enumerate(library_definitions(registry,root)):
++        if digest(d) == digest(root) or d['adapter'] != CREATIVE: continue
++        folder = Path(destination) / 'sources' / f'{i:03d}'
++        folder.mkdir(parents=True)
++        info = export_creative(registry,d,folder)
++        entries.append({'sticker':instance(d,'source')['sticker'], 'folder':folder.relative_to(destination).as_posix(),
++                        'operation':d['recipe']['operation'], 'outputs':info['outputs']})
++    (Path(destination)/'source-index.json').write_bytes(encoded(entries))
++    return entries
+diff --git a/src/axm_uc/parallel_create.py b/src/axm_uc/parallel_create.py
+index cffba2f..38ec28d 100644
+--- a/src/axm_uc/parallel_create.py
++++ b/src/axm_uc/parallel_create.py
+@@ -20,10 +20,12 @@ from axm_stickers import Registry, instance
+ from axm_stickers.assembly import import_library, library_bundle
+ from .sticker_create import execute
+ from .sticker_assembly import export_assembly
++from axm_stickers.assembly import CREATIVE
++from .creative_tasks import OPERATIONS as CREATIVE_OPERATIONS, execute_creative, export_creative, export_creative_sources
+ 
+ SCHEMA = 'axm.parallel-creation/v1'
+ MAX_BYTES = 48 * 1024 * 1024
+-OPERATIONS = ('create_3d', 'save_assembly')
++OPERATIONS = ('create_3d', 'save_assembly') + CREATIVE_OPERATIONS
+ DATA = Path(__file__).parent / 'data' / 'parallel'
+ 
+ 
+@@ -52,6 +54,17 @@ def write(path, value):
+ 
+ def references(value):
+     if isinstance(value, dict):
++        if '$asset' in value:
++            ref = value['$asset']
++            if set(value) != {'$asset'} or not isinstance(ref,dict) or set(ref) != {'task','key'} or not all(isinstance(v,str) for v in ref.values()):
++                raise ValueError('asset reference requires task and key')
++            yield ref['task']
++            return
++        if '$task' in value:
++            if set(value) != {'$task'} or not isinstance(value['$task'],str):
++                raise ValueError('task reference requires a task ID')
++            yield value['$task']
++            return
+         if '$instance' in value:
+             if set(value) != {'$instance'} or not isinstance(value['$instance'], dict):
+                 raise ValueError('invalid instance reference')
+@@ -132,7 +145,10 @@ def run_worker(input_path):
+         request = resolve_references(job['request'], definitions)
+         if request.get('operation') not in OPERATIONS:
+             raise ValueError('unsupported worker operation')
+-        definition = execute(registry, request, path.parent)
++        if request['operation'] in CREATIVE_OPERATIONS:
++            definition = execute_creative(registry, request, path.parent, definitions)
++        else:
++            definition = execute(registry, request, path.parent)
+         bundle = library_bundle(registry, definition['id'], definition['version'])
+         write(path.parent / 'library.json', bundle)
+         return {'root': bundle['root'], 'bundle_sha256': sha(encode(bundle)),
+@@ -214,12 +230,19 @@ def build(plan, output, *, workers=4, timeout=120):
+                     import_library(registry, bundle)
+                 chosen = next(r['output']['root'] for r in receipt['outputs'] if r['taskId'] == plan['result'])
+                 bundle = library_bundle(registry, chosen['id'], chosen['version'])
+-                artifact = export_assembly(registry, chosen['id'], chosen['version'])
+-                (staged / 'asset.glb').write_bytes(artifact['body'])
++                definition = registry.get(chosen['id'], chosen['version'])
++                if definition['adapter'] == CREATIVE:
++                    realization = export_creative(registry, definition, staged)
++                    realization['sources'] = export_creative_sources(registry, definition, staged)
++                    output_fields = {'asset_sha256':realization['sha256'], 'primary':realization['primary'], 'export':realization}
++                else:
++                    artifact = export_assembly(registry, chosen['id'], chosen['version'])
++                    (staged / 'asset.glb').write_bytes(artifact['body'])
++                    output_fields = {'glb_sha256':sha(artifact['body']), 'primary':'asset.glb', 'export':artifact['receipt']}
+                 write(staged / 'library.json', bundle)
+-            receipt['creation'] = {'plan_sha256': job['digest'], 'glb_sha256': sha(artifact['body']),
+-                'result': chosen, 'export': artifact['receipt'], 'workers': workers,
+-                'limits': 'Local authored rigid GLB assembly; no physics or engine playback acceptance.'}
++            receipt['creation'] = {'plan_sha256': job['digest'], **output_fields,
++                'result': chosen, 'workers': workers,
++                'limits': 'Local authored creation; no physics or engine playback acceptance.'}
+             write(staged / 'plan.json', plan); write(staged / 'receipt.json', receipt)
+             # Atomic no-clobber reservation, then move only into our own directory.
+             output.mkdir()
+diff --git a/src/axm_uc/surface_creation.py b/src/axm_uc/surface_creation.py
+new file mode 100644
+index 0000000..f0acd42
+--- /dev/null
++++ b/src/axm_uc/surface_creation.py
+@@ -0,0 +1,81 @@
++"""Creation controls for a reusable charged surface, not a layer-editor UI.
++
++A prompt interpreter or clickable control can call create_surface once. The
++deterministic machine compiles its internal material/effect/composition graph.
++"""
++import argparse
++import json
++from pathlib import Path
++
++from .game_material_styles import FAMILIES, FINISHES
++from .parallel_create import SCHEMA, build, read
++
++SURFACE = 'axm.surface-creation/v1'
++
++
++def surface_catalog():
++    return {'schema':SURFACE,'creations':['charged-surface'], 'families':list(FAMILIES),
++            'finishes':[f.name for f in FINISHES], 'controls':['name','seed','size','family','finish','color','effect_color','wear','charge'],
++            'invocation':'create_surface(request, output); no manual task graph required',
++            'outputs':['PNG','editable Studio project','original material maps','effect graph/SVG','portable source library'],
++            'ai_required':False, 'truth':'One deterministic creation composition; not free-form prompt interpretation or a new human editor.'}
++
++
++def compile_surface(request):
++    if not isinstance(request,dict) or request.get('schema') != SURFACE or set(request)-{'schema','origin',*surface_catalog()['controls']}:
++        raise ValueError('invalid surface creation controls')
++    name = request.get('name','Charged salvage surface')
++    if not isinstance(name,str) or not name.strip() or len(name)>100: raise ValueError('name requires 1..100 characters')
++    size = request.get('size',256); seed = request.get('seed',1)
++    if type(size) is not int or not 64<=size<=512: raise ValueError('size must be 64..512')
++    if type(seed) is not int or not 0<=seed<=2147483647: raise ValueError('seed must be 0..2147483647')
++    family = request.get('family','painted-metal'); finish = request.get('finish','realistic')
++    if family not in FAMILIES or finish not in [f.name for f in FINISHES]: raise ValueError('unknown surface family/finish')
++    wear = request.get('wear',.35); charge = request.get('charge',.8)
++    if any(type(v) not in (float,int) or not 0<=v<=1 for v in (wear,charge)):
++        raise ValueError('wear and charge must be in 0..1')
++    origin = request.get('origin', {'author':'AXM','license':'CC0-1.0','source':'Original charged-surface deterministic composition'})
++    tasks = []
++    def task(id, dependencies, operation, **values):
++        tasks.append({'id':id,'dependencies':dependencies,'request':{
++            'operation':operation,'id':id,'name':name+' / '+id,'origin':origin,**values}})
++    settings = {'family':family,'finish':finish,'size':size,'seed':seed,
++                'layer':{'amount':wear}, 'protected_regions':[[.02,.02,.98,.09],[.02,.91,.98,.98]]}
++    if 'color' in request: settings['color'] = request['color']
++    task('material', [], 'create_material', settings=settings)
++    task('arc', [], 'create_effect', settings={
++        'name':name,'kind':'electric-arc','seed':seed,'canvas':{'width':size,'height':size},
++        'topology':{'source':[.08,.18],'target':[.9,.78],'grid':48,'walkers':28,'spread':.13,'octaves':5,'roughness':.78},
++        'guides':{'points':[[.38,.27],[.58,.68]],'strength':.65,'radius':.14},
++        'realization':{'color':request.get('effect_color','#9deaff'),'background':None,
++                       'core_width':max(.7,size/170),'glow_width':size/22,'glow_strength':.8}})
++    project = {'schema':'axm.studio-composition-project/v1',
++        'sources':{'paint':{'$asset':{'task':'material','key':'base_color'}},'charge':{'$asset':{'task':'arc','key':'image'}}},
++        'recipe':{'schema':'axm.raster-composition/v1','canvas':{'width':size,'height':size},
++                  'layers':[{'id':'paint','source_artifact_id':'paint'},
++                            {'id':'charge','source_artifact_id':'charge','blend_mode':'screen','opacity':charge}]}}
++    task('composed', ['material','arc'], 'compose_layers', project=project)
++    task('finished', ['composed'], 'edit_layers', source={'$task':'composed'},
++         edits=[{'op':'change','id':'paint','patch':{'filters':[{'type':'contrast','value':.12}]}}])
++    return {'schema':SCHEMA,'tasks':tasks,'result':'finished'}
++
++
++def create_surface(request, output, *, workers=4, timeout=120):
++    return build(compile_surface(request), output, workers=workers, timeout=timeout)
++
++
++def main(argv=None):
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument('request',help='saved creation controls, or catalog')
++    parser.add_argument('output',nargs='?')
++    parser.add_argument('--workers',type=int,default=4)
++    args = parser.parse_args(argv)
++    if args.request == 'catalog': result = surface_catalog()
++    else:
++        if args.output is None: parser.error('output directory required')
++        result = create_surface(read(Path(args.request)),args.output,workers=args.workers)
++    print(json.dumps(result,allow_nan=False))
++    return 0
++
++
++if __name__ == '__main__': raise SystemExit(main())
+diff --git a/tests/test_creative_tasks.py b/tests/test_creative_tasks.py
+new file mode 100644
+index 0000000..8b591ec
+--- /dev/null
++++ b/tests/test_creative_tasks.py
+@@ -0,0 +1,113 @@
++"""Typed tool composition and human-editable source round trips."""
++import copy
++import json
++from pathlib import Path
++import shutil
++import sys
++import tempfile
++import unittest
++
++sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src'))
++from axm_stickers import Registry, instance
++from axm_stickers.assembly import CREATIVE, import_library, library_bundle, library_definitions
++from axm_uc.creative_tasks import execute_creative, export_creative
++from axm_uc.parallel_create import build, validate_plan, CreationFailed
++from axm_uc.surface_creation import create_surface, compile_surface, SURFACE
++from axm_uc.studio_compositor import compose_studio_project
++from axm_uc.game_material_bridge import load_material_bundle
++from axm_uc.game_material_styles import game_material_request
++from axm_uc.procedural_effects import build_electric_arc
++
++
++@unittest.skipUnless(shutil.which('node'),'local Node required by Studio')
++class CreativeTaskTests(unittest.TestCase):
++    def setUp(self):
++        self.temp = tempfile.TemporaryDirectory(); self.addCleanup(self.temp.cleanup)
++        self.root = Path(self.temp.name)
++        self.controls = {'schema':SURFACE,'name':'Coil housing','size':64,'seed':41,'color':[40,78,88]}
++
++    def test_single_creation_controls_compile_and_execute_same_serial_parallel(self):
++        original = copy.deepcopy(self.controls)
++        a = create_surface(self.controls,self.root/'one',workers=1)
++        b = create_surface(self.controls,self.root/'four',workers=4)
++        self.assertEqual(self.controls,original)
++        self.assertEqual(a['creation']['asset_sha256'],b['creation']['asset_sha256'])
++        for name in ('asset.png','library.json','studio-project.json','plan.json'):
++            self.assertEqual((self.root/'one'/name).read_bytes(),(self.root/'four'/name).read_bytes())
++        body = (self.root/'four/asset.png').read_bytes()
++        project = json.loads((self.root/'four/studio-project.json').read_text())
++        self.assertEqual(compose_studio_project(project,self.root/'four')['png'],body)
++        sources = json.loads((self.root/'four/source-index.json').read_text())
++        material = next(e for e in sources if e['operation']=='create_material')
++        loaded = load_material_bundle(self.root/'four'/material['folder'])
++        self.assertIn('normal',loaded['pngs']); self.assertIn('exposed_mask',loaded['pngs'])
++        with Registry(self.root/'reimport.sqlite') as registry:
++            bundle = json.loads((self.root/'four/library.json').read_text()); import_library(registry,bundle)
++            self.assertEqual(len(bundle['definitions']),4)
++            self.assertEqual(library_bundle(registry,'finished',1),bundle)
++            d = registry.get('finished',1)
++            replay = self.root/'replay'; replay.mkdir(); export_creative(registry,d,replay)
++            self.assertEqual((replay/'asset.png').read_bytes(),body)
++            # The final library still contains the exact earlier editable step.
++            before = registry.get('composed',1)
++            self.assertNotIn('filters',before['recipe']['project']['recipe']['layers'][0])
++            self.assertIn('filters',d['recipe']['project']['recipe']['layers'][0])
++
++    def test_material_and_effect_preserve_original_mechanisms_and_topology(self):
++        plan = compile_surface(self.controls)
++        with Registry(self.root/'r.sqlite') as registry:
++            mat = execute_creative(registry,plan['tasks'][0]['request'],self.root,{})
++            spec = plan['tasks'][0]['request']['settings']
++            plain = game_material_request('unused',family=spec['family'],size=64,seed=41,color=spec['color'])
++            # Actual requested coat changes physical maps, not merely a tint.
++            self.assertNotEqual(json.loads(registry.asset(mat['assets']['material']))['maps']['normal']['sha256'],
++                                json.loads(plain['inputs']['text_files']['game-material.json'])['maps']['normal']['sha256'])
++            arc = execute_creative(registry,plan['tasks'][1]['request'],self.root,{})
++            expected = build_electric_arc(plan['tasks'][1]['request']['settings'])['graph']
++            self.assertEqual(json.loads(registry.asset(arc['assets']['graph'])),expected)
++            self.assertTrue(registry.asset(arc['assets']['image']).startswith(b'\x89PNG'))
++            changed = copy.deepcopy(plan['tasks'][1]['request']); changed['id']='red'
++            changed['settings']['realization']['color']='#ff3300'
++            red = execute_creative(registry,changed,self.root,{})
++            self.assertEqual(arc['assets']['graph'],red['assets']['graph'])
++            self.assertNotEqual(arc['assets']['image'],red['assets']['image'])
++
++    def test_typed_inputs_reject_paths_wrong_media_and_undeclared_dependencies(self):
++        plan = compile_surface(self.controls)
++        bad = copy.deepcopy(plan); bad['tasks'][2]['dependencies']=[]
++        with self.assertRaisesRegex(ValueError,'declared dependency'): validate_plan(bad)
++        bad = copy.deepcopy(plan); bad['tasks'][2]['request']['project']['sources']['paint']='../../private.png'
++        with self.assertRaises(CreationFailed): build(bad,self.root/'bad-path')
++        bad = copy.deepcopy(plan); bad['tasks'][2]['request']['project']['sources']['paint']['$asset']['key']='material'
++        with self.assertRaises(CreationFailed): build(bad,self.root/'bad-media')
++        self.assertFalse((self.root/'bad-path').exists()); self.assertFalse((self.root/'bad-media').exists())
++
++    def test_dependency_library_rejects_missing_tampered_and_extra_definitions_atomically(self):
++        create_surface(self.controls,self.root/'valid')
++        bundle = json.loads((self.root/'valid/library.json').read_text())
++        with Registry(self.root/'empty.sqlite') as registry:
++            for kind in ('missing','pin','extra'):
++                bad = copy.deepcopy(bundle)
++                if kind=='missing': bad['definitions'].pop()
++                elif kind=='pin': bad['definitions'][0]['recipe']['dependencies'][0]['digest']='0'*64
++                else:
++                    extra = copy.deepcopy(bad['definitions'][-1]);extra['id']='foreign';bad['definitions'].append(extra)
++                with self.assertRaises(ValueError): import_library(registry,bad)
++                self.assertEqual(registry.search()['entries'],[])
++
++    def test_all_layer_edit_verbs_operate_on_a_copy(self):
++        plan = compile_surface(self.controls)
++        plan['tasks'][-1]['request']['edits'] = [
++            {'op':'add','layer':{'id':'grade','fill':'#112244','opacity':.1}},
++            {'op':'move','id':'grade','before':'charge'},
++            {'op':'change','id':'charge','patch':{'opacity':.5}},
++            {'op':'remove','id':'grade'}]
++        build(plan,self.root/'edited')
++        with Registry(self.root/'edited/stickers.sqlite') as registry:
++            original = registry.get('composed',1)['recipe']['project']['recipe']['layers']
++            revised = registry.get('finished',1)['recipe']['project']['recipe']['layers']
++            self.assertEqual(original[1]['opacity'],.8);self.assertEqual(revised[1]['opacity'],.5)
++            self.assertEqual([v['id'] for v in revised],['paint','charge'])
++
++
++if __name__=='__main__': unittest.main()
+diff --git a/tests/test_parallel_create.py b/tests/test_parallel_create.py
+index 6a480e4..588cdd6 100644
+--- a/tests/test_parallel_create.py
++++ b/tests/test_parallel_create.py
+@@ -121,7 +121,7 @@ class ParallelCreationTests(unittest.TestCase):
+         worker.write_text('import time\ntime.sleep(30)\n')
+         if sys.platform == 'win32': self.skipTest('POSIX executable fixture; main adapter remains portable')
+         launcher = self.root / 'blocked'
+-        launcher.write_text('#!' + sys.executable + '\nimport time\ntime.sleep(30)\n'); launcher.chmod(0o755)
++        launcher.write_text('#!' + sys.executable + '\nimport subprocess,sys,time\nsubprocess.Popen([sys.executable, \"-c\", \"import time; time.sleep(30)\"])\ntime.sleep(30)\n'); launcher.chmod(0o755)
+         job = {'root': str(self.root), 'python': str(launcher), 'workers': 1, 'timeout': 1, 'digest': 'timeout',
+                'tasks': [{'id': 'first', 'operation': 'test', 'dependencies': [], 'digest': '1', 'input': 'unused'},
+                          {'id': 'next', 'operation': 'test', 'dependencies': ['first'], 'digest': '2', 'input': 'unused'}]}
+diff --git a/tests/test_sticker_creative_library.py b/tests/test_sticker_creative_library.py
+new file mode 100644
+index 0000000..a97aa55
+--- /dev/null
++++ b/tests/test_sticker_creative_library.py
+@@ -0,0 +1,57 @@
++"""Renderer-free portability of creative dependency pins."""
++import copy
++from pathlib import Path
++import sys
++import tempfile
++import unittest
++sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src'))
++from axm_stickers import Registry, instance
++from axm_stickers.core import SCHEMA
++from axm_stickers.assembly import CREATIVE, library_bundle, import_library
++
++
++def definition(id, dependencies=()):
++    return {'schema':SCHEMA,'id':id,'version':1,'name':id,'adapter':CREATIVE,
++        'attachment':{'space':'2d','socket':'surface','anchor':[0,0]},
++        'recipe':{'dependencies':[instance(d,'source')['sticker'] for d in dependencies]},
++        'assets':{},'parameters':{},'tags':[],
++        'origin':{'author':'AXM','license':'CC0-1.0','source':'Original dependency fixture'}}
++
++
++class CreativeLibraryTests(unittest.TestCase):
++    def test_diamond_dependencies_are_saved_once_and_reimport_without_uc(self):
++        with tempfile.TemporaryDirectory() as t, Registry(Path(t)/'a.sqlite') as r, Registry(Path(t)/'b.sqlite') as other:
++            a=definition('source');left=definition('left',[a]);right=definition('right',[a]);root=definition('root',[left,right])
++            r.register_many([a,left,right,root]);bundle=library_bundle(r,'root',1)
++            self.assertEqual(len(bundle['definitions']),4)
++            import_library(other,bundle)
++            self.assertEqual(library_bundle(other,'root',1),bundle)
++
++    def test_dependency_pin_and_missing_source_fail_without_partial_import(self):
++        with tempfile.TemporaryDirectory() as t, Registry(Path(t)/'a.sqlite') as r, Registry(Path(t)/'b.sqlite') as other:
++            a=definition('source');root=definition('root',[a]);r.register_many([a,root]);bundle=library_bundle(r,'root',1)
++            bad=copy.deepcopy(bundle);bad['definitions'].pop()
++            with self.assertRaises(ValueError):import_library(other,bad)
++            self.assertEqual(other.search()['entries'],[])
++            bad=definition('wrong',[a]);bad['recipe']['dependencies'][0]['digest']='0'*64;r.register(bad)
++            with self.assertRaises(ValueError):library_bundle(r,'wrong',1)
++
++    def test_creative_dependency_depth_remains_bounded(self):
++        with tempfile.TemporaryDirectory() as t, Registry(Path(t)/'a.sqlite') as r:
++            d=definition('source');r.register(d)
++            for i in range(15):d=definition('step'+str(i),[d]);r.register(d)
++            self.assertEqual(len(library_bundle(r,d['id'],1)['definitions']),16)
++            d=definition('too-deep',[d]);r.register(d)
++            with self.assertRaisesRegex(ValueError,'deep'):library_bundle(r,'too-deep',1)
++
++    def test_shared_dependency_cannot_hide_a_longer_path(self):
++        with tempfile.TemporaryDirectory() as t, Registry(Path(t)/'a.sqlite') as r:
++            leaf=definition('leaf'); shared=definition('shared',[leaf]);r.register_many([leaf,shared])
++            d=shared
++            for i in range(14):d=definition('step'+str(i),[d]);r.register(d)
++            # The short branch visits shared first; memoization must retain depth.
++            root=definition('root',[shared,d]);r.register(root)
++            with self.assertRaisesRegex(ValueError,'deep'):library_bundle(r,'root',1)
++
++
++if __name__=='__main__':unittest.main()
+diff --git a/tools/creative_surface_proof.py b/tools/creative_surface_proof.py
+new file mode 100644
+index 0000000..d92b5a6
+--- /dev/null
++++ b/tools/creative_surface_proof.py
+@@ -0,0 +1,95 @@
++"""One creation request -> reusable surface -> further ordinary Studio editing."""
++import copy
++import json
++from pathlib import Path
++import sys
++sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src'))
++from axm_uc.surface_creation import create_surface, SURFACE
++from axm_uc.studio_compositor import compose_studio_project, edit_studio_layers
++from axm_uc.game_material_bridge import load_material_bundle
++from axm_uc.creative_tasks import export_creative
++from axm_stickers import Registry
++from axm_stickers.assembly import import_library
++
++
++def make(destination):
++    root = Path(destination); root.mkdir(parents=True,exist_ok=False)
++    controls = {'schema':SURFACE,'name':'Stormpost coil housing','size':256,'seed':41,
++                'family':'painted-metal','finish':'comic-salvage','color':[40,78,88],
++                'effect_color':'#b5eeff','wear':.32,'charge':.95}
++    (root/'creation.json').write_text(json.dumps(controls,indent=2)+'\n')
++    result = create_surface(controls,root/'created',workers=4)
++    folder = root/'created'
++    body = (folder/'asset.png').read_bytes()
++    project = json.loads((folder/'studio-project.json').read_text())
++    assert compose_studio_project(project,folder)['png'] == body
++    original = copy.deepcopy(project)
++    # Demonstrate a human tool's next edit using existing Studio, outside the graph.
++    edited = edit_studio_layers(project,[{'op':'change','id':'charge','patch':{'opacity':.25}}])
++    later = compose_studio_project(edited,folder)
++    assert project == original and later['png'] != body
++    (folder/'studio-edited-project.json').write_text(json.dumps(edited,indent=2)+'\n')
++    (folder/'studio-edited.png').write_bytes(later['png'])
++    entries = json.loads((folder/'source-index.json').read_text())
++    material = next(e for e in entries if e['operation']=='create_material')
++    validated = load_material_bundle(folder/material['folder'])
++    arc = next(e for e in entries if e['operation']=='create_effect')
++    graph = json.loads((folder/arc['folder']/'graph.json').read_text())
++    with Registry(root/'restored.sqlite') as registry:
++        bundle = json.loads((folder/'library.json').read_text()); import_library(registry,bundle)
++        replay = root/'restored';replay.mkdir()
++        export_creative(registry,registry.get('finished',1),replay)
++        assert (replay/'asset.png').read_bytes()==body
++    evidence = {'jobs':len(result['outputs']),'original_definitions':len(bundle['definitions']),
++        'material_maps_verified':sorted(validated['pngs']), 'effect_edges':len(graph['edges']),
++        'studio_replay_byte_exact':True,'portable_library_replay_byte_exact':True,
++        'further_studio_edit_changes_pixels_and_preserves_source':True,
++        'limits':'One generated surface, not new editor UI, free-form prompt interpretation, animated image or 3D projection.'}
++    (root/'verification.json').write_text(json.dumps(evidence,indent=2)+'\n')
++    (root/'README.md').write_text('''# Stormpost coil housing / reusable creation
++
++The human-facing request is a creation choice and controls. The machine generates
++and connects its internal tools. Run `axm-create-surface creation.json NEW_FOLDER`.
++No manual task graph, AI account, online service or new editor is needed.
++
++`created/asset.png`: finished surface for reuse in other creations.
++`created/studio-project.json`: editable layered Studio project with captured PNGs.
++`created/studio-edited-project.json`: an example further tool-based edit;
++`created/studio-edited.png`: its separately saved result.
++`created/sources/`: original material maps, effect topology/SVG and composition.
++`created/source-index.json`: names and locations of those source assets.
++`created/library.json`: complete portable immutable dependency closure.
++`created/stickers.sqlite`: saved reusable outputs.
++
++The original material maps retain their physical channel meanings. The composed
++image adds an artistic arc overlay; it does not silently become a new physically
++consistent PBR material. Apply/project it explicitly in a later 3D workflow.
++PNG arc halos use bounded radial coverage; SVG retains its separate blur styling.
++No live Studio UI interaction or third-party editor compatibility is claimed.
++''')
++    return evidence
++
++
++def preview(destination):
++    import matplotlib
++    matplotlib.use('Agg')
++    import matplotlib.pyplot as plt
++    root=Path(destination); folder=root/'created'
++    entries=json.loads((folder/'source-index.json').read_text())
++    material=next(e for e in entries if e['operation']=='create_material')
++    arc=next(e for e in entries if e['operation']=='create_effect')
++    panels=[(folder/material['folder']/'base_color.png','Original painted surface'),
++            (folder/arc['folder']/'image.png','Reusable electric path effect'),
++            (folder/'asset.png','Machine-created composition'),
++            (folder/'studio-edited.png','Further edit with Studio tools')]
++    fig,axes=plt.subplots(1,4,figsize=(14,4.5),facecolor='#101b26')
++    for ax,(path,title) in zip(axes,panels):
++        ax.set_facecolor('#142633');ax.imshow(plt.imread(path));ax.axis('off');ax.set_title(title,color='#dce8ee',fontsize=11)
++    fig.suptitle('STORMPOST / CREATE → REUSE → CONTINUE EDITING',color='white',fontsize=16)
++    fig.text(.5,.06,'Actual generated pixels • editable layers • original PBR maps and path graph retained',ha='center',color='#b9cbd4')
++    fig.tight_layout(rect=(0,.12,1,.9));fig.savefig(root/'creative-surface.png',dpi=140,facecolor=fig.get_facecolor());plt.close(fig)
++
++
++if __name__=='__main__':
++    if sys.argv[1]=='preview': preview(sys.argv[2])
++    else: print(json.dumps(make(sys.argv[1]),indent=2))

@@ -1,0 +1,160 @@
+diff --git a/docs/CREATIVE_PRECISION_WAVE4.md b/docs/CREATIVE_PRECISION_WAVE4.md
+new file mode 100644
+index 0000000..526a437
+--- /dev/null
++++ b/docs/CREATIVE_PRECISION_WAVE4.md
+@@ -0,0 +1,140 @@
++# Creative Precision Fabric — executable hand wave 4
++
++Wave 4 extends the UC-native Creative Hands body from **144 to 197 executable hands** and the dynamic recipe surface from **151 to 204 callable recipes**.
++
++The direction remains unchanged:
++
++`outside creative-tool influence -> decompose behavior -> implement bounded deterministic UC primitive -> expose as hand -> compose through recipes -> verify exact execution`
++
++No external product UI, source code, branding, presets or proprietary implementation is copied.
++
++## 53 new executable hands
++
++| family | added hands |
++| --- | ---: |
++| blend / compositing | 14 |
++| raster geometry / resampling | 10 |
++| procedural raster generation | 12 |
++| audio DSP | 10 |
++| timeline finishing | 7 |
++| **total added** | **53** |
++
++The complete registry after this wave contains **197 `EXECUTABLE` hands**.
++
++## Compositing
++
++Fourteen blend hands are executable over two equal-size precision rasters:
++
++- normal
++- multiply
++- screen
++- overlay
++- darken
++- lighten
++- color dodge
++- color burn
++- hard light
++- soft light
++- difference
++- exclusion
++- add
++- subtract
++
++Each operation supports opacity and an optional precision mask. Colour output uses source-over alpha composition rather than treating transparency as opaque black. These are bounded RGBA8/sRGB operations; they do not claim scene-linear HDR compositing or every blend convention used by every DCC.
++
++## Raster geometry
++
++Ten hands provide:
++
++- horizontal / vertical flip
++- 90 / 180 / 270 degree rotation
++- crop
++- transparent or coloured padding
++- nearest-neighbour resize
++- bilinear resize
++- repeated tiling
++
++The source remains a precision raster and every output gets a new deterministic digest. Resizing is intentionally limited to nearest and bilinear in this wave; higher-order kernels remain separate future work.
++
++## Procedural raster generation
++
++Twelve generators create standalone precision rasters without an imported source image:
++
++- solid fill
++- linear gradient
++- radial gradient
++- checker
++- stripes
++- dots
++- deterministic noise
++- bounded Voronoi/cell field
++- brick
++- grid
++- rings
++- waves
++
++The general procedural raster ceiling is 4,194,304 pixels. Voronoi additionally has an explicit `pixels × cells <= 16,000,000` work ceiling so a valid-looking parameter set cannot silently produce an extreme nested-loop workload.
++
++These generators are reusable inputs for materials, masks, decals, stickers, texture stacks, UI assets and later creation recipes.
++
++## Audio DSP
++
++Ten deterministic time-domain DSP hands are added on top of the existing precision-audio body:
++
++- DC removal
++- one-pole low-pass
++- one-pole high-pass
++- static compressor
++- limiter
++- delay
++- echo
++- tremolo
++- ring modulation
++- stereo width
++
++These are useful deterministic building blocks and do not claim mastering-grade analogue models, zero-phase filtering, oversampled dynamics, spectral restoration or perceptual codec processing.
++
++## Timeline finishing
++
++Seven state-edit hands extend the existing precision timeline:
++
++- ripple delete
++- slip
++- slide
++- crossfade intent
++- opacity keyframe
++- transform keyframe
++- duplicate clip
++
++These edit `axm.precision-timeline/v1` state. They do not render final video frames or encode media. Crossfades and keyframes are explicit editable intent for downstream renderers.
++
++Ripple delete removes the selected clip, removes captions that begin inside the deleted interval, shifts later clips/captions by the removed duration, and removes transitions bound to the deleted clip.
++
++## Public surface
++
++The existing `PlatformHands.creativeHands` service remains the public entrypoint. Because its registry is dynamic, hosts automatically see the expanded body through:
++
++- `list()`
++- `get(id)`
++- `invoke(id, args)`
++- `audit()`
++- `recipeRegistry()`
++- `invokeRecipe(id, args)`
++
++No host needs knowledge of the internal module paths added by this wave.
++
++## Verification
++
++`creative-hands-wave4-selftest.js` executes representative operations from all five new families. It verifies:
++
++- the exact 197-hand / 204-recipe census;
++- blend execution;
++- geometry dimension changes;
++- deterministic procedural output;
++- Voronoi work-budget rejection;
++- real audio DSP state changes;
++- crossfade/keyframe/duplicate/ripple timeline behavior.
++
++Earlier wave proofs are updated to the same current census, so the repository cannot pass by exercising only an obsolete 86- or 144-hand body.
++
++The Python test facade runs the JavaScript proofs from the normal full repository suite. Passing CI proves the tested deterministic behavior and integration only; it is not a claim of Photoshop, GIMP, Krita, Blender, Substance, Audacity or NLE product parity.
+diff --git a/tests/test_creative_precision_fabric.py b/tests/test_creative_precision_fabric.py
+index c23ca80..be31436 100644
+--- a/tests/test_creative_precision_fabric.py
++++ b/tests/test_creative_precision_fabric.py
+@@ -36,6 +36,9 @@ class CreativePrecisionFabricTests(unittest.TestCase):
+     def test_advanced_executable_creative_hand_wave(self):
+         self.run_node('creative-hands-wave3-selftest.js')
+ 
++    def test_compositing_geometry_procedural_audio_timeline_wave(self):
++        self.run_node('creative-hands-wave4-selftest.js')
++
+ 
+ if __name__ == '__main__':
+     unittest.main()

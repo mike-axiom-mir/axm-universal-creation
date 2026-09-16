@@ -1,0 +1,230 @@
+{
+  "capsule_id": "bb197538f0e03e8c3fff2161b7d121951c710bb53b4358e1e27e7ac69ef362e4",
+  "evidence": {
+    "files": [
+      {
+        "additions": 244,
+        "binary": false,
+        "content_sha256": "65748b179016ba014d12cac2830984e97344813a5352ddfcdb814efb741f1d03",
+        "deletions": 0,
+        "path": "VISUAL_TEMPLATE_FABRIC.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Visual Template / Archetype Fabric",
+          "One composed catalog",
+          "Layers",
+          "Racing foundations",
+          "Reusable co-op game foundation",
+          "Reusable RTS foundation",
+          "Shared professional game-system shell",
+          "Responsive geometry",
+          "Sticker Fabric / registry bridge",
+          "CLI",
+          "Evidence",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 610,
+        "binary": false,
+        "content_sha256": "54ca6656c2e6f6a8cf7a5f3d331cee4765fdacecff6bf51be226eab87a4df46a",
+        "deletions": 0,
+        "path": "src/axm_uc/visual_template_core.py",
+        "status": "A",
+        "symbols": [
+          "_origin",
+          "_screen",
+          "canonical_bytes",
+          "digest",
+          "_id",
+          "_finite_ratio",
+          "_validate_box",
+          "validate_screen",
+          "validate_product",
+          "validate_catalog",
+          "catalog",
+          "get",
+          "select_variant",
+          "resolve",
+          "product_resolution",
+          "sticker_definition",
+          "install_builtins",
+          "bind_sticker_slots",
+          "_svg_for_resolution",
+          "screen_project",
+          "product_project"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 242,
+        "binary": false,
+        "content_sha256": "cc0ed484034c31b06229d932ae26c2d17dcd348b3d9ba1d85aa747ecaa5d0618",
+        "deletions": 0,
+        "path": "src/axm_uc/visual_template_game_systems.py",
+        "status": "A",
+        "symbols": [
+          "_merge_unique",
+          "_settings_layout",
+          "_browser_layout",
+          "_gallery_layout",
+          "extend_game_system_catalog"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 463,
+        "binary": false,
+        "content_sha256": "fb6f93782cdee9370c99162afc3991475d6cdb400c51d4f5d0936645fb300ac6",
+        "deletions": 0,
+        "path": "src/axm_uc/visual_template_growth.py",
+        "status": "A",
+        "symbols": [
+          "_merge_unique",
+          "extend_catalog"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 37,
+        "binary": false,
+        "content_sha256": "5e8e21321fb7f97f90c89d1eba0b4422546b27c023993825bb2d88eda664577e",
+        "deletions": 0,
+        "path": "src/axm_uc/visual_templates.py",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 98,
+        "binary": false,
+        "content_sha256": "68d6ab4bb83c4c48935a9cefcc4614f1bf881ecdd5700d3d0c79f5d07243bac5",
+        "deletions": 0,
+        "path": "src/axm_uc/visual_templates_cli.py",
+        "status": "A",
+        "symbols": [
+          "_print",
+          "_write_project",
+          "build_parser",
+          "main"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 145,
+        "binary": false,
+        "content_sha256": "6ebe1b566fbf761237c1da2bf9a9bad02606f582864940eb2da0b4c7338b58ad",
+        "deletions": 0,
+        "path": "tests/test_visual_templates.py",
+        "status": "A",
+        "symbols": [
+          "VisualTemplateTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 105,
+        "binary": false,
+        "content_sha256": "b4881e08d00e22dc44808fa96e47258f442407ff7d1b26a372e4fb717d8b9c30",
+        "deletions": 0,
+        "path": "tools/visual_template_proof.py",
+        "status": "A",
+        "symbols": [
+          "_write_project",
+          "main"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "bb0a815295551b3f9e920bdd29b8f072a6145ab0a77a0add8caa05fa00d65f7a"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "add",
+      "archetype",
+      "axm",
+      "bind",
+      "boundary",
+      "box",
+      "bridge",
+      "browser",
+      "build",
+      "builtins",
+      "bytes",
+      "canonical",
+      "catalog",
+      "cli",
+      "composed",
+      "creation-machine",
+      "definition",
+      "deterministic",
+      "digest",
+      "evidence",
+      "extend",
+      "fabric",
+      "finite",
+      "foundation",
+      "foundations",
+      "gallery",
+      "game",
+      "geometry",
+      "get",
+      "growth",
+      "install",
+      "layers",
+      "layout",
+      "merge",
+      "one",
+      "origin",
+      "parser",
+      "print",
+      "product",
+      "professional",
+      "project",
+      "proof",
+      "racing",
+      "ratio",
+      "registry",
+      "resolution",
+      "resolve",
+      "responsive",
+      "reusable",
+      "rts",
+      "screen",
+      "select",
+      "settings",
+      "shared",
+      "shell",
+      "slots",
+      "standalone",
+      "sticker",
+      "svg",
+      "system",
+      "systems",
+      "template",
+      "templates",
+      "tools"
+    ]
+  },
+  "source": {
+    "base": "30d62f80c84732dbeebd1e58984525b3f8ec1d60",
+    "commit_subject": "Add deterministic professional visual template fabric",
+    "head": "0bb0df5f8f684fe3fed6b903005ee4f6a91a5621",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

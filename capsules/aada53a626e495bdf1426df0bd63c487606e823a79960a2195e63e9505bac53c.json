@@ -1,0 +1,148 @@
+{
+  "capsule_id": "aada53a626e495bdf1426df0bd63c487606e823a79960a2195e63e9505bac53c",
+  "evidence": {
+    "files": [
+      {
+        "additions": 64,
+        "binary": false,
+        "content_sha256": "cebe8fa8aff85f61c1a6528e8d899617577f21a255ae71497761ff73549c4e90",
+        "deletions": 0,
+        "path": "capabilities/live/AXM-CAP-INSPECT-FABRIC-SOURCES.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 14,
+        "binary": false,
+        "content_sha256": "74d4071eb1fdd16a57d1fac579ad333fc3343b80b53bf748a18f3e55b0007481",
+        "deletions": 0,
+        "path": "src/axm_uc/__init__.py",
+        "status": "M",
+        "symbols": [
+          "_register_extension_builtins"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 175,
+        "binary": false,
+        "content_sha256": "8b9daa2a5e1e1473e3e13becd86bb5f668b1a8888d18160c8a10c098045935b2",
+        "deletions": 0,
+        "path": "src/axm_uc/fabric_sources.py",
+        "status": "A",
+        "symbols": [
+          "FabricSourceError",
+          "FabricSource",
+          "_source_map",
+          "_resolve_path",
+          "inspect_fabric_sources"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 5,
+        "binary": false,
+        "content_sha256": "637ded219c266f86e01fa3944f4bd454ae154f55af417294eadba5a99d00971d",
+        "deletions": 1,
+        "path": "tests/test_composite_and_executable.py",
+        "status": "M",
+        "symbols": [
+          "CompositeAndExecutableTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 3,
+        "binary": false,
+        "content_sha256": "b4e9b1a326ac4783f9c527bb997b95a91a25cf8b829e5ffd89d2a85a0271281d",
+        "deletions": 1,
+        "path": "tests/test_creation_forge.py",
+        "status": "M",
+        "symbols": [
+          "CreationForgeTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 71,
+        "binary": false,
+        "content_sha256": "deaf07a4e73557503c4bea7900b3ea02a2dda4a8ba489a67f0c3187c43dc7d6a",
+        "deletions": 0,
+        "path": "tests/test_fabric_sources.py",
+        "status": "A",
+        "symbols": [
+          "FabricSourceTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 3,
+        "binary": false,
+        "content_sha256": "778b5ed00e300f8d44bb6b4954637f95b19d3c7fba653ad3db0fe3972cd9d2c9",
+        "deletions": 1,
+        "path": "tests/test_gap_synthesis.py",
+        "status": "M",
+        "symbols": [
+          "GapSynthesisTests"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "8eb78b1b6448e8d7b9126c62acf3cd16152e259411c9d59d29959bd16461ab2c"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 7,
+    "kinds": [
+      "code",
+      "configuration",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "axm",
+      "builtins",
+      "cap",
+      "capabilities",
+      "capability",
+      "composite",
+      "creation",
+      "creation-machine",
+      "error",
+      "executable",
+      "explicitly",
+      "extension",
+      "fabric",
+      "fabrics",
+      "forge",
+      "gap",
+      "init",
+      "inspect",
+      "json",
+      "live",
+      "map",
+      "path",
+      "register",
+      "resolve",
+      "shared",
+      "source",
+      "sources",
+      "standalone",
+      "synthesis",
+      "universal-creation"
+    ]
+  },
+  "source": {
+    "base": "741eb6cb8bc4bbacdaed412755634696304ec531",
+    "commit_subject": "Resolve shared AXM capability fabrics explicitly",
+    "head": "6fc223ba62163a3681683a388c7313d6f963cf96",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

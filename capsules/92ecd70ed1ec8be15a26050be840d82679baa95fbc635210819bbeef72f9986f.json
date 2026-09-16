@@ -1,0 +1,112 @@
+{
+  "capsule_id": "92ecd70ed1ec8be15a26050be840d82679baa95fbc635210819bbeef72f9986f",
+  "evidence": {
+    "files": [
+      {
+        "additions": 80,
+        "binary": false,
+        "content_sha256": "d55d46db9bace35ec0c780b3b4e152fc9c93d7493c5be5d4a3ec5c7163d0fb5f",
+        "deletions": 0,
+        "path": "docs/STATIC_ASSET_BUDGET_EVIDENCE.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Static Asset Budget Evidence v0.1",
+          "Why this exists",
+          "Contract",
+          "What is measured",
+          "PASS / FAIL / HOLD",
+          "Important truth boundary"
+        ]
+      },
+      {
+        "additions": 252,
+        "binary": false,
+        "content_sha256": "ab1d8bfa58af14d0163882a08db2b7c027077569c09c1b1af4cc7874c0673265",
+        "deletions": 0,
+        "path": "src/axm_uc/static_asset_budget.py",
+        "status": "A",
+        "symbols": [
+          "validate_static_asset_budget",
+          "_rgba8_mip_bytes",
+          "inspect_static_asset_budget"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 177,
+        "binary": false,
+        "content_sha256": "471b6dcea35fe923be98c9ecd59109a91a56cd4479bd592dd0469d0cab008fb7",
+        "deletions": 0,
+        "path": "tests/test_static_asset_budget.py",
+        "status": "A",
+        "symbols": [
+          "_png",
+          "_glb_bytes",
+          "_asset",
+          "StaticAssetBudgetTests"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "ef1ffbada54bddfd4b5df6358c297af748f16c77db81f60dd8684ce442a12e62"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 6,
+    "kinds": [
+      "code",
+      "knowledge",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "asset",
+      "axiom",
+      "axm",
+      "boundary",
+      "budget",
+      "bytes",
+      "contract",
+      "creation-machine",
+      "evidence",
+      "exists",
+      "fail",
+      "from",
+      "glb",
+      "growth",
+      "hold",
+      "important",
+      "inspect",
+      "measured",
+      "merge",
+      "mike",
+      "mip",
+      "mir",
+      "pass",
+      "png",
+      "pull",
+      "request",
+      "rgba8",
+      "standalone",
+      "static",
+      "this",
+      "truth",
+      "universal-creation",
+      "validate",
+      "what",
+      "why"
+    ]
+  },
+  "source": {
+    "base": "b434a349cf159b392148b4dc9d68146573531a60",
+    "commit_subject": "Merge pull request #138 from mike-axiom-mir/growth/static-asset-budget-evidence-v0",
+    "head": "f7dd18a7ee88d9e623c7ee20b2ca97613c37506c",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

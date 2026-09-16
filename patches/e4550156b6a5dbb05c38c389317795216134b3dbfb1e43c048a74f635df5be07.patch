@@ -1,0 +1,649 @@
+diff --git a/GAME_STYLE_GROWTH.md b/GAME_STYLE_GROWTH.md
+index c32d1df..0c84196 100644
+--- a/GAME_STYLE_GROWTH.md
++++ b/GAME_STYLE_GROWTH.md
+@@ -1,3 +1,36 @@
++### Deterministic parallel creation — 2026-09-15
++
++- Reused the exact Apache-2.0 scheduler from axm-parallel-capability at
++  85f6d75bf8517bb0171d6a223b2389e03299e4b6. Bundled source, license,
++  provenance hashes and unchanged 16-test fixture; no external runtime repo.
++- Added axm-create-parallel / axm_uc.parallel_create.build: explicit dependency
++  graphs, 1..8 real Python worker processes, private registries, bounded task
++  timeouts, dependency instances from exact completed pins, deterministic merge,
++  conflict rejection, no overwrite of existing output. Humans, deterministic
++  software and AI share the same JSON interface. No AI required.
++- First adapters: create_3d and save_assembly. Preserve original styles/materials,
++  editable source and nested motion. The task count limit is 256; this is not a
++  claim of hundreds of wired tools. Node 20+ and Python 3.11+ are local runtimes.
++- Evidence: six integration tests, 23 sticker regression tests and 16 unchanged
++  donor tests pass locally. Rivetwing builds through 19 processes with observed
++  peak overlap four; all dependency starts follow completion. Four-worker and
++  one-worker libraries/GLBs are byte-exact, and GLB matches the earlier direct
++  build. Re-imported motion samples preserve nonzero motion and exact loop.
++  Initial source-order/hash drift was detected and repaired before acceptance.
++- Proof: tools/parallel_creation_proof.py, workflow parallel-creation.yml,
++  downloadable CI artifacts parallel-creation-ubuntu-latest / windows-latest.
++  Local one-sample wall times: 2.40 s one worker, 1.35 s four workers; this is
++  workload-specific, not a general speedup/CPU utilization claim.
++- Limits: trusted local tools; no RAM sandbox, distributed scheduling, checkpoint
++  reuse, new visual-quality/physics claim or live UI. Failed task blobs are
++  temporary; receipts survive through the API/CLI. Publication reserves a fresh
++  directory after validation; clients wait for completion, not atomic visibility.
++- Next: explicit adapters for material/effect/layer tools with captured inputs,
++  compatible outputs and per-tool resource costs, then useful persistent workers
++  for tiny jobs. Keep UC standalone and source identity stable.
++- Lane: codex/rts-reference-foundry; current pass PR #82. Final
++  remote head checks and merge outcome recorded on the PR.
++
+ ### Reusable sticker assemblies — 2026-09-15
+ 
+ - UC remains standalone: its installed package includes both registry and creation
+diff --git a/docs/PARALLEL_CREATION.md b/docs/PARALLEL_CREATION.md
+new file mode 100644
+index 0000000..d026e55
+--- /dev/null
++++ b/docs/PARALLEL_CREATION.md
+@@ -0,0 +1,112 @@
++# Parallel creative parts
++
++UC bundles the actual scheduler from `mike-axiom-mir/axm-parallel-capability`
++at `85f6d75bf8517bb0171d6a223b2389e03299e4b6`. `fabric.mjs` is byte-exact
++upstream source; LICENSE, NOTICE and UPSTREAM.json retain its origin. The original
++16-test scheduler fixture runs through a local export facade. UC does not need
++that repository, an AI, a service, or a network connection to execute a plan.
++
++Install UC and provide local Python 3.11+ and Node 20+. Run:
++
++```sh
++axm-create-parallel plan.json new-asset-directory --workers 4 --timeout 120
++```
++
++Python callers use `axm_uc.parallel_create.build(plan, output, workers=4)`.
++Humans, deterministic software and AI use the same explicit JSON contract. The
++current adapters are `create_3d` and `save_assembly`, using the existing sticker
++creator's parameters. This is two wired operation families, not a claim that
++hundreds of tool adapters are already available.
++
++Each task runs in a separate Python process with a private SQLite registry.
++Independent tasks can run concurrently. Assembly tasks wait for exact completed
++dependencies and import their validated, editable library closures. No worker
++writes another worker's registry. Final merge uses declaration order, independent
++of process completion order. Different content for an existing id/version rejects
++the merge, including conflicting successful tasks outside the chosen root.
++
++The plan has exactly `schema`, `tasks`, and `result`:
++
++```json
++{
++  "schema": "axm.parallel-creation/v1",
++  "tasks": [
++    {
++      "id": "bolt",
++      "dependencies": [],
++      "request": {
++        "operation": "create_3d",
++        "id": "steel-bolt",
++        "name": "Steel bolt",
++        "socket": "mount",
++        "author": "AXM",
++        "license": "CC0-1.0",
++        "source": "Original example",
++        "spec": {
++          "schema": "axm.procedural-3d/v0.1",
++          "name": "Bolt",
++          "primitives": [{"id": "head", "type": "box", "size": [0.1, 0.1, 0.1], "translation": [0, 0, 0], "material": {"color": "#87979F", "metallic": 0.8, "roughness": 0.5}}]
++        }
++      }
++    },
++    {
++      "id": "assembled",
++      "dependencies": ["bolt"],
++      "request": {
++        "operation": "save_assembly",
++        "id": "bolt-assembly",
++        "name": "Reusable bolt assembly",
++        "origin": {"author": "AXM", "license": "CC0-1.0", "source": "Original example"},
++        "children": [{
++          "instance": {"$instance": {"task": "bolt", "id": "placed-bolt"}},
++          "target": {"space": "3d", "socket": "mount", "frame": [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]},
++          "motion": null,
++          "clip": null
++        }]
++      }
++    }
++  ],
++  "result": "assembled"
++}
++```
++
++`$instance` may also include `placement` and `overrides`. It must name a declared
++direct dependency. The adapter creates the ordinary pinned sticker instance from
++the actual completed definition. Saved groups can be dependencies of larger
++groups. Children accept the existing explicit socket animation traces and source
++clip selection; the executor does not alter animation, material or style intent.
++
++Successful output contains `asset.glb`, `library.json`, `stickers.sqlite`,
++`plan.json`, and `receipt.json`. The library contains the chosen asset's closure;
++the registry retains every successful task so unused parts remain reusable too.
++Source dictionary order is preserved because existing authoring tools save that
++order in editable source bytes. Execution timestamps and PIDs vary; authored
++source, pins and GLB content remain deterministic for the same plan/tool version.
++
++Limits: 1..256 tasks, 1..8 worker processes, 1..600 seconds per worker, 48 MiB per
++plan/library transfer, and existing geometry/assembly/asset limits. Worker count
++is a concurrency budget, not enforced CPU/RAM isolation. Disk use scales with
++the dependency libraries copied into private jobs. Workers are trusted local UC
++tools; this is not a hostile-code sandbox or a distributed device executor.
++
++Failures block dependent tasks while independent tasks can finish. No final asset
++directory is created for failed execution or conflicting libraries. Python raises
++`CreationFailed` with the full receipt; the CLI writes it to stderr and exits 1.
++Temporary worker files are cleaned, so failure receipts do not imply their output
++blobs are retained. Successful publication reserves a new directory without
++clobbering existing data, then moves the fully verified files into it. Consumers
++should wait for the command/API to complete; whole-directory visibility is not
++transactional. Interrupts cancel queued jobs and terminate active child workers.
++
++The donor supports pause/resume and checkpointing internally, but this UC adapter
++does not expose checkpoint reuse: safe persistent reuse also needs exact tool and
++artifact lifetime binding. Nor does this adapter accept arbitrary shell commands,
++plugins, remote workers or file-reading tools. Add further tool families through
++explicit validated adapters, with their input capture and output merge rules.
++
++`python tools/parallel_creation_proof.py NEW_DIRECTORY` constructs Rivetwing as
++19 jobs (15 parts, three groups and final assembly), verifies actual process
++overlap, dependencies, serial/direct byte identity, and samples exported motion.
++The original 272 rigid placements are preserved. This tests orchestration, not
++new artistic quality, CPU utilization, rendered playback or universal speedup.
++For tiny jobs, process startup may cost more than the tool computation.
+diff --git a/src/axm_uc/parallel_create.py b/src/axm_uc/parallel_create.py
+new file mode 100644
+index 0000000..cffba2f
+--- /dev/null
++++ b/src/axm_uc/parallel_create.py
+@@ -0,0 +1,262 @@
++"""Bounded deterministic part creation using the bundled AXM parallel scheduler.
++
++The same JSON plan works for humans, software and AI. Each task runs in its own
++Python process and registry. Completed libraries are merged in declaration order
++into a new output directory only after every task passes. No AI/service needed.
++"""
++import argparse
++import hashlib
++import json
++import os
++from pathlib import Path
++import re
++import shutil
++import subprocess
++import sys
++import tempfile
++import time
++
++from axm_stickers import Registry, instance
++from axm_stickers.assembly import import_library, library_bundle
++from .sticker_create import execute
++from .sticker_assembly import export_assembly
++
++SCHEMA = 'axm.parallel-creation/v1'
++MAX_BYTES = 48 * 1024 * 1024
++OPERATIONS = ('create_3d', 'save_assembly')
++DATA = Path(__file__).parent / 'data' / 'parallel'
++
++
++def encode(value):
++    return json.dumps(value, separators=(',', ':'), allow_nan=False).encode()
++
++
++def sha(body):
++    return hashlib.sha256(body).hexdigest()
++
++
++def read(path):
++    with Path(path).open('rb') as stream:
++        body = stream.read(MAX_BYTES + 1)
++    if len(body) > MAX_BYTES:
++        raise ValueError('creation input exceeds 48 MiB')
++    return json.loads(body)
++
++
++def write(path, value):
++    body = encode(value)
++    if len(body) > MAX_BYTES:
++        raise ValueError('creation output exceeds 48 MiB')
++    Path(path).write_bytes(body)
++
++
++def references(value):
++    if isinstance(value, dict):
++        if '$instance' in value:
++            if set(value) != {'$instance'} or not isinstance(value['$instance'], dict):
++                raise ValueError('invalid instance reference')
++            ref = value['$instance']
++            if not {'task', 'id'} <= set(ref) or set(ref) - {'task', 'id', 'overrides', 'placement'}:
++                raise ValueError('instance reference requires task/id and optional overrides/placement')
++            if not isinstance(ref['task'], str):
++                raise ValueError('instance task must be a string')
++            yield ref['task']
++        else:
++            for child in value.values():
++                yield from references(child)
++    elif isinstance(value, list):
++        for child in value:
++            yield from references(child)
++
++
++def validate_plan(plan):
++    # Freeze the caller's state and reject non-JSON/NaN inputs before execution.
++    body = encode(plan)
++    if len(body) > MAX_BYTES:
++        raise ValueError('plan exceeds 48 MiB')
++    plan = json.loads(body)
++    if not isinstance(plan, dict) or set(plan) != {'schema', 'tasks', 'result'} or plan['schema'] != SCHEMA:
++        raise ValueError('plan requires schema, tasks and result')
++    tasks = plan['tasks']
++    if not isinstance(tasks, list) or not 1 <= len(tasks) <= 256:
++        raise ValueError('plan requires 1..256 tasks')
++    ids = set()
++    for task in tasks:
++        if not isinstance(task, dict) or set(task) != {'id', 'dependencies', 'request'}:
++            raise ValueError('task requires id, dependencies and request')
++        id = task['id']
++        if not isinstance(id, str) or not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_-]{0,79}', id) or id in ids:
++            raise ValueError('invalid or duplicate task id')
++        ids.add(id)
++        deps = task['dependencies']
++        if not isinstance(deps, list) or any(not isinstance(d, str) for d in deps) or len(set(deps)) != len(deps):
++            raise ValueError('dependencies must be unique task IDs')
++        req = task['request']
++        if not isinstance(req, dict) or req.get('operation') not in OPERATIONS:
++            raise ValueError('unsupported parallel creation operation')
++        if set(references(req)) - set(deps):
++            raise ValueError('instance reference must name a declared dependency')
++    if not isinstance(plan['result'], str) or plan['result'] not in ids:
++        raise ValueError('result must name a task')
++    complete = set()
++    while len(complete) < len(ids):
++        ready = {t['id'] for t in tasks if set(t['dependencies']) <= complete} - complete
++        if not ready:
++            raise ValueError('cycle or missing dependency')
++        complete.update(ready)
++    return plan
++
++
++def resolve_references(value, definitions):
++    if isinstance(value, dict):
++        if '$instance' in value:
++            ref = dict(value['$instance'])
++            return instance(definitions[ref.pop('task')], **ref)
++        return {k: resolve_references(v, definitions) for k, v in value.items()}
++    if isinstance(value, list):
++        return [resolve_references(v, definitions) for v in value]
++    return value
++
++
++def run_worker(input_path):
++    started = time.time_ns()
++    path = Path(input_path)
++    job = read(path)
++    with Registry(path.parent / 'private.sqlite') as registry:
++        definitions = {}
++        for task, source in job['dependencies'].items():
++            bundle = read(source)
++            import_library(registry, bundle)
++            root = bundle['root']
++            definitions[task] = registry.get(root['id'], root['version'])
++        request = resolve_references(job['request'], definitions)
++        if request.get('operation') not in OPERATIONS:
++            raise ValueError('unsupported worker operation')
++        definition = execute(registry, request, path.parent)
++        bundle = library_bundle(registry, definition['id'], definition['version'])
++        write(path.parent / 'library.json', bundle)
++        return {'root': bundle['root'], 'bundle_sha256': sha(encode(bundle)),
++                'pid': os.getpid(), 'started_ns': started, 'finished_ns': time.time_ns()}
++
++
++class CreationFailed(RuntimeError):
++    def __init__(self, receipt):
++        super().__init__('parallel creation failed; no output published')
++        self.receipt = receipt
++
++
++def build(plan, output, *, workers=4, timeout=120):
++    """Publish a new local asset folder; worker count affects execution, not content.
++
++    timeout bounds each worker in seconds. No shared writable registry, arbitrary
++    commands, network dispatch, checkpoint reuse or hidden AI calls are exposed.
++    Worker isolation is for state ownership, not a hostile-code security sandbox.
++    """
++    plan = validate_plan(plan)
++    if type(workers) is not int or not 1 <= workers <= 8:
++        raise ValueError('workers must be an integer in 1..8')
++    if type(timeout) is not int or not 1 <= timeout <= 600:
++        raise ValueError('timeout must be an integer in 1..600 seconds')
++    node = shutil.which('node')
++    if node is None:
++        raise RuntimeError('parallel creation requires local Node 20+; sequential creator remains available')
++    output = Path(output).absolute()
++    if output.exists():
++        raise FileExistsError(output)
++    if not output.parent.is_dir():
++        raise FileNotFoundError(output.parent)
++    with tempfile.TemporaryDirectory(prefix='.axm-create-', dir=output.parent) as temporary:
++        root = Path(temporary)
++        (root / 'tasks').mkdir()
++        job = {'root': str(root), 'python': sys.executable, 'workers': workers,
++               'timeout': timeout, 'digest': sha(encode(plan)), 'tasks': []}
++        directories = {t['id']: root / 'tasks' / str(i) for i, t in enumerate(plan['tasks'])}
++        for task in plan['tasks']:
++            directory = directories[task['id']]; directory.mkdir()
++            data = {'request': task['request'], 'dependencies': {
++                dep: str(directories[dep] / 'library.json') for dep in task['dependencies']}}
++            write(directory / 'input.json', data)
++            job['tasks'].append({'id': task['id'], 'dependencies': task['dependencies'],
++                'operation': task['request']['operation'], 'digest': sha(encode(task)),
++                'input': str(directory / 'input.json')})
++        write(root / 'job.json', job)
++        env = dict(os.environ)
++        env['PYTHONPATH'] = str(Path(__file__).resolve().parent.parent) + os.pathsep + env.get('PYTHONPATH', '')
++        # File-backed logs prevent unbounded stdout accumulation in the parent.
++        with (root / 'scheduler.log').open('wb') as log:
++            process = subprocess.Popen([node, str(DATA / 'bridge.mjs'), str(root / 'job.json'),
++                                        str(root / 'receipt.json')], env=env, stdout=log, stderr=log)
++            try:
++                process.wait(timeout=(timeout + 5) * len(plan['tasks']) + 30)
++            except BaseException:
++                process.terminate()
++                try:
++                    process.wait(timeout=5)
++                except subprocess.TimeoutExpired:
++                    process.kill(); process.wait()
++                raise
++        if process.returncode:
++            with (root / 'scheduler.log').open('rb') as log:
++                message = log.read(65536).decode(errors='replace')
++            raise RuntimeError('parallel scheduler failed: ' + message)
++        receipt = read(root / 'receipt.json')
++        if receipt['status'] != 'COMPLETED':
++            raise CreationFailed(receipt)
++        staged = root / 'published'; staged.mkdir()
++        try:
++            with Registry(staged / 'stickers.sqlite') as registry:
++                for task, result in zip(plan['tasks'], receipt['outputs'], strict=True):
++                    if result['taskId'] != task['id'] or result['status'] != 'COMPLETED':
++                        raise ValueError('scheduler task receipt mismatch')
++                    bundle = read(directories[task['id']] / 'library.json')
++                    if sha(encode(bundle)) != result['output']['bundle_sha256'] or bundle['root'] != result['output']['root']:
++                        raise ValueError('worker library receipt mismatch')
++                    import_library(registry, bundle)
++                chosen = next(r['output']['root'] for r in receipt['outputs'] if r['taskId'] == plan['result'])
++                bundle = library_bundle(registry, chosen['id'], chosen['version'])
++                artifact = export_assembly(registry, chosen['id'], chosen['version'])
++                (staged / 'asset.glb').write_bytes(artifact['body'])
++                write(staged / 'library.json', bundle)
++            receipt['creation'] = {'plan_sha256': job['digest'], 'glb_sha256': sha(artifact['body']),
++                'result': chosen, 'export': artifact['receipt'], 'workers': workers,
++                'limits': 'Local authored rigid GLB assembly; no physics or engine playback acceptance.'}
++            write(staged / 'plan.json', plan); write(staged / 'receipt.json', receipt)
++            # Atomic no-clobber reservation, then move only into our own directory.
++            output.mkdir()
++            try:
++                for file in staged.iterdir():
++                    file.rename(output / file.name)
++            except BaseException:
++                shutil.rmtree(output)
++                raise
++        except (ValueError, KeyError) as exc:
++            receipt['status'] = 'MERGE_REJECTED'
++            receipt['merge_error'] = str(exc)
++            raise CreationFailed(receipt) from exc
++        return receipt
++
++
++def main(argv=None):
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument('plan', type=Path)
++    parser.add_argument('output', type=Path, nargs='?')
++    parser.add_argument('--workers', type=int, default=4)
++    parser.add_argument('--timeout', type=int, default=120)
++    parser.add_argument('--worker', action='store_true', help=argparse.SUPPRESS)
++    args = parser.parse_args(argv)
++    if args.worker:
++        result = run_worker(args.plan)
++    else:
++        if args.output is None:
++            parser.error('output directory required')
++        try:
++            result = build(read(args.plan), args.output, workers=args.workers, timeout=args.timeout)
++        except CreationFailed as exc:
++            print(json.dumps(exc.receipt, allow_nan=False), file=sys.stderr)
++            return 1
++    print(json.dumps(result, allow_nan=False))
++    return 0
++
++
++if __name__ == '__main__':
++    raise SystemExit(main())
+diff --git a/tests/test_parallel_create.py b/tests/test_parallel_create.py
+new file mode 100644
+index 0000000..6a480e4
+--- /dev/null
++++ b/tests/test_parallel_create.py
+@@ -0,0 +1,134 @@
++"""Real process execution, deterministic artifacts and rejected broken graphs."""
++import copy
++import json
++from pathlib import Path
++import shutil
++import subprocess
++import sys
++import tempfile
++import unittest
++from unittest.mock import patch
++
++sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src'))
++from axm_uc.parallel_create import build, validate_plan, CreationFailed, SCHEMA, DATA
++from axm_uc.game_pose_runtime import GamePoseAsset
++from axm_stickers import Registry
++from axm_stickers.assembly import import_library
++from axm_stickers.placement import identity
++from axm_uc.sticker_assembly import export_assembly
++
++ORIGIN = {'author': 'AXM', 'license': 'CC0-1.0', 'source': 'Original parallel creation fixture'}
++
++
++def plan():
++    tasks = []
++    for i in range(4):
++        id = 'part' + str(i)
++        tasks.append({'id': id, 'dependencies': [], 'request': {
++            'operation': 'create_3d', 'id': id, 'name': id, 'socket': 'mount', **ORIGIN,
++            'spec': {'schema': 'axm.procedural-3d/v0.1', 'name': id, 'primitives': [
++                {'id': 'body', 'type': 'box', 'size': [.2, .3, .4], 'translation': [0, 0, 0],
++                 'material': {'color': '#BF8738', 'metallic': .5, 'roughness': .6}}]}}})
++    a = identity(); b = identity(); b[7] = .5
++    children = [{'instance': {'$instance': {'task': t['id'], 'id': t['id']}},
++                 'target': {'space': '3d', 'socket': 'mount', 'frame': a}, 'clip': None,
++                 'motion': [{'time': 0, 'frame': a}, {'time': 1, 'frame': b}, {'time': 2, 'frame': a}]}
++                for t in tasks]
++    tasks.append({'id': 'group', 'dependencies': [t['id'] for t in tasks], 'request': {
++        'operation': 'save_assembly', 'id': 'group', 'name': 'Moving group', 'children': children, 'origin': ORIGIN}})
++    return {'schema': SCHEMA, 'tasks': tasks, 'result': 'group'}
++
++
++@unittest.skipUnless(shutil.which('node'), 'parallel adapter requires local Node 20+')
++class ParallelCreationTests(unittest.TestCase):
++    def setUp(self):
++        self.temp = tempfile.TemporaryDirectory(); self.addCleanup(self.temp.cleanup)
++        self.root = Path(self.temp.name)
++
++    def test_processes_overlap_but_artifacts_and_motion_match_serial(self):
++        p = plan(); original = copy.deepcopy(p)
++        serial = build(p, self.root / 'one', workers=1)
++        parallel = build(p, self.root / 'four', workers=4)
++        self.assertEqual(p, original)
++        for file in ('asset.glb', 'library.json', 'plan.json'):
++            self.assertEqual((self.root / 'one' / file).read_bytes(), (self.root / 'four' / file).read_bytes())
++        for receipt, cap in [(serial, 1), (parallel, 4)]:
++            outputs = {r['taskId']: r['output'] for r in receipt['outputs']}
++            self.assertEqual(len({v['pid'] for v in outputs.values()}), 5)
++            events = sorted((time, delta) for v in outputs.values()
++                            for time, delta in [(v['processStartedMs'], 1), (v['processFinishedMs'], -1)])
++            active = peak = 0
++            for _, delta in events: active += delta; peak = max(peak, active)
++            self.assertLessEqual(peak, cap)
++            if cap > 1: self.assertGreater(peak, 1)
++            for dep in p['tasks'][-1]['dependencies']:
++                self.assertGreaterEqual(outputs['group']['started_ns'], outputs[dep]['finished_ns'])
++        asset = GamePoseAsset((self.root / 'four/asset.glb').read_bytes())
++        self.assertEqual(asset.sample('AssemblyMotion', 0)['world_matrices'], asset.sample('AssemblyMotion', 2)['world_matrices'])
++        self.assertNotEqual(asset.sample('AssemblyMotion', 0)['world_matrices'], asset.sample('AssemblyMotion', 1)['world_matrices'])
++        with Registry(self.root / 'import.sqlite') as registry:
++            import_library(registry, json.loads((self.root / 'four/library.json').read_text()))
++            self.assertEqual(export_assembly(registry, 'group', 1)['body'], (self.root / 'four/asset.glb').read_bytes())
++
++    def test_invalid_plans_rejected_before_processes_or_output(self):
++        mutations = [lambda p: p['tasks'][0].update(dependencies=['group']),
++                     lambda p: p['tasks'][0].update(dependencies=['missing']),
++                     lambda p: p['tasks'][0].update(id='../escape'),
++                     lambda p: p['tasks'][0].update(id='part1'),
++                     lambda p: p['tasks'][-1].update(dependencies=[]),
++                     lambda p: p['tasks'][0]['request'].update(operation='shell'),
++                     lambda p: p.update(result='missing'),
++                     lambda p: p.update(checkpoint={})]
++        with patch('axm_uc.parallel_create.subprocess.Popen') as popen:
++            for mutate in mutations:
++                p = plan(); mutate(p)
++                with self.assertRaises(ValueError): build(p, self.root / 'out')
++            for cap in (0, 9, True, 1.5):
++                with self.assertRaises(ValueError): build(plan(), self.root / 'out', workers=cap)
++            popen.assert_not_called()
++        self.assertFalse((self.root / 'out').exists())
++
++    def test_failed_piece_blocks_assembly_preserves_independent_receipts(self):
++        p = plan(); p['tasks'][0]['request']['spec']['primitives'][0]['type'] = 'not-a-shape'
++        with self.assertRaises(CreationFailed) as caught: build(p, self.root / 'failed', workers=2)
++        outputs = {o['taskId']: o['status'] for o in caught.exception.receipt['outputs']}
++        self.assertEqual(outputs['part0'], 'FAILED')
++        self.assertEqual(outputs['group'], 'BLOCKED_DEPENDENCY')
++        self.assertEqual(outputs['part1'], 'COMPLETED')
++        self.assertFalse((self.root / 'failed').exists())
++
++    def test_conflicting_definitions_never_publish(self):
++        p = plan(); p['tasks'][1]['request']['id'] = 'part0'
++        p['tasks'][1]['request']['spec']['primitives'][0]['size'] = [1, 1, 1]
++        # Independent output still conflicts at final merge even if unused by result.
++        p['tasks'][-1]['dependencies'].remove('part1')
++        p['tasks'][-1]['request']['children'].pop(1)
++        with self.assertRaises(CreationFailed) as caught: build(p, self.root / 'conflict')
++        self.assertEqual(caught.exception.receipt['status'], 'MERGE_REJECTED')
++        self.assertFalse((self.root / 'conflict').exists())
++
++    def test_no_clobber_and_missing_node_are_explicit(self):
++        output = self.root / 'existing'; output.mkdir(); (output / 'mine').write_text('retain')
++        with self.assertRaises(FileExistsError): build(plan(), output)
++        self.assertEqual((output / 'mine').read_text(), 'retain')
++        with patch('axm_uc.parallel_create.shutil.which', return_value=None):
++            with self.assertRaisesRegex(RuntimeError, 'local Node'): build(plan(), self.root / 'missing')
++
++    def test_timeout_kills_worker_before_dependent_launch(self):
++        # A local fixed test executable deliberately blocks; no arbitrary command
++        # selection is exposed by the public plan/API.
++        worker = self.root / 'blocked.py'
++        worker.write_text('import time\ntime.sleep(30)\n')
++        if sys.platform == 'win32': self.skipTest('POSIX executable fixture; main adapter remains portable')
++        launcher = self.root / 'blocked'
++        launcher.write_text('#!' + sys.executable + '\nimport time\ntime.sleep(30)\n'); launcher.chmod(0o755)
++        job = {'root': str(self.root), 'python': str(launcher), 'workers': 1, 'timeout': 1, 'digest': 'timeout',
++               'tasks': [{'id': 'first', 'operation': 'test', 'dependencies': [], 'digest': '1', 'input': 'unused'},
++                         {'id': 'next', 'operation': 'test', 'dependencies': ['first'], 'digest': '2', 'input': 'unused'}]}
++        (self.root / 'job.json').write_text(json.dumps(job))
++        subprocess.run(['node', str(DATA / 'bridge.mjs'), str(self.root / 'job.json'), str(self.root / 'receipt.json')], check=True, timeout=8)
++        receipt = json.loads((self.root / 'receipt.json').read_text())
++        self.assertEqual([o['status'] for o in receipt['outputs']], ['FAILED', 'BLOCKED_DEPENDENCY'])
++
++
++if __name__ == '__main__': unittest.main()
+diff --git a/tools/parallel_creation_proof.py b/tools/parallel_creation_proof.py
+new file mode 100644
+index 0000000..2a4a1f0
+--- /dev/null
++++ b/tools/parallel_creation_proof.py
+@@ -0,0 +1,76 @@
++"""Execute the original Rivetwing authoring requests as a real dependency graph."""
++import json
++from pathlib import Path
++import sys
++import time
++sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src'))
++from sticker_assembly_proof import make
++from axm_uc.parallel_create import build, SCHEMA
++from axm_uc.game_pose_runtime import GamePoseAsset
++
++
++def graph(requests):
++    tasks = []
++    for request in requests:
++        dependencies = set()
++        def convert(value):
++            if isinstance(value, dict):
++                if value.get('schema') == 'axm.sticker-instance/v1':
++                    task = value['sticker']['id']; dependencies.add(task)
++                    return {'$instance': {'task': task, 'id': value['id'],
++                        'overrides': value['overrides'], 'placement': value['placement']}}
++                return {k: convert(v) for k, v in value.items()}
++            if isinstance(value, list): return [convert(v) for v in value]
++            return value
++        converted = convert(request)
++        tasks.append({'id': request['id'], 'dependencies': sorted(dependencies), 'request': converted})
++    return {'schema': SCHEMA, 'tasks': tasks, 'result': 'rivetwing'}
++
++
++def main(destination):
++    root = Path(destination); root.mkdir(parents=True, exist_ok=False)
++    make(root / 'reference')
++    plan = graph(json.loads((root / 'reference/create-requests.json').read_text()))
++    (root / 'plan.json').write_text(json.dumps(plan, indent=2) + '\n')
++    timings = {}; receipts = {}
++    for name, workers in [('serial', 1), ('parallel', 4)]:
++        start = time.perf_counter()
++        receipts[name] = build(plan, root / name, workers=workers)
++        timings[name] = time.perf_counter() - start
++    expected = (root / 'reference/rivetwing.glb').read_bytes()
++    assert expected == (root / 'serial/asset.glb').read_bytes() == (root / 'parallel/asset.glb').read_bytes()
++    assert (root / 'serial/library.json').read_bytes() == (root / 'parallel/library.json').read_bytes()
++    asset = GamePoseAsset(expected)
++    assert asset.sample('AssemblyMotion', 0)['world_matrices'] == asset.sample('AssemblyMotion', 2)['world_matrices']
++    assert asset.sample('AssemblyMotion', 0)['world_matrices'] != asset.sample('AssemblyMotion', .5)['world_matrices']
++    outputs = {r['taskId']: r['output'] for r in receipts['parallel']['outputs']}
++    for task in plan['tasks']:
++        for dependency in task['dependencies']:
++            assert outputs[task['id']]['started_ns'] >= outputs[dependency]['finished_ns']
++    events = sorted((t, d) for r in outputs.values() for t, d in
++                    [(r['processStartedMs'], 1), (r['processFinishedMs'], -1)])
++    active = peak = 0
++    for _, delta in events: active += delta; peak = max(peak, active)
++    assert 1 < peak <= 4
++    result = {'tasks': len(plan['tasks']), 'distinct_processes': len({r['pid'] for r in outputs.values()}),
++              'peak_process_overlap': peak, 'wall_seconds': timings, 'byte_exact_reference_and_serial': True,
++              'dependencies_observed_in_order': True, 'exact_motion_loop': True,
++              'note': 'Process overlap is observed, not a CPU utilization or speedup claim. Small tasks can cost more to launch than execute.'}
++    (root / 'verification.json').write_text(json.dumps(result, indent=2) + '\n')
++    (root / 'README.md').write_text('''# Deterministic parallel Rivetwing creation
++
++19 actual creation jobs: 15 reusable parts, three subassemblies and the final
++animated creature. The same recipe executes with one or four local workers.
++`parallel/asset.glb` is byte-identical to the earlier direct creation path.
++`parallel/library.json` retains the complete editable dependency closure;
++`parallel/stickers.sqlite` also keeps every successful task as a reusable part.
++
++Run `axm-create-parallel plan.json NEW_DIRECTORY --workers 4` with the installed
++UC package, local Python and Node 20+. No donor repository/service/AI is needed.
++The original renderer/geometry and motion are unchanged; this proof verifies
++parallel execution and deterministic assembly, not new visual quality or physics.
++''')
++    print(json.dumps(result, indent=2))
++
++
++if __name__ == '__main__': main(sys.argv[1])

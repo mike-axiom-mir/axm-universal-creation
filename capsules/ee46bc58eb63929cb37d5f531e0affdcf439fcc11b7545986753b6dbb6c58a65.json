@@ -1,0 +1,141 @@
+{
+  "capsule_id": "ee46bc58eb63929cb37d5f531e0affdcf439fcc11b7545986753b6dbb6c58a65",
+  "evidence": {
+    "files": [
+      {
+        "additions": 40,
+        "binary": false,
+        "content_sha256": "30fb454c5f31556b4c3043624feb0866349738621029dd28eab05e8ba8589923",
+        "deletions": 0,
+        "path": "GAME_STYLE_GROWTH.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Current checkpoint",
+          "Portable animation runtime pass \u2014 2026-09-13",
+          "Functional motion repair pass \u2014 2026-09-13"
+        ]
+      },
+      {
+        "additions": 36,
+        "binary": false,
+        "content_sha256": "375639160127acfc50bdecb39eb7c12de8b44826085d1014d393d5f4992b3ea6",
+        "deletions": 0,
+        "path": "docs/GAME_ANIMATION_RUNTIME.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Portable game-animation runtime",
+          "Parcel Imp scenario"
+        ]
+      },
+      {
+        "additions": 218,
+        "binary": false,
+        "content_sha256": "c7b0b9ba420f592ed0320091d2689d47b9595d3a9f8d96f5231496f1019002c9",
+        "deletions": 0,
+        "path": "src/axm_uc/game_animation_runtime.py",
+        "status": "A",
+        "symbols": [
+          "_canonical",
+          "_digest",
+          "_name",
+          "_number",
+          "_vec3",
+          "game_animation_runtime_catalog",
+          "compile_game_animation_runtime",
+          "replay_game_animation_runtime",
+          "publish_game_animation_replay"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 14,
+        "binary": false,
+        "content_sha256": "19a6366677d591db71d54f793278754473451483bb6798c4af0fbd08bb50b31b",
+        "deletions": 0,
+        "path": "src/axm_uc/visual_assets_cli.py",
+        "status": "M",
+        "symbols": [
+          "combined_catalog",
+          "build_parser",
+          "main"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 108,
+        "binary": false,
+        "content_sha256": "9936ab0eb25809f531ae36fc1ed2e9fbb4b1b67643d8b9f4efd104b656505245",
+        "deletions": 0,
+        "path": "tests/test_game_animation_runtime.py",
+        "status": "A",
+        "symbols": [
+          "parcel_imp_runtime",
+          "GameAnimationRuntimeTests"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "0b1db17aa2a9a6fea0531316fbe1f5fe093544f9712243a59634aa9507f41118"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "animation",
+      "axm",
+      "build",
+      "canonical",
+      "catalog",
+      "checkpoint",
+      "cli",
+      "combined",
+      "compile",
+      "creation-machine",
+      "current",
+      "deterministic",
+      "digest",
+      "functional",
+      "game",
+      "growth",
+      "imp",
+      "merge",
+      "motion",
+      "name",
+      "number",
+      "parcel",
+      "parser",
+      "pass",
+      "portable",
+      "publish",
+      "repair",
+      "replay",
+      "runtime",
+      "scenario",
+      "standalone",
+      "style",
+      "universal-creation",
+      "vec3",
+      "visual"
+    ]
+  },
+  "source": {
+    "base": "cc0c40625a1cc0ee4beaa31762a65033b157a411",
+    "commit_subject": "Merge deterministic portable animation runtime (#71)",
+    "head": "89ada6ba0981d067dc714b682da57ba0716f7080",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

@@ -1,0 +1,177 @@
+{
+  "capsule_id": "ffd43fefb05ed016fd9387338bd02203c97e91f7082c661a6a4fdd1f21c93eb0",
+  "evidence": {
+    "files": [
+      {
+        "additions": 37,
+        "binary": false,
+        "content_sha256": "cc5eecc0c233627ab0bad076061e37a67ae7808a41a1a10fb0768ef96a86b7f9",
+        "deletions": 0,
+        "path": "MISSION_TEMPLATE_PACK.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Source-Bound Quest / Mission Flow Template Pack",
+          "Surfaces",
+          "Source-truth contract",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 41,
+        "binary": false,
+        "content_sha256": "17c6051d00b8611bce62c2135601a2e3fd1078362c64c8916e8d990cf8982d95",
+        "deletions": 41,
+        "path": "VISUAL_TEMPLATE_FABRIC.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Current v21 candidate census",
+          "Source-bound quest / mission-flow foundation",
+          "Registry and identity",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 34,
+        "binary": false,
+        "content_sha256": "b719c1e53e2640f7838317f00f5c9c0ecff705839d3ef8f2e82810e99ad932cc",
+        "deletions": 33,
+        "path": "VISUAL_TEMPLATE_PRIORITY_MAP.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "AXM Visual Template Expansion Priority Map",
+          "Quest / mission flow reference systems \u2014 IMPLEMENTED IN THIS LANE",
+          "Next high-value visual/creation families",
+          "Cross-cutting rules",
+          "Immediate build order"
+        ]
+      },
+      {
+        "additions": 88,
+        "binary": false,
+        "content_sha256": "ccc864bef701b56ffa520fa06982a26d39b74da3cb1c6e86e3b13ff18ef3b405",
+        "deletions": 0,
+        "path": "src/axm_uc/visual_template_mission.py",
+        "status": "A",
+        "symbols": [
+          "_merge",
+          "extend_mission_catalog"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 3,
+        "binary": false,
+        "content_sha256": "907854fd5d9dd588258a0c035230df9f5a8d07da6cb3e874a1bf68e397812013",
+        "deletions": 1,
+        "path": "src/axm_uc/visual_templates.py",
+        "status": "M",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 42,
+        "binary": false,
+        "content_sha256": "81451fa69c9cd3883c2bb940853d917f247e9f2062cc36a9a3f91f7bd51e6145",
+        "deletions": 26,
+        "path": "tests/test_visual_templates.py",
+        "status": "M",
+        "symbols": [
+          "VisualTemplateTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 20,
+        "binary": false,
+        "content_sha256": "0a74a95211ff93d8f13ca5baa635e7906186e5e297c835ababe91bdc436a71ea",
+        "deletions": 17,
+        "path": "tools/visual_template_proof.py",
+        "status": "M",
+        "symbols": [
+          "_write",
+          "main"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "375187dd561ab8364ac153241ce68c3c94ec6cf8d3737bbc4cfed96cba548a6f"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "add",
+      "axm",
+      "bound",
+      "boundary",
+      "build",
+      "candidate",
+      "catalog",
+      "census",
+      "contract",
+      "creation",
+      "creation-machine",
+      "cross",
+      "current",
+      "cutting",
+      "expansion",
+      "extend",
+      "fabric",
+      "families",
+      "flow",
+      "foundation",
+      "high",
+      "identity",
+      "immediate",
+      "implemented",
+      "lane",
+      "map",
+      "merge",
+      "mission",
+      "next",
+      "order",
+      "pack",
+      "priority",
+      "proof",
+      "quest",
+      "reference",
+      "registry",
+      "rules",
+      "source",
+      "standalone",
+      "surfaces",
+      "systems",
+      "template",
+      "templates",
+      "this",
+      "tools",
+      "truth",
+      "universal-creation",
+      "v21",
+      "value",
+      "visual",
+      "write"
+    ]
+  },
+  "source": {
+    "base": "4dbe2c485b94b5a1e0cd609eab9eb443a07d9615",
+    "commit_subject": "Add source-bound quest and mission flow templates",
+    "head": "04f1acb6fab0e175445b3a55f387b86c59b21115",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

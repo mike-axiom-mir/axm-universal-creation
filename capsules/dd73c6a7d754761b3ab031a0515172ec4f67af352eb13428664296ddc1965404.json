@@ -1,0 +1,148 @@
+{
+  "capsule_id": "dd73c6a7d754761b3ab031a0515172ec4f67af352eb13428664296ddc1965404",
+  "evidence": {
+    "files": [
+      {
+        "additions": 29,
+        "binary": false,
+        "content_sha256": "6239dcb4253e65a422134613ff50888a29b12406055e5cdd70381111675ef792",
+        "deletions": 9,
+        "path": "RTS_WORKSHOP_POLISH.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Runtime LOD ladder",
+          "What changed perceptually",
+          "Evidence and boundaries",
+          "Root review"
+        ]
+      },
+      {
+        "additions": 44,
+        "binary": false,
+        "content_sha256": "61a066953591ae760498cd86ea6353fe8f4cb37651587bfc576aa7a7e1bda064",
+        "deletions": 8,
+        "path": "src/axm_uc/rts_polish.py",
+        "status": "M",
+        "symbols": [
+          "polish_workshop"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 3,
+        "binary": false,
+        "content_sha256": "7349a39e5b49c5016c46648f7b34c3f2ca3abee1502205928ed18ff8b57e3b53",
+        "deletions": 1,
+        "path": "tests/test_rts_polish.py",
+        "status": "M",
+        "symbols": [
+          "RTSWorkshopPublicationTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 53,
+        "binary": false,
+        "content_sha256": "b5c41a3092d0cd8361e2a19b639ebfb7a3e64d73a6eb1ee4e6887673460ab208",
+        "deletions": 0,
+        "path": "tests/test_workshop_lod_ladder_source.py",
+        "status": "A",
+        "symbols": [
+          "WorkshopLodLadderSourceTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 116,
+        "binary": false,
+        "content_sha256": "929056d841a8cff331d160690c1034915a01c45616fcfa13ec1e2e39762cbfb6",
+        "deletions": 0,
+        "path": "tools/blender/axm_rts_workshop_lods.py",
+        "status": "A",
+        "symbols": [
+          "triangle_count",
+          "clear_scene",
+          "apply_decimation",
+          "main"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 41,
+        "binary": false,
+        "content_sha256": "ba3e2793c00322dccc8379dd4ee0ff2082211d5bb20ba948170068a08a5cdac2",
+        "deletions": 4,
+        "path": "tools/blender/verify_rts_workshop.py",
+        "status": "M",
+        "symbols": [
+          "verify",
+          "validate_lod_ladder",
+          "game_readiness_gates"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "c634b75266141a9f7a013069617f80baab4259528ef2430935e4146a019c6ec7"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 6,
+    "kinds": [
+      "code",
+      "knowledge",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "add",
+      "apply",
+      "axm",
+      "blender",
+      "boundaries",
+      "changed",
+      "clear",
+      "count",
+      "creation-machine",
+      "decimation",
+      "evidence",
+      "far",
+      "game",
+      "gates",
+      "ladder",
+      "lod",
+      "lods",
+      "perceptually",
+      "polish",
+      "publication",
+      "readiness",
+      "review",
+      "root",
+      "rts",
+      "rtsworkshop",
+      "runtime",
+      "scene",
+      "source",
+      "standalone",
+      "tactical",
+      "tools",
+      "triangle",
+      "universal-creation",
+      "validate",
+      "verify",
+      "what",
+      "workshop"
+    ]
+  },
+  "source": {
+    "base": "ce19a138392cbd23acffc3a46b01b76fd91b305a",
+    "commit_subject": "Workshop: add tactical, RTS and far LOD ladder",
+    "head": "2b9c55e9c77fa77767fbd1e739b25edc9298a233",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

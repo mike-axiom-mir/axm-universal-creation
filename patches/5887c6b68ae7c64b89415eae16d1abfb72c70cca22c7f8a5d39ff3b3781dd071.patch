@@ -1,0 +1,793 @@
+diff --git a/MATERIAL_DONOR_ADAPTER.md b/MATERIAL_DONOR_ADAPTER.md
+new file mode 100644
+index 0000000..7cc4129
+--- /dev/null
++++ b/MATERIAL_DONOR_ADAPTER.md
+@@ -0,0 +1,117 @@
++# AXM Material Donor Adapter v0.1
++
++Universal Creation can now consume one explicit interchange format from AXM Material / Surface Fabric:
++
++`axm-material-donor-pack / v0.2.0`
++
++The goal is deliberately narrow:
++
++> **Prove that reusable material/texture ingredients retained by the Material / Surface Fabric can cross into Universal Creation and become valid Asset Atom texture/material descriptors without silently guessing what the pixels mean.**
++
++## First proof boundary
++
++The first bridge is deliberately a **detached adapter tool**, not a new live machine capability:
++
++```bash
++python tools/import_material_donor.py \
++  examples/material-donor-packs/painted-metal-v0.2.json \
++  --strict
++```
++
++This keeps the first cross-repository compatibility proof separate from Universal Creation's live capability count and anatomy bindings. Promotion into a live creation route can happen later if real use justifies it; the first experiment does not need to silently enlarge the running machine topology.
++
++The adapter performs:
++
++`donor pack -> validate exact donor version -> inspect explicit channel hints -> decode portable image data URLs -> SHA-256 donor bytes -> create Asset Atom texture descriptors -> map exact declared families -> run existing Asset Atom validator -> READY / PARTIAL HOLD / FAIL`
++
++It reuses the existing `axm.asset-atom-package/v0.1` grammar rather than inventing a parallel material representation inside Universal Creation.
++
++## Entry mapping
++
++A donor entry is accepted only when all of these are true:
++
++- it has a stable donor entry ID;
++- its `usage.channelHint` exactly names a channel already supported by Asset Atom textures;
++- its image payload is present as a decodable data URL;
++- its declared MIME type matches the data URL MIME type.
++
++Accepted payload bytes receive a fresh SHA-256 digest. The resulting Asset Atom texture resource uses a `donor://` URI plus that digest.
++
++The adapter does **not** infer a missing channel from:
++
++- the image appearance;
++- filename words;
++- average color;
++- generator source;
++- a model guess.
++
++`unassigned` remains a visible HOLD.
++
++## Family mapping
++
++A donor family may become one Asset Atom `material` atom when:
++
++- every family member was accepted as a texture entry;
++- every member has one supported explicit channel;
++- no two family members claim the same channel.
++
++The material atom binds those exact texture atoms through `texture_bindings`.
++
++A family is held when a member is unavailable/unmappable or when two members collide on the same channel. Accepted standalone texture entries remain reusable texture roots even when a family holds.
++
++This means a partially useful donor pack does not have to become all-or-nothing unless the caller asks for `--strict` / `strict=True`.
++
++## Strict versus partial
++
++Default mode may return:
++
++`PARTIAL_EXACT_MATERIAL_DONOR_ADAPTER_WITH_HOLDS`
++
++That result includes accepted entries/families and exact held-state reasons.
++
++With `--strict`, any held donor entry or family fails the adaptation instead. This is useful when a caller requires complete family continuity.
++
++## What is actually proven
++
++The adapter and its CLI tests prove:
++
++- the donor-pack v0.2 structure was accepted;
++- explicit donor routing hints were used without semantic guessing;
++- local data URLs were decoded;
++- exact SHA-256 values were calculated over those decoded bytes;
++- accepted donor entries were translated into Asset Atom texture descriptors;
++- compatible declared families were translated into Asset Atom material descriptors;
++- the resulting package passed the existing Asset Atom deterministic validator;
++- the standalone command-line consumer can take a donor JSON file and emit the same validated descriptor result.
++
++## What is not proven
++
++The adapter does **not** prove:
++
++- that donor bytes are a visually valid PNG merely because their data URL says `image/png`;
++- that a texture is a physically correct base-color, normal, roughness, metallic, or other PBR map;
++- that `donor://` resources are installed in a renderer;
++- that Universal Creation rendered the adapted material;
++- artistic quality;
++- perceptual similarity;
++- cross-engine material equivalence;
++- that this detached adapter has been promoted into the live Universal Creation capability registry.
++
++Those require later explicit resource materialization/render/host evidence and, separately, a justified live-admission choice rather than stronger wording here.
++
++## Why this is the first reuse proof
++
++The Material / Surface Fabric can now keep a persistent local library and export selected reusable ingredients as donor packs. Universal Creation already has a renderer-neutral Asset Atom grammar for texture/material relationships. This adapter creates the smallest truthful bridge between those two existing systems.
++
++The loop is now structurally testable:
++
++`visual source -> Material / Surface Fabric library -> donor pack -> Universal Creation detached adapter -> validated Asset Atom package`
++
++That is not yet the full visual loop. The next stronger proof would materialize accepted donor bytes into an ordinary creation/runtime that can actually sample or render them, while preserving the same donor identity and evidence.
++
++## Roots
++
++- **Truth** — explicit routing declarations, byte evidence, descriptor validation, held state, detached/live status, and unverified rendering remain separate.
++- **Agency / non-domination** — no donor meaning is silently inferred; strict versus partial acceptance is caller-controlled.
++- **Continuity** — donor IDs, source metadata, family membership, SHA-256 receipts, and mapping receipts remain inspectable.
++- **Wisdom before speed** — unknown or conflicting material state holds, and the first consumer remains detached until a stronger need for live promotion is earned.
+diff --git a/src/axm_uc/material_donor.py b/src/axm_uc/material_donor.py
+new file mode 100644
+index 0000000..8e25047
+--- /dev/null
++++ b/src/axm_uc/material_donor.py
+@@ -0,0 +1,413 @@
++from __future__ import annotations
++
++import base64
++import binascii
++import copy
++import hashlib
++import json
++import re
++from typing import Any
++from urllib.parse import unquote_to_bytes
++
++from .asset_atoms import AssetAtomError, validate_asset_package
++
++
++DONOR_FORMAT = "axm-material-donor-pack"
++DONOR_VERSION = "0.2.0"
++MAX_ENTRIES = 128
++MAX_FAMILIES = 128
++MAX_DATA_URL_CHARS = 16_000_000
++SUPPORTED_CHANNELS = {
++    "base-color",
++    "normal",
++    "roughness",
++    "metallic",
++    "ambient-occlusion",
++    "height",
++    "displacement",
++    "emissive",
++    "opacity",
++    "color-mask",
++    "decal",
++    "microdetail",
++}
++DATA_URL_RE = re.compile(r"^data:([^;,]+)(;base64)?,(.*)$", re.DOTALL | re.IGNORECASE)
++
++
++class MaterialDonorError(RuntimeError):
++    def __init__(self, message: str, details: dict[str, Any] | None = None):
++        super().__init__(message)
++        self.details = details or {}
++
++
++def _canonical_bytes(value: Any) -> bytes:
++    try:
++        return json.dumps(
++            value,
++            ensure_ascii=False,
++            sort_keys=True,
++            separators=(",", ":"),
++            allow_nan=False,
++        ).encode("utf-8")
++    except (TypeError, ValueError) as exc:
++        raise MaterialDonorError("material donor pack must contain deterministic JSON data") from exc
++
++
++def _digest(value: Any) -> str:
++    return hashlib.sha256(_canonical_bytes(value)).hexdigest()
++
++
++def _text(value: Any, label: str, maximum: int = 2000) -> str:
++    if not isinstance(value, str) or not value.strip():
++        raise MaterialDonorError(f"{label} must be non-empty text")
++    result = value.strip()
++    if len(result) > maximum:
++        raise MaterialDonorError(f"{label} exceeds its {maximum}-character bound")
++    return result
++
++
++def _safe_atom_id(prefix: str, value: Any) -> str:
++    source = str(value or "").strip()
++    clean = re.sub(r"[^A-Za-z0-9_.:-]+", "-", source).strip("-.:_")
++    if not clean:
++        clean = hashlib.sha256(source.encode("utf-8")).hexdigest()[:16]
++    result = f"{prefix}-{clean}"
++    if not result[0].isalpha():
++        result = f"x-{result}"
++    return result[:128].rstrip("-.:_")
++
++
++def _decode_data_url(value: Any, *, entry_id: str) -> tuple[str, bytes]:
++    data_url = _text(value, f"entry {entry_id} dataUrl", MAX_DATA_URL_CHARS)
++    match = DATA_URL_RE.fullmatch(data_url)
++    if match is None:
++        raise MaterialDonorError(
++            "material donor entry payload must be a data URL",
++            {"entry_id": entry_id},
++        )
++    mime = match.group(1).strip().casefold()
++    payload = match.group(3)
++    try:
++        if match.group(2):
++            raw = base64.b64decode(payload, validate=True)
++        else:
++            raw = unquote_to_bytes(payload)
++    except (binascii.Error, ValueError) as exc:
++        raise MaterialDonorError(
++            "material donor entry data URL payload could not be decoded",
++            {"entry_id": entry_id},
++        ) from exc
++    if not raw:
++        raise MaterialDonorError(
++            "material donor entry payload is empty",
++            {"entry_id": entry_id},
++        )
++    return mime, raw
++
++
++def _color_space(channel: str) -> str:
++    if channel == "normal":
++        return "normal-data"
++    if channel in {
++        "roughness",
++        "metallic",
++        "ambient-occlusion",
++        "height",
++        "displacement",
++        "opacity",
++        "color-mask",
++    }:
++        return "scalar-data"
++    return "srgb"
++
++
++def _entry_channel(entry: dict[str, Any]) -> str:
++    usage = entry.get("usage")
++    if not isinstance(usage, dict):
++        return "unassigned"
++    channel = str(usage.get("channelHint", "unassigned")).strip().casefold().replace("_", "-")
++    return channel if channel in SUPPORTED_CHANNELS else "unassigned"
++
++
++def _validate_pack(raw_pack: Any) -> dict[str, Any]:
++    if not isinstance(raw_pack, dict):
++        raise MaterialDonorError("material donor pack must be an object")
++    if raw_pack.get("format") != DONOR_FORMAT:
++        raise MaterialDonorError(
++            "unsupported material donor format",
++            {"expected": DONOR_FORMAT, "observed": raw_pack.get("format")},
++        )
++    if raw_pack.get("version") != DONOR_VERSION:
++        raise MaterialDonorError(
++            "unsupported material donor version",
++            {"expected": DONOR_VERSION, "observed": raw_pack.get("version")},
++        )
++    library = raw_pack.get("library")
++    if not isinstance(library, dict):
++        raise MaterialDonorError("material donor v0.2 pack is missing its library object")
++    entries = library.get("entries")
++    families = library.get("families")
++    if not isinstance(entries, list) or not 1 <= len(entries) <= MAX_ENTRIES:
++        raise MaterialDonorError(f"material donor entries must contain 1..{MAX_ENTRIES} items")
++    if not isinstance(families, list) or len(families) > MAX_FAMILIES:
++        raise MaterialDonorError(f"material donor families must contain 0..{MAX_FAMILIES} items")
++    return copy.deepcopy(raw_pack)
++
++
++def adapt_material_donor_pack(raw_pack: Any, *, strict: bool = False) -> dict[str, Any]:
++    pack = _validate_pack(raw_pack)
++    pack_id = str(pack.get("id") or f"donor-{_digest(pack)[:16]}")
++    entries = pack["library"]["entries"]
++    families = pack["library"]["families"]
++
++    atoms: list[dict[str, Any]] = []
++    texture_atom_by_entry: dict[str, str] = {}
++    accepted_entries: list[dict[str, Any]] = []
++    held_entries: list[dict[str, Any]] = []
++
++    seen_entry_ids: set[str] = set()
++    for index, raw_entry in enumerate(entries):
++        if not isinstance(raw_entry, dict):
++            held_entries.append({"index": index, "reason": "entry is not an object"})
++            continue
++        try:
++            entry_id = _text(raw_entry.get("id"), f"entries[{index}].id", 128)
++        except MaterialDonorError as exc:
++            held_entries.append({"index": index, "reason": str(exc)})
++            continue
++        if entry_id in seen_entry_ids:
++            held_entries.append({"entry_id": entry_id, "reason": "duplicate entry id"})
++            continue
++        seen_entry_ids.add(entry_id)
++
++        channel = _entry_channel(raw_entry)
++        if channel == "unassigned":
++            held_entries.append(
++                {
++                    "entry_id": entry_id,
++                    "reason": "entry has no supported explicit channel hint",
++                    "observed_hint": raw_entry.get("usage", {}).get("channelHint")
++                    if isinstance(raw_entry.get("usage"), dict)
++                    else None,
++                }
++            )
++            continue
++        try:
++            data_mime, payload_bytes = _decode_data_url(raw_entry.get("dataUrl"), entry_id=entry_id)
++            declared_mime = str(raw_entry.get("mime") or data_mime).strip().casefold()
++            if declared_mime != data_mime:
++                raise MaterialDonorError(
++                    "entry MIME does not match data URL MIME",
++                    {
++                        "entry_id": entry_id,
++                        "declared_mime": declared_mime,
++                        "data_url_mime": data_mime,
++                    },
++                )
++        except MaterialDonorError as exc:
++            held_entries.append({"entry_id": entry_id, "reason": str(exc), "details": exc.details})
++            continue
++
++        digest = hashlib.sha256(payload_bytes).hexdigest()
++        texture_atom_id = _safe_atom_id("texture", entry_id)
++        if texture_atom_id in {atom["id"] for atom in atoms}:
++            held_entries.append({"entry_id": entry_id, "reason": "normalized texture atom id collision"})
++            continue
++        purpose_name = str(raw_entry.get("name") or entry_id).strip()[:160]
++        atoms.append(
++            {
++                "id": texture_atom_id,
++                "kind": "texture",
++                "purpose": f"Material donor texture: {purpose_name}",
++                "uses": [],
++                "payload": {
++                    "channel": channel,
++                    "resource": {
++                        "uri": f"donor://{_safe_atom_id('pack', pack_id)}/{texture_atom_id}",
++                        "mime_type": declared_mime,
++                        "digest": f"sha256:{digest}",
++                        "color_space": _color_space(channel),
++                    },
++                    "uv_set": 0,
++                    "tiling": [1, 1],
++                    "offset": [0, 0],
++                    "strength": 1,
++                },
++            }
++        )
++        texture_atom_by_entry[entry_id] = texture_atom_id
++        accepted_entries.append(
++            {
++                "entry_id": entry_id,
++                "texture_atom": texture_atom_id,
++                "channel": channel,
++                "mime_type": declared_mime,
++                "decoded_bytes": len(payload_bytes),
++                "sha256": digest,
++                "source": copy.deepcopy(raw_entry.get("source") or {}),
++            }
++        )
++
++    if not accepted_entries:
++        raise MaterialDonorError(
++            "material donor pack has no entries that can be adapted without guessing",
++            {"held_entries": held_entries},
++        )
++
++    accepted_families: list[dict[str, Any]] = []
++    held_families: list[dict[str, Any]] = []
++    texture_ids_used_by_materials: set[str] = set()
++    seen_family_ids: set[str] = set()
++
++    for index, raw_family in enumerate(families):
++        if not isinstance(raw_family, dict):
++            held_families.append({"index": index, "reason": "family is not an object"})
++            continue
++        family_id = str(raw_family.get("id") or f"family-{index + 1}").strip()
++        if family_id in seen_family_ids:
++            held_families.append({"family_id": family_id, "reason": "duplicate family id"})
++            continue
++        seen_family_ids.add(family_id)
++        member_ids = raw_family.get("entryIds")
++        if not isinstance(member_ids, list) or not member_ids:
++            held_families.append({"family_id": family_id, "reason": "family has no entryIds"})
++            continue
++
++        bindings: dict[str, str] = {}
++        missing_members: list[str] = []
++        duplicate_channels: list[str] = []
++        used_texture_ids: list[str] = []
++        for member in member_ids:
++            entry_id = str(member)
++            texture_id = texture_atom_by_entry.get(entry_id)
++            if texture_id is None:
++                missing_members.append(entry_id)
++                continue
++            accepted = next(item for item in accepted_entries if item["entry_id"] == entry_id)
++            channel = accepted["channel"]
++            if channel in bindings:
++                duplicate_channels.append(channel)
++                continue
++            bindings[channel] = texture_id
++            used_texture_ids.append(texture_id)
++
++        if missing_members or duplicate_channels or not bindings:
++            held_families.append(
++                {
++                    "family_id": family_id,
++                    "reason": "family cannot be mapped exactly to one texture per supported channel",
++                    "missing_or_held_members": sorted(set(missing_members)),
++                    "duplicate_channels": sorted(set(duplicate_channels)),
++                }
++            )
++            continue
++
++        material_atom_id = _safe_atom_id("material", family_id)
++        if material_atom_id in {atom["id"] for atom in atoms}:
++            held_families.append({"family_id": family_id, "reason": "normalized material atom id collision"})
++            continue
++        uses = sorted(set(used_texture_ids))
++        atoms.append(
++            {
++                "id": material_atom_id,
++                "kind": "material",
++                "purpose": f"Material donor family: {str(raw_family.get('name') or family_id).strip()[:160]}",
++                "uses": uses,
++                "payload": {
++                    "scalars": {},
++                    "colors": {},
++                    "texture_bindings": dict(sorted(bindings.items())),
++                    "masks": [],
++                    "overlays": [],
++                },
++            }
++        )
++        texture_ids_used_by_materials.update(uses)
++        accepted_families.append(
++            {
++                "family_id": family_id,
++                "material_atom": material_atom_id,
++                "entry_ids": [str(item) for item in member_ids],
++                "texture_bindings": dict(sorted(bindings.items())),
++            }
++        )
++
++    root_atoms = [item["material_atom"] for item in accepted_families]
++    root_atoms.extend(
++        item["texture_atom"]
++        for item in accepted_entries
++        if item["texture_atom"] not in texture_ids_used_by_materials
++    )
++    root_atoms = sorted(set(root_atoms))
++
++    package = {
++        "schema": "axm.asset-atom-package/v0.1",
++        "id": f"axm.material-donor.{_digest({'pack_id': pack_id, 'entries': accepted_entries, 'families': accepted_families})[:20]}",
++        "version": "0.1.0",
++        "asset_class": "material.library",
++        "root_atoms": root_atoms,
++        "atoms": atoms,
++        "provenance": {
++            "kind": "derived-material-donor",
++            "basis": (
++                "Adapted from explicit axm-material-donor-pack/v0.2 routing declarations; "
++                "portable data URLs were decoded and SHA-256 hashed without inferring pixel semantics."
++            ),
++            "creator": "AXM-Material-Donor-Adapter",
++            "source_uri": f"donor://{_safe_atom_id('pack', pack_id)}",
++        },
++        "limitations": [
++            "donor resource bytes are decoded and SHA-256 hashed but are not installed or rendered by this adapter",
++            "texture channel meaning comes only from explicit donor-pack channel hints and is not physically verified",
++            "validated Asset Atom descriptor structure does not prove PBR correctness, visual quality, renderer compatibility, or physical-material behavior",
++        ],
++    }
++
++    try:
++        normalized = validate_asset_package(package)
++    except AssetAtomError as exc:
++        raise MaterialDonorError(
++            "adapted material donor package failed the existing Asset Atom validator",
++            {"asset_atom_error": str(exc), "asset_atom_details": exc.details},
++        ) from exc
++
++    holds_exist = bool(held_entries or held_families)
++    if strict and holds_exist:
++        raise MaterialDonorError(
++            "strict material donor adaptation is on HOLD because some donor state could not be mapped exactly",
++            {"held_entries": held_entries, "held_families": held_families},
++        )
++
++    return {
++        "truth_status": "READY_EXACT_MATERIAL_DONOR_ADAPTER"
++        if not holds_exist
++        else "PARTIAL_EXACT_MATERIAL_DONOR_ADAPTER_WITH_HOLDS",
++        "source": {
++            "format": DONOR_FORMAT,
++            "version": DONOR_VERSION,
++            "pack_id": pack_id,
++            "exported_at": pack.get("exportedAt"),
++            "source_library_id": pack.get("library", {}).get("sourceLibraryId"),
++        },
++        "receipt": {
++            "declared_entries": len(entries),
++            "accepted_entries": len(accepted_entries),
++            "held_entries": held_entries,
++            "declared_families": len(families),
++            "accepted_families": len(accepted_families),
++            "held_families": held_families,
++            "resource_bytes_verified": "data-url-decode-and-sha256-only",
++            "rendering_verified": False,
++            "physical_material_correctness_verified": False,
++        },
++        "accepted_entries": accepted_entries,
++        "accepted_families": accepted_families,
++        "asset_package": {key: value for key, value in normalized.items() if key != "validation"},
++        "asset_validation": normalized["validation"],
++        "truth_boundary": {
++            "channel_mapping": "Uses only donor-pack channelHint values already explicit in the source pack; no semantic material recognition is performed.",
++            "resource_uri": "Asset Atom resources use donor:// descriptors plus SHA-256 evidence; this adapter does not install or render donor bytes.",
++            "families": "A donor family becomes a material atom only when every accepted member maps to one unique supported texture channel.",
++            "holds": "Unassigned, undecodable, conflicting, or otherwise unmappable donor state remains visible instead of being silently discarded.",
++        },
++    }
+diff --git a/tests/test_material_donor.py b/tests/test_material_donor.py
+new file mode 100644
+index 0000000..8288592
+--- /dev/null
++++ b/tests/test_material_donor.py
+@@ -0,0 +1,175 @@
++from __future__ import annotations
++
++import copy
++import json
++import subprocess
++import sys
++import tempfile
++import unittest
++from pathlib import Path
++
++from axm_uc.material_donor import MaterialDonorError, adapt_material_donor_pack
++
++
++ROOT = Path(__file__).resolve().parents[1]
++BASE_DATA = "data:image/png;base64,iVBORw0KGgo="
++ROUGH_DATA = "data:image/png;base64,iVBORw0KGgp="
++
++
++def donor_pack() -> dict:
++    return {
++        "format": "axm-material-donor-pack",
++        "version": "0.2.0",
++        "id": "donor-test-pack",
++        "exportedAt": "2026-09-12T00:00:00Z",
++        "library": {
++            "sourceFormat": "axm-material-library",
++            "sourceVersion": "0.4.0",
++            "sourceLibraryId": "library-test",
++            "entries": [
++                {
++                    "id": "material-base",
++                    "name": "painted-metal-base.png",
++                    "kind": "texture",
++                    "mime": "image/png",
++                    "width": 1,
++                    "height": 1,
++                    "dataUrl": BASE_DATA,
++                    "source": {"method": "self-made-test"},
++                    "usage": {"channelHint": "base-color", "channelBasis": "operator-declared"},
++                    "tags": ["metal"],
++                },
++                {
++                    "id": "material-roughness",
++                    "name": "painted-metal-roughness.png",
++                    "kind": "roughness",
++                    "mime": "image/png",
++                    "width": 1,
++                    "height": 1,
++                    "dataUrl": ROUGH_DATA,
++                    "source": {"method": "self-made-test"},
++                    "usage": {"channelHint": "roughness", "channelBasis": "operator-declared"},
++                    "tags": ["metal"],
++                },
++            ],
++            "families": [
++                {
++                    "id": "family-painted-metal",
++                    "name": "painted metal",
++                    "purpose": "test reusable base + roughness family",
++                    "entryIds": ["material-base", "material-roughness"],
++                    "tags": ["metal"],
++                }
++            ],
++        },
++        "assets": [],
++        "workspace": {},
++        "layers": [],
++        "experiment": None,
++    }
++
++
++class MaterialDonorAdapterTests(unittest.TestCase):
++    def test_complete_pack_becomes_valid_asset_atom_material(self) -> None:
++        result = adapt_material_donor_pack(donor_pack(), strict=True)
++        self.assertEqual(result["truth_status"], "READY_EXACT_MATERIAL_DONOR_ADAPTER")
++        self.assertEqual(result["receipt"]["accepted_entries"], 2)
++        self.assertEqual(result["receipt"]["accepted_families"], 1)
++        self.assertFalse(result["receipt"]["rendering_verified"])
++
++        package = result["asset_package"]
++        self.assertEqual(package["schema"], "axm.asset-atom-package/v0.1")
++        self.assertEqual(package["asset_class"], "material.library")
++        kinds = [atom["kind"] for atom in package["atoms"]]
++        self.assertEqual(kinds.count("texture"), 2)
++        self.assertEqual(kinds.count("material"), 1)
++        self.assertEqual(package["provenance"]["kind"], "derived-material-donor")
++        self.assertTrue(package["limitations"])
++
++        material = next(atom for atom in package["atoms"] if atom["kind"] == "material")
++        self.assertEqual(
++            sorted(material["payload"]["texture_bindings"]),
++            ["base-color", "roughness"],
++        )
++        self.assertEqual(sorted(material["uses"]), sorted(material["payload"]["texture_bindings"].values()))
++        self.assertTrue(all(atom["payload"]["resource"]["uri"].startswith("donor://") for atom in package["atoms"] if atom["kind"] == "texture"))
++        self.assertTrue(all(atom["payload"]["resource"]["digest"].startswith("sha256:") for atom in package["atoms"] if atom["kind"] == "texture"))
++
++    def test_detached_cli_consumes_pack_into_same_validated_grammar(self) -> None:
++        with tempfile.TemporaryDirectory() as td:
++            donor_path = Path(td) / "donor.json"
++            donor_path.write_text(json.dumps(donor_pack()), encoding="utf-8")
++            run = subprocess.run(
++                [
++                    sys.executable,
++                    str(ROOT / "tools/import_material_donor.py"),
++                    str(donor_path),
++                    "--strict",
++                ],
++                cwd=ROOT,
++                capture_output=True,
++                text=True,
++                check=False,
++            )
++            self.assertEqual(run.returncode, 0, run.stderr)
++            result = json.loads(run.stdout)
++            self.assertEqual(result["truth_status"], "READY_EXACT_MATERIAL_DONOR_ADAPTER")
++            self.assertEqual(result["receipt"]["accepted_entries"], 2)
++            self.assertEqual(result["receipt"]["accepted_families"], 1)
++            self.assertEqual(result["asset_package"]["schema"], "axm.asset-atom-package/v0.1")
++            self.assertFalse(result["receipt"]["rendering_verified"])
++
++    def test_unassigned_entry_is_visible_hold_not_silent_guess(self) -> None:
++        pack = donor_pack()
++        pack["library"]["entries"].append(
++            {
++                "id": "material-unknown",
++                "name": "mystery.png",
++                "kind": "texture",
++                "mime": "image/png",
++                "width": 1,
++                "height": 1,
++                "dataUrl": BASE_DATA,
++                "source": {"method": "test"},
++                "usage": {"channelHint": "unassigned", "channelBasis": "operator-declared"},
++            }
++        )
++        result = adapt_material_donor_pack(pack)
++        self.assertEqual(result["truth_status"], "PARTIAL_EXACT_MATERIAL_DONOR_ADAPTER_WITH_HOLDS")
++        self.assertEqual(result["receipt"]["accepted_entries"], 2)
++        self.assertEqual(len(result["receipt"]["held_entries"]), 1)
++        self.assertIn("no supported explicit channel hint", result["receipt"]["held_entries"][0]["reason"])
++        with self.assertRaises(MaterialDonorError):
++            adapt_material_donor_pack(pack, strict=True)
++
++    def test_duplicate_family_channel_holds_family_but_keeps_textures(self) -> None:
++        pack = donor_pack()
++        duplicate = copy.deepcopy(pack["library"]["entries"][0])
++        duplicate["id"] = "material-base-2"
++        duplicate["name"] = "second-base.png"
++        pack["library"]["entries"].append(duplicate)
++        pack["library"]["families"][0]["entryIds"].append("material-base-2")
++        result = adapt_material_donor_pack(pack)
++        self.assertEqual(result["receipt"]["accepted_entries"], 3)
++        self.assertEqual(result["receipt"]["accepted_families"], 0)
++        self.assertEqual(len(result["receipt"]["held_families"]), 1)
++        self.assertEqual(result["receipt"]["held_families"][0]["duplicate_channels"], ["base-color"])
++        self.assertTrue(all(atom["kind"] == "texture" for atom in result["asset_package"]["atoms"]))
++
++    def test_wrong_version_fails_closed(self) -> None:
++        pack = donor_pack()
++        pack["version"] = "0.1.0"
++        with self.assertRaises(MaterialDonorError):
++            adapt_material_donor_pack(pack)
++
++    def test_mime_mismatch_holds_entry(self) -> None:
++        pack = donor_pack()
++        pack["library"]["entries"][0]["mime"] = "image/webp"
++        result = adapt_material_donor_pack(pack)
++        self.assertEqual(result["receipt"]["accepted_entries"], 1)
++        self.assertEqual(len(result["receipt"]["held_entries"]), 1)
++        self.assertIn("MIME does not match", result["receipt"]["held_entries"][0]["reason"])
++
++
++if __name__ == "__main__":
++    unittest.main()
+diff --git a/tools/import_material_donor.py b/tools/import_material_donor.py
+new file mode 100644
+index 0000000..8a47350
+--- /dev/null
++++ b/tools/import_material_donor.py
+@@ -0,0 +1,64 @@
++from __future__ import annotations
++
++import argparse
++import json
++import sys
++from pathlib import Path
++
++ROOT = Path(__file__).resolve().parents[1]
++sys.path.insert(0, str(ROOT / "src"))
++
++from axm_uc.material_donor import MaterialDonorError, adapt_material_donor_pack
++
++
++def parse_args() -> argparse.Namespace:
++    parser = argparse.ArgumentParser(
++        description=(
++            "Validate one axm-material-donor-pack/v0.2 file and adapt its explicit "
++            "material routing into the existing AXM Asset Atom texture/material grammar."
++        )
++    )
++    parser.add_argument("pack", type=Path, help="Path to one donor-pack JSON file.")
++    parser.add_argument(
++        "--strict",
++        action="store_true",
++        help="Fail if any donor entry or family remains on HOLD.",
++    )
++    return parser.parse_args()
++
++
++def main() -> int:
++    args = parse_args()
++    try:
++        raw = json.loads(args.pack.read_text(encoding="utf-8"))
++    except FileNotFoundError:
++        print(json.dumps({"truth_status": "HOLD", "error": "donor pack file does not exist", "path": str(args.pack)}, indent=2), file=sys.stderr)
++        return 2
++    except (OSError, json.JSONDecodeError) as exc:
++        print(json.dumps({"truth_status": "HOLD", "error": f"donor pack could not be read as JSON: {exc}", "path": str(args.pack)}, indent=2), file=sys.stderr)
++        return 2
++
++    try:
++        result = adapt_material_donor_pack(raw, strict=args.strict)
++    except MaterialDonorError as exc:
++        print(
++            json.dumps(
++                {
++                    "truth_status": "HOLD",
++                    "error": str(exc),
++                    "details": exc.details,
++                    "path": str(args.pack),
++                },
++                indent=2,
++                sort_keys=True,
++            ),
++            file=sys.stderr,
++        )
++        return 2
++
++    print(json.dumps(result, indent=2, sort_keys=True))
++    return 0
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())

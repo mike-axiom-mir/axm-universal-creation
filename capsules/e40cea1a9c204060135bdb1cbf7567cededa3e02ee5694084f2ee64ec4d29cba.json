@@ -1,0 +1,109 @@
+{
+  "capsule_id": "e40cea1a9c204060135bdb1cbf7567cededa3e02ee5694084f2ee64ec4d29cba",
+  "evidence": {
+    "files": [
+      {
+        "additions": 59,
+        "binary": false,
+        "content_sha256": "7db014f5e4b670ae179e836538a66678ac132974ca06d183b300e18107a1c751",
+        "deletions": 0,
+        "path": "CHAOS_TRIKE.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "AXM Chaos Trike",
+          "Portable vehicle contract",
+          "Driving helper",
+          "Evidence and roots"
+        ]
+      },
+      {
+        "additions": 260,
+        "binary": false,
+        "content_sha256": "cfafffb397acd536c1f853bbe4a911badffdab4f343076fabac3a4e6dab78e59",
+        "deletions": 0,
+        "path": "tools/blender/axm_chaos_trike.py",
+        "status": "A",
+        "symbols": [
+          "turn_parts",
+          "sideplate",
+          "spring",
+          "wheel",
+          "build",
+          "animate",
+          "main"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 24,
+        "binary": false,
+        "content_sha256": "c5acc71e0f98a1479b03b1af9ce74418253b3e5ba2986db0f1eae15099692d36",
+        "deletions": 0,
+        "path": "tools/blender/render_chaos_trike.py",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 11,
+        "binary": false,
+        "content_sha256": "89cb59ab4293c1e959f6a0f13bde1ad7a79f47fc05d42fa13668f91e407d00be",
+        "deletions": 0,
+        "path": "tools/blender/verify_chaos_trike.py",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "c00a01021a39fbb76a116d3b3124603dd50dda449f93ffaa974f34ca990a7882"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 4,
+    "kinds": [
+      "code",
+      "knowledge"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "animate",
+      "axm",
+      "blender",
+      "build",
+      "chaos",
+      "contract",
+      "creation-machine",
+      "driving",
+      "evidence",
+      "helper",
+      "merge",
+      "parts",
+      "pipeline",
+      "portable",
+      "render",
+      "roots",
+      "sideplate",
+      "spring",
+      "standalone",
+      "tools",
+      "trike",
+      "turn",
+      "universal-creation",
+      "vehicle",
+      "verify",
+      "wheel"
+    ]
+  },
+  "source": {
+    "base": "2b9c55e9c77fa77767fbd1e739b25edc9298a233",
+    "commit_subject": "Merge Chaos trike vehicle pipeline",
+    "head": "8c8a313fa076a49f947df594e6997b7def267ac9",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

@@ -1,0 +1,175 @@
+{
+  "capsule_id": "a2bdca89a7b037a1b678b949887c4ea886b852a9f4a56485ab4d7630218bb070",
+  "evidence": {
+    "files": [
+      {
+        "additions": 37,
+        "binary": false,
+        "content_sha256": "0fa15713da0cda894ba54d7239cf1b4333287d8a626342859c610a580233a725",
+        "deletions": 0,
+        "path": "BRAND_TEMPLATE_PACK.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Source-Bound Brand / Identity System Template Pack",
+          "Surfaces",
+          "Source-truth contract",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 42,
+        "binary": false,
+        "content_sha256": "fa3dbbe92ae2a203be00652c81a510fc84361e692a4fb365cb242ecb0ca639ae",
+        "deletions": 42,
+        "path": "VISUAL_TEMPLATE_FABRIC.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Current v18 candidate census",
+          "Source-bound brand / identity foundation",
+          "Registry and identity",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 34,
+        "binary": false,
+        "content_sha256": "8967c74d6f9c6d41cba1a896a033a8a5903563fb22bec68670f55322016a35e3",
+        "deletions": 33,
+        "path": "VISUAL_TEMPLATE_PRIORITY_MAP.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "AXM Visual Template Expansion Priority Map",
+          "Brand / identity system editor \u2014 IMPLEMENTED IN THIS LANE",
+          "Next high-value visual/creation families",
+          "Cross-cutting rules",
+          "Immediate build order"
+        ]
+      },
+      {
+        "additions": 88,
+        "binary": false,
+        "content_sha256": "325f94b79b5cb8d429224139604219f7b40bbddd5e9fc71ae055a8473c66e2da",
+        "deletions": 0,
+        "path": "src/axm_uc/visual_template_brand.py",
+        "status": "A",
+        "symbols": [
+          "_merge",
+          "extend_brand_catalog"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 3,
+        "binary": false,
+        "content_sha256": "53e2d5321c579e83348e034ebaab022f58a7eff4a7b8ade96c003c58694e7caf",
+        "deletions": 1,
+        "path": "src/axm_uc/visual_templates.py",
+        "status": "M",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 37,
+        "binary": false,
+        "content_sha256": "957b7b96df21bf1683e2749a3b73ed02de6f714876dddb628bba81622c3d1253",
+        "deletions": 35,
+        "path": "tests/test_visual_templates.py",
+        "status": "M",
+        "symbols": [
+          "VisualTemplateTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 20,
+        "binary": false,
+        "content_sha256": "180d47e3a343a28fd88658ded0536311947eea2bfb41924de62507f58b127799",
+        "deletions": 19,
+        "path": "tools/visual_template_proof.py",
+        "status": "M",
+        "symbols": [
+          "_write",
+          "main"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "d4e8bdce6220033554431d3f628af6707704598c1e8f32030e486f8d0f11ccea"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "add",
+      "axm",
+      "bound",
+      "boundary",
+      "brand",
+      "build",
+      "candidate",
+      "catalog",
+      "census",
+      "contract",
+      "creation",
+      "creation-machine",
+      "cross",
+      "current",
+      "cutting",
+      "editor",
+      "expansion",
+      "extend",
+      "fabric",
+      "families",
+      "foundation",
+      "high",
+      "identity",
+      "immediate",
+      "implemented",
+      "lane",
+      "map",
+      "merge",
+      "next",
+      "order",
+      "pack",
+      "priority",
+      "proof",
+      "registry",
+      "rules",
+      "source",
+      "standalone",
+      "surfaces",
+      "system",
+      "template",
+      "templates",
+      "this",
+      "tools",
+      "truth",
+      "universal-creation",
+      "v18",
+      "value",
+      "visual",
+      "write"
+    ]
+  },
+  "source": {
+    "base": "007c7c1850e6670f66398f15ff61391d4f46d839",
+    "commit_subject": "Add source-bound brand and identity system templates",
+    "head": "a72d12c80aa691c704402250b115fb24e630e613",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

@@ -1,0 +1,623 @@
+diff --git a/ATLAS_TEMPLATE_PACK.md b/ATLAS_TEMPLATE_PACK.md
+new file mode 100644
+index 0000000..2245e56
+--- /dev/null
++++ b/ATLAS_TEMPLATE_PACK.md
+@@ -0,0 +1,39 @@
++# Editable World-Map / Lore-Atlas Template Pack
++
++`visual.atlas.core` gives Universal Creation a source-first foundation for fictional or evidence-backed world maps, lore atlases, state maps and chronology overlays.
++
++The core rule is spatial truth: **missing coordinates, routes, borders or place state stay unknown rather than being invented to make the map look complete.**
++
++## Product surfaces
++
++The product contains ten responsive screens:
++
++- project / atlas hub;
++- world-map editor;
++- region / boundary editor;
++- route / path editor;
++- POI / lore-reference editor;
++- layer editor;
++- timeline / state-overlay editor;
++- coordinate / spatial-source editor;
++- review / comparison;
++- export matrix.
++
++## Spatial and narrative contracts
++
++- `map-region` — exact geometry/source/status;
++- `route-path` — explicit endpoints plus known/planned/blocked/unknown status;
++- `poi-marker` — exact identity and location source/status;
++- `map-layer` — named independent layer with provenance;
++- `time-slice` — explicit period plus current/historical/projected/unknown status;
++- `lore-reference` — exact target plus source/status;
++- `boundary-line` — explicit boundary type, source and uncertainty;
++- `map-coordinate` — coordinate system, source and precision remain explicit;
++- `state-overlay` — source and time slice remain bound;
++- `atlas-export-target` — extent/layers/labels/provenance requirements remain visible.
++
++## Truth boundary
++
++This pack proves deterministic structure and spatial/editability contracts only. It does not prove that a coordinate, border, route, geopolitical claim, historical state or lore claim is correct. Projected state cannot be presented as observed state. Approximate or derived coordinates stay distinguishable from exact coordinates.
++
++Consuming products must provide real source state. Derived exports never replace richer editable atlas source.
+diff --git a/VISUAL_TEMPLATE_FABRIC.md b/VISUAL_TEMPLATE_FABRIC.md
+index ae66167..0a75134 100644
+--- a/VISUAL_TEMPLATE_FABRIC.md
++++ b/VISUAL_TEMPLATE_FABRIC.md
+@@ -2,85 +2,65 @@
+ 
+ Universal Creation contains one deterministic library of **known visual archetypes** between low-level format scaffolds and finished products. Templates are editable structural starting points, not finished art and not automatic canon.
+ 
+-The public module remains `axm_uc.visual_templates`. Explicit extension packs now cover games/product plumbing, creative editors, comics, AXM system surfaces, key art, cards/decks, cinematic overlays, video/broadcast overlays and evidence-aware diagrams. Sticker Fabric remains the immutable/versioned registry bridge. Mathematical work can enrich declared ratios/ranges through `math_hooks` without replacing template identity.
++The public module remains `axm_uc.visual_templates`. Explicit extension packs now cover games/product plumbing, creative editors, comics, AXM system surfaces, key art, cards/decks, cinematic overlays, video/broadcast overlays, evidence-aware diagrams and world-map/lore-atlas editing. Sticker Fabric remains the immutable/versioned registry bridge. Mathematical work can enrich declared ratios/ranges through `math_hooks` without replacing template identity.
+ 
+-## Current v9 candidate census
++## Current v10 candidate census
+ 
+-- **116 reusable visual/state primitives**
+-- **17 coherent style systems**
+-- **154 responsive screen archetypes**
+-- **15 whole-product archetypes**
+-- **169 exact screen/product definitions** when explicitly installed into Sticker Registry
++- **126 reusable visual/state primitives**
++- **18 coherent style systems**
++- **164 responsive screen archetypes**
++- **16 whole-product archetypes**
++- **180 exact screen/product definitions** when explicitly installed into Sticker Registry
+ 
+ Every major family provides compact, standard and wide normalized layouts. Unknown requested variants fail rather than silently falling back.
+ 
+-## Major product foundations
+-
+-- `game.racing.performance`, `game.racing.full`, `game.coop.action`, `game.rts.command`, `game.system.shell`, `game.shared.core`
+-- `editor.creative.core`
+-- `comic.narrative.core`
+-- `axm.system.shell`
+-- `visual.keyart.core`
+-- `visual.cards.core`
+-- `visual.cinematic.core`
+-- `visual.broadcast.core`
+-- `visual.diagram.core`
+-
+-The previously merged packs preserve exact source/edit state: game ownership/progression/runtime status, editor layers/timelines/graphs, comic page/panel/dialogue state, AXM source/evidence/recovery state, key-art subject/type/crop state, card rules/face/back/deck/print state, cinematic text/timing/credits state, and broadcast source/freshness/delivery/output state.
+-
+-## Evidence-aware diagrams / infographics
+-
+-`visual.diagram.core` provides ten source-first diagram surfaces:
+-
+-- project / diagram hub;
+-- canvas editor;
+-- node editor;
+-- relationship editor;
+-- evidence / data binding editor;
+-- annotation / callout editor;
+-- legend / semantic style editor;
+-- layout variants;
+-- review / truth check;
+-- export matrix.
++## Product foundations
+ 
+-Its `visual.diagram.evidence` style is replaceable. The semantic contract matters more than appearance:
++The catalog retains the merged game, creative-editor, comic, AXM-system, key-art, card/deck, cinematic, broadcast and diagram products, and adds `visual.atlas.core`.
+ 
+-- `diagram-node` keeps exact entity/concept/state identity;
+-- `relationship-edge` requires exact endpoints, relation type and direction;
+-- `evidence-reference` keeps source plus observed/derived/claimed/missing status;
+-- `data-field` keeps value, unit, source and period/freshness explicit;
+-- `annotation-pin` requires an exact target;
+-- `legend-entry` cannot depend on color alone;
+-- `group-boundary` keeps membership/criteria explicit;
+-- `layout-guide` cannot change semantic relationships;
+-- `callout-card` keeps content and evidence status separate;
+-- `diagram-export-target` keeps output requirements explicit.
++## World-map / lore-atlas foundation
+ 
+-**Visual proximity is never allowed to imply an undeclared relationship.** Alternate layouts/routing may improve readability but cannot add, remove or retype semantic edges.
++`visual.atlas.core` provides ten source-first surfaces:
+ 
+-## Registry and identity
++- project / atlas hub;
++- world-map editor;
++- region / boundary editor;
++- route / path editor;
++- POI / lore-reference editor;
++- layer editor;
++- timeline / state-overlay editor;
++- coordinate / spatial-source editor;
++- review / comparison;
++- export matrix.
+ 
+-Every built-in screen/product can be wrapped as an immutable Sticker definition:
++Its `visual.atlas.cartographic` style is replaceable. Spatial and narrative truth remains explicit:
+ 
+-```python
+-from axm_stickers import Registry
+-from axm_uc.visual_templates import install_builtins
++- `map-region` requires exact geometry/source state;
++- `route-path` requires exact endpoints plus known/planned/blocked/unknown status;
++- `poi-marker` keeps identity and location source/status explicit;
++- `map-layer` preserves independent layer provenance;
++- `time-slice` preserves period plus current/historical/projected/unknown status;
++- `lore-reference` binds exact target and source/status;
++- `boundary-line` requires boundary type, source and uncertainty state;
++- `map-coordinate` keeps coordinate system, source and precision explicit;
++- `state-overlay` stays bound to exact source and time slice;
++- `atlas-export-target` keeps extent/layer/label/provenance requirements visible.
+ 
+-with Registry('stickers.sqlite') as registry:
+-    pins = install_builtins(registry)
+-```
++**Unknown coordinates, routes or boundaries are never invented merely to make a map look complete.** Projected state remains distinguishable from observed/current state, and visual boundaries do not become factual borders without declared type/source.
++
++## Registry and identity
+ 
+-Definitions use exact id/version/digest identity. There is no floating `latest`, silent upgrade or automatic canon.
++Every built-in screen/product can be wrapped as an immutable Sticker definition. Definitions use exact id/version/digest identity; there is no floating `latest`, silent upgrade or automatic canon.
+ 
+ ## CLI
+ 
+ ```sh
+ axm-visual-templates catalog
+-axm-visual-templates show visual.diagram.core
+-axm-visual-templates render visual.diagram.core creations/diagram --width 1920 --height 1080
++axm-visual-templates show visual.atlas.core
++axm-visual-templates render visual.atlas.core creations/atlas --width 1920 --height 1080
+ ```
+ 
+-A product preview contains structural SVGs plus exact resolved source metadata and a local gallery. Preview/export remains derived inspection output, never authoritative source.
++Preview/export remains derived inspection output, never authoritative source.
+ 
+ ## Evidence gate
+ 
+@@ -89,20 +69,19 @@ python -m unittest discover -s tests -p 'test_visual_templates.py' -v
+ python tools/visual_template_proof.py /new/output/path
+ ```
+ 
+-The v9 gate requires:
++The v10 gate requires:
+ 
+-- exact census: 17 styles / 116 primitives / 154 screens / 15 products;
+-- all 154 screens stay within six representative viewport shapes;
++- exact census: 18 styles / 126 primitives / 164 screens / 16 products;
++- all 164 screens stay within six representative viewport shapes;
+ - exact product screen order and flows resolve across those viewports;
+-- parseable galleries for all prior proof products plus `visual.diagram.core`;
+-- all 169 screen/product definitions install through Sticker Registry;
+-- exact nodes, relationship endpoints/types, evidence/source status, value/unit/source/period, target-bound annotations, non-color legends and explicit group membership remain present;
+-- layout variants cannot rewrite semantic relationships;
+-- prior broadcast/cinematic/card/key-art/comic/game/AXM source boundaries remain intact;
++- parseable galleries for all prior proof products plus `visual.atlas.core`;
++- all 180 screen/product definitions install through Sticker Registry;
++- exact region geometry/source, route endpoints/status, POI location source, layer provenance, time-slice status, lore target/source, boundary type/source, coordinate precision/source and overlay source/time remain present;
++- prior diagram/broadcast/cinematic/card/key-art/comic/game/AXM source boundaries remain intact;
+ - copy safety, strict variant rejection, invalid-geometry rejection and exact Sticker-slot binding remain intact.
+ 
+ ## Truth boundary
+ 
+-Current evidence proves deterministic structural and semantic/editability contracts only. It does **not** prove that a diagrammed relationship is true, causal, sufficiently evidenced or statistically valid; it does not prove numerical data correctness, source reliability, accessibility compliance or aesthetic acceptance.
++Current evidence proves deterministic structural/editability contracts only. It does **not** prove coordinate accuracy, route existence, border/geopolitical claims, chronology correctness, lore truth, source reliability or aesthetic acceptance.
+ 
+-Consuming products must provide real source/evidence state. Missing, disputed, derived and claimed information stays distinguishable. Richer editable source remains authoritative over previews/exports. Templates may be mutated, combined, replaced or ignored when better evidence and product intent support another solution.
++Consuming products must provide real source state. Unknown, disputed, approximate, derived and projected information stays distinguishable. Richer editable source remains authoritative over previews/exports.
+diff --git a/VISUAL_TEMPLATE_PRIORITY_MAP.md b/VISUAL_TEMPLATE_PRIORITY_MAP.md
+index 1bcf481..1e4418d 100644
+--- a/VISUAL_TEMPLATE_PRIORITY_MAP.md
++++ b/VISUAL_TEMPLATE_PRIORITY_MAP.md
+@@ -1,60 +1,59 @@
+ # AXM Visual Template Expansion Priority Map
+ 
+-Status: v9 growth lane after verified v1–v8 merges.
++Status: v10 growth lane after verified v1–v9 merges.
+ 
+ The visual-template fabric grows where Universal Creation is likely to reuse the knowledge soon. This is a build priority, not canon: templates remain editable foundations and may be replaced when evidence supports a better structure.
+ 
+ ## Merged foundations
+ 
+-- `editor.creative.core` — professional source-first editing surfaces.
+-- `comic.narrative.core` — editable comics and visual narrative.
+-- `axm.system.shell` — AXM registry/state/evidence/workflow/recovery shell.
+-- `game.shared.core` plus racing/co-op/RTS/game-system foundations.
+-- `visual.keyart.core` — editable key art/poster/cover composition.
+-- `visual.cards.core` — editable cards/decks/collectibles.
+-- `visual.cinematic.core` — exact cinematic titles/credits/subtitles/timed overlays.
+-- `visual.broadcast.core` — source-truth video/program/stream overlays.
++- creative editor, editable comics and AXM system shell;
++- racing/co-op/RTS/shared game systems;
++- key art / poster / cover editor;
++- card / deck editor;
++- cinematic title / credits / overlay editor;
++- video / program / stream overlay editor;
++- evidence-aware infographic / diagram editor.
+ 
+-## Priority 5E — Evidence-aware infographic / diagram editor — IMPLEMENTED IN THIS LANE
++## World-map / lore-atlas editor — IMPLEMENTED IN THIS LANE
+ 
+-Product: `visual.diagram.core`
++Product: `visual.atlas.core`
+ 
+ Implemented screens:
+ 
+-- `visual.diagram.project-hub`
+-- `visual.diagram.canvas-editor`
+-- `visual.diagram.node-editor`
+-- `visual.diagram.relationship-editor`
+-- `visual.diagram.evidence-editor`
+-- `visual.diagram.annotation-editor`
+-- `visual.diagram.legend-style`
+-- `visual.diagram.layout-variants`
+-- `visual.diagram.review-compare`
+-- `visual.diagram.export`
++- `visual.atlas.project-hub`
++- `visual.atlas.map-editor`
++- `visual.atlas.region-editor`
++- `visual.atlas.route-editor`
++- `visual.atlas.poi-lore`
++- `visual.atlas.layer-editor`
++- `visual.atlas.timeline-state`
++- `visual.atlas.coordinate-source`
++- `visual.atlas.review-compare`
++- `visual.atlas.export`
+ 
+ New primitives:
+ 
+-- `diagram-node`
+-- `relationship-edge`
+-- `evidence-reference`
+-- `data-field`
+-- `annotation-pin`
+-- `legend-entry`
+-- `group-boundary`
+-- `layout-guide`
+-- `callout-card`
+-- `diagram-export-target`
++- `map-region`
++- `route-path`
++- `poi-marker`
++- `map-layer`
++- `time-slice`
++- `lore-reference`
++- `boundary-line`
++- `map-coordinate`
++- `state-overlay`
++- `atlas-export-target`
+ 
+-Style: `visual.diagram.evidence`.
++Style: `visual.atlas.cartographic`.
+ 
+-The central rule is semantic truth: visual proximity never becomes an undeclared relationship. Exact edge endpoints/type/direction, evidence status, values/units/periods and group membership remain editable source state. Layout variants may improve readability but cannot rewrite semantics.
++The central rule is spatial truth: unknown coordinates/routes/boundaries remain unknown, projected state is not observation, and visual boundaries do not become factual borders without explicit source/type.
+ 
+ ## Next high-value visual/creation families
+ 
+-1. **World-map / lore-atlas editor** — regions, routes, layers, points of interest, time/state overlays and narrative references without invented coordinates or route truth.
+-2. **Interactive visual-novel surfaces** — dialogue, choices, character staging, backgrounds, history/log, saves and branching state.
+-3. **3D showroom / gallery presentation** — hero object, comparison, annotations, material/variant selection and orbit/detail views.
+-4. **Music visualizer / album-art editor** — cover systems, track identity, waveform/beat-driven visual states and export crops.
++1. **Interactive visual-novel surfaces** — dialogue, choices, character staging, backgrounds, history/log, saves and branching state.
++2. **3D showroom / gallery presentation** — hero object, comparison, annotations, material/variant selection and orbit/detail views.
++3. **Music visualizer / album-art editor** — cover systems, track identity, waveform/beat-driven visual states and export crops.
++4. **Presentation / explainer page systems** — reusable visual storytelling pages assembled from the diagram, key-art, atlas and editor foundations.
+ 
+ ## Cross-cutting rules
+ 
+@@ -70,7 +69,7 @@ Every family preserves the existing visual-template contract:
+ 
+ ## Immediate build order
+ 
+-1. exact-head verify `visual.diagram.core`;
+-2. merge v9 only when template + repository checks pass;
+-3. begin world-map / lore-atlas editing from fresh main;
++1. exact-head verify `visual.atlas.core`;
++2. merge v10 only when template + repository checks pass;
++3. begin interactive visual-novel surfaces from fresh main;
+ 4. keep prioritizing reusable source-first editors over flat one-off outputs.
+diff --git a/src/axm_uc/visual_template_atlas.py b/src/axm_uc/visual_template_atlas.py
+new file mode 100644
+index 0000000..e831714
+--- /dev/null
++++ b/src/axm_uc/visual_template_atlas.py
+@@ -0,0 +1,88 @@
++"""Editable world-map, lore-atlas and state-overlay foundations."""
++from __future__ import annotations
++from copy import deepcopy
++from typing import Any
++
++
++def _merge(target: dict[str, Any], additions: dict[str, Any], label: str) -> None:
++    overlap=sorted(set(target)&set(additions))
++    if overlap: raise RuntimeError(f"atlas {label} collision: {', '.join(overlap)}")
++    target.update(deepcopy(additions))
++
++
++def extend_atlas_catalog(namespace: dict[str, Any]) -> None:
++    styles=namespace['STYLE_SYSTEMS']; primitives=namespace['PRIMITIVES']
++    screens=namespace['SCREEN_TEMPLATES']; products=namespace['PRODUCT_ARCHETYPES']
++    screen=namespace['_screen']; origin=namespace['_origin']
++
++    _merge(styles,{'visual.atlas.cartographic':{
++        'intent':'layered map and lore-atlas presentation with explicit spatial truth, provenance, chronology and narrative references',
++        'tokens':{'canvas':'#0b1011','surface':'#182022','surface_raised':'#242e30','text':'#eef1e9','muted':'#a5afa8','accent':'#8ec7a6','warning':'#e3bd72','danger':'#dc7c77','line':'#465452'},
++        'shape':{'panel_radius_ratio':0.010,'cut_ratio':0.002,'line_ratio':0.0012},
++        'type':{'display_weight':720,'body_weight':500,'metric_scale':1.45,'tracking':0.012},
++        'depth':{'layers':7,'shadow':'subtle','glass':'none'},
++        'motion':{'fast_ms':80,'standard_ms':170,'slow_ms':320,'principle':'spatial/state truth before flourish'},
++    }},'style')
++
++    _merge(primitives,{
++        'map-region':{'role':'named spatial region with exact geometry/source and state','states':['known','selected','disputed','unknown'],'geometry_source_required':True},
++        'route-path':{'role':'explicit route/path with exact endpoints and observed/declared status','states':['known','planned','blocked','unknown'],'endpoints_and_status_required':True},
++        'poi-marker':{'role':'point of interest with exact identity and location source/status','states':['known','selected','hidden','unknown'],'location_source_required':True},
++        'map-layer':{'role':'named independently toggleable map/state layer with provenance','states':['visible','hidden','selected','unavailable'],'layer_source_required':True},
++        'time-slice':{'role':'one exact chronology/state snapshot with period and provenance','states':['current','historical','projected','unknown'],'period_and_status_required':True},
++        'lore-reference':{'role':'narrative/lore reference bound to exact entity/place/event','states':['observed','canon-source','claimed','disputed'],'target_and_source_required':True},
++        'boundary-line':{'role':'explicit border/boundary with type, source and uncertainty state','states':['known','disputed','historical','unknown'],'boundary_type_and_source_required':True},
++        'map-coordinate':{'role':'coordinate/location value with coordinate system/source/precision state','states':['exact','approximate','derived','unknown'],'system_source_precision_required':True},
++        'state-overlay':{'role':'derived state visualization bound to exact source/time slice','states':['active','selected','stale','unknown'],'source_and_time_required':True},
++        'atlas-export-target':{'role':'output target with extent/layers/labels/provenance inclusion state','states':['ready','warning','blocked','exported'],'requirements_must_be_visible':True},
++    },'primitive')
++
++    q=['map geometry, labels, routes and lore references remain separately editable','unknown coordinates or routes are never invented to make the map look complete','time/state overlays remain bound to explicit source and period','visual boundaries do not become factual borders without declared source/type','derived exports never replace richer editable atlas source']
++    def v(c,s,w): return {'compact':c,'standard':s,'wide':w}
++    additions={
++      'visual.atlas.project-hub':screen('visual.atlas.project-hub','Atlas project hub','creative.atlas','visual.atlas.cartographic','browse maps, source coverage, layer sets, time slices and export targets before editing',v(
++        {'header':(.03,.03,.94,.08),'maps':(.03,.14,.94,.30),'sources':(.03,.47,.45,.38),'targets':(.51,.47,.46,.27),'actions':(.51,.77,.46,.08)},
++        {'header':(.02,.03,.96,.075),'maps':(.02,.14,.22,.82),'sources':(.27,.14,.46,.82),'targets':(.76,.14,.22,.55),'actions':(.76,.72,.22,.14)},
++        {'header':(.015,.03,.97,.07),'maps':(.015,.13,.20,.84),'sources':(.24,.13,.50,.84),'targets':(.77,.13,.215,.57),'actions':(.77,.73,.215,.14)}),tags=['visual','atlas','map','project'],quality=q),
++      'visual.atlas.map-editor':screen('visual.atlas.map-editor','World-map editor','creative.atlas','visual.atlas.cartographic','edit base geometry, regions, layers, labels and source coverage without inventing missing spatial facts',v(
++        {'toolbar':(.02,.02,.96,.07),'map':(.12,.11,.76,.56),'layers':(.02,.11,.08,.56),'properties':(.90,.11,.08,.56),'sources':(.02,.70,.46,.28),'checks':(.51,.70,.47,.28)},
++        {'toolbar':(.015,.02,.97,.065),'layers':(.015,.105,.16,.75),'map':(.19,.105,.58,.75),'properties':(.79,.105,.195,.75),'sources':(.19,.88,.38,.10),'checks':(.59,.88,.395,.10)},
++        {'toolbar':(.012,.02,.976,.06),'layers':(.012,.10,.14,.77),'map':(.17,.10,.62,.77),'properties':(.805,.10,.183,.77),'sources':(.17,.90,.40,.08),'checks':(.59,.90,.398,.08)}),tags=['visual','atlas','map','editor'],math_hooks={'label_clearance_ratio':[0.01,0.06],'region_gap_ratio':[0.0,0.03]},quality=q),
++      'visual.atlas.region-editor':screen('visual.atlas.region-editor','Region and boundary editor','creative.atlas','visual.atlas.cartographic','edit exact region geometry, names, boundaries, source/status and historical/disputed variants',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.36),'regions':(.03,.53,.30,.34),'boundary':(.36,.53,.29,.34),'source':(.68,.53,.29,.34),'actions':(.03,.90,.94,.07)},
++        {'header':(.02,.03,.96,.075),'regions':(.02,.14,.20,.72),'preview':(.245,.14,.50,.72),'boundary':(.77,.14,.21,.34),'source':(.77,.51,.21,.23),'actions':(.77,.77,.21,.09)},
++        {'header':(.015,.03,.97,.07),'regions':(.015,.13,.18,.74),'preview':(.215,.13,.54,.74),'boundary':(.775,.13,.21,.35),'source':(.775,.51,.21,.24),'actions':(.775,.78,.21,.09)}),tags=['visual','atlas','region','boundary'],quality=q),
++      'visual.atlas.route-editor':screen('visual.atlas.route-editor','Route and path editor','creative.atlas','visual.atlas.cartographic','edit exact route endpoints, geometry, route type and known/planned/blocked/unknown status without inventing connectivity',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.34),'routes':(.03,.51,.55,.34),'details':(.61,.51,.36,.25),'actions':(.61,.79,.36,.06)},
++        {'header':(.02,.03,.96,.075),'routes':(.02,.14,.28,.72),'preview':(.33,.14,.44,.72),'details':(.80,.14,.18,.54),'actions':(.80,.71,.18,.15)},
++        {'header':(.015,.03,.97,.07),'routes':(.015,.13,.26,.74),'preview':(.305,.13,.47,.74),'details':(.795,.13,.19,.55),'actions':(.795,.71,.19,.16)}),tags=['visual','atlas','route','path'],quality=q),
++      'visual.atlas.poi-lore':screen('visual.atlas.poi-lore','POI and lore-reference editor','creative.atlas','visual.atlas.cartographic','bind exact places/events/entities to location source and lore/narrative references with status visible',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.30),'poi':(.03,.47,.45,.39),'lore':(.51,.47,.46,.39),'actions':(.03,.89,.94,.08)},
++        {'header':(.02,.03,.96,.075),'poi':(.02,.14,.24,.72),'preview':(.29,.14,.46,.72),'lore':(.78,.14,.20,.54),'actions':(.78,.71,.20,.15)},
++        {'header':(.015,.03,.97,.07),'poi':(.015,.13,.22,.74),'preview':(.265,.13,.48,.74),'lore':(.78,.13,.205,.55),'actions':(.78,.71,.205,.16)}),tags=['visual','atlas','poi','lore'],quality=q),
++      'visual.atlas.layer-editor':screen('visual.atlas.layer-editor','Atlas layer editor','creative.atlas','visual.atlas.cartographic','compose independent terrain, political, infrastructure, narrative and state layers with source/provenance visible',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.34),'layers':(.03,.51,.55,.34),'details':(.61,.51,.36,.25),'actions':(.61,.79,.36,.06)},
++        {'header':(.02,.03,.96,.075),'layers':(.02,.14,.28,.72),'preview':(.33,.14,.44,.72),'details':(.80,.14,.18,.54),'actions':(.80,.71,.18,.15)},
++        {'header':(.015,.03,.97,.07),'layers':(.015,.13,.26,.74),'preview':(.305,.13,.47,.74),'details':(.795,.13,.19,.55),'actions':(.795,.71,.19,.16)}),tags=['visual','atlas','layer','state'],quality=q),
++      'visual.atlas.timeline-state':screen('visual.atlas.timeline-state','Atlas timeline and state overlays','creative.atlas','visual.atlas.cartographic','edit exact historical/current/projected time slices and source-bound state overlays without presenting projection as observation',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.31),'timeline':(.03,.48,.58,.39),'state':(.64,.48,.33,.28),'actions':(.64,.79,.33,.08)},
++        {'header':(.02,.03,.96,.075),'timeline':(.02,.14,.30,.72),'preview':(.35,.14,.40,.72),'state':(.78,.14,.20,.54),'actions':(.78,.71,.20,.15)},
++        {'header':(.015,.03,.97,.07),'timeline':(.015,.13,.28,.74),'preview':(.32,.13,.43,.74),'state':(.775,.13,.21,.55),'actions':(.775,.71,.21,.16)}),tags=['visual','atlas','timeline','state'],quality=q),
++      'visual.atlas.coordinate-source':screen('visual.atlas.coordinate-source','Coordinate and spatial-source editor','creative.atlas','visual.atlas.cartographic','edit coordinate system, source, precision, approximate/derived/unknown state and spatial source coverage',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.31),'coordinates':(.03,.48,.45,.39),'sources':(.51,.48,.46,.39),'actions':(.03,.90,.94,.07)},
++        {'header':(.02,.03,.96,.075),'coordinates':(.02,.14,.24,.72),'preview':(.29,.14,.46,.72),'sources':(.78,.14,.20,.54),'actions':(.78,.71,.20,.15)},
++        {'header':(.015,.03,.97,.07),'coordinates':(.015,.13,.22,.74),'preview':(.265,.13,.48,.74),'sources':(.78,.13,.205,.55),'actions':(.78,.71,.205,.16)}),tags=['visual','atlas','coordinate','source'],quality=q),
++      'visual.atlas.review-compare':screen('visual.atlas.review-compare','Atlas review and comparison','creative.atlas','visual.atlas.cartographic','review missing spatial evidence, disputed boundaries, unknown coordinates/routes, time-state distinctions and lore provenance before export',v(
++        {'header':(.03,.03,.94,.08),'primary':(.03,.14,.45,.45),'alternate':(.52,.14,.45,.45),'checks':(.03,.62,.58,.26),'actions':(.64,.62,.33,.26)},
++        {'header':(.02,.03,.96,.075),'primary':(.02,.14,.38,.63),'alternate':(.42,.14,.38,.63),'checks':(.82,.14,.16,.45),'actions':(.82,.62,.16,.15)},
++        {'header':(.015,.03,.97,.07),'primary':(.015,.13,.39,.65),'alternate':(.42,.13,.39,.65),'checks':(.825,.13,.16,.47),'actions':(.825,.63,.16,.15)}),tags=['visual','atlas','review','truth'],quality=q),
++      'visual.atlas.export':screen('visual.atlas.export','Atlas export matrix','creative.atlas','visual.atlas.cartographic','review exact extent, included layers, label/lore/source-note state and output requirements before derived export',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.30),'targets':(.03,.47,.58,.39),'details':(.64,.47,.33,.27),'actions':(.64,.77,.33,.09)},
++        {'header':(.02,.03,.96,.075),'preview':(.02,.14,.38,.72),'targets':(.43,.14,.34,.72),'details':(.79,.14,.19,.48),'actions':(.79,.65,.19,.21)},
++        {'header':(.015,.03,.97,.07),'preview':(.015,.13,.36,.74),'targets':(.40,.13,.37,.74),'details':(.79,.13,.195,.49),'actions':(.79,.65,.195,.22)}),tags=['visual','atlas','export','target'],quality=q),
++    }
++    _merge(screens,additions,'screen')
++    ids=list(additions)
++    product={'schema':'axm.visual-product/v1','id':'visual.atlas.core','version':1,'name':'Editable world-map and lore-atlas core','kind':'product','domain':'creative.atlas','tags':['visual','atlas','map','lore','product'],'origin':origin(),'style':'visual.atlas.cartographic','intent':'source-first world-map and lore-atlas editing with exact regions, routes, POIs, layers, coordinates, chronology/state and narrative references','screens':ids,'flow':[
++      ['visual.atlas.project-hub','visual.atlas.map-editor','edit-map'],['visual.atlas.map-editor','visual.atlas.region-editor','edit-regions'],['visual.atlas.map-editor','visual.atlas.route-editor','edit-routes'],['visual.atlas.map-editor','visual.atlas.poi-lore','edit-poi-lore'],['visual.atlas.map-editor','visual.atlas.layer-editor','edit-layers'],['visual.atlas.map-editor','visual.atlas.timeline-state','edit-time-state'],['visual.atlas.map-editor','visual.atlas.coordinate-source','edit-spatial-source'],['visual.atlas.map-editor','visual.atlas.review-compare','review'],['visual.atlas.review-compare','visual.atlas.export','export']], 'quality':q}
++    _merge(products,{'visual.atlas.core':product},'product')
+diff --git a/src/axm_uc/visual_templates.py b/src/axm_uc/visual_templates.py
+index acfd67f..b9a0ba6 100644
+--- a/src/axm_uc/visual_templates.py
++++ b/src/axm_uc/visual_templates.py
+@@ -18,8 +18,9 @@ from .visual_template_cards import extend_card_catalog as _extend_card_catalog
+ from .visual_template_cinematic import extend_cinematic_catalog as _extend_cinematic_catalog
+ from .visual_template_video_overlay import extend_video_overlay_catalog as _extend_video_overlay_catalog
+ from .visual_template_diagram import extend_diagram_catalog as _extend_diagram_catalog
++from .visual_template_atlas import extend_atlas_catalog as _extend_atlas_catalog
+ 
+-_COMPOSITION=("visual_template_growth","visual_template_game_systems","visual_template_creative_narrative","visual_template_axm_system","visual_template_game_shared","visual_template_keyart","visual_template_cards","visual_template_cinematic","visual_template_video_overlay","visual_template_diagram")
++_COMPOSITION=("visual_template_growth","visual_template_game_systems","visual_template_creative_narrative","visual_template_axm_system","visual_template_game_shared","visual_template_keyart","visual_template_cards","visual_template_cinematic","visual_template_video_overlay","visual_template_diagram","visual_template_atlas")
+ _applied=getattr(_core,"_AXM_VISUAL_COMPOSITION",None)
+ if _applied is None:
+     _extend_catalog(vars(_core))
+@@ -32,6 +33,7 @@ if _applied is None:
+     _extend_cinematic_catalog(vars(_core))
+     _extend_video_overlay_catalog(vars(_core))
+     _extend_diagram_catalog(vars(_core))
++    _extend_atlas_catalog(vars(_core))
+     _core._AXM_VISUAL_COMPOSITION=_COMPOSITION
+ elif _applied != _COMPOSITION:
+     raise RuntimeError("visual template composition changed inside a live process; restart with one exact catalog")
+diff --git a/tests/test_visual_templates.py b/tests/test_visual_templates.py
+index 5804798..53fdbeb 100644
+--- a/tests/test_visual_templates.py
++++ b/tests/test_visual_templates.py
+@@ -8,18 +8,18 @@ from axm_stickers import Registry
+ from axm_uc import visual_templates as vt
+ 
+ SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
+-PRODUCTS=('game.racing.full','game.coop.action','game.rts.command','game.system.shell','game.shared.core','editor.creative.core','comic.narrative.core','axm.system.shell','visual.keyart.core','visual.cards.core','visual.cinematic.core','visual.broadcast.core','visual.diagram.core')
++PRODUCTS=('game.racing.full','game.coop.action','game.rts.command','game.system.shell','game.shared.core','editor.creative.core','comic.narrative.core','axm.system.shell','visual.keyart.core','visual.cards.core','visual.cinematic.core','visual.broadcast.core','visual.diagram.core','visual.atlas.core')
+ 
+ class VisualTemplateTests(unittest.TestCase):
+     def test_catalog_counts_and_products(self):
+         counts=vt.validate_catalog()
+-        self.assertEqual(counts,{'styles':17,'primitives':116,'screens':154,'products':15})
++        self.assertEqual(counts,{'styles':18,'primitives':126,'screens':164,'products':16})
+         self.assertEqual(vt.CATALOG_COMPOSITION['counts'],counts)
+         ids={p['id'] for p in vt.catalog()['products']}
+         self.assertTrue(set(PRODUCTS)|{'game.racing.performance','software.creator.studio'} <= ids)
+ 
+     def test_all_geometry_and_major_variants(self):
+-        prefixes=('game.','editor.creative.','comic.narrative.','axm.system.','visual.keyart.','visual.cards.','visual.cinematic.','visual.broadcast.','visual.diagram.')
++        prefixes=('game.','editor.creative.','comic.narrative.','axm.system.','visual.keyart.','visual.cards.','visual.cinematic.','visual.broadcast.','visual.diagram.','visual.atlas.')
+         for tid,definition in vt.SCREEN_TEMPLATES.items():
+             if tid.startswith(prefixes): self.assertEqual(set(definition['variants']),{'compact','standard','wide'},tid)
+             for width,height in SIZES:
+@@ -29,21 +29,20 @@ class VisualTemplateTests(unittest.TestCase):
+                     self.assertLessEqual(x+w,width+1e-6); self.assertLessEqual(y+h,height+1e-6)
+ 
+     def test_existing_product_depth_is_retained(self):
+-        expected={'game.racing.full':19,'game.system.shell':18,'game.shared.core':12,'editor.creative.core':12,'comic.narrative.core':10,'axm.system.shell':12,'visual.keyart.core':10,'visual.cards.core':11,'visual.cinematic.core':10,'visual.broadcast.core':10}
++        expected={'game.racing.full':19,'game.system.shell':18,'game.shared.core':12,'editor.creative.core':12,'comic.narrative.core':10,'axm.system.shell':12,'visual.keyart.core':10,'visual.cards.core':11,'visual.cinematic.core':10,'visual.broadcast.core':10,'visual.diagram.core':10}
+         for pid,count in expected.items(): self.assertEqual(len(vt.get(pid)['screens']),count)
+ 
+-    def test_diagram_product_preserves_semantic_evidence_truth(self):
+-        product=vt.get('visual.diagram.core')
+-        required={'visual.diagram.project-hub','visual.diagram.canvas-editor','visual.diagram.node-editor','visual.diagram.relationship-editor','visual.diagram.evidence-editor','visual.diagram.annotation-editor','visual.diagram.legend-style','visual.diagram.layout-variants','visual.diagram.review-compare','visual.diagram.export'}
++    def test_atlas_product_preserves_spatial_and_lore_truth(self):
++        product=vt.get('visual.atlas.core')
++        required={'visual.atlas.project-hub','visual.atlas.map-editor','visual.atlas.region-editor','visual.atlas.route-editor','visual.atlas.poi-lore','visual.atlas.layer-editor','visual.atlas.timeline-state','visual.atlas.coordinate-source','visual.atlas.review-compare','visual.atlas.export'}
+         self.assertEqual(set(product['screens']),required)
+-        self.assertEqual(product['style'],'visual.diagram.evidence')
++        self.assertEqual(product['style'],'visual.atlas.cartographic')
+         quality=' '.join(product['quality']).lower()
+-        self.assertIn('visual adjacency',quality)
+-        self.assertIn('relationship direction',quality)
+-        self.assertIn('missing evidence',quality)
+-        self.assertIn('semantic relationships',quality)
+-        self.assertIn('node_spacing_ratio',vt.get('visual.diagram.canvas-editor')['math_hooks'])
+-        self.assertIn('group_gap_ratio',vt.get('visual.diagram.layout-variants')['math_hooks'])
++        self.assertIn('unknown coordinates or routes',quality)
++        self.assertIn('source and period',quality)
++        self.assertIn('factual borders',quality)
++        self.assertIn('editable atlas source',quality)
++        self.assertIn('label_clearance_ratio',vt.get('visual.atlas.map-editor')['math_hooks'])
+ 
+     def test_products_resolve_and_previews_parse(self):
+         for pid in PRODUCTS:
+@@ -60,43 +59,43 @@ class VisualTemplateTests(unittest.TestCase):
+         with tempfile.TemporaryDirectory() as td:
+             with Registry(Path(td)/'stickers.sqlite') as registry:
+                 pins=vt.install_builtins(registry)
+-                self.assertEqual(len(pins),169)
+-                diagram=registry.search(adapter=vt.ADAPTER,tag='diagram',limit=100)['entries']
+-                self.assertEqual(len(diagram),10)
+-                d=registry.get('visual.visual.diagram.canvas-editor',1)
++                self.assertEqual(len(pins),180)
++                atlas=registry.search(adapter=vt.ADAPTER,tag='atlas',limit=100)['entries']
++                self.assertEqual(len(atlas),10)
++                d=registry.get('visual.visual.atlas.map-editor',1)
+                 self.assertEqual(d['recipe']['visual_template']['schema'],vt.SCHEMA)
+                 self.assertNotIn('"latest"',json.dumps(d,sort_keys=True))
+ 
+-    def test_diagram_semantic_evidence_and_layout_contracts(self):
+-        required={'diagram-node','relationship-edge','evidence-reference','data-field','annotation-pin','legend-entry','group-boundary','layout-guide','callout-card','diagram-export-target'}
++    def test_atlas_spatial_source_time_and_lore_contracts(self):
++        required={'map-region','route-path','poi-marker','map-layer','time-slice','lore-reference','boundary-line','map-coordinate','state-overlay','atlas-export-target'}
+         self.assertTrue(required <= set(vt.PRIMITIVES))
+-        self.assertTrue(vt.PRIMITIVES['diagram-node']['identity_must_be_exact'])
+-        self.assertTrue(vt.PRIMITIVES['relationship-edge']['endpoints_and_relation_type_required'])
+-        self.assertTrue(vt.PRIMITIVES['evidence-reference']['source_and_status_required'])
+-        self.assertTrue(vt.PRIMITIVES['data-field']['value_unit_source_period_required'])
+-        self.assertTrue(vt.PRIMITIVES['annotation-pin']['target_reference_must_be_exact'])
+-        self.assertTrue(vt.PRIMITIVES['legend-entry']['meaning_must_not_depend_on_color_only'])
+-        self.assertTrue(vt.PRIMITIVES['group-boundary']['membership_must_be_explicit'])
+-        self.assertTrue(vt.PRIMITIVES['layout-guide']['guide_must_not_change_semantic_relationships'])
+-        self.assertTrue(vt.PRIMITIVES['callout-card']['content_and_evidence_status_separate'])
+-        self.assertTrue(vt.PRIMITIVES['diagram-export-target']['target_requirements_must_be_visible'])
++        self.assertTrue(vt.PRIMITIVES['map-region']['geometry_source_required'])
++        self.assertTrue(vt.PRIMITIVES['route-path']['endpoints_and_status_required'])
++        self.assertTrue(vt.PRIMITIVES['poi-marker']['location_source_required'])
++        self.assertTrue(vt.PRIMITIVES['map-layer']['layer_source_required'])
++        self.assertTrue(vt.PRIMITIVES['time-slice']['period_and_status_required'])
++        self.assertTrue(vt.PRIMITIVES['lore-reference']['target_and_source_required'])
++        self.assertTrue(vt.PRIMITIVES['boundary-line']['boundary_type_and_source_required'])
++        self.assertTrue(vt.PRIMITIVES['map-coordinate']['system_source_precision_required'])
++        self.assertTrue(vt.PRIMITIVES['state-overlay']['source_and_time_required'])
++        self.assertTrue(vt.PRIMITIVES['atlas-export-target']['requirements_must_be_visible'])
+ 
+     def test_prior_source_boundaries_remain_present(self):
++        self.assertTrue(vt.PRIMITIVES['relationship-edge']['endpoints_and_relation_type_required'])
+         self.assertTrue(vt.PRIMITIVES['source-window']['source_identity_must_be_explicit'])
+         self.assertTrue(vt.PRIMITIVES['title-card']['text_layout_timing_remain_separate'])
+         self.assertTrue(vt.PRIMITIVES['card-frame']['geometry_must_remain_editable'])
+         self.assertTrue(vt.PRIMITIVES['crop-safe-frame']['crop_must_not_modify_source_geometry'])
+         self.assertTrue(vt.PRIMITIVES['speech-bubble']['text_and_tail_remain_separate'])
+-        self.assertTrue(vt.PRIMITIVES['inventory-slot']['ownership_must_be_explicit'])
+         self.assertTrue(vt.PRIMITIVES['truth-state']['source_must_be_visible'])
+ 
+     def test_copy_safety_variant_rejection_and_bad_geometry(self):
+-        a=vt.resolve('visual.diagram.canvas-editor',1920,1080); b=vt.resolve('visual.diagram.canvas-editor',1920,1080)
++        a=vt.resolve('visual.atlas.map-editor',1920,1080); b=vt.resolve('visual.atlas.map-editor',1920,1080)
+         self.assertEqual(a,b)
+-        copy=vt.get('visual.diagram.canvas-editor'); copy['name']='changed'
+-        self.assertNotEqual(vt.get('visual.diagram.canvas-editor')['name'],'changed')
+-        with self.assertRaises(ValueError): vt.resolve('visual.diagram.canvas-editor',1920,1080,variant='unknown')
+-        bad=vt.get('visual.diagram.layout-variants'); bad['variants']['standard']['variants']=[.9,.9,.2,.2]
++        copy=vt.get('visual.atlas.map-editor'); copy['name']='changed'
++        self.assertNotEqual(vt.get('visual.atlas.map-editor')['name'],'changed')
++        with self.assertRaises(ValueError): vt.resolve('visual.atlas.map-editor',1920,1080,variant='unknown')
++        bad=vt.get('visual.atlas.map-editor'); bad['variants']['standard']['map']=[.9,.9,.2,.2]
+         with self.assertRaises(ValueError): vt.validate_screen(bad)
+ 
+     def test_exact_sticker_slot_binding_is_retained(self):
+diff --git a/tools/visual_template_proof.py b/tools/visual_template_proof.py
+index fba589e..754163e 100644
+--- a/tools/visual_template_proof.py
++++ b/tools/visual_template_proof.py
+@@ -8,7 +8,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src'))
+ from axm_uc import visual_templates as vt
+ 
+ SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
+-PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell","visual.keyart.core","visual.cards.core","visual.cinematic.core","visual.broadcast.core","visual.diagram.core")
++PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell","visual.keyart.core","visual.cards.core","visual.cinematic.core","visual.broadcast.core","visual.diagram.core","visual.atlas.core")
+ 
+ def _write(project,target):
+     target.mkdir(); out=[]
+@@ -25,7 +25,7 @@ def main(argv):
+     out.mkdir(parents=True)
+     try:
+         counts=vt.validate_catalog()
+-        if counts!={'styles':17,'primitives':116,'screens':154,'products':15}: raise AssertionError(counts)
++        if counts!={'styles':18,'primitives':126,'screens':164,'products':16}: raise AssertionError(counts)
+         evidence=[]
+         for pid in PRODUCTS:
+             expected=vt.get(pid)
+@@ -50,27 +50,28 @@ def main(argv):
+             ('visual.cinematic.core',1920,1080,'cinematic','AXM Cinematic Title and Overlay Foundation'),
+             ('visual.broadcast.core',1920,1080,'broadcast','AXM Video and Stream Overlay Foundation'),
+             ('visual.diagram.core',1920,1080,'diagram','AXM Evidence-Aware Diagram Foundation'),
++            ('visual.atlas.core',1920,1080,'atlas','AXM World-Map and Lore-Atlas Foundation'),
+         )
+         outputs=[]
+         for pid,w,h,folder,title in galleries: outputs+=_write(vt.product_project(pid,w,h,title),out/folder)
+         outputs+=_write(vt.screen_project('product.mobile.home',1080,1920,'AXM Mobile Foundation'),out/'mobile-home')
+-        product=vt.get('visual.diagram.core')
+-        required={'visual.diagram.project-hub','visual.diagram.canvas-editor','visual.diagram.node-editor','visual.diagram.relationship-editor','visual.diagram.evidence-editor','visual.diagram.annotation-editor','visual.diagram.legend-style','visual.diagram.layout-variants','visual.diagram.review-compare','visual.diagram.export'}
+-        if set(product['screens'])!=required: raise AssertionError('diagram pack lost required surfaces')
++        product=vt.get('visual.atlas.core')
++        required={'visual.atlas.project-hub','visual.atlas.map-editor','visual.atlas.region-editor','visual.atlas.route-editor','visual.atlas.poi-lore','visual.atlas.layer-editor','visual.atlas.timeline-state','visual.atlas.coordinate-source','visual.atlas.review-compare','visual.atlas.export'}
++        if set(product['screens'])!=required: raise AssertionError('atlas pack lost required surfaces')
+         checks={
+-            'node_identity_exact':vt.PRIMITIVES['diagram-node']['identity_must_be_exact'],
+-            'relationship_endpoints_type':vt.PRIMITIVES['relationship-edge']['endpoints_and_relation_type_required'],
+-            'evidence_source_status':vt.PRIMITIVES['evidence-reference']['source_and_status_required'],
+-            'data_value_unit_source_period':vt.PRIMITIVES['data-field']['value_unit_source_period_required'],
+-            'annotation_target_exact':vt.PRIMITIVES['annotation-pin']['target_reference_must_be_exact'],
+-            'legend_noncolor':vt.PRIMITIVES['legend-entry']['meaning_must_not_depend_on_color_only'],
+-            'group_membership_explicit':vt.PRIMITIVES['group-boundary']['membership_must_be_explicit'],
+-            'layout_preserves_semantics':vt.PRIMITIVES['layout-guide']['guide_must_not_change_semantic_relationships'],
+-            'callout_evidence_separate':vt.PRIMITIVES['callout-card']['content_and_evidence_status_separate'],
+-            'export_requirements_visible':vt.PRIMITIVES['diagram-export-target']['target_requirements_must_be_visible'],
++            'region_geometry_source':vt.PRIMITIVES['map-region']['geometry_source_required'],
++            'route_endpoints_status':vt.PRIMITIVES['route-path']['endpoints_and_status_required'],
++            'poi_location_source':vt.PRIMITIVES['poi-marker']['location_source_required'],
++            'layer_source':vt.PRIMITIVES['map-layer']['layer_source_required'],
++            'time_period_status':vt.PRIMITIVES['time-slice']['period_and_status_required'],
++            'lore_target_source':vt.PRIMITIVES['lore-reference']['target_and_source_required'],
++            'boundary_type_source':vt.PRIMITIVES['boundary-line']['boundary_type_and_source_required'],
++            'coordinate_system_source_precision':vt.PRIMITIVES['map-coordinate']['system_source_precision_required'],
++            'overlay_source_time':vt.PRIMITIVES['state-overlay']['source_and_time_required'],
++            'export_requirements_visible':vt.PRIMITIVES['atlas-export-target']['requirements_must_be_visible'],
+         }
+-        if not all(checks.values()): raise AssertionError('diagram semantic/evidence contract failed')
+-        receipt={'schema':'axm.visual-template-proof/v11','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'diagram_checks':checks,'truth':'Offline structural evidence only. Relationship truth, causal validity, evidence sufficiency, data correctness and aesthetic acceptance were not observed.'}
++        if not all(checks.values()): raise AssertionError('atlas spatial/source contract failed')
++        receipt={'schema':'axm.visual-template-proof/v12','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'atlas_checks':checks,'truth':'Offline structural evidence only. Coordinate accuracy, route truth, boundary claims, chronology correctness, lore truth and aesthetic acceptance were not observed.'}
+         (out/'receipt.json').write_text(json.dumps(receipt,indent=2,sort_keys=True),encoding='utf-8')
+         print(json.dumps(receipt,indent=2,sort_keys=True))
+     except BaseException:

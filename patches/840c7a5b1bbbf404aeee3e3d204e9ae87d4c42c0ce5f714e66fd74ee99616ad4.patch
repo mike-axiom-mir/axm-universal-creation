@@ -1,0 +1,1090 @@
+diff --git a/GAME_STYLE_GROWTH.md b/GAME_STYLE_GROWTH.md
+index 68b272b..4fd04f9 100644
+--- a/GAME_STYLE_GROWTH.md
++++ b/GAME_STYLE_GROWTH.md
+@@ -101,6 +101,51 @@ exports when those features change. Measure performance before making claims.
+ 
+ ## Current checkpoint
+ 
++### Offline pose execution pass — 2026-09-15
++
++- Completed `game_pose_runtime.py`, `axm-assets pose-sample` and catalog:
++  embedded GLB intake, LINEAR/STEP tracks, shortest-arc quaternion sampling,
++  explicit pose crossfades, hierarchy evaluation, socket points and linear skin
++  positions. The execution requires Python's standard library only.
++- Preserves exact source bytes/materials/styles and ties every output to its
++  source SHA-256. Rejects malformed/unsupported pose data rather than substituting
++  default animation. Source meshes and editable Blender files remain canonical.
++- Actual local verification: 21 new analytical/CLI tests pass; 70 focused game
++  tests pass together. Tests exercise inverse binds, nonuniform parent scale,
++  mixed weights, antipodal rotations, clip rest resets, crossfades, loop/STEP
++  boundaries, malformed input and failed-publication cleanup.
++- Added an independent reference job to rebuild the existing Parcel Imp and
++  freshly import both LODs in Blender 4.3. It compares 16 joint origins and full
++  deformed vertex point sets over three clips × six authored keyframes per LOD.
++  Native reference passed at `f8406f4`: maximum joint error 0.000000615 m,
++  maximum bidirectional vertex error 0.000001800 m. All 36 samples passed the
++  unchanged 0.00002 m tolerance; LOD0/LOD1 compared 73,060/26,134 vertices.
++  Full repository CI passed 660 tests. Its `parcel-imp-pose-evidence` artifact
++  carries the GLBs, editable source and JSON comparison. Saved-asset recovery
++  returned HTTP 502, so the job regenerates from repository source.
++- Reference repairs: aligned Blender frames with nonzero first authored key
++  times; excluded only importer-generated bone custom-shape objects (an
++  Icosphere), which are not exported asset geometry. No tolerance was relaxed.
++- Evidence: `tests/test_game_pose_runtime.py`, `docs/GAME_POSE_RUNTIME.md`,
++  `tools/blender/game_pose_runtime_roundtrip.py`,
++  `docs/evidence/game-pose-runtime-2026-09-15.json`, and
++  [reference run 34944009459](https://github.com/mike-axiom-mir/axm-universal-creation/actions/runs/34944009459).
++- Limits: positions only; no shading, deformed normals, morphs, CUBICSPLINE, IK,
++  automatic transition/collision policy or continuous visual playback claim.
++  Between-key SLERP/crossfades have analytical coverage, not native crossfade
++  playback evidence. Point-set comparison does not prove topology or vertex order.
++- Next useful improvement: explicit binding between runtime clocks and the
++  actual root curve, preserving authored acceleration and preventing the same
++  motion being applied through both pose and world displacement. Then bounded
++  normals/tangents evaluation and a host-driven continuous visual proof.
++- Active lane: `codex/rts-reference-foundry`, based on main `3ec310f`; resume this
++  [PR #73](https://github.com/mike-axiom-mir/axm-universal-creation/pull/73)
++  and related repairs until its final checks pass. PR #54 remains untouched.
++- Roots: Truth separates execution from appearance and measures independent
++  imported geometry; Agency keeps clocks, blend weights and motion ownership
++  caller-controlled; Continuity preserves bytes, identity and richer source;
++  Wisdom requires native comparison before accepting real-asset compatibility.
++
+ ### Portable animation runtime pass — 2026-09-13
+ 
+ - Completed `game_animation_runtime.py`, `axm-assets
+diff --git a/docs/GAME_POSE_RUNTIME.md b/docs/GAME_POSE_RUNTIME.md
+new file mode 100644
+index 0000000..9418f2c
+--- /dev/null
++++ b/docs/GAME_POSE_RUNTIME.md
+@@ -0,0 +1,136 @@
++# Offline game pose runtime
++
++`GamePoseAsset` evaluates actual GLB animation into local transforms, world
++matrices, attachment positions and optionally skinned vertex positions. Python
++3.11+ and its standard library are sufficient. No AI, graphics library, browser
++or game engine is needed for this operation.
++
++```python
++from axm_uc.game_pose_runtime import load_game_pose_glb
++
++asset = load_game_pose_glb("AXM_Parcel_Imp_LOD0.glb")
++description = asset.describe()
++pose = asset.sample("Package_Launch", 0.3, vertices=True)
++socket = next(n["index"] for n in description["nodes"]
++              if n["name"] == "Socket.Package")
++position = asset.point(pose, socket)
++```
++
++CLI uses the same implementation:
++
++```sh
++axm-assets pose-runtime-catalog
++axm-assets pose-sample character.glb pose-request.json new-output-directory
++```
++
++Example request:
++
++```json
++{
++  "clip": "Delivery_Dash",
++  "time_s": 0.2,
++  "loop": false,
++  "blend": {
++    "clip": "Idle_Parcel_Panic",
++    "time_s": 0.6,
++    "loop": true,
++    "weight": 0.4
++  },
++  "vertices": false
++}
++```
++
++The blend weight is the target contribution: zero is the specified source pose;
++one is the target pose. Translation/scale mix linearly and rotations follow the
++shortest quaternion arc. Each sample starts from the original rest pose, so a
++channel absent from a clip cannot leak from an earlier clip. The caller chooses
++both clocks and the blend weight; no hidden wall clock or transition policy is
++introduced. With no clip, sampling returns the rest pose.
++
++Non-looping samples clamp to the clip's end; looping samples wrap, with exactly
++one duration returning to time zero. Individual tracks clamp before their first
++key and after their last key. The evaluator supports LINEAR and STEP tracks.
++`start_s` records the first authored key; `duration_s` is the last timestamp in
++the unchanged GLB time domain. An initial gap holds the first value and is not
++silently subtracted. Reference importers must align their frame range to that
++authored interval when comparing poses.
++
++## Portable coordinates and root ownership
++
++The GLB's coordinate system is retained (normally glTF Y-up, metres). Outputs
++use **row-major matrices multiplying column vectors**. GLB matrix accessors are
++column-major and are transposed once on intake. Hierarchies compose parent ×
++local. A socket point is transformed by its node's complete world matrix.
++
++`skin_world_matrices` are joint-world × inverse-bind matrices. Weighted vertex
++positions are already in scene space. The mesh node's transform must not be
++applied again. These matrices can also be given to another implementation;
++they are not a renderer-specific resource.
++
++Authored root movement is already in the pose. The previous animation-state
++runtime's `world_translation_m` is a separate trajectory estimate. **Do not add
++it to this pose blindly:** that would apply movement twice. Its linear
++distance-over-duration estimate also need not match the asset's authored
++acceleration. A future binding should choose an explicit motion owner and use
++the actual root curve when extracting/applying movement. This pass does not
++silently remove a root track or fabricate that binding.
++
++## Supported input and bounded failures
++
++Intake supports embedded GLB 2.0 buffers, static affine node matrices or TRS,
++named animation clips, float transform channels, strided accessors, float or
++normalized unsigned-byte/unsigned-short weights, and four influences per vertex.
++Near-unit quantized weight sums are normalized explicitly; malformed, negative,
++zero-total and substantially non-unit weights are rejected.
++
++External buffers, sparse/compressed geometry, morphs, animation extensions,
++CUBICSPLINE and additional skin-influence sets are rejected when relevant to
++pose evaluation. The asset's materials and textures are retained in the original
++file; this evaluator does not interpret their appearance. Non-pose required
++material/texture extensions are allowed. All document nodes are evaluated,
++including nodes outside the selected scene; this is an asset pose API, not a
++scene-visibility selector.
++
++Input is limited to 64 MiB, JSON to 4 MiB, nodes to 2,048, decoded accessor
++scalars to four million, and instantiated vertices to 250,000. Cycles, multiple
++parents, duplicate animation targets/names, nonfinite data, missing references,
++misaligned/out-of-range accessors and unsupported transform encodings fail.
++
++The publisher stages `asset.json`, `request.json` and `pose.json` and refuses
++existing destinations. On a write failure, temporary output is cleaned. It
++does not copy, simplify or rewrite the source GLB. Its SHA-256 binds the output
++to the exact supplied bytes. This is a file identity, not artistic acceptance.
++
++## Evidence
++
++`tests/test_game_pose_runtime.py` uses analytical GLB fixtures with an offset
++rig, a different mesh-node transform, inverse bind matrices, mixed weights and
++an articulated hinge. Expected positions are independent geometric results.
++Cases cover quaternion sign equivalence, blend endpoints/midpoints, striding,
++integer weights, static matrices, loop boundaries and rejected inputs.
++
++`tools/blender/game_pose_runtime_roundtrip.py` is an additional reference gate:
++it independently re-imports both GLBs rebuilt by the existing Parcel Imp source,
++evaluates three clips at six authored keyframes each, and compares all 16 joint
++origins and the complete deformed vertex point sets. A fresh Blender process is
++the reference; the production sampler uses no Blender code. Objects explicitly
++used as Blender bone custom shapes are excluded because the importer creates
++them for rig display, not from the GLB mesh. Both directional
++nearest-point errors must remain under 0.00002 metres. Vertex order/topology is
++not inferred from this point-set comparison. Between-key SLERP and crossfades
++have analytical unit coverage; native crossfade playback is not claimed.
++
++The `Offline game pose evidence` Actions artifact carries the rebuilt GLBs,
++editable Blender source and `pose-runtime-comparison.json`. Its actual job result
++determines whether the real-asset reference passed. It must not be inferred from
++the unit tests or from this document.
++
++The recorded run in `docs/evidence/game-pose-runtime-2026-09-15.json` passed
++36 poses with maximum joint error 0.000000615 m and maximum bidirectional
++vertex error 0.000001800 m. It identifies the exact code commit and both GLB
++digests. LOD0/LOD1 each compared 73,060/26,134 vertex positions per pose.
++
++No shading, deformed normals/tangents, physics, constraints/IK, automatic
++transition blending, continuous visual playback or device performance is
++claimed. The new capability is portable pose execution and its geometric
++evidence, with the original styles and richer editable source intact.
+diff --git a/src/axm_uc/game_pose_runtime.py b/src/axm_uc/game_pose_runtime.py
+new file mode 100644
+index 0000000..dee5db0
+--- /dev/null
++++ b/src/axm_uc/game_pose_runtime.py
+@@ -0,0 +1,451 @@
++"""Offline evaluation of a bounded GLB transform/skin subset; no renderer needed.
++
++Quaternions are xyzw; published matrices are row-major, multiplying column
++vectors. glTF column-major matrices are converted exactly once on intake.
++Source GLB bytes and their material/geometry payloads are never rewritten.
++"""
++from __future__ import annotations
++
++import bisect
++import copy
++import hashlib
++import json
++import math
++from pathlib import Path
++import shutil
++import struct
++import tempfile
++
++from .atomic import atomic_write_json
++
++MAX_BYTES = 64 * 1024 * 1024
++MAX_VALUES = 4_000_000
++MAX_VERTICES = 250_000
++IDENTITY = [1., 0., 0., 0., 0., 1., 0., 0., 0., 0., 1., 0., 0., 0., 0., 1.]
++DEFAULTS = {"translation": [0., 0., 0.], "rotation": [0., 0., 0., 1.], "scale": [1., 1., 1.]}
++WIDTHS = {"SCALAR": 1, "VEC3": 3, "VEC4": 4, "MAT4": 16}
++
++
++def game_pose_runtime_catalog():
++    return {
++        "schema": "axm.game-pose-runtime-catalog/v0.1",
++        "executes": ["embedded GLB transform intake", "LINEAR and STEP sampling", "quaternion shortest-arc interpolation",
++                     "local pose crossfade", "hierarchical world transforms", "socket points", "linear skin positions"],
++        "dependencies": [], "source_preserved": True,
++        "matrix_convention": "row-major matrices multiplying column vectors; scene-space output",
++        "limits": {"glb_bytes": MAX_BYTES, "nodes": 2048, "decoded_scalars": MAX_VALUES,
++                   "instantiated_vertices": MAX_VERTICES},
++        "truth": "Evaluates authored poses and vertex positions offline. No shading, normals/tangents, morph targets, "
++                 "CUBICSPLINE, IK, physics, automatic transition blending or device playback acceptance. "
++                 "Root translation remains in the authored pose; do not apply runtime root displacement a second time.",
++    }
++
++
++def _integer(value, label, low, high):
++    if type(value) is not int or not low <= value <= high:
++        raise ValueError(f"{label} must be an integer in {low}..{high}")
++    return value
++
++
++def _number(value, label):
++    if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or abs(value) > 1e12:
++        raise ValueError(f"{label} must be a bounded finite number")
++    return float(value)
++
++
++def _vector(value, width, label):
++    if not isinstance(value, (list, tuple)) or len(value) != width:
++        raise ValueError(f"{label} requires {width} numbers")
++    return [_number(v, label) for v in value]
++
++
++def _quaternion(value):
++    value = _vector(value, 4, "quaternion")
++    length = math.sqrt(sum(v * v for v in value))
++    if abs(length - 1) > 1e-4:
++        raise ValueError("rotation quaternion must be normalized")
++    return [v / length for v in value]
++
++
++def _slerp(a, b, weight):
++    dot = sum(x * y for x, y in zip(a, b))
++    if dot < 0:
++        b, dot = [-v for v in b], -dot
++    dot = min(1., dot)
++    if dot > .9995:
++        result = [x + (y - x) * weight for x, y in zip(a, b)]
++    else:
++        angle = math.acos(dot)
++        result = [(x * math.sin((1 - weight) * angle) + y * math.sin(weight * angle)) / math.sin(angle)
++                  for x, y in zip(a, b)]
++    length = math.sqrt(sum(v * v for v in result))
++    return [v / length for v in result]
++
++
++def _multiply(a, b):
++    return [sum(a[r * 4 + k] * b[k * 4 + c] for k in range(4)) for r in range(4) for c in range(4)]
++
++
++def _transform(matrix, position):
++    return [sum(matrix[r * 4 + k] * position[k] for k in range(3)) + matrix[r * 4 + 3] for r in range(3)]
++
++
++def _trs(local):
++    x, y, z, w = local["rotation"]
++    sx, sy, sz = local["scale"]
++    tx, ty, tz = local["translation"]
++    return [(1 - 2 * (y*y + z*z))*sx, 2*(x*y-z*w)*sy, 2*(x*z+y*w)*sz, tx,
++            2*(x*y+z*w)*sx, (1-2*(x*x+z*z))*sy, 2*(y*z-x*w)*sz, ty,
++            2*(x*z-y*w)*sx, 2*(y*z+x*w)*sy, (1-2*(x*x+y*y))*sz, tz, 0., 0., 0., 1.]
++
++
++def _matrix(value):
++    source = _vector(value, 16, "matrix")
++    result = [source[c * 4 + r] for r in range(4) for c in range(4)]
++    if result[12:] != [0, 0, 0, 1]:
++        raise ValueError("only affine matrices are supported")
++    return result
++
++
++def _array(document, key, maximum):
++    value = document.get(key, [])
++    if not isinstance(value, list) or len(value) > maximum or any(not isinstance(row, dict) for row in value):
++        raise ValueError(f"{key} must be a bounded array of objects")
++    return value
++
++
++def _parse(body):
++    if not isinstance(body, bytes) or not 28 <= len(body) <= MAX_BYTES:
++        raise ValueError("GLB must be bounded bytes")
++    if struct.unpack_from("<4sII", body) != (b"glTF", 2, len(body)):
++        raise ValueError("invalid GLB header or declared length")
++    chunks, offset = [], 12
++    while offset < len(body):
++        if offset + 8 > len(body):
++            raise ValueError("truncated GLB chunk")
++        length, kind = struct.unpack_from("<II", body, offset)
++        offset += 8
++        if length % 4 or offset + length > len(body):
++            raise ValueError("invalid GLB chunk bounds")
++        chunks.append((kind, body[offset:offset + length]))
++        offset += length
++    if len(chunks) != 2 or [c[0] for c in chunks] != [0x4E4F534A, 0x004E4942] or len(chunks[0][1]) > 4 * 1024 * 1024:
++        raise ValueError("requires one JSON chunk followed by one embedded BIN chunk")
++    def unique_object(pairs):
++        result = {}
++        for key, value in pairs:
++            if key in result:
++                raise ValueError("duplicate GLB JSON key")
++            result[key] = value
++        return result
++    try:
++        document = json.loads(chunks[0][1].decode("utf-8"), object_pairs_hook=unique_object)
++    except (UnicodeError, json.JSONDecodeError, RecursionError) as exc:
++        raise ValueError("invalid GLB JSON") from exc
++    if (not isinstance(document, dict) or not isinstance(document.get("asset"), dict)
++            or document["asset"].get("version") != "2.0" or document["asset"].get("minVersion", "2.0") != "2.0"):
++        raise ValueError("requires glTF 2.0")
++    required = document.get("extensionsRequired", [])
++    if not isinstance(required, list) or any(not isinstance(x, str) or not
++            (x.startswith("KHR_materials_") or x == "KHR_texture_transform") for x in required):
++        raise ValueError("unsupported required extension; only non-pose material/texture extensions are accepted")
++    buffers = _array(document, "buffers", 1)
++    if len(buffers) != 1 or "uri" in buffers[0]:
++        raise ValueError("external buffers are unsupported")
++    length = _integer(buffers[0].get("byteLength"), "buffer.byteLength", 1, len(chunks[1][1]))
++    if len(chunks[1][1]) - length > 3:
++        raise ValueError("invalid BIN padding")
++    return document, chunks[1][1][:length]
++
++
++class GamePoseAsset:
++    """Compile once, sample repeatedly. Internal arrays never alias caller bytes."""
++
++    def __init__(self, body):
++        document, binary = _parse(body)
++        self.source_sha256 = hashlib.sha256(body).hexdigest()
++        views = _array(document, "bufferViews", 16384)
++        accessors = _array(document, "accessors", 16384)
++        budget, cache = 0, {}
++
++        def accessor(ref, shape, allowed=(5126,)):
++            nonlocal budget
++            ref = _integer(ref, "accessor index", 0, len(accessors) - 1)
++            a = accessors[ref]
++            if (a.get("type") != shape or type(a.get("componentType")) is not int
++                    or a["componentType"] not in allowed or "sparse" in a or a.get("extensions")):
++                raise ValueError("unsupported accessor shape, component or sparse encoding")
++            if type(a.get("normalized", False)) is not bool:
++                raise ValueError("normalized must be boolean")
++            if a.get("normalized", False) and a["componentType"] == 5126:
++                raise ValueError("float accessors cannot be normalized")
++            if ref in cache:
++                return cache[ref]
++            count = _integer(a.get("count"), "accessor.count", 1, MAX_VALUES)
++            width = WIDTHS[shape]
++            budget += count * width
++            if budget > MAX_VALUES:
++                raise ValueError("decoded scalar budget exceeded")
++            view = views[_integer(a.get("bufferView"), "bufferView index", 0, len(views) - 1)]
++            if type(view.get("buffer")) is not int or view["buffer"] != 0 or view.get("extensions"):
++                raise ValueError("accessor requires embedded buffer zero")
++            start = _integer(view.get("byteOffset", 0), "view offset", 0, len(binary))
++            length = _integer(view.get("byteLength"), "view length", 1, len(binary) - start)
++            offset = _integer(a.get("byteOffset", 0), "accessor offset", 0, length)
++            code, size = {5126: ("f", 4), 5123: ("H", 2), 5121: ("B", 1)}[a["componentType"]]
++            stride = _integer(view.get("byteStride", width * size), "stride", width * size, 252)
++            if stride % size or (start + offset) % size or offset + (count - 1) * stride + width * size > length:
++                raise ValueError("accessor exceeds or misaligns its buffer view")
++            rows = [list(struct.unpack_from("<" + code * width, binary, start + offset + i * stride)) for i in range(count)]
++            if a.get("normalized", False):
++                divisor = 255 if size == 1 else 65535
++                rows = [[v / divisor for v in row] for row in rows]
++            if any(not math.isfinite(v) for row in rows for v in row):
++                raise ValueError("nonfinite accessor data")
++            cache[ref] = rows
++            return rows
++
++        nodes = _array(document, "nodes", 2048)
++        if not nodes:
++            raise ValueError("asset requires nodes")
++        self._nodes, self._parents = [], [None] * len(nodes)
++        for i, node in enumerate(nodes):
++            if node.get("extensions") or "weights" in node:
++                raise ValueError("node extensions and morph weights are unsupported")
++            if not isinstance(node.get("name", ""), str):
++                raise ValueError("node name must be text")
++            local = {p: _vector(node.get(p, default), len(default), p) for p, default in DEFAULTS.items()}
++            local["rotation"] = _quaternion(local["rotation"])
++            if "matrix" in node:
++                if any(p in node for p in DEFAULTS):
++                    raise ValueError("node cannot combine matrix and TRS")
++                local["matrix"] = _matrix(node["matrix"])
++            self._nodes.append({"name": node.get("name", f"node-{i}"), **local})
++            children = node.get("children", [])
++            if not isinstance(children, list) or len(children) > len(nodes):
++                raise ValueError("invalid node children")
++            for child in children:
++                child = _integer(child, "child index", 0, len(nodes) - 1)
++                if child == i or self._parents[child] is not None:
++                    raise ValueError("node hierarchy must have unique parents and no self-cycles")
++                self._parents[child] = i
++        self._order = [i for i, parent in enumerate(self._parents) if parent is None]
++        for parent in self._order:
++            self._order.extend(nodes[parent].get("children", []))
++        if len(self._order) != len(nodes):
++            raise ValueError("cyclic node hierarchy")
++
++        self._clips = {}
++        for animation in _array(document, "animations", 128):
++            if animation.get("extensions"):
++                raise ValueError("animation extensions are unsupported")
++            name = animation.get("name")
++            if not isinstance(name, str) or not name or name in self._clips:
++                raise ValueError("animation names must be nonempty and unique")
++            samplers = _array(animation, "samplers", 6144)
++            tracks, targets, duration = [], set(), 0.
++            for channel in _array(animation, "channels", 6144):
++                target = channel.get("target", {})
++                if not isinstance(target, dict):
++                    raise ValueError("animation target must be an object")
++                node = _integer(target.get("node"), "target node", 0, len(nodes) - 1)
++                path = target.get("path")
++                if path not in DEFAULTS or "matrix" in self._nodes[node] or target.get("extensions") or channel.get("extensions"):
++                    raise ValueError("animation requires supported TRS target without matrix or extensions")
++                if (node, path) in targets:
++                    raise ValueError("duplicate animation channel target")
++                targets.add((node, path))
++                sampler = samplers[_integer(channel.get("sampler"), "sampler index", 0, len(samplers) - 1)]
++                mode = sampler.get("interpolation", "LINEAR")
++                if mode not in ("LINEAR", "STEP") or sampler.get("extensions"):
++                    raise ValueError("only LINEAR and STEP animation interpolation is supported")
++                times = [r[0] for r in accessor(sampler.get("input"), "SCALAR")]
++                if times[0] < 0 or times[-1] > 600 or any(b <= a for a, b in zip(times, times[1:])):
++                    raise ValueError("key times must strictly increase within 0..600 seconds")
++                values = accessor(sampler.get("output"), "VEC4" if path == "rotation" else "VEC3")
++                if len(values) != len(times):
++                    raise ValueError("animation input/output counts differ")
++                if path == "rotation":
++                    values = [_quaternion(row) for row in values]
++                tracks.append({"node": node, "path": path, "times": times, "values": values, "mode": mode})
++                duration = max(duration, times[-1])
++            if not tracks or duration <= 0:
++                raise ValueError("animation requires nonempty tracks and positive duration")
++            self._clips[name] = {"start_s": min(t["times"][0] for t in tracks), "duration_s": duration, "tracks": tracks}
++
++        self._skins = []
++        for skin in _array(document, "skins", 128):
++            if skin.get("extensions"):
++                raise ValueError("skin extensions are unsupported")
++            joints = skin.get("joints")
++            if not isinstance(joints, list) or not 1 <= len(joints) <= 2048:
++                raise ValueError("skin requires bounded joints")
++            joints = [_integer(j, "joint", 0, len(nodes) - 1) for j in joints]
++            if len(set(joints)) != len(joints):
++                raise ValueError("duplicate skin joints")
++            inverses = ([_matrix(v) for v in accessor(skin["inverseBindMatrices"], "MAT4")]
++                        if "inverseBindMatrices" in skin else [list(IDENTITY) for _ in joints])
++            if len(inverses) != len(joints):
++                raise ValueError("inverse bind count differs from joint count")
++            self._skins.append({"joints": joints, "inverses": inverses})
++
++        self._meshes = []
++        instantiated_vertices = 0
++        meshes = _array(document, "meshes", 2048)
++        for node_index, node in enumerate(nodes):
++            if "skin" in node and "mesh" not in node:
++                raise ValueError("skin requires mesh")
++            if "mesh" not in node:
++                continue
++            mesh = meshes[_integer(node["mesh"], "mesh index", 0, len(meshes) - 1)]
++            skin_index = _integer(node["skin"], "skin index", 0, len(self._skins) - 1) if "skin" in node else None
++            for primitive_index, primitive in enumerate(_array(mesh, "primitives", 1024)):
++                if primitive.get("targets") or primitive.get("extensions"):
++                    raise ValueError("morph targets and compressed/extended geometry are unsupported")
++                attributes = primitive.get("attributes", {})
++                if not isinstance(attributes, dict):
++                    raise ValueError("primitive attributes must be an object")
++                positions = accessor(attributes.get("POSITION"), "VEC3")
++                instantiated_vertices += len(positions)
++                if instantiated_vertices > MAX_VERTICES:
++                    raise ValueError("instantiated vertex budget exceeded")
++                joint_rows, weight_rows = None, None
++                if skin_index is not None:
++                    if any(k.startswith(("JOINTS_", "WEIGHTS_")) and k not in ("JOINTS_0", "WEIGHTS_0") for k in attributes):
++                        raise ValueError("only four skin influences per vertex are supported")
++                    joint_rows = accessor(attributes.get("JOINTS_0"), "VEC4", (5121, 5123))
++                    weight_rows = accessor(attributes.get("WEIGHTS_0"), "VEC4", (5126, 5121, 5123))
++                    ja, wa = accessors[attributes["JOINTS_0"]], accessors[attributes["WEIGHTS_0"]]
++                    if ja.get("normalized", False) or (wa["componentType"] != 5126 and not wa.get("normalized", False)):
++                        raise ValueError("invalid joint/weight normalization")
++                    if len(joint_rows) != len(positions) or len(weight_rows) != len(positions):
++                        raise ValueError("skin attribute counts differ")
++                    for joints, weights in zip(joint_rows, weight_rows):
++                        if any(not 0 <= j < len(self._skins[skin_index]["joints"]) for j in joints):
++                            raise ValueError("vertex references missing joint")
++                        if any(w < 0 or w > 1 for w in weights) or abs(sum(weights) - 1) > .02:
++                            raise ValueError("skin weights must be nonnegative and sum to one within quantization tolerance")
++                    weight_rows = [[w / sum(row) for w in row] for row in weight_rows]
++                self._meshes.append({"node": node_index, "primitive": primitive_index, "skin": skin_index,
++                                     "positions": positions, "joints": joint_rows, "weights": weight_rows})
++
++    def describe(self):
++        return {"schema": "axm.game-pose-asset/v0.1", "source_sha256": self.source_sha256,
++                "nodes": [{"index": i, "name": row["name"], "parent": self._parents[i]} for i, row in enumerate(self._nodes)],
++                "clips": [{"name": name, "start_s": clip["start_s"], "duration_s": clip["duration_s"],
++                           "channels": len(clip["tracks"])} for name, clip in self._clips.items()],
++                "skins": [{"joints": list(skin["joints"])} for skin in self._skins],
++                "primitives": len(self._meshes), "vertices": sum(len(m["positions"]) for m in self._meshes),
++                "truth": game_pose_runtime_catalog()["truth"]}
++
++    def _local(self, clip, time_s, loop):
++        time_s = _number(time_s, "time_s")
++        if time_s < 0 or type(loop) is not bool:
++            raise ValueError("time must be nonnegative and loop boolean")
++        local = copy.deepcopy(self._nodes)
++        if clip is None:
++            return local, 0.
++        if not isinstance(clip, str) or clip not in self._clips:
++            raise ValueError("unknown animation clip")
++        animation = self._clips[clip]
++        time_s = time_s % animation["duration_s"] if loop else min(time_s, animation["duration_s"])
++        for track in animation["tracks"]:
++            times, values = track["times"], track["values"]
++            upper = bisect.bisect_right(times, time_s)
++            if upper == 0:
++                value = list(values[0])
++            elif upper == len(times) or track["mode"] == "STEP":
++                value = list(values[upper - 1])
++            else:
++                weight = (time_s - times[upper - 1]) / (times[upper] - times[upper - 1])
++                a, b = values[upper - 1], values[upper]
++                value = _slerp(a, b, weight) if track["path"] == "rotation" else [x + (y-x)*weight for x, y in zip(a, b)]
++            local[track["node"]][track["path"]] = value
++        return local, time_s
++
++    def sample(self, clip=None, time_s=0., *, loop=False, blend=None, vertices=False):
++        """Blend is an explicit source pose and target weight, not a hidden clock.
++
++        {'clip': source_name, 'time_s': source_time, 'loop': bool, 'weight': 0..1}
++        Weight zero returns source; weight one returns the requested target.
++        """
++        if type(vertices) is not bool:
++            raise ValueError("vertices must be boolean")
++        local, time_s = self._local(clip, time_s, loop)
++        if blend is not None:
++            if not isinstance(blend, dict) or set(blend) != {"clip", "time_s", "loop", "weight"}:
++                raise ValueError("blend requires exactly clip, time_s, loop and weight")
++            weight = _number(blend["weight"], "blend.weight")
++            if not 0 <= weight <= 1:
++                raise ValueError("blend weight must be in 0..1")
++            prior, _ = self._local(blend["clip"], blend["time_s"], blend["loop"])
++            for source, target in zip(prior, local):
++                for path in DEFAULTS:
++                    target[path] = (_slerp(source[path], target[path], weight) if path == "rotation" else
++                                    [a + (b-a)*weight for a, b in zip(source[path], target[path])])
++        world = [None] * len(local)
++        for index in self._order:
++            matrix = local[index].get("matrix", None)
++            matrix = list(matrix) if matrix is not None else _trs(local[index])
++            parent = self._parents[index]
++            world[index] = matrix if parent is None else _multiply(world[parent], matrix)
++            if any(not math.isfinite(v) for v in world[index]):
++                raise ValueError("world transform overflow")
++        palettes = [[_multiply(world[j], inverse) for j, inverse in zip(skin["joints"], skin["inverses"])] for skin in self._skins]
++        if any(not math.isfinite(v) for palette in palettes for matrix in palette for v in matrix):
++            raise ValueError("skin transform overflow")
++        result = {"schema": "axm.game-pose-sample/v0.1", "source_sha256": self.source_sha256,
++                  "clip": clip, "time_s": time_s, "blend": copy.deepcopy(blend),
++                  "local": local, "world_matrices": world, "skin_world_matrices": palettes,
++                  "matrix_convention": "row-major, column vectors, scene-space; authored root already included"}
++        if vertices:
++            deformed = []
++            for mesh in self._meshes:
++                if mesh["skin"] is None:
++                    positions = [_transform(world[mesh["node"]], p) for p in mesh["positions"]]
++                else:
++                    palette = palettes[mesh["skin"]]
++                    positions = []
++                    for p, joints, weights in zip(mesh["positions"], mesh["joints"], mesh["weights"]):
++                        points = [_transform(palette[j], p) for j in joints]
++                        positions.append([sum(points[k][axis] * weights[k] for k in range(4)) for axis in range(3)])
++                deformed.append({"node": mesh["node"], "primitive": mesh["primitive"], "positions": positions})
++                if any(not math.isfinite(v) for p in positions for v in p):
++                    raise ValueError("skin position overflow")
++            result["meshes"] = deformed
++        return result
++
++    def point(self, pose, node, position=(0., 0., 0.)):
++        if pose.get("source_sha256") != self.source_sha256:
++            raise ValueError("pose belongs to another source")
++        node = _integer(node, "node index", 0, len(self._nodes) - 1)
++        return _transform(pose["world_matrices"][node], _vector(position, 3, "point"))
++
++
++def load_game_pose_glb(path):
++    with Path(path).open("rb") as handle:
++        body = handle.read(MAX_BYTES + 1)
++    return GamePoseAsset(body)
++
++
++def publish_game_pose(path, asset_path, request):
++    target = Path(path)
++    if target.exists():
++        raise FileExistsError(f"refusing to overwrite existing path: {target}")
++    if not isinstance(request, dict) or set(request) - {"clip", "time_s", "loop", "blend", "vertices"}:
++        raise ValueError("pose request has unsupported fields")
++    asset = load_game_pose_glb(asset_path)
++    result = asset.sample(**request)
++    target.parent.mkdir(parents=True, exist_ok=True)
++    stage = Path(tempfile.mkdtemp(prefix=".axm-pose-", dir=target.parent))
++    try:
++        atomic_write_json(stage / "pose.json", result)
++        atomic_write_json(stage / "asset.json", asset.describe())
++        atomic_write_json(stage / "request.json", request)
++        if target.exists():
++            raise FileExistsError(f"refusing to overwrite existing path: {target}")
++        stage.rename(target)
++    finally:
++        if stage.exists():
++            shutil.rmtree(stage)
++    return result
+diff --git a/src/axm_uc/visual_assets_cli.py b/src/axm_uc/visual_assets_cli.py
+index aae1fc1..83f4e15 100644
+--- a/src/axm_uc/visual_assets_cli.py
++++ b/src/axm_uc/visual_assets_cli.py
+@@ -40,6 +40,7 @@ from .game_runtime_realization import game_runtime_realization_catalog, publish_
+ from .game_showcase_contract import game_showcase_catalog, publish_game_showcase
+ from .game_functional_motion import game_functional_motion_catalog, publish_game_functional_motion
+ from .game_animation_runtime import game_animation_runtime_catalog, publish_game_animation_replay
++from .game_pose_runtime import game_pose_runtime_catalog, publish_game_pose
+ 
+ BASE_CATEGORIES = ["texture", "gradient", "material", "fixture", "decal", "palette"]
+ EXPANDED_CATEGORIES = ["surface", "pigment", "sprite", "mesh", "vector-part"]
+@@ -70,6 +71,7 @@ def combined_catalog() -> dict:
+         "game_showcase": game_showcase_catalog(),
+         "game_functional_motion": game_functional_motion_catalog(),
+         "game_animation_runtime": game_animation_runtime_catalog(),
++        "game_pose_runtime": game_pose_runtime_catalog(),
+     }
+ 
+ 
+@@ -94,6 +96,11 @@ def build_parser() -> argparse.ArgumentParser:
+     functional.add_argument("request", help="JSON functional-motion request")
+     functional.add_argument("path", help="new output directory; existing paths are never overwritten")
+     sub.add_parser("animation-runtime-catalog", help="show deterministic clip clock and state execution")
++    sub.add_parser("pose-runtime-catalog", help="show offline GLB pose, attachment and skin evaluation")
++    pose = sub.add_parser("pose-sample", help="evaluate or blend an actual GLB pose without a renderer")
++    pose.add_argument("asset", help="embedded GLB with LINEAR or STEP TRS animation")
++    pose.add_argument("request", help="JSON clip, time_s and optional loop, blend, vertices")
++    pose.add_argument("path", help="new output directory; existing paths are never overwritten")
+     animation_runtime = sub.add_parser(
+         "animation-runtime-replay", help="execute animation transitions, clocks, events and root motion")
+     animation_runtime.add_argument("request", help="JSON object containing runtime and commands")
+@@ -286,6 +293,11 @@ def main(argv: list[str] | None = None) -> int:
+         result = publish_game_functional_motion(args.path, request)
+     elif args.command == "animation-runtime-catalog":
+         result = game_animation_runtime_catalog()
++    elif args.command == "pose-runtime-catalog":
++        result = game_pose_runtime_catalog()
++    elif args.command == "pose-sample":
++        request = json.loads(Path(args.request).read_text(encoding="utf-8"))
++        result = publish_game_pose(args.path, args.asset, request)
+     elif args.command == "animation-runtime-replay":
+         request = json.loads(Path(args.request).read_text(encoding="utf-8"))
+         if not isinstance(request, dict) or set(request) != {"runtime", "commands"}:
+diff --git a/tests/test_game_pose_runtime.py b/tests/test_game_pose_runtime.py
+new file mode 100644
+index 0000000..a758c13
+--- /dev/null
++++ b/tests/test_game_pose_runtime.py
+@@ -0,0 +1,254 @@
++"""Analytical fixtures, independent of Blender and the production evaluator."""
++import copy
++from contextlib import redirect_stdout
++import hashlib
++import io
++import json
++import math
++from pathlib import Path
++import struct
++import sys
++import tempfile
++import unittest
++from unittest.mock import patch
++
++sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
++from axm_uc.game_pose_runtime import GamePoseAsset, load_game_pose_glb, publish_game_pose, game_pose_runtime_catalog
++from axm_uc.visual_assets_cli import main
++
++
++def fixture():
++    """Two-joint rig with translated mesh and a nontrivial inverse bind.
++
++    Rig root x=2; child is at y=1. Bind vertex (1,1,0) is one unit from
++    the child's pivot; turning child by 90 degrees moves it to (2,2,0).
++    Mesh-node translation is deliberately unrelated to catch double transforms.
++    """
++    binary = bytearray()
++    doc = {"asset": {"version": "2.0"}, "bufferViews": [], "accessors": [],
++           "nodes": [{"name": "Rig", "translation": [2, 0, 0], "children": [1]},
++                     {"name": "Hinge", "translation": [0, 1, 0]},
++                     {"name": "Mesh", "translation": [99, 0, 0], "mesh": 0, "skin": 0}],
++           "scenes": [{"nodes": [0, 2]}], "scene": 0}
++
++    def add(rows, shape, code="f", component=5126, normalized=False, padding=0):
++        while len(binary) % 4:
++            binary.append(0)
++        start = len(binary)
++        for row in rows:
++            binary.extend(struct.pack("<" + code * len(row), *row))
++            binary.extend(b"\0" * padding)
++        view = {"buffer": 0, "byteOffset": start, "byteLength": len(binary) - start}
++        if padding:
++            view["byteStride"] = struct.calcsize(code) * len(rows[0]) + padding
++        doc["bufferViews"].append(view)
++        a = {"bufferView": len(doc["bufferViews"]) - 1, "count": len(rows), "type": shape, "componentType": component}
++        if normalized:
++            a["normalized"] = True
++        doc["accessors"].append(a)
++        return len(doc["accessors"]) - 1
++
++    times = add([[0], [1]], "SCALAR")
++    rotation = add([[0, 0, 0, 1], [0, 0, 1, 0]], "VEC4")
++    slide = add([[2, 0, 0], [4, 0, 0]], "VEC3")
++    doc["animations"] = [
++        {"name": "Turn", "samplers": [{"input": times, "output": rotation, "interpolation": "LINEAR"}],
++         "channels": [{"sampler": 0, "target": {"node": 1, "path": "rotation"}}]},
++        {"name": "Slide", "samplers": [{"input": times, "output": slide, "interpolation": "LINEAR"}],
++         "channels": [{"sampler": 0, "target": {"node": 0, "path": "translation"}}]},
++    ]
++    # Inverse bind matrices stored column-major as required by GLB.
++    identity = [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1]
++    child_inverse = [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,-1,0,1]
++    inverse = add([identity, child_inverse], "MAT4")
++    doc["skins"] = [{"joints": [0, 1], "inverseBindMatrices": inverse}]
++    positions = add([[1,1,0], [0,1,0], [1,0,0]], "VEC3", padding=4)
++    joints = add([[1,0,0,0], [0,1,0,0], [1,0,0,0]], "VEC4", "B", 5121)
++    weights = add([[1,0,0,0], [.25,.75,0,0], [1,0,0,0]], "VEC4")
++    doc["meshes"] = [{"primitives": [{"attributes": {"POSITION": positions, "JOINTS_0": joints, "WEIGHTS_0": weights}}]}]
++    doc["buffers"] = [{"byteLength": len(binary)}]
++    return doc, binary
++
++
++def encode(doc, binary):
++    encoded = json.dumps(doc, separators=(",", ":")).encode()
++    encoded += b" " * (-len(encoded) % 4)
++    binary = bytes(binary) + b"\0" * (-len(binary) % 4)
++    return (struct.pack("<4sII", b"glTF", 2, 28 + len(encoded) + len(binary)) +
++            struct.pack("<II", len(encoded), 0x4E4F534A) + encoded +
++            struct.pack("<II", len(binary), 0x004E4942) + binary)
++
++
++class GamePoseRuntimeTests(unittest.TestCase):
++    def setUp(self):
++        self.doc, self.binary = fixture()
++
++    def asset(self):
++        return GamePoseAsset(encode(self.doc, self.binary))
++
++    def vector(self, actual, expected):
++        self.assertEqual(len(actual), len(expected))
++        for a, b in zip(actual, expected):
++            self.assertAlmostEqual(a, b, places=7)
++
++    def test_rest_hierarchy_and_child_local_socket(self):
++        a = self.asset(); pose = a.sample(vertices=True)
++        self.vector(a.point(pose, 1), [2, 1, 0])
++        self.vector(a.point(pose, 1, [1,0,0]), [3, 1, 0])
++        self.vector(pose["meshes"][0]["positions"][0], [3, 1, 0])
++
++    def test_half_turn_slerp_world_joint_and_skin_positions(self):
++        a = self.asset(); pose = a.sample("Turn", .5, vertices=True)
++        self.vector(pose["local"][1]["rotation"], [0,0,math.sqrt(.5),math.sqrt(.5)])
++        self.vector(a.point(pose, 1, [1,0,0]), [2,2,0])
++        self.vector(pose["meshes"][0]["positions"][0], [2,2,0])
++        # Blended influences share a pivot; mesh-node x=99 must not be applied.
++        self.vector(pose["meshes"][0]["positions"][1], [2,1,0])
++        self.vector(pose["meshes"][0]["positions"][2], [3,2,0])
++
++    def test_skin_blended_influences_with_different_results(self):
++        p = self.doc["meshes"][0]["primitives"][0]["attributes"]["POSITION"]
++        offset = self.doc["bufferViews"][self.doc["accessors"][p]["bufferView"]]["byteOffset"]
++        struct.pack_into("<3f", self.binary, offset + 16, 1, 1, 0)
++        pose = self.asset().sample("Turn", .5, vertices=True)
++        self.vector(pose["meshes"][0]["positions"][1], [2.25,1.75,0])
++
++    def test_antipodal_quaternion_does_not_spin(self):
++        ref = self.doc["animations"][0]["samplers"][0]["output"]
++        view = self.doc["bufferViews"][self.doc["accessors"][ref]["bufferView"]]
++        struct.pack_into("<4f", self.binary, view["byteOffset"] + 16, 0,0,0,-1)
++        pose = self.asset().sample("Turn", .5)
++        self.vector(pose["local"][1]["rotation"], [0,0,0,1])
++
++    def test_step_exact_boundary_hold_clamp_and_loop(self):
++        self.doc["animations"][0]["samplers"][0]["interpolation"] = "STEP"
++        a = self.asset()
++        self.vector(a.sample("Turn", .999)["local"][1]["rotation"], [0,0,0,1])
++        self.vector(a.sample("Turn", 1)["local"][1]["rotation"], [0,0,1,0])
++        self.assertEqual(a.sample("Turn", 9)["time_s"], 1)
++        self.assertEqual(a.sample("Turn", 1, loop=True)["time_s"], 0)
++
++    def test_nonzero_first_key_preserves_authored_time_domain(self):
++        struct.pack_into("<f", self.binary, 0, .5)
++        a = self.asset()
++        self.assertEqual(a.describe()["clips"][0]["start_s"], .5)
++        self.assertEqual(a.describe()["clips"][0]["duration_s"], 1.)
++        self.vector(a.sample("Turn", .25)["local"][1]["rotation"], [0,0,0,1])
++        self.vector(a.sample("Turn", .75)["local"][1]["rotation"], [0,0,math.sqrt(.5),math.sqrt(.5)])
++
++    def test_partial_channels_reset_to_rest_between_samples(self):
++        a = self.asset(); a.sample("Turn", 1)
++        pose = a.sample("Slide", .5)
++        self.vector(pose["local"][1]["rotation"], [0,0,0,1])
++        self.vector(pose["local"][0]["translation"], [3,0,0])
++
++    def test_explicit_crossfade_endpoints_and_midpoint(self):
++        a = self.asset()
++        for weight in (0, .5, 1):
++            result = a.sample("Slide", 1, blend={"clip":"Turn", "time_s":1, "loop":False, "weight":weight})
++            self.vector(result["local"][0]["translation"], [2 + 2*weight,0,0])
++            angle = math.pi * (1-weight) / 2
++            self.vector(result["local"][1]["rotation"], [0,0,math.sin(angle),math.cos(angle)])
++
++    def test_nonuniform_scale_uses_parent_before_child_translation(self):
++        self.doc["nodes"][0]["scale"] = [2,3,4]
++        a = self.asset(); self.vector(a.point(a.sample(), 1, [1,0,0]), [4,3,0])
++
++    def test_static_matrix_column_major_conversion(self):
++        self.doc["nodes"].append({"name":"Fixed", "matrix":[1,0,0,0, 0,1,0,0, 0,0,1,0, 7,8,9,1]})
++        a = self.asset(); self.vector(a.point(a.sample(), 3), [7,8,9])
++
++    def test_static_unskinned_mesh_uses_own_world_transform(self):
++        del self.doc["nodes"][2]["skin"]
++        self.vector(self.asset().sample(vertices=True)["meshes"][0]["positions"][0], [100,1,0])
++
++    def test_normalized_integer_weights_are_supported(self):
++        ref = self.doc["meshes"][0]["primitives"][0]["attributes"]["WEIGHTS_0"]
++        a = self.doc["accessors"][ref]; a.update(componentType=5121, normalized=True)
++        view = self.doc["bufferViews"][a["bufferView"]]
++        view["byteStride"] = 16
++        for i in range(3):
++            struct.pack_into("<4B", self.binary, view["byteOffset"] + 16*i, 255,0,0,0)
++        self.vector(self.asset().sample("Turn", .5, vertices=True)["meshes"][0]["positions"][0], [2,2,0])
++
++    def test_input_bytes_and_previous_samples_are_immutable(self):
++        body = encode(self.doc, self.binary); before = hashlib.sha256(body).hexdigest()
++        a = GamePoseAsset(body); one = a.sample("Turn", .4, vertices=True); expected = copy.deepcopy(one)
++        a.sample("Slide", .7); self.assertEqual(one, expected)
++        one["local"][0]["translation"][0] = 100
++        self.assertEqual(a.sample("Turn", .4, vertices=True), expected)
++        self.assertEqual(before, hashlib.sha256(body).hexdigest())
++
++    def test_invalid_glb_chunks_and_offsets_fail(self):
++        body = encode(self.doc, self.binary)
++        for broken in (body[:15], body[:-1], b"nope" + body[4:], body + b"extra"):
++            with self.subTest(length=len(broken)), self.assertRaises(ValueError): GamePoseAsset(broken)
++        self.doc["accessors"][0]["byteOffset"] = 999999
++        with self.assertRaises(ValueError): self.asset()
++
++    def test_unsupported_and_ambiguous_motion_fail_closed(self):
++        mutations = [
++            lambda d: d["animations"][0]["samplers"][0].update(interpolation="CUBICSPLINE"),
++            lambda d: d["animations"][0]["channels"][0]["target"].update(path="weights"),
++            lambda d: d["animations"][0]["channels"].append(copy.deepcopy(d["animations"][0]["channels"][0])),
++            lambda d: d["animations"][1].update(name="Turn"),
++            lambda d: d["accessors"][0].update(sparse={}),
++            lambda d: d["buffers"][0].update(uri="https://example.invalid/data"),
++            lambda d: d["nodes"][1].update(children=[0]),
++            lambda d: d["nodes"][2].update(children=[1]),
++            lambda d: d["nodes"][1].update(matrix=[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]),
++        ]
++        for mutate in mutations:
++            d = copy.deepcopy(self.doc); mutate(d)
++            with self.subTest(mutate=mutate), self.assertRaises(ValueError): GamePoseAsset(encode(d, self.binary))
++
++    def test_nonfinite_zero_rotation_and_nonmonotonic_keys_rejected(self):
++        for value in (0., -1., float("nan")):
++            binary = bytearray(self.binary); struct.pack_into("<f", binary, 4, value)
++            with self.assertRaises(ValueError): GamePoseAsset(encode(self.doc, binary))
++        self.doc["nodes"][0]["rotation"] = [0,0,0,0]
++        with self.assertRaises(ValueError): self.asset()
++
++    def test_bad_skin_weights_and_joint_indices_rejected(self):
++        attrs = self.doc["meshes"][0]["primitives"][0]["attributes"]
++        for key in ("JOINTS_0", "WEIGHTS_0"):
++            ref = attrs[key]; offset = self.doc["bufferViews"][self.doc["accessors"][ref]["bufferView"]]["byteOffset"]
++            binary = bytearray(self.binary)
++            struct.pack_into("<B" if key=="JOINTS_0" else "<f", binary, offset, 9)
++            with self.assertRaises(ValueError): GamePoseAsset(encode(self.doc, binary))
++
++    def test_queries_validate_clip_time_and_blend(self):
++        a = self.asset()
++        for time in (-1, float("nan"), True):
++            with self.assertRaises(ValueError): a.sample("Turn", time)
++        with self.assertRaises(ValueError): a.sample("missing")
++        with self.assertRaises(ValueError): a.sample("Turn", blend={"weight":.5})
++        with self.assertRaises(ValueError): a.sample("Turn", blend={"clip":"Slide","time_s":0,"loop":False,"weight":2})
++
++    def test_cli_reopens_glb_and_preserves_source(self):
++        with tempfile.TemporaryDirectory() as folder:
++            root = Path(folder); asset_path = root / "fixture.glb"
++            body = encode(self.doc, self.binary); asset_path.write_bytes(body)
++            request = root / "request.json"; request.write_text(json.dumps({"clip":"Turn","time_s":.5,"vertices":True}))
++            with redirect_stdout(io.StringIO()):
++                self.assertEqual(main(["pose-sample", str(asset_path), str(request), str(root / "out")]), 0)
++            result = json.loads((root / "out" / "pose.json").read_text())
++            self.vector(result["meshes"][0]["positions"][0], [2,2,0])
++            self.assertEqual(asset_path.read_bytes(), body)
++            with self.assertRaises(FileExistsError): publish_game_pose(root / "out", asset_path, {})
++
++    def test_publication_failure_cleans_stage(self):
++        with tempfile.TemporaryDirectory() as folder:
++            root = Path(folder); source = root / "fixture.glb"; source.write_bytes(encode(self.doc,self.binary))
++            with patch("axm_uc.game_pose_runtime.atomic_write_json", side_effect=OSError("full disk")):
++                with self.assertRaises(OSError): publish_game_pose(root / "out", source, {"clip":"Turn"})
++            self.assertFalse((root / "out").exists())
++            self.assertEqual(list(root.iterdir()), [source])
++
++    def test_catalog_exposes_actual_scope(self):
++        catalog = game_pose_runtime_catalog()
++        self.assertEqual(catalog["dependencies"], [])
++        self.assertIn("Root translation remains", catalog["truth"])
++
++
++if __name__ == "__main__": unittest.main()
+diff --git a/tools/blender/game_pose_runtime_roundtrip.py b/tools/blender/game_pose_runtime_roundtrip.py
+new file mode 100644
+index 0000000..ade0eaa
+--- /dev/null
++++ b/tools/blender/game_pose_runtime_roundtrip.py
+@@ -0,0 +1,125 @@
++"""Independent Blender/UC pose comparison on rebuilt Parcel Imp exports.
++
++Run in a fresh process after game_showcase_parcel_imp.py build. No browser,
++renderer service or engine installation is used by the production evaluator.
++Blender is solely the independent reference for this integration check.
++"""
++import argparse
++import json
++import math
++from pathlib import Path
++import sys
++
++import bpy
++from mathutils import Vector
++from mathutils.kdtree import KDTree
++
++ROOT = Path(__file__).resolve().parents[2]
++sys.path.insert(0, str(ROOT / "src"))
++from axm_uc.game_pose_runtime import load_game_pose_glb
++
++
++def blender_point(p):
++    return Vector((p[0], -p[2], p[1]))
++
++
++def tree(points):
++    result = KDTree(len(points))
++    for i, p in enumerate(points):
++        result.insert(p, i)
++    result.balance()
++    return result
++
++
++def compare(asset_path):
++    asset = load_game_pose_glb(asset_path)
++    description = asset.describe()
++    bpy.ops.wm.read_factory_settings(use_empty=True)
++    bpy.context.scene.render.fps = 30
++    bpy.ops.import_scene.gltf(filepath=str(asset_path), merge_vertices=False)
++    armatures = [o for o in bpy.context.scene.objects if o.type == "ARMATURE"]
++    assert len(armatures) == 1, "requires the original single Parcel Imp rig"
++    arm = armatures[0]
++    # The importer creates an Icosphere for bone display. It is not GLB mesh
++    # data. Exclude only objects explicitly referenced as bone custom shapes.
++    helpers = {b.custom_shape for b in arm.pose.bones if b.custom_shape is not None}
++    meshes = [o for o in bpy.context.scene.objects if o.type == "MESH" and o not in helpers]
++    assert len(meshes) == 1 and meshes[0].parent == arm, "requires the original Parcel Imp skin"
++    joint_ids = sorted({j for skin in description["skins"] for j in skin["joints"]})
++    assert len(joint_ids) == 16, "Parcel Imp joint identity changed"
++    rows = []
++    for clip in description["clips"]:
++        actions = [a for a in bpy.data.actions if a.name == clip["name"] or a.name.startswith(clip["name"] + "_")]
++        assert len(actions) == 1, (clip["name"], [a.name for a in bpy.data.actions])
++        arm.animation_data_create(); arm.animation_data.action = actions[0]
++        # Import uses Blender frames from seconds and can put its first key at 0.
++        # Read this mapping rather than assuming an authored frame-one offset.
++        start, end = actions[0].frame_range
++        assert abs((end - start) / 30 - (clip["duration_s"] - clip["start_s"])) < 1e-5, (clip, start, end, bpy.context.scene.render.fps, bpy.context.scene.render.fps_base)
++        for fraction in (0., .137, .3, .5, .731, 1.):
++            # Compare authored 30 Hz keys. Blender quaternion component F-curves
++            # need not implement glTF SLERP between keys; the latter is covered
++            # independently by the analytical shortest-arc tests.
++            time = min(round((clip["start_s"] + (clip["duration_s"] - clip["start_s"]) * fraction) * 30) / 30, clip["duration_s"])
++            frame = start + (time - clip["start_s"]) * 30
++            bpy.context.scene.frame_set(math.floor(frame), subframe=frame - math.floor(frame))
++            pose = asset.sample(clip["name"], time, vertices=True)
++            joint_error = 0.
++            for j in joint_ids:
++                name = description["nodes"][j]["name"]
++                actual = blender_point(asset.point(pose, j))
++                expected = arm.matrix_world @ arm.pose.bones[name].head
++                joint_error = max(joint_error, (actual - expected).length)
++            actual_points = [blender_point(p) for mesh in pose["meshes"] for p in mesh["positions"]]
++            expected_points = []
++            graph = bpy.context.evaluated_depsgraph_get()
++            for mesh in meshes:
++                evaluated = mesh.evaluated_get(graph)
++                expected_points.extend(evaluated.matrix_world @ v.co for v in evaluated.data.vertices)
++            assert actual_points and expected_points
++            # Importers may reorder/split vertices. Bidirectional nearest-point
++            # error checks the complete deformed surface point sets, not indices.
++            actual_tree, expected_tree = tree(actual_points), tree(expected_points)
++            vertex_error = max(max(expected_tree.find(p)[2] for p in actual_points),
++                               max(actual_tree.find(p)[2] for p in expected_points))
++            if vertex_error >= 2e-5:
++                worst = max(range(len(actual_points)), key=lambda i: expected_tree.find(actual_points[i])[2])
++                reverse = max(expected_points, key=lambda p: actual_tree.find(p)[2])
++                diagnostic = {"asset": asset_path.name, "clip": clip["name"], "time_s": time,
++                    "joint_error": joint_error, "counts": [len(actual_points), len(expected_points)],
++                    "uc_point": list(actual_points[worst]), "nearest_blender": list(expected_tree.find(actual_points[worst])[0]),
++                    "blender_point": list(reverse), "nearest_uc": list(actual_tree.find(reverse)[0]),
++                    "arm_matrix": [list(r) for r in arm.matrix_world],
++                    "meshes": [{"name": m.name, "matrix": [list(r) for r in m.matrix_world],
++                        "modifiers": [{"type": mod.type, "preserve_volume": getattr(mod, "use_deform_preserve_volume", None)} for mod in m.modifiers]} for m in meshes]}
++                print("POSE_DIAGNOSTIC " + json.dumps(diagnostic), flush=True)
++            assert joint_error < 2e-5, (asset_path.name, clip["name"], time, "joint", joint_error)
++            assert vertex_error < 2e-5, (asset_path.name, clip["name"], time, "skin", vertex_error)
++            rows.append({"clip": clip["name"], "time_s": time, "joint_error_m": joint_error,
++                         "bidirectional_vertex_error_m": vertex_error,
++                         "uc_vertices": len(actual_points), "blender_vertices": len(expected_points)})
++    return {"asset": asset_path.name, "source_sha256": asset.source_sha256,
++            "joint_count": len(joint_ids), "excluded_bone_display_helpers": sorted(o.name for o in helpers),
++            "samples": rows}
++
++
++def main():
++    parser = argparse.ArgumentParser()
++    parser.add_argument("directory", type=Path)
++    args = parser.parse_args()
++    results = [compare(path) for path in sorted(args.directory.glob("AXM_Parcel_Imp_LOD*.glb"))]
++    assert len(results) == 2
++    receipt = {"schema": "axm.game-pose-blender-comparison/v0.1", "passed": True,
++               "reference": "fresh Blender " + bpy.app.version_string + " GLB import and evaluated skin",
++               "evaluator": "Python standard library only", "exports": results,
++               "maximum_joint_error_m": max(row["joint_error_m"] for result in results for row in result["samples"]),
++               "maximum_vertex_error_m": max(row["bidirectional_vertex_error_m"] for result in results for row in result["samples"]),
++               "limits": ["Sampled positions only; no shading, normals, continuous playback or performance claim.",
++                          "Vertex comparison is bidirectional nearest-point error, not a vertex-order or topology proof.",
++                          "Crossfades have analytical unit coverage, not native Blender transition playback coverage."]}
++    (args.directory / "pose-runtime-comparison.json").write_text(json.dumps(receipt, indent=2) + "\n")
++    print(json.dumps(receipt, indent=2))
++
++
++if __name__ == "__main__":
++    main()

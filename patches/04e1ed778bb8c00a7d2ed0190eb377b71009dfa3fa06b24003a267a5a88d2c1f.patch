@@ -1,0 +1,1060 @@
+diff --git a/GAME_STYLE_GROWTH.md b/GAME_STYLE_GROWTH.md
+index b27e249..7cbe6d1 100644
+--- a/GAME_STYLE_GROWTH.md
++++ b/GAME_STYLE_GROWTH.md
+@@ -86,7 +86,8 @@ bounded change before starting another; no quota of new files or assets.
+ 7. **Completed:** reusable causal secondary motion for springs, short rigid
+    cloth chains, antennae and carried props, with bounded response and exact
+    authored loop closure.
+-8. Improve contact, sockets, useful LOD selection and game-distance readability.
++8. **Completed:** measured contact/socket frames, useful LOD selection and
++   game-distance readability with exact-view render evidence.
+ 9. Exercise the combined capabilities on one memorable animated game asset,
+    such as a mischievous salvage delivery bot, with editable source and real GLBs.
+ 10. Repair the weakest demonstrated quality gap; verify and package a coherent
+@@ -99,6 +100,46 @@ exports when those features change. Measure performance before making claims.
+ 
+ ## Current checkpoint
+ 
++### Game runtime realization pass — 2026-09-13
++
++- Completed `game_runtime_realization.py`, `axm-assets game-realization-plan`
++  and its catalog. The deterministic planner chooses the cheapest measured LOD
++  satisfying contact/socket drift, projected surface error, readable feature
++  retention and exact-view RGBA/silhouette limits. Missing evidence fails
++  closed; caller-owned source, view policy and hashes remain intact.
++- Actual verification: **9 new focused tests pass** for near/mid/far selection,
++  feature readability, anchor rejection, render-gated false confidence,
++  canonical fallback, determinism, validation, publication and CLI execution.
++  Full repository gates remain required at the proposed head.
++- Blender 4.3 proof: the same animated 11-bone Clockwork Smacker exports and
++  freshly imports LOD0/1/2 at 58,928 / 28,284 / 10,586 triangles. Final imported
++  surface deviations are 0 / 0.000502 / 0.003396 m. Four contact/socket frames
++  pass; maximum wheel-marker-to-imported-surface distance is 0.000945 m; all
++  five declared story features retain real triangles at every tier.
++- Visual repair: geometry-only evidence first selected LOD2 at every distance.
++  Actual stills measured near RMSE 0.03875 and gameplay RMSE 0.01266, above the
++  declared 0.01 limit. Exact-view render gates now select LOD0 at 2.8 m, LOD1 at
++  9 m and LOD2 at 22 m. Static inspection passes framing, silhouette continuity
++  and recognizability for these representative frames; it does not prove motion.
++- Evidence: `tools/blender/game_runtime_realization_roundtrip.py`,
++  `docs/GAME_RUNTIME_REALIZATION.md`, and
++  `docs/evidence/game-runtime-realization-roundtrip-2026-09-13.json`.
++  Deliverable: `AXM-Game-Realization-Proof.zip` plus
++  `AXM-Game-Realization.png`.
++- Limits: representative stills and two rest contact markers only—no continuous
++  collision/contact, target-engine playback, dynamic camera selection,
++  measured frame time or continuous perceptual motion review.
++- **Next useful step: priority 9**, exercise the combined style, form, material,
++  expression, primary/secondary motion and realization capabilities on one
++  memorable original animated game asset.
++- Active lane: `codex/rts-reference-foundry`, based on merged PR #67/main
++  `228708d`; unrelated PR #54 remains outside this pass. Recheck current main,
++  overlap and exact-head checks before merge; final GitHub state rules.
++- Roots: Truth added render evidence after geometry-only selection failed;
++  Agency keeps camera/tolerances explicit; Continuity retains canonical source
++  and exact anchors; Wisdom repairs exported topology and uses the cheapest LOD
++  only after all independent gates pass.
++
+ ### Secondary motion pass — 2026-09-13
+ 
+ - Completed `game_secondary_motion.py`, `axm-assets secondary-motion-compose`
+diff --git a/docs/GAME_RUNTIME_REALIZATION.md b/docs/GAME_RUNTIME_REALIZATION.md
+new file mode 100644
+index 0000000..f4f009d
+--- /dev/null
++++ b/docs/GAME_RUNTIME_REALIZATION.md
+@@ -0,0 +1,60 @@
++# Game runtime realization
++
++`axm_uc.game_runtime_realization` selects the cheapest measured LOD that is
++acceptable for each caller-owned game view. It is deterministic, offline and
++renderer-neutral. The planner preserves the complete source and request plus
++their SHA-256 identities; it does not alter the canonical asset.
++
++## Evidence contract
++
++Each LOD supplies measured triangle count, maximum surface deviation, surviving
++story features, contact/socket frames and render observations for named views.
++Each view supplies distance, vertical field of view, viewport height, projected
++error budget, maximum RGBA RMSE and minimum silhouette intersection-over-union.
++
++A LOD is eligible only when all four gates pass:
++
++1. every contact and socket stays within caller-owned position/angle tolerance;
++2. maximum surface deviation projects below the pixel-error budget;
++3. every feature large enough to be readable at that view is present; and
++4. an exact-view render observation passes both image and silhouette limits.
++
++Missing evidence fails closed. Among eligible representations, the planner
++chooses the lowest triangle count. It never assumes that fewer triangles are
++better, or that a geometric bound proves visual equivalence.
++
++```sh
++axm-assets game-realization-catalog
++axm-assets game-realization-plan source.json request.json out/realization
++```
++
++The transactional publisher writes the exact source, exact request and final
++plan to a new directory and refuses overwrite.
++
++## Real export proof
++
++`tools/blender/game_runtime_realization_roundtrip.py` builds three actual GLBs
++of the original animated AXM Clockwork Smacker: 58,928, 28,284 and 10,586
++triangles. Blender 4.3 then imports each GLB in a fresh scene, measures final
++imported surfaces and triangle counts, checks four attachment/contact frames,
++counts feature-bearing triangles, and renders 2.8 m, 9 m and 22 m game views.
++
++With a 42-degree vertical field of view, 512-pixel viewport, 2-pixel geometric
++budget, 0.01 RGBA RMSE limit and 0.995 silhouette-IoU floor, the plan selects
++LOD0, LOD1 and LOD2 respectively. Geometry-only selection initially chose LOD2
++for every view; the near-view render RMSE of 0.03875 and gameplay RMSE of
++0.01266 exposed that false confidence and caused the exact-view render gate.
++
++The two imported wheel-contact markers remain within 0.000945 m of their mesh
++surfaces. Tool and companion sockets retain exact frames relative to LOD0.
++Every named story material survives every tier in this proof.
++
++## Truth boundary
++
++This proves deterministic selection from supplied measurements, fresh-import
++structure, representative still comparison, contact-marker proximity and
++triangle/file reductions for this asset and camera policy. It does not prove a
++continuous collision patch, animation contact through the clip, target-engine
++playback, frame-time improvement, dynamic camera policy or user-perceived art
++quality. A new engine, camera, scale, mesh or collision representation requires
++new evidence.
+diff --git a/src/axm_uc/game_runtime_realization.py b/src/axm_uc/game_runtime_realization.py
+new file mode 100644
+index 0000000..28463fb
+--- /dev/null
++++ b/src/axm_uc/game_runtime_realization.py
+@@ -0,0 +1,297 @@
++"""Deterministic game-view LOD selection with anchor and readability gates.
++
++The planner consumes measured, caller-owned LOD evidence.  It never invents
++geometry quality: a representation is eligible only when its contact/socket
++frames remain within tolerance, its projected deviation fits the requested
++pixel budget, and every story feature large enough to read is present.
++"""
++from __future__ import annotations
++
++import copy
++import hashlib
++import json
++import math
++from pathlib import Path
++
++from .atomic import atomic_write_json
++
++
++SOURCE_SCHEMA = "axm.game-runtime-realization-source/v0.1"
++PLAN_SCHEMA = "axm.game-runtime-realization/v0.1"
++ANCHOR_KINDS = ("contact", "socket")
++HIERARCHY = ("primary", "secondary", "detail")
++
++
++def _canonical(value):
++    return json.dumps(value, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()
++
++
++def _digest(value):
++    return hashlib.sha256(_canonical(value)).hexdigest()
++
++
++def _number(value, label, low=None, high=None):
++    if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value):
++        raise ValueError(f"{label} must be a finite number")
++    value = float(value)
++    if low is not None and value < low or high is not None and value > high:
++        raise ValueError(f"{label} must be from {low} to {high}")
++    return value
++
++
++def _integer(value, label, low, high):
++    if isinstance(value, bool) or not isinstance(value, int) or not low <= value <= high:
++        raise ValueError(f"{label} must be an integer from {low} to {high}")
++    return value
++
++
++def _name(value, label):
++    if not isinstance(value, str) or not value.strip() or len(value) > 128:
++        raise ValueError(f"{label} must contain 1..128 visible characters")
++    return value
++
++
++def _vec3(value, label, *, unit=False):
++    if not isinstance(value, (list, tuple)) or len(value) != 3:
++        raise ValueError(f"{label} must contain three numbers")
++    result = tuple(_number(item, f"{label}[{index}]", -100000, 100000)
++                   for index, item in enumerate(value))
++    if unit:
++        length = math.sqrt(sum(item * item for item in result))
++        if abs(length - 1) > 1e-5:
++            raise ValueError(f"{label} must be normalized")
++        result = tuple(item / length for item in result)
++    return result
++
++
++def game_runtime_realization_catalog():
++    return {
++        "schema": "axm.game-runtime-realization-catalog/v0.1",
++        "anchor_kinds": list(ANCHOR_KINDS),
++        "feature_hierarchy": list(HIERARCHY),
++        "selection": "cheapest measured LOD satisfying anchors, projected deviation, visible features and exact-view render limits",
++        "canonical_source_preserved": True,
++        "truth": (
++            "Plans from explicit measured LOD evidence. It does not measure meshes, judge art, "
++            "run an engine, prove collision patches or infer camera/player policy."
++        ),
++    }
++
++
++def _anchor(raw, label):
++    required = {"name", "kind", "position", "forward", "up"}
++    if not isinstance(raw, dict) or set(raw) != required:
++        raise ValueError(f"{label} must contain exactly {sorted(required)}")
++    name = _name(raw["name"], f"{label}.name")
++    kind = raw["kind"]
++    if kind not in ANCHOR_KINDS:
++        raise ValueError(f"{label}.kind must be contact or socket")
++    forward = _vec3(raw["forward"], f"{label}.forward", unit=True)
++    up = _vec3(raw["up"], f"{label}.up", unit=True)
++    if abs(sum(a * b for a, b in zip(forward, up))) > 1e-4:
++        raise ValueError(f"{label} forward and up must be perpendicular")
++    return {"name": name, "kind": kind, "position": list(_vec3(raw["position"], f"{label}.position")),
++            "forward": list(forward), "up": list(up)}
++
++
++def _features(raw):
++    if not isinstance(raw, list) or not 1 <= len(raw) <= 128:
++        raise ValueError("features must contain 1..128 entries")
++    result, names = [], set()
++    for index, row in enumerate(raw):
++        label = f"features[{index}]"
++        required = {"name", "hierarchy", "world_size_m", "min_pixels"}
++        if not isinstance(row, dict) or set(row) != required:
++            raise ValueError(f"{label} must contain exactly {sorted(required)}")
++        name = _name(row["name"], f"{label}.name")
++        if name in names:
++            raise ValueError(f"duplicate feature: {name}")
++        names.add(name)
++        hierarchy = row["hierarchy"]
++        if hierarchy not in HIERARCHY:
++            raise ValueError(f"{label}.hierarchy is unsupported")
++        result.append({"name": name, "hierarchy": hierarchy,
++                       "world_size_m": _number(row["world_size_m"], f"{label}.world_size_m", .0001, 1000),
++                       "min_pixels": _number(row["min_pixels"], f"{label}.min_pixels", .25, 1024)})
++    return result, names
++
++
++def _source(raw):
++    required = {"schema", "asset_id", "canonical_lod", "features", "lods", "source_sha256"}
++    if not isinstance(raw, dict) or set(raw) != required or raw.get("schema") != SOURCE_SCHEMA:
++        raise ValueError(f"source must use {SOURCE_SCHEMA} and contain exactly {sorted(required)}")
++    asset_id = _name(raw["asset_id"], "asset_id")
++    source_sha = raw["source_sha256"]
++    if not isinstance(source_sha, str) or len(source_sha) != 64 or any(c not in "0123456789abcdef" for c in source_sha):
++        raise ValueError("source_sha256 must be a lowercase SHA-256")
++    features, feature_names = _features(raw["features"])
++    lods = raw["lods"]
++    if not isinstance(lods, list) or not 1 <= len(lods) <= 16:
++        raise ValueError("lods must contain 1..16 entries")
++    checked, lod_names, prior_triangles, prior_error = [], set(), None, None
++    canonical_anchors = None
++    for index, row in enumerate(lods):
++        label = f"lods[{index}]"
++        required_lod = {"name", "triangles", "max_deviation_m", "features", "anchors", "render_observations"}
++        if not isinstance(row, dict) or set(row) != required_lod:
++            raise ValueError(f"{label} must contain exactly {sorted(required_lod)}")
++        name = _name(row["name"], f"{label}.name")
++        if name in lod_names:
++            raise ValueError(f"duplicate LOD: {name}")
++        lod_names.add(name)
++        triangles = _integer(row["triangles"], f"{label}.triangles", 1, 100_000_000)
++        deviation = _number(row["max_deviation_m"], f"{label}.max_deviation_m", 0, 1000)
++        if prior_triangles is not None and triangles >= prior_triangles:
++            raise ValueError("LOD triangle counts must strictly descend")
++        if prior_error is not None and deviation < prior_error:
++            raise ValueError("LOD maximum deviation must not decrease")
++        prior_triangles, prior_error = triangles, deviation
++        present = row["features"]
++        if not isinstance(present, list) or len(present) > len(feature_names):
++            raise ValueError(f"{label}.features must be a bounded list")
++        present = [_name(item, f"{label}.features") for item in present]
++        if len(set(present)) != len(present) or set(present) - feature_names:
++            raise ValueError(f"{label}.features contains duplicates or unknown names")
++        anchors = [_anchor(item, f"{label}.anchors[{i}]") for i, item in enumerate(row["anchors"])]
++        amap = {(item["name"], item["kind"]): item for item in anchors}
++        if len(amap) != len(anchors) or not anchors:
++            raise ValueError(f"{label}.anchors must be non-empty and unique by name/kind")
++        if canonical_anchors is None:
++            canonical_anchors = set(amap)
++        elif set(amap) != canonical_anchors:
++            raise ValueError("every LOD must report the same anchor identities")
++        observations = row["render_observations"]
++        if not isinstance(observations, list) or not observations or len(observations) > 64:
++            raise ValueError(f"{label}.render_observations must contain 1..64 entries")
++        checked_observations, observation_names = [], set()
++        for observation_index, observation in enumerate(observations):
++            observation_label = f"{label}.render_observations[{observation_index}]"
++            fields = {"view", "rgba_rmse", "silhouette_iou"}
++            if not isinstance(observation, dict) or set(observation) != fields:
++                raise ValueError(f"{observation_label} must contain exactly {sorted(fields)}")
++            view = _name(observation["view"], f"{observation_label}.view")
++            if view in observation_names:
++                raise ValueError(f"duplicate render observation: {name}/{view}")
++            observation_names.add(view)
++            checked_observations.append({
++                "view": view,
++                "rgba_rmse": _number(observation["rgba_rmse"], f"{observation_label}.rgba_rmse", 0, 1),
++                "silhouette_iou": _number(observation["silhouette_iou"], f"{observation_label}.silhouette_iou", 0, 1),
++            })
++        checked.append({"name": name, "triangles": triangles, "max_deviation_m": deviation,
++                        "features": present, "anchors": anchors,
++                        "render_observations": checked_observations})
++    canonical_lod = _name(raw["canonical_lod"], "canonical_lod")
++    if canonical_lod != checked[0]["name"]:
++        raise ValueError("canonical_lod must be the first and richest representation")
++    if checked[0]["max_deviation_m"] != 0 or set(checked[0]["features"]) != feature_names:
++        raise ValueError("canonical LOD needs zero deviation and every feature")
++    return {"schema": SOURCE_SCHEMA, "asset_id": asset_id, "canonical_lod": canonical_lod,
++            "features": features, "lods": checked, "source_sha256": source_sha}
++
++
++def _request(raw):
++    required = {"views", "anchor_position_tolerance_m", "anchor_angle_tolerance_deg"}
++    if not isinstance(raw, dict) or set(raw) != required:
++        raise ValueError(f"request must contain exactly {sorted(required)}")
++    views = raw["views"]
++    if not isinstance(views, list) or not 1 <= len(views) <= 64:
++        raise ValueError("views must contain 1..64 entries")
++    checked, names = [], set()
++    for index, row in enumerate(views):
++        label = f"views[{index}]"
++        fields = {"name", "distance_m", "vertical_fov_deg", "viewport_height_px", "error_budget_px",
++                  "max_rgba_rmse", "min_silhouette_iou"}
++        if not isinstance(row, dict) or set(row) != fields:
++            raise ValueError(f"{label} must contain exactly {sorted(fields)}")
++        name = _name(row["name"], f"{label}.name")
++        if name in names:
++            raise ValueError(f"duplicate view: {name}")
++        names.add(name)
++        checked.append({"name": name,
++                        "distance_m": _number(row["distance_m"], f"{label}.distance_m", .05, 100000),
++                        "vertical_fov_deg": _number(row["vertical_fov_deg"], f"{label}.vertical_fov_deg", 5, 175),
++                        "viewport_height_px": _integer(row["viewport_height_px"], f"{label}.viewport_height_px", 16, 32768),
++                        "error_budget_px": _number(row["error_budget_px"], f"{label}.error_budget_px", .01, 1000),
++                        "max_rgba_rmse": _number(row["max_rgba_rmse"], f"{label}.max_rgba_rmse", 0, 1),
++                        "min_silhouette_iou": _number(row["min_silhouette_iou"], f"{label}.min_silhouette_iou", 0, 1)})
++    return {"views": checked,
++            "anchor_position_tolerance_m": _number(raw["anchor_position_tolerance_m"], "anchor_position_tolerance_m", 0, 10),
++            "anchor_angle_tolerance_deg": _number(raw["anchor_angle_tolerance_deg"], "anchor_angle_tolerance_deg", 0, 180)}
++
++
++def _angle(a, b):
++    dot = max(-1., min(1., sum(x * y for x, y in zip(a, b))))
++    return math.degrees(math.acos(dot))
++
++
++def _anchor_receipts(source, request):
++    canonical = {(a["name"], a["kind"]): a for a in source["lods"][0]["anchors"]}
++    result = {}
++    for lod in source["lods"]:
++        rows = []
++        for anchor in lod["anchors"]:
++            base = canonical[(anchor["name"], anchor["kind"])]
++            position = math.dist(base["position"], anchor["position"])
++            angular = max(_angle(base["forward"], anchor["forward"]), _angle(base["up"], anchor["up"]))
++            rows.append({"name": anchor["name"], "kind": anchor["kind"],
++                         "position_drift_m": position, "angle_drift_deg": angular,
++                         "passed": position <= request["anchor_position_tolerance_m"] and
++                                   angular <= request["anchor_angle_tolerance_deg"]})
++        result[lod["name"]] = rows
++    return result
++
++
++def compose_game_runtime_realization(raw_source, raw_request):
++    source, request = _source(raw_source), _request(raw_request)
++    anchors = _anchor_receipts(source, request)
++    decisions = []
++    for view in request["views"]:
++        pixels_per_m = view["viewport_height_px"] / (
++            2 * view["distance_m"] * math.tan(math.radians(view["vertical_fov_deg"]) / 2))
++        feature_pixels = {row["name"]: row["world_size_m"] * pixels_per_m for row in source["features"]}
++        required = sorted(row["name"] for row in source["features"]
++                          if feature_pixels[row["name"]] >= row["min_pixels"])
++        candidates = []
++        for lod in source["lods"]:
++            anchor_pass = all(row["passed"] for row in anchors[lod["name"]])
++            missing = sorted(set(required) - set(lod["features"]))
++            error = lod["max_deviation_m"] * pixels_per_m
++            observations = {row["view"]: row for row in lod["render_observations"]}
++            observed = observations.get(view["name"])
++            render_pass = (observed is not None and
++                           observed["rgba_rmse"] <= view["max_rgba_rmse"] and
++                           observed["silhouette_iou"] >= view["min_silhouette_iou"])
++            eligible = anchor_pass and not missing and error <= view["error_budget_px"] and render_pass
++            candidates.append({"lod": lod["name"], "triangles": lod["triangles"],
++                               "projected_error_px": error, "missing_required_features": missing,
++                               "anchors_pass": anchor_pass, "render_observation": copy.deepcopy(observed),
++                               "render_pass": render_pass, "eligible": eligible})
++        eligible = [row for row in candidates if row["eligible"]]
++        decisions.append({"view": view["name"], "pixels_per_m": pixels_per_m,
++                          "feature_pixels": feature_pixels, "required_features": required,
++                          "selected_lod": min(eligible, key=lambda row: row["triangles"])["lod"] if eligible else None,
++                          "status": "PASS" if eligible else "HOLD", "candidates": candidates})
++    return {"schema": PLAN_SCHEMA, "status": "PASS" if all(row["status"] == "PASS" for row in decisions) else "HOLD",
++            "source_sha256": _digest(raw_source), "request_sha256": _digest(raw_request),
++            "source": copy.deepcopy(raw_source), "request": copy.deepcopy(raw_request),
++            "anchor_receipts": anchors, "decisions": decisions,
++            "truth": "Selection is justified by supplied measurements; mesh measurement and engine playback remain external."}
++
++
++def publish_game_runtime_realization(path, source, request):
++    destination = Path(path)
++    if destination.exists():
++        raise FileExistsError(f"refusing to overwrite {destination}")
++    plan = compose_game_runtime_realization(source, request)
++    destination.mkdir(parents=True)
++    try:
++        atomic_write_json(destination / "source.json", source)
++        atomic_write_json(destination / "request.json", request)
++        atomic_write_json(destination / "realization-plan.json", plan)
++    except Exception:
++        for child in destination.iterdir():
++            child.unlink()
++        destination.rmdir()
++        raise
++    return plan
+diff --git a/src/axm_uc/visual_assets_cli.py b/src/axm_uc/visual_assets_cli.py
+index 93e05b8..6b30805 100644
+--- a/src/axm_uc/visual_assets_cli.py
++++ b/src/axm_uc/visual_assets_cli.py
+@@ -36,6 +36,7 @@ from .game_character_expression import (EXPRESSIONS, STANCES, game_character_exp
+                                         publish_character_expression)
+ from .game_motion_timing import PROFILES as MOTION_PROFILES, game_motion_timing_catalog, publish_game_motion
+ from .game_secondary_motion import game_secondary_motion_catalog, publish_secondary_motion
++from .game_runtime_realization import game_runtime_realization_catalog, publish_game_runtime_realization
+ 
+ BASE_CATEGORIES = ["texture", "gradient", "material", "fixture", "decal", "palette"]
+ EXPANDED_CATEGORIES = ["surface", "pigment", "sprite", "mesh", "vector-part"]
+@@ -62,6 +63,7 @@ def combined_catalog() -> dict:
+         "game_character_expressions": game_character_expression_catalog(),
+         "game_motion_timing": game_motion_timing_catalog(),
+         "game_secondary_motion": game_secondary_motion_catalog(),
++        "game_runtime_realization": game_runtime_realization_catalog(),
+     }
+ 
+ 
+@@ -76,6 +78,12 @@ def build_parser() -> argparse.ArgumentParser:
+     sub.add_parser("character-expression-catalog", help="show static face expressions and storytelling stances")
+     sub.add_parser("motion-timing-catalog", help="show deterministic anticipation, impact and settle profiles")
+     sub.add_parser("secondary-motion-catalog", help="show reusable inertial follow-through profiles")
++    sub.add_parser("game-realization-catalog", help="show measured LOD, anchor and readability planning")
++    realization = sub.add_parser(
++        "game-realization-plan", help="select useful LODs from measured anchor and screen-space evidence")
++    realization.add_argument("source", help="JSON measured LOD source contract")
++    realization.add_argument("request", help="JSON view and tolerance request")
++    realization.add_argument("path", help="new output directory; existing paths are never overwritten")
+     motion = sub.add_parser("motion-compose", help="compose sampled local transform tracks with timing receipts")
+     motion.add_argument("request", help="JSON motion request with explicit rest/action transform channels")
+     motion.add_argument("path", help="new output directory; existing paths are never overwritten")
+@@ -245,6 +253,12 @@ def main(argv: list[str] | None = None) -> int:
+         result = game_motion_timing_catalog()
+     elif args.command == "secondary-motion-catalog":
+         result = game_secondary_motion_catalog()
++    elif args.command == "game-realization-catalog":
++        result = game_runtime_realization_catalog()
++    elif args.command == "game-realization-plan":
++        source = json.loads(Path(args.source).read_text(encoding="utf-8"))
++        request = json.loads(Path(args.request).read_text(encoding="utf-8"))
++        result = publish_game_runtime_realization(args.path, source, request)
+     elif args.command == "motion-compose":
+         request = json.loads(Path(args.request).read_text(encoding="utf-8"))
+         result = publish_game_motion(args.path, request, args.profile)
+diff --git a/tests/test_game_runtime_realization.py b/tests/test_game_runtime_realization.py
+new file mode 100644
+index 0000000..4466d9e
+--- /dev/null
++++ b/tests/test_game_runtime_realization.py
+@@ -0,0 +1,157 @@
++import copy
++from contextlib import redirect_stdout
++import io
++import json
++from pathlib import Path
++import tempfile
++import unittest
++
++from axm_uc.game_runtime_realization import (
++    PLAN_SCHEMA, SOURCE_SCHEMA, compose_game_runtime_realization,
++    game_runtime_realization_catalog, publish_game_runtime_realization,
++)
++from axm_uc.visual_assets_cli import main
++
++
++def anchor(name, kind="socket", x=0):
++    return {"name": name, "kind": kind, "position": [x, 0, 0],
++            "forward": [0, 0, 1], "up": [0, 1, 0]}
++
++
++def source():
++    anchors = [anchor("tool"), anchor("wheel", "contact", -.3)]
++    observations = {
++        "LOD0": [("near", 0, 1), ("play", 0, 1), ("far", 0, 1)],
++        "LOD1": [("near", .012, .998), ("play", .005, .999), ("far", .002, .9995)],
++        "LOD2": [("near", .04, .990), ("play", .018, .996), ("far", .005, .999)],
++    }
++    def observed(lod):
++        return [{"view": view, "rgba_rmse": rmse, "silhouette_iou": iou}
++                for view, rmse, iou in observations[lod]]
++    return {
++        "schema": SOURCE_SCHEMA, "asset_id": "clockwork-smacker", "canonical_lod": "LOD0",
++        "source_sha256": "a" * 64,
++        "features": [
++            {"name": "hero-shape", "hierarchy": "primary", "world_size_m": .8, "min_pixels": 5},
++            {"name": "clock-face", "hierarchy": "secondary", "world_size_m": .15, "min_pixels": 10},
++            {"name": "lucky-duck", "hierarchy": "detail", "world_size_m": .06, "min_pixels": 8},
++        ],
++        "lods": [
++            {"name": "LOD0", "triangles": 60000, "max_deviation_m": 0,
++             "features": ["hero-shape", "clock-face", "lucky-duck"], "anchors": anchors,
++             "render_observations": observed("LOD0")},
++            {"name": "LOD1", "triangles": 28000, "max_deviation_m": .002,
++             "features": ["hero-shape", "clock-face"], "anchors": copy.deepcopy(anchors),
++             "render_observations": observed("LOD1")},
++            {"name": "LOD2", "triangles": 9000, "max_deviation_m": .005,
++             "features": ["hero-shape"], "anchors": copy.deepcopy(anchors),
++             "render_observations": observed("LOD2")},
++        ],
++    }
++
++
++def request():
++    return {"anchor_position_tolerance_m": .001, "anchor_angle_tolerance_deg": .1,
++            "views": [
++                {"name": "near", "distance_m": 2.5, "vertical_fov_deg": 60,
++                 "viewport_height_px": 1080, "error_budget_px": 2,
++                 "max_rgba_rmse": .01, "min_silhouette_iou": .995},
++                {"name": "play", "distance_m": 10, "vertical_fov_deg": 60,
++                 "viewport_height_px": 1080, "error_budget_px": 2,
++                 "max_rgba_rmse": .01, "min_silhouette_iou": .995},
++                {"name": "far", "distance_m": 40, "vertical_fov_deg": 60,
++                 "viewport_height_px": 1080, "error_budget_px": 2,
++                 "max_rgba_rmse": .01, "min_silhouette_iou": .995},
++            ]}
++
++
++class RuntimeRealizationTests(unittest.TestCase):
++    def test_catalog_keeps_truth_boundaries(self):
++        catalog = game_runtime_realization_catalog()
++        self.assertTrue(catalog["canonical_source_preserved"])
++        self.assertIn("does not measure meshes", catalog["truth"])
++
++    def test_selects_cheapest_eligible_lod_at_each_distance(self):
++        result = compose_game_runtime_realization(source(), request())
++        self.assertEqual(result["schema"], PLAN_SCHEMA)
++        self.assertEqual(result["status"], "PASS")
++        self.assertEqual([row["selected_lod"] for row in result["decisions"]],
++                         ["LOD0", "LOD1", "LOD2"])
++
++    def test_features_are_required_only_while_projected_readable(self):
++        result = compose_game_runtime_realization(source(), request())
++        self.assertEqual(result["decisions"][0]["required_features"],
++                         ["clock-face", "hero-shape", "lucky-duck"])
++        self.assertEqual(result["decisions"][1]["required_features"],
++                         ["clock-face", "hero-shape"])
++        self.assertEqual(result["decisions"][2]["required_features"], ["hero-shape"])
++
++    def test_anchor_drift_blocks_only_the_drifting_lod(self):
++        raw = source()
++        raw["lods"][2]["anchors"][0]["position"][0] = .01
++        result = compose_game_runtime_realization(raw, request())
++        far = result["decisions"][2]
++        self.assertEqual(far["selected_lod"], "LOD1")
++        self.assertFalse(next(row for row in far["candidates"] if row["lod"] == "LOD2")["anchors_pass"])
++
++    def test_render_evidence_blocks_geometry_only_false_confidence(self):
++        result = compose_game_runtime_realization(source(), request())
++        near_lod2 = next(row for row in result["decisions"][0]["candidates"] if row["lod"] == "LOD2")
++        self.assertLessEqual(near_lod2["projected_error_px"], request()["views"][0]["error_budget_px"])
++        self.assertFalse(near_lod2["render_pass"])
++        self.assertEqual(result["decisions"][0]["selected_lod"], "LOD0")
++
++    def test_canonical_lod_remains_honest_fallback(self):
++        raw = source()
++        raw["lods"][0]["max_deviation_m"] = 0
++        req = request()
++        req["anchor_position_tolerance_m"] = 0
++        for lod in raw["lods"]:
++            lod["anchors"][0]["position"][0] = .01
++        result = compose_game_runtime_realization(raw, req)
++        self.assertEqual(result["status"], "PASS")  # all LODs share the same canonical frame
++        raw["lods"][1]["anchors"][0]["position"][0] = .02
++        raw["lods"][2]["anchors"][0]["position"][0] = .02
++        req["views"] = [dict(req["views"][0], error_budget_px=.01)]
++        result = compose_game_runtime_realization(raw, req)
++        self.assertEqual(result["status"], "PASS")
++        self.assertEqual(result["decisions"][0]["selected_lod"], "LOD0")
++
++    def test_deterministic_and_preserves_caller_sources(self):
++        raw, req = source(), request()
++        before = (copy.deepcopy(raw), copy.deepcopy(req))
++        first = compose_game_runtime_realization(raw, req)
++        self.assertEqual(first, compose_game_runtime_realization(raw, req))
++        self.assertEqual((raw, req), before)
++        self.assertEqual(first["source"], raw)
++
++    def test_validation_rejects_bad_ladder_feature_and_anchor_frames(self):
++        cases = []
++        raw = source(); raw["lods"][1]["triangles"] = raw["lods"][0]["triangles"]; cases.append(raw)
++        raw = source(); raw["lods"][1]["features"].append("invented"); cases.append(raw)
++        raw = source(); raw["lods"][1]["anchors"].pop(); cases.append(raw)
++        raw = source(); raw["lods"][1]["anchors"][0]["forward"] = [0, 2, 0]; cases.append(raw)
++        raw = source(); raw["lods"][1]["render_observations"].clear(); cases.append(raw)
++        for case in cases:
++            with self.assertRaises(ValueError):
++                compose_game_runtime_realization(case, request())
++
++    def test_publisher_and_cli_are_transactional(self):
++        with tempfile.TemporaryDirectory() as temporary:
++            root = Path(temporary)
++            output = root / "direct"
++            publish_game_runtime_realization(output, source(), request())
++            self.assertEqual(json.loads((output / "source.json").read_text()), source())
++            with self.assertRaises(FileExistsError):
++                publish_game_runtime_realization(output, source(), request())
++            (root / "source.json").write_text(json.dumps(source()))
++            (root / "request.json").write_text(json.dumps(request()))
++            cli = root / "cli"
++            with redirect_stdout(io.StringIO()):
++                self.assertEqual(main(["game-realization-plan", str(root / "source.json"),
++                                       str(root / "request.json"), str(cli)]), 0)
++            self.assertTrue((cli / "realization-plan.json").is_file())
++
++
++if __name__ == "__main__":
++    unittest.main()
+diff --git a/tools/blender/game_runtime_realization_roundtrip.py b/tools/blender/game_runtime_realization_roundtrip.py
+new file mode 100644
+index 0000000..c0e8266
+--- /dev/null
++++ b/tools/blender/game_runtime_realization_roundtrip.py
+@@ -0,0 +1,415 @@
++"""Build and freshly verify contact/socket-safe game-view realizations.
++
++Extends the original animated Clockwork Smacker proof with explicit attachment
++frames and rolling contacts, three real geometry tiers and measured game-view
++renders.  The deterministic runtime planner consumes the resulting evidence.
++"""
++from __future__ import annotations
++
++import argparse
++import hashlib
++import json
++import math
++from pathlib import Path
++import sys
++
++import bpy
++from mathutils import Vector
++from mathutils.bvhtree import BVHTree
++from PIL import Image, ImageDraw, ImageFont
++
++HERE = Path(__file__).resolve().parent
++ROOT = HERE.parent.parent
++sys.path.insert(0, str(HERE))
++sys.path.insert(0, str(ROOT / "src"))
++
++import axm_blender_forge as geo
++from axm_hero_motion import clean_triangles, rig
++from axm_salvage_surfaces import solid
++import game_motion_timing_roundtrip as primary_proof
++import game_secondary_motion_roundtrip as secondary_proof
++from axm_uc.game_runtime_realization import SOURCE_SCHEMA, compose_game_runtime_realization
++
++
++FPS = 30
++ACTION_NAME = secondary_proof.ACTION_NAME
++LOD_SPECS = (("LOD0", 1.0), ("LOD1", .48), ("LOD2", .18))
++ANCHOR_BONES = {
++    "wheel-contact-left": "Contact_Wheel.L",
++    "wheel-contact-right": "Contact_Wheel.R",
++    "tool-socket": "Socket_Tool",
++    "companion-socket": "Socket_Companion",
++}
++FEATURE_MATERIALS = {
++    "clock-signal": ("Feature_ClockSignal",),
++    "lucky-duck": ("Feature_LuckyDuck",),
++    "patched-cape": ("Feature_CapeRed", "Feature_CapeIvory"),
++    "tool-bag": ("Feature_SecondaryTeal",),
++}
++VIEWS = (
++    {"name": "near-hero", "distance_m": 2.8, "vertical_fov_deg": 42,
++     "viewport_height_px": 512, "error_budget_px": 2.0,
++     "max_rgba_rmse": .01, "min_silhouette_iou": .995},
++    {"name": "gameplay", "distance_m": 9.0, "vertical_fov_deg": 42,
++     "viewport_height_px": 512, "error_budget_px": 2.0,
++     "max_rgba_rmse": .01, "min_silhouette_iou": .995},
++    {"name": "far-gameplay", "distance_m": 22.0, "vertical_fov_deg": 42,
++     "viewport_height_px": 512, "error_budget_px": 2.0,
++     "max_rgba_rmse": .01, "min_silhouette_iou": .995},
++)
++
++
++def sha256(path):
++    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
++
++
++def add_realization_bones(hero):
++    # Two points across each wheel width define a rolling contact line. The
++    # bone frame supplies the authored surface normal and tangent orientation.
++    hero.bone("Contact_Wheel.L", (-.29, .02, .035), (-.19, .02, .035), "Root")
++    hero.bone("Contact_Wheel.R", (.29, .02, .035), (.39, .02, .035), "Root")
++    hero.bone("Socket_Tool", (.39, -.20, .72), (.39, -.35, .72), "Body")
++    hero.bone("Socket_Companion", (-.34, .04, 1.22), (-.34, .04, 1.42), "Body")
++
++
++def feature_surfaces(hero):
++    hero.mat["cyan"] = solid("Feature_ClockSignal", "#2be0ff", .10, .24, 3.2)
++    hero.mat["duck"] = solid("Feature_LuckyDuck", "#ffc42e", 0, .34, 0)
++
++
++def secondary_feature_surfaces(hero):
++    hero.mat["red"] = solid("Feature_CapeRed", "#b43b35", .28, .62, 0)
++    hero.mat["ivory"] = solid("Feature_CapeIvory", "#d9cfb6", .42, .48, 0)
++    hero.mat["teal"] = solid("Feature_SecondaryTeal", "#297b83", .48, .42, 0)
++
++
++def bvh(mesh):
++    return BVHTree.FromPolygons([tuple(vertex.co) for vertex in mesh.vertices],
++                                [tuple(poly.vertices) for poly in mesh.polygons], all_triangles=False)
++
++
++def maximum_surface_deviation(source_mesh, target_mesh, sample_limit=12000):
++    if source_mesh == target_mesh:
++        return 0.0
++    tree = bvh(target_mesh)
++    stride = max(1, math.ceil(len(source_mesh.vertices) / sample_limit))
++    maximum = 0.0
++    for index in range(0, len(source_mesh.vertices), stride):
++        vertex = source_mesh.vertices[index]
++        nearest = tree.find_nearest(vertex.co)
++        if nearest[0] is None:
++            raise ValueError("LOD surface query failed")
++        maximum = max(maximum, (vertex.co - nearest[0]).length)
++    return maximum
++
++
++def export_lods(output, arm, source_mesh):
++    exports = {}
++    for lod, ratio in LOD_SPECS:
++        target = source_mesh
++        if ratio < 1:
++            target = source_mesh.copy()
++            target.data = source_mesh.data.copy()
++            bpy.context.collection.objects.link(target)
++            target.name = f"AXM_Clockwork_Smacker_{lod}"
++            target.modifiers.clear()
++            geo.select_only([target])
++            bpy.context.view_layer.objects.active = target
++            modifier = target.modifiers.new("Measured game LOD", "DECIMATE")
++            modifier.ratio = ratio
++            modifier.use_collapse_triangulate = True
++            bpy.ops.object.modifier_apply(modifier=modifier.name)
++            repaired = target.data.validate(verbose=False, clean_customdata=False)
++            print("LOD_MESH_VALIDATION", lod, "repaired", repaired, flush=True)
++            clean_triangles(target)
++            skin = target.modifiers.new("Skin", "ARMATURE")
++            skin.object = arm
++        deviation = maximum_surface_deviation(source_mesh.data, target.data)
++        geo.select_only([arm, target])
++        bpy.context.view_layer.objects.active = arm
++        path = output / f"AXM_Clockwork_Smacker_Realization_{lod}.glb"
++        bpy.ops.export_scene.gltf(
++            filepath=str(path), export_format="GLB", use_selection=True,
++            export_skins=True, export_animations=True, export_animation_mode="ACTIONS",
++            export_force_sampling=True, export_yup=True, export_extras=True,
++            export_tangents=True, export_cameras=False, export_lights=False,
++            export_materials="EXPORT")
++        target.data.calc_loop_triangles()
++        exports[lod] = {"file": path.name, "bytes": path.stat().st_size,
++                        "triangles": len(target.data.loop_triangles),
++                        "vertices": len(target.data.vertices), "max_deviation_m": deviation,
++                        "sha256": sha256(path)}
++        if target is not source_mesh:
++            bpy.data.objects.remove(target, do_unlink=True)
++    arm.animation_data.action = bpy.data.actions[ACTION_NAME]
++    bpy.context.scene.frame_set(1)
++    blend = output / "AXM_Clockwork_Smacker_Realization.blend"
++    bpy.ops.wm.save_as_mainfile(filepath=str(blend), compress=True)
++    return exports, blend
++
++
++def build(output):
++    output.mkdir(parents=True, exist_ok=False)
++    bpy.ops.wm.read_factory_settings(use_empty=True)
++    bpy.context.scene.render.fps = FPS
++    hero = primary_proof.new_hero(output)
++    feature_surfaces(hero)
++    primary_proof.build_geometry(hero)
++    secondary_proof.add_secondary_bones(hero)
++    add_realization_bones(hero)
++    secondary_feature_surfaces(hero)
++    secondary_proof.add_secondary_geometry(hero)
++    arm, mesh = rig(hero)
++    arm.name = "AXM_Clockwork_Smacker_Realization_Rig"
++    mesh.name = "AXM_Clockwork_Smacker_Realization"
++    primary, secondary, animation = secondary_proof.author_action(arm)
++    exports, blend = export_lods(output, arm, mesh)
++    report = {
++        "schema": "axm.game-runtime-realization-build/v0.1",
++        "asset_id": "axm-clockwork-smacker-realization",
++        "editable_source": blend.name, "editable_source_sha256": sha256(blend),
++        "exports": exports, "animation": animation,
++        "anchors": [{"name": name, "bone": bone,
++                     "kind": "contact" if name.startswith("wheel-contact") else "socket"}
++                    for name, bone in ANCHOR_BONES.items()],
++        "feature_materials": FEATURE_MATERIALS,
++        "views": VIEWS,
++        "truth": "Authored three-tier proof awaiting fresh-import anchor, surface and render checks.",
++        "source_sha256": sha256(__file__),
++    }
++    (output / "build-manifest.json").write_text(json.dumps(report, indent=2) + "\n")
++
++
++def action_by_prefix(prefix):
++    found = [action for action in bpy.data.actions if action.name == prefix or action.name.startswith(prefix)]
++    if len(found) != 1:
++        raise ValueError(f"expected one action {prefix}, found {[item.name for item in found]}")
++    return found[0]
++
++
++def bone_frame(arm, name, kind):
++    bone = arm.pose.bones[name]
++    matrix = arm.matrix_world @ bone.matrix
++    position = arm.matrix_world @ bone.head
++    forward = (matrix.to_3x3() @ Vector((0, 1, 0))).normalized()
++    # Contacts use +Z as the authored outward/up normal; sockets retain a full
++    # frame with the same orthogonal +Z direction.
++    up = (matrix.to_3x3() @ Vector((0, 0, 1))).normalized()
++    return {"name": next(label for label, bone_name in ANCHOR_BONES.items() if bone_name == name),
++            "kind": kind, "position": list(position), "forward": list(forward), "up": list(up)}
++
++
++def closest_surface_distance(mesh, point_world):
++    depsgraph = bpy.context.evaluated_depsgraph_get()
++    evaluated = mesh.evaluated_get(depsgraph)
++    local = evaluated.matrix_world.inverted() @ point_world
++    hit, location, normal, _ = evaluated.closest_point_on_mesh(local, distance=.10, depsgraph=depsgraph)
++    if not hit:
++        return None
++    world = evaluated.matrix_world @ location
++    return (world - point_world).length
++
++
++def feature_counts(mesh):
++    names = [slot.material.name if slot.material else "" for slot in mesh.material_slots]
++    counts = {name: 0 for name in names}
++    mesh.data.calc_loop_triangles()
++    for triangle in mesh.data.loop_triangles:
++        if triangle.material_index < len(names):
++            counts[names[triangle.material_index]] += 1
++    result = {"hero-shape": len(mesh.data.loop_triangles)}
++    for feature, materials in FEATURE_MATERIALS.items():
++        result[feature] = sum(counts.get(name, 0) for name in materials)
++    return result
++
++
++def imported_surface_deviation(canonical_points, mesh):
++    tree = bvh(mesh.data)
++    maximum = 0.0
++    for point in canonical_points:
++        nearest = tree.find_nearest(point)
++        if nearest[0] is None:
++            raise ValueError("imported LOD surface query failed")
++        maximum = max(maximum, (point - nearest[0]).length)
++    return maximum
++
++
++def studio(distance):
++    primary_proof.studio(512)
++    scene = bpy.context.scene
++    scene.render.film_transparent = True
++    camera = scene.camera
++    camera.data.type = "PERSP"
++    camera.data.lens_unit = "FOV"
++    camera.data.angle = math.radians(42)
++    direction = Vector((2.6, -5.4, 2.05)).normalized()
++    target = Vector((.24, 0, .90))
++    camera.location = target + direction * distance
++    camera.rotation_euler = (target - camera.location).to_track_quat("-Z", "Y").to_euler()
++
++
++def render_view(output, lod, distance):
++    studio(distance)
++    scene = bpy.context.scene
++    path = output / "game-view-renders" / f"{lod}-{distance:.1f}m.png"
++    scene.render.filepath = str(path)
++    bpy.ops.render.render(write_still=True)
++    return path
++
++
++def pixel_comparison(reference_path, candidate_path):
++    a = Image.open(reference_path).convert("RGBA")
++    b = Image.open(candidate_path).convert("RGBA")
++    pa, pb = list(a.getdata()), list(b.getdata())
++    mse = sum(sum((x - y) ** 2 for x, y in zip(ca, cb)) for ca, cb in zip(pa, pb)) / (len(pa) * 4 * 255 * 255)
++    alpha_a = [value[3] > 8 for value in pa]
++    alpha_b = [value[3] > 8 for value in pb]
++    intersection = sum(x and y for x, y in zip(alpha_a, alpha_b))
++    union = sum(x or y for x, y in zip(alpha_a, alpha_b))
++    return {"rgba_rmse": math.sqrt(mse), "silhouette_iou": intersection / union if union else 1.0}
++
++
++def verify(output):
++    build_report = json.loads((output / "build-manifest.json").read_text())
++    render_dir = output / "game-view-renders"
++    render_dir.mkdir(exist_ok=False)
++    lod_rows = []
++    renders = {}
++    canonical_points = None
++    for lod, _ in LOD_SPECS:
++        row = build_report["exports"][lod]
++        bpy.ops.wm.read_factory_settings(use_empty=True)
++        bpy.context.scene.render.fps = FPS
++        bpy.ops.import_scene.gltf(filepath=str(output / row["file"]))
++        arms = [obj for obj in bpy.context.scene.objects if obj.type == "ARMATURE"]
++        arm = arms[0] if len(arms) == 1 else None
++        skins = [obj for obj in bpy.context.scene.objects if obj.type == "MESH" and obj.parent == arm]
++        if arm is None or len(skins) != 1:
++            raise ValueError(f"{lod} did not re-import as one armature and skin")
++        mesh = skins[0]
++        mesh.data.calc_loop_triangles()
++        if canonical_points is None:
++            canonical_points = [vertex.co.copy() for vertex in mesh.data.vertices]
++        measured_deviation = imported_surface_deviation(canonical_points, mesh)
++        arm.animation_data_create()
++        arm.animation_data.action = action_by_prefix(ACTION_NAME)
++        if getattr(arm.animation_data.action, "slots", None):
++            arm.animation_data.action_slot = arm.animation_data.action.slots[0]
++        bpy.context.scene.frame_set(1)
++        anchors = []
++        surface = {}
++        for label, bone_name in ANCHOR_BONES.items():
++            kind = "contact" if label.startswith("wheel-contact") else "socket"
++            anchors.append(bone_frame(arm, bone_name, kind))
++            if kind == "contact":
++                surface[label] = closest_surface_distance(mesh, arm.matrix_world @ arm.pose.bones[bone_name].head)
++        features = feature_counts(mesh)
++        present = [name for name, count in features.items() if count > 0]
++        lod_rows.append({"name": lod, "triangles": len(mesh.data.loop_triangles),
++                         "max_deviation_m": measured_deviation,
++                         "features": present, "anchors": anchors,
++                         "feature_triangles": features, "contact_surface_distance_m": surface,
++                         "build_reported_triangles": row["triangles"],
++                         "build_reported_max_deviation_m": row["max_deviation_m"]})
++        for view in VIEWS:
++            renders[(lod, view["name"])] = render_view(output, lod, view["distance_m"])
++
++    comparisons = {}
++    for view in VIEWS:
++        reference = renders[("LOD0", view["name"])]
++        comparisons[view["name"]] = {
++            lod: pixel_comparison(reference, renders[(lod, view["name"])]) for lod, _ in LOD_SPECS
++        }
++    for row in lod_rows:
++        row["render_observations"] = [
++            {"view": view["name"], **comparisons[view["name"]][row["name"]]}
++            for view in VIEWS
++        ]
++
++    source = {
++        "schema": SOURCE_SCHEMA, "asset_id": build_report["asset_id"], "canonical_lod": "LOD0",
++        "source_sha256": build_report["editable_source_sha256"],
++        "features": [
++            {"name": "hero-shape", "hierarchy": "primary", "world_size_m": 1.85, "min_pixels": 5},
++            {"name": "clock-signal", "hierarchy": "secondary", "world_size_m": .38, "min_pixels": 10},
++            {"name": "patched-cape", "hierarchy": "secondary", "world_size_m": .55, "min_pixels": 8},
++            {"name": "lucky-duck", "hierarchy": "detail", "world_size_m": .15, "min_pixels": 9},
++            {"name": "tool-bag", "hierarchy": "detail", "world_size_m": .31, "min_pixels": 8},
++        ],
++        "lods": [{key: row[key] for key in ("name", "triangles", "max_deviation_m", "features",
++                                                   "anchors", "render_observations")}
++                 for row in lod_rows],
++    }
++    request = {"views": list(VIEWS), "anchor_position_tolerance_m": 1e-5,
++               "anchor_angle_tolerance_deg": .01}
++    plan = compose_game_runtime_realization(source, request)
++    max_surface = max(value for row in lod_rows for value in row["contact_surface_distance_m"].values()
++                      if value is not None)
++    result = {
++        "schema": "axm.game-runtime-realization-roundtrip/v0.1", "fresh_import": True,
++        "source": source, "request": request, "plan": plan, "lod_evidence": lod_rows,
++        "render_comparisons": comparisons, "maximum_contact_surface_distance_m": max_surface,
++        "limits": {
++            "contact": "Two authored wheel markers checked against imported mesh surfaces; not a continuous collision patch.",
++            "readability": "Pixel comparison and representative stills only; no target-game camera or user test.",
++            "performance": "Triangle/file reductions only; no frame-time measurement.",
++            "engine_playback": False,
++        },
++    }
++    result["passed"] = (plan["status"] == "PASS" and max_surface <= .002 and
++                        all(all(anchor["passed"] for anchor in rows)
++                            for rows in plan["anchor_receipts"].values()))
++    (output / "roundtrip-receipt.json").write_text(json.dumps(result, indent=2) + "\n")
++    (output / "realization-source.json").write_text(json.dumps(source, indent=2) + "\n")
++    (output / "realization-request.json").write_text(json.dumps(request, indent=2) + "\n")
++    (output / "realization-plan.json").write_text(json.dumps(plan, indent=2) + "\n")
++    (output / "INTEGRATION.md").write_text(
++        "# AXM Clockwork Smacker — game realization proof\n\n"
++        "Import one GLB and play `Bell_Smack_Secondary_Followthrough`. Use `realization-plan.json` "
++        "as evidence for the supplied 42-degree/512px camera policy, not as a universal distance table. "
++        "`Socket_Tool` and `Socket_Companion` are attachment frames. `Contact_Wheel.L/R` mark rolling "
++        "contacts checked against the imported surface at rest. Re-evaluate for another camera, altered "
++        "mesh, collision shape, scale or target engine.\n")
++    if not result["passed"]:
++        raise ValueError("fresh-import game realization verification failed")
++
++
++def sheet(output):
++    receipt = json.loads((output / "roundtrip-receipt.json").read_text())
++    cell, header = 512, 120
++    canvas = Image.new("RGB", (cell * 3, header + cell * 3), (19, 23, 34))
++    draw = ImageDraw.Draw(canvas)
++    font = ImageFont.load_default(size=28)
++    small = ImageFont.load_default(size=22)
++    draw.text((24, 18), "AXM GAME-VIEW REALIZATION - ACTUAL GLB LODS", fill=(243, 231, 201), font=font)
++    selected = {row["view"]: row["selected_lod"] for row in receipt["plan"]["decisions"]}
++    for column, view in enumerate(VIEWS):
++        title = f"{view['name']}  {view['distance_m']:g}m\nselected {selected[view['name']]}"
++        draw.multiline_text((column * cell + 18, 62), title, fill=(57, 226, 242), font=small, spacing=2)
++    for row_index, (lod, _) in enumerate(LOD_SPECS):
++        for column, view in enumerate(VIEWS):
++            image = Image.open(output / "game-view-renders" / f"{lod}-{view['distance_m']:.1f}m.png").convert("RGBA")
++            tile = Image.new("RGBA", image.size, (19, 23, 34, 255))
++            tile.alpha_composite(image)
++            canvas.paste(tile.convert("RGB"), (column * cell, header + row_index * cell))
++            draw.text((column * cell + 16, header + row_index * cell + 14), lod,
++                      fill=(255, 196, 55), font=small)
++    canvas.save(output / "game-runtime-realization.png")
++
++
++def main():
++    parser = argparse.ArgumentParser()
++    parser.add_argument("mode", choices=("build", "verify", "sheet"))
++    parser.add_argument("--output", type=Path, required=True)
++    args = parser.parse_args(sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else None)
++    output = args.output.resolve()
++    if args.mode == "build":
++        build(output)
++    elif args.mode == "verify":
++        verify(output)
++    else:
++        sheet(output)
++
++
++if __name__ == "__main__":
++    main()

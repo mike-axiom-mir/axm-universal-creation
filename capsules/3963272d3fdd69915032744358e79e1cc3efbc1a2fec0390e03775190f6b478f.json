@@ -1,0 +1,102 @@
+{
+  "capsule_id": "3963272d3fdd69915032744358e79e1cc3efbc1a2fec0390e03775190f6b478f",
+  "evidence": {
+    "files": [
+      {
+        "additions": 110,
+        "binary": false,
+        "content_sha256": "ca0e55b9c32d7917f8b86b6ecf173b11aa4a375cc3b85c50acc3eee13653e819",
+        "deletions": 0,
+        "path": "docs/CREATIVE_PRECISION_WAVE2.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Creative Precision Fabric \u2014 executable hand wave 2",
+          "Executable creative-hand registry",
+          "Raster adjustment depth",
+          "Raster filters",
+          "Brush operators",
+          "Selection and masks",
+          "Retouch",
+          "Transform operations",
+          "Vector operations",
+          "Pixel-art operations",
+          "Effect graphs",
+          "Recipe promotion",
+          "Verification boundary"
+        ]
+      },
+      {
+        "additions": 3,
+        "binary": false,
+        "content_sha256": "351cccfc0e8bab54e6b2e73792194bd7aee5d953e19dfc919527ce74a0ee9508",
+        "deletions": 0,
+        "path": "tests/test_creative_precision_fabric.py",
+        "status": "M",
+        "symbols": [
+          "CreativePrecisionFabricTests"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "3e3df517888e76f10745356029b77711d1d767761cffa8d988cfeea5b911efdf"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "adjustment",
+      "art",
+      "axm",
+      "boundary",
+      "brush",
+      "creation-machine",
+      "creative",
+      "depth",
+      "effect",
+      "executable",
+      "execute",
+      "fabric",
+      "filters",
+      "graphs",
+      "hand",
+      "hands",
+      "masks",
+      "operations",
+      "operators",
+      "pixel",
+      "precision",
+      "promotion",
+      "raster",
+      "recipe",
+      "registry",
+      "retouch",
+      "selection",
+      "standalone",
+      "transform",
+      "universal-creation",
+      "vector",
+      "verification",
+      "wave",
+      "wave2"
+    ]
+  },
+  "source": {
+    "base": "7bfd2cf45246cf4a564abc3c379782c84d808567",
+    "commit_subject": "Execute 86 creative precision hands (#85)",
+    "head": "6d36c725d8c0e2b12bab87ead25d4e22e87ae8da",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

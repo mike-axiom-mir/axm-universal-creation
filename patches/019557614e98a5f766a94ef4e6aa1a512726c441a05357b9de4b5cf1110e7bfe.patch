@@ -1,0 +1,1364 @@
+diff --git a/GAME_STYLE_GROWTH.md b/GAME_STYLE_GROWTH.md
+index 979916b..cc0a2ba 100644
+--- a/GAME_STYLE_GROWTH.md
++++ b/GAME_STYLE_GROWTH.md
+@@ -101,6 +101,41 @@ exports when those features change. Measure performance before making claims.
+ 
+ ## Current checkpoint
+ 
++### Portable sticker fabric and registry — 2026-09-15
++
++- Mike requested pullable reusable creation parts and a registry usable by other
++  programs. Added independent `axm_stickers` (standard library only) with immutable
++  versions, exact instance pins, declared parameters, source attribution, indexed
++  lookup, shared asset blobs and portable bundles. Registry lives inside the core;
++  future dedicated repo name is `axm-sticker-fabric`, not a required service.
++- UC consumes the core through `sticker_adapter.py`: original layered Studio
++  recipes, translated/scaled/rotated/alpha placements, per-call render reuse and
++  replayable scene publication. Canonical host, nested sticker recipes, source
++  PNGs and independent instance controls survive the flattened preview.
++- Rigid GLB stickers gain source/target socket contracts and optional exported
++  host-socket motion. Original geometry/materials/buffer and source bytes remain
++  retained. Actual GLB re-import checks 17 samples with maximum socket error
++  0.0000000142 m. This is rigid attachment, not skinning, projection or physics.
++- Local evidence: 13 focused tests pass, including isolated import without UC,
++  cross-registry bundles, immutable versions, invalid overrides/pins/sockets,
++  exact pixels and source-loss scene replay. The original proof registered 1,000
++  metadata fixtures sharing two PNGs and placed 1,000 instances with one render:
++  0.38–0.43 seconds on this host, not an arbitrary-device speed guarantee.
++- Proof: `tools/sticker_proof.py`, `docs/STICKER_FABRIC.md`; dedicated CI exports
++  actual GLBs, editable source, portable scenes/registry and an independently
++  installable core package. Static proof inspection confirms distinct 2D instances
++  and visible 3D posed geometry; an occluding per-object preview-sort error was
++  repaired by sorting faces together. No continuous playback/PBR acceptance.
++- Roots: Truth separates contract/render/visual/performance evidence; Agency keeps
++  changes explicit and versions pinned; Continuity retains rich source/provenance
++  across derivatives; Wisdom bounds work and measures reuse instead of promising
++  instant arbitrary complexity. Existing donors and paused platform are unchanged.
++- Lane: `codex/rts-reference-foundry`, based on current main `90148a8`.
++  PR #54 is unrelated. Next: placement UI, optional smoother sampling, measured
++  surface projection and nested assembly references. Practice promotion remains
++  explicit registration; no silent additions to a shared registry.
++
++
+ ### Profile-based creative practice — 2026-09-15
+ 
+ - Mike requested resumable heartbeat practice, identity-linked directed growth,
+diff --git a/docs/STICKER_FABRIC.md b/docs/STICKER_FABRIC.md
+new file mode 100644
+index 0000000..1207a90
+--- /dev/null
++++ b/docs/STICKER_FABRIC.md
+@@ -0,0 +1,168 @@
++# Sticker fabric and local registry
++
++A sticker is an immutable, versioned editable creation. A placed instance pins
++that exact definition and stores its own parameter overrides and placement.
++Registering a new version does not update existing creations. Rich source remains
++canonical; cached images and attached GLBs are derived realizations.
++
++## Repository boundary
++
++`src/axm_stickers/` is the standalone fabric core, including the registry.
++It imports only Python's standard library. Other programs can use this package,
++the JSON contracts, or the portable SQLite/JSON bundles. No UC, AI, browser,
++Node, network, account or registry service is needed to register/search/resolve.
++
++`src/axm_uc/sticker_adapter.py` is a separate consumer. Its 2D adapter executes
++UC's existing Studio compositor (local Node required). Its rigid 3D adapter uses
++UC's existing GLB pose reader (standard library only).
++
++The suggested future dedicated repository is `axm-sticker-fabric`; keep registry
++code in it initially. A public registry service may be added later if actual
++sharing/discovery needs it. This change creates no repository or service.
++`tools/sticker_proof.py` produces an independently installable `standalone-core`
++folder, with license and a pyproject for `axm-sticker-fabric` v0.1.0. The same
++source is packaged in UC today. Avoid maintaining divergent copies when moving
++it: choose one package source and pin consumers to released versions.
++
++## Definition and instance contracts
++
++| Definition field | Meaning |
++| --- | --- |
++| `schema` | `axm.sticker/v1` |
++| `id`, `version` | Portable name and positive integer version |
++| `name`, `tags` | Display name and indexed exact search tags |
++| `origin` | Required author, license and source declarations; not a rights audit |
++| `adapter` | Explicit recipe interpreter identifier |
++| `attachment` | 2D/3D space, compatible socket kind and source anchor |
++| `recipe` | Original editable declarative creation state |
++| `assets` | Logical source IDs mapped to exact content digests |
++| `parameters` | Explicit controls, defaults, ranges/choices and recipe paths |
++
++The core validates contracts, not an arbitrary recipe's execution. UC adapters
++validate their supported recipe forms before rendering. Nothing in a recipe or
++bundle is evaluated as Python, JavaScript or shell code.
++
++Parameters support numbers, integers, booleans and explicit choices. Paths refer
++only inside the recipe, must already exist, must not overlap, and their defaults
++must equal source values. Out-of-range or undeclared changes fail. Edit the
++canonical recipe and register a new version to expose new controls.
++
++An `axm.sticker-instance/v1` contains an independent ID, exact
++`{id, version, digest}` pin, overrides and placement. A wrong pin or socket kind
++fails. The API deliberately has no floating `latest` reference or silent upgrade.
++Instance state belongs to the consuming project; the registry does not silently
++modify a project's placements.
++
++## Registry API and CLI
++
++```python
++from axm_stickers import Registry, instance, resolve
++
++with Registry('stickers.sqlite') as registry:
++    definition = registry.get('salvage-signal', 1)
++    placed = instance(definition, 'helmet-badge',
++                      overrides={'signal-opacity': 0.7},
++                      placement={'translation': [120, 80], 'rotation': -15})
++    editable_recipe = resolve(definition, placed)
++    matches = registry.search(tag='salvage', socket='surface', limit=30)
++    portable_bundle = registry.bundle('salvage-signal', 1)
++```
++
++`register(definition, assets)` accepts a digest-to-bytes map; existing verified
++asset blobs can be reused without resupplying them. Same version/same definition
++is idempotent; same version/different definition fails. Source assets are shared
++by digest. `import_bundle` checks exact declared asset membership and byte
++integrity before committing. Metadata, tags and assets commit together.
++
++```sh
++axm-stickers stickers.sqlite request.json
++# or, using just the standalone package:
++python -m axm_stickers stickers.sqlite request.json
++```
++
++Example request: `{"operation":"search","tag":"salvage","limit":30}`.
++The CLI also accepts `get`, `register`, `bundle` and `import_bundle` with the
++same keyword arguments as Python. For binary intake through JSON, use a bundle
++with base64 assets. Search supports adapter/socket/tag filters and row cursors;
++it does not load every asset or choose a most-recent version for the caller.
++
++## 2D layered stickers
++
++`register_studio` captures an existing Studio project's exact source PNGs and
++editable layer recipe. Parameters can expose layer opacity, filters and other
++existing values. The first adapter provides translation, positive X/Y scale,
++rotation in degrees, opacity, declared pixel anchor and ordered alpha compositing.
++
++`stamp_layer` resolves instances, renders each unique resolved recipe once per
++call, and reuses those pixels. Pixel-edge coordinates and nearest-neighbour
++sampling are explicit. Positive angles rotate clockwise in image coordinates.
++Rendering is encoded sRGB RGBA8, following the existing Studio donor.
++Antialiased resampling, arbitrary surface wrapping, mesh UV projection and
++normal/roughness decal channels are not implemented in this first adapter.
++
++`publish_sticker_scene(output, registry, host, source_root, instances)` writes:
++
++- `scene.json`: canonical host and independently editable instance placements;
++- `stickers.sqlite`: only the selected definitions and exact shared sources;
++- `preview/`: a replayable Studio project and composed PNG;
++- `receipt.json`: instance count, cache reuse, clipped work and claim boundaries.
++
++The preview's combined placement layer is flattened for rendering. The nested
++source recipes and instance controls remain in the scene and selected registry.
++Reload `scene.json`, adjust an instance and publish a new output to regenerate.
++Do not use its flattened preview as a replacement for the editable scene.
++The publisher refuses to overwrite an existing target. Original host layers and
++source data remain retained; host global filters still apply to the composition.
++
++## 3D and animated sockets
++
++`register_glb` retains a rigid GLB and optionally exact editable source bytes.
++`attach_glb` creates a derivative by adding a mount node and target socket node.
++Original mesh, material, source buffer and internal animation definitions remain
++intact. Source bytes remain unchanged in the registry. The first adapter refuses
++skinned assets, external images and multiple scenes; it is not mesh fusion or a
++skin/retargeting system.
++
++Frames use row-major matrices multiplying column vectors; GLB matrices are
++converted to glTF's column-major serialization. Use glTF metres and +Y up.
++Source and target sockets must be proper rigid frames. Uniform positive instance
++scale and a rigid local offset are allowed. The transform is:
++
++`target_frame × local_offset_and_scale × inverse(source_anchor_frame)`
++
++An optional trace of 2–240 `{time, frame}` samples creates a named glTF LINEAR
++animation for the target socket. Times strictly increase from zero; its initial
++frame must match the declared target. Translation and quaternion rotation are
++exported, with shortest-path continuity. Existing internal clips are retained,
++but the adapter does not implicitly mix them with the new attachment clip.
++An engine or another host can instead evaluate `attachment_matrix` directly for
++each current socket frame. No renderer is necessary for the placement math.
++
++## Evidence and limits
++
++Run `python tools/sticker_proof.py OUTPUT`. It creates one original salvage
++signal badge as layered 2D and raised 3D forms, actual original/animated GLBs,
++editable source, portable scene, registry and standalone installable core.
++A fresh registry replays the 2D scene byte-identically. The GLB pose reader
++independently samples the new exported socket motion at 17 times.
++
++The proof also registers 1,000 synthetic metadata entries sharing the same two
++source images and places 1,000 instances using one render. These are load-test
++fixtures, **not 1,000 distinct finished designs**. Timings in `proof.json` are
++local observations, not an instant-render promise for arbitrary hardware/assets.
++Optional `python tools/sticker_proof.py preview OUTPUT` uses matplotlib to plot
++actual GLB geometry and poses; it is flat-colour inspection, not PBR rendering or
++continuous target-engine playback. The first preview's per-object painter sorting
++hid the raised emblem; sorting all faces together repairs that inspection error.
++
++Bounds: 2 MiB per definition/instance, 64 parameters/assets, 32 MiB referenced
++assets per sticker, 512 MiB registry, 100 search results per page. 2D placement:
++1–4,096 instances, 32 unique renders, 4M cached pixels, 16M clipped pixel visits,
++and Studio's existing 1,024-pixel dimension/runtime bounds. Resource ceilings
++reject work; they never silently remove details from canonical source.
++
++Next: a human/machine placement panel, smoother optional resampling, measured
++surface projection and nested assembly references. Practice-to-registry promotion
++should remain an explicit registration with source and evidence; it is not wired
++automatically by this pass. No physics/collision, shader portability, arbitrary
++3D sticker material editing or continuous playback acceptance is claimed.
+diff --git a/src/axm_stickers/__init__.py b/src/axm_stickers/__init__.py
+new file mode 100644
+index 0000000..ecebe87
+--- /dev/null
++++ b/src/axm_stickers/__init__.py
+@@ -0,0 +1,6 @@
++"""Portable sticker definitions and registry; Python standard library only."""
++from .core import Registry, digest, instance, resolve, validate
++from .placement import attachment_matrix, placement_2d
++
++__all__ = ['Registry', 'digest', 'instance', 'resolve', 'validate',
++           'attachment_matrix', 'placement_2d']
+diff --git a/src/axm_stickers/__main__.py b/src/axm_stickers/__main__.py
+new file mode 100644
+index 0000000..201096d
+--- /dev/null
++++ b/src/axm_stickers/__main__.py
+@@ -0,0 +1,25 @@
++"""Independent registry CLI: JSON in/out, no UC import or runtime needed."""
++import argparse
++import json
++from pathlib import Path
++from .core import Registry
++
++
++def main(argv=None):
++    parser = argparse.ArgumentParser(description='Portable local sticker registry')
++    parser.add_argument('database',type=Path)
++    parser.add_argument('request',type=Path)
++    args = parser.parse_args(argv)
++    with args.request.open('rb') as handle: raw = handle.read(48*1024*1024+1)
++    if len(raw) > 48*1024*1024: parser.error('request exceeds 48 MiB')
++    request = json.loads(raw)
++    if not isinstance(request,dict): parser.error('request must be an object')
++    operation = request.pop('operation',None)
++    if operation not in {'search','get','register','bundle','import_bundle'}:
++        parser.error('unknown operation')
++    with Registry(args.database) as registry:
++        result = getattr(registry,operation)(**request)
++    print(json.dumps(result,ensure_ascii=False,allow_nan=False))
++
++
++if __name__ == '__main__': main()
+diff --git a/src/axm_stickers/core.py b/src/axm_stickers/core.py
+new file mode 100644
+index 0000000..5bf5793
+--- /dev/null
++++ b/src/axm_stickers/core.py
+@@ -0,0 +1,307 @@
++"""Immutable versioned creations, explicit instances, and a local registry.
++
++This package does not import UC, render, execute recipes, contact services, or
++choose a latest version. Adapters interpret declarative recipes independently.
++"""
++from contextlib import contextmanager
++import base64
++import copy
++import hashlib
++import json
++from pathlib import Path
++import re
++import sqlite3
++
++SCHEMA = 'axm.sticker/v1'
++BUNDLE = 'axm.sticker-bundle/v1'
++INSTANCE = 'axm.sticker-instance/v1'
++MAX_JSON = 2 * 1024 * 1024
++MAX_ASSETS = 32 * 1024 * 1024
++APP = 0x41585354
++
++
++def encode(value):
++    body = json.dumps(value, sort_keys=True, separators=(',', ':'), ensure_ascii=False,
++                      allow_nan=False).encode('utf-8')
++    if len(body) > MAX_JSON:
++        raise ValueError('definition exceeds 2 MiB')
++    return body
++
++
++def digest(value):
++    return hashlib.sha256(encode(value)).hexdigest()
++
++
++def identifier(value):
++    if not isinstance(value, str) or not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_.-]{0,79}', value):
++        raise ValueError('expected portable identifier of 1..80 characters')
++    return value
++
++
++def text(value, maximum=2000):
++    if not isinstance(value, str) or not value.strip() or len(value) > maximum:
++        raise ValueError('expected bounded nonempty text')
++    return value
++
++
++def version(value):
++    if type(value) is not int or not 1 <= value <= 2**31-1:
++        raise ValueError('version must be a positive integer')
++    return value
++
++
++def sha(value):
++    if not isinstance(value, str) or not re.fullmatch('[a-f0-9]{64}', value):
++        raise ValueError('expected SHA-256 digest')
++    return value
++
++
++def _parameter(spec, value):
++    if not isinstance(spec, dict) or not {'path','default','type'} <= spec.keys():
++        raise ValueError('parameter requires path, default and type')
++    kind = spec['type']
++    expected = {'path','default','type'} | ({'min','max'} if kind in ('number','integer') else
++                                           {'choices'} if kind == 'choice' else set())
++    if set(spec) != expected:
++        raise ValueError('unsupported parameter fields/type')
++    if kind in ('number','integer'):
++        for x in (value, spec['min'], spec['max']):
++            if type(x) not in (int,float) or (kind == 'integer' and type(x) is not int):
++                raise ValueError('parameter has wrong numeric type')
++        if not spec['min'] <= value <= spec['max']:
++            raise ValueError('parameter exceeds declared range')
++    elif kind == 'boolean':
++        if type(value) is not bool:
++            raise ValueError('parameter requires boolean')
++    elif kind == 'choice':
++        choices = spec['choices']
++        if not isinstance(choices,list) or not 1 <= len(choices) <= 64:
++            raise ValueError('parameter requires bounded choices')
++        if not any(type(value) is type(x) and value == x for x in choices):
++            raise ValueError('unknown parameter choice')
++    else:
++        raise ValueError('unsupported parameter type')
++    encode(value)
++
++
++def _target(recipe, path):
++    if not isinstance(path, list) or not 1 <= len(path) <= 16:
++        raise ValueError('parameter path must have 1..16 segments')
++    current = recipe
++    for part in path:
++        if isinstance(current,dict) and isinstance(part,str) and part in current:
++            parent, current = current, current[part]
++        elif isinstance(current,list) and type(part) is int and 0 <= part < len(current):
++            parent, current = current, current[part]
++        else:
++            raise ValueError('parameter path does not exist in recipe')
++    return parent, path[-1], current
++
++
++def validate(definition):
++    if not isinstance(definition,dict) or set(definition) != {
++            'schema','id','version','name','tags','origin','adapter','attachment','recipe','assets','parameters'}:
++        raise ValueError('unsupported sticker definition fields')
++    if definition['schema'] != SCHEMA:
++        raise ValueError('unsupported sticker schema')
++    encode(definition)
++    identifier(definition['id']); version(definition['version']); text(definition['name'],160)
++    text(definition['adapter'],120)
++    tags = definition['tags']
++    if not isinstance(tags,list) or len(tags) > 32 or len(tags) != len(set(map(str,tags))):
++        raise ValueError('expected at most 32 unique tags')
++    for tag in tags: identifier(tag)
++    origin = definition['origin']
++    if not isinstance(origin,dict) or set(origin) != {'author','license','source'}:
++        raise ValueError('author, license and source declarations required')
++    for value in origin.values(): text(value)
++    attachment = definition['attachment']
++    if not isinstance(attachment,dict) or set(attachment) != {'space','socket','anchor'}:
++        raise ValueError('attachment requires space, socket and anchor')
++    identifier(attachment['socket'])
++    if attachment['space'] == '2d':
++        from .placement import vector
++        vector(attachment['anchor'],2)
++    elif attachment['space'] == '3d':
++        from .placement import rigid
++        rigid(attachment['anchor'])
++    else:
++        raise ValueError('unknown attachment space')
++    assets = definition['assets']
++    if not isinstance(assets,dict) or len(assets) > 64:
++        raise ValueError('expected at most 64 assets')
++    for key,value in assets.items(): identifier(key); sha(value)
++    if not isinstance(definition['recipe'],dict):
++        raise ValueError('recipe must be an object')
++    parameters = definition['parameters']
++    if not isinstance(parameters,dict) or len(parameters) > 64:
++        raise ValueError('expected at most 64 parameters')
++    paths = []
++    for name,spec in parameters.items():
++        identifier(name)
++        if not isinstance(spec,dict): raise ValueError('invalid parameter')
++        _parameter(spec, spec.get('default'))
++        _,_,original = _target(definition['recipe'], spec['path'])
++        if type(original) is not type(spec['default']) or original != spec['default']:
++            raise ValueError('parameter default must equal canonical recipe value')
++        path = spec['path']
++        if any(path[:len(p)] == p or p[:len(path)] == path for p in paths):
++            raise ValueError('parameter paths must not overlap')
++        paths.append(path)
++    return copy.deepcopy(definition)
++
++
++def instance(definition, id, *, overrides=None, placement=None):
++    validate(definition); identifier(id)
++    result = {'schema':INSTANCE,'id':id,'sticker':{'id':definition['id'],
++              'version':definition['version'],'digest':digest(definition)},
++              'overrides':copy.deepcopy({} if overrides is None else overrides),'placement':copy.deepcopy({} if placement is None else placement)}
++    resolve(definition,result)
++    return result
++
++
++def resolve(definition, placed):
++    validate(definition)
++    if not isinstance(placed,dict) or set(placed) != {'schema','id','sticker','overrides','placement'}:
++        raise ValueError('unsupported instance fields')
++    identifier(placed['id'])
++    pin = placed['sticker']
++    if not isinstance(pin,dict) or set(pin) != {'id','version','digest'}:
++        raise ValueError('instance requires exact version pin')
++    identifier(pin['id']); version(pin['version']); sha(pin['digest'])
++    if placed['schema'] != INSTANCE or placed['sticker'] != {
++            'id':definition['id'],'version':definition['version'],'digest':digest(definition)}:
++        raise ValueError('instance does not match its pinned sticker version')
++    if not isinstance(placed['placement'],dict): raise ValueError('placement must be an object')
++    overrides = placed['overrides']
++    if not isinstance(overrides,dict) or set(overrides)-definition['parameters'].keys():
++        raise ValueError('undeclared parameter override')
++    recipe = copy.deepcopy(definition['recipe'])
++    for name,value in overrides.items():
++        spec = definition['parameters'][name]
++        _parameter(spec,value)
++        parent,key,_ = _target(recipe,spec['path'])
++        parent[key] = copy.deepcopy(value)
++    encode(placed)
++    return recipe
++
++
++class Registry:
++    """One offline file: indexed metadata and shared exact asset bytes."""
++    def __init__(self,path):
++        self.db = sqlite3.connect(Path(path), timeout=35, isolation_level=None)
++        self.db.row_factory = sqlite3.Row
++        try:
++            self.db.execute('PRAGMA foreign_keys=ON')
++            self.db.execute('PRAGMA synchronous=FULL')
++            with self._write():
++                app = self.db.execute('PRAGMA application_id').fetchone()[0]
++                tables = self.db.execute("SELECT name FROM sqlite_master WHERE type='table'").fetchall()
++                if app != APP and (app or tables): raise ValueError('not a sticker registry')
++                v = self.db.execute('PRAGMA user_version').fetchone()[0]
++                if v not in (0,1) or (app == APP and v != 1): raise ValueError('unsupported registry version')
++                if not tables:
++                    for sql in (
++                        'CREATE TABLE assets (digest TEXT PRIMARY KEY, body BLOB NOT NULL)',
++                        'CREATE TABLE stickers (id TEXT, version INTEGER, digest TEXT UNIQUE, adapter TEXT, socket TEXT, body TEXT, PRIMARY KEY(id,version))',
++                        'CREATE TABLE tags (id TEXT, version INTEGER, tag TEXT, PRIMARY KEY(id,version,tag), FOREIGN KEY(id,version) REFERENCES stickers(id,version))',
++                        'CREATE INDEX sticker_adapter ON stickers(adapter,socket)',
++                        'CREATE INDEX sticker_tags ON tags(tag,id,version)'):
++                        self.db.execute(sql)
++                    self.db.execute(f'PRAGMA application_id={APP}')
++                    self.db.execute('PRAGMA user_version=1')
++            size = self.db.execute('PRAGMA page_size').fetchone()[0]
++            self.db.execute(f'PRAGMA max_page_count={512*1024*1024//size}')
++        except BaseException:
++            self.db.close(); raise
++
++    @contextmanager
++    def _write(self):
++        self.db.execute('BEGIN IMMEDIATE')
++        try:
++            yield
++            self.db.execute('COMMIT')
++        except BaseException:
++            if self.db.in_transaction: self.db.execute('ROLLBACK')
++            raise
++
++    def __enter__(self): return self
++    def __exit__(self,*args): self.db.close()
++
++    def register(self,definition,assets=None):
++        definition = validate(definition)
++        assets = {} if assets is None else assets
++        if not isinstance(assets,dict) or set(assets)-set(definition['assets'].values()):
++            raise ValueError('supplied assets must be referenced digests')
++        if any(not isinstance(v,bytes) for v in assets.values()) or sum(map(len,assets.values())) > MAX_ASSETS:
++            raise ValueError('asset bytes exceed 32 MiB')
++        with self._write():
++            existing = self.db.execute('SELECT digest FROM stickers WHERE id=? AND version=?',
++                                       (definition['id'],definition['version'])).fetchone()
++            key = digest(definition)
++            if existing and existing[0] != key:
++                raise ValueError('immutable version conflict; register a new version')
++            total_bytes = 0
++            for reference in set(definition['assets'].values()):
++                if reference in assets:
++                    body = assets[reference]
++                    if hashlib.sha256(body).hexdigest() != reference: raise ValueError('asset digest mismatch')
++                    self.db.execute('INSERT OR IGNORE INTO assets VALUES (?,?)',(reference,body))
++                total_bytes += len(self.asset(reference))
++                if total_bytes > MAX_ASSETS: raise ValueError('referenced assets exceed 32 MiB')
++            self.db.execute('INSERT OR IGNORE INTO stickers VALUES (?,?,?,?,?,?)',
++                            (definition['id'],definition['version'],key,definition['adapter'],
++                             definition['attachment']['socket'],encode(definition).decode()))
++            for tag in definition['tags']:
++                self.db.execute('INSERT OR IGNORE INTO tags VALUES (?,?,?)',
++                                (definition['id'],definition['version'],tag))
++            return {'id':definition['id'],'version':definition['version'],'digest':key}
++
++    def get(self,id,ver):
++        identifier(id); version(ver)
++        row = self.db.execute('SELECT digest,body FROM stickers WHERE id=? AND version=?',(id,ver)).fetchone()
++        if row is None: raise ValueError('unknown sticker version')
++        definition = json.loads(row[1])
++        if digest(definition) != row[0]: raise ValueError('corrupt sticker definition')
++        return validate(definition)
++
++    def asset(self,reference):
++        sha(reference)
++        row = self.db.execute('SELECT body FROM assets WHERE digest=?',(reference,)).fetchone()
++        if row is None or hashlib.sha256(row[0]).hexdigest() != reference:
++            raise ValueError('missing or corrupt asset')
++        return row[0]
++
++    def search(self, *, adapter=None, socket=None, tag=None, after=0, limit=30):
++        if type(after) is not int or after < 0 or type(limit) is not int or not 1 <= limit <= 100:
++            raise ValueError('invalid search cursor/limit')
++        clauses,values = ['s.rowid>?'],[after]
++        for key,value in (('adapter',adapter),('socket',socket)):
++            if value is not None: text(value,120); clauses.append(f's.{key}=?'); values.append(value)
++        if tag is not None:
++            identifier(tag)
++            clauses.append('EXISTS (SELECT 1 FROM tags t WHERE t.id=s.id AND t.version=s.version AND t.tag=?)')
++            values.append(tag)
++        rows = self.db.execute('SELECT s.rowid,s.body,s.digest FROM stickers s WHERE '+
++                               ' AND '.join(clauses)+' ORDER BY s.rowid LIMIT ?',values+[limit]).fetchall()
++        results = []
++        for row in rows:
++            d = json.loads(row[1])
++            results.append({k:d[k] for k in ('id','version','name','tags','adapter','attachment','origin')}
++                           | {'digest':row[2]})
++        return {'entries':results,'next_cursor':rows[-1][0] if rows else after}
++
++    def bundle(self,id,ver):
++        definition = self.get(id,ver)
++        return {'schema':BUNDLE,'definition':definition,'assets':{
++                s:base64.b64encode(self.asset(s)).decode('ascii') for s in sorted(set(definition['assets'].values()))}}
++
++    def import_bundle(self,bundle):
++        if not isinstance(bundle,dict) or set(bundle) != {'schema','definition','assets'} or bundle['schema'] != BUNDLE:
++            raise ValueError('invalid sticker bundle')
++        definition = validate(bundle['definition'])
++        if not isinstance(bundle['assets'],dict) or set(bundle['assets']) != set(definition['assets'].values()):
++            raise ValueError('bundle must contain exactly its declared assets')
++        if any(not isinstance(v,str) for v in bundle['assets'].values()) or sum(map(len,bundle['assets'].values())) > 45*1024*1024:
++            raise ValueError('bundle exceeds byte bound')
++        return self.register(definition,{k:base64.b64decode(v,validate=True) for k,v in bundle['assets'].items()})
+diff --git a/src/axm_stickers/placement.py b/src/axm_stickers/placement.py
+new file mode 100644
+index 0000000..27eb70a
+--- /dev/null
++++ b/src/axm_stickers/placement.py
+@@ -0,0 +1,76 @@
++"""Renderer-independent 2D affine and rigid 3D socket attachment conventions."""
++import math
++
++
++def vector(value,n):
++    if not isinstance(value,list) or len(value) != n or any(
++            type(x) not in (int,float) or not math.isfinite(x) or abs(x) > 1e6 for x in value):
++        raise ValueError(f'expected {n} bounded finite numbers')
++    return list(value)
++
++
++def identity(): return [1.,0.,0.,0.,0.,1.,0.,0.,0.,0.,1.,0.,0.,0.,0.,1.]
++
++
++def multiply(a,b):
++    return [sum(a[r*4+k]*b[k*4+c] for k in range(4)) for r in range(4) for c in range(4)]
++
++
++def rigid(value):
++    m = vector(value,16)
++    if m[12:] != [0,0,0,1]: raise ValueError('expected affine row-major matrix')
++    for i in range(3):
++        for j in range(3):
++            if abs(sum(m[k*4+i]*m[k*4+j] for k in range(3)) - (i==j)) > 1e-6:
++                raise ValueError('socket frame must be rigid; scale is an instance control')
++    det = m[0]*(m[5]*m[10]-m[6]*m[9])-m[1]*(m[4]*m[10]-m[6]*m[8])+m[2]*(m[4]*m[9]-m[5]*m[8])
++    if abs(det-1) > 1e-6: raise ValueError('reflected socket frames are unsupported')
++    return m
++
++
++def inverse_rigid(value):
++    m = rigid(value)
++    result = identity()
++    for r in range(3):
++        for c in range(3): result[r*4+c] = m[c*4+r]
++        result[r*4+3] = -sum(result[r*4+c]*m[c*4+3] for c in range(3))
++    return result
++
++
++def compatible(definition,target,space):
++    if not isinstance(target,dict) or target.get('space') != space or definition['attachment']['space'] != space:
++        raise ValueError('incompatible attachment space')
++    if target.get('socket') != definition['attachment']['socket']:
++        raise ValueError('incompatible socket kind')
++
++
++def placement_2d(definition,placed,target):
++    """Six values: x'=a*x+c*y+tx; y'=b*x+d*y+ty, pixel-edge coordinates."""
++    compatible(definition,target,'2d')
++    if set(target) != {'space','socket'}: raise ValueError('unsupported 2D target fields')
++    p = placed['placement']
++    if set(p)-{'translation','scale','rotation','opacity'}: raise ValueError('unsupported 2D placement controls')
++    x,y = vector(p.get('translation',[0,0]),2)
++    sx,sy = vector(p.get('scale',[1,1]),2)
++    angle = vector([p.get('rotation',0)],1)[0]
++    opacity = vector([p.get('opacity',1)],1)[0]
++    if not .001 <= sx <= 100 or not .001 <= sy <= 100 or not 0 <= opacity <= 1:
++        raise ValueError('scale/opacity outside bounds')
++    c,s = math.cos(math.radians(angle)),math.sin(math.radians(angle))
++    a,b,d,e = c*sx,s*sx,-s*sy,c*sy
++    ax,ay = vector(definition['attachment']['anchor'],2)
++    return [a,b,d,e,x-a*ax-d*ay,y-b*ax-e*ay]
++
++
++def attachment_matrix(definition,placed,target):
++    """World = target socket * local offset * inverse(sticker mount frame)."""
++    compatible(definition,target,'3d')
++    if set(target) != {'space','socket','frame'}: raise ValueError('unsupported 3D target fields')
++    p = placed['placement']
++    if set(p)-{'offset','scale'}: raise ValueError('unsupported 3D placement controls')
++    offset = rigid(p.get('offset',identity()))
++    scale = vector([p.get('scale',1)],1)[0]
++    if not .001 <= scale <= 100: raise ValueError('scale outside bounds')
++    for r in range(3):
++        for c in range(3): offset[r*4+c] *= scale
++    return multiply(multiply(rigid(target['frame']),offset),inverse_rigid(definition['attachment']['anchor']))
+diff --git a/src/axm_uc/sticker_adapter.py b/src/axm_uc/sticker_adapter.py
+new file mode 100644
+index 0000000..160767a
+--- /dev/null
++++ b/src/axm_uc/sticker_adapter.py
+@@ -0,0 +1,273 @@
++"""UC consumers of axm_stickers; the registry remains independently usable.
++
++2D instances render isolated editable recipes, then place cached RGBA results.
++3D attachments add wrapper nodes/tracks to a derivative GLB, retaining source.
++"""
++import copy
++import hashlib
++import json
++import math
++from pathlib import Path
++import shutil
++import struct
++import tempfile
++
++from axm_stickers import Registry, digest, resolve, validate
++from axm_stickers.core import SCHEMA
++from axm_stickers.placement import (identity, rigid, multiply, inverse_rigid,
++                                    attachment_matrix, placement_2d)
++from . import studio_compositor as studio
++from .fabric_noise import png_bytes
++from .game_pose_runtime import GamePoseAsset, _parse
++
++STUDIO = 'axm.sticker.studio-layered/v1'
++GLB = 'axm.sticker.glb-rigid/v1'
++MAX_PLACEMENTS = 4096
++MAX_WORK = 16*1024*1024
++
++
++def _sha(body): return hashlib.sha256(body).hexdigest()
++
++
++def definition(id, name, adapter, attachment, recipe, assets, *, ver=1, tags=None,
++               parameters=None, author, license, source):
++    return validate({'schema':SCHEMA,'id':id,'version':ver,'name':name,'adapter':adapter,
++                     'attachment':attachment,'recipe':recipe,'assets':assets,
++                     'tags':tags or [],'parameters':parameters or {},
++                     'origin':{'author':author,'license':license,'source':source}})
++
++
++def register_studio(registry, project, source_root, *, id, name, anchor=None, **metadata):
++    composed = studio.compose_studio_project(project,source_root)
++    bodies = {_sha(body):body for body in composed['sources'].values()}
++    d = definition(id,name,STUDIO,{'space':'2d','socket':'surface','anchor':anchor or [0,0]},
++                   {'project':copy.deepcopy(project)},
++                   {key:_sha(body) for key,body in composed['sources'].items()},**metadata)
++    registry.register(d,bodies)
++    return d
++
++
++def _studio_render(registry,d,recipe):
++    if set(recipe) != {'project'}: raise ValueError('unsupported Studio sticker recipe')
++    project = copy.deepcopy(recipe['project'])
++    if not isinstance(project,dict) or set(project.get('sources',{})) != set(d['assets']):
++        raise ValueError('sticker source IDs must match its captured assets')
++    with tempfile.TemporaryDirectory(prefix='axm-sticker-') as root:
++        for index,(key,ref) in enumerate(sorted(d['assets'].items())):
++            name = f'{index}.png'
++            (Path(root)/name).write_bytes(registry.asset(ref))
++            project['sources'][key] = name
++        result = studio.compose_studio_project(project,root)
++    # Studio emits unfiltered RGBA PNG; decode using the existing general reader.
++    header,compressed,palette,transparency = studio._parse_png(result['png'])
++    rows,_ = studio._inflate_scanlines(header,compressed)
++    rgba = bytes(c for row in rows for pixel in studio._row_rgba(
++        row,header['color_type'],palette,transparency) for c in pixel)
++    return result['receipt']['width'],result['receipt']['height'],rgba
++
++
++def _over(destination,at,source,opacity):
++    a = source[3]/255*opacity
++    if a == 0: return
++    b = destination[at+3]/255
++    out = a+b*(1-a)
++    for c in range(3):
++        destination[at+c] = round((source[c]*a+destination[at+c]*b*(1-a))/out)
++    destination[at+3] = round(out*255)
++
++
++def stamp_layer(registry, instances, *, width, height, target=None):
++    """Place up to 4096 instances under an explicit clipped-pixel work ceiling.
++
++    Nearest-neighbour sampling preserves hard pixels; antialiasing is not claimed.
++    Anchor and transforms use pixel edges; sampling uses pixel centres.
++    """
++    studio._dimension(width); studio._dimension(height)
++    if not isinstance(instances,list) or not 1 <= len(instances) <= MAX_PLACEMENTS:
++        raise ValueError('supply 1..4096 instances')
++    target = {'space':'2d','socket':'surface'} if target is None else target
++    canvas = bytearray(width*height*4)
++    cache,definitions,seen = {},{},set()
++    work,cached_pixels = 0,0
++    for placed in instances:
++        if not isinstance(placed,dict) or not isinstance(placed.get('sticker'),dict):
++            raise ValueError('invalid sticker instance')
++        reference = placed['sticker']
++        key = (reference.get('id'),reference.get('version'))
++        if key not in definitions: definitions[key] = registry.get(*key)
++        d = definitions[key]
++        recipe = resolve(d,placed)
++        if placed['id'] in seen: raise ValueError('duplicate instance ID')
++        seen.add(placed['id'])
++        if d['adapter'] != STUDIO: raise ValueError('sticker requires another rendering adapter')
++        a,b,c,e,tx,ty = placement_2d(d,placed,target)
++        render_key = digest({'recipe':recipe,'assets':d['assets']})
++        if render_key not in cache:
++            if len(cache) >= 32: raise ValueError('at most 32 unique renders per placement call')
++            w,h,pixels = _studio_render(registry,d,recipe)
++            cached_pixels += w*h
++            if cached_pixels > 4*1024*1024: raise ValueError('unique sticker raster budget exceeded')
++            cache[render_key] = (w,h,pixels)
++        w,h,pixels = cache[render_key]
++        corners = [(a*x+c*y+tx,b*x+e*y+ty) for x,y in ((0,0),(w,0),(0,h),(w,h))]
++        x0=max(0,math.floor(min(p[0] for p in corners))); x1=min(width,math.ceil(max(p[0] for p in corners)))
++        y0=max(0,math.floor(min(p[1] for p in corners))); y1=min(height,math.ceil(max(p[1] for p in corners)))
++        work += max(0,x1-x0)*max(0,y1-y0)
++        if work > MAX_WORK: raise ValueError('sticker placement work budget exceeded')
++        det = a*e-b*c
++        opacity = placed['placement'].get('opacity',1)
++        for y in range(y0,y1):
++            for x in range(x0,x1):
++                dx,dy = x+.5-tx,y+.5-ty
++                sx,sy = math.floor((e*dx-c*dy)/det),math.floor((-b*dx+a*dy)/det)
++                if 0 <= sx < w and 0 <= sy < h:
++                    pos = (sy*w+sx)*4
++                    _over(canvas,(y*width+x)*4,pixels[pos:pos+4],opacity)
++    return {'png':png_bytes(width,height,4,bytes(canvas)),
++            'receipt':{'instances':len(instances),'unique_renders':len(cache),
++                       'clipped_pixel_visits':work,'sampling':'nearest-neighbour',
++                       'visual_approval':False,'canonical_definitions_modified':False}}
++
++
++def publish_sticker_scene(path, registry, host, source_root, instances):
++    """Editable host + instance recipe + selected registry + replayable preview."""
++    target = Path(path)
++    if target.exists(): raise FileExistsError(target)
++    base = studio.compose_studio_project(host,source_root)
++    stamp = stamp_layer(registry,instances,width=base['receipt']['width'],height=base['receipt']['height'])
++    if 'axm-stickers' in host['sources'] or any(x['id']=='axm-stickers' for x in host['recipe']['layers']):
++        raise ValueError('reserved placement layer/source ID already exists')
++    target.parent.mkdir(parents=True,exist_ok=True)
++    stage = Path(tempfile.mkdtemp(prefix='sticker-scene-',dir=target.parent))
++    try:
++        with tempfile.TemporaryDirectory(prefix='sticker-input-') as temp:
++            derived = copy.deepcopy(host)
++            for index,(key,body) in enumerate(sorted(base['sources'].items())):
++                name=f'{index}.png'; (Path(temp)/name).write_bytes(body); derived['sources'][key]=name
++            (Path(temp)/'stamps.png').write_bytes(stamp['png'])
++            derived['sources']['axm-stickers']='stamps.png'
++            derived['recipe']['layers'].append({'id':'axm-stickers','source_artifact_id':'axm-stickers'})
++            studio.publish_studio_project(stage/'preview',derived,temp)
++        published = json.loads((stage/'preview/project.json').read_text())
++        canonical = copy.deepcopy(host)
++        canonical['sources']={key:'preview/'+published['sources'][key] for key in host['sources']}
++        scene={'schema':'axm.sticker-scene-2d/v1','host':canonical,'instances':copy.deepcopy(instances)}
++        (stage/'scene.json').write_text(json.dumps(scene,indent=2)+'\n',encoding='utf-8')
++        with Registry(stage/'stickers.sqlite') as selected:
++            for p in instances:
++                d=registry.get(p['sticker']['id'],p['sticker']['version'])
++                selected.register(d,{ref:registry.asset(ref) for ref in set(d['assets'].values())})
++        (stage/'receipt.json').write_text(json.dumps(stamp['receipt'],indent=2)+'\n',encoding='utf-8')
++        if target.exists(): raise FileExistsError(target)
++        stage.rename(target)
++        return stamp['receipt']
++    finally:
++        if stage.exists(): shutil.rmtree(stage)
++
++
++def register_glb(registry,body,*,id,name,socket,anchor=None,editable_source=None,**metadata):
++    GamePoseAsset(body)
++    document,_ = _parse(body)
++    if document.get('skins') or any('uri' in image for image in document.get('images',[])):
++        raise ValueError('first GLB adapter requires rigid meshes and embedded images')
++    bodies={_sha(body):body}; assets={'model':_sha(body)}
++    if editable_source is not None:
++        if not isinstance(editable_source,bytes): raise ValueError('editable source must be exact bytes')
++        bodies[_sha(editable_source)]=editable_source; assets['editable-source']=_sha(editable_source)
++    d=definition(id,name,GLB,{'space':'3d','socket':socket,'anchor':anchor or identity()},
++                 {'model':'model'},assets,**metadata)
++    registry.register(d,bodies)
++    return d
++
++
++def _trs(frame):
++    m=rigid(frame)
++    # Stable quaternion recovery for all proper rigid rotations, including pi.
++    trace=m[0]+m[5]+m[10]
++    if trace > 0:
++        s=math.sqrt(trace+1)*2
++        q=[(m[9]-m[6])/s,(m[2]-m[8])/s,(m[4]-m[1])/s,s/4]
++    elif m[0] > m[5] and m[0] > m[10]:
++        s=math.sqrt(1+m[0]-m[5]-m[10])*2
++        q=[s/4,(m[1]+m[4])/s,(m[2]+m[8])/s,(m[9]-m[6])/s]
++    elif m[5] > m[10]:
++        s=math.sqrt(1+m[5]-m[0]-m[10])*2
++        q=[(m[1]+m[4])/s,s/4,(m[6]+m[9])/s,(m[2]-m[8])/s]
++    else:
++        s=math.sqrt(1+m[10]-m[0]-m[5])*2
++        q=[(m[2]+m[8])/s,(m[6]+m[9])/s,s/4,(m[4]-m[1])/s]
++    return [m[3],m[7],m[11]],q
++
++
++def attach_glb(registry,placed,target,*,motion=None,clip='StickerSocketMotion'):
++    """Derivative GLB with preserved meshes/materials and animated host socket.
++
++    motion is a bounded sampled host trace [{time, frame}, ...]. It creates one
++    ordinary glTF LINEAR clip; internal clips are retained, not implicitly mixed.
++    """
++    d=registry.get(placed['sticker']['id'],placed['sticker']['version'])
++    recipe=resolve(d,placed)
++    if d['adapter'] != GLB or recipe != {'model':'model'} or placed['overrides']:
++        raise ValueError('unsupported rigid GLB sticker recipe/parameters')
++    local_target={'space':'3d','socket':target.get('socket'),'frame':identity()}
++    attachment_matrix(d,placed,target)  # Validate target before deriving local frame.
++    local=attachment_matrix(d,placed,local_target)
++    source=registry.asset(d['assets']['model'])
++    GamePoseAsset(source)
++    doc,original_binary=_parse(source)
++    if doc.get('skins') or any('uri' in image for image in doc.get('images',[])):
++        raise ValueError('first GLB adapter requires rigid meshes and embedded images')
++    if len(doc.get('scenes',[])) != 1 or doc.get('scene',0) != 0: raise ValueError('attachment requires one explicit scene')
++    roots=list(doc['scenes'][0]['nodes']); nodes=doc['nodes']
++    holder=len(nodes)
++    nodes.append({'name':placed['id']+'.mount','matrix':[local[r*4+c] for c in range(4) for r in range(4)],'children':roots})
++    socket=len(nodes)
++    translation,rotation=_trs(target['frame'])
++    nodes.append({'name':placed['id']+'.socket','translation':translation,'rotation':rotation,'children':[holder]})
++    doc['scenes'][0]['nodes']=[socket]
++    binary=bytearray(original_binary)
++    if motion is not None:
++        if not isinstance(motion,list) or not 2 <= len(motion) <= 240: raise ValueError('motion requires 2..240 samples')
++        if not isinstance(clip,str) or not clip or len(clip)>120: raise ValueError('invalid clip name')
++        animations=doc.setdefault('animations',[])
++        if any(x.get('name')==clip for x in animations): raise ValueError('clip name already exists')
++        times,translations,rotations=[],[],[]
++        for sample in motion:
++            if not isinstance(sample,dict) or set(sample) != {'time','frame'}: raise ValueError('invalid motion sample')
++            t=sample['time']
++            if type(t) not in (int,float) or not math.isfinite(t) or not 0 <= t <= 3600 or (times and t<=times[-1]):
++                raise ValueError('motion times must strictly increase in 0..3600 seconds')
++            tr,qr=_trs(sample['frame'])
++            if rotations and sum(a*b for a,b in zip(rotations[-1],qr))<0: qr=[-v for v in qr]
++            times.append(t); translations.append(tr); rotations.append(qr)
++        if times[0] != 0 or motion[0]['frame'] != target['frame']:
++            raise ValueError('motion must start at zero with the declared target frame')
++        def accessor(rows,shape):
++            while len(binary)%4: binary.append(0)
++            start=len(binary)
++            values=[x for row in rows for x in row]
++            binary.extend(struct.pack('<'+'f'*len(values),*values))
++            views=doc.setdefault('bufferViews',[]); index=len(views)
++            views.append({'buffer':0,'byteOffset':start,'byteLength':len(binary)-start})
++            accesses=doc.setdefault('accessors',[]); result=len(accesses)
++            accesses.append({'bufferView':index,'componentType':5126,'count':len(rows),'type':shape,
++                             'min':[min(row[i] for row in rows) for i in range(len(rows[0]))],
++                             'max':[max(row[i] for row in rows) for i in range(len(rows[0]))]})
++            return result
++        clock=accessor([[t] for t in times],'SCALAR')
++        pos=accessor(translations,'VEC3'); rot=accessor(rotations,'VEC4')
++        animations.append({'name':clip,'samplers':[{'input':clock,'output':pos,'interpolation':'LINEAR'},
++                                                  {'input':clock,'output':rot,'interpolation':'LINEAR'}],
++                           'channels':[{'sampler':0,'target':{'node':socket,'path':'translation'}},
++                                       {'sampler':1,'target':{'node':socket,'path':'rotation'}}]})
++    doc['buffers'][0]['byteLength']=len(binary)
++    doc.setdefault('extras',{})['axm_sticker']={'definition':placed['sticker'],'instance':placed,'origin':d['origin'],'source_sha256':_sha(source)}
++    json_chunk=json.dumps(doc,separators=(',',':'),allow_nan=False).encode()
++    json_chunk+=b' '*((-len(json_chunk))%4); binary.extend(b'\0'*((-len(binary))%4))
++    body=struct.pack('<4sII',b'glTF',2,28+len(json_chunk)+len(binary))
++    body+=struct.pack('<II',len(json_chunk),0x4E4F534A)+json_chunk
++    body+=struct.pack('<II',len(binary),0x004E4942)+binary
++    GamePoseAsset(body)  # Independent intake validates the derivative, including tracks.
++    return {'body':body,'receipt':{'source_sha256':_sha(source),'output_sha256':_sha(body),
++            'source_preserved':True,'socket_node':socket,'mount_node':holder,
++            'clip':clip if motion is not None else None,'visual_approval':False}}
+diff --git a/tests/test_stickers.py b/tests/test_stickers.py
+new file mode 100644
+index 0000000..e2bcf4f
+--- /dev/null
++++ b/tests/test_stickers.py
+@@ -0,0 +1,245 @@
++"""Portable core, real 2D pixels and independently decoded animated 3D frames."""
++import copy
++import hashlib
++import json
++import math
++from pathlib import Path
++import shutil
++import sqlite3
++import subprocess
++import sys
++import tempfile
++import unittest
++from unittest.mock import patch
++
++ROOT=Path(__file__).resolve().parents[1]
++sys.path.insert(0,str(ROOT/'src'))
++from axm_stickers import Registry,digest,instance,resolve,validate,attachment_matrix,placement_2d
++from axm_stickers.placement import identity
++from axm_uc import sticker_adapter as adapter
++from axm_uc.fabric_noise import png_bytes
++from axm_uc.procedural_3d import build_glb
++from axm_uc.game_pose_runtime import GamePoseAsset,_parse
++from axm_uc import studio_compositor as studio
++
++ORIGIN={'author':'AXM test fixture','license':'CC0-1.0','source':'Original analytical fixture'}
++
++
++def project(fill='#4080C0',width=2,height=2):
++    return {'schema':studio.SCHEMA,'sources':{},'recipe':{
++        'schema':'axm.raster-composition/v1','canvas':{'width':width,'height':height},
++        'layers':[{'id':'paint','fill':fill,'opacity':1.0}]}}
++
++
++def definition():
++    return adapter.definition('panel','Salvage panel',adapter.STUDIO,
++        {'space':'2d','socket':'surface','anchor':[0,0]}, {'project':project()}, {},
++        tags=['salvage','panel'],parameters={'opacity':{
++            'type':'number','min':0,'max':1,'default':1.0,
++            'path':['project','recipe','layers',0,'opacity']}},**ORIGIN)
++
++
++def frame(x=0,y=0,z=0,angle=0):
++    s,c=math.sin(angle),math.cos(angle)
++    return [c,-s,0,x,s,c,0,y,0,0,1,z,0,0,0,1]
++
++
++def pixels(body):
++    # Independent decoding of the PNG output scanlines.
++    import struct,zlib
++    at=8; data=b''
++    while at<len(body):
++        n=struct.unpack_from('>I',body,at)[0]; kind=body[at+4:at+8]
++        if kind==b'IHDR': w,h=struct.unpack_from('>II',body,at+8)
++        if kind==b'IDAT': data+=body[at+8:at+8+n]
++        at+=n+12
++    raw=zlib.decompress(data)
++    return [tuple(raw[y*(w*4+1)+1+x*4:y*(w*4+1)+5+x*4]) for y in range(h) for x in range(w)]
++
++
++class StickerFixture:
++
++    def setUp(self):
++        self.temp=tempfile.TemporaryDirectory(); self.addCleanup(self.temp.cleanup)
++        self.root=Path(self.temp.name)
++        self.registry=Registry(self.root/'stickers.sqlite'); self.addCleanup(self.registry.db.close)
++        self.d=definition(); self.registry.register(self.d)
++
++
++class StickerCoreTests(StickerFixture, unittest.TestCase):
++    def test_immutable_versions_and_pinned_independent_instances(self):
++        a=instance(self.d,'left',overrides={'opacity':0.25})
++        b=instance(self.d,'right')
++        self.assertEqual(resolve(self.d,a)['project']['recipe']['layers'][0]['opacity'],0.25)
++        self.assertEqual(resolve(self.d,b)['project']['recipe']['layers'][0]['opacity'],1.0)
++        invalid=copy.deepcopy(a); invalid['sticker']['version']=True
++        with self.assertRaises(ValueError): resolve(self.d,invalid)
++        changed=copy.deepcopy(self.d); changed['name']='new'
++        with self.assertRaisesRegex(ValueError,'immutable'): self.registry.register(changed)
++        changed['version']=2; self.registry.register(changed)
++        with self.assertRaisesRegex(ValueError,'pinned'): resolve(changed,a)
++        self.assertEqual(self.registry.get('panel',1),self.d)
++        self.assertEqual(self.registry.get('panel',2),changed)
++
++    def test_parameters_are_declared_bounded_and_not_arbitrary_mutations(self):
++        for overrides in ({'unknown':1},{'opacity':True},{'opacity':1.1},{'opacity':float('nan')},[]):
++            with self.subTest(overrides=overrides),self.assertRaises(ValueError): instance(self.d,'x',overrides=overrides)
++        wrong=copy.deepcopy(self.d); wrong['parameters']['opacity']['path']=['project','missing']
++        with self.assertRaises(ValueError): validate(wrong)
++        wrong=copy.deepcopy(self.d); wrong['parameters']['other']=copy.deepcopy(wrong['parameters']['opacity'])
++        with self.assertRaisesRegex(ValueError,'overlap'): validate(wrong)
++        wrong=copy.deepcopy(self.d); wrong['parameters']['opacity']['default']=0.5
++        with self.assertRaisesRegex(ValueError,'canonical'): validate(wrong)
++
++    def test_registry_index_filters_and_pagination(self):
++        other=copy.deepcopy(self.d); other.update(id='other',tags=['metal'])
++        self.registry.register(other)
++        self.assertEqual(len(self.registry.search(tag='salvage')['entries']),1)
++        self.assertEqual(len(self.registry.search(adapter=adapter.STUDIO,socket='surface')['entries']),2)
++        one=self.registry.search(limit=1)
++        two=self.registry.search(after=one['next_cursor'],limit=1)
++        self.assertEqual(two['entries'][0]['id'],'other')
++        self.assertEqual(self.registry.search(tag='absent')['entries'],[])
++        with self.assertRaises(ValueError): self.registry.search(limit=1000)
++
++    def test_bundle_preserves_exact_assets_and_provenance_across_programs(self):
++        body=b'Original editable source bytes'; sha=hashlib.sha256(body).hexdigest()
++        d=copy.deepcopy(self.d); d['assets']={'source':sha}; d['id']='source-fixture'
++        self.registry.register(d,{sha:body})
++        bundle=self.registry.bundle(d['id'],1)
++        with Registry(self.root/'other.sqlite') as other:
++            other.import_bundle(bundle)
++            self.assertEqual(other.get(d['id'],1),d)
++            self.assertEqual(other.asset(sha),body)
++        bundle['assets'][sha]='Y29ycnVwdA=='
++        with self.assertRaisesRegex(ValueError,'digest'): self.registry.import_bundle(bundle)
++        self.assertEqual(self.registry.asset(sha),body)
++
++    def test_missing_assets_and_bad_digest_leave_no_partial_entry(self):
++        d=copy.deepcopy(self.d); d['id']='missing'; d['assets']={'one':'1'*64}
++        with self.assertRaises(ValueError): self.registry.register(d)
++        with self.assertRaises(ValueError): self.registry.register(d,{'1'*64:b'wrong'})
++        with self.assertRaises(ValueError): self.registry.get('missing',1)
++        self.assertEqual(self.registry.db.execute('SELECT count(*) FROM assets').fetchone()[0],0)
++
++    def test_source_hash_and_wrong_database_are_checked(self):
++        other=self.root/'other.sqlite'
++        with sqlite3.connect(other) as db: db.execute('CREATE TABLE unrelated(x)')
++        before=other.read_bytes()
++        with self.assertRaises(ValueError): Registry(other)
++        self.assertEqual(before,other.read_bytes())
++        self.registry.db.execute('UPDATE stickers SET body=?',(json.dumps({'bad':'data'}),))
++        with self.assertRaises(ValueError): self.registry.get('panel',1)
++
++    def test_core_is_importable_without_uc_or_other_dependencies(self):
++        (self.root/'isolated').mkdir()
++        shutil.copytree(ROOT/'src/axm_stickers',self.root/'isolated/axm_stickers',ignore=shutil.ignore_patterns('__pycache__'))
++        script="""import sys
++sys.path.insert(0,sys.argv[1])
++from axm_stickers import Registry
++with Registry(sys.argv[2]) as r:
++ assert r.search()['entries'][0]['id']=='panel'
++assert not any(k.startswith('axm_uc') for k in sys.modules)
++print('standalone core passed')
++"""
++        r=subprocess.run([sys.executable,'-I','-c',script,str(self.root/'isolated'),str(self.root/'stickers.sqlite')],capture_output=True,text=True)
++        self.assertEqual(r.returncode,0,r.stderr)
++        self.assertIn('standalone core passed',r.stdout)
++
++    def test_3d_rotated_mount_scaling_and_socket_mismatch(self):
++        d=copy.deepcopy(self.d); d['attachment']={'space':'3d','socket':'bolt','anchor':frame(1,0,0,math.pi/2)}
++        p=instance(d,'x',placement={'scale':2})
++        target={'space':'3d','socket':'bolt','frame':frame(4,5,6,math.pi)}
++        m=attachment_matrix(d,p,target)
++        actual=[sum(m[r*4+k]*[1,0,0,1][k] for k in range(4)) for r in range(3)]
++        for a,b in zip(actual,[4,5,6]): self.assertAlmostEqual(a,b)
++        target['socket']='eye'
++        with self.assertRaisesRegex(ValueError,'socket'): attachment_matrix(d,p,target)
++        target['socket']='bolt'; target['frame'][0]=3
++        with self.assertRaisesRegex(ValueError,'rigid'): attachment_matrix(d,p,target)
++
++
++@unittest.skipUnless(shutil.which('node'),'dedicated CI supplies Node 22')
++class StickerRenderingTests(StickerFixture, unittest.TestCase):
++    def test_translated_scaled_rotated_2d_pixels_and_no_source_mutation(self):
++        original=copy.deepcopy(self.d)
++        p=instance(self.d,'rotated',placement={'translation':[3,0],'rotation':90})
++        result=adapter.stamp_layer(self.registry,[p],width=5,height=4)
++        values=pixels(result['png'])
++        occupied={(i%5,i//5) for i,v in enumerate(values) if v[3]}
++        self.assertEqual(occupied,{(1,0),(2,0),(1,1),(2,1)})
++        self.assertEqual(self.registry.get('panel',1),original)
++        scaled=instance(self.d,'scaled',placement={'translation':[0,0],'scale':[2,1]})
++        self.assertEqual(sum(v[3]>0 for v in pixels(adapter.stamp_layer(self.registry,[scaled],width=5,height=4)['png'])),8)
++
++    def test_opacity_overlap_and_cache_reuse(self):
++        a=instance(self.d,'a',placement={'opacity':0.5})
++        b=instance(self.d,'b',placement={'opacity':0.5})
++        with patch.object(adapter,'_studio_render',wraps=adapter._studio_render) as render:
++            result=adapter.stamp_layer(self.registry,[a,b],width=2,height=2)
++            self.assertEqual(render.call_count,1)
++        self.assertEqual(result['receipt']['unique_renders'],1)
++        self.assertEqual(pixels(result['png'])[0],(64,128,192,192))
++
++    def test_duplicate_ids_bad_parameters_and_work_bounds_fail(self):
++        a=instance(self.d,'a')
++        with self.assertRaisesRegex(ValueError,'duplicate'): adapter.stamp_layer(self.registry,[a,a],width=2,height=2)
++        with self.assertRaises(ValueError): adapter.stamp_layer(self.registry,[a],width=2,height=2,target={'space':'2d','socket':'bolt'})
++        with patch.object(adapter,'MAX_WORK',1):
++            with self.assertRaisesRegex(ValueError,'work budget'): adapter.stamp_layer(self.registry,[a],width=2,height=2)
++        invalid=copy.deepcopy(a); invalid['placement']={'execute':'bad'}
++        with self.assertRaises(ValueError): adapter.stamp_layer(self.registry,[invalid],width=2,height=2)
++
++    def test_source_file_loss_and_scene_replay_with_editable_instances(self):
++        body=png_bytes(2,2,4,bytes([20,220,120,255])*4)
++        (self.root/'source.png').write_bytes(body)
++        p=project(); p['sources']={'ink':'source.png'}
++        p['recipe']['layers']=[{'id':'ink','source_artifact_id':'ink'}]
++        d=adapter.register_studio(self.registry,p,self.root,id='ink',name='Captured ink',**ORIGIN)
++        (self.root/'source.png').unlink()
++        instances=[instance(d,'stamp',placement={'translation':[2,1]})]
++        adapter.publish_sticker_scene(self.root/'scene',self.registry,project(width=8,height=8),self.root,instances)
++        scene=json.loads((self.root/'scene/scene.json').read_text())
++        with Registry(self.root/'scene/stickers.sqlite') as portable:
++            adapter.publish_sticker_scene(self.root/'replay',portable,scene['host'],self.root/'scene',scene['instances'])
++            self.assertEqual(portable.asset(d['assets']['ink']),body)
++        self.assertEqual((self.root/'scene/preview/composition.png').read_bytes(),(self.root/'replay/preview/composition.png').read_bytes())
++        with self.assertRaises(FileExistsError):
++            adapter.publish_sticker_scene(self.root/'scene',self.registry,project(),self.root,instances)
++        self.assertEqual(scene['instances'],instances)
++
++
++class StickerGLBTests(unittest.TestCase):
++    def test_animated_attachment_roundtrip_preserves_geometry_materials_and_source(self):
++        source_spec={'schema':'axm.procedural-3d/v0.1','name':'Salvage socket fixture','primitives':[
++            {'id':'plate','type':'box','size':[0.4,0.1,0.3],'translation':[1,0,0],
++             'material':{'color':'#DFA32A','metallic':0.7,'roughness':0.6}}]}
++        source=build_glb(source_spec)['body']; original_doc,original_bin=_parse(source)
++        with tempfile.TemporaryDirectory() as temp, Registry(Path(temp)/'r.sqlite') as registry:
++            d=adapter.register_glb(registry,source,id='plate',name='Plate',socket='bolt',anchor=frame(1,0,0),
++                                   editable_source=json.dumps(source_spec).encode(),**ORIGIN)
++            p=instance(d,'shoulder',placement={'scale':2})
++            target={'space':'3d','socket':'bolt','frame':frame(2,3,4)}
++            motion=[{'time':0,'frame':target['frame']},{'time':1,'frame':frame(4,3,4,math.pi/2)},
++                    {'time':2,'frame':target['frame']}]
++            result=adapter.attach_glb(registry,p,target,motion=motion)
++            doc,binary=_parse(result['body'])
++            self.assertEqual(doc['meshes'],original_doc['meshes'])
++            self.assertEqual(doc['materials'],original_doc['materials'])
++            self.assertEqual(binary[:len(original_bin)],original_bin)
++            self.assertEqual(registry.asset(d['assets']['model']),source)
++            asset=GamePoseAsset(result['body'])
++            mount=result['receipt']['mount_node']
++            for t,expected in [(0,[2,3,4]),(0.5,[3,3,4]),(1,[4,3,4]),(2,[2,3,4])]:
++                pose=asset.sample('StickerSocketMotion',t,vertices=True)
++                point=asset.point(pose,mount,[1,0,0])
++                for a,b in zip(point,expected): self.assertAlmostEqual(a,b,places=6)
++            start=asset.sample('StickerSocketMotion',0)
++            end=asset.sample('StickerSocketMotion',2)
++            self.assertEqual(start['world_matrices'],end['world_matrices'])
++            self.assertFalse(result['receipt']['visual_approval'])
++            with self.assertRaises(ValueError): adapter.attach_glb(registry,p,target,motion=motion[::-1])
++            with self.assertRaises(ValueError): adapter.attach_glb(registry,p,dict(target,socket='eye'))
++
++
++if __name__=='__main__': unittest.main()
+diff --git a/tools/sticker_proof.py b/tools/sticker_proof.py
+new file mode 100644
+index 0000000..77b4e95
+--- /dev/null
++++ b/tools/sticker_proof.py
+@@ -0,0 +1,170 @@
++"""Actual layered sticker placement, 1000-instance reuse and animated GLB proof."""
++import copy
++import hashlib
++import json
++import math
++from pathlib import Path
++import shutil
++import struct
++import sys
++import time
++
++sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src'))
++from axm_stickers import Registry,instance
++from axm_uc import sticker_adapter as adapter
++from axm_uc.fabric_noise import png_bytes
++from axm_uc.procedural_3d import build_glb
++from axm_uc.game_pose_runtime import GamePoseAsset,_parse
++
++ORIGIN={'author':'AXM','license':'CC0-1.0','source':'Original salvage signal badge, generated by tools/sticker_proof.py'}
++
++
++def project(width,height,layers,sources=None):
++    return {'schema':'axm.studio-composition-project/v1','sources':sources or {},
++            'recipe':{'schema':'axm.raster-composition/v1','canvas':{'width':width,'height':height},'layers':layers}}
++
++
++def frame(t):
++    angle=0.65*math.sin(t*math.pi)
++    c,s=math.cos(angle),math.sin(angle)
++    return [c,-s,0,0.5*math.sin(t*math.pi),s,c,0,0.4*math.sin(t*math.pi),0,0,1,0,0,0,0,1]
++
++
++def standalone(root):
++    repo=Path(__file__).resolve().parents[1]
++    package=root/'standalone-core'; package.mkdir()
++    shutil.copytree(repo/'src/axm_stickers',package/'axm_stickers',ignore=shutil.ignore_patterns('__pycache__'))
++    shutil.copyfile(repo/'LICENSE',package/'LICENSE')
++    (package/'pyproject.toml').write_text('''[build-system]
++requires = ["setuptools>=68"]
++build-backend = "setuptools.build_meta"
++[project]
++name = "axm-sticker-fabric"
++version = "0.1.0"
++description = "Portable offline sticker definitions and registry"
++requires-python = ">=3.11"
++dependencies = []
++[project.scripts]
++axm-stickers = "axm_stickers.__main__:main"
++[tool.setuptools]
++packages = ["axm_stickers"]
++''')
++    (package/'README.md').write_text('# AXM Sticker Fabric core\n\nInstall with `python -m pip install .`. This package imports only the Python standard library.\nIt registers, searches, bundles and resolves stickers; renderers are external adapters.\nNo UC, Node, AI, network or account is needed for the core.\nThe first UC adapters consume these definitions for Studio layers and rigid GLB attachment.\n')
++
++
++def build(destination):
++    root=Path(destination); root.mkdir(parents=True,exist_ok=False)
++    plate,signal=bytearray(),bytearray()
++    for y in range(96):
++        for x in range(96):
++            inside=5<=x<91 and 5<=y<91 and 20<=x+y<=170 and abs(x-y)<73
++            rim=inside and (x<11 or x>84 or y<11 or y>84 or x+y<26 or x+y>164 or abs(x-y)>67)
++            nick=inside and (x*23+y*17)%131<4
++            color=(207,148,41) if rim else ((86,108,127) if nick else (27,42,60))
++            plate.extend((*color,255 if inside else 0))
++            bolt=(33<=x<53 and 20<=y<43) or (24<=x<67 and 40<=y<52) or (47<=x<62 and 48<=y<75)
++            screw=any((x-a)**2+(y-b)**2<8 for a,b in ((18,18),(78,18),(18,78),(78,78)))
++            signal.extend((45,237,239,255) if bolt else ((231,212,166,255) if screw else (0,0,0,0)))
++    for key,pixels in [('plate',plate),('signal',signal)]: (root/f'{key}.png').write_bytes(png_bytes(96,96,4,bytes(pixels)))
++    source=project(96,96,[{'id':'plate','source_artifact_id':'plate'},
++        {'id':'signal','source_artifact_id':'signal','opacity':1.0}],{'plate':'plate.png','signal':'signal.png'})
++    parameters={'signal-opacity':{'type':'number','min':0,'max':1,'default':1.0,
++                                  'path':['project','recipe','layers',1,'opacity']}}
++    host=project(420,220,[{'id':'background','fill':'#111C2D'}])
++    with Registry(root/'registry.sqlite') as registry:
++        d=adapter.register_studio(registry,source,root,id='salvage-signal',name='Salvage signal badge',
++                                 anchor=[48,48],parameters=parameters,tags=['salvage','signal'],**ORIGIN)
++        placed=[instance(d,'upright',placement={'translation':[78,108]}),
++                instance(d,'tilted',placement={'translation':[211,108],'rotation':-22,'scale':[1.25,1.25]}),
++                instance(d,'dimmed',overrides={'signal-opacity':0.35},placement={'translation':[341,108],'rotation':16})]
++        adapter.publish_sticker_scene(root/'scene',registry,host,root,placed)
++        scene=json.loads((root/'scene/scene.json').read_text())
++        with Registry(root/'scene/stickers.sqlite') as subset:
++            adapter.publish_sticker_scene(root/'scene-replay',subset,scene['host'],root/'scene',scene['instances'])
++        assert (root/'scene/preview/composition.png').read_bytes()==(root/'scene-replay/preview/composition.png').read_bytes()
++        # Indexed metadata and shared source blobs, not 1000 independent PNG copies.
++        start=time.perf_counter()
++        for i in range(1000):
++            entry=copy.deepcopy(d); entry['id']=f'catalog-fixture-{i}'
++            registry.register(entry)
++        catalog_seconds=time.perf_counter()-start
++        assert registry.db.execute('SELECT count(*) FROM assets').fetchone()[0]==2
++        assert len(registry.search(tag='signal',limit=100)['entries'])==100
++        many=[instance(d,f'part-{i}',placement={'translation':[8+(i%40)*16,8+(i//40)*16],
++                                               'scale':[0.14,0.14]}) for i in range(1000)]
++        start=time.perf_counter(); tiled=adapter.stamp_layer(registry,many,width=640,height=400)
++        placement_seconds=time.perf_counter()-start
++        assert tiled['receipt']['unique_renders']==1
++        (root/'thousand-placements.png').write_bytes(tiled['png'])
++        primitives=[]
++        def box(id,size,position,color,metal=.3):
++            primitives.append({'id':id,'type':'box','size':size,'translation':position,
++                               'material':{'color':color,'metallic':metal,'roughness':.5}})
++        box('outer-plate',[.96,1.06,.12],[0,0,0],'#C48A25',.7)
++        box('inset',[.8,.9,.05],[0,0,.08],'#253A50',.5)
++        for i,(x,y) in enumerate([(-.34,-.4),(.34,-.4),(-.34,.4),(.34,.4)]):
++            box(f'bolt-{i}',[.07,.07,.04],[x,y,.12],'#E4D5AD',.8)
++        for i,(x,y,w,h) in enumerate([(-.08,.2,.15,.27),(-.01,.05,.4,.12),(.08,-.12,.13,.27)]):
++            box(f'signal-{i}',[w,h,.04],[x,y,.13],'#30E8EF',.1)
++        box('crooked-repair',[.18,.06,.03],[.2,-.3,.12],'#AC603E',.6)
++        spec={'schema':'axm.procedural-3d/v0.1','name':'Salvage Signal Raised Badge','primitives':primitives}
++        original=build_glb(spec)['body']
++        three=adapter.register_glb(registry,original,id='raised-signal',name='Raised signal badge',socket='bolt',
++                                  editable_source=json.dumps(spec,indent=2).encode(),tags=['salvage','3d'],**ORIGIN)
++        motion=[{'time':i/8,'frame':frame(i/8)} for i in range(17)]
++        attached=adapter.attach_glb(registry,instance(three,'shoulder-badge'),
++                                   {'space':'3d','socket':'bolt','frame':frame(0)},motion=motion)
++        (root/'animated-badge.glb').write_bytes(attached['body']); (root/'original-badge.glb').write_bytes(original)
++        (root/'editable-badge.json').write_text(json.dumps(spec,indent=2)+'\n')
++        asset=GamePoseAsset(attached['body']); maximum=0
++        for item in motion:
++            pose=asset.sample('StickerSocketMotion',item['time'],vertices=True)
++            point=asset.point(pose,attached['receipt']['mount_node'])
++            maximum=max(maximum,max(abs(a-b) for a,b in zip(point,[item['frame'][3],item['frame'][7],item['frame'][11]])))
++        assert maximum<1e-6
++        receipt={'schema':'axm.sticker-proof/v1','two_d_replay_exact':True,'instances':tiled['receipt'],
++                 'catalog_fixture_count':1000,'catalog_seconds':catalog_seconds,'placement_seconds':placement_seconds,
++                 'registry_bytes':(root/'registry.sqlite').stat().st_size,'source_pngs_shared':True,
++                 'glb_socket_max_error_m':maximum,'glb_samples':len(motion),
++                 'limits':'Local measured execution only. No target-engine, continuous playback or aesthetic acceptance claim.'}
++    standalone(root)
++    (root/'proof.json').write_text(json.dumps(receipt,indent=2)+'\n')
++    return receipt
++
++
++def preview(root):
++    # Optional offline inspection sheet, built from actual output PNG and GLB poses.
++    import matplotlib
++    matplotlib.use('Agg')
++    import matplotlib.pyplot as plt
++    from mpl_toolkits.mplot3d.art3d import Poly3DCollection
++    root=Path(root); body=(root/'animated-badge.glb').read_bytes()
++    asset=GamePoseAsset(body); doc,binary=_parse(body)
++    def indices(ref):
++        a=doc['accessors'][ref]; v=doc['bufferViews'][a['bufferView']]
++        fmt={5123:'H',5125:'I'}[a['componentType']]
++        return struct.unpack_from('<'+fmt*a['count'],binary,v.get('byteOffset',0)+a.get('byteOffset',0))
++    fig=plt.figure(figsize=(12,7),facecolor='#101929')
++    top=fig.add_subplot(2,1,1); top.imshow(plt.imread(root/'scene/preview/composition.png')); top.axis('off')
++    top.set_title('ONE EDITABLE STICKER / THREE INDEPENDENT INSTANCES',color='white',fontsize=13)
++    for slot,t in enumerate([0,.5,1.5],1):
++        ax=fig.add_subplot(2,3,slot+3,projection='3d')
++        pose=asset.sample('StickerSocketMotion',t,vertices=True)
++        all_triangles,all_colors=[],[]
++        for mesh in pose['meshes']:
++            primitive=doc['meshes'][doc['nodes'][mesh['node']]['mesh']]['primitives'][mesh['primitive']]
++            ids=indices(primitive['indices']); vertices=mesh['positions']
++            triangles=[[vertices[i] for i in ids[j:j+3]] for j in range(0,len(ids),3)]
++            color=doc['materials'][primitive.get('material',0)]['pbrMetallicRoughness']['baseColorFactor']
++            all_triangles.extend(triangles); all_colors.extend([color]*len(triangles))
++        ax.add_collection3d(Poly3DCollection(all_triangles,facecolors=all_colors,edgecolors='#182331',linewidths=.25))
++        ax.set(xlim=(-1.3,1.3),ylim=(-1.3,1.3),zlim=(-.5,.7))
++        ax.view_init(elev=67,azim=-65); ax.set_box_aspect((1,1,.5)); ax.set_axis_off(); ax.set_facecolor('#101929')
++        ax.set_title(f'EXPORTED SOCKET POSE / {t:.1f}s',color='white',fontsize=11)
++    fig.text(.5,.02,'Actual GLB geometry • offline flat-colour inspection • editable source retained',ha='center',color='#AFBFCE')
++    fig.tight_layout(rect=(0,.04,1,1)); fig.savefig(root/'sticker-proof.png',dpi=150,facecolor=fig.get_facecolor()); plt.close(fig)
++
++
++if __name__=='__main__':
++    if sys.argv[1]=='preview': preview(sys.argv[2])
++    else: print(json.dumps(build(sys.argv[1]),indent=2))

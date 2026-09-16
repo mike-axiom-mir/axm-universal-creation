@@ -1,0 +1,191 @@
+{
+  "capsule_id": "277c0c4e19e10d7cea1210c28edbfded7632acc15894941e869e716e727bd791",
+  "evidence": {
+    "files": [
+      {
+        "additions": 49,
+        "binary": false,
+        "content_sha256": "a2878d6deeb056c90896d90e99a3d7c2877baae4129c734c77d88f3629e376c7",
+        "deletions": 2,
+        "path": "GAME_STYLE_GROWTH.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Current checkpoint",
+          "Combined Parcel Imp showcase pass \u2014 2026-09-13",
+          "Game runtime realization pass \u2014 2026-09-13"
+        ]
+      },
+      {
+        "additions": 28,
+        "binary": false,
+        "content_sha256": "e33782958003c23f95c4c66c772ae94d3d7e25d61e41455cfdfb87c8d2654f42",
+        "deletions": 0,
+        "path": "docs/GAME_SHOWCASE_CONTRACT.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Combined animated game-asset showcase",
+          "Parcel Imp proof"
+        ]
+      },
+      {
+        "additions": 250,
+        "binary": false,
+        "content_sha256": "159524ac797361b1f23a78ce79c920cb05d585247899a15c972183274a2147db",
+        "deletions": 0,
+        "path": "src/axm_uc/game_showcase_contract.py",
+        "status": "A",
+        "symbols": [
+          "_canonical",
+          "_digest",
+          "_name",
+          "_number",
+          "_integer",
+          "_sha",
+          "game_showcase_catalog",
+          "_validate",
+          "compose_game_showcase",
+          "publish_game_showcase"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 11,
+        "binary": false,
+        "content_sha256": "acd9b8a97208912380beba608f0886ed058652c9852a977d5df94d64b39ea2c6",
+        "deletions": 0,
+        "path": "src/axm_uc/visual_assets_cli.py",
+        "status": "M",
+        "symbols": [
+          "combined_catalog",
+          "build_parser",
+          "main"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 104,
+        "binary": false,
+        "content_sha256": "1c6a3571c1afa358abb45f27a80d349fd5a91abf99820ffdc9c1a1c71e9c9d8c",
+        "deletions": 0,
+        "path": "tests/test_game_showcase_contract.py",
+        "status": "A",
+        "symbols": [
+          "source",
+          "GameShowcaseContractTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 468,
+        "binary": false,
+        "content_sha256": "a2baac58cff7ff353e19d0675814a87c2a7becc2a46e483ce2608f950ebbca49",
+        "deletions": 0,
+        "path": "tools/blender/game_showcase_parcel_imp.py",
+        "status": "A",
+        "symbols": [
+          "sha256",
+          "q",
+          "new_hero",
+          "bones",
+          "build_geometry",
+          "request",
+          "secondary_request",
+          "apply_track",
+          "author_actions",
+          "export_assets",
+          "studio",
+          "build",
+          "action",
+          "local_value",
+          "value_error",
+          "verify",
+          "main"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "5e2d8b02723b766dd95f394f6a0fee74e2c3761e4a9e35bdbfb45261976cc19d"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 7,
+    "kinds": [
+      "code",
+      "knowledge",
+      "protocol-state",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "action",
+      "actions",
+      "animated",
+      "apply",
+      "asset",
+      "author",
+      "axm",
+      "blender",
+      "bones",
+      "build",
+      "canonical",
+      "catalog",
+      "checkpoint",
+      "cli",
+      "combined",
+      "compose",
+      "contract",
+      "creation-machine",
+      "current",
+      "digest",
+      "error",
+      "export",
+      "game",
+      "gate",
+      "geometry",
+      "growth",
+      "hero",
+      "imp",
+      "integer",
+      "local",
+      "merge",
+      "name",
+      "number",
+      "parcel",
+      "parser",
+      "pass",
+      "proof",
+      "publish",
+      "realization",
+      "request",
+      "runtime",
+      "secondary",
+      "sha",
+      "sha256",
+      "showcase",
+      "source",
+      "standalone",
+      "studio",
+      "style",
+      "tools",
+      "track",
+      "universal-creation",
+      "validate",
+      "value",
+      "verify",
+      "visual"
+    ]
+  },
+  "source": {
+    "base": "d93faaaa39f9c270e8b4f45c55a01642fa8f5b05",
+    "commit_subject": "Merge combined animated Parcel Imp showcase gate (#69)",
+    "head": "b6a111d71649350d1288bdf3882e1b00a0b9bc46",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

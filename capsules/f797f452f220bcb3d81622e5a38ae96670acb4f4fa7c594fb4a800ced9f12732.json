@@ -1,0 +1,98 @@
+{
+  "capsule_id": "f797f452f220bcb3d81622e5a38ae96670acb4f4fa7c594fb4a800ced9f12732",
+  "evidence": {
+    "files": [
+      {
+        "additions": 92,
+        "binary": false,
+        "content_sha256": "e8967cbbfcdd8d654bed64b697a0bc116b2aef85c69ce45ab6a027c0d4ee594b",
+        "deletions": 0,
+        "path": "docs/CREATIVE_FINISHING_WAVE12.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Creative Finishing Wave 12",
+          "Exact hand census",
+          "Vector finishing",
+          "Typography finishing",
+          "Audio mastering and restoration",
+          "Frame finishing",
+          "Machine-use integration",
+          "Resource and continuity boundaries",
+          "Verification"
+        ]
+      },
+      {
+        "additions": 6,
+        "binary": false,
+        "content_sha256": "4fe48ad5161409e72ebb9902cd6a71a9a702defc9ae1e185821f08eadc173706",
+        "deletions": 0,
+        "path": "tests/test_creative_precision_fabric.py",
+        "status": "M",
+        "symbols": [
+          "CreativePrecisionFabricTests"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "0bf1c037d8658c81f17f1e53c0556010d10b4c66f10fabd46c7855fa42a372a5"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "audio",
+      "axiom",
+      "axm",
+      "boundaries",
+      "census",
+      "chatgpt",
+      "continuity",
+      "creation-machine",
+      "creative",
+      "exact",
+      "fabric",
+      "finishing",
+      "frame",
+      "from",
+      "hand",
+      "integration",
+      "machine",
+      "mastering",
+      "merge",
+      "mike",
+      "mir",
+      "precision",
+      "pull",
+      "request",
+      "resource",
+      "restoration",
+      "standalone",
+      "typography",
+      "universal-creation",
+      "use",
+      "vector",
+      "verification",
+      "wave",
+      "wave12"
+    ]
+  },
+  "source": {
+    "base": "ab9f93bd8862f0700d7e91065496ee5215cb3211",
+    "commit_subject": "Merge pull request #101 from mike-axiom-mir/chatgpt/creative-finishing-wave12",
+    "head": "026f4f5d0e669627639f404945147c9dedb48ff2",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

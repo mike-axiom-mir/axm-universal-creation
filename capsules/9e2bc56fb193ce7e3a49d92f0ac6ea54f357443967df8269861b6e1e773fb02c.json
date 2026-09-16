@@ -1,0 +1,180 @@
+{
+  "capsule_id": "9e2bc56fb193ce7e3a49d92f0ac6ea54f357443967df8269861b6e1e773fb02c",
+  "evidence": {
+    "files": [
+      {
+        "additions": 35,
+        "binary": false,
+        "content_sha256": "1363b8228fc3e0e140360473761802ecc69d4d3f1884f081c76110fcf3185c72",
+        "deletions": 0,
+        "path": "SHOWROOM_TEMPLATE_PACK.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Editable 3D Showroom / Gallery Template Pack",
+          "Surfaces",
+          "Source-first contracts",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 42,
+        "binary": false,
+        "content_sha256": "898ef028fd4a1afa6a0baf56ac4dfa88551ff10bc57f05119870395e7f8859b2",
+        "deletions": 42,
+        "path": "VISUAL_TEMPLATE_FABRIC.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Current v12 candidate census",
+          "Product foundations",
+          "3D showroom / object gallery foundation",
+          "Registry and identity",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 34,
+        "binary": false,
+        "content_sha256": "745355e5b804e37c2d1adb0a425609e383601fb490022e1168b8ebcc9381f863",
+        "deletions": 33,
+        "path": "VISUAL_TEMPLATE_PRIORITY_MAP.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "AXM Visual Template Expansion Priority Map",
+          "3D showroom / gallery presentation \u2014 IMPLEMENTED IN THIS LANE",
+          "Next high-value visual/creation families",
+          "Cross-cutting rules",
+          "Immediate build order"
+        ]
+      },
+      {
+        "additions": 88,
+        "binary": false,
+        "content_sha256": "f052c99c523ace88e7dd266a25cbfac01ece89a374e1f8e88a345c867aafc6df",
+        "deletions": 0,
+        "path": "src/axm_uc/visual_template_showroom.py",
+        "status": "A",
+        "symbols": [
+          "_merge",
+          "extend_showroom_catalog"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 3,
+        "binary": false,
+        "content_sha256": "56386fe8be92b30f99e8a7fd7509c2c89de35d2b3bba44e6a9cc93d20a0cadfc",
+        "deletions": 1,
+        "path": "src/axm_uc/visual_templates.py",
+        "status": "M",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 36,
+        "binary": false,
+        "content_sha256": "8bb4749e0d65ee21b0e837c6abef1a6b6d1ba8b65f9f3aba2bfcf127bf4cb10e",
+        "deletions": 35,
+        "path": "tests/test_visual_templates.py",
+        "status": "M",
+        "symbols": [
+          "VisualTemplateTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 18,
+        "binary": false,
+        "content_sha256": "2c754b2f3a929c550580582bab3e86420339ae685b194f00990ba9bace25d2dd",
+        "deletions": 17,
+        "path": "tools/visual_template_proof.py",
+        "status": "M",
+        "symbols": [
+          "_write",
+          "main"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "b72f69e1b008b371548946e59a17ac0ef21e3ac6912565a14d794d881e582e41"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "add",
+      "axm",
+      "boundary",
+      "build",
+      "candidate",
+      "catalog",
+      "census",
+      "contracts",
+      "creation",
+      "creation-machine",
+      "cross",
+      "current",
+      "cutting",
+      "editable",
+      "expansion",
+      "extend",
+      "fabric",
+      "families",
+      "first",
+      "foundation",
+      "foundations",
+      "gallery",
+      "high",
+      "identity",
+      "immediate",
+      "implemented",
+      "lane",
+      "map",
+      "merge",
+      "next",
+      "object",
+      "order",
+      "pack",
+      "presentation",
+      "priority",
+      "product",
+      "proof",
+      "registry",
+      "rules",
+      "showroom",
+      "source",
+      "standalone",
+      "surfaces",
+      "template",
+      "templates",
+      "this",
+      "tools",
+      "truth",
+      "universal-creation",
+      "v12",
+      "value",
+      "visual",
+      "write"
+    ]
+  },
+  "source": {
+    "base": "901c9ff759188f7da268f1b5dd0466461d1af4a6",
+    "commit_subject": "Add editable 3D showroom and gallery templates",
+    "head": "8584629d1abb0cecbf96cfcc84990b409bd140a9",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

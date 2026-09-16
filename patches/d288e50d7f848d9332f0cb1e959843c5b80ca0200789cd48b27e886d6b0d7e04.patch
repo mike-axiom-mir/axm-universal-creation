@@ -1,0 +1,997 @@
+diff --git a/CREATIVE_COMIC_TEMPLATE_PACK.md b/CREATIVE_COMIC_TEMPLATE_PACK.md
+new file mode 100644
+index 0000000..d8f0067
+--- /dev/null
++++ b/CREATIVE_COMIC_TEMPLATE_PACK.md
+@@ -0,0 +1,39 @@
++# Creative Editor + Editable Comic Template Pack
++
++This v2 pack extends AXM Visual Template Fabric with two source-first product foundations:
++
++- `editor.creative.core`
++- `comic.narrative.core`
++
++They are structural knowledge, not finished applications and not aesthetic canon.
++
++## Creative editor
++
++The editor foundation supplies twelve coordinated surfaces for project selection, assets, layers, timelines, graphs, inspection, animation, effects, cutscenes, materials, audio and review/export.
++
++The important contract is that richer editable state remains authoritative. Preview/export surfaces can display or derive from that state but do not replace it.
++
++## Editable comics
++
++The comic/narrative foundation is intentionally not a flat page-image template. It separates:
++
++- page geometry;
++- panel geometry and gutters;
++- panel source art / crop / depth;
++- dialogue text;
++- speech-bubble body and tail;
++- captions;
++- character references;
++- reading order;
++- scene/beat graph;
++- storyboard sequence;
++- motion-comic timing;
++- reader preview/export.
++
++That gives Universal Creation known structure for creating something visually rich while still leaving meaningful handles for later human or machine editing.
++
++## Evidence boundary
++
++Current deterministic evidence can prove catalog identity, responsive geometry, product flows, registry pins and structural separation of editable surfaces. It does not prove drawing quality, authoring ergonomics, undo/redo, export fidelity, target-engine rendering, typography quality or aesthetic acceptance.
++
++A flattened SVG/HTML preview is evidence that the structural template can be realized for inspection. It is never the authoritative comic/editor source.
+diff --git a/VISUAL_TEMPLATE_FABRIC.md b/VISUAL_TEMPLATE_FABRIC.md
+index 5942eb4..28891b1 100644
+--- a/VISUAL_TEMPLATE_FABRIC.md
++++ b/VISUAL_TEMPLATE_FABRIC.md
+@@ -16,129 +16,83 @@ This extends, rather than replaces, the existing systems:
+ 
+ The public module is `axm_uc.visual_templates`.
+ 
+-Its retained deterministic kernel lives in `visual_template_core.py`. Genre/product growth lives in `visual_template_growth.py`. Shared professional game-product surfaces live in `visual_template_game_systems.py`. The public facade composes those dictionaries, rejects collisions, validates the resulting catalog, then exposes the same v1 schemas and functions.
++Its retained deterministic kernel lives in `visual_template_core.py`. Genre/product growth lives in `visual_template_growth.py`. Shared professional game-product surfaces live in `visual_template_game_systems.py`. Creative-editor and editable-narrative surfaces live in `visual_template_creative_narrative.py`. The public facade composes those dictionaries, rejects collisions, validates the resulting catalog, then exposes the same v1 schemas and functions.
+ 
+ This is intentionally **one catalog**, not competing template systems and not multiple registries.
+ 
+-Current deterministic catalog:
++Current deterministic catalog in the v2 lane:
+ 
+-- **32 reusable primitives**;
+-- **8 coherent style systems**;
+-- **57 responsive screen archetypes**;
+-- **6 whole-product archetypes**.
++- **47 reusable primitives**;
++- **10 coherent style systems**;
++- **79 responsive screen archetypes**;
++- **8 whole-product archetypes**.
+ 
+ ## Layers
+ 
+-1. **Primitives** — reusable state/interaction contracts such as panel, navigation, player seat, selection card, stat comparison, slider row, countdown, loading state, recovery banner, keybind row, save slot and confirmation summary.
++1. **Primitives** — reusable state/interaction contracts such as panel, navigation, player seat, loading state, layer row, timeline track, graph node, panel frame, speech bubble and reading-order marker.
+ 2. **Style systems** — coherent surface, type, depth, shape and motion language. These are semantic visual systems, not one-off color themes.
+ 3. **Screen archetypes** — normalized responsive region geometry, slots, math hooks, intent and quality constraints.
+ 4. **Whole-product archetypes** — exact screen sets plus explicit flow edges and product-level coherence rules.
+ 
+ Primitives describe reusable behavior/state expectations; they are not hidden widget implementations. A target product can realize them differently while preserving the contract that matters.
+ 
+-## Racing foundations
+-
+-Two racing products are retained deliberately:
+-
+-- `game.racing.performance` — the smaller six-screen racing shell: lobby, event selection, garage, driving HUD, pause and results.
+-- `game.racing.full` — the professional 19-screen foundation intended for a complete game shell.
+-
+-`game.racing.full` covers:
+-
+-- home / main menu;
+-- co-op lobby;
+-- event selection;
+-- vehicle selection;
+-- garage;
+-- detailed reversible tuning + telemetry;
+-- livery / appearance editing;
+-- pre-race briefing and grid;
+-- truthful loading/readiness;
+-- start countdown;
+-- primary driving HUD;
+-- split-screen HUD with explicit seat identity;
+-- pause;
+-- disconnect / reconnection / recovery;
+-- results and rewards;
+-- replay / photo review;
+-- season / progression;
+-- settings;
+-- accessibility.
+-
+-The product carries one shared `racing.performance` language and explicit flow edges between those surfaces. Driving views reduce chrome relative to setup views. Loading and recovery templates explicitly forbid pretending an unobserved state succeeded.
+-
+-This is deliberately useful for AXM Wreckline-like work without hard-coding one game's identity into Universal Creation. A game can inherit the structure and mutate its art direction, slots, geometry, content or whole screens.
+-
+-## Reusable co-op game foundation
+-
+-`game.coop.action` supplies a generic co-op action shell rather than copying the racing product:
+-
+-- home;
+-- party lobby;
+-- loadout;
+-- action HUD;
+-- pause/session overlay;
+-- mission results;
+-- settings with local-vs-party scope.
+-
+-The reusable `player-seat` contract includes empty, joining, ready, not-ready, disconnected and AI-seat states. Seat ownership is explicit. Human and machine players can therefore use the same player-facing presentation contract instead of receiving hidden privileged paths.
+-
+-## Reusable RTS foundation
+-
+-`game.rts.command` supplies a macro-scale command shell for persistent RTS-style worlds:
+-
+-- world-entry lobby;
+-- persistent world map;
+-- command HUD;
+-- production/build planner;
+-- research/technology;
+-- diplomacy;
+-- pause/strategic overview;
+-- battle/world outcome.
+-
+-Its quality contract keeps the strategic map/world as the referent while command panels change. Selection, ownership, resources, production and strategic consequences retain stable anchors rather than turning the experience into unrelated dashboards.
+-
+-## Shared professional game-system shell
+-
+-`game.system.shell` is a genre-neutral library of **18 optional product surfaces**. It exists so every new AXM game does not have to rediscover the non-gameplay half of being a professional product.
+-
+-It contains:
+-
+-- player profile;
+-- party / seat management;
+-- matchmaking queue;
+-- server/session browser;
+-- controller/input remapping;
+-- display/graphics settings;
+-- audio settings;
+-- shared accessibility settings;
+-- save/load slots;
+-- achievements/challenges;
+-- tutorial/training;
+-- photo mode;
+-- credits/licenses;
+-- error/recovery;
+-- notifications;
+-- text chat/channels;
+-- privacy/consent;
+-- language/localization selection.
+-
+-These screens are **capabilities, not assumptions**. A local/offline game does not suddenly require accounts, matchmaking, servers or chat because templates exist for them. A game selects only the surfaces relevant to its real product state.
+-
+-Truth-sensitive contracts include:
+-
+-- fake loading/progress state is forbidden;
+-- server/session availability must be observed;
+-- pending/failed chat delivery cannot look delivered;
+-- corrupt/incompatible saves remain visible as such rather than being silently rewritten;
+-- input conflicts must be shown before replacement;
+-- display changes can expose a bounded revert path;
+-- consent is not preselected merely to improve conversion and revocation remains discoverable;
+-- errors say what failed, what remains safe and what recovery evidence exists.
++## Game foundations
++
++The merged v1 foundation remains intact:
++
++- `game.racing.performance` — compact six-screen racing shell;
++- `game.racing.full` — 19-screen professional racing foundation;
++- `game.coop.action` — reusable co-op action shell;
++- `game.rts.command` — persistent-world RTS command shell;
++- `game.system.shell` — 18 optional genre-neutral professional product surfaces.
++
++Those foundations include truthful loading/recovery, explicit player-seat ownership, split-screen support, controller remapping, save/load, accessibility, privacy/consent, language/localization and other reusable product plumbing. Optional network/account surfaces remain capabilities, not requirements for local/offline games.
++
++## Creative editor foundation
++
++`editor.creative.core` is a 12-screen professional editing foundation:
++
++- project hub;
++- asset browser;
++- layer/composition editor;
++- timeline editor;
++- node graph;
++- deep inspector;
++- animation workspace;
++- effects workspace;
++- cutscene editor;
++- material editor;
++- audio editor;
++- review/export.
++
++Its `creative.workbench` visual language prioritizes stable editing context and dense inspectable state. New primitives include `layer-row`, `timeline-track`, `keyframe`, `node-card`, `socket-port`, `inspector-field` and `asset-tile`.
++
++The contract is deliberately source-first: selected state, modified state, graph typing, timeline position, provenance and richer editable source remain visible. A derived preview/export never becomes authoritative merely because it is easier to render.
++
++## Editable comics and visual narrative
++
++`comic.narrative.core` is a 10-screen visual-story foundation:
++
++- story/project library;
++- page editor;
++- panel editor;
++- dialogue/lettering editor;
++- character reference sheet;
++- scene graph;
++- storyboard;
++- motion-comic timeline;
++- reader preview;
++- review/export.
++
++The important boundary is **editability**, not just appearance. Page geometry, panel geometry, source art, crops/depth, dialogue text, bubble shape/tail, captions, character references, reading order, branching story beats and motion timing remain distinct semantic state.
++
++Reusable narrative primitives include `panel-frame`, `panel-gutter`, `speech-bubble`, `caption-box`, `storyboard-card`, `reading-order-marker`, `character-reference-card` and `story-beat-link`.
++
++The `narrative.ink` style gives the pack a coherent editorial starting language, but a comic may replace that style without replacing its structural/editability contract.
+ 
+ ## Responsive geometry
+ 
+-Screen regions are stored in normalized `0..1` coordinates. `resolve()` turns them into exact pixels for a supplied viewport. Game screens currently ship all three variants:
++Screen regions are stored in normalized `0..1` coordinates. `resolve()` turns them into exact pixels for a supplied viewport. Current game, creative-editor and comic screens ship all three variants:
+ 
+ - `compact`: width below 900 px or portrait/narrow ratio below 1.15;
+ - `wide`: aspect ratio at least 1.9;
+@@ -162,6 +116,8 @@ with Registry('stickers.sqlite') as registry:
+ 
+ The wrapper keeps the exact visual template inside the sticker recipe. Existing Sticker Registry guarantees still apply: exact id/version/digest pins, no floating `latest`, no silent upgrades, explicit registration and portable offline state.
+ 
++The v2 catalog contains 79 screens + 8 products, so explicit built-in installation currently registers **87 exact visual definitions**.
++
+ The bridge does **not** turn every Sticker into UI. It lets visual foundations use the same proven immutable local registry when desired.
+ 
+ Screen archetypes may declare Sticker slots. `bind_sticker_slots()` accepts only explicit `{id, version, digest}` pins and validates socket/tag requirements. It never searches for or chooses a replacement on the caller's behalf.
+@@ -178,28 +134,20 @@ Inspect exact foundations:
+ 
+ ```sh
+ axm-visual-templates show game.racing.full
+-axm-visual-templates show game.coop.action
+-axm-visual-templates show game.rts.command
+-axm-visual-templates show game.system.shell
++axm-visual-templates show editor.creative.core
++axm-visual-templates show comic.narrative.core
+ ```
+ 
+ Write local structural previews:
+ 
+ ```sh
+ axm-visual-templates render game.racing.full creations/racing-foundation --width 1920 --height 1080
+-axm-visual-templates render game.coop.action creations/coop-foundation --width 1280 --height 720
+-axm-visual-templates render game.rts.command creations/rts-foundation --width 1920 --height 1080
+-axm-visual-templates render game.system.shell creations/game-system-foundation --width 1280 --height 720
++axm-visual-templates render editor.creative.core creations/creative-editor --width 1920 --height 1080
++axm-visual-templates render comic.narrative.core creations/comic-editor --width 1920 --height 1080
+ ```
+ 
+ A product preview contains one SVG per screen, `product.json` with exact resolved structure, and a local HTML gallery. A screen preview contains `screen.svg`, `template.json` and HTML.
+ 
+-Explicitly install all built-ins into a Sticker Registry:
+-
+-```sh
+-axm-visual-templates install-registry creations/stickers.sqlite
+-```
+-
+ ## Evidence
+ 
+ Run:
+@@ -209,23 +157,23 @@ python -m unittest discover -s tests -p 'test_visual_templates.py' -v
+ python tools/visual_template_proof.py /new/output/path
+ ```
+ 
+-The deterministic test suite checks:
++The deterministic suite now checks:
+ 
+-- exact composed catalog counts;
+-- all 57 screens across six representative viewport shapes/sizes;
+-- compact/standard/wide coverage for game screens;
++- exact composed catalog counts: 10 styles / 47 primitives / 79 screens / 8 products;
++- all 79 screens across six representative viewport shapes/sizes;
++- compact/standard/wide coverage for game, creative-editor and comic screens;
+ - strict unknown-variant rejection;
+ - exact product screen ordering and flow references;
+-- the 19-screen professional racing shell and key loading/recovery transitions;
+-- the 18-screen shared system shell including consent/recovery/input/persistence surfaces;
+-- racing, co-op, RTS and shared-system product resolution;
++- professional racing and shared game-system coverage;
++- 12-screen creative editor coverage;
++- 10-screen editable comic/narrative coverage;
++- separation of comic page/panel/dialogue/scene/motion surfaces;
++- explicit speech text/tail separation and visible reading-order conflicts;
+ - SVG parseability;
+-- actual Sticker Registry installation of all 63 screens/products;
+-- exact Sticker slot pins;
+-- rejection of invalid geometry;
+-- mature reusable primitives including truthful loading, observed availability and explicit player-seat ownership.
++- actual Sticker Registry installation of all 87 screens/products;
++- exact Sticker slot pins and invalid-geometry rejection.
+ 
+-The proof generates galleries for `game.racing.full`, `game.coop.action`, `game.rts.command` and `game.system.shell`, plus a portrait mobile foundation. It resolves all four game products at 640×360, 1080×1920, 1280×720, 1920×1080, 2560×1080 and 3840×2160 and rejects any region that escapes its viewport.
++The proof generates galleries for racing, co-op, RTS, shared game systems, the creative editor and editable comic system, plus a portrait mobile reference. It resolves all six proof products at 640×360, 1080×1920, 1280×720, 1920×1080, 2560×1080 and 3840×2160 and rejects any region that escapes its viewport.
+ 
+ ## Truth boundary
+ 
+@@ -233,12 +181,13 @@ Current claims are intentionally narrow:
+ 
+ - these are known structural foundations, **not** professional-quality guarantees by themselves;
+ - generated SVG is an offline structural preview, not target-engine rendering;
+-- no gameplay, controller feel, interaction timing, localization, font rendering, network behavior, save reliability, runtime performance, accessibility audit or aesthetic acceptance is proven by the template resolver;
+-- having an accessibility template does not mean a finished product is accessible; it prevents that product surface from being absent by default;
+-- having privacy/consent templates does not establish legal compliance; it preserves a non-manipulative explicit-choice starting structure;
+-- color/style tokens express coherent intent but do not replace final art direction;
++- creative/editor templates do not prove actual authoring behavior, undo/redo correctness, file compatibility or export fidelity;
++- comic templates do not prove drawing quality, lettering quality, reading experience, localization or aesthetic acceptance;
++- preserving separate semantic regions is structural editability evidence, not proof that a finished GUI exposes every operation perfectly;
++- having accessibility/privacy surfaces does not establish accessibility or legal compliance;
+ - loading, recovery and availability contracts forbid fake state, but the real product still has to connect them to observed runtime evidence;
++- color/style tokens express coherent intent but do not replace final art direction;
+ - the machine may mutate, combine, replace or ignore a template when evidence and user intent support doing so;
+ - no template becomes canon merely because it is built in or registered.
+ 
+-The goal is to stop creation from beginning at zero while preserving agency, exact source truth and room for better solutions.
++The goal is to stop creation from beginning at zero while preserving agency, exact source truth, deep editability and room for better solutions.
+diff --git a/VISUAL_TEMPLATE_PRIORITY_MAP.md b/VISUAL_TEMPLATE_PRIORITY_MAP.md
+new file mode 100644
+index 0000000..1576497
+--- /dev/null
++++ b/VISUAL_TEMPLATE_PRIORITY_MAP.md
+@@ -0,0 +1,149 @@
++# AXM Visual Template Expansion Priority Map
++
++Status: v2 growth lane after merged PR #94.
++
++The visual-template fabric should grow where Universal Creation is most likely to reuse the knowledge soon. The order below is a build priority, not canon: templates remain editable foundations and may be replaced when evidence supports a better structure.
++
++## Priority 1 — Creative editor core — IMPLEMENTED IN THIS LANE
++
++Product: `editor.creative.core`
++
++Purpose: give AXM reusable professional editing surfaces so generated work remains editable instead of collapsing into flat final outputs.
++
++Implemented screen IDs:
++
++- `editor.creative.project-hub`
++- `editor.creative.asset-browser`
++- `editor.creative.layer-editor`
++- `editor.creative.timeline`
++- `editor.creative.node-graph`
++- `editor.creative.inspector`
++- `editor.creative.animation`
++- `editor.creative.effects`
++- `editor.creative.cutscene`
++- `editor.creative.material`
++- `editor.creative.audio`
++- `editor.creative.review-export`
++
++Implemented reusable primitives:
++
++- `layer-row`
++- `timeline-track`
++- `keyframe`
++- `node-card`
++- `socket-port`
++- `inspector-field`
++- `asset-tile`
++
++Style: `creative.workbench`.
++
++## Priority 2 — Editable comics and visual narrative — IMPLEMENTED IN THIS LANE
++
++Product: `comic.narrative.core`
++
++Purpose: move beyond a flat comic-image generator into an editable visual-story system where page geometry, panels, source art, dialogue, captions, characters, sequencing and motion remain independently controllable.
++
++Implemented screen IDs:
++
++- `comic.narrative.library`
++- `comic.narrative.page-editor`
++- `comic.narrative.panel-editor`
++- `comic.narrative.dialogue-editor`
++- `comic.narrative.character-sheet`
++- `comic.narrative.scene-graph`
++- `comic.narrative.storyboard`
++- `comic.narrative.motion-timeline`
++- `comic.narrative.reader-preview`
++- `comic.narrative.export`
++
++Implemented reusable primitives:
++
++- `panel-frame`
++- `panel-gutter`
++- `speech-bubble`
++- `caption-box`
++- `storyboard-card`
++- `reading-order-marker`
++- `character-reference-card`
++- `story-beat-link`
++
++Style: `narrative.ink`.
++
++The proof gate requires panel/page/dialogue/scene/motion surfaces to remain distinct and requires speech text/tail plus reading-order conflicts to stay explicitly editable/visible. This is structural editability evidence, not a claim of finished drawing quality or authoring UX acceptance.
++
++## Priority 3 — AXM software / monolith shell — NEXT
++
++Product target: `axm.system.shell`
++
++Purpose: give AXM-native software coherent reusable surfaces rather than repeatedly inventing one-off dashboards.
++
++Planned screen IDs:
++
++- `axm.system.home`
++- `axm.system.registry`
++- `axm.system.capability-browser`
++- `axm.system.cartridge-loader`
++- `axm.system.machine-state`
++- `axm.system.evidence-review`
++- `axm.system.workflow`
++- `axm.system.specialists`
++- `axm.system.workfloor`
++- `axm.system.snapshots`
++- `axm.system.settings`
++- `axm.system.recovery`
++
++Design rule: deep machine state may be complex, but the human-facing shell should expose progressive detail rather than forcing internal complexity onto ordinary use.
++
++## Priority 4 — Remaining near-term game gaps
++
++These extend the merged game foundation only where real reusable gaps remain.
++
++Planned IDs:
++
++- `game.shared.inventory`
++- `game.shared.skill-tree`
++- `game.shared.mission-briefing`
++- `game.shared.world-map`
++- `game.shared.objective-log`
++- `game.shared.upgrade-shop`
++- `game.shared.codex`
++- `game.shared.revive-overlay`
++- `game.shared.boss-encounter-hud`
++- `game.shared.spectator`
++- `game.shared.end-session-summary`
++- `game.shared.challenge-board`
++
++These should inherit the existing game-system shell where possible rather than duplicating profile/settings/network/accessibility surfaces.
++
++## Priority 5 — Later visual families
++
++Grow only after the editor/comic/AXM shells prove useful:
++
++- poster / key-art composition systems;
++- card/deck editors;
++- cinematic title/credit systems;
++- music visualizers and album-art editors;
++- video overlay / stream-layout systems;
++- procedural diagram / infographic editors;
++- world-map / lore-atlas editors;
++- interactive visual novel surfaces;
++- 3D showroom / gallery presentation templates.
++
++## Cross-cutting rules
++
++Every new family should preserve the existing visual-template contract:
++
++1. normalized responsive geometry with explicit compact/standard/wide behavior where relevant;
++2. exact identity/version/digest through the existing Sticker Registry bridge;
++3. no floating `latest` references or silent upgrades;
++4. richer editable source remains authoritative over preview/export derivatives;
++5. selection, focus, ownership, errors and destructive consequences do not depend on color alone;
++6. `math_hooks` remain available for the mathematics lane to improve ratios/ranges without silently replacing template identity;
++7. templates are known foundations, never automatic canon.
++
++## Immediate build order
++
++1. finish exact-head verification for `editor.creative.core` and `comic.narrative.core`;
++2. merge the v2 lane only after proof and repository checks pass;
++3. begin `axm.system.shell` from fresh main;
++4. add game-gap templates only when they are not already represented by the merged catalog.
+diff --git a/docs/v2-pr-notes.md b/docs/v2-pr-notes.md
+new file mode 100644
+index 0000000..c569184
+--- /dev/null
++++ b/docs/v2-pr-notes.md
+@@ -0,0 +1,12 @@
++# v2 PR evidence targets
++
++The v2 lane must not merge until the exact branch head proves:
++
++- 10 styles / 47 primitives / 79 screens / 8 products;
++- all screen geometry remains inside six representative viewports;
++- creative editor and comic/narrative products resolve exact screen order and flows;
++- SVG product galleries parse for both new products;
++- all 87 screen/product definitions install through the existing immutable Sticker Registry;
++- comic page/panel/dialogue/scene/motion surfaces remain distinct;
++- speech bubble text/tail remain separate state;
++- reading-order conflicts remain visible rather than silently repaired.
+diff --git a/examples/requests/visual_template_v2_examples.json b/examples/requests/visual_template_v2_examples.json
+new file mode 100644
+index 0000000..6dea1d8
+--- /dev/null
++++ b/examples/requests/visual_template_v2_examples.json
+@@ -0,0 +1,28 @@
++[
++  {
++    "tool": "axm-visual-templates",
++    "operation": "show",
++    "id": "editor.creative.core"
++  },
++  {
++    "tool": "axm-visual-templates",
++    "operation": "render",
++    "id": "editor.creative.core",
++    "width": 1920,
++    "height": 1080,
++    "output": "creations/creative-editor"
++  },
++  {
++    "tool": "axm-visual-templates",
++    "operation": "show",
++    "id": "comic.narrative.core"
++  },
++  {
++    "tool": "axm-visual-templates",
++    "operation": "render",
++    "id": "comic.narrative.core",
++    "width": 1920,
++    "height": 1080,
++    "output": "creations/comic-narrative"
++  }
++]
+diff --git a/src/axm_uc/visual_template_creative_narrative.py b/src/axm_uc/visual_template_creative_narrative.py
+new file mode 100644
+index 0000000..be1fec8
+--- /dev/null
++++ b/src/axm_uc/visual_template_creative_narrative.py
+@@ -0,0 +1,204 @@
++"""Creative-editor and editable visual-narrative foundations for AXM visual templates.
++
++This extension keeps editability visible: source structure, layers, tracks, panels,
++dialogue and references remain separate semantic regions instead of being flattened
++into one output image. It extends the existing v1 catalog only.
++"""
++from __future__ import annotations
++
++from copy import deepcopy
++from typing import Any
++
++
++def _merge_unique(target: dict[str, Any], additions: dict[str, Any], label: str) -> None:
++    overlap=sorted(set(target)&set(additions))
++    if overlap:
++        raise RuntimeError(f"creative/narrative {label} extension collides: {', '.join(overlap)}")
++    target.update(deepcopy(additions))
++
++
++def extend_creative_narrative_catalog(namespace: dict[str, Any]) -> None:
++    styles=namespace['STYLE_SYSTEMS']; primitives=namespace['PRIMITIVES']
++    screens=namespace['SCREEN_TEMPLATES']; products=namespace['PRODUCT_ARCHETYPES']
++    screen=namespace['_screen']; origin=namespace['_origin']
++
++    new_styles={
++        'creative.workbench': {
++            'intent':'professional multi-surface editing with stable tools, visible source state and dense but inspectable controls',
++            'tokens':{'canvas':'#090d12','surface':'#121922','surface_raised':'#1a2530','text':'#eef4f6','muted':'#9cacb6','accent':'#72c7ff','warning':'#efc46e','danger':'#ee7474','line':'#33434f'},
++            'shape':{'panel_radius_ratio':0.010,'cut_ratio':0.002,'line_ratio':0.0012},
++            'type':{'display_weight':720,'body_weight':490,'metric_scale':1.46,'tracking':0.010},
++            'depth':{'layers':6,'shadow':'subtle','glass':'none'},
++            'motion':{'fast_ms':75,'standard_ms':150,'slow_ms':260,'principle':'preserve selection and editing context'},
++        },
++        'narrative.ink': {
++            'intent':'story-first visual composition with strong page rhythm, editable dialogue and restrained editorial chrome',
++            'tokens':{'canvas':'#0c0c0f','surface':'#17171c','surface_raised':'#222229','text':'#f4f1ea','muted':'#b8b2a7','accent':'#f2bf68','warning':'#e79b63','danger':'#e87373','line':'#45444a'},
++            'shape':{'panel_radius_ratio':0.008,'cut_ratio':0.0,'line_ratio':0.0013},
++            'type':{'display_weight':750,'body_weight':500,'metric_scale':1.52,'tracking':0.012},
++            'depth':{'layers':5,'shadow':'soft','glass':'none'},
++            'motion':{'fast_ms':90,'standard_ms':180,'slow_ms':320,'principle':'reading order and story state before decoration'},
++        },
++    }
++    new_primitives={
++        'layer-row':{'role':'editable ordered visual layer with visibility, lock and selection state','states':['visible','hidden','locked','selected','nested'],'order_must_be_explicit':True},
++        'timeline-track':{'role':'time-based property or media lane','states':['idle','armed','muted','locked','selected'],'time_range_must_be_explicit':True},
++        'keyframe':{'role':'editable value at an exact timeline position','states':['rest','selected','held','interpolated'],'time_and_value_must_be_inspectable':True},
++        'node-card':{'role':'inspectable operation in a visual graph','states':['rest','selected','warning','error','disabled'],'operation_identity_must_be_explicit':True},
++        'socket-port':{'role':'typed graph connection point','states':['open','connected','incompatible','invalid'],'type_mismatch_must_be_visible':True},
++        'inspector-field':{'role':'edit one explicit property without hiding source value','states':['rest','focused','modified','invalid','read-only'],'modified_state_must_be_visible':True},
++        'asset-tile':{'role':'browse one source asset with identity and provenance','states':['rest','selected','missing','linked','embedded'],'source_identity_must_be_visible':True},
++        'panel-frame':{'role':'editable comic/story panel boundary','states':['rest','selected','locked','overflow'],'geometry_must_remain_editable':True},
++        'panel-gutter':{'role':'explicit spacing between narrative panels','states':['normal','selected'],'spacing_is_structure':True},
++        'speech-bubble':{'role':'editable spoken dialogue container tied to a speaker/target','states':['rest','selected','overflow','unresolved-speaker'],'text_and_tail_remain_separate':True},
++        'caption-box':{'role':'editable narration or contextual text','states':['rest','selected','overflow'],'reading_order_must_be_explicit':True},
++        'storyboard-card':{'role':'scene or shot summary preserving order and status','states':['draft','ready','blocked','selected'],'sequence_position_must_be_visible':True},
++        'reading-order-marker':{'role':'explicit panel/dialogue reading sequence','states':['rest','selected','conflict'],'order_conflicts_must_fail_visible':True},
++        'character-reference-card':{'role':'persistent visual/identity reference for a character','states':['active','alternate','missing-reference'],'reference_source_must_be_explicit':True},
++        'story-beat-link':{'role':'directed narrative transition between beats/scenes','states':['normal','conditional','blocked'],'transition_semantics_must_be_explicit':True},
++    }
++    _merge_unique(styles,new_styles,'style'); _merge_unique(primitives,new_primitives,'primitive')
++
++    editor_quality=[
++        'editable source state outranks preview convenience',
++        'selection, active tool and modified state remain visible',
++        'derived previews never replace richer canonical project state',
++        'destructive edits expose scope and recovery consequence before commitment',
++    ]
++    comic_quality=[
++        'panel geometry, source art, dialogue and reading order remain independently editable',
++        'flattened preview is never authoritative source state',
++        'speaker/reference identity remains inspectable instead of inferred silently',
++        'overflow and reading-order conflicts remain visible',
++    ]
++
++    editor_screens={
++        'editor.creative.project-hub': screen('editor.creative.project-hub','Creative project hub','software.creator','creative.workbench','resume, create and inspect creative projects without losing status or source identity',{
++            'compact':{'header':(.03,.03,.94,.08),'recent':(.03,.14,.94,.38),'templates':(.03,.55,.94,.25),'actions':(.03,.83,.94,.13)},
++            'standard':{'header':(.025,.03,.95,.08),'recent':(.025,.14,.57,.70),'templates':(.62,.14,.355,.48),'actions':(.62,.66,.355,.18)},
++            'wide':{'header':(.02,.03,.96,.075),'recent':(.02,.14,.60,.72),'templates':(.65,.14,.33,.49),'actions':(.65,.67,.33,.19)}},tags=['software','creator','project','editor'],quality=editor_quality),
++        'editor.creative.asset-browser': screen('editor.creative.asset-browser','Creative asset browser','software.creator','creative.workbench','browse source assets with provenance, filters, preview and explicit insertion target',{
++            'compact':{'header':(.03,.03,.94,.08),'filters':(.03,.14,.94,.10),'assets':(.03,.27,.58,.68),'preview':(.64,.27,.33,.50),'details':(.64,.80,.33,.15)},
++            'standard':{'header':(.025,.03,.95,.08),'sources':(.025,.14,.16,.82),'assets':(.21,.14,.48,.82),'preview':(.715,.14,.26,.54),'details':(.715,.71,.26,.25)},
++            'wide':{'header':(.02,.03,.96,.075),'sources':(.02,.14,.14,.82),'assets':(.18,.14,.52,.82),'preview':(.72,.14,.26,.55),'details':(.72,.72,.26,.24)}},tags=['software','creator','assets','browser'],quality=editor_quality),
++        'editor.creative.layer-editor': screen('editor.creative.layer-editor','Layer and composition editor','software.creator','creative.workbench','edit ordered visual layers while keeping canvas, hierarchy and properties simultaneously inspectable',{
++            'compact':{'toolbar':(.02,.02,.96,.07),'canvas':(.14,.11,.84,.55),'tools':(.02,.11,.10,.55),'layers':(.02,.69,.45,.29),'properties':(.50,.69,.48,.29)},
++            'standard':{'toolbar':(.015,.02,.97,.065),'tools':(.015,.105,.055,.67),'layers':(.085,.105,.17,.67),'canvas':(.27,.105,.50,.67),'properties':(.79,.105,.195,.67),'status':(.085,.80,.90,.18)},
++            'wide':{'toolbar':(.012,.02,.976,.06),'tools':(.012,.10,.045,.69),'layers':(.07,.10,.15,.69),'canvas':(.235,.10,.54,.69),'properties':(.79,.10,.198,.69),'status':(.07,.82,.918,.16)}},tags=['software','creator','layers','composition'],quality=editor_quality),
++        'editor.creative.timeline': screen('editor.creative.timeline','Creative timeline editor','software.creator','creative.workbench','edit temporal structure with tracks, exact playhead, curves and preview in one stable workspace',{
++            'compact':{'transport':(.03,.03,.94,.08),'preview':(.03,.14,.94,.32),'tracks':(.03,.49,.94,.33),'properties':(.03,.85,.94,.12)},
++            'standard':{'transport':(.02,.03,.96,.075),'preview':(.02,.14,.32,.54),'tracks':(.37,.14,.61,.54),'properties':(.02,.72,.32,.24),'curves':(.37,.72,.61,.24)},
++            'wide':{'transport':(.015,.03,.97,.07),'preview':(.015,.13,.29,.56),'tracks':(.33,.13,.655,.56),'properties':(.015,.72,.29,.25),'curves':(.33,.72,.655,.25)}},tags=['software','creator','timeline','animation'],quality=editor_quality),
++        'editor.creative.node-graph': screen('editor.creative.node-graph','Node graph editor','software.creator','creative.workbench','compose inspectable operations with typed connections, graph context and selected-node properties',{
++            'compact':{'toolbar':(.03,.03,.94,.08),'graph':(.03,.14,.94,.52),'library':(.03,.69,.45,.28),'properties':(.52,.69,.45,.28)},
++            'standard':{'toolbar':(.02,.03,.96,.075),'library':(.02,.14,.17,.82),'graph':(.21,.14,.56,.82),'properties':(.79,.14,.19,.82)},
++            'wide':{'toolbar':(.015,.03,.97,.07),'library':(.015,.13,.15,.84),'graph':(.18,.13,.60,.84),'properties':(.795,.13,.19,.84)}},tags=['software','creator','nodes','graph'],quality=editor_quality),
++        'editor.creative.inspector': screen('editor.creative.inspector','Deep property inspector','software.creator','creative.workbench','inspect and edit exact selected-object properties with defaults, deltas, provenance and validation',{
++            'compact':{'header':(.04,.03,.92,.08),'identity':(.04,.14,.92,.15),'fields':(.04,.32,.92,.52),'actions':(.04,.87,.92,.10)},
++            'standard':{'header':(.03,.03,.94,.08),'groups':(.03,.14,.22,.82),'fields':(.28,.14,.46,.82),'evidence':(.77,.14,.20,.58),'actions':(.77,.75,.20,.21)},
++            'wide':{'header':(.025,.03,.95,.075),'groups':(.025,.14,.19,.82),'fields':(.24,.14,.50,.82),'evidence':(.765,.14,.21,.58),'actions':(.765,.75,.21,.21)}},tags=['software','creator','inspector','properties'],quality=editor_quality),
++        'editor.creative.animation': screen('editor.creative.animation','Animation editing workspace','software.creator','creative.workbench','edit rigs, poses, clips and curves while preserving exact scene and timeline context',{
++            'compact':{'toolbar':(.02,.02,.96,.07),'viewport':(.02,.11,.96,.43),'rig':(.02,.57,.30,.28),'timeline':(.35,.57,.63,.28),'properties':(.02,.88,.96,.10)},
++            'standard':{'toolbar':(.015,.02,.97,.065),'rig':(.015,.105,.16,.66),'viewport':(.19,.105,.50,.66),'properties':(.705,.105,.28,.66),'timeline':(.19,.795,.805,.185)},
++            'wide':{'toolbar':(.012,.02,.976,.06),'rig':(.012,.10,.14,.68),'viewport':(.17,.10,.54,.68),'properties':(.725,.10,.263,.68),'timeline':(.17,.80,.818,.18)}},tags=['software','creator','animation','rig'],quality=editor_quality),
++        'editor.creative.effects': screen('editor.creative.effects','Effects editing workspace','software.creator','creative.workbench','compose visual effects from emitters, materials, timing and previewable parameters without flattening recipes',{
++            'compact':{'toolbar':(.02,.02,.96,.07),'preview':(.02,.11,.96,.40),'stack':(.02,.54,.35,.32),'properties':(.40,.54,.58,.32),'timeline':(.02,.89,.96,.09)},
++            'standard':{'toolbar':(.015,.02,.97,.065),'stack':(.015,.105,.18,.68),'preview':(.21,.105,.49,.68),'properties':(.715,.105,.27,.68),'timeline':(.21,.80,.775,.18)},
++            'wide':{'toolbar':(.012,.02,.976,.06),'stack':(.012,.10,.16,.69),'preview':(.19,.10,.52,.69),'properties':(.725,.10,.263,.69),'timeline':(.19,.81,.798,.17)}},tags=['software','creator','effects','vfx'],quality=editor_quality),
++        'editor.creative.cutscene': screen('editor.creative.cutscene','Cutscene editor','software.creator','creative.workbench','coordinate shots, cameras, dialogue, animation and timing with explicit sequence structure',{
++            'compact':{'toolbar':(.02,.02,.96,.07),'preview':(.02,.11,.96,.38),'shots':(.02,.52,.34,.32),'timeline':(.39,.52,.59,.32),'properties':(.02,.87,.96,.11)},
++            'standard':{'toolbar':(.015,.02,.97,.065),'shots':(.015,.105,.17,.68),'preview':(.20,.105,.50,.52),'properties':(.715,.105,.27,.52),'timeline':(.20,.65,.785,.33)},
++            'wide':{'toolbar':(.012,.02,.976,.06),'shots':(.012,.10,.15,.69),'preview':(.18,.10,.54,.52),'properties':(.735,.10,.253,.52),'timeline':(.18,.65,.808,.33)}},tags=['software','creator','cutscene','cinematic'],quality=editor_quality),
++        'editor.creative.material': screen('editor.creative.material','Material editor','software.creator','creative.workbench','edit material channels, procedural graph and object preview with source maps remaining inspectable',{
++            'compact':{'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.33),'channels':(.03,.50,.45,.33),'graph':(.51,.50,.46,.33),'actions':(.03,.86,.94,.10)},
++            'standard':{'header':(.02,.03,.96,.075),'channels':(.02,.14,.20,.82),'preview':(.245,.14,.35,.56),'graph':(.61,.14,.37,.56),'actions':(.245,.74,.735,.22)},
++            'wide':{'header':(.015,.03,.97,.07),'channels':(.015,.13,.18,.84),'preview':(.215,.13,.37,.58),'graph':(.61,.13,.375,.58),'actions':(.215,.75,.77,.22)}},tags=['software','creator','material','shader'],quality=editor_quality),
++        'editor.creative.audio': screen('editor.creative.audio','Audio editing workspace','software.creator','creative.workbench','edit clips, levels, routing and timeline placement while retaining source and meter context',{
++            'compact':{'header':(.03,.03,.94,.08),'waveform':(.03,.14,.94,.28),'mixer':(.03,.45,.45,.38),'timeline':(.51,.45,.46,.38),'actions':(.03,.86,.94,.10)},
++            'standard':{'header':(.02,.03,.96,.075),'sources':(.02,.14,.16,.82),'waveform':(.20,.14,.49,.33),'mixer':(.715,.14,.265,.52),'timeline':(.20,.50,.49,.46),'actions':(.715,.70,.265,.26)},
++            'wide':{'header':(.015,.03,.97,.07),'sources':(.015,.13,.14,.84),'waveform':(.175,.13,.53,.34),'mixer':(.725,.13,.26,.53),'timeline':(.175,.50,.53,.47),'actions':(.725,.70,.26,.27)}},tags=['software','creator','audio','timeline'],quality=editor_quality),
++        'editor.creative.review-export': screen('editor.creative.review-export','Creative review and export','software.creator','creative.workbench','compare output, source state, checks and export targets before explicit publication',{
++            'compact':{'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.34),'checks':(.03,.51,.45,.31),'export':(.51,.51,.46,.31),'actions':(.03,.85,.94,.11)},
++            'standard':{'header':(.02,.03,.96,.075),'preview':(.02,.14,.55,.66),'checks':(.60,.14,.18,.66),'export':(.80,.14,.18,.48),'actions':(.80,.66,.18,.14)},
++            'wide':{'header':(.015,.03,.97,.07),'preview':(.015,.13,.58,.68),'checks':(.615,.13,.17,.68),'export':(.805,.13,.18,.49),'actions':(.805,.66,.18,.15)}},tags=['software','creator','review','export'],quality=editor_quality),
++    }
++
++    comic_screens={
++        'comic.narrative.library': screen('comic.narrative.library','Narrative project library','creative.comic','narrative.ink','browse stories, episodes, pages and source references without flattening project structure',{
++            'compact':{'header':(.03,.03,.94,.08),'projects':(.03,.14,.94,.40),'episodes':(.03,.57,.45,.29),'references':(.51,.57,.46,.29),'actions':(.03,.89,.94,.08)},
++            'standard':{'header':(.025,.03,.95,.08),'projects':(.025,.14,.26,.72),'episodes':(.315,.14,.42,.72),'references':(.76,.14,.215,.55),'actions':(.76,.72,.215,.14)},
++            'wide':{'header':(.02,.03,.96,.075),'projects':(.02,.14,.23,.73),'episodes':(.275,.14,.46,.73),'references':(.76,.14,.22,.56),'actions':(.76,.74,.22,.13)}},tags=['comic','narrative','library','project'],quality=comic_quality),
++        'comic.narrative.page-editor': screen('comic.narrative.page-editor','Comic page editor','creative.comic','narrative.ink','edit page geometry, panels, gutters, overlays and page-level reading order while source art stays separate',{
++            'compact':{'toolbar':(.02,.02,.96,.07),'page':(.12,.11,.76,.57),'panels':(.02,.11,.08,.57),'layers':(.02,.71,.45,.27),'properties':(.50,.71,.48,.27)},
++            'standard':{'toolbar':(.015,.02,.97,.065),'pages':(.015,.105,.13,.875),'page':(.17,.105,.52,.79),'layers':(.715,.105,.13,.79),'properties':(.845,.105,.14,.79),'status':(.17,.915,.815,.065)},
++            'wide':{'toolbar':(.012,.02,.976,.06),'pages':(.012,.10,.11,.88),'page':(.145,.10,.56,.80),'layers':(.725,.10,.12,.80),'properties':(.86,.10,.128,.80),'status':(.145,.925,.843,.055)}},tags=['comic','narrative','page','editor'],math_hooks={'page_focus_ratio':[0.50,0.66],'gutter_ratio':[0.01,0.05]},quality=comic_quality),
++        'comic.narrative.panel-editor': screen('comic.narrative.panel-editor','Comic panel editor','creative.comic','narrative.ink','edit one panel crop, depth, source art, effects and embedded dialogue while preserving page context',{
++            'compact':{'header':(.03,.03,.94,.08),'panel':(.03,.14,.94,.43),'sources':(.03,.60,.30,.27),'layers':(.36,.60,.29,.27),'properties':(.68,.60,.29,.27),'actions':(.03,.90,.94,.07)},
++            'standard':{'header':(.02,.03,.96,.075),'page-context':(.02,.14,.17,.70),'panel':(.21,.14,.50,.70),'layers':(.735,.14,.11,.70),'properties':(.86,.14,.12,.70),'actions':(.21,.88,.77,.08)},
++            'wide':{'header':(.015,.03,.97,.07),'page-context':(.015,.13,.15,.72),'panel':(.18,.13,.54,.72),'layers':(.74,.13,.10,.72),'properties':(.855,.13,.13,.72),'actions':(.18,.89,.805,.07)}},tags=['comic','narrative','panel','editor'],quality=comic_quality),
++        'comic.narrative.dialogue-editor': screen('comic.narrative.dialogue-editor','Dialogue and lettering editor','creative.comic','narrative.ink','edit dialogue text, speaker identity, bubble shape/tail and reading order as separate state',{
++            'compact':{'header':(.03,.03,.94,.08),'panel-preview':(.03,.14,.94,.35),'dialogue':(.03,.52,.45,.34),'bubble':(.51,.52,.46,.34),'order':(.03,.89,.94,.08)},
++            'standard':{'header':(.02,.03,.96,.075),'dialogue':(.02,.14,.24,.72),'panel-preview':(.285,.14,.46,.72),'bubble':(.765,.14,.215,.54),'order':(.765,.72,.215,.14)},
++            'wide':{'header':(.015,.03,.97,.07),'dialogue':(.015,.13,.22,.74),'panel-preview':(.255,.13,.49,.74),'bubble':(.765,.13,.22,.56),'order':(.765,.73,.22,.14)}},tags=['comic','narrative','dialogue','lettering'],quality=comic_quality),
++        'comic.narrative.character-sheet': screen('comic.narrative.character-sheet','Character reference sheet','creative.comic','narrative.ink','keep identity, visual references, expressions, outfits and continuity notes together without collapsing variants',{
++            'compact':{'header':(.03,.03,.94,.08),'hero':(.03,.14,.94,.30),'expressions':(.03,.47,.45,.28),'outfits':(.51,.47,.46,.28),'notes':(.03,.78,.94,.18)},
++            'standard':{'header':(.02,.03,.96,.075),'hero':(.02,.14,.32,.70),'expressions':(.37,.14,.28,.34),'outfits':(.68,.14,.30,.34),'notes':(.37,.51,.61,.33)},
++            'wide':{'header':(.015,.03,.97,.07),'hero':(.015,.13,.30,.72),'expressions':(.35,.13,.29,.35),'outfits':(.67,.13,.315,.35),'notes':(.35,.51,.635,.34)}},tags=['comic','narrative','character','reference'],quality=comic_quality),
++        'comic.narrative.scene-graph': screen('comic.narrative.scene-graph','Narrative scene graph','creative.comic','narrative.ink','map story beats, branches, dependencies and unresolved transitions without hiding alternate paths',{
++            'compact':{'header':(.03,.03,.94,.08),'graph':(.03,.14,.94,.51),'beats':(.03,.68,.45,.29),'properties':(.51,.68,.46,.29)},
++            'standard':{'header':(.02,.03,.96,.075),'beats':(.02,.14,.18,.82),'graph':(.22,.14,.56,.82),'properties':(.80,.14,.18,.82)},
++            'wide':{'header':(.015,.03,.97,.07),'beats':(.015,.13,.16,.84),'graph':(.19,.13,.60,.84),'properties':(.81,.13,.175,.84)}},tags=['comic','narrative','scene','graph'],quality=comic_quality),
++        'comic.narrative.storyboard': screen('comic.narrative.storyboard','Storyboard editor','creative.comic','narrative.ink','arrange shots/pages/beats in explicit sequence with reference imagery and status visible',{
++            'compact':{'header':(.03,.03,.94,.08),'board':(.03,.14,.94,.55),'details':(.03,.72,.58,.24),'references':(.64,.72,.33,.24)},
++            'standard':{'header':(.02,.03,.96,.075),'sequence':(.02,.14,.16,.82),'board':(.20,.14,.55,.82),'details':(.775,.14,.205,.47),'references':(.775,.64,.205,.32)},
++            'wide':{'header':(.015,.03,.97,.07),'sequence':(.015,.13,.14,.84),'board':(.175,.13,.59,.84),'details':(.785,.13,.20,.48),'references':(.785,.64,.20,.33)}},tags=['comic','narrative','storyboard','sequence'],quality=comic_quality),
++        'comic.narrative.motion-timeline': screen('comic.narrative.motion-timeline','Motion-comic timeline','creative.comic','narrative.ink','time panel movement, camera, dialogue reveals, effects and audio while preserving the static page/story source',{
++            'compact':{'transport':(.03,.03,.94,.08),'preview':(.03,.14,.94,.34),'tracks':(.03,.51,.94,.32),'properties':(.03,.86,.94,.11)},
++            'standard':{'transport':(.02,.03,.96,.075),'preview':(.02,.14,.38,.54),'tracks':(.43,.14,.55,.54),'properties':(.02,.72,.38,.24),'curves':(.43,.72,.55,.24)},
++            'wide':{'transport':(.015,.03,.97,.07),'preview':(.015,.13,.36,.56),'tracks':(.40,.13,.585,.56),'properties':(.015,.72,.36,.25),'curves':(.40,.72,.585,.25)}},tags=['comic','narrative','motion','timeline'],quality=comic_quality),
++        'comic.narrative.reader-preview': screen('comic.narrative.reader-preview','Comic reader preview','creative.comic','narrative.ink','preview reading sequence, page transitions and text fit without replacing editable source',{
++            'compact':{'reader':(.05,.04,.90,.80),'navigation':(.05,.87,.90,.09)},
++            'standard':{'context':(.02,.04,.16,.92),'reader':(.21,.04,.58,.92),'navigation':(.82,.04,.16,.92)},
++            'wide':{'context':(.015,.04,.14,.92),'reader':(.18,.04,.62,.92),'navigation':(.83,.04,.155,.92)}},tags=['comic','narrative','reader','preview'],quality=comic_quality),
++        'comic.narrative.export': screen('comic.narrative.export','Narrative review and export','creative.comic','narrative.ink','review pages, source completeness, reading order and export targets before explicit publication',{
++            'compact':{'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.34),'checks':(.03,.51,.45,.31),'export':(.51,.51,.46,.31),'actions':(.03,.85,.94,.11)},
++            'standard':{'header':(.02,.03,.96,.075),'preview':(.02,.14,.55,.66),'checks':(.60,.14,.18,.66),'export':(.80,.14,.18,.48),'actions':(.80,.66,.18,.14)},
++            'wide':{'header':(.015,.03,.97,.07),'preview':(.015,.13,.58,.68),'checks':(.615,.13,.17,.68),'export':(.805,.13,.18,.49),'actions':(.805,.66,.18,.15)}},tags=['comic','narrative','review','export'],quality=comic_quality),
++    }
++    _merge_unique(screens,editor_screens|comic_screens,'screen')
++
++    editor_ids=list(editor_screens)
++    comic_ids=list(comic_screens)
++    new_products={
++        'editor.creative.core':{
++            'schema':'axm.visual-product/v1','id':'editor.creative.core','version':1,'name':'Creative editor core','kind':'product','domain':'software.creator','tags':['software','creator','editor','product'],'origin':origin(),'style':'creative.workbench','intent':'a reusable professional editing shell that preserves source state across asset, layer, timeline, graph, animation, effects, audio and export work','screens':editor_ids,
++            'flow':[
++                ['editor.creative.project-hub','editor.creative.asset-browser','open-project'],
++                ['editor.creative.asset-browser','editor.creative.layer-editor','insert-asset'],
++                ['editor.creative.layer-editor','editor.creative.timeline','edit-time'],
++                ['editor.creative.timeline','editor.creative.animation','edit-animation'],
++                ['editor.creative.animation','editor.creative.effects','edit-effects'],
++                ['editor.creative.effects','editor.creative.audio','edit-audio'],
++                ['editor.creative.audio','editor.creative.review-export','review'],
++                ['editor.creative.node-graph','editor.creative.inspector','inspect-node'],
++                ['editor.creative.cutscene','editor.creative.timeline','edit-sequence'],
++                ['editor.creative.material','editor.creative.inspector','inspect-material'],
++            ],'quality':editor_quality,
++        },
++        'comic.narrative.core':{
++            'schema':'axm.visual-product/v1','id':'comic.narrative.core','version':1,'name':'Editable comic and visual narrative core','kind':'product','domain':'creative.comic','tags':['comic','narrative','editor','product'],'origin':origin(),'style':'narrative.ink','intent':'an editable visual-story shell where page structure, panel art, dialogue, character continuity, branching story and motion remain separable source state','screens':comic_ids,
++            'flow':[
++                ['comic.narrative.library','comic.narrative.page-editor','open-story'],
++                ['comic.narrative.page-editor','comic.narrative.panel-editor','edit-panel'],
++                ['comic.narrative.panel-editor','comic.narrative.dialogue-editor','edit-dialogue'],
++                ['comic.narrative.dialogue-editor','comic.narrative.page-editor','return-page'],
++                ['comic.narrative.library','comic.narrative.character-sheet','edit-character'],
++                ['comic.narrative.library','comic.narrative.scene-graph','edit-story'],
++                ['comic.narrative.scene-graph','comic.narrative.storyboard','board-story'],
++                ['comic.narrative.storyboard','comic.narrative.motion-timeline','add-motion'],
++                ['comic.narrative.motion-timeline','comic.narrative.reader-preview','preview'],
++                ['comic.narrative.reader-preview','comic.narrative.export','review-export'],
++            ],'quality':comic_quality,
++        },
++    }
++    _merge_unique(products,new_products,'product')
+diff --git a/src/axm_uc/visual_templates.py b/src/axm_uc/visual_templates.py
+index 56087a6..194cfb9 100644
+--- a/src/axm_uc/visual_templates.py
++++ b/src/axm_uc/visual_templates.py
+@@ -10,12 +10,14 @@ from __future__ import annotations
+ from . import visual_template_core as _core
+ from .visual_template_growth import extend_catalog as _extend_catalog
+ from .visual_template_game_systems import extend_game_system_catalog as _extend_game_system_catalog
++from .visual_template_creative_narrative import extend_creative_narrative_catalog as _extend_creative_narrative_catalog
+ 
+-_COMPOSITION=("visual_template_growth","visual_template_game_systems")
++_COMPOSITION=("visual_template_growth","visual_template_game_systems","visual_template_creative_narrative")
+ _applied=getattr(_core,"_AXM_VISUAL_COMPOSITION",None)
+ if _applied is None:
+     _extend_catalog(vars(_core))
+     _extend_game_system_catalog(vars(_core))
++    _extend_creative_narrative_catalog(vars(_core))
+     _core._AXM_VISUAL_COMPOSITION=_COMPOSITION
+ elif _applied != _COMPOSITION:
+     raise RuntimeError("visual template composition changed inside a live process; restart with one exact catalog")
+diff --git a/tests/test_visual_templates.py b/tests/test_visual_templates.py
+index 5eaa497..2674544 100644
+--- a/tests/test_visual_templates.py
++++ b/tests/test_visual_templates.py
+@@ -13,15 +13,16 @@ from axm_uc import visual_templates as vt
+ 
+ SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
+ GAME_PRODUCTS=('game.racing.full','game.coop.action','game.rts.command','game.system.shell')
++CREATIVE_PRODUCTS=('editor.creative.core','comic.narrative.core')
+ 
+ 
+ class VisualTemplateTests(unittest.TestCase):
+     def test_catalog_is_valid_and_professional_pack_is_present(self):
+         counts=vt.validate_catalog()
+-        self.assertEqual(counts,{'styles':8,'primitives':32,'screens':57,'products':6})
++        self.assertEqual(counts,{'styles':10,'primitives':47,'screens':79,'products':8})
+         self.assertEqual(vt.CATALOG_COMPOSITION['counts'],counts)
+         products={p['id'] for p in vt.catalog()['products']}
+-        self.assertTrue({'game.racing.performance','game.racing.full','game.coop.action','game.rts.command','game.system.shell','software.creator.studio'} <= products)
++        self.assertTrue({'game.racing.performance','game.racing.full','game.coop.action','game.rts.command','game.system.shell','software.creator.studio','editor.creative.core','comic.narrative.core'} <= products)
+ 
+     def test_all_resolutions_stay_in_viewport(self):
+         for tid in vt.SCREEN_TEMPLATES:
+@@ -32,9 +33,9 @@ class VisualTemplateTests(unittest.TestCase):
+                     self.assertGreaterEqual(x,0); self.assertGreaterEqual(y,0)
+                     self.assertLessEqual(x+w,width+1e-6); self.assertLessEqual(y+h,height+1e-6)
+ 
+-    def test_game_screens_supply_all_three_responsive_variants(self):
++    def test_game_and_creative_screens_supply_all_three_responsive_variants(self):
+         for tid,screen in vt.SCREEN_TEMPLATES.items():
+-            if tid.startswith('game.'):
++            if tid.startswith(('game.','editor.creative.','comic.narrative.')):
+                 self.assertEqual(set(screen['variants']),{'compact','standard','wide'},tid)
+ 
+     def test_deterministic_copy_safe_and_strict_variant(self):
+@@ -73,11 +74,43 @@ class VisualTemplateTests(unittest.TestCase):
+         }
+         self.assertEqual(set(product['screens']),required)
+         privacy=vt.get('game.system.privacy-consent')
+-        self.assertIn('revocation', ' '.join(privacy['quality']).lower())
+-        self.assertIn('observed', ' '.join(vt.get('game.system.matchmaking')['quality']).lower())
++        self.assertIn('revocation',' '.join(privacy['quality']).lower())
++        self.assertIn('observed',' '.join(vt.get('game.system.matchmaking')['quality']).lower())
+ 
+-    def test_game_products_resolve_exact_screens_across_viewports(self):
+-        for product_id in GAME_PRODUCTS:
++    def test_creative_editor_product_covers_editable_source_work(self):
++        product=vt.get('editor.creative.core')
++        self.assertEqual(len(product['screens']),12)
++        required={
++            'editor.creative.project-hub','editor.creative.asset-browser','editor.creative.layer-editor',
++            'editor.creative.timeline','editor.creative.node-graph','editor.creative.inspector',
++            'editor.creative.animation','editor.creative.effects','editor.creative.cutscene',
++            'editor.creative.material','editor.creative.audio','editor.creative.review-export',
++        }
++        self.assertEqual(set(product['screens']),required)
++        self.assertIn('source state',' '.join(product['quality']).lower())
++        self.assertIn('layers',vt.get('editor.creative.layer-editor')['tags'])
++        self.assertIn('graph',vt.get('editor.creative.node-graph')['tags'])
++
++    def test_comic_product_preserves_editable_narrative_structure(self):
++        product=vt.get('comic.narrative.core')
++        self.assertEqual(len(product['screens']),10)
++        required={
++            'comic.narrative.library','comic.narrative.page-editor','comic.narrative.panel-editor',
++            'comic.narrative.dialogue-editor','comic.narrative.character-sheet','comic.narrative.scene-graph',
++            'comic.narrative.storyboard','comic.narrative.motion-timeline','comic.narrative.reader-preview',
++            'comic.narrative.export',
++        }
++        self.assertEqual(set(product['screens']),required)
++        quality=' '.join(product['quality']).lower()
++        self.assertIn('panel geometry',quality)
++        self.assertIn('flattened preview',quality)
++        page=vt.get('comic.narrative.page-editor')
++        self.assertIn('gutter_ratio',page['math_hooks'])
++        dialogue=' '.join(vt.get('comic.narrative.dialogue-editor')['quality']).lower()
++        self.assertIn('reading-order',dialogue)
++
++    def test_products_resolve_exact_screens_across_viewports(self):
++        for product_id in GAME_PRODUCTS+CREATIVE_PRODUCTS:
+             product=vt.get(product_id)
+             for width,height in SIZES:
+                 out=vt.product_resolution(product_id,width,height)
+@@ -85,10 +118,10 @@ class VisualTemplateTests(unittest.TestCase):
+                 self.assertEqual(len(out['flow']),len(product['flow']))
+ 
+     def test_preview_projects_are_parseable(self):
+-        screen=vt.screen_project('game.racing.hud.performance',1280,720)
++        screen=vt.screen_project('comic.narrative.page-editor',1280,720)
+         ElementTree.fromstring(screen['files']['screen.svg'])
+         json.loads(screen['files']['template.json'])
+-        for product_id in GAME_PRODUCTS:
++        for product_id in GAME_PRODUCTS+CREATIVE_PRODUCTS:
+             product=vt.product_project(product_id,1280,720)
+             svgs=[name for name in product['files'] if name.endswith('.svg')]
+             self.assertEqual(len(svgs),len(vt.get(product_id)['screens']))
+@@ -98,27 +131,31 @@ class VisualTemplateTests(unittest.TestCase):
+         with tempfile.TemporaryDirectory() as td:
+             with Registry(Path(td)/'stickers.sqlite') as registry:
+                 pins=vt.install_builtins(registry)
+-                self.assertEqual(len(pins),63)
++                self.assertEqual(len(pins),87)
+                 racing=registry.search(adapter=vt.ADAPTER,tag='racing',limit=100)['entries']
+                 game=registry.search(adapter=vt.ADAPTER,tag='game',limit=100)['entries']
++                comic=registry.search(adapter=vt.ADAPTER,tag='comic',limit=100)['entries']
+                 self.assertGreaterEqual(len(racing),19)
+                 self.assertGreaterEqual(len(game),52)
+-                definition=registry.get('visual.game.racing.hud.performance',1)
++                self.assertEqual(len(comic),10)
++                definition=registry.get('visual.comic.narrative.page-editor',1)
+                 self.assertEqual(definition['recipe']['visual_template']['schema'],vt.SCHEMA)
+                 self.assertNotIn('"latest"',json.dumps(definition,sort_keys=True))
+ 
+-    def test_reusable_game_primitives_cover_mature_product_states(self):
++    def test_reusable_primitives_cover_game_editing_and_narrative_states(self):
+         required={
+             'player-seat','selection-card','stat-comparison','slider-row','countdown','loading-state',
+             'recovery-banner','telemetry-strip','input-hint','modal','empty-state','tab-strip',
+             'keybind-row','save-slot','party-member','server-row','notification-badge','chat-message',
+-            'confirmation-summary','focus-indicator',
++            'confirmation-summary','focus-indicator','layer-row','timeline-track','keyframe','node-card',
++            'socket-port','inspector-field','asset-tile','panel-frame','panel-gutter','speech-bubble',
++            'caption-box','storyboard-card','reading-order-marker','character-reference-card','story-beat-link',
+         }
+         self.assertTrue(required <= set(vt.PRIMITIVES))
+         self.assertTrue(vt.PRIMITIVES['loading-state']['fake_progress_forbidden'])
+-        self.assertTrue(vt.PRIMITIVES['player-seat']['ownership_must_be_explicit'])
+-        self.assertTrue(vt.PRIMITIVES['keybind-row']['conflicts_must_be_explicit'])
+-        self.assertTrue(vt.PRIMITIVES['server-row']['availability_must_be_observed'])
++        self.assertTrue(vt.PRIMITIVES['layer-row']['order_must_be_explicit'])
++        self.assertTrue(vt.PRIMITIVES['speech-bubble']['text_and_tail_remain_separate'])
++        self.assertTrue(vt.PRIMITIVES['reading-order-marker']['order_conflicts_must_fail_visible'])
+ 
+     def test_slot_binding_requires_exact_pin_and_contract(self):
+         definition={
+@@ -137,8 +174,8 @@ class VisualTemplateTests(unittest.TestCase):
+                     vt.bind_sticker_slots('game.racing.hud.performance',registry,{'speed-cluster':bad})
+ 
+     def test_bad_geometry_fails(self):
+-        d=vt.get('game.racing.hud.performance')
+-        d['variants']['standard']['speed']=[.9,.9,.2,.2]
++        d=vt.get('comic.narrative.page-editor')
++        d['variants']['standard']['page']=[.9,.9,.2,.2]
+         with self.assertRaises(ValueError): vt.validate_screen(d)
+ 
+ 
+diff --git a/tools/visual_template_proof.py b/tools/visual_template_proof.py
+index fac3275..1d1d9ec 100644
+--- a/tools/visual_template_proof.py
++++ b/tools/visual_template_proof.py
+@@ -13,7 +13,10 @@ from axm_uc import visual_templates as vt
+ 
+ 
+ SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
+-GAME_PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell")
++PROOF_PRODUCTS=(
++    "game.racing.full","game.coop.action","game.rts.command","game.system.shell",
++    "editor.creative.core","comic.narrative.core",
++)
+ 
+ 
+ def _write_project(project: dict, target: Path) -> list[str]:
+@@ -38,11 +41,11 @@ def main(argv: list[str]) -> int:
+     out.mkdir(parents=True)
+     try:
+         counts=vt.validate_catalog()
+-        if counts != {"styles":8,"primitives":32,"screens":57,"products":6}:
++        if counts != {"styles":10,"primitives":47,"screens":79,"products":8}:
+             raise AssertionError(f"unexpected composed catalog: {counts}")
+ 
+         evidence=[]
+-        for product_id in GAME_PRODUCTS:
++        for product_id in PROOF_PRODUCTS:
+             expected=vt.get(product_id)
+             for width,height in SIZES:
+                 resolved=vt.product_resolution(product_id,width,height)
+@@ -65,6 +68,8 @@ def main(argv: list[str]) -> int:
+             ("game.coop.action",1280,720,"coop-action","AXM Co-op Action Foundation"),
+             ("game.rts.command",1920,1080,"rts-command","AXM RTS Command Foundation"),
+             ("game.system.shell",1280,720,"game-system","AXM Shared Game-System Foundation"),
++            ("editor.creative.core",1920,1080,"creative-editor","AXM Creative Editor Foundation"),
++            ("comic.narrative.core",1920,1080,"comic-narrative","AXM Editable Comic Foundation"),
+         )
+         for product_id,width,height,folder,title in galleries:
+             outputs.extend(_write_project(vt.product_project(product_id,width,height,title),out/folder))
+@@ -80,9 +85,21 @@ def main(argv: list[str]) -> int:
+         required_system={"game.system.controller-remap","game.system.save-slots","game.system.error-recovery","game.system.privacy-consent","game.system.language"}
+         if not required_system <= set(system["screens"]):
+             raise AssertionError("shared game-system foundation lost required product surfaces")
++        editor=vt.get("editor.creative.core")
++        required_editor={"editor.creative.layer-editor","editor.creative.timeline","editor.creative.node-graph","editor.creative.animation","editor.creative.review-export"}
++        if not required_editor <= set(editor["screens"]):
++            raise AssertionError("creative editor lost required editable source surfaces")
++        comic=vt.get("comic.narrative.core")
++        required_comic={"comic.narrative.page-editor","comic.narrative.panel-editor","comic.narrative.dialogue-editor","comic.narrative.scene-graph","comic.narrative.motion-timeline"}
++        if not required_comic <= set(comic["screens"]):
++            raise AssertionError("comic foundation lost required editable narrative surfaces")
++        if not vt.PRIMITIVES['speech-bubble']['text_and_tail_remain_separate']:
++            raise AssertionError("speech bubble editability contract missing")
++        if not vt.PRIMITIVES['reading-order-marker']['order_conflicts_must_fail_visible']:
++            raise AssertionError("reading order conflict contract missing")
+ 
+         receipt={
+-            "schema":"axm.visual-template-proof/v3",
++            "schema":"axm.visual-template-proof/v4",
+             "catalog":counts,
+             "composition":vt.CATALOG_COMPOSITION,
+             "product_evidence":evidence,
+@@ -91,7 +108,13 @@ def main(argv: list[str]) -> int:
+                 for product_id,_,_,folder,_ in galleries
+             },
+             "parsed_svg_count":sum(1 for path in outputs if path.endswith(".svg")),
+-            "truth":"Offline contract/layout evidence only. SVG/HTML structure was generated and SVG parsed; target-engine interaction, gameplay, typography rendering, network behavior, persistence behavior, accessibility audit and aesthetic acceptance were not observed.",
++            "editability_checks":{
++                "creative_editor_source_surfaces":sorted(required_editor),
++                "comic_separable_surfaces":sorted(required_comic),
++                "speech_text_tail_separate":True,
++                "reading_order_conflicts_visible":True,
++            },
++            "truth":"Offline contract/layout evidence only. SVG/HTML structure was generated and SVG parsed; target-engine interaction, authoring behavior, drawing quality, typography rendering, network/persistence behavior, accessibility audit and aesthetic acceptance were not observed.",
+         }
+         (out/"receipt.json").write_text(json.dumps(receipt,indent=2,sort_keys=True),encoding="utf-8")
+         print(json.dumps(receipt,indent=2,sort_keys=True))

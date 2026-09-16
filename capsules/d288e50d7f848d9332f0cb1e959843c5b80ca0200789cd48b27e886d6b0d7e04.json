@@ -1,0 +1,215 @@
+{
+  "capsule_id": "d288e50d7f848d9332f0cb1e959843c5b80ca0200789cd48b27e886d6b0d7e04",
+  "evidence": {
+    "files": [
+      {
+        "additions": 39,
+        "binary": false,
+        "content_sha256": "7f981fe6bf3249c2d6e343ef3d592adcee9079f9e4debd98f8a35e07d9e7953a",
+        "deletions": 0,
+        "path": "CREATIVE_COMIC_TEMPLATE_PACK.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Creative Editor + Editable Comic Template Pack",
+          "Creative editor",
+          "Editable comics",
+          "Evidence boundary"
+        ]
+      },
+      {
+        "additions": 85,
+        "binary": false,
+        "content_sha256": "08d00fab96f91fe9822a11089f71cdeae7eee215f39b64d08f1e01b7fbd81ba2",
+        "deletions": 136,
+        "path": "VISUAL_TEMPLATE_FABRIC.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Layers",
+          "Game foundations",
+          "Creative editor foundation",
+          "Editable comics and visual narrative",
+          "Responsive geometry",
+          "Evidence",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 149,
+        "binary": false,
+        "content_sha256": "2a022fc76e2e684374e51d38480fbbbd6a6fdab024d697e2ab545ba0b80ec8d8",
+        "deletions": 0,
+        "path": "VISUAL_TEMPLATE_PRIORITY_MAP.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "AXM Visual Template Expansion Priority Map",
+          "Priority 1 \u2014 Creative editor core \u2014 IMPLEMENTED IN THIS LANE",
+          "Priority 2 \u2014 Editable comics and visual narrative \u2014 IMPLEMENTED IN THIS LANE",
+          "Priority 3 \u2014 AXM software / monolith shell \u2014 NEXT",
+          "Priority 4 \u2014 Remaining near-term game gaps",
+          "Priority 5 \u2014 Later visual families",
+          "Cross-cutting rules",
+          "Immediate build order"
+        ]
+      },
+      {
+        "additions": 12,
+        "binary": false,
+        "content_sha256": "674a0bbe91006a58f949cfb3f15a4397cdf2eeab476036f5f03d5fcd6e46be28",
+        "deletions": 0,
+        "path": "docs/v2-pr-notes.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "v2 PR evidence targets"
+        ]
+      },
+      {
+        "additions": 28,
+        "binary": false,
+        "content_sha256": "4d7c64c54481f11ac9666c593f7522a66a96af4317fe6e6fe360be9c072f36f8",
+        "deletions": 0,
+        "path": "examples/requests/visual_template_v2_examples.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 204,
+        "binary": false,
+        "content_sha256": "f495a6eab78dfd6f0c5242d43365666ed91267f1ef71cfe5c8ffa7bea38390c1",
+        "deletions": 0,
+        "path": "src/axm_uc/visual_template_creative_narrative.py",
+        "status": "A",
+        "symbols": [
+          "_merge_unique",
+          "extend_creative_narrative_catalog"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 3,
+        "binary": false,
+        "content_sha256": "5a0db07da174e1287b37dd856adb042fe9193a4b498f145a8a2a6fc0efed2312",
+        "deletions": 1,
+        "path": "src/axm_uc/visual_templates.py",
+        "status": "M",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 56,
+        "binary": false,
+        "content_sha256": "c086eb3e0fa1cda82fe19c7dfcb073709f6e63e13ed23df0c447f0c046cf0d27",
+        "deletions": 19,
+        "path": "tests/test_visual_templates.py",
+        "status": "M",
+        "symbols": [
+          "VisualTemplateTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 28,
+        "binary": false,
+        "content_sha256": "7aebe7625d559d511c296f2dd66cc5cbbd52a02ad65a0a58dd824bfb00dbc083",
+        "deletions": 5,
+        "path": "tools/visual_template_proof.py",
+        "status": "M",
+        "symbols": [
+          "_write_project",
+          "main"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "ec22195fb28a5b808fb5afd078a6856593c2d0e596363f9b9ddf00042a8ae19e"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "configuration",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "add",
+      "axm",
+      "boundary",
+      "build",
+      "catalog",
+      "comic",
+      "comics",
+      "creation-machine",
+      "creative",
+      "cross",
+      "cutting",
+      "editable",
+      "editor",
+      "evidence",
+      "examples",
+      "expansion",
+      "extend",
+      "fabric",
+      "families",
+      "foundation",
+      "foundations",
+      "game",
+      "gaps",
+      "geometry",
+      "immediate",
+      "implemented",
+      "json",
+      "lane",
+      "later",
+      "layers",
+      "map",
+      "merge",
+      "monolith",
+      "narrative",
+      "near",
+      "next",
+      "notes",
+      "order",
+      "pack",
+      "priority",
+      "project",
+      "proof",
+      "remaining",
+      "requests",
+      "responsive",
+      "rules",
+      "shell",
+      "software",
+      "standalone",
+      "targets",
+      "template",
+      "templates",
+      "term",
+      "this",
+      "tools",
+      "truth",
+      "unique",
+      "universal-creation",
+      "visual",
+      "write"
+    ]
+  },
+  "source": {
+    "base": "0bb0df5f8f684fe3fed6b903005ee4f6a91a5621",
+    "commit_subject": "Add creative editor and editable comic template foundations",
+    "head": "4ce96ba829bcf02e4db848ac4ee28dcbd49961e6",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

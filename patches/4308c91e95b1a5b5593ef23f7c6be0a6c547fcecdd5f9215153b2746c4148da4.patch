@@ -1,0 +1,568 @@
+diff --git a/CAMERA_TEMPLATE_PACK.md b/CAMERA_TEMPLATE_PACK.md
+new file mode 100644
+index 0000000..5c6486c
+--- /dev/null
++++ b/CAMERA_TEMPLATE_PACK.md
+@@ -0,0 +1,37 @@
++# Source-Bound Camera / Shot Reference Template Pack
++
++`visual.camera.core` is the reusable camera/shot foundation for games, software, cinematics and visual storytelling.
++
++Camera presentation is not world truth. Rigs, targets, lenses, framing guides, constraints, transitions, runtime ownership and platform variants remain separate editable state.
++
++## Surfaces
++
++- project / shot hub
++- camera rig editor
++- target / framing editor
++- lens / projection / FOV editor
++- movement / collision / occlusion constraint editor
++- camera transition editor
++- runtime binding editor
++- platform / accessibility variant editor
++- shot comparison preview
++- review / export
++
++## Source-truth contract
++
++- `camera-source` — exact camera/shot identity, source, version, owner/context and purpose;
++- `camera-rig` — exact parent/pivot/transform/source and ownership;
++- `camera-target` — exact target/anchor/source and tracking status;
++- `lens-state` — exact projection, lens/FOV/aperture/focus values and source units;
++- `framing-guide` — exact viewport/aspect/target guide and source;
++- `camera-transition` — exact from/to states, trigger, duration/curve and ownership;
++- `camera-constraint` — exact subject/rule/source/status for motion/collision/occlusion;
++- `camera-runtime-binding` — exact gameplay/cinematic state to camera binding with source/authority;
++- `camera-platform-variant` — exact base, deltas, platform/input/accessibility context;
++- `camera-export-target` — exact rig/lens/target/transition/binding requirements.
++
++## Truth boundary
++
++Preview framing never moves world objects or rewrites authoritative transforms. A cinematic-looking shot does not imply gameplay camera ownership or input authority. Lens/FOV values are never inferred solely from appearance. Visual similarity does not create a target or runtime binding. Platform/accessibility variants must preserve required targeting, orientation and semantic feedback.
++
++This pack proves deterministic structural/editability contracts only. It does not prove camera feel, motion comfort, collision behavior, target-engine parity, gameplay suitability or aesthetic quality.
+diff --git a/VISUAL_TEMPLATE_FABRIC.md b/VISUAL_TEMPLATE_FABRIC.md
+index 2b6a960..7b3e45b 100644
+--- a/VISUAL_TEMPLATE_FABRIC.md
++++ b/VISUAL_TEMPLATE_FABRIC.md
+@@ -2,47 +2,47 @@
+ 
+ Universal Creation contains one deterministic library of **known visual archetypes** between low-level format scaffolds and finished products. Templates are editable structural starting points, not finished art and not automatic canon.
+ 
+-The public module remains `axm_uc.visual_templates`. Explicit extension packs cover games/product plumbing, creative editors, comics, AXM system surfaces, key art, cards/decks, cinematic/broadcast overlays, diagrams, atlas/map editing, branching narrative, 3D showroom, music, presentation/explainers, character reference, equipment configuration, source-bound UI motion, brand/identity systems, environment/level references, VFX/particle authoring, quest/mission flow systems, HUD theme/skin systems, and lighting/post-process look systems. Sticker Fabric remains the immutable/versioned registry bridge. Mathematical work can enrich declared ratios/ranges through `math_hooks` without replacing template identity.
++The public module remains `axm_uc.visual_templates`. Explicit extension packs cover games/product plumbing, creative editors, comics, AXM system surfaces, key art, cards/decks, cinematic/broadcast overlays, diagrams, atlas/map editing, branching narrative, 3D showroom, music, presentation/explainers, character reference, equipment configuration, source-bound UI motion, brand/identity systems, environment/level references, VFX/particle authoring, quest/mission flow systems, HUD theme/skin systems, lighting/post-process look systems, and camera/shot reference systems. Sticker Fabric remains the immutable/versioned registry bridge. Mathematical work can enrich declared ratios/ranges through `math_hooks` without replacing template identity.
+ 
+-## Current v23 candidate census
++## Current v24 candidate census
+ 
+-- **256 reusable visual/state primitives**
+-- **31 coherent style systems**
+-- **294 responsive screen archetypes**
+-- **29 whole-product archetypes**
+-- **323 exact screen/product definitions** when explicitly installed into Sticker Registry
++- **266 reusable visual/state primitives**
++- **32 coherent style systems**
++- **304 responsive screen archetypes**
++- **30 whole-product archetypes**
++- **334 exact screen/product definitions** when explicitly installed into Sticker Registry
+ 
+ Every major family provides compact, standard and wide normalized layouts. Unknown requested variants fail rather than silently falling back.
+ 
+-## Source-bound lighting / post-process look foundation
++## Source-bound camera / shot reference foundation
+ 
+-`visual.look.core` provides ten look-authoring surfaces:
++`visual.camera.core` provides ten camera-authoring surfaces:
+ 
+-- project / look hub;
+-- exposure / tone-map editor;
+-- color-grade editor;
+-- fog / atmosphere editor;
+-- bloom / glare editor;
+-- post-process layer-stack editor;
+-- scene / camera binding editor;
+-- platform / performance variant editor;
+-- comparison / preview;
++- project / shot hub;
++- camera rig editor;
++- target / framing editor;
++- lens / projection / FOV editor;
++- movement / collision / occlusion constraint editor;
++- camera transition editor;
++- runtime binding editor;
++- platform / accessibility variant editor;
++- shot comparison preview;
+ - review / export.
+ 
+-Its `visual.look.system` style is replaceable. Presentation state stays explicit:
++Its `visual.camera.system` style is replaceable. Camera state stays explicit:
+ 
+-- `look-source` preserves exact look/preset identity, source, version and owning context;
+-- `exposure-state` preserves exact value/range, adaptation source and context;
+-- `tone-map-state` preserves exact operator, parameters, output space and source;
+-- `color-grade-state` preserves exact transform source, working/output spaces and intensity;
+-- `fog-atmosphere-state` preserves exact density/range/scattering source and context;
+-- `bloom-glare-state` preserves exact threshold/intensity/radius/quality and source;
+-- `postprocess-layer` preserves exact ordered layer identity, parameters, blend, scope and source;
+-- `scene-look-binding` binds exact scenes/cameras/regions to exact look identities with source/activation state;
+-- `look-platform-variant` preserves exact base, deltas and platform/performance/accessibility context;
+-- `look-export-target` keeps exact look/binding/color-space/variant/runtime requirements visible.
++- `camera-source` preserves exact camera/shot identity, source, version and owner/context;
++- `camera-rig` preserves exact parent/pivot/transform/source and ownership;
++- `camera-target` preserves exact target/anchor/source and tracking status;
++- `lens-state` preserves exact projection, lens/FOV/aperture/focus values and source units;
++- `framing-guide` preserves exact viewport/aspect/target guide and source;
++- `camera-transition` preserves exact from/to camera states, trigger, duration/curve and ownership;
++- `camera-constraint` preserves exact subject/rule/source/status for motion, collision and occlusion;
++- `camera-runtime-binding` binds exact gameplay/cinematic states to exact rigs/shots with source/authority;
++- `camera-platform-variant` preserves exact base, deltas and platform/input/accessibility context;
++- `camera-export-target` keeps exact rig/lens/target/transition/binding requirements visible.
+ 
+-A convincing look preview never becomes authoritative world lighting or gameplay state. Grade/post-process transforms do not replace source materials, lights, geometry or environment state. Visual similarity does not bind a look to a scene. Reduced/performance variants must preserve required visibility and state legibility.
++Preview framing never moves world objects or rewrites authoritative transforms. A cinematic-looking shot never implies gameplay camera ownership or input authority. Lens/FOV values are not inferred solely from appearance. Visual similarity does not create a target or runtime binding. Platform/accessibility variants must preserve required targeting, orientation and semantic feedback.
+ 
+ ## Registry and identity
+ 
+@@ -52,8 +52,8 @@ Every built-in screen/product can be wrapped as an immutable Sticker definition.
+ 
+ ```sh
+ axm-visual-templates catalog
+-axm-visual-templates show visual.look.core
+-axm-visual-templates render visual.look.core creations/lighting-look --width 1920 --height 1080
++axm-visual-templates show visual.camera.core
++axm-visual-templates render visual.camera.core creations/camera --width 1920 --height 1080
+ ```
+ 
+ Preview/export remains derived inspection output, never authoritative source.
+@@ -65,19 +65,19 @@ python -m unittest discover -s tests -p 'test_visual_templates.py' -v
+ python tools/visual_template_proof.py /new/output/path
+ ```
+ 
+-The v23 gate requires:
++The v24 gate requires:
+ 
+-- exact census: 31 styles / 256 primitives / 294 screens / 29 products;
+-- all 294 screens stay within six representative viewport shapes;
++- exact census: 32 styles / 266 primitives / 304 screens / 30 products;
++- all 304 screens stay within six representative viewport shapes;
+ - exact product screen order and flows resolve across those viewports;
+-- parseable galleries for all prior proof products plus `visual.look.core`;
+-- all 323 screen/product definitions install through Sticker Registry;
+-- exact look identity/exposure/tone/grade/fog/bloom/layer/scene-binding/platform contracts remain present;
+-- prior HUD/mission/VFX/environment/brand/motion/configurator/character/presentation/music/showroom/visual-novel/atlas/diagram/broadcast/cinematic/card/key-art/comic/game/AXM boundaries remain intact;
++- parseable galleries for all prior proof products plus `visual.camera.core`;
++- all 334 screen/product definitions install through Sticker Registry;
++- exact camera identity/rig/target/lens/framing/transition/constraint/runtime-authority/platform contracts remain present;
++- prior lighting/HUD/mission/VFX/environment/brand/motion/configurator/character/presentation/music/showroom/visual-novel/atlas/diagram/broadcast/cinematic/card/key-art/comic/game/AXM boundaries remain intact;
+ - copy safety, strict variant rejection, invalid-geometry rejection and exact Sticker-slot binding remain intact.
+ 
+ ## Truth boundary
+ 
+-Current evidence proves deterministic structural/editability contracts only. It does **not** prove physical lighting correctness, calibrated color output, accessibility acceptance, GPU cost, target-engine parity or aesthetic quality.
++Current evidence proves deterministic structural/editability contracts only. It does **not** prove camera feel, motion comfort, collision behavior, target-engine parity, gameplay suitability or aesthetic quality.
+ 
+-Consuming products must supply real world/scene/camera state and output-space context. Unknown, unsupported, disabled, reduced and unbound state stays distinguishishable. Richer editable source remains authoritative over look previews/exports.
++Consuming products must supply real world, scene, camera and runtime ownership state. Unknown, lost, disabled, advisory, reduced and unbound state stays distinguishable. Richer editable source remains authoritative over camera previews/exports.
+diff --git a/VISUAL_TEMPLATE_PRIORITY_MAP.md b/VISUAL_TEMPLATE_PRIORITY_MAP.md
+index e10de8c..7fdc830 100644
+--- a/VISUAL_TEMPLATE_PRIORITY_MAP.md
++++ b/VISUAL_TEMPLATE_PRIORITY_MAP.md
+@@ -1,6 +1,6 @@
+ # AXM Visual Template Expansion Priority Map
+ 
+-Status: v23 growth lane after verified v1–v22 merges.
++Status: v24 growth lane after verified v1–v23 merges.
+ 
+ The visual-template fabric grows where Universal Creation is likely to reuse the knowledge soon. This is a build priority, not canon: templates remain editable foundations and may be replaced when evidence supports a better structure.
+ 
+@@ -18,48 +18,49 @@ The visual-template fabric grows where Universal Creation is likely to reuse the
+ - environment / level reference boards;
+ - VFX / particle reference-authoring;
+ - quest / mission flow systems;
+-- HUD theme / skin systems.
++- HUD theme / skin systems;
++- lighting / post-process look systems.
+ 
+-## Lighting / post-process look systems — IMPLEMENTED IN THIS LANE
++## Camera / shot reference systems — IMPLEMENTED IN THIS LANE
+ 
+-Product: `visual.look.core`
++Product: `visual.camera.core`
+ 
+ Implemented screens:
+ 
+-- `visual.look.project-hub`
+-- `visual.look.exposure-tone`
+-- `visual.look.color-grade`
+-- `visual.look.fog-atmosphere`
+-- `visual.look.bloom-glare`
+-- `visual.look.layer-stack`
+-- `visual.look.scene-bindings`
+-- `visual.look.platform-performance`
+-- `visual.look.compare-preview`
+-- `visual.look.review-export`
++- `visual.camera.project-hub`
++- `visual.camera.rig-editor`
++- `visual.camera.target-framing`
++- `visual.camera.lens-fov`
++- `visual.camera.constraints`
++- `visual.camera.transitions`
++- `visual.camera.runtime-bindings`
++- `visual.camera.platform-variants`
++- `visual.camera.compare-preview`
++- `visual.camera.review-export`
+ 
+ New primitives:
+ 
+-- `look-source`
+-- `exposure-state`
+-- `tone-map-state`
+-- `color-grade-state`
+-- `fog-atmosphere-state`
+-- `bloom-glare-state`
+-- `postprocess-layer`
+-- `scene-look-binding`
+-- `look-platform-variant`
+-- `look-export-target`
++- `camera-source`
++- `camera-rig`
++- `camera-target`
++- `lens-state`
++- `framing-guide`
++- `camera-transition`
++- `camera-constraint`
++- `camera-runtime-binding`
++- `camera-platform-variant`
++- `camera-export-target`
+ 
+-Style: `visual.look.system`.
++Style: `visual.camera.system`.
+ 
+-The central rule is look/world-state truth: a beautiful preview does not redefine world lighting, color transforms do not replace source materials/lights/geometry, scene application requires exact bindings, and performance/accessibility variants preserve required visibility and state legibility.
++The central rule is camera/world-state truth: preview framing never moves world objects, cinematic appearance does not imply gameplay ownership, lens values retain exact source/units, and target/runtime bindings require explicit source state.
+ 
+ ## Next high-value visual/creation families
+ 
+-1. **Camera / shot reference systems** — exact camera rigs, targets, framing, lens/FOV, shot transitions and gameplay/cinematic ownership without treating preview framing as world state.
+-2. **Inventory / item-reference systems** — item identity, rarity/affordance presentation, equipment slots, stats, comparison, provenance and platform/input variants without turning iconography into gameplay truth.
+-3. **Menu / shell theme systems** — source-bound navigation/component families, focus/state visibility, controller/touch/keyboard variants and branding hooks across complete game/application shells.
+-4. **Animation / rig reference systems** — exact skeleton/rig identity, clips, state transitions, timing/root-motion/event hooks and retargeting/source state without treating preview motion as runtime truth.
++1. **Inventory / item-reference systems** — item identity, rarity/affordance presentation, equipment slots, stats, comparison, provenance and platform/input variants without turning iconography into gameplay truth.
++2. **Menu / shell theme systems** — source-bound navigation/component families, focus/state visibility, controller/touch/keyboard variants and branding hooks across complete game/application shells.
++3. **Animation / rig reference systems** — exact skeleton/rig identity, clips, state transitions, timing/root-motion/event hooks and retargeting/source state without treating preview motion as runtime truth.
++4. **Vehicle cockpit / instrument systems** — exact telemetry bindings, gauges, warning channels, camera/seat variants and platform readability without making visual instruments authoritative over simulation state.
+ 
+ ## Cross-cutting rules
+ 
+@@ -75,7 +76,7 @@ Every family preserves the existing visual-template contract:
+ 
+ ## Immediate build order
+ 
+-1. exact-head verify `visual.look.core`;
+-2. merge v23 only when template + repository checks pass;
+-3. begin camera / shot reference systems from fresh main;
++1. exact-head verify `visual.camera.core`;
++2. merge v24 only when template + repository checks pass;
++3. begin inventory / item-reference systems from fresh main;
+ 4. keep prioritizing reusable source-first editors over flat one-off outputs.
+diff --git a/src/axm_uc/visual_template_camera.py b/src/axm_uc/visual_template_camera.py
+new file mode 100644
+index 0000000..3589b8e
+--- /dev/null
++++ b/src/axm_uc/visual_template_camera.py
+@@ -0,0 +1,47 @@
++"""Source-bound camera, shot and framing reference foundations."""
++from __future__ import annotations
++from copy import deepcopy
++from typing import Any
++
++
++def _merge(target: dict[str, Any], additions: dict[str, Any], label: str) -> None:
++    overlap=sorted(set(target)&set(additions))
++    if overlap: raise RuntimeError(f"camera {label} collision: {', '.join(overlap)}")
++    target.update(deepcopy(additions))
++
++
++def extend_camera_catalog(namespace: dict[str, Any]) -> None:
++    styles=namespace['STYLE_SYSTEMS']; primitives=namespace['PRIMITIVES']
++    screens=namespace['SCREEN_TEMPLATES']; products=namespace['PRODUCT_ARCHETYPES']
++    screen=namespace['_screen']; origin=namespace['_origin']
++    _merge(styles,{'visual.camera.system':{'intent':'source-bound camera/shot authoring with exact rig, target, lens, framing, constraints, transitions and runtime ownership','tokens':{'canvas':'#090e12','surface':'#151c23','surface_raised':'#202a32','text':'#eff3f5','muted':'#9faab2','accent':'#87c7c2','warning':'#e1b86b','danger':'#dd7478','line':'#3e4d56'},'shape':{'panel_radius_ratio':0.010,'cut_ratio':0.002,'line_ratio':0.0012},'type':{'display_weight':735,'body_weight':500,'metric_scale':1.48,'tracking':0.010},'depth':{'layers':7,'shadow':'subtle','glass':'restrained'},'motion':{'fast_ms':80,'standard_ms':165,'slow_ms':300,'principle':'camera presentation never rewrites world or gameplay state'}}},'style')
++    _merge(primitives,{
++      'camera-source':{'role':'exact camera/shot identity with source/version/digest, owner/context and purpose','states':['known','active','archived','unknown'],'identity_source_version_owner_required':True},
++      'camera-rig':{'role':'camera rig identity with exact parent/pivot/transform/source and ownership','states':['active','preview','disabled','unknown'],'identity_parent_transform_source_required':True},
++      'camera-target':{'role':'exact target identity/anchor/source plus tracking status','states':['bound','tracking','lost','unknown'],'target_anchor_source_status_required':True},
++      'lens-state':{'role':'exact projection/lens/FOV/aperture/focus state with unit/source','states':['perspective','orthographic','custom','unknown'],'projection_lens_fov_source_required':True},
++      'framing-guide':{'role':'composition/safe-area guide bound to exact viewport/aspect/target and source','states':['active','advisory','disabled','unknown'],'viewport_target_guide_source_required':True},
++      'camera-transition':{'role':'transition between exact camera states with trigger/duration/curve/ownership','states':['ready','running','cancelled','complete'],'from_to_trigger_duration_required':True},
++      'camera-constraint':{'role':'movement/rotation/collision/occlusion constraint with exact subject/rule/source/status','states':['active','conditional','disabled','unknown'],'subject_rule_source_status_required':True},
++      'camera-runtime-binding':{'role':'runtime binding between gameplay/cinematic state and exact camera rig/shot with source/authority','states':['bound','conditional','inactive','unknown'],'state_camera_source_authority_required':True},
++      'camera-platform-variant':{'role':'platform/input/accessibility camera variant with exact base, deltas, context and availability','states':['active','reduced','alternate','unknown'],'base_delta_platform_input_required':True},
++      'camera-export-target':{'role':'camera/shot export target with exact rigs, lenses, targets, transitions, bindings and requirements','states':['ready','warning','blocked','exported'],'requirements_must_be_visible':True},
++    },'primitive')
++    q=['camera identity, rigs, targets, lenses, framing, constraints, transitions and runtime bindings remain separately editable','preview framing never silently moves world objects or rewrites authoritative transforms','a cinematic-looking shot never implies gameplay camera ownership or input authority','lens and FOV values retain units/source rather than being inferred from visual appearance','platform/accessibility variants preserve required targeting, orientation and semantic feedback']
++    def v(c,s,w): return {'compact':c,'standard':s,'wide':w}
++    additions={
++      'visual.camera.project-hub':screen('visual.camera.project-hub','Camera and shot project hub','creative.camera','visual.camera.system','browse shots, rigs, runtime bindings, platform variants and export coverage',v({'header':(.03,.03,.94,.08),'shots':(.03,.14,.94,.30),'coverage':(.03,.47,.45,.38),'variants':(.51,.47,.46,.27),'actions':(.51,.77,.46,.08)},{'header':(.02,.03,.96,.075),'shots':(.02,.14,.22,.82),'coverage':(.27,.14,.46,.82),'variants':(.76,.14,.22,.55),'actions':(.76,.72,.22,.14)},{'header':(.015,.03,.97,.07),'shots':(.015,.13,.20,.84),'coverage':(.24,.13,.50,.84),'variants':(.77,.13,.215,.57),'actions':(.77,.73,.215,.14)}),tags=['visual','camera','shot','project'],quality=q),
++      'visual.camera.rig-editor':screen('visual.camera.rig-editor','Camera rig editor','creative.camera','visual.camera.system','edit exact parent/pivot/transform/source and rig ownership without modifying world objects',v({'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.40),'rigs':(.03,.57,.55,.30),'details':(.61,.57,.36,.22),'actions':(.61,.82,.36,.05)},{'header':(.02,.03,.96,.075),'rigs':(.02,.14,.25,.72),'preview':(.30,.14,.45,.72),'details':(.78,.14,.20,.54),'actions':(.78,.71,.20,.15)},{'header':(.015,.03,.97,.07),'rigs':(.015,.13,.23,.74),'preview':(.265,.13,.49,.74),'details':(.78,.13,.205,.55),'actions':(.78,.71,.205,.16)}),tags=['visual','camera','rig','transform'],quality=q),
++      'visual.camera.target-framing':screen('visual.camera.target-framing','Target and framing editor','creative.camera','visual.camera.system','bind exact targets/anchors and framing guides while preserving world and target transforms',v({'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.40),'targets':(.03,.57,.45,.30),'guides':(.51,.57,.46,.22),'actions':(.51,.82,.46,.05)},{'header':(.02,.03,.96,.075),'targets':(.02,.14,.22,.72),'preview':(.27,.14,.48,.72),'guides':(.78,.14,.20,.54),'actions':(.78,.71,.20,.15)},{'header':(.015,.03,.97,.07),'targets':(.015,.13,.20,.74),'preview':(.24,.13,.51,.74),'guides':(.775,.13,.21,.55),'actions':(.775,.71,.21,.16)}),tags=['visual','camera','target','framing'],math_hooks={'target_coverage_ratio':[0.12,0.80],'safe_margin_ratio':[0.01,0.18]},quality=q),
++      'visual.camera.lens-fov':screen('visual.camera.lens-fov','Lens projection and FOV editor','creative.camera','visual.camera.system','edit exact projection, lens/FOV, aperture/focus values and source units without estimating from preview alone',v({'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.36),'lens':(.03,.53,.55,.34),'details':(.61,.53,.36,.25),'actions':(.61,.81,.36,.06)},{'header':(.02,.03,.96,.075),'lens':(.02,.14,.28,.72),'preview':(.33,.14,.44,.72),'details':(.80,.14,.18,.54),'actions':(.80,.71,.18,.15)},{'header':(.015,.03,.97,.07),'lens':(.015,.13,.26,.74),'preview':(.305,.13,.47,.74),'details':(.795,.13,.19,.55),'actions':(.795,.71,.19,.16)}),tags=['visual','camera','lens','fov'],math_hooks={'fov_degrees':[1,179],'focal_length_mm':[1,600]},quality=q),
++      'visual.camera.constraints':screen('visual.camera.constraints','Camera movement and constraint editor','creative.camera','visual.camera.system','edit movement, rotation, collision and occlusion constraints with exact rules/source/status',v({'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.34),'constraints':(.03,.51,.55,.34),'details':(.61,.51,.36,.25),'actions':(.61,.79,.36,.06)},{'header':(.02,.03,.96,.075),'constraints':(.02,.14,.28,.72),'preview':(.33,.14,.44,.72),'details':(.80,.14,.18,.54),'actions':(.80,.71,.18,.15)},{'header':(.015,.03,.97,.07),'constraints':(.015,.13,.26,.74),'preview':(.305,.13,.47,.74),'details':(.795,.13,.19,.55),'actions':(.795,.71,.19,.16)}),tags=['visual','camera','constraint','occlusion'],quality=q),
++      'visual.camera.transitions':screen('visual.camera.transitions','Camera transition editor','creative.camera','visual.camera.system','edit exact from/to camera states, trigger, timing/curve and cancellation without manufacturing state changes',v({'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.34),'transitions':(.03,.51,.55,.34),'details':(.61,.51,.36,.25),'actions':(.61,.79,.36,.06)},{'header':(.02,.03,.96,.075),'transitions':(.02,.14,.28,.72),'preview':(.33,.14,.44,.72),'details':(.80,.14,.18,.54),'actions':(.80,.71,.18,.15)},{'header':(.015,.03,.97,.07),'transitions':(.015,.13,.26,.74),'preview':(.305,.13,.47,.74),'details':(.795,.13,.19,.55),'actions':(.795,.71,.19,.16)}),tags=['visual','camera','transition','timing'],quality=q),
++      'visual.camera.runtime-bindings':screen('visual.camera.runtime-bindings','Camera runtime binding editor','creative.camera','visual.camera.system','bind exact gameplay/cinematic states to exact rigs/shots with source and authority visible',v({'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.32),'bindings':(.03,.49,.58,.38),'details':(.64,.49,.33,.28),'actions':(.64,.80,.33,.07)},{'header':(.02,.03,.96,.075),'bindings':(.02,.14,.28,.72),'preview':(.33,.14,.44,.72),'details':(.80,.14,.18,.54),'actions':(.80,.71,.18,.15)},{'header':(.015,.03,.97,.07),'bindings':(.015,.13,.26,.74),'preview':(.305,.13,.47,.74),'details':(.795,.13,.19,.55),'actions':(.795,.71,.19,.16)}),tags=['visual','camera','runtime','binding'],quality=q),
++      'visual.camera.platform-variants':screen('visual.camera.platform-variants','Camera platform and accessibility variants','creative.camera','visual.camera.system','author exact platform/input/accessibility camera variants preserving required targeting and orientation semantics',v({'header':(.03,.03,.94,.08),'default':(.03,.14,.45,.42),'variant':(.52,.14,.45,.42),'rules':(.03,.59,.58,.28),'actions':(.64,.59,.33,.28)},{'header':(.02,.03,.96,.075),'default':(.02,.14,.36,.63),'variant':(.40,.14,.36,.63),'rules':(.78,.14,.20,.48),'actions':(.78,.65,.20,.12)},{'header':(.015,.03,.97,.07),'default':(.015,.13,.37,.65),'variant':(.405,.13,.37,.65),'rules':(.795,.13,.19,.49),'actions':(.795,.65,.19,.13)}),tags=['visual','camera','platform','accessibility'],quality=q),
++      'visual.camera.compare-preview':screen('visual.camera.compare-preview','Camera shot comparison preview','creative.camera','visual.camera.system','compare exact shots/rigs/variants while keeping source transforms, targets and ownership separately visible',v({'header':(.03,.03,.94,.08),'left':(.03,.14,.45,.48),'right':(.52,.14,.45,.48),'checks':(.03,.65,.58,.22),'actions':(.64,.65,.33,.22)},{'header':(.02,.03,.96,.075),'left':(.02,.14,.36,.63),'right':(.40,.14,.36,.63),'checks':(.78,.14,.20,.48),'actions':(.78,.65,.20,.12)},{'header':(.015,.03,.97,.07),'left':(.015,.13,.37,.65),'right':(.405,.13,.37,.65),'checks':(.795,.13,.19,.49),'actions':(.795,.65,.19,.13)}),tags=['visual','camera','compare','preview'],quality=q),
++      'visual.camera.review-export':screen('visual.camera.review-export','Camera system review and export','creative.camera','visual.camera.system','review missing targets, unknown lens/source state, unsafe constraints, ownership gaps and export/runtime requirements',v({'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.30),'checks':(.03,.47,.58,.39),'targets':(.64,.47,.33,.27),'actions':(.64,.77,.33,.09)},{'header':(.02,.03,.96,.075),'preview':(.02,.14,.38,.72),'checks':(.43,.14,.34,.72),'targets':(.79,.14,.19,.48),'actions':(.79,.65,.19,.21)},{'header':(.015,.03,.97,.07),'preview':(.015,.13,.36,.74),'checks':(.40,.13,.37,.74),'targets':(.79,.13,.195,.49),'actions':(.79,.65,.195,.22)}),tags=['visual','camera','review','export'],quality=q),
++    }
++    _merge(screens,additions,'screen')
++    ids=list(additions)
++    product={'schema':'axm.visual-product/v1','id':'visual.camera.core','version':1,'name':'Source-bound camera and shot reference core','kind':'product','domain':'creative.camera','tags':['visual','camera','shot','framing','product'],'origin':origin(),'style':'visual.camera.system','intent':'source-first camera/shot authoring with exact rigs, targets, lenses, framing, constraints, transitions, runtime bindings and platform variants','screens':ids,'flow':[['visual.camera.project-hub','visual.camera.rig-editor','edit-rig'],['visual.camera.rig-editor','visual.camera.target-framing','edit-target'],['visual.camera.rig-editor','visual.camera.lens-fov','edit-lens'],['visual.camera.rig-editor','visual.camera.constraints','edit-constraints'],['visual.camera.project-hub','visual.camera.transitions','edit-transitions'],['visual.camera.project-hub','visual.camera.runtime-bindings','bind-runtime'],['visual.camera.project-hub','visual.camera.platform-variants','edit-variants'],['visual.camera.project-hub','visual.camera.compare-preview','compare'],['visual.camera.project-hub','visual.camera.review-export','review-export']], 'quality':q}
++    _merge(products,{'visual.camera.core':product},'product')
+diff --git a/src/axm_uc/visual_templates.py b/src/axm_uc/visual_templates.py
+index d483763..24e9aa0 100644
+--- a/src/axm_uc/visual_templates.py
++++ b/src/axm_uc/visual_templates.py
+@@ -32,8 +32,9 @@ from .visual_template_vfx import extend_vfx_catalog as _extend_vfx_catalog
+ from .visual_template_mission import extend_mission_catalog as _extend_mission_catalog
+ from .visual_template_hud import extend_hud_catalog as _extend_hud_catalog
+ from .visual_template_lighting import extend_lighting_catalog as _extend_lighting_catalog
++from .visual_template_camera import extend_camera_catalog as _extend_camera_catalog
+ 
+-_COMPOSITION=("visual_template_growth","visual_template_game_systems","visual_template_creative_narrative","visual_template_axm_system","visual_template_game_shared","visual_template_keyart","visual_template_cards","visual_template_cinematic","visual_template_video_overlay","visual_template_diagram","visual_template_atlas","visual_template_novel","visual_template_showroom","visual_template_music","visual_template_presentation","visual_template_character_reference","visual_template_configurator","visual_template_motion","visual_template_brand","visual_template_environment","visual_template_vfx","visual_template_mission","visual_template_hud","visual_template_lighting")
++_COMPOSITION=("visual_template_growth","visual_template_game_systems","visual_template_creative_narrative","visual_template_axm_system","visual_template_game_shared","visual_template_keyart","visual_template_cards","visual_template_cinematic","visual_template_video_overlay","visual_template_diagram","visual_template_atlas","visual_template_novel","visual_template_showroom","visual_template_music","visual_template_presentation","visual_template_character_reference","visual_template_configurator","visual_template_motion","visual_template_brand","visual_template_environment","visual_template_vfx","visual_template_mission","visual_template_hud","visual_template_lighting","visual_template_camera")
+ _applied=getattr(_core,"_AXM_VISUAL_COMPOSITION",None)
+ if _applied is None:
+     _extend_catalog(vars(_core))
+@@ -60,6 +61,7 @@ if _applied is None:
+     _extend_mission_catalog(vars(_core))
+     _extend_hud_catalog(vars(_core))
+     _extend_lighting_catalog(vars(_core))
++    _extend_camera_catalog(vars(_core))
+     _core._AXM_VISUAL_COMPOSITION=_COMPOSITION
+ elif _applied != _COMPOSITION:
+     raise RuntimeError("visual template composition changed inside a live process; restart with one exact catalog")
+diff --git a/tests/test_visual_templates.py b/tests/test_visual_templates.py
+index 3656488..2df6554 100644
+--- a/tests/test_visual_templates.py
++++ b/tests/test_visual_templates.py
+@@ -8,18 +8,18 @@ from axm_stickers import Registry
+ from axm_uc import visual_templates as vt
+ 
+ SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
+-PRODUCTS=('game.racing.full','game.coop.action','game.rts.command','game.system.shell','game.shared.core','editor.creative.core','comic.narrative.core','axm.system.shell','visual.keyart.core','visual.cards.core','visual.cinematic.core','visual.broadcast.core','visual.diagram.core','visual.atlas.core','visual.novel.core','visual.showroom.core','visual.music.core','visual.presentation.core','visual.character.core','visual.configurator.core','visual.motion.core','visual.brand.core','visual.environment.core','visual.vfx.core','visual.mission.core','visual.hud.core','visual.look.core')
++PRODUCTS=('game.racing.full','game.coop.action','game.rts.command','game.system.shell','game.shared.core','editor.creative.core','comic.narrative.core','axm.system.shell','visual.keyart.core','visual.cards.core','visual.cinematic.core','visual.broadcast.core','visual.diagram.core','visual.atlas.core','visual.novel.core','visual.showroom.core','visual.music.core','visual.presentation.core','visual.character.core','visual.configurator.core','visual.motion.core','visual.brand.core','visual.environment.core','visual.vfx.core','visual.mission.core','visual.hud.core','visual.look.core','visual.camera.core')
+ 
+ class VisualTemplateTests(unittest.TestCase):
+     def test_catalog_counts_and_products(self):
+         counts=vt.validate_catalog()
+-        self.assertEqual(counts,{'styles':31,'primitives':256,'screens':294,'products':29})
++        self.assertEqual(counts,{'styles':32,'primitives':266,'screens':304,'products':30})
+         self.assertEqual(vt.CATALOG_COMPOSITION['counts'],counts)
+         ids={p['id'] for p in vt.catalog()['products']}
+         self.assertTrue(set(PRODUCTS)|{'game.racing.performance','software.creator.studio'} <= ids)
+ 
+     def test_all_geometry_and_major_variants(self):
+-        prefixes=('game.','editor.creative.','comic.narrative.','axm.system.','visual.keyart.','visual.cards.','visual.cinematic.','visual.broadcast.','visual.diagram.','visual.atlas.','visual.novel.','visual.showroom.','visual.music.','visual.presentation.','visual.character.','visual.configurator.','visual.motion.','visual.brand.','visual.environment.','visual.vfx.','visual.mission.','visual.hud.','visual.look.')
++        prefixes=('game.','editor.creative.','comic.narrative.','axm.system.','visual.keyart.','visual.cards.','visual.cinematic.','visual.broadcast.','visual.diagram.','visual.atlas.','visual.novel.','visual.showroom.','visual.music.','visual.presentation.','visual.character.','visual.configurator.','visual.motion.','visual.brand.','visual.environment.','visual.vfx.','visual.mission.','visual.hud.','visual.look.','visual.camera.')
+         for tid,definition in vt.SCREEN_TEMPLATES.items():
+             if tid.startswith(prefixes): self.assertEqual(set(definition['variants']),{'compact','standard','wide'},tid)
+             for width,height in SIZES:
+@@ -29,32 +29,31 @@ class VisualTemplateTests(unittest.TestCase):
+                     self.assertLessEqual(x+w,width+1e-6); self.assertLessEqual(y+h,height+1e-6)
+ 
+     def test_existing_product_depth_is_retained(self):
+-        expected={'game.racing.full':19,'game.system.shell':18,'game.shared.core':12,'editor.creative.core':12,'comic.narrative.core':10,'axm.system.shell':12,'visual.keyart.core':10,'visual.cards.core':11,'visual.cinematic.core':10,'visual.broadcast.core':10,'visual.diagram.core':10,'visual.atlas.core':10,'visual.novel.core':10,'visual.showroom.core':10,'visual.music.core':10,'visual.presentation.core':10,'visual.character.core':10,'visual.configurator.core':10,'visual.motion.core':10,'visual.brand.core':10,'visual.environment.core':10,'visual.vfx.core':10,'visual.mission.core':10,'visual.hud.core':10}
++        expected={'game.racing.full':19,'game.system.shell':18,'game.shared.core':12,'editor.creative.core':12,'comic.narrative.core':10,'axm.system.shell':12,'visual.keyart.core':10,'visual.cards.core':11,'visual.cinematic.core':10,'visual.broadcast.core':10,'visual.diagram.core':10,'visual.atlas.core':10,'visual.novel.core':10,'visual.showroom.core':10,'visual.music.core':10,'visual.presentation.core':10,'visual.character.core':10,'visual.configurator.core':10,'visual.motion.core':10,'visual.brand.core':10,'visual.environment.core':10,'visual.vfx.core':10,'visual.mission.core':10,'visual.hud.core':10,'visual.look.core':10}
+         for pid,count in expected.items(): self.assertEqual(len(vt.get(pid)['screens']),count)
+ 
+-    def test_hud_product_preserves_binding_readability_and_platform_truth(self):
+-        product=vt.get('visual.hud.core')
+-        required={'visual.hud.project-hub','visual.hud.components','visual.hud.layout','visual.hud.data-bindings','visual.hud.readability','visual.hud.alerts-feedback','visual.hud.platform-input','visual.hud.theme-skin','visual.hud.compare-preview','visual.hud.review-export'}
+-        self.assertEqual(set(product['screens']),required)
+-        self.assertEqual(product['style'],'visual.hud.system')
+-        quality=' '.join(product['quality']).lower()
+-        self.assertIn('never creates a data binding',quality)
+-        self.assertIn('icon/color alone never carries critical meaning',quality)
+-        self.assertIn('safe_margin_ratio',vt.get('visual.hud.layout')['math_hooks'])
+-
+     def test_look_product_preserves_world_source_and_presentation_truth(self):
+         product=vt.get('visual.look.core')
+         required={'visual.look.project-hub','visual.look.exposure-tone','visual.look.color-grade','visual.look.fog-atmosphere','visual.look.bloom-glare','visual.look.layer-stack','visual.look.scene-bindings','visual.look.platform-performance','visual.look.compare-preview','visual.look.review-export'}
+         self.assertEqual(set(product['screens']),required)
+         self.assertEqual(product['style'],'visual.look.system')
+         quality=' '.join(product['quality']).lower()
+-        self.assertIn('separately editable',quality)
+         self.assertIn('never silently becomes authoritative world lighting or gameplay state',quality)
+-        self.assertIn('never replace source materials, lights, geometry or environment state',quality)
+-        self.assertIn('source-bound bindings',quality)
+-        self.assertIn('visibility/state legibility',quality)
+         self.assertIn('exposure_ev_range',vt.get('visual.look.exposure-tone')['math_hooks'])
+ 
++    def test_camera_product_preserves_rig_target_lens_and_authority_truth(self):
++        product=vt.get('visual.camera.core')
++        required={'visual.camera.project-hub','visual.camera.rig-editor','visual.camera.target-framing','visual.camera.lens-fov','visual.camera.constraints','visual.camera.transitions','visual.camera.runtime-bindings','visual.camera.platform-variants','visual.camera.compare-preview','visual.camera.review-export'}
++        self.assertEqual(set(product['screens']),required)
++        self.assertEqual(product['style'],'visual.camera.system')
++        quality=' '.join(product['quality']).lower()
++        self.assertIn('separately editable',quality)
++        self.assertIn('never silently moves world objects or rewrites authoritative transforms',quality)
++        self.assertIn('never implies gameplay camera ownership or input authority',quality)
++        self.assertIn('units/source',quality)
++        self.assertIn('semantic feedback',quality)
++        self.assertIn('fov_degrees',vt.get('visual.camera.lens-fov')['math_hooks'])
++
+     def test_products_resolve_and_previews_parse(self):
+         for pid in PRODUCTS:
+             definition=vt.get(pid)
+@@ -70,32 +69,33 @@ class VisualTemplateTests(unittest.TestCase):
+         with tempfile.TemporaryDirectory() as td:
+             with Registry(Path(td)/'stickers.sqlite') as registry:
+                 pins=vt.install_builtins(registry)
+-                self.assertEqual(len(pins),323)
+-                looks=registry.search(adapter=vt.ADAPTER,tag='lighting',limit=100)['entries']
+-                expected={f'visual.visual.look.{name}' for name in ('project-hub','exposure-tone','color-grade','fog-atmosphere','bloom-glare','layer-stack','scene-bindings','platform-performance','compare-preview','review-export')}
+-                self.assertTrue(expected <= {entry['id'] for entry in looks})
+-                d=registry.get('visual.visual.look.exposure-tone',1)
++                self.assertEqual(len(pins),334)
++                cameras=registry.search(adapter=vt.ADAPTER,tag='camera',limit=100)['entries']
++                expected={f'visual.visual.camera.{name}' for name in ('project-hub','rig-editor','target-framing','lens-fov','constraints','transitions','runtime-bindings','platform-variants','compare-preview','review-export')}
++                self.assertTrue(expected <= {entry['id'] for entry in cameras})
++                d=registry.get('visual.visual.camera.lens-fov',1)
+                 self.assertEqual(d['recipe']['visual_template']['schema'],vt.SCHEMA)
+                 self.assertNotIn('"latest"',json.dumps(d,sort_keys=True))
+ 
+-    def test_look_source_exposure_tone_grade_atmosphere_bloom_layer_binding_variant_contracts(self):
+-        required={'look-source','exposure-state','tone-map-state','color-grade-state','fog-atmosphere-state','bloom-glare-state','postprocess-layer','scene-look-binding','look-platform-variant','look-export-target'}
++    def test_camera_source_rig_target_lens_framing_transition_constraint_binding_variant_contracts(self):
++        required={'camera-source','camera-rig','camera-target','lens-state','framing-guide','camera-transition','camera-constraint','camera-runtime-binding','camera-platform-variant','camera-export-target'}
+         self.assertTrue(required <= set(vt.PRIMITIVES))
++        self.assertTrue(vt.PRIMITIVES['camera-source']['identity_source_version_owner_required'])
++        self.assertTrue(vt.PRIMITIVES['camera-rig']['identity_parent_transform_source_required'])
++        self.assertTrue(vt.PRIMITIVES['camera-target']['target_anchor_source_status_required'])
++        self.assertTrue(vt.PRIMITIVES['lens-state']['projection_lens_fov_source_required'])
++        self.assertTrue(vt.PRIMITIVES['framing-guide']['viewport_target_guide_source_required'])
++        self.assertTrue(vt.PRIMITIVES['camera-transition']['from_to_trigger_duration_required'])
++        self.assertTrue(vt.PRIMITIVES['camera-constraint']['subject_rule_source_status_required'])
++        self.assertTrue(vt.PRIMITIVES['camera-runtime-binding']['state_camera_source_authority_required'])
++        self.assertTrue(vt.PRIMITIVES['camera-platform-variant']['base_delta_platform_input_required'])
++        self.assertTrue(vt.PRIMITIVES['camera-export-target']['requirements_must_be_visible'])
++
++    def test_look_hud_mission_vfx_environment_brand_motion_and_prior_boundaries_remain_present(self):
+         self.assertTrue(vt.PRIMITIVES['look-source']['identity_source_version_context_required'])
+-        self.assertTrue(vt.PRIMITIVES['exposure-state']['value_range_source_context_required'])
+-        self.assertTrue(vt.PRIMITIVES['tone-map-state']['operator_parameters_output_source_required'])
+-        self.assertTrue(vt.PRIMITIVES['color-grade-state']['transform_spaces_intensity_source_required'])
+-        self.assertTrue(vt.PRIMITIVES['fog-atmosphere-state']['density_range_scattering_source_required'])
+-        self.assertTrue(vt.PRIMITIVES['bloom-glare-state']['threshold_intensity_radius_source_required'])
+-        self.assertTrue(vt.PRIMITIVES['postprocess-layer']['identity_parameters_blend_order_scope_required'])
+         self.assertTrue(vt.PRIMITIVES['scene-look-binding']['target_look_source_activation_required'])
+-        self.assertTrue(vt.PRIMITIVES['look-platform-variant']['base_delta_platform_context_required'])
+-        self.assertTrue(vt.PRIMITIVES['look-export-target']['requirements_must_be_visible'])
+-
+-    def test_hud_mission_vfx_environment_brand_motion_and_prior_boundaries_remain_present(self):
+         self.assertTrue(vt.PRIMITIVES['hud-source']['identity_source_version_context_required'])
+         self.assertTrue(vt.PRIMITIVES['hud-data-binding']['subject_field_source_freshness_required'])
+-        self.assertTrue(vt.PRIMITIVES['hud-readability-rule']['target_context_threshold_source_required'])
+         self.assertTrue(vt.PRIMITIVES['mission-source']['identity_source_version_context_required'])
+         self.assertTrue(vt.PRIMITIVES['objective-state']['identity_type_status_source_required'])
+         self.assertTrue(vt.PRIMITIVES['vfx-source']['identity_source_version_purpose_required'])
+@@ -121,12 +121,12 @@ class VisualTemplateTests(unittest.TestCase):
+         self.assertTrue(vt.PRIMITIVES['truth-state']['source_must_be_visible'])
+ 
+     def test_copy_safety_variant_rejection_and_bad_geometry(self):
+-        a=vt.resolve('visual.look.exposure-tone',1920,1080); b=vt.resolve('visual.look.exposure-tone',1920,1080)
++        a=vt.resolve('visual.camera.lens-fov',1920,1080); b=vt.resolve('visual.camera.lens-fov',1920,1080)
+         self.assertEqual(a,b)
+-        copy=vt.get('visual.look.exposure-tone'); copy['name']='changed'
+-        self.assertNotEqual(vt.get('visual.look.exposure-tone')['name'],'changed')
+-        with self.assertRaises(ValueError): vt.resolve('visual.look.exposure-tone',1920,1080,variant='unknown')
+-        bad=vt.get('visual.look.exposure-tone'); bad['variants']['standard']['preview']=[.9,.9,.2,.2]
++        copy=vt.get('visual.camera.lens-fov'); copy['name']='changed'
++        self.assertNotEqual(vt.get('visual.camera.lens-fov')['name'],'changed')
++        with self.assertRaises(ValueError): vt.resolve('visual.camera.lens-fov',1920,1080,variant='unknown')
++        bad=vt.get('visual.camera.lens-fov'); bad['variants']['standard']['preview']=[.9,.9,.2,.2]
+         with self.assertRaises(ValueError): vt.validate_screen(bad)
+ 
+     def test_exact_sticker_slot_binding_is_retained(self):
+diff --git a/tools/visual_template_proof.py b/tools/visual_template_proof.py
+index 22c2cac..efe47de 100644
+--- a/tools/visual_template_proof.py
++++ b/tools/visual_template_proof.py
+@@ -8,7 +8,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src'))
+ from axm_uc import visual_templates as vt
+ 
+ SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
+-PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell","visual.keyart.core","visual.cards.core","visual.cinematic.core","visual.broadcast.core","visual.diagram.core","visual.atlas.core","visual.novel.core","visual.showroom.core","visual.music.core","visual.presentation.core","visual.character.core","visual.configurator.core","visual.motion.core","visual.brand.core","visual.environment.core","visual.vfx.core","visual.mission.core","visual.hud.core","visual.look.core")
++PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell","visual.keyart.core","visual.cards.core","visual.cinematic.core","visual.broadcast.core","visual.diagram.core","visual.atlas.core","visual.novel.core","visual.showroom.core","visual.music.core","visual.presentation.core","visual.character.core","visual.configurator.core","visual.motion.core","visual.brand.core","visual.environment.core","visual.vfx.core","visual.mission.core","visual.hud.core","visual.look.core","visual.camera.core")
+ 
+ def _write(project,target):
+     target.mkdir(); out=[]
+@@ -25,7 +25,7 @@ def main(argv):
+     out.mkdir(parents=True)
+     try:
+         counts=vt.validate_catalog()
+-        if counts!={'styles':31,'primitives':256,'screens':294,'products':29}: raise AssertionError(counts)
++        if counts!={'styles':32,'primitives':266,'screens':304,'products':30}: raise AssertionError(counts)
+         evidence=[]
+         for pid in PRODUCTS:
+             expected=vt.get(pid)
+@@ -64,33 +64,34 @@ def main(argv):
+             ('visual.mission.core',1920,1080,'mission','AXM Quest and Mission Flow Foundation'),
+             ('visual.hud.core',1920,1080,'hud','AXM Source-Bound HUD Theme Foundation'),
+             ('visual.look.core',1920,1080,'lighting-look','AXM Lighting and Post-Process Look Foundation'),
++            ('visual.camera.core',1920,1080,'camera','AXM Camera and Shot Reference Foundation'),
+         )
+         outputs=[]
+         for pid,w,h,folder,title in galleries: outputs+=_write(vt.product_project(pid,w,h,title),out/folder)
+         outputs+=_write(vt.screen_project('product.mobile.home',1080,1920,'AXM Mobile Foundation'),out/'mobile-home')
+-        product=vt.get('visual.look.core')
+-        required={'visual.look.project-hub','visual.look.exposure-tone','visual.look.color-grade','visual.look.fog-atmosphere','visual.look.bloom-glare','visual.look.layer-stack','visual.look.scene-bindings','visual.look.platform-performance','visual.look.compare-preview','visual.look.review-export'}
+-        if set(product['screens'])!=required: raise AssertionError('lighting look pack lost required surfaces')
++        product=vt.get('visual.camera.core')
++        required={'visual.camera.project-hub','visual.camera.rig-editor','visual.camera.target-framing','visual.camera.lens-fov','visual.camera.constraints','visual.camera.transitions','visual.camera.runtime-bindings','visual.camera.platform-variants','visual.camera.compare-preview','visual.camera.review-export'}
++        if set(product['screens'])!=required: raise AssertionError('camera pack lost required surfaces')
+         checks={
+-            'look_identity_source_context':vt.PRIMITIVES['look-source']['identity_source_version_context_required'],
+-            'exposure_value_range_source_context':vt.PRIMITIVES['exposure-state']['value_range_source_context_required'],
+-            'tone_operator_parameters_output_source':vt.PRIMITIVES['tone-map-state']['operator_parameters_output_source_required'],
+-            'grade_transform_spaces_intensity_source':vt.PRIMITIVES['color-grade-state']['transform_spaces_intensity_source_required'],
+-            'fog_density_range_scattering_source':vt.PRIMITIVES['fog-atmosphere-state']['density_range_scattering_source_required'],
+-            'bloom_threshold_intensity_radius_source':vt.PRIMITIVES['bloom-glare-state']['threshold_intensity_radius_source_required'],
+-            'layer_identity_parameters_blend_order_scope':vt.PRIMITIVES['postprocess-layer']['identity_parameters_blend_order_scope_required'],
+-            'scene_binding_target_look_source_activation':vt.PRIMITIVES['scene-look-binding']['target_look_source_activation_required'],
+-            'variant_base_delta_platform_context':vt.PRIMITIVES['look-platform-variant']['base_delta_platform_context_required'],
+-            'export_requirements_visible':vt.PRIMITIVES['look-export-target']['requirements_must_be_visible'],
++            'camera_identity_source_owner':vt.PRIMITIVES['camera-source']['identity_source_version_owner_required'],
++            'rig_identity_parent_transform_source':vt.PRIMITIVES['camera-rig']['identity_parent_transform_source_required'],
++            'target_anchor_source_status':vt.PRIMITIVES['camera-target']['target_anchor_source_status_required'],
++            'lens_projection_fov_source':vt.PRIMITIVES['lens-state']['projection_lens_fov_source_required'],
++            'framing_viewport_target_guide_source':vt.PRIMITIVES['framing-guide']['viewport_target_guide_source_required'],
++            'transition_from_to_trigger_duration':vt.PRIMITIVES['camera-transition']['from_to_trigger_duration_required'],
++            'constraint_subject_rule_source_status':vt.PRIMITIVES['camera-constraint']['subject_rule_source_status_required'],
++            'runtime_binding_state_camera_source_authority':vt.PRIMITIVES['camera-runtime-binding']['state_camera_source_authority_required'],
++            'platform_base_delta_input':vt.PRIMITIVES['camera-platform-variant']['base_delta_platform_input_required'],
++            'export_requirements_visible':vt.PRIMITIVES['camera-export-target']['requirements_must_be_visible'],
+         }
+-        if not all(checks.values()): raise AssertionError('lighting look source/binding contract failed')
++        if not all(checks.values()): raise AssertionError('camera source/authority contract failed')
+         retained={
++            'look_source':vt.PRIMITIVES['look-source']['identity_source_version_context_required'],
++            'scene_look_binding':vt.PRIMITIVES['scene-look-binding']['target_look_source_activation_required'],
+             'hud_source':vt.PRIMITIVES['hud-source']['identity_source_version_context_required'],
+             'hud_binding':vt.PRIMITIVES['hud-data-binding']['subject_field_source_freshness_required'],
+             'mission_source':vt.PRIMITIVES['mission-source']['identity_source_version_context_required'],
+-            'objective_state':vt.PRIMITIVES['objective-state']['identity_type_status_source_required'],
+             'vfx_source':vt.PRIMITIVES['vfx-source']['identity_source_version_purpose_required'],
+-            'vfx_interaction':vt.PRIMITIVES['vfx-interaction-hook']['subject_event_response_source_required'],
+             'environment_source':vt.PRIMITIVES['environment-source']['identity_source_version_scope_required'],
+             'brand_asset':vt.PRIMITIVES['brand-asset-source']['identity_source_version_provenance_required'],
+             'motion_state':vt.PRIMITIVES['motion-state']['source_target_identity_required'],
+@@ -103,7 +104,7 @@ def main(argv):
+             'atlas_coordinate':vt.PRIMITIVES['map-coordinate']['system_source_precision_required'],
+         }
+         if not all(retained.values()): raise AssertionError('prior visual source boundary failed')
+-        receipt={'schema':'axm.visual-template-proof/v25','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'lighting_checks':checks,'retained_checks':retained,'truth':'Offline structural evidence only. Physical lighting correctness, calibrated color output, accessibility acceptance, GPU cost, target-engine parity and aesthetic quality were not observed.'}
++        receipt={'schema':'axm.visual-template-proof/v26','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'camera_checks':checks,'retained_checks':retained,'truth':'Offline structural evidence only. Camera feel, motion comfort, collision behavior, target-engine parity, gameplay suitability and aesthetic quality were not observed.'}
+         (out/'receipt.json').write_text(json.dumps(receipt,indent=2,sort_keys=True),encoding='utf-8')
+         print(json.dumps(receipt,indent=2,sort_keys=True))
+     except BaseException:

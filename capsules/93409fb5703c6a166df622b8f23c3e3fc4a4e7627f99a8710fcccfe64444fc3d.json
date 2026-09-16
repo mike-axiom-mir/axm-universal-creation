@@ -1,0 +1,1194 @@
+{
+  "capsule_id": "93409fb5703c6a166df622b8f23c3e3fc4a4e7627f99a8710fcccfe64444fc3d",
+  "evidence": {
+    "files": [
+      {
+        "additions": 65,
+        "binary": false,
+        "content_sha256": "cd1af0813202ac2253042899db660964c813b9030d0121fa8da01428bf24b5e7",
+        "deletions": 0,
+        "path": ".axm/beacon.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 84,
+        "binary": false,
+        "content_sha256": "fa4605968f5d3025c282416ff2e8952d85d26d30d47bf8d235198d1bbea8f185",
+        "deletions": 0,
+        "path": ".axm/beacon/beacon.py",
+        "status": "A",
+        "symbols": [
+          "cmd_publish",
+          "cmd_scan",
+          "cmd_verify",
+          "cmd_fetch",
+          "build_parser",
+          "main"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 382,
+        "binary": false,
+        "content_sha256": "49f3a401cf5cc0f2aa855a20f45fd55dcb139fd12030823469073042de7a2717",
+        "deletions": 0,
+        "path": ".axm/beacon/core.py",
+        "status": "A",
+        "symbols": [
+          "BeaconError",
+          "DiffFile",
+          "canonical_json",
+          "sha256_text",
+          "sha256_bytes",
+          "run_git",
+          "ensure_git_repo",
+          "resolve_ref",
+          "load_config",
+          "infer_repo_slug",
+          "_matches_any",
+          "path_allowed",
+          "parse_changed_lines",
+          "collect_diff_files",
+          "read_file_at_ref",
+          "intersects_changed",
+          "extract_symbols",
+          "extract_knowledge_topics",
+          "tokenize",
+          "classify_changes",
+          "build_capsule",
+          "capsule_summary",
+          "verify_capsule",
+          "publish"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 109,
+        "binary": false,
+        "content_sha256": "81d0077ed6501d51bff8242cbc1fb60f202f9fd0f75936c826e1af5ece9c553c",
+        "deletions": 0,
+        "path": ".axm/beacon/network.py",
+        "status": "A",
+        "symbols": [
+          "_request_json",
+          "discover_github_repos",
+          "fetch_peer_indexes",
+          "load_local_indexes",
+          "rank_candidates",
+          "scan",
+          "fetch_capsule"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 61,
+        "binary": false,
+        "content_sha256": "ce6f09a7535fc1446ab755a399437c6684187053059b0f6ff921699a67b2fbbe",
+        "deletions": 0,
+        "path": ".github/workflows/axm-beacon-publish.yml",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 36,
+        "binary": false,
+        "content_sha256": "8d2997aed498dda85b2ca90a11e27c459025b2f60cdab64352bddd37157e7f10",
+        "deletions": 0,
+        "path": ".github/workflows/axm-beacon-test.yml",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 17,
+        "binary": false,
+        "content_sha256": "141443e05f1c02fb0e5c1d4399fc1ac920d498cba0fd658c1b78601e24b85853",
+        "deletions": 4,
+        "path": "DAILY_SNAPSHOT.md",
+        "status": "M",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 52,
+        "binary": false,
+        "content_sha256": "0f9a130a2801ca3f44a1ffe1917cf19993cf1b5f87dcce9c79f39d88b22a23f6",
+        "deletions": 0,
+        "path": "PORTABLE_RUNTIME.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Portable runtime capsule",
+          "Build and verify",
+          "Consume",
+          "Integrity and provenance",
+          "Included boundary"
+        ]
+      },
+      {
+        "additions": 8,
+        "binary": false,
+        "content_sha256": "b3c861453982987cb8b4f30317d349c854948efc7c614b4c8fbdc9841c8bb448",
+        "deletions": 0,
+        "path": "README.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Portable creation bytes"
+        ]
+      },
+      {
+        "additions": 94,
+        "binary": false,
+        "content_sha256": "cb8f0e732a816fbd6749abbb9f721372c8283d1deb6a413fac05483a639760ba",
+        "deletions": 0,
+        "path": "STATE_DIRECTION_REACHABILITY.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "State Direction and Current Reachability",
+          "Core distinction",
+          "Creation orientation",
+          "Prompts and machine state",
+          "Open transition graph",
+          "Authority remains separate",
+          "Relation to the current machine",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 56,
+        "binary": false,
+        "content_sha256": "f0b047b2245adac6ff817c14b73ff75f5b8a35966c75dcce4e3ac328ea7e92d4",
+        "deletions": 0,
+        "path": "VISUAL_3D_V26_V14_REVIEW.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Axiom v26 / Mir v14 Exact-Context Visual Review",
+          "Evidence boundary",
+          "Technical receipts",
+          "Static visual inspection receipts",
+          "Axiom v26",
+          "Mir v14",
+          "Separation preserved"
+        ]
+      },
+      {
+        "additions": 128,
+        "binary": false,
+        "content_sha256": "27f1b65d1425d2696192c3740ffde91ffdf80dbda109c05b1e1b8dd735530220",
+        "deletions": 0,
+        "path": "VISUAL_PROMPT_STATE_ATLAS.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "AXM Visual Prompt State Atlas",
+          "Mapping labels",
+          "Machine-readable companions",
+          "Cross-media boundary"
+        ]
+      },
+      {
+        "additions": 230,
+        "binary": false,
+        "content_sha256": "bd693c8a31e7c485a4af52da0e9b7e1bd4a1abcf65d55bab04c897a87bc1ff5d",
+        "deletions": 0,
+        "path": "VISUAL_STATE_COMPILATION.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Visual State Compilation",
+          "Core model",
+          "Why prompt vocabulary transfers",
+          "One state family, several media",
+          "Image",
+          "Animation",
+          "3D",
+          "Deterministic compilation",
+          "Friction becomes path evidence",
+          "Human table and machine specifications",
+          "CLI",
+          "Source integrity",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 85,
+        "binary": false,
+        "content_sha256": "d2eb39ab76078131605ddf6fcdc5a523dd8f32f356248b1133534c6ce7fef0e6",
+        "deletions": 0,
+        "path": "capabilities/live/AXM-CAP-BIND-HOST-EVIDENCE.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 99,
+        "binary": false,
+        "content_sha256": "9ed5b491a58d2850dbcf761172e00df970e9c7e7b3991adc354b1d34a44facbb",
+        "deletions": 0,
+        "path": "capabilities/live/AXM-CAP-BUILD-OFFLINE-BROWSER-GAME.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 66,
+        "binary": false,
+        "content_sha256": "56d13cdb846dcad15ec91de2b94d99b743f42fe3835d8db2c806cfeac8039afa",
+        "deletions": 0,
+        "path": "capabilities/live/AXM-CAP-DETERMINISTIC-STATE-MACHINE.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 89,
+        "binary": false,
+        "content_sha256": "66dd7b4713746c0f790b5a8bcaddaa89becdf78c2f9211e47be782e98cb6ceab",
+        "deletions": 0,
+        "path": "capabilities/live/AXM-CAP-GENERATE-PROCEDURAL-3D.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 83,
+        "binary": false,
+        "content_sha256": "dcfa4db3cae0d2edddddb35d1bdcc835e32e20caf1f5ee773508da8785b30225",
+        "deletions": 0,
+        "path": "capabilities/live/AXM-CAP-GENERATE-PROCEDURAL-MEDIA.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 100,
+        "binary": false,
+        "content_sha256": "67972cce461c26ae9902ea5506d7b806ff0fec927ca1c6ba9ce5169b9f62d583",
+        "deletions": 0,
+        "path": "capabilities/live/AXM-CAP-GROW-CREATION-WITH-ORGAN.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 111,
+        "binary": false,
+        "content_sha256": "ef2c9282379933cd9514d7709457025dd962e4ef832e8d539a30bf2ec840fd73",
+        "deletions": 0,
+        "path": "capabilities/live/AXM-CAP-LOCAL-CREATION-PROVIDER.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 66,
+        "binary": false,
+        "content_sha256": "0931071fdc7c25ec11a160f69d7606fb5bcc6a31215e8ccc40889cb1d9abdd0b",
+        "deletions": 0,
+        "path": "capabilities/live/AXM-CAP-PORTABLE-CREATION-BUNDLE.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 64,
+        "binary": false,
+        "content_sha256": "ed1c538a93c68c7c64c4bb1764f26b7ecc4fd71922a08abcf7edc2bd13016b39",
+        "deletions": 0,
+        "path": "capabilities/live/AXM-CAP-WRITE-MIXED-PROJECT.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 42,
+        "binary": false,
+        "content_sha256": "4ffd682e67a9352fdbf83e99b8b90dbbb05749605cc5dcec896a71f0a107f421",
+        "deletions": 0,
+        "path": "docs/AXM_BEACON_ADOPTION.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Universal Creation Organ Beacon",
+          "Local commands",
+          "Export boundary",
+          "Authority boundary"
+        ]
+      },
+      {
+        "additions": 4,
+        "binary": false,
+        "content_sha256": "6b2af7794d7a6f5f4d41fbdad28a905ae167ade9cb142e50caa04a939d1654f7",
+        "deletions": 0,
+        "path": "src/axm_uc/__init__.py",
+        "status": "M",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 143,
+        "binary": false,
+        "content_sha256": "b0848e6d4bd374f4e6502b19ebc368852167b31e389217593518541bb169c973",
+        "deletions": 0,
+        "path": "src/axm_uc/adoption_lock.py",
+        "status": "A",
+        "symbols": [
+          "CandidateAdoptionLockError",
+          "CandidateAdoptionBusy",
+          "_lock_path",
+          "_open_lock",
+          "_acquire",
+          "_release",
+          "candidate_adoption_lock"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 602,
+        "binary": false,
+        "content_sha256": "09850e1b72af745e56478580759b618d6a53192c5f308637f23ff553a9718262",
+        "deletions": 0,
+        "path": "src/axm_uc/browser_game.py",
+        "status": "A",
+        "symbols": [
+          "BrowserGameError",
+          "browser_game_summary",
+          "_canonical",
+          "_object",
+          "_integer",
+          "_number",
+          "_text",
+          "_identifier",
+          "_color",
+          "validate_browser_game_spec",
+          "_session_machine",
+          "_render_project",
+          "build_browser_game"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 30,
+        "binary": false,
+        "content_sha256": "2721aaa62b6bcfad8297f846b7501812c51121755c3f6127c972b7ab03d81df8",
+        "deletions": 4,
+        "path": "src/axm_uc/capabilities.py",
+        "status": "M",
+        "symbols": [
+          "CapabilityStore"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 7,
+        "binary": false,
+        "content_sha256": "0e1932797cfe6ec0209d869910f7729bc21571f9a2091597c8c8adf5b0a783be",
+        "deletions": 2,
+        "path": "src/axm_uc/cli.py",
+        "status": "M",
+        "symbols": [
+          "_print",
+          "build_parser",
+          "main"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 222,
+        "binary": false,
+        "content_sha256": "0a4248135546605d54780814857d0b99a5782a634c1908a647059a045b90c6ba",
+        "deletions": 0,
+        "path": "src/axm_uc/creation_growth.py",
+        "status": "A",
+        "symbols": [
+          "CreationGrowthError",
+          "creation_growth_summary",
+          "_digest",
+          "_required_text",
+          "_gap_context",
+          "_linked_plan",
+          "operate_creation_growth"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 37,
+        "binary": false,
+        "content_sha256": "61e755a085d9bd45908ef559db6c8092ca69b67d1022a1e19f64e3b3a84b7b84",
+        "deletions": 5,
+        "path": "src/axm_uc/decompose.py",
+        "status": "M",
+        "symbols": [
+          "CreationDecomposer"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 1,
+        "binary": false,
+        "content_sha256": "b2df9f27474956248dcd083a865792451fc57c3d2ae13a58053e520764f11238",
+        "deletions": 1,
+        "path": "src/axm_uc/directions.py",
+        "status": "M",
+        "symbols": [
+          "SoftwareDirections"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 277,
+        "binary": false,
+        "content_sha256": "2413172db342300bf35f72996517f1a7dba533e296952a704dde2f24992c9921",
+        "deletions": 0,
+        "path": "src/axm_uc/growth_lane_compat.py",
+        "status": "A",
+        "symbols": [
+          "_install_project_checks",
+          "_provider_bridge_request",
+          "_install_machine_creation_contract",
+          "install_growth_lane_compatibility"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 291,
+        "binary": false,
+        "content_sha256": "a07a1edf64665385c4f3fe0aa96ddad127cafb5cf5d0437db691c1ecd601231e",
+        "deletions": 0,
+        "path": "src/axm_uc/host_evidence.py",
+        "status": "A",
+        "symbols": [
+          "HostEvidenceError",
+          "_canonical_bytes",
+          "_digest",
+          "_required_text",
+          "_sha256",
+          "_project_manifest",
+          "_expected_digests",
+          "_timestamp",
+          "_claims",
+          "_attachments",
+          "host_evidence_summary",
+          "bind_host_evidence",
+          "operate_host_evidence"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 550,
+        "binary": false,
+        "content_sha256": "e652d85b7476d1cab7e17a85c65336e4b0d6a1b2700e2b3abb6ebf9fa5ef3c9b",
+        "deletions": 0,
+        "path": "src/axm_uc/local_provider.py",
+        "status": "A",
+        "symbols": [
+          "_RejectRedirects",
+          "LocalProviderError",
+          "_canonical_bytes",
+          "_digest",
+          "_required_text",
+          "normalize_loopback_endpoint",
+          "_safe_project_files",
+          "_provider_config",
+          "provider_summary",
+          "prepare_provider_request",
+          "_system_prompt",
+          "_call_provider",
+          "_extract_response_content",
+          "_parse_proposal",
+          "invoke_provider",
+          "analyze_specialist_checkpoint",
+          "create_from_provider",
+          "operate_local_provider"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 73,
+        "binary": false,
+        "content_sha256": "6d1b523372d2cc03f6fcb381ef47a897d7b6b06051ae977e884bfc657b545844",
+        "deletions": 3,
+        "path": "src/axm_uc/machine.py",
+        "status": "M",
+        "symbols": [
+          "UniversalCreationMachine"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 242,
+        "binary": false,
+        "content_sha256": "63360f3a8c556aa413f5d2357bb93d7a164040fcd9f87f2ee9bc762bb634ff54",
+        "deletions": 0,
+        "path": "src/axm_uc/mixed_project.py",
+        "status": "A",
+        "symbols": [
+          "mixed_project_summary",
+          "_sha256",
+          "_normalize_text_files",
+          "_normalize_binary_files",
+          "preview_mixed_project",
+          "build_mixed_project"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 486,
+        "binary": false,
+        "content_sha256": "1df1612795775f82d2642139d9e1002b36fcceb5e97c6a2afe431b01b84c4b69",
+        "deletions": 0,
+        "path": "src/axm_uc/portable.py",
+        "status": "A",
+        "symbols": [
+          "PortableRuntimeError",
+          "_canonical_bytes",
+          "_sha256",
+          "_file_record",
+          "_safe_archive_path",
+          "_strict_object",
+          "_reject_constant",
+          "_load_manifest",
+          "_source_revision",
+          "_tracked_runtime_paths",
+          "_collect_runtime",
+          "_zip_info",
+          "build_portable_runtime",
+          "verify_portable_runtime"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 313,
+        "binary": false,
+        "content_sha256": "1781246603f2717c9142e09ba0b8a8ce75f22c26120ec5e2add5c50d73a30bd4",
+        "deletions": 0,
+        "path": "src/axm_uc/portable_bundle.py",
+        "status": "A",
+        "symbols": [
+          "portable_bundle_summary",
+          "PortableBundleError",
+          "_digest",
+          "_canonical_json",
+          "_zip_info",
+          "_inside",
+          "_validate_file_rows",
+          "inspect_bundle",
+          "pack_bundle",
+          "unpack_bundle",
+          "operate_portable_bundle"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 59,
+        "binary": false,
+        "content_sha256": "a4da3891d7fb8fde7fcd13901d027263cef582fe2096f7bbc3f964c20eacc9ea",
+        "deletions": 0,
+        "path": "src/axm_uc/portable_cli.py",
+        "status": "A",
+        "symbols": [
+          "_print",
+          "build_parser",
+          "main"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 493,
+        "binary": false,
+        "content_sha256": "9163fb3df7fb337a017ba3342fe164a230e5cc851e5d865435462bdaad480676",
+        "deletions": 0,
+        "path": "src/axm_uc/procedural_3d.py",
+        "status": "A",
+        "symbols": [
+          "Procedural3DError",
+          "procedural_3d_summary",
+          "_canonical",
+          "_object",
+          "_number",
+          "_vector3",
+          "_color",
+          "_normalize_spec",
+          "_quad",
+          "_box_geometry",
+          "_normal",
+          "_pyramid_geometry",
+          "_cylinder_geometry",
+          "_geometry",
+          "build_glb",
+          "verify_glb",
+          "publish_glb"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 384,
+        "binary": false,
+        "content_sha256": "a2b4aaf31063e9cce0b30079010eafc4b22bed647f8654961c203b140d92a579",
+        "deletions": 0,
+        "path": "src/axm_uc/procedural_media.py",
+        "status": "A",
+        "symbols": [
+          "ProceduralMediaError",
+          "procedural_media_summary",
+          "_canonical",
+          "_integer",
+          "_object",
+          "_color",
+          "_png_chunk",
+          "_normalize_png_spec",
+          "render_png",
+          "verify_png",
+          "_normalize_wav_spec",
+          "render_wav",
+          "verify_wav",
+          "generate_media",
+          "publish_media_asset"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 125,
+        "binary": false,
+        "content_sha256": "4975984b327823526ce7a51ca8fcc79e38f092dc70a9f71e2e0ad46a2e41353c",
+        "deletions": 0,
+        "path": "src/axm_uc/reachability.py",
+        "status": "A",
+        "symbols": [
+          "state_direction_summary",
+          "frame_state_direction"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 228,
+        "binary": false,
+        "content_sha256": "7aa5c1a786f007276a033513cca3d3cf849f1124073319441940532b5a13468e",
+        "deletions": 34,
+        "path": "src/axm_uc/snapshot.py",
+        "status": "M",
+        "symbols": [
+          "_has_excluded_part",
+          "_iter_snapshot_files",
+          "_write_snapshot_file",
+          "_manifest_bytes",
+          "create_daily_snapshot",
+          "_canonical_member_path",
+          "_validate_archive",
+          "_verify_manifest",
+          "_verify_archive",
+          "verify_snapshot",
+          "restore_snapshot"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 192,
+        "binary": false,
+        "content_sha256": "7f2bdc684e5bb331d39fabbc5d45ff5948dbaf52d2d7aabbef78b1f9febae73e",
+        "deletions": 0,
+        "path": "src/axm_uc/standalone_creation_capabilities.py",
+        "status": "A",
+        "symbols": [
+          "register_standalone_creation_builtins"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 197,
+        "binary": false,
+        "content_sha256": "e55bbb86f7df9cc2b23f7647f756fd5953688acb456fb940bcfa275ff943503a",
+        "deletions": 0,
+        "path": "src/axm_uc/state_machine.py",
+        "status": "A",
+        "symbols": [
+          "state_machine_summary",
+          "StateMachineError",
+          "_canonical",
+          "_text",
+          "compile_state_machine",
+          "step_state_machine",
+          "replay_state_machine",
+          "operate_state_machine"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 10,
+        "binary": false,
+        "content_sha256": "e358b31396bc77abc8b69b6c9790ca93d692ce9ad10c6ffe13816f71340ed3a7",
+        "deletions": 1,
+        "path": "src/axm_uc/visual_assets_bridge.py",
+        "status": "M",
+        "symbols": [
+          "operate_visual_expansion"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 14,
+        "binary": false,
+        "content_sha256": "92b0522dc693bee892af303b8853394e0a826c86225735158a5a688d6f5e4dfd",
+        "deletions": 4,
+        "path": "src/axm_uc/visual_assets_cli.py",
+        "status": "M",
+        "symbols": [
+          "combined_catalog",
+          "build_parser",
+          "main"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 289,
+        "binary": false,
+        "content_sha256": "705074f4e4afbd6f6cf34eb83496487ad74d3e630be766492010de7253740d45",
+        "deletions": 0,
+        "path": "src/axm_uc/visual_state_data.py",
+        "status": "A",
+        "symbols": [
+          "VisualStateError",
+          "_canonical_bytes",
+          "_digest",
+          "_load_json",
+          "_normalize_string_set",
+          "_validate_value",
+          "_load_alias_document",
+          "_validate_documents",
+          "_documents",
+          "visual_state_documents",
+          "_alias_index",
+          "extract_visual_commands",
+          "visual_state_catalog"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 313,
+        "binary": false,
+        "content_sha256": "01818567f75c345deff8f9cd48d5c08529c3064ec55088075ea554731e74a284",
+        "deletions": 0,
+        "path": "src/axm_uc/visual_state_prompt_atlas.py",
+        "status": "A",
+        "symbols": [
+          "_merge_values",
+          "_nested_state",
+          "_rule_matches",
+          "_normalize_resolutions",
+          "_evaluate_conflicts",
+          "_generator_hints",
+          "compile_visual_state"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 18,
+        "binary": false,
+        "content_sha256": "eaadbc66465761573dcf95a523f568f0e63c866a7e6bcabce04dbb5df6276d6f",
+        "deletions": 0,
+        "path": "tests/fixtures/axm_beacon_reference_index.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 146,
+        "binary": false,
+        "content_sha256": "4e61c2089e3faa09fbb356cf976905cdccb6f2f2f0c7e576ab2e93eaaed60cab",
+        "deletions": 0,
+        "path": "tests/test_browser_game.py",
+        "status": "A",
+        "symbols": [
+          "game_spec",
+          "request",
+          "BrowserGameTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 105,
+        "binary": false,
+        "content_sha256": "c31836e071aa42182d223a9c9b12def5501764266debb7988a9e3299ce20f7d2",
+        "deletions": 0,
+        "path": "tests/test_candidate_adoption_resume.py",
+        "status": "A",
+        "symbols": [
+          "CandidateAdoptionResumeTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 146,
+        "binary": false,
+        "content_sha256": "bb1f9db133094b9882e0d473565202d0eb4b6c10c42a995fc175ca6a07f40de6",
+        "deletions": 0,
+        "path": "tests/test_candidate_adoption_single_writer.py",
+        "status": "A",
+        "symbols": [
+          "CandidateAdoptionSingleWriterTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 5,
+        "binary": false,
+        "content_sha256": "d95c2cd270a641390c361d12eed68f08b1b2c99c93a853dd61647c54e61816c1",
+        "deletions": 1,
+        "path": "tests/test_character_inspector.py",
+        "status": "M",
+        "symbols": [
+          "CharacterInspectorTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 7,
+        "binary": false,
+        "content_sha256": "cd5eb672f7429347c55fbe8c5f8b6880cd0e9db58861b854b05a5ab3c4f08467",
+        "deletions": 7,
+        "path": "tests/test_composite_and_executable.py",
+        "status": "M",
+        "symbols": [
+          "CompositeAndExecutableTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 1,
+        "binary": false,
+        "content_sha256": "f1e7fa5685c3e26d16cf820578244cf4ff1c8fa7752f4ed845a40b9e9b2d76c7",
+        "deletions": 1,
+        "path": "tests/test_creation_forge.py",
+        "status": "M",
+        "symbols": [
+          "CreationForgeTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 149,
+        "binary": false,
+        "content_sha256": "45e3427a81580994a767ba967b3cc6ff6e7b90f8ac999d6f9b5d7c9bba080ad0",
+        "deletions": 0,
+        "path": "tests/test_creation_growth.py",
+        "status": "A",
+        "symbols": [
+          "growth_request",
+          "status_panel_package",
+          "CreationGrowthTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 1,
+        "binary": false,
+        "content_sha256": "d7059d9235f17ada72ef36b47011c411588fc4ab95dbab8f5a2fe8ba36fce049",
+        "deletions": 1,
+        "path": "tests/test_gap_synthesis.py",
+        "status": "M",
+        "symbols": [
+          "GapSynthesisTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 102,
+        "binary": false,
+        "content_sha256": "9932ecdada1f8ab84bc4c6836efbc465470e86fc4fd866a749cb23b46b960fc2",
+        "deletions": 0,
+        "path": "tests/test_host_evidence.py",
+        "status": "A",
+        "symbols": [
+          "HostEvidenceTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 260,
+        "binary": false,
+        "content_sha256": "51e5b5b1725b82ce8930b5911cdc2a4a912a87786d3c620697f9964d25706ab8",
+        "deletions": 0,
+        "path": "tests/test_local_provider.py",
+        "status": "A",
+        "symbols": [
+          "LocalProviderTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 138,
+        "binary": false,
+        "content_sha256": "9f8c4168732ba8391efaa6f24ebf8fd52652295367fdb4ef63f07ba1673fd876",
+        "deletions": 0,
+        "path": "tests/test_mixed_project.py",
+        "status": "A",
+        "symbols": [
+          "MixedProjectTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 153,
+        "binary": false,
+        "content_sha256": "b1c63ef9fb979e1c7c61a72350a4a135f7468637373e45507571b3bf70cd878d",
+        "deletions": 0,
+        "path": "tests/test_portable_bundle.py",
+        "status": "A",
+        "symbols": [
+          "PortableBundleTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 165,
+        "binary": false,
+        "content_sha256": "ed934474b960644162dd33811835e64d3d615473c29899f14607a5799c352572",
+        "deletions": 0,
+        "path": "tests/test_portable_runtime.py",
+        "status": "A",
+        "symbols": [
+          "PortableRuntimeTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 106,
+        "binary": false,
+        "content_sha256": "5fd259ad049a567c9404169451e6dd9162f961a1bd61e68bbc742967c4fc80bb",
+        "deletions": 0,
+        "path": "tests/test_procedural_3d.py",
+        "status": "A",
+        "symbols": [
+          "tower_spec",
+          "Procedural3DTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 132,
+        "binary": false,
+        "content_sha256": "72a88b8776b0e0aabf88343078bc898a7b8160f5996f42991dc082670f4a4b8d",
+        "deletions": 0,
+        "path": "tests/test_procedural_media.py",
+        "status": "A",
+        "symbols": [
+          "png_spec",
+          "wav_spec",
+          "ProceduralMediaTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 134,
+        "binary": false,
+        "content_sha256": "238f32e86b49d02a3ac4e07c208f406bbe5e30335f6e9f72ad656b4bd3991516",
+        "deletions": 1,
+        "path": "tests/test_snapshot.py",
+        "status": "M",
+        "symbols": [
+          "SnapshotTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 91,
+        "binary": false,
+        "content_sha256": "a2d7fda2c268c902563ca4d069f36563b60f9f9b125378dea87d8f18153af1c9",
+        "deletions": 0,
+        "path": "tests/test_software_direction_donor_parity.py",
+        "status": "A",
+        "symbols": [
+          "SoftwareDirectionDonorParityTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 90,
+        "binary": false,
+        "content_sha256": "ebe08442d2e06aa61ae5e8eae36a3e8f41a5f2062ce0724d57de6513976119a7",
+        "deletions": 0,
+        "path": "tests/test_standalone_creation_migration.py",
+        "status": "A",
+        "symbols": [
+          "StandaloneCreationMigrationTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 91,
+        "binary": false,
+        "content_sha256": "f40767367de810080190c503059267373696ac1588c9bc16ff90f9b7d6155ca4",
+        "deletions": 0,
+        "path": "tests/test_state_direction_reachability.py",
+        "status": "A",
+        "symbols": [
+          "StateDirectionReachabilityTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 101,
+        "binary": false,
+        "content_sha256": "be37546a2fd076f84e649a7cb3507a0a0c0d55a9262e0fa054500cf218efcd5a",
+        "deletions": 0,
+        "path": "tests/test_state_machine_runtime.py",
+        "status": "A",
+        "symbols": [
+          "machine",
+          "StateMachineRuntimeTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 152,
+        "binary": false,
+        "content_sha256": "7bf3afe65e4ae2cffc87abb690bc0b1ecec5c839a63000bb47cd5719b45738a2",
+        "deletions": 0,
+        "path": "tests/test_universal_creation_beacon.py",
+        "status": "A",
+        "symbols": [
+          "git",
+          "_Response",
+          "UniversalCreationBeaconTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 217,
+        "binary": false,
+        "content_sha256": "75e9602498c828cdf5d8dc654fb4bd9332020833178eac4887bcd6c3b44786e6",
+        "deletions": 0,
+        "path": "tests/test_visual_state_prompt_atlas.py",
+        "status": "A",
+        "symbols": [
+          "VisualStatePromptAtlasTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 2,
+        "binary": false,
+        "content_sha256": "b4dc89f35a20a652fa069762ac40ba054dad9645d932d8b57f31cdaa1f386f9b",
+        "deletions": 1,
+        "path": "tools/serve_character_inspector.py",
+        "status": "M",
+        "symbols": [
+          "create_handler"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 129,
+        "binary": false,
+        "content_sha256": "0749fa240c1f7d120831412dcc776eb658513f9188899c544b3cd3dba8a36ac5",
+        "deletions": 0,
+        "path": "tools/verify_software_direction_donor.py",
+        "status": "A",
+        "symbols": [
+          "_regular_json",
+          "_semantic_digest",
+          "verify_donor",
+          "main"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "90cfed6705fcca8a187b049284119e8614f94d721723fae9e8a3251311cc5f06"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 9,
+    "kinds": [
+      "code",
+      "configuration",
+      "knowledge",
+      "organ-capability",
+      "protocol-state",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "acquire",
+      "adoption",
+      "alias",
+      "allowed",
+      "analyze",
+      "animation",
+      "any",
+      "archive",
+      "asset",
+      "atlas",
+      "attachments",
+      "authority",
+      "axiom",
+      "axm",
+      "beacon",
+      "becomes",
+      "binary",
+      "bind",
+      "boundary",
+      "box",
+      "bridge",
+      "browser",
+      "build",
+      "builtins",
+      "bundle",
+      "busy",
+      "bytes",
+      "call",
+      "candidate",
+      "candidates",
+      "canonical",
+      "cap",
+      "capabilities",
+      "capability",
+      "capsule",
+      "catalog",
+      "changed",
+      "changes",
+      "character",
+      "checkpoint",
+      "checks",
+      "chunk",
+      "claims",
+      "classify",
+      "cli",
+      "cmd",
+      "collect",
+      "color",
+      "combined",
+      "commands",
+      "companions",
+      "compat",
+      "compatibility",
+      "compilation",
+      "compile",
+      "composite",
+      "conflicts",
+      "constant",
+      "consume",
+      "content",
+      "context",
+      "contract",
+      "create",
+      "creation"
+    ]
+  },
+  "source": {
+    "base": "c92e08f764bb523f2261de7f36c9cb481c3ae301",
+    "commit_subject": "Integrate Universal Creation growth-day lanes",
+    "head": "d2502e6aca6f1d1ababaaf231b8e5295ae545d95",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

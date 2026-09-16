@@ -1,0 +1,928 @@
+diff --git a/GAME_STYLE_GROWTH.md b/GAME_STYLE_GROWTH.md
+index 523cc35..5d0ae78 100644
+--- a/GAME_STYLE_GROWTH.md
++++ b/GAME_STYLE_GROWTH.md
+@@ -75,8 +75,9 @@ bounded change before starting another; no quota of new files or assets.
+ 3. **Completed:** reusable playful form controls: taper, squash, oversized
+    functional parts, asymmetry and explicit large/medium/small hierarchy, with
+    protected contact/socket coordinates and canonical source retained.
+-4. Build distinct graphic/painterly realization options that survive export;
+-   state exactly which shader features need a target-engine adapter or bake.
++4. **Completed:** distinct graphic/painterly realizations that survive GLB
++   export through final linear vertex colours and `KHR_materials_unlit`, with
++   target-engine-only shader features stated explicitly.
+ 5. Improve expressive character/robot face shapes and stances with identity checks.
+ 6. Expand animation composition for anticipation, acceleration, impact and settle.
+ 7. Add reusable secondary motion for springs, cloth, antennae and carried props.
+@@ -93,6 +94,48 @@ exports when those features change. Measure performance before making claims.
+ 
+ ## Current checkpoint
+ 
++### Portable render-style pass — 2026-09-13
++
++- Completed renderer-neutral `game_render_styles.py`, the
++  `axm-assets game-render` publisher and a truthful catalog. `realistic-pbr`
++  remains an exact identity. `graphic-toon-baked` authors three hard light
++  bands; `painted-adventure-baked` authors six bands plus seeded, object-space
++  warm/cool pigment rhythm. These are actual colour-field changes, not palette
++  labels or extra polygons.
++- Stylized realizations fold the source material factor into final linear
++  vertex colours and opt into glTF `KHR_materials_unlit`. Positions, normals
++  and indices remain exact. The canonical source, its digest, chosen light,
++  seed, realization and engine-adapter limits are retained in every package.
++  Existing non-unlit GLBs keep their prior document shape.
++- Actual verification: **18 focused tests pass** across the eight new render
++  tests plus procedural-3D and workshop regressions. Blender 4.3 exported and
++  freshly re-imported three 22-primitive courier GLBs. Decoded geometry was
++  identical across styles, maximum vertex-colour float error was
++  0.0000000298, stylized materials re-imported as unlit while realistic stayed
++  lit, and the editable-source/re-import render MAE was 0.0.
++- Visual repair: the first comparison cropped the wrench and made painted too
++  close to graphic. Stronger chromatic pigment rhythm separated them; final
++  wider framing keeps all three silhouettes and labels clear. The final still
++  visibly distinguishes lit PBR, hard graphic planes and softer faceted
++  painted colour variation on the same form.
++- Evidence: `tools/blender/game_render_style_roundtrip.py`,
++  `docs/GAME_RENDER_STYLES.md`, and
++  `docs/evidence/game-render-style-roundtrip-2026-09-13.json`. No donor code or
++  external shader runtime was copied in this pass.
++- Limits: fixed authored lighting only. Camera-responsive outlines, dynamic
++  light direction, screen-space grain, camera rim and animated brush crawl need
++  target-engine adapters. This is a static style/export proof, not animation,
++  game-distance, engine colour-management or performance acceptance.
++- **Next useful step: priority 5**, expressive character/robot face shapes and
++  stances with explicit identity checks.
++- Active lane: `codex/rts-reference-foundry`, based on merged PR #63/main
++  `b98776a`; unrelated PR #54 remains outside this pass. Current-head checks are
++  required before merge; final GitHub state is authoritative.
++- Roots: Truth separates fixed-bake evidence from dynamic-shader acceptance;
++  Agency keeps every style opt-in and offline; Continuity embeds the exact
++  canonical source and preserves legacy realistic output; Wisdom repaired the
++  visible style separation and framing before publication.
++
+ ### Expressive form pass — 2026-09-13
+ 
+ - Completed renderer-neutral `game_form_styles.py` and `axm-assets game-form`.
+diff --git a/docs/GAME_RENDER_STYLES.md b/docs/GAME_RENDER_STYLES.md
+new file mode 100644
+index 0000000..eeb8f0b
+--- /dev/null
++++ b/docs/GAME_RENDER_STYLES.md
+@@ -0,0 +1,55 @@
++# Portable game render styles
++
++`axm_uc.game_render_styles` converts a bounded `axm.surface-3d/v0.1` mesh into
++one of three explicit render realizations while retaining the exact canonical
++surface beside it.
++
++| Style | Realization | Portable result |
++| --- | --- | --- |
++| `realistic-pbr` | Identity | Existing metallic/roughness materials and vertex colours stay unchanged. |
++| `graphic-toon-baked` | Three authored light bands | Final linear vertex colours plus `KHR_materials_unlit`. |
++| `painted-adventure-baked` | Six light bands with object-space pigment rhythm | Final linear vertex colours plus `KHR_materials_unlit`. |
++
++The two stylized paths bake a fixed normalized light direction. They fold the
++source material factor and source vertex colour into each final linear RGBA
++vertex colour, then use a white unlit material. This makes the authored result
++independent of a viewer's light rig while preserving geometry, normals and
++indices exactly. The realistic path is deliberately an identity and does not
++add an extension, protecting existing output shape and appearance.
++
++## Usage
++
++```sh
++axm-assets game-render-catalog
++axm-assets game-render request.json output/graphic \
++  --style graphic-toon-baked --seed 471 --light -.45 .82 .35
++axm-assets game-render request.json output/painted \
++  --style painted-adventure-baked --seed 471 --light -.45 .82 .35
++```
++
++`request.json` contains exactly `{ "mesh": <surface-3d object> }`. Publication
++is transactional and refuses to overwrite an existing directory. It writes:
++
++- `source.json`: immutable canonical input;
++- `realization.json`: selected renderer-neutral output;
++- `render-style.json`: parameters, hashes, gates and limitations;
++- `asset.glb`: actual portable GLB.
++
++Python callers can use `apply_game_render_style`,
++`game_render_style_catalog`, or `publish_game_render_style`.
++
++## Truth boundary
++
++This capability proves a fixed-light, export-safe realization. It does not
++implement or claim camera-responsive outlines, dynamic light-band direction,
++screen-space paper grain, camera rim lighting or animated brush crawl. Those
++features need a target-engine adapter because glTF core plus
++`KHR_materials_unlit` cannot express them portably. Target-engine colour
++management, animation, gameplay-distance readability and performance remain
++separate acceptance steps.
++
++The bounded Blender specimen in
++`tools/blender/game_render_style_roundtrip.py` exports all three styles,
++re-imports them into a fresh process, checks decoded geometry and colour data,
++and renders both the editable source and fresh GLBs. Its receipt is
++`docs/evidence/game-render-style-roundtrip-2026-09-13.json`.
+diff --git a/src/axm_uc/game_render_styles.py b/src/axm_uc/game_render_styles.py
+new file mode 100644
+index 0000000..b5cd45e
+--- /dev/null
++++ b/src/axm_uc/game_render_styles.py
+@@ -0,0 +1,249 @@
++"""Portable baked game-lighting styles for renderer-neutral surface meshes.
++
++Stylized realizations fold source material and vertex colour into final linear
++vertex colours and opt into glTF KHR_materials_unlit.  This preserves the baked
++look across conforming viewers without pretending that dynamic bands, outlines,
++rim lights, or paint strokes exist in glTF core.  The canonical PBR source stays
++embedded and unchanged beside every realization.
++"""
++from __future__ import annotations
++
++import copy
++import hashlib
++import json
++import math
++import os
++from dataclasses import asdict, dataclass
++from pathlib import Path
++import tempfile
++
++from .atomic import atomic_write_bytes, atomic_write_json
++from .procedural_3d import build_glb
++
++
++RENDER_STYLE_SCHEMA = "axm.game-render-style/v0.1"
++
++
++@dataclass(frozen=True)
++class RenderStyle:
++    name: str
++    mode: str
++    bands: int
++    brush_strength: float
++    shadow_tint: tuple[float, float, float]
++    highlight_tint: tuple[float, float, float]
++    portable: str
++
++
++RENDER_STYLES = (
++    RenderStyle("realistic-pbr", "dynamic-pbr", 0, 0.0, (0, 0, 0), (0, 0, 0),
++                "unchanged canonical surface"),
++    RenderStyle("graphic-toon-baked", "unlit-baked", 3, 0.0, (.03, .10, .22), (1.0, .70, .22),
++                "KHR_materials_unlit plus final linear vertex colours"),
++    RenderStyle("painted-adventure-baked", "unlit-baked", 6, .30, (.20, .18, .38), (1.0, .58, .25),
++                "KHR_materials_unlit plus position-coherent brushed vertex colours"),
++)
++
++
++def _canonical(value):
++    return json.dumps(value, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()
++
++
++def _digest(value):
++    return hashlib.sha256(_canonical(value)).hexdigest()
++
++
++def _profile(name):
++    for style in RENDER_STYLES:
++        if style.name == name:
++            return style
++    raise ValueError(f"unknown game render style: {name}")
++
++
++def _number(value, label, low=-100000.0, high=100000.0):
++    if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value):
++        raise ValueError(f"{label} must be a finite number")
++    value = float(value)
++    if not low <= value <= high:
++        raise ValueError(f"{label} must be from {low} to {high}")
++    return value
++
++
++def _vector(value, label, width, low=-100000.0, high=100000.0):
++    if not isinstance(value, (list, tuple)) or len(value) != width:
++        raise ValueError(f"{label} must contain {width} numbers")
++    return tuple(_number(item, f"{label}[{index}]", low, high) for index, item in enumerate(value))
++
++
++def _unit(value):
++    length = math.sqrt(sum(item * item for item in value))
++    if length <= 1e-12:
++        raise ValueError("light direction must not be zero")
++    return tuple(item / length for item in value)
++
++
++def _rgba(value):
++    if not isinstance(value, str) or len(value) not in (7, 9) or not value.startswith("#"):
++        raise ValueError("material color must be #RRGGBB or #RRGGBBAA")
++    try:
++        channels = [int(value[index:index + 2], 16) / 255 for index in range(1, len(value), 2)]
++    except ValueError as exc:
++        raise ValueError("material color must be hexadecimal") from exc
++    if len(channels) == 3:
++        channels.append(1.0)
++    return channels
++
++
++def _validate(mesh):
++    if not isinstance(mesh, dict) or mesh.get("schema") != "axm.surface-3d/v0.1":
++        raise ValueError("mesh must use axm.surface-3d/v0.1")
++    primitives = mesh.get("primitives")
++    if not isinstance(primitives, list) or not 1 <= len(primitives) <= 128:
++        raise ValueError("mesh must contain 1..128 primitives")
++    for primitive in primitives:
++        if not isinstance(primitive, dict) or not isinstance(primitive.get("id"), str):
++            raise ValueError("every primitive needs a text id")
++        positions, normals, colors = (primitive.get(key) for key in ("positions", "normals", "colors"))
++        if not isinstance(positions, list) or not positions or len(positions) > 65535:
++            raise ValueError("primitive positions are missing or over limit")
++        if not isinstance(normals, list) or len(normals) != len(positions):
++            raise ValueError("primitive needs one normal per position")
++        if not isinstance(colors, list) or len(colors) != len(positions):
++            raise ValueError("primitive needs one linear RGBA colour per position")
++        for index, (position, normal, color) in enumerate(zip(positions, normals, colors)):
++            _vector(position, f"position {index}", 3)
++            _unit(_vector(normal, f"normal {index}", 3, -1, 1))
++            _vector(color, f"colour {index}", 4, 0, 1)
++        material = primitive.get("material")
++        if not isinstance(material, dict) or set(material) - {"color", "metallic", "roughness", "unlit"}:
++            raise ValueError("surface material fields are invalid")
++        _rgba(material.get("color"))
++        _number(material.get("metallic"), "metallic", 0, 1)
++        _number(material.get("roughness"), "roughness", 0, 1)
++        if "unlit" in material and type(material["unlit"]) is not bool:
++            raise ValueError("material unlit flag must be boolean")
++    # Reuse the native generator as the final topology/index grammar gate.
++    build_glb(mesh)
++
++
++def game_render_style_catalog():
++    return {
++        "schema": "axm.game-render-style-catalog/v0.1",
++        "styles": [asdict(style) for style in RENDER_STYLES],
++        "canonical_source_preserved": True,
++        "portable_dynamic_features": [],
++        "target_engine_adapter_features": [
++            "camera-responsive outlines", "dynamic light-band direction",
++            "screen-space paper grain", "camera rim lighting", "animated brush crawl",
++        ],
++        "truth": (
++            "Baked unlit styles preserve their fixed authored lighting in conforming GLB viewers. "
++            "They do not prove target-engine colour management or dynamic toon/painterly shaders."
++        ),
++    }
++
++
++def _mix(a, b, amount):
++    return tuple(a[i] * (1 - amount) + b[i] * amount for i in range(3))
++
++
++def _quantize(value, bands):
++    return round(max(0, min(1, value)) * (bands - 1)) / (bands - 1)
++
++
++def _tone(base, normal, position, style, light, seed, primitive_index):
++    normal = _unit(normal)
++    ndotl = sum(normal[i] * light[i] for i in range(3))
++    diffuse = max(0, min(1, (ndotl + .18) / 1.18))
++    band = _quantize(diffuse, style.bands)
++    if style.name == "graphic-toon-baked":
++        value = .27 + band * .88
++        tint = _mix(style.shadow_tint, style.highlight_tint, band)
++        tint_amount = .15 if band < .5 else .07
++    else:
++        phase = (seed * .61803398875 + primitive_index * 1.41421356237) % math.tau
++        # Object-space diagonal strokes remain coherent across shared positions;
++        # this is fixed paint rhythm, not a screen-space shader claim.
++        stroke = math.sin(position[0] * 11.3 + position[1] * 17.1 - position[2] * 7.7 + phase)
++        cross = math.sin(position[0] * 4.1 - position[1] * 8.3 + position[2] * 13.7 - phase)
++        brush_signal = stroke * .72 + cross * .28
++        brush = brush_signal * style.brush_strength
++        painted_band = _quantize(diffuse + brush, style.bands)
++        value = .32 + painted_band * .78
++        tint = _mix(style.shadow_tint, style.highlight_tint, painted_band)
++        # Chromatic pigment variation makes the fixed object-space strokes
++        # legible after GLB export without inventing a screen-space effect.
++        stroke_tint = (1.0, .50, .18) if brush_signal >= 0 else (.18, .34, .72)
++        tint = _mix(tint, stroke_tint, .18 * abs(brush_signal))
++        tint_amount = .19 if painted_band < .5 else .12
++    shaded = tuple(max(0, min(1, channel * value)) for channel in base)
++    return _mix(shaded, tint, tint_amount)
++
++
++def apply_game_render_style(mesh, style="graphic-toon-baked", seed=1,
++                            light_direction=(-.45, .82, .35)):
++    """Return exact canonical source plus one portable render realization."""
++    if isinstance(seed, bool) or not isinstance(seed, int) or not 0 <= seed <= 2_147_483_647:
++        raise ValueError("seed must be an integer from 0 to 2147483647")
++    profile = _profile(style)
++    light = _unit(_vector(light_direction, "light_direction", 3, -1, 1))
++    _validate(mesh)
++    source = copy.deepcopy(mesh)
++    realization = copy.deepcopy(mesh)
++    if profile.mode == "unlit-baked":
++        for primitive_index, primitive in enumerate(realization["primitives"]):
++            factor = _rgba(primitive["material"]["color"])
++            output = []
++            for position, normal, color in zip(primitive["positions"], primitive["normals"], primitive["colors"]):
++                base = tuple(factor[i] * color[i] for i in range(3))
++                rgb = _tone(base, normal, position, profile, light, seed, primitive_index)
++                output.append([*[round(value, 9) for value in rgb], round(factor[3] * color[3], 9)])
++            primitive["colors"] = output
++            primitive["material"] = {"color": "#FFFFFFFF", "metallic": 0.0,
++                                     "roughness": 1.0, "unlit": True}
++    return {
++        "schema": RENDER_STYLE_SCHEMA,
++        "source": source,
++        "source_sha256": _digest(source),
++        "realization": realization,
++        "style": asdict(profile),
++        "seed": seed,
++        "light_direction": [round(value, 9) for value in light],
++        "gates": {
++            "canonical-source-embedded": source == mesh,
++            "geometry-unchanged": all(
++                left[key] == right[key]
++                for left, right in zip(source["primitives"], realization["primitives"])
++                for key in ("positions", "normals", "indices")
++            ),
++            "portable-unlit-bake": profile.mode == "unlit-baked",
++        },
++        "engine_adapter_required_for": game_render_style_catalog()["target_engine_adapter_features"],
++        "truth": (
++            "The GLB bake fixes authored light direction and paint rhythm in vertex colours. "
++            "Dynamic outlines, lights, rims and screen-space effects require a target-engine adapter."
++        ),
++    }
++
++
++def publish_game_render_style(path, mesh, style="graphic-toon-baked", seed=1,
++                              light_direction=(-.45, .82, .35)):
++    """Atomically publish source, realization, manifest, and actual GLB."""
++    target = Path(path).resolve()
++    if target.exists():
++        raise FileExistsError(f"game render style output already exists: {target}")
++    target.parent.mkdir(parents=True, exist_ok=True)
++    package = apply_game_render_style(mesh, style, seed, light_direction)
++    built = build_glb(package["realization"])
++    with tempfile.TemporaryDirectory(prefix=".axm-game-render-", dir=target.parent) as temporary:
++        stage = Path(temporary) / "publication"
++        stage.mkdir()
++        atomic_write_json(stage / "source.json", package["source"])
++        atomic_write_json(stage / "realization.json", package["realization"])
++        manifest = {key: value for key, value in package.items() if key not in ("source", "realization")}
++        manifest["glb_sha256"] = hashlib.sha256(built["body"]).hexdigest()
++        manifest["glb_specification_sha256"] = built["specification_sha256"]
++        atomic_write_json(stage / "render-style.json", manifest)
++        atomic_write_bytes(stage / "asset.glb", built["body"])
++        os.replace(stage, target)
++    return {**manifest, "path": str(target), "files": sorted(item.name for item in target.iterdir())}
+diff --git a/src/axm_uc/procedural_3d.py b/src/axm_uc/procedural_3d.py
+index b2611c5..e7c267b 100644
+--- a/src/axm_uc/procedural_3d.py
++++ b/src/axm_uc/procedural_3d.py
+@@ -37,7 +37,7 @@ def procedural_3d_summary() -> dict[str, Any]:
+         "primitive_grammar": ["box", "pyramid", "cylinder"],
+         "maximum_primitives": MAX_PRIMITIVES,
+         "maximum_cylinder_segments": MAX_CYLINDER_SEGMENTS,
+-        "materials": "base-color metallic-roughness only",
++        "materials": "base-color metallic-roughness; surface meshes may opt into KHR_materials_unlit",
+         "container_and_buffer_ranges_reverified_after_publish": True,
+         "rendered_appearance_or_host_compatibility_proven": False,
+     }
+@@ -289,13 +289,20 @@ def _normalize_surface_spec(raw: Any) -> dict[str, Any]:
+             if not isinstance(row, (list, tuple)) or len(row) != width:
+                 raise Procedural3DError(f"{label} must contain {width} values")
+             return [_number(value, label, low, high) for value in row]
+-        material = _object(group["material"], "surface material", required={"color", "metallic", "roughness"})
++        material = _object(group["material"], "surface material",
++                           required={"color", "metallic", "roughness"}, optional={"unlit"})
++        unlit = material.get("unlit", False)
++        if type(unlit) is not bool:
++            raise Procedural3DError("surface material.unlit must be a boolean")
++        normalized_material = {"color": _color(material["color"], "surface color")[0],
++                               "metallic": _number(material["metallic"], "metallic", 0, 1),
++                               "roughness": _number(material["roughness"], "roughness", 0, 1)}
++        if unlit:
++            normalized_material["unlit"] = True
+         normalized = {"id": name, "type": "surface", "size": [1, 1, 1], "translation": [0, 0, 0],
+                       "positions": [vector(row, "position", -100000, 100000) for row in positions],
+                       "normals": [vector(row, "normal", -1, 1) for row in normals], "indices": list(indices),
+-                      "material": {"color": _color(material["color"], "surface color")[0],
+-                                   "metallic": _number(material["metallic"], "metallic", 0, 1),
+-                                   "roughness": _number(material["roughness"], "roughness", 0, 1)}}
++                      "material": normalized_material}
+         if "colors" in group:
+             colors = group["colors"]
+             if not isinstance(colors, list) or len(colors) != len(positions):
+@@ -370,14 +377,17 @@ def _encode_glb(spec: dict[str, Any]) -> dict[str, Any]:
+                               "count": len(primitive["colors"]), "type": "VEC4"})
+         _color_text, rgba = _color(primitive["material"]["color"], "material.color")
+         material_index = len(materials)
+-        materials.append({
++        material = {
+             "name": f"{primitive['id']}-material",
+             "pbrMetallicRoughness": {
+                 "baseColorFactor": rgba,
+                 "metallicFactor": primitive["material"]["metallic"],
+                 "roughnessFactor": primitive["material"]["roughness"],
+             },
+-        })
++        }
++        if primitive["material"].get("unlit", False):
++            material["extensions"] = {"KHR_materials_unlit": {}}
++        materials.append(material)
+         mesh_index = len(meshes)
+         meshes.append({
+             "name": primitive["id"],
+@@ -412,6 +422,9 @@ def _encode_glb(spec: dict[str, Any]) -> dict[str, Any]:
+             "axmPrimitiveCount": len(spec["primitives"]),
+         },
+     }
++    if any(material.get("extensions", {}).get("KHR_materials_unlit") == {} for material in materials):
++        document["extensionsUsed"] = ["KHR_materials_unlit"]
++        document["extensionsRequired"] = ["KHR_materials_unlit"]
+     json_bytes = _canonical(document)
+     json_padded = json_bytes + b" " * ((-len(json_bytes)) % 4)
+     binary_padded = bytes(binary) + b"\x00" * ((-len(binary)) % 4)
+@@ -503,6 +516,24 @@ def verify_glb(body: bytes, *, expected_spec_digest: str | None = None) -> dict[
+             raise Procedural3DError("generated GLB geometry contains non-finite values", {"accessor": ref})
+         return values
+ 
++    used = document.get("extensionsUsed", [])
++    required = document.get("extensionsRequired", [])
++    if (not isinstance(used, list) or not isinstance(required, list)
++            or set(used) - {"KHR_materials_unlit"} or set(required) - {"KHR_materials_unlit"}
++            or not set(required) <= set(used)):
++        raise Procedural3DError("generated GLB extension declarations are invalid")
++    unlit_materials = 0
++    for index, material in enumerate(materials):
++        extensions = material.get("extensions", {}) if isinstance(material, dict) else None
++        if not isinstance(extensions, dict) or set(extensions) - {"KHR_materials_unlit"}:
++            raise Procedural3DError("generated GLB material extensions are invalid", {"index": index})
++        if "KHR_materials_unlit" in extensions:
++            if extensions["KHR_materials_unlit"] != {} or "KHR_materials_unlit" not in required:
++                raise Procedural3DError("generated GLB unlit material is not explicitly required", {"index": index})
++            unlit_materials += 1
++    if "KHR_materials_unlit" in used and not unlit_materials:
++        raise Procedural3DError("generated GLB declares an unused unlit extension")
++
+     decoded_triangles = 0
+     for index, mesh in enumerate(meshes):
+         primitives = mesh.get("primitives") if isinstance(mesh, dict) else None
+@@ -561,6 +592,7 @@ def verify_glb(body: bytes, *, expected_spec_digest: str | None = None) -> dict[
+         "primitives": len(meshes),
+         "nodes": len(nodes),
+         "materials": len(materials),
++        "unlit_materials": unlit_materials,
+         "triangles": decoded_triangles,
+         "geometry_validation": {
+             "decoded_triangle_count": decoded_triangles,
+diff --git a/src/axm_uc/visual_assets_cli.py b/src/axm_uc/visual_assets_cli.py
+index 3635ae9..6aff9d9 100644
+--- a/src/axm_uc/visual_assets_cli.py
++++ b/src/axm_uc/visual_assets_cli.py
+@@ -31,6 +31,7 @@ from .rigged_characters import character_catalog, forge_rigged_character, inspec
+ from .game_material_styles import (FAMILIES, FINISHES, WearLayer, game_material_catalog,
+                                    generate_game_material, protected_regions_mask)
+ from .game_form_styles import FORM_STYLES, game_form_catalog, publish_game_form
++from .game_render_styles import RENDER_STYLES, game_render_style_catalog, publish_game_render_style
+ 
+ BASE_CATEGORIES = ["texture", "gradient", "material", "fixture", "decal", "palette"]
+ EXPANDED_CATEGORIES = ["surface", "pigment", "sprite", "mesh", "vector-part"]
+@@ -53,6 +54,7 @@ def combined_catalog() -> dict:
+         "rigged_characters": character_catalog(),
+         "game_materials": game_material_catalog(),
+         "game_forms": game_form_catalog(),
++        "game_render_styles": game_render_style_catalog(),
+     }
+ 
+ 
+@@ -63,6 +65,15 @@ def build_parser() -> argparse.ArgumentParser:
+     sub.add_parser("grammar-catalog", help="show the composable visual-intent grammar")
+     sub.add_parser("game-material-catalog", help="show material families and opt-in surface finishes")
+     sub.add_parser("game-form-catalog", help="show deterministic silhouette and proportion styles")
++    sub.add_parser("game-render-catalog", help="show portable baked graphic and painterly styles")
++    render = sub.add_parser("game-render", help="bake a portable GLB lighting style while retaining source")
++    render.add_argument("request", help="JSON object containing exactly one surface mesh")
++    render.add_argument("path", help="new output directory; existing paths are never overwritten")
++    render.add_argument("--style", choices=[style.name for style in RENDER_STYLES],
++                        default="graphic-toon-baked")
++    render.add_argument("--seed", type=int, default=1)
++    render.add_argument("--light", type=float, nargs=3, metavar=("X", "Y", "Z"),
++                        default=(-.45, .82, .35))
+     form = sub.add_parser("game-form", help="derive a styled surface mesh while retaining canonical source")
+     form.add_argument("request", help="JSON object containing mesh and exact per-component part specs")
+     form.add_argument("path", help="new output directory; existing paths are never overwritten")
+@@ -200,6 +211,14 @@ def main(argv: list[str] | None = None) -> int:
+         result = game_material_catalog()
+     elif args.command == "game-form-catalog":
+         result = game_form_catalog()
++    elif args.command == "game-render-catalog":
++        result = game_render_style_catalog()
++    elif args.command == "game-render":
++        request = json.loads(Path(args.request).read_text(encoding="utf-8"))
++        if not isinstance(request, dict) or set(request) != {"mesh"}:
++            parser.error("game-render request must contain exactly mesh")
++        result = publish_game_render_style(args.path, request["mesh"], args.style,
++                                           args.seed, tuple(args.light))
+     elif args.command == "game-form":
+         request = json.loads(Path(args.request).read_text(encoding="utf-8"))
+         if not isinstance(request, dict) or set(request) != {"mesh", "parts"}:
+diff --git a/tests/test_game_render_styles.py b/tests/test_game_render_styles.py
+new file mode 100644
+index 0000000..efda964
+--- /dev/null
++++ b/tests/test_game_render_styles.py
+@@ -0,0 +1,126 @@
++import copy
++import io
++import json
++import struct
++import tempfile
++import unittest
++from contextlib import redirect_stdout
++from pathlib import Path
++
++from axm_uc.game_render_styles import (apply_game_render_style, game_render_style_catalog,
++                                       publish_game_render_style)
++from axm_uc.procedural_3d import build_glb, verify_glb
++from axm_uc.visual_assets_cli import main
++
++
++def fixture():
++    positions = [[0, 0, 0], [1, 0, 0], [0, 1, 0],
++                 [0, 0, 0], [0, 1, 0], [0, 0, 1]]
++    normals = [[0, 0, 1]] * 3 + [[1, 0, 0]] * 3
++    return {"schema": "axm.surface-3d/v0.1", "name": "render-style-fixture", "primitives": [{
++        "id": "panel__paint", "positions": positions, "normals": normals,
++        "indices": [0, 1, 2, 3, 4, 5],
++        "colors": [[.92, .84, .72, 1], [.86, .78, .67, 1], [.80, .73, .62, 1],
++                   [.92, .84, .72, 1], [.86, .78, .67, 1], [.80, .73, .62, 1]],
++        "material": {"color": "#7F5A32FF", "metallic": .35, "roughness": .72},
++    }]}
++
++
++def glb_document(body):
++    length = struct.unpack_from("<I", body, 12)[0]
++    return json.loads(body[20:20 + length])
++
++
++class GameRenderStyleTests(unittest.TestCase):
++    def test_catalog_separates_portable_bake_from_engine_shader_features(self):
++        catalog = game_render_style_catalog()
++        names = {row["name"] for row in catalog["styles"]}
++        self.assertEqual(names, {"realistic-pbr", "graphic-toon-baked", "painted-adventure-baked"})
++        self.assertIn("camera-responsive outlines", catalog["target_engine_adapter_features"])
++        self.assertEqual(catalog["portable_dynamic_features"], [])
++        self.assertTrue(catalog["canonical_source_preserved"])
++
++    def test_realistic_is_exact_pbr_identity_and_keeps_legacy_glb_shape(self):
++        mesh = fixture()
++        result = apply_game_render_style(mesh, "realistic-pbr", 9)
++        self.assertEqual(result["source"], mesh)
++        self.assertEqual(result["realization"], mesh)
++        document = build_glb(result["realization"])["document"]
++        self.assertNotIn("extensionsUsed", document)
++        self.assertNotIn("unlit", result["realization"]["primitives"][0]["material"])
++
++    def test_graphic_style_changes_final_color_not_geometry_and_exports_unlit(self):
++        mesh = fixture()
++        original = copy.deepcopy(mesh)
++        result = apply_game_render_style(mesh, "graphic-toon-baked", 471)
++        self.assertEqual(mesh, original)
++        self.assertEqual(result["source"], original)
++        source, styled = original["primitives"][0], result["realization"]["primitives"][0]
++        for key in ("positions", "normals", "indices"):
++            self.assertEqual(styled[key], source[key])
++        self.assertNotEqual(styled["colors"], source["colors"])
++        self.assertEqual(styled["material"], {"color": "#FFFFFFFF", "metallic": 0,
++                                               "roughness": 1, "unlit": True})
++        built = build_glb(result["realization"])
++        document = built["document"]
++        self.assertEqual(document["extensionsRequired"], ["KHR_materials_unlit"])
++        self.assertEqual(document["materials"][0]["extensions"], {"KHR_materials_unlit": {}})
++        self.assertEqual(verify_glb(built["body"])["unlit_materials"], 1)
++
++    def test_painterly_is_deterministic_position_coherent_and_seeded(self):
++        mesh = fixture()
++        a = apply_game_render_style(mesh, "painted-adventure-baked", 4)
++        b = apply_game_render_style(mesh, "painted-adventure-baked", 4)
++        c = apply_game_render_style(mesh, "painted-adventure-baked", 5)
++        self.assertEqual(a, b)
++        self.assertNotEqual(a["realization"]["primitives"][0]["colors"],
++                            c["realization"]["primitives"][0]["colors"])
++        self.assertNotEqual(a["realization"]["primitives"][0]["colors"],
++                            apply_game_render_style(mesh, "graphic-toon-baked", 4)["realization"]["primitives"][0]["colors"])
++
++    def test_light_direction_changes_bake_and_zero_direction_fails(self):
++        mesh = fixture()
++        top = apply_game_render_style(mesh, light_direction=(0, 0, 1))
++        side = apply_game_render_style(mesh, light_direction=(1, 0, 0))
++        self.assertNotEqual(top["realization"], side["realization"])
++        with self.assertRaisesRegex(ValueError, "must not be zero"):
++            apply_game_render_style(mesh, light_direction=(0, 0, 0))
++
++    def test_publisher_emits_actual_glb_and_refuses_overwrite(self):
++        with tempfile.TemporaryDirectory() as tmp:
++            target = Path(tmp) / "render"
++            result = publish_game_render_style(target, fixture(), "graphic-toon-baked", 7)
++            self.assertEqual(result["files"], ["asset.glb", "realization.json", "render-style.json", "source.json"])
++            self.assertEqual(verify_glb((target / "asset.glb").read_bytes())["unlit_materials"], 1)
++            with self.assertRaises(FileExistsError):
++                publish_game_render_style(target, fixture())
++
++    def test_cli_publishes_selected_style(self):
++        with tempfile.TemporaryDirectory() as tmp:
++            request, target = Path(tmp) / "request.json", Path(tmp) / "result"
++            request.write_text(json.dumps({"mesh": fixture()}))
++            with redirect_stdout(io.StringIO()):
++                self.assertEqual(main(["game-render", str(request), str(target),
++                                       "--style", "painted-adventure-baked", "--seed", "31",
++                                       "--light", "-.2", ".9", ".4"]), 0)
++            manifest = json.loads((target / "render-style.json").read_text())
++            self.assertEqual(manifest["style"]["name"], "painted-adventure-baked")
++
++    def test_validation_rejects_missing_colors_unknown_fields_and_bad_unlit_type(self):
++        mesh = fixture()
++        broken = copy.deepcopy(mesh)
++        broken["primitives"][0].pop("colors")
++        with self.assertRaisesRegex(ValueError, "linear RGBA"):
++            apply_game_render_style(broken)
++        broken = copy.deepcopy(mesh)
++        broken["primitives"][0]["material"]["secret"] = "shader"
++        with self.assertRaisesRegex(ValueError, "fields"):
++            apply_game_render_style(broken)
++        broken = copy.deepcopy(mesh)
++        broken["primitives"][0]["material"]["unlit"] = 1
++        with self.assertRaisesRegex(ValueError, "boolean"):
++            apply_game_render_style(broken)
++
++
++if __name__ == "__main__":
++    unittest.main()
+diff --git a/tools/blender/game_render_style_roundtrip.py b/tools/blender/game_render_style_roundtrip.py
+new file mode 100644
+index 0000000..e49df1a
+--- /dev/null
++++ b/tools/blender/game_render_style_roundtrip.py
+@@ -0,0 +1,257 @@
++"""Build and independently inspect one three-style portable GLB comparison.
++
++The proof uses the same expressive salvage courier geometry for every column.
++Only render realization changes. It checks decoded GLB attributes and Blender
++fresh import, then renders a visible comparison. It does not claim target-engine
++colour management or dynamic shader parity.
++"""
++import argparse
++import hashlib
++import json
++import math
++from pathlib import Path
++import struct
++import sys
++
++ROOT = Path(__file__).resolve().parents[2]
++sys.path.insert(0, str(ROOT / "src"))
++
++from axm_uc.game_form_styles import apply_game_form
++from axm_uc.game_render_styles import apply_game_render_style
++from axm_uc.procedural_3d import build_glb, verify_glb
++from axm_uc.rts_mesh import SalvageMesh
++
++
++STYLES = ("realistic-pbr", "graphic-toon-baked", "painted-adventure-baked")
++OFFSETS = {"realistic-pbr": -3.5, "graphic-toon-baked": 0.0, "painted-adventure-baked": 3.5}
++LABELS = {"realistic-pbr": "REALISTIC PBR", "graphic-toon-baked": "GRAPHIC TOON",
++          "painted-adventure-baked": "PAINTED ADVENTURE"}
++
++
++def courier_mesh():
++    mesh = SalvageMesh()
++    with mesh.part("body", (0, 0, 0)):
++        mesh.roundbox("toolbox-body", (0, 1.28, 0), (1.75, 1.42, 1.18), "paint", .18)
++        mesh.roundbox("belly-frame", (0, 1.12, .62), (1.20, .66, .12), "iron", .06)
++    with mesh.part("head", (0, 2.05, .18)):
++        mesh.ellipsoid("face-shell", (0, 2.08, .18), (1.25, .94, .98), "ivory")
++        mesh.ellipsoid("optic", (-.24, 2.14, .64), (.40, .40, .12), "cyan")
++        mesh.ellipsoid("wink", (.27, 2.12, .65), (.30, .15, .10), "rubber")
++    mesh.wheel("wheel_left", (-.91, .56, 0), .56, .34)
++    mesh.wheel("wheel_right", (.91, .56, 0), .56, .34)
++    with mesh.part("wrench_arm", (-.80, 1.63, .08)):
++        mesh.beam("upper-arm", (-.80, 1.63, .08), (-1.22, 2.03, .05), .17, .15, "iron")
++        mesh.beam("wrench-handle", (-1.22, 2.03, .05), (-1.54, 2.55, .04), .12, .10, "signal")
++        mesh.ring("open-wrench-jaw", (-1.55, 2.66, .04), .25, .07, "signal", axis="z", ratio=.72)
++    with mesh.part("armor", (.64, 1.48, .53)):
++        mesh.roundbox("offset-shoulder", (.70, 1.61, .52), (.72, .58, .15), "signal", .08)
++        mesh.panel("story-panel", (.46, 1.22, .66), .58, .44, "red")
++    with mesh.part("antenna", (.40, 2.46, .12)):
++        mesh.pipe("antenna-stalk", [(.40, 2.44, .12), (.49, 2.93, .10)], .035, "iron", 7)
++        mesh.ellipsoid("antenna-beacon", (.50, 3.01, .10), (.20, .20, .20), "red", 9, 5)
++    with mesh.part("badge", (0, 1.12, .70)):
++        mesh.smile((0, 1.12, .70), .24)
++    return mesh.surface_spec("mischief-courier-render-specimen")
++
++
++def form_parts():
++    return {
++        "body": {"role": "body", "hierarchy": "large", "anchors": {}, "anchor_falloff": .2},
++        "head": {"role": "functional", "hierarchy": "large", "anchors": {}, "anchor_falloff": .18},
++        "wheel_left": {"role": "functional", "hierarchy": "medium", "anchors": {}, "anchor_falloff": .22},
++        "wheel_right": {"role": "functional", "hierarchy": "medium", "anchors": {}, "anchor_falloff": .22},
++        "wrench_arm": {"role": "functional", "hierarchy": "large", "anchors": {}, "anchor_falloff": .17},
++        "armor": {"role": "armor", "hierarchy": "medium", "anchors": {}, "anchor_falloff": .14},
++        "antenna": {"role": "detail", "hierarchy": "small", "anchors": {}, "anchor_falloff": .17},
++        "badge": {"role": "detail", "hierarchy": "small", "anchors": {}, "strength": .55},
++    }
++
++
++def glb_chunks(path):
++    body = path.read_bytes()
++    magic, version, length = struct.unpack_from("<4sII", body)
++    assert (magic, version, length) == (b"glTF", 2, len(body))
++    json_length, kind = struct.unpack_from("<II", body, 12)
++    assert kind == 0x4E4F534A
++    document = json.loads(body[20:20 + json_length])
++    offset = 20 + json_length
++    binary_length, kind = struct.unpack_from("<II", body, offset)
++    assert kind == 0x004E4942
++    return body, document, body[offset + 8:offset + 8 + binary_length]
++
++
++def accessor(document, binary, ref):
++    item = document["accessors"][ref]
++    view = document["bufferViews"][item["bufferView"]]
++    widths = {"SCALAR": 1, "VEC3": 3, "VEC4": 4}
++    formats = {5123: "H", 5126: "f"}
++    width, code = widths[item["type"]], formats[item["componentType"]]
++    decoder = struct.Struct("<" + code * width)
++    start = view.get("byteOffset", 0) + item.get("byteOffset", 0)
++    stride = view.get("byteStride", decoder.size)
++    return [decoder.unpack_from(binary, start + index * stride) for index in range(item["count"])]
++
++
++def add_text(bpy, text, location, size=.18):
++    curve = bpy.data.curves.new(text, "FONT")
++    curve.body, curve.align_x, curve.align_y = text, "CENTER", "CENTER"
++    curve.size, curve.extrude, curve.bevel_depth = size, .008, .003
++    obj = bpy.data.objects.new(text, curve)
++    bpy.context.scene.collection.objects.link(obj)
++    obj.location = location
++    obj.rotation_euler = (math.pi / 2, 0, 0)
++    material = bpy.data.materials.get("Proof captions") or bpy.data.materials.new("Proof captions")
++    material.diffuse_color = (.72, .80, .90, 1)
++    obj.data.materials.append(material)
++
++
++def scene_setup(bpy, output):
++    from mathutils import Vector
++    scene = bpy.context.scene
++    scene.render.engine = "BLENDER_EEVEE_NEXT"
++    scene.render.resolution_x, scene.render.resolution_y = 1700, 900
++    scene.render.resolution_percentage = 100
++    scene.render.image_settings.file_format = "PNG"
++    scene.render.filepath = str(output)
++    scene.view_settings.look = "AgX - Medium High Contrast"
++    world = bpy.data.worlds.new("Render style proof world")
++    world.color = (.018, .024, .036)
++    scene.world = world
++    bpy.ops.mesh.primitive_plane_add(size=24, location=(0, 0, -.012))
++    floor = bpy.context.object
++    floor.name = "PROOF_ONLY_FLOOR"
++    floor_material = bpy.data.materials.new("Proof floor")
++    floor_material.diffuse_color = (.038, .050, .070, 1)
++    floor_material.metallic, floor_material.roughness = .45, .32
++    floor.data.materials.append(floor_material)
++    bpy.ops.object.camera_add(location=(0, -18.8, 4.9))
++    camera = bpy.context.object
++    camera.rotation_euler = ((Vector((0, 0, 1.45)) - camera.location).to_track_quat("-Z", "Y").to_euler())
++    camera.data.lens = 56
++    scene.camera = camera
++    for location, power, size, color in [((-5, -4, 7), 1200, 4.5, (1.0, .70, .46)),
++                                          ((5, -2, 5), 900, 3.5, (.40, .70, 1.0)),
++                                          ((0, 3, 7), 800, 4.0, (.72, .82, 1.0))]:
++        bpy.ops.object.light_add(type="AREA", location=location)
++        light = bpy.context.object
++        light.data.energy, light.data.shape, light.data.size, light.data.color = power, "DISK", size, color
++        light.rotation_euler = ((Vector((0, 0, 1.3)) - light.location).to_track_quat("-Z", "Y").to_euler())
++    for style in STYLES:
++        add_text(bpy, LABELS[style], (OFFSETS[style], -.34, 3.62), .17)
++
++
++def import_variants(bpy, output):
++    imported = {}
++    for style in STYLES:
++        before = set(bpy.data.objects)
++        bpy.ops.import_scene.gltf(filepath=str(output / f"{style}.glb"))
++        fresh = [obj for obj in bpy.data.objects if obj not in before]
++        root = bpy.data.objects.new("STYLE__" + style, None)
++        bpy.context.scene.collection.objects.link(root)
++        root.location.x = OFFSETS[style]
++        root["axm_render_style"] = style
++        for obj in fresh:
++            if obj.parent is None:
++                obj.parent = root
++            if obj.type == "MESH":
++                obj["axm_render_style"] = style
++        imported[style] = [obj for obj in fresh if obj.type == "MESH"]
++    return imported
++
++
++def build(output):
++    import bpy
++    output.mkdir(parents=True, exist_ok=False)
++    neutral = courier_mesh()
++    formed = apply_game_form(neutral, form_parts(), "comic-salvage", 471)["realization"]
++    packages = {}
++    for style in STYLES:
++        package = apply_game_render_style(formed, style, 471)
++        built = build_glb(package["realization"])
++        assert verify_glb(built["body"])["unlit_materials"] == (0 if style == "realistic-pbr" else len(formed["primitives"]))
++        (output / f"{style}.glb").write_bytes(built["body"])
++        packages[style] = package
++    (output / "render-style-packages.json").write_text(json.dumps(packages, indent=2) + "\n")
++    bpy.ops.wm.read_factory_settings(use_empty=True)
++    import_variants(bpy, output)
++    text = bpy.data.texts.new("AXM_RENDER_STYLE_PACKAGES.json")
++    text.write(json.dumps(packages, indent=2))
++    scene_setup(bpy, output / "source.png")
++    bpy.ops.wm.save_as_mainfile(filepath=str(output / "game-render-style-proof.blend"))
++    bpy.ops.render.render(write_still=True)
++
++
++def verify(output):
++    from PIL import Image
++    import bpy
++    packages = json.loads((output / "render-style-packages.json").read_text())
++    rows, max_color_error = [], 0.0
++    reference_geometry = None
++    for style in STYLES:
++        body, document, binary = glb_chunks(output / f"{style}.glb")
++        expected = packages[style]["realization"]
++        actual_geometry = []
++        unlit = style != "realistic-pbr"
++        assert ("KHR_materials_unlit" in document.get("extensionsRequired", [])) == unlit
++        for index, (mesh, primitive) in enumerate(zip(document["meshes"], expected["primitives"])):
++            encoded = mesh["primitives"][0]
++            positions = accessor(document, binary, encoded["attributes"]["POSITION"])
++            normals = accessor(document, binary, encoded["attributes"]["NORMAL"])
++            colours = accessor(document, binary, encoded["attributes"]["COLOR_0"])
++            actual_geometry.append((positions, normals, tuple(accessor(document, binary, encoded["indices"]))))
++            max_color_error = max(max_color_error, *(abs(colours[row][axis] - primitive["colors"][row][axis])
++                                                      for row in range(len(colours)) for axis in range(4)))
++            material = document["materials"][encoded["material"]]
++            assert (material.get("extensions") == {"KHR_materials_unlit": {}}) == unlit
++        if reference_geometry is None:
++            reference_geometry = actual_geometry
++        else:
++            assert actual_geometry == reference_geometry
++        rows.append({"style": style, "sha256": hashlib.sha256(body).hexdigest(),
++                     "primitives": len(document["meshes"]), "unlit": unlit})
++    assert max_color_error < 1e-6, max_color_error
++    bpy.ops.wm.open_mainfile(filepath=str(output / "game-render-style-proof.blend"))
++    assert "AXM_RENDER_STYLE_PACKAGES.json" in bpy.data.texts
++    saved_variant_count = sum(obj.get("axm_render_style") in STYLES for obj in bpy.data.objects if obj.type == "MESH")
++    bpy.ops.wm.read_factory_settings(use_empty=True)
++    imported = import_variants(bpy, output)
++    assert all(imported[style] for style in STYLES)
++    # Blender's glTF importer must actually realize the two extension materials
++    # differently from the lit PBR column, not merely retain JSON metadata.
++    imported_unlit = {}
++    for style, objects in imported.items():
++        material_nodes = [node.type for obj in objects for material in obj.data.materials if material and material.use_nodes
++                          for node in material.node_tree.nodes]
++        imported_unlit[style] = "EMISSION" in material_nodes
++    assert not imported_unlit["realistic-pbr"]
++    assert imported_unlit["graphic-toon-baked"] and imported_unlit["painted-adventure-baked"]
++    scene_setup(bpy, output / "reimport.png")
++    bpy.ops.render.render(write_still=True)
++    source = Image.open(output / "source.png").convert("RGB").tobytes()
++    restored = Image.open(output / "reimport.png").convert("RGB").tobytes()
++    mae = sum(abs(a - b) for a, b in zip(source, restored)) / len(source)
++    assert mae < 2, mae
++    report = {
++        "schema": "axm.game-render-style-roundtrip/v0.1",
++        "blender": bpy.app.version_string,
++        "styles": rows,
++        "same_decoded_geometry_across_styles": True,
++        "maximum_vertex_color_float_error": max_color_error,
++        "blender_fresh_import_unlit_realization": imported_unlit,
++        "editable_source_variant_meshes": saved_variant_count,
++        "source_reimport_render_mae": mae,
++        "limits": (
++            "Static fixed-light render-style specimen. No target-engine colour-management, dynamic light-band, "
++            "outline, camera rim, screen-space grain, animation, performance or game-distance acceptance."
++        ),
++    }
++    (output / "verification.json").write_text(json.dumps(report, indent=2) + "\n")
++    print(json.dumps(report))
++
++
++if __name__ == "__main__":
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("mode", choices=("build", "verify"))
++    parser.add_argument("output", type=Path)
++    args = parser.parse_args()
++    (build if args.mode == "build" else verify)(args.output.resolve())

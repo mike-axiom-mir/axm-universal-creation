@@ -1,0 +1,716 @@
+diff --git a/DIAGRAM_TEMPLATE_PACK.md b/DIAGRAM_TEMPLATE_PACK.md
+new file mode 100644
+index 0000000..c8bb9b7
+--- /dev/null
++++ b/DIAGRAM_TEMPLATE_PACK.md
+@@ -0,0 +1,43 @@
++# Editable Infographic / Diagram Template Pack
++
++`visual.diagram.core` gives Universal Creation a source-first foundation for architecture maps, flowcharts, causal/relationship diagrams, explainers, evidence maps and infographics.
++
++The central rule is semantic truth: **visual proximity never becomes an undeclared relationship**. Nodes, edges, data, claims, annotations and evidence remain distinct editable state.
++
++## Product surfaces
++
++The product contains ten responsive screens:
++
++- project / diagram hub;
++- canvas editor;
++- node editor;
++- relationship editor;
++- evidence / data binding editor;
++- annotation / callout editor;
++- legend / semantic style editor;
++- layout variants;
++- review / truth check;
++- export matrix.
++
++## Semantic and evidence contracts
++
++- `diagram-node` — exact entity/concept/state identity;
++- `relationship-edge` — exact from/to endpoints, relation type and direction;
++- `evidence-reference` — source plus observed/derived/claimed/missing status;
++- `data-field` — value, unit, source and period/freshness remain explicit;
++- `annotation-pin` — exact target reference;
++- `legend-entry` — semantics cannot depend on color alone;
++- `group-boundary` — membership/criteria remain explicit;
++- `layout-guide` — layout aids cannot change semantic relationships;
++- `callout-card` — content and evidence status stay separate;
++- `diagram-export-target` — output requirements stay explicit.
++
++## Layout variation
++
++Alternate routing, grouping and aspect/layout choices may improve readability, but they cannot add/remove/retype semantic relationships. `math_hooks` expose spacing and label-clearance ranges for the separate mathematics lane.
++
++## Truth boundary
++
++This pack proves deterministic structure and semantic/evidence contracts only. It does not prove that a relationship is scientifically or factually true, that evidence is sufficient, that causal interpretation is justified, that numerical data is correct, or that a finished diagram is aesthetically effective.
++
++Consuming products must provide real sources/evidence. Missing, disputed, derived and claimed state stays visible rather than being converted into confident-looking graphics.
+diff --git a/VISUAL_TEMPLATE_FABRIC.md b/VISUAL_TEMPLATE_FABRIC.md
+index 177c2da..ae66167 100644
+--- a/VISUAL_TEMPLATE_FABRIC.md
++++ b/VISUAL_TEMPLATE_FABRIC.md
+@@ -2,88 +2,65 @@
+ 
+ Universal Creation contains one deterministic library of **known visual archetypes** between low-level format scaffolds and finished products. Templates are editable structural starting points, not finished art and not automatic canon.
+ 
+-The public module remains `axm_uc.visual_templates`. The retained kernel is `visual_template_core.py`; explicit extension packs add game/product, creative/narrative, AXM-system, shared-game, key-art, card/deck, cinematic and broadcast/video-overlay knowledge before the facade validates one composed v1 catalog. Sticker Fabric remains the immutable/versioned local registry bridge. Mathematical work can enrich declared ratios/ranges through `math_hooks` without replacing template identity.
+-
+-## Current v8 candidate census
+-
+-- **106 reusable visual/state primitives**
+-- **16 coherent style systems**
+-- **144 responsive screen archetypes**
+-- **14 whole-product archetypes**
+-- **158 exact screen/product definitions** when explicitly installed into Sticker Registry
+-
+-Every major game/editor/comic/AXM/key-art/card/cinematic/broadcast family provides compact, standard and wide normalized layouts. Unknown requested variants fail rather than silently falling back.
+-
+-## Product foundations accumulated so far
+-
+-### Games
+-
+-- `game.racing.performance` — compact racing shell.
+-- `game.racing.full` — professional 19-screen racing product.
+-- `game.coop.action` — reusable co-op action shell.
+-- `game.rts.command` — persistent-world RTS command shell.
+-- `game.system.shell` — optional genre-neutral product plumbing.
+-- `game.shared.core` — inventory, progression, missions/maps/objectives, upgrades, lore, revive/boss/spectator state, session summaries and challenges.
+-
+-Optional online/account surfaces remain capabilities, not requirements for local/offline products.
+-
+-### Creative/editor
+-
+-`editor.creative.core` provides twelve coordinated source-first editing surfaces spanning assets, layers, timeline, graph, inspector, animation, effects, cutscenes, materials, audio and review/export.
+-
+-### Comics / visual narrative
+-
+-`comic.narrative.core` provides ten editable story surfaces. Page geometry, panels, source art, dialogue, bubble body/tail, captions, references, reading order, branching beats and motion timing remain separate semantic state.
+-
+-### AXM system / monolith shell
+-
+-`axm.system.shell` provides twelve AXM-native surfaces for registry, capabilities, portable packages, state, evidence, workflow, specialists, workfloor, snapshots, settings and recovery. Human-facing views use progressive detail while source/version/evidence and recovery consequences remain inspectable.
+-
+-### Editable key art / poster / cover composition
+-
+-`visual.keyart.core` provides ten source-first composition surfaces for project setup, composition, subject staging, typography, lighting/effects, atmosphere, crop variants, alternate compositions, review and export. Subject source, depth, masks, type, credits, lighting passes, crop-safe frames, exact variants and export targets remain separate editable state.
+-
+-### Editable cards / decks / collectibles
+-
+-`visual.cards.core` provides eleven source-first surfaces for face/back design, artwork, exact text/stats/rules, rarity/style, foil/finish, deck construction, print-sheet layout and review/export. Artwork/crop, rules text, costs, card/deck state, finish layers and print guides remain distinct source/derived state.
+-
+-### Editable cinematic titles / credits / overlays
+-
+-`visual.cinematic.core` provides ten source-first cinematic identity and timed-overlay surfaces. Exact text, layout, timing, credit order, safe areas and transitions remain independent editable state; transitions stay derived between exact source states.
+-
+-### Editable video / program / stream overlays
+-
+-`visual.broadcast.core` provides ten source-first presentation surfaces:
+-
+-- project / scene-set hub;
+-- scene layout editor;
+-- source router and health view;
+-- camera/source frame editor;
+-- score/status field editor;
+-- alert / notification editor;
+-- chat / event-feed editor;
+-- scene set and switching editor;
+-- format / safe-area variants;
+-- review / output.
+-
+-Its `visual.broadcast.modular` style is replaceable. The important contract is that convincing presentation never substitutes for source truth:
+-
+-- `source-window` keeps exact source identity visible;
+-- `camera-slot` keeps source identity separate from crop/framing;
+-- `status-field` carries value, source and freshness;
+-- `alert-cue` forbids showing unobserved success;
+-- `chat-panel` keeps delivery/offline/error state explicit;
+-- `scene-state` preserves exact preview/live scene identity;
+-- `overlay-zone` keeps overlap conflicts visible;
+-- `identity-panel` keeps source asset and transform separate;
+-- `transition-state` requires exact from/to scene identities;
+-- `output-monitor` requires observed output-target state.
+-
+-Landscape, portrait, square and vertical variants may adapt composition while preserving exact source bindings and current scene state.
++The public module remains `axm_uc.visual_templates`. Explicit extension packs now cover games/product plumbing, creative editors, comics, AXM system surfaces, key art, cards/decks, cinematic overlays, video/broadcast overlays and evidence-aware diagrams. Sticker Fabric remains the immutable/versioned registry bridge. Mathematical work can enrich declared ratios/ranges through `math_hooks` without replacing template identity.
++
++## Current v9 candidate census
++
++- **116 reusable visual/state primitives**
++- **17 coherent style systems**
++- **154 responsive screen archetypes**
++- **15 whole-product archetypes**
++- **169 exact screen/product definitions** when explicitly installed into Sticker Registry
++
++Every major family provides compact, standard and wide normalized layouts. Unknown requested variants fail rather than silently falling back.
++
++## Major product foundations
++
++- `game.racing.performance`, `game.racing.full`, `game.coop.action`, `game.rts.command`, `game.system.shell`, `game.shared.core`
++- `editor.creative.core`
++- `comic.narrative.core`
++- `axm.system.shell`
++- `visual.keyart.core`
++- `visual.cards.core`
++- `visual.cinematic.core`
++- `visual.broadcast.core`
++- `visual.diagram.core`
++
++The previously merged packs preserve exact source/edit state: game ownership/progression/runtime status, editor layers/timelines/graphs, comic page/panel/dialogue state, AXM source/evidence/recovery state, key-art subject/type/crop state, card rules/face/back/deck/print state, cinematic text/timing/credits state, and broadcast source/freshness/delivery/output state.
++
++## Evidence-aware diagrams / infographics
++
++`visual.diagram.core` provides ten source-first diagram surfaces:
++
++- project / diagram hub;
++- canvas editor;
++- node editor;
++- relationship editor;
++- evidence / data binding editor;
++- annotation / callout editor;
++- legend / semantic style editor;
++- layout variants;
++- review / truth check;
++- export matrix.
++
++Its `visual.diagram.evidence` style is replaceable. The semantic contract matters more than appearance:
++
++- `diagram-node` keeps exact entity/concept/state identity;
++- `relationship-edge` requires exact endpoints, relation type and direction;
++- `evidence-reference` keeps source plus observed/derived/claimed/missing status;
++- `data-field` keeps value, unit, source and period/freshness explicit;
++- `annotation-pin` requires an exact target;
++- `legend-entry` cannot depend on color alone;
++- `group-boundary` keeps membership/criteria explicit;
++- `layout-guide` cannot change semantic relationships;
++- `callout-card` keeps content and evidence status separate;
++- `diagram-export-target` keeps output requirements explicit.
++
++**Visual proximity is never allowed to imply an undeclared relationship.** Alternate layouts/routing may improve readability but cannot add, remove or retype semantic edges.
+ 
+ ## Registry and identity
+ 
+-Every built-in screen/product can be wrapped as an ordinary immutable Sticker definition:
++Every built-in screen/product can be wrapped as an immutable Sticker definition:
+ 
+ ```python
+ from axm_stickers import Registry
+@@ -93,50 +70,39 @@ with Registry('stickers.sqlite') as registry:
+     pins = install_builtins(registry)
+ ```
+ 
+-Definitions use exact id/version/digest identity. There is no floating `latest`, silent upgrade or automatic canon. Screen Sticker slots accept exact pins only and validate declared socket/tag requirements.
++Definitions use exact id/version/digest identity. There is no floating `latest`, silent upgrade or automatic canon.
+ 
+ ## CLI
+ 
+ ```sh
+ axm-visual-templates catalog
+-axm-visual-templates show visual.broadcast.core
+-axm-visual-templates show visual.cinematic.core
+-axm-visual-templates show visual.cards.core
+-axm-visual-templates show visual.keyart.core
+-axm-visual-templates show game.shared.core
+-axm-visual-templates show editor.creative.core
+-axm-visual-templates show comic.narrative.core
+-axm-visual-templates show axm.system.shell
+-axm-visual-templates render visual.broadcast.core creations/broadcast --width 1920 --height 1080
++axm-visual-templates show visual.diagram.core
++axm-visual-templates render visual.diagram.core creations/diagram --width 1920 --height 1080
+ ```
+ 
+-A product preview contains one structural SVG per screen plus exact `product.json` and local HTML gallery. Preview/export is derived inspection output, not authoritative source.
++A product preview contains structural SVGs plus exact resolved source metadata and a local gallery. Preview/export remains derived inspection output, never authoritative source.
+ 
+ ## Evidence gate
+ 
+-Run:
+-
+ ```sh
+ python -m unittest discover -s tests -p 'test_visual_templates.py' -v
+ python tools/visual_template_proof.py /new/output/path
+ ```
+ 
+-The v8 candidate gate requires:
++The v9 gate requires:
+ 
+-- exact census: 16 styles / 106 primitives / 144 screens / 14 products;
+-- all 144 screens inside six representative viewport shapes;
+-- exact product screen order and flow across those viewports;
+-- parseable galleries for all prior proof products plus video/stream overlays;
+-- all 158 screen/product definitions install through the existing immutable Sticker Registry;
+-- exact source identity, crop/source separation, status freshness, delivery state, scene identity and output-state contracts remain present;
+-- alerts cannot imply unobserved success, overlay conflicts remain visible and transitions keep exact from/to scene identity;
+-- prior source boundaries from cinematic, cards, key art, comics, gameplay and AXM state remain intact;
+-- copy safety, strict variant rejection, invalid-geometry rejection and exact Sticker slot binding remain intact.
++- exact census: 17 styles / 116 primitives / 154 screens / 15 products;
++- all 154 screens stay within six representative viewport shapes;
++- exact product screen order and flows resolve across those viewports;
++- parseable galleries for all prior proof products plus `visual.diagram.core`;
++- all 169 screen/product definitions install through Sticker Registry;
++- exact nodes, relationship endpoints/types, evidence/source status, value/unit/source/period, target-bound annotations, non-color legends and explicit group membership remain present;
++- layout variants cannot rewrite semantic relationships;
++- prior broadcast/cinematic/card/key-art/comic/game/AXM source boundaries remain intact;
++- copy safety, strict variant rejection, invalid-geometry rejection and exact Sticker-slot binding remain intact.
+ 
+ ## Truth boundary
+ 
+-Current evidence proves deterministic structural knowledge and editability/state vocabulary only. It does **not** prove live capture, score correctness, chat/message delivery, encoder or output health, network latency, streaming-platform integration, privacy compliance, target-engine rendering, gameplay feel, authoring ergonomics or aesthetic acceptance.
+-
+-Templates must be connected to actual runtime/project state by the consuming product. Unknown or unavailable state stays visibly unknown rather than being invented. A convincing preview is never evidence that a live source exists. Richer editable source remains authoritative over lossy previews/exports. Templates may be mutated, combined, replaced or ignored when better evidence and product intent support another solution.
++Current evidence proves deterministic structural and semantic/editability contracts only. It does **not** prove that a diagrammed relationship is true, causal, sufficiently evidenced or statistically valid; it does not prove numerical data correctness, source reliability, accessibility compliance or aesthetic acceptance.
+ 
+-The goal is to stop creation from beginning at zero while preserving agency, exact source truth, deep editability and room for better solutions.
++Consuming products must provide real source/evidence state. Missing, disputed, derived and claimed information stays distinguishable. Richer editable source remains authoritative over previews/exports. Templates may be mutated, combined, replaced or ignored when better evidence and product intent support another solution.
+diff --git a/VISUAL_TEMPLATE_PRIORITY_MAP.md b/VISUAL_TEMPLATE_PRIORITY_MAP.md
+index 08d4556..1bcf481 100644
+--- a/VISUAL_TEMPLATE_PRIORITY_MAP.md
++++ b/VISUAL_TEMPLATE_PRIORITY_MAP.md
+@@ -1,94 +1,76 @@
+ # AXM Visual Template Expansion Priority Map
+ 
+-Status: v8 growth lane after verified v1–v7 merges.
++Status: v9 growth lane after verified v1–v8 merges.
+ 
+ The visual-template fabric grows where Universal Creation is likely to reuse the knowledge soon. This is a build priority, not canon: templates remain editable foundations and may be replaced when evidence supports a better structure.
+ 
+-## Priority 1 — Creative editor core — MERGED
++## Merged foundations
+ 
+-`editor.creative.core` — assets, layers, timeline, graphs, inspector, animation, effects, cutscenes, materials, audio and review/export.
++- `editor.creative.core` — professional source-first editing surfaces.
++- `comic.narrative.core` — editable comics and visual narrative.
++- `axm.system.shell` — AXM registry/state/evidence/workflow/recovery shell.
++- `game.shared.core` plus racing/co-op/RTS/game-system foundations.
++- `visual.keyart.core` — editable key art/poster/cover composition.
++- `visual.cards.core` — editable cards/decks/collectibles.
++- `visual.cinematic.core` — exact cinematic titles/credits/subtitles/timed overlays.
++- `visual.broadcast.core` — source-truth video/program/stream overlays.
+ 
+-## Priority 2 — Editable comics and visual narrative — MERGED
++## Priority 5E — Evidence-aware infographic / diagram editor — IMPLEMENTED IN THIS LANE
+ 
+-`comic.narrative.core` — page/panel/dialogue editing, characters, scene graph, storyboard, motion timeline, reader preview and export.
+-
+-## Priority 3 — AXM software / monolith shell — MERGED
+-
+-`axm.system.shell` — registry, capabilities, cartridge loader, machine state, evidence, workflow, specialists, workfloor, snapshots and recovery.
+-
+-## Priority 4 — Shared gameplay systems — MERGED
+-
+-`game.shared.core` — inventory, progression, missions/maps/objectives, upgrades, codex, revive/boss/spectator state, session summaries and challenges.
+-
+-## Priority 5A — Editable key art / poster / cover composition — MERGED
+-
+-`visual.keyart.core` — source-first composition, subject staging, typography, lighting/effects, atmosphere, crop variants, exact alternate compositions, review and export.
+-
+-## Priority 5B — Card / deck editor — MERGED
+-
+-`visual.cards.core` — card face/back, source artwork, exact text/stats/rules, rarity, effects/foil, deck construction, print sheets and review/export.
+-
+-## Priority 5C — Cinematic title / credits / overlay editor — MERGED
+-
+-`visual.cinematic.core` — exact title, chapter, lower-third, subtitle, credits, timed overlay, transition, safe-area variants and review/export state.
+-
+-## Priority 5D — Video / stream overlay editor — IMPLEMENTED IN THIS LANE
+-
+-Product: `visual.broadcast.core`
++Product: `visual.diagram.core`
+ 
+ Implemented screens:
+ 
+-- `visual.broadcast.project-hub`
+-- `visual.broadcast.scene-editor`
+-- `visual.broadcast.source-router`
+-- `visual.broadcast.camera-editor`
+-- `visual.broadcast.score-status`
+-- `visual.broadcast.alert-editor`
+-- `visual.broadcast.chat-social`
+-- `visual.broadcast.scene-set`
+-- `visual.broadcast.format-variants`
+-- `visual.broadcast.review-output`
++- `visual.diagram.project-hub`
++- `visual.diagram.canvas-editor`
++- `visual.diagram.node-editor`
++- `visual.diagram.relationship-editor`
++- `visual.diagram.evidence-editor`
++- `visual.diagram.annotation-editor`
++- `visual.diagram.legend-style`
++- `visual.diagram.layout-variants`
++- `visual.diagram.review-compare`
++- `visual.diagram.export`
+ 
+ New primitives:
+ 
+-- `source-window`
+-- `camera-slot`
+-- `status-field`
+-- `alert-cue`
+-- `chat-panel`
+-- `scene-state`
+-- `overlay-zone`
+-- `identity-panel`
+-- `transition-state`
+-- `output-monitor`
++- `diagram-node`
++- `relationship-edge`
++- `evidence-reference`
++- `data-field`
++- `annotation-pin`
++- `legend-entry`
++- `group-boundary`
++- `layout-guide`
++- `callout-card`
++- `diagram-export-target`
+ 
+-Style: `visual.broadcast.modular`.
++Style: `visual.diagram.evidence`.
+ 
+-Live-looking presentation is not allowed to manufacture live truth: source identity, freshness, delivery state, scene identity and output status remain explicit and bindable to real observations.
++The central rule is semantic truth: visual proximity never becomes an undeclared relationship. Exact edge endpoints/type/direction, evidence status, values/units/periods and group membership remain editable source state. Layout variants may improve readability but cannot rewrite semantics.
+ 
+-## Priority 5E — Next high-value visual/creation families
++## Next high-value visual/creation families
+ 
+-1. **Infographic / diagram editor** — nodes, relationships, legends, annotations, evidence/source panels and export layouts.
+-2. **World-map / lore-atlas editor** — regions, routes, layers, points of interest, time/state overlays and narrative references.
+-3. **Interactive visual-novel surfaces** — dialogue, choices, character staging, backgrounds, history/log, saves and branching state.
+-4. **3D showroom / gallery presentation** — hero object, comparison, annotations, material/variant selection and orbit/detail views.
+-5. **Music visualizer / album-art editor** — cover systems, track identity, waveform/beat-driven visual states and export crops.
++1. **World-map / lore-atlas editor** — regions, routes, layers, points of interest, time/state overlays and narrative references without invented coordinates or route truth.
++2. **Interactive visual-novel surfaces** — dialogue, choices, character staging, backgrounds, history/log, saves and branching state.
++3. **3D showroom / gallery presentation** — hero object, comparison, annotations, material/variant selection and orbit/detail views.
++4. **Music visualizer / album-art editor** — cover systems, track identity, waveform/beat-driven visual states and export crops.
+ 
+ ## Cross-cutting rules
+ 
+-Every new family should preserve the existing visual-template contract:
++Every family preserves the existing visual-template contract:
+ 
+ 1. normalized responsive geometry with explicit compact/standard/wide behavior where relevant;
+-2. exact identity/version/digest through the existing Sticker Registry bridge;
++2. exact identity/version/digest through the Sticker Registry bridge;
+ 3. no floating `latest` references or silent upgrades;
+ 4. richer editable source remains authoritative over preview/export derivatives;
+-5. selection, focus, ownership, errors and consequences do not depend on color alone;
++5. meaning, selection, ownership, errors and consequences do not depend on color alone;
+ 6. `math_hooks` remain available for mathematical ratio/range growth without replacing template identity;
+ 7. templates are known foundations, never automatic canon.
+ 
+ ## Immediate build order
+ 
+-1. exact-head verify `visual.broadcast.core`;
+-2. merge v8 only when template + repository checks pass;
+-3. begin infographic / diagram editing from fresh main;
+-4. keep prioritizing reusable editors over flat one-off output templates.
++1. exact-head verify `visual.diagram.core`;
++2. merge v9 only when template + repository checks pass;
++3. begin world-map / lore-atlas editing from fresh main;
++4. keep prioritizing reusable source-first editors over flat one-off outputs.
+diff --git a/src/axm_uc/visual_template_diagram.py b/src/axm_uc/visual_template_diagram.py
+new file mode 100644
+index 0000000..9675227
+--- /dev/null
++++ b/src/axm_uc/visual_template_diagram.py
+@@ -0,0 +1,88 @@
++"""Editable evidence-aware infographic and diagram foundations."""
++from __future__ import annotations
++from copy import deepcopy
++from typing import Any
++
++
++def _merge(target: dict[str, Any], additions: dict[str, Any], label: str) -> None:
++    overlap=sorted(set(target)&set(additions))
++    if overlap: raise RuntimeError(f"diagram {label} collision: {', '.join(overlap)}")
++    target.update(deepcopy(additions))
++
++
++def extend_diagram_catalog(namespace: dict[str, Any]) -> None:
++    styles=namespace['STYLE_SYSTEMS']; primitives=namespace['PRIMITIVES']
++    screens=namespace['SCREEN_TEMPLATES']; products=namespace['PRODUCT_ARCHETYPES']
++    screen=namespace['_screen']; origin=namespace['_origin']
++
++    _merge(styles,{'visual.diagram.evidence':{
++        'intent':'high-clarity diagrams and infographics where relationship meaning, provenance and uncertainty remain inspectable',
++        'tokens':{'canvas':'#0b0f14','surface':'#161d25','surface_raised':'#202b36','text':'#edf3f6','muted':'#9eacb6','accent':'#76c6df','warning':'#e8bd70','danger':'#e47a7d','line':'#40505b'},
++        'shape':{'panel_radius_ratio':0.012,'cut_ratio':0.002,'line_ratio':0.0013},
++        'type':{'display_weight':720,'body_weight':500,'metric_scale':1.45,'tracking':0.010},
++        'depth':{'layers':5,'shadow':'subtle','glass':'none'},
++        'motion':{'fast_ms':80,'standard_ms':160,'slow_ms':280,'principle':'meaning and evidence before decorative movement'},
++    }},'style')
++
++    _merge(primitives,{
++        'diagram-node':{'role':'one exact entity/concept/state node with identity and source/provenance state','states':['active','selected','unknown','disputed'],'identity_must_be_exact':True},
++        'relationship-edge':{'role':'explicit relation from one exact node to another with relation type and direction','states':['active','selected','uncertain','disputed'],'endpoints_and_relation_type_required':True},
++        'evidence-reference':{'role':'source/evidence reference supporting a node, edge or statement','states':['observed','derived','claimed','missing'],'source_and_status_required':True},
++        'data-field':{'role':'one quantitative/categorical value with source, unit and freshness/period state','states':['current','historical','unknown','stale','error'],'value_unit_source_period_required':True},
++        'annotation-pin':{'role':'annotation/callout bound to one exact target','states':['active','selected','orphaned','hidden'],'target_reference_must_be_exact':True},
++        'legend-entry':{'role':'legend mapping for symbol/pattern/line semantics','states':['active','selected','unused'],'meaning_must_not_depend_on_color_only':True},
++        'group-boundary':{'role':'explicit visual grouping with named membership/criteria','states':['active','selected','collapsed','uncertain'],'membership_must_be_explicit':True},
++        'layout-guide':{'role':'derived alignment/routing guide that may aid composition but is not semantic source','states':['active','selected','hidden'],'guide_must_not_change_semantic_relationships':True},
++        'callout-card':{'role':'explanatory claim/note with source/status separate from presentation','states':['observed','derived','claimed','warning'],'content_and_evidence_status_separate':True},
++        'diagram-export-target':{'role':'one exact output target with dimensions, crop and content-inclusion state','states':['ready','warning','blocked','exported'],'target_requirements_must_be_visible':True},
++    },'primitive')
++
++    q=['visual adjacency alone must never imply an undeclared relationship','relationship direction and meaning remain explicit source state','claims, observations, derivations and missing evidence remain distinguishable','layout/routing changes cannot silently rewrite semantic relationships','derived exports never replace richer editable diagram source']
++    def v(c,s,w): return {'compact':c,'standard':s,'wide':w}
++    additions={
++      'visual.diagram.project-hub':screen('visual.diagram.project-hub','Diagram and infographic project hub','creative.diagram','visual.diagram.evidence','browse diagrams, evidence coverage, source completeness, variants and output targets before editing',v(
++        {'header':(.03,.03,.94,.08),'projects':(.03,.14,.94,.30),'sources':(.03,.47,.45,.38),'outputs':(.51,.47,.46,.27),'actions':(.51,.77,.46,.08)},
++        {'header':(.02,.03,.96,.075),'projects':(.02,.14,.22,.82),'sources':(.27,.14,.46,.82),'outputs':(.76,.14,.22,.55),'actions':(.76,.72,.22,.14)},
++        {'header':(.015,.03,.97,.07),'projects':(.015,.13,.20,.84),'sources':(.24,.13,.50,.84),'outputs':(.77,.13,.215,.57),'actions':(.77,.73,.215,.14)}),tags=['visual','diagram','infographic','project'],quality=q),
++      'visual.diagram.canvas-editor':screen('visual.diagram.canvas-editor','Diagram canvas editor','creative.diagram','visual.diagram.evidence','compose exact nodes, relationships, groups, labels and evidence references in one source-first diagram workspace',v(
++        {'toolbar':(.02,.02,.96,.07),'canvas':(.12,.11,.76,.56),'library':(.02,.11,.08,.56),'properties':(.90,.11,.08,.56),'evidence':(.02,.70,.46,.28),'checks':(.51,.70,.47,.28)},
++        {'toolbar':(.015,.02,.97,.065),'library':(.015,.105,.16,.75),'canvas':(.19,.105,.58,.75),'properties':(.79,.105,.195,.75),'evidence':(.19,.88,.38,.10),'checks':(.59,.88,.395,.10)},
++        {'toolbar':(.012,.02,.976,.06),'library':(.012,.10,.14,.77),'canvas':(.17,.10,.62,.77),'properties':(.805,.10,.183,.77),'evidence':(.17,.90,.40,.08),'checks':(.59,.90,.398,.08)}),tags=['visual','diagram','canvas','editor'],math_hooks={'node_spacing_ratio':[0.02,0.12],'edge_clearance_ratio':[0.01,0.06]},quality=q),
++      'visual.diagram.node-editor':screen('visual.diagram.node-editor','Diagram node editor','creative.diagram','visual.diagram.evidence','edit node identity, label, type, state, evidence and styling without merging semantics into appearance',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.36),'identity':(.03,.53,.30,.34),'state':(.36,.53,.29,.34),'evidence':(.68,.53,.29,.34),'actions':(.03,.90,.94,.07)},
++        {'header':(.02,.03,.96,.075),'identity':(.02,.14,.20,.72),'preview':(.245,.14,.50,.72),'state':(.77,.14,.21,.34),'evidence':(.77,.51,.21,.23),'actions':(.77,.77,.21,.09)},
++        {'header':(.015,.03,.97,.07),'identity':(.015,.13,.18,.74),'preview':(.215,.13,.54,.74),'state':(.775,.13,.21,.35),'evidence':(.775,.51,.21,.24),'actions':(.775,.78,.21,.09)}),tags=['visual','diagram','node','editor'],quality=q),
++      'visual.diagram.relationship-editor':screen('visual.diagram.relationship-editor','Relationship editor','creative.diagram','visual.diagram.evidence','edit exact from/to nodes, relation type, direction, confidence/status and supporting evidence',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.34),'relations':(.03,.51,.55,.34),'details':(.61,.51,.36,.25),'actions':(.61,.79,.36,.06)},
++        {'header':(.02,.03,.96,.075),'relations':(.02,.14,.28,.72),'preview':(.33,.14,.44,.72),'details':(.80,.14,.18,.54),'actions':(.80,.71,.18,.15)},
++        {'header':(.015,.03,.97,.07),'relations':(.015,.13,.26,.74),'preview':(.305,.13,.47,.74),'details':(.795,.13,.19,.55),'actions':(.795,.71,.19,.16)}),tags=['visual','diagram','relationship','edge'],quality=q),
++      'visual.diagram.evidence-editor':screen('visual.diagram.evidence-editor','Evidence and data binding editor','creative.diagram','visual.diagram.evidence','bind exact sources, claims, observations, values, units, periods and freshness to diagram elements without fabricating missing evidence',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.30),'sources':(.03,.47,.58,.39),'details':(.64,.47,.33,.27),'actions':(.64,.77,.33,.09)},
++        {'header':(.02,.03,.96,.075),'sources':(.02,.14,.30,.72),'preview':(.35,.14,.40,.72),'details':(.78,.14,.20,.54),'actions':(.78,.71,.20,.15)},
++        {'header':(.015,.03,.97,.07),'sources':(.015,.13,.28,.74),'preview':(.32,.13,.43,.74),'details':(.775,.13,.21,.55),'actions':(.775,.71,.21,.16)}),tags=['visual','diagram','evidence','data'],quality=q),
++      'visual.diagram.annotation-editor':screen('visual.diagram.annotation-editor','Annotation and callout editor','creative.diagram','visual.diagram.evidence','edit exact target-bound annotations, explanatory claims and evidence status while preserving source diagram context',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.34),'annotations':(.03,.51,.55,.34),'details':(.61,.51,.36,.25),'actions':(.61,.79,.36,.06)},
++        {'header':(.02,.03,.96,.075),'annotations':(.02,.14,.28,.72),'preview':(.33,.14,.44,.72),'details':(.80,.14,.18,.54),'actions':(.80,.71,.18,.15)},
++        {'header':(.015,.03,.97,.07),'annotations':(.015,.13,.26,.74),'preview':(.305,.13,.47,.74),'details':(.795,.13,.19,.55),'actions':(.795,.71,.19,.16)}),tags=['visual','diagram','annotation','callout'],quality=q),
++      'visual.diagram.legend-style':screen('visual.diagram.legend-style','Legend and semantic style editor','creative.diagram','visual.diagram.evidence','edit symbol, line, pattern, label and group semantics with non-color cues and explicit meaning',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.34),'legend':(.03,.51,.45,.34),'style':(.51,.51,.46,.34),'actions':(.03,.88,.94,.09)},
++        {'header':(.02,.03,.96,.075),'legend':(.02,.14,.20,.72),'preview':(.245,.14,.50,.72),'style':(.77,.14,.21,.54),'actions':(.77,.71,.21,.15)},
++        {'header':(.015,.03,.97,.07),'legend':(.015,.13,.18,.74),'preview':(.215,.13,.54,.74),'style':(.775,.13,.21,.55),'actions':(.775,.71,.21,.16)}),tags=['visual','diagram','legend','style'],quality=q),
++      'visual.diagram.layout-variants':screen('visual.diagram.layout-variants','Diagram layout variants','creative.diagram','visual.diagram.evidence','compare alternate routing/grouping/layouts while preserving exact semantic nodes, edges, memberships and evidence',v(
++        {'header':(.03,.03,.94,.08),'source':(.03,.14,.94,.27),'variants':(.03,.44,.94,.34),'checks':(.03,.81,.55,.15),'actions':(.61,.81,.36,.15)},
++        {'header':(.02,.03,.96,.075),'source':(.02,.14,.38,.72),'variants':(.43,.14,.55,.50),'checks':(.43,.67,.31,.19),'actions':(.77,.67,.21,.19)},
++        {'header':(.015,.03,.97,.07),'source':(.015,.13,.36,.74),'variants':(.40,.13,.585,.51),'checks':(.40,.67,.34,.20),'actions':(.765,.67,.22,.20)}),tags=['visual','diagram','layout','variants'],math_hooks={'group_gap_ratio':[0.03,0.14],'label_clearance_ratio':[0.01,0.06]},quality=q),
++      'visual.diagram.review-compare':screen('visual.diagram.review-compare','Diagram review and truth check','creative.diagram','visual.diagram.evidence','review semantic completeness, missing evidence, orphan annotations, ambiguous edges and misleading visual proximity before export',v(
++        {'header':(.03,.03,.94,.08),'primary':(.03,.14,.45,.45),'alternate':(.52,.14,.45,.45),'checks':(.03,.62,.58,.26),'actions':(.64,.62,.33,.26)},
++        {'header':(.02,.03,.96,.075),'primary':(.02,.14,.38,.63),'alternate':(.42,.14,.38,.63),'checks':(.82,.14,.16,.45),'actions':(.82,.62,.16,.15)},
++        {'header':(.015,.03,.97,.07),'primary':(.015,.13,.39,.65),'alternate':(.42,.13,.39,.65),'checks':(.825,.13,.16,.47),'actions':(.825,.63,.16,.15)}),tags=['visual','diagram','review','truth'],quality=q),
++      'visual.diagram.export':screen('visual.diagram.export','Diagram export matrix','creative.diagram','visual.diagram.evidence','review exact output targets, inclusion/exclusion, crop, source-note and evidence-status requirements before derived export',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.30),'targets':(.03,.47,.58,.39),'details':(.64,.47,.33,.27),'actions':(.64,.77,.33,.09)},
++        {'header':(.02,.03,.96,.075),'preview':(.02,.14,.38,.72),'targets':(.43,.14,.34,.72),'details':(.79,.14,.19,.48),'actions':(.79,.65,.19,.21)},
++        {'header':(.015,.03,.97,.07),'preview':(.015,.13,.36,.74),'targets':(.40,.13,.37,.74),'details':(.79,.13,.195,.49),'actions':(.79,.65,.195,.22)}),tags=['visual','diagram','export','target'],quality=q),
++    }
++    _merge(screens,additions,'screen')
++    ids=list(additions)
++    product={'schema':'axm.visual-product/v1','id':'visual.diagram.core','version':1,'name':'Editable evidence-aware diagram core','kind':'product','domain':'creative.diagram','tags':['visual','diagram','infographic','evidence','product'],'origin':origin(),'style':'visual.diagram.evidence','intent':'source-first diagram and infographic editing with exact entities, relations, data/evidence, annotations, semantic legends and layout variants','screens':ids,'flow':[
++      ['visual.diagram.project-hub','visual.diagram.canvas-editor','edit-diagram'],['visual.diagram.canvas-editor','visual.diagram.node-editor','edit-node'],['visual.diagram.canvas-editor','visual.diagram.relationship-editor','edit-relationship'],['visual.diagram.canvas-editor','visual.diagram.evidence-editor','bind-evidence'],['visual.diagram.canvas-editor','visual.diagram.annotation-editor','edit-annotations'],['visual.diagram.canvas-editor','visual.diagram.legend-style','edit-legend'],['visual.diagram.canvas-editor','visual.diagram.layout-variants','compare-layouts'],['visual.diagram.layout-variants','visual.diagram.review-compare','review'],['visual.diagram.review-compare','visual.diagram.export','export']], 'quality':q}
++    _merge(products,{'visual.diagram.core':product},'product')
+diff --git a/src/axm_uc/visual_templates.py b/src/axm_uc/visual_templates.py
+index e531655..acfd67f 100644
+--- a/src/axm_uc/visual_templates.py
++++ b/src/axm_uc/visual_templates.py
+@@ -17,8 +17,9 @@ from .visual_template_keyart import extend_keyart_catalog as _extend_keyart_cata
+ from .visual_template_cards import extend_card_catalog as _extend_card_catalog
+ from .visual_template_cinematic import extend_cinematic_catalog as _extend_cinematic_catalog
+ from .visual_template_video_overlay import extend_video_overlay_catalog as _extend_video_overlay_catalog
++from .visual_template_diagram import extend_diagram_catalog as _extend_diagram_catalog
+ 
+-_COMPOSITION=("visual_template_growth","visual_template_game_systems","visual_template_creative_narrative","visual_template_axm_system","visual_template_game_shared","visual_template_keyart","visual_template_cards","visual_template_cinematic","visual_template_video_overlay")
++_COMPOSITION=("visual_template_growth","visual_template_game_systems","visual_template_creative_narrative","visual_template_axm_system","visual_template_game_shared","visual_template_keyart","visual_template_cards","visual_template_cinematic","visual_template_video_overlay","visual_template_diagram")
+ _applied=getattr(_core,"_AXM_VISUAL_COMPOSITION",None)
+ if _applied is None:
+     _extend_catalog(vars(_core))
+@@ -30,6 +31,7 @@ if _applied is None:
+     _extend_card_catalog(vars(_core))
+     _extend_cinematic_catalog(vars(_core))
+     _extend_video_overlay_catalog(vars(_core))
++    _extend_diagram_catalog(vars(_core))
+     _core._AXM_VISUAL_COMPOSITION=_COMPOSITION
+ elif _applied != _COMPOSITION:
+     raise RuntimeError("visual template composition changed inside a live process; restart with one exact catalog")
+diff --git a/tests/test_visual_templates.py b/tests/test_visual_templates.py
+index f09f8f7..5804798 100644
+--- a/tests/test_visual_templates.py
++++ b/tests/test_visual_templates.py
+@@ -8,18 +8,18 @@ from axm_stickers import Registry
+ from axm_uc import visual_templates as vt
+ 
+ SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
+-PRODUCTS=('game.racing.full','game.coop.action','game.rts.command','game.system.shell','game.shared.core','editor.creative.core','comic.narrative.core','axm.system.shell','visual.keyart.core','visual.cards.core','visual.cinematic.core','visual.broadcast.core')
++PRODUCTS=('game.racing.full','game.coop.action','game.rts.command','game.system.shell','game.shared.core','editor.creative.core','comic.narrative.core','axm.system.shell','visual.keyart.core','visual.cards.core','visual.cinematic.core','visual.broadcast.core','visual.diagram.core')
+ 
+ class VisualTemplateTests(unittest.TestCase):
+     def test_catalog_counts_and_products(self):
+         counts=vt.validate_catalog()
+-        self.assertEqual(counts,{'styles':16,'primitives':106,'screens':144,'products':14})
++        self.assertEqual(counts,{'styles':17,'primitives':116,'screens':154,'products':15})
+         self.assertEqual(vt.CATALOG_COMPOSITION['counts'],counts)
+         ids={p['id'] for p in vt.catalog()['products']}
+         self.assertTrue(set(PRODUCTS)|{'game.racing.performance','software.creator.studio'} <= ids)
+ 
+     def test_all_geometry_and_major_variants(self):
+-        prefixes=('game.','editor.creative.','comic.narrative.','axm.system.','visual.keyart.','visual.cards.','visual.cinematic.','visual.broadcast.')
++        prefixes=('game.','editor.creative.','comic.narrative.','axm.system.','visual.keyart.','visual.cards.','visual.cinematic.','visual.broadcast.','visual.diagram.')
+         for tid,definition in vt.SCREEN_TEMPLATES.items():
+             if tid.startswith(prefixes): self.assertEqual(set(definition['variants']),{'compact','standard','wide'},tid)
+             for width,height in SIZES:
+@@ -29,21 +29,21 @@ class VisualTemplateTests(unittest.TestCase):
+                     self.assertLessEqual(x+w,width+1e-6); self.assertLessEqual(y+h,height+1e-6)
+ 
+     def test_existing_product_depth_is_retained(self):
+-        expected={'game.racing.full':19,'game.system.shell':18,'game.shared.core':12,'editor.creative.core':12,'comic.narrative.core':10,'axm.system.shell':12,'visual.keyart.core':10,'visual.cards.core':11,'visual.cinematic.core':10}
++        expected={'game.racing.full':19,'game.system.shell':18,'game.shared.core':12,'editor.creative.core':12,'comic.narrative.core':10,'axm.system.shell':12,'visual.keyart.core':10,'visual.cards.core':11,'visual.cinematic.core':10,'visual.broadcast.core':10}
+         for pid,count in expected.items(): self.assertEqual(len(vt.get(pid)['screens']),count)
+ 
+-    def test_broadcast_product_preserves_source_and_live_state_truth(self):
+-        product=vt.get('visual.broadcast.core')
+-        required={'visual.broadcast.project-hub','visual.broadcast.scene-editor','visual.broadcast.source-router','visual.broadcast.camera-editor','visual.broadcast.score-status','visual.broadcast.alert-editor','visual.broadcast.chat-social','visual.broadcast.scene-set','visual.broadcast.format-variants','visual.broadcast.review-output'}
++    def test_diagram_product_preserves_semantic_evidence_truth(self):
++        product=vt.get('visual.diagram.core')
++        required={'visual.diagram.project-hub','visual.diagram.canvas-editor','visual.diagram.node-editor','visual.diagram.relationship-editor','visual.diagram.evidence-editor','visual.diagram.annotation-editor','visual.diagram.legend-style','visual.diagram.layout-variants','visual.diagram.review-compare','visual.diagram.export'}
+         self.assertEqual(set(product['screens']),required)
+-        self.assertEqual(product['style'],'visual.broadcast.modular')
++        self.assertEqual(product['style'],'visual.diagram.evidence')
+         quality=' '.join(product['quality']).lower()
+-        self.assertIn('source and freshness',quality)
+-        self.assertIn('exact',quality)
+-        self.assertIn('unobserved success',quality)
+-        self.assertIn('scene composition',quality)
+-        self.assertIn('safe_inset_ratio',vt.get('visual.broadcast.scene-editor')['math_hooks'])
+-        self.assertIn('safe_inset_ratio',vt.get('visual.broadcast.format-variants')['math_hooks'])
++        self.assertIn('visual adjacency',quality)
++        self.assertIn('relationship direction',quality)
++        self.assertIn('missing evidence',quality)
++        self.assertIn('semantic relationships',quality)
++        self.assertIn('node_spacing_ratio',vt.get('visual.diagram.canvas-editor')['math_hooks'])
++        self.assertIn('group_gap_ratio',vt.get('visual.diagram.layout-variants')['math_hooks'])
+ 
+     def test_products_resolve_and_previews_parse(self):
+         for pid in PRODUCTS:
+@@ -60,28 +60,29 @@ class VisualTemplateTests(unittest.TestCase):
+         with tempfile.TemporaryDirectory() as td:
+             with Registry(Path(td)/'stickers.sqlite') as registry:
+                 pins=vt.install_builtins(registry)
+-                self.assertEqual(len(pins),158)
+-                broadcast=registry.search(adapter=vt.ADAPTER,tag='broadcast',limit=100)['entries']
+-                self.assertEqual(len(broadcast),10)
+-                d=registry.get('visual.visual.broadcast.scene-editor',1)
++                self.assertEqual(len(pins),169)
++                diagram=registry.search(adapter=vt.ADAPTER,tag='diagram',limit=100)['entries']
++                self.assertEqual(len(diagram),10)
++                d=registry.get('visual.visual.diagram.canvas-editor',1)
+                 self.assertEqual(d['recipe']['visual_template']['schema'],vt.SCHEMA)
+                 self.assertNotIn('"latest"',json.dumps(d,sort_keys=True))
+ 
+-    def test_broadcast_source_freshness_scene_and_output_contracts(self):
+-        required={'source-window','camera-slot','status-field','alert-cue','chat-panel','scene-state','overlay-zone','identity-panel','transition-state','output-monitor'}
++    def test_diagram_semantic_evidence_and_layout_contracts(self):
++        required={'diagram-node','relationship-edge','evidence-reference','data-field','annotation-pin','legend-entry','group-boundary','layout-guide','callout-card','diagram-export-target'}
+         self.assertTrue(required <= set(vt.PRIMITIVES))
+-        self.assertTrue(vt.PRIMITIVES['source-window']['source_identity_must_be_explicit'])
+-        self.assertTrue(vt.PRIMITIVES['camera-slot']['source_and_crop_remain_separate'])
+-        self.assertTrue(vt.PRIMITIVES['status-field']['value_source_freshness_required'])
+-        self.assertTrue(vt.PRIMITIVES['alert-cue']['unobserved_success_forbidden'])
+-        self.assertTrue(vt.PRIMITIVES['chat-panel']['delivery_state_must_be_explicit'])
+-        self.assertTrue(vt.PRIMITIVES['scene-state']['scene_identity_must_be_exact'])
+-        self.assertTrue(vt.PRIMITIVES['overlay-zone']['overlap_conflicts_must_be_visible'])
+-        self.assertTrue(vt.PRIMITIVES['identity-panel']['source_and_transform_remain_separate'])
+-        self.assertTrue(vt.PRIMITIVES['transition-state']['from_to_identity_required'])
+-        self.assertTrue(vt.PRIMITIVES['output-monitor']['target_state_must_be_observed'])
++        self.assertTrue(vt.PRIMITIVES['diagram-node']['identity_must_be_exact'])
++        self.assertTrue(vt.PRIMITIVES['relationship-edge']['endpoints_and_relation_type_required'])
++        self.assertTrue(vt.PRIMITIVES['evidence-reference']['source_and_status_required'])
++        self.assertTrue(vt.PRIMITIVES['data-field']['value_unit_source_period_required'])
++        self.assertTrue(vt.PRIMITIVES['annotation-pin']['target_reference_must_be_exact'])
++        self.assertTrue(vt.PRIMITIVES['legend-entry']['meaning_must_not_depend_on_color_only'])
++        self.assertTrue(vt.PRIMITIVES['group-boundary']['membership_must_be_explicit'])
++        self.assertTrue(vt.PRIMITIVES['layout-guide']['guide_must_not_change_semantic_relationships'])
++        self.assertTrue(vt.PRIMITIVES['callout-card']['content_and_evidence_status_separate'])
++        self.assertTrue(vt.PRIMITIVES['diagram-export-target']['target_requirements_must_be_visible'])
+ 
+     def test_prior_source_boundaries_remain_present(self):
++        self.assertTrue(vt.PRIMITIVES['source-window']['source_identity_must_be_explicit'])
+         self.assertTrue(vt.PRIMITIVES['title-card']['text_layout_timing_remain_separate'])
+         self.assertTrue(vt.PRIMITIVES['card-frame']['geometry_must_remain_editable'])
+         self.assertTrue(vt.PRIMITIVES['crop-safe-frame']['crop_must_not_modify_source_geometry'])
+@@ -90,12 +91,12 @@ class VisualTemplateTests(unittest.TestCase):
+         self.assertTrue(vt.PRIMITIVES['truth-state']['source_must_be_visible'])
+ 
+     def test_copy_safety_variant_rejection_and_bad_geometry(self):
+-        a=vt.resolve('visual.broadcast.scene-editor',1920,1080); b=vt.resolve('visual.broadcast.scene-editor',1920,1080)
++        a=vt.resolve('visual.diagram.canvas-editor',1920,1080); b=vt.resolve('visual.diagram.canvas-editor',1920,1080)
+         self.assertEqual(a,b)
+-        copy=vt.get('visual.broadcast.scene-editor'); copy['name']='changed'
+-        self.assertNotEqual(vt.get('visual.broadcast.scene-editor')['name'],'changed')
+-        with self.assertRaises(ValueError): vt.resolve('visual.broadcast.scene-editor',1920,1080,variant='unknown')
+-        bad=vt.get('visual.broadcast.format-variants'); bad['variants']['standard']['variants']=[.9,.9,.2,.2]
++        copy=vt.get('visual.diagram.canvas-editor'); copy['name']='changed'
++        self.assertNotEqual(vt.get('visual.diagram.canvas-editor')['name'],'changed')
++        with self.assertRaises(ValueError): vt.resolve('visual.diagram.canvas-editor',1920,1080,variant='unknown')
++        bad=vt.get('visual.diagram.layout-variants'); bad['variants']['standard']['variants']=[.9,.9,.2,.2]
+         with self.assertRaises(ValueError): vt.validate_screen(bad)
+ 
+     def test_exact_sticker_slot_binding_is_retained(self):
+diff --git a/tools/visual_template_proof.py b/tools/visual_template_proof.py
+index 20293e6..fba589e 100644
+--- a/tools/visual_template_proof.py
++++ b/tools/visual_template_proof.py
+@@ -8,7 +8,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src'))
+ from axm_uc import visual_templates as vt
+ 
+ SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
+-PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell","visual.keyart.core","visual.cards.core","visual.cinematic.core","visual.broadcast.core")
++PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell","visual.keyart.core","visual.cards.core","visual.cinematic.core","visual.broadcast.core","visual.diagram.core")
+ 
+ def _write(project,target):
+     target.mkdir(); out=[]
+@@ -25,7 +25,7 @@ def main(argv):
+     out.mkdir(parents=True)
+     try:
+         counts=vt.validate_catalog()
+-        if counts!={'styles':16,'primitives':106,'screens':144,'products':14}: raise AssertionError(counts)
++        if counts!={'styles':17,'primitives':116,'screens':154,'products':15}: raise AssertionError(counts)
+         evidence=[]
+         for pid in PRODUCTS:
+             expected=vt.get(pid)
+@@ -49,27 +49,28 @@ def main(argv):
+             ('visual.cards.core',1920,1080,'cards','AXM Editable Card and Deck Foundation'),
+             ('visual.cinematic.core',1920,1080,'cinematic','AXM Cinematic Title and Overlay Foundation'),
+             ('visual.broadcast.core',1920,1080,'broadcast','AXM Video and Stream Overlay Foundation'),
++            ('visual.diagram.core',1920,1080,'diagram','AXM Evidence-Aware Diagram Foundation'),
+         )
+         outputs=[]
+         for pid,w,h,folder,title in galleries: outputs+=_write(vt.product_project(pid,w,h,title),out/folder)
+         outputs+=_write(vt.screen_project('product.mobile.home',1080,1920,'AXM Mobile Foundation'),out/'mobile-home')
+-        product=vt.get('visual.broadcast.core')
+-        required={'visual.broadcast.project-hub','visual.broadcast.scene-editor','visual.broadcast.source-router','visual.broadcast.camera-editor','visual.broadcast.score-status','visual.broadcast.alert-editor','visual.broadcast.chat-social','visual.broadcast.scene-set','visual.broadcast.format-variants','visual.broadcast.review-output'}
+-        if set(product['screens'])!=required: raise AssertionError('broadcast pack lost required surfaces')
++        product=vt.get('visual.diagram.core')
++        required={'visual.diagram.project-hub','visual.diagram.canvas-editor','visual.diagram.node-editor','visual.diagram.relationship-editor','visual.diagram.evidence-editor','visual.diagram.annotation-editor','visual.diagram.legend-style','visual.diagram.layout-variants','visual.diagram.review-compare','visual.diagram.export'}
++        if set(product['screens'])!=required: raise AssertionError('diagram pack lost required surfaces')
+         checks={
+-            'source_identity_explicit':vt.PRIMITIVES['source-window']['source_identity_must_be_explicit'],
+-            'camera_source_crop_separate':vt.PRIMITIVES['camera-slot']['source_and_crop_remain_separate'],
+-            'status_source_freshness':vt.PRIMITIVES['status-field']['value_source_freshness_required'],
+-            'alert_no_fake_success':vt.PRIMITIVES['alert-cue']['unobserved_success_forbidden'],
+-            'chat_delivery_explicit':vt.PRIMITIVES['chat-panel']['delivery_state_must_be_explicit'],
+-            'scene_identity_exact':vt.PRIMITIVES['scene-state']['scene_identity_must_be_exact'],
+-            'overlay_conflicts_visible':vt.PRIMITIVES['overlay-zone']['overlap_conflicts_must_be_visible'],
+-            'identity_source_transform_separate':vt.PRIMITIVES['identity-panel']['source_and_transform_remain_separate'],
+-            'transition_from_to_exact':vt.PRIMITIVES['transition-state']['from_to_identity_required'],
+-            'output_state_observed':vt.PRIMITIVES['output-monitor']['target_state_must_be_observed'],
++            'node_identity_exact':vt.PRIMITIVES['diagram-node']['identity_must_be_exact'],
++            'relationship_endpoints_type':vt.PRIMITIVES['relationship-edge']['endpoints_and_relation_type_required'],
++            'evidence_source_status':vt.PRIMITIVES['evidence-reference']['source_and_status_required'],
++            'data_value_unit_source_period':vt.PRIMITIVES['data-field']['value_unit_source_period_required'],
++            'annotation_target_exact':vt.PRIMITIVES['annotation-pin']['target_reference_must_be_exact'],
++            'legend_noncolor':vt.PRIMITIVES['legend-entry']['meaning_must_not_depend_on_color_only'],
++            'group_membership_explicit':vt.PRIMITIVES['group-boundary']['membership_must_be_explicit'],
++            'layout_preserves_semantics':vt.PRIMITIVES['layout-guide']['guide_must_not_change_semantic_relationships'],
++            'callout_evidence_separate':vt.PRIMITIVES['callout-card']['content_and_evidence_status_separate'],
++            'export_requirements_visible':vt.PRIMITIVES['diagram-export-target']['target_requirements_must_be_visible'],
+         }
+-        if not all(checks.values()): raise AssertionError('broadcast source/state contract failed')
+-        receipt={'schema':'axm.visual-template-proof/v10','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'broadcast_checks':checks,'truth':'Offline structural evidence only. Live capture, score correctness, message delivery, encoder/output health, platform integration, latency and aesthetic acceptance were not observed.'}
++        if not all(checks.values()): raise AssertionError('diagram semantic/evidence contract failed')
++        receipt={'schema':'axm.visual-template-proof/v11','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'diagram_checks':checks,'truth':'Offline structural evidence only. Relationship truth, causal validity, evidence sufficiency, data correctness and aesthetic acceptance were not observed.'}
+         (out/'receipt.json').write_text(json.dumps(receipt,indent=2,sort_keys=True),encoding='utf-8')
+         print(json.dumps(receipt,indent=2,sort_keys=True))
+     except BaseException:

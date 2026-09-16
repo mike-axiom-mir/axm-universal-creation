@@ -1,0 +1,231 @@
+{
+  "capsule_id": "aaec5290ef1494d8a55b4ecb1f7c8c55b758db1db6e8e1288589c5051c441e38",
+  "evidence": {
+    "files": [
+      {
+        "additions": 35,
+        "binary": false,
+        "content_sha256": "36309d0379c52449592a7e57a4b2fd245f47dade53f81871a11a8255ad989567",
+        "deletions": 0,
+        "path": "GAME_STYLE_GROWTH.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Creation controls and editable creative outputs \u2014 2026-09-15",
+          "Deterministic parallel creation \u2014 2026-09-15"
+        ]
+      },
+      {
+        "additions": 84,
+        "binary": false,
+        "content_sha256": "2bc13c6f14f3dd580ecde798e15e538f1d86ba3a8e4afc7335215fc7bec40b34",
+        "deletions": 0,
+        "path": "docs/CREATIVE_OUTPUTS.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Creation first, editable assets afterward",
+          "Internal tool wiring"
+        ]
+      },
+      {
+        "additions": 8,
+        "binary": false,
+        "content_sha256": "a779af3a041ce559365aa791b5632b369cf074d74d2716ce9539c3c1128574be",
+        "deletions": 6,
+        "path": "docs/PARALLEL_CREATION.md",
+        "status": "M",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 39,
+        "binary": false,
+        "content_sha256": "16071f0b84ed1eb424fd9eeab8e87aea0d0bd4d01fd278a8766f1f6226c51ef4",
+        "deletions": 4,
+        "path": "src/axm_stickers/assembly.py",
+        "status": "M",
+        "symbols": [
+          "save_assembly",
+          "library_definitions",
+          "library_bundle",
+          "import_library"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 193,
+        "binary": false,
+        "content_sha256": "d3afe0f9b5ebdc6cb14d1a0e185d75f77a80147726c2ef7c489a180d4e0de1e4",
+        "deletions": 0,
+        "path": "src/axm_uc/creative_tasks.py",
+        "status": "A",
+        "symbols": [
+          "encoded",
+          "raster_arc",
+          "_source",
+          "execute_creative",
+          "export_creative",
+          "export_creative_sources"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 30,
+        "binary": false,
+        "content_sha256": "8f68b1ea579d08abfc22bd5916cf78d82a16d5a04ea0c250a817dc0bd27238f1",
+        "deletions": 7,
+        "path": "src/axm_uc/parallel_create.py",
+        "status": "M",
+        "symbols": [
+          "references",
+          "run_worker",
+          "build"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 81,
+        "binary": false,
+        "content_sha256": "5d265b8a9fe498a7602217a79bc79bdc496d5714f56873a22fc747d524087228",
+        "deletions": 0,
+        "path": "src/axm_uc/surface_creation.py",
+        "status": "A",
+        "symbols": [
+          "surface_catalog",
+          "compile_surface",
+          "create_surface",
+          "main"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 113,
+        "binary": false,
+        "content_sha256": "de78987b540cd350f6c7c5baeb575e6c668135fd21cb182b7772b33dc3fa4917",
+        "deletions": 0,
+        "path": "tests/test_creative_tasks.py",
+        "status": "A",
+        "symbols": [
+          "CreativeTaskTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 1,
+        "binary": false,
+        "content_sha256": "09de3c56e6d36c56c3d2327af587ceadb1cc563a0294a7d40bf8313c2a6da46e",
+        "deletions": 1,
+        "path": "tests/test_parallel_create.py",
+        "status": "M",
+        "symbols": [
+          "ParallelCreationTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 57,
+        "binary": false,
+        "content_sha256": "74f421d80eccb9e735f7ca93eaa28f73c7574bae68e092ebdb671449066969ee",
+        "deletions": 0,
+        "path": "tests/test_sticker_creative_library.py",
+        "status": "A",
+        "symbols": [
+          "definition",
+          "CreativeLibraryTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 95,
+        "binary": false,
+        "content_sha256": "18f53017cf76a482a1b3f10b06e99f6f9064966e0b3c15c544e90d52da5bf7c4",
+        "deletions": 0,
+        "path": "tools/creative_surface_proof.py",
+        "status": "A",
+        "symbols": [
+          "make",
+          "preview"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "dcd2e21fd6d8cb7aab73edd52181016ea67a039182973a7b48bd11a56a9140f7"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 6,
+    "kinds": [
+      "code",
+      "knowledge",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "afterward",
+      "arc",
+      "assembly",
+      "axm",
+      "build",
+      "bundle",
+      "catalog",
+      "compile",
+      "controls",
+      "create",
+      "creation",
+      "creation-machine",
+      "creative",
+      "definition",
+      "definitions",
+      "deterministic",
+      "editable",
+      "encoded",
+      "execute",
+      "export",
+      "first",
+      "game",
+      "growth",
+      "import",
+      "internal",
+      "library",
+      "make",
+      "outputs",
+      "parallel",
+      "preview",
+      "proof",
+      "raster",
+      "references",
+      "reusable",
+      "run",
+      "save",
+      "source",
+      "sources",
+      "standalone",
+      "sticker",
+      "stickers",
+      "studio",
+      "style",
+      "surface",
+      "surfaces",
+      "task",
+      "tasks",
+      "tool",
+      "tools",
+      "universal-creation",
+      "wiring",
+      "with",
+      "worker"
+    ]
+  },
+  "source": {
+    "base": "0cbe39fe2fe064eb366bc07f03b35aaf7e1bcd88",
+    "commit_subject": "Create reusable surfaces with editable Studio source (#84)",
+    "head": "7bfd2cf45246cf4a564abc3c379782c84d808567",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

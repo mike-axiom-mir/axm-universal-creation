@@ -1,0 +1,1699 @@
+{
+  "capsule_id": "6d51050ebbb0c66f7cc1a7b33f65a57522f0347cbbaadd3237b278277ba7171b",
+  "evidence": {
+    "files": [
+      {
+        "additions": 28,
+        "binary": false,
+        "content_sha256": "d09614c1ad0c726c41cab7c0b4616680c06a6e205982655305ab382481b87f8e",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/INTAKE_RECEIPT.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 16,
+        "binary": false,
+        "content_sha256": "d4837d682e6c3139a75049861bde08a309a08027047c798beceac05efcec1c69",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/README.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "AXM Platform Hands capsule",
+          "Families",
+          "Universal Creation use"
+        ]
+      },
+      {
+        "additions": 16,
+        "binary": false,
+        "content_sha256": "b94c098b98981ca7b06c3e70baf8cf1ef7865690a359cd524dbfe98b4d6c6225",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/ai-native-hands/README.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "AXM AI-Native Hands"
+        ]
+      },
+      {
+        "additions": 43,
+        "binary": false,
+        "content_sha256": "efa1452e9449225f42379cedae9169a9f474fd790f088571a53c8f79b070a038",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/ai-native-hands/computed-style-hand.contract.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 46,
+        "binary": false,
+        "content_sha256": "f337e51ebf40e5f235274956a84db8c62e43e44c261c659b569d5618eaab0427",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/ai-native-hands/computed-style-measurements.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 81,
+        "binary": false,
+        "content_sha256": "be411a712a80b5323c33a39fd46c6d57d855fae387ea969c254b3815013d4266",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/ai-native-hands/service.contract.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 211,
+        "binary": false,
+        "content_sha256": "d634897d955f6fbb53cdaf67987a8d5ba283facdbbf24b064231752c197a4e96",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/README.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "AXM Asset Hands v2.5",
+          "Universal Component Protocol",
+          "Target Canvas Contract",
+          "Results and honest failure",
+          "Reference validators"
+        ]
+      },
+      {
+        "additions": 175,
+        "binary": false,
+        "content_sha256": "58e2f786fad3a557a0211d31a7809deed9709ebc3ab70a82bc3d08d8206ce188",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/ROADMAP.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Modular Asset Hands roadmap",
+          "Current baseline: completion of the fifteen-hand build",
+          "Admission gate for every later hand",
+          "Release gate for the current GitHub update",
+          "Next roadmap: make the completed platform easier to trust and extend",
+          "Phase A \u2014 registry conformance and capability negotiation",
+          "Phase B \u2014 real host adapter SDK (reference build complete)",
+          "Phase C \u2014 stronger validators (in progress; reference boundary complete)",
+          "Phase D \u2014 next candidate hands, driven by real blocked requests",
+          "Permanent non-goals"
+        ]
+      },
+      {
+        "additions": 58,
+        "binary": false,
+        "content_sha256": "408e728fe7e68d10f12a4b31ddec51cd3a99311d2533189965c9c99dcf263f6c",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/UNIVERSAL_COMPONENT_PROTOCOL.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "AXM Universal Component Protocol v1",
+          "Three portable contracts",
+          "Same roots, different truths",
+          "Relationship to Asset Fabric"
+        ]
+      },
+      {
+        "additions": 13,
+        "binary": false,
+        "content_sha256": "0add6826e9d3ecd78301f578fcab0c53b223d5529273ede32fdc489b60cc54dc",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/accessibility-validation.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 14,
+        "binary": false,
+        "content_sha256": "e0e46f36b5da2ea824231d2ca67c52329c465f878b27bd7f643a7205b84bc057",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/accessible-document-recipe.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 38,
+        "binary": false,
+        "content_sha256": "f0436cb139c19a74678d5ec0473740d661ca021619b88b2d2f65f8a7daea0784",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/accessible-document.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 53,
+        "binary": false,
+        "content_sha256": "a9deeebb6bbc91d4323438b3129474a1df3a7a0bf16d1a0c0ab87e0eb8644474",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/animated-raster-recipe.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 16,
+        "binary": false,
+        "content_sha256": "ed90b3652fd79321eb93c7aa5c44aa18bbeaed924a0858b49496554e05b152d4",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/animated-web-recipe.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 14,
+        "binary": false,
+        "content_sha256": "ae35e3418d1c7b806edef7606fa093efeab9f1c3613088d5afc46b05f4959c0a",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/animated-web-validation.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 6,
+        "binary": false,
+        "content_sha256": "9ea18a0356960093eb966c44676210ee2dff1ebae4a1b897024680b74a19a729",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/animation-clip.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 25,
+        "binary": false,
+        "content_sha256": "14d815bba5f864bd224dd1c10c580f99e3a130fd383c768fa03fd35019385a45",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/asset-artifact.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 24,
+        "binary": false,
+        "content_sha256": "2d6da67a7ca371814ad352f763a258a77892b9b7179bcf69f457a92ebc05c609",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/asset-brief.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 24,
+        "binary": false,
+        "content_sha256": "4bcbe677d85f77ae1b7272af8d29178ee58ccd9eea19476121888bf10d892be7",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/asset-creation-recipe.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 19,
+        "binary": false,
+        "content_sha256": "30c492da54043fdc526d8e05be8446e4ac5a26828a0900c1558a179faf9f34df",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/asset-hand-family.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 106,
+        "binary": false,
+        "content_sha256": "550928928973b20242a540b8f5849600d726af2e58b55df7b947969a1e4c3731",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/asset-hand-gap-report.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 27,
+        "binary": false,
+        "content_sha256": "f11e4f082678591107cc878a6fac0c13b4d5c00a35911284b339bc4d52bba6a4",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/asset-hand-result.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 357,
+        "binary": false,
+        "content_sha256": "bad2018c66fa5190a99a9a4978f220460dc9f324bfb262597d7ed740787d00f5",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/asset-hand-v2.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 23,
+        "binary": false,
+        "content_sha256": "b9058656fa5365fcc03330afc501e173a42819d434b8605d3d58587fc7b5807e",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/asset-source-artifact.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 17,
+        "binary": false,
+        "content_sha256": "cec7ef092e5e52d26345060d80fb97e5d5322761b5b72d677ef00d01ff00f292",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/asset-validation-receipt.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 37,
+        "binary": false,
+        "content_sha256": "946a557a735d11e40bf1f56981336953a07301bbb2ceaa6f28a7da61d0ad6f0a",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/audio-device.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 39,
+        "binary": false,
+        "content_sha256": "106b30b0db9d53252a7f0ddafa8bf0c0fdd20db9ff3824eeb969e7f3d6842b8c",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/audio-notation-recipe.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 39,
+        "binary": false,
+        "content_sha256": "0874dd504e9f44907f479b163a20a5719de6cd88731e917a65ab1ff45f393ab6",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/audio-notation-validation.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 126,
+        "binary": false,
+        "content_sha256": "e767e2eed42cba7e2b14f2f70a11f8b43f9ec260e1896816fbd3ccf35a5313fa",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/bridge-receipt.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 21,
+        "binary": false,
+        "content_sha256": "e4a26033e3551fb2722888949fbb41e77aee628e8e8f04dcffeee301aa7e5634",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/browser-3d-runtime/MESHOPTIMIZER-LICENSE.md",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 14,
+        "binary": false,
+        "content_sha256": "ca72c60e88c8544bf40557b8c6405baae788480ef08d2d9b4dabea8370f76b17",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/browser-3d-runtime/README.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "AXM Browser 3D Runtime"
+        ]
+      },
+      {
+        "additions": 31,
+        "binary": false,
+        "content_sha256": "b23314853128f72901c4dcfaa908b45e17fb1aebd1bb5336390647d95b2e0739",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/browser-3d-runtime/manifest.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 15,
+        "binary": false,
+        "content_sha256": "1688612dc3c40ba03852dd1e54d9da1e07d5e60c32523f6df55e20b26952f53c",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/cnc-simulation-recipe.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 37,
+        "binary": false,
+        "content_sha256": "8641d827a7d555d0fc69b830c51e9f1a193526f4d916fdc7c019bd1a0e4296f7",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/collision-mesh.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 21,
+        "binary": false,
+        "content_sha256": "fe57497a13ea49c5dce270533c1689deffaef3d0d9d6e94aaefabaedde7f2364",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/colour-validation-report.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 27,
+        "binary": false,
+        "content_sha256": "ded13e1dac9b32aeeb371e55cc897b81a9071e3a592d2fd63c4934d5ba76859a",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/cut-layout-spec.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 17,
+        "binary": false,
+        "content_sha256": "f77ec39b4a3844f5e7d240a5d8629c2ea541cdf5e59adecef97f787e5fb7b471",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/drawpacket.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 19,
+        "binary": false,
+        "content_sha256": "497c6c893f3045fe2b07869f1a28d925c28e0519ca9c07d310ca1e67ac000eb0",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/fabric-production-spec.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 16,
+        "binary": false,
+        "content_sha256": "e070f166aa47d54bb1c3b3d4a4389e095754748c420063d58aa5506d8d1b1a63",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/final-video-recipe.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 6,
+        "binary": false,
+        "content_sha256": "e63049af26163f9f0b3f49661dabb70b4ab9017bef8076b40c760dd583d70755",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/font-shaping-recipe.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 35,
+        "binary": false,
+        "content_sha256": "d563528425dc15b848e19a4e9a9e31ca65916baa03dbbe114ccbf2c62d50d32b",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/geometry-graph-recipe.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 37,
+        "binary": false,
+        "content_sha256": "74fb12b9bce0cddda3fbe4e619569717384ee20d36a92b9a4398eb82b7ae764b",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/geometry-graph-validation.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 31,
+        "binary": false,
+        "content_sha256": "8555524be554b52d0316309893235c6c33e155650d1ef525a2f3fc01b48a4c94",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/geometry-graph.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 6,
+        "binary": false,
+        "content_sha256": "951c03872b805d4a127de804e17fda307da1d9ca54434275dbb4ebd412167da2",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/glyph-run.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 18,
+        "binary": false,
+        "content_sha256": "a6dd8eca28ca19ce2b4d39e7635d2838572042273ca756309d57c91647650376",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/inspect-codegen-report.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 19,
+        "binary": false,
+        "content_sha256": "b0274bfcc3c9dbc5cc931d2f865c2d4ec6bd2ddd430143e5bb5e6440b904c6a4",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/ktx2-texture-recipe.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 17,
+        "binary": false,
+        "content_sha256": "bf7e2cd5e246434a122ea06a3f619178456f0d2764ea6d057a3e8c996cce8901",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/ktx2-validation-report.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 6,
+        "binary": false,
+        "content_sha256": "9d31e6d4a23f0dcd273fcb662208b65b66e55c1d085d90f5613d228bf226488c",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/localization-report.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 6,
+        "binary": false,
+        "content_sha256": "c5f68aef558fd3905fb25a1a53bd1ef91e0e4f938e35110cdb50f8e965b93ecf",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/localization-source.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 13,
+        "binary": false,
+        "content_sha256": "7bb86591456b461f0090898b35fbcc3a98b4e15bf6d86aea8c21efdb8ae7d7b1",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/machine-export-approval.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 31,
+        "binary": false,
+        "content_sha256": "6013a5a8918edc59f56624f110444b591f41bacb0b6fc38336660b087f82baca",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/material-graph.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 37,
+        "binary": false,
+        "content_sha256": "505fc1f1cd09eeb9549f5efe193464b889ac3f0b2ee0e12493bf449c1a21d55b",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/material-parity-recipe.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 39,
+        "binary": false,
+        "content_sha256": "d9912f05058b978db829c13ffe0960fe3cacebb87adfe7c1c00408cbdd77ed4a",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/material-parity-report.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 49,
+        "binary": false,
+        "content_sha256": "2bc64ca9c28325e6c6a14ee912bdd884d05c10d638cf344cc6d7d061eef15d22",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/missing-hands-catalog.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 35,
+        "binary": false,
+        "content_sha256": "f83073475aaa35ce2253fde65b4c517e2c23c16a4e9c5568a9ac5e1abce23ada",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/musical-sequence.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 252,
+        "binary": false,
+        "content_sha256": "a870446c9645271a96d33044f99b919f7d239d337165fb9cdafeb28b36d793d6",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/native-bridge-bundle.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 81,
+        "binary": false,
+        "content_sha256": "937bb52038727b17e090bcae24603b5acd03a0314a7d1435056679327ef3fdfe",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/native-bridge-recipe.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 82,
+        "binary": false,
+        "content_sha256": "f40eb2b63a590838319dbb2e7c2d74f8e6bdd28455b9194edb417f0edd0f7598",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/native-project-change.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 21,
+        "binary": false,
+        "content_sha256": "b4d993af83358982c2c38e9304d1acacccf2b41aa3110ff6f60b069234e14e41",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/native-raster-spec.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 35,
+        "binary": false,
+        "content_sha256": "0166be78f0a8441ac93c443765c82e9688b521431dee75ba6c52556b1050ac66",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/navigation-mesh.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 37,
+        "binary": false,
+        "content_sha256": "dbd175c4784bc8c03ec1d2f337a319b22ae7356b7fba4e315135de2f1efd5d1c",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/openusd-scene-recipe.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 23,
+        "binary": false,
+        "content_sha256": "73ecb52f619d1c466779df0ca02f0d9bba2bfd676d8adfaa0b1c4a7142aa63c1",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/pdfx-production-recipe.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 19,
+        "binary": false,
+        "content_sha256": "a182a11e3ddfc6000c29a6ab76d762334545b9bd79efeb7bbf2531129495f4e4",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/pdfx-validation-report.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 24,
+        "binary": false,
+        "content_sha256": "a11f84b994af772288f0d6425bf217dbf7d3cc5c11a24eb6aec681e53d5bf095",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/physical-tooling-spec.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 74,
+        "binary": false,
+        "content_sha256": "58cd2346c0504727c29a21bd4f54fc981e640884f1fcab15789d9feba88a2656",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/play-compose-draft.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 46,
+        "binary": false,
+        "content_sha256": "949fe8e26c17c78f1b1c41f5d4f56a59de0b38793cc20c284135228e3e12c01d",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/print-document.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 18,
+        "binary": false,
+        "content_sha256": "e34f9d25024e7b115863b66cf8fbb6bea4d48c29df08efc6a68ab72958c6322a",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/print-production-spec.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 25,
+        "binary": false,
+        "content_sha256": "e20dd9e4a3e27f80c1ced1cf0b99665db5fa6b4a88e3d63aa81c4215ae2480bb",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/raster-composition-receipt.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 82,
+        "binary": false,
+        "content_sha256": "f41923aae693fcb8286afc45db82c9a82010db03159e89b749169837aa16541e",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/raster-composition.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 34,
+        "binary": false,
+        "content_sha256": "f4e71453aba1064d05e57711499db6cf86d9a4aa3069f720e9d51cbc7dac9757",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/reference-validators/CAPABILITY_SCOUT.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Reference validator capability scout",
+          "Requested outcome",
+          "Pre-build route",
+          "Gap classification",
+          "Cheapest honest route"
+        ]
+      },
+      {
+        "additions": 119,
+        "binary": false,
+        "content_sha256": "7eae5cf359ab014377725b9d9723c641f01b17f59870a71a915b06d4d8f2fe6f",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/reference-validators/EVIDENCE.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Reference validator evidence route",
+          "`exact-routing-and-missing-state`",
+          "`receipt-binding`",
+          "`musicxml-second-implementation`",
+          "`openusd-official-checker`",
+          "`pdf-structural-corroboration`",
+          "`epub-authoritative-checker`",
+          "`host-handoff-and-compatibility`",
+          "`release-gate-2026-07-19`"
+        ]
+      },
+      {
+        "additions": 83,
+        "binary": false,
+        "content_sha256": "c091117920310d6f228ab38ba3446c7bbd904798d190cc8d3ffa41669484b99d",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/reference-validators/README.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "AXM reference validators",
+          "Installed provider contracts",
+          "Configuration",
+          "Receipts and handoffs",
+          "Verification"
+        ]
+      },
+      {
+        "additions": 49,
+        "binary": false,
+        "content_sha256": "2b47534560f73e30aeaf1c11261aee51ac7a474afcb512429f34298fe1e442e9",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/reference-validators/asset-verification-envelope.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 16,
+        "binary": false,
+        "content_sha256": "c090cceccc10e870b84395f4b62f4e5a4ee26b73708621c513fbfeb8d8943da7",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/reference-validators/capability-inventory.after.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 77,
+        "binary": false,
+        "content_sha256": "7c50f5517f7dcaa673be92efaa5ddf6069d0d175424811d1f57089e588a063c1",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/reference-validators/capability-inventory.before.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 52,
+        "binary": false,
+        "content_sha256": "0b5e605a6e9a7e8acbba1edc4c4bc53ee5cd4fb3d97ecbc5aeeaf0db2ee65c2f",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/reference-validators/capability-requirements.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 109,
+        "binary": false,
+        "content_sha256": "f8b764052770caefe6a861b91fe4fbfe6e343705d4cbd59468e5c0312895e2de",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/reference-validators/reference-validation-receipt.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 23,
+        "binary": false,
+        "content_sha256": "08612f4f87881e343ef641eb520581684e615043ad8643abddb2a0c804f71b73",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/responsive-layout.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 6,
+        "binary": false,
+        "content_sha256": "9c7bcfd651c2c89f0a8ccc8c42cca6d98e234077cd57d991ec07983beeb8ad1a",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/rigged-animation-recipe.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 6,
+        "binary": false,
+        "content_sha256": "80fc22cdf1fec2b2ddfc57c443006bade2e4bc27f947dd04cb6fbfa16ee9fa66",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/rigged-animation-validation.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 43,
+        "binary": false,
+        "content_sha256": "2fc1a7903f399cd9fe501e47e417a3fbcddc69cc5a76f0be12bb6b2cede94b7f",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/scene-composition-report.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 316,
+        "binary": false,
+        "content_sha256": "6e352d5576bf89f64f9af839623b5f56c454568aacdec2993da4b86c8c2e270b",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/service.contract.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 37,
+        "binary": false,
+        "content_sha256": "123aa0fab98e6b1d31470473d669cff35e80e7ec5618fedb842187d3ec84cfd7",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/spatial-navigation-recipe.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 35,
+        "binary": false,
+        "content_sha256": "3ca7b4302478607671193caa9ca676de4aa43c8afceb0b21a9e1f5f1459b315f",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/spatial-navigation-validation.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 21,
+        "binary": false,
+        "content_sha256": "c15a410875a986a4df60c73a39538f2ce85b78ce2bd7d8d96c133d83d67cc755",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/sprite-atlas.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 72,
+        "binary": false,
+        "content_sha256": "617f7bbc473bf3b053503ebcbde4b623d18ad4c3400fb2675e1b8f0f9500e8e1",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/substrate-pack/EVIDENCE.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "External substrate pack evidence",
+          "Exact local pack",
+          "Live proof surfaces",
+          "Capability truth after staging",
+          "Named remaining seams",
+          "Verification record"
+        ]
+      },
+      {
+        "additions": 27,
+        "binary": false,
+        "content_sha256": "1beb2d8e7793465a3c5b5c1531e5bba93bc1ffd035bd4fa14350aa733d945a88",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/substrate-pack/README.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "AXM external substrate pack",
+          "Explicit local install"
+        ]
+      },
+      {
+        "additions": 51,
+        "binary": false,
+        "content_sha256": "a509c36717701274b3676b9c7ccb3242c5602cf23b58b483e806ea621a569d7f",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/substrate-pack/blender-capability-matrix-receipt.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 55,
+        "binary": false,
+        "content_sha256": "47c87c8c3e1b1cedf57d99df6f7b28141d0e18c99494720271452698005ef42b",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/substrate-pack/blender-live-render-receipt.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 16,
+        "binary": false,
+        "content_sha256": "ccc772df8174cf4f24ffe5df73ca04521f1e4bda6b12a3a413e97cc4b05d6625",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/substrate-pack/brep-step-capability-receipt.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 27,
+        "binary": false,
+        "content_sha256": "1c2be4aba333a970066b83601eb31821ee1388bdd08ee454a8bdd999fadf6fbe",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/substrate-pack/embroidery-capability-receipt.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 56,
+        "binary": false,
+        "content_sha256": "104b7ce7d45ce23ea4bda55ed2f830ec065cd55f6e779ce9a2b06b3251a7057b",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/substrate-pack/ffmpeg-capability-receipt.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 25,
+        "binary": false,
+        "content_sha256": "abc4c254b546dd3ea9fdafe02e2995f5c0ba11f2a2e3ed6892f60b90c2a35884",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/substrate-pack/godot-live-project-receipt.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 28,
+        "binary": false,
+        "content_sha256": "b499d4168ce0cac4101bcdd37999dcaef76b805846ea91a26f85f8176dd729c0",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/substrate-pack/substrate-install-receipt.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 56,
+        "binary": false,
+        "content_sha256": "85ac7ded49187b7fbf3f0557612de328a4dc3fcd6ad28c4a0fdfe73922b88535",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/substrate-pack/substrate-inventory.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 123,
+        "binary": false,
+        "content_sha256": "7a8646b02a6104bb690f3f88a84b7a2f7f977398e226499f5b9a5f6d9fbb85d5",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/substrate-pack/substrate-lock.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 255,
+        "binary": false,
+        "content_sha256": "bf8fdf5faa07d145818327447b7818abc4073edfefd9bc7521652506f395e3be",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/substrate-pack/substrates.lock.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 27,
+        "binary": false,
+        "content_sha256": "51cd1eaa7525288b3f09dab748a17e2adf595e5a2d4590c135d48dd914878354",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/substrate-pack/three-mf-capability-receipt.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 329,
+        "binary": false,
+        "content_sha256": "e12f45d099a0506ac952c58a4549f513b4f5a0f5e2a5a70437474af66e0bf0a1",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/target-canvas.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 17,
+        "binary": false,
+        "content_sha256": "bb60a4b9551c6f55d3d6c786cbb142f0f4c4bbe049f48edf75d51548d32ccad1",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/toolpath-simulation.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 21,
+        "binary": false,
+        "content_sha256": "726bff0955151a00a2e5366d62f942b977cb2ec934ac195f0cf0726dc2572b7a",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/ui-component-spec.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 93,
+        "binary": false,
+        "content_sha256": "20fb370276e8ddd2de496d8a1774e8e112c10becf5d3650fa89ed7da296d3d45",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/universal-component-graph.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 90,
+        "binary": false,
+        "content_sha256": "8e62c2cef6cff6965fc58662aa702cdadf16a3beddb5522bc84a14a78d712434",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/universal-component-receipt.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 224,
+        "binary": false,
+        "content_sha256": "0d3a15b2bc5142aebbee54ea2d13d44d2eeb75d023449be100f1452be5bd7dcc",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/universal-component.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 209,
+        "binary": false,
+        "content_sha256": "51f03f4c897a5ec0866ac28b00a9b00261303bba767fe7b0b587d485f41d37aa",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/upgrade-program/NEXT_ROADMAP.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Asset Hands next roadmap",
+          "Current release truth",
+          "Release lane for the current GitHub update",
+          "P0 \u2014 external standards and renderer substrate pack",
+          "P1 \u2014 human, accessibility and physical proof bench",
+          "P2 \u2014 manufacturing and native creation depth",
+          "P3 \u2014 high-end 3D, audio and video production",
+          "3D and worlds",
+          "Audio",
+          "Video",
+          "P4 \u2014 shared host adoption",
+          "Standards anchors",
+          "Definition of done for a future `READY`"
+        ]
+      },
+      {
+        "additions": 68,
+        "binary": false,
+        "content_sha256": "8ecb54cfdb42ee93f172ffa8c5d62dfefa4a23bc9766c34fb7742dc76c4712cc",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/upgrade-program/README.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Asset Hands fifty-upgrade program"
+        ]
+      },
+      {
+        "additions": 93,
+        "binary": false,
+        "content_sha256": "a9a34f9f5f13800a7a5dbd2b9f46a9af1264527f0fc49685ac9b6f44b6f86877",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/upgrade-program/benchmark-receipt.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 26,
+        "binary": false,
+        "content_sha256": "22741287abd285e5fca44cd4d2c5f1ae1dfba174486a6f3063b821a4a1503517",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/upgrade-program/external-validator-receipt.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 959,
+        "binary": false,
+        "content_sha256": "132fbf97f172a5e63c1128a46fa90c01600351d63bc4967d1255be5a93ad1cdb",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/upgrade-program/program.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 29,
+        "binary": false,
+        "content_sha256": "b3e69b96c9c6e21eb6404cc55429bf343bf68f37382b611150ee395d1572fb58",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/upgrade-program/scout/benchmark-capabilities.after.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 27,
+        "binary": false,
+        "content_sha256": "2c0b22b431c85c2dd6fec7b8b6f29d89135b00cdfc5b25d8aa09a39455374995",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/upgrade-program/scout/benchmark-capabilities.before.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 21,
+        "binary": false,
+        "content_sha256": "3034cbabffcbdb90a650c5b1ad5e68f801d6647f2280e0c5f34a7cbb29b9bc23",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/upgrade-program/scout/benchmark-requirements.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 42,
+        "binary": false,
+        "content_sha256": "6f05e581e41dbf68a547ff1c3ec1b416142e25c664530ef8f7ac8bf5f1fdab0c",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/upgrade-program/upgrade-audit.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 43,
+        "binary": false,
+        "content_sha256": "3d8d7880e3c70dfcd1dd161b32c56cb8364c3c2224055316170ba5044f6ed11b",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/upgrade-program/upgrade-hand-extension.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 21,
+        "binary": false,
+        "content_sha256": "63045f30c85a451c83813dce09e182f7b5de296560eb27e7ca7a2fa8ba3b8103",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/upgrade-program/upgrade-invocation.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 66,
+        "binary": false,
+        "content_sha256": "b45f270cdfbebe322c33c7e0ebc4d4dedc042944ef6f06514371dc1ecb6f6e4f",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/upgrade-program/upgrade-program.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 21,
+        "binary": false,
+        "content_sha256": "58dbb62b5b671ed7993f098e02cc9b7495cc7fcafe8d8529d69c87a5e5f65d91",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/upgrade-program/upgrade-request.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 39,
+        "binary": false,
+        "content_sha256": "a7da08e72ec3df66999d05d3ec6daac842c2a39101f49004096c88e882a51fc0",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/upgrade-program/upgrade-result.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 41,
+        "binary": false,
+        "content_sha256": "b07b739539492d414bc5b09ca35230ed9f55953d645dbc9818733d31a3e6e626",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/usd-scene-composition.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 16,
+        "binary": false,
+        "content_sha256": "af77041b8c102806dd7108150e1184adcbf8469fda1c6a26f7a90c2d05518bb7",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/uv-layout.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 15,
+        "binary": false,
+        "content_sha256": "621222417a6cb3ff5de47d23547af7a09240b0543927af3f91a8d20bf5d765cf",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/uv-material-bake-recipe.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 14,
+        "binary": false,
+        "content_sha256": "96e3c6bf511cd5d3a7b9277abc8eee5d0228ecac4592a76233c3ead3490607d5",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/uv-material-validation.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 16,
+        "binary": false,
+        "content_sha256": "3c66d50cf694a1c2286acd67dbced2ac044d2f1e0f43deec96854ac006dc4063",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/vendor/basis-universal/AXM-VENDOR-MANIFEST.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 10,
+        "binary": false,
+        "content_sha256": "9081079f0d90895710e8a2fa52670994792810acab29ebfc8476c306ffd86079",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/vendor/basis-universal/THIRD_PARTY_NOTICES.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Basis Universal"
+        ]
+      },
+      {
+        "additions": 14,
+        "binary": false,
+        "content_sha256": "8fcacfc0ab1d1e063025afc47b62987cd23a1e1b8f2004c922bdaa14661d464c",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/vendor/fonts/noto/AXM-VENDOR-MANIFEST.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 9,
+        "binary": false,
+        "content_sha256": "6b31f67e5b71dbe9a7b6acb360ff03904fb0fe6062804be1d9dbcd0626dd86d6",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/vendor/fonts/noto/THIRD-PARTY-NOTICES.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Noto font notice"
+        ]
+      },
+      {
+        "additions": 16,
+        "binary": false,
+        "content_sha256": "422d49f31458e53ab230ffe21d8106b762a295e123961c6d53b69de4b038e163",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/vendor/harfbuzz/AXM-VENDOR-MANIFEST.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 111,
+        "binary": false,
+        "content_sha256": "874d07fa1d288361c3dbd15dea3f0d5bced05f98ad0217ff92f9587a397af30e",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/vendor/harfbuzz/README.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "harfbuzzjs",
+          "Building",
+          "Testing",
+          "Download",
+          "Migrating from v0.x",
+          "Usage",
+          "TL;DR",
+          "Browser",
+          "Node.js",
+          "[npm](https://www.npmjs.com/package/harfbuzzjs)",
+          "Need more of the library?",
+          "Using the library in a bigger emscripten project?",
+          "binaryen"
+        ]
+      },
+      {
+        "additions": 1,
+        "binary": false,
+        "content_sha256": "1239d4d885dcad42201a27ed9324f8f0f760b78700d8db9ced39a511cffe7eae",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/vendor/harfbuzz/package.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 17,
+        "binary": false,
+        "content_sha256": "33c4f7f65626959af467c6a8edfedec04586525ced52ef17a0df5a1e2271af6e",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/vendor/icc/AXM-VENDOR-MANIFEST.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 11,
+        "binary": false,
+        "content_sha256": "bba9023e7dcad6c7b8e955f9c3fda845f4d42fb926e23be16fb99da75698b920",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/vendor/icc/THIRD_PARTY_NOTICES.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "ICC profile notice"
+        ]
+      },
+      {
+        "additions": 13,
+        "binary": false,
+        "content_sha256": "456aa13cd2e765fe724dca27e06d335cdb2fdd84e137fd0f7c619ecc12d4694d",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/vendor/wasm-vips/AXM-VENDOR-MANIFEST.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 35,
+        "binary": false,
+        "content_sha256": "0f52de00dd217125646ae85177def3e144de48d11f76368f257ba6468d3f7d8d",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/vendor/wasm-vips/THIRD-PARTY-NOTICES.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Third-party notices"
+        ]
+      },
+      {
+        "additions": 81,
+        "binary": false,
+        "content_sha256": "11d601a871f010d58dfed25dad8c25d705f82ca49cf57bc99b8ba731ac7a32e1",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/vendor/wasm-vips/package.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 23,
+        "binary": false,
+        "content_sha256": "b992dc3626a0ea998881dd1f61d04150e6b1b2251a2c77b51e4bdf9ebad6f009",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/vendor/wasm-vips/versions.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 14,
+        "binary": false,
+        "content_sha256": "83b1f6941a39c0466413ecfa2dfa8e45103793df68a257e3daabc5f2549fb25d",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/video-validation.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 26,
+        "binary": false,
+        "content_sha256": "2effd339ff854a7bd1bdc8bc97710e3a65bf33ac01c5c9f27d7893f5fda0faae",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/asset-hands/wide-colour-raster-recipe.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 42,
+        "binary": false,
+        "content_sha256": "901866691a14d2c07169e9d69c64af86255a07aad6776cd28d456c29d42ddb93",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/evidence-retention/README.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "AXM Evidence Retention Spine",
+          "What it does",
+          "Machine routes",
+          "Package retention",
+          "Verification"
+        ]
+      },
+      {
+        "additions": 12,
+        "binary": false,
+        "content_sha256": "ef68c68a845406325d713d76ade7bae9df22c64a2d1e821d3fe7cfd332cd5698",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/vendor/three-r160/SOURCE.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 35,
+        "binary": false,
+        "content_sha256": "0f52de00dd217125646ae85177def3e144de48d11f76368f257ba6468d3f7d8d",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/vendor/wasm-vips/THIRD-PARTY-NOTICES.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Third-party notices"
+        ]
+      },
+      {
+        "additions": 27,
+        "binary": false,
+        "content_sha256": "b9aa13c76274311d31e2d21941b78b8ad2e20d961fba6227d895cd1e4ceee6b3",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/visual-fx/README.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "AXM Portable Visual FX"
+        ]
+      },
+      {
+        "additions": 28,
+        "binary": false,
+        "content_sha256": "4a3b10741aa301956db75a3cd2f3212d9402e0ff765f602ecf76b7807fded4b6",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/visual-fx/service.contract.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 60,
+        "binary": false,
+        "content_sha256": "6457732ca92d94257b5f9109a83b8a33060faf563192e2ec81c0f5d7f8099c66",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/visual-fx/visual-fx-recipe.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 15,
+        "binary": false,
+        "content_sha256": "01ae23d156d852c3bb8e1f213254603ee04a34d3e2d82c52d6e1e6e6fad1dd13",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/visual-kernel/README.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "AXM Visual Kernel v0.2"
+        ]
+      },
+      {
+        "additions": 19,
+        "binary": false,
+        "content_sha256": "4f376a253678b4627be182af97395b684ba6d58dbcdaeed55b8240fa701784fe",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/visual-kernel/service.contract.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 18,
+        "binary": false,
+        "content_sha256": "d9d38d81a90aa03e1a1680d4d94db683d1484c6817f96a421f9c0a0bce734c4d",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/visual-kernel/visual-kernel.schema.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 27,
+        "binary": false,
+        "content_sha256": "e378603a665468b6705429c1beeb9724afcd9b1b79f7850f7d0e48b7469c7e3d",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/shared/visual-kernel/visual-kernel.tokens.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 29,
+        "binary": false,
+        "content_sha256": "1da79c16246c56cc9a2a380ba9c7b3998e2bebd79fd693fe7a22bd9fe7b6eed2",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/tools/deterministic-json-core/manifest.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 35,
+        "binary": false,
+        "content_sha256": "2f5e1025d70a06186474aea2ab11204fb3a7f3e7937482f9e492a4880c1a1fd9",
+        "deletions": 0,
+        "path": "capabilities/platform-hands/tools/deterministic-json-core/module.contract.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "ee6b28a05e9d6c32e653cd482f6958902028551546c745c6366566fe66f1c5f6"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 6,
+    "kinds": [
+      "configuration",
+      "knowledge",
+      "organ-capability",
+      "protocol-state",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "accessibility",
+      "accessible",
+      "adapter",
+      "admission",
+      "adoption",
+      "after",
+      "anchors",
+      "animated",
+      "animation",
+      "approval",
+      "artifact",
+      "asset",
+      "atlas",
+      "audio",
+      "audit",
+      "authoritative",
+      "axm",
+      "bake",
+      "baseline",
+      "basis",
+      "before",
+      "bench",
+      "benchmark",
+      "bigger",
+      "binaryen",
+      "binding",
+      "blender",
+      "blocked",
+      "boundary",
+      "brep",
+      "bridge",
+      "brief",
+      "browser",
+      "build",
+      "building",
+      "bundle",
+      "candidate",
+      "canvas",
+      "capabilities",
+      "capability",
+      "capsule",
+      "catalog",
+      "change",
+      "cheapest",
+      "checker",
+      "classification",
+      "clip",
+      "cnc",
+      "codegen",
+      "collision",
+      "colour",
+      "com",
+      "compatibility",
+      "complete",
+      "completed",
+      "completion",
+      "component",
+      "compose",
+      "composition",
+      "computed",
+      "configuration",
+      "conformance",
+      "contract",
+      "contracts"
+    ]
+  },
+  "source": {
+    "base": "2ddf368da3bd02cfacf9529de6b5c646fb2b187f",
+    "commit_subject": "Integrate portable Platform modular Hands capsule (#76)",
+    "head": "728819d29b2380e44ecfaedc708aa8e5a177beb6",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

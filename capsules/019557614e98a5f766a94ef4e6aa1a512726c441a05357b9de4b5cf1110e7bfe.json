@@ -1,0 +1,249 @@
+{
+  "capsule_id": "019557614e98a5f766a94ef4e6aa1a512726c441a05357b9de4b5cf1110e7bfe",
+  "evidence": {
+    "files": [
+      {
+        "additions": 35,
+        "binary": false,
+        "content_sha256": "f04459369a1f3bada02c5253f209a448a8eb7eeb6ffbe95fb4c856af5a312f7a",
+        "deletions": 0,
+        "path": "GAME_STYLE_GROWTH.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Current checkpoint",
+          "Portable sticker fabric and registry \u2014 2026-09-15",
+          "Profile-based creative practice \u2014 2026-09-15"
+        ]
+      },
+      {
+        "additions": 168,
+        "binary": false,
+        "content_sha256": "aaae23fb5161d0f436d5fd1edfac62360a6a11e1b2e68a3a388a210672115b5e",
+        "deletions": 0,
+        "path": "docs/STICKER_FABRIC.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Sticker fabric and local registry",
+          "Repository boundary",
+          "Definition and instance contracts",
+          "Registry API and CLI",
+          "or, using just the standalone package:",
+          "2D layered stickers",
+          "3D and animated sockets",
+          "Evidence and limits"
+        ]
+      },
+      {
+        "additions": 6,
+        "binary": false,
+        "content_sha256": "bcb75b0bcdfda906cca5f68c83df6af7c4ff538f3ca0964d1747d077cb0f97ed",
+        "deletions": 0,
+        "path": "src/axm_stickers/__init__.py",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 25,
+        "binary": false,
+        "content_sha256": "69ca5d6bd4664ac68ae5277270c3ff08efe1b66a1fd838f849de8edd40150f67",
+        "deletions": 0,
+        "path": "src/axm_stickers/__main__.py",
+        "status": "A",
+        "symbols": [
+          "main"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 307,
+        "binary": false,
+        "content_sha256": "fbdd5f53b9df59e83fedf09a7a5a569609cad9c225b1a196383a4e8958077c63",
+        "deletions": 0,
+        "path": "src/axm_stickers/core.py",
+        "status": "A",
+        "symbols": [
+          "encode",
+          "digest",
+          "identifier",
+          "text",
+          "version",
+          "sha",
+          "_parameter",
+          "_target",
+          "validate",
+          "instance",
+          "resolve",
+          "Registry"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 76,
+        "binary": false,
+        "content_sha256": "1344884f14cbe2fa25617664521291b96c4bde067ba0cba31e043045ca3f1436",
+        "deletions": 0,
+        "path": "src/axm_stickers/placement.py",
+        "status": "A",
+        "symbols": [
+          "vector",
+          "identity",
+          "multiply",
+          "rigid",
+          "inverse_rigid",
+          "compatible",
+          "placement_2d",
+          "attachment_matrix"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 273,
+        "binary": false,
+        "content_sha256": "256af08b76a1be2352de7ac511081456b0ba8c01f6e7b36d94e3223994f5ea06",
+        "deletions": 0,
+        "path": "src/axm_uc/sticker_adapter.py",
+        "status": "A",
+        "symbols": [
+          "_sha",
+          "definition",
+          "register_studio",
+          "_studio_render",
+          "_over",
+          "stamp_layer",
+          "publish_sticker_scene",
+          "register_glb",
+          "_trs",
+          "attach_glb"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 245,
+        "binary": false,
+        "content_sha256": "1471eb7ec5efc7bda2d18946a3e326f0e36295ae89f8b06012ffc86e7db62daa",
+        "deletions": 0,
+        "path": "tests/test_stickers.py",
+        "status": "A",
+        "symbols": [
+          "project",
+          "definition",
+          "frame",
+          "pixels",
+          "StickerFixture",
+          "StickerCoreTests",
+          "StickerRenderingTests",
+          "StickerGLBTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 170,
+        "binary": false,
+        "content_sha256": "8a2f07e1cb1a76d04334f9f3ad813b9b37e2bd762cfd9398443d1d7a32db03c3",
+        "deletions": 0,
+        "path": "tools/sticker_proof.py",
+        "status": "A",
+        "symbols": [
+          "project",
+          "frame",
+          "standalone",
+          "build",
+          "preview"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "a1724e3c5debc4442b8051d604e488cab507efd69b82759c4479b6b926fbbb71"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "adapter",
+      "animated",
+      "api",
+      "attach",
+      "attachment",
+      "axm",
+      "based",
+      "boundary",
+      "build",
+      "checkpoint",
+      "cli",
+      "compatible",
+      "contracts",
+      "creation-machine",
+      "creative",
+      "current",
+      "definition",
+      "digest",
+      "encode",
+      "evidence",
+      "fabric",
+      "fixture",
+      "frame",
+      "game",
+      "glb",
+      "glbtests",
+      "growth",
+      "identifier",
+      "identity",
+      "init",
+      "instance",
+      "inverse",
+      "just",
+      "layer",
+      "layered",
+      "limits",
+      "local",
+      "matrix",
+      "merge",
+      "multiply",
+      "over",
+      "package",
+      "parameter",
+      "pixels",
+      "placement",
+      "portable",
+      "practice",
+      "preview",
+      "profile",
+      "project",
+      "proof",
+      "publish",
+      "register",
+      "registry",
+      "render",
+      "rendering",
+      "repository",
+      "resolve",
+      "rigid",
+      "scene",
+      "sha",
+      "sockets",
+      "stamp",
+      "standalone"
+    ]
+  },
+  "source": {
+    "base": "90148a8cde5349bb4b3801b3256859a631fbf9a6",
+    "commit_subject": "Merge portable sticker fabric and registry (#79)",
+    "head": "741eb6cb8bc4bbacdaed412755634696304ec531",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

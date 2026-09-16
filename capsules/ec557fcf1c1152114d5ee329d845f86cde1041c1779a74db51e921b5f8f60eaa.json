@@ -1,0 +1,106 @@
+{
+  "capsule_id": "ec557fcf1c1152114d5ee329d845f86cde1041c1779a74db51e921b5f8f60eaa",
+  "evidence": {
+    "files": [
+      {
+        "additions": 144,
+        "binary": false,
+        "content_sha256": "02399deb5395f197ac686e247e04aa29699962ad44397d9bbe72245be4bab537",
+        "deletions": 0,
+        "path": "docs/CREATIVE_MODELING_WAVE9.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Creative Modeling Wave 9 \u2014 deterministic triangle-modeling depth",
+          "Public capability growth",
+          "Selection and topology navigation",
+          "Boundary construction",
+          "Plane cutting",
+          "Symmetry",
+          "Reduction and relaxation",
+          "Creative Flow integration",
+          "Explicit non-claims / still missing",
+          "Verification"
+        ]
+      },
+      {
+        "additions": 3,
+        "binary": false,
+        "content_sha256": "34ecd9aa414461937b1e352b9f15e2038f7261c7bb4687b25dbcb87d8266a28d",
+        "deletions": 0,
+        "path": "tests/test_creative_precision_fabric.py",
+        "status": "M",
+        "symbols": [
+          "CreativePrecisionFabricTests"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "aaead06c68b1ea2db37e143fa3ed95a133be626b4cd8a2e431c4840416149f90"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "axiom",
+      "axm",
+      "boundary",
+      "capability",
+      "chatgpt",
+      "claims",
+      "construction",
+      "creation-machine",
+      "creative",
+      "cutting",
+      "depth",
+      "deterministic",
+      "explicit",
+      "fabric",
+      "flow",
+      "from",
+      "growth",
+      "integration",
+      "merge",
+      "mike",
+      "mir",
+      "missing",
+      "modeling",
+      "navigation",
+      "non",
+      "plane",
+      "precision",
+      "pull",
+      "reduction",
+      "relaxation",
+      "request",
+      "selection",
+      "standalone",
+      "still",
+      "symmetry",
+      "topology",
+      "triangle",
+      "universal-creation",
+      "verification",
+      "wave",
+      "wave9"
+    ]
+  },
+  "source": {
+    "base": "c71f6c181b60526c46c09372e6b674783b7f7eae",
+    "commit_subject": "Merge pull request #92 from mike-axiom-mir/chatgpt/creative-modeling-wave9",
+    "head": "c054f3d23ffdafba977eb70b86909dfe1bcb9f2d",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

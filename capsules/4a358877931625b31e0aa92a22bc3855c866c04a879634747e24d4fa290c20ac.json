@@ -1,0 +1,180 @@
+{
+  "capsule_id": "4a358877931625b31e0aa92a22bc3855c866c04a879634747e24d4fa290c20ac",
+  "evidence": {
+    "files": [
+      {
+        "additions": 37,
+        "binary": false,
+        "content_sha256": "591069fe07f30d32a5e03488e198fa7af944a30bd0bfca4a1e010b51badfd68e",
+        "deletions": 0,
+        "path": "NOVEL_TEMPLATE_PACK.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Editable Visual-Novel / Branching Narrative Template Pack",
+          "Surfaces",
+          "Source-first contracts",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 43,
+        "binary": false,
+        "content_sha256": "6d1e6c22956f006c780e6a4d03b3e28a821c8a88fbb66bb78dc545b09725f2a4",
+        "deletions": 43,
+        "path": "VISUAL_TEMPLATE_FABRIC.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Current v11 candidate census",
+          "Product foundations",
+          "Branching visual-novel foundation",
+          "Registry and identity",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 34,
+        "binary": false,
+        "content_sha256": "a40743dfd5dff96888065881db0e17f8fbe03f137caa1bdb07c4f34165bda4d2",
+        "deletions": 33,
+        "path": "VISUAL_TEMPLATE_PRIORITY_MAP.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "AXM Visual Template Expansion Priority Map",
+          "Interactive visual-novel / branching narrative \u2014 IMPLEMENTED IN THIS LANE",
+          "Next high-value visual/creation families",
+          "Cross-cutting rules",
+          "Immediate build order"
+        ]
+      },
+      {
+        "additions": 88,
+        "binary": false,
+        "content_sha256": "cc8487f42db322b02926b754279c02f7804d6855612ee5720dc602235dd82437",
+        "deletions": 0,
+        "path": "src/axm_uc/visual_template_novel.py",
+        "status": "A",
+        "symbols": [
+          "_merge",
+          "extend_novel_catalog"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 3,
+        "binary": false,
+        "content_sha256": "7ee70414194aacfb0a7a1c4b8c1987885860b8775311f6c7d4dd3dfb7b05c7a6",
+        "deletions": 1,
+        "path": "src/axm_uc/visual_templates.py",
+        "status": "M",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 37,
+        "binary": false,
+        "content_sha256": "c3fbdb29f933cedb2e998b547aa6fad9bc73639ff89a1b09371adcddc16364ae",
+        "deletions": 35,
+        "path": "tests/test_visual_templates.py",
+        "status": "M",
+        "symbols": [
+          "VisualTemplateTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 18,
+        "binary": false,
+        "content_sha256": "29ed5144abe36d95e6ab87cd3f9e2377513aa8821a3ef82663081d33efaaf9e1",
+        "deletions": 17,
+        "path": "tools/visual_template_proof.py",
+        "status": "M",
+        "symbols": [
+          "_write",
+          "main"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "a935a2b809d308d5e4cbf1b33625daa81fad5551cd989f12fc773d90318ceeed"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "add",
+      "axm",
+      "boundary",
+      "branching",
+      "build",
+      "candidate",
+      "catalog",
+      "census",
+      "contracts",
+      "creation",
+      "creation-machine",
+      "cross",
+      "current",
+      "cutting",
+      "editable",
+      "expansion",
+      "extend",
+      "fabric",
+      "families",
+      "first",
+      "foundation",
+      "foundations",
+      "high",
+      "identity",
+      "immediate",
+      "implemented",
+      "interactive",
+      "lane",
+      "map",
+      "merge",
+      "narrative",
+      "next",
+      "novel",
+      "order",
+      "pack",
+      "priority",
+      "product",
+      "proof",
+      "registry",
+      "rules",
+      "source",
+      "standalone",
+      "surfaces",
+      "template",
+      "templates",
+      "this",
+      "tools",
+      "truth",
+      "universal-creation",
+      "v11",
+      "value",
+      "visual",
+      "write"
+    ]
+  },
+  "source": {
+    "base": "c89839485a6d09a3e70dbd633c5f1292348f37b1",
+    "commit_subject": "Add editable branching visual-novel templates",
+    "head": "901c9ff759188f7da268f1b5dd0466461d1af4a6",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

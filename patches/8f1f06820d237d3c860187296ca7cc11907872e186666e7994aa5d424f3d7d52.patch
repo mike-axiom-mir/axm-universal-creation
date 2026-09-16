@@ -1,0 +1,330 @@
+diff --git a/capabilities/live/AXM-CAP-CREATIVE-FLOW-SPINE.json b/capabilities/live/AXM-CAP-CREATIVE-FLOW-SPINE.json
+index 4e39cc3..368cbfe 100644
+--- a/capabilities/live/AXM-CAP-CREATIVE-FLOW-SPINE.json
++++ b/capabilities/live/AXM-CAP-CREATIVE-FLOW-SPINE.json
+@@ -1,8 +1,8 @@
+ {
+   "id": "AXM-CAP-CREATIVE-FLOW-SPINE",
+-  "version": "0.1.0",
++  "version": "0.2.1",
+   "status": "live",
+-  "purpose": "Discover, resolve, preflight and execute bounded multi-hand creative plans against the shared deterministic Creative Hands body without making AI the owner of those capabilities.",
++  "purpose": "Discover, resolve, preflight and execute bounded multi-hand creative plans against the shared deterministic Creative Hands body, including quality/budget-aware planning for registered proven creation profiles, without making AI the owner of those capabilities.",
+   "handles": [
+     "creative-flow",
+     "creative-hand-flow",
+@@ -11,8 +11,12 @@
+   "input_contract": {
+     "required": [],
+     "properties": {
+-      "mode": "summary, discover, plan or execute; defaults to execute when steps are supplied and discover otherwise",
+-      "goal": "optional caller goal used only for deterministic token discovery in v1; prose alone never authorizes execution",
++      "mode": "summary, discover, plan, execute, adaptive-plan, adaptive-execute or adaptive-calibrate",
++      "goal": "caller goal; ordinary V1 discovery remains non-authorizing, while adaptive modes may match it only to an installed deterministic quality profile",
++      "quality": "optional numeric 0..1 quality depth or a known convenience alias for adaptive modes",
++      "machine": "optional bounded resource policy: max steps/work/state, observed work throughput, time budget, concurrency, and explicit allow_quality_degrade",
++      "profile_id": "optional exact installed adaptive quality profile id",
++      "samples": "adaptive-calibrate only; optional bounded sample count 1..5, default 3",
+       "discovery": "optional exact id/family/operation/query filters",
+       "state": "optional canonical candidate-state values available to plan steps",
+       "steps": "bounded explicit DAG steps using hand_id, recipe_id or a uniquely resolvable selector",
+@@ -24,6 +28,9 @@
+     "contains": [
+       "exact Creative Hands registry evidence",
+       "deterministic discovery or HOLD evidence",
++      "adaptive requested-versus-realized quality evidence when used",
++      "machine-budget estimates and dependency-derived schedule groups",
++      "optional explicit local throughput calibration receipt and reusable machine-policy patch",
+       "compiled dependency order and exact selected operation ids",
+       "per-step input/output digests and PASS receipts",
+       "candidate final-state digest on successful execution",
+@@ -34,7 +41,9 @@
+   "relationships": [
+     "routes through PlatformHands.creativeHands rather than duplicating creative implementations",
+     "lets human code, deterministic recipes and AI-proposed plans use the same underlying hand body",
+-    "keeps ambiguous selection and prose-only planning on HOLD rather than silently choosing"
++    "lets registered proven quality profiles deterministically derive bounded plans from goal + requested quality + machine policy",
++    "can explicitly calibrate local throughput by executing a bounded proven profile rather than guessing from hardware labels",
++    "keeps unknown goals, ambiguous profile selection, missing required hands and unaccepted quality degradation on HOLD"
+   ],
+   "anatomy_refs": [],
+   "implementation": {
+@@ -44,29 +53,33 @@
+     "runtime_bridge": "capabilities/platform-hands/shared/asset-hands/creative-flow-bridge.js"
+   },
+   "limitations": [
+-    "V1 does not invent an execution plan from arbitrary prose. A goal without explicit steps returns deterministic candidates and HOLD_PLAN_REQUIRED.",
++    "Adaptive planning is profile-bounded, not universal prose synthesis. Wave 13 initially installs only the creation profile learned from the verified armored-crate gauntlet; unknown goals HOLD instead of receiving invented plans.",
++    "Numeric quality is continuous, but available operation families still create real stage boundaries. Requested and realized quality are reported separately and quality degradation requires explicit allow_quality_degrade=true.",
++    "The scheduler derives dependency-safe concurrency groups and a theoretical parallel work floor, but Wave 13 still executes through the existing serial Creative Flow runtime. It does not claim parallel speedup until a worker runtime exists.",
++    "A time budget requires observed work_units_per_ms. Without it, time-bounded adaptive planning returns HOLD_CALIBRATION_REQUIRED rather than guessing hardware speed.",
++    "adaptive-calibrate is explicit and locally executes a bounded proven profile. Its timing receipt is observational, environment-dependent and noncanonical; it is not a persistent hardware identity or guaranteed future throughput.",
+     "Compatibility preflight proves plan structure, exact operation existence, dependencies and state-reference availability; individual hand implementations remain authoritative for their own schema and parameter validation at execution.",
+-    "Execution is an in-memory candidate transaction. V1 does not persist final creative state to a project file or machine canon by itself.",
++    "Execution is an in-memory candidate transaction. It does not persist final creative state to a project file or machine canon by itself.",
+     "The local Node runtime used by Platform Hands must be available. No network access is required.",
+-    "Maximum explicit flow length is 128 steps and maximum encoded request size is 64 MiB."
++    "Maximum explicit flow length remains 128 steps and maximum encoded request size remains 64 MiB."
+   ],
+   "persistent_state": null,
+   "root_fit": {
+     "truth": {
+       "fit": true,
+-      "basis": "Every resolved operation id, plan digest, state digest, step dependency and execution receipt remains inspectable; ambiguous discovery holds instead of being narrated as certainty."
++      "basis": "Requested quality, realized quality, profile identity, exact selected hands, budget estimates, missing operations, schedule groups, plan digest, calibration evidence and execution receipts remain inspectable; unsupported or under-resourced work holds instead of being narrated as achieved."
+     },
+     "agency": {
+       "fit": true,
+-      "basis": "The caller supplies or accepts the plan. AI may propose the same explicit plan format but does not gain hidden execution authority or ownership of the hands."
++      "basis": "Adaptive execution and calibration are explicit requests. Resource-driven quality degradation is off by default and must be explicitly allowed by the caller; AI has no hidden execution path or ownership of the hands."
+     },
+     "continuity": {
+       "fit": true,
+-      "basis": "The supplied canonical state is cloned into candidate state and is not mutated by the flow runtime; failed plans return HOLD evidence rather than partially committing state."
++      "basis": "The supplied canonical state is cloned into candidate state and is not mutated by the flow runtime; failed or held adaptive plans return evidence rather than partially committing state."
+     },
+     "wisdom-before-speed": {
+       "fit": true,
+-      "basis": "Plans are bounded, dependency-sorted and structurally preflighted before execution; selectors must resolve uniquely and each hand still enforces its own bounded contract."
++      "basis": "Quality plans are bounded by exact installed profiles, resource ceilings and required capabilities before execution. Missing machine-throughput calibration holds, local calibration is explicit, and planned concurrency is not mislabeled as executed parallel work."
+     }
+   }
+ }
+diff --git a/docs/CREATIVE_ADAPTIVE_QUALITY_WAVE13.md b/docs/CREATIVE_ADAPTIVE_QUALITY_WAVE13.md
+new file mode 100644
+index 0000000..62c4912
+--- /dev/null
++++ b/docs/CREATIVE_ADAPTIVE_QUALITY_WAVE13.md
+@@ -0,0 +1,119 @@
++# Adaptive Quality Resolver — Wave 13
++
++Wave 13 turns the Creative Flow gauntlet result into a bounded machine capability: for an installed deterministic quality profile, Universal Creation can derive an explicit Creative Flow plan from **goal + requested quality + machine policy** instead of requiring the caller to name every hand.
++
++This is not universal prose planning. Unknown or ambiguous goals remain on HOLD.
++
++## Quality is depth, not a hand-count target
++
++`quality` accepts any finite number from `0..1`. Convenience aliases such as `draft`, `game-ready`, `production`, `high`, `ultra`, `max-current-body`, and `maximum` only map into that numeric range.
++
++For the first installed profile, higher quality progressively wakes more of the already-installed Creative Hands body:
++
++- draft shape;
++- assembled game geometry and topology evidence;
++- UV/material/texture production;
++- material detail, rigging, skinning and animation;
++- premium hard-surface work when the required operation exists.
++
++Texture resolution, scratch density/length and animation bake sampling continue to scale inside the deeper ranges. Stage boundaries therefore coexist with continuous parameters.
++
++The resolver reports `requested_quality` and `realized_quality` separately. It never renames a cheaper realization as the requested quality.
++
++## Initial deterministic profile
++
++Wave 13 installs one proven profile:
++
++`game-prop.armored-crate/v1`
++
++It is derived from the quality gauntlet that already executed the same armored sci-fi supply-crate creation at several depths. Goal matching is deterministic and noun-bounded. This profile is not presented as an arbitrary-prop planner.
++
++Additional profiles should come from future proven creation gauntlets or other grounded deterministic routes rather than from speculative generic prose recipes.
++
++## Maximum-quality truth boundary
++
++For this hard-surface crate profile, quality `>= 0.92` requires the exact future operation:
++
++`creative.mesh-model-finish.bevel`
++
++That hand is not currently present in the public Creative Hands catalog. Therefore a `maximum` request currently returns `HOLD_CAPABILITY_GAP` unless the caller explicitly allows quality degradation. With `allow_quality_degrade: true`, the resolver searches downward in 0.01 quality increments and returns the highest executable/budget-fitting realization while preserving the original requested quality in the result.
++
++The missing-hand result includes an `axm.creative-capability-gap/v1` contract suitable as explicit future gap/Forge input. Wave 13 does not auto-install or self-canonize a replacement hand.
++
++## Machine policy
++
++Adaptive requests can bound:
++
++- `max_steps`;
++- `max_work_units`;
++- `max_state_bytes`;
++- `time_budget_ms`;
++- observed `work_units_per_ms`;
++- planned `concurrency`;
++- explicit `allow_quality_degrade`.
++
++A time budget without observed throughput returns `HOLD_CALIBRATION_REQUIRED`. The resolver does not guess machine speed.
++
++Work units are deterministic planning weights, not milliseconds. State bytes are profile estimates used for preflight, not a claim that a future runtime allocation will exactly equal the estimate.
++
++## Explicit local calibration
++
++`adaptive-calibrate` locally executes a bounded known profile one to five times (default three), measures the actual wall-clock duration of those executions, and returns an `axm.creative-throughput-calibration/v1` receipt plus a reusable machine-policy patch containing `work_units_per_ms`.
++
++Calibration is explicit because it performs real bounded work. It is not silently triggered by `adaptive-plan`.
++
++The receipt binds:
++
++- exact profile id and realized calibration quality;
++- deterministic serial work-unit count;
++- exact current Creative Hands audit digest;
++- exact quality-profile registry digest;
++- execution result digests;
++- per-sample and median observed timing;
++- derived work units per millisecond.
++
++Timing is explicitly observational. The calibration digest may change when runtime scheduling, CPU load, Node version, host hardware or other execution conditions change. It is **not canonical creation truth, a persistent hardware identity, or a guarantee of future throughput**. A caller may feed the returned rate into a later machine budget and may recalibrate whenever runtime conditions materially change.
++
++## Scheduler
++
++The resolver derives dependencies from retained `$state` references, then emits bounded concurrency groups. The schedule reports:
++
++- serial work units;
++- concurrency-limited groups;
++- a theoretical parallel work-unit floor.
++
++**Wave 13 does not execute those groups in parallel.** The existing Creative Flow executor remains serial and authoritative. Time-budget acceptance therefore uses serial work. `parallel_runtime` is explicitly `PLANNED_NOT_EXECUTED` until a real worker runtime is connected and tested.
++
++This distinction lets machine speed and future parallel execution improve without rewriting canonical creation state or pretending an unimplemented speedup already exists.
++
++## Public modes
++
++The existing `creative-flow` live capability and `PlatformHands.creativeFlow` service gain:
++
++- `adaptive-plan` — resolve profile, quality, budgets, missing operations and schedule without executing;
++- `adaptive-execute` — explicitly authorize execution of the resolved plan through the same existing Creative Flow transaction;
++- `adaptive-calibrate` — explicitly execute a bounded known route to observe current local throughput and return a reusable policy patch.
++
++Ordinary `plan` mode remains unchanged: arbitrary prose without explicit steps still returns `HOLD_PLAN_REQUIRED`.
++
++## Agency and continuity
++
++Adaptive execution and calibration are explicit. Quality degradation is off by default. A profile cannot silently broaden itself to an unknown goal. The supplied canonical state is still cloned into candidate state; held or failed work does not partially publish final state.
++
++## Verification
++
++`creative-quality-resolver-selftest.js` proves:
++
++- continuous/alias quality normalization;
++- unsupported goals HOLD;
++- 3 / 18 / 32 / 47-step depth growth across the proven profile;
++- dependency-derived concurrency groups;
++- current maximum-quality bevel gap;
++- explicit degradation below that gap;
++- step-budget adaptation;
++- throughput/time-budget adaptation where a faster calibrated machine can realize at least as much quality as a slower one;
++- `HOLD_CALIBRATION_REQUIRED` when time is supplied without observed throughput;
++- explicit local calibration produces positive measured throughput and a reusable machine-policy patch;
++- real `adaptive-execute` through the same Creative Flow executor, including a degraded execution.
++
++`tests/test_creative_flow.py` separately proves the adaptive planning/execution modes cross the ordinary `UniversalCreationMachine.create(kind="creative-flow")` live-capability bridge.
+diff --git a/src/axm_uc/creative_flow.py b/src/axm_uc/creative_flow.py
+index 1de63b8..a4e0470 100644
+--- a/src/axm_uc/creative_flow.py
++++ b/src/axm_uc/creative_flow.py
+@@ -22,13 +22,20 @@ def integration_summary(root: Path) -> dict[str, Any]:
+     bridge = root / BRIDGE_RELATIVE
+     return {
+         "type": "CREATIVE_FLOW_SPINE",
+-        "version": "1.0.0",
++        "version": "1.2.0",
+         "creation_kind": "creative-flow",
+         "bridge": str(BRIDGE_RELATIVE).replace("\\", "/"),
+         "bridge_present": bridge.is_file(),
+         "runtime": "node",
+         "machine_route": "live capability registry",
+-        "policy": "explicit plan execution plus deterministic discovery; prose-only goals HOLD for a plan",
++        "policy": (
++            "explicit plan execution plus deterministic discovery; known adaptive quality profiles may derive "
++            "bounded plans from goal + quality + machine budget, while unknown goals still HOLD"
++        ),
++        "adaptive_quality": True,
++        "adaptive_modes": ["adaptive-plan", "adaptive-execute", "adaptive-calibrate"],
++        "calibration": "explicit bounded local execution returns observational work-units-per-ms; never inferred from a hardware label",
++        "parallel_runtime": "planned-not-executed",
+         "source_state_mutation": False,
+     }
+ 
+diff --git a/tests/test_creative_flow.py b/tests/test_creative_flow.py
+index d05e0ea..8dee8a5 100644
+--- a/tests/test_creative_flow.py
++++ b/tests/test_creative_flow.py
+@@ -58,6 +58,67 @@ class CreativeFlowMachineTests(unittest.TestCase):
+         self.assertEqual(len(flow["receipts"]), 3)
+         self.assertEqual(flow["outputs"]["bounds"]["size"], [4, 2, 2])
+ 
++    def test_adaptive_quality_plans_and_executes_through_same_machine_route(self):
++        machine = UniversalCreationMachine(ROOT)
++        goal = "Create an animated armored sci-fi supply crate game asset with editable materials and animation."
++        planned = machine.create({
++            "kind": "creative-flow",
++            "direction": goal,
++            "inputs": {
++                "mode": "adaptive-plan",
++                "goal": goal,
++                "quality": 0.9,
++                "machine": {"concurrency": 4},
++            },
++        })["result"]
++        self.assertEqual(planned["status"], "READY")
++        self.assertEqual(planned["profile_id"], "game-prop.armored-crate/v1")
++        self.assertEqual(planned["requested_quality"], 0.9)
++        self.assertEqual(planned["realized_quality"], 0.9)
++        self.assertEqual(len(planned["execution_request"]["steps"]), 47)
++        self.assertEqual(planned["schedule"]["parallel_runtime"], "PLANNED_NOT_EXECUTED")
++        self.assertTrue(any(len(group["steps"]) > 1 for group in planned["schedule"]["groups"]))
++
++        executed = machine.create({
++            "kind": "creative-flow",
++            "direction": goal,
++            "inputs": {
++                "mode": "adaptive-execute",
++                "goal": goal,
++                "quality": "game-ready",
++                "machine": {"concurrency": 4},
++            },
++        })["result"]
++        self.assertEqual(executed["status"], "PASS")
++        self.assertTrue(executed["candidate_ready"])
++        self.assertEqual(executed["realized_quality"], 0.45)
++        self.assertEqual(len(executed["execution"]["receipts"]), 18)
++
++    def test_maximum_quality_holds_or_explicitly_degrades_instead_of_overclaiming(self):
++        goal = "Create a maximum quality animated armored sci-fi supply crate game asset."
++        machine = UniversalCreationMachine(ROOT)
++        held = machine.create({
++            "kind": "creative-flow",
++            "direction": goal,
++            "inputs": {"mode": "adaptive-plan", "goal": goal, "quality": "maximum"},
++        })["result"]
++        self.assertEqual(held["status"], "HOLD_CAPABILITY_GAP")
++        self.assertTrue(any(row["hand_id"] == "creative.mesh-model-finish.bevel" for row in held["missing_capabilities"]))
++
++        degraded = machine.create({
++            "kind": "creative-flow",
++            "direction": goal,
++            "inputs": {
++                "mode": "adaptive-plan",
++                "goal": goal,
++                "quality": "maximum",
++                "machine": {"allow_quality_degrade": True},
++            },
++        })["result"]
++        self.assertEqual(degraded["status"], "READY_DEGRADED")
++        self.assertLess(degraded["realized_quality"], 0.92)
++        self.assertGreaterEqual(degraded["realized_quality"], 0.85)
++
+     def test_prose_goal_discovers_but_does_not_self_authorize_plan(self):
+         result = UniversalCreationMachine(ROOT).create({
+             "kind": "creative-flow",
+diff --git a/tests/test_creative_precision_fabric.py b/tests/test_creative_precision_fabric.py
+index 22f635c..fbd0d7a 100644
+--- a/tests/test_creative_precision_fabric.py
++++ b/tests/test_creative_precision_fabric.py
+@@ -80,6 +80,9 @@ class CreativePrecisionFabricTests(unittest.TestCase):
+     def test_quality_level_creation_gauntlet(self):
+         self.run_node('creative-quality-gauntlet-selftest.js', echo=True)
+ 
++    def test_adaptive_quality_resolver_and_scheduler(self):
++        self.run_node('creative-quality-resolver-selftest.js', echo=True)
++
+ 
+ if __name__ == '__main__':
+     unittest.main()

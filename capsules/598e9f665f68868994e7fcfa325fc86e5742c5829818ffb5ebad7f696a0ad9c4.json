@@ -1,0 +1,151 @@
+{
+  "capsule_id": "598e9f665f68868994e7fcfa325fc86e5742c5829818ffb5ebad7f696a0ad9c4",
+  "evidence": {
+    "files": [
+      {
+        "additions": 147,
+        "binary": false,
+        "content_sha256": "0c5f0f1a514a42f924abea4e824265f7d1fb2d37e09901473b44c5e1bdd2d316",
+        "deletions": 0,
+        "path": "docs/PROCEDURAL_EFFECT_GRAPH.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Procedural Effect Graph v0.1",
+          "Why the graph is canonical",
+          "Algorithm",
+          "Call surfaces",
+          "Output",
+          "Controls",
+          "Existing Universal Creation relationship",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 485,
+        "binary": false,
+        "content_sha256": "e5aab4620a85f4f54ce04d775c0884704b4d4a8f71501f73184202506a45ad43",
+        "deletions": 0,
+        "path": "src/axm_uc/procedural_effects.py",
+        "status": "A",
+        "symbols": [
+          "_canonical",
+          "_digest",
+          "_number",
+          "_integer",
+          "_name",
+          "_point",
+          "_color",
+          "procedural_effect_catalog",
+          "_validate",
+          "_hash01",
+          "_field_costs",
+          "_cell",
+          "_routing",
+          "_trace",
+          "_walker_start",
+          "_point_from_cell",
+          "_path_length",
+          "build_electric_arc",
+          "_svg",
+          "_preview_html",
+          "publish_procedural_effect",
+          "operate_procedural_effect",
+          "_parser",
+          "main"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 140,
+        "binary": false,
+        "content_sha256": "232428fdde4a9a9fa4fcfb33fa02eebb387dbfce148588de1ea65de9b9298785",
+        "deletions": 0,
+        "path": "tests/test_procedural_effects.py",
+        "status": "A",
+        "symbols": [
+          "request",
+          "ProceduralEffectsTests"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "69b4c059e3437eb040ed2b180a4f41bee0c4a5f22e3170de787d05e93ca4c2a0"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 6,
+    "kinds": [
+      "code",
+      "knowledge",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "algorithm",
+      "arc",
+      "axm",
+      "boundary",
+      "build",
+      "call",
+      "canonical",
+      "catalog",
+      "cell",
+      "color",
+      "controls",
+      "costs",
+      "creation",
+      "creation-machine",
+      "digest",
+      "effect",
+      "effects",
+      "electric",
+      "existing",
+      "field",
+      "from",
+      "graph",
+      "hash01",
+      "html",
+      "integer",
+      "integrate",
+      "length",
+      "name",
+      "neutral",
+      "number",
+      "operate",
+      "output",
+      "parser",
+      "path",
+      "point",
+      "preview",
+      "procedural",
+      "publish",
+      "relationship",
+      "renderer",
+      "request",
+      "routing",
+      "standalone",
+      "start",
+      "surfaces",
+      "svg",
+      "trace",
+      "truth",
+      "universal",
+      "universal-creation",
+      "validate",
+      "walker",
+      "why"
+    ]
+  },
+  "source": {
+    "base": "728819d29b2380e44ecfaedc708aa8e5a177beb6",
+    "commit_subject": "Integrate renderer-neutral procedural electric arc graph",
+    "head": "882aeef0d4920dcfa6d105d68df9adba34e37942",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

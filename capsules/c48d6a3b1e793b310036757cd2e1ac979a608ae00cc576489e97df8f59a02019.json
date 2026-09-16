@@ -1,0 +1,89 @@
+{
+  "capsule_id": "c48d6a3b1e793b310036757cd2e1ac979a608ae00cc576489e97df8f59a02019",
+  "evidence": {
+    "files": [
+      {
+        "additions": 130,
+        "binary": false,
+        "content_sha256": "90ce6a2096984b0e75b6b8ef70b1be33e7ef8c9703cc7d896fdcc5a7477a4b13",
+        "deletions": 0,
+        "path": "docs/CREATIVE_PRECISION_WAVE5.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Creative Precision Fabric \u2014 executable mesh wave 5",
+          "Public capability growth",
+          "Primitive hands",
+          "Transform hands",
+          "Deform hands",
+          "Topology / repair hands",
+          "UV hands",
+          "Analysis hands",
+          "Public routing",
+          "Verification"
+        ]
+      },
+      {
+        "additions": 3,
+        "binary": false,
+        "content_sha256": "6fcfa9bd526ff498ac93a26640639a8d27fbabbb380bf110f56b553dd260c60d",
+        "deletions": 0,
+        "path": "tests/test_creative_precision_fabric.py",
+        "status": "M",
+        "symbols": [
+          "CreativePrecisionFabricTests"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "8463fa2d6f8450be7f0fae9acc716680a4d9bf200aeaf5fb345f03ff1d6da2b8"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "add",
+      "analysis",
+      "axm",
+      "capability",
+      "creation-machine",
+      "creative",
+      "deform",
+      "deterministic",
+      "executable",
+      "fabric",
+      "growth",
+      "hands",
+      "mesh",
+      "precision",
+      "primitive",
+      "repair",
+      "routing",
+      "standalone",
+      "topology",
+      "transform",
+      "universal-creation",
+      "verification",
+      "wave",
+      "wave5"
+    ]
+  },
+  "source": {
+    "base": "efdc99f3599294903d1aacb5b856fa2906e122d6",
+    "commit_subject": "Add 42 deterministic precision mesh hands (#88)",
+    "head": "636a4f826312377c5d36034dc3e81fc6f154d1d2",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

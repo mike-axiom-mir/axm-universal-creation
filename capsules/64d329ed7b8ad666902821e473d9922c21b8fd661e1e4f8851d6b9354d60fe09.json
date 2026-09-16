@@ -1,0 +1,105 @@
+{
+  "capsule_id": "64d329ed7b8ad666902821e473d9922c21b8fd661e1e4f8851d6b9354d60fe09",
+  "evidence": {
+    "files": [
+      {
+        "additions": 148,
+        "binary": false,
+        "content_sha256": "460b4238cc597e67cdb718b603162e61aea72935d3d728cf3815aa231748e6b7",
+        "deletions": 0,
+        "path": "docs/CREATIVE_MATERIAL_WAVE11.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Creative Production Wave 11 \u2014 UV, Material Stack and Texture Projection",
+          "Exact capability growth",
+          "Per-corner UV layout",
+          "UV truth boundary",
+          "Non-destructive material stacks",
+          "Anchors",
+          "Material generators",
+          "Geometry-to-texture projection",
+          "Creative Flow proof",
+          "Explicit non-claims"
+        ]
+      },
+      {
+        "additions": 6,
+        "binary": false,
+        "content_sha256": "80eaa751d8e65c71253ba8dc0c0bdae9c1a6a5cec4b7086927e6918b625037e3",
+        "deletions": 0,
+        "path": "tests/test_creative_precision_fabric.py",
+        "status": "M",
+        "symbols": [
+          "CreativePrecisionFabricTests"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "27cf73a2fb460707bd62c07729a98a5dd5861602374bb2db3fb1f406f3c4516f"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "anchors",
+      "axiom",
+      "axm",
+      "boundary",
+      "capability",
+      "chatgpt",
+      "claims",
+      "corner",
+      "creation-machine",
+      "creative",
+      "destructive",
+      "exact",
+      "explicit",
+      "fabric",
+      "flow",
+      "from",
+      "generators",
+      "geometry",
+      "growth",
+      "layout",
+      "material",
+      "merge",
+      "mike",
+      "mir",
+      "non",
+      "per",
+      "precision",
+      "production",
+      "projection",
+      "proof",
+      "pull",
+      "request",
+      "stack",
+      "stacks",
+      "standalone",
+      "texture",
+      "truth",
+      "universal-creation",
+      "wave",
+      "wave11"
+    ]
+  },
+  "source": {
+    "base": "c5496a17b9580abf870432ed2fed324b86d1fa37",
+    "commit_subject": "Merge pull request #96 from mike-axiom-mir/chatgpt/creative-material-wave11",
+    "head": "30d62f80c84732dbeebd1e58984525b3f8ec1d60",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

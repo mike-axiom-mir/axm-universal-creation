@@ -1,0 +1,202 @@
+{
+  "capsule_id": "3d9a1572b9fc06e4e5daa91a1ef1461f2e6be0f8a792c57a36493e1627af96a2",
+  "evidence": {
+    "files": [
+      {
+        "additions": 43,
+        "binary": false,
+        "content_sha256": "1cca1edaac119d061b93897df35043dbf9b5b25554f523e84a7ab10812a58a57",
+        "deletions": 0,
+        "path": "GAME_SHARED_TEMPLATE_PACK.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Shared Gameplay Visual Template Pack",
+          "Surfaces",
+          "State-aware primitives",
+          "Visual language",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 69,
+        "binary": false,
+        "content_sha256": "8ceb2c64a0b1acf3581638dd2bf516bbda33a79161bac6eb8fe07494f47664a2",
+        "deletions": 157,
+        "path": "VISUAL_TEMPLATE_FABRIC.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Visual Template / Archetype Fabric",
+          "Current v4 candidate census",
+          "Product foundations accumulated so far",
+          "Games",
+          "Creative/editor",
+          "Comics / visual narrative",
+          "AXM system / monolith shell",
+          "Shared gameplay-system pack",
+          "Registry and identity",
+          "CLI",
+          "Evidence gate",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 40,
+        "binary": false,
+        "content_sha256": "a61250a822027296fbda3d0fc3be856d280d8f428cba9a945c0d5cab9f87cc4d",
+        "deletions": 61,
+        "path": "VISUAL_TEMPLATE_PRIORITY_MAP.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "AXM Visual Template Expansion Priority Map",
+          "Priority 1 \u2014 Creative editor core \u2014 MERGED",
+          "Priority 2 \u2014 Editable comics and visual narrative \u2014 MERGED",
+          "Priority 3 \u2014 AXM software / monolith shell \u2014 MERGED",
+          "Priority 4 \u2014 Near-term shared gameplay gaps \u2014 IMPLEMENTED IN THIS LANE",
+          "Priority 5 \u2014 High-value visual/creation families \u2014 NEXT",
+          "Cross-cutting rules",
+          "Immediate build order"
+        ]
+      },
+      {
+        "additions": 96,
+        "binary": false,
+        "content_sha256": "23a20dbb8fe7fded9a95b146e46528cef151f19cdc516f94f0d140b6b5664224",
+        "deletions": 0,
+        "path": "src/axm_uc/visual_template_game_shared.py",
+        "status": "A",
+        "symbols": [
+          "_merge",
+          "extend_game_shared_catalog"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 3,
+        "binary": false,
+        "content_sha256": "4763d1056dadd815e97bd725e6fd987baa7af8e67560b2ab5098a441dddde5e7",
+        "deletions": 1,
+        "path": "src/axm_uc/visual_templates.py",
+        "status": "M",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 27,
+        "binary": false,
+        "content_sha256": "65d0b6bdc5b3d1c6541d7349277916dd2c9505b8507896d53757c80fccbbaff3",
+        "deletions": 30,
+        "path": "tests/test_visual_templates.py",
+        "status": "M",
+        "symbols": [
+          "VisualTemplateTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 14,
+        "binary": false,
+        "content_sha256": "a8435a103ec4a1280785455df58635424442f2ac6291425632db09388e1554fb",
+        "deletions": 11,
+        "path": "tools/visual_template_proof.py",
+        "status": "M",
+        "symbols": [
+          "_write",
+          "main"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "58324c2dd90e009949dfa41d5aa06aed0de596043aa36665400b9e99437371a1"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "accumulated",
+      "add",
+      "archetype",
+      "aware",
+      "axm",
+      "boundary",
+      "build",
+      "candidate",
+      "catalog",
+      "census",
+      "cli",
+      "comics",
+      "creation",
+      "creation-machine",
+      "creative",
+      "cross",
+      "current",
+      "cutting",
+      "editable",
+      "editor",
+      "evidence",
+      "expansion",
+      "extend",
+      "fabric",
+      "families",
+      "far",
+      "foundations",
+      "game",
+      "gameplay",
+      "games",
+      "gaps",
+      "gate",
+      "high",
+      "identity",
+      "immediate",
+      "implemented",
+      "lane",
+      "language",
+      "map",
+      "merge",
+      "merged",
+      "monolith",
+      "narrative",
+      "near",
+      "next",
+      "order",
+      "pack",
+      "primitives",
+      "priority",
+      "product",
+      "proof",
+      "registry",
+      "reusable",
+      "rules",
+      "shared",
+      "shell",
+      "software",
+      "standalone",
+      "state",
+      "surfaces",
+      "system",
+      "systems",
+      "template",
+      "templates"
+    ]
+  },
+  "source": {
+    "base": "308bda1fc25d72be71ac8e7215f24ae01c8b5586",
+    "commit_subject": "Add reusable shared gameplay visual systems",
+    "head": "ab9f93bd8862f0700d7e91065496ee5215cb3211",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

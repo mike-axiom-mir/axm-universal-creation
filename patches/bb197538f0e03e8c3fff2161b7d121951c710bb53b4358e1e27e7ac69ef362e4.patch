@@ -1,0 +1,1992 @@
+diff --git a/VISUAL_TEMPLATE_FABRIC.md b/VISUAL_TEMPLATE_FABRIC.md
+new file mode 100644
+index 0000000..5942eb4
+--- /dev/null
++++ b/VISUAL_TEMPLATE_FABRIC.md
+@@ -0,0 +1,244 @@
++# Visual Template / Archetype Fabric
++
++Universal Creation has a deterministic layer between low-level format scaffolds and finished products: **known visual archetypes**.
++
++A visual archetype is not finished art and it is not canon. It is a versioned, inspectable answer to a recurring structural problem: where important information belongs, what should dominate, how a layout adapts, what visual language holds it together, what reusable asset sockets exist, and which quality constraints should survive variation.
++
++This extends, rather than replaces, the existing systems:
++
++- `format_templates.py` still owns physical/screen canvases and simple semantic rectangles;
++- deterministic project templates still instantiate exact files;
++- Sticker Fabric remains the immutable/versioned local registry and reusable-part system;
++- visual archetypes supply stronger screen and whole-product foundations those systems can consume;
++- separate mathematical work can enrich declared ratios/ranges through `math_hooks` without silently replacing template identity.
++
++## One composed catalog
++
++The public module is `axm_uc.visual_templates`.
++
++Its retained deterministic kernel lives in `visual_template_core.py`. Genre/product growth lives in `visual_template_growth.py`. Shared professional game-product surfaces live in `visual_template_game_systems.py`. The public facade composes those dictionaries, rejects collisions, validates the resulting catalog, then exposes the same v1 schemas and functions.
++
++This is intentionally **one catalog**, not competing template systems and not multiple registries.
++
++Current deterministic catalog:
++
++- **32 reusable primitives**;
++- **8 coherent style systems**;
++- **57 responsive screen archetypes**;
++- **6 whole-product archetypes**.
++
++## Layers
++
++1. **Primitives** — reusable state/interaction contracts such as panel, navigation, player seat, selection card, stat comparison, slider row, countdown, loading state, recovery banner, keybind row, save slot and confirmation summary.
++2. **Style systems** — coherent surface, type, depth, shape and motion language. These are semantic visual systems, not one-off color themes.
++3. **Screen archetypes** — normalized responsive region geometry, slots, math hooks, intent and quality constraints.
++4. **Whole-product archetypes** — exact screen sets plus explicit flow edges and product-level coherence rules.
++
++Primitives describe reusable behavior/state expectations; they are not hidden widget implementations. A target product can realize them differently while preserving the contract that matters.
++
++## Racing foundations
++
++Two racing products are retained deliberately:
++
++- `game.racing.performance` — the smaller six-screen racing shell: lobby, event selection, garage, driving HUD, pause and results.
++- `game.racing.full` — the professional 19-screen foundation intended for a complete game shell.
++
++`game.racing.full` covers:
++
++- home / main menu;
++- co-op lobby;
++- event selection;
++- vehicle selection;
++- garage;
++- detailed reversible tuning + telemetry;
++- livery / appearance editing;
++- pre-race briefing and grid;
++- truthful loading/readiness;
++- start countdown;
++- primary driving HUD;
++- split-screen HUD with explicit seat identity;
++- pause;
++- disconnect / reconnection / recovery;
++- results and rewards;
++- replay / photo review;
++- season / progression;
++- settings;
++- accessibility.
++
++The product carries one shared `racing.performance` language and explicit flow edges between those surfaces. Driving views reduce chrome relative to setup views. Loading and recovery templates explicitly forbid pretending an unobserved state succeeded.
++
++This is deliberately useful for AXM Wreckline-like work without hard-coding one game's identity into Universal Creation. A game can inherit the structure and mutate its art direction, slots, geometry, content or whole screens.
++
++## Reusable co-op game foundation
++
++`game.coop.action` supplies a generic co-op action shell rather than copying the racing product:
++
++- home;
++- party lobby;
++- loadout;
++- action HUD;
++- pause/session overlay;
++- mission results;
++- settings with local-vs-party scope.
++
++The reusable `player-seat` contract includes empty, joining, ready, not-ready, disconnected and AI-seat states. Seat ownership is explicit. Human and machine players can therefore use the same player-facing presentation contract instead of receiving hidden privileged paths.
++
++## Reusable RTS foundation
++
++`game.rts.command` supplies a macro-scale command shell for persistent RTS-style worlds:
++
++- world-entry lobby;
++- persistent world map;
++- command HUD;
++- production/build planner;
++- research/technology;
++- diplomacy;
++- pause/strategic overview;
++- battle/world outcome.
++
++Its quality contract keeps the strategic map/world as the referent while command panels change. Selection, ownership, resources, production and strategic consequences retain stable anchors rather than turning the experience into unrelated dashboards.
++
++## Shared professional game-system shell
++
++`game.system.shell` is a genre-neutral library of **18 optional product surfaces**. It exists so every new AXM game does not have to rediscover the non-gameplay half of being a professional product.
++
++It contains:
++
++- player profile;
++- party / seat management;
++- matchmaking queue;
++- server/session browser;
++- controller/input remapping;
++- display/graphics settings;
++- audio settings;
++- shared accessibility settings;
++- save/load slots;
++- achievements/challenges;
++- tutorial/training;
++- photo mode;
++- credits/licenses;
++- error/recovery;
++- notifications;
++- text chat/channels;
++- privacy/consent;
++- language/localization selection.
++
++These screens are **capabilities, not assumptions**. A local/offline game does not suddenly require accounts, matchmaking, servers or chat because templates exist for them. A game selects only the surfaces relevant to its real product state.
++
++Truth-sensitive contracts include:
++
++- fake loading/progress state is forbidden;
++- server/session availability must be observed;
++- pending/failed chat delivery cannot look delivered;
++- corrupt/incompatible saves remain visible as such rather than being silently rewritten;
++- input conflicts must be shown before replacement;
++- display changes can expose a bounded revert path;
++- consent is not preselected merely to improve conversion and revocation remains discoverable;
++- errors say what failed, what remains safe and what recovery evidence exists.
++
++## Responsive geometry
++
++Screen regions are stored in normalized `0..1` coordinates. `resolve()` turns them into exact pixels for a supplied viewport. Game screens currently ship all three variants:
++
++- `compact`: width below 900 px or portrait/narrow ratio below 1.15;
++- `wide`: aspect ratio at least 1.9;
++- `standard`: everything between.
++
++Callers can request a declared variant explicitly. Unknown explicit variants fail; they do not silently fall back.
++
++The current geometry is a known structural foundation. Mathematical growth can later replace or enrich ratio/range derivation through `math_hooks` without changing product/template identity or silently rewriting source state.
++
++## Sticker Fabric / registry bridge
++
++Every built-in screen or whole-product archetype can be wrapped as an ordinary immutable Sticker definition:
++
++```python
++from axm_stickers import Registry
++from axm_uc.visual_templates import install_builtins
++
++with Registry('stickers.sqlite') as registry:
++    pins = install_builtins(registry)
++```
++
++The wrapper keeps the exact visual template inside the sticker recipe. Existing Sticker Registry guarantees still apply: exact id/version/digest pins, no floating `latest`, no silent upgrades, explicit registration and portable offline state.
++
++The bridge does **not** turn every Sticker into UI. It lets visual foundations use the same proven immutable local registry when desired.
++
++Screen archetypes may declare Sticker slots. `bind_sticker_slots()` accepts only explicit `{id, version, digest}` pins and validates socket/tag requirements. It never searches for or chooses a replacement on the caller's behalf.
++
++## CLI
++
++List the composed catalog:
++
++```sh
++axm-visual-templates catalog
++```
++
++Inspect exact foundations:
++
++```sh
++axm-visual-templates show game.racing.full
++axm-visual-templates show game.coop.action
++axm-visual-templates show game.rts.command
++axm-visual-templates show game.system.shell
++```
++
++Write local structural previews:
++
++```sh
++axm-visual-templates render game.racing.full creations/racing-foundation --width 1920 --height 1080
++axm-visual-templates render game.coop.action creations/coop-foundation --width 1280 --height 720
++axm-visual-templates render game.rts.command creations/rts-foundation --width 1920 --height 1080
++axm-visual-templates render game.system.shell creations/game-system-foundation --width 1280 --height 720
++```
++
++A product preview contains one SVG per screen, `product.json` with exact resolved structure, and a local HTML gallery. A screen preview contains `screen.svg`, `template.json` and HTML.
++
++Explicitly install all built-ins into a Sticker Registry:
++
++```sh
++axm-visual-templates install-registry creations/stickers.sqlite
++```
++
++## Evidence
++
++Run:
++
++```sh
++python -m unittest discover -s tests -p 'test_visual_templates.py' -v
++python tools/visual_template_proof.py /new/output/path
++```
++
++The deterministic test suite checks:
++
++- exact composed catalog counts;
++- all 57 screens across six representative viewport shapes/sizes;
++- compact/standard/wide coverage for game screens;
++- strict unknown-variant rejection;
++- exact product screen ordering and flow references;
++- the 19-screen professional racing shell and key loading/recovery transitions;
++- the 18-screen shared system shell including consent/recovery/input/persistence surfaces;
++- racing, co-op, RTS and shared-system product resolution;
++- SVG parseability;
++- actual Sticker Registry installation of all 63 screens/products;
++- exact Sticker slot pins;
++- rejection of invalid geometry;
++- mature reusable primitives including truthful loading, observed availability and explicit player-seat ownership.
++
++The proof generates galleries for `game.racing.full`, `game.coop.action`, `game.rts.command` and `game.system.shell`, plus a portrait mobile foundation. It resolves all four game products at 640×360, 1080×1920, 1280×720, 1920×1080, 2560×1080 and 3840×2160 and rejects any region that escapes its viewport.
++
++## Truth boundary
++
++Current claims are intentionally narrow:
++
++- these are known structural foundations, **not** professional-quality guarantees by themselves;
++- generated SVG is an offline structural preview, not target-engine rendering;
++- no gameplay, controller feel, interaction timing, localization, font rendering, network behavior, save reliability, runtime performance, accessibility audit or aesthetic acceptance is proven by the template resolver;
++- having an accessibility template does not mean a finished product is accessible; it prevents that product surface from being absent by default;
++- having privacy/consent templates does not establish legal compliance; it preserves a non-manipulative explicit-choice starting structure;
++- color/style tokens express coherent intent but do not replace final art direction;
++- loading, recovery and availability contracts forbid fake state, but the real product still has to connect them to observed runtime evidence;
++- the machine may mutate, combine, replace or ignore a template when evidence and user intent support doing so;
++- no template becomes canon merely because it is built in or registered.
++
++The goal is to stop creation from beginning at zero while preserving agency, exact source truth and room for better solutions.
+diff --git a/src/axm_uc/visual_template_core.py b/src/axm_uc/visual_template_core.py
+new file mode 100644
+index 0000000..68715aa
+--- /dev/null
++++ b/src/axm_uc/visual_template_core.py
+@@ -0,0 +1,610 @@
++"""Deterministic visual archetypes for screens and whole products.
++
++Visual templates are known-good structural starting points, not aesthetic canon.
++They preserve semantic hierarchy in normalized coordinates and resolve those
++coordinates to an explicit viewport. The catalog is offline and dependency-free.
++
++Sticker Fabric remains the immutable/versioned registry. ``sticker_definition``
++wraps a visual archetype as an ordinary exact sticker definition when a caller
++wants local registry discovery and pinning; no template is silently promoted or
++selected as ``latest``.
++"""
++from __future__ import annotations
++
++from copy import deepcopy
++from html import escape
++import hashlib
++import json
++import math
++import re
++from typing import Any
++
++SCHEMA = "axm.visual-template/v1"
++PRODUCT_SCHEMA = "axm.visual-product/v1"
++ADAPTER = "axm.visual-template/v1"
++PRODUCT_ADAPTER = "axm.visual-product/v1"
++_ID = re.compile(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,79}\Z")
++MAX_REGIONS = 32
++MAX_SLOTS = 24
++
++
++def _origin() -> dict[str, str]:
++    return {"author": "AXM", "license": "repository-license", "source": "axm-universal-creation"}
++
++
++STYLE_SYSTEMS: dict[str, dict[str, Any]] = {
++    "racing.performance": {
++        "intent": "high-speed legibility with one dominant race metric and restrained peripheral chrome",
++        "tokens": {
++            "canvas": "#090d12", "surface": "#111923", "surface_raised": "#172430",
++            "text": "#edf6f6", "muted": "#9fb0b7", "accent": "#67e8dc",
++            "warning": "#ffb45c", "danger": "#ff6f6f", "line": "#31414a",
++        },
++        "shape": {"panel_radius_ratio": 0.018, "cut_ratio": 0.010, "line_ratio": 0.0015},
++        "type": {"display_weight": 760, "body_weight": 520, "metric_scale": 1.85, "tracking": 0.025},
++        "depth": {"layers": 4, "shadow": "tight", "glass": "restrained"},
++        "motion": {"fast_ms": 90, "standard_ms": 180, "slow_ms": 320, "principle": "state first; flourish second"},
++    },
++    "studio.precision": {
++        "intent": "dense professional creation workspace with persistent context and inspectable controls",
++        "tokens": {
++            "canvas": "#0b0f14", "surface": "#151b22", "surface_raised": "#1c2530",
++            "text": "#eff3f6", "muted": "#9ba8b4", "accent": "#82b9ff",
++            "warning": "#f2c572", "danger": "#ef7b7b", "line": "#36414d",
++        },
++        "shape": {"panel_radius_ratio": 0.010, "cut_ratio": 0.0, "line_ratio": 0.0012},
++        "type": {"display_weight": 700, "body_weight": 480, "metric_scale": 1.45, "tracking": 0.010},
++        "depth": {"layers": 5, "shadow": "subtle", "glass": "none"},
++        "motion": {"fast_ms": 80, "standard_ms": 160, "slow_ms": 260, "principle": "preserve editing context"},
++    },
++    "system.command": {
++        "intent": "operational overview with strong status hierarchy and low ambiguity",
++        "tokens": {
++            "canvas": "#081016", "surface": "#10202a", "surface_raised": "#17303c",
++            "text": "#e9f4f6", "muted": "#9eb4ba", "accent": "#7ed6c4",
++            "warning": "#eac46c", "danger": "#ef7474", "line": "#31505a",
++        },
++        "shape": {"panel_radius_ratio": 0.012, "cut_ratio": 0.004, "line_ratio": 0.0014},
++        "type": {"display_weight": 720, "body_weight": 500, "metric_scale": 1.6, "tracking": 0.018},
++        "depth": {"layers": 4, "shadow": "subtle", "glass": "light"},
++        "motion": {"fast_ms": 100, "standard_ms": 190, "slow_ms": 340, "principle": "changes must remain traceable"},
++    },
++    "mobile.focus": {
++        "intent": "touch-first focus with one primary action and comfortable scan rhythm",
++        "tokens": {
++            "canvas": "#0d1117", "surface": "#171d26", "surface_raised": "#202936",
++            "text": "#f1f5f8", "muted": "#aab6c2", "accent": "#92c7ff",
++            "warning": "#efc16f", "danger": "#f07e7e", "line": "#354150",
++        },
++        "shape": {"panel_radius_ratio": 0.026, "cut_ratio": 0.0, "line_ratio": 0.0015},
++        "type": {"display_weight": 720, "body_weight": 500, "metric_scale": 1.45, "tracking": 0.008},
++        "depth": {"layers": 3, "shadow": "soft", "glass": "none"},
++        "motion": {"fast_ms": 100, "standard_ms": 190, "slow_ms": 300, "principle": "direct manipulation, no surprise movement"},
++    },
++    "commerce.gallery": {
++        "intent": "visual browsing with clear comparison, selection state and purchase-safe hierarchy",
++        "tokens": {
++            "canvas": "#0f1115", "surface": "#1a1d23", "surface_raised": "#232832",
++            "text": "#f5f5f2", "muted": "#b4b5b2", "accent": "#ffd477",
++            "warning": "#f0ae67", "danger": "#ec7777", "line": "#41444c",
++        },
++        "shape": {"panel_radius_ratio": 0.018, "cut_ratio": 0.0, "line_ratio": 0.0013},
++        "type": {"display_weight": 720, "body_weight": 480, "metric_scale": 1.5, "tracking": 0.012},
++        "depth": {"layers": 4, "shadow": "soft", "glass": "none"},
++        "motion": {"fast_ms": 100, "standard_ms": 180, "slow_ms": 300, "principle": "selection state stays obvious"},
++    },
++}
++
++
++PRIMITIVES: dict[str, dict[str, Any]] = {
++    "panel": {"role": "contain related state", "states": ["rest", "focus", "disabled"], "minimum_contrast": "boundary-or-surface"},
++    "primary-action": {"role": "one dominant action per local decision zone", "states": ["rest", "hover", "pressed", "disabled", "busy"]},
++    "metric": {"role": "fast numeric reading", "states": ["normal", "warning", "critical"], "alignment": "tabular-or-fixed-width"},
++    "progress": {"role": "bounded progress or charge", "states": ["empty", "partial", "full", "blocked"], "requires_text_fallback": True},
++    "navigation": {"role": "location and movement", "states": ["rest", "selected", "unavailable"], "selection_must_not_depend_on_color": True},
++    "list-row": {"role": "repeatable comparable item", "states": ["rest", "selected", "disabled"], "stable_alignment": True},
++    "viewport": {"role": "primary content/world surface", "states": ["active", "paused", "loading"], "must_preserve_focus": True},
++    "toast": {"role": "non-blocking feedback", "states": ["info", "success", "warning", "error"], "must_not_hold_unique_critical_state": True},
++}
++
++
++def _screen(template_id: str, name: str, domain: str, style: str, intent: str,
++            variants: dict[str, dict[str, tuple[float, float, float, float]]],
++            *, slots: list[dict[str, Any]] | None = None, tags: list[str] | None = None,
++            math_hooks: dict[str, Any] | None = None, quality: list[str] | None = None) -> dict[str, Any]:
++    return {
++        "schema": SCHEMA,
++        "id": template_id,
++        "version": 1,
++        "name": name,
++        "kind": "screen",
++        "domain": domain,
++        "tags": list(tags or []),
++        "origin": _origin(),
++        "style": style,
++        "intent": intent,
++        "variants": {variant: {region: list(box) for region, box in regions.items()} for variant, regions in variants.items()},
++        "slots": deepcopy(slots or []),
++        "math_hooks": deepcopy(math_hooks or {}),
++        "quality": list(quality or []),
++    }
++
++
++RACING_COMMON = [
++    "preserve world/vehicle visibility ahead of decorative chrome",
++    "critical race state must remain readable without color alone",
++    "secondary information must not compete with speed, route, threats or objective",
++    "animations may reinforce state changes but may not delay control feedback",
++]
++
++
++SCREEN_TEMPLATES: dict[str, dict[str, Any]] = {
++    "game.racing.hud.performance": _screen(
++        "game.racing.hud.performance", "Performance racing HUD", "game.racing", "racing.performance",
++        "keep speed, route, position and immediate vehicle state readable during high-motion play",
++        {
++            "compact": {
++                "position": (0.025, 0.035, 0.18, 0.10), "objective": (0.29, 0.035, 0.42, 0.10),
++                "minimap": (0.79, 0.035, 0.185, 0.235), "world": (0.0, 0.0, 1.0, 1.0),
++                "vehicle-state": (0.025, 0.805, 0.19, 0.15), "speed": (0.395, 0.80, 0.21, 0.165),
++                "event-feed": (0.73, 0.77, 0.245, 0.19),
++            },
++            "standard": {
++                "position": (0.022, 0.035, 0.15, 0.095), "objective": (0.335, 0.035, 0.33, 0.085),
++                "minimap": (0.82, 0.035, 0.158, 0.255), "world": (0.0, 0.0, 1.0, 1.0),
++                "vehicle-state": (0.022, 0.805, 0.17, 0.15), "speed": (0.41, 0.795, 0.18, 0.17),
++                "event-feed": (0.76, 0.77, 0.218, 0.19),
++            },
++            "wide": {
++                "position": (0.018, 0.04, 0.125, 0.09), "objective": (0.37, 0.04, 0.26, 0.08),
++                "minimap": (0.855, 0.04, 0.127, 0.245), "world": (0.0, 0.0, 1.0, 1.0),
++                "vehicle-state": (0.018, 0.815, 0.145, 0.14), "speed": (0.425, 0.805, 0.15, 0.155),
++                "event-feed": (0.80, 0.785, 0.182, 0.17),
++            },
++        },
++        slots=[
++            {"id": "speed-cluster", "kind": "sticker", "socket": "surface", "tags": ["hud", "metric"], "required": False},
++            {"id": "minimap-frame", "kind": "sticker", "socket": "surface", "tags": ["hud", "navigation"], "required": False},
++        ],
++        tags=["game", "racing", "hud", "performance"],
++        math_hooks={"focal_region": "speed", "edge_safe_ratio": [0.018, 0.04], "major_minor_type_ratio": [1.55, 2.15]},
++        quality=RACING_COMMON,
++    ),
++    "game.racing.garage": _screen(
++        "game.racing.garage", "Racing garage and vehicle setup", "game.racing", "racing.performance",
++        "make the vehicle the hero while tuning, comparison and primary actions stay immediately inspectable",
++        {
++            "compact": {"topbar": (0.03,0.03,0.94,0.08), "vehicle": (0.03,0.14,0.94,0.43), "stats": (0.03,0.60,0.45,0.25), "tuning": (0.52,0.60,0.45,0.25), "actions": (0.03,0.88,0.94,0.085)},
++            "standard": {"topbar": (0.025,0.03,0.95,0.08), "vehicle": (0.22,0.13,0.56,0.58), "stats": (0.025,0.17,0.17,0.54), "tuning": (0.805,0.17,0.17,0.54), "actions": (0.25,0.80,0.50,0.11)},
++            "wide": {"topbar": (0.02,0.03,0.96,0.075), "vehicle": (0.24,0.13,0.52,0.60), "stats": (0.02,0.18,0.18,0.53), "tuning": (0.80,0.18,0.18,0.53), "actions": (0.31,0.82,0.38,0.10)},
++        },
++        slots=[{"id":"vehicle-stage","kind":"content","required":True},{"id":"manufacturer-mark","kind":"sticker","socket":"surface","tags":["identity"],"required":False}],
++        tags=["game","racing","garage","loadout"],
++        math_hooks={"hero_area_ratio":[0.45,0.68],"side_panel_ratio":[0.16,0.22]}, quality=RACING_COMMON,
++    ),
++    "game.racing.event-select": _screen(
++        "game.racing.event-select", "Racing event selection", "game.racing", "racing.performance",
++        "show route identity, risk and reward before commitment without burying the primary start decision",
++        {
++            "compact": {"header":(0.03,0.03,0.94,0.08),"route-map":(0.03,0.14,0.94,0.36),"event-list":(0.03,0.53,0.50,0.33),"details":(0.56,0.53,0.41,0.33),"actions":(0.03,0.89,0.94,0.08)},
++            "standard": {"header":(0.025,0.03,0.95,0.08),"event-list":(0.025,0.14,0.25,0.72),"route-map":(0.30,0.14,0.45,0.55),"details":(0.775,0.14,0.20,0.55),"actions":(0.30,0.74,0.675,0.12)},
++            "wide": {"header":(0.02,0.03,0.96,0.075),"event-list":(0.02,0.14,0.22,0.72),"route-map":(0.27,0.14,0.50,0.56),"details":(0.80,0.14,0.18,0.56),"actions":(0.27,0.76,0.71,0.105)},
++        }, tags=["game","racing","events","map"], quality=RACING_COMMON,
++    ),
++    "game.racing.results": _screen(
++        "game.racing.results", "Racing results", "game.racing", "racing.performance",
++        "celebrate outcome while making placement, rewards and next actions unambiguous",
++        {
++            "compact": {"headline":(0.04,0.05,0.92,0.13),"placement":(0.04,0.21,0.28,0.23),"summary":(0.35,0.21,0.61,0.23),"leaderboard":(0.04,0.48,0.92,0.30),"rewards":(0.04,0.81,0.55,0.13),"actions":(0.62,0.81,0.34,0.13)},
++            "standard": {"headline":(0.04,0.06,0.92,0.12),"placement":(0.04,0.22,0.24,0.48),"summary":(0.31,0.22,0.31,0.22),"leaderboard":(0.65,0.22,0.31,0.48),"rewards":(0.31,0.48,0.31,0.22),"actions":(0.31,0.76,0.65,0.13)},
++            "wide": {"headline":(0.05,0.06,0.90,0.11),"placement":(0.05,0.22,0.20,0.49),"summary":(0.28,0.22,0.30,0.22),"leaderboard":(0.61,0.22,0.34,0.49),"rewards":(0.28,0.48,0.30,0.23),"actions":(0.28,0.78,0.67,0.11)},
++        }, tags=["game","racing","results","rewards"], quality=RACING_COMMON,
++    ),
++    "game.racing.lobby": _screen(
++        "game.racing.lobby", "Racing co-op lobby", "game.racing", "racing.performance",
++        "keep player readiness, seat ownership, event choice and launch state visible without setup clutter",
++        {
++            "compact": {"header":(0.03,0.03,0.94,0.08),"event":(0.03,0.14,0.94,0.22),"players":(0.03,0.39,0.94,0.36),"options":(0.03,0.78,0.46,0.17),"launch":(0.52,0.78,0.45,0.17)},
++            "standard": {"header":(0.025,0.03,0.95,0.08),"event":(0.025,0.14,0.28,0.68),"players":(0.33,0.14,0.42,0.68),"options":(0.775,0.14,0.20,0.45),"launch":(0.775,0.64,0.20,0.18)},
++            "wide": {"header":(0.02,0.03,0.96,0.075),"event":(0.02,0.14,0.25,0.69),"players":(0.30,0.14,0.45,0.69),"options":(0.78,0.14,0.20,0.46),"launch":(0.78,0.65,0.20,0.18)},
++        }, tags=["game","racing","lobby","coop"], quality=RACING_COMMON,
++    ),
++    "game.racing.pause": _screen(
++        "game.racing.pause", "Racing pause overlay", "game.racing", "racing.performance",
++        "preserve paused-world context while keeping resume and recovery actions dominant",
++        {
++            "compact": {"context":(0,0,1,1),"menu":(0.18,0.14,0.64,0.70),"status":(0.20,0.17,0.60,0.12),"actions":(0.25,0.35,0.50,0.43)},
++            "standard": {"context":(0,0,1,1),"menu":(0.30,0.12,0.40,0.76),"status":(0.33,0.17,0.34,0.11),"actions":(0.35,0.34,0.30,0.45)},
++            "wide": {"context":(0,0,1,1),"menu":(0.34,0.12,0.32,0.76),"status":(0.37,0.17,0.26,0.11),"actions":(0.39,0.34,0.22,0.45)},
++        }, tags=["game","racing","pause","settings"], quality=RACING_COMMON,
++    ),
++    "product.dashboard.command": _screen(
++        "product.dashboard.command", "Command dashboard", "software.dashboard", "system.command",
++        "surface the current state, important changes, exceptions and next actions in one operational view",
++        {
++            "compact": {"header":(0.03,0.025,0.94,0.075),"summary":(0.03,0.125,0.94,0.16),"primary":(0.03,0.31,0.94,0.34),"alerts":(0.03,0.68,0.45,0.28),"activity":(0.52,0.68,0.45,0.28)},
++            "standard": {"nav":(0.015,0.02,0.14,0.96),"header":(0.18,0.025,0.80,0.075),"summary":(0.18,0.125,0.80,0.16),"primary":(0.18,0.31,0.52,0.65),"alerts":(0.73,0.31,0.25,0.30),"activity":(0.73,0.64,0.25,0.32)},
++            "wide": {"nav":(0.012,0.02,0.11,0.96),"header":(0.145,0.025,0.835,0.075),"summary":(0.145,0.125,0.835,0.15),"primary":(0.145,0.30,0.56,0.66),"alerts":(0.73,0.30,0.25,0.30),"activity":(0.73,0.63,0.25,0.33)},
++        }, tags=["software","dashboard","operations"], quality=["exceptions outrank decoration","status language must be explicit","dense panels need stable alignment"],
++    ),
++    "product.editor.workspace": _screen(
++        "product.editor.workspace", "Professional editor workspace", "software.editor", "studio.precision",
++        "preserve a large primary work surface with stable tools, hierarchy, properties and evidence",
++        {
++            "compact": {"topbar":(0.02,0.02,0.96,0.07),"tools":(0.02,0.11,0.10,0.77),"viewport":(0.14,0.11,0.84,0.57),"hierarchy":(0.14,0.71,0.40,0.27),"properties":(0.56,0.71,0.42,0.27)},
++            "standard": {"topbar":(0.015,0.02,0.97,0.065),"hierarchy":(0.015,0.105,0.16,0.875),"tools":(0.19,0.105,0.055,0.67),"viewport":(0.26,0.105,0.53,0.67),"properties":(0.805,0.105,0.18,0.67),"timeline":(0.19,0.795,0.795,0.185)},
++            "wide": {"topbar":(0.012,0.02,0.976,0.06),"hierarchy":(0.012,0.10,0.14,0.88),"tools":(0.165,0.10,0.045,0.68),"viewport":(0.225,0.10,0.57,0.68),"properties":(0.81,0.10,0.178,0.68),"timeline":(0.165,0.80,0.823,0.18)},
++        }, tags=["software","editor","creative","workspace"], quality=["viewport remains the dominant surface","tools stay position-stable","properties expose state instead of hiding it"],
++    ),
++    "product.mobile.home": _screen(
++        "product.mobile.home", "Mobile product home", "software.mobile", "mobile.focus",
++        "give a touch user immediate orientation, recent state and one clear next action",
++        {
++            "compact": {"system":(0.04,0.02,0.92,0.055),"identity":(0.04,0.095,0.92,0.105),"primary":(0.04,0.23,0.92,0.27),"recent":(0.04,0.53,0.92,0.29),"nav":(0.04,0.86,0.92,0.10)},
++            "standard": {"identity":(0.06,0.05,0.88,0.10),"primary":(0.06,0.19,0.88,0.30),"recent":(0.06,0.53,0.88,0.30),"nav":(0.06,0.87,0.88,0.09)},
++            "wide": {"identity":(0.08,0.05,0.84,0.10),"primary":(0.08,0.19,0.84,0.30),"recent":(0.08,0.53,0.84,0.30),"nav":(0.08,0.87,0.84,0.09)},
++        }, tags=["software","mobile","home","touch"], quality=["one dominant next action","touch targets need breathing room","recent state stays recoverable"],
++    ),
++    "product.store.browse": _screen(
++        "product.store.browse", "Store and catalog browse", "software.commerce", "commerce.gallery",
++        "support browsing and comparison while keeping filters, selection and ownership state clear",
++        {
++            "compact": {"header":(0.03,0.03,0.94,0.08),"filters":(0.03,0.14,0.94,0.10),"gallery":(0.03,0.27,0.94,0.52),"selection":(0.03,0.82,0.94,0.15)},
++            "standard": {"header":(0.025,0.03,0.95,0.08),"filters":(0.025,0.14,0.18,0.82),"gallery":(0.23,0.14,0.50,0.82),"selection":(0.755,0.14,0.22,0.82)},
++            "wide": {"header":(0.02,0.03,0.96,0.075),"filters":(0.02,0.14,0.15,0.82),"gallery":(0.19,0.14,0.56,0.82),"selection":(0.77,0.14,0.21,0.82)},
++        }, tags=["software","commerce","store","gallery"], quality=["price/ownership state must not hide in decoration","filters preserve active state","comparison geometry stays stable"],
++    ),
++    "product.settings.system": _screen(
++        "product.settings.system", "Settings and preferences", "software.settings", "system.command",
++        "make scope, current values, consequences and reversible changes obvious",
++        {
++            "compact": {"header":(0.04,0.03,0.92,0.08),"categories":(0.04,0.14,0.92,0.15),"settings":(0.04,0.32,0.92,0.52),"actions":(0.04,0.87,0.92,0.10)},
++            "standard": {"header":(0.03,0.03,0.94,0.08),"categories":(0.03,0.14,0.22,0.82),"settings":(0.28,0.14,0.69,0.68),"actions":(0.28,0.85,0.69,0.11)},
++            "wide": {"header":(0.025,0.03,0.95,0.075),"categories":(0.025,0.14,0.19,0.82),"settings":(0.245,0.14,0.73,0.68),"actions":(0.245,0.85,0.73,0.11)},
++        }, tags=["software","settings","preferences"], quality=["show current value and scope","dangerous actions require distinct treatment","reversible changes should say how to reverse"],
++    ),
++}
++
++
++PRODUCT_ARCHETYPES: dict[str, dict[str, Any]] = {
++    "game.racing.performance": {
++        "schema": PRODUCT_SCHEMA, "id": "game.racing.performance", "version": 1,
++        "name": "Performance racing game product", "kind": "product", "domain": "game.racing",
++        "tags": ["game","racing","product","coop"], "origin": _origin(), "style": "racing.performance",
++        "intent": "a coherent professional racing shell from lobby through race, garage and results",
++        "screens": [
++            "game.racing.lobby", "game.racing.event-select", "game.racing.garage",
++            "game.racing.hud.performance", "game.racing.pause", "game.racing.results",
++        ],
++        "flow": [
++            ["game.racing.lobby","game.racing.event-select","choose-event"],
++            ["game.racing.event-select","game.racing.garage","prepare-vehicle"],
++            ["game.racing.garage","game.racing.hud.performance","start-race"],
++            ["game.racing.hud.performance","game.racing.pause","pause"],
++            ["game.racing.pause","game.racing.hud.performance","resume"],
++            ["game.racing.hud.performance","game.racing.results","finish"],
++            ["game.racing.results","game.racing.lobby","continue"],
++        ],
++        "quality": [
++            "one visual language across shell and HUD, not six unrelated screens",
++            "race information density rises only when driving begins",
++            "player/seat readiness remains explicit for co-op",
++            "results preserve a clear return/continue loop",
++            "template geometry is a starting constraint system, not finished art",
++        ],
++    },
++    "software.creator.studio": {
++        "schema": PRODUCT_SCHEMA, "id": "software.creator.studio", "version": 1,
++        "name": "Creator studio product", "kind": "product", "domain": "software.creator",
++        "tags": ["software","creator","product","editor"], "origin": _origin(), "style": "studio.precision",
++        "intent": "a professional creation product with command overview, editing and explicit preferences",
++        "screens": ["product.dashboard.command","product.editor.workspace","product.settings.system"],
++        "flow": [
++            ["product.dashboard.command","product.editor.workspace","open-project"],
++            ["product.editor.workspace","product.settings.system","configure"],
++            ["product.settings.system","product.editor.workspace","return"],
++        ],
++        "quality": ["creation state remains primary","settings never silently rewrite projects","operational dashboard shows exceptions without replacing source truth"],
++    },
++}
++
++
++def canonical_bytes(value: Any) -> bytes:
++    return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False).encode("utf-8")
++
++
++def digest(value: Any) -> str:
++    return hashlib.sha256(canonical_bytes(value)).hexdigest()
++
++
++def _id(value: Any, label: str = "id") -> str:
++    if not isinstance(value, str) or _ID.fullmatch(value) is None:
++        raise ValueError(f"{label} must be a portable identifier")
++    return value
++
++
++def _finite_ratio(value: Any, label: str) -> float:
++    if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value):
++        raise ValueError(f"{label} must be finite")
++    value = float(value)
++    if not 0.0 <= value <= 1.0:
++        raise ValueError(f"{label} must be within 0..1")
++    return value
++
++
++def _validate_box(box: Any, label: str) -> list[float]:
++    if not isinstance(box, (list, tuple)) or len(box) != 4:
++        raise ValueError(f"{label} requires x, y, width, height")
++    x, y, width, height = [_finite_ratio(v, label) for v in box]
++    if width <= 0 or height <= 0 or x + width > 1.000000001 or y + height > 1.000000001:
++        raise ValueError(f"{label} exceeds normalized viewport")
++    return [x, y, width, height]
++
++
++def validate_screen(value: Any) -> dict[str, Any]:
++    if not isinstance(value, dict) or value.get("schema") != SCHEMA or value.get("kind") != "screen":
++        raise ValueError("not an AXM visual screen template")
++    required = {"schema","id","version","name","kind","domain","tags","origin","style","intent","variants","slots","math_hooks","quality"}
++    if set(value) != required:
++        raise ValueError("unsupported visual screen fields")
++    _id(value["id"]); _id(value["domain"], "domain"); _id(value["style"], "style")
++    if type(value["version"]) is not int or value["version"] < 1:
++        raise ValueError("version must be a positive integer")
++    for field in ("name","intent"):
++        if not isinstance(value[field], str) or not value[field].strip() or len(value[field]) > 600:
++            raise ValueError(f"{field} must be bounded nonempty text")
++    if value["style"] not in STYLE_SYSTEMS:
++        raise ValueError("unknown style system")
++    if not isinstance(value["tags"], list) or len(value["tags"]) > 24 or len(set(value["tags"])) != len(value["tags"]):
++        raise ValueError("tags must be unique and bounded")
++    for tag in value["tags"]: _id(tag, "tag")
++    origin = value["origin"]
++    if not isinstance(origin, dict) or set(origin) != {"author","license","source"} or not all(isinstance(x,str) and x.strip() for x in origin.values()):
++        raise ValueError("origin requires author, license and source")
++    variants = value["variants"]
++    if not isinstance(variants, dict) or not variants or len(variants) > 6:
++        raise ValueError("variants must contain 1..6 responsive layouts")
++    for variant, regions in variants.items():
++        _id(variant, "variant")
++        if not isinstance(regions, dict) or not regions or len(regions) > MAX_REGIONS:
++            raise ValueError("each variant requires bounded regions")
++        for region, box in regions.items():
++            _id(region, "region")
++            _validate_box(box, f"{variant}.{region}")
++    slots = value["slots"]
++    if not isinstance(slots, list) or len(slots) > MAX_SLOTS:
++        raise ValueError("slots must be bounded")
++    seen = set()
++    for slot in slots:
++        if not isinstance(slot, dict) or not {"id","kind","required"} <= slot.keys() or set(slot)-{"id","kind","required","socket","tags"}:
++            raise ValueError("invalid visual slot")
++        sid = _id(slot["id"], "slot id")
++        if sid in seen: raise ValueError("duplicate visual slot")
++        seen.add(sid)
++        if slot["kind"] not in {"content","sticker","system"} or type(slot["required"]) is not bool:
++            raise ValueError("invalid visual slot kind/required flag")
++        if slot["kind"] == "sticker":
++            _id(slot.get("socket"), "slot socket")
++            tags = slot.get("tags", [])
++            if not isinstance(tags,list) or len(tags) > 12: raise ValueError("invalid slot tags")
++            for tag in tags: _id(tag, "slot tag")
++        elif "socket" in slot or "tags" in slot:
++            raise ValueError("only sticker slots declare socket/tags")
++    if not isinstance(value["math_hooks"], dict) or not isinstance(value["quality"], list) or not all(isinstance(x,str) and x.strip() for x in value["quality"]):
++        raise ValueError("math_hooks/quality malformed")
++    canonical_bytes(value)
++    return deepcopy(value)
++
++
++def validate_product(value: Any) -> dict[str, Any]:
++    if not isinstance(value, dict) or value.get("schema") != PRODUCT_SCHEMA or value.get("kind") != "product":
++        raise ValueError("not an AXM visual product archetype")
++    required = {"schema","id","version","name","kind","domain","tags","origin","style","intent","screens","flow","quality"}
++    if set(value) != required: raise ValueError("unsupported visual product fields")
++    _id(value["id"]); _id(value["domain"],"domain"); _id(value["style"],"style")
++    if type(value["version"]) is not int or value["version"] < 1: raise ValueError("version must be positive")
++    if value["style"] not in STYLE_SYSTEMS: raise ValueError("unknown product style")
++    if not isinstance(value["screens"],list) or not 1 <= len(value["screens"]) <= 32 or len(set(value["screens"])) != len(value["screens"]): raise ValueError("invalid product screens")
++    for screen in value["screens"]:
++        if screen not in SCREEN_TEMPLATES: raise ValueError("product references unknown screen")
++    if not isinstance(value["flow"],list) or len(value["flow"]) > 64: raise ValueError("invalid product flow")
++    for edge in value["flow"]:
++        if not isinstance(edge,list) or len(edge) != 3 or edge[0] not in value["screens"] or edge[1] not in value["screens"]:
++            raise ValueError("product flow must connect declared screens")
++        _id(edge[2],"flow action")
++    if not isinstance(value["tags"],list) or len(value["tags"]) > 24 or len(set(value["tags"])) != len(value["tags"]): raise ValueError("invalid product tags")
++    for tag in value["tags"]: _id(tag,"tag")
++    if not isinstance(value["name"],str) or not value["name"].strip() or not isinstance(value["intent"],str) or not value["intent"].strip(): raise ValueError("name/intent required")
++    if not isinstance(value["quality"],list) or not all(isinstance(x,str) and x.strip() for x in value["quality"]): raise ValueError("quality must be text list")
++    canonical_bytes(value)
++    return deepcopy(value)
++
++
++def validate_catalog() -> dict[str, int]:
++    for screen in SCREEN_TEMPLATES.values(): validate_screen(screen)
++    for product in PRODUCT_ARCHETYPES.values(): validate_product(product)
++    return {"styles":len(STYLE_SYSTEMS),"primitives":len(PRIMITIVES),"screens":len(SCREEN_TEMPLATES),"products":len(PRODUCT_ARCHETYPES)}
++
++
++def catalog() -> dict[str, Any]:
++    counts = validate_catalog()
++    return {
++        "schema": "axm.visual-template-catalog/v1", "counts": counts,
++        "styles": sorted(STYLE_SYSTEMS), "primitives": sorted(PRIMITIVES),
++        "screens": [{"id":v["id"],"name":v["name"],"domain":v["domain"],"style":v["style"],"tags":list(v["tags"])} for v in sorted(SCREEN_TEMPLATES.values(), key=lambda x:x["id"])],
++        "products": [{"id":v["id"],"name":v["name"],"domain":v["domain"],"style":v["style"],"screens":list(v["screens"])} for v in sorted(PRODUCT_ARCHETYPES.values(), key=lambda x:x["id"])],
++        "truth": "Known structural starting points; not finished art, aesthetic acceptance, gameplay proof or product canon.",
++    }
++
++
++def get(template_id: str) -> dict[str, Any]:
++    _id(template_id)
++    if template_id in SCREEN_TEMPLATES: return validate_screen(SCREEN_TEMPLATES[template_id])
++    if template_id in PRODUCT_ARCHETYPES: return validate_product(PRODUCT_ARCHETYPES[template_id])
++    raise ValueError("unknown visual template: "+template_id)
++
++
++def select_variant(width: int, height: int) -> str:
++    if type(width) is not int or type(height) is not int or not 240 <= width <= 16384 or not 240 <= height <= 16384:
++        raise ValueError("viewport width/height must be integer pixels within 240..16384")
++    ratio = width / height
++    if width < 900 or ratio < 1.15: return "compact"
++    if ratio >= 1.9: return "wide"
++    return "standard"
++
++
++def resolve(template_id: str, width: int, height: int, *, variant: str | None = None) -> dict[str, Any]:
++    screen = get(template_id)
++    if screen["kind"] != "screen": raise ValueError("resolve requires a screen template")
++    chosen = select_variant(width,height) if variant is None else _id(variant,"variant")
++    if chosen not in screen["variants"]:
++        raise ValueError("template does not declare variant: "+chosen)
++    regions = {}
++    for name, (x,y,w,h) in screen["variants"][chosen].items():
++        regions[name] = [round(x*width,4),round(y*height,4),round(w*width,4),round(h*height,4)]
++    style = deepcopy(STYLE_SYSTEMS[screen["style"]])
++    return {
++        "schema":"axm.visual-template-resolution/v1", "template":{"id":screen["id"],"version":screen["version"],"digest":digest(screen)},
++        "viewport":{"width":width,"height":height,"variant":chosen,"aspect_ratio":width/height},
++        "style_id":screen["style"], "style":style, "intent":screen["intent"], "regions":regions,
++        "slots":deepcopy(screen["slots"]), "math_hooks":deepcopy(screen["math_hooks"]), "quality":list(screen["quality"]),
++        "truth":"Resolved structural geometry and style intent only; no finished artwork or interaction behavior was observed.",
++    }
++
++
++def product_resolution(product_id: str, width: int, height: int) -> dict[str, Any]:
++    product = get(product_id)
++    if product["kind"] != "product": raise ValueError("product_resolution requires a product archetype")
++    screens = [resolve(screen,width,height) for screen in product["screens"]]
++    return {
++        "schema":"axm.visual-product-resolution/v1",
++        "product":{"id":product["id"],"version":product["version"],"digest":digest(product)},
++        "viewport":{"width":width,"height":height}, "style_id":product["style"], "intent":product["intent"],
++        "screens":screens, "flow":deepcopy(product["flow"]), "quality":list(product["quality"]),
++        "truth":"Product archetype resolved from exact built-in screen versions; it remains an editable foundation, not canon.",
++    }
++
++
++def sticker_definition(template_id: str) -> dict[str, Any]:
++    """Wrap one visual archetype for the existing immutable Sticker Registry."""
++    template = get(template_id)
++    adapter = ADAPTER if template["kind"] == "screen" else PRODUCT_ADAPTER
++    return {
++        "schema":"axm.sticker/v1", "id":"visual."+template["id"], "version":template["version"], "name":template["name"],
++        "tags":sorted(set(["visual-template",template["kind"],*template["tags"]])), "origin":deepcopy(template["origin"]),
++        "adapter":adapter, "attachment":{"space":"2d","socket":"product-template","anchor":[0,0]},
++        "recipe":{"visual_template":template}, "assets":{}, "parameters":{},
++    }
++
++
++def install_builtins(registry: Any) -> list[dict[str, Any]]:
++    """Explicitly register every built-in archetype; idempotence is delegated to Registry."""
++    definitions = [sticker_definition(k) for k in sorted(SCREEN_TEMPLATES)] + [sticker_definition(k) for k in sorted(PRODUCT_ARCHETYPES)]
++    return registry.register_many(definitions)
++
++
++def bind_sticker_slots(template_id: str, registry: Any, bindings: Any) -> dict[str, Any]:
++    """Validate explicit exact sticker pins against a screen's optional/required slots.
++
++    No search, latest-version choice or implicit substitution happens here.
++    """
++    screen = get(template_id)
++    if screen["kind"] != "screen": raise ValueError("slot binding requires a screen template")
++    if not isinstance(bindings,dict): raise ValueError("bindings must be an object")
++    slots = {slot["id"]:slot for slot in screen["slots"] if slot["kind"] == "sticker"}
++    if set(bindings)-set(slots): raise ValueError("binding references undeclared sticker slot")
++    missing = sorted(slot_id for slot_id,slot in slots.items() if slot["required"] and slot_id not in bindings)
++    if missing: raise ValueError("required sticker slots are missing: "+", ".join(missing))
++    resolved = {}
++    try:
++        from axm_stickers import digest as sticker_digest
++    except ImportError as exc:
++        raise ValueError("Sticker Fabric is unavailable") from exc
++    for slot_id,pin in bindings.items():
++        if not isinstance(pin,dict) or set(pin) != {"id","version","digest"}: raise ValueError("binding requires exact sticker pin")
++        definition = registry.get(pin["id"],pin["version"])
++        expected = {"id":definition["id"],"version":definition["version"],"digest":sticker_digest(definition)}
++        if pin != expected: raise ValueError("binding does not match exact sticker version")
++        slot = slots[slot_id]
++        if definition["attachment"]["socket"] != slot["socket"]: raise ValueError("sticker binding socket mismatch")
++        if set(slot.get("tags",[]))-set(definition["tags"]): raise ValueError("sticker binding lacks required tags")
++        resolved[slot_id] = deepcopy(pin)
++    return {"schema":"axm.visual-slot-bindings/v1","template":{"id":screen["id"],"version":screen["version"],"digest":digest(screen)},"bindings":resolved}
++
++
++def _svg_for_resolution(resolved: dict[str, Any], title: str) -> str:
++    width=resolved["viewport"]["width"]; height=resolved["viewport"]["height"]
++    tokens=resolved["style"]["tokens"]
++    radius=max(4.0,min(width,height)*resolved["style"]["shape"]["panel_radius_ratio"])
++    line=max(1.0,min(width,height)*resolved["style"]["shape"]["line_ratio"])
++    focal=resolved.get("math_hooks",{}).get("focal_region")
++    body=[f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" width="{width}" height="{height}">',
++          f'<title>{escape(title)}</title>',
++          '<defs>',
++          f'<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="{tokens["canvas"]}"/><stop offset="1" stop-color="{tokens["surface"]}"/></linearGradient>',
++          f'<linearGradient id="panel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="{tokens["surface_raised"]}"/><stop offset="1" stop-color="{tokens["surface"]}"/></linearGradient>',
++          f'<pattern id="grid" width="{max(24,width/48):g}" height="{max(24,height/28):g}" patternUnits="userSpaceOnUse"><path d="M 0 0 H {max(24,width/48):g} M 0 0 V {max(24,height/28):g}" stroke="{tokens["line"]}" stroke-opacity=".15" stroke-width="1"/></pattern>',
++          '</defs>',
++          f'<rect width="{width}" height="{height}" fill="url(#bg)"/>',
++          f'<rect width="{width}" height="{height}" fill="url(#grid)"/>']
++    regions=resolved["regions"]
++    background_names=[n for n in regions if n in {"world","context","viewport","vehicle","route-map"}]
++    foreground_names=[n for n in regions if n not in background_names]
++    for index,name in enumerate(background_names+foreground_names):
++        x,y,w,h=regions[name]
++        background=name in background_names
++        stroke=tokens["accent"] if name == focal else tokens["line"]
++        stroke_width=line*2.2 if name == focal else line
++        fill=tokens["surface"] if background else "url(#panel)"
++        opacity="0.40" if background else "0.94"
++        body.append(f'<rect x="{x:g}" y="{y:g}" width="{w:g}" height="{h:g}" rx="{radius:g}" fill="{fill}" fill-opacity="{opacity}" stroke="{stroke}" stroke-width="{stroke_width:g}"/>')
++        pad=max(8.0,min(w,h)*0.055)
++        size=max(10.0,min(w*0.075,h*0.20,28.0))
++        body.append(f'<text x="{x+pad:g}" y="{y+pad+size:g}" fill="{tokens["text"]}" font-family="system-ui,sans-serif" font-size="{size:g}" font-weight="700" letter-spacing=".04em">{escape(name.replace("-"," ").upper())}</text>')
++        if not background and h > size*3.2 and w > 80:
++            bar_y=y+pad+size*1.65
++            body.append(f'<rect x="{x+pad:g}" y="{bar_y:g}" width="{max(8,w-pad*2):g}" height="{max(2,line*1.2):g}" rx="1" fill="{tokens["line"]}"/>')
++            body.append(f'<rect x="{x+pad:g}" y="{bar_y:g}" width="{max(6,(w-pad*2)*(.68 if name==focal else .34)):g}" height="{max(2,line*1.2):g}" rx="1" fill="{tokens["accent"]}"/>')
++            if h > size*5:
++                for row in range(2):
++                    ry=bar_y+size*(1.45+row*1.2)
++                    rw=(w-pad*2)*(0.78-row*.17)
++                    body.append(f'<rect x="{x+pad:g}" y="{ry:g}" width="{max(8,rw):g}" height="{max(3,line*2):g}" rx="2" fill="{tokens["muted"]}" fill-opacity=".22"/>')
++        if name == focal and w > 70 and h > 45:
++            metric_size=max(18.0,min(w*.24,h*.36,64.0))
++            body.append(f'<text x="{x+w-pad:g}" y="{y+h-pad:g}" text-anchor="end" fill="{tokens["accent"]}" font-family="system-ui,sans-serif" font-size="{metric_size:g}" font-weight="800">000</text>')
++    footer_size=max(10,min(width,height)*0.016)
++    body.append(f'<line x1="{width*.02:g}" y1="{height*.965:g}" x2="{width*.98:g}" y2="{height*.965:g}" stroke="{tokens["line"]}" stroke-width="{line:g}"/>')
++    body.append(f'<text x="{width*.02:g}" y="{height*.988:g}" fill="{tokens["muted"]}" font-family="system-ui,sans-serif" font-size="{footer_size:g}">AXM visual archetype · {escape(resolved["viewport"]["variant"])} · structural preview</text>')
++    body.append('</svg>')
++    return ''.join(body)
++
++
++def screen_project(template_id: str, width: int = 1920, height: int = 1080, title: str | None = None) -> dict[str, Any]:
++    resolved=resolve(template_id,width,height); screen=get(template_id); title=screen["name"] if title is None else title
++    if not isinstance(title,str) or not title.strip() or len(title)>160: raise ValueError("title must be bounded text")
++    svg=_svg_for_resolution(resolved,title)
++    manifest=json.dumps(resolved,indent=2,ensure_ascii=False,sort_keys=True)
++    html=f'''<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{escape(title)}</title><style>body{{margin:0;background:#070a0e;color:#eef4f6;font:16px system-ui}}main{{max-width:1500px;margin:auto;padding:28px}}img{{width:100%;height:auto;border:1px solid #33424c;border-radius:14px}}code{{color:#9ee8df}}</style><main><h1>{escape(title)}</h1><p>{escape(screen["intent"])}</p><img src="screen.svg" alt="structural visual template preview"><p><code>{escape(template_id)}</code> · exact normalized structure resolved to {width}×{height}px. This preview is not finished art.</p></main></html>'''
++    return {"id":"axm.visual."+template_id,"version":"1.0.0","project_type":"static-web","files":{"index.html":html,"screen.svg":svg,"template.json":manifest}}
++
++
++def product_project(product_id: str, width: int = 1920, height: int = 1080, title: str | None = None) -> dict[str, Any]:
++    product=get(product_id)
++    if product["kind"] != "product": raise ValueError("product_project requires a product archetype")
++    resolved=product_resolution(product_id,width,height); title=product["name"] if title is None else title
++    if not isinstance(title,str) or not title.strip() or len(title)>160: raise ValueError("title must be bounded text")
++    files={"product.json":json.dumps(resolved,indent=2,ensure_ascii=False,sort_keys=True)}
++    cards=[]
++    for index,screen in enumerate(resolved["screens"]):
++        sid=screen["template"]["id"]; filename=f"screen-{index+1:02d}.svg"
++        files[filename]=_svg_for_resolution(screen,get(sid)["name"])
++        cards.append(f'<article><h2>{escape(get(sid)["name"])}</h2><img src="{filename}" alt="{escape(sid,quote=True)} structural preview"><code>{escape(sid)}</code></article>')
++    flow=' → '.join(escape(edge[2]) for edge in product["flow"])
++    tokens=STYLE_SYSTEMS[product["style"]]["tokens"]
++    files["index.html"]=f'''<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{escape(title)}</title><style>body{{margin:0;background:{tokens['canvas']};color:{tokens['text']};font:16px system-ui}}main{{max-width:1500px;margin:auto;padding:28px}}section{{display:grid;grid-template-columns:repeat(auto-fit,minmax(420px,1fr));gap:22px}}article{{background:{tokens['surface']};border:1px solid {tokens['line']};padding:16px;border-radius:16px}}img{{width:100%;height:auto;background:#070a0e}}code{{color:{tokens['accent']}}}.flow{{color:{tokens['muted']};overflow-wrap:anywhere}}</style><main><h1>{escape(title)}</h1><p>{escape(product['intent'])}</p><p class="flow">Flow: {flow}</p><section>{''.join(cards)}</section><p>Known structural foundation only: editable, replaceable and non-canonical.</p></main></html>'''
++    return {"id":"axm.visual.product."+product_id,"version":"1.0.0","project_type":"static-web","files":files}
++
++
++# Validate shipped data at import time. A broken built-in is a package defect, not a user input issue.
++validate_catalog()
+diff --git a/src/axm_uc/visual_template_game_systems.py b/src/axm_uc/visual_template_game_systems.py
+new file mode 100644
+index 0000000..68317e8
+--- /dev/null
++++ b/src/axm_uc/visual_template_game_systems.py
+@@ -0,0 +1,242 @@
++"""Reusable professional game-system visual foundations.
++
++These are auxiliary product surfaces shared by many genres. They extend the same
++visual-template v1 catalog and remain optional: shipping a server browser,
++matchmaking, chat, privacy or any other surface is a product decision, not an
++automatic requirement imposed by the catalog.
++"""
++from __future__ import annotations
++
++from copy import deepcopy
++from typing import Any
++
++
++def _merge_unique(target: dict[str, Any], additions: dict[str, Any], label: str) -> None:
++    overlap=sorted(set(target)&set(additions))
++    if overlap:
++        raise RuntimeError(f"game-system {label} extension collides: {', '.join(overlap)}")
++    target.update(deepcopy(additions))
++
++
++def _settings_layout() -> dict[str, dict[str, tuple[float,float,float,float]]]:
++    return {
++        "compact":{"header":(.04,.03,.92,.08),"categories":(.04,.14,.92,.13),"settings":(.04,.30,.92,.54),"actions":(.04,.87,.92,.09)},
++        "standard":{"header":(.03,.03,.94,.08),"categories":(.03,.14,.20,.82),"settings":(.26,.14,.71,.68),"actions":(.26,.85,.71,.11)},
++        "wide":{"header":(.025,.03,.95,.075),"categories":(.025,.14,.18,.82),"settings":(.23,.14,.745,.68),"actions":(.23,.85,.745,.11)},
++    }
++
++
++def _browser_layout() -> dict[str, dict[str, tuple[float,float,float,float]]]:
++    return {
++        "compact":{"header":(.03,.03,.94,.08),"filters":(.03,.14,.94,.10),"list":(.03,.27,.58,.60),"details":(.64,.27,.33,.43),"actions":(.64,.73,.33,.14)},
++        "standard":{"header":(.025,.03,.95,.08),"filters":(.025,.14,.18,.82),"list":(.23,.14,.47,.82),"details":(.73,.14,.245,.58),"actions":(.73,.75,.245,.21)},
++        "wide":{"header":(.02,.03,.96,.075),"filters":(.02,.14,.16,.82),"list":(.205,.14,.52,.82),"details":(.75,.14,.23,.58),"actions":(.75,.75,.23,.21)},
++    }
++
++
++def _gallery_layout() -> dict[str, dict[str, tuple[float,float,float,float]]]:
++    return {
++        "compact":{"header":(.03,.03,.94,.08),"categories":(.03,.14,.94,.10),"gallery":(.03,.27,.94,.48),"details":(.03,.78,.60,.18),"actions":(.66,.78,.31,.18)},
++        "standard":{"header":(.025,.03,.95,.08),"categories":(.025,.14,.18,.82),"gallery":(.23,.14,.50,.82),"details":(.755,.14,.22,.58),"actions":(.755,.75,.22,.21)},
++        "wide":{"header":(.02,.03,.96,.075),"categories":(.02,.14,.15,.82),"gallery":(.195,.14,.55,.82),"details":(.77,.14,.21,.58),"actions":(.77,.75,.21,.21)},
++    }
++
++
++def extend_game_system_catalog(namespace: dict[str,Any]) -> None:
++    styles=namespace["STYLE_SYSTEMS"]
++    primitives=namespace["PRIMITIVES"]
++    screens=namespace["SCREEN_TEMPLATES"]
++    products=namespace["PRODUCT_ARCHETYPES"]
++    screen=namespace["_screen"]
++    origin=namespace["_origin"]
++    product_schema=namespace["PRODUCT_SCHEMA"]
++
++    _merge_unique(styles,{
++        "game.system.neutral":{
++            "intent":"genre-neutral game product surfaces with explicit state, ownership, consequences and recovery",
++            "tokens":{"canvas":"#0a0f15","surface":"#121b24","surface_raised":"#1b2733","text":"#eff5f6","muted":"#9eacb3","accent":"#83c9ff","warning":"#f0c36e","danger":"#ee7777","line":"#34444f"},
++            "shape":{"panel_radius_ratio":.014,"cut_ratio":.003,"line_ratio":.0013},
++            "type":{"display_weight":730,"body_weight":500,"metric_scale":1.55,"tracking":.014},
++            "depth":{"layers":4,"shadow":"subtle","glass":"restrained"},
++            "motion":{"fast_ms":90,"standard_ms":175,"slow_ms":300,"principle":"state and ownership before flourish"},
++        }
++    },"style")
++
++    _merge_unique(primitives,{
++        "keybind-row":{"role":"map one player action to explicit device input","states":["bound","unbound","focused","listening","conflict","disabled"],"conflicts_must_be_explicit":True},
++        "save-slot":{"role":"represent one recoverable persisted state","states":["empty","occupied","autosave","read-only","incompatible","corrupt"],"destructive_overwrite_requires_confirmation":True},
++        "party-member":{"role":"show participant identity, seat, readiness and communication state","states":["local","remote","ai","joining","ready","disconnected"],"seat_identity_must_be_explicit":True},
++        "server-row":{"role":"compare joinable session state","states":["available","full","locked","incompatible","unreachable"],"availability_must_be_observed":True},
++        "notification-badge":{"role":"surface changed state without replacing its source","states":["none","unread","warning","critical"],"count_must_not_be_fabricated":True},
++        "chat-message":{"role":"show authored communication with source identity and time ordering","states":["normal","system","failed","pending"],"author_source_must_be_visible":True},
++        "confirmation-summary":{"role":"summarize consequence before consequential commitment","states":["review","confirm","cancel","busy"],"must_show_scope_and_consequence":True},
++        "focus-indicator":{"role":"show current navigational focus across input methods","states":["keyboard","gamepad","touch","pointer","hidden"],"focus_cannot_rely_on_color_alone":True},
++    },"primitive")
++
++    quality=[
++        "current state and scope must be visible before consequential actions",
++        "focus, selection and ownership must not depend on color alone",
++        "network or persistence success may only be shown when observed",
++        "reversible actions expose cancel/back paths and destructive actions expose consequences",
++        "templates must remain useful with controller/keyboard navigation even when pointer input exists",
++    ]
++
++    new_screens={
++        "game.system.profile":screen(
++            "game.system.profile","Player profile","game.system","game.system.neutral",
++            "show identity, progression, recent activity and editable presentation without mixing account ownership with game performance",
++            {
++                "compact":{"identity":(.04,.04,.92,.20),"progress":(.04,.27,.92,.15),"stats":(.04,.45,.45,.33),"recent":(.52,.45,.44,.33),"actions":(.04,.82,.92,.13)},
++                "standard":{"identity":(.04,.05,.27,.78),"progress":(.34,.05,.62,.16),"stats":(.34,.25,.29,.46),"recent":(.66,.25,.30,.46),"actions":(.34,.76,.62,.12)},
++                "wide":{"identity":(.035,.05,.24,.79),"progress":(.31,.05,.66,.15),"stats":(.31,.24,.31,.47),"recent":(.65,.24,.32,.47),"actions":(.31,.77,.66,.11)},
++            },tags=["game","system","profile","identity"],quality=quality),
++        "game.system.party":screen(
++            "game.system.party","Party and seat management","game.system","game.system.neutral",
++            "manage human and machine participants with explicit seat ownership, readiness and invitation state",
++            {
++                "compact":{"header":(.03,.03,.94,.08),"members":(.03,.14,.94,.47),"invite":(.03,.64,.46,.25),"rules":(.52,.64,.45,.25),"actions":(.03,.92,.94,.05)},
++                "standard":{"header":(.025,.03,.95,.08),"members":(.025,.14,.52,.74),"invite":(.565,.14,.41,.32),"rules":(.565,.49,.41,.24),"actions":(.565,.77,.41,.11)},
++                "wide":{"header":(.02,.03,.96,.075),"members":(.02,.14,.56,.75),"invite":(.61,.14,.37,.32),"rules":(.61,.49,.37,.25),"actions":(.61,.78,.37,.11)},
++            },tags=["game","system","party","seats"],quality=quality),
++        "game.system.matchmaking":screen(
++            "game.system.matchmaking","Matchmaking queue","game.system","game.system.neutral",
++            "show selected activity, party eligibility, observed queue state and a reliable cancel path",
++            {
++                "compact":{"activity":(.05,.07,.90,.22),"party":(.05,.33,.90,.20),"queue":(.05,.57,.90,.20),"actions":(.05,.81,.90,.12)},
++                "standard":{"activity":(.08,.12,.34,.60),"party":(.46,.12,.22,.60),"queue":(.72,.12,.20,.36),"actions":(.72,.53,.20,.19)},
++                "wide":{"activity":(.10,.12,.34,.62),"party":(.47,.12,.22,.62),"queue":(.72,.12,.18,.37),"actions":(.72,.54,.18,.20)},
++            },tags=["game","system","matchmaking","network"],quality=quality+["queue time estimates must be labeled estimates, not promises"]),
++        "game.system.server-browser":screen(
++            "game.system.server-browser","Server / session browser","game.system","game.system.neutral",
++            "compare observed joinable sessions with filters, compatibility state and explicit connection choice",
++            _browser_layout(),tags=["game","system","server","network"],quality=quality),
++        "game.system.controller-remap":screen(
++            "game.system.controller-remap","Controller and input remapping","game.system","game.system.neutral",
++            "map actions to current input devices while exposing conflicts, defaults and seat/device ownership",
++            {
++                "compact":{"header":(.03,.03,.94,.08),"device":(.03,.14,.94,.12),"bindings":(.03,.29,.58,.57),"conflicts":(.64,.29,.33,.30),"actions":(.64,.63,.33,.23)},
++                "standard":{"header":(.025,.03,.95,.08),"device":(.025,.14,.20,.82),"bindings":(.25,.14,.47,.82),"conflicts":(.745,.14,.23,.42),"actions":(.745,.60,.23,.36)},
++                "wide":{"header":(.02,.03,.96,.075),"device":(.02,.14,.18,.82),"bindings":(.225,.14,.50,.82),"conflicts":(.75,.14,.23,.42),"actions":(.75,.60,.23,.36)},
++            },tags=["game","system","controls","remap"],quality=quality+["binding conflicts must be shown before replacement"]),
++        "game.system.display":screen(
++            "game.system.display","Display and graphics settings","game.system","game.system.neutral",
++            "show display/graphics settings with current values, performance consequence and a safe confirmation path",
++            {
++                "compact":{"preview":(.04,.03,.92,.26),"categories":(.04,.32,.92,.10),"settings":(.04,.45,.60,.40),"impact":(.67,.45,.29,.25),"actions":(.67,.73,.29,.12)},
++                "standard":{"preview":(.03,.03,.34,.78),"categories":(.40,.03,.18,.78),"settings":(.61,.03,.36,.58),"impact":(.61,.64,.17,.17),"actions":(.81,.64,.16,.17)},
++                "wide":{"preview":(.025,.03,.40,.80),"categories":(.45,.03,.16,.80),"settings":(.635,.03,.34,.59),"impact":(.635,.66,.16,.17),"actions":(.815,.66,.16,.17)},
++            },tags=["game","system","display","graphics"],quality=quality+["display-mode changes need a bounded revert path when confirmation is required"]),
++        "game.system.audio":screen(
++            "game.system.audio","Audio settings","game.system","game.system.neutral",
++            "make master, dialogue, music, effects, voice and dynamic-range choices independently readable",
++            _settings_layout(),tags=["game","system","audio","settings"],quality=quality),
++        "game.system.accessibility":screen(
++            "game.system.accessibility","Shared game accessibility","game.system","game.system.neutral",
++            "group visual, audio, input, cognitive and assistance options with previews that state their limits",
++            {
++                "compact":{"header":(.04,.03,.92,.08),"categories":(.04,.14,.92,.12),"options":(.04,.29,.58,.55),"preview":(.65,.29,.31,.38),"actions":(.65,.71,.31,.13)},
++                "standard":{"header":(.03,.03,.94,.08),"categories":(.03,.14,.20,.82),"options":(.26,.14,.43,.70),"preview":(.72,.14,.25,.48),"actions":(.72,.66,.25,.18)},
++                "wide":{"header":(.025,.03,.95,.075),"categories":(.025,.14,.18,.82),"options":(.23,.14,.46,.70),"preview":(.72,.14,.255,.48),"actions":(.72,.66,.255,.18)},
++            },tags=["game","system","accessibility","settings"],quality=quality+["accessibility labels use plain consequences rather than unexplained expert terminology"]),
++        "game.system.save-slots":screen(
++            "game.system.save-slots","Save / load slots","game.system","game.system.neutral",
++            "show exact save identity, timestamp/progress metadata, compatibility and overwrite/delete consequences",
++            _browser_layout(),tags=["game","system","save","load"],quality=quality+["corrupt or incompatible saves remain visible as such; never silently rewrite them"]),
++        "game.system.achievements":screen(
++            "game.system.achievements","Achievements and challenges","game.system","game.system.neutral",
++            "browse completed and incomplete goals without disguising hidden or unobserved progress",
++            _gallery_layout(),tags=["game","system","achievements","progress"],quality=quality),
++        "game.system.tutorial":screen(
++            "game.system.tutorial","Tutorial / training lesson","game.system","game.system.neutral",
++            "teach one bounded mechanic with visible goal, demonstration space, input hint and repeat/skip choice",
++            {
++                "compact":{"goal":(.04,.04,.92,.13),"demo":(.04,.20,.92,.42),"steps":(.04,.65,.56,.25),"input":(.63,.65,.33,.12),"actions":(.63,.80,.33,.10)},
++                "standard":{"lessons":(.025,.03,.18,.94),"demo":(.23,.03,.51,.70),"goal":(.765,.03,.21,.22),"steps":(.765,.28,.21,.32),"input":(.23,.77,.51,.09),"actions":(.765,.64,.21,.22)},
++                "wide":{"lessons":(.02,.03,.16,.94),"demo":(.205,.03,.56,.71),"goal":(.79,.03,.19,.22),"steps":(.79,.28,.19,.33),"input":(.205,.78,.56,.09),"actions":(.79,.65,.19,.22)},
++            },tags=["game","system","tutorial","training"],quality=quality+["skip/repeat consequences must be explicit when tutorial state affects progress"]),
++        "game.system.photo-mode":screen(
++            "game.system.photo-mode","Photo mode","game.system","game.system.neutral",
++            "keep the captured world dominant while camera, lens, effects and output controls remain inspectable",
++            {
++                "compact":{"world":(0,0,1,1),"camera":(.03,.04,.28,.36),"effects":(.69,.04,.28,.36),"capture":(.35,.82,.30,.14)},
++                "standard":{"world":(0,0,1,1),"camera":(.025,.04,.20,.52),"effects":(.775,.04,.20,.52),"capture":(.36,.84,.28,.11)},
++                "wide":{"world":(0,0,1,1),"camera":(.02,.04,.17,.52),"effects":(.81,.04,.17,.52),"capture":(.39,.85,.22,.10)},
++            },tags=["game","system","photo","camera"],quality=quality),
++        "game.system.credits":screen(
++            "game.system.credits","Credits and licenses","game.system","game.system.neutral",
++            "present people, contributors, licenses and acknowledgements accessibly without hiding provenance behind animation",
++            {
++                "compact":{"header":(.05,.04,.90,.10),"credits":(.05,.18,.90,.58),"navigation":(.05,.80,.42,.14),"actions":(.53,.80,.42,.14)},
++                "standard":{"navigation":(.04,.05,.20,.84),"credits":(.28,.05,.48,.84),"licenses":(.80,.05,.16,.62),"actions":(.80,.71,.16,.18)},
++                "wide":{"navigation":(.04,.05,.17,.84),"credits":(.25,.05,.52,.84),"licenses":(.80,.05,.16,.62),"actions":(.80,.71,.16,.18)},
++            },tags=["game","system","credits","provenance"],quality=quality),
++        "game.system.error-recovery":screen(
++            "game.system.error-recovery","Error and recovery","game.system","game.system.neutral",
++            "state what failed, what remains safe, what can be retried and which diagnostic evidence is available",
++            {
++                "compact":{"context":(0,0,1,1),"error":(.12,.13,.76,.20),"safe-state":(.18,.37,.64,.16),"recovery":(.18,.57,.64,.25)},
++                "standard":{"context":(0,0,1,1),"error":(.23,.14,.54,.18),"safe-state":(.29,.37,.42,.15),"recovery":(.29,.57,.42,.24)},
++                "wide":{"context":(0,0,1,1),"error":(.28,.14,.44,.18),"safe-state":(.33,.37,.34,.15),"recovery":(.33,.57,.34,.24)},
++            },tags=["game","system","error","recovery"],quality=quality+["failure text must not imply data loss or recovery success without evidence"]),
++        "game.system.notifications":screen(
++            "game.system.notifications","Notification center","game.system","game.system.neutral",
++            "show sourced changes and alerts with filtering/read-state without turning unread count into an engagement target",
++            _browser_layout(),tags=["game","system","notifications","alerts"],quality=quality),
++        "game.system.chat":screen(
++            "game.system.chat","Text chat and channels","game.system","game.system.neutral",
++            "show channel, author and delivery state while keeping mute/block/report controls reachable",
++            {
++                "compact":{"channels":(.03,.03,.94,.10),"messages":(.03,.16,.65,.65),"members":(.71,.16,.26,.45),"composer":(.03,.84,.65,.12),"actions":(.71,.65,.26,.31)},
++                "standard":{"channels":(.02,.03,.18,.94),"messages":(.225,.03,.52,.72),"members":(.77,.03,.21,.55),"composer":(.225,.79,.52,.18),"actions":(.77,.62,.21,.35)},
++                "wide":{"channels":(.018,.03,.16,.94),"messages":(.20,.03,.56,.72),"members":(.785,.03,.197,.55),"composer":(.20,.79,.56,.18),"actions":(.785,.62,.197,.35)},
++            },tags=["game","system","chat","communication"],quality=quality+["pending/failed message delivery must not look delivered","author identity must accompany messages"]),
++        "game.system.privacy-consent":screen(
++            "game.system.privacy-consent","Privacy and consent","game.system","game.system.neutral",
++            "show optional data/network scopes, purpose, current choice and revocation path without preselecting consent",
++            {
++                "compact":{"header":(.04,.03,.92,.09),"scope":(.04,.15,.92,.16),"choices":(.04,.34,.92,.42),"consequence":(.04,.79,.56,.16),"actions":(.63,.79,.33,.16)},
++                "standard":{"header":(.04,.04,.92,.10),"scope":(.04,.19,.24,.67),"choices":(.31,.19,.39,.67),"consequence":(.73,.19,.23,.43),"actions":(.73,.66,.23,.20)},
++                "wide":{"header":(.05,.04,.90,.10),"scope":(.05,.19,.23,.67),"choices":(.31,.19,.40,.67),"consequence":(.74,.19,.21,.43),"actions":(.74,.66,.21,.20)},
++            },tags=["game","system","privacy","consent"],quality=quality+["consent is opt-in unless a different lawful/product contract is explicitly established","revocation path must be as discoverable as acceptance"]),
++        "game.system.language":screen(
++            "game.system.language","Language and text","game.system","game.system.neutral",
++            "choose interface, subtitle and voice language with readable previews and explicit download/availability state where applicable",
++            {
++                "compact":{"header":(.04,.03,.92,.08),"languages":(.04,.14,.44,.70),"text-preview":(.52,.14,.44,.32),"voice":(.52,.49,.44,.20),"actions":(.52,.73,.44,.11)},
++                "standard":{"header":(.03,.03,.94,.08),"languages":(.03,.14,.28,.82),"text-preview":(.34,.14,.39,.55),"voice":(.76,.14,.21,.36),"actions":(.76,.54,.21,.15)},
++                "wide":{"header":(.025,.03,.95,.075),"languages":(.025,.14,.26,.82),"text-preview":(.315,.14,.43,.55),"voice":(.78,.14,.195,.36),"actions":(.78,.54,.195,.15)},
++            },tags=["game","system","language","localization"],quality=quality+["unavailable language assets must be labeled unavailable rather than silently falling back"]),
++    }
++    _merge_unique(screens,new_screens,"screen")
++
++    system_screens=list(new_screens)
++    flow=[
++        ["game.system.profile","game.system.party","open-party"],
++        ["game.system.party","game.system.matchmaking","find-match"],
++        ["game.system.matchmaking","game.system.server-browser","browse-sessions"],
++        ["game.system.controller-remap","game.system.accessibility","accessibility"],
++        ["game.system.display","game.system.audio","next-settings"],
++        ["game.system.audio","game.system.accessibility","next-settings"],
++        ["game.system.save-slots","game.system.error-recovery","recover-failure"],
++        ["game.system.notifications","game.system.chat","open-message"],
++        ["game.system.privacy-consent","game.system.profile","return-profile"],
++        ["game.system.language","game.system.accessibility","return-settings"],
++        ["game.system.tutorial","game.system.achievements","view-progress"],
++        ["game.system.photo-mode","game.system.notifications","capture-complete"],
++        ["game.system.credits","game.system.privacy-consent","privacy"],
++    ]
++    _merge_unique(products,{
++        "game.system.shell":{
++            "schema":product_schema,"id":"game.system.shell","version":1,"name":"Professional shared game-system shell","kind":"product","domain":"game.system",
++            "tags":["game","system","product","shared"],"origin":origin(),"style":"game.system.neutral",
++            "intent":"a reusable library of mature game-product surfaces that genre products can adopt selectively",
++            "screens":system_screens,"flow":flow,
++            "quality":[
++                "system surfaces remain optional capabilities rather than mandatory online/account assumptions",
++                "network, persistence and delivery state tell the truth about what is observed",
++                "privacy/consent never preselects user agreement merely to improve conversion",
++                "input and accessibility surfaces preserve explicit focus and consequence state",
++                "errors preserve known-safe state and recovery evidence instead of optimistic success claims",
++            ],
++        }
++    },"product")
+diff --git a/src/axm_uc/visual_template_growth.py b/src/axm_uc/visual_template_growth.py
+new file mode 100644
+index 0000000..51e5f63
+--- /dev/null
++++ b/src/axm_uc/visual_template_growth.py
+@@ -0,0 +1,463 @@
++"""Second-wave professional visual foundations for AXM Universal Creation.
++
++This module deliberately extends the v1 visual-template dictionaries instead of
++creating a second registry or schema. It is imported by ``visual_templates``
++before built-in validation. Everything remains deterministic, offline, editable
++and non-canonical.
++"""
++from __future__ import annotations
++
++from copy import deepcopy
++from typing import Any
++
++
++def _merge_unique(target: dict[str, Any], additions: dict[str, Any], label: str) -> None:
++    overlap = sorted(set(target) & set(additions))
++    if overlap:
++        raise RuntimeError(f"visual template {label} extension collides with built-ins: {', '.join(overlap)}")
++    target.update(deepcopy(additions))
++
++
++def extend_catalog(namespace: dict[str, Any]) -> None:
++    """Install professional game foundations into the existing v1 catalog once."""
++    styles = namespace["STYLE_SYSTEMS"]
++    primitives = namespace["PRIMITIVES"]
++    screens = namespace["SCREEN_TEMPLATES"]
++    products = namespace["PRODUCT_ARCHETYPES"]
++    screen = namespace["_screen"]
++    origin = namespace["_origin"]
++    racing_common = namespace["RACING_COMMON"]
++
++    new_styles = {
++        "game.coop.tactical": {
++            "intent": "co-op action clarity with readable team state, decisive objectives and restrained tactical chrome",
++            "tokens": {
++                "canvas": "#0a1016", "surface": "#121c25", "surface_raised": "#1a2833",
++                "text": "#edf5f4", "muted": "#9eafb2", "accent": "#84dfb9",
++                "warning": "#f4c66f", "danger": "#f07878", "line": "#334750",
++            },
++            "shape": {"panel_radius_ratio": 0.014, "cut_ratio": 0.006, "line_ratio": 0.0014},
++            "type": {"display_weight": 740, "body_weight": 510, "metric_scale": 1.65, "tracking": 0.018},
++            "depth": {"layers": 4, "shadow": "tight", "glass": "light"},
++            "motion": {"fast_ms": 85, "standard_ms": 170, "slow_ms": 300, "principle": "team state before flourish"},
++        },
++        "game.rts.command": {
++            "intent": "macro-scale command readability with dense state, stable spatial anchors and explicit strategic consequences",
++            "tokens": {
++                "canvas": "#080e13", "surface": "#101a22", "surface_raised": "#172631",
++                "text": "#edf2f3", "muted": "#98a8ae", "accent": "#8fc7ff",
++                "warning": "#eec774", "danger": "#ef7777", "line": "#344650",
++            },
++            "shape": {"panel_radius_ratio": 0.009, "cut_ratio": 0.003, "line_ratio": 0.0012},
++            "type": {"display_weight": 710, "body_weight": 500, "metric_scale": 1.48, "tracking": 0.012},
++            "depth": {"layers": 5, "shadow": "subtle", "glass": "restrained"},
++            "motion": {"fast_ms": 75, "standard_ms": 150, "slow_ms": 260, "principle": "preserve map context while state changes"},
++        },
++    }
++
++    new_primitives = {
++        "selection-card": {"role": "choose one comparable object without losing context", "states": ["rest", "focused", "selected", "locked", "owned", "unavailable"], "selection_must_have_non_color_cue": True},
++        "player-seat": {"role": "show seat identity, controller ownership and readiness", "states": ["empty", "joining", "ready", "not-ready", "disconnected", "ai-seat"], "ownership_must_be_explicit": True},
++        "stat-comparison": {"role": "compare current and candidate values", "states": ["equal", "gain", "loss", "unknown"], "requires_numeric_or_text_delta": True},
++        "slider-row": {"role": "bounded tuning or preference control", "states": ["rest", "focused", "adjusting", "disabled", "default"], "show_current_and_default": True},
++        "segmented-control": {"role": "small mutually exclusive mode choice", "states": ["rest", "selected", "disabled"], "selection_must_not_depend_on_color": True},
++        "leaderboard-row": {"role": "stable placement comparison", "states": ["normal", "local-player", "team-mate", "disconnected"], "stable_columns": True},
++        "countdown": {"role": "time-critical transition into control", "states": ["waiting", "three", "two", "one", "go", "aborted"], "must_not_delay_input_activation": True},
++        "modal": {"role": "bounded blocking decision", "states": ["info", "confirm", "danger", "busy"], "requires_escape_or_explicit_cancel_when_reversible": True},
++        "telemetry-strip": {"role": "compact changing performance signals", "states": ["normal", "warning", "critical", "unavailable"], "history_must_not_obscure_current_value": True},
++        "tooltip": {"role": "secondary explanation without becoming required for core operation", "states": ["hidden", "visible"], "must_not_hold_unique_critical_state": True},
++        "carousel": {"role": "browse visual choices while preserving current selection", "states": ["rest", "focused", "selected", "loading"], "selection_position_must_remain_clear": True},
++        "tab-strip": {"role": "switch peer views without changing product location", "states": ["rest", "selected", "disabled"], "stable_order": True},
++        "input-hint": {"role": "explain available player input for the current seat/device", "states": ["keyboard", "gamepad", "touch", "mixed", "hidden"], "device_source_must_be_explicit": True},
++        "loading-state": {"role": "show bounded waiting and what is being prepared", "states": ["starting", "progress", "ready", "failed", "cancelled"], "fake_progress_forbidden": True},
++        "empty-state": {"role": "explain an intentionally empty surface and a valid next action", "states": ["empty", "filtered-empty", "unavailable"], "must_not_fake_content": True},
++        "recovery-banner": {"role": "surface degraded/disconnected state and safe recovery choices", "states": ["warning", "reconnecting", "recovered", "failed"], "must_preserve_user_choice": True},
++    }
++
++    _merge_unique(styles, new_styles, "style")
++    _merge_unique(primitives, new_primitives, "primitive")
++
++    race_quality = list(racing_common) + [
++        "setup screens must preserve the selected vehicle/event identity across transitions",
++        "destructive or network-dependent actions require explicit visible state",
++        "controller and split-screen ownership must be understandable before launch",
++    ]
++    coop_quality = [
++        "team state and objective state outrank decorative chrome",
++        "each human or machine seat exposes comparable player-facing information",
++        "revive, danger and disconnect state must not depend on color alone",
++        "loadout changes remain inspectable before commitment",
++    ]
++    rts_quality = [
++        "world/map context remains primary while command panels change",
++        "selection and ownership stay legible at macro scale",
++        "resource, production and threat changes use stable anchors",
++        "strategic consequences are explicit before irreversible commitment",
++    ]
++
++    racing_screens = {
++        "game.racing.home": screen(
++            "game.racing.home", "Racing home and main menu", "game.racing", "racing.performance",
++            "establish identity, current progression and one obvious path back into driving",
++            {
++                "compact": {"identity":(0.04,0.05,0.92,0.16),"hero":(0.04,0.24,0.92,0.35),"primary":(0.04,0.62,0.56,0.25),"secondary":(0.63,0.62,0.33,0.25),"status":(0.04,0.90,0.92,0.06)},
++                "standard": {"identity":(0.04,0.06,0.44,0.13),"hero":(0.36,0.11,0.60,0.63),"primary":(0.04,0.27,0.27,0.47),"secondary":(0.04,0.78,0.92,0.14),"status":(0.52,0.06,0.44,0.07)},
++                "wide": {"identity":(0.035,0.06,0.36,0.12),"hero":(0.36,0.10,0.61,0.65),"primary":(0.035,0.25,0.26,0.50),"secondary":(0.035,0.80,0.935,0.12),"status":(0.68,0.04,0.29,0.06)},
++            },
++            slots=[{"id":"hero-vehicle","kind":"content","required":False},{"id":"game-mark","kind":"sticker","socket":"surface","tags":["identity"],"required":False}],
++            tags=["game","racing","home","menu"], math_hooks={"hero_area_ratio":[0.48,0.68]}, quality=race_quality,
++        ),
++        "game.racing.vehicle-select": screen(
++            "game.racing.vehicle-select", "Racing vehicle selection", "game.racing", "racing.performance",
++            "compare vehicles visually and numerically while keeping ownership, class and current choice obvious",
++            {
++                "compact": {"header":(0.03,0.03,0.94,0.08),"vehicle":(0.03,0.14,0.94,0.38),"carousel":(0.03,0.55,0.94,0.16),"stats":(0.03,0.74,0.58,0.18),"actions":(0.64,0.74,0.33,0.18)},
++                "standard": {"header":(0.025,0.03,0.95,0.08),"carousel":(0.025,0.14,0.19,0.72),"vehicle":(0.245,0.14,0.49,0.58),"stats":(0.76,0.14,0.215,0.58),"actions":(0.245,0.76,0.73,0.12)},
++                "wide": {"header":(0.02,0.03,0.96,0.075),"carousel":(0.02,0.14,0.16,0.73),"vehicle":(0.21,0.14,0.54,0.59),"stats":(0.78,0.14,0.20,0.59),"actions":(0.21,0.78,0.77,0.105)},
++            },
++            slots=[{"id":"vehicle-stage","kind":"content","required":True},{"id":"class-mark","kind":"sticker","socket":"surface","tags":["identity"],"required":False}],
++            tags=["game","racing","vehicle","selection"], math_hooks={"hero_area_ratio":[0.46,0.62],"comparison_panel_ratio":[0.18,0.24]}, quality=race_quality,
++        ),
++        "game.racing.tuning": screen(
++            "game.racing.tuning", "Detailed racing tuning", "game.racing", "racing.performance",
++            "support precise reversible tuning while showing live deltas and preserving vehicle context",
++            {
++                "compact": {"header":(0.03,0.03,0.94,0.08),"vehicle":(0.03,0.14,0.94,0.26),"tabs":(0.03,0.43,0.94,0.08),"controls":(0.03,0.54,0.58,0.36),"telemetry":(0.64,0.54,0.33,0.23),"actions":(0.64,0.80,0.33,0.10)},
++                "standard": {"header":(0.025,0.03,0.95,0.08),"vehicle":(0.025,0.14,0.31,0.67),"tabs":(0.36,0.14,0.615,0.08),"controls":(0.36,0.25,0.39,0.56),"telemetry":(0.775,0.25,0.20,0.39),"actions":(0.775,0.67,0.20,0.14)},
++                "wide": {"header":(0.02,0.03,0.96,0.075),"vehicle":(0.02,0.14,0.34,0.68),"tabs":(0.39,0.14,0.59,0.075),"controls":(0.39,0.245,0.39,0.575),"telemetry":(0.80,0.245,0.18,0.40),"actions":(0.80,0.68,0.18,0.14)},
++            },
++            slots=[{"id":"vehicle-stage","kind":"content","required":True}], tags=["game","racing","tuning","telemetry"],
++            math_hooks={"control_row_height_ratio":[0.055,0.085],"delta_column_ratio":[0.18,0.28]}, quality=race_quality,
++        ),
++        "game.racing.livery": screen(
++            "game.racing.livery", "Racing livery and appearance", "game.racing", "racing.performance",
++            "keep vehicle appearance dominant while exposing layers, palette, decals and explicit save state",
++            {
++                "compact": {"header":(0.03,0.03,0.94,0.08),"vehicle":(0.03,0.14,0.94,0.40),"layers":(0.03,0.57,0.30,0.31),"tools":(0.36,0.57,0.61,0.20),"actions":(0.36,0.80,0.61,0.08)},
++                "standard": {"header":(0.025,0.03,0.95,0.08),"layers":(0.025,0.14,0.19,0.73),"vehicle":(0.24,0.14,0.50,0.61),"tools":(0.765,0.14,0.21,0.61),"actions":(0.24,0.79,0.735,0.08)},
++                "wide": {"header":(0.02,0.03,0.96,0.075),"layers":(0.02,0.14,0.17,0.74),"vehicle":(0.22,0.14,0.55,0.62),"tools":(0.80,0.14,0.18,0.62),"actions":(0.22,0.80,0.76,0.08)},
++            },
++            slots=[{"id":"vehicle-stage","kind":"content","required":True},{"id":"decal-library","kind":"system","required":False}],
++            tags=["game","racing","livery","appearance"], math_hooks={"hero_area_ratio":[0.48,0.66]}, quality=race_quality,
++        ),
++        "game.racing.pre-race": screen(
++            "game.racing.pre-race", "Pre-race briefing and grid", "game.racing", "racing.performance",
++            "confirm event, route, vehicle, players and launch conditions before control begins",
++            {
++                "compact": {"event":(0.03,0.03,0.94,0.14),"route":(0.03,0.20,0.94,0.27),"grid":(0.03,0.50,0.58,0.34),"conditions":(0.64,0.50,0.33,0.20),"launch":(0.64,0.73,0.33,0.11)},
++                "standard": {"event":(0.03,0.04,0.94,0.12),"route":(0.03,0.20,0.42,0.57),"grid":(0.48,0.20,0.29,0.57),"conditions":(0.80,0.20,0.17,0.35),"launch":(0.80,0.60,0.17,0.17)},
++                "wide": {"event":(0.025,0.04,0.95,0.11),"route":(0.025,0.19,0.45,0.59),"grid":(0.50,0.19,0.28,0.59),"conditions":(0.81,0.19,0.165,0.36),"launch":(0.81,0.61,0.165,0.17)},
++            }, tags=["game","racing","briefing","grid"], quality=race_quality,
++        ),
++        "game.racing.loading": screen(
++            "game.racing.loading", "Racing loading and readiness", "game.racing", "racing.performance",
++            "show exactly what is loading, seat readiness and failure/retry state without fake progress",
++            {
++                "compact": {"hero":(0.04,0.08,0.92,0.42),"event":(0.04,0.54,0.56,0.15),"players":(0.63,0.54,0.33,0.15),"progress":(0.04,0.74,0.92,0.09),"status":(0.04,0.86,0.92,0.08)},
++                "standard": {"hero":(0.05,0.08,0.62,0.69),"event":(0.70,0.08,0.25,0.22),"players":(0.70,0.34,0.25,0.27),"progress":(0.05,0.82,0.90,0.07),"status":(0.70,0.65,0.25,0.12)},
++                "wide": {"hero":(0.05,0.07,0.64,0.71),"event":(0.72,0.07,0.23,0.22),"players":(0.72,0.33,0.23,0.29),"progress":(0.05,0.84,0.90,0.065),"status":(0.72,0.66,0.23,0.12)},
++            }, tags=["game","racing","loading","readiness"], quality=race_quality + ["loading progress must be observed or explicitly indeterminate"],
++        ),
++        "game.racing.countdown": screen(
++            "game.racing.countdown", "Race start countdown", "game.racing", "racing.performance",
++            "transition from waiting to control without obscuring the road, vehicle or start state",
++            {
++                "compact": {"world":(0,0,1,1),"countdown":(0.36,0.25,0.28,0.34),"grid-status":(0.03,0.05,0.28,0.12),"input":(0.69,0.05,0.28,0.12)},
++                "standard": {"world":(0,0,1,1),"countdown":(0.40,0.24,0.20,0.36),"grid-status":(0.025,0.05,0.24,0.11),"input":(0.735,0.05,0.24,0.11)},
++                "wide": {"world":(0,0,1,1),"countdown":(0.425,0.23,0.15,0.37),"grid-status":(0.02,0.05,0.20,0.10),"input":(0.78,0.05,0.20,0.10)},
++            }, tags=["game","racing","countdown","start"], math_hooks={"focal_region":"countdown","focal_width_ratio":[0.15,0.28]}, quality=race_quality,
++        ),
++        "game.racing.hud.split": screen(
++            "game.racing.hud.split", "Split-screen racing HUD", "game.racing", "racing.performance",
++            "give each local seat the essential race state inside its own viewport without cross-seat ambiguity",
++            {
++                "compact": {"world":(0,0,1,1),"seat":(0.025,0.035,0.22,0.10),"position":(0.025,0.15,0.20,0.10),"route":(0.75,0.035,0.225,0.22),"speed":(0.39,0.79,0.22,0.17),"vehicle-state":(0.025,0.81,0.20,0.14)},
++                "standard": {"world":(0,0,1,1),"seat":(0.022,0.035,0.17,0.09),"position":(0.022,0.14,0.16,0.09),"route":(0.80,0.035,0.178,0.22),"speed":(0.405,0.80,0.19,0.16),"vehicle-state":(0.022,0.815,0.16,0.13)},
++                "wide": {"world":(0,0,1,1),"seat":(0.018,0.04,0.14,0.085),"position":(0.018,0.14,0.13,0.085),"route":(0.85,0.04,0.132,0.21),"speed":(0.425,0.81,0.15,0.15),"vehicle-state":(0.018,0.82,0.13,0.12)},
++            }, tags=["game","racing","hud","splitscreen"], math_hooks={"focal_region":"speed","edge_safe_ratio":[0.018,0.04]}, quality=race_quality + ["every viewport must expose seat identity before shared-screen confusion can occur"],
++        ),
++        "game.racing.replay": screen(
++            "game.racing.replay", "Race replay and photo review", "game.racing", "racing.performance",
++            "keep recorded action dominant while timeline, cameras, markers and export state remain inspectable",
++            {
++                "compact": {"viewer":(0.03,0.03,0.94,0.52),"timeline":(0.03,0.58,0.94,0.10),"cameras":(0.03,0.71,0.29,0.22),"markers":(0.35,0.71,0.29,0.22),"actions":(0.67,0.71,0.30,0.22)},
++                "standard": {"viewer":(0.025,0.03,0.73,0.70),"cameras":(0.78,0.03,0.195,0.32),"markers":(0.78,0.38,0.195,0.35),"timeline":(0.025,0.77,0.73,0.18),"actions":(0.78,0.77,0.195,0.18)},
++                "wide": {"viewer":(0.02,0.03,0.76,0.71),"cameras":(0.80,0.03,0.18,0.32),"markers":(0.80,0.38,0.18,0.36),"timeline":(0.02,0.78,0.76,0.17),"actions":(0.80,0.78,0.18,0.17)},
++            }, tags=["game","racing","replay","photo"], quality=race_quality,
++        ),
++        "game.racing.season": screen(
++            "game.racing.season", "Racing season and progression", "game.racing", "racing.performance",
++            "show progression, upcoming events and rewards without disguising locked or incomplete state",
++            {
++                "compact": {"header":(0.03,0.03,0.94,0.09),"progress":(0.03,0.15,0.94,0.13),"calendar":(0.03,0.31,0.94,0.34),"standings":(0.03,0.68,0.46,0.26),"rewards":(0.52,0.68,0.45,0.26)},
++                "standard": {"header":(0.025,0.03,0.95,0.08),"progress":(0.025,0.14,0.95,0.12),"calendar":(0.025,0.29,0.55,0.66),"standings":(0.605,0.29,0.18,0.66),"rewards":(0.81,0.29,0.165,0.66)},
++                "wide": {"header":(0.02,0.03,0.96,0.075),"progress":(0.02,0.14,0.96,0.11),"calendar":(0.02,0.28,0.58,0.67),"standings":(0.625,0.28,0.17,0.67),"rewards":(0.82,0.28,0.16,0.67)},
++            }, tags=["game","racing","season","progression"], quality=race_quality,
++        ),
++        "game.racing.settings": screen(
++            "game.racing.settings", "Racing settings", "game.racing", "racing.performance",
++            "separate driving, controls, display, audio and online preferences with visible scope and defaults",
++            {
++                "compact": {"header":(0.04,0.03,0.92,0.08),"categories":(0.04,0.14,0.92,0.13),"settings":(0.04,0.30,0.92,0.54),"actions":(0.04,0.87,0.92,0.09)},
++                "standard": {"header":(0.03,0.03,0.94,0.08),"categories":(0.03,0.14,0.20,0.82),"settings":(0.26,0.14,0.71,0.68),"actions":(0.26,0.85,0.71,0.11)},
++                "wide": {"header":(0.025,0.03,0.95,0.075),"categories":(0.025,0.14,0.18,0.82),"settings":(0.23,0.14,0.745,0.68),"actions":(0.23,0.85,0.745,0.11)},
++            }, tags=["game","racing","settings","controls"], quality=race_quality + ["control remapping must expose conflicts instead of silently replacing bindings"],
++        ),
++        "game.racing.accessibility": screen(
++            "game.racing.accessibility", "Racing accessibility", "game.racing", "racing.performance",
++            "make readability, input, assistance and sensory options understandable with immediate consequence previews",
++            {
++                "compact": {"header":(0.04,0.03,0.92,0.08),"categories":(0.04,0.14,0.92,0.13),"options":(0.04,0.30,0.58,0.54),"preview":(0.65,0.30,0.31,0.38),"actions":(0.65,0.72,0.31,0.12)},
++                "standard": {"header":(0.03,0.03,0.94,0.08),"categories":(0.03,0.14,0.20,0.82),"options":(0.26,0.14,0.43,0.70),"preview":(0.72,0.14,0.25,0.48),"actions":(0.72,0.66,0.25,0.18)},
++                "wide": {"header":(0.025,0.03,0.95,0.075),"categories":(0.025,0.14,0.18,0.82),"options":(0.23,0.14,0.46,0.70),"preview":(0.72,0.14,0.255,0.48),"actions":(0.72,0.66,0.255,0.18)},
++            }, tags=["game","racing","accessibility","preferences"], quality=race_quality + ["accessibility options must not be hidden behind expert terminology","preview must be labeled when it is only illustrative"],
++        ),
++        "game.racing.recovery": screen(
++            "game.racing.recovery", "Racing disconnect and recovery", "game.racing", "racing.performance",
++            "preserve race/session truth while making reconnection, retry and exit choices explicit",
++            {
++                "compact": {"context":(0,0,1,1),"banner":(0.12,0.14,0.76,0.18),"status":(0.18,0.36,0.64,0.18),"choices":(0.18,0.58,0.64,0.25)},
++                "standard": {"context":(0,0,1,1),"banner":(0.24,0.16,0.52,0.16),"status":(0.29,0.37,0.42,0.16),"choices":(0.29,0.58,0.42,0.23)},
++                "wide": {"context":(0,0,1,1),"banner":(0.28,0.16,0.44,0.16),"status":(0.33,0.37,0.34,0.16),"choices":(0.33,0.58,0.34,0.23)},
++            }, tags=["game","racing","recovery","network"], quality=race_quality + ["never present reconnection as successful until observed","leaving must not silently destroy recoverable session state"],
++        ),
++    }
++
++    coop_screens = {
++        "game.coop.home": screen(
++            "game.coop.home", "Co-op action home", "game.coop", "game.coop.tactical",
++            "make continue/play-together the dominant path while preserving recent party and progress state",
++            {
++                "compact": {"identity":(0.04,0.05,0.92,0.14),"hero":(0.04,0.22,0.92,0.35),"party":(0.04,0.60,0.44,0.25),"actions":(0.52,0.60,0.44,0.25),"status":(0.04,0.89,0.92,0.07)},
++                "standard": {"identity":(0.04,0.05,0.40,0.12),"hero":(0.36,0.11,0.60,0.61),"party":(0.04,0.25,0.27,0.31),"actions":(0.04,0.60,0.27,0.24),"status":(0.52,0.05,0.44,0.07)},
++                "wide": {"identity":(0.035,0.05,0.34,0.11),"hero":(0.35,0.10,0.62,0.63),"party":(0.035,0.24,0.25,0.32),"actions":(0.035,0.60,0.25,0.24),"status":(0.70,0.04,0.27,0.06)},
++            }, tags=["game","coop","home","menu"], quality=coop_quality,
++        ),
++        "game.coop.lobby": screen(
++            "game.coop.lobby", "Co-op party lobby", "game.coop", "game.coop.tactical",
++            "make seat ownership, readiness, mission choice and party state immediately inspectable",
++            {
++                "compact": {"header":(0.03,0.03,0.94,0.08),"mission":(0.03,0.14,0.94,0.20),"seats":(0.03,0.37,0.94,0.38),"options":(0.03,0.78,0.46,0.17),"launch":(0.52,0.78,0.45,0.17)},
++                "standard": {"header":(0.025,0.03,0.95,0.08),"mission":(0.025,0.14,0.27,0.69),"seats":(0.32,0.14,0.45,0.69),"options":(0.795,0.14,0.18,0.46),"launch":(0.795,0.65,0.18,0.18)},
++                "wide": {"header":(0.02,0.03,0.96,0.075),"mission":(0.02,0.14,0.25,0.70),"seats":(0.30,0.14,0.48,0.70),"options":(0.81,0.14,0.17,0.47),"launch":(0.81,0.66,0.17,0.18)},
++            }, tags=["game","coop","lobby","party"], quality=coop_quality,
++        ),
++        "game.coop.loadout": screen(
++            "game.coop.loadout", "Co-op loadout", "game.coop", "game.coop.tactical",
++            "compare role, weapons, equipment and team fit before a seat commits its loadout",
++            {
++                "compact": {"header":(0.03,0.03,0.94,0.08),"character":(0.03,0.14,0.94,0.28),"inventory":(0.03,0.45,0.58,0.39),"team-fit":(0.64,0.45,0.33,0.22),"actions":(0.64,0.70,0.33,0.14)},
++                "standard": {"header":(0.025,0.03,0.95,0.08),"inventory":(0.025,0.14,0.24,0.72),"character":(0.29,0.14,0.45,0.58),"team-fit":(0.765,0.14,0.21,0.39),"actions":(0.29,0.76,0.685,0.10)},
++                "wide": {"header":(0.02,0.03,0.96,0.075),"inventory":(0.02,0.14,0.21,0.73),"character":(0.26,0.14,0.49,0.59),"team-fit":(0.78,0.14,0.20,0.40),"actions":(0.26,0.78,0.72,0.09)},
++            }, tags=["game","coop","loadout","equipment"], quality=coop_quality,
++        ),
++        "game.coop.hud": screen(
++            "game.coop.hud", "Co-op action HUD", "game.coop", "game.coop.tactical",
++            "keep objective, self state, team state and immediate threats readable without covering the play space",
++            {
++                "compact": {"world":(0,0,1,1),"objective":(0.31,0.03,0.38,0.09),"self":(0.025,0.79,0.23,0.17),"team":(0.025,0.04,0.20,0.25),"ability":(0.37,0.84,0.26,0.12),"threat":(0.76,0.04,0.215,0.16)},
++                "standard": {"world":(0,0,1,1),"objective":(0.35,0.03,0.30,0.08),"self":(0.022,0.81,0.19,0.15),"team":(0.022,0.04,0.17,0.24),"ability":(0.39,0.85,0.22,0.11),"threat":(0.80,0.04,0.178,0.15)},
++                "wide": {"world":(0,0,1,1),"objective":(0.38,0.03,0.24,0.075),"self":(0.018,0.82,0.16,0.14),"team":(0.018,0.04,0.14,0.23),"ability":(0.41,0.86,0.18,0.10),"threat":(0.84,0.04,0.142,0.14)},
++            }, tags=["game","coop","hud","action"], math_hooks={"focal_region":"objective","edge_safe_ratio":[0.018,0.04]}, quality=coop_quality,
++        ),
++        "game.coop.pause": screen(
++            "game.coop.pause", "Co-op pause and session overlay", "game.coop", "game.coop.tactical",
++            "preserve session context while distinguishing local pause, shared pause and leave-session consequences",
++            {
++                "compact": {"context":(0,0,1,1),"menu":(0.16,0.12,0.68,0.76),"party":(0.20,0.17,0.60,0.14),"actions":(0.25,0.37,0.50,0.43)},
++                "standard": {"context":(0,0,1,1),"menu":(0.29,0.11,0.42,0.78),"party":(0.33,0.16,0.34,0.14),"actions":(0.35,0.37,0.30,0.44)},
++                "wide": {"context":(0,0,1,1),"menu":(0.34,0.11,0.32,0.78),"party":(0.37,0.16,0.26,0.14),"actions":(0.39,0.37,0.22,0.44)},
++            }, tags=["game","coop","pause","session"], quality=coop_quality,
++        ),
++        "game.coop.results": screen(
++            "game.coop.results", "Co-op mission results", "game.coop", "game.coop.tactical",
++            "show shared outcome plus each seat's contribution without turning teamwork into a misleading single score",
++            {
++                "compact": {"outcome":(0.04,0.05,0.92,0.14),"team":(0.04,0.22,0.92,0.22),"players":(0.04,0.47,0.92,0.29),"rewards":(0.04,0.79,0.55,0.15),"actions":(0.62,0.79,0.34,0.15)},
++                "standard": {"outcome":(0.04,0.05,0.92,0.13),"team":(0.04,0.22,0.23,0.49),"players":(0.30,0.22,0.42,0.49),"rewards":(0.75,0.22,0.21,0.49),"actions":(0.30,0.76,0.66,0.13)},
++                "wide": {"outcome":(0.05,0.05,0.90,0.12),"team":(0.05,0.22,0.20,0.49),"players":(0.28,0.22,0.45,0.49),"rewards":(0.76,0.22,0.19,0.49),"actions":(0.28,0.77,0.67,0.12)},
++            }, tags=["game","coop","results","team"], quality=coop_quality,
++        ),
++        "game.coop.settings": screen(
++            "game.coop.settings", "Co-op game settings", "game.coop", "game.coop.tactical",
++            "keep local preferences distinct from party/session rules and show who can change each scope",
++            {
++                "compact": {"header":(0.04,0.03,0.92,0.08),"scope":(0.04,0.14,0.92,0.11),"categories":(0.04,0.28,0.92,0.12),"settings":(0.04,0.43,0.92,0.40),"actions":(0.04,0.86,0.92,0.10)},
++                "standard": {"header":(0.03,0.03,0.94,0.08),"categories":(0.03,0.14,0.20,0.82),"scope":(0.26,0.14,0.71,0.10),"settings":(0.26,0.27,0.71,0.55),"actions":(0.26,0.85,0.71,0.11)},
++                "wide": {"header":(0.025,0.03,0.95,0.075),"categories":(0.025,0.14,0.18,0.82),"scope":(0.23,0.14,0.745,0.10),"settings":(0.23,0.27,0.745,0.55),"actions":(0.23,0.85,0.745,0.11)},
++            }, tags=["game","coop","settings","scope"], quality=coop_quality,
++        ),
++    }
++
++    rts_screens = {
++        "game.rts.lobby": screen(
++            "game.rts.lobby", "RTS world-entry lobby", "game.rts", "game.rts.command",
++            "show faction/seat, world state, allies and entry conditions before joining the persistent command layer",
++            {
++                "compact": {"world":(0.03,0.03,0.94,0.30),"seat":(0.03,0.36,0.45,0.25),"allies":(0.52,0.36,0.45,0.25),"conditions":(0.03,0.64,0.62,0.28),"launch":(0.68,0.64,0.29,0.28)},
++                "standard": {"world":(0.025,0.03,0.54,0.78),"seat":(0.59,0.03,0.185,0.36),"allies":(0.79,0.03,0.185,0.36),"conditions":(0.59,0.43,0.385,0.23),"launch":(0.59,0.70,0.385,0.11)},
++                "wide": {"world":(0.02,0.03,0.58,0.80),"seat":(0.625,0.03,0.17,0.37),"allies":(0.81,0.03,0.17,0.37),"conditions":(0.625,0.44,0.355,0.23),"launch":(0.625,0.72,0.355,0.11)},
++            }, tags=["game","rts","lobby","world"], quality=rts_quality,
++        ),
++        "game.rts.world": screen(
++            "game.rts.world", "RTS persistent world map", "game.rts", "game.rts.command",
++            "keep the strategic world primary while surfacing regions, fronts, logistics and selected context",
++            {
++                "compact": {"world":(0.02,0.03,0.96,0.61),"regions":(0.02,0.68,0.35,0.28),"selection":(0.40,0.68,0.35,0.28),"alerts":(0.78,0.68,0.20,0.28)},
++                "standard": {"world":(0.18,0.03,0.62,0.94),"regions":(0.015,0.03,0.145,0.94),"selection":(0.82,0.03,0.165,0.59),"alerts":(0.82,0.66,0.165,0.31)},
++                "wide": {"world":(0.15,0.03,0.67,0.94),"regions":(0.012,0.03,0.12,0.94),"selection":(0.84,0.03,0.148,0.59),"alerts":(0.84,0.66,0.148,0.31)},
++            }, tags=["game","rts","world","strategy"], quality=rts_quality,
++        ),
++        "game.rts.hud": screen(
++            "game.rts.hud", "RTS command HUD", "game.rts", "game.rts.command",
++            "support continuous selection, resources, production and tactical command without shrinking the battlefield into a dashboard",
++            {
++                "compact": {"world":(0,0,1,1),"resources":(0.02,0.02,0.42,0.08),"alerts":(0.66,0.02,0.32,0.15),"selection":(0.02,0.77,0.28,0.21),"commands":(0.33,0.82,0.42,0.16),"minimap":(0.78,0.75,0.20,0.23)},
++                "standard": {"world":(0,0,1,1),"resources":(0.02,0.02,0.34,0.075),"alerts":(0.76,0.02,0.22,0.15),"selection":(0.02,0.78,0.24,0.20),"commands":(0.30,0.83,0.42,0.15),"minimap":(0.78,0.73,0.20,0.25)},
++                "wide": {"world":(0,0,1,1),"resources":(0.018,0.02,0.28,0.07),"alerts":(0.82,0.02,0.162,0.14),"selection":(0.018,0.79,0.20,0.19),"commands":(0.29,0.84,0.42,0.14),"minimap":(0.80,0.72,0.182,0.26)},
++            }, tags=["game","rts","hud","command"], quality=rts_quality,
++        ),
++        "game.rts.build": screen(
++            "game.rts.build", "RTS production and build planner", "game.rts", "game.rts.command",
++            "compare build options, queues, prerequisites and map placement consequences before commitment",
++            {
++                "compact": {"world":(0.03,0.03,0.94,0.35),"catalog":(0.03,0.42,0.45,0.38),"queue":(0.52,0.42,0.45,0.22),"details":(0.52,0.67,0.45,0.13),"actions":(0.03,0.83,0.94,0.13)},
++                "standard": {"catalog":(0.02,0.03,0.22,0.94),"world":(0.27,0.03,0.49,0.69),"queue":(0.79,0.03,0.19,0.33),"details":(0.79,0.39,0.19,0.33),"actions":(0.27,0.76,0.71,0.21)},
++                "wide": {"catalog":(0.018,0.03,0.19,0.94),"world":(0.235,0.03,0.55,0.70),"queue":(0.81,0.03,0.172,0.34),"details":(0.81,0.40,0.172,0.33),"actions":(0.235,0.77,0.747,0.20)},
++            }, tags=["game","rts","build","production"], quality=rts_quality,
++        ),
++        "game.rts.tech": screen(
++            "game.rts.tech", "RTS research and technology", "game.rts", "game.rts.command",
++            "show prerequisites, opportunity cost and unlocked consequences across a large research graph",
++            {
++                "compact": {"header":(0.03,0.03,0.94,0.08),"tree":(0.03,0.14,0.94,0.53),"details":(0.03,0.70,0.62,0.24),"actions":(0.68,0.70,0.29,0.24)},
++                "standard": {"header":(0.025,0.03,0.95,0.08),"tree":(0.025,0.14,0.70,0.82),"details":(0.76,0.14,0.215,0.55),"actions":(0.76,0.72,0.215,0.24)},
++                "wide": {"header":(0.02,0.03,0.96,0.075),"tree":(0.02,0.14,0.73,0.82),"details":(0.78,0.14,0.20,0.55),"actions":(0.78,0.72,0.20,0.24)},
++            }, tags=["game","rts","technology","research"], quality=rts_quality,
++        ),
++        "game.rts.diplomacy": screen(
++            "game.rts.diplomacy", "RTS diplomacy and faction relations", "game.rts", "game.rts.command",
++            "make relationships, proposals, obligations and consequences explicit before a strategic agreement changes state",
++            {
++                "compact": {"factions":(0.03,0.03,0.94,0.18),"relations":(0.03,0.24,0.94,0.30),"proposal":(0.03,0.57,0.58,0.36),"consequence":(0.64,0.57,0.33,0.22),"actions":(0.64,0.82,0.33,0.11)},
++                "standard": {"factions":(0.025,0.03,0.19,0.94),"relations":(0.24,0.03,0.35,0.94),"proposal":(0.615,0.03,0.36,0.55),"consequence":(0.615,0.61,0.36,0.19),"actions":(0.615,0.83,0.36,0.14)},
++                "wide": {"factions":(0.02,0.03,0.17,0.94),"relations":(0.215,0.03,0.38,0.94),"proposal":(0.62,0.03,0.36,0.55),"consequence":(0.62,0.61,0.36,0.19),"actions":(0.62,0.83,0.36,0.14)},
++            }, tags=["game","rts","diplomacy","factions"], quality=rts_quality,
++        ),
++        "game.rts.pause": screen(
++            "game.rts.pause", "RTS pause and strategic overview", "game.rts", "game.rts.command",
++            "preserve world position and strategic context while exposing pause, save, settings and exit consequences",
++            {
++                "compact": {"context":(0,0,1,1),"overview":(0.08,0.09,0.84,0.25),"menu":(0.18,0.38,0.64,0.50)},
++                "standard": {"context":(0,0,1,1),"overview":(0.18,0.08,0.64,0.22),"menu":(0.30,0.35,0.40,0.53)},
++                "wide": {"context":(0,0,1,1),"overview":(0.22,0.08,0.56,0.22),"menu":(0.34,0.35,0.32,0.53)},
++            }, tags=["game","rts","pause","overview"], quality=rts_quality,
++        ),
++        "game.rts.results": screen(
++            "game.rts.results", "RTS campaign / battle outcome", "game.rts", "game.rts.command",
++            "explain world-state consequences, losses, gains and next strategic choices rather than only a win/lose banner",
++            {
++                "compact": {"outcome":(0.04,0.04,0.92,0.14),"world-change":(0.04,0.21,0.92,0.25),"forces":(0.04,0.49,0.44,0.30),"economy":(0.52,0.49,0.44,0.30),"actions":(0.04,0.83,0.92,0.12)},
++                "standard": {"outcome":(0.04,0.04,0.92,0.13),"world-change":(0.04,0.21,0.40,0.55),"forces":(0.47,0.21,0.23,0.55),"economy":(0.73,0.21,0.23,0.55),"actions":(0.47,0.80,0.49,0.12)},
++                "wide": {"outcome":(0.05,0.04,0.90,0.12),"world-change":(0.05,0.21,0.43,0.55),"forces":(0.51,0.21,0.21,0.55),"economy":(0.75,0.21,0.20,0.55),"actions":(0.51,0.80,0.44,0.12)},
++            }, tags=["game","rts","results","world-state"], quality=rts_quality,
++        ),
++    }
++
++    all_new_screens = {}
++    all_new_screens.update(racing_screens)
++    all_new_screens.update(coop_screens)
++    all_new_screens.update(rts_screens)
++    _merge_unique(screens, all_new_screens, "screen")
++
++    new_products = {
++        "game.racing.full": {
++            "schema": namespace["PRODUCT_SCHEMA"], "id": "game.racing.full", "version": 1,
++            "name": "Full professional racing product", "kind": "product", "domain": "game.racing",
++            "tags": ["game","racing","product","complete"], "origin": origin(), "style": "racing.performance",
++            "intent": "a complete professional racing presentation shell from home and setup through race, recovery, replay and progression",
++            "screens": [
++                "game.racing.home", "game.racing.lobby", "game.racing.event-select", "game.racing.vehicle-select",
++                "game.racing.garage", "game.racing.tuning", "game.racing.livery", "game.racing.pre-race",
++                "game.racing.loading", "game.racing.countdown", "game.racing.hud.performance", "game.racing.hud.split",
++                "game.racing.pause", "game.racing.recovery", "game.racing.results", "game.racing.replay",
++                "game.racing.season", "game.racing.settings", "game.racing.accessibility",
++            ],
++            "flow": [
++                ["game.racing.home","game.racing.lobby","play-together"],
++                ["game.racing.home","game.racing.season","open-season"],
++                ["game.racing.home","game.racing.settings","open-settings"],
++                ["game.racing.settings","game.racing.accessibility","open-accessibility"],
++                ["game.racing.accessibility","game.racing.settings","return-settings"],
++                ["game.racing.lobby","game.racing.event-select","choose-event"],
++                ["game.racing.event-select","game.racing.vehicle-select","choose-vehicle"],
++                ["game.racing.vehicle-select","game.racing.garage","inspect-garage"],
++                ["game.racing.garage","game.racing.tuning","tune"],
++                ["game.racing.garage","game.racing.livery","customize"],
++                ["game.racing.tuning","game.racing.pre-race","confirm-setup"],
++                ["game.racing.livery","game.racing.pre-race","confirm-appearance"],
++                ["game.racing.pre-race","game.racing.loading","launch"],
++                ["game.racing.loading","game.racing.countdown","ready"],
++                ["game.racing.countdown","game.racing.hud.performance","start-race"],
++                ["game.racing.hud.performance","game.racing.pause","pause"],
++                ["game.racing.pause","game.racing.hud.performance","resume"],
++                ["game.racing.hud.performance","game.racing.recovery","connection-loss"],
++                ["game.racing.recovery","game.racing.hud.performance","recovered"],
++                ["game.racing.hud.performance","game.racing.results","finish"],
++                ["game.racing.hud.split","game.racing.results","finish-local"],
++                ["game.racing.results","game.racing.replay","watch-replay"],
++                ["game.racing.replay","game.racing.results","return-results"],
++                ["game.racing.results","game.racing.season","continue-season"],
++                ["game.racing.results","game.racing.lobby","race-again"],
++            ],
++            "quality": [
++                "all shell screens inherit one coherent racing language before game-specific art direction mutates it",
++                "driving screens reduce chrome compared with setup screens",
++                "loading, network and recovery states tell the truth about what is observed",
++                "split-screen preserves seat ownership and readable essential state",
++                "settings and accessibility are part of the product foundation rather than post-launch extras",
++            ],
++        },
++        "game.coop.action": {
++            "schema": namespace["PRODUCT_SCHEMA"], "id": "game.coop.action", "version": 1,
++            "name": "Co-op action game product", "kind": "product", "domain": "game.coop",
++            "tags": ["game","coop","product","action"], "origin": origin(), "style": "game.coop.tactical",
++            "intent": "a reusable co-op game presentation shell with equal seat clarity from party formation through mission results",
++            "screens": ["game.coop.home","game.coop.lobby","game.coop.loadout","game.coop.hud","game.coop.pause","game.coop.results","game.coop.settings"],
++            "flow": [
++                ["game.coop.home","game.coop.lobby","play"],
++                ["game.coop.lobby","game.coop.loadout","prepare"],
++                ["game.coop.loadout","game.coop.hud","launch"],
++                ["game.coop.hud","game.coop.pause","pause"],
++                ["game.coop.pause","game.coop.hud","resume"],
++                ["game.coop.pause","game.coop.settings","settings"],
++                ["game.coop.settings","game.coop.pause","return"],
++                ["game.coop.hud","game.coop.results","complete"],
++                ["game.coop.results","game.coop.lobby","continue"],
++            ],
++            "quality": ["human and machine seats share the same player-facing state language","party ownership and readiness remain explicit","team outcome stays distinct from individual contribution"],
++        },
++        "game.rts.command": {
++            "schema": namespace["PRODUCT_SCHEMA"], "id": "game.rts.command", "version": 1,
++            "name": "Persistent RTS command product", "kind": "product", "domain": "game.rts",
++            "tags": ["game","rts","product","strategy"], "origin": origin(), "style": "game.rts.command",
++            "intent": "a persistent-world RTS presentation foundation that preserves macro context across command, production and diplomacy surfaces",
++            "screens": ["game.rts.lobby","game.rts.world","game.rts.hud","game.rts.build","game.rts.tech","game.rts.diplomacy","game.rts.pause","game.rts.results"],
++            "flow": [
++                ["game.rts.lobby","game.rts.world","enter-world"],
++                ["game.rts.world","game.rts.hud","command-region"],
++                ["game.rts.hud","game.rts.build","open-production"],
++                ["game.rts.build","game.rts.hud","return-command"],
++                ["game.rts.hud","game.rts.tech","research"],
++                ["game.rts.tech","game.rts.hud","return-command"],
++                ["game.rts.world","game.rts.diplomacy","diplomacy"],
++                ["game.rts.diplomacy","game.rts.world","return-world"],
++                ["game.rts.hud","game.rts.pause","pause"],
++                ["game.rts.pause","game.rts.hud","resume"],
++                ["game.rts.hud","game.rts.results","resolve-battle"],
++                ["game.rts.results","game.rts.world","continue-world"],
++            ],
++            "quality": ["persistent world state remains the referent across screens","command surfaces preserve spatial context","strategic consequences precede irreversible choices"],
++        },
++    }
++    _merge_unique(products, new_products, "product")
+diff --git a/src/axm_uc/visual_templates.py b/src/axm_uc/visual_templates.py
+new file mode 100644
+index 0000000..56087a6
+--- /dev/null
++++ b/src/axm_uc/visual_templates.py
+@@ -0,0 +1,37 @@
++"""Canonical AXM visual-template facade.
++
++The original deterministic template kernel is retained in ``visual_template_core``.
++Professional foundation packs extend those same dictionaries before this facade
++exports the public surface. This is one catalog/schema, not parallel template
++systems.
++"""
++from __future__ import annotations
++
++from . import visual_template_core as _core
++from .visual_template_growth import extend_catalog as _extend_catalog
++from .visual_template_game_systems import extend_game_system_catalog as _extend_game_system_catalog
++
++_COMPOSITION=("visual_template_growth","visual_template_game_systems")
++_applied=getattr(_core,"_AXM_VISUAL_COMPOSITION",None)
++if _applied is None:
++    _extend_catalog(vars(_core))
++    _extend_game_system_catalog(vars(_core))
++    _core._AXM_VISUAL_COMPOSITION=_COMPOSITION
++elif _applied != _COMPOSITION:
++    raise RuntimeError("visual template composition changed inside a live process; restart with one exact catalog")
++_core.validate_catalog()
++
++__all__=[]
++for _name in dir(_core):
++    if not _name.startswith("_"):
++        globals()[_name]=getattr(_core,_name)
++        __all__.append(_name)
++
++CATALOG_COMPOSITION={
++    "schema":"axm.visual-template-composition/v1",
++    "core":"visual_template_core",
++    "extensions":list(_COMPOSITION),
++    "counts":_core.validate_catalog(),
++    "truth":"One v1 catalog composed deterministically from retained core plus explicit foundation extensions.",
++}
++__all__.append("CATALOG_COMPOSITION")
+diff --git a/src/axm_uc/visual_templates_cli.py b/src/axm_uc/visual_templates_cli.py
+new file mode 100644
+index 0000000..c71097e
+--- /dev/null
++++ b/src/axm_uc/visual_templates_cli.py
+@@ -0,0 +1,98 @@
++"""CLI for AXM visual archetypes and whole-product foundations."""
++from __future__ import annotations
++
++import argparse
++import json
++from pathlib import Path
++
++from .visual_templates import (catalog, get, digest, screen_project, product_project,
++                               install_builtins)
++
++
++def _print(value) -> None:
++    print(json.dumps(value, indent=2, ensure_ascii=False, sort_keys=True))
++
++
++def _write_project(project: dict, target: Path) -> dict:
++    if target.exists():
++        raise ValueError("output path already exists")
++    files = project.get("files")
++    if not isinstance(files, dict) or not files:
++        raise ValueError("project files are missing")
++    target.mkdir(parents=True)
++    written = []
++    try:
++        for raw_name, body in files.items():
++            name = Path(raw_name)
++            if name.is_absolute() or ".." in name.parts or not isinstance(body, str):
++                raise ValueError("project contains unsafe path/content")
++            path = target / name
++            path.parent.mkdir(parents=True, exist_ok=True)
++            path.write_text(body, encoding="utf-8")
++            written.append(raw_name)
++    except BaseException:
++        # Only remove files created in this new target; never touch pre-existing output.
++        import shutil
++        shutil.rmtree(target, ignore_errors=True)
++        raise
++    receipt = {
++        "schema": "axm.visual-template-write/v1",
++        "project_id": project["id"],
++        "project_version": project["version"],
++        "path": str(target),
++        "files": sorted(written),
++        "truth": "Deterministic template files written; visual quality, gameplay and interaction were not runtime-tested by this command.",
++    }
++    (target / "receipt.json").write_text(json.dumps(receipt, indent=2, sort_keys=True), encoding="utf-8")
++    return receipt
++
++
++def build_parser() -> argparse.ArgumentParser:
++    parser = argparse.ArgumentParser(prog="axm-visual-templates", description="AXM visual archetype catalog")
++    sub = parser.add_subparsers(dest="command", required=True)
++    sub.add_parser("catalog", help="list built-in primitives, styles, screens and whole products")
++    show = sub.add_parser("show", help="show one exact built-in visual template")
++    show.add_argument("id")
++    render = sub.add_parser("render", help="write an offline SVG/HTML structural preview")
++    render.add_argument("id")
++    render.add_argument("path")
++    render.add_argument("--width", type=int, default=1920)
++    render.add_argument("--height", type=int, default=1080)
++    render.add_argument("--title")
++    install = sub.add_parser("install-registry", help="explicitly install all built-ins into an existing/new Sticker Registry")
++    install.add_argument("database")
++    return parser
++
++
++def main(argv: list[str] | None = None) -> int:
++    args = build_parser().parse_args(argv)
++    if args.command == "catalog":
++        _print(catalog())
++        return 0
++    if args.command == "show":
++        template = get(args.id)
++        _print({"template": template, "digest": digest(template)})
++        return 0
++    if args.command == "render":
++        template = get(args.id)
++        project = product_project(args.id, args.width, args.height, args.title) if template["kind"] == "product" else screen_project(args.id, args.width, args.height, args.title)
++        try:
++            receipt = _write_project(project, Path(args.path))
++        except (ValueError, OSError) as exc:
++            raise SystemExit(str(exc)) from exc
++        _print(receipt)
++        return 0
++    if args.command == "install-registry":
++        from axm_stickers import Registry
++        try:
++            with Registry(args.database) as registry:
++                pins = install_builtins(registry)
++        except (ValueError, OSError) as exc:
++            raise SystemExit(str(exc)) from exc
++        _print({"schema":"axm.visual-template-install/v1","database":args.database,"registered":pins,"count":len(pins)})
++        return 0
++    return 2
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
+diff --git a/tests/test_visual_templates.py b/tests/test_visual_templates.py
+new file mode 100644
+index 0000000..5eaa497
+--- /dev/null
++++ b/tests/test_visual_templates.py
+@@ -0,0 +1,145 @@
++import json
++from pathlib import Path
++import sys
++import tempfile
++import unittest
++from xml.etree import ElementTree
++
++ROOT=Path(__file__).resolve().parents[1]
++sys.path.insert(0,str(ROOT/'src'))
++from axm_stickers import Registry
++from axm_uc import visual_templates as vt
++
++
++SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
++GAME_PRODUCTS=('game.racing.full','game.coop.action','game.rts.command','game.system.shell')
++
++
++class VisualTemplateTests(unittest.TestCase):
++    def test_catalog_is_valid_and_professional_pack_is_present(self):
++        counts=vt.validate_catalog()
++        self.assertEqual(counts,{'styles':8,'primitives':32,'screens':57,'products':6})
++        self.assertEqual(vt.CATALOG_COMPOSITION['counts'],counts)
++        products={p['id'] for p in vt.catalog()['products']}
++        self.assertTrue({'game.racing.performance','game.racing.full','game.coop.action','game.rts.command','game.system.shell','software.creator.studio'} <= products)
++
++    def test_all_resolutions_stay_in_viewport(self):
++        for tid in vt.SCREEN_TEMPLATES:
++            for width,height in SIZES:
++                out=vt.resolve(tid,width,height)
++                for box in out['regions'].values():
++                    x,y,w,h=box
++                    self.assertGreaterEqual(x,0); self.assertGreaterEqual(y,0)
++                    self.assertLessEqual(x+w,width+1e-6); self.assertLessEqual(y+h,height+1e-6)
++
++    def test_game_screens_supply_all_three_responsive_variants(self):
++        for tid,screen in vt.SCREEN_TEMPLATES.items():
++            if tid.startswith('game.'):
++                self.assertEqual(set(screen['variants']),{'compact','standard','wide'},tid)
++
++    def test_deterministic_copy_safe_and_strict_variant(self):
++        a=vt.resolve('game.racing.hud.performance',1920,1080)
++        b=vt.resolve('game.racing.hud.performance',1920,1080)
++        self.assertEqual(a,b)
++        got=vt.get('game.racing.hud.performance'); got['name']='mutated'
++        self.assertNotEqual(vt.get('game.racing.hud.performance')['name'],'mutated')
++        with self.assertRaises(ValueError):
++            vt.resolve('game.racing.hud.performance',1920,1080,variant='unknown')
++
++    def test_full_racing_product_has_professional_shell(self):
++        product=vt.get('game.racing.full')
++        self.assertEqual(len(product['screens']),19)
++        required={
++            'game.racing.home','game.racing.vehicle-select','game.racing.tuning','game.racing.livery',
++            'game.racing.pre-race','game.racing.loading','game.racing.countdown','game.racing.hud.performance',
++            'game.racing.hud.split','game.racing.recovery','game.racing.results','game.racing.replay',
++            'game.racing.season','game.racing.settings','game.racing.accessibility',
++        }
++        self.assertTrue(required <= set(product['screens']))
++        flow={(a,b,action) for a,b,action in product['flow']}
++        self.assertIn(('game.racing.loading','game.racing.countdown','ready'),flow)
++        self.assertIn(('game.racing.countdown','game.racing.hud.performance','start-race'),flow)
++        self.assertIn(('game.racing.hud.performance','game.racing.recovery','connection-loss'),flow)
++
++    def test_shared_game_system_shell_covers_professional_product_plumbing(self):
++        product=vt.get('game.system.shell')
++        self.assertEqual(len(product['screens']),18)
++        required={
++            'game.system.profile','game.system.party','game.system.matchmaking','game.system.server-browser',
++            'game.system.controller-remap','game.system.display','game.system.audio','game.system.accessibility',
++            'game.system.save-slots','game.system.achievements','game.system.tutorial','game.system.photo-mode',
++            'game.system.credits','game.system.error-recovery','game.system.notifications','game.system.chat',
++            'game.system.privacy-consent','game.system.language',
++        }
++        self.assertEqual(set(product['screens']),required)
++        privacy=vt.get('game.system.privacy-consent')
++        self.assertIn('revocation', ' '.join(privacy['quality']).lower())
++        self.assertIn('observed', ' '.join(vt.get('game.system.matchmaking')['quality']).lower())
++
++    def test_game_products_resolve_exact_screens_across_viewports(self):
++        for product_id in GAME_PRODUCTS:
++            product=vt.get(product_id)
++            for width,height in SIZES:
++                out=vt.product_resolution(product_id,width,height)
++                self.assertEqual([x['template']['id'] for x in out['screens']],product['screens'])
++                self.assertEqual(len(out['flow']),len(product['flow']))
++
++    def test_preview_projects_are_parseable(self):
++        screen=vt.screen_project('game.racing.hud.performance',1280,720)
++        ElementTree.fromstring(screen['files']['screen.svg'])
++        json.loads(screen['files']['template.json'])
++        for product_id in GAME_PRODUCTS:
++            product=vt.product_project(product_id,1280,720)
++            svgs=[name for name in product['files'] if name.endswith('.svg')]
++            self.assertEqual(len(svgs),len(vt.get(product_id)['screens']))
++            for name in svgs: ElementTree.fromstring(product['files'][name])
++
++    def test_builtins_install_in_existing_sticker_registry(self):
++        with tempfile.TemporaryDirectory() as td:
++            with Registry(Path(td)/'stickers.sqlite') as registry:
++                pins=vt.install_builtins(registry)
++                self.assertEqual(len(pins),63)
++                racing=registry.search(adapter=vt.ADAPTER,tag='racing',limit=100)['entries']
++                game=registry.search(adapter=vt.ADAPTER,tag='game',limit=100)['entries']
++                self.assertGreaterEqual(len(racing),19)
++                self.assertGreaterEqual(len(game),52)
++                definition=registry.get('visual.game.racing.hud.performance',1)
++                self.assertEqual(definition['recipe']['visual_template']['schema'],vt.SCHEMA)
++                self.assertNotIn('"latest"',json.dumps(definition,sort_keys=True))
++
++    def test_reusable_game_primitives_cover_mature_product_states(self):
++        required={
++            'player-seat','selection-card','stat-comparison','slider-row','countdown','loading-state',
++            'recovery-banner','telemetry-strip','input-hint','modal','empty-state','tab-strip',
++            'keybind-row','save-slot','party-member','server-row','notification-badge','chat-message',
++            'confirmation-summary','focus-indicator',
++        }
++        self.assertTrue(required <= set(vt.PRIMITIVES))
++        self.assertTrue(vt.PRIMITIVES['loading-state']['fake_progress_forbidden'])
++        self.assertTrue(vt.PRIMITIVES['player-seat']['ownership_must_be_explicit'])
++        self.assertTrue(vt.PRIMITIVES['keybind-row']['conflicts_must_be_explicit'])
++        self.assertTrue(vt.PRIMITIVES['server-row']['availability_must_be_observed'])
++
++    def test_slot_binding_requires_exact_pin_and_contract(self):
++        definition={
++            'schema':'axm.sticker/v1','id':'test-speed-cluster','version':1,'name':'Test speed cluster',
++            'tags':['hud','metric'],'origin':{'author':'test','license':'test','source':'test'},
++            'adapter':'test/v1','attachment':{'space':'2d','socket':'surface','anchor':[0,0]},
++            'recipe':{},'assets':{},'parameters':{},
++        }
++        with tempfile.TemporaryDirectory() as td:
++            with Registry(Path(td)/'stickers.sqlite') as registry:
++                pin=registry.register(definition)
++                bound=vt.bind_sticker_slots('game.racing.hud.performance',registry,{'speed-cluster':pin})
++                self.assertEqual(bound['bindings']['speed-cluster'],pin)
++                bad=dict(pin); bad['digest']='0'*64
++                with self.assertRaises(ValueError):
++                    vt.bind_sticker_slots('game.racing.hud.performance',registry,{'speed-cluster':bad})
++
++    def test_bad_geometry_fails(self):
++        d=vt.get('game.racing.hud.performance')
++        d['variants']['standard']['speed']=[.9,.9,.2,.2]
++        with self.assertRaises(ValueError): vt.validate_screen(d)
++
++
++if __name__=='__main__': unittest.main()
+diff --git a/tools/visual_template_proof.py b/tools/visual_template_proof.py
+new file mode 100644
+index 0000000..fac3275
+--- /dev/null
++++ b/tools/visual_template_proof.py
+@@ -0,0 +1,105 @@
++#!/usr/bin/env python3
++"""Produce deterministic evidence for the composed visual-template fabric."""
++from __future__ import annotations
++
++import json
++from pathlib import Path
++import shutil
++import sys
++from xml.etree import ElementTree
++
++sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
++from axm_uc import visual_templates as vt
++
++
++SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
++GAME_PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell")
++
++
++def _write_project(project: dict, target: Path) -> list[str]:
++    target.mkdir()
++    written=[]
++    for name,body in project["files"].items():
++        path=target/name
++        path.parent.mkdir(parents=True,exist_ok=True)
++        path.write_text(body,encoding="utf-8")
++        if name.endswith(".svg"):
++            ElementTree.fromstring(body)
++        written.append(str(path))
++    return written
++
++
++def main(argv: list[str]) -> int:
++    if len(argv) != 2:
++        raise SystemExit("usage: python tools/visual_template_proof.py NEW_OUTPUT_DIRECTORY")
++    out=Path(argv[1])
++    if out.exists():
++        raise SystemExit("output path already exists")
++    out.mkdir(parents=True)
++    try:
++        counts=vt.validate_catalog()
++        if counts != {"styles":8,"primitives":32,"screens":57,"products":6}:
++            raise AssertionError(f"unexpected composed catalog: {counts}")
++
++        evidence=[]
++        for product_id in GAME_PRODUCTS:
++            expected=vt.get(product_id)
++            for width,height in SIZES:
++                resolved=vt.product_resolution(product_id,width,height)
++                if [row["template"]["id"] for row in resolved["screens"]] != expected["screens"]:
++                    raise AssertionError(f"screen order drift: {product_id}")
++                for screen in resolved["screens"]:
++                    for name,(x,y,w,h) in screen["regions"].items():
++                        if min(x,y,w,h) < 0 or x+w > width+1e-6 or y+h > height+1e-6:
++                            raise AssertionError(f"out of bounds: {screen['template']['id']} {name}")
++                evidence.append({
++                    "product":product_id,
++                    "viewport":[width,height],
++                    "screen_count":len(resolved["screens"]),
++                    "flow_edges":len(resolved["flow"]),
++                })
++
++        outputs=[]
++        galleries=(
++            ("game.racing.full",1920,1080,"racing-full","AXM Full Racing Foundation"),
++            ("game.coop.action",1280,720,"coop-action","AXM Co-op Action Foundation"),
++            ("game.rts.command",1920,1080,"rts-command","AXM RTS Command Foundation"),
++            ("game.system.shell",1280,720,"game-system","AXM Shared Game-System Foundation"),
++        )
++        for product_id,width,height,folder,title in galleries:
++            outputs.extend(_write_project(vt.product_project(product_id,width,height,title),out/folder))
++
++        mobile=vt.screen_project("product.mobile.home",1080,1920,"AXM Mobile Foundation")
++        outputs.extend(_write_project(mobile,out/"mobile-home"))
++
++        racing=vt.get("game.racing.full")
++        required_racing={"game.racing.accessibility","game.racing.recovery","game.racing.hud.split","game.racing.tuning","game.racing.replay"}
++        if not required_racing <= set(racing["screens"]):
++            raise AssertionError("full racing foundation lost required professional surfaces")
++        system=vt.get("game.system.shell")
++        required_system={"game.system.controller-remap","game.system.save-slots","game.system.error-recovery","game.system.privacy-consent","game.system.language"}
++        if not required_system <= set(system["screens"]):
++            raise AssertionError("shared game-system foundation lost required product surfaces")
++
++        receipt={
++            "schema":"axm.visual-template-proof/v3",
++            "catalog":counts,
++            "composition":vt.CATALOG_COMPOSITION,
++            "product_evidence":evidence,
++            "galleries":{
++                product_id:{"screens":len(vt.get(product_id)["screens"]),"path":folder+"/index.html"}
++                for product_id,_,_,folder,_ in galleries
++            },
++            "parsed_svg_count":sum(1 for path in outputs if path.endswith(".svg")),
++            "truth":"Offline contract/layout evidence only. SVG/HTML structure was generated and SVG parsed; target-engine interaction, gameplay, typography rendering, network behavior, persistence behavior, accessibility audit and aesthetic acceptance were not observed.",
++        }
++        (out/"receipt.json").write_text(json.dumps(receipt,indent=2,sort_keys=True),encoding="utf-8")
++        print(json.dumps(receipt,indent=2,sort_keys=True))
++    except BaseException:
++        shutil.rmtree(out,ignore_errors=True)
++        raise
++    return 0
++
++
++if __name__ == "__main__":
++    raise SystemExit(main(sys.argv))

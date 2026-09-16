@@ -1,0 +1,610 @@
+diff --git a/CINEMATIC_TEMPLATE_PACK.md b/CINEMATIC_TEMPLATE_PACK.md
+new file mode 100644
+index 0000000..f979412
+--- /dev/null
++++ b/CINEMATIC_TEMPLATE_PACK.md
+@@ -0,0 +1,45 @@
++# Editable Cinematic Title / Credits / Overlay Template Pack
++
++`visual.cinematic.core` gives Universal Creation a source-first foundation for title cards, chapter/intertitle cards, lower thirds, subtitles/captions, credits, transitions and timed overlays.
++
++The goal is not to bake text into finished frames. Exact content, layout, timing, safe-area adaptation and transition state remain independently editable.
++
++## Product surfaces
++
++The product contains ten responsive screens:
++
++- project / sequence hub;
++- title card editor;
++- chapter / intertitle editor;
++- lower-third editor;
++- subtitle / caption editor;
++- credits editor;
++- timed overlay timeline;
++- transition editor;
++- aspect / safe-area variants;
++- review / export.
++
++## Exact source contracts
++
++New primitives preserve timed source state:
++
++- `title-card` — text, layout and timing remain separate;
++- `lower-third` — content, anchor and duration are explicit;
++- `subtitle-cue` — exact text and start/end timing stay inspectable;
++- `credit-line` — content and order remain exact;
++- `time-cue` — start and end are required;
++- `safe-zone` — format guides cannot rewrite source layout;
++- `transition-cue` — transitions remain derived between source states;
++- `chapter-marker` — label plus exact timeline location;
++- `overlay-track` — overlaps/conflicts remain visible;
++- `logo-lockup` — source identity and transform stay separate.
++
++## Format adaptation
++
++Title/subtitle safe regions and aspect variants are represented explicitly. Landscape, portrait, square and vertical outputs can adapt placement without silently changing exact words, cue timing or richer source composition. `math_hooks` expose safe-area ratios for the separate mathematics lane.
++
++## Truth boundary
++
++This pack proves deterministic layout, exact timing/content contracts, responsive variants and editable source separation. It does not prove typography quality, subtitle reading speed, credit accuracy, motion quality, renderer fidelity, video encoding, platform compliance or aesthetic acceptance.
++
++Rendered SVG galleries are structural inspection evidence only. They are not final film/video frames and never replace the editable source state.
+diff --git a/VISUAL_TEMPLATE_FABRIC.md b/VISUAL_TEMPLATE_FABRIC.md
+index 35bfe8e..d3bc786 100644
+--- a/VISUAL_TEMPLATE_FABRIC.md
++++ b/VISUAL_TEMPLATE_FABRIC.md
+@@ -2,17 +2,17 @@
+ 
+ Universal Creation contains one deterministic library of **known visual archetypes** between low-level format scaffolds and finished products. Templates are editable structural starting points, not finished art and not automatic canon.
+ 
+-The public module remains `axm_uc.visual_templates`. The retained kernel is `visual_template_core.py`; explicit extension packs add game/product, creative/narrative, AXM-system, shared-game, key-art and card/deck knowledge before the facade validates one composed v1 catalog. Sticker Fabric remains the immutable/versioned local registry bridge. Mathematical work can enrich declared ratios/ranges through `math_hooks` without replacing template identity.
++The public module remains `axm_uc.visual_templates`. The retained kernel is `visual_template_core.py`; explicit extension packs add game/product, creative/narrative, AXM-system, shared-game, key-art, card/deck and cinematic knowledge before the facade validates one composed v1 catalog. Sticker Fabric remains the immutable/versioned local registry bridge. Mathematical work can enrich declared ratios/ranges through `math_hooks` without replacing template identity.
+ 
+-## Current v6 candidate census
++## Current v7 candidate census
+ 
+-- **86 reusable visual/state primitives**
+-- **14 coherent style systems**
+-- **124 responsive screen archetypes**
+-- **12 whole-product archetypes**
+-- **136 exact screen/product definitions** when explicitly installed into Sticker Registry
++- **96 reusable visual/state primitives**
++- **15 coherent style systems**
++- **134 responsive screen archetypes**
++- **13 whole-product archetypes**
++- **147 exact screen/product definitions** when explicitly installed into Sticker Registry
+ 
+-Every major game/editor/comic/AXM/key-art/card family provides compact, standard and wide normalized layouts. Unknown requested variants fail rather than silently falling back.
++Every major game/editor/comic/AXM/key-art/card/cinematic family provides compact, standard and wide normalized layouts. Unknown requested variants fail rather than silently falling back.
+ 
+ ## Product foundations accumulated so far
+ 
+@@ -45,34 +45,37 @@ Optional online/account surfaces remain capabilities, not requirements for local
+ 
+ ### Editable cards / decks / collectibles
+ 
+-`visual.cards.core` provides eleven source-first card and deck surfaces:
+-
+-- project / set hub;
+-- card face editor;
+-- card back editor;
+-- artwork editor;
+-- text / statistics editor;
+-- ability / rules editor;
+-- rarity / style editor;
+-- finish / foil editor;
+-- deck builder;
+-- print / sheet layout;
++`visual.cards.core` provides eleven source-first surfaces for face/back design, artwork, exact text/stats/rules, rarity/style, foil/finish, deck construction, print-sheet layout and review/export. Artwork/crop, rules text, costs, card/deck state, finish layers and print guides remain distinct source/derived state.
++
++### Editable cinematic titles / credits / overlays
++
++`visual.cinematic.core` provides ten source-first cinematic identity and timed-overlay surfaces:
++
++- project / sequence hub;
++- title card editor;
++- chapter / intertitle editor;
++- lower-third editor;
++- subtitle / caption editor;
++- credits editor;
++- timed overlay timeline;
++- transition editor;
++- aspect / safe-area variants;
+ - review / export.
+ 
+-Its `visual.cards.collectible` style is a replaceable starting language. The important contract is editability and exact state:
++Its `visual.cinematic.motion` style is replaceable. The structural contract is exact content and timing:
+ 
+-- `card-frame` preserves face/back geometry;
+-- `artwork-window` keeps source art and crop separate;
+-- `stat-block` preserves label/value pairs;
+-- `ability-row` retains exact rules text;
+-- `rarity-badge` cannot rely on color alone;
+-- `cost-symbol` keeps resource type and value explicit;
+-- `card-state` exposes ownership/deck/playability state;
+-- `deck-slot` points to an exact card reference;
+-- `foil-pass` cannot replace base artwork;
+-- `print-safe-frame` cannot rewrite source layout.
++- `title-card` keeps text, layout and timing separate;
++- `lower-third` exposes content, anchor and duration;
++- `subtitle-cue` preserves exact text plus start/end timing;
++- `credit-line` preserves exact content and order;
++- `time-cue` requires explicit start/end;
++- `safe-zone` cannot rewrite source layout;
++- `transition-cue` stays derived between exact source states;
++- `chapter-marker` carries exact label and timeline position;
++- `overlay-track` keeps overlaps/conflicts visible;
++- `logo-lockup` keeps source identity and transform separate.
+ 
+-Digital and physical outputs derive from richer card source state. Print trim/bleed/safe guides and foil/effect layers remain output/editing aids rather than canonical replacements.
++Landscape, portrait, square and vertical variants may adapt layout without silently changing exact words, timing or richer source composition.
+ 
+ ## Registry and identity
+ 
+@@ -92,13 +95,14 @@ Definitions use exact id/version/digest identity. There is no floating `latest`,
+ 
+ ```sh
+ axm-visual-templates catalog
++axm-visual-templates show visual.cinematic.core
+ axm-visual-templates show visual.cards.core
+ axm-visual-templates show visual.keyart.core
+ axm-visual-templates show game.shared.core
+ axm-visual-templates show editor.creative.core
+ axm-visual-templates show comic.narrative.core
+ axm-visual-templates show axm.system.shell
+-axm-visual-templates render visual.cards.core creations/cards --width 1920 --height 1080
++axm-visual-templates render visual.cinematic.core creations/cinematic --width 1920 --height 1080
+ ```
+ 
+ A product preview contains one structural SVG per screen plus exact `product.json` and local HTML gallery. Preview/export is derived inspection output, not authoritative source.
+@@ -112,20 +116,21 @@ python -m unittest discover -s tests -p 'test_visual_templates.py' -v
+ python tools/visual_template_proof.py /new/output/path
+ ```
+ 
+-The v6 candidate gate requires:
++The v7 candidate gate requires:
+ 
+-- exact census: 14 styles / 86 primitives / 124 screens / 12 products;
+-- all 124 screens inside six representative viewport shapes;
++- exact census: 15 styles / 96 primitives / 134 screens / 13 products;
++- all 134 screens inside six representative viewport shapes;
+ - exact product screen order and flow across those viewports;
+-- parseable galleries for all prior proof products plus editable cards/decks;
+-- all 136 screen/product definitions install through the existing immutable Sticker Registry;
+-- face/back geometry, artwork/crop separation, exact rules text, non-color rarity cues, explicit costs/card state, exact deck references, non-authoritative foil and non-mutating print guides remain present;
+-- prior source boundaries from key art, comics, gameplay and AXM state remain intact;
++- parseable galleries for all prior proof products plus cinematic titles/overlays;
++- all 147 screen/product definitions install through the existing immutable Sticker Registry;
++- exact title/lower-third/subtitle/credit content and timing contracts remain present;
++- overlay conflicts remain visible, safe areas cannot rewrite source layout, and transitions cannot replace source states;
++- prior source boundaries from cards, key art, comics, gameplay and AXM state remain intact;
+ - copy safety, strict variant rejection, invalid-geometry rejection and exact Sticker slot binding remain intact.
+ 
+ ## Truth boundary
+ 
+-Current evidence proves deterministic structural knowledge and editability/state vocabulary only. It does **not** prove target-engine rendering, card-game balance, rules correctness, illustration quality, typography quality, foil rendering, print production/color management, gameplay feel, authoring ergonomics or aesthetic acceptance.
++Current evidence proves deterministic structural knowledge and editability/state vocabulary only. It does **not** prove target-engine rendering, typography quality, subtitle reading speed, credit correctness, transition/motion quality, video encoding, platform compliance, gameplay feel, authoring ergonomics or aesthetic acceptance.
+ 
+ Templates must be connected to actual runtime/project state by the consuming product. Unknown or unavailable state stays visibly unknown rather than being invented. Richer editable source remains authoritative over lossy previews/exports. Templates may be mutated, combined, replaced or ignored when better evidence and product intent support another solution.
+ 
+diff --git a/VISUAL_TEMPLATE_PRIORITY_MAP.md b/VISUAL_TEMPLATE_PRIORITY_MAP.md
+index 8662118..053c14d 100644
+--- a/VISUAL_TEMPLATE_PRIORITY_MAP.md
++++ b/VISUAL_TEMPLATE_PRIORITY_MAP.md
+@@ -1,6 +1,6 @@
+ # AXM Visual Template Expansion Priority Map
+ 
+-Status: v6 growth lane after verified v1–v5 merges.
++Status: v7 growth lane after verified v1–v6 merges.
+ 
+ The visual-template fabric grows where Universal Creation is likely to reuse the knowledge soon. This is a build priority, not canon: templates remain editable foundations and may be replaced when evidence supports a better structure.
+ 
+@@ -24,50 +24,52 @@ The visual-template fabric grows where Universal Creation is likely to reuse the
+ 
+ `visual.keyart.core` — source-first composition, subject staging, typography, lighting/effects, atmosphere, crop variants, exact alternate compositions, review and export.
+ 
+-## Priority 5B — Card / deck editor — IMPLEMENTED IN THIS LANE
++## Priority 5B — Card / deck editor — MERGED
+ 
+-Product: `visual.cards.core`
++`visual.cards.core` — card face/back, source artwork, exact text/stats/rules, rarity, effects/foil, deck construction, print sheets and review/export.
++
++## Priority 5C — Cinematic title / credits / overlay editor — IMPLEMENTED IN THIS LANE
++
++Product: `visual.cinematic.core`
+ 
+ Implemented screens:
+ 
+-- `visual.cards.project-hub`
+-- `visual.cards.face-editor`
+-- `visual.cards.back-editor`
+-- `visual.cards.artwork-editor`
+-- `visual.cards.text-stats`
+-- `visual.cards.ability-layout`
+-- `visual.cards.rarity-style`
+-- `visual.cards.effects-finish`
+-- `visual.cards.deck-builder`
+-- `visual.cards.print-sheet`
+-- `visual.cards.review-export`
++- `visual.cinematic.project-hub`
++- `visual.cinematic.title-editor`
++- `visual.cinematic.chapter-editor`
++- `visual.cinematic.lower-third`
++- `visual.cinematic.subtitle-editor`
++- `visual.cinematic.credits-editor`
++- `visual.cinematic.overlay-timeline`
++- `visual.cinematic.transition-editor`
++- `visual.cinematic.aspect-variants`
++- `visual.cinematic.review-export`
+ 
+ New primitives:
+ 
+-- `card-frame`
+-- `artwork-window`
+-- `stat-block`
+-- `ability-row`
+-- `rarity-badge`
+-- `cost-symbol`
+-- `card-state`
+-- `deck-slot`
+-- `foil-pass`
+-- `print-safe-frame`
++- `title-card`
++- `lower-third`
++- `subtitle-cue`
++- `credit-line`
++- `time-cue`
++- `safe-zone`
++- `transition-cue`
++- `chapter-marker`
++- `overlay-track`
++- `logo-lockup`
+ 
+-Style: `visual.cards.collectible`.
++Style: `visual.cinematic.motion`.
+ 
+-The source-first boundary is explicit: face/back remain distinct, source art and crop remain separate, rules text stays exact, rarity is not color-only, deck membership uses exact card references, foil cannot replace base art and print guides cannot mutate source layout.
++Exact text, layout, timing, order, safe-area adaptation and transition state remain separately editable. Safe/output variants cannot rewrite richer source layout and transitions remain derived between exact source states.
+ 
+-## Priority 5C — Next high-value visual/creation families
++## Priority 5D — Next high-value visual/creation families
+ 
+-1. **Cinematic title / credits / trailer overlay system** — title cards, lower thirds, chapter cards, credits, subtitles and transition-safe zones.
+-2. **Video / stream overlay editor** — gameplay frame, cameras, alerts, chat, score and responsive scene sets.
+-3. **Infographic / diagram editor** — nodes, relationships, legends, annotations, evidence/source panels and export layouts.
+-4. **World-map / lore-atlas editor** — regions, routes, layers, points of interest, time/state overlays and narrative references.
+-5. **Interactive visual-novel surfaces** — dialogue, choices, character staging, backgrounds, history/log, saves and branching state.
+-6. **3D showroom / gallery presentation** — hero object, comparison, annotations, material/variant selection and orbit/detail views.
+-7. **Music visualizer / album-art editor** — cover systems, track identity, waveform/beat-driven visual states and export crops.
++1. **Video / stream overlay editor** — gameplay/program frame, cameras, alerts, chat, score/status and responsive scene sets.
++2. **Infographic / diagram editor** — nodes, relationships, legends, annotations, evidence/source panels and export layouts.
++3. **World-map / lore-atlas editor** — regions, routes, layers, points of interest, time/state overlays and narrative references.
++4. **Interactive visual-novel surfaces** — dialogue, choices, character staging, backgrounds, history/log, saves and branching state.
++5. **3D showroom / gallery presentation** — hero object, comparison, annotations, material/variant selection and orbit/detail views.
++6. **Music visualizer / album-art editor** — cover systems, track identity, waveform/beat-driven visual states and export crops.
+ 
+ ## Cross-cutting rules
+ 
+@@ -83,7 +85,7 @@ Every new family should preserve the existing visual-template contract:
+ 
+ ## Immediate build order
+ 
+-1. exact-head verify `visual.cards.core`;
+-2. merge v6 only when template + repository checks pass;
+-3. begin cinematic title/credits/trailer overlays from fresh main;
++1. exact-head verify `visual.cinematic.core`;
++2. merge v7 only when template + repository checks pass;
++3. begin video / stream overlay editing from fresh main;
+ 4. keep prioritizing reusable editors over flat one-off output templates.
+diff --git a/src/axm_uc/visual_template_cinematic.py b/src/axm_uc/visual_template_cinematic.py
+new file mode 100644
+index 0000000..b2f5ae1
+--- /dev/null
++++ b/src/axm_uc/visual_template_cinematic.py
+@@ -0,0 +1,88 @@
++"""Editable cinematic titles, credits and timed overlay foundations."""
++from __future__ import annotations
++from copy import deepcopy
++from typing import Any
++
++
++def _merge(target: dict[str, Any], additions: dict[str, Any], label: str) -> None:
++    overlap=sorted(set(target)&set(additions))
++    if overlap: raise RuntimeError(f"cinematic {label} collision: {', '.join(overlap)}")
++    target.update(deepcopy(additions))
++
++
++def extend_cinematic_catalog(namespace: dict[str, Any]) -> None:
++    styles=namespace['STYLE_SYSTEMS']; primitives=namespace['PRIMITIVES']
++    screens=namespace['SCREEN_TEMPLATES']; products=namespace['PRODUCT_ARCHETYPES']
++    screen=namespace['_screen']; origin=namespace['_origin']
++
++    _merge(styles,{'visual.cinematic.motion':{
++        'intent':'cinematic identity and timed overlays with exact text/timing, strong hierarchy and editable safe-area adaptation',
++        'tokens':{'canvas':'#08090d','surface':'#141720','surface_raised':'#202633','text':'#f6f2ea','muted':'#a9a6a0','accent':'#e7c47a','warning':'#e89b68','danger':'#e36f76','line':'#454b57'},
++        'shape':{'panel_radius_ratio':0.010,'cut_ratio':0.002,'line_ratio':0.0012},
++        'type':{'display_weight':780,'body_weight':500,'metric_scale':1.70,'tracking':0.025},
++        'depth':{'layers':6,'shadow':'cinematic','glass':'restrained'},
++        'motion':{'fast_ms':80,'standard_ms':180,'slow_ms':420,'principle':'timing and readability before flourish'},
++    }},'style')
++
++    _merge(primitives,{
++        'title-card':{'role':'editable title/subtitle identity plus layout and timing','states':['draft','selected','approved','overflow'],'text_layout_timing_remain_separate':True},
++        'lower-third':{'role':'named information overlay with exact text, anchor and duration','states':['hidden','active','selected','overflow'],'content_anchor_duration_explicit':True},
++        'subtitle-cue':{'role':'one exact subtitle/caption cue with start/end and speaker/language state','states':['draft','active','approved','conflict'],'text_and_timing_must_be_exact':True},
++        'credit-line':{'role':'one ordered credit entry with role/name grouping','states':['active','selected','overflow','hidden'],'content_and_order_must_remain_exact':True},
++        'time-cue':{'role':'explicit in/out timing reference for a visual element','states':['before','active','after','conflict'],'start_end_required':True},
++        'safe-zone':{'role':'target-format protected region for titles/subtitles/logos','states':['action-safe','title-safe','subtitle-safe','selected'],'guide_must_not_rewrite_source_layout':True},
++        'transition-cue':{'role':'derived transition between exact source states','states':['cut','fade','wipe','custom','disabled'],'transition_must_not_replace_source_states':True},
++        'chapter-marker':{'role':'named structural moment with exact timeline position','states':['draft','active','selected','published'],'time_and_label_required':True},
++        'overlay-track':{'role':'ordered timed overlay lane with explicit overlap/conflict state','states':['active','muted','locked','conflict'],'overlaps_must_remain_visible':True},
++        'logo-lockup':{'role':'identity mark with source, scale, anchor and safe-area state','states':['active','selected','alternate','missing-source'],'source_and_transform_remain_separate':True},
++    },'primitive')
++
++    q=['text, layout, timing and transition state remain separately editable','exact names, credits and subtitles are never inferred from imagery','safe-area variants never rewrite richer source composition','timed conflicts and overflows remain visible instead of silently clipping','exported video/frames remain derived from editable source state']
++    def v(c,s,w): return {'compact':c,'standard':s,'wide':w}
++    additions={
++      'visual.cinematic.project-hub':screen('visual.cinematic.project-hub','Cinematic identity project hub','creative.cinematic','visual.cinematic.motion','browse sequences, title systems, chapters, overlay tracks and target formats before editing',v(
++        {'header':(.03,.03,.94,.08),'projects':(.03,.14,.94,.31),'sequences':(.03,.48,.55,.38),'targets':(.61,.48,.36,.27),'actions':(.61,.78,.36,.08)},
++        {'header':(.02,.03,.96,.075),'projects':(.02,.14,.22,.82),'sequences':(.27,.14,.48,.82),'targets':(.78,.14,.20,.55),'actions':(.78,.72,.20,.14)},
++        {'header':(.015,.03,.97,.07),'projects':(.015,.13,.20,.84),'sequences':(.24,.13,.52,.84),'targets':(.785,.13,.20,.57),'actions':(.785,.73,.20,.14)}),tags=['visual','cinematic','project','hub'],quality=q),
++      'visual.cinematic.title-editor':screen('visual.cinematic.title-editor','Title card editor','creative.cinematic','visual.cinematic.motion','edit title/subtitle/logo hierarchy, layout, entry/exit timing and safe-area state independently',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.42),'content':(.03,.59,.30,.28),'layout':(.36,.59,.29,.28),'timing':(.68,.59,.29,.28),'actions':(.03,.90,.94,.07)},
++        {'header':(.02,.03,.96,.075),'content':(.02,.14,.20,.72),'preview':(.245,.14,.50,.72),'layout':(.77,.14,.21,.34),'timing':(.77,.51,.21,.23),'actions':(.77,.77,.21,.09)},
++        {'header':(.015,.03,.97,.07),'content':(.015,.13,.18,.74),'preview':(.215,.13,.54,.74),'layout':(.775,.13,.21,.35),'timing':(.775,.51,.21,.24),'actions':(.775,.78,.21,.09)}),tags=['visual','cinematic','title','editor'],math_hooks={'title_safe_ratio':[0.06,0.18]},quality=q),
++      'visual.cinematic.chapter-editor':screen('visual.cinematic.chapter-editor','Chapter and intertitle editor','creative.cinematic','visual.cinematic.motion','edit chapter labels, numbering, visual identity and exact timeline markers as structural moments',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.37),'chapters':(.03,.54,.45,.33),'details':(.51,.54,.46,.33),'actions':(.03,.90,.94,.07)},
++        {'header':(.02,.03,.96,.075),'chapters':(.02,.14,.24,.72),'preview':(.29,.14,.46,.72),'details':(.78,.14,.20,.54),'actions':(.78,.71,.20,.15)},
++        {'header':(.015,.03,.97,.07),'chapters':(.015,.13,.22,.74),'preview':(.265,.13,.48,.74),'details':(.78,.13,.205,.55),'actions':(.78,.71,.205,.16)}),tags=['visual','cinematic','chapter','intertitle'],quality=q),
++      'visual.cinematic.lower-third':screen('visual.cinematic.lower-third','Lower-third editor','creative.cinematic','visual.cinematic.motion','edit exact names/labels, anchor, hierarchy, in/out timing and safe region against scene context',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.42),'content':(.03,.59,.30,.28),'position':(.36,.59,.29,.28),'timing':(.68,.59,.29,.28),'actions':(.03,.90,.94,.07)},
++        {'header':(.02,.03,.96,.075),'content':(.02,.14,.20,.72),'preview':(.245,.14,.50,.72),'position':(.77,.14,.21,.34),'timing':(.77,.51,.21,.23),'actions':(.77,.77,.21,.09)},
++        {'header':(.015,.03,.97,.07),'content':(.015,.13,.18,.74),'preview':(.215,.13,.54,.74),'position':(.775,.13,.21,.35),'timing':(.775,.51,.21,.24),'actions':(.775,.78,.21,.09)}),tags=['visual','cinematic','lower-third','overlay'],quality=q),
++      'visual.cinematic.subtitle-editor':screen('visual.cinematic.subtitle-editor','Subtitle and caption editor','creative.cinematic','visual.cinematic.motion','edit exact cue text, language/speaker, start/end timing, reading load and target-format safe position',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.32),'cues':(.03,.49,.58,.38),'details':(.64,.49,.33,.27),'actions':(.64,.79,.33,.08)},
++        {'header':(.02,.03,.96,.075),'cues':(.02,.14,.30,.72),'preview':(.35,.14,.40,.72),'details':(.78,.14,.20,.54),'actions':(.78,.71,.20,.15)},
++        {'header':(.015,.03,.97,.07),'cues':(.015,.13,.28,.74),'preview':(.32,.13,.43,.74),'details':(.775,.13,.21,.55),'actions':(.775,.71,.21,.16)}),tags=['visual','cinematic','subtitle','caption'],math_hooks={'subtitle_safe_ratio':[0.06,0.16]},quality=q),
++      'visual.cinematic.credits-editor':screen('visual.cinematic.credits-editor','Credits editor','creative.cinematic','visual.cinematic.motion','edit ordered names/roles/groups, roll/card timing, typography and overflow without losing exact credit text',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.32),'credits':(.03,.49,.58,.38),'format':(.64,.49,.33,.27),'actions':(.64,.79,.33,.08)},
++        {'header':(.02,.03,.96,.075),'credits':(.02,.14,.30,.72),'preview':(.35,.14,.40,.72),'format':(.78,.14,.20,.54),'actions':(.78,.71,.20,.15)},
++        {'header':(.015,.03,.97,.07),'credits':(.015,.13,.28,.74),'preview':(.32,.13,.43,.74),'format':(.775,.13,.21,.55),'actions':(.775,.71,.21,.16)}),tags=['visual','cinematic','credits','editor'],quality=q),
++      'visual.cinematic.overlay-timeline':screen('visual.cinematic.overlay-timeline','Timed overlay timeline','creative.cinematic','visual.cinematic.motion','coordinate exact title, lower-third, subtitle, logo and chapter cues on inspectable tracks with overlap conflicts visible',v(
++        {'toolbar':(.02,.02,.96,.07),'preview':(.03,.11,.94,.38),'tracks':(.03,.52,.94,.35),'details':(.03,.90,.58,.07),'actions':(.64,.90,.33,.07)},
++        {'toolbar':(.015,.02,.97,.065),'tracks':(.015,.105,.24,.78),'preview':(.28,.105,.50,.58),'details':(.80,.105,.185,.58),'timeline':(.28,.71,.705,.17),'actions':(.80,.90,.185,.07)},
++        {'toolbar':(.012,.02,.976,.06),'tracks':(.012,.10,.22,.80),'preview':(.255,.10,.53,.59),'details':(.805,.10,.183,.59),'timeline':(.255,.72,.733,.18),'actions':(.805,.92,.183,.06)}),tags=['visual','cinematic','timeline','overlay'],quality=q),
++      'visual.cinematic.transition-editor':screen('visual.cinematic.transition-editor','Transition editor','creative.cinematic','visual.cinematic.motion','edit derived transitions between exact source states with duration/easing and before/after context visible',v(
++        {'header':(.03,.03,.94,.08),'before':(.03,.14,.45,.36),'after':(.52,.14,.45,.36),'transition':(.03,.53,.58,.34),'details':(.64,.53,.33,.24),'actions':(.64,.80,.33,.07)},
++        {'header':(.02,.03,.96,.075),'before':(.02,.14,.31,.48),'after':(.35,.14,.31,.48),'preview':(.68,.14,.30,.48),'transition':(.02,.66,.64,.20),'details':(.68,.66,.30,.20),'actions':(.68,.89,.30,.07)},
++        {'header':(.015,.03,.97,.07),'before':(.015,.13,.32,.50),'after':(.35,.13,.32,.50),'preview':(.685,.13,.30,.50),'transition':(.015,.67,.655,.20),'details':(.685,.67,.30,.20),'actions':(.685,.90,.30,.06)}),tags=['visual','cinematic','transition','timing'],quality=q),
++      'visual.cinematic.aspect-variants':screen('visual.cinematic.aspect-variants','Cinematic aspect and safe-area variants','creative.cinematic','visual.cinematic.motion','compare landscape, portrait, square and vertical variants while preserving exact text/timing and protected regions',v(
++        {'header':(.03,.03,.94,.08),'source':(.03,.14,.94,.27),'variants':(.03,.44,.94,.34),'safe':(.03,.81,.55,.15),'actions':(.61,.81,.36,.15)},
++        {'header':(.02,.03,.96,.075),'source':(.02,.14,.38,.72),'variants':(.43,.14,.55,.50),'safe':(.43,.67,.31,.19),'actions':(.77,.67,.21,.19)},
++        {'header':(.015,.03,.97,.07),'source':(.015,.13,.36,.74),'variants':(.40,.13,.585,.51),'safe':(.40,.67,.34,.20),'actions':(.765,.67,.22,.20)}),tags=['visual','cinematic','aspect','variants'],math_hooks={'safe_inset_ratio':[0.04,0.14]},quality=q),
++      'visual.cinematic.review-export':screen('visual.cinematic.review-export','Cinematic title and overlay review/export','creative.cinematic','visual.cinematic.motion','review exact text, timing conflicts, safe-area compliance, variant coverage and output targets before derived export',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.30),'checks':(.03,.47,.58,.39),'targets':(.64,.47,.33,.27),'actions':(.64,.77,.33,.09)},
++        {'header':(.02,.03,.96,.075),'preview':(.02,.14,.38,.72),'checks':(.43,.14,.34,.72),'targets':(.79,.14,.19,.48),'actions':(.79,.65,.19,.21)},
++        {'header':(.015,.03,.97,.07),'preview':(.015,.13,.36,.74),'checks':(.40,.13,.37,.74),'targets':(.79,.13,.195,.49),'actions':(.79,.65,.195,.22)}),tags=['visual','cinematic','review','export'],quality=q),
++    }
++    _merge(screens,additions,'screen')
++    ids=list(additions)
++    product={'schema':'axm.visual-product/v1','id':'visual.cinematic.core','version':1,'name':'Editable cinematic titles and overlays core','kind':'product','domain':'creative.cinematic','tags':['visual','cinematic','title','credits','overlay','product'],'origin':origin(),'style':'visual.cinematic.motion','intent':'source-first cinematic title, credit, subtitle and timed overlay editing with exact content/timing and safe-area variants','screens':ids,'flow':[
++      ['visual.cinematic.project-hub','visual.cinematic.title-editor','edit-title'],['visual.cinematic.title-editor','visual.cinematic.overlay-timeline','place-title'],['visual.cinematic.project-hub','visual.cinematic.chapter-editor','edit-chapters'],['visual.cinematic.project-hub','visual.cinematic.lower-third','edit-lower-thirds'],['visual.cinematic.project-hub','visual.cinematic.subtitle-editor','edit-subtitles'],['visual.cinematic.project-hub','visual.cinematic.credits-editor','edit-credits'],['visual.cinematic.overlay-timeline','visual.cinematic.transition-editor','edit-transitions'],['visual.cinematic.overlay-timeline','visual.cinematic.aspect-variants','adapt-formats'],['visual.cinematic.aspect-variants','visual.cinematic.review-export','review-export']], 'quality':q}
++    _merge(products,{'visual.cinematic.core':product},'product')
+diff --git a/src/axm_uc/visual_templates.py b/src/axm_uc/visual_templates.py
+index f93a215..ad024fd 100644
+--- a/src/axm_uc/visual_templates.py
++++ b/src/axm_uc/visual_templates.py
+@@ -15,8 +15,9 @@ from .visual_template_axm_system import extend_axm_system_catalog as _extend_axm
+ from .visual_template_game_shared import extend_game_shared_catalog as _extend_game_shared_catalog
+ from .visual_template_keyart import extend_keyart_catalog as _extend_keyart_catalog
+ from .visual_template_cards import extend_card_catalog as _extend_card_catalog
++from .visual_template_cinematic import extend_cinematic_catalog as _extend_cinematic_catalog
+ 
+-_COMPOSITION=("visual_template_growth","visual_template_game_systems","visual_template_creative_narrative","visual_template_axm_system","visual_template_game_shared","visual_template_keyart","visual_template_cards")
++_COMPOSITION=("visual_template_growth","visual_template_game_systems","visual_template_creative_narrative","visual_template_axm_system","visual_template_game_shared","visual_template_keyart","visual_template_cards","visual_template_cinematic")
+ _applied=getattr(_core,"_AXM_VISUAL_COMPOSITION",None)
+ if _applied is None:
+     _extend_catalog(vars(_core))
+@@ -26,6 +27,7 @@ if _applied is None:
+     _extend_game_shared_catalog(vars(_core))
+     _extend_keyart_catalog(vars(_core))
+     _extend_card_catalog(vars(_core))
++    _extend_cinematic_catalog(vars(_core))
+     _core._AXM_VISUAL_COMPOSITION=_COMPOSITION
+ elif _applied != _COMPOSITION:
+     raise RuntimeError("visual template composition changed inside a live process; restart with one exact catalog")
+diff --git a/tests/test_visual_templates.py b/tests/test_visual_templates.py
+index 7ebba77..549a5c2 100644
+--- a/tests/test_visual_templates.py
++++ b/tests/test_visual_templates.py
+@@ -8,18 +8,18 @@ from axm_stickers import Registry
+ from axm_uc import visual_templates as vt
+ 
+ SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
+-PRODUCTS=('game.racing.full','game.coop.action','game.rts.command','game.system.shell','game.shared.core','editor.creative.core','comic.narrative.core','axm.system.shell','visual.keyart.core','visual.cards.core')
++PRODUCTS=('game.racing.full','game.coop.action','game.rts.command','game.system.shell','game.shared.core','editor.creative.core','comic.narrative.core','axm.system.shell','visual.keyart.core','visual.cards.core','visual.cinematic.core')
+ 
+ class VisualTemplateTests(unittest.TestCase):
+     def test_catalog_counts_and_products(self):
+         counts=vt.validate_catalog()
+-        self.assertEqual(counts,{'styles':14,'primitives':86,'screens':124,'products':12})
++        self.assertEqual(counts,{'styles':15,'primitives':96,'screens':134,'products':13})
+         self.assertEqual(vt.CATALOG_COMPOSITION['counts'],counts)
+         ids={p['id'] for p in vt.catalog()['products']}
+         self.assertTrue(set(PRODUCTS)|{'game.racing.performance','software.creator.studio'} <= ids)
+ 
+     def test_all_geometry_and_major_variants(self):
+-        prefixes=('game.','editor.creative.','comic.narrative.','axm.system.','visual.keyart.','visual.cards.')
++        prefixes=('game.','editor.creative.','comic.narrative.','axm.system.','visual.keyart.','visual.cards.','visual.cinematic.')
+         for tid,definition in vt.SCREEN_TEMPLATES.items():
+             if tid.startswith(prefixes): self.assertEqual(set(definition['variants']),{'compact','standard','wide'},tid)
+             for width,height in SIZES:
+@@ -29,21 +29,22 @@ class VisualTemplateTests(unittest.TestCase):
+                     self.assertLessEqual(x+w,width+1e-6); self.assertLessEqual(y+h,height+1e-6)
+ 
+     def test_existing_product_depth_is_retained(self):
+-        expected={'game.racing.full':19,'game.system.shell':18,'game.shared.core':12,'editor.creative.core':12,'comic.narrative.core':10,'axm.system.shell':12,'visual.keyart.core':10}
++        expected={'game.racing.full':19,'game.system.shell':18,'game.shared.core':12,'editor.creative.core':12,'comic.narrative.core':10,'axm.system.shell':12,'visual.keyart.core':10,'visual.cards.core':11}
+         for pid,count in expected.items(): self.assertEqual(len(vt.get(pid)['screens']),count)
+ 
+-    def test_card_product_preserves_editable_card_and_deck_state(self):
+-        product=vt.get('visual.cards.core')
+-        required={'visual.cards.project-hub','visual.cards.face-editor','visual.cards.back-editor','visual.cards.artwork-editor','visual.cards.text-stats','visual.cards.ability-layout','visual.cards.rarity-style','visual.cards.effects-finish','visual.cards.deck-builder','visual.cards.print-sheet','visual.cards.review-export'}
++    def test_cinematic_product_preserves_exact_timed_source_state(self):
++        product=vt.get('visual.cinematic.core')
++        required={'visual.cinematic.project-hub','visual.cinematic.title-editor','visual.cinematic.chapter-editor','visual.cinematic.lower-third','visual.cinematic.subtitle-editor','visual.cinematic.credits-editor','visual.cinematic.overlay-timeline','visual.cinematic.transition-editor','visual.cinematic.aspect-variants','visual.cinematic.review-export'}
+         self.assertEqual(set(product['screens']),required)
+-        self.assertEqual(product['style'],'visual.cards.collectible')
++        self.assertEqual(product['style'],'visual.cinematic.motion')
+         quality=' '.join(product['quality']).lower()
+         self.assertIn('separately editable',quality)
+-        self.assertIn('rules text',quality)
+-        self.assertIn('face and back',quality)
+-        self.assertIn('print/digital export',quality)
+-        self.assertIn('artwork_area_ratio',vt.get('visual.cards.face-editor')['math_hooks'])
+-        self.assertIn('bleed_ratio',vt.get('visual.cards.print-sheet')['math_hooks'])
++        self.assertIn('exact names',quality)
++        self.assertIn('safe-area',quality)
++        self.assertIn('source state',quality)
++        self.assertIn('title_safe_ratio',vt.get('visual.cinematic.title-editor')['math_hooks'])
++        self.assertIn('subtitle_safe_ratio',vt.get('visual.cinematic.subtitle-editor')['math_hooks'])
++        self.assertIn('safe_inset_ratio',vt.get('visual.cinematic.aspect-variants')['math_hooks'])
+ 
+     def test_products_resolve_and_previews_parse(self):
+         for pid in PRODUCTS:
+@@ -60,40 +61,41 @@ class VisualTemplateTests(unittest.TestCase):
+         with tempfile.TemporaryDirectory() as td:
+             with Registry(Path(td)/'stickers.sqlite') as registry:
+                 pins=vt.install_builtins(registry)
+-                self.assertEqual(len(pins),136)
+-                cards=registry.search(adapter=vt.ADAPTER,tag='cards',limit=100)['entries']
+-                self.assertEqual(len(cards),11)
+-                d=registry.get('visual.visual.cards.face-editor',1)
++                self.assertEqual(len(pins),147)
++                cinematic=registry.search(adapter=vt.ADAPTER,tag='cinematic',limit=100)['entries']
++                self.assertEqual(len(cinematic),11)
++                d=registry.get('visual.visual.cinematic.title-editor',1)
+                 self.assertEqual(d['recipe']['visual_template']['schema'],vt.SCHEMA)
+                 self.assertNotIn('"latest"',json.dumps(d,sort_keys=True))
+ 
+-    def test_card_source_and_output_contracts(self):
+-        required={'card-frame','artwork-window','stat-block','ability-row','rarity-badge','cost-symbol','card-state','deck-slot','foil-pass','print-safe-frame'}
++    def test_cinematic_source_timing_and_safe_area_contracts(self):
++        required={'title-card','lower-third','subtitle-cue','credit-line','time-cue','safe-zone','transition-cue','chapter-marker','overlay-track','logo-lockup'}
+         self.assertTrue(required <= set(vt.PRIMITIVES))
+-        self.assertTrue(vt.PRIMITIVES['card-frame']['geometry_must_remain_editable'])
+-        self.assertTrue(vt.PRIMITIVES['artwork-window']['source_and_crop_remain_separate'])
+-        self.assertTrue(vt.PRIMITIVES['stat-block']['label_value_pair_must_be_explicit'])
+-        self.assertTrue(vt.PRIMITIVES['ability-row']['rules_text_must_remain_exact'])
+-        self.assertTrue(vt.PRIMITIVES['rarity-badge']['must_not_depend_on_color'])
+-        self.assertTrue(vt.PRIMITIVES['cost-symbol']['value_and_resource_type_required'])
+-        self.assertTrue(vt.PRIMITIVES['card-state']['state_must_be_explicit'])
+-        self.assertTrue(vt.PRIMITIVES['deck-slot']['card_reference_must_be_exact'])
+-        self.assertTrue(vt.PRIMITIVES['foil-pass']['finish_must_not_replace_base_art'])
+-        self.assertTrue(vt.PRIMITIVES['print-safe-frame']['guide_must_not_mutate_source_layout'])
++        self.assertTrue(vt.PRIMITIVES['title-card']['text_layout_timing_remain_separate'])
++        self.assertTrue(vt.PRIMITIVES['lower-third']['content_anchor_duration_explicit'])
++        self.assertTrue(vt.PRIMITIVES['subtitle-cue']['text_and_timing_must_be_exact'])
++        self.assertTrue(vt.PRIMITIVES['credit-line']['content_and_order_must_remain_exact'])
++        self.assertTrue(vt.PRIMITIVES['time-cue']['start_end_required'])
++        self.assertTrue(vt.PRIMITIVES['safe-zone']['guide_must_not_rewrite_source_layout'])
++        self.assertTrue(vt.PRIMITIVES['transition-cue']['transition_must_not_replace_source_states'])
++        self.assertTrue(vt.PRIMITIVES['chapter-marker']['time_and_label_required'])
++        self.assertTrue(vt.PRIMITIVES['overlay-track']['overlaps_must_remain_visible'])
++        self.assertTrue(vt.PRIMITIVES['logo-lockup']['source_and_transform_remain_separate'])
+ 
+     def test_prior_source_boundaries_remain_present(self):
++        self.assertTrue(vt.PRIMITIVES['card-frame']['geometry_must_remain_editable'])
+         self.assertTrue(vt.PRIMITIVES['crop-safe-frame']['crop_must_not_modify_source_geometry'])
+         self.assertTrue(vt.PRIMITIVES['speech-bubble']['text_and_tail_remain_separate'])
+         self.assertTrue(vt.PRIMITIVES['inventory-slot']['ownership_must_be_explicit'])
+         self.assertTrue(vt.PRIMITIVES['truth-state']['source_must_be_visible'])
+ 
+     def test_copy_safety_variant_rejection_and_bad_geometry(self):
+-        a=vt.resolve('visual.cards.face-editor',1920,1080); b=vt.resolve('visual.cards.face-editor',1920,1080)
++        a=vt.resolve('visual.cinematic.title-editor',1920,1080); b=vt.resolve('visual.cinematic.title-editor',1920,1080)
+         self.assertEqual(a,b)
+-        copy=vt.get('visual.cards.face-editor'); copy['name']='changed'
+-        self.assertNotEqual(vt.get('visual.cards.face-editor')['name'],'changed')
+-        with self.assertRaises(ValueError): vt.resolve('visual.cards.face-editor',1920,1080,variant='unknown')
+-        bad=vt.get('visual.cards.print-sheet'); bad['variants']['standard']['sheet']=[.9,.9,.2,.2]
++        copy=vt.get('visual.cinematic.title-editor'); copy['name']='changed'
++        self.assertNotEqual(vt.get('visual.cinematic.title-editor')['name'],'changed')
++        with self.assertRaises(ValueError): vt.resolve('visual.cinematic.title-editor',1920,1080,variant='unknown')
++        bad=vt.get('visual.cinematic.aspect-variants'); bad['variants']['standard']['variants']=[.9,.9,.2,.2]
+         with self.assertRaises(ValueError): vt.validate_screen(bad)
+ 
+     def test_exact_sticker_slot_binding_is_retained(self):
+@@ -103,4 +105,4 @@ class VisualTemplateTests(unittest.TestCase):
+                 pin=registry.register(d)
+                 self.assertEqual(vt.bind_sticker_slots('game.racing.hud.performance',registry,{'speed-cluster':pin})['bindings']['speed-cluster'],pin)
+ 
+-if __name__=='__main__': unittest.main()
+\ No newline at end of file
++if __name__=='__main__': unittest.main()
+diff --git a/tools/visual_template_proof.py b/tools/visual_template_proof.py
+index 0a08092..aa31ebc 100644
+--- a/tools/visual_template_proof.py
++++ b/tools/visual_template_proof.py
+@@ -8,7 +8,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src'))
+ from axm_uc import visual_templates as vt
+ 
+ SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
+-PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell","visual.keyart.core","visual.cards.core")
++PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell","visual.keyart.core","visual.cards.core","visual.cinematic.core")
+ 
+ def _write(project,target):
+     target.mkdir(); out=[]
+@@ -25,7 +25,7 @@ def main(argv):
+     out.mkdir(parents=True)
+     try:
+         counts=vt.validate_catalog()
+-        if counts!={'styles':14,'primitives':86,'screens':124,'products':12}: raise AssertionError(counts)
++        if counts!={'styles':15,'primitives':96,'screens':134,'products':13}: raise AssertionError(counts)
+         evidence=[]
+         for pid in PRODUCTS:
+             expected=vt.get(pid)
+@@ -47,27 +47,28 @@ def main(argv):
+             ('axm.system.shell',1920,1080,'axm-system','AXM System Shell Foundation'),
+             ('visual.keyart.core',1920,1080,'keyart','AXM Editable Key Art Foundation'),
+             ('visual.cards.core',1920,1080,'cards','AXM Editable Card and Deck Foundation'),
++            ('visual.cinematic.core',1920,1080,'cinematic','AXM Cinematic Title and Overlay Foundation'),
+         )
+         outputs=[]
+         for pid,w,h,folder,title in galleries: outputs+=_write(vt.product_project(pid,w,h,title),out/folder)
+         outputs+=_write(vt.screen_project('product.mobile.home',1080,1920,'AXM Mobile Foundation'),out/'mobile-home')
+-        cards=vt.get('visual.cards.core')
+-        required={'visual.cards.project-hub','visual.cards.face-editor','visual.cards.back-editor','visual.cards.artwork-editor','visual.cards.text-stats','visual.cards.ability-layout','visual.cards.rarity-style','visual.cards.effects-finish','visual.cards.deck-builder','visual.cards.print-sheet','visual.cards.review-export'}
+-        if set(cards['screens'])!=required: raise AssertionError('card/deck pack lost required surfaces')
++        cinematic=vt.get('visual.cinematic.core')
++        required={'visual.cinematic.project-hub','visual.cinematic.title-editor','visual.cinematic.chapter-editor','visual.cinematic.lower-third','visual.cinematic.subtitle-editor','visual.cinematic.credits-editor','visual.cinematic.overlay-timeline','visual.cinematic.transition-editor','visual.cinematic.aspect-variants','visual.cinematic.review-export'}
++        if set(cinematic['screens'])!=required: raise AssertionError('cinematic pack lost required surfaces')
+         checks={
+-            'frame_geometry_editable':vt.PRIMITIVES['card-frame']['geometry_must_remain_editable'],
+-            'art_source_crop_separate':vt.PRIMITIVES['artwork-window']['source_and_crop_remain_separate'],
+-            'stats_explicit':vt.PRIMITIVES['stat-block']['label_value_pair_must_be_explicit'],
+-            'rules_text_exact':vt.PRIMITIVES['ability-row']['rules_text_must_remain_exact'],
+-            'rarity_noncolor':vt.PRIMITIVES['rarity-badge']['must_not_depend_on_color'],
+-            'cost_type_value_explicit':vt.PRIMITIVES['cost-symbol']['value_and_resource_type_required'],
+-            'card_state_explicit':vt.PRIMITIVES['card-state']['state_must_be_explicit'],
+-            'deck_reference_exact':vt.PRIMITIVES['deck-slot']['card_reference_must_be_exact'],
+-            'foil_preserves_art':vt.PRIMITIVES['foil-pass']['finish_must_not_replace_base_art'],
+-            'print_guides_preserve_source':vt.PRIMITIVES['print-safe-frame']['guide_must_not_mutate_source_layout'],
++            'title_text_layout_timing_separate':vt.PRIMITIVES['title-card']['text_layout_timing_remain_separate'],
++            'lower_third_exact_state':vt.PRIMITIVES['lower-third']['content_anchor_duration_explicit'],
++            'subtitle_text_timing_exact':vt.PRIMITIVES['subtitle-cue']['text_and_timing_must_be_exact'],
++            'credits_content_order_exact':vt.PRIMITIVES['credit-line']['content_and_order_must_remain_exact'],
++            'time_cue_start_end':vt.PRIMITIVES['time-cue']['start_end_required'],
++            'safe_zone_preserves_source':vt.PRIMITIVES['safe-zone']['guide_must_not_rewrite_source_layout'],
++            'transition_preserves_sources':vt.PRIMITIVES['transition-cue']['transition_must_not_replace_source_states'],
++            'chapter_time_label':vt.PRIMITIVES['chapter-marker']['time_and_label_required'],
++            'overlay_conflicts_visible':vt.PRIMITIVES['overlay-track']['overlaps_must_remain_visible'],
++            'logo_source_transform_separate':vt.PRIMITIVES['logo-lockup']['source_and_transform_remain_separate'],
+         }
+-        if not all(checks.values()): raise AssertionError('card/deck editability contract failed')
+-        receipt={'schema':'axm.visual-template-proof/v8','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'card_deck_checks':checks,'truth':'Offline structural evidence only. Card-game balance, rules correctness, artwork quality, foil rendering, print production, physical color management and aesthetic acceptance were not observed.'}
++        if not all(checks.values()): raise AssertionError('cinematic editability contract failed')
++        receipt={'schema':'axm.visual-template-proof/v9','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'cinematic_checks':checks,'truth':'Offline structural evidence only. Typography quality, subtitle reading speed, credit correctness, motion timing quality, renderer fidelity and aesthetic acceptance were not observed.'}
+         (out/'receipt.json').write_text(json.dumps(receipt,indent=2,sort_keys=True),encoding='utf-8')
+         print(json.dumps(receipt,indent=2,sort_keys=True))
+     except BaseException:

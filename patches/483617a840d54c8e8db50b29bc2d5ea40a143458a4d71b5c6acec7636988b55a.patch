@@ -1,0 +1,572 @@
+diff --git a/PRESENTATION_TEMPLATE_PACK.md b/PRESENTATION_TEMPLATE_PACK.md
+new file mode 100644
+index 0000000..b22752c
+--- /dev/null
++++ b/PRESENTATION_TEMPLATE_PACK.md
+@@ -0,0 +1,35 @@
++# Editable Presentation / Explainer Template Pack
++
++`visual.presentation.core` is a source-first presentation and explainer foundation for game manuals, demos, product storytelling, reports, college/teaching material and AXM explanations.
++
++## Surfaces
++
++- project / presentation hub
++- page editor
++- narrative outline / section editor
++- content block editor
++- figure / reusable-artifact editor
++- source / citation / evidence editor
++- emphasis / layout variants
++- speaker notes / review
++- sequence / transition preview
++- export matrix
++
++## Source-first contracts
++
++- `presentation-page` preserves exact page identity, role and order.
++- `content-block` keeps content type, exact content/source and semantic role explicit.
++- `source-footnote` binds an exact claim/figure/block target to source and evidence status.
++- `figure-frame` preserves exact embedded source/caption identity.
++- `presentation-section` preserves ordered page membership.
++- `emphasis-cue` may change presentation emphasis but cannot rewrite source meaning.
++- `speaker-note` remains non-rendered note state bound to an exact target/source.
++- `embed-binding` preserves exact reusable artifact identity/version/view.
++- `presentation-transition` remains derived between exact ordered pages and cannot change page order.
++- `presentation-export-target` keeps page range/aspect/assets/source/provenance requirements visible.
++
++## Truth boundary
++
++A polished slide/page is not evidence that its claims are true or adequately sourced. Layout, emphasis, sequencing and transitions may shape communication but cannot create evidence or silently alter included source meaning. Embedded diagrams, key art, atlas/showroom views and other artifacts keep exact identity/version/view bindings.
++
++The deterministic proof can establish responsive layout and structural/editability contracts. It does not prove claim truth, source reliability, audience understanding, speaking quality, accessibility compliance or aesthetic acceptance.
+diff --git a/VISUAL_TEMPLATE_FABRIC.md b/VISUAL_TEMPLATE_FABRIC.md
+index 9414d92..39e68fe 100644
+--- a/VISUAL_TEMPLATE_FABRIC.md
++++ b/VISUAL_TEMPLATE_FABRIC.md
+@@ -2,47 +2,47 @@
+ 
+ Universal Creation contains one deterministic library of **known visual archetypes** between low-level format scaffolds and finished products. Templates are editable structural starting points, not finished art and not automatic canon.
+ 
+-The public module remains `axm_uc.visual_templates`. Explicit extension packs now cover games/product plumbing, creative editors, comics, AXM system surfaces, key art, cards/decks, cinematic overlays, broadcast/video overlays, evidence-aware diagrams, world-map/lore-atlas editing, branching visual novels, 3D showroom/gallery presentation and music visual/album-art editing. Sticker Fabric remains the immutable/versioned registry bridge. Mathematical work can enrich declared ratios/ranges through `math_hooks` without replacing template identity.
++The public module remains `axm_uc.visual_templates`. Explicit extension packs now cover games/product plumbing, creative editors, comics, AXM system surfaces, key art, cards/decks, cinematic overlays, broadcast/video overlays, evidence-aware diagrams, world-map/lore-atlas editing, branching visual novels, 3D showroom/gallery presentation, music visuals/album art and source-bound presentation/explainer systems. Sticker Fabric remains the immutable/versioned registry bridge. Mathematical work can enrich declared ratios/ranges through `math_hooks` without replacing template identity.
+ 
+-## Current v13 candidate census
++## Current v14 candidate census
+ 
+-- **156 reusable visual/state primitives**
+-- **21 coherent style systems**
+-- **194 responsive screen archetypes**
+-- **19 whole-product archetypes**
+-- **213 exact screen/product definitions** when explicitly installed into Sticker Registry
++- **166 reusable visual/state primitives**
++- **22 coherent style systems**
++- **204 responsive screen archetypes**
++- **20 whole-product archetypes**
++- **224 exact screen/product definitions** when explicitly installed into Sticker Registry
+ 
+ Every major family provides compact, standard and wide normalized layouts. Unknown requested variants fail rather than silently falling back.
+ 
+-## Music visual / album-art foundation
++## Presentation / explainer foundation
+ 
+-`visual.music.core` provides ten source-first surfaces:
++`visual.presentation.core` provides ten source-first surfaces:
+ 
+-- project / music-visual hub;
+-- album / single cover editor;
+-- track identity / source inspector;
+-- waveform / audio-analysis editor;
+-- beat and non-lyrical timing-marker editor;
+-- reactive visual mapping editor;
+-- track-list / sequence editor;
+-- format / crop variants;
+-- playback preview;
+-- review / export.
++- project / presentation hub;
++- page editor;
++- narrative outline / section editor;
++- content block editor;
++- figure / reusable-artifact editor;
++- source / citation / evidence editor;
++- emphasis / layout variants;
++- speaker notes / review;
++- sequence / transition preview;
++- export matrix.
+ 
+-Its `visual.music.resonant` style is replaceable. Track and analysis truth stays explicit:
++Its `visual.presentation.story` style is replaceable. Communication structure remains distinct from source truth:
+ 
+-- `music-track-source` preserves exact track identity, source/digest and duration;
+-- `music-analysis` records analysis source/algorithm version/status rather than pretending analysis is source audio;
+-- `beat-marker` preserves exact time plus observed/derived/manual status;
+-- `waveform-source` binds the representation to exact track and analysis source;
+-- `cover-composition` keeps artwork, type and identity layers editable;
+-- `reactive-visual-layer` requires an explicit input mapping;
+-- `music-marker-cue` is a named non-lyrical event cue with exact time/source;
+-- `album-variant` preserves base identity, delta and output target;
+-- `track-list-entry` preserves exact track identity and sequence order;
+-- `music-export-target` keeps track/variant/aspect/timing/provenance requirements visible.
++- `presentation-page` preserves exact page identity, role and order;
++- `content-block` keeps type, content/source identity and semantic role explicit;
++- `source-footnote` binds exact claims/figures/blocks to source plus evidence status;
++- `figure-frame` preserves exact source and caption identity;
++- `presentation-section` preserves ordered membership;
++- `emphasis-cue` may alter visual emphasis but cannot rewrite source meaning;
++- `speaker-note` remains non-rendered note state bound to an exact target/source;
++- `embed-binding` preserves exact artifact identity/version/view;
++- `presentation-transition` stays derived between exact pages and cannot change page order;
++- `presentation-export-target` keeps page range/aspect/assets/source/provenance requirements visible.
+ 
+-A visualizer-looking result is not evidence that beat, waveform, spectral or timing analysis exists. Analysis must be observed or explicitly derived from a declared track source. Unknown, stale and unavailable state stays visible.
++A polished explainer is not evidence that its claims are true or adequately sourced. Layout, emphasis, sequence and transitions can shape communication but cannot create evidence or silently alter included source meaning.
+ 
+ ## Registry and identity
+ 
+@@ -52,8 +52,8 @@ Every built-in screen/product can be wrapped as an immutable Sticker definition.
+ 
+ ```sh
+ axm-visual-templates catalog
+-axm-visual-templates show visual.music.core
+-axm-visual-templates render visual.music.core creations/music --width 1920 --height 1080
++axm-visual-templates show visual.presentation.core
++axm-visual-templates render visual.presentation.core creations/presentation --width 1920 --height 1080
+ ```
+ 
+ Preview/export remains derived inspection output, never authoritative source.
+@@ -65,19 +65,19 @@ python -m unittest discover -s tests -p 'test_visual_templates.py' -v
+ python tools/visual_template_proof.py /new/output/path
+ ```
+ 
+-The v13 gate requires:
++The v14 gate requires:
+ 
+-- exact census: 21 styles / 156 primitives / 194 screens / 19 products;
+-- all 194 screens stay within six representative viewport shapes;
++- exact census: 22 styles / 166 primitives / 204 screens / 20 products;
++- all 204 screens stay within six representative viewport shapes;
+ - exact product screen order and flows resolve across those viewports;
+-- parseable galleries for all prior proof products plus `visual.music.core`;
+-- all 213 screen/product definitions install through Sticker Registry;
+-- exact track identity/source/digest/duration, attributed analysis state, timing-marker provenance, waveform source, cover-layer editability, reactive mappings, variant identity and track-list order remain present;
+-- prior showroom/visual-novel/atlas/diagram/broadcast/cinematic/card/key-art/comic/game/AXM source boundaries remain intact;
++- parseable galleries for all prior proof products plus `visual.presentation.core`;
++- all 224 screen/product definitions install through Sticker Registry;
++- exact page/order, content/source, citation/evidence, figure identity, section membership, speaker-note, embed identity/version/view, semantic-preserving emphasis and transition-order contracts remain present;
++- prior music/showroom/visual-novel/atlas/diagram/broadcast/cinematic/card/key-art/comic/game/AXM source boundaries remain intact;
+ - copy safety, strict variant rejection, invalid-geometry rejection and exact Sticker-slot binding remain intact.
+ 
+ ## Truth boundary
+ 
+-Current evidence proves deterministic structural/editability contracts only. It does **not** prove audio-analysis correctness, musical timing quality, loudness/mastering quality, rights/licensing, renderer fidelity or aesthetic acceptance.
++Current evidence proves deterministic structural/editability contracts only. It does **not** prove claim truth, source reliability, audience understanding, speaking quality, accessibility compliance or aesthetic acceptance.
+ 
+-Consuming products must provide real audio/project state. Unknown, missing, stale and unavailable state stays distinguishable. Richer editable source remains authoritative over previews/exports.
++Consuming products must provide real content/source state. Unknown, disputed, derived and missing information stays distinguishable. Richer editable source remains authoritative over previews/exports.
+diff --git a/VISUAL_TEMPLATE_PRIORITY_MAP.md b/VISUAL_TEMPLATE_PRIORITY_MAP.md
+index d376dca..bfffa0d 100644
+--- a/VISUAL_TEMPLATE_PRIORITY_MAP.md
++++ b/VISUAL_TEMPLATE_PRIORITY_MAP.md
+@@ -1,6 +1,6 @@
+ # AXM Visual Template Expansion Priority Map
+ 
+-Status: v13 growth lane after verified v1–v12 merges.
++Status: v14 growth lane after verified v1–v13 merges.
+ 
+ The visual-template fabric grows where Universal Creation is likely to reuse the knowledge soon. This is a build priority, not canon: templates remain editable foundations and may be replaced when evidence supports a better structure.
+ 
+@@ -15,48 +15,49 @@ The visual-template fabric grows where Universal Creation is likely to reuse the
+ - evidence-aware infographic / diagram editor;
+ - world-map / lore-atlas editor;
+ - interactive visual-novel / branching narrative editor;
+-- 3D showroom / gallery presentation.
++- 3D showroom / gallery presentation;
++- music visualizer / album-art editor.
+ 
+-## Music visualizer / album-art editor — IMPLEMENTED IN THIS LANE
++## Presentation / explainer page systems — IMPLEMENTED IN THIS LANE
+ 
+-Product: `visual.music.core`
++Product: `visual.presentation.core`
+ 
+ Implemented screens:
+ 
+-- `visual.music.project-hub`
+-- `visual.music.cover-editor`
+-- `visual.music.track-identity`
+-- `visual.music.analysis-waveform`
+-- `visual.music.marker-timing`
+-- `visual.music.reactive-editor`
+-- `visual.music.tracklist-sequence`
+-- `visual.music.crop-variants`
+-- `visual.music.playback-preview`
+-- `visual.music.review-export`
++- `visual.presentation.project-hub`
++- `visual.presentation.page-editor`
++- `visual.presentation.outline-editor`
++- `visual.presentation.block-editor`
++- `visual.presentation.figure-editor`
++- `visual.presentation.source-editor`
++- `visual.presentation.emphasis-layout`
++- `visual.presentation.notes-review`
++- `visual.presentation.sequence-preview`
++- `visual.presentation.export`
+ 
+ New primitives:
+ 
+-- `music-track-source`
+-- `music-analysis`
+-- `beat-marker`
+-- `waveform-source`
+-- `cover-composition`
+-- `reactive-visual-layer`
+-- `music-marker-cue`
+-- `album-variant`
+-- `track-list-entry`
+-- `music-export-target`
++- `presentation-page`
++- `content-block`
++- `source-footnote`
++- `figure-frame`
++- `presentation-section`
++- `emphasis-cue`
++- `speaker-note`
++- `embed-binding`
++- `presentation-transition`
++- `presentation-export-target`
+ 
+-Style: `visual.music.resonant`.
++Style: `visual.presentation.story`.
+ 
+-The central rule is audio/source truth: exact track identity/source/digest/duration stays authoritative. Waveform, analysis, beat markers and reactive state must be observed or explicitly derived and attributed. Album art remains editable source layers; no lyrics are inferred or manufactured by this pack.
++The central rule is source/meaning continuity: page order, content, citations, figure identity and embedded artifact versions stay exact. Layout/emphasis/transition choices can improve communication but cannot manufacture evidence, rewrite source meaning or silently reorder the story.
+ 
+ ## Next high-value visual/creation families
+ 
+-1. **Presentation / explainer page systems** — reusable storytelling pages assembled from diagram, key-art, atlas, showroom and editor foundations.
+-2. **Character / creature reference-sheet editor** — turnaround views, expressions, materials, proportions, callouts and source/reference state for future games/comics.
+-3. **Vehicle / weapon configuration presentation** — attachment sockets, stat comparison, exploded/detail presentation and exact source/configuration identity for game garages/loadouts.
+-4. **UI motion / transition archetypes** — reusable state transitions, focus motion, spatial continuity and reduced-motion variants across software/game products.
++1. **Character / creature reference-sheet editor** — turnaround views, expressions, materials, proportions, callouts and source/reference state for games/comics.
++2. **Vehicle / weapon configuration presentation** — attachment sockets, stat comparison, exploded/detail presentation and exact source/configuration identity for garages/loadouts.
++3. **UI motion / transition archetypes** — reusable state transitions, focus motion, spatial continuity and reduced-motion variants across software/game products.
++4. **Brand / identity system editor** — exact logos, typography, icon families, spacing rules, usage variants and provenance-backed export packs.
+ 
+ ## Cross-cutting rules
+ 
+@@ -72,7 +73,7 @@ Every family preserves the existing visual-template contract:
+ 
+ ## Immediate build order
+ 
+-1. exact-head verify `visual.music.core`;
+-2. merge v13 only when template + repository checks pass;
+-3. begin presentation / explainer page systems from fresh main;
++1. exact-head verify `visual.presentation.core`;
++2. merge v14 only when template + repository checks pass;
++3. begin character / creature reference-sheet editing from fresh main;
+ 4. keep prioritizing reusable source-first editors over flat one-off outputs.
+diff --git a/src/axm_uc/visual_template_presentation.py b/src/axm_uc/visual_template_presentation.py
+new file mode 100644
+index 0000000..7be8f19
+--- /dev/null
++++ b/src/axm_uc/visual_template_presentation.py
+@@ -0,0 +1,88 @@
++"""Editable presentation, explainer-page and source-bound storytelling foundations."""
++from __future__ import annotations
++from copy import deepcopy
++from typing import Any
++
++
++def _merge(target: dict[str, Any], additions: dict[str, Any], label: str) -> None:
++    overlap=sorted(set(target)&set(additions))
++    if overlap: raise RuntimeError(f"presentation {label} collision: {', '.join(overlap)}")
++    target.update(deepcopy(additions))
++
++
++def extend_presentation_catalog(namespace: dict[str, Any]) -> None:
++    styles=namespace['STYLE_SYSTEMS']; primitives=namespace['PRIMITIVES']
++    screens=namespace['SCREEN_TEMPLATES']; products=namespace['PRODUCT_ARCHETYPES']
++    screen=namespace['_screen']; origin=namespace['_origin']
++
++    _merge(styles,{'visual.presentation.story':{
++        'intent':'high-clarity visual explanation with exact source, figure, section and narrative ordering preserved beneath flexible presentation',
++        'tokens':{'canvas':'#0d0f13','surface':'#181c23','surface_raised':'#242b35','text':'#f3f4f1','muted':'#a8afb4','accent':'#83c9de','warning':'#dfb96f','danger':'#dc7378','line':'#444d56'},
++        'shape':{'panel_radius_ratio':0.013,'cut_ratio':0.002,'line_ratio':0.0011},
++        'type':{'display_weight':760,'body_weight':500,'metric_scale':1.55,'tracking':0.012},
++        'depth':{'layers':7,'shadow':'soft','glass':'restrained'},
++        'motion':{'fast_ms':80,'standard_ms':170,'slow_ms':320,'principle':'meaning and source continuity before flourish'},
++    }},'style')
++
++    _merge(primitives,{
++        'presentation-page':{'role':'exact page/slide identity with role, order and source state','states':['draft','selected','ready','missing'],'identity_role_order_required':True},
++        'content-block':{'role':'typed content block with exact source/content identity and semantic role','states':['ready','selected','overflow','missing-source'],'type_content_source_required':True},
++        'source-footnote':{'role':'citation/provenance reference bound to exact claim/figure/block target','states':['observed','derived','claimed','missing'],'target_source_status_required':True},
++        'figure-frame':{'role':'embedded image/diagram/chart/atlas/showroom reference with exact source and caption','states':['ready','selected','missing','stale'],'source_caption_identity_required':True},
++        'presentation-section':{'role':'named ordered page membership and section intent','states':['active','selected','collapsed','invalid'],'membership_order_required':True},
++        'emphasis-cue':{'role':'derived visual emphasis bound to exact content target without changing meaning','states':['active','selected','muted','disabled'],'target_required':True,'must_not_rewrite_source_meaning':True},
++        'speaker-note':{'role':'non-rendered presenter/editor note with exact page/block target and author/source state','states':['draft','ready','selected','hidden'],'target_and_source_required':True},
++        'embed-binding':{'role':'exact reusable template/artifact embedding with version/digest and selected view','states':['bound','selected','missing','incompatible'],'identity_version_view_required':True},
++        'presentation-transition':{'role':'derived transition between exact ordered pages','states':['cut','fade','move','disabled'],'from_to_identity_required':True,'must_not_change_page_order':True},
++        'presentation-export-target':{'role':'output target with exact page range, aspect, assets, source-note and provenance requirements','states':['ready','warning','blocked','exported'],'requirements_must_be_visible':True},
++    },'primitive')
++
++    q=['page identity, content, figures, source references, section order and speaker notes remain separately editable','layout, emphasis and transitions never rewrite exact source meaning or narrative order','embedded diagrams, key art, atlas, showroom and other artifacts retain exact identity/version/view bindings','missing or disputed source state remains visible rather than being hidden by polished presentation','preview/export remains derived from richer presentation source state']
++    def v(c,s,w): return {'compact':c,'standard':s,'wide':w}
++    additions={
++      'visual.presentation.project-hub':screen('visual.presentation.project-hub','Presentation project hub','creative.presentation','visual.presentation.story','browse decks/explainers, sections, source coverage, embedded assets and output targets before editing',v(
++        {'header':(.03,.03,.94,.08),'projects':(.03,.14,.94,.30),'pages':(.03,.47,.55,.38),'coverage':(.61,.47,.36,.27),'actions':(.61,.77,.36,.08)},
++        {'header':(.02,.03,.96,.075),'sections':(.02,.14,.20,.82),'pages':(.245,.14,.48,.82),'coverage':(.75,.14,.23,.55),'actions':(.75,.72,.23,.14)},
++        {'header':(.015,.03,.97,.07),'sections':(.015,.13,.18,.84),'pages':(.215,.13,.52,.84),'coverage':(.755,.13,.23,.57),'actions':(.755,.73,.23,.14)}),tags=['visual','presentation','project','explainer'],quality=q),
++      'visual.presentation.page-editor':screen('visual.presentation.page-editor','Presentation page editor','creative.presentation','visual.presentation.story','compose one exact page from independently editable content, figures, callouts and source references',v(
++        {'toolbar':(.02,.02,.96,.07),'page':(.12,.11,.76,.56),'blocks':(.02,.11,.08,.56),'properties':(.90,.11,.08,.56),'notes':(.02,.70,.45,.28),'sources':(.50,.70,.48,.28)},
++        {'toolbar':(.015,.02,.97,.065),'blocks':(.015,.105,.16,.76),'page':(.195,.105,.55,.76),'properties':(.77,.105,.215,.56),'notes':(.77,.69,.105,.17),'sources':(.88,.69,.105,.17)},
++        {'toolbar':(.012,.02,.976,.06),'blocks':(.012,.10,.14,.78),'page':(.17,.10,.59,.78),'properties':(.78,.10,.208,.58),'notes':(.78,.71,.098,.17),'sources':(.89,.71,.098,.17)}),tags=['visual','presentation','page','editor'],math_hooks={'page_safe_ratio':[0.035,0.12],'headline_area_ratio':[0.08,0.25]},quality=q),
++      'visual.presentation.outline-editor':screen('visual.presentation.outline-editor','Narrative outline and section editor','creative.presentation','visual.presentation.story','edit exact section membership, page ordering and narrative roles without presentation layout silently changing sequence',v(
++        {'header':(.03,.03,.94,.08),'sections':(.03,.14,.94,.28),'pages':(.03,.45,.55,.41),'details':(.61,.45,.36,.29),'actions':(.61,.77,.36,.09)},
++        {'header':(.02,.03,.96,.075),'sections':(.02,.14,.23,.72),'pages':(.28,.14,.48,.72),'details':(.79,.14,.19,.54),'actions':(.79,.71,.19,.15)},
++        {'header':(.015,.03,.97,.07),'sections':(.015,.13,.21,.74),'pages':(.26,.13,.50,.74),'details':(.785,.13,.20,.55),'actions':(.785,.71,.20,.16)}),tags=['visual','presentation','outline','section'],quality=q),
++      'visual.presentation.block-editor':screen('visual.presentation.block-editor','Content block editor','creative.presentation','visual.presentation.story','edit typed content blocks, semantic roles, exact text/data and source identity with overflow visible',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.32),'blocks':(.03,.49,.55,.38),'details':(.61,.49,.36,.28),'actions':(.61,.80,.36,.07)},
++        {'header':(.02,.03,.96,.075),'blocks':(.02,.14,.28,.72),'preview':(.33,.14,.44,.72),'details':(.80,.14,.18,.54),'actions':(.80,.71,.18,.15)},
++        {'header':(.015,.03,.97,.07),'blocks':(.015,.13,.26,.74),'preview':(.305,.13,.47,.74),'details':(.795,.13,.19,.55),'actions':(.795,.71,.19,.16)}),tags=['visual','presentation','content','block'],quality=q),
++      'visual.presentation.figure-editor':screen('visual.presentation.figure-editor','Figure and reusable-artifact editor','creative.presentation','visual.presentation.story','bind exact diagrams, key art, atlas, showroom or other artifacts and edit crop/caption/view separately from source identity',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.36),'figures':(.03,.53,.45,.34),'binding':(.51,.53,.46,.25),'actions':(.51,.81,.46,.06)},
++        {'header':(.02,.03,.96,.075),'figures':(.02,.14,.23,.72),'preview':(.28,.14,.47,.72),'binding':(.78,.14,.20,.54),'actions':(.78,.71,.20,.15)},
++        {'header':(.015,.03,.97,.07),'figures':(.015,.13,.21,.74),'preview':(.26,.13,.49,.74),'binding':(.78,.13,.205,.55),'actions':(.78,.71,.205,.16)}),tags=['visual','presentation','figure','embed'],quality=q),
++      'visual.presentation.source-editor':screen('visual.presentation.source-editor','Source, citation and evidence editor','creative.presentation','visual.presentation.story','bind claims/figures/blocks to exact source references and observed/derived/claimed/missing status',v(
++        {'header':(.03,.03,.94,.08),'page':(.03,.14,.94,.28),'sources':(.03,.45,.58,.42),'details':(.64,.45,.33,.29),'actions':(.64,.77,.33,.10)},
++        {'header':(.02,.03,.96,.075),'targets':(.02,.14,.25,.72),'sources':(.30,.14,.47,.72),'details':(.80,.14,.18,.54),'actions':(.80,.71,.18,.15)},
++        {'header':(.015,.03,.97,.07),'targets':(.015,.13,.23,.74),'sources':(.265,.13,.50,.74),'details':(.78,.13,.205,.55),'actions':(.78,.71,.205,.16)}),tags=['visual','presentation','source','citation'],quality=q),
++      'visual.presentation.emphasis-layout':screen('visual.presentation.emphasis-layout','Emphasis and layout-variant editor','creative.presentation','visual.presentation.story','edit responsive layout and emphasis cues while keeping exact content meaning, page identity and source bindings unchanged',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.38),'variants':(.03,.55,.45,.32),'emphasis':(.51,.55,.46,.25),'actions':(.51,.83,.46,.04)},
++        {'header':(.02,.03,.96,.075),'variants':(.02,.14,.22,.72),'preview':(.27,.14,.48,.72),'emphasis':(.78,.14,.20,.54),'actions':(.78,.71,.20,.15)},
++        {'header':(.015,.03,.97,.07),'variants':(.015,.13,.20,.74),'preview':(.24,.13,.51,.74),'emphasis':(.775,.13,.21,.55),'actions':(.775,.71,.21,.16)}),tags=['visual','presentation','layout','emphasis'],quality=q),
++      'visual.presentation.notes-review':screen('visual.presentation.notes-review','Speaker notes and review editor','creative.presentation','visual.presentation.story','review page-specific notes, source gaps, overflow, continuity and unresolved claims without putting private notes into rendered output',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.30),'notes':(.03,.47,.45,.39),'checks':(.51,.47,.46,.29),'actions':(.51,.79,.46,.07)},
++        {'header':(.02,.03,.96,.075),'notes':(.02,.14,.27,.72),'preview':(.32,.14,.43,.72),'checks':(.78,.14,.20,.54),'actions':(.78,.71,.20,.15)},
++        {'header':(.015,.03,.97,.07),'notes':(.015,.13,.25,.74),'preview':(.29,.13,.46,.74),'checks':(.775,.13,.21,.55),'actions':(.775,.71,.21,.16)}),tags=['visual','presentation','notes','review'],quality=q),
++      'visual.presentation.sequence-preview':screen('visual.presentation.sequence-preview','Presentation sequence and transition preview','creative.presentation','visual.presentation.story','preview exact page order and derived transitions while preserving original page/content/source identities',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.40),'sequence':(.03,.57,.58,.30),'transition':(.64,.57,.33,.22),'actions':(.64,.82,.33,.05)},
++        {'header':(.02,.03,.96,.075),'sequence':(.02,.14,.24,.72),'preview':(.29,.14,.46,.72),'transition':(.78,.14,.20,.54),'actions':(.78,.71,.20,.15)},
++        {'header':(.015,.03,.97,.07),'sequence':(.015,.13,.22,.74),'preview':(.265,.13,.49,.74),'transition':(.78,.13,.205,.55),'actions':(.78,.71,.205,.16)}),tags=['visual','presentation','sequence','transition'],quality=q),
++      'visual.presentation.export':screen('visual.presentation.export','Presentation review and export matrix','creative.presentation','visual.presentation.story','review page range, source completeness, embedded artifact identity, output aspect and provenance requirements before derived export',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.30),'checks':(.03,.47,.58,.39),'targets':(.64,.47,.33,.27),'actions':(.64,.77,.33,.09)},
++        {'header':(.02,.03,.96,.075),'preview':(.02,.14,.38,.72),'checks':(.43,.14,.34,.72),'targets':(.79,.14,.19,.48),'actions':(.79,.65,.19,.21)},
++        {'header':(.015,.03,.97,.07),'preview':(.015,.13,.36,.74),'checks':(.40,.13,.37,.74),'targets':(.79,.13,.195,.49),'actions':(.79,.65,.195,.22)}),tags=['visual','presentation','export','evidence'],quality=q),
++    }
++    _merge(screens,additions,'screen')
++    ids=list(additions)
++    product={'schema':'axm.visual-product/v1','id':'visual.presentation.core','version':1,'name':'Editable presentation and explainer core','kind':'product','domain':'creative.presentation','tags':['visual','presentation','explainer','storytelling','product'],'origin':origin(),'style':'visual.presentation.story','intent':'source-first presentation and explainer editing with exact page order, content/source identity, reusable artifact bindings, notes and output requirements','screens':ids,'flow':[
++      ['visual.presentation.project-hub','visual.presentation.outline-editor','edit-outline'],['visual.presentation.outline-editor','visual.presentation.page-editor','edit-page'],['visual.presentation.page-editor','visual.presentation.block-editor','edit-content'],['visual.presentation.page-editor','visual.presentation.figure-editor','edit-figures'],['visual.presentation.page-editor','visual.presentation.source-editor','bind-sources'],['visual.presentation.page-editor','visual.presentation.emphasis-layout','edit-layout'],['visual.presentation.page-editor','visual.presentation.notes-review','review-notes'],['visual.presentation.outline-editor','visual.presentation.sequence-preview','preview-sequence'],['visual.presentation.sequence-preview','visual.presentation.export','review-export']], 'quality':q}
++    _merge(products,{'visual.presentation.core':product},'product')
+diff --git a/src/axm_uc/visual_templates.py b/src/axm_uc/visual_templates.py
+index 4662de8..d180492 100644
+--- a/src/axm_uc/visual_templates.py
++++ b/src/axm_uc/visual_templates.py
+@@ -22,8 +22,9 @@ from .visual_template_atlas import extend_atlas_catalog as _extend_atlas_catalog
+ from .visual_template_novel import extend_novel_catalog as _extend_novel_catalog
+ from .visual_template_showroom import extend_showroom_catalog as _extend_showroom_catalog
+ from .visual_template_music import extend_music_catalog as _extend_music_catalog
++from .visual_template_presentation import extend_presentation_catalog as _extend_presentation_catalog
+ 
+-_COMPOSITION=("visual_template_growth","visual_template_game_systems","visual_template_creative_narrative","visual_template_axm_system","visual_template_game_shared","visual_template_keyart","visual_template_cards","visual_template_cinematic","visual_template_video_overlay","visual_template_diagram","visual_template_atlas","visual_template_novel","visual_template_showroom","visual_template_music")
++_COMPOSITION=("visual_template_growth","visual_template_game_systems","visual_template_creative_narrative","visual_template_axm_system","visual_template_game_shared","visual_template_keyart","visual_template_cards","visual_template_cinematic","visual_template_video_overlay","visual_template_diagram","visual_template_atlas","visual_template_novel","visual_template_showroom","visual_template_music","visual_template_presentation")
+ _applied=getattr(_core,"_AXM_VISUAL_COMPOSITION",None)
+ if _applied is None:
+     _extend_catalog(vars(_core))
+@@ -40,6 +41,7 @@ if _applied is None:
+     _extend_novel_catalog(vars(_core))
+     _extend_showroom_catalog(vars(_core))
+     _extend_music_catalog(vars(_core))
++    _extend_presentation_catalog(vars(_core))
+     _core._AXM_VISUAL_COMPOSITION=_COMPOSITION
+ elif _applied != _COMPOSITION:
+     raise RuntimeError("visual template composition changed inside a live process; restart with one exact catalog")
+diff --git a/tests/test_visual_templates.py b/tests/test_visual_templates.py
+index a0fcb62..8cda8d5 100644
+--- a/tests/test_visual_templates.py
++++ b/tests/test_visual_templates.py
+@@ -8,18 +8,18 @@ from axm_stickers import Registry
+ from axm_uc import visual_templates as vt
+ 
+ SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
+-PRODUCTS=('game.racing.full','game.coop.action','game.rts.command','game.system.shell','game.shared.core','editor.creative.core','comic.narrative.core','axm.system.shell','visual.keyart.core','visual.cards.core','visual.cinematic.core','visual.broadcast.core','visual.diagram.core','visual.atlas.core','visual.novel.core','visual.showroom.core','visual.music.core')
++PRODUCTS=('game.racing.full','game.coop.action','game.rts.command','game.system.shell','game.shared.core','editor.creative.core','comic.narrative.core','axm.system.shell','visual.keyart.core','visual.cards.core','visual.cinematic.core','visual.broadcast.core','visual.diagram.core','visual.atlas.core','visual.novel.core','visual.showroom.core','visual.music.core','visual.presentation.core')
+ 
+ class VisualTemplateTests(unittest.TestCase):
+     def test_catalog_counts_and_products(self):
+         counts=vt.validate_catalog()
+-        self.assertEqual(counts,{'styles':21,'primitives':156,'screens':194,'products':19})
++        self.assertEqual(counts,{'styles':22,'primitives':166,'screens':204,'products':20})
+         self.assertEqual(vt.CATALOG_COMPOSITION['counts'],counts)
+         ids={p['id'] for p in vt.catalog()['products']}
+         self.assertTrue(set(PRODUCTS)|{'game.racing.performance','software.creator.studio'} <= ids)
+ 
+     def test_all_geometry_and_major_variants(self):
+-        prefixes=('game.','editor.creative.','comic.narrative.','axm.system.','visual.keyart.','visual.cards.','visual.cinematic.','visual.broadcast.','visual.diagram.','visual.atlas.','visual.novel.','visual.showroom.','visual.music.')
++        prefixes=('game.','editor.creative.','comic.narrative.','axm.system.','visual.keyart.','visual.cards.','visual.cinematic.','visual.broadcast.','visual.diagram.','visual.atlas.','visual.novel.','visual.showroom.','visual.music.','visual.presentation.')
+         for tid,definition in vt.SCREEN_TEMPLATES.items():
+             if tid.startswith(prefixes): self.assertEqual(set(definition['variants']),{'compact','standard','wide'},tid)
+             for width,height in SIZES:
+@@ -29,22 +29,21 @@ class VisualTemplateTests(unittest.TestCase):
+                     self.assertLessEqual(x+w,width+1e-6); self.assertLessEqual(y+h,height+1e-6)
+ 
+     def test_existing_product_depth_is_retained(self):
+-        expected={'game.racing.full':19,'game.system.shell':18,'game.shared.core':12,'editor.creative.core':12,'comic.narrative.core':10,'axm.system.shell':12,'visual.keyart.core':10,'visual.cards.core':11,'visual.cinematic.core':10,'visual.broadcast.core':10,'visual.diagram.core':10,'visual.atlas.core':10,'visual.novel.core':10,'visual.showroom.core':10}
++        expected={'game.racing.full':19,'game.system.shell':18,'game.shared.core':12,'editor.creative.core':12,'comic.narrative.core':10,'axm.system.shell':12,'visual.keyart.core':10,'visual.cards.core':11,'visual.cinematic.core':10,'visual.broadcast.core':10,'visual.diagram.core':10,'visual.atlas.core':10,'visual.novel.core':10,'visual.showroom.core':10,'visual.music.core':10}
+         for pid,count in expected.items(): self.assertEqual(len(vt.get(pid)['screens']),count)
+ 
+-    def test_music_product_preserves_track_analysis_timing_and_visual_truth(self):
+-        product=vt.get('visual.music.core')
+-        required={'visual.music.project-hub','visual.music.cover-editor','visual.music.track-identity','visual.music.analysis-waveform','visual.music.marker-timing','visual.music.reactive-editor','visual.music.tracklist-sequence','visual.music.crop-variants','visual.music.playback-preview','visual.music.review-export'}
++    def test_presentation_product_preserves_content_source_and_order_truth(self):
++        product=vt.get('visual.presentation.core')
++        required={'visual.presentation.project-hub','visual.presentation.page-editor','visual.presentation.outline-editor','visual.presentation.block-editor','visual.presentation.figure-editor','visual.presentation.source-editor','visual.presentation.emphasis-layout','visual.presentation.notes-review','visual.presentation.sequence-preview','visual.presentation.export'}
+         self.assertEqual(set(product['screens']),required)
+-        self.assertEqual(product['style'],'visual.music.resonant')
++        self.assertEqual(product['style'],'visual.presentation.story')
+         quality=' '.join(product['quality']).lower()
+         self.assertIn('separately editable',quality)
+-        self.assertIn('explicitly derived',quality)
+-        self.assertIn('richer editable source',quality)
+-        self.assertIn('exact identities',quality)
+-        self.assertIn('source audio',quality)
+-        self.assertIn('cover_safe_ratio',vt.get('visual.music.cover-editor')['math_hooks'])
+-        self.assertIn('marker_spacing_ratio',vt.get('visual.music.marker-timing')['math_hooks'])
++        self.assertIn('never rewrite exact source meaning',quality)
++        self.assertIn('exact identity/version/view bindings',quality)
++        self.assertIn('missing or disputed source state',quality)
++        self.assertIn('richer presentation source state',quality)
++        self.assertIn('page_safe_ratio',vt.get('visual.presentation.page-editor')['math_hooks'])
+ 
+     def test_products_resolve_and_previews_parse(self):
+         for pid in PRODUCTS:
+@@ -61,28 +60,29 @@ class VisualTemplateTests(unittest.TestCase):
+         with tempfile.TemporaryDirectory() as td:
+             with Registry(Path(td)/'stickers.sqlite') as registry:
+                 pins=vt.install_builtins(registry)
+-                self.assertEqual(len(pins),213)
+-                music=registry.search(adapter=vt.ADAPTER,tag='music',limit=100)['entries']
+-                self.assertEqual(len(music),10)
+-                d=registry.get('visual.visual.music.track-identity',1)
++                self.assertEqual(len(pins),224)
++                presentation=registry.search(adapter=vt.ADAPTER,tag='presentation',limit=100)['entries']
++                self.assertEqual(len(presentation),10)
++                d=registry.get('visual.visual.presentation.page-editor',1)
+                 self.assertEqual(d['recipe']['visual_template']['schema'],vt.SCHEMA)
+                 self.assertNotIn('"latest"',json.dumps(d,sort_keys=True))
+ 
+-    def test_music_source_analysis_timing_reactive_and_export_contracts(self):
+-        required={'music-track-source','music-analysis','beat-marker','waveform-source','cover-composition','reactive-visual-layer','music-marker-cue','album-variant','track-list-entry','music-export-target'}
++    def test_presentation_source_embed_notes_order_and_export_contracts(self):
++        required={'presentation-page','content-block','source-footnote','figure-frame','presentation-section','emphasis-cue','speaker-note','embed-binding','presentation-transition','presentation-export-target'}
+         self.assertTrue(required <= set(vt.PRIMITIVES))
+-        self.assertTrue(vt.PRIMITIVES['music-track-source']['identity_source_digest_duration_required'])
+-        self.assertTrue(vt.PRIMITIVES['music-analysis']['analysis_source_version_status_required'])
+-        self.assertTrue(vt.PRIMITIVES['beat-marker']['time_source_status_required'])
+-        self.assertTrue(vt.PRIMITIVES['waveform-source']['track_and_analysis_source_required'])
+-        self.assertTrue(vt.PRIMITIVES['cover-composition']['layers_must_remain_editable'])
+-        self.assertTrue(vt.PRIMITIVES['reactive-visual-layer']['input_mapping_required'])
+-        self.assertTrue(vt.PRIMITIVES['music-marker-cue']['name_time_source_required'])
+-        self.assertTrue(vt.PRIMITIVES['album-variant']['base_delta_target_required'])
+-        self.assertTrue(vt.PRIMITIVES['track-list-entry']['track_identity_and_order_required'])
+-        self.assertTrue(vt.PRIMITIVES['music-export-target']['requirements_must_be_visible'])
++        self.assertTrue(vt.PRIMITIVES['presentation-page']['identity_role_order_required'])
++        self.assertTrue(vt.PRIMITIVES['content-block']['type_content_source_required'])
++        self.assertTrue(vt.PRIMITIVES['source-footnote']['target_source_status_required'])
++        self.assertTrue(vt.PRIMITIVES['figure-frame']['source_caption_identity_required'])
++        self.assertTrue(vt.PRIMITIVES['presentation-section']['membership_order_required'])
++        self.assertTrue(vt.PRIMITIVES['emphasis-cue']['must_not_rewrite_source_meaning'])
++        self.assertTrue(vt.PRIMITIVES['speaker-note']['target_and_source_required'])
++        self.assertTrue(vt.PRIMITIVES['embed-binding']['identity_version_view_required'])
++        self.assertTrue(vt.PRIMITIVES['presentation-transition']['must_not_change_page_order'])
++        self.assertTrue(vt.PRIMITIVES['presentation-export-target']['requirements_must_be_visible'])
+ 
+     def test_prior_source_boundaries_remain_present(self):
++        self.assertTrue(vt.PRIMITIVES['music-track-source']['identity_source_digest_duration_required'])
+         self.assertTrue(vt.PRIMITIVES['showroom-object']['source_identity_version_required'])
+         self.assertTrue(vt.PRIMITIVES['save-checkpoint']['state_identity_digest_required'])
+         self.assertTrue(vt.PRIMITIVES['map-coordinate']['system_source_precision_required'])
+@@ -94,12 +94,12 @@ class VisualTemplateTests(unittest.TestCase):
+         self.assertTrue(vt.PRIMITIVES['truth-state']['source_must_be_visible'])
+ 
+     def test_copy_safety_variant_rejection_and_bad_geometry(self):
+-        a=vt.resolve('visual.music.analysis-waveform',1920,1080); b=vt.resolve('visual.music.analysis-waveform',1920,1080)
++        a=vt.resolve('visual.presentation.page-editor',1920,1080); b=vt.resolve('visual.presentation.page-editor',1920,1080)
+         self.assertEqual(a,b)
+-        copy=vt.get('visual.music.analysis-waveform'); copy['name']='changed'
+-        self.assertNotEqual(vt.get('visual.music.analysis-waveform')['name'],'changed')
+-        with self.assertRaises(ValueError): vt.resolve('visual.music.analysis-waveform',1920,1080,variant='unknown')
+-        bad=vt.get('visual.music.analysis-waveform'); bad['variants']['standard']['waveform']=[.9,.9,.2,.2]
++        copy=vt.get('visual.presentation.page-editor'); copy['name']='changed'
++        self.assertNotEqual(vt.get('visual.presentation.page-editor')['name'],'changed')
++        with self.assertRaises(ValueError): vt.resolve('visual.presentation.page-editor',1920,1080,variant='unknown')
++        bad=vt.get('visual.presentation.page-editor'); bad['variants']['standard']['page']=[.9,.9,.2,.2]
+         with self.assertRaises(ValueError): vt.validate_screen(bad)
+ 
+     def test_exact_sticker_slot_binding_is_retained(self):
+diff --git a/tools/visual_template_proof.py b/tools/visual_template_proof.py
+index 225f5da..737f957 100644
+--- a/tools/visual_template_proof.py
++++ b/tools/visual_template_proof.py
+@@ -8,7 +8,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src'))
+ from axm_uc import visual_templates as vt
+ 
+ SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
+-PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell","visual.keyart.core","visual.cards.core","visual.cinematic.core","visual.broadcast.core","visual.diagram.core","visual.atlas.core","visual.novel.core","visual.showroom.core","visual.music.core")
++PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell","visual.keyart.core","visual.cards.core","visual.cinematic.core","visual.broadcast.core","visual.diagram.core","visual.atlas.core","visual.novel.core","visual.showroom.core","visual.music.core","visual.presentation.core")
+ 
+ def _write(project,target):
+     target.mkdir(); out=[]
+@@ -25,7 +25,7 @@ def main(argv):
+     out.mkdir(parents=True)
+     try:
+         counts=vt.validate_catalog()
+-        if counts!={'styles':21,'primitives':156,'screens':194,'products':19}: raise AssertionError(counts)
++        if counts!={'styles':22,'primitives':166,'screens':204,'products':20}: raise AssertionError(counts)
+         evidence=[]
+         for pid in PRODUCTS:
+             expected=vt.get(pid)
+@@ -54,27 +54,28 @@ def main(argv):
+             ('visual.novel.core',1920,1080,'visual-novel','AXM Branching Visual-Novel Foundation'),
+             ('visual.showroom.core',1920,1080,'showroom','AXM 3D Showroom and Gallery Foundation'),
+             ('visual.music.core',1920,1080,'music','AXM Music Visualizer and Album-Art Foundation'),
++            ('visual.presentation.core',1920,1080,'presentation','AXM Presentation and Explainer Foundation'),
+         )
+         outputs=[]
+         for pid,w,h,folder,title in galleries: outputs+=_write(vt.product_project(pid,w,h,title),out/folder)
+         outputs+=_write(vt.screen_project('product.mobile.home',1080,1920,'AXM Mobile Foundation'),out/'mobile-home')
+-        product=vt.get('visual.music.core')
+-        required={'visual.music.project-hub','visual.music.cover-editor','visual.music.track-identity','visual.music.analysis-waveform','visual.music.marker-timing','visual.music.reactive-editor','visual.music.tracklist-sequence','visual.music.crop-variants','visual.music.playback-preview','visual.music.review-export'}
+-        if set(product['screens'])!=required: raise AssertionError('music visual pack lost required surfaces')
++        product=vt.get('visual.presentation.core')
++        required={'visual.presentation.project-hub','visual.presentation.page-editor','visual.presentation.outline-editor','visual.presentation.block-editor','visual.presentation.figure-editor','visual.presentation.source-editor','visual.presentation.emphasis-layout','visual.presentation.notes-review','visual.presentation.sequence-preview','visual.presentation.export'}
++        if set(product['screens'])!=required: raise AssertionError('presentation pack lost required surfaces')
+         checks={
+-            'track_identity_source_digest_duration':vt.PRIMITIVES['music-track-source']['identity_source_digest_duration_required'],
+-            'analysis_source_version_status':vt.PRIMITIVES['music-analysis']['analysis_source_version_status_required'],
+-            'beat_time_source_status':vt.PRIMITIVES['beat-marker']['time_source_status_required'],
+-            'waveform_track_analysis_source':vt.PRIMITIVES['waveform-source']['track_and_analysis_source_required'],
+-            'cover_layers_editable':vt.PRIMITIVES['cover-composition']['layers_must_remain_editable'],
+-            'reactive_input_mapping':vt.PRIMITIVES['reactive-visual-layer']['input_mapping_required'],
+-            'marker_name_time_source':vt.PRIMITIVES['music-marker-cue']['name_time_source_required'],
+-            'album_variant_base_delta_target':vt.PRIMITIVES['album-variant']['base_delta_target_required'],
+-            'tracklist_identity_order':vt.PRIMITIVES['track-list-entry']['track_identity_and_order_required'],
+-            'export_requirements_visible':vt.PRIMITIVES['music-export-target']['requirements_must_be_visible'],
++            'page_identity_role_order':vt.PRIMITIVES['presentation-page']['identity_role_order_required'],
++            'content_type_source':vt.PRIMITIVES['content-block']['type_content_source_required'],
++            'citation_target_source_status':vt.PRIMITIVES['source-footnote']['target_source_status_required'],
++            'figure_source_caption_identity':vt.PRIMITIVES['figure-frame']['source_caption_identity_required'],
++            'section_membership_order':vt.PRIMITIVES['presentation-section']['membership_order_required'],
++            'emphasis_preserves_meaning':vt.PRIMITIVES['emphasis-cue']['must_not_rewrite_source_meaning'],
++            'speaker_note_target_source':vt.PRIMITIVES['speaker-note']['target_and_source_required'],
++            'embed_identity_version_view':vt.PRIMITIVES['embed-binding']['identity_version_view_required'],
++            'transition_preserves_order':vt.PRIMITIVES['presentation-transition']['must_not_change_page_order'],
++            'export_requirements_visible':vt.PRIMITIVES['presentation-export-target']['requirements_must_be_visible'],
+         }
+-        if not all(checks.values()): raise AssertionError('music source/analysis/reactive contract failed')
+-        receipt={'schema':'axm.visual-template-proof/v15','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'music_checks':checks,'truth':'Offline structural evidence only. Audio-analysis correctness, musical timing quality, rights/licensing, mastering quality, renderer fidelity and aesthetic acceptance were not observed.'}
++        if not all(checks.values()): raise AssertionError('presentation source/order contract failed')
++        receipt={'schema':'axm.visual-template-proof/v16','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'presentation_checks':checks,'truth':'Offline structural evidence only. Claim truth, source reliability, audience understanding, speaking quality, accessibility compliance and aesthetic acceptance were not observed.'}
+         (out/'receipt.json').write_text(json.dumps(receipt,indent=2,sort_keys=True),encoding='utf-8')
+         print(json.dumps(receipt,indent=2,sort_keys=True))
+     except BaseException:

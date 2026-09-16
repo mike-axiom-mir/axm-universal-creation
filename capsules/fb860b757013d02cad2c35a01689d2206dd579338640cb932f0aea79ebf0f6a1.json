@@ -1,0 +1,206 @@
+{
+  "capsule_id": "fb860b757013d02cad2c35a01689d2206dd579338640cb932f0aea79ebf0f6a1",
+  "evidence": {
+    "files": [
+      {
+        "additions": 52,
+        "binary": false,
+        "content_sha256": "91680390ef888476d7d466aa445d09619d1cacbfd2fcc61c6ad4d872c10107c0",
+        "deletions": 1,
+        "path": "GAME_STYLE_GROWTH.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Current checkpoint",
+          "Secondary motion pass \u2014 2026-09-13",
+          "Motion timing composition pass \u2014 2026-09-13"
+        ]
+      },
+      {
+        "additions": 68,
+        "binary": false,
+        "content_sha256": "bb5328b51f631d0c9fde51e4a81c0e0718e1217db49b05157df12848256bb75b",
+        "deletions": 0,
+        "path": "docs/GAME_SECONDARY_MOTION.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Game secondary motion",
+          "Motion classes",
+          "Solver and portability",
+          "Real export proof",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 333,
+        "binary": false,
+        "content_sha256": "a3c749aab04ecf60c50215028bf40977a04279d05fa6de944d08fe277f72706d",
+        "deletions": 0,
+        "path": "src/axm_uc/game_secondary_motion.py",
+        "status": "A",
+        "symbols": [
+          "SecondaryMotionProfile",
+          "_canonical",
+          "_digest",
+          "_number",
+          "_vector",
+          "_normalize",
+          "_quaternion",
+          "_profile",
+          "game_secondary_motion_catalog",
+          "_validate_primary",
+          "_request",
+          "_multiply_quaternion",
+          "_value",
+          "_simulate",
+          "compose_secondary_motion",
+          "publish_secondary_motion"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 14,
+        "binary": false,
+        "content_sha256": "301885ed5cd6d436bbda6c43abd7e2f5e88bc2761bfc52af16abb4fc7f15b783",
+        "deletions": 0,
+        "path": "src/axm_uc/visual_assets_cli.py",
+        "status": "M",
+        "symbols": [
+          "combined_catalog",
+          "build_parser",
+          "main"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 154,
+        "binary": false,
+        "content_sha256": "8a492e9204335b06df62321ce2b96a91ec8fecc046507ff83ef838fb93f4ee62",
+        "deletions": 0,
+        "path": "tests/test_game_secondary_motion.py",
+        "status": "A",
+        "symbols": [
+          "primary",
+          "request",
+          "GameSecondaryMotionTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 386,
+        "binary": false,
+        "content_sha256": "ffdb53819aa8e00358b435ff08477141610225d3ec3ad4fae9ae6cdc9bf63297",
+        "deletions": 0,
+        "path": "tools/blender/game_secondary_motion_roundtrip.py",
+        "status": "A",
+        "symbols": [
+          "sha256",
+          "secondary_request",
+          "add_secondary_bones",
+          "add_secondary_geometry",
+          "apply_track",
+          "author_action",
+          "export_asset",
+          "build",
+          "action_by_prefix",
+          "local_value",
+          "value_error",
+          "rest_secondary_pose",
+          "mute_secondary_curves",
+          "verify",
+          "main"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "1b45cbbf3cc54d09433963ce7043a53c3ebdd48422d40a203029ff802d293b6a"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 6,
+    "kinds": [
+      "code",
+      "knowledge",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "action",
+      "add",
+      "apply",
+      "asset",
+      "author",
+      "axm",
+      "blender",
+      "bones",
+      "boundary",
+      "build",
+      "canonical",
+      "catalog",
+      "checkpoint",
+      "classes",
+      "cli",
+      "combined",
+      "compose",
+      "composition",
+      "creation-machine",
+      "current",
+      "curves",
+      "deterministic",
+      "digest",
+      "error",
+      "export",
+      "game",
+      "geometry",
+      "growth",
+      "local",
+      "merge",
+      "motion",
+      "multiply",
+      "mute",
+      "normalize",
+      "number",
+      "parser",
+      "pass",
+      "portability",
+      "pose",
+      "prefix",
+      "primary",
+      "profile",
+      "proof",
+      "publish",
+      "quaternion",
+      "real",
+      "request",
+      "rest",
+      "roundtrip",
+      "secondary",
+      "sha256",
+      "simulate",
+      "solver",
+      "standalone",
+      "style",
+      "timing",
+      "tools",
+      "track",
+      "truth",
+      "universal-creation",
+      "validate",
+      "value",
+      "vector",
+      "verify"
+    ]
+  },
+  "source": {
+    "base": "6b68f0924d1e37e866dd7d551086f8766c779507",
+    "commit_subject": "Merge deterministic secondary motion composition (#67)",
+    "head": "228708d58bb9c7c2470b53b5ba837bc8133a0bbe",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

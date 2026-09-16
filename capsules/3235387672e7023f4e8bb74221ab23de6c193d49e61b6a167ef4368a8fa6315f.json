@@ -1,0 +1,107 @@
+{
+  "capsule_id": "3235387672e7023f4e8bb74221ab23de6c193d49e61b6a167ef4368a8fa6315f",
+  "evidence": {
+    "files": [
+      {
+        "additions": 130,
+        "binary": false,
+        "content_sha256": "c019b4310525cf93aadfcb71defdc8e984295d02c7c25a10349a571905a76593",
+        "deletions": 0,
+        "path": "docs/STATIC_ASSET_TARGET_EVIDENCE.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Static Asset Target Evidence Gate v0.1",
+          "Why this exists",
+          "Evidence lanes",
+          "Example",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 287,
+        "binary": false,
+        "content_sha256": "9c094dac83188620fe23c96f3ae1094003c7b1fe4570a861ee195e5e816caa6f",
+        "deletions": 0,
+        "path": "src/axm_uc/static_asset_target_evidence.py",
+        "status": "A",
+        "symbols": [
+          "_text",
+          "_validate_evidence_item",
+          "validate_static_asset_target_evidence",
+          "verify_static_asset_target_evidence"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 212,
+        "binary": false,
+        "content_sha256": "fb5e4b1ce85ec9c5d8cb71b411583318db9c6b2bdd8b381aa36a8dc71a19e525",
+        "deletions": 0,
+        "path": "tests/test_static_asset_target_evidence.py",
+        "status": "A",
+        "symbols": [
+          "_glb_bytes",
+          "_packet",
+          "StaticAssetTargetEvidenceTests"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "86c1be291dfbe8ac9551fbff7a562c4c06f96003509b85c03b41fd8bf558eaa5"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 6,
+    "kinds": [
+      "code",
+      "knowledge",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "asset",
+      "axiom",
+      "axm",
+      "boundary",
+      "bytes",
+      "chatgpt",
+      "creation-machine",
+      "evidence",
+      "example",
+      "exists",
+      "from",
+      "gate",
+      "glb",
+      "item",
+      "lanes",
+      "merge",
+      "mike",
+      "mir",
+      "packet",
+      "pull",
+      "request",
+      "standalone",
+      "static",
+      "target",
+      "text",
+      "this",
+      "truth",
+      "universal-creation",
+      "validate",
+      "verify",
+      "why"
+    ]
+  },
+  "source": {
+    "base": "49ef11ca42b2079dffbd595daa8ea8626b99d2ab",
+    "commit_subject": "Merge pull request #142 from mike-axiom-mir/chatgpt/static-asset-target-evidence-v0",
+    "head": "87f93e1a27b2e3414f6422cd38e31b00e89d6a56",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

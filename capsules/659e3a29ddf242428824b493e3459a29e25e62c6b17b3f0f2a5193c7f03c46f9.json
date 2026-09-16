@@ -1,0 +1,201 @@
+{
+  "capsule_id": "659e3a29ddf242428824b493e3459a29e25e62c6b17b3f0f2a5193c7f03c46f9",
+  "evidence": {
+    "files": [
+      {
+        "additions": 44,
+        "binary": false,
+        "content_sha256": "7df05c6817a0c3f732528831df03afd097d5c18874e2c1d481832ff015e12e0e",
+        "deletions": 0,
+        "path": "KEYART_TEMPLATE_PACK.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Editable Key Art / Poster / Cover Template Pack",
+          "Product surfaces",
+          "Editable composition contracts",
+          "Format adaptation",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 49,
+        "binary": false,
+        "content_sha256": "e2db9e606642730afe48b87bcb63e736994c6fc13f2b70b53c98ae574a0d7585",
+        "deletions": 51,
+        "path": "VISUAL_TEMPLATE_FABRIC.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Current v5 candidate census",
+          "Product foundations accumulated so far",
+          "Games",
+          "Creative/editor",
+          "Comics / visual narrative",
+          "AXM system / monolith shell",
+          "Editable key art / poster / cover composition",
+          "Registry and identity",
+          "Evidence gate",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 48,
+        "binary": false,
+        "content_sha256": "bb973000bf421c80d3b5f4a4643456081ea7973671fb96b77ef4f205cb9aab41",
+        "deletions": 50,
+        "path": "VISUAL_TEMPLATE_PRIORITY_MAP.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "AXM Visual Template Expansion Priority Map",
+          "Priority 1 \u2014 Creative editor core \u2014 MERGED",
+          "Priority 2 \u2014 Editable comics and visual narrative \u2014 MERGED",
+          "Priority 3 \u2014 AXM software / monolith shell \u2014 MERGED",
+          "Priority 4 \u2014 Shared gameplay systems \u2014 MERGED",
+          "Priority 5A \u2014 Editable key art / poster / cover composition \u2014 IMPLEMENTED IN THIS LANE",
+          "Priority 5B \u2014 Next high-value visual/creation families",
+          "Cross-cutting rules",
+          "Immediate build order"
+        ]
+      },
+      {
+        "additions": 87,
+        "binary": false,
+        "content_sha256": "d40c5fb736865c42e3c589797d2db3d2d23e5eaeec160de74b8377d4e9a159a7",
+        "deletions": 0,
+        "path": "src/axm_uc/visual_template_keyart.py",
+        "status": "A",
+        "symbols": [
+          "_merge",
+          "extend_keyart_catalog"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 3,
+        "binary": false,
+        "content_sha256": "0ac6ccb947a46b3187f1507f52efbb3b3e10d99b2daf2ec0c3b0a01315fe7c7f",
+        "deletions": 1,
+        "path": "src/axm_uc/visual_templates.py",
+        "status": "M",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 32,
+        "binary": false,
+        "content_sha256": "389951349ef7f3803a76dde9da525180f7293293324c0266ec26329e317f082e",
+        "deletions": 29,
+        "path": "tests/test_visual_templates.py",
+        "status": "M",
+        "symbols": [
+          "VisualTemplateTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 16,
+        "binary": false,
+        "content_sha256": "7de9ff74dde3eada227c438535945c921d9d3363c1e2bae4f556c1cfbe891a7b",
+        "deletions": 13,
+        "path": "tools/visual_template_proof.py",
+        "status": "M",
+        "symbols": [
+          "_write",
+          "main"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "113ee89c7cbb8809a5a7c05bcae683029719b072291ebece212f0269db271c29"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "accumulated",
+      "adaptation",
+      "add",
+      "art",
+      "axm",
+      "boundary",
+      "build",
+      "candidate",
+      "catalog",
+      "census",
+      "comics",
+      "composition",
+      "contracts",
+      "cover",
+      "creation",
+      "creation-machine",
+      "creative",
+      "cross",
+      "current",
+      "cutting",
+      "editable",
+      "editor",
+      "evidence",
+      "expansion",
+      "extend",
+      "fabric",
+      "families",
+      "far",
+      "format",
+      "foundations",
+      "gameplay",
+      "games",
+      "gate",
+      "high",
+      "identity",
+      "immediate",
+      "implemented",
+      "key",
+      "keyart",
+      "lane",
+      "map",
+      "merge",
+      "merged",
+      "monolith",
+      "narrative",
+      "next",
+      "order",
+      "pack",
+      "poster",
+      "priority",
+      "product",
+      "proof",
+      "registry",
+      "rules",
+      "shared",
+      "shell",
+      "software",
+      "standalone",
+      "surfaces",
+      "system",
+      "systems",
+      "template",
+      "templates",
+      "this"
+    ]
+  },
+  "source": {
+    "base": "026f4f5d0e669627639f404945147c9dedb48ff2",
+    "commit_subject": "Add editable key art poster and cover composition templates",
+    "head": "02d483bca089f72a10c04f88aa941dc8b08b66eb",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

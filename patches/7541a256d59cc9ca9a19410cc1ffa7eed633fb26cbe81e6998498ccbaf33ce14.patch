@@ -1,0 +1,576 @@
+diff --git a/MUSIC_TEMPLATE_PACK.md b/MUSIC_TEMPLATE_PACK.md
+new file mode 100644
+index 0000000..e268485
+--- /dev/null
++++ b/MUSIC_TEMPLATE_PACK.md
+@@ -0,0 +1,35 @@
++# Editable Music Visualizer / Album-Art Template Pack
++
++`visual.music.core` is a source-first music-visual identity and reactive-presentation foundation. It is intended for album/single covers, track sequences, music visualizers, game/music presentation and export variants without flattening track truth into decoration.
++
++## Surfaces
++
++- project / music-visual hub
++- album / single cover editor
++- track identity / source inspector
++- waveform / audio-analysis editor
++- beat and non-lyrical timing-marker editor
++- reactive visual mapping editor
++- track-list / sequence editor
++- format / crop variants
++- playback preview
++- review / export
++
++## Source-first contracts
++
++- `music-track-source` preserves exact track identity, source/digest and duration state.
++- `music-analysis` keeps analysis algorithm/source/version/status explicit.
++- `beat-marker` keeps exact time and observed/derived/manual source status.
++- `waveform-source` binds waveform representation to exact track and analysis source.
++- `cover-composition` keeps artwork/type/identity layers editable.
++- `reactive-visual-layer` requires an explicit input mapping.
++- `music-marker-cue` provides named non-lyrical timing/event cues with exact time/source.
++- `album-variant` preserves base identity, deltas and output target.
++- `track-list-entry` preserves exact track identity and sequence order.
++- `music-export-target` keeps track/variant/aspect/timing/provenance requirements visible.
++
++## Truth boundary
++
++A visualizer-looking output is not evidence that beat, waveform, spectral or timing analysis exists. Analysis must be observed or explicitly derived from a declared track source. Unknown/unavailable/stale state remains visible. Reactive visuals and playback previews never replace source audio/project state.
++
++The deterministic proof can establish responsive layout and structural/editability contracts. It does not prove audio-analysis correctness, musical timing quality, loudness/mastering quality, rights/licensing, renderer fidelity or aesthetic acceptance.
+diff --git a/VISUAL_TEMPLATE_FABRIC.md b/VISUAL_TEMPLATE_FABRIC.md
+index bfb71fe..9414d92 100644
+--- a/VISUAL_TEMPLATE_FABRIC.md
++++ b/VISUAL_TEMPLATE_FABRIC.md
+@@ -2,51 +2,47 @@
+ 
+ Universal Creation contains one deterministic library of **known visual archetypes** between low-level format scaffolds and finished products. Templates are editable structural starting points, not finished art and not automatic canon.
+ 
+-The public module remains `axm_uc.visual_templates`. Explicit extension packs now cover games/product plumbing, creative editors, comics, AXM system surfaces, key art, cards/decks, cinematic overlays, video/broadcast overlays, evidence-aware diagrams, world-map/lore-atlas editing, branching visual novels and 3D showroom/gallery presentation. Sticker Fabric remains the immutable/versioned registry bridge. Mathematical work can enrich declared ratios/ranges through `math_hooks` without replacing template identity.
++The public module remains `axm_uc.visual_templates`. Explicit extension packs now cover games/product plumbing, creative editors, comics, AXM system surfaces, key art, cards/decks, cinematic overlays, broadcast/video overlays, evidence-aware diagrams, world-map/lore-atlas editing, branching visual novels, 3D showroom/gallery presentation and music visual/album-art editing. Sticker Fabric remains the immutable/versioned registry bridge. Mathematical work can enrich declared ratios/ranges through `math_hooks` without replacing template identity.
+ 
+-## Current v12 candidate census
++## Current v13 candidate census
+ 
+-- **146 reusable visual/state primitives**
+-- **20 coherent style systems**
+-- **184 responsive screen archetypes**
+-- **18 whole-product archetypes**
+-- **202 exact screen/product definitions** when explicitly installed into Sticker Registry
++- **156 reusable visual/state primitives**
++- **21 coherent style systems**
++- **194 responsive screen archetypes**
++- **19 whole-product archetypes**
++- **213 exact screen/product definitions** when explicitly installed into Sticker Registry
+ 
+ Every major family provides compact, standard and wide normalized layouts. Unknown requested variants fail rather than silently falling back.
+ 
+-## Product foundations
++## Music visual / album-art foundation
+ 
+-The catalog retains the merged game, creative-editor, comic, AXM-system, key-art, card/deck, cinematic, broadcast, diagram, atlas and visual-novel products, and adds `visual.showroom.core`.
++`visual.music.core` provides ten source-first surfaces:
+ 
+-## 3D showroom / object gallery foundation
+-
+-`visual.showroom.core` provides ten source-first presentation surfaces:
+-
+-- project / showroom hub;
+-- hero object stage;
+-- orbit / camera editor;
+-- material / paint editor;
+-- object variant editor;
+-- annotation / callout editor;
+-- side-by-side comparison;
+-- detail / inspection view;
+-- turntable / showcase-motion editor;
++- project / music-visual hub;
++- album / single cover editor;
++- track identity / source inspector;
++- waveform / audio-analysis editor;
++- beat and non-lyrical timing-marker editor;
++- reactive visual mapping editor;
++- track-list / sequence editor;
++- format / crop variants;
++- playback preview;
+ - review / export.
+ 
+-Its `visual.showroom.studio` style is replaceable. Object truth remains explicit:
++Its `visual.music.resonant` style is replaceable. Track and analysis truth stays explicit:
+ 
+-- `showroom-object` preserves exact source asset identity/version;
+-- `orbit-rig` preserves exact target, pivot and orbit range;
+-- `camera-preset` keeps projection, lens and transform explicit;
+-- `material-slot` binds an exact object part to an exact material source;
+-- `variant-option` preserves exact variant identity, properties and availability/source state;
+-- `object-annotation` binds content to an exact object/component/local anchor;
+-- `comparison-object` preserves exact object/variant references and comparable fields;
+-- `turntable-state` remains derived presentation state around an exact target;
+-- `measurement-callout` preserves value, unit and source;
+-- `showroom-export-target` keeps output requirements visible.
++- `music-track-source` preserves exact track identity, source/digest and duration;
++- `music-analysis` records analysis source/algorithm version/status rather than pretending analysis is source audio;
++- `beat-marker` preserves exact time plus observed/derived/manual status;
++- `waveform-source` binds the representation to exact track and analysis source;
++- `cover-composition` keeps artwork, type and identity layers editable;
++- `reactive-visual-layer` requires an explicit input mapping;
++- `music-marker-cue` is a named non-lyrical event cue with exact time/source;
++- `album-variant` preserves base identity, delta and output target;
++- `track-list-entry` preserves exact track identity and sequence order;
++- `music-export-target` keeps track/variant/aspect/timing/provenance requirements visible.
+ 
+-A convincing 3D preview does not prove geometry, scale, materials, measurements, availability or rendering quality. Camera, turntable and showcase motion remain presentation state rather than object truth.
++A visualizer-looking result is not evidence that beat, waveform, spectral or timing analysis exists. Analysis must be observed or explicitly derived from a declared track source. Unknown, stale and unavailable state stays visible.
+ 
+ ## Registry and identity
+ 
+@@ -56,8 +52,8 @@ Every built-in screen/product can be wrapped as an immutable Sticker definition.
+ 
+ ```sh
+ axm-visual-templates catalog
+-axm-visual-templates show visual.showroom.core
+-axm-visual-templates render visual.showroom.core creations/showroom --width 1920 --height 1080
++axm-visual-templates show visual.music.core
++axm-visual-templates render visual.music.core creations/music --width 1920 --height 1080
+ ```
+ 
+ Preview/export remains derived inspection output, never authoritative source.
+@@ -69,19 +65,19 @@ python -m unittest discover -s tests -p 'test_visual_templates.py' -v
+ python tools/visual_template_proof.py /new/output/path
+ ```
+ 
+-The v12 gate requires:
++The v13 gate requires:
+ 
+-- exact census: 20 styles / 146 primitives / 184 screens / 18 products;
+-- all 184 screens stay within six representative viewport shapes;
++- exact census: 21 styles / 156 primitives / 194 screens / 19 products;
++- all 194 screens stay within six representative viewport shapes;
+ - exact product screen order and flows resolve across those viewports;
+-- parseable galleries for all prior proof products plus `visual.showroom.core`;
+-- all 202 screen/product definitions install through Sticker Registry;
+-- exact object/version, orbit target/pivot/range, camera state, material bindings, variant identity/availability, annotation anchors, comparison references, turntable state and measurement value/unit/source remain present;
+-- prior visual-novel/atlas/diagram/broadcast/cinematic/card/key-art/comic/game/AXM source boundaries remain intact;
++- parseable galleries for all prior proof products plus `visual.music.core`;
++- all 213 screen/product definitions install through Sticker Registry;
++- exact track identity/source/digest/duration, attributed analysis state, timing-marker provenance, waveform source, cover-layer editability, reactive mappings, variant identity and track-list order remain present;
++- prior showroom/visual-novel/atlas/diagram/broadcast/cinematic/card/key-art/comic/game/AXM source boundaries remain intact;
+ - copy safety, strict variant rejection, invalid-geometry rejection and exact Sticker-slot binding remain intact.
+ 
+ ## Truth boundary
+ 
+-Current evidence proves deterministic structural/editability contracts only. It does **not** prove renderer fidelity, 3D geometry correctness, physical scale, material realism, lighting quality, product availability or aesthetic acceptance.
++Current evidence proves deterministic structural/editability contracts only. It does **not** prove audio-analysis correctness, musical timing quality, loudness/mastering quality, rights/licensing, renderer fidelity or aesthetic acceptance.
+ 
+-Consuming products must provide real source/project state. Unknown, missing, unavailable and incompatible state stays distinguishable. Richer editable source remains authoritative over previews/exports.
++Consuming products must provide real audio/project state. Unknown, missing, stale and unavailable state stays distinguishable. Richer editable source remains authoritative over previews/exports.
+diff --git a/VISUAL_TEMPLATE_PRIORITY_MAP.md b/VISUAL_TEMPLATE_PRIORITY_MAP.md
+index 8af7caf..d376dca 100644
+--- a/VISUAL_TEMPLATE_PRIORITY_MAP.md
++++ b/VISUAL_TEMPLATE_PRIORITY_MAP.md
+@@ -1,6 +1,6 @@
+ # AXM Visual Template Expansion Priority Map
+ 
+-Status: v12 growth lane after verified v1–v11 merges.
++Status: v13 growth lane after verified v1–v12 merges.
+ 
+ The visual-template fabric grows where Universal Creation is likely to reuse the knowledge soon. This is a build priority, not canon: templates remain editable foundations and may be replaced when evidence supports a better structure.
+ 
+@@ -14,48 +14,49 @@ The visual-template fabric grows where Universal Creation is likely to reuse the
+ - video / program / stream overlay editor;
+ - evidence-aware infographic / diagram editor;
+ - world-map / lore-atlas editor;
+-- interactive visual-novel / branching narrative editor.
++- interactive visual-novel / branching narrative editor;
++- 3D showroom / gallery presentation.
+ 
+-## 3D showroom / gallery presentation — IMPLEMENTED IN THIS LANE
++## Music visualizer / album-art editor — IMPLEMENTED IN THIS LANE
+ 
+-Product: `visual.showroom.core`
++Product: `visual.music.core`
+ 
+ Implemented screens:
+ 
+-- `visual.showroom.project-hub`
+-- `visual.showroom.object-stage`
+-- `visual.showroom.orbit-camera`
+-- `visual.showroom.material-editor`
+-- `visual.showroom.variant-editor`
+-- `visual.showroom.annotation-editor`
+-- `visual.showroom.comparison`
+-- `visual.showroom.detail-view`
+-- `visual.showroom.turntable`
+-- `visual.showroom.review-export`
++- `visual.music.project-hub`
++- `visual.music.cover-editor`
++- `visual.music.track-identity`
++- `visual.music.analysis-waveform`
++- `visual.music.marker-timing`
++- `visual.music.reactive-editor`
++- `visual.music.tracklist-sequence`
++- `visual.music.crop-variants`
++- `visual.music.playback-preview`
++- `visual.music.review-export`
+ 
+ New primitives:
+ 
+-- `showroom-object`
+-- `orbit-rig`
+-- `camera-preset`
+-- `material-slot`
+-- `variant-option`
+-- `object-annotation`
+-- `comparison-object`
+-- `turntable-state`
+-- `measurement-callout`
+-- `showroom-export-target`
++- `music-track-source`
++- `music-analysis`
++- `beat-marker`
++- `waveform-source`
++- `cover-composition`
++- `reactive-visual-layer`
++- `music-marker-cue`
++- `album-variant`
++- `track-list-entry`
++- `music-export-target`
+ 
+-Style: `visual.showroom.studio`.
++Style: `visual.music.resonant`.
+ 
+-The central rule is object/source truth: exact asset/version, camera target, part/material binding, variant identity/availability, annotation target, comparison references and measurement value/unit/source remain inspectable. Camera/orbit/turntable presentation cannot silently rewrite source-object state.
++The central rule is audio/source truth: exact track identity/source/digest/duration stays authoritative. Waveform, analysis, beat markers and reactive state must be observed or explicitly derived and attributed. Album art remains editable source layers; no lyrics are inferred or manufactured by this pack.
+ 
+ ## Next high-value visual/creation families
+ 
+-1. **Music visualizer / album-art editor** — cover systems, track identity, waveform/beat-driven visual states, lyric-free timing/marker state and export crops.
+-2. **Presentation / explainer page systems** — reusable storytelling pages assembled from diagram, key-art, atlas and editor foundations.
+-3. **Character / creature reference-sheet editor** — turnaround views, expressions, materials, proportions, callouts and source/reference state for future games/comics.
+-4. **Vehicle / weapon configuration presentation** — attachment sockets, stat comparison, exploded/detail presentation and exact source/configuration identity for game garages/loadouts.
++1. **Presentation / explainer page systems** — reusable storytelling pages assembled from diagram, key-art, atlas, showroom and editor foundations.
++2. **Character / creature reference-sheet editor** — turnaround views, expressions, materials, proportions, callouts and source/reference state for future games/comics.
++3. **Vehicle / weapon configuration presentation** — attachment sockets, stat comparison, exploded/detail presentation and exact source/configuration identity for game garages/loadouts.
++4. **UI motion / transition archetypes** — reusable state transitions, focus motion, spatial continuity and reduced-motion variants across software/game products.
+ 
+ ## Cross-cutting rules
+ 
+@@ -71,7 +72,7 @@ Every family preserves the existing visual-template contract:
+ 
+ ## Immediate build order
+ 
+-1. exact-head verify `visual.showroom.core`;
+-2. merge v12 only when template + repository checks pass;
+-3. begin music visualizer / album-art editing from fresh main;
++1. exact-head verify `visual.music.core`;
++2. merge v13 only when template + repository checks pass;
++3. begin presentation / explainer page systems from fresh main;
+ 4. keep prioritizing reusable source-first editors over flat one-off outputs.
+diff --git a/src/axm_uc/visual_template_music.py b/src/axm_uc/visual_template_music.py
+new file mode 100644
+index 0000000..557b144
+--- /dev/null
++++ b/src/axm_uc/visual_template_music.py
+@@ -0,0 +1,88 @@
++"""Editable music visualizer, album-art and track-identity foundations."""
++from __future__ import annotations
++from copy import deepcopy
++from typing import Any
++
++
++def _merge(target: dict[str, Any], additions: dict[str, Any], label: str) -> None:
++    overlap=sorted(set(target)&set(additions))
++    if overlap: raise RuntimeError(f"music visual {label} collision: {', '.join(overlap)}")
++    target.update(deepcopy(additions))
++
++
++def extend_music_catalog(namespace: dict[str, Any]) -> None:
++    styles=namespace['STYLE_SYSTEMS']; primitives=namespace['PRIMITIVES']
++    screens=namespace['SCREEN_TEMPLATES']; products=namespace['PRODUCT_ARCHETYPES']
++    screen=namespace['_screen']; origin=namespace['_origin']
++
++    _merge(styles,{'visual.music.resonant':{
++        'intent':'track-first visual identity and reactive presentation with exact audio/source/analysis/timing state kept separate from generated visuals',
++        'tokens':{'canvas':'#0b0b12','surface':'#171825','surface_raised':'#25263a','text':'#f3f2f6','muted':'#aaa7b7','accent':'#bda0ff','warning':'#e5bc72','danger':'#df737d','line':'#48475d'},
++        'shape':{'panel_radius_ratio':0.016,'cut_ratio':0.003,'line_ratio':0.0012},
++        'type':{'display_weight':745,'body_weight':500,'metric_scale':1.5,'tracking':0.012},
++        'depth':{'layers':8,'shadow':'soft','glass':'restrained'},
++        'motion':{'fast_ms':80,'standard_ms':170,'slow_ms':340,'principle':'track and timing truth before reactive flourish'},
++    }},'style')
++
++    _merge(primitives,{
++        'music-track-source':{'role':'exact track/audio identity with source, version/digest and duration state','states':['loaded','selected','missing','unknown'],'identity_source_digest_duration_required':True},
++        'music-analysis':{'role':'derived audio analysis with algorithm/source/version/status explicit','states':['observed','derived','stale','unavailable'],'analysis_source_version_status_required':True},
++        'beat-marker':{'role':'timing marker bound to exact track position and derivation/source status','states':['observed','derived','manual','unknown'],'time_source_status_required':True},
++        'waveform-source':{'role':'waveform/energy representation bound to exact track and analysis source','states':['ready','selected','stale','missing'],'track_and_analysis_source_required':True},
++        'cover-composition':{'role':'editable album/single cover structure with independent art/type/identity layers','states':['draft','selected','ready','overflow'],'layers_must_remain_editable':True},
++        'reactive-visual-layer':{'role':'visual layer driven by explicit input mapping from track/analysis state','states':['active','selected','muted','unbound'],'input_mapping_required':True},
++        'music-marker-cue':{'role':'named non-lyrical timing/event cue bound to exact track time','states':['active','selected','disabled','unknown'],'name_time_source_required':True},
++        'album-variant':{'role':'exact cover/visual variant with base identity, changed properties and intended output','states':['active','alternate','archived','unknown'],'base_delta_target_required':True},
++        'track-list-entry':{'role':'ordered track reference with exact identity and sequence position','states':['ready','selected','missing','unknown'],'track_identity_and_order_required':True},
++        'music-export-target':{'role':'output target with exact track/variant/aspect/timing/provenance requirements','states':['ready','warning','blocked','exported'],'requirements_must_be_visible':True},
++    },'primitive')
++
++    q=['track identity, cover composition, timing markers, audio analysis and reactive visual mappings remain separately editable','reactive visuals never imply beat, waveform or analysis state that has not been observed or explicitly derived','cover artwork and typography remain richer editable source rather than flattened output','track-list ordering and visual variants retain exact identities and targets','derived playback previews and exports never replace source audio or project state']
++    def v(c,s,w): return {'compact':c,'standard':s,'wide':w}
++    additions={
++      'visual.music.project-hub':screen('visual.music.project-hub','Music visual project hub','creative.music','visual.music.resonant','browse tracks, cover/visual variants, analysis availability, sequences and output targets with missing source state visible',v(
++        {'header':(.03,.03,.94,.08),'tracks':(.03,.14,.94,.30),'variants':(.03,.47,.45,.38),'targets':(.51,.47,.46,.27),'actions':(.51,.77,.46,.08)},
++        {'header':(.02,.03,.96,.075),'tracks':(.02,.14,.22,.82),'variants':(.27,.14,.46,.82),'targets':(.76,.14,.22,.55),'actions':(.76,.72,.22,.14)},
++        {'header':(.015,.03,.97,.07),'tracks':(.015,.13,.20,.84),'variants':(.24,.13,.50,.84),'targets':(.77,.13,.215,.57),'actions':(.77,.73,.215,.14)}),tags=['visual','music','project','track'],quality=q),
++      'visual.music.cover-editor':screen('visual.music.cover-editor','Album and single cover editor','creative.music','visual.music.resonant','edit artwork, title/artist identity, typography and layer geometry independently across exact variants',v(
++        {'toolbar':(.02,.02,.96,.07),'cover':(.20,.11,.60,.56),'layers':(.02,.11,.16,.56),'properties':(.82,.11,.16,.56),'variants':(.02,.70,.45,.28),'checks':(.50,.70,.48,.28)},
++        {'toolbar':(.015,.02,.97,.065),'layers':(.015,.105,.16,.76),'cover':(.195,.105,.52,.76),'properties':(.735,.105,.25,.56),'variants':(.735,.69,.12,.17),'checks':(.865,.69,.12,.17)},
++        {'toolbar':(.012,.02,.976,.06),'layers':(.012,.10,.14,.78),'cover':(.17,.10,.56,.78),'properties':(.75,.10,.238,.58),'variants':(.75,.71,.112,.17),'checks':(.875,.71,.113,.17)}),tags=['visual','music','cover','editor'],math_hooks={'cover_safe_ratio':[0.04,0.12],'title_area_ratio':[0.12,0.38]},quality=q),
++      'visual.music.track-identity':screen('visual.music.track-identity','Track identity and source editor','creative.music','visual.music.resonant','inspect exact track source, digest/version, duration, metadata identity and missing/unknown source state',v(
++        {'header':(.03,.03,.94,.08),'identity':(.03,.14,.94,.24),'source':(.03,.41,.45,.45),'metadata':(.51,.41,.46,.34),'actions':(.51,.78,.46,.08)},
++        {'header':(.02,.03,.96,.075),'tracks':(.02,.14,.22,.72),'identity':(.27,.14,.46,.72),'source':(.76,.14,.22,.54),'actions':(.76,.71,.22,.15)},
++        {'header':(.015,.03,.97,.07),'tracks':(.015,.13,.20,.74),'identity':(.24,.13,.50,.74),'source':(.77,.13,.215,.55),'actions':(.77,.71,.215,.16)}),tags=['visual','music','track','source'],quality=q),
++      'visual.music.analysis-waveform':screen('visual.music.analysis-waveform','Waveform and audio-analysis editor','creative.music','visual.music.resonant','inspect waveform/energy/analysis representations with exact track, analysis source/version and availability visible',v(
++        {'header':(.03,.03,.94,.08),'waveform':(.03,.14,.94,.32),'analysis':(.03,.49,.58,.38),'details':(.64,.49,.33,.27),'actions':(.64,.79,.33,.08)},
++        {'header':(.02,.03,.96,.075),'analysis':(.02,.14,.28,.72),'waveform':(.33,.14,.44,.72),'details':(.80,.14,.18,.54),'actions':(.80,.71,.18,.15)},
++        {'header':(.015,.03,.97,.07),'analysis':(.015,.13,.26,.74),'waveform':(.305,.13,.47,.74),'details':(.795,.13,.19,.55),'actions':(.795,.71,.19,.16)}),tags=['visual','music','waveform','analysis'],quality=q),
++      'visual.music.marker-timing':screen('visual.music.marker-timing','Beat and timing-marker editor','creative.music','visual.music.resonant','edit observed/derived/manual beat and non-lyrical event markers at exact track times with source/status visible',v(
++        {'header':(.03,.03,.94,.08),'timeline':(.03,.14,.94,.31),'markers':(.03,.48,.58,.39),'details':(.64,.48,.33,.28),'actions':(.64,.79,.33,.08)},
++        {'header':(.02,.03,.96,.075),'markers':(.02,.14,.28,.72),'timeline':(.33,.14,.44,.72),'details':(.80,.14,.18,.54),'actions':(.80,.71,.18,.15)},
++        {'header':(.015,.03,.97,.07),'markers':(.015,.13,.26,.74),'timeline':(.305,.13,.47,.74),'details':(.795,.13,.19,.55),'actions':(.795,.71,.19,.16)}),tags=['visual','music','beat','timing'],math_hooks={'marker_spacing_ratio':[0.004,0.04],'timeline_label_ratio':[0.03,0.12]},quality=q),
++      'visual.music.reactive-editor':screen('visual.music.reactive-editor','Reactive visual mapping editor','creative.music','visual.music.resonant','bind visual layers to explicit track/analysis inputs and mappings without fabricating unavailable audio state',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.36),'layers':(.03,.53,.45,.34),'mapping':(.51,.53,.46,.25),'actions':(.51,.81,.46,.06)},
++        {'header':(.02,.03,.96,.075),'layers':(.02,.14,.23,.72),'preview':(.28,.14,.47,.72),'mapping':(.78,.14,.20,.54),'actions':(.78,.71,.20,.15)},
++        {'header':(.015,.03,.97,.07),'layers':(.015,.13,.21,.74),'preview':(.26,.13,.49,.74),'mapping':(.78,.13,.205,.55),'actions':(.78,.71,.205,.16)}),tags=['visual','music','reactive','visualizer'],quality=q),
++      'visual.music.tracklist-sequence':screen('visual.music.tracklist-sequence','Track-list and sequence editor','creative.music','visual.music.resonant','edit exact ordered track references and per-track visual identity without inferring missing source content',v(
++        {'header':(.03,.03,.94,.08),'tracks':(.03,.14,.55,.52),'preview':(.61,.14,.36,.36),'details':(.61,.53,.36,.25),'actions':(.03,.69,.55,.18)},
++        {'header':(.02,.03,.96,.075),'tracks':(.02,.14,.31,.72),'preview':(.36,.14,.39,.72),'details':(.78,.14,.20,.54),'actions':(.78,.71,.20,.15)},
++        {'header':(.015,.03,.97,.07),'tracks':(.015,.13,.29,.74),'preview':(.33,.13,.42,.74),'details':(.775,.13,.21,.55),'actions':(.775,.71,.21,.16)}),tags=['visual','music','tracklist','sequence'],quality=q),
++      'visual.music.crop-variants':screen('visual.music.crop-variants','Music visual format and crop variants','creative.music','visual.music.resonant','adapt exact cover/visual compositions to square, portrait, landscape and banner outputs without rewriting richer source layers',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.34),'variants':(.03,.51,.55,.34),'safe':(.61,.51,.36,.25),'actions':(.61,.79,.36,.06)},
++        {'header':(.02,.03,.96,.075),'variants':(.02,.14,.23,.72),'preview':(.28,.14,.47,.72),'safe':(.78,.14,.20,.54),'actions':(.78,.71,.20,.15)},
++        {'header':(.015,.03,.97,.07),'variants':(.015,.13,.21,.74),'preview':(.26,.13,.49,.74),'safe':(.78,.13,.205,.55),'actions':(.78,.71,.205,.16)}),tags=['visual','music','crop','variant'],quality=q),
++      'visual.music.playback-preview':screen('visual.music.playback-preview','Music visual playback preview','creative.music','visual.music.resonant','preview exact track/timing/visual mappings while showing analysis availability and current derived state separately from source',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.40),'timeline':(.03,.57,.58,.30),'state':(.64,.57,.33,.22),'actions':(.64,.82,.33,.05)},
++        {'header':(.02,.03,.96,.075),'timeline':(.02,.14,.24,.72),'preview':(.29,.14,.46,.72),'state':(.78,.14,.20,.54),'actions':(.78,.71,.20,.15)},
++        {'header':(.015,.03,.97,.07),'timeline':(.015,.13,.22,.74),'preview':(.265,.13,.49,.74),'state':(.78,.13,.205,.55),'actions':(.78,.71,.205,.16)}),tags=['visual','music','playback','preview'],quality=q),
++      'visual.music.review-export':screen('visual.music.review-export','Music visual review and export','creative.music','visual.music.resonant','review missing tracks/analysis, invalid mappings, cover overflow, variant targets and output requirements before derived export',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.30),'checks':(.03,.47,.58,.39),'targets':(.64,.47,.33,.27),'actions':(.64,.77,.33,.09)},
++        {'header':(.02,.03,.96,.075),'preview':(.02,.14,.38,.72),'checks':(.43,.14,.34,.72),'targets':(.79,.14,.19,.48),'actions':(.79,.65,.19,.21)},
++        {'header':(.015,.03,.97,.07),'preview':(.015,.13,.36,.74),'checks':(.40,.13,.37,.74),'targets':(.79,.13,.195,.49),'actions':(.79,.65,.195,.22)}),tags=['visual','music','review','export'],quality=q),
++    }
++    _merge(screens,additions,'screen')
++    ids=list(additions)
++    product={'schema':'axm.visual-product/v1','id':'visual.music.core','version':1,'name':'Editable music visualizer and album-art core','kind':'product','domain':'creative.music','tags':['visual','music','album','visualizer','product'],'origin':origin(),'style':'visual.music.resonant','intent':'source-first music visual identity and reactive editing with exact track, analysis, timing, cover, mapping, sequence and output state','screens':ids,'flow':[
++      ['visual.music.project-hub','visual.music.track-identity','inspect-track'],['visual.music.project-hub','visual.music.cover-editor','edit-cover'],['visual.music.track-identity','visual.music.analysis-waveform','inspect-analysis'],['visual.music.analysis-waveform','visual.music.marker-timing','edit-markers'],['visual.music.marker-timing','visual.music.reactive-editor','map-visuals'],['visual.music.project-hub','visual.music.tracklist-sequence','edit-sequence'],['visual.music.cover-editor','visual.music.crop-variants','adapt-formats'],['visual.music.reactive-editor','visual.music.playback-preview','preview'],['visual.music.playback-preview','visual.music.review-export','review-export']], 'quality':q}
++    _merge(products,{'visual.music.core':product},'product')
+diff --git a/src/axm_uc/visual_templates.py b/src/axm_uc/visual_templates.py
+index 4d51106..4662de8 100644
+--- a/src/axm_uc/visual_templates.py
++++ b/src/axm_uc/visual_templates.py
+@@ -21,8 +21,9 @@ from .visual_template_diagram import extend_diagram_catalog as _extend_diagram_c
+ from .visual_template_atlas import extend_atlas_catalog as _extend_atlas_catalog
+ from .visual_template_novel import extend_novel_catalog as _extend_novel_catalog
+ from .visual_template_showroom import extend_showroom_catalog as _extend_showroom_catalog
++from .visual_template_music import extend_music_catalog as _extend_music_catalog
+ 
+-_COMPOSITION=("visual_template_growth","visual_template_game_systems","visual_template_creative_narrative","visual_template_axm_system","visual_template_game_shared","visual_template_keyart","visual_template_cards","visual_template_cinematic","visual_template_video_overlay","visual_template_diagram","visual_template_atlas","visual_template_novel","visual_template_showroom")
++_COMPOSITION=("visual_template_growth","visual_template_game_systems","visual_template_creative_narrative","visual_template_axm_system","visual_template_game_shared","visual_template_keyart","visual_template_cards","visual_template_cinematic","visual_template_video_overlay","visual_template_diagram","visual_template_atlas","visual_template_novel","visual_template_showroom","visual_template_music")
+ _applied=getattr(_core,"_AXM_VISUAL_COMPOSITION",None)
+ if _applied is None:
+     _extend_catalog(vars(_core))
+@@ -38,6 +39,7 @@ if _applied is None:
+     _extend_atlas_catalog(vars(_core))
+     _extend_novel_catalog(vars(_core))
+     _extend_showroom_catalog(vars(_core))
++    _extend_music_catalog(vars(_core))
+     _core._AXM_VISUAL_COMPOSITION=_COMPOSITION
+ elif _applied != _COMPOSITION:
+     raise RuntimeError("visual template composition changed inside a live process; restart with one exact catalog")
+diff --git a/tests/test_visual_templates.py b/tests/test_visual_templates.py
+index 23d078e..a0fcb62 100644
+--- a/tests/test_visual_templates.py
++++ b/tests/test_visual_templates.py
+@@ -8,18 +8,18 @@ from axm_stickers import Registry
+ from axm_uc import visual_templates as vt
+ 
+ SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
+-PRODUCTS=('game.racing.full','game.coop.action','game.rts.command','game.system.shell','game.shared.core','editor.creative.core','comic.narrative.core','axm.system.shell','visual.keyart.core','visual.cards.core','visual.cinematic.core','visual.broadcast.core','visual.diagram.core','visual.atlas.core','visual.novel.core','visual.showroom.core')
++PRODUCTS=('game.racing.full','game.coop.action','game.rts.command','game.system.shell','game.shared.core','editor.creative.core','comic.narrative.core','axm.system.shell','visual.keyart.core','visual.cards.core','visual.cinematic.core','visual.broadcast.core','visual.diagram.core','visual.atlas.core','visual.novel.core','visual.showroom.core','visual.music.core')
+ 
+ class VisualTemplateTests(unittest.TestCase):
+     def test_catalog_counts_and_products(self):
+         counts=vt.validate_catalog()
+-        self.assertEqual(counts,{'styles':20,'primitives':146,'screens':184,'products':18})
++        self.assertEqual(counts,{'styles':21,'primitives':156,'screens':194,'products':19})
+         self.assertEqual(vt.CATALOG_COMPOSITION['counts'],counts)
+         ids={p['id'] for p in vt.catalog()['products']}
+         self.assertTrue(set(PRODUCTS)|{'game.racing.performance','software.creator.studio'} <= ids)
+ 
+     def test_all_geometry_and_major_variants(self):
+-        prefixes=('game.','editor.creative.','comic.narrative.','axm.system.','visual.keyart.','visual.cards.','visual.cinematic.','visual.broadcast.','visual.diagram.','visual.atlas.','visual.novel.','visual.showroom.')
++        prefixes=('game.','editor.creative.','comic.narrative.','axm.system.','visual.keyart.','visual.cards.','visual.cinematic.','visual.broadcast.','visual.diagram.','visual.atlas.','visual.novel.','visual.showroom.','visual.music.')
+         for tid,definition in vt.SCREEN_TEMPLATES.items():
+             if tid.startswith(prefixes): self.assertEqual(set(definition['variants']),{'compact','standard','wide'},tid)
+             for width,height in SIZES:
+@@ -29,22 +29,22 @@ class VisualTemplateTests(unittest.TestCase):
+                     self.assertLessEqual(x+w,width+1e-6); self.assertLessEqual(y+h,height+1e-6)
+ 
+     def test_existing_product_depth_is_retained(self):
+-        expected={'game.racing.full':19,'game.system.shell':18,'game.shared.core':12,'editor.creative.core':12,'comic.narrative.core':10,'axm.system.shell':12,'visual.keyart.core':10,'visual.cards.core':11,'visual.cinematic.core':10,'visual.broadcast.core':10,'visual.diagram.core':10,'visual.atlas.core':10,'visual.novel.core':10}
++        expected={'game.racing.full':19,'game.system.shell':18,'game.shared.core':12,'editor.creative.core':12,'comic.narrative.core':10,'axm.system.shell':12,'visual.keyart.core':10,'visual.cards.core':11,'visual.cinematic.core':10,'visual.broadcast.core':10,'visual.diagram.core':10,'visual.atlas.core':10,'visual.novel.core':10,'visual.showroom.core':10}
+         for pid,count in expected.items(): self.assertEqual(len(vt.get(pid)['screens']),count)
+ 
+-    def test_showroom_product_preserves_object_and_presentation_truth(self):
+-        product=vt.get('visual.showroom.core')
+-        required={'visual.showroom.project-hub','visual.showroom.object-stage','visual.showroom.orbit-camera','visual.showroom.material-editor','visual.showroom.variant-editor','visual.showroom.annotation-editor','visual.showroom.comparison','visual.showroom.detail-view','visual.showroom.turntable','visual.showroom.review-export'}
++    def test_music_product_preserves_track_analysis_timing_and_visual_truth(self):
++        product=vt.get('visual.music.core')
++        required={'visual.music.project-hub','visual.music.cover-editor','visual.music.track-identity','visual.music.analysis-waveform','visual.music.marker-timing','visual.music.reactive-editor','visual.music.tracklist-sequence','visual.music.crop-variants','visual.music.playback-preview','visual.music.review-export'}
+         self.assertEqual(set(product['screens']),required)
+-        self.assertEqual(product['style'],'visual.showroom.studio')
++        self.assertEqual(product['style'],'visual.music.resonant')
+         quality=' '.join(product['quality']).lower()
+         self.assertIn('separately editable',quality)
+-        self.assertIn('source asset identity',quality)
+-        self.assertIn('availability',quality)
+-        self.assertIn('value, unit and source',quality)
+-        self.assertIn('showroom source state',quality)
+-        self.assertIn('hero_coverage_ratio',vt.get('visual.showroom.object-stage')['math_hooks'])
+-        self.assertIn('detail_coverage_ratio',vt.get('visual.showroom.detail-view')['math_hooks'])
++        self.assertIn('explicitly derived',quality)
++        self.assertIn('richer editable source',quality)
++        self.assertIn('exact identities',quality)
++        self.assertIn('source audio',quality)
++        self.assertIn('cover_safe_ratio',vt.get('visual.music.cover-editor')['math_hooks'])
++        self.assertIn('marker_spacing_ratio',vt.get('visual.music.marker-timing')['math_hooks'])
+ 
+     def test_products_resolve_and_previews_parse(self):
+         for pid in PRODUCTS:
+@@ -61,28 +61,29 @@ class VisualTemplateTests(unittest.TestCase):
+         with tempfile.TemporaryDirectory() as td:
+             with Registry(Path(td)/'stickers.sqlite') as registry:
+                 pins=vt.install_builtins(registry)
+-                self.assertEqual(len(pins),202)
+-                showroom=registry.search(adapter=vt.ADAPTER,tag='showroom',limit=100)['entries']
+-                self.assertEqual(len(showroom),10)
+-                d=registry.get('visual.visual.showroom.object-stage',1)
++                self.assertEqual(len(pins),213)
++                music=registry.search(adapter=vt.ADAPTER,tag='music',limit=100)['entries']
++                self.assertEqual(len(music),10)
++                d=registry.get('visual.visual.music.track-identity',1)
+                 self.assertEqual(d['recipe']['visual_template']['schema'],vt.SCHEMA)
+                 self.assertNotIn('"latest"',json.dumps(d,sort_keys=True))
+ 
+-    def test_showroom_object_camera_material_variant_and_measurement_contracts(self):
+-        required={'showroom-object','orbit-rig','camera-preset','material-slot','variant-option','object-annotation','comparison-object','turntable-state','measurement-callout','showroom-export-target'}
++    def test_music_source_analysis_timing_reactive_and_export_contracts(self):
++        required={'music-track-source','music-analysis','beat-marker','waveform-source','cover-composition','reactive-visual-layer','music-marker-cue','album-variant','track-list-entry','music-export-target'}
+         self.assertTrue(required <= set(vt.PRIMITIVES))
+-        self.assertTrue(vt.PRIMITIVES['showroom-object']['source_identity_version_required'])
+-        self.assertTrue(vt.PRIMITIVES['orbit-rig']['target_pivot_range_required'])
+-        self.assertTrue(vt.PRIMITIVES['camera-preset']['projection_lens_transform_required'])
+-        self.assertTrue(vt.PRIMITIVES['material-slot']['part_material_source_required'])
+-        self.assertTrue(vt.PRIMITIVES['variant-option']['identity_properties_availability_required'])
+-        self.assertTrue(vt.PRIMITIVES['object-annotation']['target_anchor_content_required'])
+-        self.assertTrue(vt.PRIMITIVES['comparison-object']['reference_and_fields_required'])
+-        self.assertTrue(vt.PRIMITIVES['turntable-state']['target_angle_speed_required'])
+-        self.assertTrue(vt.PRIMITIVES['measurement-callout']['value_unit_source_required'])
+-        self.assertTrue(vt.PRIMITIVES['showroom-export-target']['requirements_must_be_visible'])
++        self.assertTrue(vt.PRIMITIVES['music-track-source']['identity_source_digest_duration_required'])
++        self.assertTrue(vt.PRIMITIVES['music-analysis']['analysis_source_version_status_required'])
++        self.assertTrue(vt.PRIMITIVES['beat-marker']['time_source_status_required'])
++        self.assertTrue(vt.PRIMITIVES['waveform-source']['track_and_analysis_source_required'])
++        self.assertTrue(vt.PRIMITIVES['cover-composition']['layers_must_remain_editable'])
++        self.assertTrue(vt.PRIMITIVES['reactive-visual-layer']['input_mapping_required'])
++        self.assertTrue(vt.PRIMITIVES['music-marker-cue']['name_time_source_required'])
++        self.assertTrue(vt.PRIMITIVES['album-variant']['base_delta_target_required'])
++        self.assertTrue(vt.PRIMITIVES['track-list-entry']['track_identity_and_order_required'])
++        self.assertTrue(vt.PRIMITIVES['music-export-target']['requirements_must_be_visible'])
+ 
+     def test_prior_source_boundaries_remain_present(self):
++        self.assertTrue(vt.PRIMITIVES['showroom-object']['source_identity_version_required'])
+         self.assertTrue(vt.PRIMITIVES['save-checkpoint']['state_identity_digest_required'])
+         self.assertTrue(vt.PRIMITIVES['map-coordinate']['system_source_precision_required'])
+         self.assertTrue(vt.PRIMITIVES['relationship-edge']['endpoints_and_relation_type_required'])
+@@ -93,12 +94,12 @@ class VisualTemplateTests(unittest.TestCase):
+         self.assertTrue(vt.PRIMITIVES['truth-state']['source_must_be_visible'])
+ 
+     def test_copy_safety_variant_rejection_and_bad_geometry(self):
+-        a=vt.resolve('visual.showroom.object-stage',1920,1080); b=vt.resolve('visual.showroom.object-stage',1920,1080)
++        a=vt.resolve('visual.music.analysis-waveform',1920,1080); b=vt.resolve('visual.music.analysis-waveform',1920,1080)
+         self.assertEqual(a,b)
+-        copy=vt.get('visual.showroom.object-stage'); copy['name']='changed'
+-        self.assertNotEqual(vt.get('visual.showroom.object-stage')['name'],'changed')
+-        with self.assertRaises(ValueError): vt.resolve('visual.showroom.object-stage',1920,1080,variant='unknown')
+-        bad=vt.get('visual.showroom.object-stage'); bad['variants']['standard']['stage']=[.9,.9,.2,.2]
++        copy=vt.get('visual.music.analysis-waveform'); copy['name']='changed'
++        self.assertNotEqual(vt.get('visual.music.analysis-waveform')['name'],'changed')
++        with self.assertRaises(ValueError): vt.resolve('visual.music.analysis-waveform',1920,1080,variant='unknown')
++        bad=vt.get('visual.music.analysis-waveform'); bad['variants']['standard']['waveform']=[.9,.9,.2,.2]
+         with self.assertRaises(ValueError): vt.validate_screen(bad)
+ 
+     def test_exact_sticker_slot_binding_is_retained(self):
+diff --git a/tools/visual_template_proof.py b/tools/visual_template_proof.py
+index 91e4bb0..225f5da 100644
+--- a/tools/visual_template_proof.py
++++ b/tools/visual_template_proof.py
+@@ -8,7 +8,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src'))
+ from axm_uc import visual_templates as vt
+ 
+ SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
+-PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell","visual.keyart.core","visual.cards.core","visual.cinematic.core","visual.broadcast.core","visual.diagram.core","visual.atlas.core","visual.novel.core","visual.showroom.core")
++PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell","visual.keyart.core","visual.cards.core","visual.cinematic.core","visual.broadcast.core","visual.diagram.core","visual.atlas.core","visual.novel.core","visual.showroom.core","visual.music.core")
+ 
+ def _write(project,target):
+     target.mkdir(); out=[]
+@@ -25,7 +25,7 @@ def main(argv):
+     out.mkdir(parents=True)
+     try:
+         counts=vt.validate_catalog()
+-        if counts!={'styles':20,'primitives':146,'screens':184,'products':18}: raise AssertionError(counts)
++        if counts!={'styles':21,'primitives':156,'screens':194,'products':19}: raise AssertionError(counts)
+         evidence=[]
+         for pid in PRODUCTS:
+             expected=vt.get(pid)
+@@ -53,27 +53,28 @@ def main(argv):
+             ('visual.atlas.core',1920,1080,'atlas','AXM World-Map and Lore-Atlas Foundation'),
+             ('visual.novel.core',1920,1080,'visual-novel','AXM Branching Visual-Novel Foundation'),
+             ('visual.showroom.core',1920,1080,'showroom','AXM 3D Showroom and Gallery Foundation'),
++            ('visual.music.core',1920,1080,'music','AXM Music Visualizer and Album-Art Foundation'),
+         )
+         outputs=[]
+         for pid,w,h,folder,title in galleries: outputs+=_write(vt.product_project(pid,w,h,title),out/folder)
+         outputs+=_write(vt.screen_project('product.mobile.home',1080,1920,'AXM Mobile Foundation'),out/'mobile-home')
+-        product=vt.get('visual.showroom.core')
+-        required={'visual.showroom.project-hub','visual.showroom.object-stage','visual.showroom.orbit-camera','visual.showroom.material-editor','visual.showroom.variant-editor','visual.showroom.annotation-editor','visual.showroom.comparison','visual.showroom.detail-view','visual.showroom.turntable','visual.showroom.review-export'}
+-        if set(product['screens'])!=required: raise AssertionError('showroom pack lost required surfaces')
++        product=vt.get('visual.music.core')
++        required={'visual.music.project-hub','visual.music.cover-editor','visual.music.track-identity','visual.music.analysis-waveform','visual.music.marker-timing','visual.music.reactive-editor','visual.music.tracklist-sequence','visual.music.crop-variants','visual.music.playback-preview','visual.music.review-export'}
++        if set(product['screens'])!=required: raise AssertionError('music visual pack lost required surfaces')
+         checks={
+-            'object_source_identity_version':vt.PRIMITIVES['showroom-object']['source_identity_version_required'],
+-            'orbit_target_pivot_range':vt.PRIMITIVES['orbit-rig']['target_pivot_range_required'],
+-            'camera_projection_lens_transform':vt.PRIMITIVES['camera-preset']['projection_lens_transform_required'],
+-            'material_part_source':vt.PRIMITIVES['material-slot']['part_material_source_required'],
+-            'variant_identity_properties_availability':vt.PRIMITIVES['variant-option']['identity_properties_availability_required'],
+-            'annotation_target_anchor_content':vt.PRIMITIVES['object-annotation']['target_anchor_content_required'],
+-            'comparison_reference_fields':vt.PRIMITIVES['comparison-object']['reference_and_fields_required'],
+-            'turntable_target_angle_speed':vt.PRIMITIVES['turntable-state']['target_angle_speed_required'],
+-            'measurement_value_unit_source':vt.PRIMITIVES['measurement-callout']['value_unit_source_required'],
+-            'export_requirements_visible':vt.PRIMITIVES['showroom-export-target']['requirements_must_be_visible'],
++            'track_identity_source_digest_duration':vt.PRIMITIVES['music-track-source']['identity_source_digest_duration_required'],
++            'analysis_source_version_status':vt.PRIMITIVES['music-analysis']['analysis_source_version_status_required'],
++            'beat_time_source_status':vt.PRIMITIVES['beat-marker']['time_source_status_required'],
++            'waveform_track_analysis_source':vt.PRIMITIVES['waveform-source']['track_and_analysis_source_required'],
++            'cover_layers_editable':vt.PRIMITIVES['cover-composition']['layers_must_remain_editable'],
++            'reactive_input_mapping':vt.PRIMITIVES['reactive-visual-layer']['input_mapping_required'],
++            'marker_name_time_source':vt.PRIMITIVES['music-marker-cue']['name_time_source_required'],
++            'album_variant_base_delta_target':vt.PRIMITIVES['album-variant']['base_delta_target_required'],
++            'tracklist_identity_order':vt.PRIMITIVES['track-list-entry']['track_identity_and_order_required'],
++            'export_requirements_visible':vt.PRIMITIVES['music-export-target']['requirements_must_be_visible'],
+         }
+-        if not all(checks.values()): raise AssertionError('showroom object/presentation contract failed')
+-        receipt={'schema':'axm.visual-template-proof/v14','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'showroom_checks':checks,'truth':'Offline structural evidence only. Renderer fidelity, geometry correctness, physical scale, material realism, lighting quality, product availability and aesthetic acceptance were not observed.'}
++        if not all(checks.values()): raise AssertionError('music source/analysis/reactive contract failed')
++        receipt={'schema':'axm.visual-template-proof/v15','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'music_checks':checks,'truth':'Offline structural evidence only. Audio-analysis correctness, musical timing quality, rights/licensing, mastering quality, renderer fidelity and aesthetic acceptance were not observed.'}
+         (out/'receipt.json').write_text(json.dumps(receipt,indent=2,sort_keys=True),encoding='utf-8')
+         print(json.dumps(receipt,indent=2,sort_keys=True))
+     except BaseException:

@@ -1,0 +1,176 @@
+{
+  "capsule_id": "93f4f006909144953c1645f2098d300ac2c4b851782eb9f45e918a9af9364d52",
+  "evidence": {
+    "files": [
+      {
+        "additions": 39,
+        "binary": false,
+        "content_sha256": "6ea0eca8084ae4a2815f114f18c9670277f3cbd511b987e4ff7469a3a5143fef",
+        "deletions": 0,
+        "path": "MOTION_TEMPLATE_PACK.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Source-Bound UI Motion / Transition Template Pack",
+          "Surfaces",
+          "State-truth contract",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 41,
+        "binary": false,
+        "content_sha256": "2cc4f24558f96cfc9ab8cfcc1530db266a4255e971dceb5876a474bee36eea9b",
+        "deletions": 41,
+        "path": "VISUAL_TEMPLATE_FABRIC.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Current v17 candidate census",
+          "Source-bound UI motion foundation",
+          "Registry and identity",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 39,
+        "binary": false,
+        "content_sha256": "2385bc698463fed9e13c56f33f7ec1a5a905ac30cf320c69a64b05fc66079d4c",
+        "deletions": 45,
+        "path": "VISUAL_TEMPLATE_PRIORITY_MAP.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "AXM Visual Template Expansion Priority Map",
+          "UI motion / transition archetypes \u2014 IMPLEMENTED IN THIS LANE",
+          "Next high-value visual/creation families",
+          "Cross-cutting rules",
+          "Immediate build order"
+        ]
+      },
+      {
+        "additions": 88,
+        "binary": false,
+        "content_sha256": "02502e9079c187ab1d9edaa83e7f41a76e5dd750737187b270f7b5d4f0c8c6de",
+        "deletions": 0,
+        "path": "src/axm_uc/visual_template_motion.py",
+        "status": "A",
+        "symbols": [
+          "_merge",
+          "extend_motion_catalog"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 3,
+        "binary": false,
+        "content_sha256": "f6cd24bbde47ef9ba0757f3d15d57262b6c6dfee07bda543e33d3245b242affc",
+        "deletions": 1,
+        "path": "src/axm_uc/visual_templates.py",
+        "status": "M",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 38,
+        "binary": false,
+        "content_sha256": "9a5eca1b41669ebd92c9c8b73a2137fb93cf44834d1999a21d3027cd3dfa3d9d",
+        "deletions": 64,
+        "path": "tests/test_visual_templates.py",
+        "status": "M",
+        "symbols": [
+          "VisualTemplateTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 27,
+        "binary": false,
+        "content_sha256": "e55bf0cff49682c7c77e85df9dec389699b139b4b61d939e8da25127fd6015d9",
+        "deletions": 24,
+        "path": "tools/visual_template_proof.py",
+        "status": "M",
+        "symbols": [
+          "_write",
+          "main"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "2e883741c76cecdebd62ec8d94ff0c307c90c4fdf5cdc2359dfa9c9cea7c3e6d"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "add",
+      "archetypes",
+      "axm",
+      "bound",
+      "boundary",
+      "build",
+      "candidate",
+      "catalog",
+      "census",
+      "contract",
+      "creation",
+      "creation-machine",
+      "cross",
+      "current",
+      "cutting",
+      "expansion",
+      "extend",
+      "fabric",
+      "families",
+      "foundation",
+      "high",
+      "identity",
+      "immediate",
+      "implemented",
+      "lane",
+      "map",
+      "merge",
+      "motion",
+      "next",
+      "order",
+      "pack",
+      "priority",
+      "proof",
+      "registry",
+      "rules",
+      "source",
+      "standalone",
+      "state",
+      "surfaces",
+      "template",
+      "templates",
+      "this",
+      "tools",
+      "transition",
+      "truth",
+      "universal-creation",
+      "v17",
+      "value",
+      "visual",
+      "write"
+    ]
+  },
+  "source": {
+    "base": "4ba02b85f0154110a478491067b772dc35d4c1cb",
+    "commit_subject": "Add source-bound UI motion and transition templates",
+    "head": "007c7c1850e6670f66398f15ff61391d4f46d839",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

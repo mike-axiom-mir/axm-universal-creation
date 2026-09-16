@@ -1,0 +1,612 @@
+{
+  "capsule_id": "2657d406bda2945b20e7beb1957380997a5187d191f1ae9a529a94e9a73aabba",
+  "evidence": {
+    "files": [
+      {
+        "additions": 19,
+        "binary": false,
+        "content_sha256": "6c2c6aa1c537242b39a697547ada85a3611589510588d27c8ceefa8ae4086d0a",
+        "deletions": 0,
+        "path": "README.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Core rule",
+          "Vehicle presentation tools",
+          "Standalone media workbench"
+        ]
+      },
+      {
+        "additions": 45,
+        "binary": false,
+        "content_sha256": "e46259cb76abddfef1584c3833de9a1103443d6c338f120d14b535f13a621b1b",
+        "deletions": 0,
+        "path": "docs/KNOWN_MEASURES.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Source-backed known measures",
+          "Using a known measure",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 86,
+        "binary": false,
+        "content_sha256": "9536030de4155cd61b2ae07ef94090b0229fc6033506e83d6818b6e6f4f7b2f7",
+        "deletions": 0,
+        "path": "docs/MATERIAL_UV_EVIDENCE.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Static material UV / texel-density evidence",
+          "What is measured",
+          "Fail-closed / HOLD boundaries",
+          "Truth boundary",
+          "Focused regression"
+        ]
+      },
+      {
+        "additions": 101,
+        "binary": false,
+        "content_sha256": "a3dccbbc9c3498fca223ecda430db5598c5e7eaed7061cca4a5adc1e4d212fa9",
+        "deletions": 0,
+        "path": "docs/MATH_FIRST_CREATION.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Math-first creation",
+          "Dimension-aware math",
+          "Truth propagation",
+          "Local relation families",
+          "Binding boundary",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 61,
+        "binary": false,
+        "content_sha256": "7206b82d9a5d0f2dc2d4745af36788b772303b5c2e79493350dea6d43d89edd4",
+        "deletions": 0,
+        "path": "docs/MESH_TOPOLOGY_INSPECTOR.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Mesh Topology Inspector v0",
+          "Input",
+          "Reported evidence",
+          "Truth boundary",
+          "Initial structural fixtures",
+          "Integration boundary"
+        ]
+      },
+      {
+        "additions": 11,
+        "binary": false,
+        "content_sha256": "79d0853654d11ee1c058df1fd0f46c34266891c3ac040b3d46f4dbd9fbf65f43",
+        "deletions": 0,
+        "path": "docs/RIGID_VEHICLE_MOTION.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Rigid vehicle presentation motion"
+        ]
+      },
+      {
+        "additions": 10,
+        "binary": false,
+        "content_sha256": "d7ec75f60b0f27a8f7227c4b2b7038433a654356dfeb8d954a058f749de51628",
+        "deletions": 0,
+        "path": "docs/SOFTWARE_GLB_PREVIEW.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Software GLB preview"
+        ]
+      },
+      {
+        "additions": 20,
+        "binary": false,
+        "content_sha256": "dec2f853b028600d1c72492627ef0b006352ece78f6146d5ef414521fd233826",
+        "deletions": 0,
+        "path": "docs/VEHICLE_ART_DIRECTION.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Vehicle art direction"
+        ]
+      },
+      {
+        "additions": 8,
+        "binary": false,
+        "content_sha256": "ba1bb4f095d06435b7930cca9fe9c6ff4c9f44082f8c6d8cc07769e9d3daf6c0",
+        "deletions": 0,
+        "path": "src/axm_stickers/__init__.py",
+        "status": "M",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 251,
+        "binary": false,
+        "content_sha256": "af556074d0e63cda313ebad06928084fe7b0096cebcd8dc1716bbfb1c9132428",
+        "deletions": 0,
+        "path": "src/axm_stickers/domains.py",
+        "status": "A",
+        "symbols": [
+          "_parameter",
+          "domain_catalog",
+          "domain_family"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 540,
+        "binary": false,
+        "content_sha256": "9a6d2aa9b3d7c7d16c84edd49d0d362c969ec5d5791d8d83581bb8cadc7861b2",
+        "deletions": 0,
+        "path": "src/axm_stickers/math.py",
+        "status": "A",
+        "symbols": [
+          "_dims",
+          "Unit",
+          "Quantity",
+          "_combine_dims",
+          "_scale_dims",
+          "_identifier",
+          "_finite",
+          "_truth",
+          "_unit",
+          "_dimension_json",
+          "unit_info",
+          "convert",
+          "_quantity",
+          "_as_unit",
+          "_parameter_spec",
+          "_expr_dependencies",
+          "_eval",
+          "_derived_spec",
+          "_constraint",
+          "_combined_truth",
+          "validate_family",
+          "resolve_family",
+          "value_map"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 152,
+        "binary": false,
+        "content_sha256": "a460cda2494aaf42a3da32eab1724cf6cb09cdba96e79684ad83129a5b0a4f40",
+        "deletions": 0,
+        "path": "src/axm_stickers/measures.py",
+        "status": "A",
+        "symbols": [
+          "_text",
+          "validate_measure",
+          "_record",
+          "known_measure",
+          "measure_catalog",
+          "measure_value",
+          "resolve_family_with_measures"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 199,
+        "binary": false,
+        "content_sha256": "dd24d427ddcf2ea7418de5dbb343b0608f07acb6c6de8d84ac3bfb1222191124",
+        "deletions": 0,
+        "path": "src/axm_uc/hard_surface_frames.py",
+        "status": "A",
+        "symbols": [
+          "_unit",
+          "_dot",
+          "_cross",
+          "_angle_deg",
+          "validate_frame_plan",
+          "_basis",
+          "review_hard_surface_frames"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 378,
+        "binary": false,
+        "content_sha256": "79581e29cb772c417ab8ce2af2f19d7593efba365c8ac6d0eaf717c2eb5629f4",
+        "deletions": 0,
+        "path": "src/axm_uc/material_uv_evidence.py",
+        "status": "A",
+        "symbols": [
+          "_uv_accessor",
+          "_view_bytes",
+          "_png_dimensions",
+          "_jpeg_dimensions",
+          "_image_record",
+          "_texture_binding",
+          "_material_bindings",
+          "_twice_area_3d",
+          "_twice_area_uv",
+          "_weighted_percentile",
+          "_density_summary",
+          "inspect_material_uv_density"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 165,
+        "binary": false,
+        "content_sha256": "b57b3dd0f40e5e9f4afdd844d4ffc3ed49f80530f976dbc6392bc4b47dff1685",
+        "deletions": 0,
+        "path": "src/axm_uc/math_creation.py",
+        "status": "A",
+        "symbols": [
+          "_path_target",
+          "_family_from_spec",
+          "bind_request",
+          "execute",
+          "_read_request",
+          "main"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 234,
+        "binary": false,
+        "content_sha256": "52720a0251f088f8f3bdacd5b7b409770d35002ec465d715c198c025fdd21454",
+        "deletions": 0,
+        "path": "src/axm_uc/mesh_topology.py",
+        "status": "A",
+        "symbols": [
+          "MeshTopologyError",
+          "_point",
+          "_indices",
+          "_weld_vertices",
+          "inspect_mesh_topology"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 26,
+        "binary": false,
+        "content_sha256": "7bf84543acaccd928831ebdd79a4cab932f6d2515b78d0f2200d0785003c505d",
+        "deletions": 7,
+        "path": "src/axm_uc/procedural_3d.py",
+        "status": "M",
+        "symbols": [
+          "procedural_3d_summary",
+          "_normalize_spec",
+          "_normalize_surface_spec",
+          "_encode_glb",
+          "verify_glb"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 235,
+        "binary": false,
+        "content_sha256": "d68920373909f7eec013663a7a9fe1043d4e311d736d3f7c20f420b58a756397",
+        "deletions": 0,
+        "path": "src/axm_uc/rigid_vehicle_motion.py",
+        "status": "A",
+        "symbols": [
+          "_canonical",
+          "_digest",
+          "_number",
+          "_vector",
+          "_matrix",
+          "rigid_vehicle_motion_catalog",
+          "_contract",
+          "_sample",
+          "compile_rigid_vehicle_motion",
+          "publish_rigid_vehicle_motion"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 386,
+        "binary": false,
+        "content_sha256": "51ccdbf55d861c23fe57ee0189a35ec861e09b53a00c2a07b121af54df3ed0c1",
+        "deletions": 0,
+        "path": "src/axm_uc/software_glb_preview.py",
+        "status": "A",
+        "symbols": [
+          "software_glb_preview_catalog",
+          "_number",
+          "_integer",
+          "_unit",
+          "_cross",
+          "_sub",
+          "_dot",
+          "_accessor",
+          "_scene_triangles",
+          "render_glb_preview",
+          "publish_glb_preview"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 492,
+        "binary": false,
+        "content_sha256": "d6f55878d2c0b333acb7c232db3e7ffbe7b8487e6117b331dddd0337637aa258",
+        "deletions": 0,
+        "path": "src/axm_uc/vehicle_art_direction.py",
+        "status": "A",
+        "symbols": [
+          "_canonical",
+          "_digest",
+          "_object",
+          "_number",
+          "_integer",
+          "_color",
+          "_rgba",
+          "_vector",
+          "_unit",
+          "_cross",
+          "_normalize_marking",
+          "_normalize_upgrade",
+          "vehicle_art_direction_catalog",
+          "compile_vehicle_art_direction",
+          "_point",
+          "_strip",
+          "_marking_primitives",
+          "_mix",
+          "_noise",
+          "_base_slot",
+          "_upgrade_for",
+          "_styled_material",
+          "apply_vehicle_art_direction",
+          "publish_vehicle_art_direction"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 54,
+        "binary": false,
+        "content_sha256": "0e250da6077b9598f0f9ad6117bbb5f3300fb1110e67d46af1a695dc5f01c03d",
+        "deletions": 0,
+        "path": "src/axm_uc/visual_assets_cli.py",
+        "status": "M",
+        "symbols": [
+          "combined_catalog",
+          "build_parser",
+          "main"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 5,
+        "binary": false,
+        "content_sha256": "fb095e5432ea3dd56f04d0f5a96c6bf5722e26c5b66fe51846d10cdbb86697a8",
+        "deletions": 1,
+        "path": "tests/test_grammar_workbench.py",
+        "status": "M",
+        "symbols": [
+          "GrammarWorkbenchTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 137,
+        "binary": false,
+        "content_sha256": "9ece3b966af31e1fbc7b8db8800e288b0df095fb71340727250ebc9b72d7d8a4",
+        "deletions": 0,
+        "path": "tests/test_hard_surface_frames.py",
+        "status": "A",
+        "symbols": [
+          "glb",
+          "plan",
+          "HardSurfaceFrameTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 104,
+        "binary": false,
+        "content_sha256": "0870bcd5c6086091cff917272ffdd50997d5b1adf81d021a1ff1fb36df74be9b",
+        "deletions": 0,
+        "path": "tests/test_known_measures.py",
+        "status": "A",
+        "symbols": [
+          "KnownMeasureTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 174,
+        "binary": false,
+        "content_sha256": "4c80fe5b110f6a32e4eba53bcf2b6aa5ccbd43930784fd7776c17cb038887a90",
+        "deletions": 0,
+        "path": "tests/test_material_uv_evidence.py",
+        "status": "A",
+        "symbols": [
+          "_chunk",
+          "png",
+          "fixture",
+          "encode",
+          "MaterialUVEvidenceTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 124,
+        "binary": false,
+        "content_sha256": "a707f6f9ba9934617ee2186708e5e4144c64a14b4f5572c463062feccbeb225a",
+        "deletions": 0,
+        "path": "tests/test_math_creation.py",
+        "status": "A",
+        "symbols": [
+          "wheel_family",
+          "request",
+          "MathCreationTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 49,
+        "binary": false,
+        "content_sha256": "5c3e3c9fb20e89865c1c6ab3c6aaa2677712c768d1873b1fa329e59263fec0c7",
+        "deletions": 0,
+        "path": "tests/test_math_domains.py",
+        "status": "A",
+        "symbols": [
+          "MathDomainTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 106,
+        "binary": false,
+        "content_sha256": "3d3038ef5b6d2ba8f458085ad417b4294bde9fc597ee0b3fb0c7a6680a5dfce5",
+        "deletions": 0,
+        "path": "tests/test_mesh_topology.py",
+        "status": "A",
+        "symbols": [
+          "MeshTopologyTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 5,
+        "binary": false,
+        "content_sha256": "5aa46576967ee7efa26d3aeb4a6720f0d9a08c2d2d97721a737a940e4063eff7",
+        "deletions": 1,
+        "path": "tests/test_procedural_3d.py",
+        "status": "M",
+        "symbols": [
+          "tower_spec",
+          "Procedural3DTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 102,
+        "binary": false,
+        "content_sha256": "3be167caca442a051cb7c91bdcc67e4e0218d5298bd8e376dcf756c8b6719beb",
+        "deletions": 0,
+        "path": "tests/test_rigid_vehicle_motion.py",
+        "status": "A",
+        "symbols": [
+          "request",
+          "RigidVehicleMotionTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 69,
+        "binary": false,
+        "content_sha256": "658dc99d2a2de7ebfc4845975e66100b5751960d9133f829054f8288168e7555",
+        "deletions": 0,
+        "path": "tests/test_software_glb_preview.py",
+        "status": "A",
+        "symbols": [
+          "asset",
+          "SoftwareGlbPreviewTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 128,
+        "binary": false,
+        "content_sha256": "2e8815d18294da4a6f58b5591519eb666f5d1bc02e6ed092d23209eb9c9e3166",
+        "deletions": 0,
+        "path": "tests/test_vehicle_art_direction.py",
+        "status": "A",
+        "symbols": [
+          "surface",
+          "request",
+          "VehicleArtDirectionTests"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "120a40912489a90d454cdea15f359cacf4b9b8e5c359642fbcfa9272e3b35c81"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 6,
+    "kinds": [
+      "code",
+      "knowledge",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "accessor",
+      "angle",
+      "apply",
+      "area",
+      "art",
+      "asset",
+      "aware",
+      "axiom",
+      "axm",
+      "backed",
+      "base",
+      "basis",
+      "bind",
+      "binding",
+      "bindings",
+      "boundaries",
+      "boundary",
+      "build",
+      "bytes",
+      "canonical",
+      "capabilities",
+      "catalog",
+      "chunk",
+      "cli",
+      "closed",
+      "color",
+      "combine",
+      "combined",
+      "compile",
+      "constraint",
+      "contract",
+      "convert",
+      "creation",
+      "creation-machine",
+      "cross",
+      "deg",
+      "density",
+      "dependencies",
+      "derived",
+      "digest",
+      "dimension",
+      "dimensions",
+      "dims",
+      "direction",
+      "domain",
+      "domains",
+      "dot",
+      "dtests",
+      "encode",
+      "error",
+      "eval",
+      "evidence",
+      "execute",
+      "expr",
+      "fail",
+      "families",
+      "family",
+      "finite",
+      "first",
+      "fix",
+      "fixture",
+      "fixtures",
+      "focused",
+      "frame"
+    ]
+  },
+  "source": {
+    "base": "e9eff997334b51696a39f288ca7e6ec4e2ba505f",
+    "commit_subject": "Merge pull request #137 from mike-axiom-mir/fix/reconcile-missing-capabilities",
+    "head": "b434a349cf159b392148b4dc9d68146573531a60",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

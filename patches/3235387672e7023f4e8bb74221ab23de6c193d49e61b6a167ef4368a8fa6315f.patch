@@ -1,0 +1,647 @@
+diff --git a/docs/STATIC_ASSET_TARGET_EVIDENCE.md b/docs/STATIC_ASSET_TARGET_EVIDENCE.md
+new file mode 100644
+index 0000000..711f387
+--- /dev/null
++++ b/docs/STATIC_ASSET_TARGET_EVIDENCE.md
+@@ -0,0 +1,130 @@
++# Static Asset Target Evidence Gate v0.1
++
++`axm_uc.static_asset_target_evidence.verify_static_asset_target_evidence()` binds target-context evidence to the exact bytes of one static GLB and refuses to turn weak or missing evidence into a stronger claim.
++
++## Why this exists
++
++Universal Creation can inspect static GLB structure and measure resource budgets, but those checks do not prove that an asset actually works in a particular engine, collision scene, navigation context, camera distance, or device budget.
++
++This gate provides a reusable bridge between those external target tests and UC's truth boundary:
++
++- the packet names the exact target engine/context;
++- the packet names which lanes are required for this use;
++- every packet is bound to the artifact SHA-256;
++- a declared PASS needs an evidence kind appropriate to that lane;
++- missing or `NOT_TESTED` required lanes remain `HOLD`;
++- any supplied target failure remains `FAIL`, even when that lane was not originally required;
++- structural/source inspection alone cannot silently become collision, navigation, LOD-visual, or performance proof.
++
++The gate does **not** launch an engine or reproduce the referenced evidence itself. A gate PASS means the declared required evidence packet is complete, appropriately typed, and bound to the exact artifact—not that UC independently certified production readiness.
++
++## Evidence lanes
++
++The v0.1 closed lane set is:
++
++| Lane | PASS needs at least one of |
++| --- | --- |
++| `target_engine_import` | `TESTED` |
++| `scale_pivot` | `TESTED`, `MEASURED` |
++| `material_shader` | `TESTED`, `VISUALLY_INSPECTED` |
++| `collision` | `TESTED`, `MEASURED` |
++| `navigation` | `TESTED`, `MEASURED` |
++| `resource_budget` | `TESTED`, `MEASURED` |
++| `material_sidedness` | `TESTED`, `VISUALLY_INSPECTED` |
++| `lod_perceptual_equivalence` | `VISUALLY_INSPECTED` |
++| `target_runtime_integration` | `TESTED`, `MEASURED` |
++| `target_device_performance` | `MEASURED` |
++
++`SOURCE_INSPECTED` and `INFERRED` can be retained as evidence records, but they do not by themselves promote any lane to PASS.
++
++## Example
++
++```python
++import hashlib
++from pathlib import Path
++
++from axm_uc.static_asset_target_evidence import (
++    PACKET_SCHEMA,
++    verify_static_asset_target_evidence,
++)
++
++asset = Path("workshop.glb")
++sha256 = hashlib.sha256(asset.read_bytes()).hexdigest()
++
++packet = {
++    "schema": PACKET_SCHEMA,
++    "artifact_sha256": sha256,
++    "target": {
++        "engine": "Example Engine",
++        "version": "1.2",
++        "context": "RTS building",
++    },
++    "required_lanes": [
++        "target_engine_import",
++        "scale_pivot",
++        "collision",
++        "navigation",
++        "resource_budget",
++    ],
++    "lanes": {
++        "target_engine_import": {
++            "status": "PASS",
++            "evidence": [{
++                "kind": "TESTED",
++                "source": "engine-import-test",
++                "summary": "Imported without loader errors.",
++            }],
++        },
++        "scale_pivot": {
++            "status": "PASS",
++            "evidence": [{
++                "kind": "MEASURED",
++                "source": "engine-transform-report",
++                "summary": "Scale and pivot matched the declared target transform.",
++            }],
++        },
++        "collision": {
++            "status": "NOT_TESTED",
++            "notes": ["No target collision scene yet."],
++        },
++        "navigation": {
++            "status": "NOT_TESTED",
++            "notes": ["No target navigation bake/test yet."],
++        },
++        "resource_budget": {
++            "status": "PASS",
++            "evidence": [{
++                "kind": "MEASURED",
++                "source": "axm.static-asset-budget-evidence/v0.1 report",
++                "summary": "The caller-declared target resource budget passed.",
++            }],
++        },
++    },
++}
++
++report = verify_static_asset_target_evidence(asset, packet)
++assert report["status"] == "HOLD"  # collision/navigation are still untested
++```
++
++## Truth boundary
++
++This module verifies:
++
++- a supported GLB container exists at the supplied path;
++- packet and artifact SHA-256 identity agree;
++- the target/required-lane contract is structurally valid;
++- required lanes are present;
++- PASS lanes include at least one qualifying evidence kind;
++- supplied failures remain visible and block the overall gate.
++
++It does **not** prove:
++
++- that an evidence locator is independently trustworthy;
++- target-engine compatibility outside the named target;
++- collision correctness beyond the referenced target tests;
++- navigation correctness beyond the referenced target tests;
++- LOD perceptual equivalence unless a visual inspection receipt exists;
++- target-device performance unless measured evidence exists;
++- game readiness, final Art Director acceptance, gameplay readability, or production readiness.
++
++This directly complements `axm.static-asset-budget/v0.1`: budget evidence can be one lane inside a broader target-context evidence packet without allowing the budget result to impersonate engine/runtime evidence.
+diff --git a/src/axm_uc/static_asset_target_evidence.py b/src/axm_uc/static_asset_target_evidence.py
+new file mode 100644
+index 0000000..768fcb1
+--- /dev/null
++++ b/src/axm_uc/static_asset_target_evidence.py
+@@ -0,0 +1,287 @@
++"""Bind target-context evidence to one exact static GLB without inventing readiness.
++
++This module does not run a game engine, collision solver, navigation bake, visual
++review, or performance benchmark. It validates a closed evidence packet, binds
++that packet to the exact artifact bytes, and refuses to promote a supplied lane
++when the supplied evidence kind is too weak for the claim.
++"""
++from __future__ import annotations
++
++import hashlib
++import json
++import re
++from pathlib import Path
++from typing import Any
++
++from .asset_geometry import GeometryIssue, MAX_BYTES, _GLB
++
++PACKET_SCHEMA = "axm.static-asset-target-evidence/v0.1"
++REPORT_SCHEMA = "axm.static-asset-target-evidence-report/v0.1"
++
++_ALLOWED_STATUSES = {"PASS", "FAIL", "NOT_TESTED"}
++_ALLOWED_EVIDENCE_KINDS = {
++    "TESTED",
++    "MEASURED",
++    "VISUALLY_INSPECTED",
++    "SOURCE_INSPECTED",
++    "INFERRED",
++}
++_LANE_EVIDENCE_KINDS = {
++    "target_engine_import": {"TESTED"},
++    "scale_pivot": {"TESTED", "MEASURED"},
++    "material_shader": {"TESTED", "VISUALLY_INSPECTED"},
++    "collision": {"TESTED", "MEASURED"},
++    "navigation": {"TESTED", "MEASURED"},
++    "resource_budget": {"TESTED", "MEASURED"},
++    "material_sidedness": {"TESTED", "VISUALLY_INSPECTED"},
++    "lod_perceptual_equivalence": {"VISUALLY_INSPECTED"},
++    "target_runtime_integration": {"TESTED", "MEASURED"},
++    "target_device_performance": {"MEASURED"},
++}
++_SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
++
++
++def _text(value: Any, field: str) -> str:
++    if not isinstance(value, str) or not value.strip():
++        raise ValueError(f"{field} must be non-empty text")
++    return value.strip()
++
++
++def _validate_evidence_item(value: Any, lane: str, index: int) -> dict[str, Any]:
++    if not isinstance(value, dict):
++        raise ValueError(f"{lane}.evidence[{index}] must be an object")
++    unknown = set(value) - {"kind", "source", "summary", "details"}
++    if unknown:
++        raise ValueError(f"unknown {lane}.evidence[{index}] field(s): {sorted(unknown)}")
++    kind = value.get("kind")
++    if kind not in _ALLOWED_EVIDENCE_KINDS:
++        raise ValueError(f"{lane}.evidence[{index}].kind is not supported")
++    normalized = {
++        "kind": kind,
++        "source": _text(value.get("source"), f"{lane}.evidence[{index}].source"),
++        "summary": _text(value.get("summary"), f"{lane}.evidence[{index}].summary"),
++    }
++    if "details" in value:
++        if not isinstance(value["details"], dict):
++            raise ValueError(f"{lane}.evidence[{index}].details must be an object")
++        normalized["details"] = value["details"]
++    return normalized
++
++
++def validate_static_asset_target_evidence(value: Any) -> dict[str, Any]:
++    """Validate and normalize a closed target-context evidence packet."""
++    if not isinstance(value, dict) or value.get("schema") != PACKET_SCHEMA:
++        raise ValueError("invalid static asset target evidence schema")
++    unknown = set(value) - {"schema", "artifact_sha256", "target", "required_lanes", "lanes"}
++    if unknown:
++        raise ValueError(f"unknown static asset target evidence field(s): {sorted(unknown)}")
++
++    artifact_sha256 = value.get("artifact_sha256")
++    if not isinstance(artifact_sha256, str) or not _SHA256_RE.fullmatch(artifact_sha256):
++        raise ValueError("artifact_sha256 must be a lowercase SHA-256 hex digest")
++
++    target = value.get("target")
++    if not isinstance(target, dict):
++        raise ValueError("target must be an object")
++    unknown_target = set(target) - {"engine", "version", "context"}
++    if unknown_target:
++        raise ValueError(f"unknown target field(s): {sorted(unknown_target)}")
++    normalized_target = {
++        "engine": _text(target.get("engine"), "target.engine"),
++        "context": _text(target.get("context"), "target.context"),
++    }
++    if "version" in target:
++        normalized_target["version"] = _text(target["version"], "target.version")
++
++    required_lanes = value.get("required_lanes")
++    if not isinstance(required_lanes, list) or not required_lanes:
++        raise ValueError("required_lanes must be a non-empty array")
++    normalized_required: list[str] = []
++    for index, lane in enumerate(required_lanes):
++        lane = _text(lane, f"required_lanes[{index}]")
++        if lane not in _LANE_EVIDENCE_KINDS:
++            raise ValueError(f"unknown required lane: {lane}")
++        if lane in normalized_required:
++            raise ValueError(f"duplicate required lane: {lane}")
++        normalized_required.append(lane)
++
++    lanes = value.get("lanes")
++    if not isinstance(lanes, dict):
++        raise ValueError("lanes must be an object")
++    unknown_lanes = set(lanes) - set(_LANE_EVIDENCE_KINDS)
++    if unknown_lanes:
++        raise ValueError(f"unknown target evidence lane(s): {sorted(unknown_lanes)}")
++
++    normalized_lanes: dict[str, dict[str, Any]] = {}
++    for lane, row in lanes.items():
++        if not isinstance(row, dict):
++            raise ValueError(f"{lane} must be an object")
++        unknown_row = set(row) - {"status", "evidence", "notes"}
++        if unknown_row:
++            raise ValueError(f"unknown {lane} field(s): {sorted(unknown_row)}")
++        status = row.get("status")
++        if status not in _ALLOWED_STATUSES:
++            raise ValueError(f"{lane}.status must be PASS, FAIL or NOT_TESTED")
++        evidence = row.get("evidence", [])
++        if not isinstance(evidence, list):
++            raise ValueError(f"{lane}.evidence must be an array")
++        notes = row.get("notes", [])
++        if not isinstance(notes, list) or any(not isinstance(note, str) or not note.strip() for note in notes):
++            raise ValueError(f"{lane}.notes must be an array of non-empty text")
++        normalized_lanes[lane] = {
++            "status": status,
++            "evidence": [_validate_evidence_item(item, lane, index) for index, item in enumerate(evidence)],
++            "notes": [note.strip() for note in notes],
++        }
++
++    normalized = {
++        "schema": PACKET_SCHEMA,
++        "artifact_sha256": artifact_sha256,
++        "target": normalized_target,
++        "required_lanes": normalized_required,
++        "lanes": normalized_lanes,
++    }
++    # Also guarantees every optional details object is JSON-safe and strips
++    # caller-specific Python container subclasses from the returned contract.
++    return json.loads(json.dumps(normalized, sort_keys=True, allow_nan=False))
++
++
++def verify_static_asset_target_evidence(path: str | Path, packet: Any) -> dict[str, Any]:
++    """Bind supplied target evidence to exact GLB bytes and evaluate declared gates.
++
++    PASS means every caller-declared required lane has a PASS receipt containing
++    at least one evidence kind strong enough for that lane, every additional
++    supplied PASS is also adequately evidenced, the packet is bound to the exact
++    artifact SHA-256, and no supplied lane reports FAIL. UC does not independently
++    reproduce the external target observations here.
++    """
++    spec = validate_static_asset_target_evidence(packet)
++    packet_bytes = json.dumps(spec, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()
++    target = Path(path).resolve()
++    result: dict[str, Any] = {
++        "schema": REPORT_SCHEMA,
++        "status": "HOLD",
++        "artifact_sha256": None,
++        "packet_sha256": hashlib.sha256(packet_bytes).hexdigest(),
++        "target": spec["target"],
++        "required_lanes": list(spec["required_lanes"]),
++        "lane_results": {},
++        "findings": [],
++        "finding_count": 0,
++        "finding_counts": {},
++        "scope": (
++            "Exact-artifact evidence binding and minimum evidence-kind sufficiency for caller-declared static GLB "
++            "target-context gates. This verifier does not itself launch the target engine, import the asset, run "
++            "collision/navigation, inspect rendering, measure device performance, or prove game readiness."
++        ),
++        "nonclaims": [
++            "A PASS does not mean UC independently reproduced the referenced external observations.",
++            "A PASS does not certify visual quality, gameplay readability, engine compatibility outside the declared target, or production readiness.",
++            "NOT_TESTED and missing required lanes remain HOLD rather than being inferred from source structure.",
++        ],
++    }
++
++    def finding(code: str, **details: Any) -> None:
++        result["finding_count"] += 1
++        result["finding_counts"][code] = result["finding_counts"].get(code, 0) + 1
++        if len(result["findings"]) < 64:
++            result["findings"].append({"code": code, **details})
++
++    try:
++        raw = target.read_bytes()
++        if len(raw) > MAX_BYTES:
++            finding("RESOURCE_LIMIT", message="GLB exceeds 128MiB inspection limit")
++            result["status"] = "HOLD"
++            return result
++        artifact_sha256 = hashlib.sha256(raw).hexdigest()
++        result["artifact_sha256"] = artifact_sha256
++        _GLB(raw)  # Basic container/JSON validation only; not target-engine import evidence.
++    except GeometryIssue as exc:
++        finding(exc.code, message=str(exc))
++        result["status"] = "HOLD" if exc.hold else "FAIL"
++        return result
++    except (OSError, UnicodeDecodeError, json.JSONDecodeError, ValueError) as exc:
++        finding("INVALID_ARTIFACT", message=str(exc))
++        result["status"] = "FAIL"
++        return result
++
++    if result["artifact_sha256"] != spec["artifact_sha256"]:
++        finding(
++            "ARTIFACT_SHA_MISMATCH",
++            expected=spec["artifact_sha256"],
++            actual=result["artifact_sha256"],
++        )
++        result["status"] = "FAIL"
++        return result
++
++    required = set(spec["required_lanes"])
++    supplied = spec["lanes"]
++    any_fail = False
++    any_hold = False
++
++    for lane in sorted(set(supplied) | required):
++        row = supplied.get(lane)
++        is_required = lane in required
++        allowed_kinds = _LANE_EVIDENCE_KINDS[lane]
++        if row is None:
++            result["lane_results"][lane] = {
++                "required": True,
++                "status": "HOLD",
++                "reason": "MISSING_REQUIRED_LANE",
++                "acceptable_evidence_kinds": sorted(allowed_kinds),
++            }
++            finding("MISSING_REQUIRED_LANE", lane=lane)
++            any_hold = True
++            continue
++
++        declared_status = row["status"]
++        kinds = sorted({item["kind"] for item in row["evidence"]})
++        lane_result = {
++            "required": is_required,
++            "declared_status": declared_status,
++            "status": declared_status,
++            "evidence_kinds": kinds,
++            "acceptable_evidence_kinds": sorted(allowed_kinds),
++            "evidence_count": len(row["evidence"]),
++            "notes": list(row["notes"]),
++        }
++
++        if declared_status == "FAIL":
++            lane_result["status"] = "FAIL"
++            lane_result["reason"] = "DECLARED_TARGET_FAILURE"
++            finding("DECLARED_TARGET_FAILURE", lane=lane)
++            any_fail = True
++        elif declared_status == "NOT_TESTED":
++            lane_result["status"] = "HOLD" if is_required else "NOT_TESTED"
++            lane_result["reason"] = "REQUIRED_NOT_TESTED" if is_required else "OPTIONAL_NOT_TESTED"
++            if is_required:
++                finding("REQUIRED_NOT_TESTED", lane=lane)
++                any_hold = True
++        elif not row["evidence"]:
++            lane_result["status"] = "HOLD"
++            lane_result["reason"] = "PASS_WITHOUT_EVIDENCE"
++            finding("PASS_WITHOUT_EVIDENCE", lane=lane)
++            any_hold = True
++        elif not (set(kinds) & allowed_kinds):
++            lane_result["status"] = "HOLD"
++            lane_result["reason"] = "INSUFFICIENT_EVIDENCE_KIND"
++            finding(
++                "INSUFFICIENT_EVIDENCE_KIND",
++                lane=lane,
++                supplied=kinds,
++                acceptable=sorted(allowed_kinds),
++            )
++            any_hold = True
++        else:
++            lane_result["status"] = "PASS"
++            lane_result["reason"] = "DECLARED_PASS_WITH_QUALIFYING_EVIDENCE"
++
++        result["lane_results"][lane] = lane_result
++
++    if any_fail:
++        result["status"] = "FAIL"
++    elif any_hold:
++        result["status"] = "HOLD"
++    else:
++        result["status"] = "PASS"
++    return result
+diff --git a/tests/test_static_asset_target_evidence.py b/tests/test_static_asset_target_evidence.py
+new file mode 100644
+index 0000000..37246d8
+--- /dev/null
++++ b/tests/test_static_asset_target_evidence.py
+@@ -0,0 +1,212 @@
++from __future__ import annotations
++
++import hashlib
++import json
++import struct
++import tempfile
++import unittest
++from pathlib import Path
++
++from axm_uc.static_asset_target_evidence import (
++    PACKET_SCHEMA,
++    validate_static_asset_target_evidence,
++    verify_static_asset_target_evidence,
++)
++
++
++def _glb_bytes() -> bytes:
++    binary = struct.pack("<9f3H", 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 2)
++    doc = {
++        "asset": {"version": "2.0"},
++        "scene": 0,
++        "scenes": [{"nodes": [0]}],
++        "nodes": [{"mesh": 0}],
++        "meshes": [{"primitives": [{"attributes": {"POSITION": 0}, "indices": 1}]}],
++        "bufferViews": [
++            {"buffer": 0, "byteOffset": 0, "byteLength": 36},
++            {"buffer": 0, "byteOffset": 36, "byteLength": 6},
++        ],
++        "accessors": [
++            {"bufferView": 0, "componentType": 5126, "count": 3, "type": "VEC3"},
++            {"bufferView": 1, "componentType": 5123, "count": 3, "type": "SCALAR"},
++        ],
++        "buffers": [{"byteLength": len(binary)}],
++    }
++    encoded = json.dumps(doc, separators=(",", ":")).encode()
++    encoded += b" " * ((-len(encoded)) % 4)
++    bin_chunk = binary + b"\0" * ((-len(binary)) % 4)
++    total = 12 + 8 + len(encoded) + 8 + len(bin_chunk)
++    return (
++        struct.pack("<4sII", b"glTF", 2, total)
++        + struct.pack("<I4s", len(encoded), b"JSON")
++        + encoded
++        + struct.pack("<I4s", len(bin_chunk), b"BIN\0")
++        + bin_chunk
++    )
++
++
++def _packet(raw: bytes) -> dict:
++    return {
++        "schema": PACKET_SCHEMA,
++        "artifact_sha256": hashlib.sha256(raw).hexdigest(),
++        "target": {"engine": "Example Engine", "version": "1.2", "context": "RTS building"},
++        "required_lanes": [
++            "target_engine_import",
++            "scale_pivot",
++            "collision",
++            "navigation",
++            "resource_budget",
++        ],
++        "lanes": {
++            "target_engine_import": {
++                "status": "PASS",
++                "evidence": [{"kind": "TESTED", "source": "engine-import-test", "summary": "Imported without loader errors."}],
++            },
++            "scale_pivot": {
++                "status": "PASS",
++                "evidence": [{"kind": "MEASURED", "source": "engine-transform-report", "summary": "Scale and pivot matched the declared target transform."}],
++            },
++            "collision": {
++                "status": "PASS",
++                "evidence": [{"kind": "TESTED", "source": "collision-scene", "summary": "Representative collision contacts matched the target collider policy."}],
++            },
++            "navigation": {
++                "status": "PASS",
++                "evidence": [{"kind": "TESTED", "source": "navigation-scene", "summary": "Required walkable and blocked routes were exercised."}],
++            },
++            "resource_budget": {
++                "status": "PASS",
++                "evidence": [{"kind": "MEASURED", "source": "static-asset-budget-report", "summary": "Caller target budget was measured and passed."}],
++            },
++        },
++    }
++
++
++class StaticAssetTargetEvidenceTests(unittest.TestCase):
++    def _target(self, root: str) -> tuple[Path, bytes]:
++        path = Path(root) / "asset.glb"
++        raw = _glb_bytes()
++        path.write_bytes(raw)
++        return path, raw
++
++    def test_complete_bound_required_packet_passes_only_as_evidence_gate(self):
++        with tempfile.TemporaryDirectory() as tmp:
++            target, raw = self._target(tmp)
++            report = verify_static_asset_target_evidence(target, _packet(raw))
++            self.assertEqual(report["status"], "PASS")
++            self.assertEqual(report["artifact_sha256"], hashlib.sha256(raw).hexdigest())
++            self.assertEqual(report["lane_results"]["collision"]["status"], "PASS")
++            self.assertIn("does not itself launch the target engine", report["scope"])
++            self.assertEqual(target.read_bytes(), raw)
++
++    def test_missing_required_lane_holds_instead_of_inference(self):
++        with tempfile.TemporaryDirectory() as tmp:
++            target, raw = self._target(tmp)
++            packet = _packet(raw)
++            del packet["lanes"]["navigation"]
++            report = verify_static_asset_target_evidence(target, packet)
++            self.assertEqual(report["status"], "HOLD")
++            self.assertEqual(report["lane_results"]["navigation"]["reason"], "MISSING_REQUIRED_LANE")
++            self.assertIn("MISSING_REQUIRED_LANE", report["finding_counts"])
++
++    def test_pass_with_only_source_inspection_is_not_promoted(self):
++        with tempfile.TemporaryDirectory() as tmp:
++            target, raw = self._target(tmp)
++            packet = _packet(raw)
++            packet["lanes"]["collision"]["evidence"] = [{
++                "kind": "SOURCE_INSPECTED",
++                "source": "collider-config.json",
++                "summary": "Collider configuration exists in source.",
++            }]
++            report = verify_static_asset_target_evidence(target, packet)
++            self.assertEqual(report["status"], "HOLD")
++            self.assertEqual(report["lane_results"]["collision"]["reason"], "INSUFFICIENT_EVIDENCE_KIND")
++
++    def test_visual_equivalence_requires_visual_inspection(self):
++        with tempfile.TemporaryDirectory() as tmp:
++            target, raw = self._target(tmp)
++            packet = _packet(raw)
++            packet["required_lanes"].append("lod_perceptual_equivalence")
++            packet["lanes"]["lod_perceptual_equivalence"] = {
++                "status": "PASS",
++                "evidence": [{"kind": "TESTED", "source": "lod-structure-test", "summary": "LOD files exist and triangle counts decrease."}],
++            }
++            report = verify_static_asset_target_evidence(target, packet)
++            self.assertEqual(report["status"], "HOLD")
++            self.assertEqual(report["lane_results"]["lod_perceptual_equivalence"]["reason"], "INSUFFICIENT_EVIDENCE_KIND")
++            packet["lanes"]["lod_perceptual_equivalence"]["evidence"] = [{
++                "kind": "VISUALLY_INSPECTED",
++                "source": "rts-camera-comparison",
++                "summary": "Both LODs were compared at the declared RTS camera distance.",
++            }]
++            self.assertEqual(verify_static_asset_target_evidence(target, packet)["status"], "PASS")
++
++    def test_artifact_hash_mismatch_fails_before_lane_promotion(self):
++        with tempfile.TemporaryDirectory() as tmp:
++            target, raw = self._target(tmp)
++            packet = _packet(raw)
++            packet["artifact_sha256"] = "0" * 64
++            report = verify_static_asset_target_evidence(target, packet)
++            self.assertEqual(report["status"], "FAIL")
++            self.assertIn("ARTIFACT_SHA_MISMATCH", report["finding_counts"])
++
++    def test_supplied_failure_blocks_even_when_lane_is_optional(self):
++        with tempfile.TemporaryDirectory() as tmp:
++            target, raw = self._target(tmp)
++            packet = _packet(raw)
++            packet["lanes"]["target_device_performance"] = {
++                "status": "FAIL",
++                "evidence": [{"kind": "MEASURED", "source": "device-benchmark", "summary": "Measured target frame budget was exceeded."}],
++            }
++            report = verify_static_asset_target_evidence(target, packet)
++            self.assertEqual(report["status"], "FAIL")
++            self.assertEqual(report["lane_results"]["target_device_performance"]["status"], "FAIL")
++
++    def test_weak_optional_pass_holds_whole_packet(self):
++        with tempfile.TemporaryDirectory() as tmp:
++            target, raw = self._target(tmp)
++            packet = _packet(raw)
++            packet["lanes"]["target_device_performance"] = {
++                "status": "PASS",
++                "evidence": [{"kind": "SOURCE_INSPECTED", "source": "device-config", "summary": "A target device profile exists."}],
++            }
++            report = verify_static_asset_target_evidence(target, packet)
++            self.assertEqual(report["status"], "HOLD")
++            self.assertEqual(report["lane_results"]["target_device_performance"]["reason"], "INSUFFICIENT_EVIDENCE_KIND")
++
++    def test_not_tested_required_lane_holds(self):
++        with tempfile.TemporaryDirectory() as tmp:
++            target, raw = self._target(tmp)
++            packet = _packet(raw)
++            packet["lanes"]["navigation"] = {"status": "NOT_TESTED", "notes": ["No target navigation scene yet."]}
++            report = verify_static_asset_target_evidence(target, packet)
++            self.assertEqual(report["status"], "HOLD")
++            self.assertEqual(report["lane_results"]["navigation"]["reason"], "REQUIRED_NOT_TESTED")
++
++    def test_contract_rejects_unknown_or_ambiguous_fields(self):
++        raw = _glb_bytes()
++        packet = _packet(raw)
++        packet["quality"] = "great"
++        with self.assertRaises(ValueError):
++            validate_static_asset_target_evidence(packet)
++        packet = _packet(raw)
++        packet["required_lanes"].append("unknown_lane")
++        with self.assertRaises(ValueError):
++            validate_static_asset_target_evidence(packet)
++        packet = _packet(raw)
++        packet["lanes"]["collision"]["evidence"][0]["kind"] = "CLAIMED"
++        with self.assertRaises(ValueError):
++            validate_static_asset_target_evidence(packet)
++
++    def test_invalid_glb_fails_without_treating_hash_binding_as_structure(self):
++        with tempfile.TemporaryDirectory() as tmp:
++            target = Path(tmp) / "not-a-glb.glb"
++            raw = b"not-a-glb"
++            target.write_bytes(raw)
++            report = verify_static_asset_target_evidence(target, _packet(raw))
++            self.assertEqual(report["status"], "FAIL")
++            self.assertIn("INVALID_GLB", report["finding_counts"])
++
++
++if __name__ == "__main__":
++    unittest.main()

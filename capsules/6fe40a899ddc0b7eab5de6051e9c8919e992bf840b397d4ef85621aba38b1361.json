@@ -1,0 +1,190 @@
+{
+  "capsule_id": "6fe40a899ddc0b7eab5de6051e9c8919e992bf840b397d4ef85621aba38b1361",
+  "evidence": {
+    "files": [
+      {
+        "additions": 43,
+        "binary": false,
+        "content_sha256": "b1181e2637f6dfcb5b9c848f9122753e412b8a8fc1bb592813534aef7ccb0b0a",
+        "deletions": 0,
+        "path": "DIAGRAM_TEMPLATE_PACK.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Editable Infographic / Diagram Template Pack",
+          "Product surfaces",
+          "Semantic and evidence contracts",
+          "Layout variation",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 72,
+        "binary": false,
+        "content_sha256": "3972a8d1b2d4369bd563d564737150b16f347e6871b49b0d1be2303e71a4f52d",
+        "deletions": 106,
+        "path": "VISUAL_TEMPLATE_FABRIC.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Current v9 candidate census",
+          "Major product foundations",
+          "Evidence-aware diagrams / infographics",
+          "Registry and identity",
+          "CLI",
+          "Evidence gate",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 46,
+        "binary": false,
+        "content_sha256": "47a6509e3cbb956d6b3015c2c78afb4c6d1a20c01891d0342c709d89dcfbd261",
+        "deletions": 64,
+        "path": "VISUAL_TEMPLATE_PRIORITY_MAP.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "AXM Visual Template Expansion Priority Map",
+          "Merged foundations",
+          "Priority 5E \u2014 Evidence-aware infographic / diagram editor \u2014 IMPLEMENTED IN THIS LANE",
+          "Next high-value visual/creation families",
+          "Cross-cutting rules",
+          "Immediate build order"
+        ]
+      },
+      {
+        "additions": 88,
+        "binary": false,
+        "content_sha256": "eadda8809f60c2fbb7fe2deac3daa049634d7096452afdb2e6ed84339a75838a",
+        "deletions": 0,
+        "path": "src/axm_uc/visual_template_diagram.py",
+        "status": "A",
+        "symbols": [
+          "_merge",
+          "extend_diagram_catalog"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 3,
+        "binary": false,
+        "content_sha256": "ce70d953d01468ee88518a63ce0ce8e612709d011fcc2a67a9c5f3d2094573c5",
+        "deletions": 1,
+        "path": "src/axm_uc/visual_templates.py",
+        "status": "M",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 36,
+        "binary": false,
+        "content_sha256": "f47af5f752ff89eaf56c5e165a1260ae6fc1a6a3083aac9380a0c2b7322c28f8",
+        "deletions": 35,
+        "path": "tests/test_visual_templates.py",
+        "status": "M",
+        "symbols": [
+          "VisualTemplateTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 18,
+        "binary": false,
+        "content_sha256": "ee649f08dbe978e0a8862b2afd4c79c5dde689803ab66fe9ff911564a14a0ac2",
+        "deletions": 17,
+        "path": "tools/visual_template_proof.py",
+        "status": "M",
+        "symbols": [
+          "_write",
+          "main"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "26b79fd66eb251153f17859f46728dc99e420d58e910615c6c5eb44083f01db0"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "add",
+      "aware",
+      "axm",
+      "boundary",
+      "build",
+      "candidate",
+      "catalog",
+      "census",
+      "cli",
+      "contracts",
+      "creation",
+      "creation-machine",
+      "cross",
+      "current",
+      "cutting",
+      "diagram",
+      "diagrams",
+      "editable",
+      "editor",
+      "evidence",
+      "expansion",
+      "extend",
+      "fabric",
+      "families",
+      "foundations",
+      "gate",
+      "high",
+      "identity",
+      "immediate",
+      "implemented",
+      "infographic",
+      "infographics",
+      "lane",
+      "layout",
+      "major",
+      "map",
+      "merge",
+      "merged",
+      "next",
+      "order",
+      "pack",
+      "priority",
+      "product",
+      "proof",
+      "registry",
+      "rules",
+      "semantic",
+      "standalone",
+      "surfaces",
+      "template",
+      "templates",
+      "this",
+      "tools",
+      "truth",
+      "universal-creation",
+      "value",
+      "variation",
+      "visual",
+      "write"
+    ]
+  },
+  "source": {
+    "base": "df3abedac56fd072077ea787532f086a735ef28d",
+    "commit_subject": "Add evidence-aware infographic and diagram templates",
+    "head": "ba575dde182d52f2f5ead54a1d449581fd13e300",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

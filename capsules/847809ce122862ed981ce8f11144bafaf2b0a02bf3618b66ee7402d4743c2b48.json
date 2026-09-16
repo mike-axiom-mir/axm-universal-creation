@@ -1,0 +1,268 @@
+{
+  "capsule_id": "847809ce122862ed981ce8f11144bafaf2b0a02bf3618b66ee7402d4743c2b48",
+  "evidence": {
+    "files": [
+      {
+        "additions": 89,
+        "binary": false,
+        "content_sha256": "2776357932e50ea6d2f2a150e8be7c46a50965248707108fa49ada325fef78d9",
+        "deletions": 0,
+        "path": "capabilities/live/AXM-CAP-EXTERNAL-VISUAL-TOOLS.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 74,
+        "binary": false,
+        "content_sha256": "b049eba2e7125456006182cd73adca68502d05971b8e4ee2f3133b15abffdb09",
+        "deletions": 0,
+        "path": "capabilities/live/AXM-CAP-NATIVE-VISUAL-RUNTIME.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 82,
+        "binary": false,
+        "content_sha256": "76b6be0a88955807208d598c6a221efc4061d39c967dcec13f33f062ea808f67",
+        "deletions": 0,
+        "path": "docs/NATIVE_VISUAL_ENGINE.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "AXM Native Visual Engine",
+          "AXM-native visual runtime",
+          "Optional external connector boundary",
+          "Blender-backed code is external",
+          "Run the native demo",
+          "Machine routing"
+        ]
+      },
+      {
+        "additions": 227,
+        "binary": false,
+        "content_sha256": "7266ce931bd5babeb2d9ede20b2f7fc2835bab46e38f0396e99d28d348f902a6",
+        "deletions": 0,
+        "path": "src/axm_uc/external_visual_tools.py",
+        "status": "A",
+        "symbols": [
+          "ExternalVisualToolError",
+          "_normalize_tool",
+          "_resolve_executable",
+          "_tool_record",
+          "catalog_external_visual_tools",
+          "inspect_external_visual_tool",
+          "_capture_digest",
+          "_run",
+          "probe_external_visual_tool",
+          "execute_external_visual_tool",
+          "operate_external_visual_tool"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 322,
+        "binary": false,
+        "content_sha256": "5387b26a8575ec78c5bfaadfea5db49aa18da8034de16b81508e803dfa764c28",
+        "deletions": 0,
+        "path": "src/axm_uc/native_visual_engine.py",
+        "status": "A",
+        "symbols": [
+          "_finite",
+          "_bounded",
+          "_vec",
+          "_color",
+          "_rgb",
+          "_identifier",
+          "_material",
+          "_animation",
+          "compile_scene",
+          "catalog_native_visual",
+          "scene_sha256",
+          "demo_scene",
+          "render_html",
+          "write_visual_bundle",
+          "main"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 50,
+        "binary": false,
+        "content_sha256": "79af260469d2d0c3aefc73d776a514d49404c26907bb7f8107616e4ae332fbcb",
+        "deletions": 0,
+        "path": "src/axm_uc/standalone_creation_capabilities.py",
+        "status": "M",
+        "symbols": [
+          "register_standalone_creation_builtins"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 30,
+        "binary": false,
+        "content_sha256": "aa1f5969bb00af604432da7a5731fe9d6b0b1d15b44db3c4dcb3629bc88efb1b",
+        "deletions": 0,
+        "path": "tests/test_blender_pro_source.py",
+        "status": "A",
+        "symbols": [
+          "BlenderProSourceTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 78,
+        "binary": false,
+        "content_sha256": "1718e7dd232e50a569c028c47ad407c0f58f20bddd4ecfbd158c3c04c43e222a",
+        "deletions": 0,
+        "path": "tests/test_external_visual_tools.py",
+        "status": "A",
+        "symbols": [
+          "ExternalVisualToolTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 86,
+        "binary": false,
+        "content_sha256": "f8e003c064ed66f181b17d16ee68ded475208ff118a88f10835642263e4260f8",
+        "deletions": 0,
+        "path": "tests/test_native_visual_engine.py",
+        "status": "A",
+        "symbols": [
+          "NativeVisualEngineTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 102,
+        "binary": false,
+        "content_sha256": "dc8a1595fefb711d7e7f377c9baf61601574b26c366d84545b1900ccb459be1c",
+        "deletions": 0,
+        "path": "tests/test_native_visual_machine_adapter.py",
+        "status": "A",
+        "symbols": [
+          "AdapterError",
+          "NativeVisualMachineAdapterTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 412,
+        "binary": false,
+        "content_sha256": "afd04a7c9c237c8227cdd052c75dfd8d674bb751bca78873742d64e5c24040bc",
+        "deletions": 0,
+        "path": "tools/blender/axm_blender_pro.py",
+        "status": "A",
+        "symbols": [
+          "configure_render",
+          "configure_world",
+          "aim_at",
+          "make_camera",
+          "_area_light",
+          "three_point_lighting",
+          "pbr_material",
+          "_clear_native_scene_objects",
+          "_native_primitive",
+          "apply_native_scene",
+          "validate_scene",
+          "proof_angles",
+          "write_scene_receipt",
+          "main"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "39c2ba71f3066e7edbc4823c6c233866b3ca7e61ed9fb7ecf1f464c626dab457"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "configuration",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "adapter",
+      "aim",
+      "angles",
+      "animation",
+      "apply",
+      "area",
+      "axiom",
+      "axm",
+      "backed",
+      "blender",
+      "boundary",
+      "bounded",
+      "builtins",
+      "bundle",
+      "camera",
+      "cap",
+      "capabilities",
+      "capture",
+      "catalog",
+      "clear",
+      "code",
+      "color",
+      "compile",
+      "configure",
+      "connector",
+      "creation",
+      "creation-machine",
+      "demo",
+      "digest",
+      "engine",
+      "error",
+      "executable",
+      "execute",
+      "external",
+      "feat",
+      "finite",
+      "from",
+      "html",
+      "identifier",
+      "inspect",
+      "json",
+      "light",
+      "lighting",
+      "live",
+      "machine",
+      "make",
+      "material",
+      "merge",
+      "mike",
+      "mir",
+      "native",
+      "normalize",
+      "objects",
+      "operate",
+      "optional",
+      "pbr",
+      "point",
+      "primitive",
+      "pro",
+      "probe",
+      "proof",
+      "pull",
+      "receipt",
+      "record"
+    ]
+  },
+  "source": {
+    "base": "e2016cf30b8f7b409137d138abed91dfcc885f60",
+    "commit_subject": "Merge pull request #131 from mike-axiom-mir/feat/uc-native-visual-runtime",
+    "head": "640bd7dc177b90e023aad879b4c00051df7f4ee3",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

@@ -1,0 +1,910 @@
+diff --git a/GAME_STYLE_GROWTH.md b/GAME_STYLE_GROWTH.md
+index f998155..523cc35 100644
+--- a/GAME_STYLE_GROWTH.md
++++ b/GAME_STYLE_GROWTH.md
+@@ -72,8 +72,9 @@ bounded change before starting another; no quota of new files or assets.
+    independently inspect actual GLBs, data color spaces and normal direction.
+ 2. **Completed:** controllable layered paint, exposed-metal response, roughness
+    variation and protected readable regions, with attributed mask sources.
+-3. Add reusable playful form controls: taper, squash, oversized functional parts,
+-   asymmetry, large/medium/small detail hierarchy. Preserve rig/contact invariants.
++3. **Completed:** reusable playful form controls: taper, squash, oversized
++   functional parts, asymmetry and explicit large/medium/small hierarchy, with
++   protected contact/socket coordinates and canonical source retained.
+ 4. Build distinct graphic/painterly realization options that survive export;
+    state exactly which shader features need a target-engine adapter or bake.
+ 5. Improve expressive character/robot face shapes and stances with identity checks.
+@@ -92,6 +93,46 @@ exports when those features change. Measure performance before making claims.
+ 
+ ## Current checkpoint
+ 
++### Expressive form pass — 2026-09-13
++
++- Completed renderer-neutral `game_form_styles.py` and `axm-assets game-form`.
++  Four opt-in profiles now alter actual silhouette geometry using coordinated
++  squash, taper, functional/armor exaggeration, hierarchy scaling and seeded
++  asymmetry. `realistic` remains an exact geometry identity. Every component
++  requires an explicit semantic role; unclassified components fail closed.
++- Canonical source is embedded unchanged beside the realization. Named contact
++  and socket points fade displacement to exact zero and receive before/after
++  drift receipts. This protects declared coordinates, not entire contact patches,
++  rig deformation, collisions or articulation clearance.
++- Actual verification: **8 focused tests pass** for identity, immutability,
++  geometry-not-color changes, hierarchy, functional exaggeration, deterministic
++  asymmetry, exact anchors, CLI publishing/overwrite refusal and malformed input.
++  Blender 4.3 exported a neutral/comic courier comparison to GLB, reopened the
++  editable `.blend`, freshly imported the GLB, and checked all 44 mesh bounds
++  against renderer-neutral geometry (maximum error 0.000000222 m). Nine declared
++  anchors stayed exact; source/re-import still MAE was 0.0.
++- Visual repair: the first render cropped the source wrench. Wider framing fixed
++  it; a second render showed the explanatory caption fighting the wheel contacts,
++  so the caption was removed. Final still visibly shows larger head/wrench/wheels,
++  a squashed/tapered chassis, reduced badge detail and controlled imbalance.
++- Evidence: `tools/blender/game_form_roundtrip.py`,
++  `docs/GAME_FORM_STYLES.md`, and
++  `docs/evidence/game-form-roundtrip-2026-09-13.json`. The pinned theme-park
++  cartoon/fantasy source was reviewed for coordinated form ideas; no donor code
++  or park runtime was copied.
++- Limits: static comparison specimen, not a finished game asset. No rig,
++  animation, collision, LOD, UV, target-engine/game-distance/performance or
++  perceptual style acceptance. Optional Draco is unavailable and unused.
++- **Next useful step: priority 4**, portable graphic/painterly realization that
++  survives export, with target-engine-only shader features stated explicitly.
++- Active lane: `codex/rts-reference-foundry`, based on merged PR #62/main
++  `2243cbb`; unrelated PR #54 remains outside this pass. Current-head checks are
++  required before merge; final GitHub state is authoritative.
++- Roots: Truth separates point/bounds/render evidence from artistic or runtime
++  acceptance; Agency keeps profiles optional and caller roles explicit;
++  Continuity embeds immutable canonical source; Wisdom repaired visible framing
++  and hierarchy presentation before publication.
++
+ ### Layered wear pass — 2026-09-13
+ 
+ - Completed opt-in `WearLayer`, deterministic UV chip/scratch proposals,
+diff --git a/docs/GAME_FORM_STYLES.md b/docs/GAME_FORM_STYLES.md
+new file mode 100644
+index 0000000..ebac478
+--- /dev/null
++++ b/docs/GAME_FORM_STYLES.md
+@@ -0,0 +1,77 @@
++# Game form styles
++
++`game_form_styles.py` provides renderer-neutral, deterministic silhouette and
++proportion derivation for `axm.surface-3d/v0.1` meshes. It changes actual vertex
++positions and rebuilt normals; it is not a palette filter or polygon multiplier.
++
++The input mesh remains embedded byte-for-byte as canonical `source`. The cheaper
++or more stylized `realization` is a derivative and cannot overwrite source truth.
++Parts must be explicitly classified as body, armor, functional, or detail and as
++large, medium, or small. The machine therefore does not invent semantic roles.
++
++Available profiles:
++
++- `realistic`: identity geometry, preserving the product-design option;
++- `comic-salvage`: squat/tapered mass, enlarged functional pieces, controlled
++  asymmetry, broad large forms, and restrained small detail;
++- `heroic-toon`: taller, top-heavy mass and larger armor/function landmarks;
++- `storybook-chunky`: strongest squash and functional exaggeration with the
++  clearest large/medium/small separation.
++
++## Portable request
++
++```json
++{
++  "mesh": {"schema": "axm.surface-3d/v0.1", "name": "bot", "primitives": []},
++  "parts": {
++    "body": {
++      "role": "body",
++      "hierarchy": "large",
++      "strength": 1,
++      "anchors": {"ground": [0, 0, 0]},
++      "anchor_falloff": 0.2
++    }
++  }
++}
++```
++
++The abbreviated mesh above is illustrative; a real request needs bounded
++triangle primitives with positions, normals, colors, indices, and material.
++Part keys must exactly cover the component prefix before `__` in every primitive
++ID. This fails closed instead of silently leaving an unclassified component.
++
++```sh
++axm-assets game-form-catalog
++axm-assets game-form request.json out/comic --style comic-salvage --seed 471
++```
++
++Publishing refuses an existing path and writes `source.json`,
++`realization.json`, and `form-manifest.json`.
++
++## Protected anchors
++
++Any number of named contact/socket coordinates may be declared per part. A
++bounded radial falloff fades displacement to exactly zero at each anchor. The
++receipt records before/after coordinates and drift. This proves those points are
++fixed by the derivation; it does **not** prove complete contact patches,
++articulation clearance, skin deformation, collision behavior, or animation.
++
++`tools/blender/game_form_roundtrip.py` creates one neutral/comic-salvage courier
++comparison, exports actual GLB, reopens editable `.blend`, independently imports
++the GLB, and compares every imported mesh bound with the renderer-neutral source.
++The proof is static and intentionally stops short of calling the courier a
++finished game asset.
++
++## Donor boundary
++
++The pinned theme-park cartoon/fantasy renderers were reviewed for the useful
++category of coordinated squash/pop and asymmetrical dressing. They remain bound
++to their park renderer and state. No donor source code was copied; this module is
++an original renderer-neutral geometry contract.
++
++## Next boundary
++
++Form derivation does not judge whether a silhouette is attractive or readable.
++It does not generate topology, UVs, rig weights, LODs, collisions, clips, or
++engine shaders. The next checkpoint should realize graphic/painterly lighting
++that survives export, then combine that with form on a properly rigged asset.
+diff --git a/src/axm_uc/game_form_styles.py b/src/axm_uc/game_form_styles.py
+new file mode 100644
+index 0000000..5802e54
+--- /dev/null
++++ b/src/axm_uc/game_form_styles.py
+@@ -0,0 +1,301 @@
++"""Deterministic, renderer-neutral 3D form derivation for game silhouettes.
++
++The input ``axm.surface-3d/v0.1`` mesh stays embedded and unchanged beside the
++derived realization.  Controls operate on named components, never material
++groups, so every material slice of one part receives the same deformation.
++Protected anchors fade deformation to exactly zero at declared contacts/sockets.
++"""
++from __future__ import annotations
++
++import copy
++import hashlib
++import json
++import math
++import random
++from dataclasses import asdict, dataclass
++from pathlib import Path
++
++from .atomic import atomic_write_json
++
++
++FORM_SCHEMA = "axm.game-form-derivation/v0.1"
++ROLES = ("body", "armor", "functional", "detail")
++HIERARCHY = ("large", "medium", "small")
++
++
++@dataclass(frozen=True)
++class FormStyle:
++    name: str
++    vertical_scale: float
++    taper: float
++    functional_scale: float
++    armor_scale: float
++    asymmetry: float
++    large_scale: float
++    medium_scale: float
++    small_scale: float
++
++
++FORM_STYLES = (
++    FormStyle("realistic", 1.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0, 1.0),
++    FormStyle("comic-salvage", .86, .12, 1.32, 1.12, .085, 1.08, 1.0, .84),
++    FormStyle("heroic-toon", 1.06, .17, 1.24, 1.18, .045, 1.12, 1.0, .80),
++    FormStyle("storybook-chunky", .76, -.06, 1.38, 1.10, .065, 1.16, 1.0, .72),
++)
++
++
++def _canonical(value):
++    return json.dumps(value, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()
++
++
++def _digest(value):
++    return hashlib.sha256(_canonical(value)).hexdigest()
++
++
++def _number(value, label, low=None, high=None):
++    if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value):
++        raise ValueError(f"{label} must be a finite number")
++    value = float(value)
++    if low is not None and value < low or high is not None and value > high:
++        raise ValueError(f"{label} must be from {low} to {high}")
++    return value
++
++
++def _vec3(value, label):
++    if not isinstance(value, (list, tuple)) or len(value) != 3:
++        raise ValueError(f"{label} must have three coordinates")
++    return tuple(_number(item, f"{label}[{index}]") for index, item in enumerate(value))
++
++
++def _style(name):
++    for style in FORM_STYLES:
++        if style.name == name:
++            return style
++    raise ValueError(f"unknown game form style: {name}")
++
++
++def game_form_catalog():
++    return {
++        "schema": "axm.game-form-styles/v0.1",
++        "styles": [asdict(style) for style in FORM_STYLES],
++        "roles": list(ROLES),
++        "hierarchy": list(HIERARCHY),
++        "preserves_canonical_source": True,
++        "truth": (
++            "Deterministic geometric derivation with explicit part roles and protected anchors. "
++            "It does not infer good art direction, rig safety, deformation quality or engine fitness."
++        ),
++    }
++
++
++def _component(primitive):
++    identifier = primitive.get("id")
++    if not isinstance(identifier, str) or not identifier:
++        raise ValueError("every primitive needs a non-empty id")
++    return identifier.split("__", 1)[0]
++
++
++def _validated_mesh(mesh):
++    if not isinstance(mesh, dict) or mesh.get("schema") != "axm.surface-3d/v0.1":
++        raise ValueError("mesh must use axm.surface-3d/v0.1")
++    primitives = mesh.get("primitives")
++    if not isinstance(primitives, list) or not primitives or len(primitives) > 512:
++        raise ValueError("mesh needs 1..512 primitives")
++    components = {}
++    for primitive in primitives:
++        if not isinstance(primitive, dict):
++            raise ValueError("primitive must be an object")
++        component = _component(primitive)
++        positions = primitive.get("positions")
++        indices = primitive.get("indices")
++        if not isinstance(positions, list) or not positions or len(positions) > 1_000_000:
++            raise ValueError(f"{component} positions are missing or over limit")
++        checked = [_vec3(position, f"{component}.position") for position in positions]
++        normals, colors, material = primitive.get("normals"), primitive.get("colors"), primitive.get("material")
++        if not isinstance(normals, list) or len(normals) != len(positions):
++            raise ValueError(f"{component} needs one normal per position")
++        for normal in normals:
++            _vec3(normal, f"{component}.normal")
++        if not isinstance(colors, list) or len(colors) != len(positions):
++            raise ValueError(f"{component} needs one color per position")
++        if not isinstance(material, dict):
++            raise ValueError(f"{component} material is missing")
++        if (not isinstance(indices, list) or not indices or len(indices) % 3 or
++                any(isinstance(i, bool) or not isinstance(i, int) or not 0 <= i < len(positions) for i in indices)):
++            raise ValueError(f"{component} indices must be bounded triangles")
++        components.setdefault(component, []).extend(checked)
++    return components
++
++
++def _part_specs(raw, components):
++    if not isinstance(raw, dict) or set(raw) != set(components):
++        missing, unexpected = sorted(set(components) - set(raw)), sorted(set(raw) - set(components))
++        raise ValueError(f"part specs must exactly cover components; missing={missing}, unexpected={unexpected}")
++    result = {}
++    for component, value in raw.items():
++        if not isinstance(value, dict):
++            raise ValueError(f"part {component} must be an object")
++        unexpected = set(value) - {"role", "hierarchy", "strength", "anchors", "anchor_falloff"}
++        if unexpected:
++            raise ValueError(f"part {component} has unsupported fields: {sorted(unexpected)}")
++        role, hierarchy = value.get("role", "detail"), value.get("hierarchy", "medium")
++        if role not in ROLES or hierarchy not in HIERARCHY:
++            raise ValueError(f"part {component} has unknown role or hierarchy")
++        anchors = value.get("anchors", {})
++        if not isinstance(anchors, dict) or len(anchors) > 32:
++            raise ValueError(f"part {component}.anchors must be an object with at most 32 entries")
++        checked_anchors = {}
++        for name, point in anchors.items():
++            if not isinstance(name, str) or not name or len(name) > 100:
++                raise ValueError("anchor names must be short non-empty text")
++            checked_anchors[name] = _vec3(point, f"anchor {name}")
++        result[component] = {
++            "role": role,
++            "hierarchy": hierarchy,
++            "strength": _number(value.get("strength", 1), f"part {component}.strength", 0, 1),
++            "anchors": checked_anchors,
++            "anchor_falloff": _number(value.get("anchor_falloff", .18),
++                                       f"part {component}.anchor_falloff", 0, 1),
++        }
++    return result
++
++
++def _bounds(points):
++    return tuple(min(p[i] for p in points) for i in range(3)), tuple(max(p[i] for p in points) for i in range(3))
++
++
++def _seeded_sign(seed, component):
++    value = int(hashlib.sha256(f"{seed}:{component}".encode()).hexdigest()[:16], 16)
++    return -1 if value & 1 else 1
++
++
++def _raw_transform(point, bounds, spec, style, sign):
++    low, high = bounds
++    center = tuple((low[i] + high[i]) * .5 for i in range(3))
++    x, y, z = point
++    strength = spec["strength"]
++    hierarchy = getattr(style, spec["hierarchy"] + "_scale")
++    hierarchy = 1 + (hierarchy - 1) * strength
++    role = spec["role"]
++    role_scale = (style.functional_scale if role == "functional" else
++                  style.armor_scale if role == "armor" else 1)
++    role_scale = 1 + (role_scale - 1) * strength
++    vertical = 1 + (style.vertical_scale - 1) * strength
++    span_y = max(high[1] - low[1], 1e-9)
++    height_t = max(0, min(1, (y - low[1]) / span_y))
++    taper = 1 + style.taper * (height_t * 2 - 1) * strength
++    horizontal = hierarchy * role_scale * taper
++    vertical_total = vertical * (role_scale if role == "functional" else hierarchy)
++    dx, dy, dz = (x - center[0]) * horizontal, (y - center[1]) * vertical_total, (z - center[2]) * horizontal
++    angle = style.asymmetry * .7 * sign * strength
++    ca, sa = math.cos(angle), math.sin(angle)
++    dx, dz = dx * ca - dz * sa, dx * sa + dz * ca
++    # Height-dependent shear gives intentional imbalance rather than a color cue.
++    dx += style.asymmetry * sign * (y - center[1]) * strength
++    return center[0] + dx, center[1] + dy, center[2] + dz
++
++
++def _transform(point, bounds, spec, style, sign):
++    raw = _raw_transform(point, bounds, spec, style, sign)
++    delta = tuple(raw[i] - point[i] for i in range(3))
++    anchors = spec["anchors"]
++    if anchors and any(delta):
++        low, high = bounds
++        diagonal = math.sqrt(sum((high[i] - low[i]) ** 2 for i in range(3)))
++        radius = diagonal * spec["anchor_falloff"]
++        distance = min(math.dist(point, anchor) for anchor in anchors.values())
++        weight = 1 if radius <= 1e-12 else min(1, distance / radius)
++        delta = tuple(value * weight for value in delta)
++    return tuple(round(point[i] + delta[i], 9) for i in range(3))
++
++
++def _normals(positions, indices):
++    accum = [[0., 0., 0.] for _ in positions]
++    for offset in range(0, len(indices), 3):
++        ia, ib, ic = indices[offset:offset + 3]
++        a, b, c = positions[ia], positions[ib], positions[ic]
++        ab, ac = tuple(b[i] - a[i] for i in range(3)), tuple(c[i] - a[i] for i in range(3))
++        normal = (ab[1] * ac[2] - ab[2] * ac[1], ab[2] * ac[0] - ab[0] * ac[2],
++                  ab[0] * ac[1] - ab[1] * ac[0])
++        length = math.sqrt(sum(value * value for value in normal))
++        if length <= 1e-12:
++            raise ValueError("form derivation produced a degenerate triangle")
++        for index in (ia, ib, ic):
++            for axis in range(3):
++                accum[index][axis] += normal[axis] / length
++    result = []
++    for normal in accum:
++        length = math.sqrt(sum(value * value for value in normal))
++        if length <= 1e-12:
++            raise ValueError("form derivation produced an unreferenced vertex")
++        result.append([round(value / length, 9) for value in normal])
++    return result
++
++
++def apply_game_form(mesh, part_specs, style="comic-salvage", seed=1):
++    """Return canonical source plus a derived realization and anchor receipt."""
++    if isinstance(seed, bool) or not isinstance(seed, int) or not 0 <= seed <= 2_147_483_647:
++        raise ValueError("seed must be an integer from 0 to 2147483647")
++    profile = _style(style)
++    components = _validated_mesh(mesh)
++    specs = _part_specs(part_specs, components)
++    bounds = {name: _bounds(points) for name, points in components.items()}
++    realization = copy.deepcopy(mesh)
++    anchor_rows = []
++    for primitive in realization["primitives"]:
++        component = _component(primitive)
++        spec, sign = specs[component], _seeded_sign(seed, component)
++        source_positions = [tuple(point) for point in primitive["positions"]]
++        if style == "realistic" or spec["strength"] == 0:
++            positions = [list(point) for point in source_positions]
++        else:
++            positions = [list(_transform(point, bounds[component], spec, profile, sign))
++                         for point in source_positions]
++            primitive["normals"] = _normals(positions, primitive["indices"])
++        primitive["positions"] = positions
++    for component, spec in specs.items():
++        sign = _seeded_sign(seed, component)
++        for name, point in spec["anchors"].items():
++            after = point if style == "realistic" else _transform(point, bounds[component], spec, profile, sign)
++            drift = math.dist(point, after)
++            anchor_rows.append({"component": component, "name": name, "before": list(point),
++                                "after": list(after), "drift": drift, "preserved": drift <= 1e-9})
++    source = copy.deepcopy(mesh)
++    return {
++        "schema": FORM_SCHEMA,
++        "style": asdict(profile),
++        "seed": seed,
++        "source_sha256": _digest(source),
++        "source": source,
++        "realization": realization,
++        "parts": copy.deepcopy(part_specs),
++        "anchor_receipt": anchor_rows,
++        "gates": {"canonical-source-embedded": True,
++                  "all-declared-anchors-preserved": all(row["preserved"] for row in anchor_rows)},
++        "truth": (
++            "A deterministic geometry derivation, not perceptual style acceptance. Protected anchor "
++            "coordinates are preserved; rig deformation, collisions and target-engine behavior remain unproven."
++        ),
++    }
++
++
++def publish_game_form(path, mesh, part_specs, style="comic-salvage", seed=1):
++    """Publish source, realization and receipt without overwriting an existing path."""
++    target = Path(path)
++    if target.exists():
++        raise FileExistsError(f"refusing to overwrite existing form package: {target}")
++    result = apply_game_form(mesh, part_specs, style, seed)
++    target.mkdir(parents=True)
++    try:
++        atomic_write_json(target / "source.json", result["source"])
++        atomic_write_json(target / "realization.json", result["realization"])
++        manifest = {key: value for key, value in result.items() if key not in ("source", "realization")}
++        atomic_write_json(target / "form-manifest.json", manifest)
++    except Exception:
++        for child in target.iterdir():
++            child.unlink()
++        target.rmdir()
++        raise
++    return {"path": str(target), "style": style, "source_sha256": result["source_sha256"],
++            "anchors": result["anchor_receipt"], "gates": result["gates"],
++            "files": ["source.json", "realization.json", "form-manifest.json"]}
+diff --git a/src/axm_uc/visual_assets_cli.py b/src/axm_uc/visual_assets_cli.py
+index 7142169..3635ae9 100644
+--- a/src/axm_uc/visual_assets_cli.py
++++ b/src/axm_uc/visual_assets_cli.py
+@@ -30,6 +30,7 @@ from .visual_3d_iteration import (
+ from .rigged_characters import character_catalog, forge_rigged_character, inspect_rigged_character
+ from .game_material_styles import (FAMILIES, FINISHES, WearLayer, game_material_catalog,
+                                    generate_game_material, protected_regions_mask)
++from .game_form_styles import FORM_STYLES, game_form_catalog, publish_game_form
+ 
+ BASE_CATEGORIES = ["texture", "gradient", "material", "fixture", "decal", "palette"]
+ EXPANDED_CATEGORIES = ["surface", "pigment", "sprite", "mesh", "vector-part"]
+@@ -51,6 +52,7 @@ def combined_catalog() -> dict:
+         "three_d_forge": catalog_3d(),
+         "rigged_characters": character_catalog(),
+         "game_materials": game_material_catalog(),
++        "game_forms": game_form_catalog(),
+     }
+ 
+ 
+@@ -60,6 +62,12 @@ def build_parser() -> argparse.ArgumentParser:
+     sub.add_parser("catalog", help="show every executable generator family")
+     sub.add_parser("grammar-catalog", help="show the composable visual-intent grammar")
+     sub.add_parser("game-material-catalog", help="show material families and opt-in surface finishes")
++    sub.add_parser("game-form-catalog", help="show deterministic silhouette and proportion styles")
++    form = sub.add_parser("game-form", help="derive a styled surface mesh while retaining canonical source")
++    form.add_argument("request", help="JSON object containing mesh and exact per-component part specs")
++    form.add_argument("path", help="new output directory; existing paths are never overwritten")
++    form.add_argument("--style", choices=[style.name for style in FORM_STYLES], default="comic-salvage")
++    form.add_argument("--seed", type=int, default=1)
+     material = sub.add_parser("game-material", help="generate portable PBR maps with a selected game finish")
+     material.add_argument("family", choices=FAMILIES)
+     material.add_argument("path")
+@@ -190,6 +198,13 @@ def main(argv: list[str] | None = None) -> int:
+         result = grammar_catalog()
+     elif args.command == "game-material-catalog":
+         result = game_material_catalog()
++    elif args.command == "game-form-catalog":
++        result = game_form_catalog()
++    elif args.command == "game-form":
++        request = json.loads(Path(args.request).read_text(encoding="utf-8"))
++        if not isinstance(request, dict) or set(request) != {"mesh", "parts"}:
++            parser.error("game-form request must contain exactly mesh and parts")
++        result = publish_game_form(args.path, request["mesh"], request["parts"], args.style, args.seed)
+     elif args.command == "game-material":
+         layer = None
+         protection = None
+diff --git a/tests/test_game_form_styles.py b/tests/test_game_form_styles.py
+new file mode 100644
+index 0000000..3eed53a
+--- /dev/null
++++ b/tests/test_game_form_styles.py
+@@ -0,0 +1,139 @@
++import copy
++import io
++import json
++import tempfile
++import unittest
++from contextlib import redirect_stdout
++from pathlib import Path
++
++from axm_uc.game_form_styles import apply_game_form, game_form_catalog, publish_game_form
++from axm_uc.visual_assets_cli import main
++
++
++def cube(component, center=(0, 1, 0), size=(2, 2, 2), material="#E2A42BFF"):
++    cx, cy, cz = center
++    sx, sy, sz = (value / 2 for value in size)
++    positions = [[cx + x * sx, cy + y * sy, cz + z * sz]
++                 for x, y, z in ((-1, -1, -1), (1, -1, -1), (1, 1, -1), (-1, 1, -1),
++                                 (-1, -1, 1), (1, -1, 1), (1, 1, 1), (-1, 1, 1))]
++    indices = [0, 2, 1, 0, 3, 2, 4, 5, 6, 4, 6, 7,
++               0, 1, 5, 0, 5, 4, 3, 7, 6, 3, 6, 2,
++               0, 4, 7, 0, 7, 3, 1, 2, 6, 1, 6, 5]
++    return {"id": component + "__paint", "positions": positions,
++            "normals": [[0, 1, 0] for _ in positions], "indices": indices,
++            "colors": [[1, 1, 1, 1] for _ in positions],
++            "material": {"color": material, "metallic": .4, "roughness": .7}}
++
++
++def fixture():
++    mesh = {"schema": "axm.surface-3d/v0.1", "name": "form-fixture",
++            "primitives": [cube("body"), cube("tool", (1.65, 1.4, 0), (.8, .8, .8)),
++                           cube("badge", (0, 1.6, -1.1), (.4, .4, .2))]}
++    parts = {
++        "body": {"role": "body", "hierarchy": "large",
++                 "anchors": {"ground": [0, 0, 0]}, "anchor_falloff": .2},
++        "tool": {"role": "functional", "hierarchy": "medium",
++                 "anchors": {"socket": [1.25, 1.4, 0]}, "anchor_falloff": .2},
++        "badge": {"role": "detail", "hierarchy": "small", "anchors": {}},
++    }
++    return mesh, parts
++
++
++class GameFormStyleTests(unittest.TestCase):
++    def test_catalog_keeps_realistic_and_distinct_game_profiles(self):
++        catalog = game_form_catalog()
++        profiles = {row["name"]: row for row in catalog["styles"]}
++        self.assertEqual(set(profiles), {"realistic", "comic-salvage", "heroic-toon", "storybook-chunky"})
++        self.assertEqual(profiles["realistic"]["vertical_scale"], 1)
++        self.assertGreater(profiles["comic-salvage"]["functional_scale"], 1.25)
++        self.assertNotEqual(profiles["comic-salvage"]["taper"], 0)
++        self.assertTrue(catalog["preserves_canonical_source"])
++
++    def test_realistic_is_geometry_identity_and_source_is_immutable(self):
++        mesh, parts = fixture()
++        original = copy.deepcopy(mesh)
++        result = apply_game_form(mesh, parts, "realistic", 9)
++        self.assertEqual(mesh, original)
++        self.assertEqual(result["source"], original)
++        self.assertEqual(result["realization"], original)
++        self.assertTrue(result["gates"]["canonical-source-embedded"])
++
++    def test_comic_form_changes_geometry_not_materials_or_source(self):
++        mesh, parts = fixture()
++        original = copy.deepcopy(mesh)
++        result = apply_game_form(mesh, parts, "comic-salvage", 471)
++        self.assertEqual(result["source"], original)
++        source_by_id = {p["id"]: p for p in original["primitives"]}
++        changed = 0
++        for primitive in result["realization"]["primitives"]:
++            source = source_by_id[primitive["id"]]
++            changed += primitive["positions"] != source["positions"]
++            self.assertEqual(primitive["material"], source["material"])
++            self.assertEqual(primitive["colors"], source["colors"])
++            for normal in primitive["normals"]:
++                self.assertAlmostEqual(sum(value * value for value in normal), 1, places=6)
++        self.assertEqual(changed, 3)
++
++    def test_functional_exaggeration_and_small_detail_suppression_are_real(self):
++        mesh, parts = fixture()
++        result = apply_game_form(mesh, parts, "comic-salvage", 471)["realization"]
++        output = {primitive["id"].split("__")[0]: primitive for primitive in result["primitives"]}
++        def width(primitive):
++            xs = [point[0] for point in primitive["positions"]]
++            return max(xs) - min(xs)
++        self.assertGreater(width(output["tool"]), .8)
++        self.assertLess(width(output["badge"]), .4)
++        self.assertNotAlmostEqual(width(output["body"]), 2)
++
++    def test_declared_contacts_and_sockets_are_exactly_preserved(self):
++        mesh, parts = fixture()
++        result = apply_game_form(mesh, parts, "storybook-chunky", 71)
++        self.assertTrue(result["gates"]["all-declared-anchors-preserved"])
++        self.assertEqual({row["name"] for row in result["anchor_receipt"]}, {"ground", "socket"})
++        for row in result["anchor_receipt"]:
++            self.assertEqual(row["before"], row["after"])
++            self.assertEqual(row["drift"], 0)
++
++    def test_asymmetry_is_deterministic_and_seeded(self):
++        mesh, parts = fixture()
++        a = apply_game_form(mesh, parts, "comic-salvage", 1)["realization"]
++        b = apply_game_form(mesh, parts, "comic-salvage", 1)["realization"]
++        variants = [apply_game_form(mesh, parts, "comic-salvage", seed)["realization"]
++                    for seed in range(2, 12)]
++        self.assertEqual(a, b)
++        self.assertTrue(any(candidate != a for candidate in variants))
++
++    def test_cli_publishes_source_realization_and_refuses_overwrite(self):
++        mesh, parts = fixture()
++        with tempfile.TemporaryDirectory() as tmp:
++            request = Path(tmp) / "request.json"
++            output = Path(tmp) / "form"
++            request.write_text(json.dumps({"mesh": mesh, "parts": parts}))
++            with redirect_stdout(io.StringIO()):
++                self.assertEqual(main(["game-form", str(request), str(output),
++                                       "--style", "heroic-toon", "--seed", "17"]), 0)
++            self.assertEqual(sorted(path.name for path in output.iterdir()),
++                             ["form-manifest.json", "realization.json", "source.json"])
++            manifest = json.loads((output / "form-manifest.json").read_text())
++            self.assertEqual(manifest["style"]["name"], "heroic-toon")
++            self.assertTrue(manifest["gates"]["all-declared-anchors-preserved"])
++            with self.assertRaises(FileExistsError):
++                publish_game_form(output, mesh, parts)
++
++    def test_validation_rejects_partial_specs_invalid_anchors_and_bad_triangles(self):
++        mesh, parts = fixture()
++        for bad in ({"body": parts["body"]}, {**parts, "ghost": parts["body"]}):
++            with self.assertRaisesRegex(ValueError, "exactly cover"):
++                apply_game_form(mesh, bad)
++        broken = copy.deepcopy(parts)
++        broken["body"]["anchors"] = {"bad": [0, float("nan"), 0]}
++        with self.assertRaisesRegex(ValueError, "finite"):
++            apply_game_form(mesh, broken)
++        broken_mesh = copy.deepcopy(mesh)
++        broken_mesh["primitives"][0]["indices"] = [0, 1]
++        with self.assertRaisesRegex(ValueError, "triangles"):
++            apply_game_form(broken_mesh, parts)
++
++
++if __name__ == "__main__":
++    unittest.main()
+diff --git a/tools/blender/game_form_roundtrip.py b/tools/blender/game_form_roundtrip.py
+new file mode 100644
+index 0000000..63bf583
+--- /dev/null
++++ b/tools/blender/game_form_roundtrip.py
+@@ -0,0 +1,259 @@
++"""Build and independently re-import one expressive-form comparison GLB.
++
++This is a geometry/control specimen, not a finished animated game asset.  It
++keeps the neutral source next to a comic-salvage derivation and checks actual
++fresh-import vertex bounds plus protected wheel/contact and tool socket anchors.
++"""
++import argparse
++import hashlib
++import json
++import math
++from pathlib import Path
++import sys
++
++ROOT = Path(__file__).resolve().parents[2]
++sys.path.insert(0, str(ROOT / "src"))
++
++from axm_uc.game_form_styles import apply_game_form
++from axm_uc.rts_mesh import SalvageMesh
++
++
++def courier_mesh():
++    mesh = SalvageMesh()
++    with mesh.part("body", (0, 0, 0)):
++        mesh.roundbox("toolbox-body", (0, 1.28, 0), (1.75, 1.42, 1.18), "paint", .18)
++        mesh.roundbox("belly-frame", (0, 1.12, .62), (1.20, .66, .12), "iron", .06)
++    with mesh.part("head", (0, 2.05, .18)):
++        mesh.ellipsoid("face-shell", (0, 2.08, .18), (1.25, .94, .98), "ivory")
++        mesh.ellipsoid("optic", (-.24, 2.14, .64), (.40, .40, .12), "cyan")
++        mesh.ellipsoid("wink", (.27, 2.12, .65), (.30, .15, .10), "rubber")
++    mesh.wheel("wheel_left", (-.91, .56, 0), .56, .34)
++    mesh.wheel("wheel_right", (.91, .56, 0), .56, .34)
++    with mesh.part("wrench_arm", (-.80, 1.63, .08)):
++        mesh.beam("upper-arm", (-.80, 1.63, .08), (-1.22, 2.03, .05), .17, .15, "iron")
++        mesh.beam("wrench-handle", (-1.22, 2.03, .05), (-1.54, 2.55, .04), .12, .10, "signal")
++        mesh.ring("open-wrench-jaw", (-1.55, 2.66, .04), .25, .07, "signal", axis="z", ratio=.72)
++    with mesh.part("armor", (.64, 1.48, .53)):
++        mesh.roundbox("offset-shoulder", (.70, 1.61, .52), (.72, .58, .15), "signal", .08)
++        mesh.panel("story-panel", (.46, 1.22, .66), .58, .44, "red")
++    with mesh.part("antenna", (.40, 2.46, .12)):
++        mesh.pipe("antenna-stalk", [(.40, 2.44, .12), (.49, 2.93, .10)], .035, "iron", 7)
++        mesh.ellipsoid("antenna-beacon", (.50, 3.01, .10), (.20, .20, .20), "red", 9, 5)
++    with mesh.part("badge", (0, 1.12, .70)):
++        mesh.smile((0, 1.12, .70), .24)
++    return mesh.surface_spec("mischief-courier-form-specimen")
++
++
++def part_specs():
++    return {
++        "body": {"role": "body", "hierarchy": "large",
++                 "anchors": {"chassis-floor": [0, .50, 0]}, "anchor_falloff": .20},
++        "head": {"role": "functional", "hierarchy": "large",
++                 "anchors": {"neck-socket": [0, 1.72, .18]}, "anchor_falloff": .18},
++        "wheel_left": {"role": "functional", "hierarchy": "medium",
++                       "anchors": {"ground-left": [-.91, 0, 0], "axle-left": [-.91, .56, 0]},
++                       "anchor_falloff": .22},
++        "wheel_right": {"role": "functional", "hierarchy": "medium",
++                        "anchors": {"ground-right": [.91, 0, 0], "axle-right": [.91, .56, 0]},
++                        "anchor_falloff": .22},
++        "wrench_arm": {"role": "functional", "hierarchy": "large",
++                       "anchors": {"shoulder-socket": [-.80, 1.63, .08]}, "anchor_falloff": .17},
++        "armor": {"role": "armor", "hierarchy": "medium",
++                  "anchors": {"armor-mount": [.64, 1.48, .53]}, "anchor_falloff": .14},
++        "antenna": {"role": "detail", "hierarchy": "small",
++                    "anchors": {"antenna-socket": [.40, 2.46, .12]}, "anchor_falloff": .17},
++        "badge": {"role": "detail", "hierarchy": "small", "anchors": {}, "strength": .55},
++    }
++
++
++def map_point(point):
++    # UC surface coordinates are Y-up/+Z-forward; Blender is Z-up/-Y-forward.
++    return point[0], -point[2], point[1]
++
++
++def material_from_primitive(bpy, primitive, cache):
++    data = primitive["material"]
++    key = (data["color"], data["metallic"], data["roughness"])
++    if key in cache:
++        return cache[key]
++    material = bpy.data.materials.new("Form_" + data["color"][1:7])
++    material.use_nodes = True
++    color = tuple(int(data["color"][i:i + 2], 16) / 255 for i in (1, 3, 5))
++    shader = material.node_tree.nodes.get("Principled BSDF")
++    shader.inputs["Base Color"].default_value = (*color, 1)
++    shader.inputs["Metallic"].default_value = data["metallic"]
++    shader.inputs["Roughness"].default_value = data["roughness"]
++    cache[key] = material
++    return material
++
++
++def add_variant(bpy, variant, mesh, x_offset, cache):
++    root = bpy.data.objects.new(variant, None)
++    bpy.context.scene.collection.objects.link(root)
++    root.location.x = x_offset
++    root["axm_variant"] = variant
++    objects = [root]
++    for index, primitive in enumerate(mesh["primitives"]):
++        vertices = [map_point(point) for point in primitive["positions"]]
++        faces = [primitive["indices"][i:i + 3] for i in range(0, len(primitive["indices"]), 3)]
++        data = bpy.data.meshes.new(f"{variant}_{index:02d}")
++        data.from_pydata(vertices, [], faces)
++        data.materials.append(material_from_primitive(bpy, primitive, cache))
++        obj = bpy.data.objects.new(f"{variant}__{index:02d}__{primitive['id']}", data)
++        bpy.context.scene.collection.objects.link(obj)
++        obj.parent = root
++        obj["axm_variant"] = variant
++        obj["axm_component"] = primitive["id"].split("__", 1)[0]
++        objects.append(obj)
++    return root, objects
++
++
++def add_text(bpy, text, location, size=.20):
++    curve = bpy.data.curves.new(text, "FONT")
++    curve.body, curve.align_x, curve.align_y = text, "CENTER", "CENTER"
++    curve.size, curve.extrude, curve.bevel_depth = size, .008, .003
++    obj = bpy.data.objects.new(text, curve)
++    bpy.context.scene.collection.objects.link(obj)
++    obj.location = location
++    obj.rotation_euler = (math.pi / 2, 0, 0)
++    material = bpy.data.materials.get("Proof captions")
++    if material is None:
++        material = bpy.data.materials.new("Proof captions")
++        material.diffuse_color = (.72, .78, .86, 1)
++    obj.data.materials.append(material)
++
++
++def scene_setup(bpy, output):
++    from mathutils import Vector
++    scene = bpy.context.scene
++    scene.render.engine = "BLENDER_EEVEE_NEXT"
++    scene.render.resolution_x, scene.render.resolution_y = 1500, 900
++    scene.render.resolution_percentage = 100
++    scene.render.image_settings.file_format = "PNG"
++    scene.render.filepath = str(output)
++    scene.view_settings.look = "AgX - Medium High Contrast"
++    world = bpy.data.worlds.new("Form proof world")
++    world.color = (.018, .024, .035)
++    scene.world = world
++    bpy.ops.mesh.primitive_plane_add(size=20, location=(0, 0, -.012))
++    floor = bpy.context.object
++    floor.name = "PROOF_ONLY_FLOOR"
++    floor_material = bpy.data.materials.new("Proof floor")
++    floor_material.diffuse_color = (.045, .055, .072, 1)
++    floor_material.metallic, floor_material.roughness = .55, .30
++    floor.data.materials.append(floor_material)
++    bpy.ops.object.camera_add(location=(0, -13.5, 4.4))
++    camera = bpy.context.object
++    camera.rotation_euler = ((Vector((0, 0, 1.35)) - camera.location).to_track_quat("-Z", "Y").to_euler())
++    camera.data.lens = 54
++    scene.camera = camera
++    for location, power, size, color in [((-4, -4, 7), 1150, 4.2, (1.0, .72, .48)),
++                                          ((4, -2, 5), 900, 3.2, (.42, .72, 1.0)),
++                                          ((0, 3, 6), 850, 4.0, (.70, .82, 1.0))]:
++        bpy.ops.object.light_add(type="AREA", location=location)
++        light = bpy.context.object
++        light.data.energy, light.data.shape, light.data.size, light.data.color = power, "DISK", size, color
++        light.rotation_euler = ((Vector((0, 0, 1.2)) - light.location).to_track_quat("-Z", "Y").to_euler())
++    add_text(bpy, "CANONICAL SOURCE", (-2.55, -.30, 3.52), .20)
++    add_text(bpy, "COMIC-SALVAGE FORM", (2.55, -.30, 3.52), .20)
++
++
++def object_bounds(obj):
++    points = [obj.matrix_world @ vertex.co for vertex in obj.data.vertices]
++    return [[min(point[i] for point in points) for i in range(3)],
++            [max(point[i] for point in points) for i in range(3)]]
++
++
++def expected_bounds(mesh, x_offset):
++    rows = {}
++    for index, primitive in enumerate(mesh["primitives"]):
++        points = [(point[0] + x_offset, -point[2], point[1]) for point in primitive["positions"]]
++        rows[f"{index:02d}__{primitive['id']}"] = [
++            [min(point[i] for point in points) for i in range(3)],
++            [max(point[i] for point in points) for i in range(3)],
++        ]
++    return rows
++
++
++def build(output):
++    import bpy
++    output.mkdir(parents=True, exist_ok=False)
++    bpy.ops.wm.read_factory_settings(use_empty=True)
++    source = courier_mesh()
++    derived = apply_game_form(source, part_specs(), "comic-salvage", 471)
++    (output / "form-package.json").write_text(json.dumps(derived, indent=2) + "\n")
++    cache = {}
++    _, source_objects = add_variant(bpy, "SOURCE", source, -2.55, cache)
++    _, form_objects = add_variant(bpy, "FORM", derived["realization"], 2.55, cache)
++    bpy.ops.object.select_all(action="DESELECT")
++    for obj in source_objects + form_objects:
++        obj.select_set(True)
++    bpy.context.view_layer.objects.active = form_objects[0]
++    glb = output / "expressive-form-proof.glb"
++    bpy.ops.export_scene.gltf(filepath=str(glb), export_format="GLB", use_selection=True,
++                              export_extras=True, export_image_format="AUTO")
++    scene_setup(bpy, output / "source.png")
++    bpy.ops.wm.save_as_mainfile(filepath=str(output / "expressive-form-proof.blend"))
++    bpy.ops.render.render(write_still=True)
++    (output / "expected-bounds.json").write_text(json.dumps({
++        "SOURCE": expected_bounds(source, -2.55),
++        "FORM": expected_bounds(derived["realization"], 2.55),
++    }, indent=2) + "\n")
++
++
++def verify(output):
++    from PIL import Image
++    import bpy
++    package = json.loads((output / "form-package.json").read_text())
++    expected = json.loads((output / "expected-bounds.json").read_text())
++    bpy.ops.wm.open_mainfile(filepath=str(output / "expressive-form-proof.blend"))
++    self_contained = len([obj for obj in bpy.data.objects if obj.get("axm_variant")]) > 2
++    bpy.ops.wm.read_factory_settings(use_empty=True)
++    bpy.ops.import_scene.gltf(filepath=str(output / "expressive-form-proof.glb"))
++    checked = 0
++    maximum_error = 0
++    for obj in bpy.data.objects:
++        if obj.type != "MESH" or not obj.get("axm_variant"):
++            continue
++        variant = obj["axm_variant"]
++        suffix = obj.name.split("__", 1)[1]
++        target = expected[variant][suffix]
++        actual = object_bounds(obj)
++        error = max(abs(actual[a][i] - target[a][i]) for a in range(2) for i in range(3))
++        maximum_error = max(maximum_error, error)
++        assert error < 2e-5, (obj.name, error)
++        checked += 1
++    assert checked == sum(len(rows) for rows in expected.values()), checked
++    anchors = package["anchor_receipt"]
++    assert anchors and all(row["preserved"] and row["drift"] == 0 for row in anchors)
++    scene_setup(bpy, output / "reimport.png")
++    bpy.ops.render.render(write_still=True)
++    source = Image.open(output / "source.png").convert("RGB").tobytes()
++    restored = Image.open(output / "reimport.png").convert("RGB").tobytes()
++    mae = sum(abs(a - b) for a, b in zip(source, restored)) / len(source)
++    assert mae < 2, mae
++    glb = output / "expressive-form-proof.glb"
++    report = {
++        "schema": "axm.game-form-roundtrip/v0.1",
++        "blender": bpy.app.version_string,
++        "glb_sha256": hashlib.sha256(glb.read_bytes()).hexdigest(),
++        "fresh_import_mesh_bounds_checked": checked,
++        "maximum_bound_error_m": maximum_error,
++        "declared_anchors_preserved": len(anchors),
++        "editable_source_contains_both_variants": self_contained,
++        "source_reimport_render_mae": mae,
++        "limits": (
++            "Static two-variant geometry specimen. No rig, animation, collision, LOD, target-engine, "
++            "game-distance or perceptual style acceptance. Anchor coordinates pass; full contact surfaces do not."
++        ),
++    }
++    (output / "verification.json").write_text(json.dumps(report, indent=2) + "\n")
++    print(json.dumps(report))
++
++
++if __name__ == "__main__":
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("mode", choices=("build", "verify"))
++    parser.add_argument("output", type=Path)
++    args = parser.parse_args()
++    (build if args.mode == "build" else verify)(args.output.resolve())

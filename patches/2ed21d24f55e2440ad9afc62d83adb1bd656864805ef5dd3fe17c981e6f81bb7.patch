@@ -1,0 +1,749 @@
+diff --git a/GAME_STYLE_GROWTH.md b/GAME_STYLE_GROWTH.md
+index c35843e..eec9137 100644
+--- a/GAME_STYLE_GROWTH.md
++++ b/GAME_STYLE_GROWTH.md
+@@ -48,8 +48,9 @@ maps, plus a manifest with parameters, color spaces and file digests. Woven
+ fabric also retains its thickness map. ORM channels are occlusion, roughness,
+ metallic. Stylization never changes AO or conductivity. Height remains an
+ authoring proxy; rebuilding normals from it replaces the selected normal finish.
+-Normal orientation for existing donors is inherited and must be checked by a
+-renderer adapter; new families use tangent +Y. Generated files are not silently
++Normal orientation for existing donors is tangent -Y; new families use tangent
+++Y. The opt-in Blender adapter now corrects inherited direction in packed
++derivatives, preserving original source maps. Generated files are not silently
+ accepted as engine-ready merely because their PNG structure passes.
+ 
+ Python callers can compose `game_material_fields`, `apply_finish`, or
+@@ -63,8 +64,8 @@ Choose the next useful unoccupied step after reading current main and PRs.
+ Dependencies and observed failures may change the order. Finish and repair a
+ bounded change before starting another; no quota of new files or assets.
+ 
+-1. Connect the new surface fields to the Blender material adapter and independently
+-   inspect actual exported GLBs, including data color spaces and normal direction.
++1. **Completed:** connect surface fields to the opt-in Blender adapter and
++   independently inspect actual GLBs, data color spaces and normal direction.
+ 2. Add controllable layered paint, exposed-metal edges, roughness variation and
+    protected readable regions; distinguish authored masks from mesh-derived wear.
+ 3. Add reusable playful form controls: taper, squash, oversized functional parts,
+@@ -87,6 +88,48 @@ exports when those features change. Measure performance before making claims.
+ 
+ ## Current checkpoint
+ 
++### Material realization pass — 2026-09-13
++
++- Completed `src/axm_uc/game_material_bridge.py`: validated bounded UC bundles,
++  packed editable Blender PBR materials, explicit glTF AO, correct ORM/data color
++  spaces, tangent +Y derivative normals. Existing realistic/product generators
++  remain untouched; updated manifest direction is metadata, not a field rewrite.
++- Actual local verification: **17 tests pass** (11 prior + 6 bridge tests), source
++  compilation, and two-process Blender 4.3 GLB export/re-import of all **24**
++  family/finish combinations. Every embedded base/ORM/normal pixel matches the
++  expected source or explicit Y-flipped derivative exactly. Reopened `.blend`
++  contains 72 packed runtime images; original bundle bytes remain unchanged.
++- Evidence: `tools/blender/game_material_roundtrip.py`,
++  `docs/GAME_MATERIAL_BLENDER.md`, and
++  `docs/evidence/game-material-roundtrip-2026-09-13.json`. Deliverable:
++  `AXM-Material-Realization-Proof.zip` (actual GLB, editable Blender scene, original
++  maps, before/after renders and verification receipt); preview
++  `AXM-Material-Realization.png`.
++- Visual inspection found pole-distorted cloth/wood and cramped labels in the
++  first proof. Front-planar UVs and label spacing repaired those presentation
++  faults. Source and re-import stills visibly retain the same materials; measured
++  mean absolute RGB-byte difference is 0.000069 across this pair. This does not
++  establish target-engine appearance or full game-style quality. The graphic
++  finish stays PBR, not a cel shader; some finish differences remain subtle.
++- Limits: static material proof only, not a new character/animated asset. No
++  engine/gameplay/performance/LOD/animation/deformation or mesh-wear acceptance.
++  AO is an export socket, not Blender preview darkening. Optional Draco was
++  unavailable (not requested); shared ORM/AO sampler warning was checked against
++  matching settings and actual GLB wrapping. Blender runtime recovered using
++  cached Python 3.11/bpy 4.3 with NumPy 1.26.4, not UC's Windows provisioner.
++- **Next useful step: priority 2**, controllable layered paint/exposed substrate
++  and protected readable regions, with this real export test retained. Then
++  priority 3 form controls. Do not restart the completed bridge or duplicate it.
++- Active branch: `codex/rts-reference-foundry`, based on `bf607a5`; unrelated open
++  PR #54 is outside this pass. Require current-head checks before merging this
++  change; the final GitHub PR state is authoritative for merge completion.
++- Roots: Truth distinguishes map/export/render evidence from game acceptance;
++  Agency keeps this opt-in and free of remote/paid dependencies; Continuity keeps
++  original maps, manifests and rich editable source; Wisdom repaired visible
++  presentation errors and preserved uncertainty rather than claiming full style.
++
++### Earlier bootstrap
++
+ - Bootstrap: executable material families/finish composition and `axm-assets`
+   commands implemented; this precedes the ten scheduled activations.
+ - Local verification: eleven tests pass, covering all 24 family/finish combinations,
+@@ -101,7 +144,8 @@ exports when those features change. Measure performance before making claims.
+   preserving strong edges, and bands
+   within each source field's range. No shaded game asset or engine integration
+   demonstrated here. Surface maps alone do not satisfy Mike's complete style goal.
+-- Next useful step: material-to-Blender/export adapter plus a small rendered proof.
++- Bootstrap's next step (now completed above): Blender/export adapter plus a
++  small rendered proof.
+ - Working lane: `codex/rts-reference-foundry`; continue an existing open PR when
+   present and keep related fixes together. Prior trike PR #58 is already merged.
+ - Approval basis: Mike explicitly authorizes this bounded improvement campaign
+diff --git a/docs/GAME_MATERIAL_BLENDER.md b/docs/GAME_MATERIAL_BLENDER.md
+new file mode 100644
+index 0000000..540c720
+--- /dev/null
++++ b/docs/GAME_MATERIAL_BLENDER.md
+@@ -0,0 +1,94 @@
++# Game materials in Blender and glTF
++
++This is an **opt-in surface realization adapter**, not a replacement for the
++hero, globe or trike generators, and not a complete art-direction system.
++The realistic finish and original donor fields remain selectable and unchanged.
++
++## Use
++
++Generate a bundle using the existing portable CLI, then assign it in Blender:
++
++```sh
++axm-assets game-material painted-metal out/comic-paint --finish comic-salvage --seed 471
++```
++
++```python
++from axm_uc.game_material_bridge import blender_game_material
++
++material = blender_game_material("out/comic-paint", name="SalvageArmor")
++mesh_object.data.materials.append(material)  # caller supplies its own UV-mapped mesh
++```
++
++UC's `src` must be on Blender's Python path (or the package installed there).
++Validation uses only the standard library; importing this module does not import
++Blender. Calling `blender_game_material` requires `bpy`. The adapter does not
++install a runtime, unwrap geometry or replace existing object materials.
++
++## Export contract
++
++- Base color: sRGB image connected to Principled Base Color.
++- Packed ORM: Non-Color image; red to the recognized glTF Occlusion socket,
++  green to roughness, blue to metallic. AO is not baked into albedo. Blender's
++  ordinary preview does not evaluate that export-only AO socket.
++- Normal: Non-Color image, tangent-space Normal Map, strength 1. The finish's
++  authored normal strength is already in the pixels; no second attenuation.
++- Metal/fabric donor normals encode downward image Y. The adapter flips only
++  the green channel in a new packed image for glTF/Blender tangent +Y. Other
++  families keep their original normals. Source PNGs are never rewritten.
++- All three runtime images are packed into the editable material. Height,
++  separate scalar maps and fabric thickness remain in the source bundle;
++  height is not displacement and must not silently regenerate styled normals.
++- Material extras retain family, finish, original convention and manifest hash.
++  Keep the original bundle alongside the `.blend` when archiving a creation.
++
++New manifests explicitly identify normal direction. Existing v0.1 manifests
++with the original inherited-donor wording remain accepted for the six known
++families. Unknown schemas, conventions, maps, channel/color-space mismatches,
++path traversal, linked files, changed digests, PNG CRC/chunk errors and excessive
++dimensions/scanline data are rejected before creating Blender resources. This
++is a bounded UC-generated PNG reader, **not an arbitrary image importer** or a
++substitute for a sandbox around hostile third-party media.
++
++## Reproducible proof
++
++```sh
++python -m unittest discover -s tests -p 'test_game_material*.py' -v
++# In an isolated Python 3.11 environment with bpy 4.3.0, numpy 1.26.4, Pillow:
++python tools/blender/game_material_roundtrip.py build /new/output
++python tools/blender/game_material_roundtrip.py verify /new/output
++```
++
++The two invocations are separate processes. Build refuses an existing output
++directory. Verify deliberately overwrites that proof's re-import render/report.
++The tested runtime was Blender 4.3.0 on Linux, with Pillow 12.3.0. Blender's Python
++wheel required NumPy <2 here; no cross-version compatibility is claimed.
++
++The proof generates 24 small, front-planar-UV material samples (six families ×
++four finishes), original PNG bundles, packed editable `.blend`, actual GLB,
++source and re-imported Cycles stills, source digests and a verification receipt.
++Its independent GLB decoder checks every embedded base/ORM/normal PNG pixel,
++normal conversion, texture factors, explicit AO and repeat sampler state. It
++reopens the `.blend` and checks 72 packed images/color spaces, then starts with
++an empty Blender scene, re-imports the GLB, checks materials and renders again.
++
++The initial spherical UVs distorted woven cloth and wood into radial rings.
++Visual inspection caused a switch to front-planar UVs and clearer label spacing.
++That is a proof-scene repair, not an automatic UV-unwrapping capability.
++
++The exporter reports an unavailable optional Draco library; compression is not
++requested. It also reports shared sampler selection for ORM/AO; this adapter
++uses matching sampler settings and the GLB inspection verifies repeat wrapping.
++Neither warning is hidden or converted into a claim of compressed delivery.
++
++## Limits and next work
++
++The graphic-toon option is flatter **PBR surface data**, not exported cel lighting.
++The rendered samples show reduced highlight/detail response and directional
++paint marks; several finish differences remain subtle under this lighting.
++There are no rigs, animation clips or LODs in this material proof, deliberately.
++No performance benchmark, target-engine gameplay test, hero UV/deformation test,
++seamless tiling or mesh-aware edge wear is claimed.
++
++Next: layered paint and exposed substrate with protected readable areas, followed
++by expressive form controls. Retain this export test as a regression gate when
++those material mechanisms change.
+diff --git a/src/axm_uc/game_material_bridge.py b/src/axm_uc/game_material_bridge.py
+new file mode 100644
+index 0000000..cbc1413
+--- /dev/null
++++ b/src/axm_uc/game_material_bridge.py
+@@ -0,0 +1,200 @@
++"""Verified UC material bundles -> optional Blender/glTF PBR realization.
++
++Bundle validation needs only the standard library. Blender is imported lazily;
++existing hero/product materials are not replaced. Height stays authoring data.
++"""
++from __future__ import annotations
++
++from array import array
++import hashlib
++import json
++from pathlib import Path
++import re
++import struct
++import tempfile
++import zlib
++
++from .game_material_styles import FAMILIES, FINISHES
++
++LEGACY_NORMAL = "inherited donor for painted-metal/woven-fabric; tangent +Y for other families"
++MAP_CHANNELS = {"base_color": 3, "normal": 3, "orm": 3, "ao": 1,
++                "roughness": 1, "height": 1, "metallic": 1, "thickness": 1}
++REQUIRED_MAPS = {"base_color", "normal", "orm", "ao", "roughness", "height"}
++
++
++def _validate_png_payload(data, size, channels):
++    """Bound the complete UC PNG stream before passing it to Blender's decoder."""
++    cursor, kinds, compressed = 8, [], bytearray()
++    while cursor + 12 <= len(data):
++        length = struct.unpack_from('>I', data, cursor)[0]
++        kind = data[cursor + 4:cursor + 8]
++        end = cursor + 8 + length
++        if end + 4 > len(data) or kind not in (b'IHDR', b'IDAT', b'IEND'):
++            raise ValueError('unsupported/truncated UC PNG chunk')
++        payload = data[cursor + 8:end]
++        if zlib.crc32(kind + payload) & 0xffffffff != struct.unpack_from('>I', data, end)[0]:
++            raise ValueError('PNG CRC mismatch')
++        kinds.append(kind)
++        if kind == b'IDAT':
++            compressed.extend(payload)
++        if kind == b'IEND' and length:
++            raise ValueError('invalid PNG end')
++        cursor = end + 4
++    if cursor != len(data) or len(kinds) < 3 or kinds[0] != b'IHDR' or kinds[-1] != b'IEND' or any(k != b'IDAT' for k in kinds[1:-1]):
++        raise ValueError('invalid UC PNG chunk sequence')
++    expected = size * (size * channels + 1)
++    decoder = zlib.decompressobj()
++    raw = decoder.decompress(compressed, expected + 1)
++    if len(raw) != expected or not decoder.eof or decoder.unused_data:
++        raise ValueError('invalid or oversized PNG scanlines')
++    if any(raw[row * (size * channels + 1)] > 4 for row in range(size)):
++        raise ValueError('invalid PNG scanline filter')
++
++
++def load_material_bundle(folder):
++    """Return verified metadata and immutable PNG bytes; never execute source data.
++
++    Deliberately accepts only the bounded UC v0.1 format, not arbitrary downloaded
++    textures. A hash checks integrity, not authorship, safety or artistic quality.
++    """
++    root = Path(folder).resolve(strict=True)
++    manifest_path = root / "game-material.json"
++    if manifest_path.is_symlink() or manifest_path.stat().st_size > 65536:
++        raise ValueError("invalid material manifest path/size")
++    manifest_bytes = manifest_path.read_bytes()
++    manifest = json.loads(manifest_bytes)
++    if not isinstance(manifest, dict) or manifest.get("schema") != "axm.game-material/v0.1":
++        raise ValueError("unsupported material schema")
++    family, finish = manifest.get("family"), manifest.get("finish")
++    if family not in FAMILIES or finish not in [f.name for f in FINISHES]:
++        raise ValueError("unknown material family/finish")
++    size = manifest.get("size")
++    if type(size) is not int or not 16 <= size <= 512:
++        raise ValueError("invalid material size")
++    if manifest.get("orm_channels") != ["occlusion", "roughness", "metallic"]:
++        raise ValueError("unsupported ORM channels")
++    convention = manifest.get("normal_convention")
++    if convention == LEGACY_NORMAL:
++        convention = "tangent -Y" if family in ("painted-metal", "woven-fabric") else "tangent +Y"
++    if convention not in ("tangent +Y", "tangent -Y"):
++        raise ValueError("normal orientation must be explicit or known UC legacy")
++    maps = manifest.get("maps")
++    if not isinstance(maps, dict) or not REQUIRED_MAPS <= maps.keys() or maps.keys() - MAP_CHANNELS.keys():
++        raise ValueError("unsupported/missing material maps")
++    payloads, filenames = {}, set()
++    for name, record in maps.items():
++        if not isinstance(record, dict):
++            raise ValueError("invalid map record")
++        filename = record.get("file")
++        if not isinstance(filename, str) or not re.fullmatch(r"[A-Za-z0-9_-]+\.png", filename):
++            raise ValueError("map must be a plain PNG filename")
++        path = root / filename
++        if filename in filenames or path.is_symlink() or path.stat().st_size > 4 * 1024 * 1024:
++            raise ValueError("duplicate, linked or oversized map")
++        filenames.add(filename)
++        data = path.read_bytes()
++        if hashlib.sha256(data).hexdigest() != record.get("sha256"):
++            raise ValueError("map digest mismatch: " + name)
++        channels = MAP_CHANNELS[name]
++        color_space = "sRGB" if name == "base_color" else "linear-data"
++        if record.get("channels") != channels or record.get("color_space") != color_space:
++            raise ValueError("map channel/color-space mismatch: " + name)
++        header = struct.pack(">IIBBBBB", size, size, 8, 2 if channels == 3 else 0, 0, 0, 0)
++        if len(data) < 45 or data[:16] != b"\x89PNG\r\n\x1a\n\x00\x00\x00\x0dIHDR" or data[16:29] != header:
++            raise ValueError("invalid PNG dimensions/encoding: " + name)
++        _validate_png_payload(data, size, channels)
++        payloads[name] = data
++    return {"manifest": manifest, "manifest_sha256": hashlib.sha256(manifest_bytes).hexdigest(),
++            "normal_convention": convention, "pngs": payloads}
++
++
++def blender_game_material(folder, name=None):
++    """Create a packed, editable Principled material, tested with Blender 4.3.
++
++    AO is an explicit glTF export socket, not multiplied into base color. Blender
++    preview lighting and target-engine AO can differ. This is not a cel shader.
++    Image transformations affect only packed derivatives, never source files.
++    """
++    bundle = load_material_bundle(folder)
++    import bpy
++
++    manifest = bundle["manifest"]
++    label = name or f"UC_{manifest['family']}_{manifest['finish']}"
++    images, material, group = [], None, None
++    try:
++        material = bpy.data.materials.new(label)
++        material.use_nodes = True
++        nodes, links = material.node_tree.nodes, material.node_tree.links
++        nodes.clear()
++        output = nodes.new("ShaderNodeOutputMaterial")
++        output.location = (620, 80)
++        shader = nodes.new("ShaderNodeBsdfPrincipled")
++        shader.location = (320, 80)
++        links.new(shader.outputs["BSDF"], output.inputs["Surface"])
++        textures = {}
++        # Decode verified snapshots, not paths that can change after validation.
++        with tempfile.TemporaryDirectory(prefix="axm-material-") as temp:
++            for index, key in enumerate(("base_color", "orm", "normal")):
++                path = Path(temp) / (key + ".png")
++                path.write_bytes(bundle["pngs"][key])
++                image = bpy.data.images.load(str(path), check_existing=False)
++                images.append(image)
++                image.name = label + "_" + key
++                image.colorspace_settings.name = "sRGB" if key == "base_color" else "Non-Color"
++                if tuple(image.size) != (manifest["size"], manifest["size"]):
++                    raise ValueError("Blender could not decode the declared map size")
++                if key == "normal" and bundle["normal_convention"] == "tangent -Y":
++                    pixels = array("f", [0.0]) * len(image.pixels)
++                    image.pixels.foreach_get(pixels)
++                    for offset in range(1, len(pixels), 4):
++                        pixels[offset] = 1.0 - pixels[offset]
++                    converted = bpy.data.images.new(label + "_normal_plusY", width=manifest["size"],
++                                                    height=manifest["size"], alpha=False)
++                    images.append(converted)
++                    converted.colorspace_settings.name = "Non-Color"
++                    converted.pixels.foreach_set(pixels)
++                    converted.update()
++                    images.remove(image)
++                    bpy.data.images.remove(image)
++                    image = converted
++                image.pack()
++                tex = nodes.new("ShaderNodeTexImage")
++                tex.image = image
++                tex.label = key
++                tex.location = (-600, 240 - index * 280)
++                textures[key] = tex
++        links.new(textures["base_color"].outputs["Color"], shader.inputs["Base Color"])
++        split = nodes.new("ShaderNodeSeparateColor")
++        split.mode = "RGB"
++        split.location = (-260, -80)
++        links.new(textures["orm"].outputs["Color"], split.inputs["Color"])
++        links.new(split.outputs["Green"], shader.inputs["Roughness"])
++        links.new(split.outputs["Blue"], shader.inputs["Metallic"])
++        # Canonical Blender glTF exporter socket; no baked-in/double AO.
++        group = bpy.data.node_groups.new("glTF Material Output", "ShaderNodeTree")
++        group.interface.new_socket(name="Occlusion", in_out="INPUT", socket_type="NodeSocketFloat")
++        group.nodes.new("NodeGroupInput")
++        ao = nodes.new("ShaderNodeGroup")
++        ao.node_tree = group
++        ao.location = (0, -300)
++        links.new(split.outputs["Red"], ao.inputs["Occlusion"])
++        normal = nodes.new("ShaderNodeNormalMap")
++        normal.space = "TANGENT"
++        normal.inputs["Strength"].default_value = 1.0
++        normal.location = (-30, -120)
++        links.new(textures["normal"].outputs["Color"], normal.inputs["Color"])
++        links.new(normal.outputs["Normal"], shader.inputs["Normal"])
++        material["axm_material_manifest_sha256"] = bundle["manifest_sha256"]
++        material["axm_material_family"] = manifest["family"]
++        material["axm_material_finish"] = manifest["finish"]
++        material["axm_source_normal_convention"] = bundle["normal_convention"]
++        material["axm_realized_normal_convention"] = "tangent +Y"
++        return material
++    except Exception:
++        if material is not None:
++            bpy.data.materials.remove(material)
++        for image in images:
++            bpy.data.images.remove(image)
++        if group is not None:
++            bpy.data.node_groups.remove(group)
++        raise
+diff --git a/src/axm_uc/game_material_styles.py b/src/axm_uc/game_material_styles.py
+index 5817a64..af80dee 100644
+--- a/src/axm_uc/game_material_styles.py
++++ b/src/axm_uc/game_material_styles.py
+@@ -235,7 +235,7 @@ def game_material_request(path, family, size=128, seed=1, finish="realistic", co
+                 "size": size, "seed": seed, "color": list(DEFAULT_COLORS[family] if color is None else color),
+                 "profile": asdict(_finish(finish)), "maps": maps,
+                 "orm_channels": ["occlusion", "roughness", "metallic"],
+-                "normal_convention": "inherited donor for painted-metal/woven-fabric; tangent +Y for other families",
++                "normal_convention": "tangent -Y" if family in ("painted-metal", "woven-fabric") else "tangent +Y",
+                 "truth": "Authored procedural fields, not scanned material. No mesh-aware edge wear, seamless tiling, lighting or engine acceptance claimed.",
+                 "height_usage": "Authoring proxy; finish modifies normals independently. Re-baking normal from height replaces that finish choice."}
+     return {"kind": "mixed-media-project", "direction": "generate reusable game material maps",
+diff --git a/tests/test_game_material_bridge.py b/tests/test_game_material_bridge.py
+new file mode 100644
+index 0000000..da4cfc8
+--- /dev/null
++++ b/tests/test_game_material_bridge.py
+@@ -0,0 +1,116 @@
++import hashlib
++import json
++from pathlib import Path
++import sys
++import tempfile
++import unittest
++
++sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src'))
++from axm_uc.game_material_bridge import LEGACY_NORMAL, load_material_bundle
++from axm_uc.game_material_styles import FAMILIES, FINISHES, generate_game_material
++from axm_uc.fabric_noise import _png_chunk
++import zlib
++
++
++class MaterialBundleTests(unittest.TestCase):
++    def test_all_finishes_and_legacy_normal_resolution(self):
++        with tempfile.TemporaryDirectory() as tmp:
++            for family in FAMILIES:
++                for finish in FINISHES:
++                    folder = Path(tmp) / (family + finish.name)
++                    generate_game_material(folder, family, 16, 47, finish.name)
++                    bundle = load_material_bundle(folder)
++                    expected = 'tangent -Y' if family in ('painted-metal', 'woven-fabric') else 'tangent +Y'
++                    self.assertEqual(bundle['normal_convention'], expected)
++                    path = folder / 'game-material.json'
++                    manifest = json.loads(path.read_text())
++                    manifest['normal_convention'] = LEGACY_NORMAL
++                    path.write_text(json.dumps(manifest))
++                    self.assertEqual(load_material_bundle(folder)['normal_convention'], expected)
++
++    def test_bundle_validation_does_not_need_blender_or_modify_source(self):
++        with tempfile.TemporaryDirectory() as tmp:
++            folder = Path(tmp) / 'paint'
++            generate_game_material(folder, 'painted-metal', 16)
++            before = {p.name: p.read_bytes() for p in folder.iterdir() if p.is_file()}
++            bundle = load_material_bundle(folder)
++            self.assertEqual(bundle['pngs']['normal'], before['normal.png'])
++            self.assertEqual(before, {p.name: p.read_bytes() for p in folder.iterdir() if p.is_file()})
++
++    def test_invalid_manifest_contracts_rejected(self):
++        changes = [
++            lambda m: m.update(schema='unknown'), lambda m: m.update(family='unknown'),
++            lambda m: m.update(size=True), lambda m: m.update(size=4096),
++            lambda m: m.update(normal_convention='guess'),
++            lambda m: m.update(orm_channels=['metallic', 'roughness', 'occlusion']),
++            lambda m: m['maps'].pop('normal'),
++            lambda m: m['maps']['normal'].update(color_space='sRGB'),
++            lambda m: m['maps']['normal'].update(channels=4),
++            lambda m: m['maps']['normal'].update(file='../normal.png'),
++            lambda m: m['maps']['normal'].update(file='/normal.png'),
++            lambda m: m['maps']['normal'].update(file='C:\\normal.png'),
++            lambda m: m['maps']['normal'].update(sha256='0' * 64),
++        ]
++        with tempfile.TemporaryDirectory() as tmp:
++            folder = Path(tmp) / 'paint'
++            generate_game_material(folder, 'painted-metal', 16)
++            path = folder / 'game-material.json'
++            original = path.read_text()
++            for change in changes:
++                manifest = json.loads(original)
++                change(manifest)
++                path.write_text(json.dumps(manifest))
++                with self.assertRaises(ValueError):
++                    load_material_bundle(folder)
++
++    def test_declared_digest_does_not_excuse_wrong_png_dimensions(self):
++        with tempfile.TemporaryDirectory() as tmp:
++            folder = Path(tmp) / 'wood'
++            generate_game_material(folder, 'carved-wood', 16)
++            path = folder / 'normal.png'
++            data = bytearray(path.read_bytes())
++            data[19] = 64
++            path.write_bytes(data)
++            manifest_path = folder / 'game-material.json'
++            manifest = json.loads(manifest_path.read_text())
++            manifest['maps']['normal']['sha256'] = hashlib.sha256(data).hexdigest()
++            manifest_path.write_text(json.dumps(manifest))
++            with self.assertRaisesRegex(ValueError, 'PNG dimensions'):
++                load_material_bundle(folder)
++
++    def test_symlink_is_not_followed(self):
++        with tempfile.TemporaryDirectory() as tmp:
++            folder = Path(tmp) / 'wood'
++            generate_game_material(folder, 'carved-wood', 16)
++            path = folder / 'normal.png'
++            target = folder / 'linked.png'
++            path.rename(target)
++            try:
++                path.symlink_to(target)
++            except OSError:
++                self.skipTest('symlinks unavailable')
++            with self.assertRaisesRegex(ValueError, 'linked'):
++                load_material_bundle(folder)
++
++    def test_rehashed_truncated_corrupt_and_oversized_pngs_rejected(self):
++        with tempfile.TemporaryDirectory() as tmp:
++            folder = Path(tmp) / 'wood'
++            generate_game_material(folder, 'carved-wood', 16)
++            path = folder / 'normal.png'
++            original = path.read_bytes()
++            bad_crc = bytearray(original)
++            bad_crc[29] ^= 1
++            huge = (original[:33] + _png_chunk(b'IDAT', zlib.compress(bytes(1000000)))
++                    + _png_chunk(b'IEND', b''))
++            for data in (original[:-12], bytes(bad_crc), huge, original + b'trailing'):
++                path.write_bytes(data)
++                manifest_path = folder / 'game-material.json'
++                manifest = json.loads(manifest_path.read_text())
++                manifest['maps']['normal']['sha256'] = hashlib.sha256(data).hexdigest()
++                manifest_path.write_text(json.dumps(manifest))
++                with self.assertRaises(ValueError):
++                    load_material_bundle(folder)
++
++
++if __name__ == '__main__':
++    unittest.main()
+diff --git a/tools/blender/game_material_roundtrip.py b/tools/blender/game_material_roundtrip.py
+new file mode 100644
+index 0000000..d30335d
+--- /dev/null
++++ b/tools/blender/game_material_roundtrip.py
+@@ -0,0 +1,216 @@
++"""Bounded real-Blender material proof; run build and verify in separate processes.
++
++python tools/blender/game_material_roundtrip.py build /new/output
++python tools/blender/game_material_roundtrip.py verify /new/output
++
++Requires bpy 4.3, numpy<2 (bpy ABI), Pillow. No service or AI. Verification reads
++embedded GLB PNG bytes independently before Blender re-import; it does not infer
++visual acceptance from JSON. Output is a material test scene, not a game asset.
++"""
++import argparse
++import hashlib
++import io
++import json
++from pathlib import Path
++import struct
++import sys
++
++sys.path.insert(0, str(Path(__file__).resolve().parents[2] / 'src'))
++from axm_uc.game_material_bridge import blender_game_material, load_material_bundle
++from axm_uc.game_material_styles import FAMILIES, FINISHES, generate_game_material
++
++
++def digest_sources(root):
++    return {str(p.relative_to(root)): hashlib.sha256(p.read_bytes()).hexdigest()
++            for p in sorted((root / 'maps').rglob('*')) if p.is_file()}
++
++
++def presentation(bpy, root, filename):
++    from mathutils import Vector
++    scene = bpy.context.scene
++    scene.render.engine = 'CYCLES'
++    scene.cycles.samples = 24
++    scene.cycles.use_denoising = True
++    scene.render.threads_mode = 'FIXED'
++    scene.render.threads = 4
++    scene.render.resolution_x = 1440
++    scene.render.resolution_y = 1500
++    scene.render.resolution_percentage = 100
++    scene.view_settings.view_transform = 'AgX'
++    scene.world = bpy.data.worlds.new('Proof world')
++    scene.world.color = (.18, .18, .18)
++    bpy.ops.object.camera_add(location=(2.55, -3.4, 20))
++    camera = bpy.context.object
++    camera.rotation_euler = ((Vector((2.55, -3.4, 0)) - camera.location).to_track_quat('-Z', 'Y').to_euler())
++    camera.data.type = 'ORTHO'
++    camera.data.ortho_scale = 10.3
++    scene.camera = camera
++    for loc, power, size in [((-2, 3, 8), 1400, 5), ((7, -5, 5), 650, 4)]:
++        bpy.ops.object.light_add(type='AREA', location=loc)
++        light = bpy.context.object
++        light.data.energy, light.data.shape, light.data.size = power, 'DISK', size
++        light.rotation_euler = ((Vector((2.5, -3, 0)) - light.location).to_track_quat('-Z', 'Y').to_euler())
++    mat = bpy.data.materials.new('Proof lettering')
++    mat.diffuse_color = (.72, .77, .83, 1)
++    mat.use_nodes = True
++    shader = mat.node_tree.nodes.get('Principled BSDF')
++    shader.inputs['Base Color'].default_value = (.72, .77, .83, 1)
++    shader.inputs['Roughness'].default_value = 1
++    def text(body, location, size, align='CENTER'):
++        curve = bpy.data.curves.new('Label', 'FONT')
++        curve.body, curve.size, curve.align_x = body, size, align
++        obj = bpy.data.objects.new('Label', curve)
++        scene.collection.objects.link(obj)
++        obj.location = location
++        obj.data.materials.append(mat)
++    text('AXM  /  MATERIAL REALIZATION', (2.55, 1.35, 0), .27)
++    text('Same fields. Four finishes. Actual glTF PBR textures.', (2.55, 1.0, 0), .14)
++    for col, finish in enumerate(FINISHES):
++        text(finish.name, (col * 1.7, .64, 0), .13)
++    for row, family in enumerate(FAMILIES):
++        for col in range(4):
++            text(family, (col * 1.7, -row * 1.45 - .63, 0), .12)
++    text('Surface proof, not full art direction or target-engine acceptance.', (2.55, -8.22, 0), .13)
++    bpy.ops.mesh.primitive_plane_add(size=200, location=(0, 0, -.3))
++    floor = bpy.data.materials.new('Proof background')
++    floor.diffuse_color = (.022, .03, .046, 1)
++    floor.use_nodes = True
++    floor.node_tree.nodes.get('Principled BSDF').inputs['Base Color'].default_value = (.022, .03, .046, 1)
++    floor.node_tree.nodes.get('Principled BSDF').inputs['Roughness'].default_value = .85
++    bpy.context.object.data.materials.append(floor)
++    scene.render.image_settings.file_format = 'PNG'
++    scene.render.filepath = str(root / filename)
++
++
++def build(root):
++    import bpy
++    root.mkdir(parents=True, exist_ok=False)
++    bpy.ops.wm.read_factory_settings(use_empty=True)
++    objects = []
++    for row, family in enumerate(FAMILIES):
++        for col, finish in enumerate(FINISHES):
++            key = family + '__' + finish.name
++            folder = root / 'maps' / key
++            generate_game_material(folder, family, 128, 471, finish.name)
++            source_bytes = {p.name: p.read_bytes() for p in folder.iterdir() if p.is_file()}
++            mat = blender_game_material(folder, key)
++            assert source_bytes == {p.name: p.read_bytes() for p in folder.iterdir() if p.is_file()}
++            bpy.ops.mesh.primitive_uv_sphere_add(segments=48, ring_count=24, radius=.48,
++                                                location=(col * 1.7, -row * 1.45, 0))
++            obj = bpy.context.object
++            obj.name = key
++            obj.scale.z = .5
++            bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
++            # Planar front mapping avoids a UV pole misrepresenting cloth/grain
++            # as radial rings. This proof is viewed from +Z, not a hero UV unwrap.
++            uv = obj.data.uv_layers.active.data
++            for loop in obj.data.loops:
++                position = obj.data.vertices[loop.vertex_index].co
++                uv[loop.index].uv = (position.x / .96 + .5, position.y / .96 + .5)
++            obj.data.materials.append(mat)
++            for polygon in obj.data.polygons:
++                polygon.use_smooth = True
++            objects.append(obj)
++    before = digest_sources(root)
++    bpy.ops.object.select_all(action='DESELECT')
++    for obj in objects:
++        obj.select_set(True)
++    bpy.ops.export_scene.gltf(filepath=str(root / 'material-proof.glb'), export_format='GLB',
++                              use_selection=True, export_extras=True, export_image_format='AUTO')
++    if before != digest_sources(root):
++        raise AssertionError('source material maps changed')
++    (root / 'source-digests.json').write_text(json.dumps(before, indent=2) + '\n')
++    presentation(bpy, root, 'source.png')
++    bpy.ops.wm.save_as_mainfile(filepath=str(root / 'material-proof.blend'))
++    bpy.ops.render.render(write_still=True)
++
++
++def verify(root):
++    from PIL import Image
++    import bpy
++    data = (root / 'material-proof.glb').read_bytes()
++    magic, version, length = struct.unpack_from('<4sII', data)
++    assert (magic, version, length) == (b'glTF', 2, len(data))
++    json_length, chunk = struct.unpack_from('<II', data, 12)
++    assert chunk == 0x4E4F534A
++    doc = json.loads(data[20:20 + json_length])
++    start = 20 + json_length
++    binary_length, chunk = struct.unpack_from('<II', data, start)
++    assert chunk == 0x004E4942
++    binary = data[start + 8:start + 8 + binary_length]
++    def image_for(texture):
++        image = doc['images'][doc['textures'][texture['index']]['source']]
++        assert image.get('mimeType') == 'image/png' and 'uri' not in image
++        view = doc['bufferViews'][image['bufferView']]
++        offset = view.get('byteOffset', 0)
++        return Image.open(io.BytesIO(binary[offset:offset + view['byteLength']])).convert('RGB')
++    assert len(doc['materials']) == len(FAMILIES) * len(FINISHES)
++    receipts = []
++    for material in doc['materials']:
++        folder = root / 'maps' / material['name']
++        bundle = load_material_bundle(folder)
++        pbr = material['pbrMetallicRoughness']
++        assert pbr.get('metallicFactor', 1) == 1
++        assert pbr.get('roughnessFactor', 1) == 1
++        assert pbr.get('baseColorFactor', [1, 1, 1, 1]) == [1, 1, 1, 1]
++        assert material['normalTexture'].get('scale', 1) == 1
++        assert material['occlusionTexture'].get('strength', 1) == 1
++        for key, texture in [('base_color', pbr['baseColorTexture']),
++                             ('orm', pbr['metallicRoughnessTexture']),
++                             ('orm', material['occlusionTexture']),
++                             ('normal', material['normalTexture'])]:
++            expected = Image.open(io.BytesIO(bundle['pngs'][key])).convert('RGB')
++            actual = image_for(texture)
++            assert actual.size == expected.size == (128, 128)
++            if key == 'normal' and bundle['normal_convention'] == 'tangent -Y':
++                r, g, b = expected.split()
++                expected = Image.merge('RGB', (r, g.point(lambda value: 255 - value), b))
++            differences = [abs(a - b) for a, b in zip(actual.tobytes(), expected.tobytes())]
++            assert max(differences) == 0, (material['name'], key, max(differences))
++        assert all(texture.get('wrapS', 10497) == 10497 and texture.get('wrapT', 10497) == 10497
++                   for texture in doc.get('samplers', []))
++        receipts.append({'material': material['name'], 'embedded_pixels': 'exact',
++                         'source_normal': bundle['normal_convention'], 'export_normal': 'tangent +Y'})
++    assert digest_sources(root) == json.loads((root / 'source-digests.json').read_text())
++    # Editable source must reopen without its transient decode paths.
++    bpy.ops.wm.open_mainfile(filepath=str(root / 'material-proof.blend'))
++    for receipt in receipts:
++        material = bpy.data.materials[receipt['material']]
++        textures = {node.label: node.image for node in material.node_tree.nodes if node.type == 'TEX_IMAGE'}
++        assert set(textures) == {'base_color', 'orm', 'normal'}
++        assert all(image.packed_file is not None for image in textures.values())
++        assert textures['base_color'].colorspace_settings.name == 'sRGB'
++        assert all(textures[key].colorspace_settings.name == 'Non-Color' for key in ('orm', 'normal'))
++    # Fresh Blender state in a separate invocation, independent of the build scene.
++    bpy.ops.wm.read_factory_settings(use_empty=True)
++    bpy.ops.import_scene.gltf(filepath=str(root / 'material-proof.glb'))
++    meshes = [obj for obj in bpy.context.scene.objects if obj.type == 'MESH']
++    assert len(meshes) == 24 and len(bpy.data.materials) == 24
++    for material in bpy.data.materials:
++        assert material['axm_realized_normal_convention'] == 'tangent +Y'
++        nodes = material.node_tree.nodes
++        images = [node.image for node in nodes if node.type == 'TEX_IMAGE']
++        assert any(image.colorspace_settings.name == 'sRGB' for image in images)
++        assert sum(image.colorspace_settings.name == 'Non-Color' for image in images) >= 2
++        assert any(node.type == 'NORMAL_MAP' and node.space == 'TANGENT' for node in nodes)
++    presentation(bpy, root, 'reimport.png')
++    bpy.ops.render.render(write_still=True)
++    source = Image.open(root / 'source.png').convert('RGB').tobytes()
++    restored = Image.open(root / 'reimport.png').convert('RGB').tobytes()
++    mae = sum(abs(a - b) for a, b in zip(source, restored)) / len(source)
++    assert mae < 2, ('unexpected source/reimport render divergence', mae)
++    report = {'schema': 'axm.material-roundtrip-proof/v0.1', 'blender': bpy.app.version_string,
++              'glb_sha256': hashlib.sha256(data).hexdigest(), 'materials': receipts,
++              'reimported_meshes': len(meshes), 'source_immutable': True, 'blend_reopened_packed_images': 72,
++              'render_mean_absolute_byte_difference': mae,
++              'limits': 'Material spheres only; no engine gameplay, animation, performance, cel shader or full style acceptance.'}
++    (root / 'verification.json').write_text(json.dumps(report, indent=2) + '\n')
++    print(json.dumps(report))
++
++
++if __name__ == '__main__':
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument('mode', choices=['build', 'verify'])
++    parser.add_argument('output', type=Path)
++    args = parser.parse_args()
++    (build if args.mode == 'build' else verify)(args.output.resolve())

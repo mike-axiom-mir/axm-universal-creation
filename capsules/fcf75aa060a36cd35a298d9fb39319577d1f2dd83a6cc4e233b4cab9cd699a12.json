@@ -1,0 +1,31 @@
+{
+  "capsule_id": "fcf75aa060a36cd35a298d9fb39319577d1f2dd83a6cc4e233b4cab9cd699a12",
+  "evidence": {
+    "files": [],
+    "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 0,
+    "kinds": [],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "axm",
+      "creation-machine",
+      "noop",
+      "standalone",
+      "universal-creation"
+    ]
+  },
+  "source": {
+    "base": "ec96aef681a15c8831bbf8bdd42d99ba8c6303ed",
+    "commit_subject": "noop",
+    "head": "55b431e766d785f5405f1de38c09e9548dfccc86",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

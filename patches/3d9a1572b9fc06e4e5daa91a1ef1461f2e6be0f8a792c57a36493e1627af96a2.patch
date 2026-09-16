@@ -1,0 +1,757 @@
+diff --git a/GAME_SHARED_TEMPLATE_PACK.md b/GAME_SHARED_TEMPLATE_PACK.md
+new file mode 100644
+index 0000000..875caa0
+--- /dev/null
++++ b/GAME_SHARED_TEMPLATE_PACK.md
+@@ -0,0 +1,43 @@
++# Shared Gameplay Visual Template Pack
++
++`game.shared.core` fills reusable gameplay-system gaps that are likely to recur across AXM games without duplicating the already-merged account/settings/network shell.
++
++## Surfaces
++
++The product contains twelve responsive screens:
++
++- inventory / equipment;
++- skill and upgrade tree;
++- mission briefing;
++- world / mission map;
++- objective / quest log;
++- upgrade shop;
++- codex / lore;
++- revive overlay;
++- boss encounter HUD;
++- spectator / follow view;
++- end-session summary;
++- challenge / goals board.
++
++## State-aware primitives
++
++The pack adds reusable contracts rather than only layout rectangles:
++
++- `inventory-slot` — ownership, quantity/equipped/compatibility state;
++- `skill-node` — prerequisites, cost and unlock state;
++- `objective-row` — explicit objective lifecycle and progress;
++- `shop-offer` — exact cost and result/ownership state;
++- `codex-entry` — discovered vs unknown knowledge;
++- `revive-state` — downed/revive actor/time state;
++- `boss-phase` — encounter phase/vulnerability cues;
++- `spectator-seat` — viewed target and control context;
++- `challenge-card` — goal, progress, expiry and reward;
++- `session-stat` — post-session metric with personal/team scope.
++
++## Visual language
++
++`game.shared.adventure` is a neutral high-readability game-system style intended to be overridden by a specific game's identity while retaining the structural contracts.
++
++## Truth boundary
++
++The pack proves deterministic responsive structure and explicit state vocabulary. It does not prove gameplay balance, economy tuning, progression fairness, encounter timing, revive mechanics, item compatibility logic or actual runtime state. Real games must bind these surfaces to their own observed systems.
+diff --git a/VISUAL_TEMPLATE_FABRIC.md b/VISUAL_TEMPLATE_FABRIC.md
+index 6e491a6..81c1ce0 100644
+--- a/VISUAL_TEMPLATE_FABRIC.md
++++ b/VISUAL_TEMPLATE_FABRIC.md
+@@ -1,133 +1,81 @@
+ # Visual Template / Archetype Fabric
+ 
+-Universal Creation has a deterministic layer between low-level format scaffolds and finished products: **known visual archetypes**.
++Universal Creation contains one deterministic library of **known visual archetypes** between low-level format scaffolds and finished products. Templates are editable structural starting points, not finished art and not automatic canon.
+ 
+-A visual archetype is not finished art and it is not canon. It is a versioned, inspectable answer to a recurring structural problem: where important information belongs, what should dominate, how a layout adapts, what visual language holds it together, what reusable asset sockets exist, and which quality constraints should survive variation.
++The public module remains `axm_uc.visual_templates`. The retained kernel is `visual_template_core.py`; explicit extension packs add game/product, creative/narrative, AXM-system and shared-game knowledge before the facade validates one composed v1 catalog. Sticker Fabric remains the immutable/versioned local registry bridge. Mathematical work can enrich declared ratios/ranges through `math_hooks` without replacing template identity.
+ 
+-This extends, rather than replaces, the existing systems:
++## Current v4 candidate census
+ 
+-- `format_templates.py` still owns physical/screen canvases and simple semantic rectangles;
+-- deterministic project templates still instantiate exact files;
+-- Sticker Fabric remains the immutable/versioned local registry and reusable-part system;
+-- visual archetypes supply stronger screen and whole-product foundations those systems can consume;
+-- separate mathematical work can enrich declared ratios/ranges through `math_hooks` without replacing template identity.
++- **67 reusable visual/state primitives**
++- **12 coherent style systems**
++- **103 responsive screen archetypes**
++- **10 whole-product archetypes**
++- **113 exact screen/product definitions** when explicitly installed into Sticker Registry
+ 
+-## One composed catalog
++Every major game/editor/comic/AXM family provides compact, standard and wide normalized layouts. Unknown requested variants fail rather than silently falling back.
+ 
+-The public module is `axm_uc.visual_templates`.
++## Product foundations accumulated so far
+ 
+-Its retained deterministic kernel lives in `visual_template_core.py`. Genre/product growth lives in `visual_template_growth.py`. Shared professional game-product surfaces live in `visual_template_game_systems.py`. Creative-editor and editable-narrative surfaces live in `visual_template_creative_narrative.py`. AXM-native machine/system surfaces live in `visual_template_axm_system.py`. The public facade composes those dictionaries, rejects collisions, validates the resulting catalog, then exposes the same v1 schemas and functions.
++### Games
+ 
+-This is intentionally **one catalog**, not competing template systems and not multiple registries.
++- `game.racing.performance` — compact six-screen racing shell.
++- `game.racing.full` — 19-screen professional racing product including selection, tuning, livery, loading, countdown, primary/split HUDs, recovery, replay, progression, settings and accessibility.
++- `game.coop.action` — reusable co-op action shell.
++- `game.rts.command` — persistent-world RTS command shell.
++- `game.system.shell` — 18 optional genre-neutral product surfaces such as profiles, party/seats, matchmaking/server browsing, controls, graphics/audio, saves, achievements, tutorial, photo mode, recovery, chat, privacy/consent and language.
++- `game.shared.core` — 12 reusable gameplay-system surfaces for inventory, progression, mission/map/objectives, upgrades, lore, revive/boss/spectator state, session summaries and challenges.
+ 
+-Current deterministic catalog in the v3 lane:
++Optional online/account surfaces remain capabilities, not requirements for local/offline products.
+ 
+-- **57 reusable primitives**;
+-- **11 coherent style systems**;
+-- **91 responsive screen archetypes**;
+-- **9 whole-product archetypes**.
++### Creative/editor
+ 
+-## Layers
++`editor.creative.core` provides twelve coordinated editing surfaces: project hub, assets, layers, timeline, node graph, inspector, animation, effects, cutscenes, materials, audio and review/export. Rich editable source stays authoritative over previews and exports.
+ 
+-1. **Primitives** — reusable state/interaction contracts such as player seat, loading state, layer row, graph node, panel frame, speech bubble, truth state, capability card and recovery choice.
+-2. **Style systems** — coherent surface, type, depth, shape and motion language. These are semantic visual systems, not one-off color themes.
+-3. **Screen archetypes** — normalized responsive region geometry, slots, math hooks, intent and quality constraints.
+-4. **Whole-product archetypes** — exact screen sets plus explicit flow edges and product-level coherence rules.
++### Comics / visual narrative
+ 
+-Primitives describe reusable behavior/state expectations; they are not hidden widget implementations. A target product can realize them differently while preserving the contract that matters.
++`comic.narrative.core` provides ten editable story surfaces: project library, page editor, panel editor, dialogue/lettering editor, character sheet, scene graph, storyboard, motion timeline, reader preview and export. Page geometry, panels, source art, dialogue, bubble body/tail, captions, references, reading order, branching beats and motion timing remain separate semantic state.
+ 
+-## Game foundations
++### AXM system / monolith shell
+ 
+-The merged game foundations remain intact:
++`axm.system.shell` provides twelve AXM-native surfaces: home, registry, capability browser, cartridge loader, machine state, evidence review, workflow, specialists, workfloor, snapshots, settings and recovery. The `axm.machine.glass` visual language is a starting style, not canonical AXM identity. Human-facing views use progressive detail while source/version/evidence and recovery consequences remain inspectable.
+ 
+-- `game.racing.performance` — compact six-screen racing shell;
+-- `game.racing.full` — 19-screen professional racing foundation;
+-- `game.coop.action` — reusable co-op action shell;
+-- `game.rts.command` — persistent-world RTS command shell;
+-- `game.system.shell` — 18 optional genre-neutral professional product surfaces.
++## Shared gameplay-system pack
+ 
+-Those foundations include truthful loading/recovery, explicit player-seat ownership, split-screen support, controller remapping, save/load, accessibility, privacy/consent, language/localization and other reusable product plumbing. Optional network/account surfaces remain capabilities, not requirements for local/offline games.
++`game.shared.core` closes common near-term gaps without rebuilding product plumbing that already exists elsewhere.
+ 
+-## Creative editor foundation
++Its screens are:
+ 
+-`editor.creative.core` is a 12-screen professional editing foundation:
++- `game.shared.inventory`
++- `game.shared.skill-tree`
++- `game.shared.mission-briefing`
++- `game.shared.world-map`
++- `game.shared.objective-log`
++- `game.shared.upgrade-shop`
++- `game.shared.codex`
++- `game.shared.revive-overlay`
++- `game.shared.boss-encounter-hud`
++- `game.shared.spectator`
++- `game.shared.end-session-summary`
++- `game.shared.challenge-board`
+ 
+-- project hub;
+-- asset browser;
+-- layer/composition editor;
+-- timeline editor;
+-- node graph;
+-- deep inspector;
+-- animation workspace;
+-- effects workspace;
+-- cutscene editor;
+-- material editor;
+-- audio editor;
+-- review/export.
++The pack adds state-aware primitives instead of only rectangles:
+ 
+-Its `creative.workbench` visual language prioritizes stable editing context and dense inspectable state. New primitives include `layer-row`, `timeline-track`, `keyframe`, `node-card`, `socket-port`, `inspector-field` and `asset-tile`.
++- `inventory-slot` — quantity/ownership/equipped/compatibility state;
++- `skill-node` — prerequisites, cost and unlock state;
++- `objective-row` — objective lifecycle and progress;
++- `shop-offer` — cost plus resulting ownership state;
++- `codex-entry` — discovered versus unknown knowledge;
++- `revive-state` — actor/time/revival lifecycle;
++- `boss-phase` — phase/vulnerability state with non-color cues;
++- `spectator-seat` — viewed target/control context;
++- `challenge-card` — progress, expiry and reward;
++- `session-stat` — metric plus personal/team scope.
+ 
+-The contract is source-first: selected state, modified state, graph typing, timeline position, provenance and richer editable source remain visible. A derived preview/export never becomes authoritative merely because it is easier to render.
++The style `game.shared.adventure` is deliberately neutral enough to be replaced by a specific game's art direction while retaining these semantic contracts.
+ 
+-## Editable comics and visual narrative
++## Registry and identity
+ 
+-`comic.narrative.core` is a 10-screen visual-story foundation:
+-
+-- story/project library;
+-- page editor;
+-- panel editor;
+-- dialogue/lettering editor;
+-- character reference sheet;
+-- scene graph;
+-- storyboard;
+-- motion-comic timeline;
+-- reader preview;
+-- review/export.
+-
+-The important boundary is **editability**, not just appearance. Page geometry, panel geometry, source art, crops/depth, dialogue text, bubble shape/tail, captions, character references, reading order, branching story beats and motion timing remain distinct semantic state.
+-
+-Reusable narrative primitives include `panel-frame`, `panel-gutter`, `speech-bubble`, `caption-box`, `storyboard-card`, `reading-order-marker`, `character-reference-card` and `story-beat-link`.
+-
+-The `narrative.ink` style gives the pack a coherent editorial starting language, but a comic may replace that style without replacing its structural/editability contract.
+-
+-## AXM system / monolith shell
+-
+-`axm.system.shell` is a 12-screen AXM-native machine/product foundation:
+-
+-- home/current-state overview;
+-- registry browser;
+-- capability browser;
+-- monolith/cartridge loader;
+-- machine-state inspector;
+-- evidence/truth review;
+-- workflow/creation flow;
+-- specialist perspectives;
+-- machine workfloor;
+-- snapshots/continuity;
+-- settings/policy;
+-- recovery/repair.
+-
+-Its `axm.machine.glass` style is a layered metallic/glass starting language, not canonical identity. The structural rule is progressive detail: ordinary use sees a calm summary first, while source, version, evidence, dependency and recovery detail remains available when needed.
+-
+-Reusable AXM primitives include `truth-state`, `capability-card`, `registry-entry`, `evidence-chip`, `state-diff`, `cartridge-card`, `specialist-card`, `workfloor-lane`, `snapshot-entry` and `recovery-choice`.
+-
+-These templates represent machine state; they do not manufacture it. A real product must connect status, package compatibility, capability availability, snapshots and recovery outcomes to actual observed runtime state.
+-
+-## Responsive geometry
+-
+-Screen regions are stored in normalized `0..1` coordinates. `resolve()` turns them into exact pixels for a supplied viewport. Current game, creative-editor, comic and AXM-system screens ship all three variants:
+-
+-- `compact`: width below 900 px or portrait/narrow ratio below 1.15;
+-- `wide`: aspect ratio at least 1.9;
+-- `standard`: everything between.
+-
+-Callers can request a declared variant explicitly. Unknown explicit variants fail; they do not silently fall back.
+-
+-The current geometry is a known structural foundation. Mathematical growth can later replace or enrich ratio/range derivation through `math_hooks` without changing product/template identity or rewriting source state.
+-
+-## Sticker Fabric / registry bridge
+-
+-Every built-in screen or whole-product archetype can be wrapped as an ordinary immutable Sticker definition:
++Every built-in screen/product can be wrapped as an ordinary immutable Sticker definition:
+ 
+ ```python
+ from axm_stickers import Registry
+@@ -137,43 +85,22 @@ with Registry('stickers.sqlite') as registry:
+     pins = install_builtins(registry)
+ ```
+ 
+-The wrapper keeps the exact visual template inside the sticker recipe. Existing Sticker Registry guarantees still apply: exact id/version/digest pins, no floating `latest`, no silent upgrades, explicit registration and portable offline state.
+-
+-The v3 catalog contains 91 screens + 9 products, so explicit built-in installation currently registers **100 exact visual definitions**.
+-
+-The bridge does **not** turn every Sticker into UI. It lets visual foundations use the same proven immutable local registry when desired.
+-
+-Screen archetypes may declare Sticker slots. `bind_sticker_slots()` accepts only explicit `{id, version, digest}` pins and validates socket/tag requirements. It never searches for or chooses a replacement on the caller's behalf.
++Definitions use exact id/version/digest identity. There is no floating `latest`, silent upgrade or automatic canon. Screen Sticker slots accept exact pins only and validate declared socket/tag requirements.
+ 
+ ## CLI
+ 
+-List the composed catalog:
+-
+ ```sh
+ axm-visual-templates catalog
+-```
+-
+-Inspect exact foundations:
+-
+-```sh
+-axm-visual-templates show game.racing.full
++axm-visual-templates show game.shared.core
+ axm-visual-templates show editor.creative.core
+ axm-visual-templates show comic.narrative.core
+ axm-visual-templates show axm.system.shell
++axm-visual-templates render game.shared.core creations/game-shared --width 1920 --height 1080
+ ```
+ 
+-Write local structural previews:
+-
+-```sh
+-axm-visual-templates render game.racing.full creations/racing-foundation --width 1920 --height 1080
+-axm-visual-templates render editor.creative.core creations/creative-editor --width 1920 --height 1080
+-axm-visual-templates render comic.narrative.core creations/comic-editor --width 1920 --height 1080
+-axm-visual-templates render axm.system.shell creations/axm-system --width 1920 --height 1080
+-```
++A product preview contains one structural SVG per screen plus exact `product.json` and local HTML gallery. Preview is derived inspection output, not authoritative source.
+ 
+-A product preview contains one SVG per screen, `product.json` with exact resolved structure, and a local HTML gallery. A screen preview contains `screen.svg`, `template.json` and HTML.
+-
+-## Evidence
++## Evidence gate
+ 
+ Run:
+ 
+@@ -182,35 +109,20 @@ python -m unittest discover -s tests -p 'test_visual_templates.py' -v
+ python tools/visual_template_proof.py /new/output/path
+ ```
+ 
+-The deterministic suite now checks:
+-
+-- exact composed catalog counts: 11 styles / 57 primitives / 91 screens / 9 products;
+-- all 91 screens across six representative viewport shapes/sizes;
+-- compact/standard/wide coverage for game, editor, comic and AXM-system screens;
+-- exact product screen ordering and flow references;
+-- retained racing/game-system/editor/comic depth;
+-- 12-screen AXM system-shell coverage;
+-- source/version/evidence/recovery contracts in AXM primitives;
+-- SVG parseability;
+-- actual Sticker Registry installation of all 100 screens/products;
+-- exact Sticker slot pins and invalid-geometry rejection.
++The v4 candidate gate requires:
+ 
+-The proof generates galleries for racing, co-op, RTS, shared game systems, the creative editor, editable comic system and AXM system shell, plus a portrait mobile reference. It resolves all seven proof products at 640×360, 1080×1920, 1280×720, 1920×1080, 2560×1080 and 3840×2160 and rejects any region that escapes its viewport.
++- exact census: 12 styles / 67 primitives / 103 screens / 10 products;
++- all 103 screens inside six representative viewport shapes;
++- exact product screen order and flow across those viewports;
++- parseable galleries for racing, co-op, RTS, product systems, shared gameplay, creative editor, editable comics and AXM system shell;
++- all 113 screen/product definitions install through the existing immutable Sticker Registry;
++- explicit state contracts for inventory ownership, skill prerequisites/costs, unknown codex content, revive actor/time, boss phases and challenge progress/rewards;
++- copy safety, strict variant rejection, invalid-geometry rejection and exact Sticker slot binding remain intact.
+ 
+ ## Truth boundary
+ 
+-Current claims are intentionally narrow:
+-
+-- these are known structural foundations, **not** professional-quality guarantees by themselves;
+-- generated SVG is an offline structural preview, not target-engine rendering;
+-- creative/editor templates do not prove actual authoring behavior, undo/redo correctness, file compatibility or export fidelity;
+-- comic templates do not prove drawing quality, lettering quality, reading experience, localization or aesthetic acceptance;
+-- AXM system templates do not prove package mounting, machine execution, capability availability, snapshot restore or recovery success;
+-- preserving separate semantic regions is structural evidence, not proof that a finished GUI exposes every operation perfectly;
+-- having accessibility/privacy surfaces does not establish accessibility or legal compliance;
+-- loading, recovery and availability contracts require real products to connect displayed state to actual evidence;
+-- color/style tokens express coherent intent but do not replace final art direction;
+-- the machine may mutate, combine, replace or ignore a template when evidence and user intent support doing so;
+-- no template becomes canon merely because it is built in or registered.
++Current evidence proves deterministic structural knowledge and state vocabulary only. It does **not** prove target-engine rendering, gameplay feel, economy balance, progression fairness, encounter timing, network behavior, save reliability, authoring ergonomics, drawing quality, package mounting, recovery success, accessibility compliance or aesthetic acceptance.
++
++Templates must be connected to actual runtime/project state by the consuming product. Unknown or unavailable state stays visibly unknown rather than being invented. Richer editable source remains authoritative over lossy previews/exports. Templates may be mutated, combined, replaced or ignored when better evidence and product intent support another solution.
+ 
+ The goal is to stop creation from beginning at zero while preserving agency, exact source truth, deep editability and room for better solutions.
+diff --git a/VISUAL_TEMPLATE_PRIORITY_MAP.md b/VISUAL_TEMPLATE_PRIORITY_MAP.md
+index e353048..96208e4 100644
+--- a/VISUAL_TEMPLATE_PRIORITY_MAP.md
++++ b/VISUAL_TEMPLATE_PRIORITY_MAP.md
+@@ -1,64 +1,26 @@
+ # AXM Visual Template Expansion Priority Map
+ 
+-Status: v3 growth lane after verified v1 + v2 merges.
++Status: v4 growth lane after verified v1 + v2 + v3 merges.
+ 
+ The visual-template fabric should grow where Universal Creation is most likely to reuse the knowledge soon. The order below is a build priority, not canon: templates remain editable foundations and may be replaced when evidence supports a better structure.
+ 
+ ## Priority 1 — Creative editor core — MERGED
+ 
+-Product: `editor.creative.core`
+-
+-Twelve coordinated professional editing surfaces are now part of the catalog: project hub, asset browser, layer editor, timeline, node graph, inspector, animation, effects, cutscene, material, audio and review/export. Style: `creative.workbench`.
++Product: `editor.creative.core` — project hub, assets, layers, timeline, graph, inspector, animation, effects, cutscenes, materials, audio and review/export.
+ 
+ ## Priority 2 — Editable comics and visual narrative — MERGED
+ 
+-Product: `comic.narrative.core`
+-
+-Ten editable visual-story surfaces are now part of the catalog: library, page editor, panel editor, dialogue editor, character sheet, scene graph, storyboard, motion timeline, reader preview and export. Style: `narrative.ink`.
+-
+-The structural contract keeps page/panel/dialogue/scene/motion state distinct and preserves editable source above flattened previews.
+-
+-## Priority 3 — AXM software / monolith shell — IMPLEMENTED IN THIS LANE
+-
+-Product: `axm.system.shell`
+-
+-Implemented screens:
+-
+-- `axm.system.home`
+-- `axm.system.registry`
+-- `axm.system.capability-browser`
+-- `axm.system.cartridge-loader`
+-- `axm.system.machine-state`
+-- `axm.system.evidence-review`
+-- `axm.system.workflow`
+-- `axm.system.specialists`
+-- `axm.system.workfloor`
+-- `axm.system.snapshots`
+-- `axm.system.settings`
+-- `axm.system.recovery`
++Product: `comic.narrative.core` — library, page/panel/dialogue editing, characters, scene graph, storyboard, motion timeline, reader preview and export.
+ 
+-New reusable primitives:
++## Priority 3 — AXM software / monolith shell — MERGED
+ 
+-- `truth-state`
+-- `capability-card`
+-- `registry-entry`
+-- `evidence-chip`
+-- `state-diff`
+-- `cartridge-card`
+-- `specialist-card`
+-- `workfloor-lane`
+-- `snapshot-entry`
+-- `recovery-choice`
++Product: `axm.system.shell` — home, registry, capabilities, cartridge loader, state, evidence, workflow, specialists, workfloor, snapshots, settings and recovery.
+ 
+-Style: `axm.machine.glass`.
++## Priority 4 — Near-term shared gameplay gaps — IMPLEMENTED IN THIS LANE
+ 
+-Design rule: deep machine state may be complex, but the human-facing shell exposes summary first and progressively reveals detail. Source/version/evidence state and recovery consequences stay explicit.
++Product: `game.shared.core`
+ 
+-## Priority 4 — Remaining near-term game gaps — NEXT
+-
+-These extend the merged game foundation only where real reusable gaps remain.
+-
+-Planned IDs:
++Implemented IDs:
+ 
+ - `game.shared.inventory`
+ - `game.shared.skill-tree`
+@@ -73,19 +35,36 @@ Planned IDs:
+ - `game.shared.end-session-summary`
+ - `game.shared.challenge-board`
+ 
+-These should inherit the existing game-system shell where possible rather than duplicating profile/settings/network/accessibility surfaces.
++New state-aware primitives:
++
++- `inventory-slot`
++- `skill-node`
++- `objective-row`
++- `shop-offer`
++- `codex-entry`
++- `revive-state`
++- `boss-phase`
++- `spectator-seat`
++- `challenge-card`
++- `session-stat`
++
++Style: `game.shared.adventure`.
++
++These inherit existing product plumbing where possible rather than duplicating profile/settings/network/accessibility surfaces.
++
++## Priority 5 — High-value visual/creation families — NEXT
+ 
+-## Priority 5 — Later visual families
++Potential next packs, ordered by likely reuse:
+ 
+-- poster / key-art composition systems;
+-- card/deck editors;
+-- cinematic title/credit systems;
+-- music visualizers and album-art editors;
+-- video overlay / stream-layout systems;
+-- procedural diagram / infographic editors;
+-- world-map / lore-atlas editors;
+-- interactive visual novel surfaces;
+-- 3D showroom / gallery presentation templates.
++1. **Key art / poster / cover composition** — hero subject, title hierarchy, focal lighting, credits, variants and crop-safe outputs.
++2. **Card/deck editor** — card faces/backs, rarity/state, deck building, stat/ability layouts and print/digital variants.
++3. **Cinematic title / credits / trailer overlay system** — title cards, lower thirds, chapter cards, credits, subtitles and transition-safe zones.
++4. **Video / stream overlay editor** — gameplay frame, cameras, alerts, chat, score, sponsor-free identity areas and responsive scene sets.
++5. **Infographic / diagram editor** — nodes, relationships, legends, annotations, evidence/source panels and export layouts.
++6. **World-map / lore-atlas editor** — regions, routes, layers, points of interest, time/state overlays and narrative references.
++7. **Interactive visual-novel surfaces** — dialogue, choices, character staging, backgrounds, history/log, saves and branching state.
++8. **3D showroom / gallery presentation** — hero object, comparison, annotations, material/variant selection and orbit/detail views.
++9. **Music visualizer / album-art editor** — cover systems, track identity, waveform/beat-driven visual states and export crops.
+ 
+ ## Cross-cutting rules
+ 
+@@ -101,7 +80,7 @@ Every new family should preserve the existing visual-template contract:
+ 
+ ## Immediate build order
+ 
+-1. finish exact-head verification for `axm.system.shell`;
+-2. merge v3 only when template + repository checks pass;
+-3. start remaining near-term game gaps from fresh main;
+-4. only then expand into later visual families.
++1. finish exact-head verification for `game.shared.core`;
++2. merge v4 only when template + repository checks pass;
++3. start the highest-value visual/creation family from fresh main;
++4. prefer reusable editors over one-off flat output templates.
+diff --git a/src/axm_uc/visual_template_game_shared.py b/src/axm_uc/visual_template_game_shared.py
+new file mode 100644
+index 0000000..ae20f8c
+--- /dev/null
++++ b/src/axm_uc/visual_template_game_shared.py
+@@ -0,0 +1,96 @@
++"""Reusable gameplay-system visual foundations for the existing AXM template catalog."""
++from __future__ import annotations
++from copy import deepcopy
++from typing import Any
++
++
++def _merge(target: dict[str, Any], additions: dict[str, Any], label: str) -> None:
++    overlap=sorted(set(target)&set(additions))
++    if overlap: raise RuntimeError(f"game shared {label} collision: {', '.join(overlap)}")
++    target.update(deepcopy(additions))
++
++
++def extend_game_shared_catalog(namespace: dict[str, Any]) -> None:
++    styles=namespace['STYLE_SYSTEMS']; primitives=namespace['PRIMITIVES']
++    screens=namespace['SCREEN_TEMPLATES']; products=namespace['PRODUCT_ARCHETYPES']
++    screen=namespace['_screen']; origin=namespace['_origin']
++
++    _merge(styles,{'game.shared.adventure':{
++        'intent':'high-readability reusable game-system language for progression, inventory, objectives, encounters and post-session state',
++        'tokens':{'canvas':'#0a0f15','surface':'#131c25','surface_raised':'#1c2934','text':'#eef5f3','muted':'#9eadb4','accent':'#8bd9b7','warning':'#efc36e','danger':'#ee7474','line':'#354650'},
++        'shape':{'panel_radius_ratio':0.015,'cut_ratio':0.004,'line_ratio':0.0013},
++        'type':{'display_weight':730,'body_weight':500,'metric_scale':1.55,'tracking':0.014},
++        'depth':{'layers':5,'shadow':'tight','glass':'restrained'},
++        'motion':{'fast_ms':85,'standard_ms':170,'slow_ms':300,'principle':'game state and player choice before flourish'},
++    }},'style')
++
++    _merge(primitives,{
++        'inventory-slot':{'role':'one item/equipment location with quantity, ownership and compatibility state','states':['empty','occupied','selected','equipped','locked','incompatible'],'ownership_must_be_explicit':True},
++        'skill-node':{'role':'one progression choice with prerequisites, cost and unlock state','states':['locked','available','owned','selected','maxed'],'prerequisites_and_cost_must_be_visible':True},
++        'objective-row':{'role':'one objective with explicit lifecycle and optional progress','states':['inactive','active','complete','failed','optional'],'state_must_not_depend_on_color':True},
++        'shop-offer':{'role':'one purchase/upgrade offer with exact cost and ownership state','states':['available','owned','unaffordable','locked','selected'],'cost_and_result_must_be_visible':True},
++        'codex-entry':{'role':'one discovered knowledge entry with source/discovery state','states':['unknown','discovered','new','read','selected'],'undiscovered_content_must_not_be_faked':True},
++        'revive-state':{'role':'downed-player recovery status with actor, time and availability','states':['downed','revivable','reviving','revived','expired'],'timer_and_actor_must_be_explicit':True},
++        'boss-phase':{'role':'major encounter state with phase, vulnerability and objective cues','states':['intro','active','transition','vulnerable','enraged','defeated'],'phase_change_needs_non_color_cue':True},
++        'spectator-seat':{'role':'spectator target and control context','states':['free','following','locked-target','unavailable'],'target_identity_must_be_visible':True},
++        'challenge-card':{'role':'challenge goal, progress, reward and availability','states':['available','active','complete','claimed','expired'],'progress_and_reward_must_be_explicit':True},
++        'session-stat':{'role':'comparable post-session metric with source and personal/team scope','states':['normal','personal-best','team-best','unavailable'],'scope_must_be_visible':True},
++    },'primitive')
++
++    q=['player-owned state and costs remain explicit','selection and progress do not depend on color alone','irreversible choices show consequence before commitment','unknown or unavailable information remains visibly unknown instead of invented']
++    def v(compact,standard,wide): return {'compact':compact,'standard':standard,'wide':wide}
++    additions={
++      'game.shared.inventory':screen('game.shared.inventory','Shared game inventory','game.shared','game.shared.adventure','browse, compare, equip and move owned items while keeping capacity, compatibility and selection clear',v(
++        {'header':(.03,.03,.94,.08),'character':(.03,.14,.94,.18),'items':(.03,.35,.58,.51),'details':(.64,.35,.33,.38),'actions':(.64,.76,.33,.10)},
++        {'header':(.02,.03,.96,.075),'equipment':(.02,.14,.20,.82),'items':(.245,.14,.48,.82),'details':(.755,.14,.225,.62),'actions':(.755,.79,.225,.17)},
++        {'header':(.015,.03,.97,.07),'equipment':(.015,.13,.18,.84),'items':(.215,.13,.52,.84),'details':(.755,.13,.23,.63),'actions':(.755,.79,.23,.18)}),tags=['game','shared','inventory','equipment'],quality=q),
++      'game.shared.skill-tree':screen('game.shared.skill-tree','Skill and upgrade tree','game.shared','game.shared.adventure','show progression paths, prerequisites, costs and current build without hiding locked dependencies',v(
++        {'header':(.03,.03,.94,.08),'summary':(.03,.14,.94,.14),'tree':(.03,.31,.94,.45),'details':(.03,.79,.55,.17),'actions':(.61,.79,.36,.17)},
++        {'header':(.02,.03,.96,.075),'categories':(.02,.14,.16,.82),'tree':(.20,.14,.56,.82),'details':(.78,.14,.20,.57),'actions':(.78,.74,.20,.22)},
++        {'header':(.015,.03,.97,.07),'categories':(.015,.13,.14,.84),'tree':(.175,.13,.60,.84),'details':(.795,.13,.19,.58),'actions':(.795,.74,.19,.23)}),tags=['game','shared','skill','progression'],quality=q),
++      'game.shared.mission-briefing':screen('game.shared.mission-briefing','Mission briefing','game.shared','game.shared.adventure','present objective, route, threats, team/loadout context and launch consequences before commitment',v(
++        {'header':(.03,.03,.94,.08),'objective':(.03,.14,.94,.18),'map':(.03,.35,.94,.31),'threats':(.03,.69,.45,.20),'team':(.51,.69,.46,.20),'launch':(.03,.92,.94,.06)},
++        {'header':(.02,.03,.96,.075),'objective':(.02,.14,.23,.72),'map':(.28,.14,.44,.55),'threats':(.75,.14,.23,.31),'team':(.75,.48,.23,.21),'launch':(.28,.73,.70,.13)},
++        {'header':(.015,.03,.97,.07),'objective':(.015,.13,.21,.74),'map':(.25,.13,.48,.57),'threats':(.755,.13,.23,.32),'team':(.755,.48,.23,.22),'launch':(.25,.75,.735,.12)}),tags=['game','shared','mission','briefing'],quality=q),
++      'game.shared.world-map':screen('game.shared.world-map','World and mission map','game.shared','game.shared.adventure','keep world geography primary while exposing discovered locations, objectives, filters and route planning',v(
++        {'header':(.03,.03,.94,.08),'filters':(.03,.14,.94,.09),'map':(.03,.26,.94,.51),'details':(.03,.80,.58,.16),'actions':(.64,.80,.33,.16)},
++        {'header':(.02,.03,.96,.075),'filters':(.02,.14,.16,.82),'map':(.20,.14,.57,.82),'details':(.79,.14,.19,.58),'actions':(.79,.75,.19,.21)},
++        {'header':(.015,.03,.97,.07),'filters':(.015,.13,.14,.84),'map':(.175,.13,.61,.84),'details':(.805,.13,.18,.59),'actions':(.805,.75,.18,.22)}),tags=['game','shared','world','map'],quality=q),
++      'game.shared.objective-log':screen('game.shared.objective-log','Objective and quest log','game.shared','game.shared.adventure','show active, optional, complete and failed objectives with exact progress and context',v(
++        {'header':(.03,.03,.94,.08),'filters':(.03,.14,.94,.09),'objectives':(.03,.26,.55,.70),'details':(.61,.26,.36,.70)},
++        {'header':(.02,.03,.96,.075),'categories':(.02,.14,.17,.82),'objectives':(.21,.14,.40,.82),'details':(.635,.14,.345,.82)},
++        {'header':(.015,.03,.97,.07),'categories':(.015,.13,.15,.84),'objectives':(.185,.13,.43,.84),'details':(.635,.13,.35,.84)}),tags=['game','shared','objective','quest'],quality=q),
++      'game.shared.upgrade-shop':screen('game.shared.upgrade-shop','Upgrade shop','game.shared','game.shared.adventure','compare upgrades, exact costs and resulting state before purchase or equip',v(
++        {'header':(.03,.03,.94,.08),'currency':(.03,.14,.94,.10),'offers':(.03,.27,.58,.55),'details':(.64,.27,.33,.39),'actions':(.64,.69,.33,.13)},
++        {'header':(.02,.03,.96,.075),'categories':(.02,.14,.17,.82),'offers':(.21,.14,.47,.82),'details':(.70,.14,.28,.56),'actions':(.70,.73,.28,.23)},
++        {'header':(.015,.03,.97,.07),'categories':(.015,.13,.15,.84),'offers':(.185,.13,.50,.84),'details':(.705,.13,.28,.57),'actions':(.705,.73,.28,.24)}),tags=['game','shared','shop','upgrade'],quality=q),
++      'game.shared.codex':screen('game.shared.codex','Game codex and lore','game.shared','game.shared.adventure','browse only discovered knowledge while keeping categories, source context and unread state clear',v(
++        {'header':(.03,.03,.94,.08),'categories':(.03,.14,.94,.09),'entries':(.03,.26,.45,.70),'content':(.51,.26,.46,.70)},
++        {'header':(.02,.03,.96,.075),'categories':(.02,.14,.17,.82),'entries':(.21,.14,.28,.82),'content':(.515,.14,.465,.82)},
++        {'header':(.015,.03,.97,.07),'categories':(.015,.13,.15,.84),'entries':(.185,.13,.30,.84),'content':(.505,.13,.48,.84)}),tags=['game','shared','codex','lore'],quality=q),
++      'game.shared.revive-overlay':screen('game.shared.revive-overlay','Co-op revive overlay','game.shared','game.shared.adventure','surface downed state, reviver identity, remaining time and alternatives without obscuring nearby danger',v(
++        {'world':(0,0,1,1),'state':(.30,.28,.40,.18),'timer':(.40,.49,.20,.13),'reviver':(.28,.65,.44,.12),'options':(.25,.80,.50,.13)},
++        {'world':(0,0,1,1),'state':(.35,.30,.30,.16),'timer':(.42,.49,.16,.12),'reviver':(.33,.64,.34,.10),'options':(.34,.80,.32,.11)},
++        {'world':(0,0,1,1),'state':(.38,.30,.24,.15),'timer':(.43,.48,.14,.11),'reviver':(.36,.63,.28,.10),'options':(.37,.79,.26,.11)}),tags=['game','shared','coop','revive'],quality=q),
++      'game.shared.boss-encounter-hud':screen('game.shared.boss-encounter-hud','Boss encounter HUD','game.shared','game.shared.adventure','show boss phase, health, mechanic/objective, team danger and player state while preserving encounter visibility',v(
++        {'boss':(.20,.03,.60,.10),'objective':(.30,.15,.40,.09),'world':(0,0,1,1),'team':(.02,.73,.20,.24),'player':(.38,.82,.24,.14),'warnings':(.75,.72,.23,.24)},
++        {'boss':(.27,.03,.46,.09),'objective':(.35,.14,.30,.08),'world':(0,0,1,1),'team':(.02,.76,.17,.20),'player':(.41,.82,.18,.14),'warnings':(.78,.76,.20,.20)},
++        {'boss':(.31,.03,.38,.085),'objective':(.39,.135,.22,.075),'world':(0,0,1,1),'team':(.015,.78,.15,.18),'player':(.425,.825,.15,.13),'warnings':(.82,.78,.165,.18)}),tags=['game','shared','boss','hud'],quality=q),
++      'game.shared.spectator':screen('game.shared.spectator','Spectator and follow view','game.shared','game.shared.adventure','keep viewed player/seat identity and spectator controls explicit while leaving gameplay readable',v(
++        {'world':(0,0,1,1),'target':(.03,.03,.32,.10),'status':(.65,.03,.32,.10),'controls':(.22,.83,.56,.13)},
++        {'world':(0,0,1,1),'target':(.02,.03,.24,.09),'status':(.74,.03,.24,.09),'controls':(.32,.84,.36,.11)},
++        {'world':(0,0,1,1),'target':(.015,.03,.20,.085),'status':(.785,.03,.20,.085),'controls':(.36,.85,.28,.10)}),tags=['game','shared','spectator','seat'],quality=q),
++      'game.shared.end-session-summary':screen('game.shared.end-session-summary','End-session summary','game.shared','game.shared.adventure','summarize outcome, player/team statistics, rewards, progression and next actions with stable comparisons',v(
++        {'headline':(.04,.05,.92,.12),'outcome':(.04,.20,.28,.24),'stats':(.35,.20,.61,.24),'rewards':(.04,.47,.45,.30),'progress':(.52,.47,.44,.30),'actions':(.04,.81,.92,.13)},
++        {'headline':(.04,.05,.92,.11),'outcome':(.04,.19,.22,.54),'stats':(.29,.19,.34,.25),'rewards':(.66,.19,.30,.25),'progress':(.29,.47,.67,.26),'actions':(.29,.78,.67,.13)},
++        {'headline':(.05,.05,.90,.10),'outcome':(.05,.19,.19,.55),'stats':(.27,.19,.35,.25),'rewards':(.65,.19,.30,.25),'progress':(.27,.47,.68,.27),'actions':(.27,.79,.68,.12)}),tags=['game','shared','session','summary'],quality=q),
++      'game.shared.challenge-board':screen('game.shared.challenge-board','Challenges and goals board','game.shared','game.shared.adventure','show available goals, exact progress, expiry and rewards without implying incomplete work is earned',v(
++        {'header':(.03,.03,.94,.08),'filters':(.03,.14,.94,.09),'challenges':(.03,.26,.58,.70),'details':(.64,.26,.33,.50),'actions':(.64,.79,.33,.17)},
++        {'header':(.02,.03,.96,.075),'categories':(.02,.14,.17,.82),'challenges':(.21,.14,.47,.82),'details':(.70,.14,.28,.58),'actions':(.70,.75,.28,.21)},
++        {'header':(.015,.03,.97,.07),'categories':(.015,.13,.15,.84),'challenges':(.185,.13,.50,.84),'details':(.705,.13,.28,.59),'actions':(.705,.75,.28,.22)}),tags=['game','shared','challenge','progress'],quality=q),
++    }
++    _merge(screens,additions,'screen')
++    ids=list(additions)
++    product={'schema':'axm.visual-product/v1','id':'game.shared.core','version':1,'name':'Shared gameplay systems core','kind':'product','domain':'game.shared','tags':['game','shared','systems','product'],'origin':origin(),'style':'game.shared.adventure','intent':'reusable game-system surfaces for inventory, progression, missions, maps, objectives, upgrades, codex, encounter recovery, boss state, spectating, session results and challenges','screens':ids,'flow':[
++      ['game.shared.mission-briefing','game.shared.world-map','inspect-route'],['game.shared.world-map','game.shared.objective-log','inspect-objectives'],['game.shared.inventory','game.shared.upgrade-shop','browse-upgrades'],['game.shared.upgrade-shop','game.shared.inventory','return-inventory'],['game.shared.skill-tree','game.shared.challenge-board','inspect-goals'],['game.shared.revive-overlay','game.shared.spectator','revive-expired'],['game.shared.boss-encounter-hud','game.shared.end-session-summary','encounter-complete'],['game.shared.end-session-summary','game.shared.challenge-board','review-progress'],['game.shared.codex','game.shared.world-map','locate-entry']], 'quality':q}
++    _merge(products,{'game.shared.core':product},'product')
+diff --git a/src/axm_uc/visual_templates.py b/src/axm_uc/visual_templates.py
+index aca6d3d..e3e005f 100644
+--- a/src/axm_uc/visual_templates.py
++++ b/src/axm_uc/visual_templates.py
+@@ -12,14 +12,16 @@ from .visual_template_growth import extend_catalog as _extend_catalog
+ from .visual_template_game_systems import extend_game_system_catalog as _extend_game_system_catalog
+ from .visual_template_creative_narrative import extend_creative_narrative_catalog as _extend_creative_narrative_catalog
+ from .visual_template_axm_system import extend_axm_system_catalog as _extend_axm_system_catalog
++from .visual_template_game_shared import extend_game_shared_catalog as _extend_game_shared_catalog
+ 
+-_COMPOSITION=("visual_template_growth","visual_template_game_systems","visual_template_creative_narrative","visual_template_axm_system")
++_COMPOSITION=("visual_template_growth","visual_template_game_systems","visual_template_creative_narrative","visual_template_axm_system","visual_template_game_shared")
+ _applied=getattr(_core,"_AXM_VISUAL_COMPOSITION",None)
+ if _applied is None:
+     _extend_catalog(vars(_core))
+     _extend_game_system_catalog(vars(_core))
+     _extend_creative_narrative_catalog(vars(_core))
+     _extend_axm_system_catalog(vars(_core))
++    _extend_game_shared_catalog(vars(_core))
+     _core._AXM_VISUAL_COMPOSITION=_COMPOSITION
+ elif _applied != _COMPOSITION:
+     raise RuntimeError("visual template composition changed inside a live process; restart with one exact catalog")
+diff --git a/tests/test_visual_templates.py b/tests/test_visual_templates.py
+index 1ec2f96..df62866 100644
+--- a/tests/test_visual_templates.py
++++ b/tests/test_visual_templates.py
+@@ -8,12 +8,12 @@ from axm_stickers import Registry
+ from axm_uc import visual_templates as vt
+ 
+ SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
+-PRODUCTS=('game.racing.full','game.coop.action','game.rts.command','game.system.shell','editor.creative.core','comic.narrative.core','axm.system.shell')
++PRODUCTS=('game.racing.full','game.coop.action','game.rts.command','game.system.shell','game.shared.core','editor.creative.core','comic.narrative.core','axm.system.shell')
+ 
+ class VisualTemplateTests(unittest.TestCase):
+     def test_catalog_counts_and_products(self):
+         counts=vt.validate_catalog()
+-        self.assertEqual(counts,{'styles':11,'primitives':57,'screens':91,'products':9})
++        self.assertEqual(counts,{'styles':12,'primitives':67,'screens':103,'products':10})
+         self.assertEqual(vt.CATALOG_COMPOSITION['counts'],counts)
+         ids={p['id'] for p in vt.catalog()['products']}
+         self.assertTrue(set(PRODUCTS)|{'game.racing.performance','software.creator.studio'} <= ids)
+@@ -26,27 +26,21 @@ class VisualTemplateTests(unittest.TestCase):
+                 out=vt.resolve(tid,width,height)
+                 for x,y,w,h in out['regions'].values():
+                     self.assertGreaterEqual(min(x,y,w,h),0)
+-                    self.assertLessEqual(x+w,width+1e-6)
+-                    self.assertLessEqual(y+h,height+1e-6)
++                    self.assertLessEqual(x+w,width+1e-6); self.assertLessEqual(y+h,height+1e-6)
+ 
+     def test_existing_product_depth_is_retained(self):
+-        self.assertEqual(len(vt.get('game.racing.full')['screens']),19)
+-        self.assertEqual(len(vt.get('game.system.shell')['screens']),18)
+-        self.assertEqual(len(vt.get('editor.creative.core')['screens']),12)
+-        self.assertEqual(len(vt.get('comic.narrative.core')['screens']),10)
++        expected={'game.racing.full':19,'game.system.shell':18,'editor.creative.core':12,'comic.narrative.core':10,'axm.system.shell':12}
++        for pid,count in expected.items(): self.assertEqual(len(vt.get(pid)['screens']),count)
+         self.assertIn('game.racing.hud.split',vt.get('game.racing.full')['screens'])
+-        self.assertIn('game.system.privacy-consent',vt.get('game.system.shell')['screens'])
+-        self.assertIn('editor.creative.node-graph',vt.get('editor.creative.core')['screens'])
+         self.assertIn('comic.narrative.dialogue-editor',vt.get('comic.narrative.core')['screens'])
+ 
+-    def test_axm_system_shell(self):
+-        product=vt.get('axm.system.shell')
+-        required={'axm.system.home','axm.system.registry','axm.system.capability-browser','axm.system.cartridge-loader','axm.system.machine-state','axm.system.evidence-review','axm.system.workflow','axm.system.specialists','axm.system.workfloor','axm.system.snapshots','axm.system.settings','axm.system.recovery'}
++    def test_shared_gameplay_product_covers_near_term_gaps(self):
++        product=vt.get('game.shared.core')
++        required={'game.shared.inventory','game.shared.skill-tree','game.shared.mission-briefing','game.shared.world-map','game.shared.objective-log','game.shared.upgrade-shop','game.shared.codex','game.shared.revive-overlay','game.shared.boss-encounter-hud','game.shared.spectator','game.shared.end-session-summary','game.shared.challenge-board'}
+         self.assertEqual(set(product['screens']),required)
+-        self.assertEqual(product['style'],'axm.machine.glass')
+-        flow={(a,b,c) for a,b,c in product['flow']}
+-        self.assertIn(('axm.system.cartridge-loader','axm.system.machine-state','inspect-state'),flow)
+-        self.assertIn(('axm.system.snapshots','axm.system.recovery','recover'),flow)
++        self.assertEqual(product['style'],'game.shared.adventure')
++        self.assertIn('revive-expired',{c for _,_,c in product['flow']})
++        self.assertIn('encounter-complete',{c for _,_,c in product['flow']})
+ 
+     def test_products_resolve_and_previews_parse(self):
+         for pid in PRODUCTS:
+@@ -63,28 +57,31 @@ class VisualTemplateTests(unittest.TestCase):
+         with tempfile.TemporaryDirectory() as td:
+             with Registry(Path(td)/'stickers.sqlite') as registry:
+                 pins=vt.install_builtins(registry)
+-                self.assertEqual(len(pins),100)
++                self.assertEqual(len(pins),113)
+                 self.assertEqual(len(registry.search(adapter=vt.ADAPTER,tag='axm',limit=100)['entries']),12)
+-                self.assertEqual(len(registry.search(adapter=vt.ADAPTER,tag='comic',limit=100)['entries']),10)
+-                d=registry.get('visual.axm.system.registry',1)
++                shared=registry.search(adapter=vt.ADAPTER,tag='shared',limit=100)['entries']
++                self.assertGreaterEqual(len(shared),12)
++                d=registry.get('visual.game.shared.inventory',1)
+                 self.assertEqual(d['recipe']['visual_template']['schema'],vt.SCHEMA)
+                 self.assertNotIn('"latest"',json.dumps(d,sort_keys=True))
+ 
+     def test_reusable_state_contracts(self):
+-        required={'player-seat','loading-state','layer-row','timeline-track','node-card','speech-bubble','reading-order-marker','truth-state','capability-card','registry-entry','evidence-chip','state-diff','cartridge-card','specialist-card','workfloor-lane','snapshot-entry','recovery-choice'}
++        required={'truth-state','registry-entry','layer-row','speech-bubble','inventory-slot','skill-node','objective-row','shop-offer','codex-entry','revive-state','boss-phase','spectator-seat','challenge-card','session-stat'}
+         self.assertTrue(required <= set(vt.PRIMITIVES))
+-        self.assertTrue(vt.PRIMITIVES['truth-state']['source_must_be_visible'])
+-        self.assertTrue(vt.PRIMITIVES['registry-entry']['no_floating_latest'])
+-        self.assertTrue(vt.PRIMITIVES['snapshot-entry']['restore_is_explicit'])
+-        self.assertTrue(vt.PRIMITIVES['recovery-choice']['consequence_must_be_visible'])
++        self.assertTrue(vt.PRIMITIVES['inventory-slot']['ownership_must_be_explicit'])
++        self.assertTrue(vt.PRIMITIVES['skill-node']['prerequisites_and_cost_must_be_visible'])
++        self.assertTrue(vt.PRIMITIVES['codex-entry']['undiscovered_content_must_not_be_faked'])
++        self.assertTrue(vt.PRIMITIVES['revive-state']['timer_and_actor_must_be_explicit'])
++        self.assertTrue(vt.PRIMITIVES['boss-phase']['phase_change_needs_non_color_cue'])
++        self.assertTrue(vt.PRIMITIVES['challenge-card']['progress_and_reward_must_be_explicit'])
+ 
+     def test_copy_safety_variant_rejection_and_bad_geometry(self):
+-        a=vt.resolve('axm.system.home',1920,1080); b=vt.resolve('axm.system.home',1920,1080)
++        a=vt.resolve('game.shared.inventory',1920,1080); b=vt.resolve('game.shared.inventory',1920,1080)
+         self.assertEqual(a,b)
+-        copy=vt.get('axm.system.home'); copy['name']='changed'
+-        self.assertNotEqual(vt.get('axm.system.home')['name'],'changed')
+-        with self.assertRaises(ValueError): vt.resolve('axm.system.home',1920,1080,variant='unknown')
+-        bad=vt.get('axm.system.registry'); bad['variants']['standard']['entries']=[.9,.9,.2,.2]
++        copy=vt.get('game.shared.inventory'); copy['name']='changed'
++        self.assertNotEqual(vt.get('game.shared.inventory')['name'],'changed')
++        with self.assertRaises(ValueError): vt.resolve('game.shared.inventory',1920,1080,variant='unknown')
++        bad=vt.get('game.shared.world-map'); bad['variants']['standard']['map']=[.9,.9,.2,.2]
+         with self.assertRaises(ValueError): vt.validate_screen(bad)
+ 
+     def test_exact_sticker_slot_binding_is_retained(self):
+diff --git a/tools/visual_template_proof.py b/tools/visual_template_proof.py
+index c6fb47d..d7b8806 100644
+--- a/tools/visual_template_proof.py
++++ b/tools/visual_template_proof.py
+@@ -8,7 +8,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src'))
+ from axm_uc import visual_templates as vt
+ 
+ SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
+-PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","editor.creative.core","comic.narrative.core","axm.system.shell")
++PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell")
+ 
+ def _write(project,target):
+     target.mkdir(); out=[]
+@@ -25,7 +25,7 @@ def main(argv):
+     out.mkdir(parents=True)
+     try:
+         counts=vt.validate_catalog()
+-        if counts!={'styles':11,'primitives':57,'screens':91,'products':9}: raise AssertionError(counts)
++        if counts!={'styles':12,'primitives':67,'screens':103,'products':10}: raise AssertionError(counts)
+         evidence=[]
+         for pid in PRODUCTS:
+             expected=vt.get(pid)
+@@ -41,6 +41,7 @@ def main(argv):
+             ('game.coop.action',1280,720,'coop-action','AXM Co-op Action Foundation'),
+             ('game.rts.command',1920,1080,'rts-command','AXM RTS Command Foundation'),
+             ('game.system.shell',1280,720,'game-system','AXM Shared Game-System Foundation'),
++            ('game.shared.core',1920,1080,'game-shared','AXM Shared Gameplay Systems'),
+             ('editor.creative.core',1920,1080,'creative-editor','AXM Creative Editor Foundation'),
+             ('comic.narrative.core',1920,1080,'comic-narrative','AXM Editable Comic Foundation'),
+             ('axm.system.shell',1920,1080,'axm-system','AXM System Shell Foundation'),
+@@ -48,17 +49,19 @@ def main(argv):
+         outputs=[]
+         for pid,w,h,folder,title in galleries: outputs+=_write(vt.product_project(pid,w,h,title),out/folder)
+         outputs+=_write(vt.screen_project('product.mobile.home',1080,1920,'AXM Mobile Foundation'),out/'mobile-home')
+-        system=vt.get('axm.system.shell')
+-        required={'axm.system.registry','axm.system.capability-browser','axm.system.cartridge-loader','axm.system.machine-state','axm.system.evidence-review','axm.system.workflow','axm.system.specialists','axm.system.workfloor','axm.system.snapshots','axm.system.recovery'}
+-        if not required<=set(system['screens']): raise AssertionError('AXM shell lost required surfaces')
++        shared=vt.get('game.shared.core')
++        required={'game.shared.inventory','game.shared.skill-tree','game.shared.mission-briefing','game.shared.world-map','game.shared.objective-log','game.shared.upgrade-shop','game.shared.codex','game.shared.revive-overlay','game.shared.boss-encounter-hud','game.shared.spectator','game.shared.end-session-summary','game.shared.challenge-board'}
++        if set(shared['screens'])!=required: raise AssertionError('shared gameplay pack lost required surfaces')
+         checks={
+-            'truth_source_visible':vt.PRIMITIVES['truth-state']['source_must_be_visible'],
+-            'registry_exact_version':vt.PRIMITIVES['registry-entry']['no_floating_latest'],
+-            'snapshot_restore_explicit':vt.PRIMITIVES['snapshot-entry']['restore_is_explicit'],
+-            'recovery_consequence_visible':vt.PRIMITIVES['recovery-choice']['consequence_must_be_visible'],
++            'inventory_ownership':vt.PRIMITIVES['inventory-slot']['ownership_must_be_explicit'],
++            'skill_prerequisites':vt.PRIMITIVES['skill-node']['prerequisites_and_cost_must_be_visible'],
++            'codex_unknowns':vt.PRIMITIVES['codex-entry']['undiscovered_content_must_not_be_faked'],
++            'revive_actor_timer':vt.PRIMITIVES['revive-state']['timer_and_actor_must_be_explicit'],
++            'boss_phase_noncolor':vt.PRIMITIVES['boss-phase']['phase_change_needs_non_color_cue'],
++            'challenge_progress_reward':vt.PRIMITIVES['challenge-card']['progress_and_reward_must_be_explicit'],
+         }
+-        if not all(checks.values()): raise AssertionError('AXM system contract failed')
+-        receipt={'schema':'axm.visual-template-proof/v5','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'axm_system_checks':checks,'truth':'Offline structural evidence only. Runtime machine operation, package mounting, recovery execution, authoring quality and aesthetic acceptance were not observed.'}
++        if not all(checks.values()): raise AssertionError('shared gameplay contract failed')
++        receipt={'schema':'axm.visual-template-proof/v6','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'game_shared_checks':checks,'truth':'Offline structural evidence only. Gameplay behavior, economy balance, progression tuning, encounter timing, runtime state and aesthetic acceptance were not observed.'}
+         (out/'receipt.json').write_text(json.dumps(receipt,indent=2,sort_keys=True),encoding='utf-8')
+         print(json.dumps(receipt,indent=2,sort_keys=True))
+     except BaseException:

@@ -1,0 +1,194 @@
+{
+  "capsule_id": "9fa3acc216ecfa304f5016acf99b2df7bd3b93d1e3c8f4ab304225a066656e20",
+  "evidence": {
+    "files": [
+      {
+        "additions": 31,
+        "binary": false,
+        "content_sha256": "e06a332ccfbefc297f38b4ae276d3a7854fad65ccc2b899ae30f1a962b9de5a1",
+        "deletions": 0,
+        "path": "GAME_STYLE_GROWTH.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Reusable sticker assemblies \u2014 2026-09-15",
+          "Game style growth"
+        ]
+      },
+      {
+        "additions": 103,
+        "binary": false,
+        "content_sha256": "d84caa6b5e3c7ae5aa639090a18eb7cf23065e03d21f5e90855ad6fbfeeeb7d1",
+        "deletions": 0,
+        "path": "docs/STICKER_ASSEMBLIES.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Create, save and assemble reusable parts",
+          "Composition contract",
+          "Reproduce a complete original example",
+          "Evidence and current bounds"
+        ]
+      },
+      {
+        "additions": 9,
+        "binary": false,
+        "content_sha256": "63823207821aa978e317267714fc4b629d88d4b815b00a4c1073d2f908b0f6bc",
+        "deletions": 3,
+        "path": "src/axm_stickers/__main__.py",
+        "status": "M",
+        "symbols": [
+          "main"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 129,
+        "binary": false,
+        "content_sha256": "2c4c33e33c3e73b87c91ad1d3807e5741179b135ad91000c8e66addacc0ec7c6",
+        "deletions": 0,
+        "path": "src/axm_stickers/assembly.py",
+        "status": "A",
+        "symbols": [
+          "motion_samples",
+          "expand",
+          "save_assembly",
+          "library_bundle",
+          "import_library"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 36,
+        "binary": false,
+        "content_sha256": "2daa358da5cf967d3b9e7c19bff09ebfd48b0c0e0019517681ef23ed10701147",
+        "deletions": 22,
+        "path": "src/axm_stickers/core.py",
+        "status": "M",
+        "symbols": [
+          "Registry"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 165,
+        "binary": false,
+        "content_sha256": "5812c9f4639af99a046cbaf017723cc73b0a39ee00a9838e140f775fd3f90923",
+        "deletions": 0,
+        "path": "src/axm_uc/sticker_assembly.py",
+        "status": "A",
+        "symbols": [
+          "export_assembly"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 60,
+        "binary": false,
+        "content_sha256": "34aec157d47aa6734ea2bfb35a6bdc91e8d3409972ea5d408ad512ae407b507d",
+        "deletions": 0,
+        "path": "src/axm_uc/sticker_create.py",
+        "status": "A",
+        "symbols": [
+          "execute",
+          "main"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 161,
+        "binary": false,
+        "content_sha256": "40e753ee43e9398e9094712f321e84248243a23e42a399d6967116a1c15d1ea1",
+        "deletions": 0,
+        "path": "tests/test_sticker_assemblies.py",
+        "status": "A",
+        "symbols": [
+          "frame",
+          "child",
+          "create",
+          "AssemblyTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 136,
+        "binary": false,
+        "content_sha256": "384389b83dc501b3774eb5a07ebb1bf1424773b2bb284a653d2b07f4b3110e1a",
+        "deletions": 0,
+        "path": "tools/sticker_assembly_proof.py",
+        "status": "A",
+        "symbols": [
+          "frame",
+          "make",
+          "preview"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "2a06e3832faf194dfed7875b1a5ea72e1526b5943a9cd04999ca78bfd3d7f165"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 6,
+    "kinds": [
+      "code",
+      "knowledge",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "animated",
+      "assemble",
+      "assemblies",
+      "assembly",
+      "axm",
+      "bounds",
+      "bundle",
+      "child",
+      "complete",
+      "composition",
+      "contract",
+      "create",
+      "creation-machine",
+      "current",
+      "evidence",
+      "example",
+      "execute",
+      "expand",
+      "export",
+      "frame",
+      "game",
+      "growth",
+      "import",
+      "library",
+      "make",
+      "motion",
+      "original",
+      "parts",
+      "preview",
+      "proof",
+      "registry",
+      "reproduce",
+      "reusable",
+      "samples",
+      "save",
+      "standalone",
+      "sticker",
+      "stickers",
+      "style",
+      "tools",
+      "universal-creation"
+    ]
+  },
+  "source": {
+    "base": "6fc223ba62163a3681683a388c7313d6f963cf96",
+    "commit_subject": "Create and save reusable animated sticker assemblies (#81)",
+    "head": "b5023a88af1cdd4c8a24f73c6606dc7621ce5ffe",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

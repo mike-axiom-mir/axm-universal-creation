@@ -1,0 +1,410 @@
+diff --git a/capabilities/live/AXM-CAP-INSPECT-FABRIC-SOURCES.json b/capabilities/live/AXM-CAP-INSPECT-FABRIC-SOURCES.json
+new file mode 100644
+index 0000000..6b9cf65
+--- /dev/null
++++ b/capabilities/live/AXM-CAP-INSPECT-FABRIC-SOURCES.json
+@@ -0,0 +1,64 @@
++{
++  "id": "AXM-CAP-INSPECT-FABRIC-SOURCES",
++  "version": "0.1.0",
++  "status": "live",
++  "purpose": "Inspect and resolve explicit local mounts for shared AXM capability fabrics while preserving truthful local fallbacks and performing no hidden network fetch.",
++  "handles": [
++    "inspect-fabric-sources",
++    "resolve-fabric-source"
++  ],
++  "input_contract": {
++    "required": [],
++    "properties": {
++      "source_id": "optional exact source id: hands-fabric, organ-fabric, organ-archive, or visual-effect-fabric",
++      "overrides": "optional object mapping exact source ids to explicit local paths; an explicit missing path is reported and never silently replaced by fallback"
++    }
++  },
++  "output_contract": {
++    "kind": "fabric-source-resolution",
++    "contains": [
++      "truth_status",
++      "source_count",
++      "sources",
++      "network_fetch_performed",
++      "authority_change"
++    ]
++  },
++  "dependencies": [],
++  "relationships": [
++    "prefers caller-supplied or locally mounted shared Fabric bodies when present",
++    "reports current UC Hands capsules and organ bodies as explicit local fallbacks rather than pretending they are mirrors of the newer shared Fabrics",
++    "marks Organ Archive preservation-only and never treats archive presence as executable or canonical authority",
++    "performs no network cloning, downloading, publishing, or mutation",
++    "path availability never transfers CANON, permission, publication, or user authority"
++  ],
++  "implementation": {
++    "kind": "DETERMINISTIC_SOURCE",
++    "entrypoint": "builtin:inspect_fabric_sources",
++    "source": "src/axm_uc/fabric_sources.py"
++  },
++  "limitations": [
++    "this capability resolves local source availability; it does not automatically install, update, execute, or synchronize an external Fabric",
++    "a local fallback may be a pinned donor snapshot or local body rather than the preferred shared Fabric",
++    "runtime adapters remain responsible for validating any specific Hand or Organ before invocation"
++  ],
++  "persistent_state": "none; source mounts and existing local bodies are observed read-only",
++  "root_fit": {
++    "truth": {
++      "fit": true,
++      "basis": "Preferred mounts, fallbacks, missing explicit paths, and network behavior are reported separately instead of collapsing source availability into capability claims."
++    },
++    "agency": {
++      "fit": true,
++      "basis": "Explicit source overrides are authoritative and are never silently replaced when missing; no source lookup grants permission or CANON authority."
++    },
++    "continuity": {
++      "fit": true,
++      "basis": "Existing UC local bodies remain valid fallbacks while shared Fabrics become the preferred reusable source boundary."
++    },
++    "wisdom-before-speed": {
++      "fit": true,
++      "basis": "The resolver adds source indirection without deleting proven local bodies or pretending unmounted repositories are available."
++    }
++  }
++}
+diff --git a/src/axm_uc/__init__.py b/src/axm_uc/__init__.py
+index 8e28614..1aab0cb 100644
+--- a/src/axm_uc/__init__.py
++++ b/src/axm_uc/__init__.py
+@@ -17,6 +17,7 @@ def _register_extension_builtins() -> None:
+     from .design_geometry import DesignGeometryError, operate_design_geometry
+     from .design_observer import DesignObserverError, operate_design_observer
+     from .design_visual import DesignVisualError, operate_design_visual
++    from .fabric_sources import FabricSourceError, inspect_fabric_sources
+     from .simulation import SimulationError, operate_simulation
+     from .specialist_pool_extension import build_specialist_pool as _contextual_pool_builder
+     from .stepwise_workflow import StepwiseWorkflowError, operate_stepwise_workflow
+@@ -173,9 +174,22 @@ def _register_extension_builtins() -> None:
+             details = getattr(exc, "details", {})
+             raise _capabilities.CapabilityError(str(exc), details) from exc
+ 
++    def fabric_source_surface(root, inputs):
++        overrides = inputs.get("overrides")
++        if overrides is not None and not isinstance(overrides, dict):
++            raise _capabilities.CapabilityError("fabric source overrides must be an object")
++        source_id = inputs.get("source_id")
++        if source_id is not None and not isinstance(source_id, str):
++            raise _capabilities.CapabilityError("fabric source_id must be text")
++        try:
++            return inspect_fabric_sources(root, overrides=overrides, source_id=source_id)
++        except (FabricSourceError, ValueError, TypeError) as exc:
++            raise _capabilities.CapabilityError(str(exc)) from exc
++
+     _capabilities.BUILTINS["builtin:specialist_tournament"] = multi_perspective_orchestration
+     _capabilities.BUILTINS["builtin:simulate_creation"] = adaptive_simulation_surface
+     _capabilities.BUILTINS["builtin:design_fabric"] = design_fabric_surface
++    _capabilities.BUILTINS["builtin:inspect_fabric_sources"] = fabric_source_surface
+ 
+ 
+ _register_extension_builtins()
+diff --git a/src/axm_uc/fabric_sources.py b/src/axm_uc/fabric_sources.py
+new file mode 100644
+index 0000000..028faf9
+--- /dev/null
++++ b/src/axm_uc/fabric_sources.py
+@@ -0,0 +1,175 @@
++from __future__ import annotations
++
++from dataclasses import dataclass
++from pathlib import Path
++from typing import Any, Mapping
++
++
++class FabricSourceError(ValueError):
++    """Raised when a fabric-source request is structurally invalid."""
++
++
++@dataclass(frozen=True)
++class FabricSource:
++    id: str
++    repository: str
++    kind: str
++    preferred_mount: str
++    fallback_paths: tuple[str, ...] = ()
++    callable_by_default: bool = True
++    notes: str = ""
++
++
++SOURCES: tuple[FabricSource, ...] = (
++    FabricSource(
++        id="hands-fabric",
++        repository="mike-axiom-mir/axm-hands-fabric",
++        kind="executable-capability-fabric",
++        preferred_mount="fabrics/hands",
++        fallback_paths=("capabilities/platform-hands", "capabilities/special-effect-hands"),
++        notes=(
++            "Preferred shared source for caller-neutral executable Hands. Current UC capsules remain "
++            "local donor snapshots until an explicit Hands Fabric mount/package is supplied."
++        ),
++    ),
++    FabricSource(
++        id="organ-fabric",
++        repository="mike-axiom-mir/axm-organ-fabric",
++        kind="internal-organ-fabric",
++        preferred_mount="fabrics/organs",
++        fallback_paths=("organs", "executable-organs"),
++        notes=(
++            "Preferred shared source for organ discovery/growth. UC's local descriptive and executable "
++            "organ bodies remain valid local fallbacks and retain their separate truth status."
++        ),
++    ),
++    FabricSource(
++        id="organ-archive",
++        repository="mike-axiom-mir/axm-organ-archive",
++        kind="preservation-archive",
++        preferred_mount="fabrics/organ-archive",
++        callable_by_default=False,
++        notes=(
++            "Preservation source only. Archived bodies may be inspected or explicitly restored, but archive "
++            "presence never makes an organ live, canonical, or executable."
++        ),
++    ),
++    FabricSource(
++        id="visual-effect-fabric",
++        repository="mike-axiom-mir/axm-visual-effect-fabric",
++        kind="specialized-visual-effect-fabric",
++        preferred_mount="fabrics/visual-effects",
++        fallback_paths=("capabilities/special-effect-hands",),
++        notes=(
++            "Preferred specialist source for reusable visual-effect machinery. The local special-effect Hands "
++            "capsule is a pinned donor proof, not a transparent mirror of the whole Fabric."
++        ),
++    ),
++)
++
++
++def _source_map() -> dict[str, FabricSource]:
++    return {source.id: source for source in SOURCES}
++
++
++def _resolve_path(root: Path, value: str) -> Path:
++    text = str(value).strip()
++    if not text:
++        raise FabricSourceError("fabric source path must be non-empty text")
++    path = Path(text).expanduser()
++    if not path.is_absolute():
++        path = root / path
++    return path.resolve()
++
++
++def inspect_fabric_sources(
++    root: Path,
++    *,
++    overrides: Mapping[str, str] | None = None,
++    source_id: str | None = None,
++) -> dict[str, Any]:
++    """Inspect preferred shared fabrics without performing network access.
++
++    An explicit override is authoritative for that source. If it is missing on disk,
++    the resolver reports that fact rather than silently falling back to another body.
++    Without an override, an explicit local mount is preferred, then declared local
++    donor fallbacks are reported. No path selection grants CANON, permission, or
++    publication authority.
++    """
++
++    root = Path(root).resolve()
++    source_by_id = _source_map()
++    override_map = dict(overrides or {})
++    unknown = sorted(set(override_map) - set(source_by_id))
++    if unknown:
++        raise FabricSourceError(f"unknown fabric source override(s): {', '.join(unknown)}")
++
++    selected: tuple[FabricSource, ...]
++    if source_id is None:
++        selected = SOURCES
++    else:
++        normalized = str(source_id).strip()
++        if normalized not in source_by_id:
++            raise FabricSourceError(f"unknown fabric source: {normalized or '<empty>'}")
++        selected = (source_by_id[normalized],)
++
++    records: list[dict[str, Any]] = []
++    for source in selected:
++        explicit = source.id in override_map
++        preferred = _resolve_path(root, override_map[source.id]) if explicit else (root / source.preferred_mount).resolve()
++        preferred_exists = preferred.exists()
++
++        fallback_rows: list[dict[str, Any]] = []
++        if not explicit:
++            for rel in source.fallback_paths:
++                path = (root / rel).resolve()
++                fallback_rows.append(
++                    {
++                        "path": str(path),
++                        "relative_path": rel,
++                        "exists": path.exists(),
++                        "kind": "local-donor-fallback",
++                    }
++                )
++
++        existing_fallbacks = [row for row in fallback_rows if row["exists"]]
++        if explicit and not preferred_exists:
++            status = "EXPLICIT_SOURCE_MISSING"
++            active_paths: list[str] = []
++        elif preferred_exists:
++            status = "PREFERRED_LOCAL_SOURCE_AVAILABLE"
++            active_paths = [str(preferred)]
++        elif existing_fallbacks:
++            status = "LOCAL_FALLBACK_AVAILABLE"
++            active_paths = [row["path"] for row in existing_fallbacks]
++        else:
++            status = "DECLARED_SOURCE_NOT_MOUNTED"
++            active_paths = []
++
++        records.append(
++            {
++                "id": source.id,
++                "repository": source.repository,
++                "kind": source.kind,
++                "status": status,
++                "callable_by_default": source.callable_by_default,
++                "preferred_path": str(preferred),
++                "preferred_path_exists": preferred_exists,
++                "explicit_override": explicit,
++                "active_local_paths": active_paths,
++                "fallbacks": fallback_rows,
++                "notes": source.notes,
++                "network_fetch_performed": False,
++                "authority_change": False,
++            }
++        )
++
++    return {
++        "schema": "axm.fabric-source-resolution/v1",
++        "truth_status": "OBSERVED_LOCAL_FABRIC_SOURCE_AVAILABILITY",
++        "root": str(root),
++        "source_count": len(records),
++        "sources": records,
++        "network_fetch_performed": False,
++        "authority_change": False,
++    }
+diff --git a/tests/test_composite_and_executable.py b/tests/test_composite_and_executable.py
+index bc97b0e..3bfa3c8 100644
+--- a/tests/test_composite_and_executable.py
++++ b/tests/test_composite_and_executable.py
+@@ -19,7 +19,11 @@ class CompositeAndExecutableTests(unittest.TestCase):
+         self.assertEqual(summary["truth_status"], "EXPLICIT_LIVE_CAPABILITY_BINDINGS")
+         self.assertEqual(summary["implemented_master_records"], 41)
+         self.assertEqual(summary["implemented_master_by_level"], {"atom": 1, "component": 19, "organ": 21})
+-        self.assertEqual(summary["live_capabilities"], 32)
++        live = machine.inspect()["live_capabilities"]
++        live_ids = {row["id"] for row in live}
++        self.assertEqual(len(live_ids), len(live))
++        self.assertIn("AXM-CAP-INSPECT-FABRIC-SOURCES", live_ids)
++        self.assertEqual(summary["live_capabilities"], len(live))
+         self.assertEqual(summary["resolved_bindings"], 99)
+ 
+         project = machine.executable(master_id="AXM-24-WORKSPACE-COLLABORATION-C-010-project")["master"]
+diff --git a/tests/test_creation_forge.py b/tests/test_creation_forge.py
+index 176fd63..cab8374 100644
+--- a/tests/test_creation_forge.py
++++ b/tests/test_creation_forge.py
+@@ -318,7 +318,9 @@ class CreationForgeTests(unittest.TestCase):
+         self.assertTrue(forge["extension_kinds_allowed"])
+         self.assertFalse(forge["automatic_execution"])
+         self.assertFalse(forge["automatic_install_or_registration"])
+-        self.assertEqual(len(inspection["live_capabilities"]), 32)
++        live_ids = [row["id"] for row in inspection["live_capabilities"]]
++        self.assertEqual(len(live_ids), len(set(live_ids)))
++        self.assertIn("AXM-CAP-INSPECT-FABRIC-SOURCES", live_ids)
+ 
+ 
+ if __name__ == "__main__":
+diff --git a/tests/test_fabric_sources.py b/tests/test_fabric_sources.py
+new file mode 100644
+index 0000000..04b75ee
+--- /dev/null
++++ b/tests/test_fabric_sources.py
+@@ -0,0 +1,71 @@
++from __future__ import annotations
++
++import tempfile
++import unittest
++from pathlib import Path
++
++from axm_uc.fabric_sources import FabricSourceError, inspect_fabric_sources
++
++
++class FabricSourceTests(unittest.TestCase):
++    def test_declared_sources_do_not_fetch_network_or_transfer_authority(self):
++        with tempfile.TemporaryDirectory() as tmp:
++            report = inspect_fabric_sources(Path(tmp))
++        self.assertEqual(report["schema"], "axm.fabric-source-resolution/v1")
++        self.assertEqual(report["source_count"], 4)
++        self.assertFalse(report["network_fetch_performed"])
++        self.assertFalse(report["authority_change"])
++        self.assertTrue(all(not row["network_fetch_performed"] for row in report["sources"]))
++        self.assertTrue(all(not row["authority_change"] for row in report["sources"]))
++
++    def test_local_fallbacks_are_observed_without_becoming_preferred_fabric(self):
++        with tempfile.TemporaryDirectory() as tmp:
++            root = Path(tmp)
++            (root / "capabilities/platform-hands").mkdir(parents=True)
++            report = inspect_fabric_sources(root, source_id="hands-fabric")
++        source = report["sources"][0]
++        self.assertEqual(source["status"], "LOCAL_FALLBACK_AVAILABLE")
++        self.assertFalse(source["preferred_path_exists"])
++        self.assertEqual(len(source["active_local_paths"]), 1)
++        self.assertTrue(source["active_local_paths"][0].endswith("capabilities/platform-hands"))
++
++    def test_preferred_mount_outranks_fallback(self):
++        with tempfile.TemporaryDirectory() as tmp:
++            root = Path(tmp)
++            (root / "fabrics/organs").mkdir(parents=True)
++            (root / "organs").mkdir()
++            report = inspect_fabric_sources(root, source_id="organ-fabric")
++        source = report["sources"][0]
++        self.assertEqual(source["status"], "PREFERRED_LOCAL_SOURCE_AVAILABLE")
++        self.assertEqual(source["active_local_paths"], [source["preferred_path"]])
++
++    def test_explicit_missing_override_does_not_silently_fallback(self):
++        with tempfile.TemporaryDirectory() as tmp:
++            root = Path(tmp)
++            (root / "capabilities/platform-hands").mkdir(parents=True)
++            report = inspect_fabric_sources(
++                root,
++                source_id="hands-fabric",
++                overrides={"hands-fabric": "chosen/missing-hands"},
++            )
++        source = report["sources"][0]
++        self.assertEqual(source["status"], "EXPLICIT_SOURCE_MISSING")
++        self.assertEqual(source["active_local_paths"], [])
++        self.assertEqual(source["fallbacks"], [])
++
++    def test_archive_is_preservation_only(self):
++        with tempfile.TemporaryDirectory() as tmp:
++            report = inspect_fabric_sources(Path(tmp), source_id="organ-archive")
++        self.assertFalse(report["sources"][0]["callable_by_default"])
++
++    def test_unknown_source_and_override_are_rejected(self):
++        with tempfile.TemporaryDirectory() as tmp:
++            root = Path(tmp)
++            with self.assertRaises(FabricSourceError):
++                inspect_fabric_sources(root, source_id="missing")
++            with self.assertRaises(FabricSourceError):
++                inspect_fabric_sources(root, overrides={"missing": "somewhere"})
++
++
++if __name__ == "__main__":
++    unittest.main()
+diff --git a/tests/test_gap_synthesis.py b/tests/test_gap_synthesis.py
+index 675e45c..ee1e2e4 100644
+--- a/tests/test_gap_synthesis.py
++++ b/tests/test_gap_synthesis.py
+@@ -604,7 +604,9 @@ class GapSynthesisTests(unittest.TestCase):
+         self.assertTrue(summary["reuse_precedes_new_embodiment"])
+         self.assertFalse(summary["semantic_source_invention"])
+         self.assertFalse(summary["automatic_admission"])
+-        self.assertEqual(len(inspection["live_capabilities"]), 32)
++        live_ids = [row["id"] for row in inspection["live_capabilities"]]
++        self.assertEqual(len(live_ids), len(set(live_ids)))
++        self.assertIn("AXM-CAP-INSPECT-FABRIC-SOURCES", live_ids)
+ 
+ 
+ if __name__ == "__main__":

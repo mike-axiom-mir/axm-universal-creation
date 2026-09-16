@@ -1,0 +1,70 @@
+diff --git a/capabilities/special-effect-hands/README.md b/capabilities/special-effect-hands/README.md
+new file mode 100644
+index 0000000..9ae321d
+--- /dev/null
++++ b/capabilities/special-effect-hands/README.md
+@@ -0,0 +1,25 @@
++# Special-effect Hands donor capsule
++
++Portable Universal Creation intake of the first caller-neutral special-effect Hand proof from `mike-axiom-mir/axm-visual-effect-fabric`.
++
++Pinned donor merge commit: `9ce4b0de198aeb5890d8cce58da05a11880348ab` (Visual Effect Fabric PR #3).
++
++## What UC gains
++
++This capsule demonstrates a machine-editable creation loop inside Universal Creation:
++
++`state -> small Hand -> checkpoint -> small Hand -> checkpoint -> ... -> realization`
++
++A caller may edit a saved intermediate checkpoint and resume only the dependent downstream stages instead of rebuilding the whole effect. Caller identity is not part of deterministic result semantics: human UI, AI Agent, Mirror, or ordinary deterministic software can invoke the same graph.
++
++The current proof is an eight-stage electric-storm graph. Canonical topology, energy and layer intent remain editable state; SVG is only a derived preview.
++
++## Boundary
++
++This is a pinned donor capsule, not a declaration that all Universal Creation capabilities must use this exact runtime or schema. It transfers no CANON/permission authority and makes no electrical-physics or aesthetic-quality claim. The standalone `axm-hands-fabric` is the natural long-term home for the general Hand contract and growth; UC is a consumer/composer of compatible Hands.
++
++Run:
++
++```sh
++npm --prefix capabilities/special-effect-hands test
++```
+diff --git a/capabilities/special-effect-hands/SOURCE_INTAKE.json b/capabilities/special-effect-hands/SOURCE_INTAKE.json
+new file mode 100644
+index 0000000..0624a92
+--- /dev/null
++++ b/capabilities/special-effect-hands/SOURCE_INTAKE.json
+@@ -0,0 +1,14 @@
++{
++  "schema": "axm.special-effect-hands-donor-intake/v1",
++  "source_repository": "mike-axiom-mir/axm-visual-effect-fabric",
++  "source_pr": 3,
++  "source_merge_commit": "9ce4b0de198aeb5890d8cce58da05a11880348ab",
++  "source_path": "hand-lab",
++  "target_repository": "mike-axiom-mir/axm-universal-creation",
++  "target_path": "capabilities/special-effect-hands",
++  "caller_neutral": true,
++  "offline_core": true,
++  "authority_change": false,
++  "canonical_effect_state_distinct_from_realization": true,
++  "purpose": "Portable donor proof of small executable Hands, editable hashed checkpoints, mid-process edits, and downstream-only replay inside Universal Creation."
++}
+diff --git a/capabilities/special-effect-hands/package.json b/capabilities/special-effect-hands/package.json
+new file mode 100644
+index 0000000..b54c7ab
+--- /dev/null
++++ b/capabilities/special-effect-hands/package.json
+@@ -0,0 +1,13 @@
++{
++  "name": "axm-uc-special-effect-hands-donor",
++  "private": true,
++  "version": "0.1.0",
++  "type": "module",
++  "scripts": {
++    "test": "node --test tests/*.test.mjs",
++    "verify": "npm test"
++  },
++  "engines": {
++    "node": ">=18"
++  }
++}

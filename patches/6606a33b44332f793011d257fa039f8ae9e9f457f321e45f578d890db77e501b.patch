@@ -1,0 +1,189 @@
+diff --git a/RTS_WORKSHOP_POLISH.md b/RTS_WORKSHOP_POLISH.md
+index 011fc49..ed0dd90 100644
+--- a/RTS_WORKSHOP_POLISH.md
++++ b/RTS_WORKSHOP_POLISH.md
+@@ -73,3 +73,28 @@ asset is examined before multiplying the new treatment across the collection.
+ Integration is supported when the source regression suite and fresh-export
+ checks pass. Root fit does not certify the entire collection's visual quality or
+ replace the user's acceptance of their game assets.
++# Plate style iteration
++
++The follow-up keeps the detailed workshop source while tightening the canopy
++footprint, increasing fabric sag and corner folds, enlarging the fitted patch,
++and opening the hero view toward the inhabited work area. A separate reusable
++`axm_salvage_personality.py` constructs a kettle, mug, reclaimed car-door cabinet,
++hubcap stool, timber repair braces and wheel-driven hoist from actual geometry.
++These are authored additions consistent with found-object engineering, not
++objects claimed to have been reconstructed exactly from the plate.
++
++Lantern practicals now sit outside their opaque emissive shells so their light
++can reach nearby surfaces. A warm workbench practical complements the lamps.
++Practical lights remain explicit metadata; consumers must recreate them in the
++game. They are not baked into textures or bundled with the GLB's geometry.
++
++The proof is a fresh GLB import rendered from three views, plus independent
++decoded geometry checks. This iteration covers the workshop only. The earlier
++83-design pack has not inherited this polish merely because these reusable
++constructors exist. It does not establish animation, collider, target-engine
++integration, FPS or automatic visual acceptance.
++
++Root fit: retain the previous deliverable and editable sources (Continuity);
++name authored interpretation and remaining coverage limits (Truth); keep target
++game adoption explicit (Agency); inspect actual exported geometry before
++promoting the change (Wisdom before speed).
+diff --git a/tools/blender/axm_rts_workshop.py b/tools/blender/axm_rts_workshop.py
+index 81a5876..8cc6632 100644
+--- a/tools/blender/axm_rts_workshop.py
++++ b/tools/blender/axm_rts_workshop.py
+@@ -16,6 +16,7 @@ from mathutils import Vector
+ from axm_blender_forge import box, cylinder, cone, torus, cable, beam, sphere, select_only, export_glb
+ from axm_salvage_construction import mesh, corrugated, cloth, flange, barrel, crate, lantern, plant, physically_scaled_uv
+ from axm_salvage_surfaces import pbr_material, solid, banner_material
++from axm_salvage_personality import workshop_life
+ 
+ 
+ def materials(out,font):
+@@ -91,9 +92,9 @@ def main_structure(m):
+ 
+ def roof_canopy(m):
+     # Two different fabric spans; gravity sag lives between tensioned corners.
+-    corners=[(-.63,1.14,3.72),(2.34,1.20,3.62),(-.60,-1.51,3.30),(2.38,-1.36,3.43)]
+-    ob,pt=cloth('tarp main tensioned roof',corners,m['tarp'],sag=.12,flutter=.047,tile=(2,2),edge_sag=.24,corner_folds=.095)
+-    for u in [0,.34,.69,1]:
++    corners=[(-.63,1.05,3.77),(2.23,1.12,3.61),(-.60,-1.13,3.19),(2.25,-1.04,3.38)]
++    ob,pt=cloth('tarp main tensioned roof',corners,m['tarp'],sag=.20,flutter=.065,tile=(2,2),edge_sag=.18,corner_folds=.14)
++    for u in [0,.28,.64,1]:
+         cable('canvas stitched seam',[pt(u,j/32) for j in range(33)],.009,m['tarp_light'])
+     for v in [0,1]:cable('canvas bound hem',[pt(j/40,v) for j in range(41)],.017,m['tarp_light'])
+     # Scalloped valance hangs from front edge and exposes two glowing lamps.
+@@ -116,13 +117,14 @@ def roof_canopy(m):
+         cable('canopy tie rope',[tuple(a),tuple(a+Vector((.12,-.12,-.20))),(a.x*1.04,a.y*1.12,.38)],.012,m['wood'])
+     # Repair patch follows actual roof curvature rather than floating above it.
+     verts=[];uv=[]
+-    for j in range(9):
+-        for i in range(9):
+-            u=.57+i*.16/8;v=.35+j*.18/8
+-            verts.append(tuple(Vector(pt(u,v))+Vector((0,0,.009))));uv.append((i/8*.4,j/8*.4))
+-    faces=[]
+     for j in range(8):
+-        for i in range(8):q=j*9+i;faces.append((q,q+1,q+10,q+9))
++        for i in range(8):
++            # Same tessellation as the base cloth: avoid crossing interpolated folds.
++            u=(15+i)/32;v=(9+j)/24
++            verts.append(tuple(Vector(pt(u,v))+Vector((0,0,.018))));uv.append((i/7*.4,j/7*.4))
++    faces=[]
++    for j in range(7):
++        for i in range(7):q=j*8+i;faces.append((q,q+1,q+9,q+8))
+     mesh('patch-cloth fitted roof repair',verts,faces,m['tarp_light'],uv,True)
+ 
+ 
+@@ -280,7 +282,7 @@ def setup_render(resolution,samples):
+         data=bpy.data.lights.new(name,'AREA');data.energy=power;data.color=color;data.shape='DISK';data.size=size
+         ob=bpy.data.objects.new('REVIEW '+name,data);bpy.context.collection.objects.link(ob);ob.location=loc;point(ob,(0,0,1.6))
+     data=bpy.data.cameras.new('Review camera');cam=bpy.data.objects.new('REVIEW camera',data);bpy.context.collection.objects.link(cam);scene.camera=cam
+-    cam.data.type='ORTHO';cam.data.ortho_scale=7.3;cam.location=(7,-11,7.0);point(cam,(0,.10,2.2))
++    cam.data.type='ORTHO';cam.data.ortho_scale=7.3;cam.location=(6.7,-12,6.0);point(cam,(0,.10,2.2))
+     return cam
+ 
+ 
+@@ -329,7 +331,7 @@ def main():
+         bpy.ops.wm.open_mainfile(filepath=str(args.source_blend.resolve()))
+     else:
+         m=materials(out,args.font)
+-        for f in [foundation,main_structure,roof_canopy,pipes_and_roof,workshop_interior,foreground]:
++        for f in [foundation,main_structure,roof_canopy,pipes_and_roof,workshop_interior,foreground,workshop_life]:
+             print('BUILD',f.__name__,flush=True);f(m)
+         objects=[o for o in bpy.context.scene.objects if o.type=='MESH'];physically_scaled_uv(objects)
+     bpy.ops.wm.save_as_mainfile(filepath=str(out/'workshop-editable.blend'))
+@@ -366,13 +368,13 @@ def main():
+         ob=bpy.data.objects.new(l['name'],data);bpy.context.collection.objects.link(ob);ob.location=l['position_source_z_up']
+     cam=setup_render(args.resolution,args.samples)
+     views=[]
+-    for name,loc,target,scale in [('hero',(7,-11,7),(0,.10,2.2),7.3),('rear',(-8,10,7),(0,.1,2.1),7.3),('detail',(4,-9,4.8),(.6,-.2,1.7),4.4)]:
++    for name,loc,target,scale in [('hero',(6.7,-12,6.0),(0,.10,2.2),7.3),('rear',(-8,10,7),(0,.1,2.1),7.3),('detail',(4,-9,4.8),(.6,-.2,1.7),4.4)]:
+         cam.location=loc;point(cam,target);cam.data.ortho_scale=scale
+         bpy.context.scene.render.filepath=str(out/f'workshop-{name}.png');bpy.ops.render.render(write_still=True);views.append(f'workshop-{name}.png')
+     digest=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+     report={'schema':'axm.rts-workshop-polish/v0.1','asset':'improvised-workshop','reference':'1000000415.png','reference_sha256':'4e154be2ff7451318b09abc6d2153297ab9f1b51bae4ad94599d5901dfd7368f','geometry':stats,
+       'units':'meters','glb_up':'Y','glb_forward':'+Z','source_up':'Z','source_forward':'-Y','source_runtime':bpy.app.version_string,
+-      'source_sha256':{p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in [Path(__file__),Path(__file__).with_name('axm_salvage_construction.py'),Path(__file__).with_name('axm_salvage_surfaces.py')]},'font_sha256':digest(args.font),'fresh_import_meshes':len(imported),'practical_lights':lights,'render_views':views,
++      'source_sha256':{p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in [Path(__file__),Path(__file__).with_name('axm_salvage_construction.py'),Path(__file__).with_name('axm_salvage_surfaces.py'),Path(__file__).with_name('axm_salvage_personality.py')]},'font_sha256':digest(args.font),'fresh_import_meshes':len(imported),'practical_lights':lights,'render_views':views,
+       'artifacts':{f.name:{'bytes':f.stat().st_size,'sha256':digest(f)} for f in out.iterdir() if f.is_file()},
+       'scope':'Reference-led authored 3D interpretation. Fresh GLB import with Cycles CPU render. No target RTS integration or performance certification. Review ground, camera and studio lighting are not asset geometry.'}
+     (out/'verification.json').write_text(json.dumps(report,indent=2)+'\n')
+diff --git a/tools/blender/axm_salvage_construction.py b/tools/blender/axm_salvage_construction.py
+index 0c84716..87a5422 100644
+--- a/tools/blender/axm_salvage_construction.py
++++ b/tools/blender/axm_salvage_construction.py
+@@ -105,7 +105,8 @@ def lantern(name,c,mats,scale=1):
+         beam(name+' cage',(x+dx,y+dy,z-.17*s),(x+dx,y+dy,z+.18*s),.009*s,mats['iron'],vertices=6)
+     torus(name+' handle',(x,y,z+.33*s),.065*s,.010*s,mats['iron'],rotation=(math.pi/2,0,0),major_segments=20,minor_segments=6)
+     light=bpy.data.lights.new(name+' practical','POINT');light.energy=75*s;light.color=(1,.48,.14);light.shadow_soft_size=.13*s
+-    ob=bpy.data.objects.new(name+' practical',light);bpy.context.collection.objects.link(ob);ob.location=(x,y,z)
++    ob=bpy.data.objects.new(name+' practical',light);bpy.context.collection.objects.link(ob);ob.location=(x,y-.18*s,z-.02*s)
++    # Outside the opaque emissive shell: the lamp can illuminate its surroundings.
+     ob['export_note']='Render practical; intensity must be matched by the game lighting setup.'
+ 
+ 
+diff --git a/tools/blender/axm_salvage_personality.py b/tools/blender/axm_salvage_personality.py
+new file mode 100644
+index 0000000..daa2644
+--- /dev/null
++++ b/tools/blender/axm_salvage_personality.py
+@@ -0,0 +1,56 @@
++"""Bounded found-object construction for inhabited miniature workshops.
++
++These are editable meshes, not a raster makeover. Reuse the prop constructors
++independently; the composition function owns their deliberate placement.
++"""
++import math
++import bpy
++from axm_blender_forge import box, cylinder, torus, cable, beam, sphere
++
++
++def kettle(name, c, m, scale=1):
++    x,y,z=c;s=scale
++    sphere(name+' enamel body',(x,y,z+.13*s),(.16*s,.13*s,.14*s),m['yellow'],segments=24,rings=12)
++    cylinder(name+' lid',(x,y,z+.25*s),.10*s,.025*s,m['iron'],vertices=24,bevel=.009*s)
++    sphere(name+' lid knob',(x,y,z+.28*s),(.035*s,)*3,m['wood'],segments=12,rings=8)
++    cable(name+' spout',[(x+.12*s,y,z+.10*s),(x+.23*s,y,z+.17*s),(x+.25*s,y,z+.25*s)],.034*s,m['yellow'])
++    cable(name+' carry handle',[(x-.10*s,y,z+.20*s),(x-.11*s,y,z+.37*s),(x+.10*s,y,z+.37*s),(x+.10*s,y,z+.20*s)],.020*s,m['iron'])
++
++
++def mug(name,c,m):
++    x,y,z=c
++    cylinder(name+' enamel',(x,y,z+.065),.055,.13,m['ivory'],vertices=20,bevel=.009)
++    cylinder(name+' tea',(x,y,z+.132),.044,.003,m['wood'],vertices=20,bevel=0)
++    torus(name+' handle',(x+.061,y,z+.073),.034,.009,m['ivory'],rotation=(math.pi/2,0,0),major_segments=16,minor_segments=6)
++
++
++def workshop_life(m):
++    # A household kettle doubles as the workshop's essential machinery.
++    kettle('tea engine',(1.20,-.08,1.22),m,1.0)
++    mug('mechanic tea',(.61,-.54,1.215),m)
++    # An old car door becomes a cupboard front underneath the workbench.
++    box('reclaimed car door',(.99,-.42,.78),(.62,.07,.50),m['teal'],rotation=(0,.025,.03),bevel=.085)
++    box('car door cream inset',(.99,-.465,.82),(.49,.025,.21),m['ivory'],bevel=.045)
++    box('car door handle',(1.14,-.491,.92),(.12,.03,.025),m['steel'],bevel=.011)
++    # Chunky temporary bracing gives an understandable hand-repaired silhouette.
++    for x,sign in [(-2.1,1),(2.08,-1)]:
++        beam('timber knee brace',(x,-.72,2.38),(x+.44*sign,-.72,2.92),.052,m['wood'],vertices=8)
++    # An old wheel is the hoist's winch, attached to the existing roof bracket.
++    torus('reused hoist wheel',(-.31,.86,3.88),.19,.031,m['red'],rotation=(math.pi/2,0,0),major_segments=28,minor_segments=8)
++    for a in [0,math.tau/3,math.tau*2/3]:
++        beam('winch spoke',(-.31,.86,3.88),(-.31+.18*math.cos(a),.86,3.88+.18*math.sin(a)),.013,m['iron'],vertices=8)
++    cable('winch drop cable',[(-.31,.82,3.86),(-.22,.68,3.38),(-.12,.67,3.05)],.015,m['rubber'])
++    # Repair history on the sign bay; broad straps remain readable when small.
++    for x,z,angle in [(-1.92,1.0,.10),(-.76,2.85,-.15)]:
++        box('mismatched repair strap',(x,-.865,z),(.25,.033,.075),m['yellow'],rotation=(0,angle,0),bevel=.014)
++    # A stool on mismatched legs and a small round salvaged seat.
++    x,y=1.83,-.65
++    for dx,dy,h in [(-.11,-.09,.46),(.11,-.09,.46),(0,.12,.46)]:
++        beam('stool reused leg',(x+dx*1.3,y+dy*1.3,.26),(x+dx,y+dy,.26+h),.025,m['wood'],vertices=8)
++    cylinder('stool hubcap seat',(x,y,.73),.19,.07,m['red'],vertices=28,bevel=.023)
++    # Local task illumination, separate from studio lighting, accompanies export
++    # as named practical-light metadata. It is not baked into albedo textures.
++    data=bpy.data.lights.new('workbench warm task spill','POINT')
++    data.energy=95;data.color=(1,.52,.20);data.shadow_soft_size=.30
++    light=bpy.data.objects.new('workbench warm task spill',data)
++    bpy.context.collection.objects.link(light);light.location=(.70,.23,2.33)

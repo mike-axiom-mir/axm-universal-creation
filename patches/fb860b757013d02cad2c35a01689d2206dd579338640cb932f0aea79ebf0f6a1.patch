@@ -1,0 +1,1090 @@
+diff --git a/GAME_STYLE_GROWTH.md b/GAME_STYLE_GROWTH.md
+index 6cb6852..b27e249 100644
+--- a/GAME_STYLE_GROWTH.md
++++ b/GAME_STYLE_GROWTH.md
+@@ -83,7 +83,9 @@ bounded change before starting another; no quota of new files or assets.
+ 6. **Completed:** deterministic animation composition for anticipation,
+    acceleration, impact, recoil/counter-overshoot and settle, with sampled
+    portable tracks, exact phase events and fresh-import loop/contact receipts.
+-7. Add reusable secondary motion for springs, cloth, antennae and carried props.
++7. **Completed:** reusable causal secondary motion for springs, short rigid
++   cloth chains, antennae and carried props, with bounded response and exact
++   authored loop closure.
+ 8. Improve contact, sockets, useful LOD selection and game-distance readability.
+ 9. Exercise the combined capabilities on one memorable animated game asset,
+    such as a mischievous salvage delivery bot, with editable source and real GLBs.
+@@ -97,6 +99,55 @@ exports when those features change. Measure performance before making claims.
+ 
+ ## Current checkpoint
+ 
++### Secondary motion pass — 2026-09-13
++
++- Completed `game_secondary_motion.py`, `axm-assets secondary-motion-compose`
++  and its catalog. Four reusable classes derive per-frame local tracks from an
++  explicit sampled primary channel: `coil-spring`, `antenna`, `cloth-tail` and
++  `carried-prop`. Response frequency, damping, drive gain, causal frame lag,
++  axis, direction and amplitude remain explicit rather than inferred.
++- The primary composition and secondary request are embedded unchanged with
++  SHA-256 identities. Missing/static drivers, duplicate outputs, zero axes,
++  unsafe scale and unbounded samples fail closed. Receipts expose declared and
++  observed lag, peak/limit, pre-closure residual and exact loop seam. Primary
++  `settle` starts an authored cubic return to rest; this is not presented as a
++  physical simulation.
++- Actual verification: **9 new focused tests pass** for all four classes,
++  deterministic composition, source immutability, identical sample clocks,
++  causal chainable delays, quaternion normalization, positive scale, bounds,
++  invalid/static drivers, transactional publication and CLI execution.
++- Blender 4.3 proof: the same original Clockwork Smacker now has 11 bones and
++  five secondary controls across a coil, antenna, two-panel cape and tool bag.
++  It exports actual LOD0 (58,928 triangles) and LOD1 (28,284 triangles) GLBs,
++  editable `.blend`, and the named 37-frame
++  `Bell_Smack_Secondary_Followthrough` clip. A separate process imported both
++  files and evaluated every secondary track at every sample: maximum local
++  error `0.000000306`; maximum secondary world loop seam `0 m`.
++- Visual repair: the first comparison silently rendered both rows with active
++  curves, so identical pixels failed the evidence claim. Explicit curve muting
++  fixed the comparison. Rear inspection then exposed two plain black cape
++  backs; patched red, ivory and teal panels restored the salvage story. Final
++  locked/enabled RMSE is 0.0248 at anticipation and 0.0638 at settle; the full
++  silhouette remains framed. These stills prove visible sampled differences,
++  not continuous playback.
++- Evidence: `tools/blender/game_secondary_motion_roundtrip.py`,
++  `docs/GAME_SECONDARY_MOTION.md`, and
++  `docs/evidence/game-secondary-motion-roundtrip-2026-09-13.json`.
++  Deliverable: `AXM-Secondary-Motion-Proof.zip` plus
++  `AXM-Secondary-Motion.png`.
++- Limits: rigid bone controls only. No soft cloth, collision/self-contact, rig
++  inference, target-engine playback, state-machine/controller integration,
++  audio sync, continuous perceptual acceptance or measured frame time.
++- **Next useful step: priority 8**, improve contact/socket evidence, useful LOD
++  selection and game-distance readability without conflating those gates.
++- Active lane: `codex/rts-reference-foundry`, based on merged PR #66/main
++  `6b68f09`; unrelated PR #54 remains outside this pass. Recheck current main,
++  overlap and exact-head checks before merge; final GitHub state rules.
++- Roots: Truth keeps rigid follow-through separate from cloth/engine claims;
++  Agency requires explicit caller-owned drivers and profiles; Continuity embeds
++  unchanged primary/source state and exact endpoints; Wisdom repaired invalid
++  visual evidence and the exposed cape style defect before publication.
++
+ ### Motion timing composition pass — 2026-09-13
+ 
+ - Completed `game_motion_timing.py`, `axm-assets motion-compose` and its
+diff --git a/docs/GAME_SECONDARY_MOTION.md b/docs/GAME_SECONDARY_MOTION.md
+new file mode 100644
+index 0000000..185d49f
+--- /dev/null
++++ b/docs/GAME_SECONDARY_MOTION.md
+@@ -0,0 +1,68 @@
++# Game secondary motion
++
++`axm_uc.game_secondary_motion` derives portable follow-through tracks from an
++existing `axm.game-motion-timing/v0.1` composition. It is deterministic,
++offline, bounded and renderer-neutral. The primary composition is embedded
++unchanged and identified by SHA-256.
++
++## Motion classes
++
++| Class | Intended use | Default character |
++| --- | --- | --- |
++| `coil-spring` | compression coils and mechanical plungers | quick compression and rebound |
++| `antenna` | antennae, ears and light rods | delayed low-damping whip |
++| `cloth-tail` | short cape, scarf and banner bone chains | broad slower follow-through |
++| `carried-prop` | packs, tools, charms and luggage | restrained weighty lag |
++
++Each attachment declares its output target/path/rest/axis/amplitude and an
++existing primary target/path/component. Optional lag and direction are explicit.
++Missing drivers, duplicate targets, zero axes, unsafe scale, unbounded samples
++and unsupported fields fail closed.
++
++```sh
++axm-assets secondary-motion-catalog
++axm-assets secondary-motion-compose primary.json request.json out/secondary
++```
++
++The output directory contains the exact primary, exact request, sampled clip
++and receipt. Existing paths are never overwritten.
++
++## Solver and portability
++
++The solver measures the declared primary component's sampled velocity, applies
++the declared causal frame delay, and drives a bounded damped second-order
++response. Every result is baked to ordinary per-frame `LINEAR` translation,
++quaternion or scale keys. No runtime solver or paid/AI service is required.
++
++The primary clip's `settle` event begins an authored cubic closure with retained
++starting value and slope. The final sample returns exactly to the declared rest
++transform. The receipt reports declared and observed response lag, peak versus
++allowed displacement, pre-closure residual and loop seam error. Closure is an
++animation-authoring policy, not a physical-simulation claim.
++
++## Real export proof
++
++`tools/blender/game_secondary_motion_roundtrip.py` extends the original AXM
++Clockwork Smacker with five secondary controls: a compression coil, signal
++antenna, two patched cape panels and a carried tool bag. It exports LOD0 and
++LOD1 GLBs with one 11-bone rig and the named 37-frame clip
++`Bell_Smack_Secondary_Followthrough`.
++
++A separate Blender 4.3 process imports both GLBs and evaluates every secondary
++track at every sample. Maximum decoded local-transform error is
++`0.000000306`; maximum secondary-bone world loop seam is `0 m`. The comparison
++sheet renders the same imported action with secondary curves locked and enabled.
++Static inspection found the first comparison invalid because both rows were
++identical, then found the rear cape visually read as two plain black panels.
++The final evidence renderer mutes the relevant curves explicitly and the cape
++uses patched red, ivory and teal salvage panels.
++
++## Truth boundary
++
++This establishes deterministic rigid-control follow-through, preserved primary
++state, sampled GLB tracks, bounded amplitudes, causal declared lags, fresh-import
++agreement, exact loop closure and visible representative-frame separation for
++this proof. It does not establish soft cloth, collision, self-contact, automatic
++rig inference, target-engine playback, continuous perceptual motion quality,
++controller/state-machine integration, audio synchronization or frame-time
++performance. A two-panel cape is a portable approximation, not cloth simulation.
+diff --git a/src/axm_uc/game_secondary_motion.py b/src/axm_uc/game_secondary_motion.py
+new file mode 100644
+index 0000000..b86c4d4
+--- /dev/null
++++ b/src/axm_uc/game_secondary_motion.py
+@@ -0,0 +1,333 @@
++"""Deterministic secondary-motion composition over sampled primary clips.
++
++The solver adds bounded inertial follow-through for explicitly declared rigid
++controls.  It does not infer bones, simulate cloth, or mutate the primary clip.
++"""
++from __future__ import annotations
++
++import copy
++import hashlib
++import json
++import math
++import os
++from dataclasses import asdict, dataclass
++from pathlib import Path
++import tempfile
++
++from .atomic import atomic_write_json
++from .game_motion_timing import MOTION_TIMING_SCHEMA, PATH_WIDTHS
++
++
++SECONDARY_MOTION_SCHEMA = "axm.game-secondary-motion/v0.1"
++
++
++@dataclass(frozen=True)
++class SecondaryMotionProfile:
++    name: str
++    response_hz: float
++    damping: float
++    lag_frames: int
++    drive_gain: float
++    description: str
++
++
++PROFILES = (
++    SecondaryMotionProfile("coil-spring", 5.4, .30, 1, 1.00,
++                           "Fast mechanical compression with a readable rebound."),
++    SecondaryMotionProfile("antenna", 4.0, .23, 2, 1.08,
++                           "Light delayed whip for rods, ears and aerials."),
++    SecondaryMotionProfile("cloth-tail", 2.7, .36, 3, 1.16,
++                           "Broad, slower follow-through for short rigid cloth chains."),
++    SecondaryMotionProfile("carried-prop", 3.5, .48, 1, .82,
++                           "Weighty restrained lag for packs, tools and dangling props."),
++)
++
++
++def _canonical(value):
++    return json.dumps(value, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()
++
++
++def _digest(value):
++    return hashlib.sha256(_canonical(value)).hexdigest()
++
++
++def _number(value, label, low, high):
++    if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value):
++        raise ValueError(f"{label} must be a finite number")
++    value = float(value)
++    if not low <= value <= high:
++        raise ValueError(f"{label} must be from {low} to {high}")
++    return value
++
++
++def _vector(value, width, label, low=-100000., high=100000.):
++    if not isinstance(value, (list, tuple)) or len(value) != width:
++        raise ValueError(f"{label} must contain {width} values")
++    return tuple(_number(item, f"{label}[{index}]", low, high)
++                 for index, item in enumerate(value))
++
++
++def _normalize(value, label):
++    value = _vector(value, len(value), label)
++    length = math.sqrt(sum(item * item for item in value))
++    if length < 1e-9:
++        raise ValueError(f"{label} cannot be zero")
++    return tuple(item / length for item in value)
++
++
++def _quaternion(value, label):
++    value = _vector(value, 4, label)
++    length = math.sqrt(sum(item * item for item in value))
++    if abs(length - 1.) > 1e-5:
++        raise ValueError(f"{label} must be normalized")
++    return tuple(item / length for item in value)
++
++
++def _profile(name):
++    for profile in PROFILES:
++        if profile.name == name:
++            return profile
++    raise ValueError(f"unknown secondary motion class: {name}")
++
++
++def game_secondary_motion_catalog():
++    return {
++        "schema": "axm.game-secondary-motion-catalog/v0.1",
++        "profiles": [asdict(profile) for profile in PROFILES],
++        "paths": copy.deepcopy(PATH_WIDTHS),
++        "canonical_primary_preserved": True,
++        "portable_sampling": "Per-frame LINEAR local transform tracks.",
++        "truth": (
++            "Composes bounded rigid-control follow-through from a sampled primary clip. "
++            "It does not infer a rig, perform soft-body or cloth simulation, solve collisions, "
++            "or prove target-engine animation quality."
++        ),
++    }
++
++
++def _validate_primary(primary):
++    if not isinstance(primary, dict) or primary.get("schema") != MOTION_TIMING_SCHEMA:
++        raise ValueError("primary must be an axm.game-motion-timing/v0.1 composition")
++    clip = primary.get("clip")
++    if not isinstance(clip, dict) or not isinstance(clip.get("tracks"), list) or not clip["tracks"]:
++        raise ValueError("primary clip must contain sampled tracks")
++    count = len(clip["tracks"][0].get("times", []))
++    if not 13 <= count <= 1201:
++        raise ValueError("primary clip must contain 13..1201 samples")
++    times = clip["tracks"][0]["times"]
++    if not all(isinstance(value, (int, float)) and math.isfinite(value) for value in times):
++        raise ValueError("primary times must be finite")
++    if not all(b > a for a, b in zip(times, times[1:])):
++        raise ValueError("primary times must be strictly increasing")
++    for track in clip["tracks"]:
++        path = track.get("path")
++        if path not in PATH_WIDTHS or track.get("interpolation") != "LINEAR":
++            raise ValueError("primary tracks must use supported LINEAR paths")
++        if track.get("times") != times or len(track.get("values", [])) != count:
++            raise ValueError("primary tracks must share one sample clock")
++        for index, value in enumerate(track["values"]):
++            _vector(value, PATH_WIDTHS[path], f"primary {track.get('target')}[{index}]")
++    events = {row.get("name"): row.get("frame") for row in clip.get("events", [])
++              if isinstance(row, dict)}
++    if set(events) != {"rest", "anticipation", "impact", "recoil", "counter", "settle", "complete"}:
++        raise ValueError("primary clip must expose the complete timing event set")
++    if events["complete"] != count - 1 or not 1 <= events["settle"] < events["complete"]:
++        raise ValueError("primary settle/complete events are inconsistent")
++    return clip, times, events
++
++
++def _request(raw, primary_tracks):
++    if not isinstance(raw, dict) or set(raw) != {"name", "attachments"}:
++        raise ValueError("secondary request must contain exactly name and attachments")
++    if not isinstance(raw["name"], str) or not raw["name"].strip() or len(raw["name"]) > 96:
++        raise ValueError("secondary motion name must contain 1..96 visible characters")
++    rows = raw["attachments"]
++    if not isinstance(rows, list) or not 1 <= len(rows) <= 64:
++        raise ValueError("attachments must contain 1..64 entries")
++    known = {(track["target"], track["path"]): track for track in primary_tracks}
++    normalized, outputs = [], set()
++    required = {"target", "path", "rest", "axis", "amplitude", "driver_target",
++                "driver_path", "driver_component", "motion_class"}
++    optional = {"lag_frames", "direction"}
++    for index, row in enumerate(rows):
++        label = f"attachments[{index}]"
++        if not isinstance(row, dict) or not required <= set(row) or set(row) - required - optional:
++            raise ValueError(f"{label} has missing or unsupported fields")
++        target, path = row["target"], row["path"]
++        if not isinstance(target, str) or not target.strip() or len(target) > 128 or path not in PATH_WIDTHS:
++            raise ValueError(f"{label} has invalid target or path")
++        if (target, path) in outputs:
++            raise ValueError(f"duplicate secondary target: {target} {path}")
++        outputs.add((target, path))
++        driver_key = (row["driver_target"], row["driver_path"])
++        if driver_key not in known:
++            raise ValueError(f"{label} references a missing primary driver")
++        component = row["driver_component"]
++        if type(component) is not int or not 0 <= component < PATH_WIDTHS[driver_key[1]]:
++            raise ValueError(f"{label}.driver_component is invalid")
++        profile = _profile(row["motion_class"])
++        lag = row.get("lag_frames", profile.lag_frames)
++        if type(lag) is not int or not 0 <= lag <= 24:
++            raise ValueError(f"{label}.lag_frames must be an integer from 0 to 24")
++        direction = row.get("direction", 1)
++        if direction not in (-1, 1):
++            raise ValueError(f"{label}.direction must be -1 or 1")
++        if path == "rotation":
++            rest = _quaternion(row["rest"], f"{label}.rest")
++            axis = _normalize(_vector(row["axis"], 3, f"{label}.axis"), f"{label}.axis")
++            amplitude = _number(row["amplitude"], f"{label}.amplitude", 0.001, math.pi)
++        else:
++            rest = _vector(row["rest"], 3, f"{label}.rest")
++            axis = _normalize(_vector(row["axis"], 3, f"{label}.axis"), f"{label}.axis")
++            upper = .8 if path == "scale" else 10.
++            amplitude = _number(row["amplitude"], f"{label}.amplitude", 0.001, upper)
++            if path == "scale" and min(rest) - amplitude <= 0:
++                raise ValueError(f"{label} scale amplitude could invert the transform")
++        normalized.append({
++            "target": target, "path": path, "rest": list(rest), "axis": list(axis),
++            "amplitude": amplitude, "driver_target": driver_key[0],
++            "driver_path": driver_key[1], "driver_component": component,
++            "motion_class": profile.name, "lag_frames": lag, "direction": direction,
++        })
++    return {"name": raw["name"], "attachments": normalized}
++
++
++def _multiply_quaternion(a, b):
++    ax, ay, az, aw = a
++    bx, by, bz, bw = b
++    return (aw * bx + ax * bw + ay * bz - az * by,
++            aw * by - ax * bz + ay * bw + az * bx,
++            aw * bz + ax * by - ay * bx + az * bw,
++            aw * bw - ax * bx - ay * by - az * bz)
++
++
++def _value(row, displacement):
++    if row["path"] == "rotation":
++        half = displacement / 2
++        turn = (*[item * math.sin(half) for item in row["axis"]], math.cos(half))
++        value = _multiply_quaternion(tuple(row["rest"]), turn)
++        length = math.sqrt(sum(item * item for item in value))
++        return [item / length for item in value]
++    value = [base + axis * displacement for base, axis in zip(row["rest"], row["axis"])]
++    if row["path"] == "scale" and any(item <= 1e-6 for item in value):
++        raise ValueError(f"secondary motion inverted scale for {row['target']}")
++    return value
++
++
++def _simulate(row, driver, times, settle_frame):
++    profile = _profile(row["motion_class"])
++    component = row["driver_component"]
++    scalars = [value[component] for value in driver["values"]]
++    # Quaternion tracks may legally switch sign without changing orientation.
++    if driver["path"] == "rotation":
++        for index in range(1, len(scalars)):
++            if sum(a * b for a, b in zip(driver["values"][index - 1], driver["values"][index])) < 0:
++                scalars[index] *= -1
++    velocity = [0.] + [b - a for a, b in zip(scalars, scalars[1:])]
++    maximum = max(abs(value) for value in velocity)
++    if maximum <= 1e-12:
++        raise ValueError(f"primary driver has no motion: {row['driver_target']} {row['driver_path']}")
++    signal = [value / maximum for value in velocity]
++    displacement, speed = 0., 0.
++    raw = [0.]
++    omega = 2 * math.pi * profile.response_hz
++    for frame in range(1, len(times)):
++        delayed = max(0, frame - row["lag_frames"])
++        target = -row["direction"] * row["amplitude"] * profile.drive_gain * signal[delayed]
++        target = max(-row["amplitude"], min(row["amplitude"], target))
++        dt = times[frame] - times[frame - 1]
++        substeps = max(2, math.ceil(dt * omega * 4))
++        step = dt / substeps
++        for _ in range(substeps):
++            acceleration = omega * omega * (target - displacement) - 2 * profile.damping * omega * speed
++            speed += acceleration * step
++            displacement += speed * step
++        displacement = max(-row["amplitude"], min(row["amplitude"], displacement))
++        raw.append(displacement)
++    preclosure_residual = raw[-1]
++    closure_start = max(1, settle_frame)
++    start_value = raw[closure_start]
++    start_slope = raw[closure_start] - raw[closure_start - 1]
++    remaining = len(raw) - 1 - closure_start
++    for frame in range(closure_start, len(raw)):
++        t = (frame - closure_start) / remaining
++        h00 = 2 * t ** 3 - 3 * t ** 2 + 1
++        h10 = t ** 3 - 2 * t ** 2 + t
++        raw[frame] = h00 * start_value + h10 * remaining * start_slope
++    raw[-1] = 0.
++    return raw, preclosure_residual
++
++
++def compose_secondary_motion(primary, raw):
++    source_primary, source_request = copy.deepcopy(primary), copy.deepcopy(raw)
++    clip, times, events = _validate_primary(primary)
++    request = _request(raw, clip["tracks"])
++    drivers = {(track["target"], track["path"]): track for track in clip["tracks"]}
++    tracks, receipts = [], []
++    for row in request["attachments"]:
++        driver = drivers[(row["driver_target"], row["driver_path"])]
++        scalar, residual = _simulate(row, driver, times, events["settle"])
++        values = [_value(row, amount) for amount in scalar]
++        seam = max(abs(a - b) for a, b in zip(values[0], values[-1]))
++        first_driver = next(index for index, (a, b) in
++                            enumerate(zip(driver["values"], driver["values"][1:]), 1)
++                            if max(abs(x - y) for x, y in zip(a, b)) > 1e-10)
++        moving = [index for index, amount in enumerate(scalar) if abs(amount) > 1e-8]
++        first_secondary = moving[0] if moving else len(scalar)
++        tracks.append({"target": row["target"], "path": row["path"],
++                       "interpolation": "LINEAR", "times": list(times), "values": values})
++        receipts.append({
++            "target": row["target"], "motion_class": row["motion_class"],
++            "declared_lag_frames": row["lag_frames"],
++            "observed_response_lag_frames": first_secondary - first_driver,
++            "peak_displacement": max(abs(value) for value in scalar),
++            "amplitude_limit": row["amplitude"], "preclosure_residual": residual,
++            "loop_seam_error": seam,
++        })
++    maximum_seam = max(row["loop_seam_error"] for row in receipts)
++    passed = maximum_seam <= 1e-10 and all(
++        row["peak_displacement"] <= row["amplitude_limit"] + 1e-12 for row in receipts)
++    return {
++        "schema": SECONDARY_MOTION_SCHEMA,
++        "primary": source_primary,
++        "primary_sha256": _digest(source_primary),
++        "source": source_request,
++        "source_sha256": _digest(source_request),
++        "clip": {"name": request["name"], "fps": clip["fps"],
++                 "duration": clip["duration"], "loop": clip["loop"],
++                 "tracks": tracks, "events": copy.deepcopy(clip["events"])},
++        "receipt": {"tracks": receipts, "closure_start_frame": events["settle"],
++                    "maximum_loop_seam_error": maximum_seam, "passed": passed},
++        "gates": {
++            "primary-byte-equivalent": source_primary == primary,
++            "bounded-amplitude": all(row["peak_displacement"] <= row["amplitude_limit"] + 1e-12
++                                     for row in receipts),
++            "exact-loop-closure": maximum_seam <= 1e-10,
++            "target-engine-playback": False,
++            "soft-body-cloth-simulation": False,
++        },
++    }
++
++
++def publish_secondary_motion(path, primary, request):
++    path = Path(path)
++    if path.exists():
++        raise FileExistsError(f"refusing to overwrite existing path: {path}")
++    result = compose_secondary_motion(primary, request)
++    path.parent.mkdir(parents=True, exist_ok=True)
++    staging = Path(tempfile.mkdtemp(prefix=f".{path.name}-", dir=path.parent))
++    try:
++        atomic_write_json(staging / "primary.json", result["primary"])
++        atomic_write_json(staging / "source.json", result["source"])
++        atomic_write_json(staging / "secondary-clip.json", result["clip"])
++        atomic_write_json(staging / "secondary-receipt.json", result["receipt"])
++        os.replace(staging, path)
++    except Exception:
++        for child in staging.glob("*"):
++            child.unlink()
++        staging.rmdir()
++        raise
++    return {"schema": SECONDARY_MOTION_SCHEMA, "path": str(path),
++            "files": sorted(item.name for item in path.iterdir()),
++            "primary_sha256": result["primary_sha256"],
++            "source_sha256": result["source_sha256"], "receipt": result["receipt"]}
+diff --git a/src/axm_uc/visual_assets_cli.py b/src/axm_uc/visual_assets_cli.py
+index e4280cf..93e05b8 100644
+--- a/src/axm_uc/visual_assets_cli.py
++++ b/src/axm_uc/visual_assets_cli.py
+@@ -35,6 +35,7 @@ from .game_render_styles import RENDER_STYLES, game_render_style_catalog, publis
+ from .game_character_expression import (EXPRESSIONS, STANCES, game_character_expression_catalog,
+                                         publish_character_expression)
+ from .game_motion_timing import PROFILES as MOTION_PROFILES, game_motion_timing_catalog, publish_game_motion
++from .game_secondary_motion import game_secondary_motion_catalog, publish_secondary_motion
+ 
+ BASE_CATEGORIES = ["texture", "gradient", "material", "fixture", "decal", "palette"]
+ EXPANDED_CATEGORIES = ["surface", "pigment", "sprite", "mesh", "vector-part"]
+@@ -60,6 +61,7 @@ def combined_catalog() -> dict:
+         "game_render_styles": game_render_style_catalog(),
+         "game_character_expressions": game_character_expression_catalog(),
+         "game_motion_timing": game_motion_timing_catalog(),
++        "game_secondary_motion": game_secondary_motion_catalog(),
+     }
+ 
+ 
+@@ -73,11 +75,17 @@ def build_parser() -> argparse.ArgumentParser:
+     sub.add_parser("game-render-catalog", help="show portable baked graphic and painterly styles")
+     sub.add_parser("character-expression-catalog", help="show static face expressions and storytelling stances")
+     sub.add_parser("motion-timing-catalog", help="show deterministic anticipation, impact and settle profiles")
++    sub.add_parser("secondary-motion-catalog", help="show reusable inertial follow-through profiles")
+     motion = sub.add_parser("motion-compose", help="compose sampled local transform tracks with timing receipts")
+     motion.add_argument("request", help="JSON motion request with explicit rest/action transform channels")
+     motion.add_argument("path", help="new output directory; existing paths are never overwritten")
+     motion.add_argument("--profile", choices=[item.name for item in MOTION_PROFILES],
+                         default="weighty-salvage")
++    secondary = sub.add_parser(
++        "secondary-motion-compose", help="derive sampled secondary tracks from a composed primary clip")
++    secondary.add_argument("primary", help="JSON axm.game-motion-timing/v0.1 composition")
++    secondary.add_argument("request", help="JSON request with explicit secondary attachments")
++    secondary.add_argument("path", help="new output directory; existing paths are never overwritten")
+     character_expression = sub.add_parser(
+         "character-expression", help="derive a checked static face expression and stance while retaining source")
+     character_expression.add_argument("request", help="JSON object containing mesh and exact component semantics")
+@@ -235,9 +243,15 @@ def main(argv: list[str] | None = None) -> int:
+         result = game_character_expression_catalog()
+     elif args.command == "motion-timing-catalog":
+         result = game_motion_timing_catalog()
++    elif args.command == "secondary-motion-catalog":
++        result = game_secondary_motion_catalog()
+     elif args.command == "motion-compose":
+         request = json.loads(Path(args.request).read_text(encoding="utf-8"))
+         result = publish_game_motion(args.path, request, args.profile)
++    elif args.command == "secondary-motion-compose":
++        primary = json.loads(Path(args.primary).read_text(encoding="utf-8"))
++        request = json.loads(Path(args.request).read_text(encoding="utf-8"))
++        result = publish_secondary_motion(args.path, primary, request)
+     elif args.command == "character-expression":
+         request = json.loads(Path(args.request).read_text(encoding="utf-8"))
+         if not isinstance(request, dict) or set(request) != {"mesh", "parts"}:
+diff --git a/tests/test_game_secondary_motion.py b/tests/test_game_secondary_motion.py
+new file mode 100644
+index 0000000..c6c4fe3
+--- /dev/null
++++ b/tests/test_game_secondary_motion.py
+@@ -0,0 +1,154 @@
++import copy
++import io
++import json
++import math
++from contextlib import redirect_stdout
++from pathlib import Path
++import tempfile
++import unittest
++
++from axm_uc.game_motion_timing import compose_game_motion
++from axm_uc.game_secondary_motion import (PROFILES, compose_secondary_motion,
++                                          game_secondary_motion_catalog,
++                                          publish_secondary_motion)
++from axm_uc.visual_assets_cli import main
++
++
++def primary():
++    half = math.sin(math.pi / 4)
++    return compose_game_motion({
++        "name": "Bell_Smack", "fps": 30, "duration": 1.2, "loop": True,
++        "channels": [
++            {"target": "Root", "path": "translation", "rest": [0, 0, 0],
++             "action": [0, 0, -.1]},
++            {"target": "Hammer", "path": "rotation", "rest": [0, 0, 0, 1],
++             "action": [0, 0, -half, half]},
++        ],
++    }, "weighty-salvage")
++
++
++def request():
++    return {
++        "name": "Bell_Smack_With_Followthrough",
++        "attachments": [
++            {"target": "Coil", "path": "scale", "rest": [1, 1, 1],
++             "axis": [0, 0, 1], "amplitude": .16,
++             "driver_target": "Root", "driver_path": "translation", "driver_component": 2,
++             "motion_class": "coil-spring"},
++            {"target": "Antenna", "path": "rotation", "rest": [0, 0, 0, 1],
++             "axis": [0, 1, 0], "amplitude": .34,
++             "driver_target": "Root", "driver_path": "translation", "driver_component": 2,
++             "motion_class": "antenna"},
++            {"target": "CapeTip", "path": "rotation", "rest": [0, 0, 0, 1],
++             "axis": [1, 0, 0], "amplitude": .46,
++             "driver_target": "Hammer", "driver_path": "rotation", "driver_component": 2,
++             "motion_class": "cloth-tail", "lag_frames": 4},
++            {"target": "ToolBag", "path": "translation", "rest": [0, 0, 0],
++             "axis": [1, 0, 0], "amplitude": .09,
++             "driver_target": "Hammer", "driver_path": "rotation", "driver_component": 2,
++             "motion_class": "carried-prop", "direction": -1},
++        ],
++    }
++
++
++class GameSecondaryMotionTests(unittest.TestCase):
++    def test_catalog_names_real_secondary_classes_and_truth_boundary(self):
++        catalog = game_secondary_motion_catalog()
++        self.assertEqual([row["name"] for row in catalog["profiles"]],
++                         [profile.name for profile in PROFILES])
++        self.assertTrue(catalog["canonical_primary_preserved"])
++        self.assertIn("does not infer a rig", catalog["truth"])
++        self.assertIn("soft-body", catalog["truth"])
++
++    def test_composition_is_deterministic_and_preserves_both_sources(self):
++        source_primary, source_request = primary(), request()
++        saved_primary, saved_request = copy.deepcopy(source_primary), copy.deepcopy(source_request)
++        one = compose_secondary_motion(source_primary, source_request)
++        two = compose_secondary_motion(source_primary, source_request)
++        self.assertEqual(one, two)
++        self.assertEqual(source_primary, saved_primary)
++        self.assertEqual(source_request, saved_request)
++        self.assertEqual(one["primary"], source_primary)
++        self.assertEqual(one["source"], source_request)
++        self.assertTrue(one["gates"]["primary-byte-equivalent"])
++
++    def test_every_track_uses_primary_clock_and_closes_exactly(self):
++        result = compose_secondary_motion(primary(), request())
++        source_times = result["primary"]["clip"]["tracks"][0]["times"]
++        for track in result["clip"]["tracks"]:
++            self.assertEqual(track["times"], source_times)
++            self.assertEqual(track["interpolation"], "LINEAR")
++            self.assertEqual(track["values"][0], track["values"][-1])
++        self.assertEqual(result["receipt"]["maximum_loop_seam_error"], 0)
++        self.assertTrue(result["receipt"]["passed"])
++
++    def test_classes_create_bounded_distinct_followthrough(self):
++        result = compose_secondary_motion(primary(), request())
++        receipts = result["receipt"]["tracks"]
++        self.assertEqual({row["motion_class"] for row in receipts},
++                         {profile.name for profile in PROFILES})
++        self.assertEqual(len({round(row["peak_displacement"], 5) for row in receipts}), 4)
++        for row in receipts:
++            self.assertGreater(row["peak_displacement"], 0)
++            self.assertLessEqual(row["peak_displacement"], row["amplitude_limit"])
++
++    def test_declared_lag_is_causal_and_chainable(self):
++        source = request()
++        source["attachments"] = [copy.deepcopy(source["attachments"][1]) for _ in range(3)]
++        for index, row in enumerate(source["attachments"]):
++            row["target"] = f"Antenna_{index}"
++            row["lag_frames"] = index * 3
++        result = compose_secondary_motion(primary(), source)
++        observed = [row["observed_response_lag_frames"] for row in result["receipt"]["tracks"]]
++        self.assertEqual(observed, [0, 3, 6])
++
++    def test_rotation_values_are_normalized_and_scale_stays_positive(self):
++        result = compose_secondary_motion(primary(), request())
++        for track in result["clip"]["tracks"]:
++            if track["path"] == "rotation":
++                for value in track["values"]:
++                    self.assertAlmostEqual(sum(item * item for item in value), 1, places=10)
++            if track["path"] == "scale":
++                self.assertTrue(all(component > 0 for value in track["values"] for component in value))
++
++    def test_validation_rejects_unknown_drivers_duplicates_and_unsafe_scale(self):
++        cases = []
++        bad = request(); bad["extra"] = True; cases.append(bad)
++        bad = request(); bad["attachments"][0]["driver_target"] = "Missing"; cases.append(bad)
++        bad = request(); bad["attachments"].append(copy.deepcopy(bad["attachments"][0])); cases.append(bad)
++        bad = request(); bad["attachments"][0]["rest"] = [.1, .1, .1]; cases.append(bad)
++        bad = request(); bad["attachments"][1]["axis"] = [0, 0, 0]; cases.append(bad)
++        for item in cases:
++            with self.assertRaises(ValueError):
++                compose_secondary_motion(primary(), item)
++
++    def test_static_primary_driver_fails_instead_of_inventing_motion(self):
++        source_primary = primary()
++        track = source_primary["clip"]["tracks"][0]
++        track["values"] = [track["values"][0] for _ in track["values"]]
++        source_request = request()
++        source_request["attachments"] = [source_request["attachments"][0]]
++        with self.assertRaisesRegex(ValueError, "has no motion"):
++            compose_secondary_motion(source_primary, source_request)
++
++    def test_publisher_and_cli_are_transactional(self):
++        with tempfile.TemporaryDirectory() as tmp:
++            direct = Path(tmp) / "direct"
++            published = publish_secondary_motion(direct, primary(), request())
++            self.assertEqual(published["files"],
++                             ["primary.json", "secondary-clip.json", "secondary-receipt.json", "source.json"])
++            with self.assertRaises(FileExistsError):
++                publish_secondary_motion(direct, primary(), request())
++            primary_path, request_path = Path(tmp) / "primary.json", Path(tmp) / "request.json"
++            primary_path.write_text(json.dumps(primary()))
++            request_path.write_text(json.dumps(request()))
++            output = Path(tmp) / "cli"
++            with redirect_stdout(io.StringIO()):
++                self.assertEqual(main(["secondary-motion-compose", str(primary_path),
++                                       str(request_path), str(output)]), 0)
++            clip = json.loads((output / "secondary-clip.json").read_text())
++            self.assertEqual(clip["name"], "Bell_Smack_With_Followthrough")
++
++
++if __name__ == "__main__":
++    unittest.main()
+diff --git a/tools/blender/game_secondary_motion_roundtrip.py b/tools/blender/game_secondary_motion_roundtrip.py
+new file mode 100644
+index 0000000..7b65dd3
+--- /dev/null
++++ b/tools/blender/game_secondary_motion_roundtrip.py
+@@ -0,0 +1,386 @@
++"""Build and freshly inspect secondary motion on the AXM Clockwork Smacker.
++
++The proof extends the same original salvage bot with a compression coil, signal
++antenna, two-piece cape and carried tool bag.  One sampled primary action drives
++all four reusable secondary-motion classes.
++"""
++from __future__ import annotations
++
++import argparse
++import hashlib
++import json
++import math
++from pathlib import Path
++import sys
++
++import bpy
++from mathutils import Quaternion, Vector
++
++HERE = Path(__file__).resolve().parent
++ROOT = HERE.parent.parent
++sys.path.insert(0, str(HERE))
++sys.path.insert(0, str(ROOT / "src"))
++
++import axm_blender_forge as geo
++from axm_hero_motion import clean_triangles, rig
++from axm_oops_character import reset_pose
++from axm_salvage_surfaces import solid
++import game_motion_timing_roundtrip as primary_proof
++from axm_uc.game_motion_timing import compose_game_motion
++from axm_uc.game_secondary_motion import compose_secondary_motion
++
++
++FPS = 30
++ACTION_NAME = "Bell_Smack_Secondary_Followthrough"
++SECONDARY_BONES = ("Coil", "Antenna", "Cape.01", "Cape.02", "ToolBag")
++
++
++def sha256(path):
++    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
++
++
++def secondary_request():
++    return {
++        "name": ACTION_NAME,
++        "attachments": [
++            {"target": "Coil", "path": "scale", "rest": [1, 1, 1],
++             "axis": [0, 0, 1], "amplitude": .20,
++             "driver_target": "Root", "driver_path": "translation", "driver_component": 2,
++             "motion_class": "coil-spring"},
++            {"target": "Antenna", "path": "rotation", "rest": [0, 0, 0, 1],
++             "axis": [1, 0, 0], "amplitude": .42,
++             "driver_target": "Root", "driver_path": "translation", "driver_component": 2,
++             "motion_class": "antenna"},
++            {"target": "Cape.01", "path": "rotation", "rest": [0, 0, 0, 1],
++             "axis": [1, 0, 0], "amplitude": .48,
++             "driver_target": "Hammer", "driver_path": "rotation", "driver_component": 2,
++             "motion_class": "cloth-tail", "lag_frames": 3},
++            {"target": "Cape.02", "path": "rotation", "rest": [0, 0, 0, 1],
++             "axis": [1, 0, 0], "amplitude": .62,
++             "driver_target": "Hammer", "driver_path": "rotation", "driver_component": 2,
++             "motion_class": "cloth-tail", "lag_frames": 6},
++            {"target": "ToolBag", "path": "rotation", "rest": [0, 0, 0, 1],
++             "axis": [0, 1, 0], "amplitude": .30,
++             "driver_target": "Hammer", "driver_path": "rotation", "driver_component": 2,
++             "motion_class": "carried-prop", "direction": -1},
++        ],
++    }
++
++
++def add_secondary_bones(h):
++    h.bone("Coil", (-.30, .05, 1.16), (-.30, .05, 1.56), "Body")
++    h.bone("Antenna", (-.08, .01, 1.42), (-.08, .01, 1.82), "Head")
++    h.bone("Cape.01", (.10, .27, 1.02), (.12, .34, .73), "Body")
++    h.bone("Cape.02", (.12, .34, .73), (.18, .38, .43), "Cape.01")
++    h.bone("ToolBag", (.34, -.10, .75), (.48, -.10, .43), "Body")
++
++
++def add_secondary_geometry(h):
++    # Spring-loaded alarm mast: the coil itself is skinned to a scale track.
++    h.current = "Coil"
++    points = []
++    turns = 8
++    for index in range(81):
++        t = index / 80
++        angle = math.tau * turns * t
++        points.append((-.30 + .055 * math.cos(angle), .05 + .055 * math.sin(angle),
++                       1.20 + .30 * t))
++    h.line("Compression alarm coil", points, .012, "red")
++    h.cyl("Coil top cap", (-.30, .05, 1.53), .07, .05, "steel", v=28)
++    h.ball("Coil warning bulb", (-.30, .05, 1.60), (.065, .065, .075), "cyan",
++           segments=24, rings=14)
++
++    # Antenna has a deliberately oversized arrow-shaped signal flag.
++    h.current = "Antenna"
++    h.beam("Whippy signal antenna", (-.08, .01, 1.46), (-.08, .01, 1.80), .018, "brass")
++    h.plate("Antenna signal paddle", (-.08, -.015, 1.78), (.23, .035, .15), "teal",
++            "PING!", .030)
++    h.ring("Antenna halo", (-.08, .01, 1.91), .105, .015, "cyan", axis=(0, 0, 1))
++
++    # Two rigid panels make the cloth-tail approximation visible and portable.
++    h.current = "Cape.01"
++    h.box("Upper patched red cape", (.10, .32, .84), (.52, .040, .35), "red", .018)
++    h.box("Upper cape ivory patch", (-.04, .344, .87), (.15, .012, .12), "ivory", .006)
++    h.box("Upper cape teal stitch patch", (.23, .345, .78), (.13, .012, .10), "teal", .005)
++    for x in (-.10, .10, .30):
++        h.bolt("Cape hinge", (x, .296, 1.00), .012)
++    h.current = "Cape.02"
++    h.box("Lower patched red cape", (.17, .37, .57), (.46, .040, .30), "red", .018)
++    h.box("Lower cape ivory repair", (.28, .394, .55), (.14, .012, .12), "ivory", .006)
++    h.logo("Lower cape AXM patch", (.08, .397, .59), .12, "teal")
++
++    # The asymmetric tool bag carries a tiny story instead of generic baggage.
++    h.current = "ToolBag"
++    h.box("Swinging blue tool bag", (.46, -.14, .55), (.30, .19, .31), "teal", .035)
++    h.plate("Tool bag label", (.46, -.246, .55), (.23, .018, .21), "ivory",
++            "SPARE\nBAD\nIDEAS", .025)
++    h.ring("Tool bag wrench loop", (.46, -.255, .39), .045, .010, "brass", axis=(0, -1, 0))
++
++
++def apply_track(arm, track, frame):
++    bone = arm.pose.bones[track["target"]]
++    value = track["values"][frame]
++    if track["path"] == "translation":
++        bone.location = value
++        bone.keyframe_insert("location", frame=frame + 1, group=bone.name)
++    elif track["path"] == "rotation":
++        bone.rotation_mode = "QUATERNION"
++        bone.rotation_quaternion = Quaternion((value[3], value[0], value[1], value[2]))
++        bone.keyframe_insert("rotation_quaternion", frame=frame + 1, group=bone.name)
++    else:
++        bone.scale = value
++        bone.keyframe_insert("scale", frame=frame + 1, group=bone.name)
++
++
++def author_action(arm):
++    primary = compose_game_motion(primary_proof.motion_request(), "weighty-salvage")
++    secondary = compose_secondary_motion(primary, secondary_request())
++    action = bpy.data.actions.new(ACTION_NAME)
++    arm.animation_data_create()
++    arm.animation_data.action = action
++    action.use_fake_user = True
++    frames = primary["receipt"]["sampled_intervals"]
++    for frame in range(frames + 1):
++        reset_pose(arm)
++        for track in primary["clip"]["tracks"]:
++            apply_track(arm, track, frame)
++        for track in secondary["clip"]["tracks"]:
++            apply_track(arm, track, frame)
++    for curve in action.fcurves:
++        for key in curve.keyframe_points:
++            key.interpolation = "LINEAR"
++    arm.animation_data.action = None
++    reset_pose(arm)
++    for name in ("Hammer", "Antenna", "Cape.01", "Cape.02", "ToolBag"):
++        arm.pose.bones[name].rotation_mode = "QUATERNION"
++        arm.pose.bones[name].rotation_quaternion = Quaternion((1, 0, 0, 0))
++    return primary, secondary, {"name": action.name, "frames": frames + 1, "fps": FPS,
++                                "loop": True, "events": primary["clip"]["events"]}
++
++
++def export_asset(output, arm, mesh):
++    outputs = {}
++    for name, ratio in (("AXM_Clockwork_Smacker_Secondary", 1.0),
++                        ("AXM_Clockwork_Smacker_Secondary_LOD1", .48)):
++        target = mesh
++        if ratio < 1:
++            target = mesh.copy()
++            target.data = mesh.data.copy()
++            bpy.context.collection.objects.link(target)
++            target.name = name
++            target.modifiers.clear()
++            geo.select_only([target])
++            bpy.context.view_layer.objects.active = target
++            modifier = target.modifiers.new("Weighted game LOD", "DECIMATE")
++            modifier.ratio = ratio
++            modifier.use_collapse_triangulate = True
++            bpy.ops.object.modifier_apply(modifier=modifier.name)
++            clean_triangles(target)
++            skin = target.modifiers.new("Skin", "ARMATURE")
++            skin.object = arm
++        geo.select_only([arm, target])
++        bpy.context.view_layer.objects.active = arm
++        path = output / (name + ".glb")
++        bpy.ops.export_scene.gltf(
++            filepath=str(path), export_format="GLB", use_selection=True,
++            export_skins=True, export_animations=True, export_animation_mode="ACTIONS",
++            export_force_sampling=True, export_yup=True, export_extras=True,
++            export_tangents=True, export_cameras=False, export_lights=False,
++            export_materials="EXPORT")
++        target.data.calc_loop_triangles()
++        outputs[name] = {"path": path.name, "bytes": path.stat().st_size,
++                         "triangles": len(target.data.loop_triangles),
++                         "vertices": len(target.data.vertices), "sha256": sha256(path)}
++        if target is not mesh:
++            bpy.data.objects.remove(target, do_unlink=True)
++    arm.animation_data.action = bpy.data.actions[ACTION_NAME]
++    bpy.context.scene.frame_set(1)
++    bpy.ops.wm.save_as_mainfile(filepath=str(output / "AXM_Clockwork_Smacker_Secondary.blend"),
++                               compress=True)
++    return outputs
++
++
++def build(output):
++    output.mkdir(parents=True, exist_ok=False)
++    bpy.ops.wm.read_factory_settings(use_empty=True)
++    bpy.context.scene.render.fps = FPS
++    h = primary_proof.new_hero(output)
++    primary_proof.build_geometry(h)
++    add_secondary_bones(h)
++    add_secondary_geometry(h)
++    arm, mesh = rig(h)
++    arm.name = "AXM_Clockwork_Smacker_Secondary_Rig"
++    mesh.name = "AXM_Clockwork_Smacker_Secondary"
++    arm["secondary_motion_contract"] = "Explicit bounded rigid controls; primary clip retained."
++    primary, secondary, clip = author_action(arm)
++    exports = export_asset(output, arm, mesh)
++    report = {
++        "schema": "axm.game-secondary-motion-proof/v0.1",
++        "asset_id": "axm-clockwork-smacker-secondary",
++        "description": "Original salvage inspection bot with four classes of authored follow-through.",
++        "editable_source": "AXM_Clockwork_Smacker_Secondary.blend",
++        "exports": exports,
++        "bones": [{"name": name, "parent": spec[2]} for name, spec in h.bones.items()],
++        "animation": clip,
++        "primary_sha256": primary["source_sha256"],
++        "secondary_request": secondary_request(),
++        "secondary_receipt": secondary["receipt"],
++        "origin": "Grounded between wheels; metres; Blender -Y front; glTF Y-up.",
++        "integration": "Play Bell_Smack_Secondary_Followthrough. All secondary tracks are already baked; no runtime solver is required.",
++        "truth": "Real skinned GLBs and editable Blender source. Rigid cape panels are not soft cloth; target-engine playback remains unproven.",
++        "source_sha256": sha256(__file__),
++    }
++    (output / "asset-manifest.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
++    (output / "INTEGRATION.md").write_text(
++        "# AXM Clockwork Smacker — secondary motion proof\n\n"
++        "Import either GLB, preserve the armature, and play `Bell_Smack_Secondary_Followthrough`. "
++        "The compression coil, antenna, two cape panels and tool bag are ordinary sampled bone tracks. "
++        "LOD1 preserves the same rig and clip. Do not run another secondary solver over these bones unless "
++        "double motion is intentional. The cape is a rigid two-panel approximation, not soft cloth.\n",
++        encoding="utf-8")
++
++
++def action_by_prefix(prefix):
++    matches = [action for action in bpy.data.actions if action.name == prefix or action.name.startswith(prefix)]
++    if len(matches) != 1:
++        raise ValueError(f"expected one imported action {prefix}, found {[item.name for item in matches]}")
++    return matches[0]
++
++
++def local_value(bone, path):
++    if path == "translation":
++        return list(bone.location)
++    if path == "scale":
++        return list(bone.scale)
++    value = bone.rotation_quaternion
++    return [value.x, value.y, value.z, value.w]
++
++
++def value_error(path, actual, expected):
++    direct = max(abs(a - b) for a, b in zip(actual, expected))
++    if path != "rotation":
++        return direct
++    return min(direct, max(abs(a + b) for a, b in zip(actual, expected)))
++
++
++def rest_secondary_pose(arm):
++    for name in SECONDARY_BONES:
++        bone = arm.pose.bones[name]
++        bone.rotation_mode = "QUATERNION"
++        bone.rotation_quaternion = Quaternion((1, 0, 0, 0))
++        bone.location = (0, 0, 0)
++        bone.scale = (1, 1, 1)
++
++
++def mute_secondary_curves(action, muted):
++    prefixes = tuple(f'pose.bones["{name}"]' for name in SECONDARY_BONES)
++    for curve in action.fcurves:
++        if curve.data_path.startswith(prefixes):
++            curve.mute = muted
++
++
++def verify(output):
++    manifest = json.loads((output / "asset-manifest.json").read_text(encoding="utf-8"))
++    primary = compose_game_motion(primary_proof.motion_request(), "weighty-salvage")
++    secondary = compose_secondary_motion(primary, secondary_request())
++    receipts = {}
++    preview_dir = output / "preview-frames"
++    preview_dir.mkdir(exist_ok=False)
++    for export_name, export_row in manifest["exports"].items():
++        bpy.ops.wm.read_factory_settings(use_empty=True)
++        bpy.context.scene.render.fps = FPS
++        bpy.ops.import_scene.gltf(filepath=str(output / export_row["path"]))
++        arms = [obj for obj in bpy.context.scene.objects if obj.type == "ARMATURE"]
++        arm = arms[0] if len(arms) == 1 else None
++        skins = [obj for obj in bpy.context.scene.objects if obj.type == "MESH" and obj.parent == arm]
++        helpers = [obj for obj in bpy.context.scene.objects if obj.type == "MESH" and obj not in skins]
++        for helper in helpers:
++            helper.hide_render = True
++        if arm is None or len(skins) != 1:
++            raise ValueError(f"{export_name} did not re-import as one rig and skin")
++        action = action_by_prefix(ACTION_NAME)
++        arm.animation_data_create()
++        arm.animation_data.action = action
++        if getattr(action, "slots", None):
++            arm.animation_data.action_slot = action.slots[0]
++        first, last = [round(value) for value in action.frame_range]
++        maximum_track_error = 0.
++        for frame in range(len(secondary["clip"]["tracks"][0]["times"])):
++            bpy.context.scene.frame_set(frame + 1)
++            for track in secondary["clip"]["tracks"]:
++                actual = local_value(arm.pose.bones[track["target"]], track["path"])
++                maximum_track_error = max(maximum_track_error,
++                                          value_error(track["path"], actual, track["values"][frame]))
++        bpy.context.scene.frame_set(first)
++        start = {name: tuple(arm.matrix_world @ arm.pose.bones[name].tail) for name in SECONDARY_BONES}
++        bpy.context.scene.frame_set(last)
++        seam = max((Vector(start[name]) - arm.matrix_world @ arm.pose.bones[name].tail).length
++                   for name in SECONDARY_BONES)
++        receipts[export_name] = {
++            "bones": sorted(bone.name for bone in arm.pose.bones),
++            "skin_mesh_count": len(skins), "frame_range": [first, last],
++            "maximum_secondary_local_track_error": maximum_track_error,
++            "maximum_secondary_world_loop_seam_m": seam,
++            "triangles": export_row["triangles"], "vertices": export_row["vertices"],
++        }
++        if export_name == "AXM_Clockwork_Smacker_Secondary":
++            primary_proof.studio(360)
++            # Rear three-quarter framing exposes the cape chain, antenna and
++            # bag instead of letting the body occlude nearly every secondary
++            # control in the original front-facing motion proof camera.
++            camera = bpy.context.scene.camera
++            camera.location = (3.35, 5.15, 2.30)
++            camera.rotation_euler = (Vector((.28, .08, .88)) - camera.location).to_track_quat(
++                "-Z", "Y").to_euler()
++            events = {row["name"]: row["frame"] + 1 for row in secondary["clip"]["events"]}
++            phases = ("anticipation", "impact", "recoil", "settle")
++            for phase in phases:
++                # Render the imported animated state first. Manually setting a
++                # pose channel after evaluation intentionally overrides its
++                # F-curve until a later dependency-graph evaluation.
++                bpy.context.scene.frame_set(events[phase])
++                bpy.context.view_layer.update()
++                bpy.context.scene.render.filepath = str(
++                    preview_dir / f"secondary-enabled-{phase}.png")
++                bpy.ops.render.render(write_still=True)
++                mute_secondary_curves(action, True)
++                rest_secondary_pose(arm)
++                bpy.context.view_layer.update()
++                bpy.context.scene.render.filepath = str(
++                    preview_dir / f"primary-only-{phase}.png")
++                bpy.ops.render.render(write_still=True)
++                mute_secondary_curves(action, False)
++    maximum_error = max(row["maximum_secondary_local_track_error"] for row in receipts.values())
++    maximum_seam = max(row["maximum_secondary_world_loop_seam_m"] for row in receipts.values())
++    result = {
++        "schema": "axm.game-secondary-motion-roundtrip/v0.1",
++        "fresh_import": True, "exports": receipts,
++        "maximum_secondary_local_track_error": maximum_error,
++        "maximum_secondary_world_loop_seam_m": maximum_seam,
++        "limits": {
++            "target_engine_playback": False,
++            "soft_cloth_or_collision": False,
++            "visual_review": "Representative imported still frames only; continuous playback is not proven.",
++            "performance": "Triangle and file counts only; no frame-time claim.",
++        },
++    }
++    result["passed"] = maximum_error <= 1e-5 and maximum_seam <= 1e-5
++    (output / "roundtrip-receipt.json").write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
++    if not result["passed"]:
++        raise ValueError("fresh-import secondary-motion verification failed")
++
++
++def main():
++    parser = argparse.ArgumentParser()
++    parser.add_argument("mode", choices=("build", "verify"))
++    parser.add_argument("--output", type=Path, required=True)
++    args = parser.parse_args(sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else None)
++    output = args.output.resolve()
++    if args.mode == "build":
++        build(output)
++    else:
++        verify(output)
++
++
++if __name__ == "__main__":
++    main()

@@ -1,0 +1,92 @@
+{
+  "capsule_id": "9faa444141b2c58e4cf16f58e007c6b40004ed956187f21088d8faf03a28c201",
+  "evidence": {
+    "files": [
+      {
+        "additions": 161,
+        "binary": false,
+        "content_sha256": "b933d2bd4b4d78c83ff5e5a6d265abe10619afe57a086fe60920505e2e56450f",
+        "deletions": 0,
+        "path": "docs/CREATIVE_PRECISION_WAVE7.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Creative Precision Fabric \u2014 advanced mesh wave 7",
+          "Public capability growth",
+          "Sculpt hands",
+          "UV edit hands",
+          "Topology inspection hands",
+          "Structural modifier hands",
+          "Bounds",
+          "Public routing",
+          "Verification",
+          "Next useful depth"
+        ]
+      },
+      {
+        "additions": 3,
+        "binary": false,
+        "content_sha256": "43d5f0d1963289b8b51bb9ce2f439093d4d2a6655ed8bb9c237c45cc7b9683c0",
+        "deletions": 0,
+        "path": "tests/test_creative_precision_fabric.py",
+        "status": "M",
+        "symbols": [
+          "CreativePrecisionFabricTests"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "9cc1e9762e5f994061cbefc561c539aed50a63b05d4e52c9a1f3e7579088c519"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "add",
+      "advanced",
+      "axm",
+      "bounds",
+      "capability",
+      "creation-machine",
+      "creative",
+      "depth",
+      "edit",
+      "fabric",
+      "growth",
+      "hands",
+      "inspection",
+      "mesh",
+      "modifier",
+      "next",
+      "precision",
+      "routing",
+      "sculpt",
+      "standalone",
+      "structural",
+      "topology",
+      "universal-creation",
+      "useful",
+      "verification",
+      "wave",
+      "wave7"
+    ]
+  },
+  "source": {
+    "base": "57c261c67b0c1b55bcc287302b182f867fe0eb92",
+    "commit_subject": "Add advanced sculpt UV topology modifier hands (#90)",
+    "head": "2238a104073fc655c4eac8de58a9d78e17e746ac",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

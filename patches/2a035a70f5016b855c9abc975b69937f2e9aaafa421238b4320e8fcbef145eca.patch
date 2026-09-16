@@ -1,0 +1,1076 @@
+diff --git a/GAME_STYLE_GROWTH.md b/GAME_STYLE_GROWTH.md
+index 2795090..979916b 100644
+--- a/GAME_STYLE_GROWTH.md
++++ b/GAME_STYLE_GROWTH.md
+@@ -101,6 +101,42 @@ exports when those features change. Measure performance before making claims.
+ 
+ ## Current checkpoint
+ 
++### Profile-based creative practice — 2026-09-15
++
++- Mike requested resumable heartbeat practice, identity-linked directed growth,
++  and meaningful batched journals without file proliferation. Implemented
++  `creative_practice.py` / `axm-practice`: one SQLite cartridge for profiles,
++  captured editable sources, deduplicated PNGs, session journals and summaries.
++- Each tick executes one real Studio layer edit. Free/graphic/surface starter
++  repertoires choose untried experiments using exact prior evidence. Explicit
++  human/machine/AI proposals share the same API; bounded context includes
++  attributed feedback. Profile forks snapshot lessons and then grow separately.
++- Rendering success, changed pixels and artistic judgment remain separate.
++  Only explicit keep changes a working revision; originals persist. Repetition
++  never becomes confidence. Unknown filters retain their real error. No remote
++  model, weight training, autonomous code installation or external task created.
++- Actual local verification: 20 practice tests, including abrupt process death,
++  concurrent writers, full-database rollback, stale reviews, immutable consumed
++  feedback snapshots, source loss, resume and exact editable replay. The existing
++  16 Studio tests also pass. Current-head full CI is required before merging.
++- `tools/creative_practice_proof.py` executes two linked sessions, a missing
++  filter probe, a profile fork and 1,000 paused ticks adding zero events. Its
++  recovered session uses prior evidence to choose a different treatment and
++  reproduces exact source bytes after their original files are removed.
++  The dedicated CI artifact contains the portable database and editable outputs.
++- Limits: first adapter is 2D Studio compositing; six starter operations, no
++  autonomous aesthetic evaluator. Session steps/time, record size and database
++  size are bounded; no automatic evidence deletion. Host heartbeat calls tick,
++  or an explicit foreground run supplies pacing. See docs/CREATIVE_PRACTICE.md.
++- Roots: Truth keeps observation and judgment attributable; Agency requires
++  explicit selection and exposes equivalent caller controls; Continuity retains
++  originals, dissent and fork provenance; Wisdom consults prior failures before
++  repeating work and verifies crash recovery. Platform donor remains unchanged.
++- Lane: `codex/rts-reference-foundry`, PR #77, based on current main `882aeef`;
++  PR #54 remains unrelated. Next: connect the Studio profile/session controls
++  and add another capability adapter through the same practice contract.
++
++
+ ### Studio donor recovery and executable layers — 2026-09-15
+ 
+ - Mike redirected this pass to recover the actual old Studio from the paused
+diff --git a/docs/CREATIVE_PRACTICE.md b/docs/CREATIVE_PRACTICE.md
+new file mode 100644
+index 0000000..87c5152
+--- /dev/null
++++ b/docs/CREATIVE_PRACTICE.md
+@@ -0,0 +1,148 @@
++# Creative practice profiles
++
++UC can now perform bounded creative practice through the actual recovered Studio
++compositor, remember what happened, and use that evidence in the next session.
++This is an opt-in workspace capability. It does not impose action logging on the
++rest of UC, install a service, schedule background work or call a paid model.
++
++## Use it
++
++Python 3.11+ supplies SQLite; local Node.js runs the original Studio compositor.
++Install UC with `python -m pip install .`. No npm packages are required.
++
++```python
++from axm_uc.creative_practice import Practice
++
++with Practice('my-creation.sqlite') as practice:
++    practice.profile('salvage', identity='my-maker', direction='free', seed=471,
++                     intent='Explore readable playful materials')
++    session = practice.start('salvage', project, source_root='source',
++                             max_trials=12, active_seconds=120, checkpoint_every=4)
++    result = practice.tick(session['id'])
++    context = practice.context(session['id'])
++    # Inspect the PNG via practice.artifact(result['png']) or export the trial.
++    practice.export(session['id'], 'trial-preview', trial=result['id'])
++    practice.review(result['id'], 'keep', actor='human:maker',
++                    reason='This treatment fits the intended material')
++    practice.control(session['id'], 'close')
++```
++
++`project` is an ordinary `axm.studio-composition-project/v1` with `recipe` and
++`sources`; see [Studio donor](STUDIO_DONOR.md). Rendering failure returns a
++`blocked` trial with its actual error; check `outcome` before using `png`.
++Profile IDs are unique, explicitly named, and never guessed from an AI account.
++Actor strings attribute feedback; they do not authenticate a caller or grant
++special authority. Control of the database remains with its host.
++
++The same methods are callable through JSON by humans, machines or an AI:
++
++```sh
++axm-practice my-creation.sqlite request.json
++```
++
++For example, `{"operation":"inventory"}` finds session IDs after restart.
++`{"operation":"run","session":"SESSION_ID","ticks":6,"interval":5}` runs a
++foreground heartbeat. Stopping the process stops the heartbeat. An existing host
++heartbeat can instead call `tick` once at its own interval. No external task or
++browser loop is necessary. Request paths are relative to the caller's working
++directory. The CLI's `start` request embeds the Studio project as JSON.
++
++| Operation | Purpose |
++| --- | --- |
++| `profile` | Create an identity-linked direction; optional `parent` snapshots its lessons |
++| `start` | Capture an editable project and exact source PNG bytes into a session |
++| `tick`, `run` | Execute one proposal or a bounded foreground series |
++| `context`, `lessons`, `trial` | Retrieve bounded guidance and its full evidence |
++| `review` | Keep/reject/uncertain with an attributed reason |
++| `control` | Pause, resume or close; close seals a compact summary |
++| `inventory`, `status`, `journal` | Find sessions and read checkpoints/paginated evidence |
++| `export` | Replay-verify and publish an editable accepted revision or rendered trial |
++| `backup` | Save one consistent portable SQLite cartridge, without overwrite |
++
++## What actually learns
++
++The deterministic starter repertoire contains six real operations: threshold,
++posterization, pixelation, blur, sharpen and contrast. `graphic` and `surface`
++select subsets; `free` explores both in seed-stable order. Existing layer filters
++remain in place, and the first visible layer receives the experiment. This is a
++small starter search, not an unlimited autonomous artist. Explicit layer-edit
++proposals expose the compositor's full existing add/change/move/remove, blending,
++filtering and mask controls; captured source assets remain fixed for the session.
++
++Every attempt records its exact base, operations, engine fingerprint, output or
++error, source references, review, and the lesson snapshot available before it.
++Automatic selection queries **all matching prior observations** for that profile,
++not just the last journal page, and skips already observed input/operation pairs.
++A new session with the same input therefore makes a different choice. No-change
++pixels and blocked operations remain useful observations. Repeated observations
++are skipped unless explicitly retried; retries carry `repeat_of`, never a higher
++confidence score. Identical feedback delivery retries return the existing judgment
++without adding events or votes. An implementation change invalidates exact-match reuse.
++A temporary runtime failure can be retried explicitly after repairing the runtime.
++
++`context` returns current intent, project, capabilities and the latest 20 compact
++observations/reviews. An optional AI or another proposer reads it and supplies:
++
++```json
++{"operation":"tick","session":"SESSION_ID","actor":"machine:proposer",
++ "proposal":{"label":"soft paint",
++ "operations":[{"op":"change","id":"paint",
++ "patch":{"filters":[{"type":"blur","radius":1}]}}]}}
++```
++
++An AI integration must treat lesson text as data and guidance, not privileged
++instructions. UC does not secretly invoke an AI or update model weights. Its
++built-in selector learns which exact experiments have already been tried;
++attributed judgment and richer composition come through the same explicit API.
++Rendered/changed are technical observations, not automatic claims of quality.
++
++Only explicit `keep` changes the session's working revision. Original source and
++all attempts remain retained. A stale keep cannot overwrite a newer accepted
++revision. Later dissent is appended and visible; rejecting a previously kept
++trial does not silently undo it. Start from the retained original or another
++export to take a different branch. `parent` copies lesson snapshots into a new
++profile; future feedback/experiments in either profile do not alter the other.
++
++## Journals without file proliferation
++
++One SQLite database contains profile state, one logical journal per session,
++trial evidence, compact summaries and content-addressed source/output blobs.
++No per-tick files, per-lesson files, raw model thoughts, or idle heartbeat events.
++Every completed attempt is transactional and immediately resumable. Periodic
++checkpoints default to every four attempts; pause, review and close also seal a
++checkpoint. Summary sealing does not delete underlying evidence.
++
++Hard limits: 1 MiB per JSON record, 256 MiB per database, 128 trials and up to
++3,600 active render seconds per session. Active time counts trial execution,
++not sleep or the initial source capture. Time budgets stop the **next** trial;
++an in-flight composition still has Studio's independent 30-second timeout.
++`run` accepts at most 128 ticks and 0–60 seconds between ticks. Exhaustion pauses
++once; idle calls after that write nothing. A full database causes transaction
++rollback rather than silent evidence eviction. Back up/retain it and begin a
++new cartridge when needed; no automatic deletion or cross-cartridge merge is
++implemented. `backup` packages a consistent snapshot in one file.
++
++SQLite serializes writers; a crashed attempt rolls back its metadata, blobs and
++checkpoint together. An interrupted render can be recomputed on restart, but
++cannot leave a committed success without its output. Avoid editing the database
++through an unrelated SQL client while UC is using it. This is local persistence,
++not cryptographic identity or a multi-host synchronization protocol.
++
++## Evidence and boundaries
++
++`python tools/creative_practice_proof.py OUTPUT` builds an original salvage paint
++study. It exercises a real rejected filter, two memory-linked sessions, profile
++forking, 1,000 idle ticks with no additional events, source-file loss, byte-exact
++replay and a portable database copy. Dedicated CI runs the installed package
++outside the repository and uploads the cartridge plus editable outputs.
++Tests additionally kill a process mid-transaction, exercise stale reviews,
++feedback isolation, repetition, bounded reads and source corruption.
++
++The old Studio's heartbeat and `AXM.wisdom`/identity flow informed this adapter;
++no donor source was modified or copied again. PR #76's session-curator Hand is
++for evidence retention and exact temporary-capture cleanup, not a persistent
++practice learner. It remains intact. Current integration executes **2D Studio
++layer edits**. Other Hands, 3D/animation practice adapters and Studio profile UI
++are subsequent connections. Missing-effect observations are evidence for a future
++proposal, not automatic executable-organ installation. Existing root-fit and
++self-change machinery stays authoritative for actual machinery changes.
+diff --git a/src/axm_uc/creative_practice.py b/src/axm_uc/creative_practice.py
+new file mode 100644
+index 0000000..5811942
+--- /dev/null
++++ b/src/axm_uc/creative_practice.py
+@@ -0,0 +1,483 @@
++"""Opt-in, local creative practice: evidence memory, never model-weight training.
++
++One SQLite cartridge holds all profiles, session journals and deduplicated source
++and result bytes. A tick attempts one bounded Studio edit; it creates no service.
++Human, machine and AI callers use the same proposal/review API.
++"""
++from __future__ import annotations
++
++import argparse
++from contextlib import contextmanager
++import copy
++from datetime import datetime, timezone
++import hashlib
++import json
++from pathlib import Path
++import sqlite3
++import tempfile
++import time
++import uuid
++
++from . import studio_compositor as studio
++
++SCHEMA = 'axm.creative-practice/v1'
++APP_ID = 0x41585052
++MAX_JSON = 1024 * 1024
++MAX_DB = 256 * 1024 * 1024
++DIRECTIONS = ('free', 'graphic', 'surface')
++
++
++def _json(value):
++    encoded = json.dumps(value, sort_keys=True, ensure_ascii=False, allow_nan=False)
++    if len(encoded.encode('utf-8')) > MAX_JSON:
++        raise ValueError('practice JSON exceeds 1 MiB')
++    return encoded
++
++
++def _sha(body):
++    return hashlib.sha256(body).hexdigest()
++
++
++def _text(value, label, maximum=240):
++    if not isinstance(value, str) or not value.strip() or len(value) > maximum:
++        raise ValueError(f'{label} requires 1..{maximum} characters')
++    return value
++
++
++def _integer(value, label, low, high):
++    if type(value) is not int or not low <= value <= high:
++        raise ValueError(f'{label} must be an integer in {low}..{high}')
++    return value
++
++
++def _engine():
++    # Invalidate automatic negative evidence when either implementation changes.
++    return _sha(Path(__file__).read_bytes() + Path(studio.__file__).read_bytes()
++                + (studio.DATA / 'raster-compositor.js').read_bytes()
++                + (studio.DATA / 'compose-runner.cjs').read_bytes())
++
++
++def candidates(project, direction='free', seed=0):
++    """Small executable starter repertoire; explicit proposals can use all edits.
++
++    No inferred quality score. Select the first visible layer and retain its
++    existing filters; free practice explores both repertoires in seeded order.
++    """
++    if direction not in DIRECTIONS:
++        raise ValueError('unknown practice direction')
++    layers = project['recipe']['layers']
++    layer = next((x for x in layers if x.get('visible', True)), None)
++    if layer is None:
++        return []
++    effects = [('graphic', 'ink-threshold', {'type':'threshold', 'value':0.45}),
++               ('graphic', 'poster-four', {'type':'posterize', 'levels':4}),
++               ('graphic', 'pixel-blocks', {'type':'pixelate', 'size':4}),
++               ('surface', 'soften', {'type':'blur', 'radius':1}),
++               ('surface', 'edge-definition', {'type':'sharpen', 'amount':0.6}),
++               ('surface', 'contrast-study', {'type':'contrast', 'value':0.25})]
++    output = []
++    for family, label, effect in effects:
++        if direction == 'free' or direction == family:
++            output.append({'label':label, 'operations':[{'op':'change', 'id':layer['id'],
++                           'patch':{'filters':layer.get('filters', []) + [effect]}}]})
++    return sorted(output, key=lambda x: _sha(f'{seed}:{x["label"]}'.encode()))
++
++
++class Practice:
++    """Use as a context manager. Writes serialize and commit one meaningful event.
++
++    Rendering occurs inside the transaction (at most the compositor's 30-second
++    bound). A crash rolls back the entire trial, including its artifact and
++    checkpoint. Other writers wait or receive SQLite's ordinary busy error.
++    """
++    def __init__(self, database):
++        self.path = Path(database)
++        self.db = sqlite3.connect(self.path, timeout=35, isolation_level=None)
++        self.db.row_factory = sqlite3.Row
++        try:
++            self.db.execute('PRAGMA foreign_keys=ON')
++            self.db.execute('PRAGMA synchronous=FULL')
++            with self._write():
++                app = self.db.execute('PRAGMA application_id').fetchone()[0]
++                tables = self.db.execute("SELECT name FROM sqlite_master WHERE type='table'").fetchall()
++                if app != APP_ID and (app or tables):
++                    raise ValueError('not a creative practice database')
++                version = self.db.execute('PRAGMA user_version').fetchone()[0]
++                if version not in (0, 1) or (app == APP_ID and version != 1):
++                    raise ValueError('unsupported practice database version')
++                if not tables:
++                    self._initialize()
++            page = self.db.execute('PRAGMA page_size').fetchone()[0]
++            self.db.execute(f'PRAGMA max_page_count={MAX_DB // page}')
++        except BaseException:
++            self.db.close()
++            raise
++
++    def _initialize(self):
++        statements = [
++            'CREATE TABLE blobs (id TEXT PRIMARY KEY, body BLOB NOT NULL)',
++            'CREATE TABLE profiles (id TEXT PRIMARY KEY, body TEXT NOT NULL)',
++            'CREATE TABLE sessions (id TEXT PRIMARY KEY, profile TEXT NOT NULL REFERENCES profiles(id), body TEXT NOT NULL)',
++            'CREATE TABLE events (seq INTEGER PRIMARY KEY, session TEXT NOT NULL REFERENCES sessions(id), kind TEXT NOT NULL, body TEXT NOT NULL)',
++            'CREATE INDEX session_events ON events(session, seq)',
++            'CREATE TABLE trials (id TEXT PRIMARY KEY, session TEXT NOT NULL REFERENCES sessions(id), signature TEXT NOT NULL, body TEXT NOT NULL)',
++            'CREATE INDEX trial_signature ON trials(signature)',
++            'CREATE TABLE memory (profile TEXT NOT NULL REFERENCES profiles(id), trial TEXT NOT NULL REFERENCES trials(id), body TEXT NOT NULL, PRIMARY KEY(profile, trial))',
++        ]
++        for statement in statements:
++            self.db.execute(statement)
++        self.db.execute(f'PRAGMA application_id={APP_ID}')
++        self.db.execute('PRAGMA user_version=1')
++
++    def __enter__(self):
++        return self
++
++    def __exit__(self, *args):
++        self.db.close()
++
++    @contextmanager
++    def _write(self):
++        self.db.execute('BEGIN IMMEDIATE')
++        try:
++            yield
++            self.db.execute('COMMIT')
++        except BaseException:
++            if self.db.in_transaction:
++                self.db.execute('ROLLBACK')
++            raise
++
++    def _get(self, table, id):
++        # Table names are internal constants only, never request strings.
++        row = self.db.execute(f'SELECT body FROM {table} WHERE id=?', (id,)).fetchone()
++        if row is None:
++            raise ValueError(f'unknown {table} ID: {id}')
++        return json.loads(row[0])
++
++    def _save(self, table, id, body):
++        self.db.execute(f'UPDATE {table} SET body=? WHERE id=?', (_json(body), id))
++
++    def _blob(self, body):
++        digest = _sha(body)
++        self.db.execute('INSERT OR IGNORE INTO blobs VALUES (?,?)', (digest, body))
++        return digest
++
++    def artifact(self, digest):
++        row = self.db.execute('SELECT body FROM blobs WHERE id=?', (digest,)).fetchone()
++        if row is None or _sha(row[0]) != digest:
++            raise ValueError('missing or corrupt practice artifact')
++        return row[0]
++
++    def _event(self, session, kind, body):
++        self.db.execute('INSERT INTO events(session,kind,body) VALUES (?,?,?)',
++                        (session, kind, _json({'at':datetime.now(timezone.utc).isoformat(), **body})))
++
++    def profile(self, id, *, identity, direction='free', seed=0, parent=None, intent='Explore creative variations'):
++        _text(id, 'profile ID'); _text(identity, 'identity'); _text(intent, 'intent', 2000)
++        _integer(seed, 'seed', 0, 2**32-1)
++        if direction not in DIRECTIONS:
++            raise ValueError('unknown practice direction')
++        with self._write():
++            if parent is not None:
++                self._get('profiles', parent)
++            body = dict(id=id, identity=identity, direction=direction, seed=seed, parent=parent, intent=intent)
++            self.db.execute('INSERT INTO profiles VALUES (?,?)', (id, _json(body)))
++            if parent is not None:
++                # Snapshot references, not a live link: future parent lessons stay separate.
++                self.db.execute('INSERT INTO memory SELECT ?,trial,body FROM memory WHERE profile=?', (id, parent))
++            return body
++
++    def start(self, profile, project, source_root='.', *, max_trials=12,
++              active_seconds=120, checkpoint_every=4):
++        _integer(max_trials, 'max_trials', 1, 128)
++        _integer(active_seconds, 'active_seconds', 1, 3600)
++        _integer(checkpoint_every, 'checkpoint_every', 1, 32)
++        with self._write():
++            self._get('profiles', profile)
++            result = studio.compose_studio_project(project, source_root)
++            source = {key:self._blob(value) for key, value in result['sources'].items()}
++            png = self._blob(result['png'])
++            id = uuid.uuid4().hex
++            body = dict(id=id, profile=profile, status='active', original=copy.deepcopy(project),
++                        current=copy.deepcopy(project), sources=source, original_png=png,
++                        current_png=png, current_trial=None, trials=0, active_seconds=0.0,
++                        max_trials=max_trials, budget_seconds=active_seconds,
++                        checkpoint_every=checkpoint_every, checkpoint=None, tried_labels=[],
++                        summary=None)
++            self.db.execute('INSERT INTO sessions VALUES (?,?,?)', (id, profile, _json(body)))
++            self._event(id, 'start', {'original_png':png, 'identity':self._get('profiles', profile)['identity']})
++            return body
++
++    def status(self, session):
++        return self._get('sessions', session)
++
++    def journal(self, session, *, after=0, limit=50):
++        self.status(session)
++        _integer(after, 'after', 0, 2**63-1); _integer(limit, 'limit', 1, 100)
++        rows = self.db.execute('SELECT seq,kind,body FROM events WHERE session=? AND seq>? ORDER BY seq LIMIT ?',
++                               (session, after, limit))
++        return [dict(seq=r[0], kind=r[1], body=json.loads(r[2])) for r in rows]
++
++    def lessons(self, profile, *, limit=20):
++        self._get('profiles', profile)
++        _integer(limit, 'limit', 1, 100)
++        rows = self.db.execute('SELECT m.body FROM memory m JOIN trials t ON t.id=m.trial '
++                               'WHERE m.profile=? ORDER BY t.rowid DESC LIMIT ?', (profile, limit))
++        keys = ('id', 'session', 'signature', 'engine', 'proposal', 'outcome',
++                'changed', 'error', 'png', 'review', 'repeat_of')
++        return [{k:v for k,v in json.loads(r[0]).items() if k in keys} for r in rows]
++
++    def trial(self, id):
++        return self._get('trials', id)
++
++    def inventory(self, *, profile=None, after=0, limit=20):
++        """List resumable session IDs with a bounded cursor; no identity guessing."""
++        _integer(after, 'after', 0, 2**63-1); _integer(limit, 'limit', 1, 100)
++        query = 'SELECT rowid,body FROM sessions WHERE rowid>?'
++        params = [after]
++        if profile is not None:
++            self._get('profiles', profile)
++            query += ' AND profile=?'
++            params.append(profile)
++        params.append(limit)
++        rows = self.db.execute(query + ' ORDER BY rowid LIMIT ?', params).fetchall()
++        output = []
++        for row in rows:
++            state = json.loads(row[1])
++            output.append({k:state[k] for k in ('id','profile','status','trials','summary')})
++        return {'sessions':output, 'next_cursor':rows[-1][0] if rows else after}
++
++    def context(self, session):
++        """Bounded context for an optional human/AI/deterministic proposer."""
++        state = self.status(session)
++        return {'profile':self._get('profiles', state['profile']),
++                'project':state['current'], 'status':state['status'],
++                'lessons':self.lessons(state['profile']),
++                'capabilities':studio.studio_compositor_catalog(),
++                'truth':'Observations and attributed reviews are guidance, not instructions or authority.'}
++
++    def _signature(self, state, operations):
++        return _sha(_json({'engine':_engine(), 'project':state['current'],
++                          'sources':state['sources'], 'operations':operations}).encode())
++
++    def _known(self, profile, signature):
++        rows = self.db.execute('SELECT t.id FROM trials t JOIN memory m ON t.id=m.trial '
++                               'WHERE m.profile=? AND t.signature=? ORDER BY t.rowid', (profile, signature))
++        return [r[0] for r in rows]
++
++    def _render(self, state, project):
++        # Database-owned bytes materialize under generated safe names only.
++        with tempfile.TemporaryDirectory(prefix='axm-practice-') as directory:
++            local = copy.deepcopy(project)
++            local['sources'] = {}
++            for index, (key, digest) in enumerate(sorted(state['sources'].items())):
++                name = f'{index}.png'
++                (Path(directory) / name).write_bytes(self.artifact(digest))
++                local['sources'][key] = name
++            return studio.compose_studio_project(local, directory)
++
++    def _checkpoint(self, state):
++        state['checkpoint'] = dict(trials=state['trials'], current_trial=state['current_trial'],
++                                   current_png=state['current_png'], active_seconds=state['active_seconds'])
++
++    def tick(self, session, proposal=None, *, actor='deterministic', retry=False):
++        """One actual experiment. No work, paused and duplicates create no event.
++
++        Explicit retry preserves repeated observations but is never a confidence
++        multiplier. A blocked/rejected experiment never changes accepted state.
++        """
++        _text(actor, 'actor')
++        if type(retry) is not bool:
++            raise ValueError('retry must be boolean')
++        if proposal is not None:
++            if not isinstance(proposal, dict) or set(proposal) != {'label', 'operations'}:
++                raise ValueError('proposal requires exactly label and operations')
++            _text(proposal['label'], 'proposal label'); _json(proposal)
++        with self._write():
++            state = self.status(session)
++            if state['status'] != 'active':
++                return {'status':'idle', 'reason':state['status']}
++            if state['trials'] >= state['max_trials'] or state['active_seconds'] >= state['budget_seconds']:
++                return self._pause(state, 'budget')
++            memory = self.lessons(state['profile'])
++            if proposal is None:
++                profile = self._get('profiles', state['profile'])
++                available = candidates(state['current'], profile['direction'], profile['seed'])
++                proposal = next((p for p in available if p['label'] not in state['tried_labels']
++                                 and not self._known(state['profile'], self._signature(state, p['operations']))), None)
++                if proposal is None:
++                    return self._pause(state, 'repertoire-exhausted')
++            signature = self._signature(state, proposal['operations'])
++            known = self._known(state['profile'], signature)
++            if known and not retry:
++                return {'status':'idle', 'reason':'already-observed', 'evidence':known}
++            started = time.monotonic()
++            trial = dict(id=uuid.uuid4().hex, session=session, signature=signature,
++                         engine=_engine(), proposal=copy.deepcopy(proposal), actor=actor,
++                         base=copy.deepcopy(state['current']), base_png=state['current_png'],
++                         consumed_lessons=[x['id'] for x in memory], lesson_snapshot=memory, repeat_of=known,
++                         visual_approval=False, review=None)
++            try:
++                project = studio.edit_studio_layers(state['current'], proposal['operations'])
++                result = self._render(state, project)
++                trial.update(outcome='rendered', project=project, png=self._blob(result['png']),
++                             changed=result['png'] != self.artifact(state['current_png']),
++                             receipt=result['receipt'])
++            except (ValueError, RuntimeError, OSError) as exc:
++                trial.update(outcome='blocked', error=str(exc)[:2000], changed=False)
++            state['active_seconds'] += time.monotonic() - started
++            state['trials'] += 1
++            state['tried_labels'].append(proposal['label'])
++            self.db.execute('INSERT INTO trials VALUES (?,?,?,?)', (trial['id'], session, signature, _json(trial)))
++            self.db.execute('INSERT INTO memory VALUES (?,?,?)', (state['profile'], trial['id'], _json(trial)))
++            self._event(session, 'attempt', {'trial':trial['id'], 'outcome':trial['outcome']})
++            if state['trials'] % state['checkpoint_every'] == 0:
++                self._checkpoint(state)
++            self._save('sessions', session, state)
++            return trial
++
++    def review(self, trial_id, decision, *, actor, reason):
++        """Attributed feedback; retain disagreement/history. Keep is explicit only."""
++        _text(actor, 'actor'); _text(reason, 'reason', 2000)
++        if decision not in ('keep', 'reject', 'uncertain'):
++            raise ValueError('decision must be keep, reject or uncertain')
++        with self._write():
++            trial = self._get('trials', trial_id)
++            state = self.status(trial['session'])
++            feedback = dict(decision=decision, actor=actor, reason=reason)
++            if trial['review'] == feedback:
++                # Delivery retries are reads of an existing judgment, not votes.
++                return trial['review']
++            if state['status'] == 'closed':
++                raise ValueError('closed session is sealed; start a new session')
++            if decision == 'keep':
++                if trial['outcome'] != 'rendered':
++                    raise ValueError('cannot keep a blocked experiment')
++                if state['current'] != trial['base'] or state['current_png'] != trial['base_png']:
++                    raise ValueError('stale proposal; replay edits against the current revision')
++                state.update(current=trial['project'], current_png=trial['png'], current_trial=trial_id)
++            trial['review'] = feedback
++            self._event(state['id'], 'review', {'trial':trial_id, **trial['review']})
++            self._save('trials', trial_id, trial)
++            self.db.execute('UPDATE memory SET body=? WHERE profile=? AND trial=?',
++                            (_json(trial), state['profile'], trial_id))
++            self._checkpoint(state)
++            self._save('sessions', state['id'], state)
++            return trial['review']
++
++    def _pause(self, state, reason):
++        state['status'] = 'paused'
++        self._checkpoint(state)
++        self._save('sessions', state['id'], state)
++        self._event(state['id'], 'pause', {'reason':reason})
++        return {'status':'paused', 'reason':reason}
++
++    def control(self, session, action):
++        if action not in ('pause', 'resume', 'close'):
++            raise ValueError('unknown session control')
++        with self._write():
++            state = self.status(session)
++            if state['status'] == 'closed':
++                if action == 'close':
++                    return state
++                raise ValueError('closed session is sealed')
++            if action == 'pause':
++                if state['status'] == 'active':
++                    self._pause(state, 'explicit')
++                return self.status(session)
++            if action == 'resume':
++                if state['trials'] >= state['max_trials'] or state['active_seconds'] >= state['budget_seconds']:
++                    raise ValueError('session budget exhausted; close and start a new session')
++                if state['status'] == 'paused':
++                    state['status'] = 'active'
++                    self._save('sessions', session, state)
++                    self._event(session, 'resume', {})
++                return state
++            rows = self.db.execute('SELECT id,body FROM trials WHERE session=? ORDER BY rowid', (session,)).fetchall()
++            trials = [json.loads(r[1]) for r in rows]
++            state['status'] = 'closed'
++            state['summary'] = {'attempts':len(trials),
++                                'rendered':sum(t['outcome'] == 'rendered' for t in trials),
++                                'blocked':sum(t['outcome'] == 'blocked' for t in trials),
++                                'changed':sum(t['changed'] for t in trials),
++                                'evidence':[r[0] for r in rows],
++                                'accepted_trial':state['current_trial'],
++                                'quality':'unscored; reviews are attributed judgments'}
++            self._checkpoint(state)
++            self._save('sessions', session, state)
++            self._event(session, 'summary', state['summary'])
++            return state
++
++    def run(self, session, *, ticks=1, interval=0):
++        """Foreground heartbeat only; host may instead schedule tick itself."""
++        _integer(ticks, 'ticks', 1, 128); _integer(interval, 'interval', 0, 60)
++        results = []
++        for index in range(ticks):
++            if index and interval:
++                time.sleep(interval)
++            result = self.tick(session)
++            results.append(result)
++            if result.get('status') in ('idle', 'paused'):
++                break
++        return results
++
++    def export(self, session, directory, *, trial=None):
++        """Explicit editable publication. Original and every trial stay in DB."""
++        state = self.status(session)
++        project = state['current']
++        expected = state['current_png']
++        if trial is not None:
++            attempt = self._get('trials', trial)
++            if attempt['session'] != session or attempt['outcome'] != 'rendered':
++                raise ValueError('export requires a rendered trial from this session')
++            project, expected = attempt['project'], attempt['png']
++        # Verify replay BEFORE publishing, so a changed implementation cannot
++        # publish a package under an old experiment's identity.
++        replay = self._render(state, project)
++        if _sha(replay['png']) != expected:
++            raise ValueError('replay differs; retain evidence and investigate implementation drift')
++        with tempfile.TemporaryDirectory(prefix='axm-practice-export-') as root:
++            local = copy.deepcopy(project)
++            local['sources'] = {}
++            for index, (key, digest) in enumerate(sorted(state['sources'].items())):
++                name = f'{index}.png'
++                (Path(root) / name).write_bytes(self.artifact(digest))
++                local['sources'][key] = name
++            return studio.publish_studio_project(directory, local, root)
++
++    def backup(self, destination):
++        """One portable, consistent cartridge; refuses to overwrite any file."""
++        target = Path(destination)
++        with target.open('xb'):
++            pass
++        try:
++            with sqlite3.connect(target) as other:
++                self.db.backup(other)
++        except BaseException:
++            target.unlink(missing_ok=True)
++            raise
++        return str(target)
++
++
++def main(argv=None):
++    parser = argparse.ArgumentParser(description='Local profile-based creative practice')
++    parser.add_argument('database', type=Path)
++    parser.add_argument('request', type=Path, help='JSON operation and explicit arguments')
++    args = parser.parse_args(argv)
++    with args.request.open('rb') as handle:
++        body = handle.read(MAX_JSON + 1)
++    if len(body) > MAX_JSON:
++        parser.error('request exceeds 1 MiB')
++    request = json.loads(body)
++    if not isinstance(request, dict):
++        parser.error('request must be an object')
++    operation = request.pop('operation', None)
++    allowed = {'profile', 'start', 'tick', 'run', 'review', 'control', 'status', 'context', 'inventory', 'trial', 'lessons', 'journal', 'export', 'backup'}
++    if operation not in allowed:
++        parser.error('unknown practice operation')
++    with Practice(args.database) as practice:
++        result = getattr(practice, operation)(**request)
++    print(json.dumps({'schema':SCHEMA, 'result':result}, indent=2, ensure_ascii=False, allow_nan=False))
++
++
++if __name__ == '__main__':
++    main()
+diff --git a/tests/test_creative_practice.py b/tests/test_creative_practice.py
+new file mode 100644
+index 0000000..abb011d
+--- /dev/null
++++ b/tests/test_creative_practice.py
+@@ -0,0 +1,287 @@
++"""Execute real practice, persistence and feedback; never infer aesthetic quality."""
++import copy
++from contextlib import redirect_stdout
++import io
++import json
++from pathlib import Path
++import shutil
++import sqlite3
++import subprocess
++import sys
++import tempfile
++import unittest
++from unittest.mock import patch
++
++sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src'))
++from axm_uc.creative_practice import Practice, candidates, main
++from axm_uc import creative_practice as practice_module
++from axm_uc import studio_compositor as studio
++from axm_uc.fabric_noise import png_bytes
++
++
++def project():
++    return {'schema':studio.SCHEMA, 'sources':{}, 'recipe':{
++        'schema':'axm.raster-composition/v1', 'canvas':{'width':8, 'height':8},
++        'layers':[{'id':'paint', 'fill':'#4277AD'}]}}
++
++
++def proposal(effect='invert'):
++    return {'label':effect, 'operations':[{'op':'change', 'id':'paint',
++            'patch':{'filters':[{'type':effect, 'amount':1}]}}]}
++
++
++@unittest.skipUnless(shutil.which('node'), 'Node is required; dedicated CI supplies it')
++class PracticeTests(unittest.TestCase):
++    def setUp(self):
++        self.temp = tempfile.TemporaryDirectory()
++        self.addCleanup(self.temp.cleanup)
++        self.root = Path(self.temp.name)
++        self.file = self.root / 'practice.sqlite'
++        self.p = Practice(self.file)
++        self.addCleanup(self.p.db.close)
++        self.p.profile('salvage', identity='AXM-maker', direction='free', seed=471)
++        self.s = self.p.start('salvage', project(), checkpoint_every=2)['id']
++
++    def test_real_creation_keep_export_and_source_preservation(self):
++        original = copy.deepcopy(self.p.status(self.s)['original'])
++        trial = self.p.tick(self.s, proposal())
++        self.assertEqual(trial['outcome'], 'rendered')
++        self.assertTrue(trial['changed'])
++        self.assertFalse(trial['visual_approval'])
++        self.assertEqual(self.p.status(self.s)['current'], original)
++        self.p.review(trial['id'], 'keep', actor='human:Mike', reason='Useful inverted paint study')
++        self.assertEqual(self.p.status(self.s)['current_trial'], trial['id'])
++        self.p.export(self.s, self.root / 'editable')
++        exported = json.loads((self.root / 'editable/project.json').read_text())
++        self.assertEqual(studio.compose_studio_project(exported, self.root / 'editable')['png'],
++                         self.p.artifact(trial['png']))
++        self.assertEqual(self.p.status(self.s)['original'], original)
++
++    def test_source_bytes_survive_original_file_loss_and_database_backup(self):
++        body = png_bytes(8,8,4,bytes([210,75,21,255])*64)
++        (self.root / 'ink.png').write_bytes(body)
++        source = project(); source['sources']={'ink':'ink.png'}
++        source['recipe']['layers']=[{'id':'paint','source_artifact_id':'ink'}]
++        session = self.p.start('salvage', source, self.root)['id']
++        (self.root / 'ink.png').unlink()
++        trial = self.p.tick(session, proposal())
++        self.p.review(trial['id'], 'keep', actor='machine:review', reason='Explicit test selection')
++        backup = self.root / 'portable.sqlite'
++        self.p.backup(backup)
++        with self.assertRaises(FileExistsError): self.p.backup(backup)
++        with Practice(backup) as recovered:
++            recovered.export(session, self.root / 'restored')
++            request = json.loads((self.root / 'restored/project.json').read_text())
++            self.assertEqual((self.root / 'restored' / request['sources']['ink']).read_bytes(), body)
++            self.assertEqual(recovered.artifact(trial['png']), self.p.artifact(trial['png']))
++
++    def test_failed_proposal_is_evidence_not_state_or_improvement(self):
++        before = self.p.status(self.s)
++        trial = self.p.tick(self.s, proposal('missing-lightning-filter'))
++        self.assertEqual(trial['outcome'], 'blocked')
++        self.assertIn('unsupported filter', trial['error'])
++        self.assertEqual(self.p.status(self.s)['current'], before['current'])
++        with self.assertRaises(ValueError):
++            self.p.review(trial['id'], 'keep', actor='machine', reason='cannot invent success')
++        later = self.p.tick(self.s, proposal('grayscale'))
++        self.assertIn(trial['id'], later['consumed_lessons'])
++
++    def test_remembered_attempt_changes_next_session_selection(self):
++        first = self.p.tick(self.s)
++        self.p.control(self.s, 'close')
++        next_session = self.p.start('salvage', project())['id']
++        second = self.p.tick(next_session)
++        self.assertNotEqual(first['signature'], second['signature'])
++        self.assertNotEqual(first['proposal']['label'], second['proposal']['label'])
++        self.assertIn(first['id'], second['consumed_lessons'])
++        # A fresh profile with the same seed makes the original choice.
++        self.p.profile('fresh', identity='AXM-maker', seed=471)
++        fresh = self.p.start('fresh', project())['id']
++        self.assertEqual(first['signature'], self.p.tick(fresh)['signature'])
++
++    def test_repetition_is_idempotent_unless_explicit_and_never_votes(self):
++        first = self.p.tick(self.s, proposal())
++        before = self.p.journal(self.s)
++        for _ in range(30):
++            result = self.p.tick(self.s, proposal())
++            self.assertEqual(result['reason'], 'already-observed')
++        self.assertEqual(before, self.p.journal(self.s))
++        retry = self.p.tick(self.s, proposal(), retry=True)
++        self.assertEqual(retry['repeat_of'], [first['id']])
++        self.assertFalse(retry['visual_approval'])
++        self.assertNotIn('confidence', retry)
++
++    def test_profile_fork_snapshots_feedback_and_keeps_future_learning_separate(self):
++        t = self.p.tick(self.s, proposal())
++        self.p.review(t['id'], 'uncertain', actor='machine:a', reason='Need visual inspection')
++        self.p.profile('graphic', identity='AXM-maker', parent='salvage', direction='graphic')
++        self.p.review(t['id'], 'reject', actor='human:Mike', reason='Does not fit this direction')
++        self.assertEqual(self.p.lessons('graphic')[0]['review']['decision'], 'uncertain')
++        self.assertEqual(self.p.lessons('salvage')[0]['review']['decision'], 'reject')
++        child = self.p.start('graphic', project())['id']
++        child_trial = self.p.tick(child)
++        self.assertNotIn(child_trial['id'], [x['id'] for x in self.p.lessons('salvage')])
++        self.assertIn(t['id'], child_trial['consumed_lessons'])
++
++    def test_noop_pixels_are_recorded_as_no_effect(self):
++        p = {'label':'unchanged', 'operations':[{'op':'change','id':'paint','patch':{'opacity':1}}]}
++        t = self.p.tick(self.s, p)
++        self.assertFalse(t['changed'])
++        self.assertEqual(t['png'], t['base_png'])
++        count = self.p.db.execute('SELECT count(*) FROM blobs').fetchone()[0]
++        self.assertEqual(count, 1)
++
++    def test_idle_pause_resume_and_checkpoint_are_bounded(self):
++        self.p.tick(self.s, proposal())
++        self.assertIsNone(self.p.status(self.s)['checkpoint'])
++        self.p.tick(self.s, proposal('grayscale'))
++        self.assertEqual(self.p.status(self.s)['checkpoint']['trials'], 2)
++        self.p.control(self.s, 'pause')
++        before = self.p.journal(self.s)
++        for _ in range(100): self.p.tick(self.s)
++        self.assertEqual(self.p.journal(self.s), before)
++        self.p.control(self.s, 'resume')
++        self.assertEqual(self.p.status(self.s)['status'], 'active')
++        # No result or journal file for each attempt/tick.
++        self.assertEqual([x.name for x in self.root.iterdir()], ['practice.sqlite'])
++
++    def test_restart_resumes_latest_committed_trial_not_only_periodic_checkpoint(self):
++        trial = self.p.tick(self.s, proposal())
++        with Practice(self.file) as reopened:
++            self.assertEqual(reopened.status(self.s)['trials'], 1)
++            self.assertIsNone(reopened.status(self.s)['checkpoint'])
++            self.assertEqual(reopened.lessons('salvage')[0]['id'], trial['id'])
++            self.assertEqual(reopened.tick(self.s, proposal())['reason'], 'already-observed')
++
++    def test_write_failure_rolls_back_trial_blob_memory_and_checkpoint(self):
++        before = self.p.status(self.s)
++        with patch.object(self.p, '_event', side_effect=OSError('disk failure')):
++            with self.assertRaises(OSError): self.p.tick(self.s, proposal())
++        self.assertEqual(self.p.status(self.s), before)
++        self.assertEqual(self.p.lessons('salvage'), [])
++        self.assertEqual(self.p.db.execute('SELECT count(*) FROM blobs').fetchone()[0], 1)
++        self.assertEqual(self.p.tick(self.s, proposal())['outcome'], 'rendered')
++
++    def test_hard_process_exit_rolls_back_in_progress_work(self):
++        code = """import os,sys
++from axm_uc.creative_practice import Practice
++p=Practice(sys.argv[1])
++p._event=lambda *a: os._exit(7)
++p.tick(sys.argv[2])
++"""
++        import os
++        env = dict(os.environ, PYTHONPATH=str(Path(__file__).resolve().parents[1] / 'src'))
++        result = subprocess.run([sys.executable, '-c', code, str(self.file), self.s], env=env)
++        self.assertEqual(result.returncode, 7)
++        with Practice(self.file) as reopened:
++            self.assertEqual(reopened.status(self.s)['trials'], 0)
++            self.assertEqual(reopened.lessons('salvage'), [])
++            self.assertEqual(reopened.tick(self.s)['outcome'], 'rendered')
++
++    def test_budgets_and_closed_summary_do_not_reset_on_resume(self):
++        short = self.p.start('salvage', project(), max_trials=1)['id']
++        self.p.tick(short, proposal())
++        self.assertEqual(self.p.tick(short)['reason'], 'budget')
++        with self.assertRaisesRegex(ValueError, 'budget exhausted'): self.p.control(short, 'resume')
++        closed = self.p.control(short, 'close')
++        self.assertEqual(closed['summary']['attempts'], 1)
++        before = self.p.journal(short)
++        self.p.control(short, 'close')
++        self.assertEqual(self.p.journal(short), before)
++        with self.assertRaises(ValueError): self.p.control(short, 'resume')
++        timed = self.p.start('salvage', project(), active_seconds=1)['id']
++        with patch.object(practice_module.time, 'monotonic', side_effect=[10,12]):
++            self.p.tick(timed, proposal('grayscale'))
++        self.assertEqual(self.p.tick(timed)['reason'], 'budget')
++
++    def test_stale_review_cannot_overwrite_accepted_work_and_dissent_is_retained(self):
++        a = self.p.tick(self.s, proposal())
++        b = self.p.tick(self.s, proposal('grayscale'))
++        self.p.review(a['id'], 'keep', actor='machine:a', reason='Chosen exploration branch')
++        with self.assertRaisesRegex(ValueError, 'stale'):
++            self.p.review(b['id'], 'keep', actor='machine:b', reason='Stale competing revision')
++        self.p.review(a['id'], 'reject', actor='human:Mike', reason='Disagree; preserve actual accepted revision')
++        self.assertEqual(self.p.status(self.s)['current_trial'], a['id'])
++        self.assertEqual([e['body']['decision'] for e in self.p.journal(self.s) if e['kind']=='review'], ['keep','reject'])
++
++    def test_repertoire_exhausts_without_endless_ticks_and_inputs_are_checked(self):
++        results = self.p.run(self.s, ticks=20)
++        self.assertEqual(results[-1]['reason'], 'repertoire-exhausted')
++        self.assertEqual(self.p.status(self.s)['trials'], 6)
++        for kwargs in ({'max_trials':True},{'active_seconds':0},{'checkpoint_every':100}):
++            with self.assertRaises(ValueError): self.p.start('salvage', project(), **kwargs)
++        with self.assertRaises(ValueError): self.p.tick(self.s, {'label':'bad'})
++        with self.assertRaises(ValueError): self.p.profile('x', identity='x', direction='invented')
++        with self.assertRaises(ValueError): self.p.journal(self.s, limit=100000)
++        self.assertEqual(len(self.p.journal(self.s, limit=2)), 2)
++
++    def test_corruption_and_wrong_database_fail_closed(self):
++        t = self.p.tick(self.s, proposal())
++        self.p.db.execute('UPDATE blobs SET body=? WHERE id=?', (b'corrupt', t['png']))
++        with self.assertRaises(ValueError): self.p.artifact(t['png'])
++        other = self.root / 'other.sqlite'
++        with sqlite3.connect(other) as db: db.execute('CREATE TABLE unrelated(x)')
++        before = other.read_bytes()
++        with self.assertRaises(ValueError): Practice(other)
++        self.assertEqual(other.read_bytes(), before)
++
++    def test_identical_feedback_retries_add_no_votes_or_events(self):
++        t = self.p.tick(self.s, proposal())
++        feedback = dict(actor='machine:review', reason='Explicit selection')
++        original = self.p.review(t['id'], 'keep', **feedback)
++        before = self.p.journal(self.s)
++        for _ in range(20):
++            self.assertEqual(self.p.review(t['id'], 'keep', **feedback), original)
++        self.assertEqual(self.p.journal(self.s), before)
++        self.p.control(self.s, 'close')
++        sealed = self.p.journal(self.s)
++        self.p.review(t['id'], 'keep', **feedback)
++        self.assertEqual(self.p.journal(self.s), sealed)
++
++    def test_concurrent_writers_commit_only_one_matching_attempt(self):
++        from concurrent.futures import ThreadPoolExecutor
++        def execute():
++            with Practice(self.file) as peer:
++                return peer.tick(self.s, proposal())
++        with ThreadPoolExecutor(max_workers=2) as pool:
++            results = list(pool.map(lambda _: execute(), range(2)))
++        self.assertEqual(sum(r.get('outcome') == 'rendered' for r in results), 1)
++        self.assertEqual(sum(r.get('reason') == 'already-observed' for r in results), 1)
++        self.assertEqual(self.p.status(self.s)['trials'], 1)
++
++    def test_database_full_rolls_back_without_losing_old_evidence(self):
++        pages = self.p.db.execute('PRAGMA page_count').fetchone()[0]
++        self.p.db.execute(f'PRAGMA max_page_count={pages}')
++        original_blob = self.p._blob
++        def need_space(body):
++            original_blob(bytes(range(256)) * 4096)
++            return original_blob(body)
++        with patch.object(self.p, '_blob', side_effect=need_space):
++            with self.assertRaisesRegex(sqlite3.DatabaseError, 'full'):
++                self.p.tick(self.s, proposal())
++        self.assertEqual(self.p.status(self.s)['trials'], 0)
++        self.assertEqual(self.p.lessons('salvage'), [])
++        self.assertTrue(self.p.artifact(self.p.status(self.s)['original_png']).startswith(b'\x89PNG'))
++
++    def test_context_feedback_snapshot_and_paginated_resume_inventory(self):
++        first = self.p.tick(self.s, proposal())
++        self.p.review(first['id'], 'uncertain', actor='machine:a', reason='Inspect the pixels')
++        second = self.p.tick(self.s, proposal('grayscale'))
++        self.p.review(first['id'], 'reject', actor='human:Mike', reason='Later dissent')
++        saved = self.p.trial(second['id'])['lesson_snapshot'][0]
++        self.assertEqual(saved['review']['decision'], 'uncertain')
++        self.assertEqual(self.p.context(self.s)['profile']['identity'], 'AXM-maker')
++        page = self.p.inventory(limit=1)
++        self.assertEqual(page['sessions'][0]['id'], self.s)
++        self.assertEqual(self.p.inventory(after=page['next_cursor'])['sessions'], [])
++
++    def test_cli_dispatch_uses_same_state(self):
++        request = self.root / 'request.json'
++        request.write_text(json.dumps({'operation':'tick','session':self.s,'proposal':proposal()}))
++        output = io.StringIO()
++        with redirect_stdout(output): main([str(self.file), str(request)])
++        self.assertEqual(json.loads(output.getvalue())['result']['outcome'], 'rendered')
++        self.assertEqual(self.p.status(self.s)['trials'], 1)
++
++
++if __name__ == '__main__': unittest.main()
+diff --git a/tools/creative_practice_proof.py b/tools/creative_practice_proof.py
+new file mode 100644
+index 0000000..cbff8b9
+--- /dev/null
++++ b/tools/creative_practice_proof.py
+@@ -0,0 +1,87 @@
++"""Reproducible offline practice cartridge; no model, browser or network."""
++import json
++from pathlib import Path
++import sys
++
++sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src'))
++from axm_uc.creative_practice import Practice
++from axm_uc.fabric_noise import png_bytes
++from axm_uc.studio_compositor import SCHEMA
++
++
++def build(destination):
++    root = Path(destination)
++    root.mkdir(parents=True, exist_ok=False)
++    width, height = 128, 96
++    paint, badge = bytearray(), bytearray()
++    for y in range(height):
++        for x in range(width):
++            seam = x % 32 < 2 or y % 24 < 2
++            nick = (x*31+y*17) % 107 < 3
++            color = (37,46,60) if seam else ((127,146,155) if nick else (190+x//3,104+y//2,31))
++            paint.extend((*color,255))
++            # Original protected cyan chevron badge, above the experimental paint.
++            on = 43 <= x < 85 and 28 <= y < 65 and abs(x-64) < (y-25)/2
++            badge.extend((38,229,242,255) if on else (0,0,0,0))
++    sources = {'paint':png_bytes(width,height,4,bytes(paint)),
++               'badge':png_bytes(width,height,4,bytes(badge))}
++    for key, body in sources.items(): (root / f'{key}.png').write_bytes(body)
++    project = {'schema':SCHEMA, 'sources':{k:f'{k}.png' for k in sources},
++               'recipe':{'schema':'axm.raster-composition/v1','canvas':{'width':width,'height':height},
++                         'layers':[{'id':'paint','source_artifact_id':'paint'},
++                                   {'id':'identity','source_artifact_id':'badge'}]}}
++    database = root / 'practice.sqlite'
++    with Practice(database) as p:
++        p.profile('salvage', identity='AXM-practice-maker', direction='graphic', seed=471,
++                  intent='Explore graphic paint treatments while retaining the source badge')
++        first = p.start('salvage', project, root, checkpoint_every=2)['id']
++        bad = p.tick(first, {'label':'missing-effect-probe','operations':[
++            {'op':'change','id':'paint','patch':{'filters':[{'type':'missing-depth-emboss'}]}}]})
++        assert bad['outcome'] == 'blocked'
++        study = p.tick(first)
++        assert study['outcome'] == 'rendered' and study['changed']
++        assert bad['id'] in study['consumed_lessons']
++        p.review(study['id'],'keep',actor='deterministic:proof',
++                 reason='Select this changed rendering for replay; no artistic quality judgment')
++        p.export(first, root / 'editable-study')
++        p.control(first,'close')
++        p.profile('surface',identity='AXM-practice-maker',direction='surface',parent='salvage')
++        second = p.start('salvage',project,root)['id']
++        p.control(second,'pause')
++        before = p.journal(second)
++        for _ in range(1000): p.tick(second)
++        assert p.journal(second) == before
++    # Delete the source files; resume must use exact captured source bytes.
++    for key in sources: (root / f'{key}.png').unlink()
++    with Practice(database) as p:
++        p.control(second,'resume')
++        next_study = p.tick(second)
++        assert next_study['signature'] != study['signature']
++        assert study['id'] in next_study['consumed_lessons']
++        p.export(second,root / 'resumed-study',trial=next_study['id'])
++        p.control(second,'close')
++        for key,digest in p.status(second)['sources'].items():
++            assert p.artifact(digest) == sources[key]
++        p.backup(root / 'portable-copy.sqlite')
++        receipt = {'schema':'axm.creative-practice-proof/v1',
++                   'sessions':[first,second], 'failed_trial':bad['id'],
++                   'first_choice':study['proposal']['label'],
++                   'memory_informed_choice':next_study['proposal']['label'],
++                   'consumed_lessons':next_study['consumed_lessons'],
++                   'idle_ticks':1000, 'idle_events_added':0,
++                   'source_bytes_preserved':True, 'replay_exact':True,
++                   'profile_fork':'surface', 'database_bytes':database.stat().st_size,
++                   'truth':'Actual Studio rendering, resume and evidence retrieval; no aesthetic acceptance or model-weight training.'}
++    with Practice(root / 'portable-copy.sqlite') as portable:
++        assert portable.status(second)['status'] == 'closed'
++        assert portable.trial(study['id'])['png'] == study['png']
++    (root / 'proof.json').write_text(json.dumps(receipt,indent=2)+'\n',encoding='utf-8')
++    (root / 'README.txt').write_text('Open practice.sqlite with the axm-practice API/CLI.\n'
++        'editable-study and resumed-study are replayable Studio projects.\n'
++        'The portable copy contains profiles, captured sources, outputs and session evidence.\n'
++        'No remote services are needed. Python 3.11+ and local Node.js are required for rendering.\n',encoding='utf-8')
++    return receipt
++
++
++if __name__ == '__main__':
++    print(json.dumps(build(sys.argv[1]),indent=2))

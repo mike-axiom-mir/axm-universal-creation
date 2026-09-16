@@ -1,0 +1,195 @@
+{
+  "capsule_id": "69f1276b08f0fce6698ed15754398d2735431ac386ba7d52f478c39dc5ce5ca4",
+  "evidence": {
+    "files": [
+      {
+        "additions": 52,
+        "binary": false,
+        "content_sha256": "e3c4731e7e251e9c845c814e8742bdda4a049ef488189a05082cd511d55c929b",
+        "deletions": 2,
+        "path": "GAME_STYLE_GROWTH.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Current checkpoint",
+          "Functional motion repair pass \u2014 2026-09-13",
+          "Combined Parcel Imp showcase pass \u2014 2026-09-13"
+        ]
+      },
+      {
+        "additions": 44,
+        "binary": false,
+        "content_sha256": "56da25adbea2797cd446d286803b026ea11f9e775092b936e85781a1570b3344",
+        "deletions": 0,
+        "path": "docs/GAME_FUNCTIONAL_MOTION.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Functional game motion",
+          "Parcel Imp repair proof"
+        ]
+      },
+      {
+        "additions": 8,
+        "binary": false,
+        "content_sha256": "52acf431c97fe348b123b7ba67b310c5c66adc3532399ff31e0266d59e179cfd",
+        "deletions": 1,
+        "path": "docs/GAME_SHOWCASE_CONTRACT.md",
+        "status": "M",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 232,
+        "binary": false,
+        "content_sha256": "2a367825be9f1bfad027b90dbcbe3036bf228b34b8d405e3c498632eccadd713",
+        "deletions": 0,
+        "path": "src/axm_uc/game_functional_motion.py",
+        "status": "A",
+        "symbols": [
+          "_canonical",
+          "_digest",
+          "_name",
+          "_number",
+          "_integer",
+          "_vec3",
+          "_unit",
+          "game_functional_motion_catalog",
+          "_locomotion",
+          "_wheels",
+          "_projectile",
+          "_phase",
+          "_quat",
+          "compose_game_functional_motion",
+          "publish_game_functional_motion"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 11,
+        "binary": false,
+        "content_sha256": "4cdd91c4be79d8be4350ed9a5f704872f984652aded45452ad01fdab6c99f5a1",
+        "deletions": 0,
+        "path": "src/axm_uc/visual_assets_cli.py",
+        "status": "M",
+        "symbols": [
+          "combined_catalog",
+          "build_parser",
+          "main"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 97,
+        "binary": false,
+        "content_sha256": "ffdafd9f3a71a61397a7b02fb285b99b843f177e0898408854e65e80531e8bc3",
+        "deletions": 0,
+        "path": "tests/test_game_functional_motion.py",
+        "status": "A",
+        "symbols": [
+          "request",
+          "GameFunctionalMotionTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 72,
+        "binary": false,
+        "content_sha256": "b6d45fef81f10fe624f30ba71b476d9b3ce6f8b30cc2d7d668441e4e93cbad62",
+        "deletions": 21,
+        "path": "tools/blender/game_showcase_parcel_imp.py",
+        "status": "M",
+        "symbols": [
+          "bones",
+          "build_geometry",
+          "request",
+          "secondary_request",
+          "functional_request",
+          "apply_track",
+          "author_actions",
+          "build",
+          "verify"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "f6809d86c9751e40160d7b7ac713831eae5192f8f48ce6808ad511210acaa3ea"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 7,
+    "kinds": [
+      "code",
+      "knowledge",
+      "protocol-state",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "actions",
+      "apply",
+      "author",
+      "axm",
+      "blender",
+      "bones",
+      "build",
+      "canonical",
+      "catalog",
+      "checkpoint",
+      "cli",
+      "combined",
+      "compose",
+      "contract",
+      "creation-machine",
+      "current",
+      "digest",
+      "flight",
+      "functional",
+      "game",
+      "geometry",
+      "growth",
+      "imp",
+      "integer",
+      "locomotion",
+      "merge",
+      "motion",
+      "name",
+      "number",
+      "parcel",
+      "parser",
+      "pass",
+      "phase",
+      "projectile",
+      "proof",
+      "publish",
+      "quat",
+      "repair",
+      "request",
+      "roll",
+      "secondary",
+      "showcase",
+      "standalone",
+      "style",
+      "tools",
+      "track",
+      "unit",
+      "universal-creation",
+      "vec3",
+      "verify",
+      "visual",
+      "wheel",
+      "wheels"
+    ]
+  },
+  "source": {
+    "base": "b6a111d71649350d1288bdf3882e1b00a0b9bc46",
+    "commit_subject": "Merge functional wheel roll and parcel flight (#70)",
+    "head": "cc0c40625a1cc0ee4beaa31762a65033b157a411",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

@@ -1,0 +1,601 @@
+diff --git a/LIGHTING_TEMPLATE_PACK.md b/LIGHTING_TEMPLATE_PACK.md
+new file mode 100644
+index 0000000..d71290a
+--- /dev/null
++++ b/LIGHTING_TEMPLATE_PACK.md
+@@ -0,0 +1,37 @@
++# Source-Bound Lighting / Post-Process Look Template Pack
++
++`visual.look.core` is the reusable lighting/look foundation for games, software and visual storytelling.
++
++A convincing look preview is presentation, not authoritative world state. Exposure, tone mapping, grade, fog, bloom, post-process layers, scene bindings and platform variants remain separate editable state.
++
++## Surfaces
++
++- project / look hub
++- exposure / tone-map editor
++- color-grade editor
++- fog / atmosphere editor
++- bloom / glare editor
++- post-process layer-stack editor
++- scene / camera binding editor
++- platform / performance variant editor
++- comparison / preview
++- review / export
++
++## Source-truth contract
++
++- `look-source` — exact look identity, source, version, digest, context and purpose;
++- `exposure-state` — exact value/range/adaptation source and context;
++- `tone-map-state` — exact operator, parameters, output space and source;
++- `color-grade-state` — exact transform source, working/output spaces and intensity;
++- `fog-atmosphere-state` — exact density/range/color/scattering source and context;
++- `bloom-glare-state` — exact threshold/intensity/radius/quality and source;
++- `postprocess-layer` — exact ordered layer identity/parameters/blend/scope/source;
++- `scene-look-binding` — exact scene/camera/region target, look identity, source and activation;
++- `look-platform-variant` — exact base, deltas, platform/performance/accessibility context;
++- `look-export-target` — exact look/binding/color-space/variant/runtime requirements.
++
++## Truth boundary
++
++Color grade and post-process effects do not replace source materials, lights, geometry or environment state. A bright preview does not prove the scene contains brighter lights. Visual similarity does not bind a look to a scene. Performance/accessibility variants must preserve required visibility and state legibility.
++
++This pack proves deterministic structural/editability contracts only. It does not prove physical lighting correctness, calibrated color output, accessibility acceptance, GPU cost, target-engine parity, or aesthetic quality.
+diff --git a/VISUAL_TEMPLATE_FABRIC.md b/VISUAL_TEMPLATE_FABRIC.md
+index aad9ed1..2b6a960 100644
+--- a/VISUAL_TEMPLATE_FABRIC.md
++++ b/VISUAL_TEMPLATE_FABRIC.md
+@@ -2,47 +2,47 @@
+ 
+ Universal Creation contains one deterministic library of **known visual archetypes** between low-level format scaffolds and finished products. Templates are editable structural starting points, not finished art and not automatic canon.
+ 
+-The public module remains `axm_uc.visual_templates`. Explicit extension packs cover games/product plumbing, creative editors, comics, AXM system surfaces, key art, cards/decks, cinematic/broadcast overlays, diagrams, atlas/map editing, branching narrative, 3D showroom, music, presentation/explainers, character reference, equipment configuration, source-bound UI motion, brand/identity systems, environment/level references, VFX/particle authoring, quest/mission flow systems, and HUD theme/skin systems. Sticker Fabric remains the immutable/versioned registry bridge. Mathematical work can enrich declared ratios/ranges through `math_hooks` without replacing template identity.
++The public module remains `axm_uc.visual_templates`. Explicit extension packs cover games/product plumbing, creative editors, comics, AXM system surfaces, key art, cards/decks, cinematic/broadcast overlays, diagrams, atlas/map editing, branching narrative, 3D showroom, music, presentation/explainers, character reference, equipment configuration, source-bound UI motion, brand/identity systems, environment/level references, VFX/particle authoring, quest/mission flow systems, HUD theme/skin systems, and lighting/post-process look systems. Sticker Fabric remains the immutable/versioned registry bridge. Mathematical work can enrich declared ratios/ranges through `math_hooks` without replacing template identity.
+ 
+-## Current v22 candidate census
++## Current v23 candidate census
+ 
+-- **246 reusable visual/state primitives**
+-- **30 coherent style systems**
+-- **284 responsive screen archetypes**
+-- **28 whole-product archetypes**
+-- **312 exact screen/product definitions** when explicitly installed into Sticker Registry
++- **256 reusable visual/state primitives**
++- **31 coherent style systems**
++- **294 responsive screen archetypes**
++- **29 whole-product archetypes**
++- **323 exact screen/product definitions** when explicitly installed into Sticker Registry
+ 
+ Every major family provides compact, standard and wide normalized layouts. Unknown requested variants fail rather than silently falling back.
+ 
+-## Source-bound HUD theme / skin foundation
++## Source-bound lighting / post-process look foundation
+ 
+-`visual.hud.core` provides ten HUD-authoring surfaces:
++`visual.look.core` provides ten look-authoring surfaces:
+ 
+-- project / HUD hub;
+-- component library;
+-- layout / anchor editor;
+-- data-binding editor;
+-- readability editor;
+-- alerts / feedback editor;
+-- platform / input variant editor;
+-- theme / skin editor;
++- project / look hub;
++- exposure / tone-map editor;
++- color-grade editor;
++- fog / atmosphere editor;
++- bloom / glare editor;
++- post-process layer-stack editor;
++- scene / camera binding editor;
++- platform / performance variant editor;
+ - comparison / preview;
+ - review / export.
+ 
+-Its `visual.hud.system` style is replaceable. HUD truth stays explicit:
++Its `visual.look.system` style is replaceable. Presentation state stays explicit:
+ 
+-- `hud-source` preserves exact HUD family identity, source, version and owning context;
+-- `hud-component` preserves exact component identity, role, source and semantic purpose;
+-- `hud-layout-anchor` preserves exact component region/viewport constraints;
+-- `hud-data-binding` binds exact gameplay/system subject + field to source/freshness/fallback state;
+-- `hud-readability-rule` preserves exact target, viewing/platform/input context, threshold and evidence source;
+-- `hud-safe-region` preserves exact viewport/platform/source and safe margins;
+-- `hud-alert-state` preserves exact semantic source, severity, feedback channels and acknowledgement state;
+-- `hud-platform-variant` preserves exact base, deltas, device/input context and availability;
+-- `hud-theme-variant` preserves exact base theme plus token/component deltas;
+-- `hud-export-target` keeps exact component/binding/layout/readability/platform/provenance requirements visible.
++- `look-source` preserves exact look/preset identity, source, version and owning context;
++- `exposure-state` preserves exact value/range, adaptation source and context;
++- `tone-map-state` preserves exact operator, parameters, output space and source;
++- `color-grade-state` preserves exact transform source, working/output spaces and intensity;
++- `fog-atmosphere-state` preserves exact density/range/scattering source and context;
++- `bloom-glare-state` preserves exact threshold/intensity/radius/quality and source;
++- `postprocess-layer` preserves exact ordered layer identity, parameters, blend, scope and source;
++- `scene-look-binding` binds exact scenes/cameras/regions to exact look identities with source/activation state;
++- `look-platform-variant` preserves exact base, deltas and platform/performance/accessibility context;
++- `look-export-target` keeps exact look/binding/color-space/variant/runtime requirements visible.
+ 
+-Screen position never creates a data binding. A meter looking full never proves the underlying value is full. Icon or color alone cannot carry critical gameplay meaning. Theme/skin changes do not rewrite gameplay state, and platform variants must preserve required semantic feedback and readability.
++A convincing look preview never becomes authoritative world lighting or gameplay state. Grade/post-process transforms do not replace source materials, lights, geometry or environment state. Visual similarity does not bind a look to a scene. Reduced/performance variants must preserve required visibility and state legibility.
+ 
+ ## Registry and identity
+ 
+@@ -52,8 +52,8 @@ Every built-in screen/product can be wrapped as an immutable Sticker definition.
+ 
+ ```sh
+ axm-visual-templates catalog
+-axm-visual-templates show visual.hud.core
+-axm-visual-templates render visual.hud.core creations/hud --width 1920 --height 1080
++axm-visual-templates show visual.look.core
++axm-visual-templates render visual.look.core creations/lighting-look --width 1920 --height 1080
+ ```
+ 
+ Preview/export remains derived inspection output, never authoritative source.
+@@ -65,19 +65,19 @@ python -m unittest discover -s tests -p 'test_visual_templates.py' -v
+ python tools/visual_template_proof.py /new/output/path
+ ```
+ 
+-The v22 gate requires:
++The v23 gate requires:
+ 
+-- exact census: 30 styles / 246 primitives / 284 screens / 28 products;
+-- all 284 screens stay within six representative viewport shapes;
++- exact census: 31 styles / 256 primitives / 294 screens / 29 products;
++- all 294 screens stay within six representative viewport shapes;
+ - exact product screen order and flows resolve across those viewports;
+-- parseable galleries for all prior proof products plus `visual.hud.core`;
+-- all 312 screen/product definitions install through Sticker Registry;
+-- exact HUD identity/component/layout/data/readability/safe-region/alert/platform/theme contracts remain present;
+-- prior mission/VFX/environment/brand/motion/configurator/character/presentation/music/showroom/visual-novel/atlas/diagram/broadcast/cinematic/card/key-art/comic/game/AXM boundaries remain intact;
++- parseable galleries for all prior proof products plus `visual.look.core`;
++- all 323 screen/product definitions install through Sticker Registry;
++- exact look identity/exposure/tone/grade/fog/bloom/layer/scene-binding/platform contracts remain present;
++- prior HUD/mission/VFX/environment/brand/motion/configurator/character/presentation/music/showroom/visual-novel/atlas/diagram/broadcast/cinematic/card/key-art/comic/game/AXM boundaries remain intact;
+ - copy safety, strict variant rejection, invalid-geometry rejection and exact Sticker-slot binding remain intact.
+ 
+ ## Truth boundary
+ 
+-Current evidence proves deterministic structural/editability contracts only. It does **not** prove gameplay correctness, real-device readability, accessibility acceptance, input ergonomics, target-engine rendering or aesthetic quality.
++Current evidence proves deterministic structural/editability contracts only. It does **not** prove physical lighting correctness, calibrated color output, accessibility acceptance, GPU cost, target-engine parity or aesthetic quality.
+ 
+-Consuming products must supply real gameplay/system data and device context. Unknown, stale, missing, hidden, constrained and unreadable state stays distinguishable. Richer editable source remains authoritative over previews/skins/exports.
++Consuming products must supply real world/scene/camera state and output-space context. Unknown, unsupported, disabled, reduced and unbound state stays distinguishishable. Richer editable source remains authoritative over look previews/exports.
+diff --git a/VISUAL_TEMPLATE_PRIORITY_MAP.md b/VISUAL_TEMPLATE_PRIORITY_MAP.md
+index 05c51b0..e10de8c 100644
+--- a/VISUAL_TEMPLATE_PRIORITY_MAP.md
++++ b/VISUAL_TEMPLATE_PRIORITY_MAP.md
+@@ -1,6 +1,6 @@
+ # AXM Visual Template Expansion Priority Map
+ 
+-Status: v22 growth lane after verified v1–v21 merges.
++Status: v23 growth lane after verified v1–v22 merges.
+ 
+ The visual-template fabric grows where Universal Creation is likely to reuse the knowledge soon. This is a build priority, not canon: templates remain editable foundations and may be replaced when evidence supports a better structure.
+ 
+@@ -17,48 +17,49 @@ The visual-template fabric grows where Universal Creation is likely to reuse the
+ - brand / identity system editor;
+ - environment / level reference boards;
+ - VFX / particle reference-authoring;
+-- quest / mission flow systems.
++- quest / mission flow systems;
++- HUD theme / skin systems.
+ 
+-## HUD theme / skin systems — IMPLEMENTED IN THIS LANE
++## Lighting / post-process look systems — IMPLEMENTED IN THIS LANE
+ 
+-Product: `visual.hud.core`
++Product: `visual.look.core`
+ 
+ Implemented screens:
+ 
+-- `visual.hud.project-hub`
+-- `visual.hud.components`
+-- `visual.hud.layout`
+-- `visual.hud.data-bindings`
+-- `visual.hud.readability`
+-- `visual.hud.alerts-feedback`
+-- `visual.hud.platform-input`
+-- `visual.hud.theme-skin`
+-- `visual.hud.compare-preview`
+-- `visual.hud.review-export`
++- `visual.look.project-hub`
++- `visual.look.exposure-tone`
++- `visual.look.color-grade`
++- `visual.look.fog-atmosphere`
++- `visual.look.bloom-glare`
++- `visual.look.layer-stack`
++- `visual.look.scene-bindings`
++- `visual.look.platform-performance`
++- `visual.look.compare-preview`
++- `visual.look.review-export`
+ 
+ New primitives:
+ 
+-- `hud-source`
+-- `hud-component`
+-- `hud-layout-anchor`
+-- `hud-data-binding`
+-- `hud-readability-rule`
+-- `hud-safe-region`
+-- `hud-alert-state`
+-- `hud-platform-variant`
+-- `hud-theme-variant`
+-- `hud-export-target`
++- `look-source`
++- `exposure-state`
++- `tone-map-state`
++- `color-grade-state`
++- `fog-atmosphere-state`
++- `bloom-glare-state`
++- `postprocess-layer`
++- `scene-look-binding`
++- `look-platform-variant`
++- `look-export-target`
+ 
+-Style: `visual.hud.system`.
++Style: `visual.look.system`.
+ 
+-The central rule is HUD/game-state truth: visual placement does not create a data binding, meter appearance does not prove the underlying value, icon/color alone cannot carry critical meaning, skins do not rewrite gameplay state, and platform variants preserve required semantic feedback/readability.
++The central rule is look/world-state truth: a beautiful preview does not redefine world lighting, color transforms do not replace source materials/lights/geometry, scene application requires exact bindings, and performance/accessibility variants preserve required visibility and state legibility.
+ 
+ ## Next high-value visual/creation families
+ 
+-1. **Lighting / post-process look systems** — source-bound exposure, tone, fog, grading, bloom and accessibility/performance variants without baking presentation into world state.
+-2. **Camera / shot reference systems** — exact camera rigs, targets, framing, lens/FOV, shot transitions and gameplay/cinematic ownership without treating preview framing as world state.
+-3. **Inventory / item-reference systems** — item identity, rarity/affordance presentation, equipment slots, stats, comparison, provenance and platform/input variants without turning iconography into gameplay truth.
+-4. **Menu / shell theme systems** — source-bound navigation/component families, focus/state visibility, controller/touch/keyboard variants and branding hooks across complete game/application shells.
++1. **Camera / shot reference systems** — exact camera rigs, targets, framing, lens/FOV, shot transitions and gameplay/cinematic ownership without treating preview framing as world state.
++2. **Inventory / item-reference systems** — item identity, rarity/affordance presentation, equipment slots, stats, comparison, provenance and platform/input variants without turning iconography into gameplay truth.
++3. **Menu / shell theme systems** — source-bound navigation/component families, focus/state visibility, controller/touch/keyboard variants and branding hooks across complete game/application shells.
++4. **Animation / rig reference systems** — exact skeleton/rig identity, clips, state transitions, timing/root-motion/event hooks and retargeting/source state without treating preview motion as runtime truth.
+ 
+ ## Cross-cutting rules
+ 
+@@ -74,7 +75,7 @@ Every family preserves the existing visual-template contract:
+ 
+ ## Immediate build order
+ 
+-1. exact-head verify `visual.hud.core`;
+-2. merge v22 only when template + repository checks pass;
+-3. begin lighting / post-process look systems from fresh main;
++1. exact-head verify `visual.look.core`;
++2. merge v23 only when template + repository checks pass;
++3. begin camera / shot reference systems from fresh main;
+ 4. keep prioritizing reusable source-first editors over flat one-off outputs.
+diff --git a/src/axm_uc/visual_template_lighting.py b/src/axm_uc/visual_template_lighting.py
+new file mode 100644
+index 0000000..56ad38e
+--- /dev/null
++++ b/src/axm_uc/visual_template_lighting.py
+@@ -0,0 +1,88 @@
++"""Source-bound lighting, atmosphere and post-process look foundations."""
++from __future__ import annotations
++from copy import deepcopy
++from typing import Any
++
++
++def _merge(target: dict[str, Any], additions: dict[str, Any], label: str) -> None:
++    overlap=sorted(set(target)&set(additions))
++    if overlap: raise RuntimeError(f"lighting {label} collision: {', '.join(overlap)}")
++    target.update(deepcopy(additions))
++
++
++def extend_lighting_catalog(namespace: dict[str, Any]) -> None:
++    styles=namespace['STYLE_SYSTEMS']; primitives=namespace['PRIMITIVES']
++    screens=namespace['SCREEN_TEMPLATES']; products=namespace['PRODUCT_ARCHETYPES']
++    screen=namespace['_screen']; origin=namespace['_origin']
++
++    _merge(styles,{'visual.look.system':{
++        'intent':'source-bound lighting/post-process look authoring with exact exposure, tone, grade, fog, bloom, layer, scene-binding and platform states',
++        'tokens':{'canvas':'#090d11','surface':'#141b22','surface_raised':'#202832','text':'#eff3f5','muted':'#9fa9b1','accent':'#8bc6c4','warning':'#e2b969','danger':'#de7477','line':'#3e4b56'},
++        'shape':{'panel_radius_ratio':0.010,'cut_ratio':0.002,'line_ratio':0.0012},
++        'type':{'display_weight':735,'body_weight':500,'metric_scale':1.48,'tracking':0.010},
++        'depth':{'layers':8,'shadow':'subtle','glass':'restrained'},
++        'motion':{'fast_ms':80,'standard_ms':165,'slow_ms':300,'principle':'world/source state before presentation look'},
++    }},'style')
++
++    _merge(primitives,{
++        'look-source':{'role':'exact look/preset identity with source/version/digest, owning scene/product context and purpose','states':['known','active','archived','unknown'],'identity_source_version_context_required':True},
++        'exposure-state':{'role':'explicit exposure/brightness adaptation state with value/range, source and context','states':['manual','auto','bounded','unknown'],'value_range_source_context_required':True},
++        'tone-map-state':{'role':'tone-mapping operator/state with exact operator, parameters, output space and source','states':['active','alternate','disabled','unknown'],'operator_parameters_output_source_required':True},
++        'color-grade-state':{'role':'color-grade transform with exact source/LUT-or-curves, working/output spaces and intensity','states':['active','alternate','disabled','unknown'],'transform_spaces_intensity_source_required':True},
++        'fog-atmosphere-state':{'role':'fog/atmosphere state with exact density/range/color/scattering source and context','states':['active','bounded','disabled','unknown'],'density_range_scattering_source_required':True},
++        'bloom-glare-state':{'role':'bloom/glare state with exact threshold/intensity/radius/quality and source','states':['active','reduced','disabled','unknown'],'threshold_intensity_radius_source_required':True},
++        'postprocess-layer':{'role':'ordered post-process layer with exact identity, parameters, blend/order/scope and source','states':['active','muted','conditional','unknown'],'identity_parameters_blend_order_scope_required':True},
++        'scene-look-binding':{'role':'exact scene/camera/region to look binding with target identity, source and activation state','states':['bound','conditional','disabled','unknown'],'target_look_source_activation_required':True},
++        'look-platform-variant':{'role':'performance/accessibility/platform look variant with exact base, deltas, context and availability','states':['active','reduced','alternate','unknown'],'base_delta_platform_context_required':True},
++        'look-export-target':{'role':'look-system export target with exact states, bindings, color spaces, variants and runtime requirements','states':['ready','warning','blocked','exported'],'requirements_must_be_visible':True},
++    },'primitive')
++
++    q=['exposure, tone mapping, grading, fog, bloom, layers, bindings and platform variants remain separately editable','a convincing look preview never silently becomes authoritative world lighting or gameplay state','color grade and post-process transforms never replace source materials, lights, geometry or environment state','scene/camera application requires exact source-bound bindings rather than visual similarity or proximity','performance and accessibility variants preserve required visibility/state legibility while changing presentation cost or intensity']
++    def v(c,s,w): return {'compact':c,'standard':s,'wide':w}
++    additions={
++      'visual.look.project-hub':screen('visual.look.project-hub','Lighting and look project hub','creative.look','visual.look.system','browse source-bound looks, scene bindings, state coverage, platform variants and export targets',v(
++        {'header':(.03,.03,.94,.08),'looks':(.03,.14,.94,.30),'coverage':(.03,.47,.45,.38),'variants':(.51,.47,.46,.27),'actions':(.51,.77,.46,.08)},
++        {'header':(.02,.03,.96,.075),'looks':(.02,.14,.22,.82),'coverage':(.27,.14,.46,.82),'variants':(.76,.14,.22,.55),'actions':(.76,.72,.22,.14)},
++        {'header':(.015,.03,.97,.07),'looks':(.015,.13,.20,.84),'coverage':(.24,.13,.50,.84),'variants':(.77,.13,.215,.57),'actions':(.77,.73,.215,.14)}),tags=['visual','lighting','look','project'],quality=q),
++      'visual.look.exposure-tone':screen('visual.look.exposure-tone','Exposure and tone-map editor','creative.look','visual.look.system','edit exact exposure ranges/adaptation and tone-mapping operator/output space without rewriting world lighting',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.38),'exposure':(.03,.55,.45,.32),'tone':(.51,.55,.46,.32),'actions':(.03,.90,.94,.07)},
++        {'header':(.02,.03,.96,.075),'exposure':(.02,.14,.23,.72),'preview':(.28,.14,.47,.72),'tone':(.78,.14,.20,.54),'actions':(.78,.71,.20,.15)},
++        {'header':(.015,.03,.97,.07),'exposure':(.015,.13,.21,.74),'preview':(.26,.13,.49,.74),'tone':(.78,.13,.205,.55),'actions':(.78,.71,.205,.16)}),tags=['visual','lighting','exposure','tone'],math_hooks={'exposure_ev_range':[-12,20],'highlight_headroom_ratio':[0.02,0.35]},quality=q),
++      'visual.look.color-grade':screen('visual.look.color-grade','Color-grade editor','creative.look','visual.look.system','edit exact grade transforms, LUT/curve source, color spaces and intensity while preserving source material identity',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.36),'transforms':(.03,.53,.55,.34),'details':(.61,.53,.36,.25),'actions':(.61,.81,.36,.06)},
++        {'header':(.02,.03,.96,.075),'transforms':(.02,.14,.28,.72),'preview':(.33,.14,.44,.72),'details':(.80,.14,.18,.54),'actions':(.80,.71,.18,.15)},
++        {'header':(.015,.03,.97,.07),'transforms':(.015,.13,.26,.74),'preview':(.305,.13,.47,.74),'details':(.795,.13,.19,.55),'actions':(.795,.71,.19,.16)}),tags=['visual','lighting','color-grade','lut'],quality=q),
++      'visual.look.fog-atmosphere':screen('visual.look.fog-atmosphere','Fog and atmosphere editor','creative.look','visual.look.system','edit exact fog density/range/scattering/color state and source without baking atmosphere into base environment identity',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.38),'states':(.03,.55,.55,.32),'details':(.61,.55,.36,.24),'actions':(.61,.82,.36,.05)},
++        {'header':(.02,.03,.96,.075),'states':(.02,.14,.28,.72),'preview':(.33,.14,.44,.72),'details':(.80,.14,.18,.54),'actions':(.80,.71,.18,.15)},
++        {'header':(.015,.03,.97,.07),'states':(.015,.13,.26,.74),'preview':(.305,.13,.47,.74),'details':(.795,.13,.19,.55),'actions':(.795,.71,.19,.16)}),tags=['visual','lighting','fog','atmosphere'],quality=q),
++      'visual.look.bloom-glare':screen('visual.look.bloom-glare','Bloom and glare editor','creative.look','visual.look.system','edit exact bloom/glare threshold, intensity, radius and quality with reduced/disabled states explicit',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.38),'states':(.03,.55,.55,.32),'details':(.61,.55,.36,.24),'actions':(.61,.82,.36,.05)},
++        {'header':(.02,.03,.96,.075),'states':(.02,.14,.28,.72),'preview':(.33,.14,.44,.72),'details':(.80,.14,.18,.54),'actions':(.80,.71,.18,.15)},
++        {'header':(.015,.03,.97,.07),'states':(.015,.13,.26,.74),'preview':(.305,.13,.47,.74),'details':(.795,.13,.19,.55),'actions':(.795,.71,.19,.16)}),tags=['visual','lighting','bloom','glare'],quality=q),
++      'visual.look.layer-stack':screen('visual.look.layer-stack','Post-process layer-stack editor','creative.look','visual.look.system','edit ordered source-bound post-process layers, parameters, blend and scope without flattening them into one canonical output',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.34),'layers':(.03,.51,.55,.34),'details':(.61,.51,.36,.25),'actions':(.61,.79,.36,.06)},
++        {'header':(.02,.03,.96,.075),'layers':(.02,.14,.28,.72),'preview':(.33,.14,.44,.72),'details':(.80,.14,.18,.54),'actions':(.80,.71,.18,.15)},
++        {'header':(.015,.03,.97,.07),'layers':(.015,.13,.26,.74),'preview':(.305,.13,.47,.74),'details':(.795,.13,.19,.55),'actions':(.795,.71,.19,.16)}),tags=['visual','lighting','postprocess','layer'],quality=q),
++      'visual.look.scene-bindings':screen('visual.look.scene-bindings','Scene and camera look-binding editor','creative.look','visual.look.system','bind exact scenes, cameras or regions to exact look identities with activation/source state explicit',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.32),'bindings':(.03,.49,.58,.38),'details':(.64,.49,.33,.28),'actions':(.64,.80,.33,.07)},
++        {'header':(.02,.03,.96,.075),'bindings':(.02,.14,.28,.72),'preview':(.33,.14,.44,.72),'details':(.80,.14,.18,.54),'actions':(.80,.71,.18,.15)},
++        {'header':(.015,.03,.97,.07),'bindings':(.015,.13,.26,.74),'preview':(.305,.13,.47,.74),'details':(.795,.13,.19,.55),'actions':(.795,.71,.19,.16)}),tags=['visual','lighting','scene','binding'],quality=q),
++      'visual.look.platform-performance':screen('visual.look.platform-performance','Lighting look platform and performance variants','creative.look','visual.look.system','author exact reduced/performance/accessibility variants preserving visibility and state legibility while changing presentation cost',v(
++        {'header':(.03,.03,.94,.08),'default':(.03,.14,.45,.42),'variant':(.52,.14,.45,.42),'rules':(.03,.59,.58,.28),'actions':(.64,.59,.33,.28)},
++        {'header':(.02,.03,.96,.075),'default':(.02,.14,.36,.63),'variant':(.40,.14,.36,.63),'rules':(.78,.14,.20,.48),'actions':(.78,.65,.20,.12)},
++        {'header':(.015,.03,.97,.07),'default':(.015,.13,.37,.65),'variant':(.405,.13,.37,.65),'rules':(.795,.13,.19,.49),'actions':(.795,.65,.19,.13)}),tags=['visual','lighting','platform','performance'],quality=q),
++      'visual.look.compare-preview':screen('visual.look.compare-preview','Lighting look comparison preview','creative.look','visual.look.system','compare exact looks and variants while keeping scene/source state and applied look bindings visible independently',v(
++        {'header':(.03,.03,.94,.08),'left':(.03,.14,.45,.48),'right':(.52,.14,.45,.48),'checks':(.03,.65,.58,.22),'actions':(.64,.65,.33,.22)},
++        {'header':(.02,.03,.96,.075),'left':(.02,.14,.36,.63),'right':(.40,.14,.36,.63),'checks':(.78,.14,.20,.48),'actions':(.78,.65,.20,.12)},
++        {'header':(.015,.03,.97,.07),'left':(.015,.13,.37,.65),'right':(.405,.13,.37,.65),'checks':(.795,.13,.19,.49),'actions':(.795,.65,.19,.13)}),tags=['visual','lighting','compare','preview'],quality=q),
++      'visual.look.review-export':screen('visual.look.review-export','Lighting look review and export','creative.look','visual.look.system','review unknown color spaces, missing scene bindings, unsafe visibility, unsupported variants and export/runtime requirements',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.30),'checks':(.03,.47,.58,.39),'targets':(.64,.47,.33,.27),'actions':(.64,.77,.33,.09)},
++        {'header':(.02,.03,.96,.075),'preview':(.02,.14,.38,.72),'checks':(.43,.14,.34,.72),'targets':(.79,.14,.19,.48),'actions':(.79,.65,.19,.21)},
++        {'header':(.015,.03,.97,.07),'preview':(.015,.13,.36,.74),'checks':(.40,.13,.37,.74),'targets':(.79,.13,.195,.49),'actions':(.79,.65,.195,.22)}),tags=['visual','lighting','review','export'],quality=q),
++    }
++    _merge(screens,additions,'screen')
++    ids=list(additions)
++    product={'schema':'axm.visual-product/v1','id':'visual.look.core','version':1,'name':'Source-bound lighting and post-process look core','kind':'product','domain':'creative.look','tags':['visual','lighting','postprocess','look','product'],'origin':origin(),'style':'visual.look.system','intent':'source-first lighting/look authoring with exact exposure, tone, grade, fog, bloom, ordered layers, scene bindings and platform variants','screens':ids,'flow':[
++      ['visual.look.project-hub','visual.look.exposure-tone','edit-exposure-tone'],['visual.look.project-hub','visual.look.color-grade','edit-grade'],['visual.look.project-hub','visual.look.fog-atmosphere','edit-atmosphere'],['visual.look.project-hub','visual.look.bloom-glare','edit-bloom'],['visual.look.project-hub','visual.look.layer-stack','edit-layers'],['visual.look.project-hub','visual.look.scene-bindings','bind-scenes'],['visual.look.project-hub','visual.look.platform-performance','edit-variants'],['visual.look.project-hub','visual.look.compare-preview','compare'],['visual.look.project-hub','visual.look.review-export','review-export']], 'quality':q}
++    _merge(products,{'visual.look.core':product},'product')
+diff --git a/src/axm_uc/visual_templates.py b/src/axm_uc/visual_templates.py
+index 7e1df7b..d483763 100644
+--- a/src/axm_uc/visual_templates.py
++++ b/src/axm_uc/visual_templates.py
+@@ -31,8 +31,9 @@ from .visual_template_environment import extend_environment_catalog as _extend_e
+ from .visual_template_vfx import extend_vfx_catalog as _extend_vfx_catalog
+ from .visual_template_mission import extend_mission_catalog as _extend_mission_catalog
+ from .visual_template_hud import extend_hud_catalog as _extend_hud_catalog
++from .visual_template_lighting import extend_lighting_catalog as _extend_lighting_catalog
+ 
+-_COMPOSITION=("visual_template_growth","visual_template_game_systems","visual_template_creative_narrative","visual_template_axm_system","visual_template_game_shared","visual_template_keyart","visual_template_cards","visual_template_cinematic","visual_template_video_overlay","visual_template_diagram","visual_template_atlas","visual_template_novel","visual_template_showroom","visual_template_music","visual_template_presentation","visual_template_character_reference","visual_template_configurator","visual_template_motion","visual_template_brand","visual_template_environment","visual_template_vfx","visual_template_mission","visual_template_hud")
++_COMPOSITION=("visual_template_growth","visual_template_game_systems","visual_template_creative_narrative","visual_template_axm_system","visual_template_game_shared","visual_template_keyart","visual_template_cards","visual_template_cinematic","visual_template_video_overlay","visual_template_diagram","visual_template_atlas","visual_template_novel","visual_template_showroom","visual_template_music","visual_template_presentation","visual_template_character_reference","visual_template_configurator","visual_template_motion","visual_template_brand","visual_template_environment","visual_template_vfx","visual_template_mission","visual_template_hud","visual_template_lighting")
+ _applied=getattr(_core,"_AXM_VISUAL_COMPOSITION",None)
+ if _applied is None:
+     _extend_catalog(vars(_core))
+@@ -58,6 +59,7 @@ if _applied is None:
+     _extend_vfx_catalog(vars(_core))
+     _extend_mission_catalog(vars(_core))
+     _extend_hud_catalog(vars(_core))
++    _extend_lighting_catalog(vars(_core))
+     _core._AXM_VISUAL_COMPOSITION=_COMPOSITION
+ elif _applied != _COMPOSITION:
+     raise RuntimeError("visual template composition changed inside a live process; restart with one exact catalog")
+diff --git a/tests/test_visual_templates.py b/tests/test_visual_templates.py
+index ff4b50b..3656488 100644
+--- a/tests/test_visual_templates.py
++++ b/tests/test_visual_templates.py
+@@ -8,18 +8,18 @@ from axm_stickers import Registry
+ from axm_uc import visual_templates as vt
+ 
+ SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
+-PRODUCTS=('game.racing.full','game.coop.action','game.rts.command','game.system.shell','game.shared.core','editor.creative.core','comic.narrative.core','axm.system.shell','visual.keyart.core','visual.cards.core','visual.cinematic.core','visual.broadcast.core','visual.diagram.core','visual.atlas.core','visual.novel.core','visual.showroom.core','visual.music.core','visual.presentation.core','visual.character.core','visual.configurator.core','visual.motion.core','visual.brand.core','visual.environment.core','visual.vfx.core','visual.mission.core','visual.hud.core')
++PRODUCTS=('game.racing.full','game.coop.action','game.rts.command','game.system.shell','game.shared.core','editor.creative.core','comic.narrative.core','axm.system.shell','visual.keyart.core','visual.cards.core','visual.cinematic.core','visual.broadcast.core','visual.diagram.core','visual.atlas.core','visual.novel.core','visual.showroom.core','visual.music.core','visual.presentation.core','visual.character.core','visual.configurator.core','visual.motion.core','visual.brand.core','visual.environment.core','visual.vfx.core','visual.mission.core','visual.hud.core','visual.look.core')
+ 
+ class VisualTemplateTests(unittest.TestCase):
+     def test_catalog_counts_and_products(self):
+         counts=vt.validate_catalog()
+-        self.assertEqual(counts,{'styles':30,'primitives':246,'screens':284,'products':28})
++        self.assertEqual(counts,{'styles':31,'primitives':256,'screens':294,'products':29})
+         self.assertEqual(vt.CATALOG_COMPOSITION['counts'],counts)
+         ids={p['id'] for p in vt.catalog()['products']}
+         self.assertTrue(set(PRODUCTS)|{'game.racing.performance','software.creator.studio'} <= ids)
+ 
+     def test_all_geometry_and_major_variants(self):
+-        prefixes=('game.','editor.creative.','comic.narrative.','axm.system.','visual.keyart.','visual.cards.','visual.cinematic.','visual.broadcast.','visual.diagram.','visual.atlas.','visual.novel.','visual.showroom.','visual.music.','visual.presentation.','visual.character.','visual.configurator.','visual.motion.','visual.brand.','visual.environment.','visual.vfx.','visual.mission.','visual.hud.')
++        prefixes=('game.','editor.creative.','comic.narrative.','axm.system.','visual.keyart.','visual.cards.','visual.cinematic.','visual.broadcast.','visual.diagram.','visual.atlas.','visual.novel.','visual.showroom.','visual.music.','visual.presentation.','visual.character.','visual.configurator.','visual.motion.','visual.brand.','visual.environment.','visual.vfx.','visual.mission.','visual.hud.','visual.look.')
+         for tid,definition in vt.SCREEN_TEMPLATES.items():
+             if tid.startswith(prefixes): self.assertEqual(set(definition['variants']),{'compact','standard','wide'},tid)
+             for width,height in SIZES:
+@@ -29,34 +29,32 @@ class VisualTemplateTests(unittest.TestCase):
+                     self.assertLessEqual(x+w,width+1e-6); self.assertLessEqual(y+h,height+1e-6)
+ 
+     def test_existing_product_depth_is_retained(self):
+-        expected={'game.racing.full':19,'game.system.shell':18,'game.shared.core':12,'editor.creative.core':12,'comic.narrative.core':10,'axm.system.shell':12,'visual.keyart.core':10,'visual.cards.core':11,'visual.cinematic.core':10,'visual.broadcast.core':10,'visual.diagram.core':10,'visual.atlas.core':10,'visual.novel.core':10,'visual.showroom.core':10,'visual.music.core':10,'visual.presentation.core':10,'visual.character.core':10,'visual.configurator.core':10,'visual.motion.core':10,'visual.brand.core':10,'visual.environment.core':10,'visual.vfx.core':10,'visual.mission.core':10}
++        expected={'game.racing.full':19,'game.system.shell':18,'game.shared.core':12,'editor.creative.core':12,'comic.narrative.core':10,'axm.system.shell':12,'visual.keyart.core':10,'visual.cards.core':11,'visual.cinematic.core':10,'visual.broadcast.core':10,'visual.diagram.core':10,'visual.atlas.core':10,'visual.novel.core':10,'visual.showroom.core':10,'visual.music.core':10,'visual.presentation.core':10,'visual.character.core':10,'visual.configurator.core':10,'visual.motion.core':10,'visual.brand.core':10,'visual.environment.core':10,'visual.vfx.core':10,'visual.mission.core':10,'visual.hud.core':10}
+         for pid,count in expected.items(): self.assertEqual(len(vt.get(pid)['screens']),count)
+ 
+-    def test_mission_product_preserves_objective_branch_and_runtime_truth(self):
+-        product=vt.get('visual.mission.core')
+-        required={'visual.mission.project-hub','visual.mission.objectives','visual.mission.conditions','visual.mission.branch-flow','visual.mission.world-bindings','visual.mission.rewards-outcomes','visual.mission.failure-retry','visual.mission.runtime-state','visual.mission.variants','visual.mission.review-export'}
+-        self.assertEqual(set(product['screens']),required)
+-        self.assertEqual(product['style'],'visual.mission.flow')
+-        quality=' '.join(product['quality']).lower()
+-        self.assertIn('branch is reachable',quality)
+-        self.assertIn('objective is complete',quality)
+-        self.assertIn('reward icons never prove',quality)
+-        self.assertIn('node_spacing_ratio',vt.get('visual.mission.branch-flow')['math_hooks'])
+-
+     def test_hud_product_preserves_binding_readability_and_platform_truth(self):
+         product=vt.get('visual.hud.core')
+         required={'visual.hud.project-hub','visual.hud.components','visual.hud.layout','visual.hud.data-bindings','visual.hud.readability','visual.hud.alerts-feedback','visual.hud.platform-input','visual.hud.theme-skin','visual.hud.compare-preview','visual.hud.review-export'}
+         self.assertEqual(set(product['screens']),required)
+         self.assertEqual(product['style'],'visual.hud.system')
+         quality=' '.join(product['quality']).lower()
+-        self.assertIn('separately editable',quality)
+-        self.assertIn('never proves gameplay/system state is true',quality)
+         self.assertIn('never creates a data binding',quality)
+         self.assertIn('icon/color alone never carries critical meaning',quality)
+-        self.assertIn('source/evidence visible',quality)
+-        self.assertIn('semantic feedback',quality)
+         self.assertIn('safe_margin_ratio',vt.get('visual.hud.layout')['math_hooks'])
+ 
++    def test_look_product_preserves_world_source_and_presentation_truth(self):
++        product=vt.get('visual.look.core')
++        required={'visual.look.project-hub','visual.look.exposure-tone','visual.look.color-grade','visual.look.fog-atmosphere','visual.look.bloom-glare','visual.look.layer-stack','visual.look.scene-bindings','visual.look.platform-performance','visual.look.compare-preview','visual.look.review-export'}
++        self.assertEqual(set(product['screens']),required)
++        self.assertEqual(product['style'],'visual.look.system')
++        quality=' '.join(product['quality']).lower()
++        self.assertIn('separately editable',quality)
++        self.assertIn('never silently becomes authoritative world lighting or gameplay state',quality)
++        self.assertIn('never replace source materials, lights, geometry or environment state',quality)
++        self.assertIn('source-bound bindings',quality)
++        self.assertIn('visibility/state legibility',quality)
++        self.assertIn('exposure_ev_range',vt.get('visual.look.exposure-tone')['math_hooks'])
++
+     def test_products_resolve_and_previews_parse(self):
+         for pid in PRODUCTS:
+             definition=vt.get(pid)
+@@ -72,29 +70,32 @@ class VisualTemplateTests(unittest.TestCase):
+         with tempfile.TemporaryDirectory() as td:
+             with Registry(Path(td)/'stickers.sqlite') as registry:
+                 pins=vt.install_builtins(registry)
+-                self.assertEqual(len(pins),312)
+-                hud=registry.search(adapter=vt.ADAPTER,tag='hud',limit=100)['entries']
+-                expected={f'visual.visual.hud.{name}' for name in ('project-hub','components','layout','data-bindings','readability','alerts-feedback','platform-input','theme-skin','compare-preview','review-export')}
+-                self.assertTrue(expected <= {entry['id'] for entry in hud})
+-                d=registry.get('visual.visual.hud.data-bindings',1)
++                self.assertEqual(len(pins),323)
++                looks=registry.search(adapter=vt.ADAPTER,tag='lighting',limit=100)['entries']
++                expected={f'visual.visual.look.{name}' for name in ('project-hub','exposure-tone','color-grade','fog-atmosphere','bloom-glare','layer-stack','scene-bindings','platform-performance','compare-preview','review-export')}
++                self.assertTrue(expected <= {entry['id'] for entry in looks})
++                d=registry.get('visual.visual.look.exposure-tone',1)
+                 self.assertEqual(d['recipe']['visual_template']['schema'],vt.SCHEMA)
+                 self.assertNotIn('"latest"',json.dumps(d,sort_keys=True))
+ 
+-    def test_hud_source_component_layout_binding_readability_alert_platform_theme_contracts(self):
+-        required={'hud-source','hud-component','hud-layout-anchor','hud-data-binding','hud-readability-rule','hud-safe-region','hud-alert-state','hud-platform-variant','hud-theme-variant','hud-export-target'}
++    def test_look_source_exposure_tone_grade_atmosphere_bloom_layer_binding_variant_contracts(self):
++        required={'look-source','exposure-state','tone-map-state','color-grade-state','fog-atmosphere-state','bloom-glare-state','postprocess-layer','scene-look-binding','look-platform-variant','look-export-target'}
+         self.assertTrue(required <= set(vt.PRIMITIVES))
++        self.assertTrue(vt.PRIMITIVES['look-source']['identity_source_version_context_required'])
++        self.assertTrue(vt.PRIMITIVES['exposure-state']['value_range_source_context_required'])
++        self.assertTrue(vt.PRIMITIVES['tone-map-state']['operator_parameters_output_source_required'])
++        self.assertTrue(vt.PRIMITIVES['color-grade-state']['transform_spaces_intensity_source_required'])
++        self.assertTrue(vt.PRIMITIVES['fog-atmosphere-state']['density_range_scattering_source_required'])
++        self.assertTrue(vt.PRIMITIVES['bloom-glare-state']['threshold_intensity_radius_source_required'])
++        self.assertTrue(vt.PRIMITIVES['postprocess-layer']['identity_parameters_blend_order_scope_required'])
++        self.assertTrue(vt.PRIMITIVES['scene-look-binding']['target_look_source_activation_required'])
++        self.assertTrue(vt.PRIMITIVES['look-platform-variant']['base_delta_platform_context_required'])
++        self.assertTrue(vt.PRIMITIVES['look-export-target']['requirements_must_be_visible'])
++
++    def test_hud_mission_vfx_environment_brand_motion_and_prior_boundaries_remain_present(self):
+         self.assertTrue(vt.PRIMITIVES['hud-source']['identity_source_version_context_required'])
+-        self.assertTrue(vt.PRIMITIVES['hud-component']['identity_role_source_required'])
+-        self.assertTrue(vt.PRIMITIVES['hud-layout-anchor']['component_region_constraints_required'])
+         self.assertTrue(vt.PRIMITIVES['hud-data-binding']['subject_field_source_freshness_required'])
+         self.assertTrue(vt.PRIMITIVES['hud-readability-rule']['target_context_threshold_source_required'])
+-        self.assertTrue(vt.PRIMITIVES['hud-safe-region']['viewport_platform_source_required'])
+-        self.assertTrue(vt.PRIMITIVES['hud-alert-state']['source_severity_channels_required'])
+-        self.assertTrue(vt.PRIMITIVES['hud-platform-variant']['base_delta_device_input_required'])
+-        self.assertTrue(vt.PRIMITIVES['hud-theme-variant']['base_token_component_delta_required'])
+-        self.assertTrue(vt.PRIMITIVES['hud-export-target']['requirements_must_be_visible'])
+-
+-    def test_mission_vfx_environment_brand_motion_and_prior_boundaries_remain_present(self):
+         self.assertTrue(vt.PRIMITIVES['mission-source']['identity_source_version_context_required'])
+         self.assertTrue(vt.PRIMITIVES['objective-state']['identity_type_status_source_required'])
+         self.assertTrue(vt.PRIMITIVES['vfx-source']['identity_source_version_purpose_required'])
+@@ -120,12 +121,12 @@ class VisualTemplateTests(unittest.TestCase):
+         self.assertTrue(vt.PRIMITIVES['truth-state']['source_must_be_visible'])
+ 
+     def test_copy_safety_variant_rejection_and_bad_geometry(self):
+-        a=vt.resolve('visual.hud.layout',1920,1080); b=vt.resolve('visual.hud.layout',1920,1080)
++        a=vt.resolve('visual.look.exposure-tone',1920,1080); b=vt.resolve('visual.look.exposure-tone',1920,1080)
+         self.assertEqual(a,b)
+-        copy=vt.get('visual.hud.layout'); copy['name']='changed'
+-        self.assertNotEqual(vt.get('visual.hud.layout')['name'],'changed')
+-        with self.assertRaises(ValueError): vt.resolve('visual.hud.layout',1920,1080,variant='unknown')
+-        bad=vt.get('visual.hud.layout'); bad['variants']['standard']['stage']=[.9,.9,.2,.2]
++        copy=vt.get('visual.look.exposure-tone'); copy['name']='changed'
++        self.assertNotEqual(vt.get('visual.look.exposure-tone')['name'],'changed')
++        with self.assertRaises(ValueError): vt.resolve('visual.look.exposure-tone',1920,1080,variant='unknown')
++        bad=vt.get('visual.look.exposure-tone'); bad['variants']['standard']['preview']=[.9,.9,.2,.2]
+         with self.assertRaises(ValueError): vt.validate_screen(bad)
+ 
+     def test_exact_sticker_slot_binding_is_retained(self):
+diff --git a/tools/visual_template_proof.py b/tools/visual_template_proof.py
+index 822e873..22c2cac 100644
+--- a/tools/visual_template_proof.py
++++ b/tools/visual_template_proof.py
+@@ -8,7 +8,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src'))
+ from axm_uc import visual_templates as vt
+ 
+ SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
+-PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell","visual.keyart.core","visual.cards.core","visual.cinematic.core","visual.broadcast.core","visual.diagram.core","visual.atlas.core","visual.novel.core","visual.showroom.core","visual.music.core","visual.presentation.core","visual.character.core","visual.configurator.core","visual.motion.core","visual.brand.core","visual.environment.core","visual.vfx.core","visual.mission.core","visual.hud.core")
++PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell","visual.keyart.core","visual.cards.core","visual.cinematic.core","visual.broadcast.core","visual.diagram.core","visual.atlas.core","visual.novel.core","visual.showroom.core","visual.music.core","visual.presentation.core","visual.character.core","visual.configurator.core","visual.motion.core","visual.brand.core","visual.environment.core","visual.vfx.core","visual.mission.core","visual.hud.core","visual.look.core")
+ 
+ def _write(project,target):
+     target.mkdir(); out=[]
+@@ -25,7 +25,7 @@ def main(argv):
+     out.mkdir(parents=True)
+     try:
+         counts=vt.validate_catalog()
+-        if counts!={'styles':30,'primitives':246,'screens':284,'products':28}: raise AssertionError(counts)
++        if counts!={'styles':31,'primitives':256,'screens':294,'products':29}: raise AssertionError(counts)
+         evidence=[]
+         for pid in PRODUCTS:
+             expected=vt.get(pid)
+@@ -63,27 +63,30 @@ def main(argv):
+             ('visual.vfx.core',1920,1080,'vfx','AXM VFX and Particle Foundation'),
+             ('visual.mission.core',1920,1080,'mission','AXM Quest and Mission Flow Foundation'),
+             ('visual.hud.core',1920,1080,'hud','AXM Source-Bound HUD Theme Foundation'),
++            ('visual.look.core',1920,1080,'lighting-look','AXM Lighting and Post-Process Look Foundation'),
+         )
+         outputs=[]
+         for pid,w,h,folder,title in galleries: outputs+=_write(vt.product_project(pid,w,h,title),out/folder)
+         outputs+=_write(vt.screen_project('product.mobile.home',1080,1920,'AXM Mobile Foundation'),out/'mobile-home')
+-        product=vt.get('visual.hud.core')
+-        required={'visual.hud.project-hub','visual.hud.components','visual.hud.layout','visual.hud.data-bindings','visual.hud.readability','visual.hud.alerts-feedback','visual.hud.platform-input','visual.hud.theme-skin','visual.hud.compare-preview','visual.hud.review-export'}
+-        if set(product['screens'])!=required: raise AssertionError('hud pack lost required surfaces')
++        product=vt.get('visual.look.core')
++        required={'visual.look.project-hub','visual.look.exposure-tone','visual.look.color-grade','visual.look.fog-atmosphere','visual.look.bloom-glare','visual.look.layer-stack','visual.look.scene-bindings','visual.look.platform-performance','visual.look.compare-preview','visual.look.review-export'}
++        if set(product['screens'])!=required: raise AssertionError('lighting look pack lost required surfaces')
+         checks={
+-            'hud_identity_source_context':vt.PRIMITIVES['hud-source']['identity_source_version_context_required'],
+-            'component_identity_role_source':vt.PRIMITIVES['hud-component']['identity_role_source_required'],
+-            'layout_component_region_constraints':vt.PRIMITIVES['hud-layout-anchor']['component_region_constraints_required'],
+-            'binding_subject_field_source_freshness':vt.PRIMITIVES['hud-data-binding']['subject_field_source_freshness_required'],
+-            'readability_target_context_threshold_source':vt.PRIMITIVES['hud-readability-rule']['target_context_threshold_source_required'],
+-            'safe_region_viewport_platform_source':vt.PRIMITIVES['hud-safe-region']['viewport_platform_source_required'],
+-            'alert_source_severity_channels':vt.PRIMITIVES['hud-alert-state']['source_severity_channels_required'],
+-            'platform_base_delta_device_input':vt.PRIMITIVES['hud-platform-variant']['base_delta_device_input_required'],
+-            'theme_base_token_component_delta':vt.PRIMITIVES['hud-theme-variant']['base_token_component_delta_required'],
+-            'export_requirements_visible':vt.PRIMITIVES['hud-export-target']['requirements_must_be_visible'],
++            'look_identity_source_context':vt.PRIMITIVES['look-source']['identity_source_version_context_required'],
++            'exposure_value_range_source_context':vt.PRIMITIVES['exposure-state']['value_range_source_context_required'],
++            'tone_operator_parameters_output_source':vt.PRIMITIVES['tone-map-state']['operator_parameters_output_source_required'],
++            'grade_transform_spaces_intensity_source':vt.PRIMITIVES['color-grade-state']['transform_spaces_intensity_source_required'],
++            'fog_density_range_scattering_source':vt.PRIMITIVES['fog-atmosphere-state']['density_range_scattering_source_required'],
++            'bloom_threshold_intensity_radius_source':vt.PRIMITIVES['bloom-glare-state']['threshold_intensity_radius_source_required'],
++            'layer_identity_parameters_blend_order_scope':vt.PRIMITIVES['postprocess-layer']['identity_parameters_blend_order_scope_required'],
++            'scene_binding_target_look_source_activation':vt.PRIMITIVES['scene-look-binding']['target_look_source_activation_required'],
++            'variant_base_delta_platform_context':vt.PRIMITIVES['look-platform-variant']['base_delta_platform_context_required'],
++            'export_requirements_visible':vt.PRIMITIVES['look-export-target']['requirements_must_be_visible'],
+         }
+-        if not all(checks.values()): raise AssertionError('hud source/readability contract failed')
++        if not all(checks.values()): raise AssertionError('lighting look source/binding contract failed')
+         retained={
++            'hud_source':vt.PRIMITIVES['hud-source']['identity_source_version_context_required'],
++            'hud_binding':vt.PRIMITIVES['hud-data-binding']['subject_field_source_freshness_required'],
+             'mission_source':vt.PRIMITIVES['mission-source']['identity_source_version_context_required'],
+             'objective_state':vt.PRIMITIVES['objective-state']['identity_type_status_source_required'],
+             'vfx_source':vt.PRIMITIVES['vfx-source']['identity_source_version_purpose_required'],
+@@ -100,7 +103,7 @@ def main(argv):
+             'atlas_coordinate':vt.PRIMITIVES['map-coordinate']['system_source_precision_required'],
+         }
+         if not all(retained.values()): raise AssertionError('prior visual source boundary failed')
+-        receipt={'schema':'axm.visual-template-proof/v24','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'hud_checks':checks,'retained_checks':retained,'truth':'Offline structural evidence only. Gameplay correctness, real-device readability, accessibility acceptance, input ergonomics, target-engine rendering and aesthetic quality were not observed.'}
++        receipt={'schema':'axm.visual-template-proof/v25','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'lighting_checks':checks,'retained_checks':retained,'truth':'Offline structural evidence only. Physical lighting correctness, calibrated color output, accessibility acceptance, GPU cost, target-engine parity and aesthetic quality were not observed.'}
+         (out/'receipt.json').write_text(json.dumps(receipt,indent=2,sort_keys=True),encoding='utf-8')
+         print(json.dumps(receipt,indent=2,sort_keys=True))
+     except BaseException:

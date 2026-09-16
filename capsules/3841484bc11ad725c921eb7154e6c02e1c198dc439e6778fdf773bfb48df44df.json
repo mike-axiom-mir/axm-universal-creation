@@ -1,0 +1,176 @@
+{
+  "capsule_id": "3841484bc11ad725c921eb7154e6c02e1c198dc439e6778fdf773bfb48df44df",
+  "evidence": {
+    "files": [
+      {
+        "additions": 37,
+        "binary": false,
+        "content_sha256": "7448082479c28879be2bd9039d7e843be04ea4c417e817a340d625a32385383d",
+        "deletions": 0,
+        "path": "VFX_TEMPLATE_PACK.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Source-Bound VFX / Particle Template Pack",
+          "Surfaces",
+          "Source-truth contract",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 41,
+        "binary": false,
+        "content_sha256": "24a5038ece937f7086187a288248032021210cd33ee98457c66fe3692100fa8a",
+        "deletions": 41,
+        "path": "VISUAL_TEMPLATE_FABRIC.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Current v20 candidate census",
+          "Source-bound VFX / particle foundation",
+          "Registry and identity",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 34,
+        "binary": false,
+        "content_sha256": "2bec18b470ea64d4fd92413152d4d549839746517b065fd5c148e872cf5b06ef",
+        "deletions": 33,
+        "path": "VISUAL_TEMPLATE_PRIORITY_MAP.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "AXM Visual Template Expansion Priority Map",
+          "VFX / particle reference-authoring \u2014 IMPLEMENTED IN THIS LANE",
+          "Next high-value visual/creation families",
+          "Cross-cutting rules",
+          "Immediate build order"
+        ]
+      },
+      {
+        "additions": 88,
+        "binary": false,
+        "content_sha256": "1ce60ac978eb6db8f71f45ab74b903caa39532b2ed188e9b2de2e807fe456ce4",
+        "deletions": 0,
+        "path": "src/axm_uc/visual_template_vfx.py",
+        "status": "A",
+        "symbols": [
+          "_merge",
+          "extend_vfx_catalog"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 3,
+        "binary": false,
+        "content_sha256": "760cad530e8e9a892c8d16dba79f6a5681b37c11c6311184ea9960a3909f8c6b",
+        "deletions": 1,
+        "path": "src/axm_uc/visual_templates.py",
+        "status": "M",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 37,
+        "binary": false,
+        "content_sha256": "04131df7c6b81293909f1acc0ef53ac228011c6339029cce815d31322381ff4f",
+        "deletions": 36,
+        "path": "tests/test_visual_templates.py",
+        "status": "M",
+        "symbols": [
+          "VisualTemplateTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 20,
+        "binary": false,
+        "content_sha256": "b8cd63c97c69aa5e89cc78dd22ec7a5f84a63dba13cf822cdb016f6da00a5cd1",
+        "deletions": 17,
+        "path": "tools/visual_template_proof.py",
+        "status": "M",
+        "symbols": [
+          "_write",
+          "main"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "3c83ae86431e852e12cdc3870aff0c752beeb2c0f58beb582a6d8cd6d97034f1"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "add",
+      "authoring",
+      "axm",
+      "bound",
+      "boundary",
+      "build",
+      "candidate",
+      "catalog",
+      "census",
+      "contract",
+      "creation",
+      "creation-machine",
+      "cross",
+      "current",
+      "cutting",
+      "expansion",
+      "extend",
+      "fabric",
+      "families",
+      "foundation",
+      "high",
+      "identity",
+      "immediate",
+      "implemented",
+      "lane",
+      "map",
+      "merge",
+      "next",
+      "order",
+      "pack",
+      "particle",
+      "priority",
+      "proof",
+      "reference",
+      "registry",
+      "rules",
+      "source",
+      "standalone",
+      "surfaces",
+      "template",
+      "templates",
+      "this",
+      "tools",
+      "truth",
+      "universal-creation",
+      "v20",
+      "value",
+      "vfx",
+      "visual",
+      "write"
+    ]
+  },
+  "source": {
+    "base": "6bba63ad0faf3b599d3841aca6733cf8c560f5fa",
+    "commit_subject": "Add source-bound VFX and particle templates",
+    "head": "4dbe2c485b94b5a1e0cd609eab9eb443a07d9615",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

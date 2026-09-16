@@ -1,0 +1,589 @@
+diff --git a/ENVIRONMENT_TEMPLATE_PACK.md b/ENVIRONMENT_TEMPLATE_PACK.md
+new file mode 100644
+index 0000000..7837805
+--- /dev/null
++++ b/ENVIRONMENT_TEMPLATE_PACK.md
+@@ -0,0 +1,37 @@
++# Source-Bound Environment / Level Reference Template Pack
++
++`visual.environment.core` is the reusable environment/reference foundation for game levels, locations, biomes and production boards.
++
++A reference board helps humans and machines reason about a world; it does not become authoritative level geometry merely because it looks convincing.
++
++## Surfaces
++
++- project / location hub
++- environment identity board
++- zone / layout editor
++- scale / measurement editor
++- modular kit / prop editor
++- material / surface editor
++- lighting / weather / time reference editor
++- traversal / gameplay annotation editor
++- environment / biome variant editor
++- review / export
++
++## Source-truth contract
++
++- `environment-source` — exact environment/location identity, source, version, digest and scope;
++- `environment-zone` — exact zone geometry/source/status;
++- `environment-measurement` — value, unit, source and precision/assumption state;
++- `modular-environment-piece` — exact kit identity, source, connection semantics and transform;
++- `environment-prop` — exact prop identity, source, placement context and gameplay/visual status;
++- `environment-material` — exact target/material/source/context;
++- `environment-lighting-state` — source, time, weather and exposure/state;
++- `traversal-reference` — exact target/type/source/status;
++- `environment-variant` — exact base, deltas, context and source;
++- `environment-export-target` — exact source-coverage, measurement, material, prop, lighting and annotation requirements.
++
++## Truth boundary
++
++Perspective imagery alone does not establish physical scale. Visual proximity does not establish gameplay linkage. A traversal arrow, hazard region or spawn-like mark is only authoritative when bound to real project state. Lighting/weather references are state references, not hidden changes to the base environment. Derived boards and exports never replace richer world/project state.
++
++This pack proves deterministic structural/editability contracts only. It does not prove final level geometry, collision, navigation, gameplay quality, physical scale, lighting correctness, performance or aesthetic acceptance.
+\ No newline at end of file
+diff --git a/VISUAL_TEMPLATE_FABRIC.md b/VISUAL_TEMPLATE_FABRIC.md
+index 2b8e668..3c78fd8 100644
+--- a/VISUAL_TEMPLATE_FABRIC.md
++++ b/VISUAL_TEMPLATE_FABRIC.md
+@@ -2,47 +2,47 @@
+ 
+ Universal Creation contains one deterministic library of **known visual archetypes** between low-level format scaffolds and finished products. Templates are editable structural starting points, not finished art and not automatic canon.
+ 
+-The public module remains `axm_uc.visual_templates`. Explicit extension packs cover games/product plumbing, creative editors, comics, AXM system surfaces, key art, cards/decks, cinematic/broadcast overlays, diagrams, atlas/map editing, branching narrative, 3D showroom, music, presentation/explainers, character reference, equipment configuration, source-bound UI motion and brand/identity systems. Sticker Fabric remains the immutable/versioned registry bridge. Mathematical work can enrich declared ratios/ranges through `math_hooks` without replacing template identity.
++The public module remains `axm_uc.visual_templates`. Explicit extension packs cover games/product plumbing, creative editors, comics, AXM system surfaces, key art, cards/decks, cinematic/broadcast overlays, diagrams, atlas/map editing, branching narrative, 3D showroom, music, presentation/explainers, character reference, equipment configuration, source-bound UI motion, brand/identity systems and environment/level references. Sticker Fabric remains the immutable/versioned registry bridge. Mathematical work can enrich declared ratios/ranges through `math_hooks` without replacing template identity.
+ 
+-## Current v18 candidate census
++## Current v19 candidate census
+ 
+-- **206 reusable visual/state primitives**
+-- **26 coherent style systems**
+-- **244 responsive screen archetypes**
+-- **24 whole-product archetypes**
+-- **268 exact screen/product definitions** when explicitly installed into Sticker Registry
++- **216 reusable visual/state primitives**
++- **27 coherent style systems**
++- **254 responsive screen archetypes**
++- **25 whole-product archetypes**
++- **279 exact screen/product definitions** when explicitly installed into Sticker Registry
+ 
+ Every major family provides compact, standard and wide normalized layouts. Unknown requested variants fail rather than silently falling back.
+ 
+-## Source-bound brand / identity foundation
++## Source-bound environment / level-reference foundation
+ 
+-`visual.brand.core` provides ten identity-system surfaces:
++`visual.environment.core` provides ten production-reference surfaces:
+ 
+-- project / identity hub;
+-- marks and lockups editor;
+-- typography editor;
+-- icon-family editor;
+-- identity-token editor;
+-- clearspace / usage-rule editor;
+-- identity-variant editor;
+-- brand application editor;
+-- review / rule audit;
+-- export matrix.
++- project / location hub;
++- environment identity board;
++- zone / layout editor;
++- scale / measurement editor;
++- modular kit / prop editor;
++- material / surface editor;
++- lighting / weather / time reference editor;
++- traversal / gameplay annotation editor;
++- environment / biome variant editor;
++- review / export.
+ 
+-Its `visual.brand.identity` style is replaceable. Identity source remains explicit:
++Its `visual.environment.reference` style is replaceable. Environment truth remains explicit:
+ 
+-- `brand-asset-source` preserves exact mark/logo/wordmark source, version, digest and provenance state;
+-- `brand-lockup` preserves exact asset references, relative layout and approved-use status;
+-- `brand-type-role` preserves exact font source/style plus semantic role;
+-- `brand-icon-family` preserves family identity/source/version and exact member references;
+-- `brand-token` preserves exact value, context/unit, source and usage role;
+-- `brand-clearspace-rule` preserves exact target and measurement basis;
+-- `brand-usage-rule` preserves exact subject, context, status and source;
+-- `brand-application` remains a derived application bound to exact identity inputs;
+-- `brand-variant` preserves base identity, deltas, intended context and availability;
+-- `brand-export-target` keeps exact asset/token/rule/format/provenance requirements visible.
++- `environment-source` preserves exact location identity, source, version, digest and scope;
++- `environment-zone` preserves exact geometry/source/status;
++- `environment-measurement` preserves value, unit, source and precision/assumption state;
++- `modular-environment-piece` preserves exact kit source, connection semantics and transform;
++- `environment-prop` preserves prop identity/source, placement context and gameplay/visual status;
++- `environment-material` preserves exact target/material/source/context;
++- `environment-lighting-state` preserves source, time, weather and exposure/state;
++- `traversal-reference` binds exact targets to traversal/gameplay type, source and status;
++- `environment-variant` preserves exact base, deltas, context and source;
++- `environment-export-target` keeps source-coverage, scale, material, prop, lighting and annotation requirements visible.
+ 
+-A polished mockup never becomes canonical identity merely because it looks convincing. Visual similarity does not merge identity assets. Clearspace rules require explicit measurement basis, and exceptions/restricted variants remain visible.
++A beautiful reference board never becomes authoritative level geometry merely because it looks coherent. Physical scale is not inferred solely from perspective imagery. Prop proximity does not establish gameplay linkage. Lighting/weather/biome variants remain explicit state references rather than hidden rewrites of the base environment.
+ 
+ ## Registry and identity
+ 
+@@ -52,8 +52,8 @@ Every built-in screen/product can be wrapped as an immutable Sticker definition.
+ 
+ ```sh
+ axm-visual-templates catalog
+-axm-visual-templates show visual.brand.core
+-axm-visual-templates render visual.brand.core creations/brand --width 1920 --height 1080
++axm-visual-templates show visual.environment.core
++axm-visual-templates render visual.environment.core creations/environment --width 1920 --height 1080
+ ```
+ 
+ Preview/export remains derived inspection output, never authoritative source.
+@@ -65,19 +65,19 @@ python -m unittest discover -s tests -p 'test_visual_templates.py' -v
+ python tools/visual_template_proof.py /new/output/path
+ ```
+ 
+-The v18 gate requires:
++The v19 gate requires:
+ 
+-- exact census: 26 styles / 206 primitives / 244 screens / 24 products;
+-- all 244 screens stay within six representative viewport shapes;
++- exact census: 27 styles / 216 primitives / 254 screens / 25 products;
++- all 254 screens stay within six representative viewport shapes;
+ - exact product screen order and flows resolve across those viewports;
+-- parseable galleries for all prior proof products plus `visual.brand.core`;
+-- all 268 screen/product definitions install through Sticker Registry;
+-- exact identity asset/source/provenance, lockup layout/status, font role/source, icon membership, token value/context, clearspace measurement basis, usage rule status, application binding and variant-base contracts remain present;
+-- prior motion/configurator/character/presentation/music/showroom/visual-novel/atlas/diagram/broadcast/cinematic/card/key-art/comic/game/AXM boundaries remain intact;
++- parseable galleries for all prior proof products plus `visual.environment.core`;
++- all 279 screen/product definitions install through Sticker Registry;
++- exact environment identity/source/scope, zone geometry, measurements, modular kit, prop/material context, lighting state, traversal targets and environment variants remain present;
++- prior brand/motion/configurator/character/presentation/music/showroom/visual-novel/atlas/diagram/broadcast/cinematic/card/key-art/comic/game/AXM boundaries remain intact;
+ - copy safety, strict variant rejection, invalid-geometry rejection and exact Sticker-slot binding remain intact.
+ 
+ ## Truth boundary
+ 
+-Current evidence proves deterministic structural/editability contracts only. It does **not** prove trademark clearance, font/icon licensing, legal rights, market effectiveness, visual quality or accessibility acceptance.
++Current evidence proves deterministic structural/editability contracts only. It does **not** prove final level geometry, physical scale, collision/navigation, gameplay quality, lighting correctness, performance or aesthetic acceptance.
+ 
+-Consuming products must supply real identity/provenance state. Unknown, restricted, deprecated and exception states remain distinguishable. Richer editable source remains authoritative over applications/previews/exports.
++Consuming projects must supply real environment state. Unknown, estimated, decorative, optional, unavailable and unresolved information stays distinguishable. Richer editable source remains authoritative over reference boards/previews/exports.
+diff --git a/VISUAL_TEMPLATE_PRIORITY_MAP.md b/VISUAL_TEMPLATE_PRIORITY_MAP.md
+index 622ffbc..fe5f4df 100644
+--- a/VISUAL_TEMPLATE_PRIORITY_MAP.md
++++ b/VISUAL_TEMPLATE_PRIORITY_MAP.md
+@@ -1,6 +1,6 @@
+ # AXM Visual Template Expansion Priority Map
+ 
+-Status: v18 growth lane after verified v1–v17 merges.
++Status: v19 growth lane after verified v1–v18 merges.
+ 
+ The visual-template fabric grows where Universal Creation is likely to reuse the knowledge soon. This is a build priority, not canon: templates remain editable foundations and may be replaced when evidence supports a better structure.
+ 
+@@ -13,48 +13,49 @@ The visual-template fabric grows where Universal Creation is likely to reuse the
+ - branching visual novel, 3D showroom, music and presentation/explainer systems;
+ - character / creature reference sheets;
+ - vehicle / weapon / equipment configurator;
+-- source-bound UI motion / transition systems.
++- source-bound UI motion / transition systems;
++- brand / identity system editor.
+ 
+-## Brand / identity system editor — IMPLEMENTED IN THIS LANE
++## Environment / level reference boards — IMPLEMENTED IN THIS LANE
+ 
+-Product: `visual.brand.core`
++Product: `visual.environment.core`
+ 
+ Implemented screens:
+ 
+-- `visual.brand.project-hub`
+-- `visual.brand.marks-lockups`
+-- `visual.brand.typography`
+-- `visual.brand.icons`
+-- `visual.brand.tokens`
+-- `visual.brand.spacing-usage`
+-- `visual.brand.variants`
+-- `visual.brand.applications`
+-- `visual.brand.review-audit`
+-- `visual.brand.export`
++- `visual.environment.project-hub`
++- `visual.environment.identity-board`
++- `visual.environment.zones-layout`
++- `visual.environment.scale-measurements`
++- `visual.environment.modular-kit`
++- `visual.environment.materials`
++- `visual.environment.lighting-weather`
++- `visual.environment.traversal-annotations`
++- `visual.environment.variants`
++- `visual.environment.review-export`
+ 
+ New primitives:
+ 
+-- `brand-asset-source`
+-- `brand-lockup`
+-- `brand-type-role`
+-- `brand-icon-family`
+-- `brand-token`
+-- `brand-clearspace-rule`
+-- `brand-usage-rule`
+-- `brand-application`
+-- `brand-variant`
+-- `brand-export-target`
++- `environment-source`
++- `environment-zone`
++- `environment-measurement`
++- `modular-environment-piece`
++- `environment-prop`
++- `environment-material`
++- `environment-lighting-state`
++- `traversal-reference`
++- `environment-variant`
++- `environment-export-target`
+ 
+-Style: `visual.brand.identity`.
++Style: `visual.environment.reference`.
+ 
+-The central rule is identity truth: exact marks, typography, icon families, tokens, spacing rules, usage status, variants and provenance remain source state. A polished mockup stays a derived application and never silently becomes canonical identity.
++The central rule is environment truth: reference boards guide production but do not become authoritative level geometry. Scale requires explicit measurements/source state, prop proximity is not gameplay linkage, and traversal/lighting/biome references remain exact source-bound annotations or variants.
+ 
+ ## Next high-value visual/creation families
+ 
+-1. **Environment / level reference boards** — modular location identity, scale, materials, props, lighting references, traversal annotations and source provenance for game-world production.
+-2. **VFX / particle reference and authoring surfaces** — emitter/state identity, timing curves, spawn regions, layering, collision/interaction hooks and reduced-effect variants.
+-3. **Quest / mission flow reference systems** — objective identity, prerequisites, branches, state transitions, rewards, failure/retry and world/map references for game production.
+-4. **HUD theme / skin systems** — source-bound component families, layout constraints, readability state, platform/input variants and per-game identity application.
++1. **VFX / particle reference and authoring surfaces** — emitter/state identity, timing curves, spawn regions, layering, collision/interaction hooks and reduced-effect variants.
++2. **Quest / mission flow reference systems** — objective identity, prerequisites, branches, state transitions, rewards, failure/retry and world/map references for game production.
++3. **HUD theme / skin systems** — source-bound component families, layout constraints, readability state, platform/input variants and per-game identity application.
++4. **Lighting / post-process look systems** — source-bound exposure, tone, fog, grading, bloom and accessibility/performance variants without baking presentation into world state.
+ 
+ ## Cross-cutting rules
+ 
+@@ -70,7 +71,7 @@ Every family preserves the existing visual-template contract:
+ 
+ ## Immediate build order
+ 
+-1. exact-head verify `visual.brand.core`;
+-2. merge v18 only when template + repository checks pass;
+-3. begin environment / level reference boards from fresh main;
++1. exact-head verify `visual.environment.core`;
++2. merge v19 only when template + repository checks pass;
++3. begin VFX / particle reference-authoring from fresh main;
+ 4. keep prioritizing reusable source-first editors over flat one-off outputs.
+diff --git a/src/axm_uc/visual_template_environment.py b/src/axm_uc/visual_template_environment.py
+new file mode 100644
+index 0000000..6bbf9ee
+--- /dev/null
++++ b/src/axm_uc/visual_template_environment.py
+@@ -0,0 +1,88 @@
++"""Source-bound environment and level-reference foundations."""
++from __future__ import annotations
++from copy import deepcopy
++from typing import Any
++
++
++def _merge(target: dict[str, Any], additions: dict[str, Any], label: str) -> None:
++    overlap=sorted(set(target)&set(additions))
++    if overlap: raise RuntimeError(f"environment {label} collision: {', '.join(overlap)}")
++    target.update(deepcopy(additions))
++
++
++def extend_environment_catalog(namespace: dict[str, Any]) -> None:
++    styles=namespace['STYLE_SYSTEMS']; primitives=namespace['PRIMITIVES']
++    screens=namespace['SCREEN_TEMPLATES']; products=namespace['PRODUCT_ARCHETYPES']
++    screen=namespace['_screen']; origin=namespace['_origin']
++
++    _merge(styles,{'visual.environment.reference':{
++        'intent':'source-bound environment and level reference boards with exact location identity, scale, modular kit, props, materials, lighting and traversal annotations',
++        'tokens':{'canvas':'#0b1012','surface':'#172024','surface_raised':'#222d31','text':'#eef2ed','muted':'#a5b0a8','accent':'#88c6ad','warning':'#dfb96d','danger':'#da7775','line':'#43534f'},
++        'shape':{'panel_radius_ratio':0.010,'cut_ratio':0.002,'line_ratio':0.0012},
++        'type':{'display_weight':730,'body_weight':500,'metric_scale':1.48,'tracking':0.011},
++        'depth':{'layers':7,'shadow':'subtle','glass':'none'},
++        'motion':{'fast_ms':80,'standard_ms':170,'slow_ms':320,'principle':'environment source and scale truth before atmosphere'},
++    }},'style')
++
++    _merge(primitives,{
++        'environment-source':{'role':'exact location/environment identity with source/version/digest and scope','states':['known','active','archived','unknown'],'identity_source_version_scope_required':True},
++        'environment-zone':{'role':'named level/location zone with exact geometry/source/status','states':['known','selected','blocked','unknown'],'geometry_source_status_required':True},
++        'environment-measurement':{'role':'scale/dimension measurement with value, unit, source and precision/assumption state','states':['exact','measured','estimated','unknown'],'value_unit_source_precision_required':True},
++        'modular-environment-piece':{'role':'kit/module piece with exact source identity, socket/connection semantics and transform','states':['available','placed','disabled','unknown'],'source_socket_transform_required':True},
++        'environment-prop':{'role':'prop reference with exact identity, source, placement context and gameplay/visual status','states':['required','optional','decorative','unknown'],'identity_source_context_status_required':True},
++        'environment-material':{'role':'surface/material binding with exact target, material source and usage context','states':['active','alternate','damaged','unknown'],'target_material_source_context_required':True},
++        'environment-lighting-state':{'role':'lighting/weather/time reference state with source, time, weather and exposure/status','states':['day','night','weather','interior','unknown'],'source_time_weather_exposure_required':True},
++        'traversal-reference':{'role':'traversal/gameplay annotation bound to exact target with type, source and status','states':['walkable','blocked','climbable','hazard','unknown'],'target_type_source_status_required':True},
++        'environment-variant':{'role':'environment/biome/state variant with exact base, deltas, context and source','states':['active','alternate','event','archived'],'base_delta_context_source_required':True},
++        'environment-export-target':{'role':'reference-board export target with exact source coverage, measurements, materials, props, lighting and annotation requirements','states':['ready','warning','blocked','exported'],'requirements_must_be_visible':True},
++    },'primitive')
++
++    q=['location identity, geometry, scale, kit pieces, props, materials, lighting and traversal annotations remain separately editable','a beautiful reference board never silently becomes authoritative level geometry','scale is never inferred solely from perspective appearance when no measurement/source exists','prop proximity does not imply gameplay linkage and traversal annotations require exact source-bound targets','lighting, weather and biome variants remain source/state references rather than hidden rewrites of the base environment']
++    def v(c,s,w): return {'compact':c,'standard':s,'wide':w}
++    additions={
++      'visual.environment.project-hub':screen('visual.environment.project-hub','Environment reference project hub','creative.environment','visual.environment.reference','browse locations, variants, source coverage, scale evidence, kit/prop coverage and exports',v(
++        {'header':(.03,.03,.94,.08),'locations':(.03,.14,.94,.30),'coverage':(.03,.47,.45,.38),'variants':(.51,.47,.46,.27),'actions':(.51,.77,.46,.08)},
++        {'header':(.02,.03,.96,.075),'locations':(.02,.14,.22,.82),'coverage':(.27,.14,.46,.82),'variants':(.76,.14,.22,.55),'actions':(.76,.72,.22,.14)},
++        {'header':(.015,.03,.97,.07),'locations':(.015,.13,.20,.84),'coverage':(.24,.13,.50,.84),'variants':(.77,.13,.215,.57),'actions':(.77,.73,.215,.14)}),tags=['visual','environment','level','project'],quality=q),
++      'visual.environment.identity-board':screen('visual.environment.identity-board','Environment identity board','creative.environment','visual.environment.reference','stage exact location identity, source references, scope, mood references and variant context without collapsing them into one flattened image',v(
++        {'header':(.03,.03,.94,.08),'hero':(.03,.14,.94,.42),'sources':(.03,.59,.45,.28),'identity':(.51,.59,.46,.28),'actions':(.03,.90,.94,.07)},
++        {'header':(.02,.03,.96,.075),'sources':(.02,.14,.22,.72),'hero':(.27,.14,.48,.72),'identity':(.78,.14,.20,.54),'actions':(.78,.71,.20,.15)},
++        {'header':(.015,.03,.97,.07),'sources':(.015,.13,.20,.74),'hero':(.24,.13,.51,.74),'identity':(.775,.13,.21,.55),'actions':(.775,.71,.21,.16)}),tags=['visual','environment','identity','reference'],math_hooks={'hero_coverage_ratio':[0.44,0.72],'reference_gap_ratio':[0.01,0.06]},quality=q),
++      'visual.environment.zones-layout':screen('visual.environment.zones-layout','Environment zone and layout editor','creative.environment','visual.environment.reference','edit exact zones, geometry/source status and adjacency references without treating diagram layout as final level geometry',v(
++        {'header':(.03,.03,.94,.08),'layout':(.03,.14,.94,.38),'zones':(.03,.55,.55,.32),'details':(.61,.55,.36,.24),'actions':(.61,.82,.36,.05)},
++        {'header':(.02,.03,.96,.075),'zones':(.02,.14,.25,.72),'layout':(.30,.14,.45,.72),'details':(.78,.14,.20,.54),'actions':(.78,.71,.20,.15)},
++        {'header':(.015,.03,.97,.07),'zones':(.015,.13,.23,.74),'layout':(.265,.13,.49,.74),'details':(.78,.13,.205,.55),'actions':(.78,.71,.205,.16)}),tags=['visual','environment','zone','layout'],quality=q),
++      'visual.environment.scale-measurements':screen('visual.environment.scale-measurements','Scale and measurement editor','creative.environment','visual.environment.reference','edit exact dimensions, scale anchors, units, source and precision/assumption state rather than estimating scale from perspective alone',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.36),'measurements':(.03,.53,.55,.34),'source':(.61,.53,.36,.25),'actions':(.61,.81,.36,.06)},
++        {'header':(.02,.03,.96,.075),'measurements':(.02,.14,.28,.72),'preview':(.33,.14,.44,.72),'source':(.80,.14,.18,.54),'actions':(.80,.71,.18,.15)},
++        {'header':(.015,.03,.97,.07),'measurements':(.015,.13,.26,.74),'preview':(.305,.13,.47,.74),'source':(.795,.13,.19,.55),'actions':(.795,.71,.19,.16)}),tags=['visual','environment','scale','measurement'],quality=q),
++      'visual.environment.modular-kit':screen('visual.environment.modular-kit','Modular kit and prop editor','creative.environment','visual.environment.reference','catalog exact modular pieces, connection semantics, props, placement contexts and source identity for environment production',v(
++        {'header':(.03,.03,.94,.08),'grid':(.03,.14,.94,.40),'kit':(.03,.57,.45,.30),'details':(.51,.57,.46,.22),'actions':(.51,.82,.46,.05)},
++        {'header':(.02,.03,.96,.075),'kit':(.02,.14,.22,.72),'grid':(.27,.14,.48,.72),'details':(.78,.14,.20,.54),'actions':(.78,.71,.20,.15)},
++        {'header':(.015,.03,.97,.07),'kit':(.015,.13,.20,.74),'grid':(.24,.13,.51,.74),'details':(.775,.13,.21,.55),'actions':(.775,.71,.21,.16)}),tags=['visual','environment','modular','prop'],quality=q),
++      'visual.environment.materials':screen('visual.environment.materials','Environment material and surface editor','creative.environment','visual.environment.reference','bind exact surfaces/targets to material references and context/state while retaining source provenance',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.36),'surfaces':(.03,.53,.45,.34),'materials':(.51,.53,.46,.25),'actions':(.51,.81,.46,.06)},
++        {'header':(.02,.03,.96,.075),'surfaces':(.02,.14,.22,.72),'preview':(.27,.14,.48,.72),'materials':(.78,.14,.20,.54),'actions':(.78,.71,.20,.15)},
++        {'header':(.015,.03,.97,.07),'surfaces':(.015,.13,.20,.74),'preview':(.24,.13,.51,.74),'materials':(.775,.13,.21,.55),'actions':(.775,.71,.21,.16)}),tags=['visual','environment','material','surface'],quality=q),
++      'visual.environment.lighting-weather':screen('visual.environment.lighting-weather','Lighting weather and time reference editor','creative.environment','visual.environment.reference','author exact lighting/weather/time states with source and exposure/context rather than baking atmosphere into location identity',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.40),'states':(.03,.57,.55,.30),'details':(.61,.57,.36,.22),'actions':(.61,.82,.36,.05)},
++        {'header':(.02,.03,.96,.075),'states':(.02,.14,.22,.72),'preview':(.27,.14,.48,.72),'details':(.78,.14,.20,.54),'actions':(.78,.71,.20,.15)},
++        {'header':(.015,.03,.97,.07),'states':(.015,.13,.20,.74),'preview':(.24,.13,.51,.74),'details':(.775,.13,.21,.55),'actions':(.775,.71,.21,.16)}),tags=['visual','environment','lighting','weather'],quality=q),
++      'visual.environment.traversal-annotations':screen('visual.environment.traversal-annotations','Traversal and gameplay annotation editor','creative.environment','visual.environment.reference','bind traversal, hazard, route and gameplay annotations to exact targets with explicit source/status rather than visual implication',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.36),'annotations':(.03,.53,.55,.34),'details':(.61,.53,.36,.25),'actions':(.61,.81,.36,.06)},
++        {'header':(.02,.03,.96,.075),'annotations':(.02,.14,.28,.72),'preview':(.33,.14,.44,.72),'details':(.80,.14,.18,.54),'actions':(.80,.71,.18,.15)},
++        {'header':(.015,.03,.97,.07),'annotations':(.015,.13,.26,.74),'preview':(.305,.13,.47,.74),'details':(.795,.13,.19,.55),'actions':(.795,.71,.19,.16)}),tags=['visual','environment','traversal','gameplay'],quality=q),
++      'visual.environment.variants':screen('visual.environment.variants','Environment and biome variant editor','creative.environment','visual.environment.reference','edit exact base/delta/source context for biome, damage, season, event or state variants without rewriting the base location',v(
++        {'header':(.03,.03,.94,.08),'grid':(.03,.14,.94,.40),'variants':(.03,.57,.55,.30),'details':(.61,.57,.36,.22),'actions':(.61,.82,.36,.05)},
++        {'header':(.02,.03,.96,.075),'variants':(.02,.14,.22,.72),'grid':(.27,.14,.48,.72),'details':(.78,.14,.20,.54),'actions':(.78,.71,.20,.15)},
++        {'header':(.015,.03,.97,.07),'variants':(.015,.13,.20,.74),'grid':(.24,.13,.51,.74),'details':(.775,.13,.21,.55),'actions':(.775,.71,.21,.16)}),tags=['visual','environment','variant','biome'],quality=q),
++      'visual.environment.review-export':screen('visual.environment.review-export','Environment reference review and export','creative.environment','visual.environment.reference','review missing scale/source evidence, unresolved geometry, material/prop coverage, lighting state and traversal annotations before derived export',v(
++        {'header':(.03,.03,.94,.08),'preview':(.03,.14,.94,.30),'checks':(.03,.47,.58,.39),'targets':(.64,.47,.33,.27),'actions':(.64,.77,.33,.09)},
++        {'header':(.02,.03,.96,.075),'preview':(.02,.14,.38,.72),'checks':(.43,.14,.34,.72),'targets':(.79,.14,.19,.48),'actions':(.79,.65,.19,.21)},
++        {'header':(.015,.03,.97,.07),'preview':(.015,.13,.36,.74),'checks':(.40,.13,.37,.74),'targets':(.79,.13,.195,.49),'actions':(.79,.65,.195,.22)}),tags=['visual','environment','review','export'],quality=q),
++    }
++    _merge(screens,additions,'screen')
++    ids=list(additions)
++    product={'schema':'axm.visual-product/v1','id':'visual.environment.core','version':1,'name':'Source-bound environment and level reference core','kind':'product','domain':'creative.environment','tags':['visual','environment','level','reference','product'],'origin':origin(),'style':'visual.environment.reference','intent':'source-first environment/level reference authoring with exact location identity, zones, scale, kit/props, materials, lighting/weather, traversal and variants','screens':ids,'flow':[
++      ['visual.environment.project-hub','visual.environment.identity-board','open-location'],['visual.environment.identity-board','visual.environment.zones-layout','edit-zones'],['visual.environment.identity-board','visual.environment.scale-measurements','edit-scale'],['visual.environment.identity-board','visual.environment.modular-kit','edit-kit'],['visual.environment.identity-board','visual.environment.materials','edit-materials'],['visual.environment.identity-board','visual.environment.lighting-weather','edit-lighting'],['visual.environment.identity-board','visual.environment.traversal-annotations','edit-traversal'],['visual.environment.project-hub','visual.environment.variants','edit-variants'],['visual.environment.project-hub','visual.environment.review-export','review-export']], 'quality':q}
++    _merge(products,{'visual.environment.core':product},'product')
+diff --git a/src/axm_uc/visual_templates.py b/src/axm_uc/visual_templates.py
+index 9a41b9a..3ea8082 100644
+--- a/src/axm_uc/visual_templates.py
++++ b/src/axm_uc/visual_templates.py
+@@ -27,8 +27,9 @@ from .visual_template_character_reference import extend_character_reference_cata
+ from .visual_template_configurator import extend_configurator_catalog as _extend_configurator_catalog
+ from .visual_template_motion import extend_motion_catalog as _extend_motion_catalog
+ from .visual_template_brand import extend_brand_catalog as _extend_brand_catalog
++from .visual_template_environment import extend_environment_catalog as _extend_environment_catalog
+ 
+-_COMPOSITION=("visual_template_growth","visual_template_game_systems","visual_template_creative_narrative","visual_template_axm_system","visual_template_game_shared","visual_template_keyart","visual_template_cards","visual_template_cinematic","visual_template_video_overlay","visual_template_diagram","visual_template_atlas","visual_template_novel","visual_template_showroom","visual_template_music","visual_template_presentation","visual_template_character_reference","visual_template_configurator","visual_template_motion","visual_template_brand")
++_COMPOSITION=("visual_template_growth","visual_template_game_systems","visual_template_creative_narrative","visual_template_axm_system","visual_template_game_shared","visual_template_keyart","visual_template_cards","visual_template_cinematic","visual_template_video_overlay","visual_template_diagram","visual_template_atlas","visual_template_novel","visual_template_showroom","visual_template_music","visual_template_presentation","visual_template_character_reference","visual_template_configurator","visual_template_motion","visual_template_brand","visual_template_environment")
+ _applied=getattr(_core,"_AXM_VISUAL_COMPOSITION",None)
+ if _applied is None:
+     _extend_catalog(vars(_core))
+@@ -50,6 +51,7 @@ if _applied is None:
+     _extend_configurator_catalog(vars(_core))
+     _extend_motion_catalog(vars(_core))
+     _extend_brand_catalog(vars(_core))
++    _extend_environment_catalog(vars(_core))
+     _core._AXM_VISUAL_COMPOSITION=_COMPOSITION
+ elif _applied != _COMPOSITION:
+     raise RuntimeError("visual template composition changed inside a live process; restart with one exact catalog")
+diff --git a/tests/test_visual_templates.py b/tests/test_visual_templates.py
+index b753242..3c8a63c 100644
+--- a/tests/test_visual_templates.py
++++ b/tests/test_visual_templates.py
+@@ -8,18 +8,18 @@ from axm_stickers import Registry
+ from axm_uc import visual_templates as vt
+ 
+ SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
+-PRODUCTS=('game.racing.full','game.coop.action','game.rts.command','game.system.shell','game.shared.core','editor.creative.core','comic.narrative.core','axm.system.shell','visual.keyart.core','visual.cards.core','visual.cinematic.core','visual.broadcast.core','visual.diagram.core','visual.atlas.core','visual.novel.core','visual.showroom.core','visual.music.core','visual.presentation.core','visual.character.core','visual.configurator.core','visual.motion.core','visual.brand.core')
++PRODUCTS=('game.racing.full','game.coop.action','game.rts.command','game.system.shell','game.shared.core','editor.creative.core','comic.narrative.core','axm.system.shell','visual.keyart.core','visual.cards.core','visual.cinematic.core','visual.broadcast.core','visual.diagram.core','visual.atlas.core','visual.novel.core','visual.showroom.core','visual.music.core','visual.presentation.core','visual.character.core','visual.configurator.core','visual.motion.core','visual.brand.core','visual.environment.core')
+ 
+ class VisualTemplateTests(unittest.TestCase):
+     def test_catalog_counts_and_products(self):
+         counts=vt.validate_catalog()
+-        self.assertEqual(counts,{'styles':26,'primitives':206,'screens':244,'products':24})
++        self.assertEqual(counts,{'styles':27,'primitives':216,'screens':254,'products':25})
+         self.assertEqual(vt.CATALOG_COMPOSITION['counts'],counts)
+         ids={p['id'] for p in vt.catalog()['products']}
+         self.assertTrue(set(PRODUCTS)|{'game.racing.performance','software.creator.studio'} <= ids)
+ 
+     def test_all_geometry_and_major_variants(self):
+-        prefixes=('game.','editor.creative.','comic.narrative.','axm.system.','visual.keyart.','visual.cards.','visual.cinematic.','visual.broadcast.','visual.diagram.','visual.atlas.','visual.novel.','visual.showroom.','visual.music.','visual.presentation.','visual.character.','visual.configurator.','visual.motion.','visual.brand.')
++        prefixes=('game.','editor.creative.','comic.narrative.','axm.system.','visual.keyart.','visual.cards.','visual.cinematic.','visual.broadcast.','visual.diagram.','visual.atlas.','visual.novel.','visual.showroom.','visual.music.','visual.presentation.','visual.character.','visual.configurator.','visual.motion.','visual.brand.','visual.environment.')
+         for tid,definition in vt.SCREEN_TEMPLATES.items():
+             if tid.startswith(prefixes): self.assertEqual(set(definition['variants']),{'compact','standard','wide'},tid)
+             for width,height in SIZES:
+@@ -29,21 +29,21 @@ class VisualTemplateTests(unittest.TestCase):
+                     self.assertLessEqual(x+w,width+1e-6); self.assertLessEqual(y+h,height+1e-6)
+ 
+     def test_existing_product_depth_is_retained(self):
+-        expected={'game.racing.full':19,'game.system.shell':18,'game.shared.core':12,'editor.creative.core':12,'comic.narrative.core':10,'axm.system.shell':12,'visual.keyart.core':10,'visual.cards.core':11,'visual.cinematic.core':10,'visual.broadcast.core':10,'visual.diagram.core':10,'visual.atlas.core':10,'visual.novel.core':10,'visual.showroom.core':10,'visual.music.core':10,'visual.presentation.core':10,'visual.character.core':10,'visual.configurator.core':10,'visual.motion.core':10}
++        expected={'game.racing.full':19,'game.system.shell':18,'game.shared.core':12,'editor.creative.core':12,'comic.narrative.core':10,'axm.system.shell':12,'visual.keyart.core':10,'visual.cards.core':11,'visual.cinematic.core':10,'visual.broadcast.core':10,'visual.diagram.core':10,'visual.atlas.core':10,'visual.novel.core':10,'visual.showroom.core':10,'visual.music.core':10,'visual.presentation.core':10,'visual.character.core':10,'visual.configurator.core':10,'visual.motion.core':10,'visual.brand.core':10}
+         for pid,count in expected.items(): self.assertEqual(len(vt.get(pid)['screens']),count)
+ 
+-    def test_brand_product_preserves_identity_and_usage_truth(self):
+-        product=vt.get('visual.brand.core')
+-        required={'visual.brand.project-hub','visual.brand.marks-lockups','visual.brand.typography','visual.brand.icons','visual.brand.tokens','visual.brand.spacing-usage','visual.brand.variants','visual.brand.applications','visual.brand.review-audit','visual.brand.export'}
++    def test_environment_product_preserves_location_scale_and_gameplay_truth(self):
++        product=vt.get('visual.environment.core')
++        required={'visual.environment.project-hub','visual.environment.identity-board','visual.environment.zones-layout','visual.environment.scale-measurements','visual.environment.modular-kit','visual.environment.materials','visual.environment.lighting-weather','visual.environment.traversal-annotations','visual.environment.variants','visual.environment.review-export'}
+         self.assertEqual(set(product['screens']),required)
+-        self.assertEqual(product['style'],'visual.brand.identity')
++        self.assertEqual(product['style'],'visual.environment.reference')
+         quality=' '.join(product['quality']).lower()
+         self.assertIn('separately editable',quality)
+-        self.assertIn('never silently becomes canonical identity source',quality)
+-        self.assertIn('measurement basis',quality)
+-        self.assertIn('exceptions remain explicit',quality)
+-        self.assertIn('exact identity assets',quality)
+-        self.assertIn('clearspace_ratio',vt.get('visual.brand.marks-lockups')['math_hooks'])
++        self.assertIn('never silently becomes authoritative level geometry',quality)
++        self.assertIn('perspective appearance',quality)
++        self.assertIn('prop proximity does not imply gameplay linkage',quality)
++        self.assertIn('hidden rewrites',quality)
++        self.assertIn('hero_coverage_ratio',vt.get('visual.environment.identity-board')['math_hooks'])
+ 
+     def test_products_resolve_and_previews_parse(self):
+         for pid in PRODUCTS:
+@@ -60,29 +60,31 @@ class VisualTemplateTests(unittest.TestCase):
+         with tempfile.TemporaryDirectory() as td:
+             with Registry(Path(td)/'stickers.sqlite') as registry:
+                 pins=vt.install_builtins(registry)
+-                self.assertEqual(len(pins),268)
+-                brand=registry.search(adapter=vt.ADAPTER,tag='brand',limit=100)['entries']
+-                expected={f'visual.visual.brand.{name}' for name in ('project-hub','marks-lockups','typography','icons','tokens','spacing-usage','variants','applications','review-audit','export')}
+-                self.assertTrue(expected <= {entry['id'] for entry in brand})
+-                d=registry.get('visual.visual.brand.marks-lockups',1)
++                self.assertEqual(len(pins),279)
++                env=registry.search(adapter=vt.ADAPTER,tag='environment',limit=100)['entries']
++                expected={f'visual.visual.environment.{name}' for name in ('project-hub','identity-board','zones-layout','scale-measurements','modular-kit','materials','lighting-weather','traversal-annotations','variants','review-export')}
++                self.assertTrue(expected <= {entry['id'] for entry in env})
++                d=registry.get('visual.visual.environment.identity-board',1)
+                 self.assertEqual(d['recipe']['visual_template']['schema'],vt.SCHEMA)
+                 self.assertNotIn('"latest"',json.dumps(d,sort_keys=True))
+ 
+-    def test_brand_asset_lockup_type_icon_token_rule_variant_application_contracts(self):
+-        required={'brand-asset-source','brand-lockup','brand-type-role','brand-icon-family','brand-token','brand-clearspace-rule','brand-usage-rule','brand-application','brand-variant','brand-export-target'}
++    def test_environment_source_zone_scale_kit_prop_material_light_traversal_contracts(self):
++        required={'environment-source','environment-zone','environment-measurement','modular-environment-piece','environment-prop','environment-material','environment-lighting-state','traversal-reference','environment-variant','environment-export-target'}
+         self.assertTrue(required <= set(vt.PRIMITIVES))
++        self.assertTrue(vt.PRIMITIVES['environment-source']['identity_source_version_scope_required'])
++        self.assertTrue(vt.PRIMITIVES['environment-zone']['geometry_source_status_required'])
++        self.assertTrue(vt.PRIMITIVES['environment-measurement']['value_unit_source_precision_required'])
++        self.assertTrue(vt.PRIMITIVES['modular-environment-piece']['source_socket_transform_required'])
++        self.assertTrue(vt.PRIMITIVES['environment-prop']['identity_source_context_status_required'])
++        self.assertTrue(vt.PRIMITIVES['environment-material']['target_material_source_context_required'])
++        self.assertTrue(vt.PRIMITIVES['environment-lighting-state']['source_time_weather_exposure_required'])
++        self.assertTrue(vt.PRIMITIVES['traversal-reference']['target_type_source_status_required'])
++        self.assertTrue(vt.PRIMITIVES['environment-variant']['base_delta_context_source_required'])
++        self.assertTrue(vt.PRIMITIVES['environment-export-target']['requirements_must_be_visible'])
++
++    def test_brand_motion_configurator_and_prior_boundaries_remain_present(self):
+         self.assertTrue(vt.PRIMITIVES['brand-asset-source']['identity_source_version_provenance_required'])
+-        self.assertTrue(vt.PRIMITIVES['brand-lockup']['asset_refs_layout_status_required'])
+-        self.assertTrue(vt.PRIMITIVES['brand-type-role']['font_source_role_required'])
+-        self.assertTrue(vt.PRIMITIVES['brand-icon-family']['family_source_members_required'])
+-        self.assertTrue(vt.PRIMITIVES['brand-token']['value_context_source_required'])
+         self.assertTrue(vt.PRIMITIVES['brand-clearspace-rule']['target_measurement_basis_required'])
+-        self.assertTrue(vt.PRIMITIVES['brand-usage-rule']['subject_context_status_source_required'])
+-        self.assertTrue(vt.PRIMITIVES['brand-application']['asset_token_target_refs_required'])
+-        self.assertTrue(vt.PRIMITIVES['brand-variant']['base_delta_context_required'])
+-        self.assertTrue(vt.PRIMITIVES['brand-export-target']['requirements_must_be_visible'])
+-
+-    def test_motion_configurator_and_prior_boundaries_remain_present(self):
+         self.assertTrue(vt.PRIMITIVES['motion-state']['source_target_identity_required'])
+         self.assertTrue(vt.PRIMITIVES['reduced-motion-rule']['equivalent_state_result_required'])
+         self.assertTrue(vt.PRIMITIVES['configuration-state']['base_attachment_variant_digest_required'])
+@@ -101,12 +103,12 @@ class VisualTemplateTests(unittest.TestCase):
+         self.assertTrue(vt.PRIMITIVES['truth-state']['source_must_be_visible'])
+ 
+     def test_copy_safety_variant_rejection_and_bad_geometry(self):
+-        a=vt.resolve('visual.brand.marks-lockups',1920,1080); b=vt.resolve('visual.brand.marks-lockups',1920,1080)
++        a=vt.resolve('visual.environment.identity-board',1920,1080); b=vt.resolve('visual.environment.identity-board',1920,1080)
+         self.assertEqual(a,b)
+-        copy=vt.get('visual.brand.marks-lockups'); copy['name']='changed'
+-        self.assertNotEqual(vt.get('visual.brand.marks-lockups')['name'],'changed')
+-        with self.assertRaises(ValueError): vt.resolve('visual.brand.marks-lockups',1920,1080,variant='unknown')
+-        bad=vt.get('visual.brand.marks-lockups'); bad['variants']['standard']['stage']=[.9,.9,.2,.2]
++        copy=vt.get('visual.environment.identity-board'); copy['name']='changed'
++        self.assertNotEqual(vt.get('visual.environment.identity-board')['name'],'changed')
++        with self.assertRaises(ValueError): vt.resolve('visual.environment.identity-board',1920,1080,variant='unknown')
++        bad=vt.get('visual.environment.identity-board'); bad['variants']['standard']['hero']=[.9,.9,.2,.2]
+         with self.assertRaises(ValueError): vt.validate_screen(bad)
+ 
+     def test_exact_sticker_slot_binding_is_retained(self):
+diff --git a/tools/visual_template_proof.py b/tools/visual_template_proof.py
+index f227e12..4eafa81 100644
+--- a/tools/visual_template_proof.py
++++ b/tools/visual_template_proof.py
+@@ -8,7 +8,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src'))
+ from axm_uc import visual_templates as vt
+ 
+ SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
+-PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell","visual.keyart.core","visual.cards.core","visual.cinematic.core","visual.broadcast.core","visual.diagram.core","visual.atlas.core","visual.novel.core","visual.showroom.core","visual.music.core","visual.presentation.core","visual.character.core","visual.configurator.core","visual.motion.core","visual.brand.core")
++PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","game.shared.core","editor.creative.core","comic.narrative.core","axm.system.shell","visual.keyart.core","visual.cards.core","visual.cinematic.core","visual.broadcast.core","visual.diagram.core","visual.atlas.core","visual.novel.core","visual.showroom.core","visual.music.core","visual.presentation.core","visual.character.core","visual.configurator.core","visual.motion.core","visual.brand.core","visual.environment.core")
+ 
+ def _write(project,target):
+     target.mkdir(); out=[]
+@@ -25,7 +25,7 @@ def main(argv):
+     out.mkdir(parents=True)
+     try:
+         counts=vt.validate_catalog()
+-        if counts!={'styles':26,'primitives':206,'screens':244,'products':24}: raise AssertionError(counts)
++        if counts!={'styles':27,'primitives':216,'screens':254,'products':25}: raise AssertionError(counts)
+         evidence=[]
+         for pid in PRODUCTS:
+             expected=vt.get(pid)
+@@ -59,29 +59,31 @@ def main(argv):
+             ('visual.configurator.core',1920,1080,'configurator','AXM Equipment and Vehicle Configurator Foundation'),
+             ('visual.motion.core',1920,1080,'motion','AXM Source-Bound UI Motion Foundation'),
+             ('visual.brand.core',1920,1080,'brand','AXM Source-Bound Brand Identity Foundation'),
++            ('visual.environment.core',1920,1080,'environment','AXM Environment and Level Reference Foundation'),
+         )
+         outputs=[]
+         for pid,w,h,folder,title in galleries: outputs+=_write(vt.product_project(pid,w,h,title),out/folder)
+         outputs+=_write(vt.screen_project('product.mobile.home',1080,1920,'AXM Mobile Foundation'),out/'mobile-home')
+-        product=vt.get('visual.brand.core')
+-        required={'visual.brand.project-hub','visual.brand.marks-lockups','visual.brand.typography','visual.brand.icons','visual.brand.tokens','visual.brand.spacing-usage','visual.brand.variants','visual.brand.applications','visual.brand.review-audit','visual.brand.export'}
+-        if set(product['screens'])!=required: raise AssertionError('brand pack lost required surfaces')
++        product=vt.get('visual.environment.core')
++        required={'visual.environment.project-hub','visual.environment.identity-board','visual.environment.zones-layout','visual.environment.scale-measurements','visual.environment.modular-kit','visual.environment.materials','visual.environment.lighting-weather','visual.environment.traversal-annotations','visual.environment.variants','visual.environment.review-export'}
++        if set(product['screens'])!=required: raise AssertionError('environment pack lost required surfaces')
+         checks={
+-            'asset_identity_source_version_provenance':vt.PRIMITIVES['brand-asset-source']['identity_source_version_provenance_required'],
+-            'lockup_asset_refs_layout_status':vt.PRIMITIVES['brand-lockup']['asset_refs_layout_status_required'],
+-            'type_font_source_role':vt.PRIMITIVES['brand-type-role']['font_source_role_required'],
+-            'icon_family_source_members':vt.PRIMITIVES['brand-icon-family']['family_source_members_required'],
+-            'token_value_context_source':vt.PRIMITIVES['brand-token']['value_context_source_required'],
+-            'clearspace_target_measurement':vt.PRIMITIVES['brand-clearspace-rule']['target_measurement_basis_required'],
+-            'usage_subject_context_status_source':vt.PRIMITIVES['brand-usage-rule']['subject_context_status_source_required'],
+-            'application_asset_token_target':vt.PRIMITIVES['brand-application']['asset_token_target_refs_required'],
+-            'variant_base_delta_context':vt.PRIMITIVES['brand-variant']['base_delta_context_required'],
+-            'export_requirements_visible':vt.PRIMITIVES['brand-export-target']['requirements_must_be_visible'],
++            'environment_identity_source_scope':vt.PRIMITIVES['environment-source']['identity_source_version_scope_required'],
++            'zone_geometry_source_status':vt.PRIMITIVES['environment-zone']['geometry_source_status_required'],
++            'measurement_value_unit_source_precision':vt.PRIMITIVES['environment-measurement']['value_unit_source_precision_required'],
++            'kit_source_socket_transform':vt.PRIMITIVES['modular-environment-piece']['source_socket_transform_required'],
++            'prop_identity_source_context':vt.PRIMITIVES['environment-prop']['identity_source_context_status_required'],
++            'material_target_source_context':vt.PRIMITIVES['environment-material']['target_material_source_context_required'],
++            'lighting_source_time_weather_exposure':vt.PRIMITIVES['environment-lighting-state']['source_time_weather_exposure_required'],
++            'traversal_target_type_source_status':vt.PRIMITIVES['traversal-reference']['target_type_source_status_required'],
++            'variant_base_delta_context_source':vt.PRIMITIVES['environment-variant']['base_delta_context_source_required'],
++            'export_requirements_visible':vt.PRIMITIVES['environment-export-target']['requirements_must_be_visible'],
+         }
+-        if not all(checks.values()): raise AssertionError('brand source/rule contract failed')
++        if not all(checks.values()): raise AssertionError('environment source/reference contract failed')
+         retained={
++            'brand_asset':vt.PRIMITIVES['brand-asset-source']['identity_source_version_provenance_required'],
++            'brand_clearspace':vt.PRIMITIVES['brand-clearspace-rule']['target_measurement_basis_required'],
+             'motion_state':vt.PRIMITIVES['motion-state']['source_target_identity_required'],
+-            'reduced_motion':vt.PRIMITIVES['reduced-motion-rule']['equivalent_state_result_required'],
+             'config_digest':vt.PRIMITIVES['configuration-state']['base_attachment_variant_digest_required'],
+             'character_identity':vt.PRIMITIVES['character-source']['identity_source_version_required'],
+             'presentation_page':vt.PRIMITIVES['presentation-page']['identity_role_order_required'],
+@@ -91,7 +93,7 @@ def main(argv):
+             'atlas_coordinate':vt.PRIMITIVES['map-coordinate']['system_source_precision_required'],
+         }
+         if not all(retained.values()): raise AssertionError('prior visual source boundary failed')
+-        receipt={'schema':'axm.visual-template-proof/v20','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'brand_checks':checks,'retained_checks':retained,'truth':'Offline structural evidence only. Trademark clearance, font/icon licensing, legal rights, market effectiveness, visual quality and accessibility acceptance were not observed.'}
++        receipt={'schema':'axm.visual-template-proof/v21','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'environment_checks':checks,'retained_checks':retained,'truth':'Offline structural evidence only. Final level geometry, scale correctness, collision, navigation, gameplay quality, lighting correctness, performance and aesthetic acceptance were not observed.'}
+         (out/'receipt.json').write_text(json.dumps(receipt,indent=2,sort_keys=True),encoding='utf-8')
+         print(json.dumps(receipt,indent=2,sort_keys=True))
+     except BaseException:

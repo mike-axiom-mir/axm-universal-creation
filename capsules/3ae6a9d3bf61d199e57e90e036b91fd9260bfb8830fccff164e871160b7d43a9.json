@@ -1,0 +1,203 @@
+{
+  "capsule_id": "3ae6a9d3bf61d199e57e90e036b91fd9260bfb8830fccff164e871160b7d43a9",
+  "evidence": {
+    "files": [
+      {
+        "additions": 43,
+        "binary": false,
+        "content_sha256": "eaec8d1e7d63481ee86ac53a308c29fad38d488b6012d6a71756314773171a70",
+        "deletions": 2,
+        "path": "GAME_STYLE_GROWTH.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Current checkpoint",
+          "Expressive form pass \u2014 2026-09-13",
+          "Layered wear pass \u2014 2026-09-13"
+        ]
+      },
+      {
+        "additions": 77,
+        "binary": false,
+        "content_sha256": "e1399af583f08d1f33549875955226ac643d3593b6729a3581e331d43ac576e3",
+        "deletions": 0,
+        "path": "docs/GAME_FORM_STYLES.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Game form styles",
+          "Portable request",
+          "Protected anchors",
+          "Donor boundary",
+          "Next boundary"
+        ]
+      },
+      {
+        "additions": 301,
+        "binary": false,
+        "content_sha256": "c26355bf3266634fe40d5fa29732e014c61afa5702dd11e94dfddaf707313ec6",
+        "deletions": 0,
+        "path": "src/axm_uc/game_form_styles.py",
+        "status": "A",
+        "symbols": [
+          "FormStyle",
+          "_canonical",
+          "_digest",
+          "_number",
+          "_vec3",
+          "_style",
+          "game_form_catalog",
+          "_component",
+          "_validated_mesh",
+          "_part_specs",
+          "_bounds",
+          "_seeded_sign",
+          "_raw_transform",
+          "_transform",
+          "_normals",
+          "apply_game_form",
+          "publish_game_form"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 15,
+        "binary": false,
+        "content_sha256": "67ee9bded189a0e9e64594433c2addf7a79f928c0ce0eab56f05e9a81f8e74eb",
+        "deletions": 0,
+        "path": "src/axm_uc/visual_assets_cli.py",
+        "status": "M",
+        "symbols": [
+          "combined_catalog",
+          "build_parser",
+          "main"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 139,
+        "binary": false,
+        "content_sha256": "a7be2f9338b9088b3094fc7e95abd304bfdebf005dacd0e46d68c08843bb365d",
+        "deletions": 0,
+        "path": "tests/test_game_form_styles.py",
+        "status": "A",
+        "symbols": [
+          "cube",
+          "fixture",
+          "GameFormStyleTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 259,
+        "binary": false,
+        "content_sha256": "f4378e9af438be05294b4be973cbd862c7a08370ca256d64d87b2a6572f335ef",
+        "deletions": 0,
+        "path": "tools/blender/game_form_roundtrip.py",
+        "status": "A",
+        "symbols": [
+          "courier_mesh",
+          "part_specs",
+          "map_point",
+          "material_from_primitive",
+          "add_variant",
+          "add_text",
+          "scene_setup",
+          "object_bounds",
+          "expected_bounds",
+          "build",
+          "verify"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "cae2423200930fc96f107da1cf67bd788f82ecfd6907f323c378d24bda3a8372"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 6,
+    "kinds": [
+      "code",
+      "knowledge",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "add",
+      "anchors",
+      "apply",
+      "axm",
+      "blender",
+      "boundary",
+      "bounds",
+      "build",
+      "canonical",
+      "catalog",
+      "checkpoint",
+      "cli",
+      "combined",
+      "component",
+      "courier",
+      "creation-machine",
+      "cube",
+      "current",
+      "derivation",
+      "digest",
+      "donor",
+      "expected",
+      "expressive",
+      "fixture",
+      "form",
+      "from",
+      "game",
+      "growth",
+      "layered",
+      "map",
+      "material",
+      "merge",
+      "mesh",
+      "next",
+      "normals",
+      "number",
+      "object",
+      "parser",
+      "part",
+      "pass",
+      "point",
+      "portable",
+      "primitive",
+      "protected",
+      "publish",
+      "raw",
+      "request",
+      "roundtrip",
+      "scene",
+      "seeded",
+      "setup",
+      "sign",
+      "standalone",
+      "style",
+      "styles",
+      "text",
+      "tools",
+      "transform",
+      "universal-creation",
+      "validated",
+      "variant",
+      "vec3",
+      "verify",
+      "visual"
+    ]
+  },
+  "source": {
+    "base": "2243cbb9af67df0a02049d74e8a02b46b7b840c6",
+    "commit_subject": "Merge protected expressive game form derivation (#63)",
+    "head": "b98776a3ab619852fc846ea282870a079bb3c5c7",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

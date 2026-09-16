@@ -1,0 +1,902 @@
+diff --git a/AXM_SYSTEM_TEMPLATE_PACK.md b/AXM_SYSTEM_TEMPLATE_PACK.md
+new file mode 100644
+index 0000000..c8e2668
+--- /dev/null
++++ b/AXM_SYSTEM_TEMPLATE_PACK.md
+@@ -0,0 +1,47 @@
++# AXM System / Monolith Visual Template Pack
++
++`axm.system.shell` is a reusable visual foundation for AXM-native control surfaces. It is part of the existing Visual Template Fabric v1 schema and uses the same responsive resolver and immutable Sticker Registry bridge.
++
++## Surfaces
++
++The product contains twelve coordinated screens:
++
++- home / current-state overview;
++- exact registry browser;
++- capability browser;
++- monolith/cartridge loader;
++- machine-state inspector;
++- evidence/truth review;
++- workflow/creation-flow view;
++- specialist perspectives;
++- machine workfloor;
++- snapshots/continuity;
++- settings/policy;
++- recovery/repair.
++
++## Progressive detail
++
++The shell is designed so ordinary use does not require understanding the deepest machine representation. Summary state is visible first; source, evidence, dependencies and lower-level detail are available when they matter.
++
++This is a presentation rule only. The underlying canonical state remains richer than any simplified view.
++
++## Reusable contracts
++
++New primitives include:
++
++- `truth-state` — observed/inferred/proposed/blocked/unknown with visible source;
++- `capability-card` — exact capability identity and availability;
++- `registry-entry` — exact registered item/version, no floating latest;
++- `evidence-chip` — evidence state linked to source;
++- `state-diff` — explicit before/after difference;
++- `cartridge-card` — pinned portable package and compatibility state;
++- `specialist-card` — perspective/contribution with evidence field;
++- `workfloor-lane` — bounded lane tied to shared state;
++- `snapshot-entry` — checkpoint with verification and explicit restore;
++- `recovery-choice` — bounded recovery option with visible consequence.
++
++## Truth boundary
++
++The template pack proves only structural layout/state contracts. It does not prove real cartridge mounting, machine execution, snapshot restore, recovery success, capability availability or runtime evidence. A product using these templates must connect displayed status to its actual observed machine state.
++
++The layered metallic/glass `axm.machine.glass` style is a starting visual system, not canonical AXM identity. Products may replace it while retaining the structural contracts.
+diff --git a/VISUAL_TEMPLATE_FABRIC.md b/VISUAL_TEMPLATE_FABRIC.md
+index 28891b1..6e491a6 100644
+--- a/VISUAL_TEMPLATE_FABRIC.md
++++ b/VISUAL_TEMPLATE_FABRIC.md
+@@ -10,26 +10,26 @@ This extends, rather than replaces, the existing systems:
+ - deterministic project templates still instantiate exact files;
+ - Sticker Fabric remains the immutable/versioned local registry and reusable-part system;
+ - visual archetypes supply stronger screen and whole-product foundations those systems can consume;
+-- separate mathematical work can enrich declared ratios/ranges through `math_hooks` without silently replacing template identity.
++- separate mathematical work can enrich declared ratios/ranges through `math_hooks` without replacing template identity.
+ 
+ ## One composed catalog
+ 
+ The public module is `axm_uc.visual_templates`.
+ 
+-Its retained deterministic kernel lives in `visual_template_core.py`. Genre/product growth lives in `visual_template_growth.py`. Shared professional game-product surfaces live in `visual_template_game_systems.py`. Creative-editor and editable-narrative surfaces live in `visual_template_creative_narrative.py`. The public facade composes those dictionaries, rejects collisions, validates the resulting catalog, then exposes the same v1 schemas and functions.
++Its retained deterministic kernel lives in `visual_template_core.py`. Genre/product growth lives in `visual_template_growth.py`. Shared professional game-product surfaces live in `visual_template_game_systems.py`. Creative-editor and editable-narrative surfaces live in `visual_template_creative_narrative.py`. AXM-native machine/system surfaces live in `visual_template_axm_system.py`. The public facade composes those dictionaries, rejects collisions, validates the resulting catalog, then exposes the same v1 schemas and functions.
+ 
+ This is intentionally **one catalog**, not competing template systems and not multiple registries.
+ 
+-Current deterministic catalog in the v2 lane:
++Current deterministic catalog in the v3 lane:
+ 
+-- **47 reusable primitives**;
+-- **10 coherent style systems**;
+-- **79 responsive screen archetypes**;
+-- **8 whole-product archetypes**.
++- **57 reusable primitives**;
++- **11 coherent style systems**;
++- **91 responsive screen archetypes**;
++- **9 whole-product archetypes**.
+ 
+ ## Layers
+ 
+-1. **Primitives** — reusable state/interaction contracts such as panel, navigation, player seat, loading state, layer row, timeline track, graph node, panel frame, speech bubble and reading-order marker.
++1. **Primitives** — reusable state/interaction contracts such as player seat, loading state, layer row, graph node, panel frame, speech bubble, truth state, capability card and recovery choice.
+ 2. **Style systems** — coherent surface, type, depth, shape and motion language. These are semantic visual systems, not one-off color themes.
+ 3. **Screen archetypes** — normalized responsive region geometry, slots, math hooks, intent and quality constraints.
+ 4. **Whole-product archetypes** — exact screen sets plus explicit flow edges and product-level coherence rules.
+@@ -38,7 +38,7 @@ Primitives describe reusable behavior/state expectations; they are not hidden wi
+ 
+ ## Game foundations
+ 
+-The merged v1 foundation remains intact:
++The merged game foundations remain intact:
+ 
+ - `game.racing.performance` — compact six-screen racing shell;
+ - `game.racing.full` — 19-screen professional racing foundation;
+@@ -67,7 +67,7 @@ Those foundations include truthful loading/recovery, explicit player-seat owners
+ 
+ Its `creative.workbench` visual language prioritizes stable editing context and dense inspectable state. New primitives include `layer-row`, `timeline-track`, `keyframe`, `node-card`, `socket-port`, `inspector-field` and `asset-tile`.
+ 
+-The contract is deliberately source-first: selected state, modified state, graph typing, timeline position, provenance and richer editable source remain visible. A derived preview/export never becomes authoritative merely because it is easier to render.
++The contract is source-first: selected state, modified state, graph typing, timeline position, provenance and richer editable source remain visible. A derived preview/export never becomes authoritative merely because it is easier to render.
+ 
+ ## Editable comics and visual narrative
+ 
+@@ -90,9 +90,32 @@ Reusable narrative primitives include `panel-frame`, `panel-gutter`, `speech-bub
+ 
+ The `narrative.ink` style gives the pack a coherent editorial starting language, but a comic may replace that style without replacing its structural/editability contract.
+ 
++## AXM system / monolith shell
++
++`axm.system.shell` is a 12-screen AXM-native machine/product foundation:
++
++- home/current-state overview;
++- registry browser;
++- capability browser;
++- monolith/cartridge loader;
++- machine-state inspector;
++- evidence/truth review;
++- workflow/creation flow;
++- specialist perspectives;
++- machine workfloor;
++- snapshots/continuity;
++- settings/policy;
++- recovery/repair.
++
++Its `axm.machine.glass` style is a layered metallic/glass starting language, not canonical identity. The structural rule is progressive detail: ordinary use sees a calm summary first, while source, version, evidence, dependency and recovery detail remains available when needed.
++
++Reusable AXM primitives include `truth-state`, `capability-card`, `registry-entry`, `evidence-chip`, `state-diff`, `cartridge-card`, `specialist-card`, `workfloor-lane`, `snapshot-entry` and `recovery-choice`.
++
++These templates represent machine state; they do not manufacture it. A real product must connect status, package compatibility, capability availability, snapshots and recovery outcomes to actual observed runtime state.
++
+ ## Responsive geometry
+ 
+-Screen regions are stored in normalized `0..1` coordinates. `resolve()` turns them into exact pixels for a supplied viewport. Current game, creative-editor and comic screens ship all three variants:
++Screen regions are stored in normalized `0..1` coordinates. `resolve()` turns them into exact pixels for a supplied viewport. Current game, creative-editor, comic and AXM-system screens ship all three variants:
+ 
+ - `compact`: width below 900 px or portrait/narrow ratio below 1.15;
+ - `wide`: aspect ratio at least 1.9;
+@@ -100,7 +123,7 @@ Screen regions are stored in normalized `0..1` coordinates. `resolve()` turns th
+ 
+ Callers can request a declared variant explicitly. Unknown explicit variants fail; they do not silently fall back.
+ 
+-The current geometry is a known structural foundation. Mathematical growth can later replace or enrich ratio/range derivation through `math_hooks` without changing product/template identity or silently rewriting source state.
++The current geometry is a known structural foundation. Mathematical growth can later replace or enrich ratio/range derivation through `math_hooks` without changing product/template identity or rewriting source state.
+ 
+ ## Sticker Fabric / registry bridge
+ 
+@@ -116,7 +139,7 @@ with Registry('stickers.sqlite') as registry:
+ 
+ The wrapper keeps the exact visual template inside the sticker recipe. Existing Sticker Registry guarantees still apply: exact id/version/digest pins, no floating `latest`, no silent upgrades, explicit registration and portable offline state.
+ 
+-The v2 catalog contains 79 screens + 8 products, so explicit built-in installation currently registers **87 exact visual definitions**.
++The v3 catalog contains 91 screens + 9 products, so explicit built-in installation currently registers **100 exact visual definitions**.
+ 
+ The bridge does **not** turn every Sticker into UI. It lets visual foundations use the same proven immutable local registry when desired.
+ 
+@@ -136,6 +159,7 @@ Inspect exact foundations:
+ axm-visual-templates show game.racing.full
+ axm-visual-templates show editor.creative.core
+ axm-visual-templates show comic.narrative.core
++axm-visual-templates show axm.system.shell
+ ```
+ 
+ Write local structural previews:
+@@ -144,6 +168,7 @@ Write local structural previews:
+ axm-visual-templates render game.racing.full creations/racing-foundation --width 1920 --height 1080
+ axm-visual-templates render editor.creative.core creations/creative-editor --width 1920 --height 1080
+ axm-visual-templates render comic.narrative.core creations/comic-editor --width 1920 --height 1080
++axm-visual-templates render axm.system.shell creations/axm-system --width 1920 --height 1080
+ ```
+ 
+ A product preview contains one SVG per screen, `product.json` with exact resolved structure, and a local HTML gallery. A screen preview contains `screen.svg`, `template.json` and HTML.
+@@ -159,21 +184,18 @@ python tools/visual_template_proof.py /new/output/path
+ 
+ The deterministic suite now checks:
+ 
+-- exact composed catalog counts: 10 styles / 47 primitives / 79 screens / 8 products;
+-- all 79 screens across six representative viewport shapes/sizes;
+-- compact/standard/wide coverage for game, creative-editor and comic screens;
+-- strict unknown-variant rejection;
++- exact composed catalog counts: 11 styles / 57 primitives / 91 screens / 9 products;
++- all 91 screens across six representative viewport shapes/sizes;
++- compact/standard/wide coverage for game, editor, comic and AXM-system screens;
+ - exact product screen ordering and flow references;
+-- professional racing and shared game-system coverage;
+-- 12-screen creative editor coverage;
+-- 10-screen editable comic/narrative coverage;
+-- separation of comic page/panel/dialogue/scene/motion surfaces;
+-- explicit speech text/tail separation and visible reading-order conflicts;
++- retained racing/game-system/editor/comic depth;
++- 12-screen AXM system-shell coverage;
++- source/version/evidence/recovery contracts in AXM primitives;
+ - SVG parseability;
+-- actual Sticker Registry installation of all 87 screens/products;
++- actual Sticker Registry installation of all 100 screens/products;
+ - exact Sticker slot pins and invalid-geometry rejection.
+ 
+-The proof generates galleries for racing, co-op, RTS, shared game systems, the creative editor and editable comic system, plus a portrait mobile reference. It resolves all six proof products at 640×360, 1080×1920, 1280×720, 1920×1080, 2560×1080 and 3840×2160 and rejects any region that escapes its viewport.
++The proof generates galleries for racing, co-op, RTS, shared game systems, the creative editor, editable comic system and AXM system shell, plus a portrait mobile reference. It resolves all seven proof products at 640×360, 1080×1920, 1280×720, 1920×1080, 2560×1080 and 3840×2160 and rejects any region that escapes its viewport.
+ 
+ ## Truth boundary
+ 
+@@ -183,9 +205,10 @@ Current claims are intentionally narrow:
+ - generated SVG is an offline structural preview, not target-engine rendering;
+ - creative/editor templates do not prove actual authoring behavior, undo/redo correctness, file compatibility or export fidelity;
+ - comic templates do not prove drawing quality, lettering quality, reading experience, localization or aesthetic acceptance;
+-- preserving separate semantic regions is structural editability evidence, not proof that a finished GUI exposes every operation perfectly;
++- AXM system templates do not prove package mounting, machine execution, capability availability, snapshot restore or recovery success;
++- preserving separate semantic regions is structural evidence, not proof that a finished GUI exposes every operation perfectly;
+ - having accessibility/privacy surfaces does not establish accessibility or legal compliance;
+-- loading, recovery and availability contracts forbid fake state, but the real product still has to connect them to observed runtime evidence;
++- loading, recovery and availability contracts require real products to connect displayed state to actual evidence;
+ - color/style tokens express coherent intent but do not replace final art direction;
+ - the machine may mutate, combine, replace or ignore a template when evidence and user intent support doing so;
+ - no template becomes canon merely because it is built in or registered.
+diff --git a/VISUAL_TEMPLATE_PRIORITY_MAP.md b/VISUAL_TEMPLATE_PRIORITY_MAP.md
+index 1576497..e353048 100644
+--- a/VISUAL_TEMPLATE_PRIORITY_MAP.md
++++ b/VISUAL_TEMPLATE_PRIORITY_MAP.md
+@@ -1,83 +1,28 @@
+ # AXM Visual Template Expansion Priority Map
+ 
+-Status: v2 growth lane after merged PR #94.
++Status: v3 growth lane after verified v1 + v2 merges.
+ 
+ The visual-template fabric should grow where Universal Creation is most likely to reuse the knowledge soon. The order below is a build priority, not canon: templates remain editable foundations and may be replaced when evidence supports a better structure.
+ 
+-## Priority 1 — Creative editor core — IMPLEMENTED IN THIS LANE
++## Priority 1 — Creative editor core — MERGED
+ 
+ Product: `editor.creative.core`
+ 
+-Purpose: give AXM reusable professional editing surfaces so generated work remains editable instead of collapsing into flat final outputs.
++Twelve coordinated professional editing surfaces are now part of the catalog: project hub, asset browser, layer editor, timeline, node graph, inspector, animation, effects, cutscene, material, audio and review/export. Style: `creative.workbench`.
+ 
+-Implemented screen IDs:
+-
+-- `editor.creative.project-hub`
+-- `editor.creative.asset-browser`
+-- `editor.creative.layer-editor`
+-- `editor.creative.timeline`
+-- `editor.creative.node-graph`
+-- `editor.creative.inspector`
+-- `editor.creative.animation`
+-- `editor.creative.effects`
+-- `editor.creative.cutscene`
+-- `editor.creative.material`
+-- `editor.creative.audio`
+-- `editor.creative.review-export`
+-
+-Implemented reusable primitives:
+-
+-- `layer-row`
+-- `timeline-track`
+-- `keyframe`
+-- `node-card`
+-- `socket-port`
+-- `inspector-field`
+-- `asset-tile`
+-
+-Style: `creative.workbench`.
+-
+-## Priority 2 — Editable comics and visual narrative — IMPLEMENTED IN THIS LANE
++## Priority 2 — Editable comics and visual narrative — MERGED
+ 
+ Product: `comic.narrative.core`
+ 
+-Purpose: move beyond a flat comic-image generator into an editable visual-story system where page geometry, panels, source art, dialogue, captions, characters, sequencing and motion remain independently controllable.
+-
+-Implemented screen IDs:
+-
+-- `comic.narrative.library`
+-- `comic.narrative.page-editor`
+-- `comic.narrative.panel-editor`
+-- `comic.narrative.dialogue-editor`
+-- `comic.narrative.character-sheet`
+-- `comic.narrative.scene-graph`
+-- `comic.narrative.storyboard`
+-- `comic.narrative.motion-timeline`
+-- `comic.narrative.reader-preview`
+-- `comic.narrative.export`
+-
+-Implemented reusable primitives:
++Ten editable visual-story surfaces are now part of the catalog: library, page editor, panel editor, dialogue editor, character sheet, scene graph, storyboard, motion timeline, reader preview and export. Style: `narrative.ink`.
+ 
+-- `panel-frame`
+-- `panel-gutter`
+-- `speech-bubble`
+-- `caption-box`
+-- `storyboard-card`
+-- `reading-order-marker`
+-- `character-reference-card`
+-- `story-beat-link`
++The structural contract keeps page/panel/dialogue/scene/motion state distinct and preserves editable source above flattened previews.
+ 
+-Style: `narrative.ink`.
++## Priority 3 — AXM software / monolith shell — IMPLEMENTED IN THIS LANE
+ 
+-The proof gate requires panel/page/dialogue/scene/motion surfaces to remain distinct and requires speech text/tail plus reading-order conflicts to stay explicitly editable/visible. This is structural editability evidence, not a claim of finished drawing quality or authoring UX acceptance.
++Product: `axm.system.shell`
+ 
+-## Priority 3 — AXM software / monolith shell — NEXT
+-
+-Product target: `axm.system.shell`
+-
+-Purpose: give AXM-native software coherent reusable surfaces rather than repeatedly inventing one-off dashboards.
+-
+-Planned screen IDs:
++Implemented screens:
+ 
+ - `axm.system.home`
+ - `axm.system.registry`
+@@ -92,9 +37,24 @@ Planned screen IDs:
+ - `axm.system.settings`
+ - `axm.system.recovery`
+ 
+-Design rule: deep machine state may be complex, but the human-facing shell should expose progressive detail rather than forcing internal complexity onto ordinary use.
++New reusable primitives:
++
++- `truth-state`
++- `capability-card`
++- `registry-entry`
++- `evidence-chip`
++- `state-diff`
++- `cartridge-card`
++- `specialist-card`
++- `workfloor-lane`
++- `snapshot-entry`
++- `recovery-choice`
+ 
+-## Priority 4 — Remaining near-term game gaps
++Style: `axm.machine.glass`.
++
++Design rule: deep machine state may be complex, but the human-facing shell exposes summary first and progressively reveals detail. Source/version/evidence state and recovery consequences stay explicit.
++
++## Priority 4 — Remaining near-term game gaps — NEXT
+ 
+ These extend the merged game foundation only where real reusable gaps remain.
+ 
+@@ -117,8 +77,6 @@ These should inherit the existing game-system shell where possible rather than d
+ 
+ ## Priority 5 — Later visual families
+ 
+-Grow only after the editor/comic/AXM shells prove useful:
+-
+ - poster / key-art composition systems;
+ - card/deck editors;
+ - cinematic title/credit systems;
+@@ -138,12 +96,12 @@ Every new family should preserve the existing visual-template contract:
+ 3. no floating `latest` references or silent upgrades;
+ 4. richer editable source remains authoritative over preview/export derivatives;
+ 5. selection, focus, ownership, errors and destructive consequences do not depend on color alone;
+-6. `math_hooks` remain available for the mathematics lane to improve ratios/ranges without silently replacing template identity;
++6. `math_hooks` remain available for the mathematics lane to improve ratios/ranges without replacing template identity;
+ 7. templates are known foundations, never automatic canon.
+ 
+ ## Immediate build order
+ 
+-1. finish exact-head verification for `editor.creative.core` and `comic.narrative.core`;
+-2. merge the v2 lane only after proof and repository checks pass;
+-3. begin `axm.system.shell` from fresh main;
+-4. add game-gap templates only when they are not already represented by the merged catalog.
++1. finish exact-head verification for `axm.system.shell`;
++2. merge v3 only when template + repository checks pass;
++3. start remaining near-term game gaps from fresh main;
++4. only then expand into later visual families.
+diff --git a/src/axm_uc/visual_template_axm_system.py b/src/axm_uc/visual_template_axm_system.py
+new file mode 100644
+index 0000000..04b529d
+--- /dev/null
++++ b/src/axm_uc/visual_template_axm_system.py
+@@ -0,0 +1,68 @@
++"""AXM system-shell visual foundations using the existing v1 template catalog."""
++from __future__ import annotations
++from copy import deepcopy
++from typing import Any
++
++
++def _merge(target: dict[str, Any], additions: dict[str, Any], label: str) -> None:
++    overlap=sorted(set(target)&set(additions))
++    if overlap: raise RuntimeError(f"AXM {label} collision: {', '.join(overlap)}")
++    target.update(deepcopy(additions))
++
++
++def extend_axm_system_catalog(namespace: dict[str, Any]) -> None:
++    styles=namespace['STYLE_SYSTEMS']; primitives=namespace['PRIMITIVES']
++    screens=namespace['SCREEN_TEMPLATES']; products=namespace['PRODUCT_ARCHETYPES']
++    screen=namespace['_screen']; origin=namespace['_origin']
++
++    _merge(styles,{'axm.machine.glass':{
++        'intent':'layered metallic/glass machine interface with calm hierarchy, progressive detail and evidence-first status',
++        'tokens':{'canvas':'#071018','surface':'#0f1c27','surface_raised':'#172b38','text':'#eef8f7','muted':'#9fb4b7','accent':'#78e0d0','warning':'#edc56f','danger':'#ef7474','line':'#31515b'},
++        'shape':{'panel_radius_ratio':0.015,'cut_ratio':0.006,'line_ratio':0.0013},
++        'type':{'display_weight':740,'body_weight':500,'metric_scale':1.55,'tracking':0.016},
++        'depth':{'layers':6,'shadow':'tight','glass':'layered'},
++        'motion':{'fast_ms':85,'standard_ms':170,'slow_ms':300,'principle':'status changes remain traceable'},
++    }},'style')
++    _merge(primitives,{
++        'truth-state':{'role':'show observed, inferred, proposed, blocked or unknown status','states':['observed','inferred','proposed','blocked','unknown'],'source_must_be_visible':True},
++        'capability-card':{'role':'show one capability with scope, inputs, outputs and evidence','states':['available','sleeping','degraded','blocked','unknown'],'identity_must_be_exact':True},
++        'registry-entry':{'role':'show one registered item with source and version','states':['active','available','missing-source','conflict','deprecated'],'no_floating_latest':True},
++        'evidence-chip':{'role':'compact evidence state linked to source','states':['pass','fail','partial','not-tested','not-applicable'],'claim_source_required':True},
++        'state-diff':{'role':'explicit before/after state difference','states':['added','changed','removed','unchanged','conflict'],'silent_rewrite_forbidden':True},
++        'cartridge-card':{'role':'portable package and compatibility state','states':['ready','checking','incompatible','corrupt','mounted','unmounted'],'identity_must_be_pinned':True},
++        'specialist-card':{'role':'one specialist perspective and contribution','states':['idle','working','blocked','dissent','complete'],'evidence_field_required':True},
++        'workfloor-lane':{'role':'one bounded work lane over shared state','states':['idle','active','blocked','review','complete'],'shared_state_reference_required':True},
++        'snapshot-entry':{'role':'recovery checkpoint with source and verification','states':['verified','unverified','restoring','failed','available'],'restore_is_explicit':True},
++        'recovery-choice':{'role':'bounded recovery choice with consequence','states':['safe','destructive','blocked','unavailable'],'consequence_must_be_visible':True},
++    },'primitive')
++
++    q=['show simple current state first and reveal detail progressively','observed facts, inferences, proposals and unknowns remain distinguishable','source/version/evidence remain inspectable when they affect trust','recovery actions expose consequences before commitment']
++    layouts={
++      'home':({'identity':(.03,.03,.94,.09),'state':(.03,.15,.94,.21),'active':(.03,.39,.94,.25),'exceptions':(.03,.67,.45,.28),'actions':(.51,.67,.46,.28)}, {'nav':(.015,.02,.14,.96),'identity':(.18,.03,.80,.08),'state':(.18,.14,.52,.27),'active':(.18,.44,.52,.52),'exceptions':(.73,.14,.25,.35),'actions':(.73,.52,.25,.44)}, {'nav':(.012,.02,.11,.96),'identity':(.145,.03,.835,.075),'state':(.145,.14,.56,.28),'active':(.145,.45,.56,.51),'exceptions':(.73,.14,.25,.36),'actions':(.73,.53,.25,.43)}),
++      'browser':({'header':(.03,.03,.94,.08),'filters':(.03,.14,.94,.10),'entries':(.03,.27,.58,.68),'details':(.64,.27,.33,.68)}, {'header':(.02,.03,.96,.075),'categories':(.02,.14,.16,.82),'entries':(.20,.14,.48,.82),'details':(.70,.14,.28,.82)}, {'header':(.015,.03,.97,.07),'categories':(.015,.13,.14,.84),'entries':(.175,.13,.52,.84),'details':(.715,.13,.27,.84)}),
++      'three':({'header':(.03,.03,.94,.08),'primary':(.03,.14,.94,.38),'secondary':(.03,.55,.45,.41),'details':(.51,.55,.46,.41)}, {'header':(.02,.03,.96,.075),'primary':(.02,.14,.48,.82),'secondary':(.52,.14,.22,.82),'details':(.76,.14,.22,.82)}, {'header':(.015,.03,.97,.07),'primary':(.015,.13,.51,.84),'secondary':(.545,.13,.20,.84),'details':(.765,.13,.22,.84)}),
++      'lanes':({'header':(.03,.03,.94,.08),'summary':(.03,.14,.94,.14),'lanes':(.03,.31,.94,.45),'details':(.03,.79,.94,.17)}, {'header':(.02,.03,.96,.075),'summary':(.02,.14,.20,.82),'lanes':(.245,.14,.50,.82),'details':(.77,.14,.21,.82)}, {'header':(.015,.03,.97,.07),'summary':(.015,.13,.18,.84),'lanes':(.215,.13,.54,.84),'details':(.775,.13,.21,.84)}),
++      'settings':({'header':(.04,.03,.92,.08),'categories':(.04,.14,.92,.15),'settings':(.04,.32,.92,.52),'actions':(.04,.87,.92,.10)}, {'header':(.03,.03,.94,.08),'categories':(.03,.14,.22,.82),'settings':(.28,.14,.46,.82),'evidence':(.77,.14,.20,.58),'actions':(.77,.75,.20,.21)}, {'header':(.025,.03,.95,.075),'categories':(.025,.14,.19,.82),'settings':(.24,.14,.50,.82),'evidence':(.765,.14,.21,.58),'actions':(.765,.75,.21,.21)}),
++    }
++    def variants(key):
++        a,b,c=layouts[key]; return {'compact':a,'standard':b,'wide':c}
++    specs=[
++      ('axm.system.home','AXM system home','home','overview of current machine state, active work, exceptions and next actions',['axm','system','home','machine']),
++      ('axm.system.registry','AXM registry browser','browser','browse exact registered items with source and version visible',['axm','system','registry','source']),
++      ('axm.system.capability-browser','Capability browser','browser','inspect capability scope, inputs, outputs, dependencies, evidence and availability',['axm','system','capability','browser']),
++      ('axm.system.cartridge-loader','Monolith cartridge loader','three','inspect and explicitly load a portable package with compatibility and contents visible',['axm','system','monolith','cartridge']),
++      ('axm.system.machine-state','Machine state inspector','three','inspect current state, active or dormant systems, dependencies and explicit changes',['axm','system','state','inspect']),
++      ('axm.system.evidence-review','Evidence and truth review','three','review claims against evidence, source boundaries and untested gaps',['axm','system','evidence','truth']),
++      ('axm.system.workflow','Workflow and creation flow','lanes','show requested work as explicit stages with dependencies, blockers and outputs',['axm','system','workflow','state']),
++      ('axm.system.specialists','Specialist perspectives','three','show specialist scopes, evidence, dissent and contributions',['axm','system','specialists','dissent']),
++      ('axm.system.workfloor','Machine workfloor','lanes','visualize concurrent bounded work lanes over shared canonical state',['axm','system','workfloor','lanes']),
++      ('axm.system.snapshots','Snapshots and continuity','three','inspect checkpoints, verification, differences and restore consequences',['axm','system','snapshot','continuity']),
++      ('axm.system.settings','AXM system settings','settings','edit explicit user or device policies and optional connections',['axm','system','settings','policy']),
++      ('axm.system.recovery','AXM recovery and repair','three','show failure state, safe state, evidence and bounded recovery choices',['axm','system','recovery','repair']),
++    ]
++    additions={sid:screen(sid,name,'software.axm','axm.machine.glass',intent,variants(layout),tags=tags,quality=q) for sid,name,layout,intent,tags in specs}
++    _merge(screens,additions,'screen')
++    ids=[x[0] for x in specs]
++    product={'schema':'axm.visual-product/v1','id':'axm.system.shell','version':1,'name':'AXM machine and monolith shell','kind':'product','domain':'software.axm','tags':['axm','system','machine','product'],'origin':origin(),'style':'axm.machine.glass','intent':'a progressively disclosed control shell for registry, capabilities, portable packages, state, evidence, workflows, specialists, workfloor, continuity and recovery','screens':ids,'flow':[
++      ['axm.system.home','axm.system.registry','browse-registry'],['axm.system.home','axm.system.capability-browser','browse-capabilities'],['axm.system.home','axm.system.cartridge-loader','load-cartridge'],['axm.system.cartridge-loader','axm.system.machine-state','inspect-state'],['axm.system.machine-state','axm.system.evidence-review','review-evidence'],['axm.system.home','axm.system.workflow','inspect-work'],['axm.system.workflow','axm.system.specialists','inspect-perspectives'],['axm.system.workflow','axm.system.workfloor','inspect-workfloor'],['axm.system.home','axm.system.snapshots','inspect-continuity'],['axm.system.snapshots','axm.system.recovery','recover'],['axm.system.home','axm.system.settings','configure'],['axm.system.recovery','axm.system.home','return-home']], 'quality':q}
++    _merge(products,{'axm.system.shell':product},'product')
+diff --git a/src/axm_uc/visual_templates.py b/src/axm_uc/visual_templates.py
+index 194cfb9..aca6d3d 100644
+--- a/src/axm_uc/visual_templates.py
++++ b/src/axm_uc/visual_templates.py
+@@ -11,13 +11,15 @@ from . import visual_template_core as _core
+ from .visual_template_growth import extend_catalog as _extend_catalog
+ from .visual_template_game_systems import extend_game_system_catalog as _extend_game_system_catalog
+ from .visual_template_creative_narrative import extend_creative_narrative_catalog as _extend_creative_narrative_catalog
++from .visual_template_axm_system import extend_axm_system_catalog as _extend_axm_system_catalog
+ 
+-_COMPOSITION=("visual_template_growth","visual_template_game_systems","visual_template_creative_narrative")
++_COMPOSITION=("visual_template_growth","visual_template_game_systems","visual_template_creative_narrative","visual_template_axm_system")
+ _applied=getattr(_core,"_AXM_VISUAL_COMPOSITION",None)
+ if _applied is None:
+     _extend_catalog(vars(_core))
+     _extend_game_system_catalog(vars(_core))
+     _extend_creative_narrative_catalog(vars(_core))
++    _extend_axm_system_catalog(vars(_core))
+     _core._AXM_VISUAL_COMPOSITION=_COMPOSITION
+ elif _applied != _COMPOSITION:
+     raise RuntimeError("visual template composition changed inside a live process; restart with one exact catalog")
+diff --git a/tests/test_visual_templates.py b/tests/test_visual_templates.py
+index 2674544..1ec2f96 100644
+--- a/tests/test_visual_templates.py
++++ b/tests/test_visual_templates.py
+@@ -1,182 +1,97 @@
+ import json
+ from pathlib import Path
+-import sys
+-import tempfile
+-import unittest
++import sys,tempfile,unittest
+ from xml.etree import ElementTree
+-
+ ROOT=Path(__file__).resolve().parents[1]
+ sys.path.insert(0,str(ROOT/'src'))
+ from axm_stickers import Registry
+ from axm_uc import visual_templates as vt
+ 
+-
+ SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
+-GAME_PRODUCTS=('game.racing.full','game.coop.action','game.rts.command','game.system.shell')
+-CREATIVE_PRODUCTS=('editor.creative.core','comic.narrative.core')
+-
++PRODUCTS=('game.racing.full','game.coop.action','game.rts.command','game.system.shell','editor.creative.core','comic.narrative.core','axm.system.shell')
+ 
+ class VisualTemplateTests(unittest.TestCase):
+-    def test_catalog_is_valid_and_professional_pack_is_present(self):
++    def test_catalog_counts_and_products(self):
+         counts=vt.validate_catalog()
+-        self.assertEqual(counts,{'styles':10,'primitives':47,'screens':79,'products':8})
++        self.assertEqual(counts,{'styles':11,'primitives':57,'screens':91,'products':9})
+         self.assertEqual(vt.CATALOG_COMPOSITION['counts'],counts)
+-        products={p['id'] for p in vt.catalog()['products']}
+-        self.assertTrue({'game.racing.performance','game.racing.full','game.coop.action','game.rts.command','game.system.shell','software.creator.studio','editor.creative.core','comic.narrative.core'} <= products)
++        ids={p['id'] for p in vt.catalog()['products']}
++        self.assertTrue(set(PRODUCTS)|{'game.racing.performance','software.creator.studio'} <= ids)
+ 
+-    def test_all_resolutions_stay_in_viewport(self):
+-        for tid in vt.SCREEN_TEMPLATES:
++    def test_all_geometry_and_major_variants(self):
++        for tid,definition in vt.SCREEN_TEMPLATES.items():
++            if tid.startswith(('game.','editor.creative.','comic.narrative.','axm.system.')):
++                self.assertEqual(set(definition['variants']),{'compact','standard','wide'},tid)
+             for width,height in SIZES:
+                 out=vt.resolve(tid,width,height)
+-                for box in out['regions'].values():
+-                    x,y,w,h=box
+-                    self.assertGreaterEqual(x,0); self.assertGreaterEqual(y,0)
+-                    self.assertLessEqual(x+w,width+1e-6); self.assertLessEqual(y+h,height+1e-6)
+-
+-    def test_game_and_creative_screens_supply_all_three_responsive_variants(self):
+-        for tid,screen in vt.SCREEN_TEMPLATES.items():
+-            if tid.startswith(('game.','editor.creative.','comic.narrative.')):
+-                self.assertEqual(set(screen['variants']),{'compact','standard','wide'},tid)
+-
+-    def test_deterministic_copy_safe_and_strict_variant(self):
+-        a=vt.resolve('game.racing.hud.performance',1920,1080)
+-        b=vt.resolve('game.racing.hud.performance',1920,1080)
+-        self.assertEqual(a,b)
+-        got=vt.get('game.racing.hud.performance'); got['name']='mutated'
+-        self.assertNotEqual(vt.get('game.racing.hud.performance')['name'],'mutated')
+-        with self.assertRaises(ValueError):
+-            vt.resolve('game.racing.hud.performance',1920,1080,variant='unknown')
+-
+-    def test_full_racing_product_has_professional_shell(self):
+-        product=vt.get('game.racing.full')
+-        self.assertEqual(len(product['screens']),19)
+-        required={
+-            'game.racing.home','game.racing.vehicle-select','game.racing.tuning','game.racing.livery',
+-            'game.racing.pre-race','game.racing.loading','game.racing.countdown','game.racing.hud.performance',
+-            'game.racing.hud.split','game.racing.recovery','game.racing.results','game.racing.replay',
+-            'game.racing.season','game.racing.settings','game.racing.accessibility',
+-        }
+-        self.assertTrue(required <= set(product['screens']))
+-        flow={(a,b,action) for a,b,action in product['flow']}
+-        self.assertIn(('game.racing.loading','game.racing.countdown','ready'),flow)
+-        self.assertIn(('game.racing.countdown','game.racing.hud.performance','start-race'),flow)
+-        self.assertIn(('game.racing.hud.performance','game.racing.recovery','connection-loss'),flow)
+-
+-    def test_shared_game_system_shell_covers_professional_product_plumbing(self):
+-        product=vt.get('game.system.shell')
+-        self.assertEqual(len(product['screens']),18)
+-        required={
+-            'game.system.profile','game.system.party','game.system.matchmaking','game.system.server-browser',
+-            'game.system.controller-remap','game.system.display','game.system.audio','game.system.accessibility',
+-            'game.system.save-slots','game.system.achievements','game.system.tutorial','game.system.photo-mode',
+-            'game.system.credits','game.system.error-recovery','game.system.notifications','game.system.chat',
+-            'game.system.privacy-consent','game.system.language',
+-        }
+-        self.assertEqual(set(product['screens']),required)
+-        privacy=vt.get('game.system.privacy-consent')
+-        self.assertIn('revocation',' '.join(privacy['quality']).lower())
+-        self.assertIn('observed',' '.join(vt.get('game.system.matchmaking')['quality']).lower())
+-
+-    def test_creative_editor_product_covers_editable_source_work(self):
+-        product=vt.get('editor.creative.core')
+-        self.assertEqual(len(product['screens']),12)
+-        required={
+-            'editor.creative.project-hub','editor.creative.asset-browser','editor.creative.layer-editor',
+-            'editor.creative.timeline','editor.creative.node-graph','editor.creative.inspector',
+-            'editor.creative.animation','editor.creative.effects','editor.creative.cutscene',
+-            'editor.creative.material','editor.creative.audio','editor.creative.review-export',
+-        }
++                for x,y,w,h in out['regions'].values():
++                    self.assertGreaterEqual(min(x,y,w,h),0)
++                    self.assertLessEqual(x+w,width+1e-6)
++                    self.assertLessEqual(y+h,height+1e-6)
++
++    def test_existing_product_depth_is_retained(self):
++        self.assertEqual(len(vt.get('game.racing.full')['screens']),19)
++        self.assertEqual(len(vt.get('game.system.shell')['screens']),18)
++        self.assertEqual(len(vt.get('editor.creative.core')['screens']),12)
++        self.assertEqual(len(vt.get('comic.narrative.core')['screens']),10)
++        self.assertIn('game.racing.hud.split',vt.get('game.racing.full')['screens'])
++        self.assertIn('game.system.privacy-consent',vt.get('game.system.shell')['screens'])
++        self.assertIn('editor.creative.node-graph',vt.get('editor.creative.core')['screens'])
++        self.assertIn('comic.narrative.dialogue-editor',vt.get('comic.narrative.core')['screens'])
++
++    def test_axm_system_shell(self):
++        product=vt.get('axm.system.shell')
++        required={'axm.system.home','axm.system.registry','axm.system.capability-browser','axm.system.cartridge-loader','axm.system.machine-state','axm.system.evidence-review','axm.system.workflow','axm.system.specialists','axm.system.workfloor','axm.system.snapshots','axm.system.settings','axm.system.recovery'}
+         self.assertEqual(set(product['screens']),required)
+-        self.assertIn('source state',' '.join(product['quality']).lower())
+-        self.assertIn('layers',vt.get('editor.creative.layer-editor')['tags'])
+-        self.assertIn('graph',vt.get('editor.creative.node-graph')['tags'])
+-
+-    def test_comic_product_preserves_editable_narrative_structure(self):
+-        product=vt.get('comic.narrative.core')
+-        self.assertEqual(len(product['screens']),10)
+-        required={
+-            'comic.narrative.library','comic.narrative.page-editor','comic.narrative.panel-editor',
+-            'comic.narrative.dialogue-editor','comic.narrative.character-sheet','comic.narrative.scene-graph',
+-            'comic.narrative.storyboard','comic.narrative.motion-timeline','comic.narrative.reader-preview',
+-            'comic.narrative.export',
+-        }
+-        self.assertEqual(set(product['screens']),required)
+-        quality=' '.join(product['quality']).lower()
+-        self.assertIn('panel geometry',quality)
+-        self.assertIn('flattened preview',quality)
+-        page=vt.get('comic.narrative.page-editor')
+-        self.assertIn('gutter_ratio',page['math_hooks'])
+-        dialogue=' '.join(vt.get('comic.narrative.dialogue-editor')['quality']).lower()
+-        self.assertIn('reading-order',dialogue)
+-
+-    def test_products_resolve_exact_screens_across_viewports(self):
+-        for product_id in GAME_PRODUCTS+CREATIVE_PRODUCTS:
+-            product=vt.get(product_id)
++        self.assertEqual(product['style'],'axm.machine.glass')
++        flow={(a,b,c) for a,b,c in product['flow']}
++        self.assertIn(('axm.system.cartridge-loader','axm.system.machine-state','inspect-state'),flow)
++        self.assertIn(('axm.system.snapshots','axm.system.recovery','recover'),flow)
++
++    def test_products_resolve_and_previews_parse(self):
++        for pid in PRODUCTS:
++            definition=vt.get(pid)
+             for width,height in SIZES:
+-                out=vt.product_resolution(product_id,width,height)
+-                self.assertEqual([x['template']['id'] for x in out['screens']],product['screens'])
+-                self.assertEqual(len(out['flow']),len(product['flow']))
+-
+-    def test_preview_projects_are_parseable(self):
+-        screen=vt.screen_project('comic.narrative.page-editor',1280,720)
+-        ElementTree.fromstring(screen['files']['screen.svg'])
+-        json.loads(screen['files']['template.json'])
+-        for product_id in GAME_PRODUCTS+CREATIVE_PRODUCTS:
+-            product=vt.product_project(product_id,1280,720)
+-            svgs=[name for name in product['files'] if name.endswith('.svg')]
+-            self.assertEqual(len(svgs),len(vt.get(product_id)['screens']))
+-            for name in svgs: ElementTree.fromstring(product['files'][name])
+-
+-    def test_builtins_install_in_existing_sticker_registry(self):
++                out=vt.product_resolution(pid,width,height)
++                self.assertEqual([x['template']['id'] for x in out['screens']],definition['screens'])
++            project=vt.product_project(pid,1280,720)
++            svgs=[v for k,v in project['files'].items() if k.endswith('.svg')]
++            self.assertEqual(len(svgs),len(definition['screens']))
++            for svg in svgs: ElementTree.fromstring(svg)
++
++    def test_registry_installs_all_exact_definitions(self):
+         with tempfile.TemporaryDirectory() as td:
+             with Registry(Path(td)/'stickers.sqlite') as registry:
+                 pins=vt.install_builtins(registry)
+-                self.assertEqual(len(pins),87)
+-                racing=registry.search(adapter=vt.ADAPTER,tag='racing',limit=100)['entries']
+-                game=registry.search(adapter=vt.ADAPTER,tag='game',limit=100)['entries']
+-                comic=registry.search(adapter=vt.ADAPTER,tag='comic',limit=100)['entries']
+-                self.assertGreaterEqual(len(racing),19)
+-                self.assertGreaterEqual(len(game),52)
+-                self.assertEqual(len(comic),10)
+-                definition=registry.get('visual.comic.narrative.page-editor',1)
+-                self.assertEqual(definition['recipe']['visual_template']['schema'],vt.SCHEMA)
+-                self.assertNotIn('"latest"',json.dumps(definition,sort_keys=True))
+-
+-    def test_reusable_primitives_cover_game_editing_and_narrative_states(self):
+-        required={
+-            'player-seat','selection-card','stat-comparison','slider-row','countdown','loading-state',
+-            'recovery-banner','telemetry-strip','input-hint','modal','empty-state','tab-strip',
+-            'keybind-row','save-slot','party-member','server-row','notification-badge','chat-message',
+-            'confirmation-summary','focus-indicator','layer-row','timeline-track','keyframe','node-card',
+-            'socket-port','inspector-field','asset-tile','panel-frame','panel-gutter','speech-bubble',
+-            'caption-box','storyboard-card','reading-order-marker','character-reference-card','story-beat-link',
+-        }
++                self.assertEqual(len(pins),100)
++                self.assertEqual(len(registry.search(adapter=vt.ADAPTER,tag='axm',limit=100)['entries']),12)
++                self.assertEqual(len(registry.search(adapter=vt.ADAPTER,tag='comic',limit=100)['entries']),10)
++                d=registry.get('visual.axm.system.registry',1)
++                self.assertEqual(d['recipe']['visual_template']['schema'],vt.SCHEMA)
++                self.assertNotIn('"latest"',json.dumps(d,sort_keys=True))
++
++    def test_reusable_state_contracts(self):
++        required={'player-seat','loading-state','layer-row','timeline-track','node-card','speech-bubble','reading-order-marker','truth-state','capability-card','registry-entry','evidence-chip','state-diff','cartridge-card','specialist-card','workfloor-lane','snapshot-entry','recovery-choice'}
+         self.assertTrue(required <= set(vt.PRIMITIVES))
+-        self.assertTrue(vt.PRIMITIVES['loading-state']['fake_progress_forbidden'])
+-        self.assertTrue(vt.PRIMITIVES['layer-row']['order_must_be_explicit'])
+-        self.assertTrue(vt.PRIMITIVES['speech-bubble']['text_and_tail_remain_separate'])
+-        self.assertTrue(vt.PRIMITIVES['reading-order-marker']['order_conflicts_must_fail_visible'])
++        self.assertTrue(vt.PRIMITIVES['truth-state']['source_must_be_visible'])
++        self.assertTrue(vt.PRIMITIVES['registry-entry']['no_floating_latest'])
++        self.assertTrue(vt.PRIMITIVES['snapshot-entry']['restore_is_explicit'])
++        self.assertTrue(vt.PRIMITIVES['recovery-choice']['consequence_must_be_visible'])
+ 
+-    def test_slot_binding_requires_exact_pin_and_contract(self):
+-        definition={
+-            'schema':'axm.sticker/v1','id':'test-speed-cluster','version':1,'name':'Test speed cluster',
+-            'tags':['hud','metric'],'origin':{'author':'test','license':'test','source':'test'},
+-            'adapter':'test/v1','attachment':{'space':'2d','socket':'surface','anchor':[0,0]},
+-            'recipe':{},'assets':{},'parameters':{},
+-        }
++    def test_copy_safety_variant_rejection_and_bad_geometry(self):
++        a=vt.resolve('axm.system.home',1920,1080); b=vt.resolve('axm.system.home',1920,1080)
++        self.assertEqual(a,b)
++        copy=vt.get('axm.system.home'); copy['name']='changed'
++        self.assertNotEqual(vt.get('axm.system.home')['name'],'changed')
++        with self.assertRaises(ValueError): vt.resolve('axm.system.home',1920,1080,variant='unknown')
++        bad=vt.get('axm.system.registry'); bad['variants']['standard']['entries']=[.9,.9,.2,.2]
++        with self.assertRaises(ValueError): vt.validate_screen(bad)
++
++    def test_exact_sticker_slot_binding_is_retained(self):
++        d={'schema':'axm.sticker/v1','id':'test-speed-cluster','version':1,'name':'Test speed cluster','tags':['hud','metric'],'origin':{'author':'test','license':'test','source':'test'},'adapter':'test/v1','attachment':{'space':'2d','socket':'surface','anchor':[0,0]},'recipe':{},'assets':{},'parameters':{}}
+         with tempfile.TemporaryDirectory() as td:
+             with Registry(Path(td)/'stickers.sqlite') as registry:
+-                pin=registry.register(definition)
+-                bound=vt.bind_sticker_slots('game.racing.hud.performance',registry,{'speed-cluster':pin})
+-                self.assertEqual(bound['bindings']['speed-cluster'],pin)
+-                bad=dict(pin); bad['digest']='0'*64
+-                with self.assertRaises(ValueError):
+-                    vt.bind_sticker_slots('game.racing.hud.performance',registry,{'speed-cluster':bad})
+-
+-    def test_bad_geometry_fails(self):
+-        d=vt.get('comic.narrative.page-editor')
+-        d['variants']['standard']['page']=[.9,.9,.2,.2]
+-        with self.assertRaises(ValueError): vt.validate_screen(d)
+-
++                pin=registry.register(d)
++                self.assertEqual(vt.bind_sticker_slots('game.racing.hud.performance',registry,{'speed-cluster':pin})['bindings']['speed-cluster'],pin)
+ 
+ if __name__=='__main__': unittest.main()
+diff --git a/tools/visual_template_proof.py b/tools/visual_template_proof.py
+index 1d1d9ec..c6fb47d 100644
+--- a/tools/visual_template_proof.py
++++ b/tools/visual_template_proof.py
+@@ -1,128 +1,68 @@
+ #!/usr/bin/env python3
+ """Produce deterministic evidence for the composed visual-template fabric."""
+ from __future__ import annotations
+-
+-import json
++import json,shutil,sys
+ from pathlib import Path
+-import shutil
+-import sys
+ from xml.etree import ElementTree
+-
+-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
++sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src'))
+ from axm_uc import visual_templates as vt
+ 
+-
+ SIZES=[(640,360),(1080,1920),(1280,720),(1920,1080),(2560,1080),(3840,2160)]
+-PROOF_PRODUCTS=(
+-    "game.racing.full","game.coop.action","game.rts.command","game.system.shell",
+-    "editor.creative.core","comic.narrative.core",
+-)
+-
++PRODUCTS=("game.racing.full","game.coop.action","game.rts.command","game.system.shell","editor.creative.core","comic.narrative.core","axm.system.shell")
+ 
+-def _write_project(project: dict, target: Path) -> list[str]:
+-    target.mkdir()
+-    written=[]
+-    for name,body in project["files"].items():
+-        path=target/name
+-        path.parent.mkdir(parents=True,exist_ok=True)
+-        path.write_text(body,encoding="utf-8")
+-        if name.endswith(".svg"):
+-            ElementTree.fromstring(body)
+-        written.append(str(path))
+-    return written
++def _write(project,target):
++    target.mkdir(); out=[]
++    for name,body in project['files'].items():
++        path=target/name; path.parent.mkdir(parents=True,exist_ok=True); path.write_text(body,encoding='utf-8')
++        if name.endswith('.svg'): ElementTree.fromstring(body)
++        out.append(str(path))
++    return out
+ 
+-
+-def main(argv: list[str]) -> int:
+-    if len(argv) != 2:
+-        raise SystemExit("usage: python tools/visual_template_proof.py NEW_OUTPUT_DIRECTORY")
++def main(argv):
++    if len(argv)!=2: raise SystemExit('usage: python tools/visual_template_proof.py NEW_OUTPUT_DIRECTORY')
+     out=Path(argv[1])
+-    if out.exists():
+-        raise SystemExit("output path already exists")
++    if out.exists(): raise SystemExit('output path already exists')
+     out.mkdir(parents=True)
+     try:
+         counts=vt.validate_catalog()
+-        if counts != {"styles":10,"primitives":47,"screens":79,"products":8}:
+-            raise AssertionError(f"unexpected composed catalog: {counts}")
+-
++        if counts!={'styles':11,'primitives':57,'screens':91,'products':9}: raise AssertionError(counts)
+         evidence=[]
+-        for product_id in PROOF_PRODUCTS:
+-            expected=vt.get(product_id)
++        for pid in PRODUCTS:
++            expected=vt.get(pid)
+             for width,height in SIZES:
+-                resolved=vt.product_resolution(product_id,width,height)
+-                if [row["template"]["id"] for row in resolved["screens"]] != expected["screens"]:
+-                    raise AssertionError(f"screen order drift: {product_id}")
+-                for screen in resolved["screens"]:
+-                    for name,(x,y,w,h) in screen["regions"].items():
+-                        if min(x,y,w,h) < 0 or x+w > width+1e-6 or y+h > height+1e-6:
+-                            raise AssertionError(f"out of bounds: {screen['template']['id']} {name}")
+-                evidence.append({
+-                    "product":product_id,
+-                    "viewport":[width,height],
+-                    "screen_count":len(resolved["screens"]),
+-                    "flow_edges":len(resolved["flow"]),
+-                })
+-
+-        outputs=[]
++                resolved=vt.product_resolution(pid,width,height)
++                if [x['template']['id'] for x in resolved['screens']]!=expected['screens']: raise AssertionError('screen order drift '+pid)
++                for row in resolved['screens']:
++                    for name,(x,y,w,h) in row['regions'].items():
++                        if min(x,y,w,h)<0 or x+w>width+1e-6 or y+h>height+1e-6: raise AssertionError(f"out of bounds {row['template']['id']} {name}")
++                evidence.append({'product':pid,'viewport':[width,height],'screens':len(resolved['screens']),'flow_edges':len(resolved['flow'])})
+         galleries=(
+-            ("game.racing.full",1920,1080,"racing-full","AXM Full Racing Foundation"),
+-            ("game.coop.action",1280,720,"coop-action","AXM Co-op Action Foundation"),
+-            ("game.rts.command",1920,1080,"rts-command","AXM RTS Command Foundation"),
+-            ("game.system.shell",1280,720,"game-system","AXM Shared Game-System Foundation"),
+-            ("editor.creative.core",1920,1080,"creative-editor","AXM Creative Editor Foundation"),
+-            ("comic.narrative.core",1920,1080,"comic-narrative","AXM Editable Comic Foundation"),
++            ('game.racing.full',1920,1080,'racing-full','AXM Full Racing Foundation'),
++            ('game.coop.action',1280,720,'coop-action','AXM Co-op Action Foundation'),
++            ('game.rts.command',1920,1080,'rts-command','AXM RTS Command Foundation'),
++            ('game.system.shell',1280,720,'game-system','AXM Shared Game-System Foundation'),
++            ('editor.creative.core',1920,1080,'creative-editor','AXM Creative Editor Foundation'),
++            ('comic.narrative.core',1920,1080,'comic-narrative','AXM Editable Comic Foundation'),
++            ('axm.system.shell',1920,1080,'axm-system','AXM System Shell Foundation'),
+         )
+-        for product_id,width,height,folder,title in galleries:
+-            outputs.extend(_write_project(vt.product_project(product_id,width,height,title),out/folder))
+-
+-        mobile=vt.screen_project("product.mobile.home",1080,1920,"AXM Mobile Foundation")
+-        outputs.extend(_write_project(mobile,out/"mobile-home"))
+-
+-        racing=vt.get("game.racing.full")
+-        required_racing={"game.racing.accessibility","game.racing.recovery","game.racing.hud.split","game.racing.tuning","game.racing.replay"}
+-        if not required_racing <= set(racing["screens"]):
+-            raise AssertionError("full racing foundation lost required professional surfaces")
+-        system=vt.get("game.system.shell")
+-        required_system={"game.system.controller-remap","game.system.save-slots","game.system.error-recovery","game.system.privacy-consent","game.system.language"}
+-        if not required_system <= set(system["screens"]):
+-            raise AssertionError("shared game-system foundation lost required product surfaces")
+-        editor=vt.get("editor.creative.core")
+-        required_editor={"editor.creative.layer-editor","editor.creative.timeline","editor.creative.node-graph","editor.creative.animation","editor.creative.review-export"}
+-        if not required_editor <= set(editor["screens"]):
+-            raise AssertionError("creative editor lost required editable source surfaces")
+-        comic=vt.get("comic.narrative.core")
+-        required_comic={"comic.narrative.page-editor","comic.narrative.panel-editor","comic.narrative.dialogue-editor","comic.narrative.scene-graph","comic.narrative.motion-timeline"}
+-        if not required_comic <= set(comic["screens"]):
+-            raise AssertionError("comic foundation lost required editable narrative surfaces")
+-        if not vt.PRIMITIVES['speech-bubble']['text_and_tail_remain_separate']:
+-            raise AssertionError("speech bubble editability contract missing")
+-        if not vt.PRIMITIVES['reading-order-marker']['order_conflicts_must_fail_visible']:
+-            raise AssertionError("reading order conflict contract missing")
+-
+-        receipt={
+-            "schema":"axm.visual-template-proof/v4",
+-            "catalog":counts,
+-            "composition":vt.CATALOG_COMPOSITION,
+-            "product_evidence":evidence,
+-            "galleries":{
+-                product_id:{"screens":len(vt.get(product_id)["screens"]),"path":folder+"/index.html"}
+-                for product_id,_,_,folder,_ in galleries
+-            },
+-            "parsed_svg_count":sum(1 for path in outputs if path.endswith(".svg")),
+-            "editability_checks":{
+-                "creative_editor_source_surfaces":sorted(required_editor),
+-                "comic_separable_surfaces":sorted(required_comic),
+-                "speech_text_tail_separate":True,
+-                "reading_order_conflicts_visible":True,
+-            },
+-            "truth":"Offline contract/layout evidence only. SVG/HTML structure was generated and SVG parsed; target-engine interaction, authoring behavior, drawing quality, typography rendering, network/persistence behavior, accessibility audit and aesthetic acceptance were not observed.",
++        outputs=[]
++        for pid,w,h,folder,title in galleries: outputs+=_write(vt.product_project(pid,w,h,title),out/folder)
++        outputs+=_write(vt.screen_project('product.mobile.home',1080,1920,'AXM Mobile Foundation'),out/'mobile-home')
++        system=vt.get('axm.system.shell')
++        required={'axm.system.registry','axm.system.capability-browser','axm.system.cartridge-loader','axm.system.machine-state','axm.system.evidence-review','axm.system.workflow','axm.system.specialists','axm.system.workfloor','axm.system.snapshots','axm.system.recovery'}
++        if not required<=set(system['screens']): raise AssertionError('AXM shell lost required surfaces')
++        checks={
++            'truth_source_visible':vt.PRIMITIVES['truth-state']['source_must_be_visible'],
++            'registry_exact_version':vt.PRIMITIVES['registry-entry']['no_floating_latest'],
++            'snapshot_restore_explicit':vt.PRIMITIVES['snapshot-entry']['restore_is_explicit'],
++            'recovery_consequence_visible':vt.PRIMITIVES['recovery-choice']['consequence_must_be_visible'],
+         }
+-        (out/"receipt.json").write_text(json.dumps(receipt,indent=2,sort_keys=True),encoding="utf-8")
++        if not all(checks.values()): raise AssertionError('AXM system contract failed')
++        receipt={'schema':'axm.visual-template-proof/v5','catalog':counts,'composition':vt.CATALOG_COMPOSITION,'product_evidence':evidence,'galleries':{pid:{'screens':len(vt.get(pid)['screens']),'path':folder+'/index.html'} for pid,_,_,folder,_ in galleries},'parsed_svg_count':sum(p.endswith('.svg') for p in outputs),'axm_system_checks':checks,'truth':'Offline structural evidence only. Runtime machine operation, package mounting, recovery execution, authoring quality and aesthetic acceptance were not observed.'}
++        (out/'receipt.json').write_text(json.dumps(receipt,indent=2,sort_keys=True),encoding='utf-8')
+         print(json.dumps(receipt,indent=2,sort_keys=True))
+     except BaseException:
+-        shutil.rmtree(out,ignore_errors=True)
+-        raise
++        shutil.rmtree(out,ignore_errors=True); raise
+     return 0
+ 
+-
+-if __name__ == "__main__":
+-    raise SystemExit(main(sys.argv))
++if __name__=='__main__': raise SystemExit(main(sys.argv))

@@ -1,0 +1,176 @@
+{
+  "capsule_id": "ac541b05342f41f397dbf4ae5876ae8dc346bace4e51d34c009bf00824a109ce",
+  "evidence": {
+    "files": [
+      {
+        "additions": 37,
+        "binary": false,
+        "content_sha256": "2ec81545fdde97fca2e411e84a652f07c26263dde0953340a977e3c4eb637aef",
+        "deletions": 0,
+        "path": "ENVIRONMENT_TEMPLATE_PACK.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Source-Bound Environment / Level Reference Template Pack",
+          "Surfaces",
+          "Source-truth contract",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 42,
+        "binary": false,
+        "content_sha256": "00dc7dddd1d5dc9e9a17a54334428d6db6e99e4102aad3c0ec8c44341f5919a0",
+        "deletions": 42,
+        "path": "VISUAL_TEMPLATE_FABRIC.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Current v19 candidate census",
+          "Source-bound environment / level-reference foundation",
+          "Registry and identity",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 34,
+        "binary": false,
+        "content_sha256": "6919614e758f8942d7aba32babd2fd805ffa8b7405a0aded9d1748363fd64c90",
+        "deletions": 33,
+        "path": "VISUAL_TEMPLATE_PRIORITY_MAP.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "AXM Visual Template Expansion Priority Map",
+          "Environment / level reference boards \u2014 IMPLEMENTED IN THIS LANE",
+          "Next high-value visual/creation families",
+          "Cross-cutting rules",
+          "Immediate build order"
+        ]
+      },
+      {
+        "additions": 88,
+        "binary": false,
+        "content_sha256": "69106a27bef5159b206e95fb83b22fb990606105da9925c3e5ceb7e8773c23cd",
+        "deletions": 0,
+        "path": "src/axm_uc/visual_template_environment.py",
+        "status": "A",
+        "symbols": [
+          "_merge",
+          "extend_environment_catalog"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 3,
+        "binary": false,
+        "content_sha256": "244a5ac982b1d9bbf7c7ef5f5ca9d62c8ec5b592ee7d7822f32d2ba8a036a980",
+        "deletions": 1,
+        "path": "src/axm_uc/visual_templates.py",
+        "status": "M",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 37,
+        "binary": false,
+        "content_sha256": "4b22e9ba24e478298b0ba8467d3d7f35a157fa87662bb3ccbca9c865ed72bf09",
+        "deletions": 35,
+        "path": "tests/test_visual_templates.py",
+        "status": "M",
+        "symbols": [
+          "VisualTemplateTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 20,
+        "binary": false,
+        "content_sha256": "ba524dffa7eeebbc7a86c7a5af838db8bcdced8969f2a9a0be7dfd4a0ee6c5d8",
+        "deletions": 18,
+        "path": "tools/visual_template_proof.py",
+        "status": "M",
+        "symbols": [
+          "_write",
+          "main"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "8385fcd643223f1c74a6b2d194fbe3c048605569b84d02b4b4a44509d5e18367"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "add",
+      "axm",
+      "boards",
+      "bound",
+      "boundary",
+      "build",
+      "candidate",
+      "catalog",
+      "census",
+      "contract",
+      "creation",
+      "creation-machine",
+      "cross",
+      "current",
+      "cutting",
+      "environment",
+      "expansion",
+      "extend",
+      "fabric",
+      "families",
+      "foundation",
+      "high",
+      "identity",
+      "immediate",
+      "implemented",
+      "lane",
+      "level",
+      "map",
+      "merge",
+      "next",
+      "order",
+      "pack",
+      "priority",
+      "proof",
+      "reference",
+      "registry",
+      "rules",
+      "source",
+      "standalone",
+      "surfaces",
+      "template",
+      "templates",
+      "this",
+      "tools",
+      "truth",
+      "universal-creation",
+      "v19",
+      "value",
+      "visual",
+      "write"
+    ]
+  },
+  "source": {
+    "base": "a72d12c80aa691c704402250b115fb24e630e613",
+    "commit_subject": "Add source-bound environment and level-reference templates",
+    "head": "6bba63ad0faf3b599d3841aca6733cf8c560f5fa",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

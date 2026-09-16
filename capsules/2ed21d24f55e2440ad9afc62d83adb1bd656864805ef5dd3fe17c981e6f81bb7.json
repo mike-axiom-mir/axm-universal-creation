@@ -1,0 +1,166 @@
+{
+  "capsule_id": "2ed21d24f55e2440ad9afc62d83adb1bd656864805ef5dd3fe17c981e6f81bb7",
+  "evidence": {
+    "files": [
+      {
+        "additions": 49,
+        "binary": false,
+        "content_sha256": "373e71aa4a379af61c826523467a586ab91d15c88be7aa1a85b7690a9a402895",
+        "deletions": 5,
+        "path": "GAME_STYLE_GROWTH.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Current checkpoint",
+          "Material realization pass \u2014 2026-09-13",
+          "Earlier bootstrap"
+        ]
+      },
+      {
+        "additions": 94,
+        "binary": false,
+        "content_sha256": "83997f8b5b459b1567d4b9c075ada25d5433ff949b15c0cd1e2e2070396bb4ce",
+        "deletions": 0,
+        "path": "docs/GAME_MATERIAL_BLENDER.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Game materials in Blender and glTF",
+          "Use",
+          "Export contract",
+          "Reproducible proof",
+          "In an isolated Python 3.11 environment with bpy 4.3.0, numpy 1.26.4, Pillow:",
+          "Limits and next work"
+        ]
+      },
+      {
+        "additions": 200,
+        "binary": false,
+        "content_sha256": "175875dfd28ef5b04b45bf1328aacdaf7ca5ce96365d2aae2b6bc8a08dc716b3",
+        "deletions": 0,
+        "path": "src/axm_uc/game_material_bridge.py",
+        "status": "A",
+        "symbols": [
+          "_validate_png_payload",
+          "load_material_bundle",
+          "blender_game_material"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 1,
+        "binary": false,
+        "content_sha256": "afb31835c3e009a219a6de68ba98f26ec6879f2a03eb2eb92fd90bff650e78cf",
+        "deletions": 1,
+        "path": "src/axm_uc/game_material_styles.py",
+        "status": "M",
+        "symbols": [
+          "game_material_request"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 116,
+        "binary": false,
+        "content_sha256": "e6bc5047ad766a8834448ffd8288486da4cfdad69b72458001364a9d391e133f",
+        "deletions": 0,
+        "path": "tests/test_game_material_bridge.py",
+        "status": "A",
+        "symbols": [
+          "MaterialBundleTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 216,
+        "binary": false,
+        "content_sha256": "5d588e5f949888a48e45568631136047cc2844eaf0d74529fa23ff1dae441b66",
+        "deletions": 0,
+        "path": "tools/blender/game_material_roundtrip.py",
+        "status": "A",
+        "symbols": [
+          "digest_sources",
+          "presentation",
+          "build",
+          "verify"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "70a901c601a0efb7cd1db166a688521eb7d2802a4efab5eb12ec573d61e35981"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 6,
+    "kinds": [
+      "code",
+      "knowledge",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "axm",
+      "blender",
+      "bootstrap",
+      "bpy",
+      "bridge",
+      "build",
+      "bundle",
+      "checkpoint",
+      "contract",
+      "creation-machine",
+      "current",
+      "digest",
+      "earlier",
+      "environment",
+      "export",
+      "game",
+      "glb",
+      "growth",
+      "isolated",
+      "limits",
+      "load",
+      "material",
+      "materials",
+      "merge",
+      "next",
+      "numpy",
+      "pass",
+      "payload",
+      "pillow",
+      "png",
+      "presentation",
+      "proof",
+      "python",
+      "realization",
+      "reproducible",
+      "request",
+      "round",
+      "roundtrip",
+      "sources",
+      "standalone",
+      "style",
+      "styles",
+      "tools",
+      "trips",
+      "universal-creation",
+      "use",
+      "validate",
+      "verified",
+      "verify",
+      "with",
+      "work"
+    ]
+  },
+  "source": {
+    "base": "bf607a534b240522b919a39d8aecbc9f7ff665dd",
+    "commit_subject": "Merge game material Blender realization and verified GLB round trips (#61)",
+    "head": "c20bcc4767694afc1199732c75a59a102f14ac35",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

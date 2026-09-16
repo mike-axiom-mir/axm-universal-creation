@@ -1,0 +1,105 @@
+{
+  "capsule_id": "c2283762aceb22fdfff8628024daa658f38065b2cf9cb4bbabb09a51987d0ca1",
+  "evidence": {
+    "files": [
+      {
+        "additions": 162,
+        "binary": false,
+        "content_sha256": "92d8029137ed6e03761d34d9d20387e7a362bff670c811adb19a71a62e5eeb15",
+        "deletions": 0,
+        "path": "docs/CREATIVE_PRECISION_WAVE6.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Creative Precision Fabric \u2014 face / edge / vertex modeling wave 6",
+          "Public capability growth",
+          "Exact mesh-edit hand families",
+          "Face selection",
+          "Vertex selection",
+          "Selection operations",
+          "Edge selection",
+          "Face editing",
+          "Region extrusion",
+          "Individual extrusion and inset",
+          "Selected-vertex editing",
+          "General topology helper",
+          "Truth boundaries",
+          "Verification"
+        ]
+      },
+      {
+        "additions": 6,
+        "binary": false,
+        "content_sha256": "e5b8d4b70182888511639d167f6e3919cebba312cf10f9112aba530b06e63a6e",
+        "deletions": 0,
+        "path": "tests/test_creative_precision_fabric.py",
+        "status": "M",
+        "symbols": [
+          "CreativePrecisionFabricTests"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "16170d2c73d1b290c9138933bc1655fc3dbad113582598fad8d51116c6987943"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "add",
+      "axm",
+      "boundaries",
+      "capability",
+      "creation-machine",
+      "creative",
+      "edge",
+      "edit",
+      "editing",
+      "exact",
+      "extrusion",
+      "fabric",
+      "face",
+      "families",
+      "general",
+      "growth",
+      "hand",
+      "hands",
+      "helper",
+      "individual",
+      "inset",
+      "mesh",
+      "modeling",
+      "operations",
+      "precision",
+      "region",
+      "selected",
+      "selection",
+      "standalone",
+      "topology",
+      "truth",
+      "universal-creation",
+      "verification",
+      "vertex",
+      "wave",
+      "wave6"
+    ]
+  },
+  "source": {
+    "base": "636a4f826312377c5d36034dc3e81fc6f154d1d2",
+    "commit_subject": "Add face edge vertex modeling hands (#89)",
+    "head": "57c261c67b0c1b55bcc287302b182f867fe0eb92",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

@@ -1,0 +1,148 @@
+{
+  "capsule_id": "2a035a70f5016b855c9abc975b69937f2e9aaafa421238b4320e8fcbef145eca",
+  "evidence": {
+    "files": [
+      {
+        "additions": 36,
+        "binary": false,
+        "content_sha256": "882aa204ca93651870f7065462561962cc0d4210717ae9fbfb2dde6fd4631d8c",
+        "deletions": 0,
+        "path": "GAME_STYLE_GROWTH.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Current checkpoint",
+          "Profile-based creative practice \u2014 2026-09-15",
+          "Studio donor recovery and executable layers \u2014 2026-09-15"
+        ]
+      },
+      {
+        "additions": 148,
+        "binary": false,
+        "content_sha256": "c0ca391e99e72502169ee0418bce2e5c4046bca5cb02df0e60af1db2b0175cb9",
+        "deletions": 0,
+        "path": "docs/CREATIVE_PRACTICE.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Creative practice profiles",
+          "Use it",
+          "What actually learns",
+          "Journals without file proliferation",
+          "Evidence and boundaries"
+        ]
+      },
+      {
+        "additions": 483,
+        "binary": false,
+        "content_sha256": "4bcb384147ce5308374dcf42a531f791dbcdff9ef17784d5e62e80bf38afb452",
+        "deletions": 0,
+        "path": "src/axm_uc/creative_practice.py",
+        "status": "A",
+        "symbols": [
+          "_json",
+          "_sha",
+          "_text",
+          "_integer",
+          "_engine",
+          "candidates",
+          "Practice",
+          "main"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 287,
+        "binary": false,
+        "content_sha256": "4cd8ff3c4e8919cf4faa1e3ea570e12b094b77180cd2e15997fa7c4b54302657",
+        "deletions": 0,
+        "path": "tests/test_creative_practice.py",
+        "status": "A",
+        "symbols": [
+          "project",
+          "proposal",
+          "PracticeTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 87,
+        "binary": false,
+        "content_sha256": "7c7f33a2bc33faed7a7bede644a713a0ffcb7e89f3443a863fbce9d42e8c3a19",
+        "deletions": 0,
+        "path": "tools/creative_practice_proof.py",
+        "status": "A",
+        "symbols": [
+          "build"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "5b33c83f696289037ab758d6226100e0f761d2fe10fe4c515663900e25af6547"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 6,
+    "kinds": [
+      "code",
+      "knowledge",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "actually",
+      "axm",
+      "based",
+      "boundaries",
+      "build",
+      "candidates",
+      "checkpoint",
+      "creation-machine",
+      "creative",
+      "current",
+      "donor",
+      "engine",
+      "evidence",
+      "executable",
+      "game",
+      "growth",
+      "integer",
+      "integrate",
+      "journals",
+      "json",
+      "layers",
+      "learns",
+      "memory",
+      "practice",
+      "profile",
+      "profiles",
+      "project",
+      "proliferation",
+      "proof",
+      "proposal",
+      "recovery",
+      "resumable",
+      "sha",
+      "standalone",
+      "studio",
+      "style",
+      "text",
+      "tools",
+      "universal-creation",
+      "use",
+      "what",
+      "without"
+    ]
+  },
+  "source": {
+    "base": "882aeef0d4920dcfa6d105d68df9adba34e37942",
+    "commit_subject": "Integrate resumable creative practice profiles and evidence memory",
+    "head": "210ba77528cb03c7812dfed06bf605360cca77d0",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

@@ -1,0 +1,760 @@
+diff --git a/MATERIAL_CAPABILITY_EXCHANGE_ADAPTER.md b/MATERIAL_CAPABILITY_EXCHANGE_ADAPTER.md
+new file mode 100644
+index 0000000..02aa19c
+--- /dev/null
++++ b/MATERIAL_CAPABILITY_EXCHANGE_ADAPTER.md
+@@ -0,0 +1,62 @@
++# Material Capability Exchange Adapter v0.18
++
++Universal Creation can now consume the exact `axm-material-capability-pack/v0.18.0` contract emitted by AXM Material / Surface Fabric and return an exact `axm-material-use-feedback/v0.18.0` receipt.
++
++This adapter is deliberately detached from live Universal Creation topology. Its first bounded use path is material-native:
++
++`Material / Surface capability pack -> exact identity/fingerprint validation -> material-entry/material-family projection -> existing v0.2 donor adapter -> validated Asset Atom package -> v0.18 downstream-use feedback`
++
++## What is adopted
++
++`material-entry` capabilities are adopted only when their portable data URL and explicit channel state can be mapped exactly through the existing Material Donor adapter.
++
++`material-family` capabilities are adopted only when their declared entry membership can be mapped exactly to accepted entries and one texture per supported channel.
++
++A successful adoption emits a `PASS adopted` feedback event carrying the exact source capability ID and the derived Universal Creation Asset Atom ID.
++
++The derived state is detached. `PASS adopted` does **not** mean that the material was silently installed into the live capability graph or promoted into canonical project state.
++
++## What remains HOLD
++
++The first adapter intentionally leaves `sprite-candidate`, `recipe`, and `pattern` capabilities as explicit `HOLD inspected` events. Universal Creation does not yet have a bounded native consumer contract for those v0.18 capability kinds, so this adapter refuses to guess one.
++
++That is a truth boundary, not a failure of the transport contract.
++
++## CLI
++
++```bash
++python tools/import_material_capability_pack.py \
++  examples/material-capability-packs/painted-metal-v0.18.json \
++  --out build/material-capability-consumer.json \
++  --feedback-out build/material-use-feedback.json
++```
++
++Use `--strict` to fail if any supplied capability remains HOLD.
++
++## Cross-repo proof
++
++The checked-in fixture uses the same v0.18 identity/fingerprint rules as Material / Surface Fabric. The test proves that Universal Creation:
++
++1. validates the exact producer pack identity before use;
++2. creates validated detached texture/material Asset Atoms from the material capabilities;
++3. preserves unsupported pattern state as HOLD;
++4. emits deterministic downstream feedback linked to the exact pack ID/fingerprint;
++5. preserves the exact source capability IDs and downstream derived atom IDs.
++
++The feedback receipt can be fed back into Material / Surface Fabric's v0.18 usage ledger without granting it authority over Universal Creation state.
++
++## Truth boundary
++
++This integration proves exact transport identity, byte decoding/hash verification through the donor adapter, detached Asset Atom adaptation, and deterministic use-feedback generation.
++
++It does not prove:
++
++- aesthetic quality;
++- PBR correctness;
++- physical-material truth;
++- renderer parity;
++- live topology installation;
++- automatic keeper/pattern promotion;
++- canonical authority in either repository.
++
++The constitutional merge gate remains the AXM roots: Truth, Agency / non-domination, Continuity, and Wisdom before speed.
+diff --git a/src/axm_uc/material_capability_exchange.py b/src/axm_uc/material_capability_exchange.py
+new file mode 100644
+index 0000000..de46e4d
+--- /dev/null
++++ b/src/axm_uc/material_capability_exchange.py
+@@ -0,0 +1,528 @@
++from __future__ import annotations
++
++import copy
++import json
++from typing import Any
++
++from .material_donor import MaterialDonorError, adapt_material_donor_pack
++
++
++CAPABILITY_PACK_FORMAT = "axm-material-capability-pack"
++CAPABILITY_PACK_VERSION = "0.18.0"
++FEEDBACK_FORMAT = "axm-material-use-feedback"
++FEEDBACK_VERSION = "0.18.0"
++SUPPORTED_KINDS = {
++    "material-entry",
++    "material-family",
++    "sprite-candidate",
++    "recipe",
++    "pattern",
++}
++SUPPORTED_ACTIONS = {
++    "inspected",
++    "validated",
++    "rendered",
++    "adopted",
++    "modified",
++    "rejected",
++    "reused",
++}
++SUPPORTED_OUTCOMES = {"PASS", "HOLD", "REJECT"}
++MAX_CAPABILITIES = 512
++CONSUMER = {
++    "system": "AXM Universal Creation",
++    "repository": "mike-axiom-mir/axm-universal-creation",
++    "adapter": "material-capability-consumer/v0.18.0",
++    "instance": None,
++}
++
++
++class MaterialCapabilityError(RuntimeError):
++    def __init__(self, message: str, details: dict[str, Any] | None = None):
++        super().__init__(message)
++        self.details = details or {}
++
++
++def _stable_json(value: Any) -> str:
++    try:
++        return json.dumps(
++            value,
++            ensure_ascii=False,
++            sort_keys=True,
++            separators=(",", ":"),
++            allow_nan=False,
++        )
++    except (TypeError, ValueError) as exc:
++        raise MaterialCapabilityError("capability exchange state must be deterministic JSON") from exc
++
++
++def _fnv1a_js(value: Any) -> str:
++    """Match the Surface Fabric JS FNV-1a helper exactly for JSON text.
++
++    The producer hashes the low byte of each JavaScript UTF-16 code unit. Encoding
++    to UTF-16LE and walking every low byte preserves that behavior for non-ASCII
++    strings as well as the normal ASCII contract fixtures.
++    """
++
++    encoded = str(value if value is not None else "").encode("utf-16-le", "surrogatepass")
++    result = 0x811C9DC5
++    for index in range(0, len(encoded), 2):
++        result ^= encoded[index]
++        result = (result * 0x01000193) & 0xFFFFFFFF
++    return f"{result:08x}"
++
++
++def _text(value: Any, label: str, maximum: int = 4000) -> str:
++    if not isinstance(value, str) or not value.strip():
++        raise MaterialCapabilityError(f"{label} must be non-empty text")
++    result = value.strip()
++    if len(result) > maximum:
++        raise MaterialCapabilityError(f"{label} exceeds its {maximum}-character bound")
++    return result
++
++
++def _capability_identity(kind: str, source_id: str, payload: Any) -> str:
++    basis = {"kind": kind, "sourceId": source_id, "payload": payload}
++    return f"cap-{kind}-{_fnv1a_js(_stable_json(basis))}"
++
++
++def _capability_fingerprint(capability: dict[str, Any]) -> str:
++    basis = {
++        "kind": capability["kind"],
++        "sourceId": capability["sourceId"],
++        "payload": capability.get("payload") or {},
++        "provenance": capability.get("provenance") or {},
++        "refs": capability.get("refs") or {},
++    }
++    return _fnv1a_js(_stable_json(basis))
++
++
++def validate_material_capability_pack(raw_pack: Any) -> dict[str, Any]:
++    if not isinstance(raw_pack, dict):
++        raise MaterialCapabilityError("material capability pack must be an object")
++    if raw_pack.get("format") != CAPABILITY_PACK_FORMAT:
++        raise MaterialCapabilityError(
++            "unsupported material capability pack format",
++            {"expected": CAPABILITY_PACK_FORMAT, "observed": raw_pack.get("format")},
++        )
++    if raw_pack.get("version") != CAPABILITY_PACK_VERSION:
++        raise MaterialCapabilityError(
++            "unsupported material capability pack version",
++            {"expected": CAPABILITY_PACK_VERSION, "observed": raw_pack.get("version")},
++        )
++    producer = raw_pack.get("producer")
++    if not isinstance(producer, dict) or not str(producer.get("system") or "").strip():
++        raise MaterialCapabilityError("capability pack producer.system is required")
++    capabilities = raw_pack.get("capabilities")
++    if not isinstance(capabilities, list) or not 1 <= len(capabilities) <= MAX_CAPABILITIES:
++        raise MaterialCapabilityError(f"capability pack must contain 1..{MAX_CAPABILITIES} capabilities")
++
++    ids: set[str] = set()
++    for index, capability in enumerate(capabilities):
++        if not isinstance(capability, dict):
++            raise MaterialCapabilityError(f"capabilities[{index}] must be an object")
++        kind = _text(capability.get("kind"), f"capabilities[{index}].kind", 64)
++        if kind not in SUPPORTED_KINDS:
++            raise MaterialCapabilityError(
++                f"unsupported capability kind: {kind}",
++                {"index": index, "supported": sorted(SUPPORTED_KINDS)},
++            )
++        source_id = _text(capability.get("sourceId"), f"capabilities[{index}].sourceId", 512)
++        payload = capability.get("payload")
++        if not isinstance(payload, dict):
++            raise MaterialCapabilityError(f"capabilities[{index}].payload must be an object")
++        capability_id = _text(capability.get("id"), f"capabilities[{index}].id", 512)
++        if capability_id in ids:
++            raise MaterialCapabilityError(f"duplicate capability id: {capability_id}")
++        ids.add(capability_id)
++        expected_id = _capability_identity(kind, source_id, payload)
++        if capability_id != expected_id:
++            raise MaterialCapabilityError(
++                "capability identity mismatch",
++                {"capability_id": capability_id, "expected": expected_id},
++            )
++        expected_fingerprint = _capability_fingerprint(capability)
++        if capability.get("fingerprint") != expected_fingerprint:
++            raise MaterialCapabilityError(
++                "capability fingerprint mismatch",
++                {
++                    "capability_id": capability_id,
++                    "expected": expected_fingerprint,
++                    "observed": capability.get("fingerprint"),
++                },
++            )
++
++    basis = {
++        "producer": producer,
++        "capabilities": [
++            {"id": capability["id"], "fingerprint": capability["fingerprint"]}
++            for capability in capabilities
++        ],
++    }
++    expected_fingerprint = _fnv1a_js(_stable_json(basis))
++    expected_id = f"material-capability-pack-{expected_fingerprint}"
++    if raw_pack.get("fingerprint") != expected_fingerprint or raw_pack.get("id") != expected_id:
++        raise MaterialCapabilityError(
++            "capability pack fingerprint/id mismatch",
++            {
++                "expected_fingerprint": expected_fingerprint,
++                "observed_fingerprint": raw_pack.get("fingerprint"),
++                "expected_id": expected_id,
++                "observed_id": raw_pack.get("id"),
++            },
++        )
++    return copy.deepcopy(raw_pack)
++
++
++def _synthetic_donor_pack(pack: dict[str, Any]) -> dict[str, Any] | None:
++    entries: list[dict[str, Any]] = []
++    families: list[dict[str, Any]] = []
++    for capability in pack["capabilities"]:
++        payload = capability.get("payload") or {}
++        if capability["kind"] == "material-entry":
++            entries.append(
++                {
++                    "id": capability["sourceId"],
++                    "name": payload.get("name") or capability["sourceId"],
++                    "kind": payload.get("kind") or "texture",
++                    "mime": payload.get("mime") or "application/octet-stream",
++                    "width": payload.get("width") or 0,
++                    "height": payload.get("height") or 0,
++                    "bytes": payload.get("bytes"),
++                    "dataUrl": payload.get("dataUrl"),
++                    "payload": copy.deepcopy(payload.get("payload") or {}),
++                    "usage": copy.deepcopy(payload.get("usage") or {}),
++                    "tags": copy.deepcopy(payload.get("tags") or []),
++                    "source": {
++                        "method": "axm-material-capability-pack/v0.18.0",
++                        "capabilityId": capability["id"],
++                        "capabilityFingerprint": capability["fingerprint"],
++                        "producer": copy.deepcopy(pack["producer"]),
++                        "sourceProvenance": copy.deepcopy(capability.get("provenance") or {}),
++                    },
++                }
++            )
++        elif capability["kind"] == "material-family":
++            entry_ids = payload.get("entryIds")
++            families.append(
++                {
++                    "id": capability["sourceId"],
++                    "name": payload.get("name") or capability["sourceId"],
++                    "purpose": payload.get("purpose") or "",
++                    "entryIds": copy.deepcopy(entry_ids if isinstance(entry_ids, list) else []),
++                    "tags": copy.deepcopy(payload.get("tags") or []),
++                }
++            )
++    if not entries:
++        return None
++    return {
++        "format": "axm-material-donor-pack",
++        "version": "0.2.0",
++        "id": f"uc-capability-donor-{pack['fingerprint']}",
++        "exportedAt": None,
++        "purpose": "Detached AXM Universal Creation intake of v0.18 Material / Surface capabilities.",
++        "library": {
++            "sourceFormat": CAPABILITY_PACK_FORMAT,
++            "sourceVersion": CAPABILITY_PACK_VERSION,
++            "sourceLibraryId": pack["id"],
++            "entries": entries,
++            "families": families,
++        },
++        "assets": copy.deepcopy(entries),
++        "workspace": {},
++        "layers": [],
++        "experiment": None,
++        "truthBoundary": {
++            "provenance": "Capability IDs/fingerprints remain attached to the synthetic donor entry source metadata.",
++            "routing": "Channel meaning comes only from explicit capability usage state; Universal Creation does not infer physical-material semantics.",
++            "downstream": "Adaptation creates detached validated Asset Atom state; it does not silently install into live Universal Creation topology.",
++        },
++    }
++
++
++def _event(
++    capability_id: str,
++    action: str,
++    outcome: str,
++    *,
++    evidence: dict[str, Any] | None = None,
++    derived_ids: list[str] | None = None,
++    note: str = "",
++) -> dict[str, Any]:
++    normalized_action = action.strip().casefold()
++    normalized_outcome = outcome.strip().upper()
++    if normalized_action not in SUPPORTED_ACTIONS:
++        raise MaterialCapabilityError(f"unsupported feedback action: {normalized_action}")
++    if normalized_outcome not in SUPPORTED_OUTCOMES:
++        raise MaterialCapabilityError(f"unsupported feedback outcome: {normalized_outcome}")
++    normalized_evidence = copy.deepcopy(evidence or {})
++    normalized_derived = sorted({str(item).strip() for item in (derived_ids or []) if str(item).strip()})
++    normalized_note = str(note or "").strip()
++    basis = {
++        "capabilityId": capability_id,
++        "action": normalized_action,
++        "outcome": normalized_outcome,
++        "evidence": normalized_evidence,
++        "derivedIds": normalized_derived,
++        "note": normalized_note,
++    }
++    return {
++        "id": f"use-event-{_fnv1a_js(_stable_json(basis))}",
++        **basis,
++    }
++
++
++def _create_feedback(pack: dict[str, Any], events: list[dict[str, Any]]) -> dict[str, Any]:
++    if not events:
++        raise MaterialCapabilityError("use feedback requires at least one explicit event")
++    ids = [event["id"] for event in events]
++    if len(ids) != len(set(ids)):
++        raise MaterialCapabilityError("duplicate feedback events are not allowed")
++    consumer = copy.deepcopy(CONSUMER)
++    basis = {
++        "packId": pack["id"],
++        "packFingerprint": pack["fingerprint"],
++        "consumer": consumer,
++        "events": events,
++    }
++    fingerprint = _fnv1a_js(_stable_json(basis))
++    return {
++        "format": FEEDBACK_FORMAT,
++        "version": FEEDBACK_VERSION,
++        "id": f"material-use-feedback-{fingerprint}",
++        "fingerprint": fingerprint,
++        "packId": pack["id"],
++        "packFingerprint": pack["fingerprint"],
++        "consumer": consumer,
++        "events": copy.deepcopy(events),
++        "note": "AXM Universal Creation detached material-capability consumption receipt.",
++        "truthBoundary": {
++            "use": "PASS adopted means Universal Creation created validated detached Asset Atom state from the named capability; it does not prove visual or physical quality.",
++            "adoption": "Detached adoption is not live-topology installation, automatic canonical promotion, or authority over Material / Surface Fabric.",
++            "rejection": "Unsupported or unusable capability state remains explicit HOLD/REJECT evidence.",
++            "privacy": "Feedback contains only adapter evidence derived from the supplied capability pack.",
++        },
++    }
++
++
++def validate_material_use_feedback(feedback: Any, raw_pack: Any) -> dict[str, Any]:
++    pack = validate_material_capability_pack(raw_pack)
++    if not isinstance(feedback, dict):
++        raise MaterialCapabilityError("material use feedback must be an object")
++    if feedback.get("format") != FEEDBACK_FORMAT or feedback.get("version") != FEEDBACK_VERSION:
++        raise MaterialCapabilityError(f"expected {FEEDBACK_FORMAT}/{FEEDBACK_VERSION}")
++    if feedback.get("packId") != pack["id"] or feedback.get("packFingerprint") != pack["fingerprint"]:
++        raise MaterialCapabilityError("feedback capability-pack linkage mismatch")
++    if feedback.get("consumer") != CONSUMER:
++        raise MaterialCapabilityError("feedback consumer identity mismatch")
++    events = feedback.get("events")
++    if not isinstance(events, list) or not events:
++        raise MaterialCapabilityError("feedback requires non-empty events")
++    capability_ids = {item["id"] for item in pack["capabilities"]}
++    normalized_events: list[dict[str, Any]] = []
++    for index, raw_event in enumerate(events):
++        if not isinstance(raw_event, dict):
++            raise MaterialCapabilityError(f"feedback event {index} must be an object")
++        capability_id = _text(raw_event.get("capabilityId"), f"events[{index}].capabilityId", 512)
++        if capability_id not in capability_ids:
++            raise MaterialCapabilityError(f"feedback references unknown capability: {capability_id}")
++        normalized = _event(
++            capability_id,
++            _text(raw_event.get("action"), f"events[{index}].action", 64),
++            _text(raw_event.get("outcome"), f"events[{index}].outcome", 64),
++            evidence=raw_event.get("evidence") if isinstance(raw_event.get("evidence"), dict) else {},
++            derived_ids=raw_event.get("derivedIds") if isinstance(raw_event.get("derivedIds"), list) else [],
++            note=str(raw_event.get("note") or ""),
++        )
++        if normalized["id"] != raw_event.get("id"):
++            raise MaterialCapabilityError("feedback event identity mismatch", {"index": index})
++        normalized_events.append(copy.deepcopy(raw_event))
++    if len({event["id"] for event in normalized_events}) != len(normalized_events):
++        raise MaterialCapabilityError("duplicate feedback event id")
++    basis = {
++        "packId": feedback["packId"],
++        "packFingerprint": feedback["packFingerprint"],
++        "consumer": feedback["consumer"],
++        "events": normalized_events,
++    }
++    expected = _fnv1a_js(_stable_json(basis))
++    if feedback.get("fingerprint") != expected or feedback.get("id") != f"material-use-feedback-{expected}":
++        raise MaterialCapabilityError("feedback fingerprint/id mismatch")
++    return copy.deepcopy(feedback)
++
++
++def consume_material_capability_pack(raw_pack: Any, *, strict: bool = False) -> dict[str, Any]:
++    pack = validate_material_capability_pack(raw_pack)
++    capabilities = pack["capabilities"]
++    capability_by_source = {
++        (capability["kind"], capability["sourceId"]): capability
++        for capability in capabilities
++    }
++
++    donor_pack = _synthetic_donor_pack(pack)
++    material_result: dict[str, Any] | None = None
++    material_error: MaterialDonorError | None = None
++    if donor_pack is not None:
++        try:
++            material_result = adapt_material_donor_pack(donor_pack, strict=False)
++        except MaterialDonorError as exc:
++            material_error = exc
++
++    accepted_entry_atoms: dict[str, str] = {}
++    accepted_family_atoms: dict[str, str] = {}
++    entry_holds: dict[str, Any] = {}
++    family_holds: dict[str, Any] = {}
++    if material_result is not None:
++        accepted_entry_atoms = {
++            item["entry_id"]: item["texture_atom"]
++            for item in material_result.get("accepted_entries", [])
++        }
++        accepted_family_atoms = {
++            item["family_id"]: item["material_atom"]
++            for item in material_result.get("accepted_families", [])
++        }
++        for hold in material_result.get("receipt", {}).get("held_entries", []):
++            key = str(hold.get("entry_id") or f"index:{hold.get('index')}")
++            entry_holds[key] = copy.deepcopy(hold)
++        for hold in material_result.get("receipt", {}).get("held_families", []):
++            key = str(hold.get("family_id") or f"index:{hold.get('index')}")
++            family_holds[key] = copy.deepcopy(hold)
++    elif material_error is not None:
++        details = material_error.details or {}
++        for hold in details.get("held_entries", []):
++            key = str(hold.get("entry_id") or f"index:{hold.get('index')}")
++            entry_holds[key] = copy.deepcopy(hold)
++        for hold in details.get("held_families", []):
++            key = str(hold.get("family_id") or f"index:{hold.get('index')}")
++            family_holds[key] = copy.deepcopy(hold)
++
++    events: list[dict[str, Any]] = []
++    adopted_capability_ids: list[str] = []
++    held_capability_ids: list[str] = []
++    for capability in capabilities:
++        kind = capability["kind"]
++        source_id = capability["sourceId"]
++        if kind == "material-entry" and source_id in accepted_entry_atoms:
++            atom_id = accepted_entry_atoms[source_id]
++            events.append(
++                _event(
++                    capability["id"],
++                    "adopted",
++                    "PASS",
++                    evidence={
++                        "adapter": CONSUMER["adapter"],
++                        "consumerPath": "detached-asset-atom-adapter",
++                        "resourceBytesVerified": "data-url-decode-and-sha256-only",
++                        "channelSource": "explicit-capability-usage-hint",
++                        "canonicalInstallation": False,
++                    },
++                    derived_ids=[atom_id],
++                    note="Material entry adapted into validated detached Asset Atom texture state.",
++                )
++            )
++            adopted_capability_ids.append(capability["id"])
++        elif kind == "material-family" and source_id in accepted_family_atoms:
++            atom_id = accepted_family_atoms[source_id]
++            accepted_family = next(
++                (item for item in material_result.get("accepted_families", []) if item["family_id"] == source_id),
++                {},
++            )
++            events.append(
++                _event(
++                    capability["id"],
++                    "adopted",
++                    "PASS",
++                    evidence={
++                        "adapter": CONSUMER["adapter"],
++                        "consumerPath": "detached-asset-atom-adapter",
++                        "textureBindings": copy.deepcopy(accepted_family.get("texture_bindings") or {}),
++                        "canonicalInstallation": False,
++                    },
++                    derived_ids=[atom_id],
++                    note="Material family adapted into validated detached Asset Atom material state.",
++                )
++            )
++            adopted_capability_ids.append(capability["id"])
++        elif kind in {"material-entry", "material-family"}:
++            hold = (entry_holds if kind == "material-entry" else family_holds).get(source_id)
++            reason = (
++                str(hold.get("reason"))
++                if isinstance(hold, dict) and hold.get("reason")
++                else str(material_error or "material capability could not be mapped exactly")
++            )
++            events.append(
++                _event(
++                    capability["id"],
++                    "validated",
++                    "HOLD",
++                    evidence={
++                        "adapter": CONSUMER["adapter"],
++                        "reason": reason,
++                        "canonicalInstallation": False,
++                    },
++                    note="Material capability remains on HOLD; no guessed adoption was performed.",
++                )
++            )
++            held_capability_ids.append(capability["id"])
++        else:
++            events.append(
++                _event(
++                    capability["id"],
++                    "inspected",
++                    "HOLD",
++                    evidence={
++                        "adapter": CONSUMER["adapter"],
++                        "reason": f"{kind} has no bounded Universal Creation adoption path in this first v0.18 adapter",
++                        "canonicalInstallation": False,
++                    },
++                    note="Capability was preserved as explicit HOLD instead of being silently reinterpreted.",
++                )
++            )
++            held_capability_ids.append(capability["id"])
++
++    feedback = _create_feedback(pack, events)
++    validate_material_use_feedback(feedback, pack)
++
++    holds_exist = bool(held_capability_ids)
++    if strict and holds_exist:
++        raise MaterialCapabilityError(
++            "strict material capability intake is on HOLD because some capabilities were not adopted exactly",
++            {
++                "adopted_capability_ids": adopted_capability_ids,
++                "held_capability_ids": held_capability_ids,
++                "feedback": feedback,
++            },
++        )
++
++    return {
++        "truth_status": (
++            "READY_EXACT_MATERIAL_CAPABILITY_CONSUMER_FEEDBACK"
++            if not holds_exist
++            else "PARTIAL_EXACT_MATERIAL_CAPABILITY_CONSUMER_WITH_HOLDS"
++        ),
++        "source": {
++            "format": CAPABILITY_PACK_FORMAT,
++            "version": CAPABILITY_PACK_VERSION,
++            "pack_id": pack["id"],
++            "pack_fingerprint": pack["fingerprint"],
++            "producer": copy.deepcopy(pack["producer"]),
++        },
++        "receipt": {
++            "declared_capabilities": len(capabilities),
++            "adopted_capabilities": len(adopted_capability_ids),
++            "held_capabilities": len(held_capability_ids),
++            "adopted_capability_ids": adopted_capability_ids,
++            "held_capability_ids": held_capability_ids,
++            "live_topology_modified": False,
++            "canonical_state_modified": False,
++        },
++        "material_adapter": copy.deepcopy(material_result),
++        "asset_package": copy.deepcopy(material_result.get("asset_package")) if material_result else None,
++        "feedback": feedback,
++        "truth_boundary": [
++            "The consumer validates exact v0.18 capability identity/fingerprints before use.",
++            "PASS adopted means a material capability produced validated detached Asset Atom state; it does not mean live installation, beauty, PBR correctness, or physical truth.",
++            "Recipe, pattern, and sprite capabilities remain HOLD until Universal Creation has a bounded native consumer path for them.",
++            "Feedback is evidence for Material / Surface Fabric and cannot auto-promote either repository's canonical state.",
++        ],
++    }
+diff --git a/tests/test_material_capability_exchange.py b/tests/test_material_capability_exchange.py
+new file mode 100644
+index 0000000..eccfbc4
+--- /dev/null
++++ b/tests/test_material_capability_exchange.py
+@@ -0,0 +1,89 @@
++from __future__ import annotations
++
++import copy
++import json
++from pathlib import Path
++import unittest
++
++from axm_uc.material_capability_exchange import (
++    MaterialCapabilityError,
++    consume_material_capability_pack,
++    validate_material_capability_pack,
++    validate_material_use_feedback,
++)
++
++
++ROOT = Path(__file__).resolve().parents[1]
++FIXTURE = ROOT / "examples" / "material-capability-packs" / "painted-metal-v0.18.json"
++
++
++class MaterialCapabilityExchangeTests(unittest.TestCase):
++    def setUp(self) -> None:
++        self.pack = json.loads(FIXTURE.read_text(encoding="utf-8"))
++
++    def test_fixture_matches_v018_identity_contract(self) -> None:
++        validated = validate_material_capability_pack(self.pack)
++        self.assertEqual(validated["id"], "material-capability-pack-55c82b2d")
++        self.assertEqual(validated["fingerprint"], "55c82b2d")
++        self.assertEqual(len(validated["capabilities"]), 3)
++
++    def test_detached_material_capabilities_are_adopted_and_pattern_is_hold(self) -> None:
++        result = consume_material_capability_pack(self.pack)
++        self.assertEqual(result["truth_status"], "PARTIAL_EXACT_MATERIAL_CAPABILITY_CONSUMER_WITH_HOLDS")
++        self.assertEqual(result["receipt"]["declared_capabilities"], 3)
++        self.assertEqual(result["receipt"]["adopted_capabilities"], 2)
++        self.assertEqual(result["receipt"]["held_capabilities"], 1)
++        self.assertFalse(result["receipt"]["live_topology_modified"])
++        self.assertFalse(result["receipt"]["canonical_state_modified"])
++
++        package = result["asset_package"]
++        self.assertIsNotNone(package)
++        atom_ids = {atom["id"] for atom in package["atoms"]}
++        self.assertIn("texture-surface-base", atom_ids)
++        self.assertIn("material-painted-metal-family", atom_ids)
++
++        feedback = result["feedback"]
++        validate_material_use_feedback(feedback, self.pack)
++        events = {event["capabilityId"]: event for event in feedback["events"]}
++        self.assertEqual(events["cap-material-entry-a2c5429f"]["action"], "adopted")
++        self.assertEqual(events["cap-material-entry-a2c5429f"]["outcome"], "PASS")
++        self.assertEqual(events["cap-material-entry-a2c5429f"]["derivedIds"], ["texture-surface-base"])
++        self.assertEqual(events["cap-material-family-2d93291f"]["action"], "adopted")
++        self.assertEqual(events["cap-material-family-2d93291f"]["derivedIds"], ["material-painted-metal-family"])
++        self.assertEqual(events["cap-pattern-4445f3c4"]["action"], "inspected")
++        self.assertEqual(events["cap-pattern-4445f3c4"]["outcome"], "HOLD")
++
++    def test_output_is_deterministic(self) -> None:
++        first = consume_material_capability_pack(self.pack)
++        second = consume_material_capability_pack(self.pack)
++        self.assertEqual(first["feedback"], second["feedback"])
++        self.assertEqual(first["asset_package"], second["asset_package"])
++
++    def test_tampered_payload_is_rejected_before_use(self) -> None:
++        tampered = copy.deepcopy(self.pack)
++        tampered["capabilities"][0]["payload"]["name"] = "tampered"
++        with self.assertRaises(MaterialCapabilityError):
++            validate_material_capability_pack(tampered)
++
++    def test_tampered_capability_fingerprint_is_rejected_even_if_pack_fingerprint_is_unchanged(self) -> None:
++        tampered = copy.deepcopy(self.pack)
++        tampered["capabilities"][0]["fingerprint"] = "00000000"
++        with self.assertRaises(MaterialCapabilityError):
++            validate_material_capability_pack(tampered)
++
++    def test_strict_mode_refuses_unsupported_capability_hold(self) -> None:
++        with self.assertRaises(MaterialCapabilityError) as context:
++            consume_material_capability_pack(self.pack, strict=True)
++        self.assertIn("some capabilities were not adopted exactly", str(context.exception))
++        self.assertIn("feedback", context.exception.details)
++
++    def test_feedback_linkage_rejects_wrong_pack(self) -> None:
++        result = consume_material_capability_pack(self.pack)
++        wrong = copy.deepcopy(self.pack)
++        wrong["id"] = "material-capability-pack-wrong"
++        with self.assertRaises(MaterialCapabilityError):
++            validate_material_use_feedback(result["feedback"], wrong)
++
++
++if __name__ == "__main__":
++    unittest.main()
+diff --git a/tools/import_material_capability_pack.py b/tools/import_material_capability_pack.py
+new file mode 100644
+index 0000000..424d790
+--- /dev/null
++++ b/tools/import_material_capability_pack.py
+@@ -0,0 +1,57 @@
++#!/usr/bin/env python3
++from __future__ import annotations
++
++import argparse
++import json
++from pathlib import Path
++import sys
++
++ROOT = Path(__file__).resolve().parents[1]
++sys.path.insert(0, str(ROOT / "src"))
++
++from axm_uc.material_capability_exchange import (  # noqa: E402
++    MaterialCapabilityError,
++    consume_material_capability_pack,
++)
++
++
++def parse_args() -> argparse.Namespace:
++    parser = argparse.ArgumentParser(
++        description="Consume an AXM Material / Surface Fabric v0.18 capability pack in detached Universal Creation state."
++    )
++    parser.add_argument("input", type=Path, help="axm-material-capability-pack/v0.18.0 JSON file")
++    parser.add_argument("--out", type=Path, help="write complete consumer result JSON")
++    parser.add_argument("--feedback-out", type=Path, help="write axm-material-use-feedback/v0.18.0 JSON")
++    parser.add_argument("--strict", action="store_true", help="fail if any capability remains HOLD")
++    return parser.parse_args()
++
++
++def write_json(path: Path, value: object) -> None:
++    path.parent.mkdir(parents=True, exist_ok=True)
++    path.write_text(json.dumps(value, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
++
++
++def main() -> int:
++    args = parse_args()
++    try:
++        raw = json.loads(args.input.read_text(encoding="utf-8"))
++        result = consume_material_capability_pack(raw, strict=args.strict)
++    except (OSError, json.JSONDecodeError, MaterialCapabilityError) as exc:
++        print(json.dumps({"status": "HOLD", "error": str(exc), "details": getattr(exc, "details", {})}, indent=2))
++        return 2
++
++    if args.out:
++        write_json(args.out, result)
++    if args.feedback_out:
++        write_json(args.feedback_out, result["feedback"])
++    print(json.dumps({
++        "truth_status": result["truth_status"],
++        "receipt": result["receipt"],
++        "feedback_id": result["feedback"]["id"],
++        "feedback_fingerprint": result["feedback"]["fingerprint"],
++    }, indent=2))
++    return 0
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())

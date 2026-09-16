@@ -1,0 +1,192 @@
+{
+  "capsule_id": "8e0aa5e5c2c72afc63e8c08c5117c3c43359264b3ce5ba97a302493b81760ed3",
+  "evidence": {
+    "files": [
+      {
+        "additions": 45,
+        "binary": false,
+        "content_sha256": "6320ebb935b69bd5bed9c5b8d238cb301a0f93320cdc22a09244d696c3e43676",
+        "deletions": 0,
+        "path": "VIDEO_OVERLAY_TEMPLATE_PACK.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Editable Video / Stream Overlay Template Pack",
+          "Product surfaces",
+          "Source and state contracts",
+          "Format adaptation",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 51,
+        "binary": false,
+        "content_sha256": "23213df3df931c66b97b219797ee6d6c8b8ded554085fd1cb9a0603e3e1350c7",
+        "deletions": 46,
+        "path": "VISUAL_TEMPLATE_FABRIC.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Current v8 candidate census",
+          "Product foundations accumulated so far",
+          "Editable cinematic titles / credits / overlays",
+          "Editable video / program / stream overlays",
+          "Registry and identity",
+          "Truth boundary"
+        ]
+      },
+      {
+        "additions": 38,
+        "binary": false,
+        "content_sha256": "4109342f73acff3425798bdd4b985d5f1cec0b392fa097f1b74b1bbee47fda5e",
+        "deletions": 35,
+        "path": "VISUAL_TEMPLATE_PRIORITY_MAP.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "AXM Visual Template Expansion Priority Map",
+          "Priority 5C \u2014 Cinematic title / credits / overlay editor \u2014 MERGED",
+          "Priority 5D \u2014 Video / stream overlay editor \u2014 IMPLEMENTED IN THIS LANE",
+          "Priority 5E \u2014 Next high-value visual/creation families",
+          "Cross-cutting rules",
+          "Immediate build order"
+        ]
+      },
+      {
+        "additions": 88,
+        "binary": false,
+        "content_sha256": "cbf1d585d79b3df3380807925182902802d423b5c4a6b326a3892385a85ff0e3",
+        "deletions": 0,
+        "path": "src/axm_uc/visual_template_video_overlay.py",
+        "status": "A",
+        "symbols": [
+          "_merge",
+          "extend_video_overlay_catalog"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 3,
+        "binary": false,
+        "content_sha256": "6dcc98eca2d172f1fe5cf879b713b887e47698614899937762fac3e793f183bc",
+        "deletions": 1,
+        "path": "src/axm_uc/visual_templates.py",
+        "status": "M",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 36,
+        "binary": false,
+        "content_sha256": "9c828861ea536cc7bd1b5e96a9b2777776b0a3c07f39fe17b4320f17a5395de3",
+        "deletions": 36,
+        "path": "tests/test_visual_templates.py",
+        "status": "M",
+        "symbols": [
+          "VisualTemplateTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 18,
+        "binary": false,
+        "content_sha256": "8d3266e39c6224a552f4a75ee328e5731f93482d9e6c258eb56a15718be4ac1d",
+        "deletions": 17,
+        "path": "tools/visual_template_proof.py",
+        "status": "M",
+        "symbols": [
+          "_write",
+          "main"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "ce2724c7f506be4aa5baaff2e41bafce92ef15ae12448998486a58ca20b230af"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "accumulated",
+      "adaptation",
+      "add",
+      "axm",
+      "boundary",
+      "build",
+      "candidate",
+      "catalog",
+      "census",
+      "cinematic",
+      "contracts",
+      "creation",
+      "creation-machine",
+      "credits",
+      "cross",
+      "current",
+      "cutting",
+      "editable",
+      "editor",
+      "expansion",
+      "extend",
+      "fabric",
+      "families",
+      "far",
+      "format",
+      "foundations",
+      "high",
+      "identity",
+      "immediate",
+      "implemented",
+      "lane",
+      "map",
+      "merge",
+      "merged",
+      "next",
+      "order",
+      "overlay",
+      "overlays",
+      "pack",
+      "priority",
+      "product",
+      "program",
+      "proof",
+      "registry",
+      "rules",
+      "source",
+      "standalone",
+      "state",
+      "stream",
+      "surfaces",
+      "template",
+      "templates",
+      "this",
+      "title",
+      "titles",
+      "tools",
+      "truth",
+      "universal-creation",
+      "value",
+      "video",
+      "visual",
+      "write"
+    ]
+  },
+  "source": {
+    "base": "74f03713f814c4373d5b5e0ab9b45ee8d85b3928",
+    "commit_subject": "Add editable video and stream overlay templates",
+    "head": "df3abedac56fd072077ea787532f086a735ef28d",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

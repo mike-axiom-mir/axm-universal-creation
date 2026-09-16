@@ -1,0 +1,143 @@
+{
+  "capsule_id": "8f1f06820d237d3c860187296ca7cc11907872e186666e7994aa5d424f3d7d52",
+  "evidence": {
+    "files": [
+      {
+        "additions": 25,
+        "binary": false,
+        "content_sha256": "35709ce85caa5bd40ee0e3e0133d1c645b0e86385a20c1005a5d10af419d08b5",
+        "deletions": 12,
+        "path": "capabilities/live/AXM-CAP-CREATIVE-FLOW-SPINE.json",
+        "status": "M",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 119,
+        "binary": false,
+        "content_sha256": "253d7dea40d3b9e127713d8b4a7c91466aa76830b8eac75e4a06c35728013ee1",
+        "deletions": 0,
+        "path": "docs/CREATIVE_ADAPTIVE_QUALITY_WAVE13.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Adaptive Quality Resolver \u2014 Wave 13",
+          "Quality is depth, not a hand-count target",
+          "Initial deterministic profile",
+          "Maximum-quality truth boundary",
+          "Machine policy",
+          "Explicit local calibration",
+          "Scheduler",
+          "Public modes",
+          "Agency and continuity",
+          "Verification"
+        ]
+      },
+      {
+        "additions": 9,
+        "binary": false,
+        "content_sha256": "6dce78abd0c62f2bf0b409c884cc679942d92d032983ceddeda648350eee7054",
+        "deletions": 2,
+        "path": "src/axm_uc/creative_flow.py",
+        "status": "M",
+        "symbols": [
+          "integration_summary"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 61,
+        "binary": false,
+        "content_sha256": "415c619c9d0fbb476cc7a3cf1122ef5cfc832e39deca4d65b29bcade2ebf53c9",
+        "deletions": 0,
+        "path": "tests/test_creative_flow.py",
+        "status": "M",
+        "symbols": [
+          "CreativeFlowMachineTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 3,
+        "binary": false,
+        "content_sha256": "89da2d41b09b8de30345fc93f5697a6d661b7f583579a77da73921fa1ce8695d",
+        "deletions": 0,
+        "path": "tests/test_creative_precision_fabric.py",
+        "status": "M",
+        "symbols": [
+          "CreativePrecisionFabricTests"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "8715ea38ed41f575ccb15d7f55058db0f218948108700f7ee93ed533b7574e1a"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "configuration",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "adaptive",
+      "add",
+      "agency",
+      "aware",
+      "axm",
+      "boundary",
+      "calibration",
+      "cap",
+      "capabilities",
+      "continuity",
+      "count",
+      "creation-machine",
+      "creative",
+      "depth",
+      "deterministic",
+      "explicit",
+      "fabric",
+      "flow",
+      "hand",
+      "initial",
+      "integration",
+      "json",
+      "live",
+      "local",
+      "machine",
+      "maximum",
+      "modes",
+      "not",
+      "policy",
+      "precision",
+      "profile",
+      "quality",
+      "resolver",
+      "scheduler",
+      "spine",
+      "standalone",
+      "summary",
+      "target",
+      "truth",
+      "universal-creation",
+      "verification",
+      "wave",
+      "wave13"
+    ]
+  },
+  "source": {
+    "base": "ba575dde182d52f2f5ead54a1d449581fd13e300",
+    "commit_subject": "Add adaptive quality resolver and machine-aware scheduler",
+    "head": "63d42c86beb8ae01b6a8848d742fbfc71144cec7",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}
