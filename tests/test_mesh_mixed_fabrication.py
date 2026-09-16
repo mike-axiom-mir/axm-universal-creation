@@ -286,6 +286,7 @@ class MixedFabricationTests(unittest.TestCase):
                 rotation,
                 [
                     hole("hole-a", [1.62, 0.0, 0.0], rotation, radius=0.30),
+                    hole("hole-b", [-1.62, 0.0, 0.0], rotation, radius=0.30),
                     notch("notch-a", [0.0, 0.0, 0.0], rotation, side="u-max", span=0.70, depth=0.52),
                 ],
             )
