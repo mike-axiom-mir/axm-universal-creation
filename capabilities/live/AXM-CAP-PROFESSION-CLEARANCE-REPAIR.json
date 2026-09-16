@@ -1,0 +1,34 @@
+{
+  "id": "AXM-CAP-PROFESSION-CLEARANCE-REPAIR",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Find and verify a bounded static clearance repair, preserving source assets and exposing a reusable parameterized procedure to professional crews.",
+  "handles": ["repair-sticker-clearance"],
+  "input_contract": {
+    "required": ["path", "database", "assembly", "moving", "fixed", "axis", "minimum_m", "max_translation_m", "output_id"],
+    "properties": {
+      "path": "new output directory; contains source/repaired libraries, actual before/after GLBs and repair report",
+      "database": "existing local sticker registry, never changed by repair",
+      "assembly": "exact source assembly pin",
+      "moving": "one direct child permitted to translate",
+      "fixed": "1..8 other direct children to check; other pairs remain untested",
+      "axis": "+x, -x, +y, -y, +z or -z in the identity-root assembly",
+      "minimum_m": "required positive static gap",
+      "max_translation_m": "hard translation ceiling",
+      "search_steps": "optional 1..16 cold search samples; defaults to 8",
+      "output_id": "new immutable assembly identifier",
+      "procedure": "optional supported axm.clearance-procedure/v1; crews retrieve it only within the same evidence binding"
+    }
+  },
+  "output_contract": {"kind": "verified-static-clearance-repair-bundle", "professional_acceptance": "NOT_TESTED"},
+  "dependencies": ["AXM-CAP-STICKER-CLEARANCE-CONTACT"],
+  "relationships": ["uses actual UC triangle clearance and immutable sticker assembly exports", "crew observations reconstruct artifacts and recheck the procedure before learning"],
+  "anatomy_refs": [],
+  "implementation": {"kind": "DETERMINISTIC_SOURCE", "entrypoint": "builtin:profession_clearance_repair", "source": "src/axm_uc/profession_clearance_repair.py"},
+  "limitations": [
+    "Static rigid rest pose only; no steering/suspension sweep, physics, assembly-strength or visual-quality acceptance.",
+    "A bounded discrete search is not a global or minimum-displacement optimizer.",
+    "The retained rule recalculates from new bounds and still requires fresh triangle verification.",
+    "Only caller-selected pairs are checked. Unsupported geometry, motion and exceeded bounds do not grant a learned procedure."
+  ]
+}

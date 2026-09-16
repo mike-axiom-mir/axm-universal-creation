@@ -7,7 +7,10 @@ each explicit station to a profession, a body skill and an existing UC tool.
 The first bundle contains 18 existing professions. No new profession was needed.
 Work-type recipes cover software, web, 3D, animation, games, audio and documents.
 These are ownership and consultation maps: automatic execution currently covers
-text/JSON, basic text projects, project verification and bounded procedural GLB.
+text/JSON, basic text projects, project verification, bounded procedural GLB and
+validation of supplied static GLB target evidence against job requirements.
+Crews also perform bounded static sticker-clearance repair and can retain a
+verified parameterized procedure for later matching jobs.
 Other stations report a capability gap. A `judgment: "REQUIRED"` station stops
 before execution and identifies its owner; it cannot invent approval.
 
@@ -24,6 +27,53 @@ This is deterministic adaptation through experience. It is not neural training,
 autonomous professional reasoning, a points system or evidence of artistic
 mastery. Repeating identical work under new run IDs does not add new experience.
 Source/context changes invalidate transfer without deleting the older practice.
+
+### Reusable clearance procedures
+
+`repair-sticker-clearance` starts from an exact immutable sticker assembly. The
+caller names one movable direct child, one permitted signed axis, 1..8 fixed
+children, a positive minimum gap and a hard movement limit. UC measures actual
+transformed triangles, searches at most 16 candidate translations, and checks a
+reusable `separate-bounds` rule against the measured result before retention.
+
+The crew reopens the output, reconstructs both assemblies from their portable
+libraries, checks that exported GLBs match them, and repeats the measurements.
+Only that fresh observation can add a procedure to its scoped practice. An
+unchanged source repaired into a new destination does not add duplicate practice.
+
+On a matching later job, the stored procedure computes a new translation from
+the new geometry's bounds and the current minimum gap. It still respects that
+job's movement limit and passes fresh triangle checks. It does not replay the
+first offset. Work context, profession, skill, axis, selected part roles,
+minimum gap, runtime and catalog bind reuse. Changed geometry may be tested
+inside that explicit scope; success on one geometry is not assumed on another.
+
+This learns which built-in parameterized procedure is verified for the context.
+It does not generate new executable code, train neural weights or promote a
+profession. If the source is unsupported or no candidate meets the movement
+limit, the job holds with its owner identified and adds no successful procedure.
+
+Sources stay intact. Results contain `source-library.json`, `before.glb`,
+`repair.json` and, when a candidate exists, `repaired-library.json` and
+`after.glb`. Only the selected child's translation changes in a new assembly;
+other definitions, source meshes, materials and metadata are preserved.
+
+Run the complete existing-vehicle demonstration in a fresh destination:
+
+```sh
+python tools/profession_clearance_demo.py creations/clearance-demo
+```
+
+It uses the original near-detail scrap buggy and convoy truck recipes, grouping
+the real chassis faces separately for measurement. Each crew job and verification
+runs in a fresh Python process, so the second job must recover its procedure from
+disk. The native software renderer creates front/top before-and-after PNGs from
+the actual exported GLBs. `--no-render` runs only the geometry/learning portion.
+
+This capability checks **static clearance for named pairs only**. It does not
+verify other contacts, a safe movement path, steering, suspension, axle mounts,
+vehicle dynamics or visual acceptance. See `docs/profession-crew-growth/RUN_002.md`
+for the actual two-vehicle measurements and render evidence.
 
 Jobs and compact practice live in `state/profession-crews/<crew_id>.json`.
 The normal UC snapshot/recovery mechanism covers this state. No simulator reward
@@ -104,6 +154,47 @@ registered deterministic artifact observers.
 
 ## Evidence ceilings and next adapters
 
+### Target evidence and specialist handoffs
+
+The `verify-static-asset-target` capability also works as a crew station. Its
+inputs are `path` (an existing GLB), `packet` (the existing
+`axm.static-asset-target-evidence/v0.1` packet), `target` (the job's expected
+engine, optional version and context), and `required_lanes` (the job's minimum
+requirements). See `docs/STATIC_ASSET_TARGET_EVIDENCE.md` for the packet format.
+
+The expected target is compared exactly after whitespace normalization. The
+packet cannot weaken the job by removing required lanes. Different targets or
+requirements have different station bindings. The artifact is reopened during
+crew observation and verification; a stale file cannot keep its earlier PASS.
+
+Missing or weak evidence produces `HOLD_TARGET_EVIDENCE`; an artifact mismatch
+or declared target failure produces `HOLD_FAILED_CHECK`. Both stop later steps.
+Each unresolved requirement identifies a profession, whose original contract is
+included in the crew's consultation cards:
+
+| Target work | Owning profession |
+| --- | --- |
+| Engine import, scale/pivot, materials/shaders, sidedness | Technical artist |
+| Collision, target runtime integration | Gameplay engineer |
+| Navigation | World/encounter designer |
+| Resource budget, device performance | Graphics engineer |
+| Perceptual LOD equivalence | Art director |
+
+These are declared ownership assignments, not proof that any specialist ran.
+The adapter performs **external packet validation only**: it does not open or
+authenticate evidence source locators, launch an engine, run collision or
+navigation, render/review an asset or measure a device. Even an adequate packet
+has `independently_reproduced: false`. Its declarations, failures and adapter
+errors never add crew practice. Actual local project observations still teach
+the existing preflight behavior. Professional acceptance and visual quality
+remain `NOT_TESTED`.
+
+`python tools/profession_crew_demo.py` also generates a real GLB, observes missing
+import/collision/navigation evidence and names its owners without inventing
+target tests. The target demo retains zero practice entries.
+
+### Remaining ceilings
+
 - All imported professions remain **EXPERIMENTAL**.
 - `COMPLETE_BOUNDED_CHECKS` means the selected automatic stations completed and
   their bounded artifact checks passed. It does not mean professional acceptance.
@@ -130,5 +221,7 @@ The design was informed by `axm-factual-space-simulator` at
 is role -> observed situation -> specific skill evidence -> changed next action.
 No simulator code or its reward/promotion/ledger machinery was copied into UC.
 
-This lane extends UC main `49ef11ca42b2079dffbd595daa8ea8626b99d2ab` and preserves
-the separate aftertouch and physics lanes. It does not claim those PRs are merged.
+The initial crew implementation merged as PR #143 at main
+`8dd55d7186aa99911ca8d28af303f31d2c05fad4`. The manual target-evidence improvement
+continues the same working branch. The aftertouch and physics PRs remain separate;
+this work does not claim their adoption.

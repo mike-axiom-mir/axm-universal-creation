@@ -1,0 +1,509 @@
+{
+  "cases": [
+    {
+      "after": {
+        "broad_phase": {
+          "aabb_distance_lower_bound_m": 0.060004,
+          "aabb_overlap": false,
+          "axis_overlap_depths_m": [
+            -0.060004,
+            0.22000002861,
+            0.933829009533
+          ]
+        },
+        "clearance_m": 0.060004,
+        "closest_point_a_m": [
+          -0.810004,
+          0.646049976349,
+          0.961000025272
+        ],
+        "closest_point_b_m": [
+          -0.75,
+          0.646049976349,
+          0.961000025272
+        ],
+        "inside_classification": {
+          "chassis": {
+            "classification": "no sampled inside witness",
+            "status": "PASS"
+          },
+          "wheel": {
+            "classification": "no sampled inside witness",
+            "status": "PASS"
+          }
+        },
+        "narrow_phase": {
+          "triangle_pair_product": 51120,
+          "triangle_pairs_pruned": 50688,
+          "triangle_pairs_tested": 432
+        },
+        "part_a": "wheel",
+        "part_b": "chassis",
+        "penetration_witness": null,
+        "relation": "SEPARATED",
+        "status": "PASS",
+        "surface_distance_m": 0.060004,
+        "tolerance_m": 1e-06,
+        "units": "m"
+      },
+      "asset_id": "scrap-buggy",
+      "before": {
+        "broad_phase": {
+          "aabb_distance_lower_bound_m": 0.0,
+          "aabb_overlap": true,
+          "axis_overlap_depths_m": [
+            0.188685595989,
+            0.22000002861,
+            0.933829009533
+          ]
+        },
+        "clearance_m": 0.0,
+        "closest_point_a_m": [
+          -0.699390769005,
+          0.512190759182,
+          1.357533811361
+        ],
+        "closest_point_b_m": [
+          -0.699390769005,
+          0.512190759182,
+          1.357533811361
+        ],
+        "inside_classification": {
+          "chassis": {
+            "classification": "no sampled inside witness",
+            "status": "PASS"
+          },
+          "wheel": {
+            "classification": "inside",
+            "status": "PASS"
+          }
+        },
+        "narrow_phase": {
+          "triangle_pair_product": 51120,
+          "triangle_pairs_pruned": 50635,
+          "triangle_pairs_tested": 485
+        },
+        "part_a": "wheel",
+        "part_b": "chassis",
+        "penetration_witness": {
+          "container_part": "chassis",
+          "inside_part": "wheel",
+          "point": [
+            -0.6993907690048218,
+            0.5850901007652283,
+            1.3459876775741577
+          ]
+        },
+        "relation": "PENETRATING",
+        "status": "PASS",
+        "surface_distance_m": 0.0,
+        "tolerance_m": 1e-06,
+        "units": "m"
+      },
+      "distance_m": 0.2486895959892273,
+      "fresh_verification": "PASS",
+      "lod": "near",
+      "renders": [
+        {
+          "bounds": {
+            "max": [
+              1.034999966621399,
+              2.240000009536743,
+              1.8200000524520874
+            ],
+            "min": [
+              -1.034999966621399,
+              0.0,
+              -1.5499999523162842
+            ]
+          },
+          "clip": null,
+          "contact_shadow_pixels": 8336,
+          "elevation": 0.2,
+          "file": "scrap-buggy-front-before.png",
+          "height": 420,
+          "light_count": 4,
+          "lighting": "studio",
+          "loop": false,
+          "png_sha256": "6adee6668d9d289164fe69f7a3cc7574e5e47c20484b13879fe742abcac36cf7",
+          "raster_visits": 809584,
+          "schema": "axm.software-glb-preview/v0.1",
+          "source_sha256": "264bd4ed1881458ad56d44dab1d8ab703d316d358701836326f1c1548a133eb6",
+          "supersample": 1,
+          "time_s": 0.0,
+          "triangles": 8394,
+          "truth": "Observes decoded geometry, material factors, vertex colours and one sampled pose. It does not prove PBR parity, reflections, textures, transparency, target-engine import, continuous animation, artistic quality or performance.",
+          "visible_triangles": 1659,
+          "width": 640,
+          "yaw": 0.0
+        },
+        {
+          "bounds": {
+            "max": [
+              1.034999966621399,
+              2.240000009536743,
+              1.8200000524520874
+            ],
+            "min": [
+              -1.2773751657524108,
+              0.0,
+              -1.5499999523162842
+            ]
+          },
+          "clip": null,
+          "contact_shadow_pixels": 9316,
+          "elevation": 0.2,
+          "file": "scrap-buggy-front-after.png",
+          "height": 420,
+          "light_count": 4,
+          "lighting": "studio",
+          "loop": false,
+          "png_sha256": "bd95ca1ba139c04103ac7d4bd76cb7831e623a82cb058901f0bedb03bf8ee8dd",
+          "raster_visits": 809055,
+          "schema": "axm.software-glb-preview/v0.1",
+          "source_sha256": "559b67fb3a4c9dc32aeb650fd7995c8882e15c67e042ad869efe0a5279765bb9",
+          "supersample": 1,
+          "time_s": 0.0,
+          "triangles": 8394,
+          "truth": "Observes decoded geometry, material factors, vertex colours and one sampled pose. It does not prove PBR parity, reflections, textures, transparency, target-engine import, continuous animation, artistic quality or performance.",
+          "visible_triangles": 1676,
+          "width": 640,
+          "yaw": 0.0
+        },
+        {
+          "bounds": {
+            "max": [
+              1.034999966621399,
+              2.240000009536743,
+              1.8200000524520874
+            ],
+            "min": [
+              -1.034999966621399,
+              0.0,
+              -1.5499999523162842
+            ]
+          },
+          "clip": null,
+          "contact_shadow_pixels": 7170,
+          "elevation": 1.2,
+          "file": "scrap-buggy-top-before.png",
+          "height": 420,
+          "light_count": 4,
+          "lighting": "studio",
+          "loop": false,
+          "png_sha256": "4d5c29b1d234d64b280111166e661bda659b424b59ed8de84a552168531fc122",
+          "raster_visits": 937278,
+          "schema": "axm.software-glb-preview/v0.1",
+          "source_sha256": "264bd4ed1881458ad56d44dab1d8ab703d316d358701836326f1c1548a133eb6",
+          "supersample": 1,
+          "time_s": 0.0,
+          "triangles": 8394,
+          "truth": "Observes decoded geometry, material factors, vertex colours and one sampled pose. It does not prove PBR parity, reflections, textures, transparency, target-engine import, continuous animation, artistic quality or performance.",
+          "visible_triangles": 1574,
+          "width": 640,
+          "yaw": 0.1
+        },
+        {
+          "bounds": {
+            "max": [
+              1.034999966621399,
+              2.240000009536743,
+              1.8200000524520874
+            ],
+            "min": [
+              -1.2773751657524108,
+              0.0,
+              -1.5499999523162842
+            ]
+          },
+          "clip": null,
+          "contact_shadow_pixels": 7840,
+          "elevation": 1.2,
+          "file": "scrap-buggy-top-after.png",
+          "height": 420,
+          "light_count": 4,
+          "lighting": "studio",
+          "loop": false,
+          "png_sha256": "36bf0314bc02e0af1671cc811c67bab0445ba51b009b0d2950c327e3f638674e",
+          "raster_visits": 936851,
+          "schema": "axm.software-glb-preview/v0.1",
+          "source_sha256": "559b67fb3a4c9dc32aeb650fd7995c8882e15c67e042ad869efe0a5279765bb9",
+          "supersample": 1,
+          "time_s": 0.0,
+          "triangles": 8394,
+          "truth": "Observes decoded geometry, material factors, vertex colours and one sampled pose. It does not prove PBR parity, reflections, textures, transparency, target-engine import, continuous animation, artistic quality or performance.",
+          "visible_triangles": 1581,
+          "width": 640,
+          "yaw": 0.1
+        }
+      ],
+      "reused_procedure": false,
+      "search_trials": 5,
+      "selected_chassis_triangles": 60,
+      "selected_wheel_triangles": 852,
+      "selection": "BOUNDED_SEARCH",
+      "triangles": 8394
+    },
+    {
+      "after": {
+        "broad_phase": {
+          "aabb_distance_lower_bound_m": 0.060004,
+          "aabb_overlap": false,
+          "axis_overlap_depths_m": [
+            -0.060004,
+            0.22000002861,
+            1.076236128807
+          ]
+        },
+        "clearance_m": 0.060004,
+        "closest_point_a_m": [
+          -0.985004011921,
+          0.641950011253,
+          1.662417531013
+        ],
+        "closest_point_b_m": [
+          -0.925000011921,
+          0.641950011253,
+          1.662417531014
+        ],
+        "inside_classification": {
+          "chassis": {
+            "classification": "no sampled inside witness",
+            "status": "PASS"
+          },
+          "wheel": {
+            "classification": "no sampled inside witness",
+            "status": "PASS"
+          }
+        },
+        "narrow_phase": {
+          "triangle_pair_product": 51120,
+          "triangle_pairs_pruned": 50656,
+          "triangle_pairs_tested": 464
+        },
+        "part_a": "wheel",
+        "part_b": "chassis",
+        "penetration_witness": null,
+        "relation": "SEPARATED",
+        "status": "PASS",
+        "surface_distance_m": 0.060004,
+        "tolerance_m": 1e-06,
+        "units": "m"
+      },
+      "asset_id": "flatbed-convoy-truck",
+      "before": {
+        "broad_phase": {
+          "aabb_distance_lower_bound_m": 0.0,
+          "aabb_overlap": true,
+          "axis_overlap_depths_m": [
+            0.178185582161,
+            0.22000002861,
+            1.076236128807
+          ]
+        },
+        "clearance_m": 0.0,
+        "closest_point_a_m": [
+          -0.925000011921,
+          0.611263929044,
+          1.973086102663
+        ],
+        "closest_point_b_m": [
+          -0.925000011921,
+          0.611263929044,
+          1.973086102663
+        ],
+        "inside_classification": {
+          "chassis": {
+            "classification": "no sampled inside witness",
+            "status": "PASS"
+          },
+          "wheel": {
+            "classification": "inside",
+            "status": "PASS"
+          }
+        },
+        "narrow_phase": {
+          "triangle_pair_product": 51120,
+          "triangle_pairs_pruned": 50568,
+          "triangle_pairs_tested": 552
+        },
+        "part_a": "wheel",
+        "part_b": "chassis",
+        "penetration_witness": {
+          "container_part": "chassis",
+          "inside_part": "wheel",
+          "point": [
+            -0.8703415393829346,
+            0.5299999713897705,
+            1.9543999433517456
+          ]
+        },
+        "relation": "PENETRATING",
+        "status": "PASS",
+        "surface_distance_m": 0.0,
+        "tolerance_m": 1e-06,
+        "units": "m"
+      },
+      "distance_m": 0.2381895821609497,
+      "fresh_verification": "PASS",
+      "lod": "near",
+      "renders": [
+        {
+          "bounds": {
+            "max": [
+              1.281000018119812,
+              2.240000009536743,
+              2.6700000762939453
+            ],
+            "min": [
+              -1.281000018119812,
+              0.0,
+              -2.4000000953674316
+            ]
+          },
+          "clip": null,
+          "contact_shadow_pixels": 9458,
+          "elevation": 0.2,
+          "file": "flatbed-convoy-truck-front-before.png",
+          "height": 420,
+          "light_count": 4,
+          "lighting": "studio",
+          "loop": false,
+          "png_sha256": "47c28110575c5e5d168740e97cf87403be9b296a113f11e6bfb21a2f50bbaf35",
+          "raster_visits": 1211780,
+          "schema": "axm.software-glb-preview/v0.1",
+          "source_sha256": "86b1c4a543d1477fd14cea8ac249e78757414b37dd13bea4a9637e6645525bc1",
+          "supersample": 1,
+          "time_s": 0.0,
+          "triangles": 11018,
+          "truth": "Observes decoded geometry, material factors, vertex colours and one sampled pose. It does not prove PBR parity, reflections, textures, transparency, target-engine import, continuous animation, artistic quality or performance.",
+          "visible_triangles": 2055,
+          "width": 640,
+          "yaw": 0.0
+        },
+        {
+          "bounds": {
+            "max": [
+              1.281000018119812,
+              2.240000009536743,
+              2.6700000762939453
+            ],
+            "min": [
+              -1.4523751776733398,
+              0.0,
+              -2.4000000953674316
+            ]
+          },
+          "clip": null,
+          "contact_shadow_pixels": 10100,
+          "elevation": 0.2,
+          "file": "flatbed-convoy-truck-front-after.png",
+          "height": 420,
+          "light_count": 4,
+          "lighting": "studio",
+          "loop": false,
+          "png_sha256": "7f57e788efe195b53c98db7d21aaeaf00a8cedf5454daab964c5b979ce039603",
+          "raster_visits": 1206734,
+          "schema": "axm.software-glb-preview/v0.1",
+          "source_sha256": "d477da054b5835f6b3be5231a09df71209410c0d51c4c7a25c42b76b8ecf29e6",
+          "supersample": 1,
+          "time_s": 0.0,
+          "triangles": 11018,
+          "truth": "Observes decoded geometry, material factors, vertex colours and one sampled pose. It does not prove PBR parity, reflections, textures, transparency, target-engine import, continuous animation, artistic quality or performance.",
+          "visible_triangles": 2153,
+          "width": 640,
+          "yaw": 0.0
+        },
+        {
+          "bounds": {
+            "max": [
+              1.281000018119812,
+              2.240000009536743,
+              2.6700000762939453
+            ],
+            "min": [
+              -1.281000018119812,
+              0.0,
+              -2.4000000953674316
+            ]
+          },
+          "clip": null,
+          "contact_shadow_pixels": 6210,
+          "elevation": 1.2,
+          "file": "flatbed-convoy-truck-top-before.png",
+          "height": 420,
+          "light_count": 4,
+          "lighting": "studio",
+          "loop": false,
+          "png_sha256": "0956c7fdc7d7c96a8c5017b17ad3a5ae2c94ca8636126ad6f2a5fae79edf9d0d",
+          "raster_visits": 968446,
+          "schema": "axm.software-glb-preview/v0.1",
+          "source_sha256": "86b1c4a543d1477fd14cea8ac249e78757414b37dd13bea4a9637e6645525bc1",
+          "supersample": 1,
+          "time_s": 0.0,
+          "triangles": 11018,
+          "truth": "Observes decoded geometry, material factors, vertex colours and one sampled pose. It does not prove PBR parity, reflections, textures, transparency, target-engine import, continuous animation, artistic quality or performance.",
+          "visible_triangles": 2206,
+          "width": 640,
+          "yaw": 0.1
+        },
+        {
+          "bounds": {
+            "max": [
+              1.281000018119812,
+              2.240000009536743,
+              2.6700000762939453
+            ],
+            "min": [
+              -1.4523751776733398,
+              0.0,
+              -2.4000000953674316
+            ]
+          },
+          "clip": null,
+          "contact_shadow_pixels": 6536,
+          "elevation": 1.2,
+          "file": "flatbed-convoy-truck-top-after.png",
+          "height": 420,
+          "light_count": 4,
+          "lighting": "studio",
+          "loop": false,
+          "png_sha256": "77a086ae36ae8b43ac43d6d8d373f02e82b84a8e8f4e043cfb247f03491fde62",
+          "raster_visits": 968206,
+          "schema": "axm.software-glb-preview/v0.1",
+          "source_sha256": "d477da054b5835f6b3be5231a09df71209410c0d51c4c7a25c42b76b8ecf29e6",
+          "supersample": 1,
+          "time_s": 0.0,
+          "triangles": 11018,
+          "truth": "Observes decoded geometry, material factors, vertex colours and one sampled pose. It does not prove PBR parity, reflections, textures, transparency, target-engine import, continuous animation, artistic quality or performance.",
+          "visible_triangles": 2210,
+          "width": 640,
+          "yaw": 0.1
+        }
+      ],
+      "reused_procedure": true,
+      "search_trials": 1,
+      "selected_chassis_triangles": 60,
+      "selected_wheel_triangles": 852,
+      "selection": "RETAINED_PROCEDURE",
+      "triangles": 11018
+    }
+  ],
+  "crew_worker_restarted_between_jobs": true,
+  "demo_script_sha256": "417d1110c0de77c16a4335e3e7c3639c6baeff45a44f9b9ba5b53b7e8ed0fca0",
+  "limits": [
+    "Other clearance pairs, mounts, steering, suspension, physics and target engines are untested.",
+    "Offline inspection renders are automatically framed per artifact; they do not prove PBR equivalence or professional visual quality.",
+    "Procedure discovery selects and verifies a built-in parameterized rule; it does not synthesize new code."
+  ],
+  "schema": "axm.profession-clearance-demo/v1",
+  "scope": "One selected wheel against the actual chassis on two existing near-detail static vehicle recipes; no proxy geometry.",
+  "sources": {
+    "profession_clearance_repair.py": "3531e3e8b39c964e7e028a3a8720b0e4471d58a41c1b7aefb03c0edf3a0d3b6f",
+    "profession_crew.py": "5543d3444b6d83bde1f56ea94209b768d5c3d9a8bfe3a06babc83789af46270e",
+    "rts_detail.py": "110ee499a8375da98fe7092e79396f859097c19ee42a45c5a538866ba885b09c",
+    "rts_mesh.py": "60441a99fa8a0c91ba2df525c73c3daa05d6ee99be25ba1f9482591abd40e8af",
+    "rts_recipes.py": "41b4cb1924885e6375d9aa1d8cab7d506d3722025199d8c7a620a82931be1278"
+  },
+  "status": "PASS"
+}

@@ -1,0 +1,27 @@
+{
+  "id": "AXM-CAP-STATIC-ASSET-TARGET-EVIDENCE",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Bind supplied static GLB target evidence to exact bytes and independent job requirements; identify owning professions for unresolved evidence.",
+  "handles": ["verify-static-asset-target"],
+  "input_contract": {
+    "required": ["path", "packet", "target", "required_lanes"],
+    "properties": {
+      "path": "existing GLB artifact; read-only, outside protected machine state, without symbolic links",
+      "packet": "axm.static-asset-target-evidence/v0.1 evidence packet",
+      "target": "job's expected engine, optional version, and context; must match packet exactly",
+      "required_lanes": "job's non-empty target requirements; packet cannot remove these requirements"
+    }
+  },
+  "output_contract": {"kind": "static-asset-target-evidence-report", "execution_scope": "EXTERNAL_PACKET_VALIDATION_ONLY", "independently_reproduced": false},
+  "dependencies": [],
+  "relationships": ["reuses the existing static asset target evidence validator", "profession crews reobserve the artifact and do not train from supplied target declarations"],
+  "anatomy_refs": [],
+  "implementation": {"kind": "DETERMINISTIC_SOURCE", "entrypoint": "builtin:static_asset_target_evidence", "source": "src/axm_uc/profession_target_evidence.py"},
+  "limitations": [
+    "No engine, collision, navigation, visual review or device benchmark is executed.",
+    "Evidence sources are not opened, authenticated or independently reproduced.",
+    "PASS means packet adequacy, exact artifact binding and matching job requirements only.",
+    "No professional acceptance, visual quality or crew experience is granted."
+  ]
+}
