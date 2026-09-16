@@ -2,12 +2,13 @@
 
 const Core = require('./source/axm-physics-core.js');
 const DistanceJoints = require('./uc-distance-joints.js');
+const DistanceLimits = require('./uc-distance-limits.js');
 const TranslationMounts = require('./uc-translation-mounts.js');
 
-const VERSION = '0.2.0';
+const VERSION = '0.3.0';
 const STEP_SCHEMA = 'axm.uc-constraint-composer-step/v0.1';
 const SIMULATION_SCHEMA = 'axm.uc-constraint-composer-simulation/v0.1';
-const FAMILY_ORDER = Object.freeze(['translation-mounts', 'distance-joints']);
+const FAMILY_ORDER = Object.freeze(['translation-mounts', 'distance-joints', 'distance-limits']);
 const MAX_FAMILY_PASSES = 16;
 const DEFAULT_POSITION_TOLERANCE = 1e-8;
 const DEFAULT_VELOCITY_TOLERANCE = 1e-8;
@@ -51,7 +52,8 @@ function normalizeConstraints(world, constraints) {
   constraints = constraints || {};
   return {
     mounts: TranslationMounts.normalizeMounts(constraints.mounts || [], world),
-    distanceJoints: DistanceJoints.normalizeJoints(constraints.distanceJoints || [], world)
+    distanceJoints: DistanceJoints.normalizeJoints(constraints.distanceJoints || [], world),
+    distanceLimits: DistanceLimits.normalizeLimits(constraints.distanceLimits || [], world)
   };
 }
 
@@ -78,6 +80,10 @@ function stageOptions(options, stage) {
     distanceJoints: {
       positionIterations: iterationCount(options[post ? 'postDistancePositionIterations' : 'distancePositionIterations'], post ? 2 : 4),
       velocityIterations: iterationCount(options[post ? 'postDistanceVelocityIterations' : 'distanceVelocityIterations'], post ? 1 : 2)
+    },
+    distanceLimits: {
+      positionIterations: iterationCount(options[post ? 'postLimitPositionIterations' : 'limitPositionIterations'], post ? 2 : 4),
+      velocityIterations: iterationCount(options[post ? 'postLimitVelocityIterations' : 'limitVelocityIterations'], post ? 1 : 2)
     }
   };
 }
@@ -105,22 +111,32 @@ function distanceRelativeSpeed(world, joint) {
   return Math.abs((bv.x - av.x) * axisX + (bv.y - av.y) * axisY);
 }
 
+function distanceLimitRelativeSpeed(world, limit) {
+  if (!limit.enabled) return 0;
+  const violation = DistanceLimits.velocityViolation(world, limit);
+  return violation.active ? Math.abs(violation.relativeSpeed) : 0;
+}
+
 function measure(world, normalized) {
   const mounts = normalized.mounts.map(mount => TranslationMounts.measureMount(world, mount));
   const distanceJoints = normalized.distanceJoints.map(joint => DistanceJoints.measureJoint(world, joint));
+  const distanceLimits = normalized.distanceLimits.map(limit => DistanceLimits.measureLimit(world, limit));
   return {
     mounts,
     distanceJoints,
+    distanceLimits,
     maxMountError: round(mounts.reduce((max, item) => Math.max(max, item.errorDistance), 0)),
     maxDistanceError: round(distanceJoints.reduce((max, item) => Math.max(max, Math.abs(item.error)), 0)),
+    maxDistanceLimitError: round(distanceLimits.reduce((max, item) => item.enabled ? Math.max(max, Math.abs(item.error)) : max, 0)),
     maxMountRelativeSpeed: round(normalized.mounts.reduce((max, mount) => Math.max(max, mountRelativeSpeed(world, mount)), 0)),
-    maxDistanceRelativeSpeed: round(normalized.distanceJoints.reduce((max, joint) => Math.max(max, distanceRelativeSpeed(world, joint)), 0))
+    maxDistanceRelativeSpeed: round(normalized.distanceJoints.reduce((max, joint) => Math.max(max, distanceRelativeSpeed(world, joint)), 0)),
+    maxDistanceLimitRelativeSpeed: round(normalized.distanceLimits.reduce((max, limit) => Math.max(max, distanceLimitRelativeSpeed(world, limit)), 0))
   };
 }
 
 function convergence(measurement, stageConfig) {
-  const maxPositionError = round(Math.max(measurement.maxMountError, measurement.maxDistanceError));
-  const maxVelocityError = round(Math.max(measurement.maxMountRelativeSpeed, measurement.maxDistanceRelativeSpeed));
+  const maxPositionError = round(Math.max(measurement.maxMountError, measurement.maxDistanceError, measurement.maxDistanceLimitError));
+  const maxVelocityError = round(Math.max(measurement.maxMountRelativeSpeed, measurement.maxDistanceRelativeSpeed, measurement.maxDistanceLimitRelativeSpeed));
   return {
     converged: maxPositionError <= stageConfig.positionTolerance && maxVelocityError <= stageConfig.velocityTolerance,
     maxPositionError,
@@ -142,7 +158,9 @@ function solveFamilies(world, normalized, stageConfig) {
       mountPositionReceiptCount: 0,
       mountVelocityReceiptCount: 0,
       distancePositionReceiptCount: 0,
-      distanceVelocityReceiptCount: 0
+      distanceVelocityReceiptCount: 0,
+      distanceLimitPositionReceiptCount: 0,
+      distanceLimitVelocityReceiptCount: 0
     };
 
     if (normalized.mounts.length) {
@@ -157,6 +175,13 @@ function solveFamilies(world, normalized, stageConfig) {
       out = preparedJoints.world;
       summary.distancePositionReceiptCount = preparedJoints.positionReceipts.length;
       summary.distanceVelocityReceiptCount = preparedJoints.velocityReceipts.length;
+    }
+
+    if (normalized.distanceLimits.length) {
+      const preparedLimits = DistanceLimits.prepareWorld(out, normalized.distanceLimits, stageConfig.distanceLimits);
+      out = preparedLimits.world;
+      summary.distanceLimitPositionReceiptCount = preparedLimits.positionReceipts.length;
+      summary.distanceLimitVelocityReceiptCount = preparedLimits.velocityReceipts.length;
     }
 
     summary.after = measure(out, normalized);
@@ -205,7 +230,7 @@ function refreshDiagnostics(world, coreDiagnostics, beforeCoreDiagnostics) {
 function validate(world, constraints) {
   const core = Core.validate(world);
   const errors = (core.errors || []).slice();
-  let normalized = { mounts: [], distanceJoints: [] };
+  let normalized = { mounts: [], distanceJoints: [], distanceLimits: [] };
 
   if (core.ok) {
     try {
@@ -216,7 +241,8 @@ function validate(world, constraints) {
   }
 
   const warnings = [
-    'Constraint families execute in fixed deterministic order: translation mounts, then distance joints.',
+    'Constraint families execute in fixed deterministic order: translation mounts, then distance joints, then distance limits.',
+    'Distance-limit range interiors remain slack; only violated position bounds or outward-moving active boundaries contribute residuals and correction.',
     'The composer combines existing translation-only constraint families around one donor-core integration step; it does not add angular joint semantics.',
     'Convergence-aware early exit is tolerance-based and requires both position and constrained relative-velocity residuals to satisfy caller-visible thresholds; it is not proof of global convergence.',
     'Conflicting constraints can retain residual error because this bounded composer does not claim a globally convergent rigid-body constraint solution.',
@@ -224,7 +250,7 @@ function validate(world, constraints) {
     'The imported donor source remains untouched.'
   ];
 
-  if (!normalized.mounts.length && !normalized.distanceJoints.length) {
+  if (!normalized.mounts.length && !normalized.distanceJoints.length && !normalized.distanceLimits.length) {
     warnings.push('No constraints were supplied; the composer would reduce to one donor-core step.');
   }
 
@@ -233,6 +259,7 @@ function validate(world, constraints) {
     errors,
     mountCount: normalized.mounts.length,
     distanceJointCount: normalized.distanceJoints.length,
+    distanceLimitCount: normalized.distanceLimits.length,
     warnings
   };
 }
@@ -291,23 +318,24 @@ function step(world, constraints, dt, options) {
       worldBeforePostCompositeStabilization: clone(coreStep.world)
     },
     evidence: [
-      normalized.mounts.length + ' translation mount(s) and ' + normalized.distanceJoints.length + ' distance joint(s) normalized once from the caller input state',
+      normalized.mounts.length + ' translation mount(s), ' + normalized.distanceJoints.length + ' distance joint(s), and ' + normalized.distanceLimits.length + ' distance limit(s) normalized once from the caller input state',
       'Constraint family order fixed as ' + FAMILY_ORDER.join(' -> '),
       pre.passesExecuted + ' of ' + preConfig.passes + ' bounded pre-core family pass(es) executed',
       'AXM Physics Core v' + Core.VERSION + ' executed exactly one collision/integration step',
       post.passesExecuted + ' of ' + postConfig.passes + ' bounded post-core family pass(es) executed without a second integration step',
       'Convergence-aware early exit avoided ' + totalPassesAvoided + ' of ' + totalPassBudget + ' configured family pass(es)',
-      'Final maximum mount error ' + after.maxMountError + '; final maximum distance error ' + after.maxDistanceError,
-      'Final constrained relative-speed maxima: mounts ' + after.maxMountRelativeSpeed + '; distance joints ' + after.maxDistanceRelativeSpeed,
+      'Final maximum mount error ' + after.maxMountError + '; final maximum distance-joint error ' + after.maxDistanceError + '; final maximum distance-limit violation ' + after.maxDistanceLimitError,
+      'Final constrained relative-speed maxima: mounts ' + after.maxMountRelativeSpeed + '; distance joints ' + after.maxDistanceRelativeSpeed + '; active distance limits ' + after.maxDistanceLimitRelativeSpeed,
       'Final state checksum ' + Core.checksum(post.world)
     ],
     limitations: [
-      'The composer currently supports only the existing translation-mount and center-to-center distance-joint families.',
+      'The composer currently supports only the existing translation-mount, center-to-center distance-joint, and center-distance-limit families.',
+      'Distance-limit range interiors are intentionally slack and are not treated as zero-error exact joints.',
       'Family order is deterministic but introduces ordering bias; conflicting constraints are bounded by pass counts rather than claimed to converge globally.',
       'Early exit only means configured position and constrained relative-velocity tolerances were satisfied at a pass boundary; it is not a proof of physical equilibrium or global convergence.',
       'No angular inertia, rotating local anchors, hinge, slider, weld, motor or gear semantics are implemented.',
       'Post-core projection can change positions after collision/contact evidence was generated; returned core events and contact geometry describe the core stage before post-composite stabilization.',
-      'Connected constrained bodies can still collide unless caller collision filters suppress that pair.',
+      'Connected constrained bodies can still collide unless caller collision filters or the separate component-isolation wrapper suppress that component.',
       'This is game/prototype physics evidence, not scientific validation.'
     ]
   };
