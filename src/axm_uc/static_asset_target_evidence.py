@@ -2,7 +2,7 @@
 
 This module does not run a game engine, collision solver, navigation bake, visual
 review, or performance benchmark. It validates a closed evidence packet, binds
-that packet to the exact artifact bytes, and refuses to promote a required lane
+that packet to the exact artifact bytes, and refuses to promote a supplied lane
 when the supplied evidence kind is too weak for the claim.
 """
 from __future__ import annotations
@@ -149,10 +149,11 @@ def validate_static_asset_target_evidence(value: Any) -> dict[str, Any]:
 def verify_static_asset_target_evidence(path: str | Path, packet: Any) -> dict[str, Any]:
     """Bind supplied target evidence to exact GLB bytes and evaluate declared gates.
 
-    PASS means only that every caller-declared required lane has a PASS receipt
-    containing at least one evidence kind strong enough for that lane, the packet
-    is bound to the exact artifact SHA-256, and no supplied lane reports FAIL.
-    UC does not independently reproduce the external target observations here.
+    PASS means every caller-declared required lane has a PASS receipt containing
+    at least one evidence kind strong enough for that lane, every additional
+    supplied PASS is also adequately evidenced, the packet is bound to the exact
+    artifact SHA-256, and no supplied lane reports FAIL. UC does not independently
+    reproduce the external target observations here.
     """
     spec = validate_static_asset_target_evidence(packet)
     packet_bytes = json.dumps(spec, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()
@@ -260,8 +261,7 @@ def verify_static_asset_target_evidence(path: str | Path, packet: Any) -> dict[s
             lane_result["status"] = "HOLD"
             lane_result["reason"] = "PASS_WITHOUT_EVIDENCE"
             finding("PASS_WITHOUT_EVIDENCE", lane=lane)
-            if is_required:
-                any_hold = True
+            any_hold = True
         elif not (set(kinds) & allowed_kinds):
             lane_result["status"] = "HOLD"
             lane_result["reason"] = "INSUFFICIENT_EVIDENCE_KIND"
@@ -271,8 +271,7 @@ def verify_static_asset_target_evidence(path: str | Path, packet: Any) -> dict[s
                 supplied=kinds,
                 acceptable=sorted(allowed_kinds),
             )
-            if is_required:
-                any_hold = True
+            any_hold = True
         else:
             lane_result["status"] = "PASS"
             lane_result["reason"] = "DECLARED_PASS_WITH_QUALIFYING_EVIDENCE"
