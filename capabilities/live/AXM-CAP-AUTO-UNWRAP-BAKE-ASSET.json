@@ -2,7 +2,7 @@
   "id": "AXM-CAP-AUTO-UNWRAP-BAKE-ASSET",
   "version": "0.2.0",
   "status": "live",
-  "purpose": "automatically group locally planar connected UV-less faces into deterministic padded charts and bake verified UC material maps into a native offline atlas",
+  "purpose": "automatically unwrap UV-less surface geometry into deterministic padded connected charts and bake verified UC material maps into a native offline atlas",
   "handles": [
     "auto-unwrap-bake-asset"
   ],
@@ -26,9 +26,9 @@
     "source": "src/axm_uc/auto_uv_bake.py"
   },
   "limitations": [
-    "Offline connected-planar fallback only; no global seam optimization, density-optimal packing, UDIMs, high-to-low cage baking, AO/curvature/thickness synthesis or MikkTSpace parity.",
-    "Hard edges, disconnected topology and nonmanifold adjacency remain seams instead of being silently merged.",
-    "Generated chart separation and pixel gutters are technical evidence, not aesthetic acceptance.",
+    "Offline bounded connected-chart fallback only; no global seam optimization, density-optimal packing, UDIMs, high-to-low cage baking, AO/curvature/thickness synthesis or MikkTSpace parity.",
+    "Separate chart cells are non-overlapping by construction, but projected triangles inside one shared chart are not yet overlap/distortion-tested.",
+    "Generated chart grouping and pixel gutters are technical evidence, not aesthetic acceptance.",
     "Sources and failed product drafts remain preserved; existing outputs are refused."
   ]
 }
