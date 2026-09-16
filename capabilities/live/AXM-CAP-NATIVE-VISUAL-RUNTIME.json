@@ -2,7 +2,7 @@
   "id": "AXM-CAP-NATIVE-VISUAL-RUNTIME",
   "version": "0.1.0",
   "status": "live",
-  "purpose": "Compile deterministic inspectable 3D scene state into a self-contained coded WebGL2 visual runtime, with an explicit bridge into Blender for deeper authoring and proof.",
+  "purpose": "Compile deterministic inspectable 3D scene state into a self-contained AXM-owned WebGL2 visual runtime without requiring an external creative application.",
   "handles": [
     "native-visual-scene",
     "native-visual-runtime",
@@ -30,15 +30,16 @@
       "self-contained WebGL2 HTML runtime",
       "bundle receipt with file digests",
       "explicit host-render evidence boundary",
-      "native-scene contract consumable by the Blender pro bridge"
+      "portable native scene state that optional external adapters may consume"
     ]
   },
   "dependencies": [],
   "relationships": [
-    "adds a fast coded visual execution path beside Blender rather than replacing Blender",
-    "shares camera, transforms, basic material values, lights and world state with tools/blender/axm_blender_pro.py",
+    "is an AXM-owned visual execution path and remains available when external creative tools are absent",
+    "may share camera, transforms, basic material values, lights and world state with optional external adapters",
     "keeps browser pixel observation separate from deterministic source compilation and JavaScript syntax evidence",
-    "refuses silent writes into non-empty output directories unless replace is explicit"
+    "refuses silent writes into non-empty output directories unless replace is explicit",
+    "does not classify Blender-backed or other third-party execution as native"
   ],
   "implementation": {
     "kind": "DETERMINISTIC_SOURCE",
@@ -48,14 +49,14 @@
   "limitations": [
     "the native renderer currently supports boxes, spheres, cylinders and planes rather than arbitrary imported meshes",
     "WebGL2 execution and rendered visual quality require browser or authorized host evidence",
-    "the Blender bridge preserves shared scene intent but does not claim pixel parity between renderers",
-    "final high-detail asset authoring, rigging, export and artifact-bound visual proof remain Blender-forge responsibilities"
+    "native geometry, rigging, texturing, simulation and rendering breadth is still substantially smaller than mature external creative suites",
+    "optional external adapters may currently provide capabilities the native runtime has not implemented yet, but those adapters remain external dependencies rather than native AXM capability"
   ],
   "persistent_state": null,
   "root_fit": {
     "truth": {
       "fit": true,
-      "basis": "Compiled scene state, hashes, generated source, absent host pixels and Blender visual acceptance remain explicitly distinguishable."
+      "basis": "Compiled scene state, hashes, generated source, absent host pixels and external-tool execution remain explicitly distinguishable."
     },
     "agency": {
       "fit": true,
@@ -63,7 +64,7 @@
     },
     "continuity": {
       "fit": true,
-      "basis": "The scene JSON is deterministic, inspectable and portable between the coded runtime and the additive Blender bridge."
+      "basis": "The scene JSON is deterministic, inspectable and remains usable without any third-party creative executable."
     },
     "wisdom-before-speed": {
       "fit": true,
