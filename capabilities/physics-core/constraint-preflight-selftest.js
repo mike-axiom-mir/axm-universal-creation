@@ -109,6 +109,38 @@ assert.equal(disabledRadial.ok, true);
 assert.equal(disabledRadial.counts.disabledConstraints, 1);
 assert.equal(disabledRadial.radialGroups[0].constraintCount, 2, 'disabled distance constraints must not enter radial intersections');
 
+const projectionRadialConflict = Preflight.analyze(baseWorld(), {
+  axisLocks: [{ id: 'x-three', a: 'a', b: 'b', axis: 'x', offset: 3 }],
+  distanceLimits: [{ id: 'radius-two', a: 'a', b: 'b', maxLength: 2 }]
+});
+assert.equal(projectionRadialConflict.valid, true);
+assert.equal(projectionRadialConflict.conflictFree, false, 'a fixed projection magnitude above the same-pair radial maximum is impossible');
+assert.equal(projectionRadialConflict.counts.projectionConflicts, 0, 'the projected interval alone is internally satisfiable');
+assert.equal(projectionRadialConflict.counts.radialConflicts, 0, 'the radial interval alone is internally satisfiable');
+assert.equal(projectionRadialConflict.counts.projectionRadialChecks, 1);
+assert.equal(projectionRadialConflict.counts.projectionRadialConflicts, 1);
+assert.equal(projectionRadialConflict.conflicts[0].code, 'PROJECTION_EXCEEDS_DISTANCE_MAX');
+assert.equal(projectionRadialConflict.conflicts[0].minimumRequiredDistance, 3);
+assert.equal(projectionRadialConflict.conflicts[0].maximumAllowedDistance, 2);
+assert.deepEqual(projectionRadialConflict.conflicts[0].constraintIds, ['radius-two', 'x-three']);
+assert.deepEqual(projectionRadialConflict.conflicts[0].families, ['axis-locks', 'distance-limits']);
+
+const projectionRadialCompatible = Preflight.analyze(baseWorld(), {
+  axisLimits: [{ id: 'x-band', a: 'a', b: 'b', axis: 'x', minOffset: -3, maxOffset: 3 }],
+  distanceLimits: [{ id: 'radius-half', a: 'a', b: 'b', maxLength: 0.5 }]
+});
+assert.equal(projectionRadialCompatible.ok, true, 'a projected range containing zero must not be rejected merely because its outer endpoints exceed the radial maximum');
+assert.equal(projectionRadialCompatible.counts.projectionRadialChecks, 1);
+assert.equal(projectionRadialCompatible.projectionRadialChecks[0].minimumRequiredDistance, 0);
+
+const radialMinimumDoesNotConflict = Preflight.analyze(baseWorld(), {
+  axisLocks: [{ id: 'x-zero', a: 'a', b: 'b', axis: 'x', offset: 0 }],
+  distanceLimits: [{ id: 'radius-min-five', a: 'a', b: 'b', minLength: 5 }]
+});
+assert.equal(radialMinimumDoesNotConflict.ok, true, 'radial minimum alone cannot contradict one projected coordinate because perpendicular freedom may satisfy it');
+assert.equal(radialMinimumDoesNotConflict.counts.projectionRadialChecks, 1, 'the normalized distance-limit contract carries its bounded MAX_LENGTH ceiling even when only minLength is supplied');
+assert.equal(radialMinimumDoesNotConflict.counts.projectionRadialConflicts, 0);
+
 const nearParallel = Preflight.analyze(baseWorld(), {
   directionLocks: [
     { id: 'one', a: 'a', b: 'b', direction: { x: 1, y: 1 }, offset: 1 },
@@ -130,19 +162,32 @@ const tolerance = Preflight.analyze(baseWorld(), {
 }, { tolerance: 1e-9 });
 assert.equal(tolerance.conflictFree, true, 'configured bounded tolerance may absorb sub-tolerance projection and radial interval separation');
 
+const coupledTolerance = Preflight.analyze(baseWorld(), {
+  axisLocks: [{ id: 'x-near', a: 'a', b: 'b', axis: 'x', offset: 2.0000000005 }],
+  distanceLimits: [{ id: 'radius-two', a: 'a', b: 'b', maxLength: 2 }]
+}, { tolerance: 1e-9 });
+assert.equal(coupledTolerance.conflictFree, true, 'bounded tolerance also applies to the single-projection versus radial-maximum proof');
+
 const replayA = Preflight.analyze(baseWorld(), {
   mounts: [{ id: 'mount', a: 'a', b: 'b', offset: { x: 0, y: 2 } }],
-  axisLocks: [{ id: 'x-lock', a: 'a', b: 'b', axis: 'x', offset: 1 }],
+  axisLocks: [
+    { id: 'x-lock', a: 'a', b: 'b', axis: 'x', offset: 1 },
+    { id: 'x-three', a: 'a', b: 'b', axis: 'y', offset: 3 }
+  ],
   distanceJoints: [{ id: 'distance-three', a: 'a', b: 'b', length: 3 }],
   distanceLimits: [{ id: 'max-two', a: 'a', b: 'b', maxLength: 2 }]
 });
 const replayB = Preflight.analyze(baseWorld(), {
   mounts: [{ id: 'mount', a: 'a', b: 'b', offset: { x: 0, y: 2 } }],
-  axisLocks: [{ id: 'x-lock', a: 'a', b: 'b', axis: 'x', offset: 1 }],
+  axisLocks: [
+    { id: 'x-lock', a: 'a', b: 'b', axis: 'x', offset: 1 },
+    { id: 'x-three', a: 'a', b: 'b', axis: 'y', offset: 3 }
+  ],
   distanceJoints: [{ id: 'distance-three', a: 'a', b: 'b', length: 3 }],
   distanceLimits: [{ id: 'max-two', a: 'a', b: 'b', maxLength: 2 }]
 });
 assert.equal(replayA.checksum, replayB.checksum, 'preflight evidence must replay deterministically in one JS runtime');
 assert.deepEqual(replayA.conflicts, replayB.conflicts);
+assert.deepEqual(replayA.projectionRadialChecks, replayB.projectionRadialChecks);
 
-console.log('UC Constraint Preflight selftest: PASS (projected and same-pair radial interval conflicts, canonical body/direction handling, disabled validation, bounded tolerance and deterministic evidence)');
+console.log('UC Constraint Preflight selftest: PASS (projected, same-pair radial and bounded projection-vs-distance conflicts, canonical handling, disabled validation, tolerance and deterministic evidence)');

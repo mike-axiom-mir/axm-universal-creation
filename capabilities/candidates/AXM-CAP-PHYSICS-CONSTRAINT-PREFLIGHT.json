@@ -1,19 +1,19 @@
 {
   "id": "AXM-CAP-PHYSICS-CONSTRAINT-PREFLIGHT",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "status": "candidate",
-  "purpose": "Provide a deterministic conservative preflight that detects provable local conflicts among exact-match projected translation constraints and same-body-pair center-distance equalities/ranges before solver work is spent.",
-  "handles": ["constraint-preflight", "overconstraint-check", "projected-interval-conflict", "distance-interval-conflict", "constraint-truth-audit"],
+  "purpose": "Provide a deterministic conservative preflight that detects provable local conflicts among exact-match projected translation constraints, same-body-pair center-distance equalities/ranges, and the bounded same-pair case where one required projection magnitude exceeds a finite center-distance maximum.",
+  "handles": ["constraint-preflight", "overconstraint-check", "projected-interval-conflict", "distance-interval-conflict", "projection-distance-conflict", "constraint-truth-audit"],
   "input_contract": {
     "required": ["world", "constraints"],
     "properties": {
       "constraints": "existing seven-family UC constraint set: translation mounts, distance joints/limits, axis locks/limits and fixed-direction locks/limits",
-      "options.tolerance": "bounded non-negative local interval-conflict tolerance"
+      "options.tolerance": "bounded non-negative local interval/conflict tolerance"
     }
   },
   "output_contract": {
-    "kind": "axm.uc-constraint-preflight/v0.2",
-    "contains": ["validation state", "deterministically canonicalized projection groups", "same-pair radial distance groups", "local interval intersections", "provable conflict receipts", "evidence checksum", "explicit limitations"]
+    "kind": "axm.uc-constraint-preflight/v0.3",
+    "contains": ["validation state", "deterministically canonicalized projection groups", "same-pair radial distance groups", "bounded projection/radial upper-bound checks", "local interval intersections", "provable conflict receipts", "evidence checksum", "explicit limitations"]
   },
   "dependencies": [
     "AXM-CAP-PHYSICS-FABRIC",
@@ -31,9 +31,11 @@
     "selftest": "node capabilities/physics-core/constraint-preflight-selftest.js"
   },
   "limitations": [
-    "conservative local projected-translation and same-pair radial-distance checks only",
+    "conservative local projected-translation and same-pair radial-distance checks only, plus a bounded same-pair proof when one projection interval alone requires more distance than a finite radial maximum allows",
+    "the coupled proof uses only |projection| <= center distance and does not combine multiple independent projected directions",
+    "radial minima do not by themselves conflict with one projected interval because perpendicular freedom may satisfy them",
     "does not prove global satisfiability, convergence, stability or physical correctness",
-    "distance reasoning does not span triangles, loops, coupled directions or other multi-pair geometry",
+    "distance reasoning does not span triangles, loops, multi-pair geometry or other coupled constraints beyond the stated same-pair upper-bound proof",
     "near-parallel but non-identical directions are intentionally not merged",
     "disabled analyzed constraints are validated but excluded from conflict intersections",
     "does not change solver order, world state, collision behavior or donor source",
@@ -48,18 +50,20 @@
         "axis and scaled fixed-direction constraints share an exact normalized projection group",
         "body-order and direction-sign reversal canonicalization",
         "same-pair distance equality/range intersections can prove compatible and contradictory radial intervals",
-        "reversed distance body pairs canonicalize without sign inversion",
+        "a same-pair required projection magnitude above a finite radial maximum is conservatively rejected",
+        "a projected range containing zero remains compatible with a smaller radial maximum because the preflight uses the minimum required projection magnitude",
+        "radial minimum alone is not falsely treated as a projected contradiction",
         "disabled conflicting constraints remain inert while invalid references still fail validation",
         "near-parallel non-identical directions remain separate",
-        "bounded tolerance applies to projected and radial interval separation",
+        "bounded tolerance applies to projected, radial and projection/radial upper-bound separation",
         "same-runtime report checksum replay is deterministic"
       ]
     }
   ],
   "root_fit": {
-    "truth": {"fit": true, "basis": "Only contradictions proven by interval intersection on exact normalized projections or the exact same body-pair distance scalar are reported; coupled geometric cases remain explicit non-claims."},
+    "truth": {"fit": true, "basis": "Only contradictions proven by exact interval intersection or the necessary inequality |projection| <= center distance on the exact same body pair are reported; stronger coupled geometry remains an explicit non-claim."},
     "agency": {"fit": true, "basis": "The preflight remains advisory evidence and does not silently mutate constraints or force a repair."},
     "continuity": {"fit": true, "basis": "It reuses existing seven-family normalizers and leaves the byte-for-byte donor physics source and solver behavior unchanged."},
-    "wisdom-before-speed": {"fit": true, "basis": "It surfaces more locally provable contradictions before callers spend bounded solver passes on impossible same-pair constraint intervals."}
+    "wisdom-before-speed": {"fit": true, "basis": "It catches an additional class of locally impossible same-pair constraints before callers spend bounded solver passes on them."}
   }
 }
