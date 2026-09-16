@@ -401,6 +401,8 @@ def _build_mixed_cross_section_surface(
 
     for z, normal in ((-half_depth, (0.0, 0.0, -1.0)), (half_depth, (0.0, 0.0, 1.0))):
         for left, right in zip(xs, xs[1:]):
+            if right - left <= SWEEP_TOLERANCE:
+                continue
             midpoint = (left + right) / 2.0
             if _blocked_on_outer_boundary(operations, x=midpoint, z=z, half_width=half_width, half_depth=half_depth, tolerance=tolerance):
                 continue
@@ -409,6 +411,8 @@ def _build_mixed_cross_section_surface(
     for x, normal in ((-half_width, (-1.0, 0.0, 0.0)), (half_width, (1.0, 0.0, 0.0))):
         seam = seams[x]
         for low, high in zip(seam, seam[1:]):
+            if high - low <= SWEEP_TOLERANCE:
+                continue
             midpoint = (low + high) / 2.0
             if _blocked_on_outer_boundary(operations, x=x, z=midpoint, half_width=half_width, half_depth=half_depth, tolerance=tolerance):
                 continue
