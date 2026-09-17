@@ -1,6 +1,6 @@
 'use strict';
 
-const VERSION = '0.1.6';
+const VERSION = '0.1.7';
 const SCHEMA = 'axm.uc-two-projection-radial-envelope/v0.1';
 
 function finiteDirection(direction) {
@@ -156,6 +156,21 @@ function analyze(firstDirection, secondDirection, firstInterval, secondInterval)
       edgeDistanceEvaluations: 0,
       cornerNormEvaluations: 0
     };
+  } else if (degenerateProjectionIntervals === 2) {
+    // Two collapsed projection intervals define one exact inverse-basis point.
+    // Evaluate that unique point once instead of scanning four zero-length edges
+    // and four duplicate corners.
+    const pointDistance = norm(corners[0]);
+    if (!Number.isFinite(pointDistance)) {
+      return unsupported('NON_FINITE_RADIAL_ENVELOPE', { determinant });
+    }
+    minimumDistance = pointDistance;
+    maximumDistance = pointDistance;
+    distanceMethod = 'inverse-basis-point';
+    distanceWork = {
+      edgeDistanceEvaluations: 0,
+      cornerNormEvaluations: 1
+    };
   } else if (degenerateProjectionIntervals === 1) {
     // Exactly one collapsed projection interval makes the feasible inverse-basis
     // envelope a segment rather than a 2D parallelogram. Use its two unique
@@ -232,22 +247,26 @@ function analyze(firstDirection, secondDirection, firstInterval, secondInterval)
       'The two finite non-empty signed projection intervals are mapped through the exact inverse 2D basis into one feasible affine envelope.',
       orthonormalFastPath
         ? 'An exactly orthonormal two-direction basis preserves Euclidean distance, so radial extrema come directly from the projection rectangle without edge-distance or corner-norm scans.'
-        : degenerateProjectionIntervals === 1
-          ? originInsideProjectionRectangle
-            ? 'One exact projection plus one finite interval defines a feasible segment containing the origin, so radial minimum is zero and radial maximum needs only the two endpoint norms.'
-            : 'One exact projection plus one finite interval defines a feasible segment, so radial minimum needs one point-to-segment evaluation and radial maximum needs only the two endpoint norms.'
-          : originInsideProjectionRectangle
-            ? 'Both projection intervals contain zero, so linear inverse-basis geometry makes the world-space origin exactly feasible and radial minimum is zero without scanning parallelogram edges.'
-            : 'Minimum radius is the distance from the origin to the finite parallelogram edges; maximum radius is the farthest corner distance.',
+        : degenerateProjectionIntervals === 2
+          ? 'Two exact projections define one feasible inverse-basis point, so radial minimum and maximum are the same single point norm.'
+          : degenerateProjectionIntervals === 1
+            ? originInsideProjectionRectangle
+              ? 'One exact projection plus one finite interval defines a feasible segment containing the origin, so radial minimum is zero and radial maximum needs only the two endpoint norms.'
+              : 'One exact projection plus one finite interval defines a feasible segment, so radial minimum needs one point-to-segment evaluation and radial maximum needs only the two endpoint norms.'
+            : originInsideProjectionRectangle
+              ? 'Both projection intervals contain zero, so linear inverse-basis geometry makes the world-space origin exactly feasible and radial minimum is zero without scanning parallelogram edges.'
+              : 'Minimum radius is the distance from the origin to the finite parallelogram edges; maximum radius is the farthest corner distance.',
       orthonormalFastPath
         ? 'Orthonormal corners are reconstructed through the transpose basis, avoiding determinant division on this exact common-case path.'
         : 'Point-to-segment distance is evaluated after common coordinate scaling so finite large-magnitude geometry does not overflow merely because an edge delta is squared.',
-      'A finite projection rectangle with exactly one collapsed interval is treated as its actual segment geometry instead of repeatedly scanning duplicate corners and collapsed edges.'
+      degenerateProjectionIntervals === 2
+        ? 'A finite projection rectangle with two collapsed intervals is treated as its actual unique point instead of scanning four zero-length edges and four duplicate corners.'
+        : 'A finite projection rectangle with exactly one collapsed interval is treated as its actual segment geometry instead of repeatedly scanning duplicate corners and collapsed edges.'
     ],
     limitations: [
       'This helper only handles two finite non-empty projection intervals and an invertible 2D direction pair.',
       'The orthonormal fast path requires exact represented unit norms and exact represented zero dot product; tolerance-accepted near-orthogonal pairs retain the inverse-basis geometry paths.',
-      'Exactly one degenerate interval only reduces repeated work after the same two-direction inverse-basis geometry has already been accepted; two-degenerate point envelopes retain the established general behavior in this bounded change.',
+      'Degenerate interval fast paths only reduce repeated work after the same two-direction inverse-basis geometry has already been accepted; one collapsed interval is a segment and two collapsed intervals are one point.',
       'The general 2D inverse-basis path may skip edge-distance scans only when both signed intervals contain zero, because linear invertibility then makes world-space displacement zero exactly feasible.',
       'A caller may tolerate a tiny interval gap under its own proof tolerance, but this exact-envelope helper declines min > max rather than manufacturing feasible geometry from an empty intersection.',
       'It does not decide whether directions are eligible for a stronger proof and does not combine more than two projections.',
