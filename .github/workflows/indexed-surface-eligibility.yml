@@ -1,0 +1,43 @@
+name: Indexed surface eligibility evidence
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/axm_uc/indexed_surface_eligibility.py'
+      - 'tests/test_indexed_surface_eligibility.py'
+      - 'tools/build_indexed_surface_eligibility_evidence.py'
+      - 'docs/INDEXED_SURFACE_ELIGIBILITY.md'
+      - '.github/workflows/indexed-surface-eligibility.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  observer-evidence:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install UC package
+        run: python -m pip install -e .
+      - name: Run focused fail-closed tests
+        run: python -m unittest -v tests.test_indexed_surface_eligibility
+      - name: Build retained neutral evidence
+        run: python tools/build_indexed_surface_eligibility_evidence.py --output /tmp/indexed-surface-eligibility-evidence
+      - name: Record archive source identity
+        run: |
+          git rev-parse HEAD > /tmp/indexed-surface-eligibility-evidence/checked-out-head.txt
+          sha256sum src/axm_uc/indexed_surface_eligibility.py > /tmp/indexed-surface-eligibility-evidence/observer-file.sha256
+      - uses: actions/upload-artifact@v4
+        with:
+          name: indexed-surface-eligibility-evidence
+          path: /tmp/indexed-surface-eligibility-evidence
+          if-no-files-found: error
+          retention-days: 14
