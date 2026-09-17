@@ -29,8 +29,9 @@ const constraints = {
 };
 
 const report = Preflight.analyze(world, constraints);
-assert.equal(report.schema, 'axm.uc-orthogonal-projection-preflight/v0.7');
-assert.equal(report.version, '0.7.0');
+assert.equal(report.schema, 'axm.uc-orthogonal-projection-preflight/v0.8');
+assert.equal(report.version, '0.8.0');
+assert.equal(report.proofGeometry, 'full-precision-normalized-singular-bounded');
 assert.equal(report.conflictFree, true);
 assert.equal(report.strongerProofComplete, true);
 assert.equal(report.proofBudget.maxProjectionPairCandidates, null,
@@ -48,10 +49,15 @@ assert.equal(report.counts.orthogonalProjectionRadialChecks, 2,
   'each radial group must reuse only its own pair bucket; cross-pair projection combinations must not be evaluated');
 assert.equal(report.counts.radialMaximumChecks, 2);
 assert.equal(report.counts.radialMaximumConflicts, 0);
+assert.ok(report.orthogonalProjectionRadialChecks.every(check =>
+  check.basisSingularValues.min === 1 && check.basisSingularValues.max === 1
+), 'exact orthogonal axis pairs must retain singular values of one');
 assert.ok(report.evidence.some(line => line.includes('indexed once and reused for radial lookup')),
   'receipt must expose the one-index-per-analysis lookup path');
 assert.ok(report.evidence.some(line => line.includes('projection metric record(s) computed once and reused')),
   'receipt must expose one-time projection metric materialization');
+assert.ok(report.evidence.some(line => line.includes('exact singular values')),
+  'receipt must expose the conservative tolerance-safe basis conversion');
 
 const replay = Preflight.analyze(world, constraints);
 assert.equal(report.checksum, replay.checksum, 'pair-indexed proof planning must replay deterministically');
@@ -92,6 +98,73 @@ const reuseReplay = Preflight.analyze(world, reuseConstraints);
 assert.equal(reuseReport.checksum, reuseReplay.checksum,
   'metric reuse planning must replay deterministically');
 assert.deepEqual(reuseReport.orthogonalProjectionRadialChecks, reuseReplay.orthogonalProjectionRadialChecks);
+
+const nearOrthogonalDirection = {
+  x: 5e-7,
+  y: Math.sqrt(1 - 25e-14)
+};
+
+const toleranceSafeMaximumConstraints = {
+  axisLocks: [
+    { id: 'safe-max-x-three', a: 'a', b: 'b', axis: 'x', offset: 3 }
+  ],
+  directionLocks: [
+    { id: 'safe-max-near-y-four', a: 'a', b: 'b', direction: nearOrthogonalDirection, offset: 4 }
+  ],
+  distanceLimits: [
+    { id: 'safe-max-radius', a: 'a', b: 'b', maxLength: 4.9999995 }
+  ]
+};
+
+const toleranceSafeMaximum = Preflight.analyze(world, toleranceSafeMaximumConstraints, {
+  orthogonalityTolerance: 1e-6
+});
+assert.equal(toleranceSafeMaximum.valid, true);
+assert.equal(toleranceSafeMaximum.conflictFree, true,
+  'strict-tolerance near-orthogonal inputs must not use raw hypot as an unsafe radial lower bound');
+assert.equal(toleranceSafeMaximum.counts.radialMaximumChecks, 1);
+assert.equal(toleranceSafeMaximum.counts.radialMaximumConflicts, 0);
+const maximumCheck = toleranceSafeMaximum.orthogonalProjectionRadialChecks[0].radialMaximumCheck;
+assert.ok(maximumCheck.projectionMagnitudeLowerBound > maximumCheck.maximumAllowedDistance,
+  'the old raw projection-vector hypot would have exceeded the radial maximum in this regression');
+assert.ok(maximumCheck.minimumRequiredDistance < maximumCheck.maximumAllowedDistance,
+  'singular-value correction must conservatively reduce the radial lower bound at the tolerance edge');
+assert.ok(maximumCheck.decisionWitness.basisSingularValues.max > 1,
+  'decision witness must retain the full-precision operator expansion used by the lower bound');
+
+const toleranceSafeMinimumConstraints = {
+  axisLimits: [
+    { id: 'safe-min-x-range', a: 'a', b: 'b', axis: 'x', minOffset: -2, maxOffset: 2 }
+  ],
+  directionLimits: [
+    { id: 'safe-min-near-y-range', a: 'a', b: 'b', direction: nearOrthogonalDirection, minOffset: -2, maxOffset: 2 }
+  ],
+  distanceLimits: [
+    { id: 'safe-min-radius', a: 'a', b: 'b', minLength: 2.8284275 }
+  ]
+};
+
+const toleranceSafeMinimum = Preflight.analyze(world, toleranceSafeMinimumConstraints, {
+  orthogonalityTolerance: 1e-6
+});
+assert.equal(toleranceSafeMinimum.valid, true);
+assert.equal(toleranceSafeMinimum.conflictFree, true,
+  'strict-tolerance near-orthogonal inputs must not use raw hypot as an unsafe radial upper bound');
+assert.equal(toleranceSafeMinimum.counts.radialMinimumChecks, 1);
+assert.equal(toleranceSafeMinimum.counts.radialMinimumConflicts, 0);
+const minimumCheck = toleranceSafeMinimum.orthogonalProjectionRadialChecks[0].radialMinimumCheck;
+assert.ok(minimumCheck.projectionMagnitudeUpperBound < minimumCheck.minimumAllowedDistance,
+  'the old raw projection-vector hypot would have fallen below the radial minimum in this regression');
+assert.ok(minimumCheck.maximumPossibleDistance > minimumCheck.minimumAllowedDistance,
+  'singular-value correction must conservatively expand the radial upper bound at the tolerance edge');
+assert.ok(minimumCheck.decisionWitness.basisSingularValues.min < 1,
+  'decision witness must retain the full-precision inverse-basis contraction used by the upper bound');
+
+const toleranceSafeReplay = Preflight.analyze(world, toleranceSafeMaximumConstraints, {
+  orthogonalityTolerance: 1e-6
+});
+assert.equal(toleranceSafeMaximum.checksum, toleranceSafeReplay.checksum,
+  'tolerance-safe singular-bound proof must replay deterministically');
 
 const budgetConstraints = {
   axisLocks: [
