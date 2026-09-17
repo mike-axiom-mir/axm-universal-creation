@@ -39,6 +39,10 @@ def _base():
 def _cases():
     preserve = _base()
 
+    topology_mismatch = _base()
+    topology_mismatch["surface_identity"] = "neutral-topology-lineage-mismatch"
+    topology_mismatch["render"]["indices"] = [0, 2, 1, 0, 2, 3]
+
     dedup = _base()
     dedup["surface_identity"] = "neutral-expanded-corners"
     dedup["render"] = {
@@ -89,6 +93,7 @@ def _cases():
 
     return {
         "preserve": preserve,
+        "topology_mismatch": topology_mismatch,
         "dedup": dedup,
         "uv_split": uv_split,
         "protected_split": protected,
@@ -107,6 +112,7 @@ def main() -> int:
 
     expected = {
         "preserve": ("PRESERVE_SOURCE_INDEXING", "SAME_AS_SOURCE", 4),
+        "topology_mismatch": ("HOLD_TOPOLOGY_LINEAGE_MISMATCH", "NOT_EVALUATED", None),
         "dedup": ("POST_ATTRIBUTE_TUPLE_DEDUP_CANDIDATE", "RENDER_DOMAIN_DERIVED", 4),
         "uv_split": ("PRESERVE_RENDER_DOMAIN_INDEXING", "RENDER_DOMAIN_SPLIT_REQUIRED", 5),
         "protected_split": ("PRESERVE_RENDER_DOMAIN_INDEXING", "RENDER_DOMAIN_SPLIT_REQUIRED", 5),
@@ -132,6 +138,7 @@ def main() -> int:
             "render_domain_state": report["render_domain_state"],
             "candidate_vertex_count": None if report["candidate"] is None else report["candidate"]["vertex_count"],
             "input_digest": report["input_digest"],
+            "topology_lineage_matches": report["topology_lineage"]["matches_source_index_stream"],
         }
 
     head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=root, text=True).strip()
