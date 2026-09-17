@@ -19,6 +19,13 @@ MAX_INDICES = 3_000_000
 MAX_CHANNELS = 16
 MAX_TEXT = 256
 
+SOURCE_LINEAGE_POLICY = "SOURCE_VERTEX_AND_ATTRIBUTES"
+CROSS_SOURCE_TUPLE_POLICY = "ATTRIBUTES_AND_PROTECTED_SPLITS"
+CANDIDATE_IDENTITY_POLICIES = {
+    SOURCE_LINEAGE_POLICY,
+    CROSS_SOURCE_TUPLE_POLICY,
+}
+
 SUPPORTED_CHANNELS = {
     "POSITION": (3,),
     "NORMAL": (3,),
@@ -34,6 +41,7 @@ NON_CLAIMS = [
     "Structural eligibility does not prove rendered equality or visual acceptance.",
     "Candidate counts do not prove target-host or target-device memory/performance savings.",
     "No domain-specific seam, topology, skin, material or animation policy is inferred.",
+    "Cross-source tuple candidates are diagnostic only and do not authorize semantic vertex welding or product adoption.",
 ]
 
 
@@ -95,11 +103,21 @@ def _channels(value: Any, render_count: int) -> tuple[dict[str, list[tuple[int |
     return output, []
 
 
-def _base_report(source_identity: str, surface_identity: str) -> dict[str, Any]:
+def _candidate_identity_policy(value: Any) -> str:
+    if value is None:
+        return SOURCE_LINEAGE_POLICY
+    if value not in CANDIDATE_IDENTITY_POLICIES:
+        allowed = ", ".join(sorted(CANDIDATE_IDENTITY_POLICIES))
+        raise ValueError(f"candidate_identity_policy must be one of: {allowed}")
+    return value
+
+
+def _base_report(source_identity: str, surface_identity: str, candidate_identity_policy: str) -> dict[str, Any]:
     return {
         "schema": SCHEMA,
         "source_identity": source_identity,
         "surface_identity": surface_identity,
+        "candidate_identity_policy": candidate_identity_policy,
         "observer_only": True,
         "non_claims": list(NON_CLAIMS),
     }
@@ -111,6 +129,7 @@ def observe_indexed_surface_eligibility(spec: dict[str, Any]) -> dict[str, Any]:
         raise ValueError(f"spec must use {INPUT_SCHEMA}")
     source_identity = _text(spec.get("source_identity"), "source_identity")
     surface_identity = _text(spec.get("surface_identity"), "surface_identity")
+    candidate_policy = _candidate_identity_policy(spec.get("candidate_identity_policy"))
     source = spec.get("source")
     render = spec.get("render")
     if not isinstance(source, dict) or not isinstance(render, dict):
@@ -137,7 +156,7 @@ def observe_indexed_surface_eligibility(spec: dict[str, Any]) -> dict[str, Any]:
     mapped_render_source_indices = [mapping[index] for index in render_indices]
     topology_lineage_matches = mapped_render_source_indices == source_indices
 
-    base = _base_report(source_identity, surface_identity)
+    base = _base_report(source_identity, surface_identity, candidate_policy)
     base["input_digest"] = _digest(spec)
     base["source_domain"] = {
         "vertex_count": source_count,
@@ -183,6 +202,14 @@ def observe_indexed_surface_eligibility(spec: dict[str, Any]) -> dict[str, Any]:
 
     protected_present = "protected_split_ids" in render
     protected_value = render.get("protected_split_ids")
+    if candidate_policy == CROSS_SOURCE_TUPLE_POLICY and not protected_present:
+        base.update({
+            "eligibility_state": "HOLD_CROSS_SOURCE_SPLIT_DECLARATION_REQUIRED",
+            "render_domain_state": "NOT_EVALUATED",
+            "hold_reason": "cross-source tuple evaluation requires explicit protected_split_ids for every render vertex; use null only when the caller explicitly declares no extra non-attribute split identity",
+            "candidate": None,
+        })
+        return base
     if not protected_present:
         if render_count != source_count or mapping != list(range(render_count)):
             base.update({
@@ -208,7 +235,9 @@ def observe_indexed_surface_eligibility(spec: dict[str, Any]) -> dict[str, Any]:
     channel_order = sorted(channels)
     keys = []
     for index in range(render_count):
-        key = [mapping[index]]
+        key: list[Any] = []
+        if candidate_policy == SOURCE_LINEAGE_POLICY:
+            key.append(["SOURCE_VERTEX", mapping[index]])
         key.extend([name, channels[name][index]] for name in channel_order)
         if protected[index] is not None:
             key.append(["PROTECTED_SPLIT", protected[index]])
@@ -225,6 +254,15 @@ def observe_indexed_surface_eligibility(spec: dict[str, Any]) -> dict[str, Any]:
         candidate_map.append(candidate)
     candidate_indices = [candidate_map[index] for index in render_indices]
     candidate_count = len(key_to_candidate)
+
+    candidate_source_sets: dict[int, set[int]] = {}
+    for render_index, candidate_index in enumerate(candidate_map):
+        candidate_source_sets.setdefault(candidate_index, set()).add(mapping[render_index])
+    cross_source_groups = sorted(
+        (candidate_index, sorted(source_indices_for_candidate))
+        for candidate_index, source_indices_for_candidate in candidate_source_sets.items()
+        if len(source_indices_for_candidate) > 1
+    )
 
     by_position: dict[bytes, list[int]] = {}
     for index, row in enumerate(channels["POSITION"]):
@@ -246,6 +284,8 @@ def observe_indexed_surface_eligibility(spec: dict[str, Any]) -> dict[str, Any]:
     domain_state = "SAME_AS_SOURCE"
     if render_count != source_count or mapping != list(range(render_count)):
         domain_state = "RENDER_DOMAIN_SPLIT_REQUIRED" if candidate_count > source_count else "RENDER_DOMAIN_DERIVED"
+    elif cross_source_groups:
+        domain_state = "RENDER_DOMAIN_CROSS_SOURCE_DEDUP_CANDIDATE"
 
     if candidate_count < render_count:
         eligibility = "POST_ATTRIBUTE_TUPLE_DEDUP_CANDIDATE"
@@ -262,6 +302,12 @@ def observe_indexed_surface_eligibility(spec: dict[str, Any]) -> dict[str, Any]:
         "split_groups_by_channel": per_channel_splits,
         "protected_split_id_count": protected_groups,
         "position_only_weld_safe": len(split_groups) == 0,
+    }
+    base["cross_source_observation"] = {
+        "enabled": candidate_policy == CROSS_SOURCE_TUPLE_POLICY,
+        "candidate_groups_spanning_multiple_source_vertices": len(cross_source_groups),
+        "source_vertices_participating_in_cross_source_groups": sum(len(group) for _, group in cross_source_groups),
+        "group_digest": _digest(cross_source_groups),
     }
     base["candidate"] = {
         "vertex_count": candidate_count,
