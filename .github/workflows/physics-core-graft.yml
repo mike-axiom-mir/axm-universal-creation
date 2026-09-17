@@ -69,6 +69,8 @@ jobs:
         run: node capabilities/physics-core/two-projection-radial-envelope-selftest.js
       - name: Verify single-zero projection envelope edge reduction
         run: node capabilities/physics-core/single-zero-projection-envelope-selftest.js
+      - name: Verify origin-symmetric projection envelope corner reduction
+        run: node capabilities/physics-core/origin-symmetric-projection-envelope-selftest.js
       - name: Verify one-degenerate finite projection envelope work reduction
         run: node capabilities/physics-core/one-degenerate-projection-envelope-selftest.js
       - name: Verify tolerated empty projection intervals do not fabricate exact envelopes
