@@ -1,13 +1,14 @@
 """Bounded read-only nonadjacent triangle self-intersection evidence.
 
-This module extracts neutral indexed-triangle geometry machinery independently
-proved in AXM Animal and AXM Character receiving domains. It deliberately stays
-separate from :mod:`axm_uc.mesh_topology`: edge/fan topology and geometric
-self-intersection have different work bounds and different truth boundaries.
+Animal and Character independently demonstrated the need for this neutral kind
+of indexed-mesh diagnostic. Their repositories are treated as requirement and
+method precedent only; this UC implementation is independently written and
+re-tested here.
 
-The observer never repairs, welds, splits, prunes, or adopts mesh geometry. It
-excludes triangle pairs that share an exact source vertex index, so adjacent
-fold-over/contact semantics remain outside this contract.
+The observer deliberately stays separate from :mod:`axm_uc.mesh_topology`.
+Topology incidence and geometric pair testing have different work bounds and
+truth boundaries. This module never repairs, welds, splits, prunes, adopts, or
+otherwise mutates geometry.
 """
 from __future__ import annotations
 
@@ -22,185 +23,221 @@ MAX_EXAMPLES = 16
 
 Point = tuple[float, float, float]
 Triangle = tuple[Point, Point, Point]
+Box = tuple[Point, Point]
 
 DONOR_PROVENANCE = (
     {
         "repository": "mike-axiom-mir/axm-animal-design",
         "commit": "feb4b24cd36bcc879173138d240754f71db34834",
         "path": "src/axm_animal_design/self_intersection.py",
-        "role": "first receiving-domain geometric-method precedent",
+        "reuse": "requirement/geometric-method precedent only; source not copied",
     },
     {
         "repository": "mike-axiom-mir/axm-character-design",
         "commit": "eae6d296867ecaa40e8f5c3f1fe37d8e3019541e",
         "path": "src/axm_character_design/self_intersection.py",
-        "role": "independent second receiving-domain re-test of the same neutral method",
+        "reuse": "independent second receiving-domain evidence; result not inherited",
     },
 )
 
 
 class MeshSelfIntersectionError(ValueError):
-    """Raised when the observer input contract is invalid."""
+    """Raised when input cannot support the observer contract."""
 
 
-def _num(value: Any, label: str) -> float:
+def _finite_number(value: Any, label: str) -> float:
     if isinstance(value, bool) or not isinstance(value, (int, float)):
         raise MeshSelfIntersectionError(f"{label} must be a finite number")
-    converted = float(value)
-    if not math.isfinite(converted):
+    result = float(value)
+    if not math.isfinite(result):
         raise MeshSelfIntersectionError(f"{label} must be a finite number")
-    return converted
+    return result
 
 
-def _point(value: Sequence[float], label: str) -> Point:
+def _read_point(value: Sequence[float], label: str) -> Point:
     if not isinstance(value, (list, tuple)) or len(value) != 3:
         raise MeshSelfIntersectionError(f"{label} must contain exactly three finite coordinates")
-    return tuple(_num(item, f"{label}[{index}]") for index, item in enumerate(value))
+    return tuple(_finite_number(component, f"{label}[{axis}]") for axis, component in enumerate(value))
 
 
-def _sub(first: Point, second: Point) -> Point:
-    return tuple(first[index] - second[index] for index in range(3))
+def _minus(left: Point, right: Point) -> Point:
+    return (left[0] - right[0], left[1] - right[1], left[2] - right[2])
 
 
-def _dot(first: Point, second: Point) -> float:
-    return sum(first[index] * second[index] for index in range(3))
-
-
-def _cross(first: Point, second: Point) -> Point:
+def _plus_scaled(origin: Point, direction: Point, scale: float) -> Point:
     return (
-        first[1] * second[2] - first[2] * second[1],
-        first[2] * second[0] - first[0] * second[2],
-        first[0] * second[1] - first[1] * second[0],
+        origin[0] + direction[0] * scale,
+        origin[1] + direction[1] * scale,
+        origin[2] + direction[2] * scale,
     )
 
 
-def _length(value: Point) -> float:
-    return math.sqrt(_dot(value, value))
+def _dot(left: Point, right: Point) -> float:
+    return left[0] * right[0] + left[1] * right[1] + left[2] * right[2]
 
 
-def _aabb(triangle: Triangle) -> tuple[Point, Point]:
+def _cross(left: Point, right: Point) -> Point:
     return (
-        tuple(min(point[axis] for point in triangle) for axis in range(3)),
-        tuple(max(point[axis] for point in triangle) for axis in range(3)),
+        left[1] * right[2] - left[2] * right[1],
+        left[2] * right[0] - left[0] * right[2],
+        left[0] * right[1] - left[1] * right[0],
     )
 
 
-def _aabb_overlap(first, second, epsilon: float) -> bool:
-    first_min, first_max = first
-    second_min, second_max = second
-    return all(
-        first_max[axis] + epsilon >= second_min[axis]
-        and second_max[axis] + epsilon >= first_min[axis]
-        for axis in range(3)
+def _magnitude(vector: Point) -> float:
+    return math.hypot(vector[0], vector[1], vector[2])
+
+
+def _triangle_normal(triangle: Triangle) -> Point:
+    return _cross(_minus(triangle[1], triangle[0]), _minus(triangle[2], triangle[0]))
+
+
+def _box_for(triangle: Triangle) -> Box:
+    return (
+        tuple(min(vertex[axis] for vertex in triangle) for axis in range(3)),
+        tuple(max(vertex[axis] for vertex in triangle) for axis in range(3)),
     )
 
 
-def _segment_triangle_intersection(start: Point, end: Point, triangle: Triangle, epsilon: float) -> bool:
+def _boxes_overlap(first: Box, second: Box, epsilon: float) -> bool:
+    first_low, first_high = first
+    second_low, second_high = second
+    for axis in range(3):
+        if first_high[axis] + epsilon < second_low[axis]:
+            return False
+        if second_high[axis] + epsilon < first_low[axis]:
+            return False
+    return True
+
+
+def _point_inside_triangle(point: Point, triangle: Triangle, epsilon: float) -> bool:
+    """Barycentric containment for a point already known to lie on the plane."""
     a, b, c = triangle
-    direction = _sub(end, start)
-    edge1 = _sub(b, a)
-    edge2 = _sub(c, a)
-    h = _cross(direction, edge2)
-    determinant = _dot(edge1, h)
-    if abs(determinant) <= epsilon:
+    edge0 = _minus(b, a)
+    edge1 = _minus(c, a)
+    relative = _minus(point, a)
+    d00 = _dot(edge0, edge0)
+    d01 = _dot(edge0, edge1)
+    d11 = _dot(edge1, edge1)
+    d20 = _dot(relative, edge0)
+    d21 = _dot(relative, edge1)
+    denominator = d00 * d11 - d01 * d01
+    if denominator <= 0 or not math.isfinite(denominator):
+        raise MeshSelfIntersectionError("self-intersection inspection requires non-degenerate triangles")
+    v = (d11 * d20 - d01 * d21) / denominator
+    w = (d00 * d21 - d01 * d20) / denominator
+    u = 1.0 - v - w
+    return u >= -epsilon and v >= -epsilon and w >= -epsilon
+
+
+def _segment_hits_triangle(start: Point, end: Point, triangle: Triangle, normal: Point, epsilon: float) -> bool:
+    direction = _minus(end, start)
+    denominator = _dot(normal, direction)
+    if abs(denominator) <= epsilon:
         return False
-    inverse = 1.0 / determinant
-    s = _sub(start, a)
-    u = inverse * _dot(s, h)
-    if u < -epsilon or u > 1.0 + epsilon:
+    plane_offset = _dot(normal, _minus(triangle[0], start))
+    parameter = plane_offset / denominator
+    if parameter < -epsilon or parameter > 1.0 + epsilon:
         return False
-    q = _cross(s, edge1)
-    v = inverse * _dot(direction, q)
-    if v < -epsilon or u + v > 1.0 + epsilon:
+    point = _plus_scaled(start, direction, parameter)
+    return _point_inside_triangle(point, triangle, epsilon)
+
+
+def _project(point: Point, omitted_axis: int) -> tuple[float, float]:
+    values = [point[axis] for axis in range(3) if axis != omitted_axis]
+    return values[0], values[1]
+
+
+def _orientation(a, b, c) -> float:
+    return (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])
+
+
+def _point_on_2d_segment(point, start, end, epsilon: float) -> bool:
+    if abs(_orientation(start, end, point)) > epsilon:
         return False
-    t = inverse * _dot(edge2, q)
-    return -epsilon <= t <= 1.0 + epsilon
-
-
-def _orient2(first, second, third) -> float:
-    return (
-        (second[0] - first[0]) * (third[1] - first[1])
-        - (second[1] - first[1]) * (third[0] - first[0])
-    )
-
-
-def _on_segment2(start, end, point, epsilon: float) -> bool:
     return (
         min(start[0], end[0]) - epsilon <= point[0] <= max(start[0], end[0]) + epsilon
         and min(start[1], end[1]) - epsilon <= point[1] <= max(start[1], end[1]) + epsilon
-        and abs(_orient2(start, end, point)) <= epsilon
     )
 
 
-def _segments_intersect2(first_start, first_end, second_start, second_end, epsilon: float) -> bool:
-    o1 = _orient2(first_start, first_end, second_start)
-    o2 = _orient2(first_start, first_end, second_end)
-    o3 = _orient2(second_start, second_end, first_start)
-    o4 = _orient2(second_start, second_end, first_end)
-    if ((o1 > epsilon and o2 < -epsilon) or (o1 < -epsilon and o2 > epsilon)) and (
-        (o3 > epsilon and o4 < -epsilon) or (o3 < -epsilon and o4 > epsilon)
-    ):
+def _segments_overlap_2d(a0, a1, b0, b1, epsilon: float) -> bool:
+    oa = _orientation(a0, a1, b0)
+    ob = _orientation(a0, a1, b1)
+    oc = _orientation(b0, b1, a0)
+    od = _orientation(b0, b1, a1)
+    proper = (
+        ((oa > epsilon and ob < -epsilon) or (oa < -epsilon and ob > epsilon))
+        and ((oc > epsilon and od < -epsilon) or (oc < -epsilon and od > epsilon))
+    )
+    if proper:
         return True
     return (
-        (abs(o1) <= epsilon and _on_segment2(first_start, first_end, second_start, epsilon))
-        or (abs(o2) <= epsilon and _on_segment2(first_start, first_end, second_end, epsilon))
-        or (abs(o3) <= epsilon and _on_segment2(second_start, second_end, first_start, epsilon))
-        or (abs(o4) <= epsilon and _on_segment2(second_start, second_end, first_end, epsilon))
+        (abs(oa) <= epsilon and _point_on_2d_segment(b0, a0, a1, epsilon))
+        or (abs(ob) <= epsilon and _point_on_2d_segment(b1, a0, a1, epsilon))
+        or (abs(oc) <= epsilon and _point_on_2d_segment(a0, b0, b1, epsilon))
+        or (abs(od) <= epsilon and _point_on_2d_segment(a1, b0, b1, epsilon))
     )
 
 
-def _point_in_triangle2(point, triangle, epsilon: float) -> bool:
-    a, b, c = triangle
-    o1 = _orient2(a, b, point)
-    o2 = _orient2(b, c, point)
-    o3 = _orient2(c, a, point)
-    has_positive = any(value > epsilon for value in (o1, o2, o3))
-    has_negative = any(value < -epsilon for value in (o1, o2, o3))
+def _point_in_triangle_2d(point, triangle, epsilon: float) -> bool:
+    signs = (
+        _orientation(triangle[0], triangle[1], point),
+        _orientation(triangle[1], triangle[2], point),
+        _orientation(triangle[2], triangle[0], point),
+    )
+    has_positive = any(value > epsilon for value in signs)
+    has_negative = any(value < -epsilon for value in signs)
     return not (has_positive and has_negative)
 
 
-def _project2(point: Point, drop_axis: int):
-    return tuple(point[axis] for axis in range(3) if axis != drop_axis)
-
-
-def _coplanar_triangles_intersect(first: Triangle, second: Triangle, normal: Point, epsilon: float) -> bool:
-    drop_axis = max(range(3), key=lambda axis: abs(normal[axis]))
-    first_2d = tuple(_project2(point, drop_axis) for point in first)
-    second_2d = tuple(_project2(point, drop_axis) for point in second)
-    for index in range(3):
-        first_start, first_end = first_2d[index], first_2d[(index + 1) % 3]
-        for other in range(3):
-            second_start, second_end = second_2d[other], second_2d[(other + 1) % 3]
-            if _segments_intersect2(first_start, first_end, second_start, second_end, epsilon):
+def _coplanar_overlap(first: Triangle, second: Triangle, normal: Point, epsilon: float) -> bool:
+    omitted_axis = max(range(3), key=lambda axis: abs(normal[axis]))
+    first_2d = tuple(_project(vertex, omitted_axis) for vertex in first)
+    second_2d = tuple(_project(vertex, omitted_axis) for vertex in second)
+    for first_edge in range(3):
+        a0 = first_2d[first_edge]
+        a1 = first_2d[(first_edge + 1) % 3]
+        for second_edge in range(3):
+            b0 = second_2d[second_edge]
+            b1 = second_2d[(second_edge + 1) % 3]
+            if _segments_overlap_2d(a0, a1, b0, b1, epsilon):
                 return True
     return (
-        _point_in_triangle2(first_2d[0], second_2d, epsilon)
-        or _point_in_triangle2(second_2d[0], first_2d, epsilon)
+        _point_in_triangle_2d(first_2d[0], second_2d, epsilon)
+        or _point_in_triangle_2d(second_2d[0], first_2d, epsilon)
     )
 
 
-def _triangles_intersect(first: Triangle, second: Triangle, epsilon: float) -> bool:
-    first_normal = _cross(_sub(first[1], first[0]), _sub(first[2], first[0]))
-    second_normal = _cross(_sub(second[1], second[0]), _sub(second[2], second[0]))
-    first_length = _length(first_normal)
-    second_length = _length(second_normal)
-    if first_length <= epsilon or second_length <= epsilon:
+def _triangles_overlap(first: Triangle, second: Triangle, epsilon: float) -> bool:
+    first_normal = _triangle_normal(first)
+    second_normal = _triangle_normal(second)
+    first_normal_length = _magnitude(first_normal)
+    second_normal_length = _magnitude(second_normal)
+    if first_normal_length <= epsilon or second_normal_length <= epsilon:
         raise MeshSelfIntersectionError("self-intersection inspection requires non-degenerate triangles")
 
-    normal_cross = _length(_cross(first_normal, second_normal))
-    plane_distance = abs(_dot(first_normal, _sub(second[0], first[0]))) / first_length
-    if normal_cross <= epsilon * first_length * second_length and plane_distance <= epsilon:
-        return _coplanar_triangles_intersect(first, second, first_normal, epsilon)
+    normal_cross_length = _magnitude(_cross(first_normal, second_normal))
+    parallel_threshold = epsilon * first_normal_length * second_normal_length
+    if normal_cross_length <= parallel_threshold:
+        plane_distance = abs(_dot(first_normal, _minus(second[0], first[0]))) / first_normal_length
+        if plane_distance > epsilon:
+            return False
+        return _coplanar_overlap(first, second, first_normal, epsilon)
 
-    for index in range(3):
-        if _segment_triangle_intersection(first[index], first[(index + 1) % 3], second, epsilon):
+    for edge in range(3):
+        if _segment_hits_triangle(
+            first[edge], first[(edge + 1) % 3], second, second_normal, epsilon
+        ):
             return True
-        if _segment_triangle_intersection(second[index], second[(index + 1) % 3], first, epsilon):
+        if _segment_hits_triangle(
+            second[edge], second[(edge + 1) % 3], first, first_normal, epsilon
+        ):
             return True
     return False
 
 
-def _truth_boundary(*, complete: bool) -> dict[str, bool]:
+def _truth_boundary(complete: bool) -> dict[str, bool]:
     return {
         "nonadjacent_triangle_self_intersection_checked": complete,
         "topological_neighbor_contacts_excluded": True,
@@ -220,16 +257,15 @@ def inspect_triangle_self_intersections(
     max_examples: int = MAX_EXAMPLES,
     max_triangle_pair_checks: int = DEFAULT_MAX_TRIANGLE_PAIR_CHECKS,
 ) -> dict[str, Any]:
-    """Inspect nonadjacent triangle pairs under an explicit bounded-work contract.
+    """Inspect nonadjacent triangle pairs under an explicit pair-work ceiling.
 
-    The observer performs an all-pairs source-triangle scan with AABB rejection.
-    Because even broad-phase rejection requires visiting each unordered pair, the
-    complete scan is attempted only when ``n * (n - 1) / 2`` is within the caller's
-    bounded pair budget. Otherwise a HOLD report is returned without a partial
-    geometric claim.
+    AABB rejection reduces expensive geometric predicates but not the number of
+    unordered source-triangle pairs visited. Therefore the observer computes the
+    exact all-pairs iteration count first and returns a HOLD without a partial
+    result when the requested budget is insufficient.
     """
     try:
-        vertices = tuple(_point(value, f"positions[{index}]") for index, value in enumerate(positions))
+        vertices = tuple(_read_point(value, f"positions[{index}]") for index, value in enumerate(positions))
     except TypeError as exc:
         raise MeshSelfIntersectionError("positions must be an iterable of 3D points") from exc
     if not vertices:
@@ -252,7 +288,7 @@ def inspect_triangle_self_intersections(
     if triangle_count > MAX_TRIANGLES:
         raise MeshSelfIntersectionError(f"mesh exceeds {MAX_TRIANGLES} triangles")
 
-    epsilon = _num(epsilon, "epsilon")
+    epsilon = _finite_number(epsilon, "epsilon")
     if epsilon <= 0:
         raise MeshSelfIntersectionError("epsilon must be > 0")
     if type(max_examples) is not int or not 0 <= max_examples <= MAX_EXAMPLES:
@@ -279,46 +315,45 @@ def inspect_triangle_self_intersections(
             "broad_phase_candidate_pairs": None,
             "self_intersection_pair_count": None,
             "examples": [],
-            "truth_boundary": _truth_boundary(complete=False),
+            "truth_boundary": _truth_boundary(False),
             "limitations": [
-                "The observer did not start the quadratic pair scan because the explicit pair budget would be exceeded.",
-                "No partial prefix is reported as a complete self-intersection result.",
+                "The quadratic pair scan was not started because the explicit work budget would be exceeded.",
+                "No scanned prefix is relabelled as a complete mesh result.",
                 "Triangle degeneracy is not geometrically evaluated on a budget HOLD; only point/index stream validity and bounds are established.",
             ],
         }
 
-    triangle_indices: list[tuple[int, int, int]] = []
+    source_faces: list[tuple[int, int, int]] = []
     triangles: list[Triangle] = []
-    boxes = []
+    boxes: list[Box] = []
     for triangle_index in range(triangle_count):
         face = tuple(raw_indices[triangle_index * 3: triangle_index * 3 + 3])
         if len(set(face)) != 3:
             raise MeshSelfIntersectionError(f"triangle {triangle_index} is collapsed by index")
         triangle = tuple(vertices[index] for index in face)
-        area2 = _length(_cross(_sub(triangle[1], triangle[0]), _sub(triangle[2], triangle[0])))
-        if area2 <= epsilon:
+        if _magnitude(_triangle_normal(triangle)) <= epsilon:
             raise MeshSelfIntersectionError(f"triangle {triangle_index} is geometrically degenerate")
-        triangle_indices.append(face)
+        source_faces.append(face)
         triangles.append(triangle)
-        boxes.append(_aabb(triangle))
+        boxes.append(_box_for(triangle))
 
     checked_pairs = 0
-    skipped_topological_neighbors = 0
+    skipped_neighbors = 0
     broad_phase_pairs = 0
     intersection_count = 0
     examples: list[dict[str, int]] = []
 
     for left in range(triangle_count):
-        left_vertices = set(triangle_indices[left])
+        left_indices = set(source_faces[left])
         for right in range(left + 1, triangle_count):
             checked_pairs += 1
-            if left_vertices.intersection(triangle_indices[right]):
-                skipped_topological_neighbors += 1
+            if left_indices.intersection(source_faces[right]):
+                skipped_neighbors += 1
                 continue
-            if not _aabb_overlap(boxes[left], boxes[right], epsilon):
+            if not _boxes_overlap(boxes[left], boxes[right], epsilon):
                 continue
             broad_phase_pairs += 1
-            if _triangles_intersect(triangles[left], triangles[right], epsilon):
+            if _triangles_overlap(triangles[left], triangles[right], epsilon):
                 intersection_count += 1
                 if len(examples) < max_examples:
                     examples.append({"triangle_a": left, "triangle_b": right})
@@ -340,14 +375,14 @@ def inspect_triangle_self_intersections(
         "max_triangle_pair_checks": max_triangle_pair_checks,
         "triangle_pair_checks_required": required_pair_checks,
         "triangle_pair_checks_performed": checked_pairs,
-        "skipped_topological_neighbor_pairs": skipped_topological_neighbors,
+        "skipped_topological_neighbor_pairs": skipped_neighbors,
         "broad_phase_candidate_pairs": broad_phase_pairs,
         "self_intersection_pair_count": intersection_count,
         "examples": examples,
-        "truth_boundary": _truth_boundary(complete=True),
+        "truth_boundary": _truth_boundary(True),
         "limitations": [
             "Pairs sharing an exact source vertex index are excluded; adjacent fold-over/contact is not classified.",
-            "The geometric predicates use finite Python float arithmetic and epsilon thresholds, not exact computational geometry.",
-            "The observer does not mutate geometry or authorize repair, adoption, collision suitability, visual acceptance, or production release.",
+            "Predicates use finite Python float arithmetic and epsilon thresholds, not exact computational geometry.",
+            "A complete report is geometric evidence only; it does not authorize repair, mesh adoption, collision suitability, visual acceptance, or production release.",
         ],
     }
