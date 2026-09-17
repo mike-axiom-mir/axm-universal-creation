@@ -1,7 +1,7 @@
 import math
 import unittest
 
-from axm_uc.mesh_topology import MeshTopologyError, inspect_mesh_topology
+from axm_uc.mesh_topology import MAX_EXAMPLES, MeshTopologyError, inspect_mesh_topology
 from axm_uc.procedural_3d import _box_geometry, _cylinder_geometry, _pyramid_geometry
 
 
@@ -23,15 +23,47 @@ class MeshTopologyTests(unittest.TestCase):
                 self.assertEqual(report["collapsed_triangle_count"], 0)
                 self.assertTrue(report["closed_by_edge_incidence"])
                 self.assertTrue(report["orientation_consistent_by_shared_edge"])
+                self.assertTrue(report["all_source_vertices_referenced"])
 
     def test_box_face_duplicates_weld_to_eight_geometric_vertices(self):
         positions, _normals, indices = _box_geometry()
         report = inspect_mesh_topology(positions, indices)
         self.assertEqual(report["source_vertex_count"], 24)
+        self.assertEqual(report["referenced_source_vertex_count"], 24)
+        self.assertEqual(report["unreferenced_source_vertex_count"], 0)
+        self.assertTrue(report["all_source_vertices_referenced"])
+        self.assertEqual(report["examples"]["unreferenced_source_vertices"], [])
         self.assertEqual(report["welded_vertex_count"], 8)
         self.assertEqual(report["welded_vertex_reduction"], 16)
         self.assertEqual(report["triangle_count"], 12)
         self.assertEqual(report["edge_count"], 18)
+
+    def test_unreferenced_source_vertex_is_reported_without_changing_edge_status(self):
+        positions, _normals, indices = _box_geometry()
+        positions = [*positions, (99.0, 99.0, 99.0)]
+        report = inspect_mesh_topology(positions, indices)
+
+        self.assertEqual(report["status"], "CLOSED_ORIENTED_EDGE_MANIFOLD_CANDIDATE")
+        self.assertEqual(report["source_vertex_count"], 25)
+        self.assertEqual(report["referenced_source_vertex_count"], 24)
+        self.assertEqual(report["unreferenced_source_vertex_count"], 1)
+        self.assertFalse(report["all_source_vertices_referenced"])
+        self.assertEqual(report["examples"]["unreferenced_source_vertices"], [24])
+        self.assertTrue(report["truth_boundary"]["source_vertex_liveness_checked"])
+        self.assertFalse(report["truth_boundary"]["source_vertex_pruning_performed"])
+
+    def test_unreferenced_examples_are_bounded_deterministic_source_indices(self):
+        positions, _normals, indices = _box_geometry()
+        first_unused = len(positions)
+        extra = [(100.0 + index, 0.0, 0.0) for index in range(MAX_EXAMPLES + 4)]
+        report = inspect_mesh_topology([*positions, *extra], indices)
+
+        self.assertEqual(report["referenced_source_vertex_count"], first_unused)
+        self.assertEqual(report["unreferenced_source_vertex_count"], MAX_EXAMPLES + 4)
+        self.assertEqual(
+            report["examples"]["unreferenced_source_vertices"],
+            list(range(first_unused, first_unused + MAX_EXAMPLES)),
+        )
 
     def test_open_quad_reports_boundary_edges_without_calling_it_invalid(self):
         positions = [(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0)]
@@ -71,6 +103,9 @@ class MeshTopologyTests(unittest.TestCase):
         report = inspect_mesh_topology(positions, [0, 2, 3], weld_tolerance=1e-6)
         self.assertEqual(report["welded_vertex_count"], 3)
         self.assertEqual(report["collapsed_triangle_count"], 0)
+        self.assertEqual(report["referenced_source_vertex_count"], 3)
+        self.assertEqual(report["unreferenced_source_vertex_count"], 1)
+        self.assertEqual(report["examples"]["unreferenced_source_vertices"], [1])
 
     def test_reports_multiple_disconnected_triangle_components(self):
         positions = [
@@ -83,6 +118,8 @@ class MeshTopologyTests(unittest.TestCase):
     def test_truth_boundary_stays_structural(self):
         report = inspect_mesh_topology([(0, 0, 0), (1, 0, 0), (0, 1, 0)], [0, 1, 2])
         boundary = report["truth_boundary"]
+        self.assertTrue(boundary["source_vertex_liveness_checked"])
+        self.assertFalse(boundary["source_vertex_pruning_performed"])
         self.assertFalse(boundary["vertex_manifoldness_checked"])
         self.assertFalse(boundary["self_intersection_checked"])
         self.assertFalse(boundary["deformation_quality_checked"])
