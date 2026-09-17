@@ -1,6 +1,6 @@
 'use strict';
 
-const VERSION = '0.1.13';
+const VERSION = '0.1.14';
 const SCHEMA = 'axm.uc-two-projection-radial-envelope/v0.1';
 
 function finiteDirection(direction) {
@@ -25,6 +25,10 @@ function intervalIsExactlyOriginSymmetric(interval) {
 
 function finitePoint(point) {
   return point && Number.isFinite(point.x) && Number.isFinite(point.y);
+}
+
+function copyPoint(point) {
+  return { x: point.x, y: point.y };
 }
 
 function norm(point) {
@@ -205,10 +209,29 @@ function analyze(firstDirection, secondDirection, firstInterval, secondInterval)
     [firstInterval.max, secondInterval.max],
     [firstInterval.min, secondInterval.max]
   ];
-  const corners = projectionCorners.map(pair => orthonormalFastPath
-    ? orthonormalProjectionPoint(firstDirection, secondDirection, pair[0], pair[1])
-    : inverseProjectionPoint(firstDirection, secondDirection, pair[0], pair[1], determinant)
-  );
+  let projectionPointEvaluations = 0;
+  const reconstructProjectionPoint = pair => {
+    projectionPointEvaluations += 1;
+    return orthonormalFastPath
+      ? orthonormalProjectionPoint(firstDirection, secondDirection, pair[0], pair[1])
+      : inverseProjectionPoint(firstDirection, secondDirection, pair[0], pair[1], determinant);
+  };
+  let corners;
+  if (degenerateProjectionIntervals === 2) {
+    const point = reconstructProjectionPoint(projectionCorners[0]);
+    corners = [copyPoint(point), copyPoint(point), copyPoint(point), copyPoint(point)];
+  } else if (firstDegenerate) {
+    const start = reconstructProjectionPoint(projectionCorners[0]);
+    const end = reconstructProjectionPoint(projectionCorners[2]);
+    corners = [copyPoint(start), copyPoint(start), copyPoint(end), copyPoint(end)];
+  } else if (secondDegenerate) {
+    const start = reconstructProjectionPoint(projectionCorners[0]);
+    const end = reconstructProjectionPoint(projectionCorners[1]);
+    corners = [copyPoint(start), copyPoint(end), copyPoint(end), copyPoint(start)];
+  } else {
+    corners = projectionCorners.map(reconstructProjectionPoint);
+  }
+  const geometryWork = { projectionPointEvaluations };
 
   if (!corners.every(finitePoint)) {
     return unsupported('NON_FINITE_ENVELOPE_GEOMETRY', { determinant });
@@ -416,6 +439,7 @@ function analyze(firstDirection, secondDirection, firstInterval, secondInterval)
     originSymmetricSegmentThroughOrigin,
     distanceMethod,
     distanceWork,
+    geometryWork,
     evidence: [
       'The two finite non-empty signed projection intervals are mapped through the exact inverse 2D basis into one feasible affine envelope.',
       orthonormalFastPath
@@ -458,7 +482,12 @@ function analyze(firstDirection, secondDirection, firstInterval, secondInterval)
               ? 'Exact origin symmetry makes opposite world-space corners negatives of each other under the linear inverse basis, so only two unique corner norms are required when the represented cross-term sign is not finite and usable.'
               : zeroContainingProjectionIntervals === 1
                 ? 'For a non-degenerate projection rectangle with exactly one zero-containing interval, only the nearest boundary edge of the other interval can contain the radial minimum; the other three edge scans are skipped.'
-                : 'For a non-degenerate projection rectangle with neither interval containing zero, only the nearest-to-zero boundary edge from each projection axis can contain the radial minimum; the two farther boundary edges are skipped.'
+                : 'For a non-degenerate projection rectangle with neither interval containing zero, only the nearest-to-zero boundary edge from each projection axis can contain the radial minimum; the two farther boundary edges are skipped.',
+      degenerateProjectionIntervals === 2
+        ? 'Collapsed point envelopes reconstruct their one unique world-space point once and copy that deterministic value into the four evidence-corner slots.'
+        : degenerateProjectionIntervals === 1
+          ? 'Collapsed segment envelopes reconstruct only their two unique world-space endpoints and copy them into the duplicated evidence-corner slots.'
+          : 'Non-degenerate envelopes retain four independent projection-to-world corner reconstructions.'
     ],
     limitations: [
       'This helper only handles two finite non-empty projection intervals and an invertible 2D direction pair.',
@@ -470,6 +499,7 @@ function analyze(firstDirection, secondDirection, firstInterval, secondInterval)
       'For a non-degenerate general envelope with exactly one zero-containing projection interval, only the nearest boundary edge of the other one-sided interval is evaluated for radial minimum.',
       'For a non-degenerate general envelope with neither interval containing zero, radial minimum is evaluated on exactly two edges: the boundary of each one-sided projection interval nearest zero. Positive homogeneity excludes the two farther edges from containing the minimum.',
       'The one-corner radial-maximum reduction requires at least one represented projection interval to be exactly symmetric about zero plus a finite nonzero represented direction dot product; merely near-symmetric intervals do not qualify.',
+      '`geometryWork.projectionPointEvaluations` counts projection-to-world point reconstructions only; it does not claim fewer evidence-corner objects or fewer radial arithmetic operations.',
       'A caller may tolerate a tiny interval gap under its own proof tolerance, but this exact-envelope helper declines min > max rather than manufacturing feasible geometry from an empty intersection.',
       'It does not decide whether directions are eligible for a stronger proof and does not combine more than two projections.',
       'It uses JavaScript Number arithmetic; geometry whose represented inverse-basis points or radial distances are non-finite is declined so the caller can use its conservative fallback.',
