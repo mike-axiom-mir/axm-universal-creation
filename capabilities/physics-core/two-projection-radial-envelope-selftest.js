@@ -28,6 +28,35 @@ assert.equal(axisBox.determinant, 1);
 assert.equal(axisBox.minimumDistance, 0);
 assert.equal(axisBox.maximumDistance, Math.hypot(2, 2));
 
+const shortFiniteEdge = Envelope.analyze(
+  { x: 1, y: 0 },
+  { x: 0, y: 1 },
+  { min: -5e-9, max: 5e-9 },
+  { min: 1e-10, max: 1e-10 }
+);
+assert.equal(shortFiniteEdge.supported, true);
+assert.ok(Math.abs(shortFiniteEdge.minimumDistance - 1e-10) < 1e-20,
+  'a represented non-zero edge shorter than sqrt(Number.EPSILON) must not be collapsed to one endpoint');
+assert.ok(shortFiniteEdge.minimumDistance < 2e-9,
+  'the true feasible short edge must remain inside the bounded radial maximum used by the integration regression');
+
+const shortFiniteCompatible = Preflight.analyze(baseWorld(), {
+  axisLimits: [
+    { id: 'short-x-band', a: 'a', b: 'b', axis: 'x', minOffset: -5e-9, maxOffset: 5e-9 }
+  ],
+  axisLocks: [
+    { id: 'short-y-lock', a: 'a', b: 'b', axis: 'y', offset: 1e-10 }
+  ],
+  distanceLimits: [
+    { id: 'short-radius-max', a: 'a', b: 'b', maxLength: 2e-9 }
+  ]
+});
+assert.equal(shortFiniteCompatible.base.conflictFree, true);
+assert.equal(shortFiniteCompatible.counts.radialMaximumChecks, 1);
+assert.equal(shortFiniteCompatible.counts.radialMaximumConflicts, 0,
+  'sub-epsilon finite-edge handling must not manufacture a local contradiction');
+assert.equal(shortFiniteCompatible.conflictFree, true);
+
 const nearOrthogonalDirection = {
   x: 5e-7,
   y: Math.sqrt(1 - 25e-14)
