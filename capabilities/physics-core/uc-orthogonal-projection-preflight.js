@@ -4,8 +4,8 @@ const crypto = require('crypto');
 const BasePreflight = require('./uc-constraint-preflight.js');
 const ExactGeometry = require('./uc-exact-projection-geometry.js');
 
-const VERSION = '0.5.0';
-const REPORT_SCHEMA = 'axm.uc-orthogonal-projection-preflight/v0.5';
+const VERSION = '0.6.0';
+const REPORT_SCHEMA = 'axm.uc-orthogonal-projection-preflight/v0.6';
 const DEFAULT_ORTHOGONALITY_TOLERANCE = 1e-9;
 const MAX_ORTHOGONALITY_TOLERANCE = 1e-6;
 
@@ -61,15 +61,21 @@ function dot(left, right) {
   return left.x * right.x + left.y * right.y;
 }
 
-function isUnitDirection(direction, tolerance) {
-  return Math.abs(directionNormSquared(direction) - 1) <= tolerance;
+function projectionMetric(group) {
+  return {
+    group,
+    unitError: Math.abs(directionNormSquared(group.direction) - 1),
+    minimumMagnitude: minimumAbsoluteInterval(group.intersection),
+    maximumMagnitude: maximumAbsoluteInterval(group.intersection)
+  };
 }
 
-function indexProjectionGroupsByPair(projections) {
+function indexProjectionMetricsByPair(projections) {
   const indexed = new Map();
   projections.forEach(group => {
+    const metric = projectionMetric(group);
     if (!indexed.has(group.pairKey)) indexed.set(group.pairKey, []);
-    indexed.get(group.pairKey).push(group);
+    indexed.get(group.pairKey).push(metric);
   });
   return indexed;
 }
@@ -131,6 +137,8 @@ function analyze(world, constraints, options) {
   const checks = [];
   const additionalConflicts = [];
   let projectionPairBuckets = 0;
+  let projectionMetricRecords = 0;
+  let projectionPairCandidates = 0;
   let radialMaximumChecks = 0;
   let radialMaximumConflicts = 0;
   let radialMinimumChecks = 0;
@@ -140,23 +148,27 @@ function analyze(world, constraints, options) {
     const exact = ExactGeometry.analyze(world, constraints, { tolerance });
     const projections = (exact.groups || []).filter(group => !group.conflict);
     const radials = (exact.radialGroups || []).filter(group => !group.conflict);
-    const projectionsByPair = indexProjectionGroupsByPair(projections);
-    projectionPairBuckets = projectionsByPair.size;
+    const projectionMetricsByPair = indexProjectionMetricsByPair(projections);
+    projectionPairBuckets = projectionMetricsByPair.size;
+    projectionMetricRecords = projections.length;
 
     radials.forEach(radial => {
-      const samePairProjections = projectionsByPair.get(radial.key) || [];
-      for (let i = 0; i < samePairProjections.length; i += 1) {
-        for (let j = i + 1; j < samePairProjections.length; j += 1) {
-          const first = samePairProjections[i];
-          const second = samePairProjections[j];
-          if (!isUnitDirection(first.direction, orthogonalityTolerance)) continue;
-          if (!isUnitDirection(second.direction, orthogonalityTolerance)) continue;
+      const samePairMetrics = projectionMetricsByPair.get(radial.key) || [];
+      for (let i = 0; i < samePairMetrics.length; i += 1) {
+        for (let j = i + 1; j < samePairMetrics.length; j += 1) {
+          projectionPairCandidates += 1;
+          const firstMetric = samePairMetrics[i];
+          const secondMetric = samePairMetrics[j];
+          const first = firstMetric.group;
+          const second = secondMetric.group;
+          if (firstMetric.unitError > orthogonalityTolerance) continue;
+          if (secondMetric.unitError > orthogonalityTolerance) continue;
           if (Math.abs(dot(first.direction, second.direction)) > orthogonalityTolerance) continue;
 
-          const firstMinimum = minimumAbsoluteInterval(first.intersection);
-          const secondMinimum = minimumAbsoluteInterval(second.intersection);
-          const firstMaximum = maximumAbsoluteInterval(first.intersection);
-          const secondMaximum = maximumAbsoluteInterval(second.intersection);
+          const firstMinimum = firstMetric.minimumMagnitude;
+          const secondMinimum = secondMetric.minimumMagnitude;
+          const firstMaximum = firstMetric.maximumMagnitude;
+          const secondMaximum = secondMetric.maximumMagnitude;
           const involved = [first, second, radial];
           const summary = {
             a: radial.a,
@@ -272,6 +284,8 @@ function analyze(world, constraints, options) {
     counts: {
       baseConflicts: (base.conflicts || []).length,
       projectionPairBuckets,
+      projectionMetricRecords,
+      projectionPairCandidates,
       orthogonalProjectionRadialChecks: checks.length,
       orthogonalProjectionRadialConflicts: additionalConflicts.length,
       radialMaximumChecks,
@@ -287,6 +301,8 @@ function analyze(world, constraints, options) {
     evidence: [
       checks.length + ' same-pair orthogonal two-projection/radial check pair(s) evaluated',
       projectionPairBuckets + ' same-pair projection bucket(s) indexed once and reused for radial lookup',
+      projectionMetricRecords + ' projection metric record(s) computed once and reused across candidate pair checks',
+      projectionPairCandidates + ' same-pair projection pair candidate(s) considered before strict orthogonality filtering',
       radialMaximumConflicts + ' combined projection-lower-bound/radial-maximum conflict(s) proven',
       radialMinimumConflicts + ' combined projection-upper-bound/radial-minimum conflict(s) proven',
       'Orthogonality and radial proof decisions use full-precision normalized geometry; 1e-9 rounding is presentation-only.',
@@ -297,6 +313,7 @@ function analyze(world, constraints, options) {
     limitations: [
       'This is an optional stronger layer over the existing conservative preflight; the base preflight and solver are unchanged.',
       'Projection groups are indexed by canonical body pair once per analysis; indexing changes lookup work only and does not widen proof eligibility or reorder same-pair groups.',
+      'Unit-length error and projection interval magnitude bounds are computed once per non-conflicting projection group and reused across pair candidates; this is structural work reduction, not a benchmarked wall-clock claim.',
       'It combines exactly two same-body-pair projected intervals only when their full-precision normalized directions are unit-length and mutually orthogonal within the configured strict tolerance.',
       'Rounded directions, intervals and summary distances in the public receipt are display evidence only; decisionWitness preserves the unrounded values used by each combined proof.',
       'It does not combine oblique or merely near-orthogonal directions, more than two projected directions at once, or constraints from different body pairs.',
