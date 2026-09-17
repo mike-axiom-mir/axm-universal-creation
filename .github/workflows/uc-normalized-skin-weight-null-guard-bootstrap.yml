@@ -1,0 +1,35 @@
+name: Bootstrap strict normalized skin-weight guard
+
+on:
+  push:
+    branches:
+      - studio/uc-normalized-skin-weight-receiver-001
+
+permissions:
+  contents: write
+
+jobs:
+  strict-guard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: studio/uc-normalized-skin-weight-receiver-001
+          fetch-depth: 0
+      - name: Apply strict normalized-field guard
+        run: |
+          set -euo pipefail
+          python tools/patch_normalized_skin_weight_null_guard.py
+          node --check capabilities/platform-hands/shared/asset-hands/rigged-gltf-codec.js
+      - name: Commit repair and remove bootstrap files
+        run: |
+          set -euo pipefail
+          git rm .github/workflows/uc-normalized-skin-weight-null-guard-bootstrap.yml
+          git rm tools/patch_normalized_skin_weight_null_guard.py
+          git add capabilities/platform-hands/shared/asset-hands/rigged-gltf-codec.js
+          git diff --cached --check
+          git config user.name "AXM Technical Art UC"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Reject non-boolean normalized skin-weight fields"
+          git push origin HEAD:studio/uc-normalized-skin-weight-receiver-001
