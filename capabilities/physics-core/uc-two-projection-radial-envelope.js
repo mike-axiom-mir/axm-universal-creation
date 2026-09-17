@@ -1,6 +1,6 @@
 'use strict';
 
-const VERSION = '0.1.0';
+const VERSION = '0.1.1';
 const SCHEMA = 'axm.uc-two-projection-radial-envelope/v0.1';
 
 function finiteDirection(direction) {
@@ -26,7 +26,10 @@ function pointSegmentDistanceToOrigin(start, end) {
   const dx = end.x - start.x;
   const dy = end.y - start.y;
   const lengthSquared = dx * dx + dy * dy;
-  if (!(lengthSquared > Number.EPSILON)) return norm(start);
+  // A short but non-zero edge is still real feasible geometry. Collapsing every
+  // edge below sqrt(Number.EPSILON) can overstate the minimum radius by more
+  // than the preflight proof tolerance and create a false contradiction.
+  if (lengthSquared === 0) return norm(start);
   const unclamped = -(start.x * dx + start.y * dy) / lengthSquared;
   const t = Math.max(0, Math.min(1, unclamped));
   return Math.hypot(start.x + dx * t, start.y + dy * t);
@@ -99,11 +102,13 @@ function analyze(firstDirection, secondDirection, firstInterval, secondInterval)
     corners,
     evidence: [
       'The two finite signed projection intervals are mapped through the exact inverse 2D basis into one feasible parallelogram.',
-      'Minimum radius is the exact distance from the origin to that finite parallelogram; maximum radius is the farthest corner distance.'
+      'Minimum radius is the distance from the origin to that finite parallelogram; maximum radius is the farthest corner distance.',
+      'Non-zero parallelogram edges are retained at their represented floating-point length rather than collapsed by an epsilon-length heuristic.'
     ],
     limitations: [
       'This helper only handles two finite projection intervals and an invertible 2D direction pair.',
       'It does not decide whether directions are eligible for a stronger proof and does not combine more than two projections.',
+      'It uses JavaScript Number arithmetic; the caller must retain a proof tolerance for contradiction decisions.',
       'It does not reason across body pairs, triangles, loops, convergence, stability, 3D physics or scientific validation.'
     ]
   };
