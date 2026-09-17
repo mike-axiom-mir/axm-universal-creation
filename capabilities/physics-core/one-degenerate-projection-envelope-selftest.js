@@ -79,11 +79,35 @@ const pointEnvelope = Envelope.analyze(
 );
 assert.equal(pointEnvelope.supported, true);
 assert.equal(pointEnvelope.degenerateProjectionIntervals, 2);
-assert.equal(pointEnvelope.distanceMethod, 'inverse-basis-parallelogram-edges',
-  'this bounded change must not silently rewrite the established two-degenerate point behavior');
+assert.equal(pointEnvelope.distanceMethod, 'inverse-basis-point');
 assert.deepEqual(pointEnvelope.distanceWork, {
-  edgeDistanceEvaluations: 4,
-  cornerNormEvaluations: 4
+  edgeDistanceEvaluations: 0,
+  cornerNormEvaluations: 1
+}, 'two collapsed projection intervals must evaluate their one unique inverse-basis point exactly once');
+const expectedFixedPoint = expectedPoint(3, 4);
+assert.ok(Math.abs(pointEnvelope.minimumDistance - radius(expectedFixedPoint)) < 1e-12,
+  'two collapsed intervals must preserve the exact point radius as their minimum');
+assert.equal(pointEnvelope.minimumDistance, pointEnvelope.maximumDistance,
+  'a point envelope has identical minimum and maximum radius');
+assert.deepEqual(pointEnvelope.corners[0], pointEnvelope.corners[1]);
+assert.deepEqual(pointEnvelope.corners[0], pointEnvelope.corners[2]);
+assert.deepEqual(pointEnvelope.corners[0], pointEnvelope.corners[3],
+  'the evidence corners remain deterministic duplicates even though radial work uses one unique point');
+
+const originPointEnvelope = Envelope.analyze(
+  { x: 1, y: 0 },
+  nearOrthogonalDirection,
+  { min: 0, max: 0 },
+  { min: 0, max: 0 }
+);
+assert.equal(originPointEnvelope.supported, true);
+assert.equal(originPointEnvelope.originInsideProjectionRectangle, true);
+assert.equal(originPointEnvelope.distanceMethod, 'inverse-basis-point');
+assert.equal(originPointEnvelope.minimumDistance, 0);
+assert.equal(originPointEnvelope.maximumDistance, 0);
+assert.deepEqual(originPointEnvelope.distanceWork, {
+  edgeDistanceEvaluations: 0,
+  cornerNormEvaluations: 1
 });
 
 assert.deepEqual(
@@ -96,5 +120,15 @@ assert.deepEqual(
   fixedFirstProjection,
   'degenerate segment evidence must replay deterministically'
 );
+assert.deepEqual(
+  Envelope.analyze(
+    { x: 1, y: 0 },
+    nearOrthogonalDirection,
+    { min: 3, max: 3 },
+    { min: 4, max: 4 }
+  ),
+  pointEnvelope,
+  'degenerate point evidence must replay deterministically'
+);
 
-console.log('one degenerate projection envelope selftest passed');
+console.log('one/two degenerate projection envelope selftest passed');
