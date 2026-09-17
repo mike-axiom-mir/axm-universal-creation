@@ -70,18 +70,22 @@ def material_quality(folder, policy=None):
         edge_errors[name] = {"mean": max(sum(horizontal)/len(horizontal), sum(vertical)/len(vertical)),
                              "maximum": max(horizontal+vertical)}
     png_bytes = sum(len(data) for data in bundle["pngs"].values())
+    width, height = bundle["dimensions"]
     checks = [
         {"type": "complete-integrity-color-space-contract", "passed": True},
-        {"type": "minimum-map-size", "passed": bundle["manifest"]["size"] >= policy["minimum_size"]},
+        {"type": "minimum-map-size", "passed": min(width, height) >= policy["minimum_size"]},
         {"type": "texture-byte-budget", "passed": png_bytes <= policy["maximum_png_bytes"]},
         {"type": "unit-normal-length", "passed": max(errors) <= policy["maximum_normal_error"]},
     ]
     if policy["require_tileable"]:
         checks.append({"type": "opposite-edge-pixel-agreement", "passed": all(r["maximum"] <= policy["maximum_edge_error"] for r in edge_errors.values())})
+    measurements = {"dimensions": [width, height], "png_bytes": png_bytes,
+                    "maximum_normal_error": max(errors), "opposite_edges": edge_errors}
+    if width == height:
+        measurements["size"] = width
     return {"schema": "axm.material-quality/v1", "status": "PASS" if all(r["passed"] for r in checks) else "FAIL",
             "manifest_sha256": bundle["manifest_sha256"], "policy": policy, "checks": checks,
-            "measurements": {"size": bundle["manifest"]["size"], "png_bytes": png_bytes,
-                             "maximum_normal_error": max(errors), "opposite_edges": edge_errors},
+            "measurements": measurements,
             "limitations": ["Pixel agreement does not prove perceptually seamless repetition or mip padding.",
                 "Map integrity and unit normals do not prove artistic quality, scanned realism or mesh-aware wear."]}
 
