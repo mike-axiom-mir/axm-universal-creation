@@ -1,6 +1,6 @@
 'use strict';
 
-const VERSION = '0.1.7';
+const VERSION = '0.1.8';
 const SCHEMA = 'axm.uc-two-projection-radial-envelope/v0.1';
 
 function finiteDirection(direction) {
@@ -13,6 +13,10 @@ function finiteInterval(interval) {
 
 function orderedInterval(interval) {
   return interval.min <= interval.max;
+}
+
+function intervalContainsZero(interval) {
+  return interval.min <= 0 && interval.max >= 0;
 }
 
 function finitePoint(point) {
@@ -38,7 +42,7 @@ function exactOrthonormalPair(firstDirection, secondDirection) {
 }
 
 function minimumAbsoluteInterval(interval) {
-  if (interval.min <= 0 && interval.max >= 0) return 0;
+  if (intervalContainsZero(interval)) return 0;
   return Math.min(Math.abs(interval.min), Math.abs(interval.max));
 }
 
@@ -119,9 +123,10 @@ function analyze(firstDirection, secondDirection, firstInterval, secondInterval)
   const firstDegenerate = firstInterval.min === firstInterval.max;
   const secondDegenerate = secondInterval.min === secondInterval.max;
   const degenerateProjectionIntervals = Number(firstDegenerate) + Number(secondDegenerate);
-  const originInsideProjectionRectangle =
-    firstInterval.min <= 0 && firstInterval.max >= 0 &&
-    secondInterval.min <= 0 && secondInterval.max >= 0;
+  const firstContainsZero = intervalContainsZero(firstInterval);
+  const secondContainsZero = intervalContainsZero(secondInterval);
+  const zeroContainingProjectionIntervals = Number(firstContainsZero) + Number(secondContainsZero);
+  const originInsideProjectionRectangle = firstContainsZero && secondContainsZero;
   const projectionCorners = [
     [firstInterval.min, secondInterval.min],
     [firstInterval.max, secondInterval.min],
@@ -202,6 +207,35 @@ function analyze(firstDirection, secondDirection, firstInterval, secondInterval)
   } else {
     if (originInsideProjectionRectangle) {
       minimumDistance = 0;
+    } else if (zeroContainingProjectionIntervals === 1) {
+      // With exactly one projection interval containing zero, minimizing the
+      // positive-definite inverse-basis distance over that coordinate leaves a
+      // convex function of the other coordinate whose global minimum is at zero.
+      // Because the other interval lies wholly on one side of zero, its nearest
+      // feasible radius must therefore lie on that interval's boundary edge
+      // closest to zero. Evaluate only that one active edge.
+      let start;
+      let end;
+      if (firstContainsZero) {
+        if (Math.abs(secondInterval.min) <= Math.abs(secondInterval.max)) {
+          start = corners[0];
+          end = corners[1];
+        } else {
+          start = corners[3];
+          end = corners[2];
+        }
+      } else if (Math.abs(firstInterval.min) <= Math.abs(firstInterval.max)) {
+        start = corners[0];
+        end = corners[3];
+      } else {
+        start = corners[1];
+        end = corners[2];
+      }
+
+      minimumDistance = pointSegmentDistanceToOrigin(start, end);
+      if (!Number.isFinite(minimumDistance)) {
+        return unsupported('NON_FINITE_RADIAL_ENVELOPE', { determinant });
+      }
     } else {
       minimumDistance = Infinity;
       for (let index = 0; index < corners.length; index += 1) {
@@ -220,9 +254,15 @@ function analyze(firstDirection, secondDirection, firstInterval, secondInterval)
     maximumDistance = cornerDistances.reduce((maximum, distance) => Math.max(maximum, distance), 0);
     distanceMethod = originInsideProjectionRectangle
       ? 'inverse-basis-parallelogram-origin-contained'
-      : 'inverse-basis-parallelogram-edges';
+      : zeroContainingProjectionIntervals === 1
+        ? 'inverse-basis-parallelogram-single-active-edge'
+        : 'inverse-basis-parallelogram-edges';
     distanceWork = {
-      edgeDistanceEvaluations: originInsideProjectionRectangle ? 0 : corners.length,
+      edgeDistanceEvaluations: originInsideProjectionRectangle
+        ? 0
+        : zeroContainingProjectionIntervals === 1
+          ? 1
+          : corners.length,
       cornerNormEvaluations: corners.length
     };
   }
@@ -240,6 +280,7 @@ function analyze(firstDirection, secondDirection, firstInterval, secondInterval)
     maximumDistance,
     corners,
     degenerateProjectionIntervals,
+    zeroContainingProjectionIntervals,
     originInsideProjectionRectangle,
     distanceMethod,
     distanceWork,
@@ -255,19 +296,26 @@ function analyze(firstDirection, secondDirection, firstInterval, secondInterval)
               : 'One exact projection plus one finite interval defines a feasible segment, so radial minimum needs one point-to-segment evaluation and radial maximum needs only the two endpoint norms.'
             : originInsideProjectionRectangle
               ? 'Both projection intervals contain zero, so linear inverse-basis geometry makes the world-space origin exactly feasible and radial minimum is zero without scanning parallelogram edges.'
-              : 'Minimum radius is the distance from the origin to the finite parallelogram edges; maximum radius is the farthest corner distance.',
+              : zeroContainingProjectionIntervals === 1
+                ? 'Exactly one projection interval contains zero; convex inverse-basis squared distance puts the radial minimum on the nearest boundary edge of the other one-sided interval, so only that active edge is evaluated.'
+                : 'Minimum radius is the distance from the origin to the finite parallelogram edges; maximum radius is the farthest corner distance.',
       orthonormalFastPath
         ? 'Orthonormal corners are reconstructed through the transpose basis, avoiding determinant division on this exact common-case path.'
         : 'Point-to-segment distance is evaluated after common coordinate scaling so finite large-magnitude geometry does not overflow merely because an edge delta is squared.',
       degenerateProjectionIntervals === 2
         ? 'A finite projection rectangle with two collapsed intervals is treated as its actual unique point instead of scanning four zero-length edges and four duplicate corners.'
-        : 'A finite projection rectangle with exactly one collapsed interval is treated as its actual segment geometry instead of repeatedly scanning duplicate corners and collapsed edges.'
+        : degenerateProjectionIntervals === 1
+          ? 'A finite projection rectangle with exactly one collapsed interval is treated as its actual segment geometry instead of repeatedly scanning duplicate corners and collapsed edges.'
+          : zeroContainingProjectionIntervals === 1
+            ? 'For a non-degenerate projection rectangle with exactly one zero-containing interval, only the nearest boundary edge of the other interval can contain the radial minimum; the other three edge scans are skipped.'
+            : 'General non-degenerate envelopes retain the complete edge scan unless the origin is feasible or the single-active-edge proof applies.'
     ],
     limitations: [
       'This helper only handles two finite non-empty projection intervals and an invertible 2D direction pair.',
       'The orthonormal fast path requires exact represented unit norms and exact represented zero dot product; tolerance-accepted near-orthogonal pairs retain the inverse-basis geometry paths.',
       'Degenerate interval fast paths only reduce repeated work after the same two-direction inverse-basis geometry has already been accepted; one collapsed interval is a segment and two collapsed intervals are one point.',
-      'The general 2D inverse-basis path may skip edge-distance scans only when both signed intervals contain zero, because linear invertibility then makes world-space displacement zero exactly feasible.',
+      'The general 2D inverse-basis path may skip all edge-distance scans only when both signed intervals contain zero, because linear invertibility then makes world-space displacement zero exactly feasible.',
+      'For a non-degenerate general envelope with exactly one zero-containing projection interval, only the nearest boundary edge of the other one-sided interval is evaluated for radial minimum; when neither interval contains zero, all four edges remain authoritative.',
       'A caller may tolerate a tiny interval gap under its own proof tolerance, but this exact-envelope helper declines min > max rather than manufacturing feasible geometry from an empty intersection.',
       'It does not decide whether directions are eligible for a stronger proof and does not combine more than two projections.',
       'It uses JavaScript Number arithmetic; geometry whose represented inverse-basis points or radial distances are non-finite is declined so the caller can use its conservative fallback.',
