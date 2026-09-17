@@ -6,6 +6,7 @@ on:
     paths:
       - 'src/axm_uc/indexed_surface_eligibility.py'
       - 'tests/test_indexed_surface_eligibility.py'
+      - 'tests/test_indexed_surface_cross_source_metrics.py'
       - 'tools/build_indexed_surface_eligibility_evidence.py'
       - 'docs/INDEXED_SURFACE_ELIGIBILITY.md'
       - '.github/workflows/indexed-surface-eligibility.yml'
@@ -28,7 +29,7 @@ jobs:
       - name: Install UC package
         run: python -m pip install -e .
       - name: Run focused fail-closed tests
-        run: python -m unittest -v tests.test_indexed_surface_eligibility
+        run: python -m unittest -v tests.test_indexed_surface_eligibility tests.test_indexed_surface_cross_source_metrics
       - name: Build retained neutral evidence
         run: python tools/build_indexed_surface_eligibility_evidence.py --output /tmp/indexed-surface-eligibility-evidence
       - name: Record archive source identity
