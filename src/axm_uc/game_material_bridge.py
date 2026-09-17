@@ -192,7 +192,8 @@ def blender_game_material(folder, name=None):
         split = nodes.new("ShaderNodeSeparateColor")
         split.mode = "RGB"
         split.location = (-260, -80)
-        links.new(textures["orm"].outputs["Color"], split.inputs["Roughness"])
+        links.new(textures["orm"].outputs["Color"], split.inputs["Color"])
+        links.new(split.outputs["Green"], shader.inputs["Roughness"])
         links.new(split.outputs["Blue"], shader.inputs["Metallic"])
         # Canonical Blender glTF exporter socket; no baked-in/double AO.
         group = bpy.data.node_groups.new("glTF Material Output", "ShaderNodeTree")
