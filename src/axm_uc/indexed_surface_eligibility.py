@@ -134,6 +134,9 @@ def observe_indexed_surface_eligibility(spec: dict[str, Any]) -> dict[str, Any]:
             for i, item in enumerate(mapping_value)
         ]
 
+    mapped_render_source_indices = [mapping[index] for index in render_indices]
+    topology_lineage_matches = mapped_render_source_indices == source_indices
+
     base = _base_report(source_identity, surface_identity)
     base["input_digest"] = _digest(spec)
     base["source_domain"] = {
@@ -147,7 +150,23 @@ def observe_indexed_surface_eligibility(spec: dict[str, Any]) -> dict[str, Any]:
         "index_count": len(render_indices),
         "triangle_count": len(render_indices) // 3,
         "source_mapping_digest": _digest(mapping),
+        "mapped_source_index_digest": _digest(mapped_render_source_indices),
     }
+    base["topology_lineage"] = {
+        "exact_corner_stream_required": True,
+        "matches_source_index_stream": topology_lineage_matches,
+        "source_index_digest": _digest(source_indices),
+        "mapped_render_source_index_digest": _digest(mapped_render_source_indices),
+    }
+
+    if not topology_lineage_matches:
+        base.update({
+            "eligibility_state": "HOLD_TOPOLOGY_LINEAGE_MISMATCH",
+            "render_domain_state": "NOT_EVALUATED",
+            "hold_reason": "render triangle-corner lineage must reproduce source.indices exactly through source_vertex_indices",
+            "candidate": None,
+        })
+        return base
 
     channels, unknown = _channels(render.get("channels"), render_count)
     if unknown:
