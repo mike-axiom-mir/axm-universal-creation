@@ -4,8 +4,8 @@ const crypto = require('crypto');
 const BasePreflight = require('./uc-constraint-preflight.js');
 const ExactGeometry = require('./uc-exact-projection-geometry.js');
 
-const VERSION = '0.3.0';
-const REPORT_SCHEMA = 'axm.uc-orthogonal-projection-preflight/v0.3';
+const VERSION = '0.4.0';
+const REPORT_SCHEMA = 'axm.uc-orthogonal-projection-preflight/v0.4';
 const DEFAULT_ORTHOGONALITY_TOLERANCE = 1e-9;
 const MAX_ORTHOGONALITY_TOLERANCE = 1e-6;
 
@@ -75,6 +75,24 @@ function constraintIds(groups) {
 
 function families(groups) {
   return Array.from(new Set(groups.flatMap(group => (group.constraints || []).map(item => item.family)))).sort();
+}
+
+function radialMaximumWitness(minimumRequiredDistance, maximumAllowedDistance, tolerance) {
+  return {
+    minimumRequiredDistance,
+    maximumAllowedDistance,
+    proofMargin: minimumRequiredDistance - maximumAllowedDistance,
+    tolerance
+  };
+}
+
+function radialMinimumWitness(minimumAllowedDistance, maximumPossibleDistance, tolerance) {
+  return {
+    minimumAllowedDistance,
+    maximumPossibleDistance,
+    proofMargin: minimumAllowedDistance - maximumPossibleDistance,
+    tolerance
+  };
 }
 
 function reportChecksum(report) {
@@ -158,10 +176,12 @@ function analyze(world, constraints, options) {
             if (firstMinimum <= maximumAllowedDistance + tolerance &&
                 secondMinimum <= maximumAllowedDistance + tolerance) {
               const minimumRequiredDistance = Math.hypot(firstMinimum, secondMinimum);
+              const decisionWitness = radialMaximumWitness(minimumRequiredDistance, maximumAllowedDistance, tolerance);
               const conflict = minimumRequiredDistance > maximumAllowedDistance + tolerance;
               summary.radialMaximumCheck = {
                 minimumRequiredDistance: round(minimumRequiredDistance),
                 maximumAllowedDistance: round(maximumAllowedDistance),
+                decisionWitness,
                 conflict
               };
               radialMaximumChecks += 1;
@@ -177,6 +197,7 @@ function analyze(world, constraints, options) {
                   minimumProjectionMagnitudes: clone(summary.minimumProjectionMagnitudes),
                   minimumRequiredDistance: round(minimumRequiredDistance),
                   maximumAllowedDistance: round(maximumAllowedDistance),
+                  decisionWitness: clone(decisionWitness),
                   orthogonalityDot: summary.orthogonalityDot,
                   constraintIds: clone(summary.constraintIds),
                   families: clone(summary.families)
@@ -193,10 +214,12 @@ function analyze(world, constraints, options) {
               Number.isFinite(firstMaximum) && Number.isFinite(secondMaximum)) {
             const minimumAllowedDistance = radial.intersection.min;
             const maximumPossibleDistance = Math.hypot(firstMaximum, secondMaximum);
+            const decisionWitness = radialMinimumWitness(minimumAllowedDistance, maximumPossibleDistance, tolerance);
             const conflict = minimumAllowedDistance > maximumPossibleDistance + tolerance;
             summary.radialMinimumCheck = {
               minimumAllowedDistance: round(minimumAllowedDistance),
               maximumPossibleDistance: round(maximumPossibleDistance),
+              decisionWitness,
               conflict
             };
             radialMinimumChecks += 1;
@@ -212,6 +235,7 @@ function analyze(world, constraints, options) {
                 maximumProjectionMagnitudes: clone(summary.maximumProjectionMagnitudes),
                 maximumPossibleDistance: round(maximumPossibleDistance),
                 minimumAllowedDistance: round(minimumAllowedDistance),
+                decisionWitness: clone(decisionWitness),
                 orthogonalityDot: summary.orthogonalityDot,
                 constraintIds: clone(summary.constraintIds),
                 families: clone(summary.families)
@@ -256,13 +280,14 @@ function analyze(world, constraints, options) {
       radialMaximumConflicts + ' combined projection-lower-bound/radial-maximum conflict(s) proven',
       radialMinimumConflicts + ' combined projection-upper-bound/radial-minimum conflict(s) proven',
       'Orthogonality and radial proof decisions use full-precision normalized geometry; 1e-9 rounding is presentation-only.',
+      'Each combined radial proof carries an unrounded decisionWitness with the compared values, proof margin and tolerance.',
       'Accepted directions must each be unit-length and mutually orthogonal within tolerance ' + orthogonalityTolerance,
       'The proof uses the 2D orthonormal identity distance^2 = projectionA^2 + projectionB^2 only for one exact body pair.'
     ],
     limitations: [
       'This is an optional stronger layer over the existing conservative preflight; the base preflight and solver are unchanged.',
       'It combines exactly two same-body-pair projected intervals only when their full-precision normalized directions are unit-length and mutually orthogonal within the configured strict tolerance.',
-      'Rounded directions and intervals in the public receipt are display evidence only and are never used to decide orthogonality or conflict.',
+      'Rounded directions, intervals and summary distances in the public receipt are display evidence only; decisionWitness preserves the unrounded values used by each combined proof.',
       'It does not combine oblique or merely near-orthogonal directions, more than two projected directions at once, or constraints from different body pairs.',
       'A radial maximum can be checked from projection lower bounds; a radial minimum is checked only when both orthogonal projection intervals have finite upper magnitudes.',
       'It does not prove global constraint satisfiability, convergence, stability or physical correctness and does not reason across triangles or loops.',
