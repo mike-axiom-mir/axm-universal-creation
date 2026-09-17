@@ -214,12 +214,98 @@ def _density_summary(base_rows: list[tuple[float, float]], width: int, height: i
             "p90_p10_ratio": p90 / p10 if p10 else float("inf")}
 
 
+def _directional_texel_density(
+    world: list[list[float]], uv: list[tuple[float, float]], width: int, height: int
+) -> tuple[float, float, float]:
+    """Return principal world-plane -> texel scales and their ratio for one triangle."""
+    e1 = [world[1][i] - world[0][i] for i in range(3)]
+    e2 = [world[2][i] - world[0][i] for i in range(3)]
+    e1_length = math.sqrt(sum(value * value for value in e1))
+    if e1_length <= MIN_TWICE_AREA:
+        raise GeometryIssue("DIRECTIONAL_WORLD_BASIS_SINGULAR", "first triangle edge cannot define a plane basis", hold=True)
+    axis = [value / e1_length for value in e1]
+    projection = sum(e2[i] * axis[i] for i in range(3))
+    e2_length_sq = sum(value * value for value in e2)
+    perpendicular_sq = max(0.0, e2_length_sq - projection * projection)
+    perpendicular = math.sqrt(perpendicular_sq)
+    if e1_length * perpendicular <= MIN_TWICE_AREA:
+        raise GeometryIssue("DIRECTIONAL_WORLD_BASIS_SINGULAR", "triangle plane basis is singular", hold=True)
+
+    du1 = (uv[1][0] - uv[0][0]) * width
+    dv1 = (uv[1][1] - uv[0][1]) * height
+    du2 = (uv[2][0] - uv[0][0]) * width
+    dv2 = (uv[2][1] - uv[0][1]) * height
+
+    # World-edge matrix in the local orthonormal plane basis is upper triangular:
+    # [[|e1|, projection], [0, perpendicular]].  J = texel_edges * inverse(world_edges).
+    inv00 = 1.0 / e1_length
+    inv01 = -projection / (e1_length * perpendicular)
+    inv11 = 1.0 / perpendicular
+    a = du1 * inv00
+    b = du1 * inv01 + du2 * inv11
+    c = dv1 * inv00
+    d = dv1 * inv01 + dv2 * inv11
+
+    frobenius_sq = a*a + b*b + c*c + d*d
+    determinant = a*d - b*c
+    discriminant = max(0.0, frobenius_sq*frobenius_sq - 4.0*determinant*determinant)
+    sigma_max_sq = 0.5 * (frobenius_sq + math.sqrt(discriminant))
+    sigma_max = math.sqrt(max(0.0, sigma_max_sq))
+    if not math.isfinite(sigma_max) or sigma_max <= 0.0:
+        raise GeometryIssue("DIRECTIONAL_UV_BASIS_SINGULAR", "texel Jacobian has no finite principal scale", hold=True)
+    sigma_min = abs(determinant) / sigma_max
+    if not math.isfinite(sigma_min) or sigma_min <= 0.0:
+        raise GeometryIssue("DIRECTIONAL_UV_BASIS_SINGULAR", "texel Jacobian is singular", hold=True)
+    ratio = sigma_max / sigma_min
+    if not math.isfinite(ratio):
+        raise GeometryIssue("DIRECTIONAL_UV_BASIS_SINGULAR", "texel Jacobian anisotropy is non-finite", hold=True)
+    return sigma_min, sigma_max, ratio
+
+
+def _distribution_accumulator() -> dict[str, float | int | None]:
+    return {"count": 0, "weight": 0.0, "weighted_log_sum": 0.0, "min": None, "max": None}
+
+
+def _distribution_add(row: dict[str, float | int | None], value: float, weight: float) -> None:
+    if not math.isfinite(value) or value <= 0.0 or not math.isfinite(weight) or weight <= 0.0:
+        raise GeometryIssue("INVALID_DIRECTIONAL_DENSITY", "directional density accumulator received invalid input", hold=True)
+    row["count"] = int(row["count"]) + 1
+    row["weight"] = float(row["weight"]) + weight
+    row["weighted_log_sum"] = float(row["weighted_log_sum"]) + weight * math.log(value)
+    row["min"] = value if row["min"] is None else min(float(row["min"]), value)
+    row["max"] = value if row["max"] is None else max(float(row["max"]), value)
+
+
+def _distribution_finish(row: dict[str, float | int | None]) -> dict[str, float | int]:
+    count = int(row["count"])
+    weight = float(row["weight"])
+    if count <= 0 or weight <= 0.0 or row["min"] is None or row["max"] is None:
+        raise GeometryIssue("NO_DIRECTIONAL_MEASUREMENTS", "no complete directional triangle measurements exist", hold=True)
+    return {
+        "triangle_count": count,
+        "weighted_geometric_mean": math.exp(float(row["weighted_log_sum"]) / weight),
+        "min": float(row["min"]),
+        "max": float(row["max"]),
+    }
+
+
+def _directional_accumulator() -> dict[str, Any]:
+    return {
+        "complete": True,
+        "measured_triangles": 0,
+        "principal_min": _distribution_accumulator(),
+        "principal_max": _distribution_accumulator(),
+        "anisotropy_ratio": _distribution_accumulator(),
+    }
+
+
 def inspect_material_uv_density(path: str | Path) -> dict[str, Any]:
     """Measure actual static GLB triangle UV scale against embedded texture sizes.
 
     `MEASURED` means the report contains direct byte-derived measurements. It is
-    deliberately not PASS/FAIL aesthetic acceptance. A target texel density is a
-    project/art-direction decision and is not invented here.
+    deliberately not PASS/FAIL aesthetic acceptance. A target texel density or an
+    acceptable anisotropy threshold is a project/art-direction decision and is not
+    invented here.
     """
     target = Path(path).resolve()
     result: dict[str, Any] = {
@@ -227,10 +313,11 @@ def inspect_material_uv_density(path: str | Path) -> dict[str, Any]:
         "status": "HOLD",
         "artifact_sha256": None,
         "measurements": {"primitive_count": 0, "textured_primitive_count": 0,
-                         "measured_binding_count": 0, "collapsed_uv_triangles": 0},
+                         "measured_binding_count": 0, "collapsed_uv_triangles": 0,
+                         "directional_binding_count": 0, "directional_hold_binding_count": 0},
         "primitives": [],
         "findings": [],
-        "scope": "Actual default-scene static GLB POSITION/TEXCOORD_0/indices/transforms plus core embedded PNG/JPEG dimensions. No unwrap, texture decode, shader/render, seam quality, style acceptance, engine import, deformation, performance, or automatic repair proof.",
+        "scope": "Actual default-scene static GLB POSITION/TEXCOORD_0/indices/transforms plus core embedded PNG/JPEG dimensions. Measures area-equivalent and principal directional texel scale. No unwrap, texture decode, shader/render, seam quality, anisotropy acceptance, style acceptance, engine import, deformation, performance, or automatic repair proof.",
     }
 
     def finding(code: str, **details: Any) -> None:
@@ -318,6 +405,7 @@ def inspect_material_uv_density(path: str | Path) -> dict[str, Any]:
                 if triangle_total > MAX_TRIANGLES:
                     raise GeometryIssue("RESOURCE_LIMIT", "scene exceeds triangle review limit", hold=True)
                 base_rows: list[tuple[float, float]] = []
+                directional_rows = [_directional_accumulator() for _ in binding_rows]
                 world_area = uv_area = 0.0
                 collapsed = 0
                 uv_min = [float("inf"), float("inf")]
@@ -335,12 +423,30 @@ def inspect_material_uv_density(path: str | Path) -> dict[str, Any]:
                                 primitive=primitive_index, triangle=triangle // 3)
                         continue
                     ua2 = _twice_area_uv(*uv)
-                    world_area += wa2 * .5
+                    weight = wa2 * .5
+                    world_area += weight
                     uv_area += ua2 * .5
                     if ua2 <= MIN_TWICE_AREA:
                         collapsed += 1
                         continue
-                    base_rows.append((math.sqrt(ua2 / wa2), wa2 * .5))
+                    base_rows.append((math.sqrt(ua2 / wa2), weight))
+                    for binding_index, binding in enumerate(binding_rows):
+                        directional = directional_rows[binding_index]
+                        if not directional["complete"]:
+                            continue
+                        try:
+                            principal_min, principal_max, ratio = _directional_texel_density(
+                                wp, uv, binding["width"], binding["height"]
+                            )
+                            _distribution_add(directional["principal_min"], principal_min, weight)
+                            _distribution_add(directional["principal_max"], principal_max, weight)
+                            _distribution_add(directional["anisotropy_ratio"], ratio, weight)
+                            directional["measured_triangles"] += 1
+                        except GeometryIssue as exc:
+                            directional["complete"] = False
+                            finding(exc.code, node=node.get("name"), mesh=mesh_index,
+                                    primitive=primitive_index, triangle=triangle // 3,
+                                    slot=binding["slot"], message=str(exc))
                 result["measurements"]["collapsed_uv_triangles"] += collapsed
                 if collapsed:
                     finding("UV_COLLAPSE", node=node.get("name"), mesh=mesh_index, primitive=primitive_index,
@@ -349,9 +455,26 @@ def inspect_material_uv_density(path: str | Path) -> dict[str, Any]:
                     finding("NO_MEASURABLE_UV_AREA", node=node.get("name"), mesh=mesh_index, primitive=primitive_index)
                     continue
                 binding_reports = []
-                for binding in binding_rows:
+                for binding_index, binding in enumerate(binding_rows):
                     summary = _density_summary(base_rows, binding["width"], binding["height"])
-                    row = {**binding, "texels_per_m": summary}
+                    directional = directional_rows[binding_index]
+                    if directional["complete"] and directional["measured_triangles"] == len(base_rows):
+                        directional_report = {
+                            "status": "MEASURED",
+                            "principal_min": _distribution_finish(directional["principal_min"]),
+                            "principal_max": _distribution_finish(directional["principal_max"]),
+                            "anisotropy_ratio": _distribution_finish(directional["anisotropy_ratio"]),
+                        }
+                        result["measurements"]["directional_binding_count"] += 1
+                    else:
+                        directional_report = {
+                            "status": "HOLD",
+                            "measured_triangles": directional["measured_triangles"],
+                            "expected_triangles": len(base_rows),
+                        }
+                        result["measurements"]["directional_hold_binding_count"] += 1
+                    row = {**binding, "texels_per_m": summary,
+                           "directional_texels_per_m": directional_report}
                     binding_reports.append(row)
                     result["measurements"]["measured_binding_count"] += 1
                     if (binding["wrap_s"] == 33071 and (uv_min[0] < 0 or uv_max[0] > 1)
