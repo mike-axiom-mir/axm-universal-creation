@@ -28,6 +28,7 @@ const combinedConflictConstraints = {
 
 const combined = Preflight.analyze(baseWorld(), combinedConflictConstraints);
 assert.equal(combined.valid, true);
+assert.equal(combined.proofGeometry, 'full-precision-normalized');
 assert.equal(combined.base.conflictFree, true, 'neither projection alone exceeds the radial maximum');
 assert.equal(combined.counts.baseConflicts, 0);
 assert.equal(combined.counts.orthogonalProjectionRadialChecks, 1);
@@ -58,6 +59,20 @@ const oblique = Preflight.analyze(baseWorld(), {
 });
 assert.equal(oblique.counts.orthogonalProjectionRadialChecks, 0, 'oblique directions must not be combined by the bounded proof');
 assert.equal(oblique.counts.orthogonalProjectionRadialConflicts, 0);
+
+const roundingBoundary = Preflight.analyze(baseWorld(), {
+  directionLocks: [
+    { id: 'x-three', a: 'a', b: 'b', direction: { x: 1, y: 0 }, offset: 3 },
+    { id: 'almost-y-four', a: 'a', b: 'b', direction: { x: 1.4e-9, y: 1 }, offset: 4 }
+  ],
+  distanceLimits: [{ id: 'radius-four-point-five', a: 'a', b: 'b', maxLength: 4.5 }]
+});
+assert.equal(roundingBoundary.base.groups.find(group => group.constraints.some(item => item.id === 'almost-y-four')).direction.x, 1e-9,
+  'base receipt intentionally rounds normalized direction components for display');
+assert.equal(roundingBoundary.counts.orthogonalProjectionRadialChecks, 0,
+  'display rounding must not turn a full-precision dot product above tolerance into an accepted orthogonal proof');
+assert.equal(roundingBoundary.counts.orthogonalProjectionRadialConflicts, 0);
+assert.equal(roundingBoundary.conflictFree, true, 'strict bounded proof must decline the near-orthogonal case instead of overclaiming');
 
 const radialMinimumConflictConstraints = {
   axisLimits: [
@@ -114,6 +129,17 @@ assert.equal(minimumBlocked.coreStepExecuted, false);
 assert.equal(minimumBlocked.worldChecksumBefore, minimumBlockedBefore);
 assert.equal(minimumBlocked.worldChecksumAfter, minimumBlockedBefore);
 assert.equal(Core.checksum(minimumBlockedWorld), minimumBlockedBefore, 'radial-minimum conflict must be blocked without mutating caller state');
+
+const roundingGuardWorld = baseWorld();
+const roundingGuard = Guard.step(roundingGuardWorld, {
+  directionLocks: [
+    { id: 'x-three', a: 'a', b: 'b', direction: { x: 1, y: 0 }, offset: 3 },
+    { id: 'almost-y-four', a: 'a', b: 'b', direction: { x: 1.4e-9, y: 1 }, offset: 4 }
+  ],
+  distanceLimits: [{ id: 'radius-four-point-five', a: 'a', b: 'b', maxLength: 4.5 }]
+}, 1 / 60);
+assert.equal(roundingGuard.accepted, true, 'near-orthogonal display rounding must not cause the opt-in guard to block');
+assert.equal(roundingGuard.coreStepExecuted, true);
 
 const acceptedConstraints = {
   axisLocks: combinedConflictConstraints.axisLocks,
