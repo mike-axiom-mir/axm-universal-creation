@@ -91,7 +91,7 @@ def _weld_vertices(vertices: tuple[Point, ...], tolerance: float) -> tuple[tuple
 def _inspect_source_vertex_fans(
     raw_indices: tuple[int, ...],
     vertex_count: int,
-) -> tuple[list[dict[str, int]], int]:
+) -> tuple[list[dict[str, int]], int, int]:
     """Inspect exact-source incident-triangle fans with bounded incidence work.
 
     This deliberately runs before positional welding. Unreferenced source vertices
@@ -122,10 +122,12 @@ def _inspect_source_vertex_fans(
 
     disconnected: list[dict[str, int]] = []
     max_components = 0
+    observed_vertex_count = 0
 
     for vertex, incident in enumerate(incident_faces):
         if not incident:
             continue
+        observed_vertex_count += 1
 
         parent = {triangle: triangle for triangle in incident}
 
@@ -161,7 +163,7 @@ def _inspect_source_vertex_fans(
                 "fan_component_count": components,
             })
 
-    return disconnected, max_components
+    return disconnected, max_components, observed_vertex_count
 
 
 def inspect_mesh_topology(
@@ -202,9 +204,14 @@ def inspect_mesh_topology(
     unreferenced_source_vertices = tuple(
         index for index in range(len(vertices)) if index not in referenced_source_vertices
     )
-    disconnected_source_vertex_fans, max_source_vertex_fan_components = _inspect_source_vertex_fans(
-        raw_indices,
-        len(vertices),
+    (
+        disconnected_source_vertex_fans,
+        max_source_vertex_fan_components,
+        source_vertex_fan_observed_count,
+    ) = _inspect_source_vertex_fans(raw_indices, len(vertices))
+    all_referenced_source_vertex_fans_connected = (
+        not disconnected_source_vertex_fans
+        and source_vertex_fan_observed_count == len(referenced_source_vertices)
     )
 
     welded_vertices, source_to_welded = _weld_vertices(vertices, tolerance)
@@ -293,9 +300,10 @@ def inspect_mesh_topology(
         "referenced_source_vertex_count": len(referenced_source_vertices),
         "unreferenced_source_vertex_count": len(unreferenced_source_vertices),
         "all_source_vertices_referenced": not unreferenced_source_vertices,
+        "source_vertex_fan_observed_count": source_vertex_fan_observed_count,
         "disconnected_source_vertex_fan_count": len(disconnected_source_vertex_fans),
         "max_source_vertex_fan_components": max_source_vertex_fan_components,
-        "all_referenced_source_vertex_fans_connected": not disconnected_source_vertex_fans,
+        "all_referenced_source_vertex_fans_connected": all_referenced_source_vertex_fans_connected,
         "welded_vertex_count": len(welded_vertices),
         "welded_vertex_reduction": len(vertices) - len(welded_vertices),
         "triangle_count": len(raw_indices) // 3,
