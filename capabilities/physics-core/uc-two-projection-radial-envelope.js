@@ -1,6 +1,6 @@
 'use strict';
 
-const VERSION = '0.1.11';
+const VERSION = '0.1.12';
 const SCHEMA = 'axm.uc-two-projection-radial-envelope/v0.1';
 
 function finiteDirection(direction) {
@@ -56,6 +56,45 @@ function minimumAbsoluteInterval(interval) {
 
 function maximumAbsoluteInterval(interval) {
   return Math.max(Math.abs(interval.min), Math.abs(interval.max));
+}
+
+function fartherAbsoluteEndpoint(interval) {
+  if (Math.abs(interval.min) >= Math.abs(interval.max)) {
+    return { value: interval.min, usesMin: true };
+  }
+  return { value: interval.max, usesMin: false };
+}
+
+function originSymmetricMaximumCornerIndex(firstInterval, secondInterval, representedDot) {
+  if (!Number.isFinite(representedDot) || representedDot === 0) return null;
+
+  const firstSymmetric = intervalIsExactlyOriginSymmetric(firstInterval);
+  const secondSymmetric = intervalIsExactlyOriginSymmetric(secondInterval);
+  if (!firstSymmetric && !secondSymmetric) return null;
+
+  // If A has the two projection directions as rows, the inverse-basis
+  // column cross term is -(firstDirection dot secondDirection) / det(A)^2.
+  // Exact origin symmetry lets us select the sign of the symmetric
+  // projection coordinate that maximizes that cross term.
+  const inverseCrossSign = representedDot > 0 ? -1 : 1;
+
+  if (firstSymmetric) {
+    const secondEndpoint = fartherAbsoluteEndpoint(secondInterval);
+    const secondSign = secondEndpoint.value < 0 ? -1 : 1;
+    const desiredFirstSign = inverseCrossSign * secondSign;
+    const firstUsesMin = desiredFirstSign < 0;
+
+    if (secondEndpoint.usesMin) return firstUsesMin ? 0 : 1;
+    return firstUsesMin ? 3 : 2;
+  }
+
+  const firstEndpoint = fartherAbsoluteEndpoint(firstInterval);
+  const firstSign = firstEndpoint.value < 0 ? -1 : 1;
+  const desiredSecondSign = inverseCrossSign * firstSign;
+  const secondUsesMin = desiredSecondSign < 0;
+
+  if (firstEndpoint.usesMin) return secondUsesMin ? 0 : 3;
+  return secondUsesMin ? 1 : 2;
 }
 
 function inverseProjectionPoint(firstDirection, secondDirection, firstProjection, secondProjection, determinant) {
@@ -145,8 +184,10 @@ function analyze(firstDirection, secondDirection, firstInterval, secondInterval)
   const secondContainsZero = intervalContainsZero(secondInterval);
   const zeroContainingProjectionIntervals = Number(firstContainsZero) + Number(secondContainsZero);
   const originInsideProjectionRectangle = firstContainsZero && secondContainsZero;
-  const centrallySymmetricProjectionRectangle =
-    intervalIsExactlyOriginSymmetric(firstInterval) && intervalIsExactlyOriginSymmetric(secondInterval);
+  const firstOriginSymmetric = intervalIsExactlyOriginSymmetric(firstInterval);
+  const secondOriginSymmetric = intervalIsExactlyOriginSymmetric(secondInterval);
+  const originSymmetricProjectionIntervals = Number(firstOriginSymmetric) + Number(secondOriginSymmetric);
+  const centrallySymmetricProjectionRectangle = originSymmetricProjectionIntervals === 2;
   const projectionCorners = [
     [firstInterval.min, secondInterval.min],
     [firstInterval.max, secondInterval.min],
@@ -166,6 +207,7 @@ function analyze(firstDirection, secondDirection, firstInterval, secondInterval)
   let maximumDistance;
   let distanceMethod;
   let distanceWork;
+  let symmetricMaximumCornerIndex = null;
 
   if (orthonormalFastPath) {
     minimumDistance = Math.hypot(
@@ -274,7 +316,22 @@ function analyze(firstDirection, secondDirection, firstInterval, secondInterval)
     }
 
     let cornerNormEvaluations;
-    if (centrallySymmetricProjectionRectangle) {
+    if (originSymmetricProjectionIntervals > 0) {
+      symmetricMaximumCornerIndex = originSymmetricMaximumCornerIndex(
+        firstInterval,
+        secondInterval,
+        representedDot
+      );
+    }
+
+    if (symmetricMaximumCornerIndex !== null) {
+      const selectedCornerDistance = norm(corners[symmetricMaximumCornerIndex]);
+      if (!Number.isFinite(selectedCornerDistance)) {
+        return unsupported('NON_FINITE_RADIAL_ENVELOPE', { determinant });
+      }
+      maximumDistance = selectedCornerDistance;
+      cornerNormEvaluations = 1;
+    } else if (centrallySymmetricProjectionRectangle) {
       const firstCornerDistance = norm(corners[0]);
       const secondCornerDistance = norm(corners[1]);
       if (!Number.isFinite(firstCornerDistance) || !Number.isFinite(secondCornerDistance)) {
@@ -339,7 +396,7 @@ function analyze(firstDirection, secondDirection, firstInterval, secondInterval)
                 ? 'One exact projection plus one finite interval defines a feasible segment containing the origin, so radial minimum is zero and radial maximum needs only the two endpoint norms.'
                 : 'One exact projection plus one finite interval defines a feasible segment, so radial minimum needs one point-to-segment evaluation and radial maximum needs only the two endpoint norms.'
               : centrallySymmetricProjectionRectangle
-                ? 'Both projection intervals are exactly symmetric about zero, so the inverse-basis parallelogram is centrally symmetric: radial minimum is zero and opposite corner radii are equal, requiring only two unique corner norms for the radial maximum.'
+                ? 'Both projection intervals are exactly symmetric about zero, so the inverse-basis parallelogram is centrally symmetric and radial minimum is zero.'
                 : originInsideProjectionRectangle
                   ? 'Both projection intervals contain zero, so linear inverse-basis geometry makes the world-space origin exactly feasible and radial minimum is zero without scanning parallelogram edges.'
                   : zeroContainingProjectionIntervals === 1
@@ -354,11 +411,13 @@ function analyze(firstDirection, secondDirection, firstInterval, secondInterval)
         ? 'A finite projection rectangle with two collapsed intervals is treated as its actual unique point instead of scanning four zero-length edges and four duplicate corners.'
         : degenerateProjectionIntervals === 1
           ? 'A finite projection rectangle with exactly one collapsed interval is treated as its actual segment geometry instead of repeatedly scanning duplicate corners and collapsed edges.'
-          : centrallySymmetricProjectionRectangle
-            ? 'Exact origin symmetry makes opposite world-space corners negatives of each other under the linear inverse basis, so only two unique corner norms are evaluated.'
-            : zeroContainingProjectionIntervals === 1
-              ? 'For a non-degenerate projection rectangle with exactly one zero-containing interval, only the nearest boundary edge of the other interval can contain the radial minimum; the other three edge scans are skipped.'
-              : 'For a non-degenerate projection rectangle with neither interval containing zero, only the nearest-to-zero boundary edge from each projection axis can contain the radial minimum; the two farther boundary edges are skipped.'
+          : symmetricMaximumCornerIndex !== null
+            ? 'At least one projection interval is exactly symmetric about zero. The inverse-basis quadratic cross-term sign selects the maximizing sign for that symmetric coordinate while the other coordinate uses its farther absolute endpoint, so one corner norm is sufficient for the exact radial maximum.'
+            : centrallySymmetricProjectionRectangle
+              ? 'Exact origin symmetry makes opposite world-space corners negatives of each other under the linear inverse basis, so only two unique corner norms are required when the represented cross-term sign is not finite and usable.'
+              : zeroContainingProjectionIntervals === 1
+                ? 'For a non-degenerate projection rectangle with exactly one zero-containing interval, only the nearest boundary edge of the other interval can contain the radial minimum; the other three edge scans are skipped.'
+                : 'For a non-degenerate projection rectangle with neither interval containing zero, only the nearest-to-zero boundary edge from each projection axis can contain the radial minimum; the two farther boundary edges are skipped.'
     ],
     limitations: [
       'This helper only handles two finite non-empty projection intervals and an invertible 2D direction pair.',
@@ -368,7 +427,7 @@ function analyze(firstDirection, secondDirection, firstInterval, secondInterval)
       'The general 2D inverse-basis path may skip all edge-distance scans only when both signed intervals contain zero, because linear invertibility then makes world-space displacement zero exactly feasible.',
       'For a non-degenerate general envelope with exactly one zero-containing projection interval, only the nearest boundary edge of the other one-sided interval is evaluated for radial minimum.',
       'For a non-degenerate general envelope with neither interval containing zero, radial minimum is evaluated on exactly two edges: the boundary of each one-sided projection interval nearest zero. Positive homogeneity excludes the two farther edges from containing the minimum.',
-      'The two-corner radial-maximum fast path requires both represented projection intervals to be exactly symmetric about zero; merely near-symmetric intervals retain the full four-corner norm scan.',
+      'The one-corner radial-maximum reduction requires at least one represented projection interval to be exactly symmetric about zero plus a finite nonzero represented direction dot product; merely near-symmetric intervals do not qualify.',
       'A caller may tolerate a tiny interval gap under its own proof tolerance, but this exact-envelope helper declines min > max rather than manufacturing feasible geometry from an empty intersection.',
       'It does not decide whether directions are eligible for a stronger proof and does not combine more than two projections.',
       'It uses JavaScript Number arithmetic; geometry whose represented inverse-basis points or radial distances are non-finite is declined so the caller can use its conservative fallback.',
