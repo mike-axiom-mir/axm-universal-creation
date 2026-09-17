@@ -30,4 +30,6 @@ jobs:
       - name: Compile topology observer and regression tests
         run: python -m compileall -q src/axm_uc/mesh_topology.py tests/test_mesh_topology.py
       - name: Run exact mesh-topology regression suite
+        env:
+          PYTHONPATH: src
         run: python -m unittest tests.test_mesh_topology -v
