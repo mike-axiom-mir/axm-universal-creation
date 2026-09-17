@@ -1,8 +1,9 @@
 """Deterministic structural topology evidence for bounded triangle meshes.
 
-This module diagnoses seam-welded edge topology. It does not prove freedom from
-self-intersection, vertex-manifoldness, deformation quality, collision suitability,
-or visual quality.
+This module diagnoses source-vertex liveness plus seam-welded edge topology. It
+does not prove freedom from self-intersection, vertex-manifoldness, deformation
+quality, collision suitability, or visual quality, and it never authorizes source
+vertex deletion.
 """
 from __future__ import annotations
 
@@ -92,12 +93,13 @@ def inspect_mesh_topology(
     *,
     weld_tolerance: float = 1e-6,
 ) -> dict[str, Any]:
-    """Return seam-welded edge-topology evidence for one triangle mesh.
+    """Return source-liveness and seam-welded edge-topology evidence.
 
-    ``indices`` is a flat triangle index list. Coincident source vertices are
-    clustered by Euclidean distance before edge incidence is measured, which lets
-    hard-normal/material seams be diagnosed as one geometric surface without
-    rewriting the source mesh.
+    ``indices`` is a flat triangle index list. Source-array liveness is measured
+    from the validated source index stream before any positional welding. Coincident
+    source vertices are then clustered by Euclidean distance before edge incidence
+    is measured, which lets hard-normal/material seams be diagnosed as one geometric
+    surface without rewriting the source mesh.
     """
     if isinstance(weld_tolerance, bool) or not isinstance(weld_tolerance, (int, float)):
         raise MeshTopologyError("weld_tolerance must be a finite positive number")
@@ -117,6 +119,11 @@ def inspect_mesh_topology(
     raw_indices = _indices(indices)
     if any(index < 0 or index >= len(vertices) for index in raw_indices):
         raise MeshTopologyError("triangle index is out of range")
+
+    referenced_source_vertices = set(raw_indices)
+    unreferenced_source_vertices = tuple(
+        index for index in range(len(vertices)) if index not in referenced_source_vertices
+    )
 
     welded_vertices, source_to_welded = _weld_vertices(vertices, tolerance)
 
@@ -201,6 +208,9 @@ def inspect_mesh_topology(
     return {
         "status": status,
         "source_vertex_count": len(vertices),
+        "referenced_source_vertex_count": len(referenced_source_vertices),
+        "unreferenced_source_vertex_count": len(unreferenced_source_vertices),
+        "all_source_vertices_referenced": not unreferenced_source_vertices,
         "welded_vertex_count": len(welded_vertices),
         "welded_vertex_reduction": len(vertices) - len(welded_vertices),
         "triangle_count": len(raw_indices) // 3,
@@ -215,12 +225,15 @@ def inspect_mesh_topology(
         "orientation_consistent_by_shared_edge": not orientation_conflicts,
         "weld_tolerance": tolerance,
         "examples": {
+            "unreferenced_source_vertices": list(unreferenced_source_vertices[:MAX_EXAMPLES]),
             "collapsed_triangles": collapsed_triangles[:MAX_EXAMPLES],
             "boundary_edges": [list(edge) for edge in boundary_edges[:MAX_EXAMPLES]],
             "nonmanifold_edges": [list(edge) for edge in nonmanifold_edges[:MAX_EXAMPLES]],
             "orientation_conflict_edges": [list(edge) for edge in orientation_conflicts[:MAX_EXAMPLES]],
         },
         "truth_boundary": {
+            "source_vertex_liveness_checked": True,
+            "source_vertex_pruning_performed": False,
             "seam_clustered_by_position": True,
             "source_geometry_rewritten": False,
             "edge_incidence_checked": True,
