@@ -755,7 +755,7 @@
           weightAccessor && weightAccessor.normalized === true,
         weightNormalizedFieldValid =
           !!weightAccessor &&
-          (weightAccessor.normalized == null ||
+          (weightAccessor.normalized === undefined ||
             typeof weightAccessor.normalized === "boolean"),
         weightFormatValid =
           !!weightAccessor &&
