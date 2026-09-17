@@ -2,9 +2,10 @@
 
 const crypto = require('crypto');
 const BasePreflight = require('./uc-constraint-preflight.js');
+const ExactGeometry = require('./uc-exact-projection-geometry.js');
 
-const VERSION = '0.2.0';
-const REPORT_SCHEMA = 'axm.uc-orthogonal-projection-preflight/v0.2';
+const VERSION = '0.3.0';
+const REPORT_SCHEMA = 'axm.uc-orthogonal-projection-preflight/v0.3';
 const DEFAULT_ORTHOGONALITY_TOLERANCE = 1e-9;
 const MAX_ORTHOGONALITY_TOLERANCE = 1e-6;
 
@@ -29,6 +30,17 @@ function bounded(value, min, max, fallback) {
 
 function round(value) {
   return Math.round(value * 1e9) / 1e9;
+}
+
+function roundedDirection(direction) {
+  return { x: round(direction.x), y: round(direction.y) };
+}
+
+function roundedInterval(interval) {
+  return {
+    min: Number.isFinite(interval.min) ? round(interval.min) : interval.min,
+    max: Number.isFinite(interval.max) ? round(interval.max) : interval.max
+  };
 }
 
 function minimumAbsoluteInterval(interval) {
@@ -72,6 +84,7 @@ function reportChecksum(report) {
     valid: report.valid,
     conflictFree: report.conflictFree,
     baseChecksum: report.baseChecksum,
+    proofGeometry: report.proofGeometry,
     tolerance: report.tolerance,
     orthogonalityTolerance: report.orthogonalityTolerance,
     counts: report.counts,
@@ -100,8 +113,9 @@ function analyze(world, constraints, options) {
   let radialMinimumConflicts = 0;
 
   if (base.valid) {
-    const projections = (base.groups || []).filter(group => !group.conflict);
-    const radials = (base.radialGroups || []).filter(group => !group.conflict);
+    const exact = ExactGeometry.analyze(world, constraints, { tolerance });
+    const projections = (exact.groups || []).filter(group => !group.conflict);
+    const radials = (exact.radialGroups || []).filter(group => !group.conflict);
 
     radials.forEach(radial => {
       const samePairProjections = projections.filter(group => samePair(group, radial));
@@ -121,9 +135,9 @@ function analyze(world, constraints, options) {
           const summary = {
             a: radial.a,
             b: radial.b,
-            directions: [clone(first.direction), clone(second.direction)],
-            projectionIntersections: [clone(first.intersection), clone(second.intersection)],
-            distanceIntersection: clone(radial.intersection),
+            directions: [roundedDirection(first.direction), roundedDirection(second.direction)],
+            projectionIntersections: [roundedInterval(first.intersection), roundedInterval(second.intersection)],
+            distanceIntersection: roundedInterval(radial.intersection),
             minimumProjectionMagnitudes: [round(firstMinimum), round(secondMinimum)],
             maximumProjectionMagnitudes: [
               Number.isFinite(firstMaximum) ? round(firstMaximum) : firstMaximum,
@@ -219,6 +233,7 @@ function analyze(world, constraints, options) {
     valid: base.valid,
     conflictFree: base.valid && conflicts.length === 0,
     baseChecksum: base.checksum,
+    proofGeometry: 'full-precision-normalized',
     tolerance,
     orthogonalityTolerance,
     base: clone(base),
@@ -240,12 +255,14 @@ function analyze(world, constraints, options) {
       checks.length + ' same-pair orthogonal two-projection/radial check pair(s) evaluated',
       radialMaximumConflicts + ' combined projection-lower-bound/radial-maximum conflict(s) proven',
       radialMinimumConflicts + ' combined projection-upper-bound/radial-minimum conflict(s) proven',
+      'Orthogonality and radial proof decisions use full-precision normalized geometry; 1e-9 rounding is presentation-only.',
       'Accepted directions must each be unit-length and mutually orthogonal within tolerance ' + orthogonalityTolerance,
       'The proof uses the 2D orthonormal identity distance^2 = projectionA^2 + projectionB^2 only for one exact body pair.'
     ],
     limitations: [
       'This is an optional stronger layer over the existing conservative preflight; the base preflight and solver are unchanged.',
-      'It combines exactly two same-body-pair projected intervals only when their normalized directions are unit-length and mutually orthogonal within the configured strict tolerance.',
+      'It combines exactly two same-body-pair projected intervals only when their full-precision normalized directions are unit-length and mutually orthogonal within the configured strict tolerance.',
+      'Rounded directions and intervals in the public receipt are display evidence only and are never used to decide orthogonality or conflict.',
       'It does not combine oblique or merely near-orthogonal directions, more than two projected directions at once, or constraints from different body pairs.',
       'A radial maximum can be checked from projection lower bounds; a radial minimum is checked only when both orthogonal projection intervals have finite upper magnitudes.',
       'It does not prove global constraint satisfiability, convergence, stability or physical correctness and does not reason across triangles or loops.',
