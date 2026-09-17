@@ -171,6 +171,11 @@ def inspect_mesh_topology(
     indices: Iterable[int],
     *,
     weld_tolerance: float = 1e-6,
+    include_closed_component_orientation: bool = False,
+    orientation_triangle_budget: int = MAX_TRIANGLES,
+    orientation_volume_epsilon: float = 1e-12,
+    orientation_frame_label: str = "INPUT_XYZ_AS_PROVIDED",
+    orientation_handedness: str = "UNDECLARED",
 ) -> dict[str, Any]:
     """Return source and seam-welded structural topology evidence.
 
@@ -180,12 +185,38 @@ def inspect_mesh_topology(
     clustered by Euclidean distance before edge incidence is measured, which lets
     hard-normal/material seams be diagnosed as one geometric surface without
     rewriting the source mesh.
+
+    ``include_closed_component_orientation`` is opt-in so historical callers keep
+    the exact v0 report shape and work profile. When enabled, a sibling read-only
+    report solves deterministic face-parity constraints on eligible closed
+    components and reports algebraic signed volume in the declared numeric frame.
+    The diagnostic never rewrites indices or chooses a renderer front-face rule.
     """
     if isinstance(weld_tolerance, bool) or not isinstance(weld_tolerance, (int, float)):
         raise MeshTopologyError("weld_tolerance must be a finite positive number")
     tolerance = float(weld_tolerance)
     if not math.isfinite(tolerance) or tolerance <= 0:
         raise MeshTopologyError("weld_tolerance must be a finite positive number")
+
+    if type(include_closed_component_orientation) is not bool:
+        raise MeshTopologyError("include_closed_component_orientation must be a boolean")
+    if include_closed_component_orientation:
+        if type(orientation_triangle_budget) is not int or orientation_triangle_budget <= 0:
+            raise MeshTopologyError("orientation_triangle_budget must be a positive integer")
+        if (
+            isinstance(orientation_volume_epsilon, bool)
+            or not isinstance(orientation_volume_epsilon, (int, float))
+        ):
+            raise MeshTopologyError("orientation_volume_epsilon must be a finite non-negative number")
+        orientation_volume_epsilon = float(orientation_volume_epsilon)
+        if not math.isfinite(orientation_volume_epsilon) or orientation_volume_epsilon < 0:
+            raise MeshTopologyError("orientation_volume_epsilon must be a finite non-negative number")
+        if not isinstance(orientation_frame_label, str) or not orientation_frame_label.strip():
+            raise MeshTopologyError("orientation_frame_label must be a non-empty string")
+        if orientation_handedness not in {"UNDECLARED", "RIGHT_HANDED", "LEFT_HANDED"}:
+            raise MeshTopologyError(
+                "orientation_handedness must be UNDECLARED, RIGHT_HANDED, or LEFT_HANDED"
+            )
 
     try:
         vertices = tuple(_point(value, f"positions[{index}]") for index, value in enumerate(positions))
@@ -219,6 +250,7 @@ def inspect_mesh_topology(
     edge_faces: dict[Edge, list[tuple[int, int]]] = defaultdict(list)
     collapsed_triangles: list[int] = []
     valid_triangles: list[int] = []
+    valid_faces: dict[int, tuple[int, int, int]] = {}
 
     for triangle_index in range(len(raw_indices) // 3):
         source_face = raw_indices[triangle_index * 3: triangle_index * 3 + 3]
@@ -241,6 +273,7 @@ def inspect_mesh_topology(
             continue
 
         valid_triangles.append(triangle_index)
+        valid_faces[triangle_index] = face
         for start, end in ((a, b), (b, c), (c, a)):
             edge = (start, end) if start < end else (end, start)
             direction = 1 if (start, end) == edge else -1
@@ -294,7 +327,7 @@ def inspect_mesh_topology(
     else:
         status = "CLOSED_ORIENTED_EDGE_MANIFOLD_CANDIDATE"
 
-    return {
+    report: dict[str, Any] = {
         "status": status,
         "source_vertex_count": len(vertices),
         "referenced_source_vertex_count": len(referenced_source_vertices),
@@ -343,3 +376,22 @@ def inspect_mesh_topology(
             "visual_quality_checked": False,
         },
     }
+
+    if include_closed_component_orientation:
+        from .mesh_closed_orientation import inspect_closed_component_orientation
+
+        report["closed_component_orientation"] = inspect_closed_component_orientation(
+            raw_indices=raw_indices,
+            welded_vertices=welded_vertices,
+            valid_faces=valid_faces,
+            edge_faces=edge_faces,
+            valid_triangles=valid_triangles,
+            collapsed_triangles=collapsed_triangles,
+            triangle_budget=orientation_triangle_budget,
+            volume_epsilon=orientation_volume_epsilon,
+            frame_label=orientation_frame_label.strip(),
+            handedness=orientation_handedness,
+            max_examples=MAX_EXAMPLES,
+        )
+
+    return report
