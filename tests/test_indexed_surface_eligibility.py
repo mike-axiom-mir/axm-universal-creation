@@ -28,6 +28,16 @@ class IndexedSurfaceEligibilityTests(unittest.TestCase):
         self.assertEqual(report["render_domain_state"], "SAME_AS_SOURCE")
         self.assertEqual(report["candidate"]["vertex_count"], 4)
         self.assertTrue(report["split_observation"]["position_only_weld_safe"])
+        self.assertTrue(report["topology_lineage"]["matches_source_index_stream"])
+
+    def test_render_topology_lineage_mismatch_is_held(self):
+        spec = base_spec()
+        spec["render"]["indices"] = [0, 2, 1, 0, 2, 3]
+        report = observe_indexed_surface_eligibility(spec)
+        self.assertEqual(report["eligibility_state"], "HOLD_TOPOLOGY_LINEAGE_MISMATCH")
+        self.assertEqual(report["render_domain_state"], "NOT_EVALUATED")
+        self.assertFalse(report["topology_lineage"]["matches_source_index_stream"])
+        self.assertIsNone(report["candidate"])
 
     def test_expanded_triangle_corners_become_tuple_dedup_candidate_only_with_explicit_split_declaration(self):
         spec = base_spec()
@@ -45,6 +55,7 @@ class IndexedSurfaceEligibilityTests(unittest.TestCase):
         self.assertEqual(report["eligibility_state"], "POST_ATTRIBUTE_TUPLE_DEDUP_CANDIDATE")
         self.assertEqual(report["candidate"]["vertex_count"], 4)
         self.assertEqual(report["candidate"]["indices"], [0, 1, 2, 0, 2, 3])
+        self.assertTrue(report["topology_lineage"]["matches_source_index_stream"])
 
         held = copy.deepcopy(spec)
         del held["render"]["protected_split_ids"]
