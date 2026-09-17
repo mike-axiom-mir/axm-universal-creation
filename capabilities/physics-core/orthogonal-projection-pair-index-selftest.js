@@ -29,10 +29,10 @@ const constraints = {
 };
 
 const report = Preflight.analyze(world, constraints);
-assert.equal(report.schema, 'axm.uc-orthogonal-projection-preflight/v0.8');
-assert.equal(report.version, '0.8.0');
+assert.equal(report.schema, 'axm.uc-orthogonal-projection-preflight/v0.9');
+assert.equal(report.version, '0.9.0');
 assert.equal(report.proofGeometry, 'full-precision-normalized');
-assert.equal(report.radialBoundModel, 'singular-value-conservative');
+assert.equal(report.radialBoundModel, 'finite-interval-parallelogram-exact-with-singular-value-fallback');
 assert.equal(report.conflictFree, true);
 assert.equal(report.strongerProofComplete, true);
 assert.equal(report.proofBudget.maxProjectionPairCandidates, null,
@@ -46,6 +46,8 @@ assert.equal(report.counts.projectionPairCandidatesAvailable, 2,
   'each two-projection pair bucket contributes one available candidate');
 assert.equal(report.counts.projectionPairCandidates, 2,
   'unbounded/default proof must evaluate every available candidate pair');
+assert.equal(report.counts.exactRadialEnvelopeChecks, 2,
+  'both finite same-pair orthogonal candidates must use exact radial envelopes');
 assert.equal(report.counts.orthogonalProjectionRadialChecks, 2,
   'each radial group must reuse only its own pair bucket; cross-pair projection combinations must not be evaluated');
 assert.equal(report.counts.radialMaximumChecks, 2);
@@ -53,12 +55,15 @@ assert.equal(report.counts.radialMaximumConflicts, 0);
 assert.ok(report.orthogonalProjectionRadialChecks.every(check =>
   check.basisSingularValues.min === 1 && check.basisSingularValues.max === 1
 ), 'exact orthogonal axis pairs must retain singular values of one');
+assert.ok(report.orthogonalProjectionRadialChecks.every(check =>
+  check.radialBoundModel === 'finite-interval-parallelogram-exact'
+), 'finite orthogonal pairs must use the exact feasible parallelogram radial envelope');
 assert.ok(report.evidence.some(line => line.includes('indexed once and reused for radial lookup')),
   'receipt must expose the one-index-per-analysis lookup path');
 assert.ok(report.evidence.some(line => line.includes('projection metric record(s) computed once and reused')),
   'receipt must expose one-time projection metric materialization');
-assert.ok(report.evidence.some(line => line.includes('exact singular values')),
-  'receipt must expose the conservative tolerance-safe basis conversion');
+assert.ok(report.evidence.some(line => line.includes('exact inverse-basis parallelogram')),
+  'receipt must expose the exact finite-interval radial envelope model');
 
 const replay = Preflight.analyze(world, constraints);
 assert.equal(report.checksum, replay.checksum, 'pair-indexed proof planning must replay deterministically');
@@ -122,16 +127,17 @@ const toleranceSafeMaximum = Preflight.analyze(world, toleranceSafeMaximumConstr
 });
 assert.equal(toleranceSafeMaximum.valid, true);
 assert.equal(toleranceSafeMaximum.conflictFree, true,
-  'strict-tolerance near-orthogonal inputs must not use raw hypot as an unsafe radial lower bound');
+  'strict-tolerance near-orthogonal inputs must retain a conservative radial lower bound');
 assert.equal(toleranceSafeMaximum.counts.radialMaximumChecks, 1);
 assert.equal(toleranceSafeMaximum.counts.radialMaximumConflicts, 0);
 const maximumCheck = toleranceSafeMaximum.orthogonalProjectionRadialChecks[0].radialMaximumCheck;
 assert.ok(maximumCheck.projectionMagnitudeLowerBound > maximumCheck.maximumAllowedDistance,
   'the old raw projection-vector hypot would have exceeded the radial maximum in this regression');
 assert.ok(maximumCheck.minimumRequiredDistance < maximumCheck.maximumAllowedDistance,
-  'singular-value correction must conservatively reduce the radial lower bound at the tolerance edge');
+  'the exact finite-envelope lower bound must keep this tolerance-edge case accepted');
 assert.ok(maximumCheck.decisionWitness.basisSingularValues.max > 1,
-  'decision witness must retain the full-precision operator expansion used by the lower bound');
+  'decision witness must retain the full-precision operator expansion used by the fallback comparison');
+assert.equal(maximumCheck.boundModel, 'finite-interval-parallelogram-exact');
 
 const toleranceSafeMinimumConstraints = {
   axisLimits: [
@@ -150,22 +156,23 @@ const toleranceSafeMinimum = Preflight.analyze(world, toleranceSafeMinimumConstr
 });
 assert.equal(toleranceSafeMinimum.valid, true);
 assert.equal(toleranceSafeMinimum.conflictFree, true,
-  'strict-tolerance near-orthogonal inputs must not use raw hypot as an unsafe radial upper bound');
+  'strict-tolerance near-orthogonal inputs must retain a conservative radial upper bound');
 assert.equal(toleranceSafeMinimum.counts.radialMinimumChecks, 1);
 assert.equal(toleranceSafeMinimum.counts.radialMinimumConflicts, 0);
 const minimumCheck = toleranceSafeMinimum.orthogonalProjectionRadialChecks[0].radialMinimumCheck;
 assert.ok(minimumCheck.projectionMagnitudeUpperBound < minimumCheck.minimumAllowedDistance,
   'the old raw projection-vector hypot would have fallen below the radial minimum in this regression');
 assert.ok(minimumCheck.maximumPossibleDistance > minimumCheck.minimumAllowedDistance,
-  'singular-value correction must conservatively expand the radial upper bound at the tolerance edge');
+  'the exact finite-envelope upper bound must keep this tolerance-edge case accepted');
 assert.ok(minimumCheck.decisionWitness.basisSingularValues.min < 1,
-  'decision witness must retain the full-precision inverse-basis contraction used by the upper bound');
+  'decision witness must retain the full-precision inverse-basis contraction used by the fallback comparison');
+assert.equal(minimumCheck.boundModel, 'finite-interval-parallelogram-exact');
 
 const toleranceSafeReplay = Preflight.analyze(world, toleranceSafeMaximumConstraints, {
   orthogonalityTolerance: 1e-6
 });
 assert.equal(toleranceSafeMaximum.checksum, toleranceSafeReplay.checksum,
-  'tolerance-safe singular-bound proof must replay deterministically');
+  'tolerance-safe exact-envelope proof must replay deterministically');
 
 const budgetConstraints = {
   axisLocks: [
