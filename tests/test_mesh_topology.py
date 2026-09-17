@@ -24,6 +24,8 @@ class MeshTopologyTests(unittest.TestCase):
                 self.assertTrue(report["closed_by_edge_incidence"])
                 self.assertTrue(report["orientation_consistent_by_shared_edge"])
                 self.assertTrue(report["all_source_vertices_referenced"])
+                self.assertTrue(report["all_referenced_source_vertex_fans_connected"])
+                self.assertEqual(report["disconnected_source_vertex_fan_count"], 0)
 
     def test_box_face_duplicates_weld_to_eight_geometric_vertices(self):
         positions, _normals, indices = _box_geometry()
@@ -33,12 +35,14 @@ class MeshTopologyTests(unittest.TestCase):
         self.assertEqual(report["unreferenced_source_vertex_count"], 0)
         self.assertTrue(report["all_source_vertices_referenced"])
         self.assertEqual(report["examples"]["unreferenced_source_vertices"], [])
+        self.assertEqual(report["disconnected_source_vertex_fan_count"], 0)
+        self.assertTrue(report["all_referenced_source_vertex_fans_connected"])
         self.assertEqual(report["welded_vertex_count"], 8)
         self.assertEqual(report["welded_vertex_reduction"], 16)
         self.assertEqual(report["triangle_count"], 12)
         self.assertEqual(report["edge_count"], 18)
 
-    def test_unreferenced_source_vertex_is_reported_without_changing_edge_status(self):
+    def test_unreferenced_source_vertex_is_reported_without_changing_edge_or_fan_status(self):
         positions, _normals, indices = _box_geometry()
         positions = [*positions, (99.0, 99.0, 99.0)]
         report = inspect_mesh_topology(positions, indices)
@@ -49,6 +53,8 @@ class MeshTopologyTests(unittest.TestCase):
         self.assertEqual(report["unreferenced_source_vertex_count"], 1)
         self.assertFalse(report["all_source_vertices_referenced"])
         self.assertEqual(report["examples"]["unreferenced_source_vertices"], [24])
+        self.assertEqual(report["disconnected_source_vertex_fan_count"], 0)
+        self.assertTrue(report["all_referenced_source_vertex_fans_connected"])
         self.assertTrue(report["truth_boundary"]["source_vertex_liveness_checked"])
         self.assertFalse(report["truth_boundary"]["source_vertex_pruning_performed"])
 
@@ -73,6 +79,38 @@ class MeshTopologyTests(unittest.TestCase):
         self.assertEqual(report["nonmanifold_edge_count"], 0)
         self.assertEqual(report["orientation_conflict_edge_count"], 0)
         self.assertFalse(report["closed_by_edge_incidence"])
+        self.assertTrue(report["all_referenced_source_vertex_fans_connected"])
+
+    def test_two_closed_tetrahedra_sharing_only_one_source_vertex_expose_bow_tie_fan(self):
+        positions = [
+            (0, 0, 0),
+            (1, 0, 0), (0, 1, 0), (0, 0, 1),
+            (-1, 0, 0), (0, -1, 0), (0, 0, -1),
+        ]
+        indices = [
+            0, 2, 1,
+            0, 1, 3,
+            1, 2, 3,
+            2, 0, 3,
+            0, 5, 4,
+            0, 4, 6,
+            4, 5, 6,
+            5, 0, 6,
+        ]
+        report = inspect_mesh_topology(positions, indices)
+
+        self.assertEqual(report["status"], "CLOSED_ORIENTED_EDGE_MANIFOLD_CANDIDATE")
+        self.assertEqual(report["boundary_edge_count"], 0)
+        self.assertEqual(report["nonmanifold_edge_count"], 0)
+        self.assertEqual(report["orientation_conflict_edge_count"], 0)
+        self.assertEqual(report["triangle_component_count"], 2)
+        self.assertFalse(report["all_referenced_source_vertex_fans_connected"])
+        self.assertEqual(report["disconnected_source_vertex_fan_count"], 1)
+        self.assertEqual(report["max_source_vertex_fan_components"], 2)
+        self.assertEqual(
+            report["examples"]["disconnected_source_vertex_fans"],
+            [{"vertex": 0, "incident_triangle_count": 6, "fan_component_count": 2}],
+        )
 
     def test_three_faces_on_one_edge_report_nonmanifold_edge(self):
         positions = [
@@ -106,6 +144,7 @@ class MeshTopologyTests(unittest.TestCase):
         self.assertEqual(report["referenced_source_vertex_count"], 3)
         self.assertEqual(report["unreferenced_source_vertex_count"], 1)
         self.assertEqual(report["examples"]["unreferenced_source_vertices"], [1])
+        self.assertTrue(report["all_referenced_source_vertex_fans_connected"])
 
     def test_reports_multiple_disconnected_triangle_components(self):
         positions = [
@@ -114,13 +153,17 @@ class MeshTopologyTests(unittest.TestCase):
         ]
         report = inspect_mesh_topology(positions, [0, 1, 2, 3, 4, 5])
         self.assertEqual(report["triangle_component_count"], 2)
+        self.assertTrue(report["all_referenced_source_vertex_fans_connected"])
 
     def test_truth_boundary_stays_structural(self):
         report = inspect_mesh_topology([(0, 0, 0), (1, 0, 0), (0, 1, 0)], [0, 1, 2])
         boundary = report["truth_boundary"]
         self.assertTrue(boundary["source_vertex_liveness_checked"])
         self.assertFalse(boundary["source_vertex_pruning_performed"])
+        self.assertTrue(boundary["source_indexed_vertex_fan_connectivity_checked"])
+        self.assertTrue(boundary["source_index_collapsed_triangles_excluded_from_vertex_fans"])
         self.assertFalse(boundary["vertex_manifoldness_checked"])
+        self.assertFalse(boundary["seam_welded_geometric_vertex_manifoldness_checked"])
         self.assertFalse(boundary["self_intersection_checked"])
         self.assertFalse(boundary["deformation_quality_checked"])
         self.assertFalse(boundary["collision_suitability_checked"])
