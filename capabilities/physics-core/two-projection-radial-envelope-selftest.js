@@ -140,13 +140,13 @@ assert.equal(pointEnvelope.supported, true);
 assert.ok(pointEnvelope.minimumDistance > 4.99999879 && pointEnvelope.minimumDistance < 4.99999881);
 assert.equal(pointEnvelope.minimumDistance, pointEnvelope.maximumDistance,
   'two exact projections define one displacement point and therefore one exact radius');
-assert.equal(pointEnvelope.distanceMethod, 'inverse-basis-parallelogram-edges',
-  'tolerance-eligible but not exactly orthonormal directions must retain the general exact geometry path');
+assert.equal(pointEnvelope.distanceMethod, 'inverse-basis-point',
+  'two collapsed finite projections should evaluate their one unique inverse-basis point directly');
 assert.equal(pointEnvelope.originInsideProjectionRectangle, false);
 assert.deepEqual(pointEnvelope.distanceWork, {
-  edgeDistanceEvaluations: 4,
-  cornerNormEvaluations: 4
-});
+  edgeDistanceEvaluations: 0,
+  cornerNormEvaluations: 1
+}, 'the point-envelope path must avoid four zero-length edge scans and four duplicate corner norms');
 
 const originContainedGeneralEnvelope = Envelope.analyze(
   { x: 1, y: 0 },
