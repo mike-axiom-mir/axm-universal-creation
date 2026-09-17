@@ -39,6 +39,9 @@ assert.equal(combined.conflictFree, false);
 assert.equal(combined.conflicts[0].code, 'ORTHOGONAL_PROJECTIONS_EXCEED_DISTANCE_MAX');
 assert.equal(combined.conflicts[0].minimumRequiredDistance, 5);
 assert.equal(combined.conflicts[0].maximumAllowedDistance, 4.5);
+assert.equal(combined.conflicts[0].decisionWitness.minimumRequiredDistance, 5);
+assert.equal(combined.conflicts[0].decisionWitness.maximumAllowedDistance, 4.5);
+assert.equal(combined.conflicts[0].decisionWitness.proofMargin, 0.5);
 assert.deepEqual(combined.conflicts[0].constraintIds, ['radius-four-point-five', 'x-three', 'y-four']);
 
 const compatible = Preflight.analyze(baseWorld(), {
@@ -48,7 +51,20 @@ const compatible = Preflight.analyze(baseWorld(), {
 assert.equal(compatible.conflictFree, true, 'the exact 3-4-5 boundary must remain accepted');
 assert.equal(compatible.counts.orthogonalProjectionRadialChecks, 1);
 assert.equal(compatible.counts.radialMaximumConflicts, 0);
-assert.equal(compatible.counts.orthogonalProjectionRadialConflicts, 0);
+
+const roundedMaximumBoundary = Preflight.analyze(baseWorld(), {
+  axisLocks: combinedConflictConstraints.axisLocks,
+  distanceLimits: [{ id: 'radius-just-under-five', a: 'a', b: 'b', maxLength: 4.9999999996 }]
+}, { tolerance: 0 });
+assert.equal(roundedMaximumBoundary.conflictFree, false, 'full-precision 3-4-5 proof must detect a radial maximum just below five when tolerance is zero');
+const roundedMaximumConflict = roundedMaximumBoundary.conflicts.find(item => item.code === 'ORTHOGONAL_PROJECTIONS_EXCEED_DISTANCE_MAX');
+assert.ok(roundedMaximumConflict, 'near-boundary radial-maximum conflict must be reported');
+assert.equal(roundedMaximumConflict.minimumRequiredDistance, 5, 'display summary rounds the lower bound');
+assert.equal(roundedMaximumConflict.maximumAllowedDistance, 5, 'display summary may round the radial maximum to the same value');
+assert.equal(roundedMaximumConflict.decisionWitness.minimumRequiredDistance, 5);
+assert.equal(roundedMaximumConflict.decisionWitness.maximumAllowedDistance, 4.9999999996);
+assert.ok(roundedMaximumConflict.decisionWitness.proofMargin > 0, 'unrounded witness must expose the positive conflict margin hidden by display rounding');
+assert.equal(roundedMaximumConflict.decisionWitness.tolerance, 0);
 
 const oblique = Preflight.analyze(baseWorld(), {
   directionLocks: [
@@ -90,6 +106,7 @@ assert.equal(radialMinimumConflict.conflictFree, false);
 assert.equal(radialMinimumConflict.conflicts[0].code, 'DISTANCE_MIN_EXCEEDS_ORTHOGONAL_PROJECTION_MAX');
 assert.equal(radialMinimumConflict.conflicts[0].maximumPossibleDistance, Math.round(Math.hypot(2, 2) * 1e9) / 1e9);
 assert.equal(radialMinimumConflict.conflicts[0].minimumAllowedDistance, 3);
+assert.ok(radialMinimumConflict.conflicts[0].decisionWitness.proofMargin > 0);
 assert.deepEqual(radialMinimumConflict.conflicts[0].constraintIds, ['minimum-three', 'x-small-box', 'y-small-box']);
 
 const radialMinimumCompatible = Preflight.analyze(baseWorld(), {
@@ -99,6 +116,21 @@ const radialMinimumCompatible = Preflight.analyze(baseWorld(), {
 assert.equal(radialMinimumCompatible.conflictFree, true, 'a radial minimum below the orthogonal box corner remains feasible');
 assert.equal(radialMinimumCompatible.counts.radialMinimumChecks, 1);
 assert.equal(radialMinimumCompatible.counts.radialMinimumConflicts, 0);
+
+const roundedMinimumBoundary = Preflight.analyze(baseWorld(), {
+  axisLimits: [{ id: 'x-three-box', a: 'a', b: 'b', axis: 'x', minOffset: -3, maxOffset: 3 }],
+  axisLocks: [{ id: 'y-zero', a: 'a', b: 'b', axis: 'y', offset: 0 }],
+  distanceLimits: [{ id: 'minimum-just-over-three', a: 'a', b: 'b', minLength: 3.0000000004 }]
+}, { tolerance: 0 });
+assert.equal(roundedMinimumBoundary.conflictFree, false, 'full-precision bounded box proof must detect a radial minimum just above three when tolerance is zero');
+const roundedMinimumConflict = roundedMinimumBoundary.conflicts.find(item => item.code === 'DISTANCE_MIN_EXCEEDS_ORTHOGONAL_PROJECTION_MAX');
+assert.ok(roundedMinimumConflict, 'near-boundary radial-minimum conflict must be reported');
+assert.equal(roundedMinimumConflict.minimumAllowedDistance, 3, 'display summary rounds the radial minimum');
+assert.equal(roundedMinimumConflict.maximumPossibleDistance, 3, 'display summary may round the box radius to the same value');
+assert.equal(roundedMinimumConflict.decisionWitness.minimumAllowedDistance, 3.0000000004);
+assert.equal(roundedMinimumConflict.decisionWitness.maximumPossibleDistance, 3);
+assert.ok(roundedMinimumConflict.decisionWitness.proofMargin > 0, 'unrounded witness must expose the positive radial-minimum conflict margin hidden by display rounding');
+assert.equal(roundedMinimumConflict.decisionWitness.tolerance, 0);
 
 const singleProjectionMinimum = Preflight.analyze(baseWorld(), {
   axisLimits: [{ id: 'x-small', a: 'a', b: 'b', axis: 'x', minOffset: -2, maxOffset: 2 }],
