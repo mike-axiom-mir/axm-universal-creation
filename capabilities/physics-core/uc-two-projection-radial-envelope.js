@@ -228,6 +228,15 @@ function analyze(firstDirection, secondDirection, firstInterval, secondInterval)
     const start = reconstructProjectionPoint(projectionCorners[0]);
     const end = reconstructProjectionPoint(projectionCorners[1]);
     corners = [copyPoint(start), copyPoint(end), copyPoint(end), copyPoint(start)];
+  } else if (centrallySymmetricProjectionRectangle) {
+    const firstCorner = reconstructProjectionPoint(projectionCorners[0]);
+    const secondCorner = reconstructProjectionPoint(projectionCorners[1]);
+    corners = [
+      copyPoint(firstCorner),
+      copyPoint(secondCorner),
+      { x: -firstCorner.x, y: -firstCorner.y },
+      { x: -secondCorner.x, y: -secondCorner.y }
+    ];
   } else {
     corners = projectionCorners.map(reconstructProjectionPoint);
   }
@@ -487,7 +496,9 @@ function analyze(firstDirection, secondDirection, firstInterval, secondInterval)
         ? 'Collapsed point envelopes reconstruct their one unique world-space point once and copy that deterministic value into the four evidence-corner slots.'
         : degenerateProjectionIntervals === 1
           ? 'Collapsed segment envelopes reconstruct only their two unique world-space endpoints and copy them into the duplicated evidence-corner slots.'
-          : 'Non-degenerate envelopes retain four independent projection-to-world corner reconstructions.'
+          : centrallySymmetricProjectionRectangle
+            ? 'Non-degenerate exactly origin-symmetric envelopes reconstruct two adjacent world-space corners and derive the opposite pair by sign negation into independent evidence objects.'
+            : 'Other non-degenerate envelopes retain four independent projection-to-world corner reconstructions.'
     ],
     limitations: [
       'This helper only handles two finite non-empty projection intervals and an invertible 2D direction pair.',
