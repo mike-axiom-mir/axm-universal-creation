@@ -40,6 +40,29 @@ assert.ok(Math.abs(shortFiniteEdge.minimumDistance - 1e-10) < 1e-20,
 assert.ok(shortFiniteEdge.minimumDistance < 2e-9,
   'the true feasible short edge must remain inside the bounded radial maximum used by the integration regression');
 
+const largeFiniteEnvelope = Envelope.analyze(
+  { x: 1, y: 0 },
+  { x: 0, y: 1 },
+  { min: 1e200, max: 2e200 },
+  { min: 1e200, max: 2e200 }
+);
+assert.equal(largeFiniteEnvelope.supported, true,
+  'finite large-magnitude geometry must not be rejected merely because an unscaled edge-length square would overflow');
+assert.ok(Number.isFinite(largeFiniteEnvelope.minimumDistance));
+assert.ok(Number.isFinite(largeFiniteEnvelope.maximumDistance));
+assert.ok(Math.abs(largeFiniteEnvelope.minimumDistance / Math.hypot(1e200, 1e200) - 1) < 1e-15);
+assert.ok(Math.abs(largeFiniteEnvelope.maximumDistance / Math.hypot(2e200, 2e200) - 1) < 1e-15);
+
+const nonRepresentableRadialEnvelope = Envelope.analyze(
+  { x: 1, y: 0 },
+  { x: 0, y: 1 },
+  { min: 1.3e308, max: 1.3e308 },
+  { min: 1.3e308, max: 1.3e308 }
+);
+assert.equal(nonRepresentableRadialEnvelope.supported, false,
+  'finite projection coordinates whose radial geometry exceeds Number range must be declined, not emitted as NaN evidence');
+assert.equal(nonRepresentableRadialEnvelope.reason, 'NON_FINITE_RADIAL_ENVELOPE');
+
 const shortFiniteCompatible = Preflight.analyze(baseWorld(), {
   axisLimits: [
     { id: 'short-x-band', a: 'a', b: 'b', axis: 'x', minOffset: -5e-9, maxOffset: 5e-9 }
@@ -56,6 +79,27 @@ assert.equal(shortFiniteCompatible.counts.radialMaximumChecks, 1);
 assert.equal(shortFiniteCompatible.counts.radialMaximumConflicts, 0,
   'sub-epsilon finite-edge handling must not manufacture a local contradiction');
 assert.equal(shortFiniteCompatible.conflictFree, true);
+
+const largeFiniteConflict = Preflight.analyze(baseWorld(), {
+  axisLimits: [
+    { id: 'large-x-band', a: 'a', b: 'b', axis: 'x', minOffset: 1e200, maxOffset: 2e200 },
+    { id: 'large-y-band', a: 'a', b: 'b', axis: 'y', minOffset: 1e200, maxOffset: 2e200 }
+  ],
+  distanceLimits: [
+    { id: 'large-radius-max', a: 'a', b: 'b', maxLength: 1.3e200 }
+  ]
+});
+assert.equal(largeFiniteConflict.base.conflictFree, true,
+  'neither large finite projection alone exceeds the radial maximum');
+assert.equal(largeFiniteConflict.counts.radialMaximumChecks, 1);
+assert.equal(largeFiniteConflict.counts.radialMaximumConflicts, 1,
+  'scaled segment geometry must preserve the exact finite-envelope contradiction at large represented magnitudes');
+const largeFiniteMaximumConflict = largeFiniteConflict.conflicts.find(
+  item => item.code === 'ORTHOGONAL_PROJECTIONS_EXCEED_DISTANCE_MAX'
+);
+assert.ok(largeFiniteMaximumConflict);
+assert.equal(largeFiniteMaximumConflict.boundModel, 'finite-interval-parallelogram-exact');
+assert.ok(Number.isFinite(largeFiniteMaximumConflict.decisionWitness.minimumRequiredDistance));
 
 const nearOrthogonalDirection = {
   x: 5e-7,
