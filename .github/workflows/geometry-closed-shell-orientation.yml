@@ -1,0 +1,45 @@
+name: Geometry closed-shell orientation evidence
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "src/axm_uc/mesh_topology.py"
+      - "src/axm_uc/mesh_closed_orientation.py"
+      - "tests/test_mesh_topology.py"
+      - "tests/test_mesh_closed_orientation.py"
+      - "docs/MESH_CLOSED_ORIENTATION_OBSERVER.md"
+      - ".github/workflows/geometry-closed-shell-orientation.yml"
+  workflow_dispatch:
+
+jobs:
+  closed-shell-orientation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.13"]
+    steps:
+      - name: Checkout exact PR state
+        uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Compile topology and orientation observers
+        run: >-
+          python -m compileall -q
+          src/axm_uc/mesh_topology.py
+          src/axm_uc/mesh_closed_orientation.py
+          tests/test_mesh_topology.py
+          tests/test_mesh_closed_orientation.py
+      - name: Run historical topology regression suite
+        env:
+          PYTHONPATH: src
+        run: python -m unittest tests.test_mesh_topology -v
+      - name: Run closed-shell orientation regression suite
+        env:
+          PYTHONPATH: src
+        run: python -m unittest tests.test_mesh_closed_orientation -v
