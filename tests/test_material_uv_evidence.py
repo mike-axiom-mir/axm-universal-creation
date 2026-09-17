@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import struct
 import sys
 import tempfile
@@ -24,13 +25,30 @@ def png(width=4, height=4) -> bytes:
     return b"\x89PNG\r\n\x1a\n" + _chunk(b"IHDR", header) + _chunk(b"IDAT", zlib.compress(rows)) + _chunk(b"IEND", b"")
 
 
-def fixture(*, uv_scale=1.0, node_scale=None, collapse_uv=False, clamp=False):
-    positions = [(0,0,0),(1,0,0),(1,1,0),(0,1,0)]
-    uvs = [(0,0),(uv_scale,0),(uv_scale,uv_scale),(0,uv_scale)]
+def fixture(
+    *,
+    uv_scale=1.0,
+    node_scale=None,
+    node_rotation=None,
+    collapse_uv=False,
+    clamp=False,
+    physical_size=(1.0, 1.0),
+    uv_extent=None,
+    image_size=(4, 4),
+    reverse_triangles=False,
+):
+    width_m, height_m = physical_size
+    positions = [(0,0,0),(width_m,0,0),(width_m,height_m,0),(0,height_m,0)]
+    if uv_extent is None:
+        uv_extent = (uv_scale, uv_scale)
+    u_span, v_span = uv_extent
+    uvs = [(0,0),(u_span,0),(u_span,v_span),(0,v_span)]
     if collapse_uv:
         uvs = [(0,0)] * 4
     indices = [0,1,2,0,2,3]
-    image = png(4,4)
+    if reverse_triangles:
+        indices = [2,1,0,3,2,0]
+    image = png(*image_size)
     binary = bytearray()
     views = []
 
@@ -52,6 +70,8 @@ def fixture(*, uv_scale=1.0, node_scale=None, collapse_uv=False, clamp=False):
     node = {"name":"Body","mesh":0}
     if node_scale is not None:
         node["scale"] = list(node_scale)
+    if node_rotation is not None:
+        node["rotation"] = list(node_rotation)
     sampler = {"wrapS":33071,"wrapT":33071} if clamp else {"wrapS":10497,"wrapT":10497}
     doc = {
         "asset":{"version":"2.0"}, "scene":0, "scenes":[{"nodes":[0]}], "nodes":[node],
@@ -105,6 +125,14 @@ class MaterialUVEvidenceTests(unittest.TestCase):
         for key in ("weighted_geometric_mean","p10","p50","p90"):
             self.assertAlmostEqual(binding["texels_per_m"][key], 4.0)
         self.assertAlmostEqual(binding["texels_per_m"]["p90_p10_ratio"], 1.0)
+        directional = binding["directional_texels_per_m"]
+        self.assertTrue(directional["complete"])
+        self.assertEqual(directional["measured_triangles"], 2)
+        self.assertEqual(directional["skipped_triangles"], 0)
+        self.assertAlmostEqual(directional["weighted_geometric_mean_min"], 4.0)
+        self.assertAlmostEqual(directional["weighted_geometric_mean_max"], 4.0)
+        self.assertAlmostEqual(directional["weighted_geometric_mean_anisotropy_ratio"], 1.0)
+        self.assertAlmostEqual(directional["max_anisotropy_ratio"], 1.0)
 
     def test_world_scale_and_uv_scale_change_density_for_the_expected_reason(self):
         result = self.inspect(*fixture(node_scale=(2,2,1)))
@@ -112,6 +140,66 @@ class MaterialUVEvidenceTests(unittest.TestCase):
         self.assertAlmostEqual(result["primitives"][0]["bindings"][0]["texels_per_m"]["p50"], 2.0)
         result = self.inspect(*fixture(uv_scale=2.0))
         self.assertAlmostEqual(result["primitives"][0]["bindings"][0]["texels_per_m"]["p50"], 8.0)
+
+    def test_aspect_correct_mapping_reports_equal_principal_density(self):
+        result = self.inspect(*fixture(
+            physical_size=(1.1, 1.5),
+            uv_extent=(1.1 / 1.5, 1.0),
+            image_size=(512, 512),
+        ))
+        directional = result["primitives"][0]["bindings"][0]["directional_texels_per_m"]
+        expected = 512.0 / 1.5
+        self.assertAlmostEqual(directional["weighted_geometric_mean_min"], expected, places=4)
+        self.assertAlmostEqual(directional["weighted_geometric_mean_max"], expected, places=4)
+        self.assertAlmostEqual(directional["weighted_geometric_mean_anisotropy_ratio"], 1.0, places=6)
+
+    def test_aspect_blind_mapping_exposes_directional_anisotropy_without_rejecting_it(self):
+        result = self.inspect(*fixture(
+            physical_size=(1.1, 1.5),
+            uv_extent=(1.0, 1.0),
+            image_size=(512, 512),
+        ))
+        self.assertEqual(result["status"], "MEASURED")
+        binding = result["primitives"][0]["bindings"][0]
+        directional = binding["directional_texels_per_m"]
+        self.assertAlmostEqual(directional["weighted_geometric_mean_min"], 512.0 / 1.5, places=4)
+        self.assertAlmostEqual(directional["weighted_geometric_mean_max"], 512.0 / 1.1, places=4)
+        self.assertAlmostEqual(directional["weighted_geometric_mean_anisotropy_ratio"], 1.5 / 1.1, places=6)
+        self.assertAlmostEqual(
+            binding["texels_per_m"]["weighted_geometric_mean"],
+            math.sqrt((512.0 / 1.1) * (512.0 / 1.5)),
+            places=4,
+        )
+
+    def test_rectangular_image_dimensions_are_applied_per_axis(self):
+        result = self.inspect(*fixture(image_size=(8, 4)))
+        binding = result["primitives"][0]["bindings"][0]
+        directional = binding["directional_texels_per_m"]
+        self.assertAlmostEqual(directional["weighted_geometric_mean_min"], 4.0)
+        self.assertAlmostEqual(directional["weighted_geometric_mean_max"], 8.0)
+        self.assertAlmostEqual(directional["weighted_geometric_mean_anisotropy_ratio"], 2.0)
+        self.assertAlmostEqual(binding["texels_per_m"]["weighted_geometric_mean"], math.sqrt(32.0))
+
+    def test_directional_density_is_triangle_order_and_rigid_transform_invariant(self):
+        baseline = self.inspect(*fixture(
+            physical_size=(1.1, 1.5), uv_extent=(1.0, 1.0), image_size=(512, 384)
+        ))
+        transformed = self.inspect(*fixture(
+            physical_size=(1.1, 1.5), uv_extent=(1.0, 1.0), image_size=(512, 384),
+            reverse_triangles=True,
+            node_rotation=(0.0, 0.0, 0.7071067811865476, 0.7071067811865476),
+        ))
+        first = baseline["primitives"][0]["bindings"][0]["directional_texels_per_m"]
+        second = transformed["primitives"][0]["bindings"][0]["directional_texels_per_m"]
+        for key in (
+            "weighted_geometric_mean_min",
+            "weighted_geometric_mean_max",
+            "weighted_geometric_mean_anisotropy_ratio",
+            "min_texels_per_m",
+            "max_texels_per_m",
+            "max_anisotropy_ratio",
+        ):
+            self.assertAlmostEqual(first[key], second[key], places=5)
 
     def test_clamped_texture_with_out_of_range_uvs_is_explicit(self):
         result = self.inspect(*fixture(uv_scale=2.0, clamp=True))
