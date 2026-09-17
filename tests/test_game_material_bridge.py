@@ -8,7 +8,7 @@ import unittest
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src'))
 from axm_uc.game_material_bridge import LEGACY_NORMAL, load_material_bundle
 from axm_uc.game_material_styles import FAMILIES, FINISHES, generate_game_material
-from axm_uc.fabric_noise import _png_chunk
+from axm_uc.fabric_noise import _png_chunk, png_bytes
 import zlib
 
 
@@ -22,11 +22,45 @@ class MaterialBundleTests(unittest.TestCase):
                     bundle = load_material_bundle(folder)
                     expected = 'tangent -Y' if family in ('painted-metal', 'woven-fabric') else 'tangent +Y'
                     self.assertEqual(bundle['normal_convention'], expected)
+                    self.assertEqual(bundle['dimensions'], [16, 16])
                     path = folder / 'game-material.json'
                     manifest = json.loads(path.read_text())
                     manifest['normal_convention'] = LEGACY_NORMAL
                     path.write_text(json.dumps(manifest))
                     self.assertEqual(load_material_bundle(folder)['normal_convention'], expected)
+
+    def test_rectangular_dimensions_are_explicit_and_verified(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            folder = Path(tmp) / 'paint'
+            generate_game_material(folder, 'painted-metal', 16)
+            manifest_path = folder / 'game-material.json'
+            manifest = json.loads(manifest_path.read_text())
+            manifest.pop('size')
+            manifest['dimensions'] = [16, 24]
+            for name, record in manifest['maps'].items():
+                channels = int(record['channels'])
+                value = bytes([128, 128, 255]) if name == 'normal' else bytes([127]) * channels
+                payload = png_bytes(16, 24, channels, value * (16 * 24))
+                path = folder / record['file']
+                path.write_bytes(payload)
+                record['sha256'] = hashlib.sha256(payload).hexdigest()
+            manifest_path.write_text(json.dumps(manifest))
+            bundle = load_material_bundle(folder)
+            self.assertEqual(bundle['dimensions'], [16, 24])
+            self.assertNotIn('size', bundle['manifest'])
+
+            bad = json.loads(manifest_path.read_text())
+            bad['size'] = 16
+            manifest_path.write_text(json.dumps(bad))
+            with self.assertRaisesRegex(ValueError, 'exactly one'):
+                load_material_bundle(folder)
+
+            for dimensions in ([16, True], [15, 24], [16, 513], [16], '16x24'):
+                bad = json.loads(json.dumps(manifest))
+                bad['dimensions'] = dimensions
+                manifest_path.write_text(json.dumps(bad))
+                with self.assertRaisesRegex(ValueError, 'dimensions'):
+                    load_material_bundle(folder)
 
     def test_bundle_validation_does_not_need_blender_or_modify_source(self):
         with tempfile.TemporaryDirectory() as tmp:
