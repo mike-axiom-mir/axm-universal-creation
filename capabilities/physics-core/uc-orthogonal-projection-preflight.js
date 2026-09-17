@@ -4,8 +4,8 @@ const crypto = require('crypto');
 const BasePreflight = require('./uc-constraint-preflight.js');
 const ExactGeometry = require('./uc-exact-projection-geometry.js');
 
-const VERSION = '0.4.0';
-const REPORT_SCHEMA = 'axm.uc-orthogonal-projection-preflight/v0.4';
+const VERSION = '0.5.0';
+const REPORT_SCHEMA = 'axm.uc-orthogonal-projection-preflight/v0.5';
 const DEFAULT_ORTHOGONALITY_TOLERANCE = 1e-9;
 const MAX_ORTHOGONALITY_TOLERANCE = 1e-6;
 
@@ -65,8 +65,13 @@ function isUnitDirection(direction, tolerance) {
   return Math.abs(directionNormSquared(direction) - 1) <= tolerance;
 }
 
-function samePair(left, right) {
-  return left.a === right.a && left.b === right.b;
+function indexProjectionGroupsByPair(projections) {
+  const indexed = new Map();
+  projections.forEach(group => {
+    if (!indexed.has(group.pairKey)) indexed.set(group.pairKey, []);
+    indexed.get(group.pairKey).push(group);
+  });
+  return indexed;
 }
 
 function constraintIds(groups) {
@@ -125,6 +130,7 @@ function analyze(world, constraints, options) {
   const tolerance = base.tolerance;
   const checks = [];
   const additionalConflicts = [];
+  let projectionPairBuckets = 0;
   let radialMaximumChecks = 0;
   let radialMaximumConflicts = 0;
   let radialMinimumChecks = 0;
@@ -134,9 +140,11 @@ function analyze(world, constraints, options) {
     const exact = ExactGeometry.analyze(world, constraints, { tolerance });
     const projections = (exact.groups || []).filter(group => !group.conflict);
     const radials = (exact.radialGroups || []).filter(group => !group.conflict);
+    const projectionsByPair = indexProjectionGroupsByPair(projections);
+    projectionPairBuckets = projectionsByPair.size;
 
     radials.forEach(radial => {
-      const samePairProjections = projections.filter(group => samePair(group, radial));
+      const samePairProjections = projectionsByPair.get(radial.key) || [];
       for (let i = 0; i < samePairProjections.length; i += 1) {
         for (let j = i + 1; j < samePairProjections.length; j += 1) {
           const first = samePairProjections[i];
@@ -263,6 +271,7 @@ function analyze(world, constraints, options) {
     base: clone(base),
     counts: {
       baseConflicts: (base.conflicts || []).length,
+      projectionPairBuckets,
       orthogonalProjectionRadialChecks: checks.length,
       orthogonalProjectionRadialConflicts: additionalConflicts.length,
       radialMaximumChecks,
@@ -277,6 +286,7 @@ function analyze(world, constraints, options) {
     errors: clone(base.errors || []),
     evidence: [
       checks.length + ' same-pair orthogonal two-projection/radial check pair(s) evaluated',
+      projectionPairBuckets + ' same-pair projection bucket(s) indexed once and reused for radial lookup',
       radialMaximumConflicts + ' combined projection-lower-bound/radial-maximum conflict(s) proven',
       radialMinimumConflicts + ' combined projection-upper-bound/radial-minimum conflict(s) proven',
       'Orthogonality and radial proof decisions use full-precision normalized geometry; 1e-9 rounding is presentation-only.',
@@ -286,6 +296,7 @@ function analyze(world, constraints, options) {
     ],
     limitations: [
       'This is an optional stronger layer over the existing conservative preflight; the base preflight and solver are unchanged.',
+      'Projection groups are indexed by canonical body pair once per analysis; indexing changes lookup work only and does not widen proof eligibility or reorder same-pair groups.',
       'It combines exactly two same-body-pair projected intervals only when their full-precision normalized directions are unit-length and mutually orthogonal within the configured strict tolerance.',
       'Rounded directions, intervals and summary distances in the public receipt are display evidence only; decisionWitness preserves the unrounded values used by each combined proof.',
       'It does not combine oblique or merely near-orthogonal directions, more than two projected directions at once, or constraints from different body pairs.',

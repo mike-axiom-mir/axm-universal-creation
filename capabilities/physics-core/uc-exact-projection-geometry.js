@@ -9,8 +9,17 @@ const AxisLimits = require('./uc-axis-limits.js');
 const DirectionLocks = require('./uc-direction-locks.js');
 const DirectionLimits = require('./uc-direction-limits.js');
 
-const VERSION = '0.1.0';
-const SCHEMA = 'axm.uc-exact-projection-geometry/v0.1';
+const VERSION = '0.2.0';
+const SCHEMA = 'axm.uc-exact-projection-geometry/v0.2';
+
+function finite(value, fallback) {
+  const number = Number(value);
+  return Number.isFinite(number) ? number : fallback;
+}
+
+function bounded(value, min, max, fallback) {
+  return Math.max(min, Math.min(max, finite(value, fallback)));
+}
 
 function cleanZero(value) {
   return Math.abs(value) <= Number.EPSILON ? 0 : value;
@@ -223,22 +232,33 @@ function groupRadialEntries(entries, tolerance) {
 
 function analyze(world, constraints, options) {
   options = options || {};
-  const tolerance = Number.isFinite(Number(options.tolerance)) ? Number(options.tolerance) : BasePreflight.DEFAULT_TOLERANCE;
+  const tolerance = bounded(
+    options.tolerance,
+    0,
+    BasePreflight.MAX_TOLERANCE,
+    BasePreflight.DEFAULT_TOLERANCE
+  );
   const normalized = normalize(world, constraints);
   const projectionEntries = buildProjectionEntries(normalized);
   const radialEntries = buildRadialEntries(normalized);
+  const projectionGroups = groupProjectionEntries(projectionEntries, tolerance);
+  const radialGroups = groupRadialEntries(radialEntries, tolerance);
   return {
     schema: SCHEMA,
     version: VERSION,
     tolerance,
-    groups: groupProjectionEntries(projectionEntries, tolerance),
-    radialGroups: groupRadialEntries(radialEntries, tolerance),
+    groups: projectionGroups,
+    radialGroups,
     counts: {
       projectionEntries: projectionEntries.length,
-      projectionGroups: groupProjectionEntries(projectionEntries, tolerance).length,
+      projectionGroups: projectionGroups.length,
       radialEntries: radialEntries.length,
-      radialGroups: groupRadialEntries(radialEntries, tolerance).length
+      radialGroups: radialGroups.length
     },
+    evidence: [
+      'Tolerance is clamped to the same non-negative bounded range as the conservative base preflight.',
+      'Projection and radial groups are each materialized exactly once per analysis and reused for counts/output.'
+    ],
     limitations: [
       'This view exists only to preserve full-precision normalized geometry for downstream proof decisions.',
       'It does not mutate world state, execute the donor core, or independently claim satisfiability.'
