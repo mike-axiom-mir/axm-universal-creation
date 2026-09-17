@@ -23,7 +23,31 @@ MAP_CHANNELS = {"base_color": 3, "normal": 3, "orm": 3, "ao": 1,
 REQUIRED_MAPS = {"base_color", "normal", "orm", "ao", "roughness", "height"}
 
 
-def _validate_png_payload(data, size, channels):
+def material_dimensions(manifest):
+    """Return bounded map dimensions while preserving legacy square bundles.
+
+    `size` remains the existing square v0.1 declaration. New callers may instead
+    provide `dimensions: [width, height]` for rectangular bundles. The two forms
+    are mutually exclusive so a receiver never has to guess which declaration is
+    authoritative.
+    """
+    has_size = "size" in manifest
+    has_dimensions = "dimensions" in manifest
+    if has_size == has_dimensions:
+        raise ValueError("material manifest requires exactly one of size or dimensions")
+    if has_size:
+        size = manifest.get("size")
+        if type(size) is not int or not 16 <= size <= 512:
+            raise ValueError("invalid material size")
+        return size, size
+    dimensions = manifest.get("dimensions")
+    if (not isinstance(dimensions, list) or len(dimensions) != 2
+            or any(type(value) is not int or not 16 <= value <= 512 for value in dimensions)):
+        raise ValueError("invalid material dimensions")
+    return dimensions[0], dimensions[1]
+
+
+def _validate_png_payload(data, width, height, channels):
     """Bound the complete UC PNG stream before passing it to Blender's decoder."""
     cursor, kinds, compressed = 8, [], bytearray()
     while cursor + 12 <= len(data):
@@ -43,12 +67,13 @@ def _validate_png_payload(data, size, channels):
         cursor = end + 4
     if cursor != len(data) or len(kinds) < 3 or kinds[0] != b'IHDR' or kinds[-1] != b'IEND' or any(k != b'IDAT' for k in kinds[1:-1]):
         raise ValueError('invalid UC PNG chunk sequence')
-    expected = size * (size * channels + 1)
+    stride = width * channels
+    expected = height * (stride + 1)
     decoder = zlib.decompressobj()
     raw = decoder.decompress(compressed, expected + 1)
     if len(raw) != expected or not decoder.eof or decoder.unused_data:
         raise ValueError('invalid or oversized PNG scanlines')
-    if any(raw[row * (size * channels + 1)] > 4 for row in range(size)):
+    if any(raw[row * (stride + 1)] > 4 for row in range(height)):
         raise ValueError('invalid PNG scanline filter')
 
 
@@ -69,9 +94,7 @@ def load_material_bundle(folder):
     family, finish = manifest.get("family"), manifest.get("finish")
     if family not in FAMILIES or finish not in [f.name for f in FINISHES]:
         raise ValueError("unknown material family/finish")
-    size = manifest.get("size")
-    if type(size) is not int or not 16 <= size <= 512:
-        raise ValueError("invalid material size")
+    width, height = material_dimensions(manifest)
     if manifest.get("orm_channels") != ["occlusion", "roughness", "metallic"]:
         raise ValueError("unsupported ORM channels")
     convention = manifest.get("normal_convention")
@@ -100,13 +123,13 @@ def load_material_bundle(folder):
         color_space = "sRGB" if name == "base_color" else "linear-data"
         if record.get("channels") != channels or record.get("color_space") != color_space:
             raise ValueError("map channel/color-space mismatch: " + name)
-        header = struct.pack(">IIBBBBB", size, size, 8, 2 if channels == 3 else 0, 0, 0, 0)
+        header = struct.pack(">IIBBBBB", width, height, 8, 2 if channels == 3 else 0, 0, 0, 0)
         if len(data) < 45 or data[:16] != b"\x89PNG\r\n\x1a\n\x00\x00\x00\x0dIHDR" or data[16:29] != header:
             raise ValueError("invalid PNG dimensions/encoding: " + name)
-        _validate_png_payload(data, size, channels)
+        _validate_png_payload(data, width, height, channels)
         payloads[name] = data
     return {"manifest": manifest, "manifest_sha256": hashlib.sha256(manifest_bytes).hexdigest(),
-            "normal_convention": convention, "pngs": payloads}
+            "normal_convention": convention, "dimensions": [width, height], "pngs": payloads}
 
 
 def blender_game_material(folder, name=None):
@@ -120,6 +143,7 @@ def blender_game_material(folder, name=None):
     import bpy
 
     manifest = bundle["manifest"]
+    width, height = bundle["dimensions"]
     label = name or f"UC_{manifest['family']}_{manifest['finish']}"
     images, material, group = [], None, None
     try:
@@ -142,15 +166,15 @@ def blender_game_material(folder, name=None):
                 images.append(image)
                 image.name = label + "_" + key
                 image.colorspace_settings.name = "sRGB" if key == "base_color" else "Non-Color"
-                if tuple(image.size) != (manifest["size"], manifest["size"]):
-                    raise ValueError("Blender could not decode the declared map size")
+                if tuple(image.size) != (width, height):
+                    raise ValueError("Blender could not decode the declared map dimensions")
                 if key == "normal" and bundle["normal_convention"] == "tangent -Y":
                     pixels = array("f", [0.0]) * len(image.pixels)
                     image.pixels.foreach_get(pixels)
                     for offset in range(1, len(pixels), 4):
                         pixels[offset] = 1.0 - pixels[offset]
-                    converted = bpy.data.images.new(label + "_normal_plusY", width=manifest["size"],
-                                                    height=manifest["size"], alpha=False)
+                    converted = bpy.data.images.new(label + "_normal_plusY", width=width,
+                                                    height=height, alpha=False)
                     images.append(converted)
                     converted.colorspace_settings.name = "Non-Color"
                     converted.pixels.foreach_set(pixels)
@@ -168,8 +192,7 @@ def blender_game_material(folder, name=None):
         split = nodes.new("ShaderNodeSeparateColor")
         split.mode = "RGB"
         split.location = (-260, -80)
-        links.new(textures["orm"].outputs["Color"], split.inputs["Color"])
-        links.new(split.outputs["Green"], shader.inputs["Roughness"])
+        links.new(textures["orm"].outputs["Color"], split.inputs["Roughness"])
         links.new(split.outputs["Blue"], shader.inputs["Metallic"])
         # Canonical Blender glTF exporter socket; no baked-in/double AO.
         group = bpy.data.node_groups.new("glTF Material Output", "ShaderNodeTree")
