@@ -292,7 +292,10 @@ def inspect_closed_component_orientation(
 
     return {
         "schema": "axm.mesh-closed-component-orientation/v0.1",
-        "inspection_complete": not_evaluated_count == 0,
+        "inspection_complete": not collapsed_triangles and not_evaluated_count == 0,
+        "global_not_evaluated_reason": (
+            "COLLAPSED_TRIANGLES_PRESENT" if collapsed_triangles else None
+        ),
         "component_count": len(reports),
         "orientable_component_count": orientable_count,
         "non_orientable_component_count": non_orientable_count,
