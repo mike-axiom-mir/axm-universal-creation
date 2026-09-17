@@ -1,6 +1,6 @@
 'use strict';
 
-const VERSION = '0.1.2';
+const VERSION = '0.1.3';
 const SCHEMA = 'axm.uc-two-projection-radial-envelope/v0.1';
 
 function finiteDirection(direction) {
@@ -9,6 +9,10 @@ function finiteDirection(direction) {
 
 function finiteInterval(interval) {
   return interval && Number.isFinite(interval.min) && Number.isFinite(interval.max);
+}
+
+function orderedInterval(interval) {
+  return interval.min <= interval.max;
 }
 
 function finitePoint(point) {
@@ -73,6 +77,14 @@ function analyze(firstDirection, secondDirection, firstInterval, secondInterval)
   if (!finiteInterval(firstInterval) || !finiteInterval(secondInterval)) {
     return unsupported('NON_FINITE_INTERVAL');
   }
+  if (!orderedInterval(firstInterval) || !orderedInterval(secondInterval)) {
+    return unsupported('EMPTY_PROJECTION_INTERVAL', {
+      emptyIntervals: [
+        firstInterval.min > firstInterval.max,
+        secondInterval.min > secondInterval.max
+      ]
+    });
+  }
 
   const determinant = firstDirection.x * secondDirection.y - firstDirection.y * secondDirection.x;
   if (!Number.isFinite(determinant) || Math.abs(determinant) <= Number.EPSILON) {
@@ -125,13 +137,14 @@ function analyze(firstDirection, secondDirection, firstInterval, secondInterval)
     maximumDistance,
     corners,
     evidence: [
-      'The two finite signed projection intervals are mapped through the exact inverse 2D basis into one feasible parallelogram.',
+      'The two finite non-empty signed projection intervals are mapped through the exact inverse 2D basis into one feasible parallelogram.',
       'Minimum radius is the distance from the origin to that finite parallelogram; maximum radius is the farthest corner distance.',
       'Point-to-segment distance is evaluated after common coordinate scaling so finite large-magnitude geometry does not overflow merely because an edge delta is squared.',
       'Non-zero parallelogram edges are retained at their represented floating-point length rather than collapsed by an epsilon-length heuristic.'
     ],
     limitations: [
-      'This helper only handles two finite projection intervals and an invertible 2D direction pair.',
+      'This helper only handles two finite non-empty projection intervals and an invertible 2D direction pair.',
+      'A caller may tolerate a tiny interval gap under its own proof tolerance, but this exact-envelope helper declines min > max rather than manufacturing feasible geometry from an empty intersection.',
       'It does not decide whether directions are eligible for a stronger proof and does not combine more than two projections.',
       'It uses JavaScript Number arithmetic; geometry whose represented inverse-basis points or radial distances are non-finite is declined so the caller can use its conservative fallback.',
       'The caller must retain a proof tolerance for contradiction decisions.',
