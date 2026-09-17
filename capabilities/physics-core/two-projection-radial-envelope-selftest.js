@@ -28,6 +28,7 @@ assert.equal(axisBox.determinant, 1);
 assert.equal(axisBox.minimumDistance, 0);
 assert.equal(axisBox.maximumDistance, Math.hypot(2, 2));
 assert.equal(axisBox.distanceMethod, 'orthonormal-projection-rectangle');
+assert.equal(axisBox.originInsideProjectionRectangle, true);
 assert.deepEqual(axisBox.distanceWork, {
   edgeDistanceEvaluations: 0,
   cornerNormEvaluations: 0
@@ -45,6 +46,7 @@ assert.equal(swappedAxisBox.determinant, -1,
 assert.equal(swappedAxisBox.minimumDistance, Math.hypot(3, 4));
 assert.equal(swappedAxisBox.maximumDistance, Math.hypot(5, 6));
 assert.equal(swappedAxisBox.distanceMethod, 'orthonormal-projection-rectangle');
+assert.equal(swappedAxisBox.originInsideProjectionRectangle, false);
 assert.deepEqual(swappedAxisBox.corners[0], { x: -6, y: 3 },
   'transpose reconstruction must preserve exact corners for determinant -1 orthonormal bases');
 
@@ -140,10 +142,37 @@ assert.equal(pointEnvelope.minimumDistance, pointEnvelope.maximumDistance,
   'two exact projections define one displacement point and therefore one exact radius');
 assert.equal(pointEnvelope.distanceMethod, 'inverse-basis-parallelogram-edges',
   'tolerance-eligible but not exactly orthonormal directions must retain the general exact geometry path');
+assert.equal(pointEnvelope.originInsideProjectionRectangle, false);
 assert.deepEqual(pointEnvelope.distanceWork, {
   edgeDistanceEvaluations: 4,
   cornerNormEvaluations: 4
 });
+
+const originContainedGeneralEnvelope = Envelope.analyze(
+  { x: 1, y: 0 },
+  nearOrthogonalDirection,
+  { min: -3, max: 2 },
+  { min: -4, max: 5 }
+);
+assert.equal(originContainedGeneralEnvelope.supported, true);
+assert.equal(originContainedGeneralEnvelope.minimumDistance, 0,
+  'if both signed projection intervals contain zero, the invertible linear basis makes world-space origin exactly feasible');
+assert.equal(originContainedGeneralEnvelope.originInsideProjectionRectangle, true);
+assert.equal(originContainedGeneralEnvelope.distanceMethod, 'inverse-basis-parallelogram-origin-contained');
+assert.deepEqual(originContainedGeneralEnvelope.distanceWork, {
+  edgeDistanceEvaluations: 0,
+  cornerNormEvaluations: 4
+}, 'origin-contained general envelopes should skip all four redundant edge-distance scans while retaining corner work for the radial maximum');
+assert.deepEqual(
+  Envelope.analyze(
+    { x: 1, y: 0 },
+    nearOrthogonalDirection,
+    { min: -3, max: 2 },
+    { min: -4, max: 5 }
+  ),
+  originContainedGeneralEnvelope,
+  'origin-contained general-envelope evidence must replay deterministically'
+);
 
 const unboundedEnvelope = Envelope.analyze(
   { x: 1, y: 0 },
