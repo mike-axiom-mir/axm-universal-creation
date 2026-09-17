@@ -1,10 +1,9 @@
 """Deterministic structural topology evidence for bounded triangle meshes.
 
-This module diagnoses source-vertex liveness, source-indexed vertex-fan
-connectivity, plus seam-welded edge topology. It does not prove seam-welded
-geometric vertex-manifoldness, freedom from self-intersection, deformation
+This module diagnoses source-vertex liveness plus seam-welded edge topology. It
+does not prove freedom from self-intersection, vertex-manifoldness, deformation
 quality, collision suitability, or visual quality, and it never authorizes source
-vertex deletion or topology repair.
+vertex deletion.
 """
 from __future__ import annotations
 
@@ -88,88 +87,19 @@ def _weld_vertices(vertices: tuple[Point, ...], tolerance: float) -> tuple[tuple
     return tuple(welded), tuple(source_to_welded)
 
 
-def _inspect_source_vertex_fans(
-    raw_indices: tuple[int, ...],
-    vertex_count: int,
-) -> tuple[list[dict[str, int]], int]:
-    """Inspect edge-connected incident-triangle fans at exact source indices.
-
-    This deliberately runs before positional welding. Unreferenced source vertices
-    are handled by the separate liveness evidence and are not relabelled as fan
-    defects. Exact-index-collapsed source triangles are excluded from this local
-    fan observation; the main edge-topology pass already reports them as collapsed.
-    """
-    faces = [tuple(raw_indices[index:index + 3]) for index in range(0, len(raw_indices), 3)]
-    incident_faces: list[list[int]] = [[] for _ in range(vertex_count)]
-    edge_faces: dict[Edge, list[int]] = defaultdict(list)
-
-    for triangle_index, face in enumerate(faces):
-        if len(set(face)) != 3:
-            continue
-        for vertex in face:
-            incident_faces[vertex].append(triangle_index)
-        a, b, c = face
-        for start, end in ((a, b), (b, c), (c, a)):
-            edge = (start, end) if start < end else (end, start)
-            edge_faces[edge].append(triangle_index)
-
-    disconnected: list[dict[str, int]] = []
-    max_components = 0
-
-    for vertex, incident in enumerate(incident_faces):
-        if not incident:
-            continue
-
-        incident_set = set(incident)
-        adjacency = {triangle: set() for triangle in incident}
-        for triangle in incident:
-            face = faces[triangle]
-            for other in face:
-                if other == vertex:
-                    continue
-                edge = (vertex, other) if vertex < other else (other, vertex)
-                for neighbor in edge_faces[edge]:
-                    if neighbor != triangle and neighbor in incident_set:
-                        adjacency[triangle].add(neighbor)
-                        adjacency[neighbor].add(triangle)
-
-        remaining = set(incident)
-        components = 0
-        while remaining:
-            components += 1
-            stack = [remaining.pop()]
-            while stack:
-                current = stack.pop()
-                for neighbor in adjacency[current]:
-                    if neighbor in remaining:
-                        remaining.remove(neighbor)
-                        stack.append(neighbor)
-
-        max_components = max(max_components, components)
-        if components != 1:
-            disconnected.append({
-                "vertex": vertex,
-                "incident_triangle_count": len(incident),
-                "fan_component_count": components,
-            })
-
-    return disconnected, max_components
-
-
 def inspect_mesh_topology(
     positions: Iterable[Sequence[float]],
     indices: Iterable[int],
     *,
     weld_tolerance: float = 1e-6,
 ) -> dict[str, Any]:
-    """Return source and seam-welded structural topology evidence.
+    """Return source-liveness and seam-welded edge-topology evidence.
 
-    ``indices`` is a flat triangle index list. Source-array liveness and exact
-    source-indexed vertex-fan connectivity are measured from the validated source
-    index stream before any positional welding. Coincident source vertices are then
-    clustered by Euclidean distance before edge incidence is measured, which lets
-    hard-normal/material seams be diagnosed as one geometric surface without
-    rewriting the source mesh.
+    ``indices`` is a flat triangle index list. Source-array liveness is measured
+    from the validated source index stream before any positional welding. Coincident
+    source vertices are then clustered by Euclidean distance before edge incidence
+    is measured, which lets hard-normal/material seams be diagnosed as one geometric
+    surface without rewriting the source mesh.
     """
     if isinstance(weld_tolerance, bool) or not isinstance(weld_tolerance, (int, float)):
         raise MeshTopologyError("weld_tolerance must be a finite positive number")
@@ -193,10 +123,6 @@ def inspect_mesh_topology(
     referenced_source_vertices = set(raw_indices)
     unreferenced_source_vertices = tuple(
         index for index in range(len(vertices)) if index not in referenced_source_vertices
-    )
-    disconnected_source_vertex_fans, max_source_vertex_fan_components = _inspect_source_vertex_fans(
-        raw_indices,
-        len(vertices),
     )
 
     welded_vertices, source_to_welded = _weld_vertices(vertices, tolerance)
@@ -285,9 +211,6 @@ def inspect_mesh_topology(
         "referenced_source_vertex_count": len(referenced_source_vertices),
         "unreferenced_source_vertex_count": len(unreferenced_source_vertices),
         "all_source_vertices_referenced": not unreferenced_source_vertices,
-        "disconnected_source_vertex_fan_count": len(disconnected_source_vertex_fans),
-        "max_source_vertex_fan_components": max_source_vertex_fan_components,
-        "all_referenced_source_vertex_fans_connected": not disconnected_source_vertex_fans,
         "welded_vertex_count": len(welded_vertices),
         "welded_vertex_reduction": len(vertices) - len(welded_vertices),
         "triangle_count": len(raw_indices) // 3,
@@ -303,7 +226,6 @@ def inspect_mesh_topology(
         "weld_tolerance": tolerance,
         "examples": {
             "unreferenced_source_vertices": list(unreferenced_source_vertices[:MAX_EXAMPLES]),
-            "disconnected_source_vertex_fans": disconnected_source_vertex_fans[:MAX_EXAMPLES],
             "collapsed_triangles": collapsed_triangles[:MAX_EXAMPLES],
             "boundary_edges": [list(edge) for edge in boundary_edges[:MAX_EXAMPLES]],
             "nonmanifold_edges": [list(edge) for edge in nonmanifold_edges[:MAX_EXAMPLES]],
@@ -312,14 +234,11 @@ def inspect_mesh_topology(
         "truth_boundary": {
             "source_vertex_liveness_checked": True,
             "source_vertex_pruning_performed": False,
-            "source_indexed_vertex_fan_connectivity_checked": True,
-            "source_index_collapsed_triangles_excluded_from_vertex_fans": True,
             "seam_clustered_by_position": True,
             "source_geometry_rewritten": False,
             "edge_incidence_checked": True,
             "shared_edge_orientation_checked": True,
             "vertex_manifoldness_checked": False,
-            "seam_welded_geometric_vertex_manifoldness_checked": False,
             "self_intersection_checked": False,
             "deformation_quality_checked": False,
             "collision_suitability_checked": False,
