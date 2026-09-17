@@ -32,12 +32,13 @@ Supported channels in v0.1 are `POSITION`, `NORMAL`, `TEXCOORD_0`, `TANGENT`, `C
 
 Schema: `axm.indexed-surface-eligibility-report/v0.1`.
 
-The report keeps source and render domain identities separate and returns deterministic digests, a render-vertex-to-candidate map, candidate indices, position-coincident split diagnostics, and explicit non-claims.
+The report keeps source and render domain identities separate and returns deterministic digests, an exact topology-lineage receipt, a render-vertex-to-candidate map, candidate indices, position-coincident split diagnostics, and explicit non-claims.
 
 Important states include:
 
-- `PRESERVE_SOURCE_INDEXING` — the declared render domain is the source domain and no smaller full-tuple candidate exists.
+- `PRESERVE_SOURCE_INDEXING` — the declared render domain exactly reproduces the source triangle-corner stream and no smaller full-tuple candidate exists.
 - `POST_ATTRIBUTE_TUPLE_DEDUP_CANDIDATE` — exact supported attribute tuples permit a smaller candidate index domain. This is only a structural candidate.
+- `HOLD_TOPOLOGY_LINEAGE_MISMATCH` — mapping the render triangle-corner stream through `source_vertex_indices` does not exactly reproduce `source.indices`, so the observer cannot claim this render domain descends from the supplied source topology.
 - `HOLD_ATTRIBUTE_SEAM_AMBIGUITY` — an expanded/remapped render domain omitted the explicit protected-split declaration required by this observer.
 - `NOT_EVALUATED_UNSUPPORTED_CHANNEL` — a present channel is outside the bounded supported set.
 
@@ -46,6 +47,7 @@ Important states include:
 ## Exactness rules
 
 - No tolerance-based welding is performed.
+- The render triangle-corner stream, mapped back through `source_vertex_indices`, must exactly equal `source.indices`; reordered or changed topology is held rather than inferred equivalent.
 - Full supported per-vertex tuples are used, never position alone.
 - Source-vertex lineage participates in the candidate key.
 - Explicit protected split IDs participate in the candidate key even when all supported attributes are identical.
