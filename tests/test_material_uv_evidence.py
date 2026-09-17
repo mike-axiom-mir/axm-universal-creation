@@ -213,6 +213,14 @@ class MaterialUVEvidenceTests(unittest.TestCase):
         self.assertIn("UV_COLLAPSE", codes)
         self.assertIn("NO_MEASURABLE_BINDINGS", codes)
 
+    def test_collapsed_world_basis_holds_without_directional_invention(self):
+        result = self.inspect(*fixture(physical_size=(0.0, 1.0)))
+        self.assertEqual(result["status"], "HOLD")
+        codes = {row["code"] for row in result["findings"]}
+        self.assertIn("DEGENERATE_WORLD_TRIANGLE", codes)
+        self.assertIn("NO_MEASURABLE_BINDINGS", codes)
+        self.assertEqual(result["measurements"]["directional_binding_count"], 0)
+
     def test_texture_transform_and_alternate_uv_set_hold_without_fake_measurement(self):
         for mutate, code in [
             (lambda d: d["materials"][0]["pbrMetallicRoughness"]["baseColorTexture"].update(extensions={"KHR_texture_transform":{"scale":[2,2]}}), "TEXTURE_TRANSFORM_UNMEASURED"),
