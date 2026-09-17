@@ -148,11 +148,13 @@ class MaterialUVEvidenceTests(unittest.TestCase):
             image_size=(512, 512),
         ))
         binding = result["primitives"][0]["bindings"][0]
-        self.assertAlmostEqual(binding["texels_per_m"]["weighted_geometric_mean"], 320.0, places=9)
+        # GLB POSITION/TEXCOORD_0 fixtures are FLOAT32, so decimal dimensions such as
+        # 1.10 are intentionally checked within their encoded precision, not as ideal reals.
+        self.assertAlmostEqual(binding["texels_per_m"]["weighted_geometric_mean"], 320.0, delta=1e-4)
         measured = directional(binding)
-        self.assertAlmostEqual(measured["principal_min"]["weighted_geometric_mean"], 320.0, places=9)
-        self.assertAlmostEqual(measured["principal_max"]["weighted_geometric_mean"], 320.0, places=9)
-        self.assertAlmostEqual(measured["anisotropy_ratio"]["weighted_geometric_mean"], 1.0, places=12)
+        self.assertAlmostEqual(measured["principal_min"]["weighted_geometric_mean"], 320.0, delta=1e-4)
+        self.assertAlmostEqual(measured["principal_max"]["weighted_geometric_mean"], 320.0, delta=1e-4)
+        self.assertAlmostEqual(measured["anisotropy_ratio"]["weighted_geometric_mean"], 1.0, delta=1e-6)
 
     def test_aspect_blind_unit_square_exposes_directional_anisotropy_without_changing_scalar_semantics(self):
         result = self.inspect(*fixture(world_size=(1.10, 1.50), image_size=(512, 512)))
@@ -161,15 +163,15 @@ class MaterialUVEvidenceTests(unittest.TestCase):
         expected_max = 512 / 1.10
         expected_ratio = 1.50 / 1.10
         expected_scalar = math.sqrt(expected_min * expected_max)
-        self.assertAlmostEqual(binding["texels_per_m"]["weighted_geometric_mean"], expected_scalar, places=9)
+        self.assertAlmostEqual(binding["texels_per_m"]["weighted_geometric_mean"], expected_scalar, delta=1e-4)
         measured = directional(binding)
-        self.assertAlmostEqual(measured["principal_min"]["weighted_geometric_mean"], expected_min, places=9)
-        self.assertAlmostEqual(measured["principal_max"]["weighted_geometric_mean"], expected_max, places=9)
-        self.assertAlmostEqual(measured["anisotropy_ratio"]["weighted_geometric_mean"], expected_ratio, places=9)
+        self.assertAlmostEqual(measured["principal_min"]["weighted_geometric_mean"], expected_min, delta=1e-4)
+        self.assertAlmostEqual(measured["principal_max"]["weighted_geometric_mean"], expected_max, delta=1e-4)
+        self.assertAlmostEqual(measured["anisotropy_ratio"]["weighted_geometric_mean"], expected_ratio, delta=1e-6)
         self.assertAlmostEqual(
             math.sqrt(measured["principal_min"]["weighted_geometric_mean"]
                       * measured["principal_max"]["weighted_geometric_mean"]),
-            binding["texels_per_m"]["weighted_geometric_mean"], places=9,
+            binding["texels_per_m"]["weighted_geometric_mean"], delta=1e-6,
         )
 
     def test_rectangular_image_dimensions_are_applied_per_axis(self):
