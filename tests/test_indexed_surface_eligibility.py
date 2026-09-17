@@ -1,7 +1,12 @@
 import copy
 import unittest
 
-from axm_uc.indexed_surface_eligibility import INPUT_SCHEMA, observe_indexed_surface_eligibility
+from axm_uc.indexed_surface_eligibility import (
+    CROSS_SOURCE_TUPLE_POLICY,
+    INPUT_SCHEMA,
+    SOURCE_LINEAGE_POLICY,
+    observe_indexed_surface_eligibility,
+)
 
 
 def base_spec():
@@ -24,6 +29,7 @@ def base_spec():
 class IndexedSurfaceEligibilityTests(unittest.TestCase):
     def test_preserves_valid_source_indexing(self):
         report = observe_indexed_surface_eligibility(base_spec())
+        self.assertEqual(report["candidate_identity_policy"], SOURCE_LINEAGE_POLICY)
         self.assertEqual(report["eligibility_state"], "PRESERVE_SOURCE_INDEXING")
         self.assertEqual(report["render_domain_state"], "SAME_AS_SOURCE")
         self.assertEqual(report["candidate"]["vertex_count"], 4)
@@ -99,6 +105,65 @@ class IndexedSurfaceEligibilityTests(unittest.TestCase):
         self.assertEqual(report["candidate"]["vertex_count"], 5)
         self.assertEqual(report["split_observation"]["protected_split_id_count"], 2)
         self.assertFalse(report["split_observation"]["position_only_weld_safe"])
+
+    def test_cross_source_triangle_corner_dedup_requires_explicit_policy_and_split_declaration(self):
+        spec = {
+            "schema": INPUT_SCHEMA,
+            "source_identity": "triangle-corner-source",
+            "surface_identity": "one-partition",
+            "candidate_identity_policy": CROSS_SOURCE_TUPLE_POLICY,
+            "source": {"vertex_count": 6, "indices": list(range(6))},
+            "render": {
+                "vertex_count": 6,
+                "indices": list(range(6)),
+                "protected_split_ids": [None] * 6,
+                "channels": {
+                    "POSITION": [[0, 0, 0], [1, 0, 0], [1, 1, 0], [0, 0, 0], [1, 1, 0], [0, 1, 0]],
+                    "NORMAL": [[0, 0, 1]] * 6,
+                },
+            },
+        }
+        report = observe_indexed_surface_eligibility(spec)
+        self.assertEqual(report["eligibility_state"], "POST_ATTRIBUTE_TUPLE_DEDUP_CANDIDATE")
+        self.assertEqual(report["render_domain_state"], "RENDER_DOMAIN_CROSS_SOURCE_DEDUP_CANDIDATE")
+        self.assertEqual(report["candidate"]["vertex_count"], 4)
+        self.assertEqual(report["candidate"]["indices"], [0, 1, 2, 0, 2, 3])
+        self.assertEqual(report["cross_source_observation"]["candidate_groups_spanning_multiple_source_vertices"], 2)
+        self.assertTrue(report["cross_source_observation"]["enabled"])
+
+        source_preserving = copy.deepcopy(spec)
+        source_preserving.pop("candidate_identity_policy")
+        report = observe_indexed_surface_eligibility(source_preserving)
+        self.assertEqual(report["candidate_identity_policy"], SOURCE_LINEAGE_POLICY)
+        self.assertEqual(report["candidate"]["vertex_count"], 6)
+        self.assertEqual(report["render_domain_state"], "SAME_AS_SOURCE")
+
+        missing_split = copy.deepcopy(spec)
+        del missing_split["render"]["protected_split_ids"]
+        report = observe_indexed_surface_eligibility(missing_split)
+        self.assertEqual(report["eligibility_state"], "HOLD_CROSS_SOURCE_SPLIT_DECLARATION_REQUIRED")
+        self.assertIsNone(report["candidate"])
+
+    def test_cross_source_policy_preserves_explicit_non_attribute_split(self):
+        spec = {
+            "schema": INPUT_SCHEMA,
+            "source_identity": "split-source",
+            "surface_identity": "one-partition",
+            "candidate_identity_policy": CROSS_SOURCE_TUPLE_POLICY,
+            "source": {"vertex_count": 6, "indices": list(range(6))},
+            "render": {
+                "vertex_count": 6,
+                "indices": list(range(6)),
+                "protected_split_ids": ["a", None, None, "b", None, None],
+                "channels": {
+                    "POSITION": [[0, 0, 0], [1, 0, 0], [1, 1, 0], [0, 0, 0], [1, 1, 0], [0, 1, 0]],
+                    "NORMAL": [[0, 0, 1]] * 6,
+                },
+            },
+        }
+        report = observe_indexed_surface_eligibility(spec)
+        self.assertEqual(report["candidate"]["vertex_count"], 5)
+        self.assertEqual(report["split_observation"]["protected_split_id_count"], 2)
 
     def test_unknown_channel_fails_closed_without_candidate(self):
         spec = base_spec()
