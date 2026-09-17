@@ -263,6 +263,11 @@ def observe_indexed_surface_eligibility(spec: dict[str, Any]) -> dict[str, Any]:
         for candidate_index, source_indices_for_candidate in candidate_source_sets.items()
         if len(source_indices_for_candidate) > 1
     )
+    cross_source_vertices = {
+        source_index
+        for _, source_indices_for_candidate in cross_source_groups
+        for source_index in source_indices_for_candidate
+    }
 
     by_position: dict[bytes, list[int]] = {}
     for index, row in enumerate(channels["POSITION"]):
@@ -306,7 +311,7 @@ def observe_indexed_surface_eligibility(spec: dict[str, Any]) -> dict[str, Any]:
     base["cross_source_observation"] = {
         "enabled": candidate_policy == CROSS_SOURCE_TUPLE_POLICY,
         "candidate_groups_spanning_multiple_source_vertices": len(cross_source_groups),
-        "source_vertices_participating_in_cross_source_groups": sum(len(group) for _, group in cross_source_groups),
+        "source_vertices_participating_in_cross_source_groups": len(cross_source_vertices),
         "group_digest": _digest(cross_source_groups),
     }
     base["candidate"] = {
