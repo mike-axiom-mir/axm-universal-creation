@@ -1,6 +1,6 @@
 'use strict';
 
-const VERSION = '0.1.9';
+const VERSION = '0.1.11';
 const SCHEMA = 'axm.uc-two-projection-radial-envelope/v0.1';
 
 function finiteDirection(direction) {
@@ -29,6 +29,10 @@ function finitePoint(point) {
 
 function norm(point) {
   return Math.hypot(point.x, point.y);
+}
+
+function directionNorm(direction) {
+  return Math.hypot(direction.x, direction.y);
 }
 
 function directionNormSquared(direction) {
@@ -124,6 +128,16 @@ function analyze(firstDirection, secondDirection, firstInterval, secondInterval)
   }
 
   const orthonormalFastPath = exactOrthonormalPair(firstDirection, secondDirection);
+  const representedDot = dot(firstDirection, secondDirection);
+  const firstDirectionNorm = directionNorm(firstDirection);
+  const secondDirectionNorm = directionNorm(secondDirection);
+  const scaledOrthogonalFastPath =
+    !orthonormalFastPath &&
+    representedDot === 0 &&
+    Number.isFinite(firstDirectionNorm) &&
+    Number.isFinite(secondDirectionNorm) &&
+    firstDirectionNorm > 0 &&
+    secondDirectionNorm > 0;
   const firstDegenerate = firstInterval.min === firstInterval.max;
   const secondDegenerate = secondInterval.min === secondInterval.max;
   const degenerateProjectionIntervals = Number(firstDegenerate) + Number(secondDegenerate);
@@ -163,6 +177,20 @@ function analyze(firstDirection, secondDirection, firstInterval, secondInterval)
       maximumAbsoluteInterval(secondInterval)
     );
     distanceMethod = 'orthonormal-projection-rectangle';
+    distanceWork = {
+      edgeDistanceEvaluations: 0,
+      cornerNormEvaluations: 0
+    };
+  } else if (scaledOrthogonalFastPath) {
+    minimumDistance = Math.hypot(
+      minimumAbsoluteInterval(firstInterval) / firstDirectionNorm,
+      minimumAbsoluteInterval(secondInterval) / secondDirectionNorm
+    );
+    maximumDistance = Math.hypot(
+      maximumAbsoluteInterval(firstInterval) / firstDirectionNorm,
+      maximumAbsoluteInterval(secondInterval) / secondDirectionNorm
+    );
+    distanceMethod = 'orthogonal-scaled-projection-rectangle';
     distanceWork = {
       edgeDistanceEvaluations: 0,
       cornerNormEvaluations: 0
@@ -231,14 +259,18 @@ function analyze(firstDirection, secondDirection, firstInterval, secondInterval)
         return unsupported('NON_FINITE_RADIAL_ENVELOPE', { determinant });
       }
     } else {
-      minimumDistance = Infinity;
-      for (let index = 0; index < corners.length; index += 1) {
-        const edgeDistance = pointSegmentDistanceToOrigin(corners[index], corners[(index + 1) % corners.length]);
-        if (!Number.isFinite(edgeDistance)) {
-          return unsupported('NON_FINITE_RADIAL_ENVELOPE', { determinant });
-        }
-        minimumDistance = Math.min(minimumDistance, edgeDistance);
+      const firstNearestIsMin = Math.abs(firstInterval.min) <= Math.abs(firstInterval.max);
+      const secondNearestIsMin = Math.abs(secondInterval.min) <= Math.abs(secondInterval.max);
+      const firstEdgeStart = firstNearestIsMin ? corners[0] : corners[1];
+      const firstEdgeEnd = firstNearestIsMin ? corners[3] : corners[2];
+      const secondEdgeStart = secondNearestIsMin ? corners[0] : corners[3];
+      const secondEdgeEnd = secondNearestIsMin ? corners[1] : corners[2];
+      const firstEdgeDistance = pointSegmentDistanceToOrigin(firstEdgeStart, firstEdgeEnd);
+      const secondEdgeDistance = pointSegmentDistanceToOrigin(secondEdgeStart, secondEdgeEnd);
+      if (!Number.isFinite(firstEdgeDistance) || !Number.isFinite(secondEdgeDistance)) {
+        return unsupported('NON_FINITE_RADIAL_ENVELOPE', { determinant });
       }
+      minimumDistance = Math.min(firstEdgeDistance, secondEdgeDistance);
     }
 
     let cornerNormEvaluations;
@@ -265,13 +297,13 @@ function analyze(firstDirection, secondDirection, firstInterval, secondInterval)
         ? 'inverse-basis-parallelogram-origin-contained'
         : zeroContainingProjectionIntervals === 1
           ? 'inverse-basis-parallelogram-single-active-edge'
-          : 'inverse-basis-parallelogram-edges';
+          : 'inverse-basis-parallelogram-two-active-edges';
     distanceWork = {
       edgeDistanceEvaluations: originInsideProjectionRectangle
         ? 0
         : zeroContainingProjectionIntervals === 1
           ? 1
-          : corners.length,
+          : 2,
       cornerNormEvaluations
     };
   }
@@ -298,22 +330,26 @@ function analyze(firstDirection, secondDirection, firstInterval, secondInterval)
       'The two finite non-empty signed projection intervals are mapped through the exact inverse 2D basis into one feasible affine envelope.',
       orthonormalFastPath
         ? 'An exactly orthonormal two-direction basis preserves Euclidean distance, so radial extrema come directly from the projection rectangle without edge-distance or corner-norm scans.'
-        : degenerateProjectionIntervals === 2
-          ? 'Two exact projections define one feasible inverse-basis point, so radial minimum and maximum are the same single point norm.'
-          : degenerateProjectionIntervals === 1
-            ? originInsideProjectionRectangle
-              ? 'One exact projection plus one finite interval defines a feasible segment containing the origin, so radial minimum is zero and radial maximum needs only the two endpoint norms.'
-              : 'One exact projection plus one finite interval defines a feasible segment, so radial minimum needs one point-to-segment evaluation and radial maximum needs only the two endpoint norms.'
-            : centrallySymmetricProjectionRectangle
-              ? 'Both projection intervals are exactly symmetric about zero, so the inverse-basis parallelogram is centrally symmetric: radial minimum is zero and opposite corner radii are equal, requiring only two unique corner norms for the radial maximum.'
-              : originInsideProjectionRectangle
-                ? 'Both projection intervals contain zero, so linear inverse-basis geometry makes the world-space origin exactly feasible and radial minimum is zero without scanning parallelogram edges.'
-                : zeroContainingProjectionIntervals === 1
-                  ? 'Exactly one projection interval contains zero; convex inverse-basis squared distance puts the radial minimum on the nearest boundary edge of the other one-sided interval, so only that active edge is evaluated.'
-                  : 'Minimum radius is the distance from the origin to the finite parallelogram edges; maximum radius is the farthest corner distance.',
+        : scaledOrthogonalFastPath
+          ? 'An exactly represented orthogonal two-direction basis with finite nonzero direction norms separates radial distance into scale-adjusted projection components, so radial extrema come directly from the projection rectangle without edge-distance or corner-norm scans.'
+          : degenerateProjectionIntervals === 2
+            ? 'Two exact projections define one feasible inverse-basis point, so radial minimum and maximum are the same single point norm.'
+            : degenerateProjectionIntervals === 1
+              ? originInsideProjectionRectangle
+                ? 'One exact projection plus one finite interval defines a feasible segment containing the origin, so radial minimum is zero and radial maximum needs only the two endpoint norms.'
+                : 'One exact projection plus one finite interval defines a feasible segment, so radial minimum needs one point-to-segment evaluation and radial maximum needs only the two endpoint norms.'
+              : centrallySymmetricProjectionRectangle
+                ? 'Both projection intervals are exactly symmetric about zero, so the inverse-basis parallelogram is centrally symmetric: radial minimum is zero and opposite corner radii are equal, requiring only two unique corner norms for the radial maximum.'
+                : originInsideProjectionRectangle
+                  ? 'Both projection intervals contain zero, so linear inverse-basis geometry makes the world-space origin exactly feasible and radial minimum is zero without scanning parallelogram edges.'
+                  : zeroContainingProjectionIntervals === 1
+                    ? 'Exactly one projection interval contains zero; convex inverse-basis squared distance puts the radial minimum on the nearest boundary edge of the other one-sided interval, so only that active edge is evaluated.'
+                    : 'Neither projection interval contains zero. Positive homogeneity of the linear inverse basis means any feasible point away from both nearest-to-zero projection boundaries can be scaled toward zero until one of those two boundaries is reached with strictly smaller radius, so only those two active edges can contain the radial minimum.',
       orthonormalFastPath
         ? 'Orthonormal corners are reconstructed through the transpose basis, avoiding determinant division on this exact common-case path.'
-        : 'Point-to-segment distance is evaluated after common coordinate scaling so finite large-magnitude geometry does not overflow merely because an edge delta is squared.',
+        : scaledOrthogonalFastPath
+          ? 'The scale-adjusted orthogonal radial calculation uses represented direction norms; inverse-basis corners remain available as finite geometry evidence.'
+          : 'Point-to-segment distance is evaluated after common coordinate scaling so finite large-magnitude geometry does not overflow merely because an edge delta is squared.',
       degenerateProjectionIntervals === 2
         ? 'A finite projection rectangle with two collapsed intervals is treated as its actual unique point instead of scanning four zero-length edges and four duplicate corners.'
         : degenerateProjectionIntervals === 1
@@ -322,14 +358,16 @@ function analyze(firstDirection, secondDirection, firstInterval, secondInterval)
             ? 'Exact origin symmetry makes opposite world-space corners negatives of each other under the linear inverse basis, so only two unique corner norms are evaluated.'
             : zeroContainingProjectionIntervals === 1
               ? 'For a non-degenerate projection rectangle with exactly one zero-containing interval, only the nearest boundary edge of the other interval can contain the radial minimum; the other three edge scans are skipped.'
-              : 'General non-degenerate envelopes retain the complete edge scan unless the origin is feasible or the single-active-edge proof applies.'
+              : 'For a non-degenerate projection rectangle with neither interval containing zero, only the nearest-to-zero boundary edge from each projection axis can contain the radial minimum; the two farther boundary edges are skipped.'
     ],
     limitations: [
       'This helper only handles two finite non-empty projection intervals and an invertible 2D direction pair.',
-      'The orthonormal fast path requires exact represented unit norms and exact represented zero dot product; tolerance-accepted near-orthogonal pairs retain the inverse-basis geometry paths.',
+      'The orthonormal fast path requires exact represented unit norms and exact represented zero dot product.',
+      'The scaled-orthogonal fast path requires an exact represented zero dot product plus finite nonzero represented direction norms; tolerance-accepted nonzero-dot pairs retain the inverse-basis geometry paths.',
       'Degenerate interval fast paths only reduce repeated work after the same two-direction inverse-basis geometry has already been accepted; one collapsed interval is a segment and two collapsed intervals are one point.',
       'The general 2D inverse-basis path may skip all edge-distance scans only when both signed intervals contain zero, because linear invertibility then makes world-space displacement zero exactly feasible.',
-      'For a non-degenerate general envelope with exactly one zero-containing projection interval, only the nearest boundary edge of the other one-sided interval is evaluated for radial minimum; when neither interval contains zero, all four edges remain authoritative.',
+      'For a non-degenerate general envelope with exactly one zero-containing projection interval, only the nearest boundary edge of the other one-sided interval is evaluated for radial minimum.',
+      'For a non-degenerate general envelope with neither interval containing zero, radial minimum is evaluated on exactly two edges: the boundary of each one-sided projection interval nearest zero. Positive homogeneity excludes the two farther edges from containing the minimum.',
       'The two-corner radial-maximum fast path requires both represented projection intervals to be exactly symmetric about zero; merely near-symmetric intervals retain the full four-corner norm scan.',
       'A caller may tolerate a tiny interval gap under its own proof tolerance, but this exact-envelope helper declines min > max rather than manufacturing feasible geometry from an empty intersection.',
       'It does not decide whether directions are eligible for a stronger proof and does not combine more than two projections.',

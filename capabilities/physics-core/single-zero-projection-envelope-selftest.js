@@ -67,11 +67,11 @@ const neitherContainsZero = Envelope.analyze(
 );
 assert.equal(neitherContainsZero.supported, true);
 assert.equal(neitherContainsZero.zeroContainingProjectionIntervals, 0);
-assert.equal(neitherContainsZero.distanceMethod, 'inverse-basis-parallelogram-edges');
+assert.equal(neitherContainsZero.distanceMethod, 'inverse-basis-parallelogram-two-active-edges');
 assert.deepEqual(neitherContainsZero.distanceWork, {
-  edgeDistanceEvaluations: 4,
+  edgeDistanceEvaluations: 2,
   cornerNormEvaluations: 4
-}, 'the optimization must not weaken the authoritative full edge scan when neither interval contains zero');
+}, 'when neither interval contains zero, only the nearest-to-zero boundary from each projection axis should be scanned');
 
 assert.deepEqual(
   Envelope.analyze(

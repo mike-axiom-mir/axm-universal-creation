@@ -67,8 +67,12 @@ jobs:
         run: node capabilities/physics-core/orthogonal-projection-pair-index-selftest.js
       - name: Verify exact finite two-projection radial envelopes
         run: node capabilities/physics-core/two-projection-radial-envelope-selftest.js
+      - name: Verify scaled exact-orthogonal projection envelope fast path
+        run: node capabilities/physics-core/scaled-orthogonal-projection-envelope-selftest.js
       - name: Verify single-zero projection envelope edge reduction
         run: node capabilities/physics-core/single-zero-projection-envelope-selftest.js
+      - name: Verify two-active-edge projection envelope reduction
+        run: node capabilities/physics-core/two-active-edge-projection-envelope-selftest.js
       - name: Verify origin-symmetric projection envelope corner reduction
         run: node capabilities/physics-core/origin-symmetric-projection-envelope-selftest.js
       - name: Verify one-degenerate finite projection envelope work reduction
