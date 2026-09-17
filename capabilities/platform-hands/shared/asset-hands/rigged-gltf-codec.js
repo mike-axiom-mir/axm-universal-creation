@@ -535,6 +535,11 @@
             parsed.bytes.byteOffset + at,
             4,
           ).getFloat32(0, true);
+        if (
+          accessor.normalized === true &&
+          (accessor.componentType === 5121 || accessor.componentType === 5123)
+        )
+          v /= accessor.componentType === 5121 ? 255 : 65535;
         values.push(v);
       }
       out.push(values);
@@ -744,12 +749,22 @@
         [5121, 5123].indexOf(jointAccessor.componentType) < 0
       )
         errors.push("JOINTS_0 accessor invalid");
-      if (
-        !weightAccessor ||
-        weightAccessor.type !== "VEC4" ||
-        weightAccessor.componentType !== 5126
-      )
-        errors.push("WEIGHTS_0 accessor invalid");
+      var weightComponent =
+          weightAccessor && weightAccessor.componentType,
+        weightNormalized =
+          weightAccessor && weightAccessor.normalized === true,
+        weightNormalizedFieldValid =
+          !!weightAccessor &&
+          (weightAccessor.normalized === undefined ||
+            typeof weightAccessor.normalized === "boolean"),
+        weightFormatValid =
+          !!weightAccessor &&
+          weightAccessor.type === "VEC4" &&
+          weightNormalizedFieldValid &&
+          ((weightComponent === 5126 && !weightNormalized) ||
+            ([5121, 5123].indexOf(weightComponent) >= 0 &&
+              weightNormalized));
+      if (!weightFormatValid) errors.push("WEIGHTS_0 accessor invalid");
       if (
         !inverseAccessor ||
         inverseAccessor.type !== "MAT4" ||

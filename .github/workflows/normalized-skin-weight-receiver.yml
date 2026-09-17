@@ -1,0 +1,31 @@
+name: Normalized skin-weight receiver parity
+
+on:
+  pull_request:
+    paths:
+      - "capabilities/platform-hands/shared/asset-hands/rigged-gltf-codec.js"
+      - "capabilities/platform-hands/shared/asset-hands/tests/normalized-skin-weight-receiver-selftest.js"
+      - ".github/workflows/normalized-skin-weight-receiver.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  receiver-parity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Verify JavaScript rigged receiver contract
+        run: node capabilities/platform-hands/shared/asset-hands/tests/normalized-skin-weight-receiver-selftest.js
+
+      - name: Cross-check existing Python game-pose receiver contract
+        run: python -m unittest tests.test_game_pose_runtime.GamePoseRuntimeTests.test_normalized_integer_weights_are_supported -v
