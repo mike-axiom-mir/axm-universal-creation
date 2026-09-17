@@ -1,6 +1,6 @@
 'use strict';
 
-const VERSION = '0.1.4';
+const VERSION = '0.1.5';
 const SCHEMA = 'axm.uc-two-projection-radial-envelope/v0.1';
 
 function finiteDirection(direction) {
@@ -122,6 +122,9 @@ function analyze(firstDirection, secondDirection, firstInterval, secondInterval)
   }
 
   const orthonormalFastPath = exactOrthonormalPair(firstDirection, secondDirection);
+  const originInsideProjectionRectangle =
+    firstInterval.min <= 0 && firstInterval.max >= 0 &&
+    secondInterval.min <= 0 && secondInterval.max >= 0;
   const projectionCorners = [
     [firstInterval.min, secondInterval.min],
     [firstInterval.max, secondInterval.min],
@@ -162,13 +165,21 @@ function analyze(firstDirection, secondDirection, firstInterval, secondInterval)
       cornerNormEvaluations: 0
     };
   } else {
-    minimumDistance = Infinity;
-    for (let index = 0; index < corners.length; index += 1) {
-      const edgeDistance = pointSegmentDistanceToOrigin(corners[index], corners[(index + 1) % corners.length]);
-      if (!Number.isFinite(edgeDistance)) {
-        return unsupported('NON_FINITE_RADIAL_ENVELOPE', { determinant });
+    if (originInsideProjectionRectangle) {
+      // The inverse basis is linear and maps projection (0, 0) to world-space
+      // displacement (0, 0). If both finite intervals contain zero, the origin is
+      // therefore feasible exactly and the radial minimum is known without scanning
+      // any parallelogram edges.
+      minimumDistance = 0;
+    } else {
+      minimumDistance = Infinity;
+      for (let index = 0; index < corners.length; index += 1) {
+        const edgeDistance = pointSegmentDistanceToOrigin(corners[index], corners[(index + 1) % corners.length]);
+        if (!Number.isFinite(edgeDistance)) {
+          return unsupported('NON_FINITE_RADIAL_ENVELOPE', { determinant });
+        }
+        minimumDistance = Math.min(minimumDistance, edgeDistance);
       }
-      minimumDistance = Math.min(minimumDistance, edgeDistance);
     }
 
     const cornerDistances = corners.map(norm);
@@ -176,13 +187,11 @@ function analyze(firstDirection, secondDirection, firstInterval, secondInterval)
       return unsupported('NON_FINITE_RADIAL_ENVELOPE', { determinant });
     }
     maximumDistance = cornerDistances.reduce((maximum, distance) => Math.max(maximum, distance), 0);
-    const originInsideProjectionRectangle =
-      firstInterval.min <= 0 && firstInterval.max >= 0 &&
-      secondInterval.min <= 0 && secondInterval.max >= 0;
-    if (originInsideProjectionRectangle) minimumDistance = 0;
-    distanceMethod = 'inverse-basis-parallelogram-edges';
+    distanceMethod = originInsideProjectionRectangle
+      ? 'inverse-basis-parallelogram-origin-contained'
+      : 'inverse-basis-parallelogram-edges';
     distanceWork = {
-      edgeDistanceEvaluations: corners.length,
+      edgeDistanceEvaluations: originInsideProjectionRectangle ? 0 : corners.length,
       cornerNormEvaluations: corners.length
     };
   }
@@ -199,13 +208,16 @@ function analyze(firstDirection, secondDirection, firstInterval, secondInterval)
     minimumDistance,
     maximumDistance,
     corners,
+    originInsideProjectionRectangle,
     distanceMethod,
     distanceWork,
     evidence: [
       'The two finite non-empty signed projection intervals are mapped through the exact inverse 2D basis into one feasible parallelogram.',
       orthonormalFastPath
         ? 'An exactly orthonormal two-direction basis preserves Euclidean distance, so radial extrema come directly from the projection rectangle without edge-distance or corner-norm scans.'
-        : 'Minimum radius is the distance from the origin to the finite parallelogram edges; maximum radius is the farthest corner distance.',
+        : originInsideProjectionRectangle
+          ? 'Both projection intervals contain zero, so linear inverse-basis geometry makes the world-space origin exactly feasible and radial minimum is zero without scanning parallelogram edges.'
+          : 'Minimum radius is the distance from the origin to the finite parallelogram edges; maximum radius is the farthest corner distance.',
       orthonormalFastPath
         ? 'Orthonormal corners are reconstructed through the transpose basis, avoiding determinant division on this exact common-case path.'
         : 'Point-to-segment distance is evaluated after common coordinate scaling so finite large-magnitude geometry does not overflow merely because an edge delta is squared.',
@@ -214,6 +226,7 @@ function analyze(firstDirection, secondDirection, firstInterval, secondInterval)
     limitations: [
       'This helper only handles two finite non-empty projection intervals and an invertible 2D direction pair.',
       'The orthonormal fast path requires exact represented unit norms and exact represented zero dot product; tolerance-accepted near-orthogonal pairs retain the general inverse-basis path.',
+      'The general inverse-basis path may skip edge-distance scans only when both signed intervals contain zero, because linear invertibility then makes world-space displacement zero exactly feasible.',
       'A caller may tolerate a tiny interval gap under its own proof tolerance, but this exact-envelope helper declines min > max rather than manufacturing feasible geometry from an empty intersection.',
       'It does not decide whether directions are eligible for a stronger proof and does not combine more than two projections.',
       'It uses JavaScript Number arithmetic; geometry whose represented inverse-basis points or radial distances are non-finite is declined so the caller can use its conservative fallback.',
