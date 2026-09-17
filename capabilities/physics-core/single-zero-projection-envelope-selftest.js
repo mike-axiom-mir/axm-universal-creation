@@ -21,8 +21,8 @@ assert.equal(firstExcluded.originInsideProjectionRectangle, false);
 assert.equal(firstExcluded.distanceMethod, 'inverse-basis-parallelogram-single-active-edge');
 assert.deepEqual(firstExcluded.distanceWork, {
   edgeDistanceEvaluations: 1,
-  cornerNormEvaluations: 4
-}, 'one zero-containing interval should require only the nearest boundary edge of the other interval');
+  cornerNormEvaluations: 1
+}, 'one zero-containing interval should require only the nearest boundary edge, while its exact origin symmetry selects one maximum corner');
 assert.ok(Math.abs(firstExcluded.minimumDistance - 3) < 1e-12,
   'the positive first-projection interval should reach its radial minimum on the min boundary edge');
 
@@ -36,7 +36,7 @@ assert.equal(firstExcludedNegative.supported, true);
 assert.equal(firstExcludedNegative.distanceMethod, 'inverse-basis-parallelogram-single-active-edge');
 assert.deepEqual(firstExcludedNegative.distanceWork, {
   edgeDistanceEvaluations: 1,
-  cornerNormEvaluations: 4
+  cornerNormEvaluations: 1
 });
 assert.ok(Math.abs(firstExcludedNegative.minimumDistance - 3) < 1e-12,
   'the negative first-projection interval should reach its radial minimum on the max boundary edge nearest zero');
@@ -54,7 +54,7 @@ assert.equal(secondExcluded.originInsideProjectionRectangle, false);
 assert.equal(secondExcluded.distanceMethod, 'inverse-basis-parallelogram-single-active-edge');
 assert.deepEqual(secondExcluded.distanceWork, {
   edgeDistanceEvaluations: 1,
-  cornerNormEvaluations: 4
+  cornerNormEvaluations: 1
 });
 assert.ok(Math.abs(secondExcluded.minimumDistance - 4) < 1e-12,
   'the positive second-projection interval should reach its radial minimum on the min boundary edge');
@@ -71,7 +71,7 @@ assert.equal(neitherContainsZero.distanceMethod, 'inverse-basis-parallelogram-tw
 assert.deepEqual(neitherContainsZero.distanceWork, {
   edgeDistanceEvaluations: 2,
   cornerNormEvaluations: 4
-}, 'when neither interval contains zero, only the nearest-to-zero boundary from each projection axis should be scanned');
+}, 'when neither interval contains zero or exact symmetry, only the two nearest edges are scanned and the full corner maximum remains authoritative');
 
 assert.deepEqual(
   Envelope.analyze(
