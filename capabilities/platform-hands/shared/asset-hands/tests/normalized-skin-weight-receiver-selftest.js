@@ -94,6 +94,7 @@ for (const [name, bytes] of [
 for (const [name, bytes] of [
   ["u8-without-normalized", variant(packed.bytes, 5121, false)],
   ["u16-without-normalized", variant(packed.bytes, 5123, undefined)],
+  ["u16-null-normalized", variant(packed.bytes, 5123, null)],
   ["normalized-float", variant(packed.bytes, 5126, true)],
 ]) {
   const inspection = Rig.inspect(bytes);
