@@ -5,8 +5,8 @@ const Composer = require('./uc-constraint-composer.js');
 const BaseGuard = require('./uc-constraint-preflight-guard.js');
 const OrthogonalPreflight = require('./uc-orthogonal-projection-preflight.js');
 
-const VERSION = '0.4.0';
-const STEP_SCHEMA = 'axm.uc-orthogonal-projection-preflight-guard-step/v0.4';
+const VERSION = '0.5.0';
+const STEP_SCHEMA = 'axm.uc-orthogonal-projection-preflight-guard-step/v0.5';
 
 function clone(value) {
   if (Array.isArray(value)) return value.map(clone);
@@ -63,14 +63,14 @@ function step(world, constraints, dt, options) {
       'PROVABLE_ORTHOGONAL_LOCAL_CONFLICT',
       [
         preflight.counts.orthogonalProjectionRadialConflicts + ' bounded same-pair orthogonal projection/radial conflict(s) blocked before donor integration.',
-        'Radial-maximum conflicts use conservative lower bounds from the accepted two-direction basis; radial-minimum conflicts require finite upper bounds on both accepted projections.'
+        'Finite accepted projection intervals use the exact two-direction feasible parallelogram for radial bounds; non-finite cases retain the conservative singular-value fallback.'
       ],
       [
         'This is an opt-in stronger guard layered in front of the existing fail-closed preflight guard; the existing guard and composer are unchanged.',
         'Only two same-body-pair unit projection groups that are mutually orthogonal within a strict tolerance are combined at once.',
-        'Because eligibility uses a strict numeric tolerance, accepted two-direction bases are converted through their exact singular values instead of assuming an exactly orthonormal Pythagorean identity.',
-        'Radial minima are considered only when both accepted projection intervals have finite maximum magnitudes; unbounded intervals are not guessed closed.',
-        'Oblique directions, multi-pair geometry, loops and global satisfiability remain outside this guard.',
+        'Finite two-direction intervals are converted through the exact invertible 2D basis; non-finite intervals are not guessed closed and use the established singular-value conservative fallback where applicable.',
+        'Radial minima are considered only when both accepted projection intervals have finite maximum magnitudes.',
+        'Oblique directions outside eligibility tolerance, more-than-two projection proofs, multi-pair geometry, loops and global satisfiability remain outside this guard.',
         'A blocked result is local contradiction evidence, not a claim of general physical correctness or scientific validation.'
       ]
     );
@@ -93,8 +93,8 @@ function step(world, constraints, dt, options) {
         'Default behavior remains unbounded and therefore unchanged unless maxProjectionPairCandidates is explicitly supplied.',
         'The budget changes proof work only; it does not alter the base conservative preflight, composer, donor core or solver semantics.',
         'Only two same-body-pair unit projection groups that are mutually orthogonal within a strict tolerance are eligible for stronger proof.',
-        'Eligible two-direction radial bounds use exact singular values so tolerance-edge inputs remain conservative rather than being treated as perfectly orthonormal.',
-        'Oblique directions, multi-pair geometry, loops and global satisfiability remain outside this guard.',
+        'Finite eligible pairs use exact two-direction radial envelopes; otherwise the established conservative fallback remains in place.',
+        'Oblique directions outside eligibility tolerance, more-than-two projection proofs, multi-pair geometry, loops and global satisfiability remain outside this guard.',
         'A blocked result is bounded execution evidence, not a claim of physical correctness or scientific validation.'
       ]
     );
