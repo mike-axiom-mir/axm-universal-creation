@@ -4,10 +4,11 @@ const crypto = require('crypto');
 const BasePreflight = require('./uc-constraint-preflight.js');
 const ExactGeometry = require('./uc-exact-projection-geometry.js');
 
-const VERSION = '0.6.0';
-const REPORT_SCHEMA = 'axm.uc-orthogonal-projection-preflight/v0.6';
+const VERSION = '0.7.0';
+const REPORT_SCHEMA = 'axm.uc-orthogonal-projection-preflight/v0.7';
 const DEFAULT_ORTHOGONALITY_TOLERANCE = 1e-9;
 const MAX_ORTHOGONALITY_TOLERANCE = 1e-6;
+const MAX_PROJECTION_PAIR_CANDIDATE_BUDGET = 100000;
 
 function clone(value) {
   if (Array.isArray(value)) return value.map(clone);
@@ -26,6 +27,13 @@ function finite(value, fallback) {
 
 function bounded(value, min, max, fallback) {
   return Math.max(min, Math.min(max, finite(value, fallback)));
+}
+
+function projectionPairCandidateBudget(value) {
+  if (value === undefined || value === null || value === Infinity) return Infinity;
+  const number = Number(value);
+  if (!Number.isFinite(number)) return Infinity;
+  return Math.floor(Math.max(0, Math.min(MAX_PROJECTION_PAIR_CANDIDATE_BUDGET, number)));
 }
 
 function round(value) {
@@ -80,6 +88,10 @@ function indexProjectionMetricsByPair(projections) {
   return indexed;
 }
 
+function candidatePairCount(metrics) {
+  return metrics.length < 2 ? 0 : (metrics.length * (metrics.length - 1)) / 2;
+}
+
 function constraintIds(groups) {
   return Array.from(new Set(groups.flatMap(group => (group.constraints || []).map(item => item.id)))).sort();
 }
@@ -112,10 +124,12 @@ function reportChecksum(report) {
     version: report.version,
     valid: report.valid,
     conflictFree: report.conflictFree,
+    strongerProofComplete: report.strongerProofComplete,
     baseChecksum: report.baseChecksum,
     proofGeometry: report.proofGeometry,
     tolerance: report.tolerance,
     orthogonalityTolerance: report.orthogonalityTolerance,
+    proofBudget: report.proofBudget,
     counts: report.counts,
     orthogonalProjectionRadialChecks: report.orthogonalProjectionRadialChecks,
     conflicts: report.conflicts,
@@ -133,12 +147,15 @@ function analyze(world, constraints, options) {
     MAX_ORTHOGONALITY_TOLERANCE,
     DEFAULT_ORTHOGONALITY_TOLERANCE
   );
+  const projectionPairBudget = projectionPairCandidateBudget(options.maxProjectionPairCandidates);
   const tolerance = base.tolerance;
   const checks = [];
   const additionalConflicts = [];
   let projectionPairBuckets = 0;
   let projectionMetricRecords = 0;
+  let projectionPairCandidatesAvailable = 0;
   let projectionPairCandidates = 0;
+  let proofBudgetExhausted = false;
   let radialMaximumChecks = 0;
   let radialMaximumConflicts = 0;
   let radialMinimumChecks = 0;
@@ -151,11 +168,20 @@ function analyze(world, constraints, options) {
     const projectionMetricsByPair = indexProjectionMetricsByPair(projections);
     projectionPairBuckets = projectionMetricsByPair.size;
     projectionMetricRecords = projections.length;
+    projectionPairCandidatesAvailable = radials.reduce((total, radial) => {
+      return total + candidatePairCount(projectionMetricsByPair.get(radial.key) || []);
+    }, 0);
 
-    radials.forEach(radial => {
+    radialLoop:
+    for (const radial of radials) {
       const samePairMetrics = projectionMetricsByPair.get(radial.key) || [];
       for (let i = 0; i < samePairMetrics.length; i += 1) {
         for (let j = i + 1; j < samePairMetrics.length; j += 1) {
+          if (projectionPairCandidates >= projectionPairBudget) {
+            proofBudgetExhausted = projectionPairCandidates < projectionPairCandidatesAvailable;
+            break radialLoop;
+          }
+
           projectionPairCandidates += 1;
           const firstMetric = samePairMetrics[i];
           const secondMetric = samePairMetrics[j];
@@ -266,25 +292,32 @@ function analyze(world, constraints, options) {
           if (summary.radialMaximumCheck || summary.radialMinimumCheck) checks.push(summary);
         }
       }
-    });
+    }
   }
 
+  const strongerProofComplete = base.valid && !proofBudgetExhausted;
   const conflicts = (base.conflicts || []).map(clone).concat(additionalConflicts.map(clone));
   const report = {
     schema: REPORT_SCHEMA,
     version: VERSION,
-    ok: base.valid && conflicts.length === 0,
+    ok: base.valid && conflicts.length === 0 && strongerProofComplete,
     valid: base.valid,
     conflictFree: base.valid && conflicts.length === 0,
+    strongerProofComplete,
     baseChecksum: base.checksum,
     proofGeometry: 'full-precision-normalized',
     tolerance,
     orthogonalityTolerance,
+    proofBudget: {
+      maxProjectionPairCandidates: Number.isFinite(projectionPairBudget) ? projectionPairBudget : null,
+      exhausted: proofBudgetExhausted
+    },
     base: clone(base),
     counts: {
       baseConflicts: (base.conflicts || []).length,
       projectionPairBuckets,
       projectionMetricRecords,
+      projectionPairCandidatesAvailable,
       projectionPairCandidates,
       orthogonalProjectionRadialChecks: checks.length,
       orthogonalProjectionRadialConflicts: additionalConflicts.length,
@@ -302,7 +335,10 @@ function analyze(world, constraints, options) {
       checks.length + ' same-pair orthogonal two-projection/radial check pair(s) evaluated',
       projectionPairBuckets + ' same-pair projection bucket(s) indexed once and reused for radial lookup',
       projectionMetricRecords + ' projection metric record(s) computed once and reused across candidate pair checks',
-      projectionPairCandidates + ' same-pair projection pair candidate(s) considered before strict orthogonality filtering',
+      projectionPairCandidates + ' of ' + projectionPairCandidatesAvailable + ' same-pair projection pair candidate(s) evaluated before strict orthogonality filtering',
+      proofBudgetExhausted
+        ? 'Configured projection-pair proof budget was exhausted; stronger proof coverage is incomplete and cannot be treated as conflict-free evidence.'
+        : 'Projection-pair proof budget did not truncate stronger proof coverage.',
       radialMaximumConflicts + ' combined projection-lower-bound/radial-maximum conflict(s) proven',
       radialMinimumConflicts + ' combined projection-upper-bound/radial-minimum conflict(s) proven',
       'Orthogonality and radial proof decisions use full-precision normalized geometry; 1e-9 rounding is presentation-only.',
@@ -314,6 +350,7 @@ function analyze(world, constraints, options) {
       'This is an optional stronger layer over the existing conservative preflight; the base preflight and solver are unchanged.',
       'Projection groups are indexed by canonical body pair once per analysis; indexing changes lookup work only and does not widen proof eligibility or reorder same-pair groups.',
       'Unit-length error and projection interval magnitude bounds are computed once per non-conflicting projection group and reused across pair candidates; this is structural work reduction, not a benchmarked wall-clock claim.',
+      'The optional maxProjectionPairCandidates budget bounds quadratic stronger-proof work deterministically; null means unbounded/default behavior, and exhaustion is exposed rather than silently treated as complete proof coverage.',
       'It combines exactly two same-body-pair projected intervals only when their full-precision normalized directions are unit-length and mutually orthogonal within the configured strict tolerance.',
       'Rounded directions, intervals and summary distances in the public receipt are display evidence only; decisionWitness preserves the unrounded values used by each combined proof.',
       'It does not combine oblique or merely near-orthogonal directions, more than two projected directions at once, or constraints from different body pairs.',
@@ -331,5 +368,6 @@ module.exports = {
   REPORT_SCHEMA,
   DEFAULT_ORTHOGONALITY_TOLERANCE,
   MAX_ORTHOGONALITY_TOLERANCE,
+  MAX_PROJECTION_PAIR_CANDIDATE_BUDGET,
   analyze
 };
