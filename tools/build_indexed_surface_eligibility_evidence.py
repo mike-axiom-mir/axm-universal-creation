@@ -8,7 +8,11 @@ import json
 from pathlib import Path
 import subprocess
 
-from axm_uc.indexed_surface_eligibility import INPUT_SCHEMA, observe_indexed_surface_eligibility
+from axm_uc.indexed_surface_eligibility import (
+    CROSS_SOURCE_TUPLE_POLICY,
+    INPUT_SCHEMA,
+    observe_indexed_surface_eligibility,
+)
 
 
 def _sha(path: Path) -> str:
@@ -83,6 +87,27 @@ def _cases():
         },
     }
 
+    cross_source = {
+        "schema": INPUT_SCHEMA,
+        "source_identity": "neutral-triangle-corner-source-v1",
+        "surface_identity": "neutral-cross-source-tuple-candidate",
+        "candidate_identity_policy": CROSS_SOURCE_TUPLE_POLICY,
+        "source": {"vertex_count": 6, "indices": list(range(6))},
+        "render": {
+            "vertex_count": 6,
+            "indices": list(range(6)),
+            "protected_split_ids": [None] * 6,
+            "channels": {
+                "POSITION": [[0, 0, 0], [1, 0, 0], [1, 1, 0], [0, 0, 0], [1, 1, 0], [0, 1, 0]],
+                "NORMAL": [[0, 0, 1]] * 6,
+            },
+        },
+    }
+
+    cross_source_missing_split = json.loads(json.dumps(cross_source))
+    cross_source_missing_split["surface_identity"] = "neutral-cross-source-missing-split-declaration"
+    del cross_source_missing_split["render"]["protected_split_ids"]
+
     ambiguous = json.loads(json.dumps(dedup))
     ambiguous["surface_identity"] = "neutral-ambiguous-expansion"
     del ambiguous["render"]["protected_split_ids"]
@@ -97,6 +122,8 @@ def _cases():
         "dedup": dedup,
         "uv_split": uv_split,
         "protected_split": protected,
+        "cross_source": cross_source,
+        "cross_source_missing_split": cross_source_missing_split,
         "ambiguous": ambiguous,
         "unsupported": unsupported,
     }
@@ -116,6 +143,8 @@ def main() -> int:
         "dedup": ("POST_ATTRIBUTE_TUPLE_DEDUP_CANDIDATE", "RENDER_DOMAIN_DERIVED", 4),
         "uv_split": ("PRESERVE_RENDER_DOMAIN_INDEXING", "RENDER_DOMAIN_SPLIT_REQUIRED", 5),
         "protected_split": ("PRESERVE_RENDER_DOMAIN_INDEXING", "RENDER_DOMAIN_SPLIT_REQUIRED", 5),
+        "cross_source": ("POST_ATTRIBUTE_TUPLE_DEDUP_CANDIDATE", "RENDER_DOMAIN_CROSS_SOURCE_DEDUP_CANDIDATE", 4),
+        "cross_source_missing_split": ("HOLD_CROSS_SOURCE_SPLIT_DECLARATION_REQUIRED", "NOT_EVALUATED", None),
         "ambiguous": ("HOLD_ATTRIBUTE_SEAM_AMBIGUITY", "NOT_EVALUATED", None),
         "unsupported": ("NOT_EVALUATED_UNSUPPORTED_CHANNEL", "NOT_EVALUATED", None),
     }
@@ -136,6 +165,7 @@ def main() -> int:
         summaries[name] = {
             "eligibility_state": report["eligibility_state"],
             "render_domain_state": report["render_domain_state"],
+            "candidate_identity_policy": report["candidate_identity_policy"],
             "candidate_vertex_count": None if report["candidate"] is None else report["candidate"]["vertex_count"],
             "input_digest": report["input_digest"],
             "topology_lineage_matches": report["topology_lineage"]["matches_source_index_stream"],
@@ -144,7 +174,7 @@ def main() -> int:
     head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=root, text=True).strip()
     module = root / "src/axm_uc/indexed_surface_eligibility.py"
     receipt = {
-        "schema": "axm.indexed-surface-eligibility-evidence/v0.1",
+        "schema": "axm.indexed-surface-eligibility-evidence/v0.2",
         "uc_head": head,
         "observer_path": str(module.relative_to(root)),
         "observer_sha256": _sha(module),
@@ -155,6 +185,7 @@ def main() -> int:
             "visual_equality_proven": False,
             "runtime_savings_proven": False,
             "adoption_authorized": False,
+            "cross_source_tuple_mode_requires_explicit_split_declaration": True,
         },
     }
     _write(out / "receipt.json", receipt)
