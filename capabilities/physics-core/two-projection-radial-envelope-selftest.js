@@ -27,6 +27,26 @@ assert.equal(axisBox.supported, true);
 assert.equal(axisBox.determinant, 1);
 assert.equal(axisBox.minimumDistance, 0);
 assert.equal(axisBox.maximumDistance, Math.hypot(2, 2));
+assert.equal(axisBox.distanceMethod, 'orthonormal-projection-rectangle');
+assert.deepEqual(axisBox.distanceWork, {
+  edgeDistanceEvaluations: 0,
+  cornerNormEvaluations: 0
+}, 'exact orthonormal envelopes should avoid the general edge/corner radial scans');
+
+const swappedAxisBox = Envelope.analyze(
+  { x: 0, y: 1 },
+  { x: 1, y: 0 },
+  { min: 3, max: 5 },
+  { min: -6, max: -4 }
+);
+assert.equal(swappedAxisBox.supported, true);
+assert.equal(swappedAxisBox.determinant, -1,
+  'orientation-reversing orthonormal bases remain invertible exact fast-path inputs');
+assert.equal(swappedAxisBox.minimumDistance, Math.hypot(3, 4));
+assert.equal(swappedAxisBox.maximumDistance, Math.hypot(5, 6));
+assert.equal(swappedAxisBox.distanceMethod, 'orthonormal-projection-rectangle');
+assert.deepEqual(swappedAxisBox.corners[0], { x: -6, y: 3 },
+  'transpose reconstruction must preserve exact corners for determinant -1 orthonormal bases');
 
 const shortFiniteEdge = Envelope.analyze(
   { x: 1, y: 0 },
@@ -39,6 +59,8 @@ assert.ok(Math.abs(shortFiniteEdge.minimumDistance - 1e-10) < 1e-20,
   'a represented non-zero edge shorter than sqrt(Number.EPSILON) must not be collapsed to one endpoint');
 assert.ok(shortFiniteEdge.minimumDistance < 2e-9,
   'the true feasible short edge must remain inside the bounded radial maximum used by the integration regression');
+assert.equal(shortFiniteEdge.distanceMethod, 'orthonormal-projection-rectangle',
+  'the exact-axis short-edge case should use the direct projection-rectangle extrema path');
 
 const largeFiniteEnvelope = Envelope.analyze(
   { x: 1, y: 0 },
@@ -52,6 +74,7 @@ assert.ok(Number.isFinite(largeFiniteEnvelope.minimumDistance));
 assert.ok(Number.isFinite(largeFiniteEnvelope.maximumDistance));
 assert.ok(Math.abs(largeFiniteEnvelope.minimumDistance / Math.hypot(1e200, 1e200) - 1) < 1e-15);
 assert.ok(Math.abs(largeFiniteEnvelope.maximumDistance / Math.hypot(2e200, 2e200) - 1) < 1e-15);
+assert.equal(largeFiniteEnvelope.distanceMethod, 'orthonormal-projection-rectangle');
 
 const nonRepresentableRadialEnvelope = Envelope.analyze(
   { x: 1, y: 0 },
@@ -115,6 +138,12 @@ assert.equal(pointEnvelope.supported, true);
 assert.ok(pointEnvelope.minimumDistance > 4.99999879 && pointEnvelope.minimumDistance < 4.99999881);
 assert.equal(pointEnvelope.minimumDistance, pointEnvelope.maximumDistance,
   'two exact projections define one displacement point and therefore one exact radius');
+assert.equal(pointEnvelope.distanceMethod, 'inverse-basis-parallelogram-edges',
+  'tolerance-eligible but not exactly orthonormal directions must retain the general exact geometry path');
+assert.deepEqual(pointEnvelope.distanceWork, {
+  edgeDistanceEvaluations: 4,
+  cornerNormEvaluations: 4
+});
 
 const unboundedEnvelope = Envelope.analyze(
   { x: 1, y: 0 },
