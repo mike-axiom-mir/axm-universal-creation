@@ -214,12 +214,116 @@ def _density_summary(base_rows: list[tuple[float, float]], width: int, height: i
             "p90_p10_ratio": p90 / p10 if p10 else float("inf")}
 
 
+def _uv_world_jacobian(
+    world_points: list[list[float]], uv_points: list[tuple[float, float]]
+) -> tuple[float, float, float, float]:
+    """Return the local world-plane -> UV Jacobian for one non-degenerate triangle."""
+    a, b, c = world_points
+    e1 = [b[i] - a[i] for i in range(3)]
+    e2 = [c[i] - a[i] for i in range(3)]
+    e1_len = math.sqrt(sum(v * v for v in e1))
+    if not math.isfinite(e1_len) or e1_len <= 0:
+        raise ArithmeticError("first world edge is not a finite nonzero vector")
+    xhat = [v / e1_len for v in e1]
+    x2 = sum(e2[i] * xhat[i] for i in range(3))
+    orthogonal = [e2[i] - x2 * xhat[i] for i in range(3)]
+    y2 = math.sqrt(sum(v * v for v in orthogonal))
+    if not math.isfinite(y2) or y2 <= 0:
+        raise ArithmeticError("world triangle basis is singular")
+    du1 = uv_points[1][0] - uv_points[0][0]
+    dv1 = uv_points[1][1] - uv_points[0][1]
+    du2 = uv_points[2][0] - uv_points[0][0]
+    dv2 = uv_points[2][1] - uv_points[0][1]
+    j00 = du1 / e1_len
+    j01 = (du2 - du1 * x2 / e1_len) / y2
+    j10 = dv1 / e1_len
+    j11 = (dv2 - dv1 * x2 / e1_len) / y2
+    if not all(math.isfinite(v) for v in (j00, j01, j10, j11)):
+        raise ArithmeticError("world-to-UV Jacobian is non-finite")
+    return j00, j01, j10, j11
+
+
+def _singular_values_2x2(a: float, b: float, c: float, d: float) -> tuple[float, float]:
+    """Return finite nonnegative singular values in ascending order."""
+    scale = max(abs(a), abs(b), abs(c), abs(d))
+    if not math.isfinite(scale) or scale <= 0:
+        raise ArithmeticError("texel Jacobian has no finite scale")
+    na, nb, nc, nd = a / scale, b / scale, c / scale, d / scale
+    sumsq = na * na + nb * nb + nc * nc + nd * nd
+    det = na * nd - nb * nc
+    disc = max(0.0, sumsq * sumsq - 4.0 * det * det)
+    smax_n = math.sqrt(max(0.0, (sumsq + math.sqrt(disc)) * 0.5))
+    if smax_n <= 0:
+        raise ArithmeticError("texel Jacobian is singular")
+    smin_n = abs(det) / smax_n
+    smax = scale * smax_n
+    smin = scale * smin_n
+    if not all(math.isfinite(v) and v > 0 for v in (smin, smax)):
+        raise ArithmeticError("directional texel density is non-finite or singular")
+    return (min(smin, smax), max(smin, smax))
+
+
+def _directional_accumulator() -> dict[str, Any]:
+    return {
+        "measured_triangles": 0,
+        "skipped_triangles": 0,
+        "world_area_m2": 0.0,
+        "weighted_log_min": 0.0,
+        "weighted_log_max": 0.0,
+        "weighted_log_anisotropy": 0.0,
+        "min_texels_per_m": float("inf"),
+        "max_texels_per_m": 0.0,
+        "max_anisotropy_ratio": 0.0,
+    }
+
+
+def _accumulate_directional(
+    accumulator: dict[str, Any],
+    uv_jacobian: tuple[float, float, float, float],
+    width: int,
+    height: int,
+    weight: float,
+) -> None:
+    j00, j01, j10, j11 = uv_jacobian
+    smin, smax = _singular_values_2x2(
+        j00 * width, j01 * width, j10 * height, j11 * height
+    )
+    ratio = smax / smin
+    accumulator["measured_triangles"] += 1
+    accumulator["world_area_m2"] += weight
+    accumulator["weighted_log_min"] += weight * math.log(smin)
+    accumulator["weighted_log_max"] += weight * math.log(smax)
+    accumulator["weighted_log_anisotropy"] += weight * math.log(ratio)
+    accumulator["min_texels_per_m"] = min(accumulator["min_texels_per_m"], smin)
+    accumulator["max_texels_per_m"] = max(accumulator["max_texels_per_m"], smax)
+    accumulator["max_anisotropy_ratio"] = max(accumulator["max_anisotropy_ratio"], ratio)
+
+
+def _directional_summary(accumulator: dict[str, Any]) -> dict[str, Any] | None:
+    weight = accumulator["world_area_m2"]
+    if not accumulator["measured_triangles"] or weight <= 0:
+        return None
+    return {
+        "measured_triangles": accumulator["measured_triangles"],
+        "skipped_triangles": accumulator["skipped_triangles"],
+        "complete": accumulator["skipped_triangles"] == 0,
+        "weighted_geometric_mean_min": math.exp(accumulator["weighted_log_min"] / weight),
+        "weighted_geometric_mean_max": math.exp(accumulator["weighted_log_max"] / weight),
+        "weighted_geometric_mean_anisotropy_ratio": math.exp(
+            accumulator["weighted_log_anisotropy"] / weight
+        ),
+        "min_texels_per_m": accumulator["min_texels_per_m"],
+        "max_texels_per_m": accumulator["max_texels_per_m"],
+        "max_anisotropy_ratio": accumulator["max_anisotropy_ratio"],
+    }
+
+
 def inspect_material_uv_density(path: str | Path) -> dict[str, Any]:
     """Measure actual static GLB triangle UV scale against embedded texture sizes.
 
     `MEASURED` means the report contains direct byte-derived measurements. It is
-    deliberately not PASS/FAIL aesthetic acceptance. A target texel density is a
-    project/art-direction decision and is not invented here.
+    deliberately not PASS/FAIL aesthetic acceptance. A target texel density or
+    anisotropy threshold is a project/art-direction decision and is not invented here.
     """
     target = Path(path).resolve()
     result: dict[str, Any] = {
@@ -227,10 +331,12 @@ def inspect_material_uv_density(path: str | Path) -> dict[str, Any]:
         "status": "HOLD",
         "artifact_sha256": None,
         "measurements": {"primitive_count": 0, "textured_primitive_count": 0,
-                         "measured_binding_count": 0, "collapsed_uv_triangles": 0},
+                         "measured_binding_count": 0, "collapsed_uv_triangles": 0,
+                         "directional_binding_count": 0,
+                         "directional_skipped_triangles": 0},
         "primitives": [],
         "findings": [],
-        "scope": "Actual default-scene static GLB POSITION/TEXCOORD_0/indices/transforms plus core embedded PNG/JPEG dimensions. No unwrap, texture decode, shader/render, seam quality, style acceptance, engine import, deformation, performance, or automatic repair proof.",
+        "scope": "Actual default-scene static GLB POSITION/TEXCOORD_0/indices/transforms plus core embedded PNG/JPEG dimensions. Reports scalar area-equivalent texel density and local principal directional density/anisotropy where finite. No unwrap, rescale, anisotropy threshold, texture decode, shader/render, seam quality, style acceptance, engine import, deformation, performance, or automatic repair proof.",
     }
 
     def finding(code: str, **details: Any) -> None:
@@ -318,6 +424,7 @@ def inspect_material_uv_density(path: str | Path) -> dict[str, Any]:
                 if triangle_total > MAX_TRIANGLES:
                     raise GeometryIssue("RESOURCE_LIMIT", "scene exceeds triangle review limit", hold=True)
                 base_rows: list[tuple[float, float]] = []
+                directional = [_directional_accumulator() for _ in binding_rows]
                 world_area = uv_area = 0.0
                 collapsed = 0
                 uv_min = [float("inf"), float("inf")]
@@ -340,7 +447,29 @@ def inspect_material_uv_density(path: str | Path) -> dict[str, Any]:
                     if ua2 <= MIN_TWICE_AREA:
                         collapsed += 1
                         continue
-                    base_rows.append((math.sqrt(ua2 / wa2), wa2 * .5))
+                    weight = wa2 * .5
+                    base_rows.append((math.sqrt(ua2 / wa2), weight))
+                    try:
+                        uv_jacobian = _uv_world_jacobian(wp, uv)
+                    except ArithmeticError as exc:
+                        for accumulator in directional:
+                            accumulator["skipped_triangles"] += 1
+                        result["measurements"]["directional_skipped_triangles"] += len(binding_rows)
+                        finding("DIRECTIONAL_UV_UNMEASURABLE", node=node.get("name"), mesh=mesh_index,
+                                primitive=primitive_index, triangle=triangle // 3, message=str(exc))
+                        continue
+                    for binding_index, binding in enumerate(binding_rows):
+                        try:
+                            _accumulate_directional(
+                                directional[binding_index], uv_jacobian,
+                                binding["width"], binding["height"], weight,
+                            )
+                        except (ArithmeticError, OverflowError, ValueError) as exc:
+                            directional[binding_index]["skipped_triangles"] += 1
+                            result["measurements"]["directional_skipped_triangles"] += 1
+                            finding("DIRECTIONAL_UV_UNMEASURABLE", node=node.get("name"),
+                                    mesh=mesh_index, primitive=primitive_index,
+                                    triangle=triangle // 3, slot=binding["slot"], message=str(exc))
                 result["measurements"]["collapsed_uv_triangles"] += collapsed
                 if collapsed:
                     finding("UV_COLLAPSE", node=node.get("name"), mesh=mesh_index, primitive=primitive_index,
@@ -349,9 +478,13 @@ def inspect_material_uv_density(path: str | Path) -> dict[str, Any]:
                     finding("NO_MEASURABLE_UV_AREA", node=node.get("name"), mesh=mesh_index, primitive=primitive_index)
                     continue
                 binding_reports = []
-                for binding in binding_rows:
+                for binding_index, binding in enumerate(binding_rows):
                     summary = _density_summary(base_rows, binding["width"], binding["height"])
                     row = {**binding, "texels_per_m": summary}
+                    directional_summary = _directional_summary(directional[binding_index])
+                    if directional_summary is not None:
+                        row["directional_texels_per_m"] = directional_summary
+                        result["measurements"]["directional_binding_count"] += 1
                     binding_reports.append(row)
                     result["measurements"]["measured_binding_count"] += 1
                     if (binding["wrap_s"] == 33071 and (uv_min[0] < 0 or uv_max[0] > 1)

@@ -2,16 +2,13 @@
 
 `axm_uc.material_uv_evidence.inspect_material_uv_density()` is a bounded
 look-development instrument for **actual static GLB artifacts**. It exists to
-measure a class of surface-scale problem that visual inspection has already
-exposed in UC: the first Blender material proof used spherical UVs and visibly
-stretched woven cloth/wood into radial rings before the proof scene was repaired
-to front-planar UVs.
+measure surface-scale problems from the exact artifact rather than infer them
+from mesh names, exporter metadata or visual intent.
 
-The instrument does not decide a studio-wide texel-density target. Different
-assets, camera distances and realization budgets can legitimately need different
-surface scale. It provides comparable evidence so Art Direction / LookDev can
-choose those targets explicitly rather than relying on mesh names or exporter
-metadata.
+The instrument does not decide a studio-wide texel-density or anisotropy target.
+Different assets, camera distances and realization budgets can legitimately need
+different surface scale. It provides comparable evidence so Art Direction /
+LookDev can choose those targets explicitly.
 
 ## What is measured
 
@@ -26,22 +23,30 @@ reviewer reads the actual embedded bytes for:
 - core embedded PNG/JPEG image dimensions.
 
 For each bound base-color, metallic/roughness, normal, occlusion or emissive
-texture it reports area-weighted texels-per-metre evidence (`p10`, `p50`, `p90`
-and weighted geometric mean), UV/world area, UV bounds, wrap modes and exact
-image/artifact SHA-256 identity.
+texture it retains the existing area-equivalent texels-per-metre evidence
+(`p10`, `p50`, `p90` and weighted geometric mean), UV/world area, UV bounds,
+wrap modes and exact image/artifact SHA-256 identity.
 
-A one-square-metre surface mapped across one 1024x1024 texture therefore measures
-approximately 1024 texels/metre. Doubling the world dimensions without changing
-UVs measures approximately 512 texels/metre; doubling UV span without changing
-the object measures approximately 2048 texels/metre.
+It additionally derives the local 2D world-plane -> texel Jacobian for each
+non-degenerate measurable triangle. The singular values of that Jacobian are
+the principal directional sampling densities. Each binding reports bounded
+area-weighted summaries for the lower and upper principal densities plus local
+anisotropy (`max / min`). Image width and height are applied on their own axes;
+they are not collapsed to `sqrt(width * height)` for the directional evidence.
 
-`MEASURED` means only that these numbers came from the exact artifact bytes. It
-is **not** aesthetic approval.
+A one-square-metre surface mapped across one 1024x1024 texture therefore has
+principal densities near 1024 texels/metre in both directions. A one-square-
+metre surface mapped across a 1024x512 texture has principal densities near
+512 and 1024 texels/metre and anisotropy near 2, while the retained scalar
+area-equivalent view remains their geometric mean.
 
-## Fail-closed / HOLD boundaries
+`MEASURED` means only that the numbers came from the exact artifact bytes. It
+is **not** aesthetic approval. No anisotropy threshold is invented.
 
-The first version deliberately HOLDs rather than estimating when the result
-would be misleading, including:
+## Fail-closed / explicit-finding boundaries
+
+The observer deliberately HOLDs rather than estimates when its existing static
+evidence contract is unsupported, including:
 
 - animation / skin deformation;
 - external image URIs (nothing is fetched);
@@ -55,24 +60,32 @@ would be misleading, including:
 A clamped texture whose UVs leave the normalized 0..1 range is retained as a
 measurement but receives an explicit `UV_OUTSIDE_CLAMP` finding.
 
+Directional calculation is also fail-closed per binding/triangle. If the local
+world-plane -> texel Jacobian cannot be represented as a finite nonsingular
+mapping, the observer emits `DIRECTIONAL_UV_UNMEASURABLE`, increments the
+directional skip count and does not fabricate principal densities for that
+sample. Existing scalar evidence remains separate and backward compatible.
+
 ## Truth boundary
 
-This does **not** prove:
+This observer reports local directional sampling distortion; it does **not**
+prove:
 
-- that the UV unwrap has attractive seams or low directional distortion;
+- that the UV unwrap has attractive seams or acceptable directional distortion;
+- that any anisotropy ratio is good or bad for an asset;
 - that a chosen texel density is correct for an asset or camera distance;
-- texture pixel validity beyond the bounded PNG/JPEG dimension header needed for
-  scale evidence;
+- texture pixel validity beyond the bounded PNG/JPEG dimension header needed
+  for scale evidence;
 - shader correctness, color management, normal orientation or material response;
 - actual rendering quality in Blender, the AXM native visual runtime or a game
   engine;
 - mip/filter/compression quality or target-device memory/performance;
 - deformation-time density; or
-- any automatic repair/unwrapping capability.
+- any automatic UV rescale, repair, packing or unwrapping capability.
 
-Use the measurements beside renders, not instead of renders. A later lookdev
-pass can bind explicit project/asset targets only after cross-domain visual
-evidence justifies them.
+Use the measurements beside renders, not instead of renders. Product repositories
+retain authority over source metric meaning, target px/m, acceptable anisotropy,
+atlas policy and visual acceptance.
 
 ## Focused regression
 
@@ -80,7 +93,7 @@ evidence justifies them.
 python -m unittest tests.test_material_uv_evidence -v
 ```
 
-The fixtures prove direct scale response, node-scale response, clamped out-of-
-range UV reporting, collapsed-UV HOLD, texture-transform/alternate-UV HOLD,
-no-fetch external-image behavior, missing-evidence HOLD, deformation HOLD,
-image-header integrity and source-artifact immutability.
+The fixtures preserve the existing scalar-scale, HOLD and immutability checks and
+add isotropic principal-density equivalence, Building-style aspect-correct versus
+aspect-blind mapping, rectangular-image axis handling, triangle-order invariance
+and rigid-transform invariance.
