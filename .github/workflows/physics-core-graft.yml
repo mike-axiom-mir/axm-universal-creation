@@ -57,6 +57,8 @@ jobs:
         run: node capabilities/physics-core/constraint-activity-gate-selftest.js
       - name: Verify conservative constraint preflight
         run: node capabilities/physics-core/constraint-preflight-selftest.js
+      - name: Verify exact full-precision projection geometry view
+        run: node capabilities/physics-core/exact-projection-geometry-selftest.js
       - name: Verify fail-closed constraint preflight guard
         run: node capabilities/physics-core/constraint-preflight-guard-selftest.js
       - name: Verify bounded orthogonal projection preflight and guard
