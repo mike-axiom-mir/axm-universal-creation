@@ -31,7 +31,8 @@ const constraints = {
 const report = Preflight.analyze(world, constraints);
 assert.equal(report.schema, 'axm.uc-orthogonal-projection-preflight/v0.8');
 assert.equal(report.version, '0.8.0');
-assert.equal(report.proofGeometry, 'full-precision-normalized-singular-bounded');
+assert.equal(report.proofGeometry, 'full-precision-normalized');
+assert.equal(report.radialBoundModel, 'singular-value-conservative');
 assert.equal(report.conflictFree, true);
 assert.equal(report.strongerProofComplete, true);
 assert.equal(report.proofBudget.maxProjectionPairCandidates, null,
