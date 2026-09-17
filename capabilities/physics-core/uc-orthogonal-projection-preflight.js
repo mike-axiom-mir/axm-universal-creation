@@ -149,6 +149,7 @@ function reportChecksum(report) {
     strongerProofComplete: report.strongerProofComplete,
     baseChecksum: report.baseChecksum,
     proofGeometry: report.proofGeometry,
+    radialBoundModel: report.radialBoundModel,
     tolerance: report.tolerance,
     orthogonalityTolerance: report.orthogonalityTolerance,
     proofBudget: report.proofBudget,
@@ -353,7 +354,8 @@ function analyze(world, constraints, options) {
     conflictFree: base.valid && conflicts.length === 0,
     strongerProofComplete,
     baseChecksum: base.checksum,
-    proofGeometry: 'full-precision-normalized-singular-bounded',
+    proofGeometry: 'full-precision-normalized',
+    radialBoundModel: 'singular-value-conservative',
     tolerance,
     orthogonalityTolerance,
     proofBudget: {
