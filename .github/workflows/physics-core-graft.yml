@@ -67,6 +67,8 @@ jobs:
         run: node capabilities/physics-core/orthogonal-projection-pair-index-selftest.js
       - name: Verify exact finite two-projection radial envelopes
         run: node capabilities/physics-core/two-projection-radial-envelope-selftest.js
+      - name: Verify tolerated empty projection intervals do not fabricate exact envelopes
+        run: node capabilities/physics-core/tolerated-empty-projection-envelope-selftest.js
       - name: Verify axis-lock composer gate and isolation integration
         run: node capabilities/physics-core/axis-lock-integration-selftest.js
       - name: Verify axis-limit composer gate and isolation integration
