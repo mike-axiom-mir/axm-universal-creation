@@ -1,0 +1,34 @@
+name: Instant UC production 3D proof
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/instant-uc-production-3d.yml'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install Blender Python runtime
+        run: python -m pip install 'numpy==1.26.4' 'Pillow>=10,<12' 'bpy==4.3.0'
+      - name: Build reusable animated UC companion
+        run: python tools/blender/axm_globe_companion.py --output /tmp/uc-instant-3d
+      - name: Independently verify exported assets
+        run: python tools/blender/verify_globe_companion.py --directory /tmp/uc-instant-3d
+      - name: Render production proof from exported GLB
+        run: python tools/blender/render_globe_companion.py --directory /tmp/uc-instant-3d --resolution 900
+      - name: Render motion proof
+        run: python tools/blender/render_globe_companion.py --directory /tmp/uc-instant-3d --motion --resolution 480
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: instant-uc-production-3d
+          path: /tmp/uc-instant-3d
+          retention-days: 14
