@@ -151,6 +151,9 @@ function verifyAxis(receiptAxis, expectedAxis, prefix, tolerance, violations) {
     violations.push(`${prefix}_AXIS_RECEIPT_MISSING`);
     return;
   }
+  if (receiptAxis.supported !== true) {
+    violations.push(`${prefix}_SUPPORTED_FLAG_MISMATCH`);
+  }
 
   for (const [field, code] of [
     ['projection', 'PROJECTION_MISMATCH'],
@@ -183,6 +186,9 @@ function verifyExtremum(receiptExtremum, expectedExtremum, prefix, tolerance, vi
   if (!receiptExtremum || typeof receiptExtremum !== 'object') {
     violations.push(`${prefix}_MARGINS_MISSING`);
     return;
+  }
+  if (receiptExtremum.supported !== true) {
+    violations.push(`${prefix}_SUPPORTED_FLAG_MISMATCH`);
   }
   if (receiptExtremum.witnessKind !== expectedExtremum.witnessKind) {
     violations.push(`${prefix}_WITNESS_KIND_MISMATCH`);
@@ -298,6 +304,9 @@ function verify(
       projectionMarginsReceipt.version !== PROJECTION_MARGINS_VERSION) {
     violations.push('PROJECTION_MARGINS_SCHEMA_MISMATCH');
   }
+  if (projectionMarginsReceipt.reason !== null) {
+    violations.push('PROJECTION_MARGINS_REASON_MISMATCH');
+  }
   if (projectionMarginsReceipt.numericTolerance !== tolerance) {
     violations.push('NUMERIC_TOLERANCE_MISMATCH');
   }
@@ -335,8 +344,8 @@ function verify(
       'The independent radial-envelope active-set verifier must pass before projection-margin receipt evidence is trusted.',
       'The embedded active-set verification receipt must exactly match a fresh verification over the same represented directions, intervals, analysis, witness receipt, active-set receipt, and tolerance.',
       'Every extremum projection and signed endpoint margin is independently recomputed from fresh direction-point dot products and represented intervals.',
-      'Tolerance bands, feasibility margins, nearest-boundary gaps, active sides, degenerate flags, boundary/interior classifications, strict-interior flags, and extremum aggregates must match the independent reconstruction.',
-      'Numeric comparisons remain tolerance-relative JavaScript Number checks; exact schema, boolean, string, count, and ordered-side evidence must match exactly.'
+      'Tolerance bands, feasibility margins, nearest-boundary gaps, active sides, degenerate flags, boundary/interior classifications, strict-interior flags, support flags, and extremum aggregates must match the independent reconstruction.',
+      'Numeric comparisons remain tolerance-relative JavaScript Number checks; exact schema, reason, boolean, string, count, and ordered-side evidence must match exactly.'
     ],
     limitations: [
       'This verifier checks deterministic internal consistency of represented signed-projection margin receipts for already-verified finite two-projection radial-extremum evidence only.',
