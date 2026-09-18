@@ -7,7 +7,9 @@ on:
     paths:
       - "capabilities/physics-core/uc-two-projection-radial-envelope.js"
       - "capabilities/physics-core/uc-two-projection-radial-envelope-verifier.js"
+      - "capabilities/physics-core/uc-two-projection-radial-envelope-plan-verifier.js"
       - "capabilities/physics-core/radial-envelope-verifier-selftest.js"
+      - "capabilities/physics-core/radial-envelope-plan-verifier-selftest.js"
       - ".github/workflows/physics-radial-envelope-verifier.yml"
   workflow_dispatch:
 
@@ -24,3 +26,5 @@ jobs:
           node-version: '22'
       - name: Verify optimized radial-envelope receipts against generic boundary evidence
         run: node capabilities/physics-core/radial-envelope-verifier-selftest.js
+      - name: Verify radial-envelope optimization plan receipts
+        run: node capabilities/physics-core/radial-envelope-plan-verifier-selftest.js
