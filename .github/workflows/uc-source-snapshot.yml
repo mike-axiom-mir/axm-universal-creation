@@ -1,0 +1,26 @@
+name: UC full source snapshot
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/uc-source-snapshot.yml'
+  workflow_dispatch:
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Prepare source tree
+        run: |
+          rm -rf .git
+          mkdir -p /tmp/uc-source
+          cp -a . /tmp/uc-source/axm-universal-creation
+      - uses: actions/upload-artifact@v4
+        with:
+          name: axm-universal-creation-main-source
+          path: /tmp/uc-source/axm-universal-creation
+          retention-days: 14
