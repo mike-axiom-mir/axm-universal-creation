@@ -177,6 +177,16 @@ assert.strictEqual(rejected.verified, false);
 assert.ok(rejected.violations.includes('MINIMUM_FIRST_ACTIVE_SIDES_MISMATCH'));
 assert.ok(rejected.violations.includes('MINIMUM_FIRST_DEGENERATE_FLAG_MISMATCH'));
 
+const supportFlagTamper = JSON.parse(JSON.stringify(inverseBasis.projectionMarginsReceipt));
+supportFlagTamper.minimum.supported = false;
+supportFlagTamper.minimum.first.supported = false;
+supportFlagTamper.reason = 'tampered';
+rejected = verifyWithCase(inverseBasis, supportFlagTamper);
+assert.strictEqual(rejected.verified, false);
+assert.ok(rejected.violations.includes('MINIMUM_SUPPORTED_FLAG_MISMATCH'));
+assert.ok(rejected.violations.includes('MINIMUM_FIRST_SUPPORTED_FLAG_MISMATCH'));
+assert.ok(rejected.violations.includes('PROJECTION_MARGINS_REASON_MISMATCH'));
+
 const aggregateTamper = JSON.parse(JSON.stringify(inverseBasis.projectionMarginsReceipt));
 aggregateTamper.maximum.minimumSignedFeasibilityMargin += 0.5;
 aggregateTamper.maximum.nearestRepresentedBoundaryGap += 0.5;
@@ -238,6 +248,7 @@ console.log(JSON.stringify({
     toleranceBandTamperRejection: true,
     classificationTamperRejection: true,
     activeSideTamperRejection: true,
+    supportFlagAndReasonTamperRejection: true,
     aggregateTamperRejection: true,
     embeddedVerificationTamperRejection: true,
     schemaTamperRejection: true,
