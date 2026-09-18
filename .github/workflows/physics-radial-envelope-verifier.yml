@@ -12,12 +12,14 @@ on:
       - "capabilities/physics-core/uc-two-projection-radial-envelope-witness-verifier.js"
       - "capabilities/physics-core/uc-two-projection-radial-envelope-active-set.js"
       - "capabilities/physics-core/uc-two-projection-radial-envelope-active-set-verifier.js"
+      - "capabilities/physics-core/uc-two-projection-radial-envelope-projection-margins.js"
       - "capabilities/physics-core/radial-envelope-verifier-selftest.js"
       - "capabilities/physics-core/radial-envelope-plan-verifier-selftest.js"
       - "capabilities/physics-core/radial-envelope-witness-selftest.js"
       - "capabilities/physics-core/radial-envelope-witness-verifier-selftest.js"
       - "capabilities/physics-core/radial-envelope-active-set-selftest.js"
       - "capabilities/physics-core/radial-envelope-active-set-verifier-selftest.js"
+      - "capabilities/physics-core/radial-envelope-projection-margins-selftest.js"
       - "capabilities/physics-core/radial-envelope-classification-matrix-selftest.js"
       - "capabilities/physics-core/radial-envelope-representation-invariance-selftest.js"
       - "capabilities/physics-core/radial-envelope-scale-covariance-selftest.js"
@@ -49,6 +51,8 @@ jobs:
         run: node capabilities/physics-core/radial-envelope-active-set-selftest.js
       - name: Independently verify radial-envelope active-set receipts
         run: node capabilities/physics-core/radial-envelope-active-set-verifier-selftest.js
+      - name: Derive radial-envelope extremum projection margins
+        run: node capabilities/physics-core/radial-envelope-projection-margins-selftest.js
       - name: Verify radial-envelope classification matrix
         run: node capabilities/physics-core/radial-envelope-classification-matrix-selftest.js
       - name: Verify radial-envelope representation invariance
