@@ -9,9 +9,11 @@ on:
       - "capabilities/physics-core/uc-two-projection-radial-envelope-verifier.js"
       - "capabilities/physics-core/uc-two-projection-radial-envelope-plan-verifier.js"
       - "capabilities/physics-core/uc-two-projection-radial-envelope-witness.js"
+      - "capabilities/physics-core/uc-two-projection-radial-envelope-witness-verifier.js"
       - "capabilities/physics-core/radial-envelope-verifier-selftest.js"
       - "capabilities/physics-core/radial-envelope-plan-verifier-selftest.js"
       - "capabilities/physics-core/radial-envelope-witness-selftest.js"
+      - "capabilities/physics-core/radial-envelope-witness-verifier-selftest.js"
       - "capabilities/physics-core/radial-envelope-classification-matrix-selftest.js"
       - "capabilities/physics-core/radial-envelope-representation-invariance-selftest.js"
       - "capabilities/physics-core/radial-envelope-scale-covariance-selftest.js"
@@ -37,6 +39,8 @@ jobs:
         run: node capabilities/physics-core/radial-envelope-plan-verifier-selftest.js
       - name: Verify deterministic radial-envelope extremum witnesses
         run: node capabilities/physics-core/radial-envelope-witness-selftest.js
+      - name: Independently verify radial-envelope extremum witness receipts
+        run: node capabilities/physics-core/radial-envelope-witness-verifier-selftest.js
       - name: Verify radial-envelope classification matrix
         run: node capabilities/physics-core/radial-envelope-classification-matrix-selftest.js
       - name: Verify radial-envelope representation invariance
