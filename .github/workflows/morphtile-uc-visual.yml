@@ -1,0 +1,52 @@
+name: MorphTile UC visual proof
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'examples/requests/morphtile_spatial_marketing_visual.json'
+      - '.github/workflows/morphtile-uc-visual.yml'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Let Universal Creation simulate and materialize the visual
+        run: |
+          set -euo pipefail
+          PYTHONPATH=src python - <<'PY'
+          import json
+          from pathlib import Path
+          from axm_uc.machine import UniversalCreationMachine
+          root=Path('.').resolve()
+          req=json.loads(Path('examples/requests/morphtile_spatial_marketing_visual.json').read_text())
+          machine=UniversalCreationMachine(root)
+          simulated=machine.create(req)
+          Path('/tmp/simulation.json').write_text(json.dumps(simulated,indent=2))
+          if simulated.get('type')!='CREATION_RESULT':
+              raise SystemExit('UC simulation did not return CREATION_RESULT')
+          state=simulated['result']
+          if state.get('status')!='NO_KNOWN_IMPROVEMENTS':
+              raise SystemExit('UC held visual at '+str(state.get('status')))
+          materialized=machine.create({'kind':'paintgun-visual-project','inputs':{'path':'creations/morphtile-spatial-marketing','simulation':state,'replace':True}})
+          Path('/tmp/materialized.json').write_text(json.dumps(materialized,indent=2))
+          if materialized.get('type')!='CREATION_RESULT':
+              raise SystemExit('UC materialization failed')
+          PY
+      - name: Package exact UC outputs
+        run: |
+          mkdir -p /tmp/morphtile-uc-proof
+          cp /tmp/simulation.json /tmp/morphtile-uc-proof/
+          cp /tmp/materialized.json /tmp/morphtile-uc-proof/
+          cp -r creations/morphtile-spatial-marketing /tmp/morphtile-uc-proof/creation
+          test -s /tmp/morphtile-uc-proof/creation/scene.svg
+      - uses: actions/upload-artifact@v4
+        with:
+          name: morphtile-uc-spatial-marketing
+          path: /tmp/morphtile-uc-proof
+          retention-days: 14
