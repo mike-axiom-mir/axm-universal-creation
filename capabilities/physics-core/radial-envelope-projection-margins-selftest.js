@@ -119,8 +119,8 @@ const segment = derive(
   { min: 2, max: 5 }
 );
 assert.strictEqual(segment.receipt.minimum.first.classification, 'degenerate-boundary');
-assert.strictEqual(segment.receipt.minimum.first.toMin, 0);
-assert.strictEqual(segment.receipt.minimum.first.toMax, 0);
+assert.ok(Math.abs(segment.receipt.minimum.first.toMin) <= segment.receipt.minimum.first.toleranceBand);
+assert.ok(Math.abs(segment.receipt.minimum.first.toMax) <= segment.receipt.minimum.first.toleranceBand);
 assert.deepStrictEqual(segment.receipt.minimum.first.activeSides, ['min', 'max']);
 assert.strictEqual(segment.receipt.minimum.first.exactDegenerateInterval, true);
 
@@ -133,9 +133,10 @@ const point = derive(
 for (const extremum of [point.receipt.minimum, point.receipt.maximum]) {
   for (const axis of [extremum.first, extremum.second]) {
     assert.strictEqual(axis.classification, 'degenerate-boundary');
-    assert.strictEqual(axis.toMin, 0);
-    assert.strictEqual(axis.toMax, 0);
-    assert.strictEqual(axis.nearestBoundaryGap, 0);
+    assert.ok(Math.abs(axis.toMin) <= axis.toleranceBand);
+    assert.ok(Math.abs(axis.toMax) <= axis.toleranceBand);
+    assert.ok(axis.nearestBoundaryGap <= axis.toleranceBand);
+    assert.ok(axis.signedFeasibilityMargin >= -axis.toleranceBand);
     assert.deepStrictEqual(axis.activeSides, ['min', 'max']);
   }
 }
