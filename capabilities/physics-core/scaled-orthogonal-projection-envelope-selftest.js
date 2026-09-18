@@ -21,6 +21,11 @@ assert.deepEqual(result.distanceWork, {
   edgeDistanceEvaluations: 0,
   cornerNormEvaluations: 0
 }, 'exact represented orthogonality with tiny scale error should avoid edge and corner radial scans');
+assert.deepEqual(result.basisWork, {
+  directionNormSquaredEvaluations: 2,
+  representedDotEvaluations: 1,
+  directionNormEvaluations: 2
+}, 'scaled exact-orthogonal classification should reuse one dot product and evaluate Euclidean direction norms only once per direction');
 
 const firstNorm = Math.hypot(firstDirection.x, firstDirection.y);
 const secondNorm = Math.hypot(secondDirection.x, secondDirection.y);
@@ -38,6 +43,20 @@ assert.deepEqual(
   'scaled orthogonal evidence must replay deterministically'
 );
 
+const exactOrthonormal = Envelope.analyze(
+  { x: 1, y: 0 },
+  { x: 0, y: 1 },
+  firstInterval,
+  secondInterval
+);
+assert.equal(exactOrthonormal.supported, true);
+assert.equal(exactOrthonormal.distanceMethod, 'orthonormal-projection-rectangle');
+assert.deepEqual(exactOrthonormal.basisWork, {
+  directionNormSquaredEvaluations: 2,
+  representedDotEvaluations: 1,
+  directionNormEvaluations: 0
+}, 'exact orthonormal classification should not evaluate Euclidean direction norms');
+
 const nearOrthogonal = Envelope.analyze(
   firstDirection,
   { x: 5e-7, y: Math.sqrt(1 - 25e-14) },
@@ -51,5 +70,10 @@ assert.deepEqual(nearOrthogonal.distanceWork, {
   edgeDistanceEvaluations: 2,
   cornerNormEvaluations: 4
 }, 'a nonzero represented dot product must retain the established inverse-basis path');
+assert.deepEqual(nearOrthogonal.basisWork, {
+  directionNormSquaredEvaluations: 2,
+  representedDotEvaluations: 1,
+  directionNormEvaluations: 0
+}, 'tolerance-eligible nonzero-dot geometry should skip both unnecessary Euclidean direction-norm evaluations');
 
 console.log('scaled orthogonal projection envelope selftest passed');

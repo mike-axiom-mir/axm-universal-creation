@@ -1,6 +1,6 @@
 'use strict';
 
-const VERSION = '0.1.14';
+const VERSION = '0.1.15';
 const SCHEMA = 'axm.uc-two-projection-radial-envelope/v0.1';
 
 function finiteDirection(direction) {
@@ -45,12 +45,6 @@ function directionNormSquared(direction) {
 
 function dot(left, right) {
   return left.x * right.x + left.y * right.y;
-}
-
-function exactOrthonormalPair(firstDirection, secondDirection) {
-  return directionNormSquared(firstDirection) === 1 &&
-    directionNormSquared(secondDirection) === 1 &&
-    dot(firstDirection, secondDirection) === 0;
 }
 
 function minimumAbsoluteInterval(interval) {
@@ -170,17 +164,32 @@ function analyze(firstDirection, secondDirection, firstInterval, secondInterval)
     return unsupported('SINGULAR_DIRECTION_PAIR', { determinant });
   }
 
-  const orthonormalFastPath = exactOrthonormalPair(firstDirection, secondDirection);
+  const firstDirectionNormSquared = directionNormSquared(firstDirection);
+  const secondDirectionNormSquared = directionNormSquared(secondDirection);
   const representedDot = dot(firstDirection, secondDirection);
-  const firstDirectionNorm = directionNorm(firstDirection);
-  const secondDirectionNorm = directionNorm(secondDirection);
-  const scaledOrthogonalFastPath =
-    !orthonormalFastPath &&
-    representedDot === 0 &&
-    Number.isFinite(firstDirectionNorm) &&
-    Number.isFinite(secondDirectionNorm) &&
-    firstDirectionNorm > 0 &&
-    secondDirectionNorm > 0;
+  const orthonormalFastPath =
+    firstDirectionNormSquared === 1 &&
+    secondDirectionNormSquared === 1 &&
+    representedDot === 0;
+  let firstDirectionNorm = null;
+  let secondDirectionNorm = null;
+  let directionNormEvaluations = 0;
+  let scaledOrthogonalFastPath = false;
+  if (!orthonormalFastPath && representedDot === 0) {
+    firstDirectionNorm = directionNorm(firstDirection);
+    secondDirectionNorm = directionNorm(secondDirection);
+    directionNormEvaluations = 2;
+    scaledOrthogonalFastPath =
+      Number.isFinite(firstDirectionNorm) &&
+      Number.isFinite(secondDirectionNorm) &&
+      firstDirectionNorm > 0 &&
+      secondDirectionNorm > 0;
+  }
+  const basisWork = {
+    directionNormSquaredEvaluations: 2,
+    representedDotEvaluations: 1,
+    directionNormEvaluations
+  };
   const firstDegenerate = firstInterval.min === firstInterval.max;
   const secondDegenerate = secondInterval.min === secondInterval.max;
   const degenerateProjectionIntervals = Number(firstDegenerate) + Number(secondDegenerate);
@@ -449,6 +458,7 @@ function analyze(firstDirection, secondDirection, firstInterval, secondInterval)
     distanceMethod,
     distanceWork,
     geometryWork,
+    basisWork,
     evidence: [
       'The two finite non-empty signed projection intervals are mapped through the exact inverse 2D basis into one feasible affine envelope.',
       orthonormalFastPath
@@ -477,6 +487,9 @@ function analyze(firstDirection, secondDirection, firstInterval, secondInterval)
         : scaledOrthogonalFastPath
           ? 'The scale-adjusted orthogonal radial calculation uses represented direction norms; inverse-basis corners remain available as finite geometry evidence.'
           : 'Point-to-segment distance is evaluated after common coordinate scaling so finite large-magnitude geometry does not overflow merely because an edge delta is squared.',
+      directionNormEvaluations === 0
+        ? 'Basis metrics reuse one represented dot product and two represented squared norms, and Euclidean direction-norm evaluations are skipped unless an exact-zero-dot non-orthonormal basis needs the scaled-orthogonal path.'
+        : 'The exact-zero-dot non-orthonormal path evaluates both Euclidean direction norms once after reusing the represented dot product and squared norms for basis classification.',
       degenerateProjectionIntervals === 2
         ? exactOriginPoint
           ? 'The all-zero collapsed projection rectangle is recognized before radial norm work; deterministic corner evidence is still reconstructed and checked finite.'
@@ -504,6 +517,7 @@ function analyze(firstDirection, secondDirection, firstInterval, secondInterval)
       'This helper only handles two finite non-empty projection intervals and an invertible 2D direction pair.',
       'The orthonormal fast path requires exact represented unit norms and exact represented zero dot product.',
       'The scaled-orthogonal fast path requires an exact represented zero dot product plus finite nonzero represented direction norms; tolerance-accepted nonzero-dot pairs retain the inverse-basis geometry paths.',
+      '`basisWork` counts helper-local basis metric evaluations only: two represented squared norms and one represented dot product are shared by classification, while Euclidean direction norms are evaluated only for exact-zero-dot non-orthonormal bases.',
       'Degenerate interval fast paths only reduce repeated work after the same two-direction inverse-basis geometry has already been accepted; one collapsed interval is a segment and two collapsed intervals are one point.',
       'The zero-work point shortcut requires both collapsed represented projection values to be exactly zero; the one-norm segment shortcut requires the collapsed projection to be exactly zero and the varying represented interval to be exactly symmetric about zero.',
       'The general 2D inverse-basis path may skip all edge-distance scans only when both signed intervals contain zero, because linear invertibility then makes world-space displacement zero exactly feasible.',

@@ -1,0 +1,26 @@
+name: Physics radial-envelope receipt verifier
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "capabilities/physics-core/uc-two-projection-radial-envelope.js"
+      - "capabilities/physics-core/uc-two-projection-radial-envelope-verifier.js"
+      - "capabilities/physics-core/radial-envelope-verifier-selftest.js"
+      - ".github/workflows/physics-radial-envelope-verifier.yml"
+  workflow_dispatch:
+
+jobs:
+  radial-envelope-receipt-verifier:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact PR state
+        uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify optimized radial-envelope receipts against generic boundary evidence
+        run: node capabilities/physics-core/radial-envelope-verifier-selftest.js
