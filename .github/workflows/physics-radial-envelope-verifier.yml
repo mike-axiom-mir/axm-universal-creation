@@ -13,6 +13,7 @@ on:
       - "capabilities/physics-core/radial-envelope-classification-matrix-selftest.js"
       - "capabilities/physics-core/radial-envelope-representation-invariance-selftest.js"
       - "capabilities/physics-core/radial-envelope-scale-covariance-selftest.js"
+      - "capabilities/physics-core/radial-envelope-interval-inclusion-selftest.js"
       - ".github/workflows/physics-radial-envelope-verifier.yml"
   workflow_dispatch:
 
@@ -37,3 +38,5 @@ jobs:
         run: node capabilities/physics-core/radial-envelope-representation-invariance-selftest.js
       - name: Verify radial-envelope positive-scale covariance
         run: node capabilities/physics-core/radial-envelope-scale-covariance-selftest.js
+      - name: Verify radial-envelope interval inclusion monotonicity
+        run: node capabilities/physics-core/radial-envelope-interval-inclusion-selftest.js
