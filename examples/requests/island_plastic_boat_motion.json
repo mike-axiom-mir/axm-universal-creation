@@ -1,0 +1,28 @@
+{
+  "schema": "axm.rigid-vehicle-motion-request/v0.1",
+  "name": "Tiny Plastic Boat idle water motion",
+  "contract": {
+    "wheel_radius_m": 0.25,
+    "wheel_positions_m": {
+      "front-left": [-1.15, 0.0, 0.62],
+      "front-right": [1.15, 0.0, 0.62],
+      "rear-left": [-1.15, 0.0, -0.62],
+      "rear-right": [1.15, 0.0, -0.62]
+    },
+    "max_steer_rad": 0.4,
+    "max_suspension_m": 0.25,
+    "max_body_rotation_rad": 0.35,
+    "max_impact_offset_m": 0.25
+  },
+  "samples": [
+    {"time_s":0.0,"distance_m":0.0,"steer":0.0,"suspension_m":[0,0,0,0],"body_heave_m":0.0,"body_pitch_rad":0.0,"body_roll_rad":0.0,"impact_offset_m":[0,0,0],"impact_rotation_rad":[0,0,0],"damage_stage":0,"lights":{"head":false,"brake":false,"reverse":false,"damage":false}},
+    {"time_s":0.25,"distance_m":0.0,"steer":0.0,"suspension_m":[0,0,0,0],"body_heave_m":0.055,"body_pitch_rad":0.025,"body_roll_rad":-0.035,"impact_offset_m":[0,0,0],"impact_rotation_rad":[0,0,0],"damage_stage":0,"lights":{"head":false,"brake":false,"reverse":false,"damage":false}},
+    {"time_s":0.5,"distance_m":0.0,"steer":0.0,"suspension_m":[0,0,0,0],"body_heave_m":0.095,"body_pitch_rad":0.045,"body_roll_rad":0.0,"impact_offset_m":[0,0,0],"impact_rotation_rad":[0,0,0],"damage_stage":0,"lights":{"head":false,"brake":false,"reverse":false,"damage":false}},
+    {"time_s":0.75,"distance_m":0.0,"steer":0.0,"suspension_m":[0,0,0,0],"body_heave_m":0.04,"body_pitch_rad":0.015,"body_roll_rad":0.04,"impact_offset_m":[0,0,0],"impact_rotation_rad":[0,0,0],"damage_stage":0,"lights":{"head":false,"brake":false,"reverse":false,"damage":false}},
+    {"time_s":1.0,"distance_m":0.0,"steer":0.0,"suspension_m":[0,0,0,0],"body_heave_m":-0.025,"body_pitch_rad":-0.035,"body_roll_rad":0.02,"impact_offset_m":[0,0,0],"impact_rotation_rad":[0,0,0],"damage_stage":0,"lights":{"head":false,"brake":false,"reverse":false,"damage":false}},
+    {"time_s":1.25,"distance_m":0.0,"steer":0.0,"suspension_m":[0,0,0,0],"body_heave_m":-0.06,"body_pitch_rad":-0.045,"body_roll_rad":-0.025,"impact_offset_m":[0,0,0],"impact_rotation_rad":[0,0,0],"damage_stage":0,"lights":{"head":false,"brake":false,"reverse":false,"damage":false}},
+    {"time_s":1.5,"distance_m":0.0,"steer":0.0,"suspension_m":[0,0,0,0],"body_heave_m":-0.025,"body_pitch_rad":-0.015,"body_roll_rad":-0.04,"impact_offset_m":[0,0,0],"impact_rotation_rad":[0,0,0],"damage_stage":0,"lights":{"head":false,"brake":false,"reverse":false,"damage":false}},
+    {"time_s":1.75,"distance_m":0.0,"steer":0.0,"suspension_m":[0,0,0,0],"body_heave_m":0.035,"body_pitch_rad":0.02,"body_roll_rad":0.02,"impact_offset_m":[0,0,0],"impact_rotation_rad":[0,0,0],"damage_stage":0,"lights":{"head":false,"brake":false,"reverse":false,"damage":false}},
+    {"time_s":2.0,"distance_m":0.0,"steer":0.0,"suspension_m":[0,0,0,0],"body_heave_m":0.0,"body_pitch_rad":0.0,"body_roll_rad":0.0,"impact_offset_m":[0,0,0],"impact_rotation_rad":[0,0,0],"damage_stage":0,"lights":{"head":false,"brake":false,"reverse":false,"damage":false}}
+  ]
+}

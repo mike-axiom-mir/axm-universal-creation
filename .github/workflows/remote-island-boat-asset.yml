@@ -1,0 +1,163 @@
+name: Remote island boat asset
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'examples/requests/island_plastic_boat.json'
+      - 'examples/requests/island_plastic_boat_motion.json'
+      - 'examples/requests/layered_game_material_example.json'
+      - 'src/axm_uc/rich_game_materials.py'
+      - 'src/axm_uc/layered_game_materials.py'
+      - 'src/axm_uc/finished_layered_game_materials.py'
+      - 'src/axm_uc/rich_game_material_bridge.py'
+      - 'src/axm_uc/rich_game_material_cli.py'
+      - 'tests/test_rich_game_materials.py'
+      - 'tests/test_finished_layered_game_materials.py'
+      - 'tools/blender/build_island_plastic_boat.py'
+      - 'tools/blender/build_island_plastic_boat_rich.py'
+      - '.github/workflows/remote-island-boat-asset.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-animated-game-asset:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - name: Checkout exact candidate state
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install UC package
+        run: python -m pip install .
+
+      - name: Verify rich layered and finished material generators
+        run: python -m unittest discover -s tests -p 'test_*game_material*.py'
+
+      - name: Install Blender headless runtime
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y blender python3-numpy libegl1 libgl1-mesa-dri
+          ldconfig -p | grep 'libEGL.so.1'
+          blender --version
+          blender --background --factory-startup --python-exit-code 1 --python-expr "import numpy; print('Blender numpy', numpy.__version__)"
+
+      - name: Compile boat presentation motion through UC
+        run: |
+          axm-assets vehicle-motion-compose \
+            examples/requests/island_plastic_boat_motion.json \
+            "${{ runner.temp }}/boat-motion"
+
+      - name: Build actual animated textured 3D game asset
+        run: |
+          blender --background --factory-startup --python-exit-code 1 \
+            --python tools/blender/build_island_plastic_boat_rich.py -- \
+            examples/requests/island_plastic_boat.json \
+            "${{ runner.temp }}/boat-motion/vehicle-motion.json" \
+            "${{ runner.temp }}/island-boat"
+
+      - name: Independently verify exported GLB animation game nodes PBR textures layers and finishes
+        run: |
+          python - <<'PY'
+          import hashlib, json, struct
+          from pathlib import Path
+
+          root = Path('${{ runner.temp }}') / 'island-boat'
+          glb = root / 'TinyPlasticBoat_Animated_LOD0.glb'
+          data = glb.read_bytes()
+          magic, version, total = struct.unpack_from('<4sII', data, 0)
+          assert magic == b'glTF' and version == 2 and total == len(data)
+          chunk_len, chunk_type = struct.unpack_from('<II', data, 12)
+          assert chunk_type == 0x4E4F534A
+          document = json.loads(data[20:20 + chunk_len].decode('utf-8').rstrip(' \t\r\n\x00'))
+          assert document.get('animations'), 'exported GLB contains no animations'
+          node_names = {node.get('name') for node in document.get('nodes', [])}
+          required = {
+              'Socket_Player1', 'Socket_Player2', 'Socket_WeaponMount',
+              'Socket_UpgradeFront', 'Socket_UpgradeRear'
+          }
+          missing = required - node_names
+          assert not missing, f'missing game nodes: {sorted(missing)}'
+
+          rich_materials = [m for m in document.get('materials', []) if m.get('name', '').startswith('UC_BOAT_')]
+          assert len(rich_materials) >= 8, f'expected rich role materials, got {len(rich_materials)}'
+          for material in rich_materials:
+              pbr = material.get('pbrMetallicRoughness', {})
+              assert 'baseColorTexture' in pbr, material.get('name')
+              assert 'metallicRoughnessTexture' in pbr, material.get('name')
+              assert 'normalTexture' in material, material.get('name')
+              assert 'occlusionTexture' in material, material.get('name')
+          assert len(document.get('images', [])) >= 18, 'expected embedded PBR image payloads'
+          assert len(document.get('textures', [])) >= 18, 'expected exported glTF textures'
+
+          manifest = json.loads((root / 'manifest.json').read_text())
+          assert manifest['truth']['actual_geometry'] is True
+          assert manifest['truth']['actual_glb'] is True
+          assert manifest['truth']['actual_exported_animation'] is True
+          assert manifest['truth']['actual_portable_pbr_textures'] is True
+          assert manifest['truth']['actual_layered_surface_authoring'] is True
+          assert manifest['truth']['actual_game_finish_maps'] is True
+          assert manifest['truth']['final_visual_acceptance'] is False
+          assert manifest['surface_system']['schema'] == 'axm.layered-game-material-realization/v0.1'
+          assert manifest['surface_system']['preserved_layer_masks'] is True
+          assert manifest['surface_system']['texture_size'] == 512
+          assert len(manifest['surface_system']['materials']) >= 8
+          layered_roles = 0
+          finished_roles = 0
+          mask_count = 0
+          for role, record in manifest['surface_system']['materials'].items():
+              folder = root / record['bundle']
+              assert (folder / 'base_color.png').stat().st_size > 100
+              assert (folder / 'normal.png').stat().st_size > 100
+              assert (folder / 'orm.png').stat().st_size > 100
+              if record['bundle_kind'] in ('layered', 'layered-finished'):
+                  layered_roles += 1
+                  layer_manifest = json.loads((folder / 'layered-game-material.json').read_text())
+                  assert layer_manifest['layers'], role
+                  if record['bundle_kind'] == 'layered-finished':
+                      finished_roles += 1
+                      assert layer_manifest['game_finish'] == record['finish']
+                      assert layer_manifest['game_finish'] != 'realistic'
+                  for layer in layer_manifest['layers']:
+                      mask = folder / layer['file']
+                      payload = mask.read_bytes()
+                      assert len(payload) > 100, (role, layer['type'])
+                      assert hashlib.sha256(payload).hexdigest() == layer['sha256']
+                      mask_count += 1
+          assert layered_roles >= 8, layered_roles
+          assert finished_roles >= 8, finished_roles
+          assert mask_count >= 16, mask_count
+
+          tris = [manifest['lods'][name]['triangles'] for name in ('lod0','lod1','lod2')]
+          assert tris[0] > tris[1] > tris[2] > 0, tris
+          assert (root / 'TinyPlasticBoat_motion.mp4').stat().st_size > 1000
+          print(json.dumps({
+              'animations': [a.get('name') for a in document['animations']],
+              'required_game_nodes': sorted(required),
+              'rich_materials': [m.get('name') for m in rich_materials],
+              'embedded_images': len(document.get('images', [])),
+              'embedded_textures': len(document.get('textures', [])),
+              'layered_roles': layered_roles,
+              'finished_roles': finished_roles,
+              'preserved_layer_masks': mask_count,
+              'lod_triangles': tris,
+              'motion_video_bytes': (root / 'TinyPlasticBoat_motion.mp4').stat().st_size
+          }, indent=2))
+          PY
+
+      - name: Upload real asset delivery
+        uses: actions/upload-artifact@v4
+        with:
+          name: tiny-plastic-boat-animated-game-asset
+          path: ${{ runner.temp }}/island-boat
+          if-no-files-found: error
+          retention-days: 14
