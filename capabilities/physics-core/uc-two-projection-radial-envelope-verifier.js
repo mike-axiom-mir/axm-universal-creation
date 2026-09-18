@@ -1,7 +1,19 @@
 'use strict';
 
-const VERSION = '0.1.0';
+const VERSION = '0.1.1';
 const SCHEMA = 'axm.uc-two-projection-radial-envelope-verifier/v0.1';
+
+function finiteDirection(direction) {
+  return direction && Number.isFinite(direction.x) && Number.isFinite(direction.y);
+}
+
+function finiteInterval(interval) {
+  return interval && Number.isFinite(interval.min) && Number.isFinite(interval.max);
+}
+
+function orderedInterval(interval) {
+  return interval.min <= interval.max;
+}
 
 function finitePoint(point) {
   return point && Number.isFinite(point.x) && Number.isFinite(point.y);
@@ -17,6 +29,10 @@ function norm(point) {
 
 function intervalContainsZero(interval) {
   return interval.min <= 0 && interval.max >= 0;
+}
+
+function intervalIsExactlyOriginSymmetric(interval) {
+  return interval.min === -interval.max;
 }
 
 function closeEnough(actual, expected, tolerance) {
@@ -60,6 +76,39 @@ function invalid(reason, extra) {
   }, extra || {});
 }
 
+function structuralReceiptExpectation(firstInterval, secondInterval) {
+  const firstDegenerate = firstInterval.min === firstInterval.max;
+  const secondDegenerate = secondInterval.min === secondInterval.max;
+  const firstContainsZero = intervalContainsZero(firstInterval);
+  const secondContainsZero = intervalContainsZero(secondInterval);
+  const firstOriginSymmetric = intervalIsExactlyOriginSymmetric(firstInterval);
+  const secondOriginSymmetric = intervalIsExactlyOriginSymmetric(secondInterval);
+  const degenerateProjectionIntervals = Number(firstDegenerate) + Number(secondDegenerate);
+  const zeroContainingProjectionIntervals = Number(firstContainsZero) + Number(secondContainsZero);
+  const originInsideProjectionRectangle = firstContainsZero && secondContainsZero;
+  const centrallySymmetricProjectionRectangle = firstOriginSymmetric && secondOriginSymmetric;
+  const exactOriginPoint =
+    degenerateProjectionIntervals === 2 &&
+    firstInterval.min === 0 &&
+    secondInterval.min === 0;
+  const originSymmetricSegmentThroughOrigin =
+    degenerateProjectionIntervals === 1 &&
+    originInsideProjectionRectangle &&
+    (
+      (firstDegenerate && firstInterval.min === 0 && secondOriginSymmetric) ||
+      (secondDegenerate && secondInterval.min === 0 && firstOriginSymmetric)
+    );
+
+  return {
+    degenerateProjectionIntervals,
+    zeroContainingProjectionIntervals,
+    originInsideProjectionRectangle,
+    centrallySymmetricProjectionRectangle,
+    exactOriginPoint,
+    originSymmetricSegmentThroughOrigin
+  };
+}
+
 function verify(firstDirection, secondDirection, firstInterval, secondInterval, analysis, options) {
   const tolerance = options && options.numericTolerance !== undefined
     ? options.numericTolerance
@@ -68,6 +117,28 @@ function verify(firstDirection, secondDirection, firstInterval, secondInterval, 
   if (!Number.isFinite(tolerance) || tolerance < 0) {
     return invalid('INVALID_NUMERIC_TOLERANCE', { numericTolerance: tolerance });
   }
+  if (!finiteDirection(firstDirection) || !finiteDirection(secondDirection)) {
+    return invalid('INVALID_DIRECTION_INPUT');
+  }
+  if (!finiteInterval(firstInterval) || !finiteInterval(secondInterval)) {
+    return invalid('INVALID_INTERVAL_INPUT');
+  }
+  if (!orderedInterval(firstInterval) || !orderedInterval(secondInterval)) {
+    return invalid('EMPTY_PROJECTION_INTERVAL', {
+      emptyIntervals: [
+        firstInterval.min > firstInterval.max,
+        secondInterval.min > secondInterval.max
+      ]
+    });
+  }
+
+  const determinant =
+    firstDirection.x * secondDirection.y -
+    firstDirection.y * secondDirection.x;
+  if (!Number.isFinite(determinant) || Math.abs(determinant) <= Number.EPSILON) {
+    return invalid('SINGULAR_DIRECTION_PAIR', { determinant });
+  }
+
   if (!analysis || analysis.supported !== true) {
     return invalid('ANALYSIS_NOT_SUPPORTED');
   }
@@ -78,6 +149,23 @@ function verify(firstDirection, secondDirection, firstInterval, secondInterval, 
     return invalid('INVALID_RADIAL_EVIDENCE');
   }
 
+  const violations = [];
+  const determinantMatches = closeEnough(analysis.determinant, determinant, tolerance);
+  if (!determinantMatches) {
+    violations.push('DETERMINANT_MISMATCH');
+  }
+
+  const structuralExpectation = structuralReceiptExpectation(firstInterval, secondInterval);
+  const structuralChecks = Object.keys(structuralExpectation).map(field => ({
+    field,
+    actual: analysis[field],
+    expected: structuralExpectation[field],
+    matches: analysis[field] === structuralExpectation[field]
+  }));
+  if (structuralChecks.some(check => !check.matches)) {
+    violations.push('STRUCTURAL_RECEIPT_MISMATCH');
+  }
+
   const corners = analysis.corners;
   const projectionTargets = [
     [firstInterval.min, secondInterval.min],
@@ -85,7 +173,6 @@ function verify(firstDirection, secondDirection, firstInterval, secondInterval, 
     [firstInterval.max, secondInterval.max],
     [firstInterval.min, secondInterval.max]
   ];
-  const violations = [];
   const projectionChecks = [];
 
   for (let index = 0; index < corners.length; index += 1) {
@@ -155,11 +242,16 @@ function verify(firstDirection, secondDirection, firstInterval, secondInterval, 
     verified: uniqueViolations.length === 0,
     reason: uniqueViolations.length === 0 ? null : 'RECEIPT_INCONSISTENT',
     numericTolerance: tolerance,
+    determinant,
+    determinantMatches,
+    structuralChecks,
     expectedMinimumDistance,
     expectedMaximumDistance,
     projectionChecks,
     violations: uniqueViolations,
     evidence: [
+      'Verifier inputs are first required to be finite, interval-ordered, and represented by a finite non-singular 2D direction pair; this is a verifier precondition only and does not decide the caller orthogonality eligibility boundary.',
+      'The represented direction determinant and interval-derived structural receipt flags are recomputed independently before geometry evidence is trusted.',
       'Corner projections are checked against the four represented interval endpoint pairs returned by the existing two-projection envelope contract.',
       'Radial minimum is recomputed from the world-space origin against all four returned boundary segments, except that two zero-containing projection intervals make the origin exactly feasible.',
       'Radial maximum is recomputed from all four returned corner norms rather than trusting any optimized fast-path work receipt.',
@@ -167,6 +259,7 @@ function verify(firstDirection, secondDirection, firstInterval, secondInterval, 
     ],
     limitations: [
       'The verifier operates on the helper returned corner evidence and JavaScript Number arithmetic under a caller-selected numeric tolerance.',
+      'Structural receipt checks cover determinant and interval-derived flags only; helper-internal work counters and optimization-method labels remain implementation evidence rather than independently reproduced execution traces.',
       'Agreement does not prove exact-arithmetic geometry, global satisfiability, convergence, stability, collision correctness, 3D physics, gameplay correctness, or scientific validation.',
       'Direction eligibility remains the responsibility of the existing caller proof boundary; this verifier must not be used to admit additional directions or body pairs.'
     ]
