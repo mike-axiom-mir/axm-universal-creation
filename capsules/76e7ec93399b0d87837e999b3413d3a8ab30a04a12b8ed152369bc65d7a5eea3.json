@@ -1,0 +1,37 @@
+{
+  "capsule_id": "76e7ec93399b0d87837e999b3413d3a8ab30a04a12b8ed152369bc65d7a5eea3",
+  "evidence": {
+    "files": [],
+    "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 0,
+    "kinds": [],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "axm",
+      "body",
+      "creation-machine",
+      "morph",
+      "novel",
+      "run",
+      "scene",
+      "standalone",
+      "through",
+      "tile",
+      "universal-creation"
+    ]
+  },
+  "source": {
+    "base": "e861d0c7a87d430a3a2418bfe2607a974f99c340",
+    "commit_subject": "Run novel MorphTile scene through UC 3D body",
+    "head": "6cfb403d8860cd2d4dda71287532c605c7a4140f",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

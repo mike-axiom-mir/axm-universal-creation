@@ -1,0 +1,60 @@
+{
+  "capsule_id": "811bb3c8ca750db53cb9ea453055d356fc07e187964842eee8363bf01c3093ed",
+  "evidence": {
+    "files": [
+      {
+        "additions": 89,
+        "binary": false,
+        "content_sha256": "e5eda114ae7e7f6cc60c349c3b40b13a1855409f3bb48cba20c2262879336657",
+        "deletions": 0,
+        "path": "tools/blender/morphtile_spatial_demo.py",
+        "status": "A",
+        "symbols": [
+          "mat",
+          "point",
+          "main"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "167f2235966956529fa4f02d9d1a4a8944c6523459fedc62bf21b9040c340803"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 3,
+    "kinds": [
+      "code"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "author",
+      "axm",
+      "blender",
+      "creation-machine",
+      "demo",
+      "mat",
+      "morph",
+      "morphtile",
+      "novel",
+      "point",
+      "primitives",
+      "spatial",
+      "standalone",
+      "tile",
+      "tools",
+      "universal-creation",
+      "with"
+    ]
+  },
+  "source": {
+    "base": "d8020552b201a36274316a08f551ac7d6c071e71",
+    "commit_subject": "Author novel MorphTile spatial demo with UC 3D primitives",
+    "head": "e861d0c7a87d430a3a2418bfe2607a974f99c340",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

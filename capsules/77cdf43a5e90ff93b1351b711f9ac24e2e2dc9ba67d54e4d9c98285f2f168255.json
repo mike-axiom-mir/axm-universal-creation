@@ -1,0 +1,36 @@
+{
+  "capsule_id": "77cdf43a5e90ff93b1351b711f9ac24e2e2dc9ba67d54e4d9c98285f2f168255",
+  "evidence": {
+    "files": [],
+    "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 0,
+    "kinds": [],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "after",
+      "axm",
+      "creation-machine",
+      "material",
+      "morph",
+      "repair",
+      "retrigger",
+      "standalone",
+      "tile",
+      "universal-creation"
+    ]
+  },
+  "source": {
+    "base": "fd40a6b3bb924b476489bd9d75366b00d3bde810",
+    "commit_subject": "Retrigger MorphTile 3D after material repair",
+    "head": "73cbe9a6c83a4f4c018152fa7dcbe3c780773ae3",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

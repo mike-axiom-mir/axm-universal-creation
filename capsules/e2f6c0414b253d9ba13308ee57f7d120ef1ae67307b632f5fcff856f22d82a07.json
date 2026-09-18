@@ -1,0 +1,35 @@
+{
+  "capsule_id": "e2f6c0414b253d9ba13308ee57f7d120ef1ae67307b632f5fcff856f22d82a07",
+  "evidence": {
+    "files": [],
+    "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 0,
+    "kinds": [],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "axm",
+      "creation-machine",
+      "instant",
+      "pipeline",
+      "production",
+      "run",
+      "standalone",
+      "through",
+      "universal-creation"
+    ]
+  },
+  "source": {
+    "base": "6f017a81b73f2f648b0281ae69043753f233c682",
+    "commit_subject": "Run Instant test through UC production 3D pipeline",
+    "head": "d8020552b201a36274316a08f551ac7d6c071e71",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

@@ -1,0 +1,95 @@
+diff --git a/tools/blender/morphtile_spatial_demo.py b/tools/blender/morphtile_spatial_demo.py
+new file mode 100644
+index 0000000..9d60f72
+--- /dev/null
++++ b/tools/blender/morphtile_spatial_demo.py
+@@ -0,0 +1,89 @@
++#!/usr/bin/env python3
++"""Novel MorphTile spatial-creation scene built from UC's existing Blender geometry/material helpers."""
++from pathlib import Path
++import sys, json, math
++import bpy
++from mathutils import Vector
++ROOT=Path(__file__).resolve().parents[2]
++HERE=Path(__file__).resolve().parent
++sys.path[:0]=[str(HERE),str(ROOT/'src')]
++import axm_blender_forge as geo
++from axm_salvage_surfaces import solid
++
++def mat(name,color,metal=.2,rough=.35,emit=None):
++    m=solid(name,color,metallic=metal,roughness=rough)
++    if emit:
++        m.use_nodes=True
++        bs=m.node_tree.nodes.get('Principled BSDF')
++        bs.inputs['Emission Color'].default_value=(*emit,1)
++        bs.inputs['Emission Strength'].default_value=3.0
++    return m
++
++def point(obj, target):
++    obj.rotation_euler=(Vector(target)-obj.location).to_track_quat('-Z','Y').to_euler()
++
++def main():
++    import argparse
++    p=argparse.ArgumentParser();p.add_argument('--output',type=Path,required=True);a=p.parse_args()
++    out=a.output.resolve();out.mkdir(parents=True,exist_ok=False)
++    bpy.ops.wm.read_factory_settings(use_empty=True)
++    dark=mat('MorphTile_Dark',(0.025,.045,.075,1),.75,.22)
++    cyan=mat('MorphTile_Cyan',(.02,.35,.58,1),.25,.18,(.02,.55,1))
++    green=mat('World_Green',(.03,.38,.16,1),.1,.4,(.02,.22,.08))
++    violet=mat('AI_Violet',(.22,.08,.55,1),.2,.16,(.35,.08,1))
++    ivory=mat('Human_Ivory',(.55,.42,.32,1),.05,.55)
++    screen=mat('Screen_Glass',(.025,.08,.13,1),.5,.12,(.02,.18,.35))
++    floor=mat('Room_Floor',(.09,.075,.065,1),.05,.7)
++    objects=[]
++    objects.append(geo.box('RoomFloor',(0,0,-.08),(8,6,.16),floor,bevel=.08))
++    # TV / world window
++    objects.append(geo.box('DisplayFrame',(0,1.55,2.45),(4.9,.22,2.75),dark,bevel=.12))
++    objects.append(geo.box('WorldScreen',(0,1.40,2.45),(4.5,.08,2.35),screen,bevel=.08))
++    # world inside screen: island + towers + luminous tiles
++    objects.append(geo.box('WorldIsland',(0,1.30,2.0),(2.9,.10,.75),green,bevel=.18))
++    for i,x in enumerate([-1.0,-.35,.35,1.0]):
++        objects.append(geo.box(f'WorldTile{i}',(x,1.18,2.35+(i%2)*.25),(.48,.12,.48),[cyan,violet,green,cyan][i],bevel=.08))
++    # AI collaborator orb + rings
++    objects.append(geo.sphere('AICore',(1.75,1.0,3.15),.28,violet,segments=32,rings=16))
++    objects.append(geo.torus('AIRing',(1.75,1.0,3.15),.43,.035,cyan,major_segments=32,minor_segments=8))
++    # Human torso/head facing display
++    objects.append(geo.box('HumanTorso',(0,-1.65,1.25),(.85,.48,1.35),dark,bevel=.18))
++    objects.append(geo.sphere('HumanHead',(0,-1.55,2.2),.34,ivory,segments=28,rings=14))
++    # arms reaching toward world
++    for side in [-1,1]:
++        sx=.38*side
++        objects.append(geo.beam(f'UpperArm{side}',(sx,-1.48,1.7),(.72*side,-.78,1.55),.15,.18,dark))
++        objects.append(geo.beam(f'ForeArm{side}',(.72*side,-.78,1.55),(1.02*side,-.10,1.72),.13,.16,dark))
++        # cheap sensor glove: palm, finger bars, LEDs
++        objects.append(geo.box(f'GlovePalm{side}',(1.05*side,-.02,1.72),(.38,.22,.42),dark,bevel=.08))
++        for j in range(3):
++            x=(1.0+.12*j)*side
++            objects.append(geo.beam(f'GloveFinger{side}_{j}',(x,.02,1.88),(x+.08*side,.28,2.06),.035,.05,dark))
++        for j,z in enumerate([1.62,1.72,1.82]):
++            objects.append(geo.sphere(f'LED{side}_{j}',(1.05*side,-.15,z),.045,cyan,segments=16,rings=8))
++    # physical MorphTiles floating between hands and screen
++    for i,(x,z,m) in enumerate([(-.65,1.85,cyan),(0,2.05,violet),(.65,1.82,green)]):
++        objects.append(geo.box(f'MorphTile_{i}',(x,.45,z),(.42,.22,.42),m,bevel=.09))
++        objects.append(geo.torus(f'MorphTilePort_{i}',(x,.32,z),.12,.025,cyan,major_segments=20,minor_segments=6))
++    # camera tracking bar
++    objects.append(geo.box('TrackingBar',(0,1.22,.72),(1.5,.18,.16),dark,bevel=.05))
++    for x in [-.55,0,.55]: objects.append(geo.sphere('Tracker'+str(x),(x,1.10,.72),.07,cyan,segments=16,rings=8))
++    # signature plaque as geometry marker (text via Blender)
++    bpy.ops.object.text_add(location=(-2.6,.7,.42),rotation=(math.pi/2,0,0))
++    t=bpy.context.object;t.name='Signature';t.data.body='MorphTile  |  Mike - Axiom/Mir';t.data.size=.22;t.data.extrude=.01;t.data.materials.append(cyan);objects.append(t)
++    # lighting / camera
++    bpy.ops.object.light_add(type='AREA',location=(0,-1,5.5));bpy.context.object.data.energy=1200;bpy.context.object.data.shape='DISK';bpy.context.object.data.size=5
++    bpy.ops.object.light_add(type='AREA',location=(3,-2,2.5));bpy.context.object.data.energy=700;bpy.context.object.data.color=(.15,.55,1);bpy.context.object.data.size=3
++    bpy.ops.object.light_add(type='AREA',location=(-3,0,2));bpy.context.object.data.energy=500;bpy.context.object.data.color=(.35,.15,1);bpy.context.object.data.size=2
++    bpy.ops.object.camera_add(location=(5.7,-8.4,4.3));cam=bpy.context.object;point(cam,(0,.15,1.75));bpy.context.scene.camera=cam
++    scene=bpy.context.scene;scene.render.engine='BLENDER_EEVEE_NEXT';scene.render.resolution_x=1280;scene.render.resolution_y=720;scene.render.resolution_percentage=100
++    scene.render.image_settings.file_format='PNG';scene.render.filepath=str(out/'morphtile-spatial-demo.png')
++    scene.world.color=(.004,.008,.018)
++    # save editable source, render, export all authored geometry
++    bpy.ops.wm.save_as_mainfile(filepath=str(out/'MorphTile-Spatial-Demo.blend'))
++    bpy.ops.render.render(write_still=True)
++    geo.select_only([o for o in objects if o and o.name in bpy.data.objects])
++    geo.export_glb(out/'MorphTile-Spatial-Demo.glb')
++    manifest={'schema':'axm.morphtile-spatial-demo/v0.1','novel_request':True,'source':'tools/blender/morphtile_spatial_demo.py','outputs':['MorphTile-Spatial-Demo.blend','MorphTile-Spatial-Demo.glb','morphtile-spatial-demo.png'],'reusable_groups':['sensor-gloves','tracking-bar','morphtiles','ai-core','world-display','human-proxy'],'truth':'New MorphTile scene authored from existing UC geometry/material primitives; not a replay of an existing asset builder and not a claim of photorealism or finished product design.'}
++    (out/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
++if __name__=='__main__':main()

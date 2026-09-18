@@ -1,0 +1,34 @@
+{
+  "capsule_id": "9c7147bf636109dd663c9a8d19aa8e036d3359389f47d43edb29dc0c294fe64e",
+  "evidence": {
+    "files": [],
+    "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 0,
+    "kinds": [],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "add",
+      "axm",
+      "chat",
+      "creation-machine",
+      "execution",
+      "probe",
+      "standalone",
+      "universal-creation"
+    ]
+  },
+  "source": {
+    "base": "25a5a4053c9dca1c164e887540f3f02954061b37",
+    "commit_subject": "Add chat-to-UC execution probe",
+    "head": "06488d08e63064e077b3a44e170fd01705c6763f",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

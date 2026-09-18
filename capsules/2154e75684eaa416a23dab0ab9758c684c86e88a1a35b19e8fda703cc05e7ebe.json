@@ -1,0 +1,36 @@
+{
+  "capsule_id": "2154e75684eaa416a23dab0ab9758c684c86e88a1a35b19e8fda703cc05e7ebe",
+  "evidence": {
+    "files": [],
+    "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 0,
+    "kinds": [],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "axm",
+      "build",
+      "creation-machine",
+      "evidence",
+      "failure",
+      "morph",
+      "preserve",
+      "standalone",
+      "tile",
+      "universal-creation"
+    ]
+  },
+  "source": {
+    "base": "d7280e5e4791fe06d73ca3cb6b76b43787a005f2",
+    "commit_subject": "Preserve MorphTile 3D build failure evidence",
+    "head": "2af1845fbeaa3edb6f88ea5777a6dd90dcbcdacf",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

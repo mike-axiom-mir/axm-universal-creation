@@ -1,0 +1,318 @@
+diff --git a/examples/requests/morphtile_spatial_marketing_visual.json b/examples/requests/morphtile_spatial_marketing_visual.json
+new file mode 100644
+index 0000000..a495ef0
+--- /dev/null
++++ b/examples/requests/morphtile_spatial_marketing_visual.json
+@@ -0,0 +1,312 @@
++{
++  "kind": "simulate-creation",
++  "direction": "Create a futuristic marketing visual log for MorphTile spatial creation: a human using inexpensive tracked hand inputs in front of a TV, collaborating with an AI to build a modular digital world. Emphasize simple hardware, open world, modular computational matter, and human + AI co-creation. Signature concept: Mike - Axiom/Mir.",
++  "inputs": {
++    "thought": {
++      "intent": "AXM MorphTile spatial creation marketing visual: two tracked hands manipulate modular luminous computational blocks toward a large world-display, with a visible AI collaborator and simple camera/sensor bridge. Futuristic, inspiring, technical, open rather than locked-in.",
++      "canvas": {
++        "width": 1280,
++        "height": 720,
++        "background": "#050B14"
++      },
++      "objects": [
++        {
++          "id": "world-screen",
++          "z": 1,
++          "shape": {
++            "kind": "rect",
++            "x": 470,
++            "y": 70,
++            "width": 740,
++            "height": 470,
++            "rx": 32
++          },
++          "material": {
++            "name": "glass-display",
++            "metallic": 0.55,
++            "roughness": 0.18,
++            "opacity": 0.98,
++            "emission": 0.45
++          },
++          "color": {
++            "fill": "#10243A",
++            "stroke": "#67E8F9",
++            "stroke_width": 4
++          }
++        },
++        {
++          "id": "world-island",
++          "z": 2,
++          "shape": {
++            "kind": "polygon",
++            "points": [
++              [
++                620,
++                380
++              ],
++              [
++                760,
++                220
++              ],
++              [
++                930,
++                260
++              ],
++              [
++                1080,
++                400
++              ],
++              [
++                910,
++                485
++              ],
++              [
++                710,
++                470
++              ]
++            ]
++          },
++          "material": {
++            "name": "living-world",
++            "metallic": 0.1,
++            "roughness": 0.45,
++            "opacity": 1,
++            "emission": 0.35
++          },
++          "color": {
++            "fill": "#22C55E",
++            "stroke": "#A7F3D0",
++            "stroke_width": 4
++          }
++        },
++        {
++          "id": "ai-core",
++          "z": 3,
++          "shape": {
++            "kind": "circle",
++            "cx": 1090,
++            "cy": 170,
++            "r": 62
++          },
++          "material": {
++            "name": "ai-light",
++            "metallic": 0.25,
++            "roughness": 0.12,
++            "opacity": 0.95,
++            "emission": 1
++          },
++          "color": {
++            "fill": "#38BDF8",
++            "stroke": "#E0F2FE",
++            "stroke_width": 4
++          }
++        },
++        {
++          "id": "left-hand",
++          "z": 4,
++          "shape": {
++            "kind": "polygon",
++            "points": [
++              [
++                170,
++                590
++              ],
++              [
++                205,
++                410
++              ],
++              [
++                250,
++                390
++              ],
++              [
++                275,
++                520
++              ],
++              [
++                325,
++                430
++              ],
++              [
++                350,
++                455
++              ],
++              [
++                315,
++                610
++              ]
++            ]
++          },
++          "material": {
++            "name": "sensor-glove",
++            "metallic": 0.7,
++            "roughness": 0.3,
++            "opacity": 1,
++            "emission": 0.25
++          },
++          "color": {
++            "fill": "#111827",
++            "stroke": "#22D3EE",
++            "stroke_width": 5
++          }
++        },
++        {
++          "id": "right-hand",
++          "z": 4,
++          "shape": {
++            "kind": "polygon",
++            "points": [
++              [
++                360,
++                610
++              ],
++              [
++                330,
++                455
++              ],
++              [
++                355,
++                430
++              ],
++              [
++                405,
++                520
++              ],
++              [
++                430,
++                390
++              ],
++              [
++                475,
++                410
++              ],
++              [
++                510,
++                590
++              ]
++            ]
++          },
++          "material": {
++            "name": "sensor-glove",
++            "metallic": 0.7,
++            "roughness": 0.3,
++            "opacity": 1,
++            "emission": 0.25
++          },
++          "color": {
++            "fill": "#111827",
++            "stroke": "#22D3EE",
++            "stroke_width": 5
++          }
++        },
++        {
++          "id": "camera",
++          "z": 3,
++          "shape": {
++            "kind": "circle",
++            "cx": 330,
++            "cy": 170,
++            "r": 48
++          },
++          "material": {
++            "name": "camera-sensor",
++            "metallic": 0.8,
++            "roughness": 0.22,
++            "opacity": 1,
++            "emission": 0.3
++          },
++          "color": {
++            "fill": "#0F172A",
++            "stroke": "#A5F3FC",
++            "stroke_width": 5
++          }
++        },
++        {
++          "id": "tile-a",
++          "z": 5,
++          "shape": {
++            "kind": "rect",
++            "x": 510,
++            "y": 565,
++            "width": 95,
++            "height": 95,
++            "rx": 14
++          },
++          "material": {
++            "name": "morphtile",
++            "metallic": 0.3,
++            "roughness": 0.22,
++            "opacity": 1,
++            "emission": 0.7
++          },
++          "color": {
++            "fill": "#2563EB",
++            "stroke": "#BFDBFE",
++            "stroke_width": 4
++          }
++        },
++        {
++          "id": "tile-b",
++          "z": 5,
++          "shape": {
++            "kind": "rect",
++            "x": 620,
++            "y": 565,
++            "width": 95,
++            "height": 95,
++            "rx": 14
++          },
++          "material": {
++            "name": "morphtile",
++            "metallic": 0.3,
++            "roughness": 0.22,
++            "opacity": 1,
++            "emission": 0.7
++          },
++          "color": {
++            "fill": "#06B6D4",
++            "stroke": "#CFFAFE",
++            "stroke_width": 4
++          }
++        },
++        {
++          "id": "tile-c",
++          "z": 5,
++          "shape": {
++            "kind": "rect",
++            "x": 730,
++            "y": 565,
++            "width": 95,
++            "height": 95,
++            "rx": 14
++          },
++          "material": {
++            "name": "morphtile",
++            "metallic": 0.3,
++            "roughness": 0.22,
++            "opacity": 1,
++            "emission": 0.7
++          },
++          "color": {
++            "fill": "#8B5CF6",
++            "stroke": "#EDE9FE",
++            "stroke_width": 4
++          }
++        }
++      ]
++    },
++    "palette": [
++      "#050B14",
++      "#22D3EE",
++      "#38BDF8",
++      "#22C55E",
++      "#8B5CF6",
++      "#F8FAFC"
++    ],
++    "criteria": {
++      "fit_canvas": true,
++      "minimum_contrast": 4.5
++    },
++    "max_iterations": 8
++  }
++}

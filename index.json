@@ -1,0 +1,320 @@
+{
+  "capsules": [
+    {
+      "attention_score": 3,
+      "base": "2af1845fbeaa3edb6f88ea5777a6dd90dcbcdacf",
+      "capsule_id": "1866a9be48c0c819d28ec08693f05c809afca4331fdb69b9dc36cdbddb78351a",
+      "capsule_path": "capsules/1866a9be48c0c819d28ec08693f05c809afca4331fdb69b9dc36cdbddb78351a.json",
+      "file_count": 1,
+      "head": "fd40a6b3bb924b476489bd9d75366b00d3bde810",
+      "kinds": [
+        "code"
+      ],
+      "patch_path": "patches/1866a9be48c0c819d28ec08693f05c809afca4331fdb69b9dc36cdbddb78351a.patch",
+      "repo": "mike-axiom-mir/axm-universal-creation",
+      "tags": [
+        "axm",
+        "blender",
+        "captured",
+        "creation-machine",
+        "demo",
+        "fix",
+        "from",
+        "materials",
+        "morph",
+        "morphtile",
+        "spatial",
+        "standalone",
+        "tile",
+        "tools",
+        "traceback",
+        "universal-creation"
+      ]
+    },
+    {
+      "attention_score": 3,
+      "base": "d8020552b201a36274316a08f551ac7d6c071e71",
+      "capsule_id": "811bb3c8ca750db53cb9ea453055d356fc07e187964842eee8363bf01c3093ed",
+      "capsule_path": "capsules/811bb3c8ca750db53cb9ea453055d356fc07e187964842eee8363bf01c3093ed.json",
+      "file_count": 1,
+      "head": "e861d0c7a87d430a3a2418bfe2607a974f99c340",
+      "kinds": [
+        "code"
+      ],
+      "patch_path": "patches/811bb3c8ca750db53cb9ea453055d356fc07e187964842eee8363bf01c3093ed.patch",
+      "repo": "mike-axiom-mir/axm-universal-creation",
+      "tags": [
+        "author",
+        "axm",
+        "blender",
+        "creation-machine",
+        "demo",
+        "mat",
+        "morph",
+        "morphtile",
+        "novel",
+        "point",
+        "primitives",
+        "spatial",
+        "standalone",
+        "tile",
+        "tools",
+        "universal-creation",
+        "with"
+      ]
+    },
+    {
+      "attention_score": 0,
+      "base": "6f017a81b73f2f648b0281ae69043753f233c682",
+      "capsule_id": "e2f6c0414b253d9ba13308ee57f7d120ef1ae67307b632f5fcff856f22d82a07",
+      "capsule_path": "capsules/e2f6c0414b253d9ba13308ee57f7d120ef1ae67307b632f5fcff856f22d82a07.json",
+      "file_count": 0,
+      "head": "d8020552b201a36274316a08f551ac7d6c071e71",
+      "kinds": [],
+      "patch_path": "patches/e2f6c0414b253d9ba13308ee57f7d120ef1ae67307b632f5fcff856f22d82a07.patch",
+      "repo": "mike-axiom-mir/axm-universal-creation",
+      "tags": [
+        "axm",
+        "creation-machine",
+        "instant",
+        "pipeline",
+        "production",
+        "run",
+        "standalone",
+        "through",
+        "universal-creation"
+      ]
+    },
+    {
+      "attention_score": 3,
+      "base": "6cfb403d8860cd2d4dda71287532c605c7a4140f",
+      "capsule_id": "6ad0d855f795ed09ec3c94d73a080b29c78be7b37566a715eae4781e3b99b296",
+      "capsule_path": "capsules/6ad0d855f795ed09ec3c94d73a080b29c78be7b37566a715eae4781e3b99b296.json",
+      "file_count": 1,
+      "head": "d7280e5e4791fe06d73ca3cb6b76b43787a005f2",
+      "kinds": [
+        "code"
+      ],
+      "patch_path": "patches/6ad0d855f795ed09ec3c94d73a080b29c78be7b37566a715eae4781e3b99b296.patch",
+      "repo": "mike-axiom-mir/axm-universal-creation",
+      "tags": [
+        "against",
+        "axm",
+        "blender",
+        "builder",
+        "contracts",
+        "creation-machine",
+        "demo",
+        "helper",
+        "mat",
+        "morph",
+        "morphtile",
+        "novel",
+        "repair",
+        "spatial",
+        "standalone",
+        "tile",
+        "tools",
+        "universal-creation"
+      ]
+    },
+    {
+      "attention_score": 0,
+      "base": "06488d08e63064e077b3a44e170fd01705c6763f",
+      "capsule_id": "f1307b3d213136549ca3133d6a42152a286e1eb6c489889f60fbf1377eda746f",
+      "capsule_path": "capsules/f1307b3d213136549ca3133d6a42152a286e1eb6c489889f60fbf1377eda746f.json",
+      "file_count": 1,
+      "head": "826fa5ea3701ac54242dfdf1fc08aed76aeb741b",
+      "kinds": [
+        "configuration"
+      ],
+      "patch_path": "patches/f1307b3d213136549ca3133d6a42152a286e1eb6c489889f60fbf1377eda746f.patch",
+      "repo": "mike-axiom-mir/axm-universal-creation",
+      "tags": [
+        "axm",
+        "chat",
+        "creation-machine",
+        "examples",
+        "installed",
+        "json",
+        "path",
+        "probe",
+        "requests",
+        "route",
+        "standalone",
+        "static",
+        "universal-creation",
+        "use",
+        "web"
+      ]
+    },
+    {
+      "attention_score": 0,
+      "base": "826fa5ea3701ac54242dfdf1fc08aed76aeb741b",
+      "capsule_id": "d7ecbda6d67625a4ead828588bea69dda3e821579f7346d7e492e7bbc3f966f0",
+      "capsule_path": "capsules/d7ecbda6d67625a4ead828588bea69dda3e821579f7346d7e492e7bbc3f966f0.json",
+      "file_count": 1,
+      "head": "78a49e56c934b07c38f2bf23fab2050208e14b3d",
+      "kinds": [
+        "configuration"
+      ],
+      "patch_path": "patches/d7ecbda6d67625a4ead828588bea69dda3e821579f7346d7e492e7bbc3f966f0.patch",
+      "repo": "mike-axiom-mir/axm-universal-creation",
+      "tags": [
+        "add",
+        "axm",
+        "creation-machine",
+        "examples",
+        "json",
+        "marketing",
+        "morph",
+        "morphtile",
+        "request",
+        "requests",
+        "spatial",
+        "standalone",
+        "tile",
+        "universal-creation",
+        "visual"
+      ]
+    },
+    {
+      "attention_score": 0,
+      "base": "fd40a6b3bb924b476489bd9d75366b00d3bde810",
+      "capsule_id": "77cdf43a5e90ff93b1351b711f9ac24e2e2dc9ba67d54e4d9c98285f2f168255",
+      "capsule_path": "capsules/77cdf43a5e90ff93b1351b711f9ac24e2e2dc9ba67d54e4d9c98285f2f168255.json",
+      "file_count": 0,
+      "head": "73cbe9a6c83a4f4c018152fa7dcbe3c780773ae3",
+      "kinds": [],
+      "patch_path": "patches/77cdf43a5e90ff93b1351b711f9ac24e2e2dc9ba67d54e4d9c98285f2f168255.patch",
+      "repo": "mike-axiom-mir/axm-universal-creation",
+      "tags": [
+        "after",
+        "axm",
+        "creation-machine",
+        "material",
+        "morph",
+        "repair",
+        "retrigger",
+        "standalone",
+        "tile",
+        "universal-creation"
+      ]
+    },
+    {
+      "attention_score": 0,
+      "base": "78a49e56c934b07c38f2bf23fab2050208e14b3d",
+      "capsule_id": "26136728306a0b6fbe6db4ad744ea8f7021553e0047e21e947debe2b0fdc49a7",
+      "capsule_path": "capsules/26136728306a0b6fbe6db4ad744ea8f7021553e0047e21e947debe2b0fdc49a7.json",
+      "file_count": 0,
+      "head": "6f017a81b73f2f648b0281ae69043753f233c682",
+      "kinds": [],
+      "patch_path": "patches/26136728306a0b6fbe6db4ad744ea8f7021553e0047e21e947debe2b0fdc49a7.patch",
+      "repo": "mike-axiom-mir/axm-universal-creation",
+      "tags": [
+        "axm",
+        "creation-machine",
+        "marketing",
+        "morph",
+        "paintgun",
+        "run",
+        "standalone",
+        "through",
+        "tile",
+        "universal-creation",
+        "visual"
+      ]
+    },
+    {
+      "attention_score": 0,
+      "base": "e861d0c7a87d430a3a2418bfe2607a974f99c340",
+      "capsule_id": "76e7ec93399b0d87837e999b3413d3a8ab30a04a12b8ed152369bc65d7a5eea3",
+      "capsule_path": "capsules/76e7ec93399b0d87837e999b3413d3a8ab30a04a12b8ed152369bc65d7a5eea3.json",
+      "file_count": 0,
+      "head": "6cfb403d8860cd2d4dda71287532c605c7a4140f",
+      "kinds": [],
+      "patch_path": "patches/76e7ec93399b0d87837e999b3413d3a8ab30a04a12b8ed152369bc65d7a5eea3.patch",
+      "repo": "mike-axiom-mir/axm-universal-creation",
+      "tags": [
+        "axm",
+        "body",
+        "creation-machine",
+        "morph",
+        "novel",
+        "run",
+        "scene",
+        "standalone",
+        "through",
+        "tile",
+        "universal-creation"
+      ]
+    },
+    {
+      "attention_score": 0,
+      "base": "73cbe9a6c83a4f4c018152fa7dcbe3c780773ae3",
+      "capsule_id": "065542563ddf259f0b0f5fa6fb7b93a8caf47a34b601e81486c74778e0c199ef",
+      "capsule_path": "capsules/065542563ddf259f0b0f5fa6fb7b93a8caf47a34b601e81486c74778e0c199ef.json",
+      "file_count": 0,
+      "head": "5a4904f4b87a0b05ff5fda7a4878a1c516ca5053",
+      "kinds": [],
+      "patch_path": "patches/065542563ddf259f0b0f5fa6fb7b93a8caf47a34b601e81486c74778e0c199ef.patch",
+      "repo": "mike-axiom-mir/axm-universal-creation",
+      "tags": [
+        "add",
+        "axm",
+        "creation-machine",
+        "downloadable",
+        "snapshot",
+        "source",
+        "standalone",
+        "universal-creation"
+      ]
+    },
+    {
+      "attention_score": 0,
+      "base": "d7280e5e4791fe06d73ca3cb6b76b43787a005f2",
+      "capsule_id": "2154e75684eaa416a23dab0ab9758c684c86e88a1a35b19e8fda703cc05e7ebe",
+      "capsule_path": "capsules/2154e75684eaa416a23dab0ab9758c684c86e88a1a35b19e8fda703cc05e7ebe.json",
+      "file_count": 0,
+      "head": "2af1845fbeaa3edb6f88ea5777a6dd90dcbcdacf",
+      "kinds": [],
+      "patch_path": "patches/2154e75684eaa416a23dab0ab9758c684c86e88a1a35b19e8fda703cc05e7ebe.patch",
+      "repo": "mike-axiom-mir/axm-universal-creation",
+      "tags": [
+        "axm",
+        "build",
+        "creation-machine",
+        "evidence",
+        "failure",
+        "morph",
+        "preserve",
+        "standalone",
+        "tile",
+        "universal-creation"
+      ]
+    },
+    {
+      "attention_score": 0,
+      "base": "25a5a4053c9dca1c164e887540f3f02954061b37",
+      "capsule_id": "9c7147bf636109dd663c9a8d19aa8e036d3359389f47d43edb29dc0c294fe64e",
+      "capsule_path": "capsules/9c7147bf636109dd663c9a8d19aa8e036d3359389f47d43edb29dc0c294fe64e.json",
+      "file_count": 0,
+      "head": "06488d08e63064e077b3a44e170fd01705c6763f",
+      "kinds": [],
+      "patch_path": "patches/9c7147bf636109dd663c9a8d19aa8e036d3359389f47d43edb29dc0c294fe64e.patch",
+      "repo": "mike-axiom-mir/axm-universal-creation",
+      "tags": [
+        "add",
+        "axm",
+        "chat",
+        "creation-machine",
+        "execution",
+        "probe",
+        "standalone",
+        "universal-creation"
+      ]
+    }
+  ],
+  "protocol": "axm-beacon/0.1",
+  "repo": "mike-axiom-mir/axm-universal-creation"
+}

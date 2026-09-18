@@ -1,0 +1,57 @@
+{
+  "capsule_id": "1866a9be48c0c819d28ec08693f05c809afca4331fdb69b9dc36cdbddb78351a",
+  "evidence": {
+    "files": [
+      {
+        "additions": 7,
+        "binary": false,
+        "content_sha256": "ee3c0db464cf37429331ca5dc71e990ddaf4f7c1e7e34e8cdda1e40a435fa773",
+        "deletions": 7,
+        "path": "tools/blender/morphtile_spatial_demo.py",
+        "status": "M",
+        "symbols": [
+          "main"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "4b4372734bd4dba17e20dd86f52b79e43f64f82a4cea60fe04a8004aca9491c7"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 3,
+    "kinds": [
+      "code"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "axm",
+      "blender",
+      "captured",
+      "creation-machine",
+      "demo",
+      "fix",
+      "from",
+      "materials",
+      "morph",
+      "morphtile",
+      "spatial",
+      "standalone",
+      "tile",
+      "tools",
+      "traceback",
+      "universal-creation"
+    ]
+  },
+  "source": {
+    "base": "2af1845fbeaa3edb6f88ea5777a6dd90dcbcdacf",
+    "commit_subject": "Fix MorphTile UC materials from captured traceback",
+    "head": "fd40a6b3bb924b476489bd9d75366b00d3bde810",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

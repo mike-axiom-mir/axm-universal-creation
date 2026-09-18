@@ -1,0 +1,54 @@
+{
+  "capsule_id": "f1307b3d213136549ca3133d6a42152a286e1eb6c489889f60fbf1377eda746f",
+  "evidence": {
+    "files": [
+      {
+        "additions": 1,
+        "binary": false,
+        "content_sha256": "9bc84b1733f394a9d668051a7b7712fdc5f52c778643951f4f70a1e7c0d7d3dc",
+        "deletions": 1,
+        "path": "examples/requests/chat_path_probe.json",
+        "status": "M",
+        "symbols": [],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "a8ffe9df4a310a826129389b2722b8128e14a7cac19901c0824ed58633c5b3e0"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 0,
+    "kinds": [
+      "configuration"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "axm",
+      "chat",
+      "creation-machine",
+      "examples",
+      "installed",
+      "json",
+      "path",
+      "probe",
+      "requests",
+      "route",
+      "standalone",
+      "static",
+      "universal-creation",
+      "use",
+      "web"
+    ]
+  },
+  "source": {
+    "base": "06488d08e63064e077b3a44e170fd01705c6763f",
+    "commit_subject": "Use installed static-web route for chat-to-UC probe",
+    "head": "826fa5ea3701ac54242dfdf1fc08aed76aeb741b",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

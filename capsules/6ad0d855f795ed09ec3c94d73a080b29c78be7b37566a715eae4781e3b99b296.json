@@ -1,0 +1,60 @@
+{
+  "capsule_id": "6ad0d855f795ed09ec3c94d73a080b29c78be7b37566a715eae4781e3b99b296",
+  "evidence": {
+    "files": [
+      {
+        "additions": 9,
+        "binary": false,
+        "content_sha256": "bacfd49da133e9db532d2f84a138635b7185d3f27fa10dc32cf9eebc69da43e0",
+        "deletions": 9,
+        "path": "tools/blender/morphtile_spatial_demo.py",
+        "status": "M",
+        "symbols": [
+          "mat",
+          "main"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "a5da665c97e9fdab156687ccbb00dcc5b2e56976423486404495e5b216da4b86"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 3,
+    "kinds": [
+      "code"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "against",
+      "axm",
+      "blender",
+      "builder",
+      "contracts",
+      "creation-machine",
+      "demo",
+      "helper",
+      "mat",
+      "morph",
+      "morphtile",
+      "novel",
+      "repair",
+      "spatial",
+      "standalone",
+      "tile",
+      "tools",
+      "universal-creation"
+    ]
+  },
+  "source": {
+    "base": "6cfb403d8860cd2d4dda71287532c605c7a4140f",
+    "commit_subject": "Repair MorphTile novel 3D builder against UC helper contracts",
+    "head": "d7280e5e4791fe06d73ca3cb6b76b43787a005f2",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "capsule_id": "d7ecbda6d67625a4ead828588bea69dda3e821579f7346d7e492e7bbc3f966f0",
+  "evidence": {
+    "files": [
+      {
+        "additions": 312,
+        "binary": false,
+        "content_sha256": "db3a0aeca0deb8958663a7bafac110e5335af4c4394ff19ea419e456f72a7bbd",
+        "deletions": 0,
+        "path": "examples/requests/morphtile_spatial_marketing_visual.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "826ce2f863e325ff702dfc6f9a588cb14d2256c2ecbb016ef097b2bd9a50b056"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 0,
+    "kinds": [
+      "configuration"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "add",
+      "axm",
+      "creation-machine",
+      "examples",
+      "json",
+      "marketing",
+      "morph",
+      "morphtile",
+      "request",
+      "requests",
+      "spatial",
+      "standalone",
+      "tile",
+      "universal-creation",
+      "visual"
+    ]
+  },
+  "source": {
+    "base": "826fa5ea3701ac54242dfdf1fc08aed76aeb741b",
+    "commit_subject": "Add MorphTile spatial marketing UC request",
+    "head": "78a49e56c934b07c38f2bf23fab2050208e14b3d",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "capsule_id": "065542563ddf259f0b0f5fa6fb7b93a8caf47a34b601e81486c74778e0c199ef",
+  "evidence": {
+    "files": [],
+    "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 0,
+    "kinds": [],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "add",
+      "axm",
+      "creation-machine",
+      "downloadable",
+      "snapshot",
+      "source",
+      "standalone",
+      "universal-creation"
+    ]
+  },
+  "source": {
+    "base": "73cbe9a6c83a4f4c018152fa7dcbe3c780773ae3",
+    "commit_subject": "Add downloadable UC source snapshot",
+    "head": "5a4904f4b87a0b05ff5fda7a4878a1c516ca5053",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

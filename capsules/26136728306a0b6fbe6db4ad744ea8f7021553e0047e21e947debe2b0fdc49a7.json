@@ -1,0 +1,37 @@
+{
+  "capsule_id": "26136728306a0b6fbe6db4ad744ea8f7021553e0047e21e947debe2b0fdc49a7",
+  "evidence": {
+    "files": [],
+    "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 0,
+    "kinds": [],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "axm",
+      "creation-machine",
+      "marketing",
+      "morph",
+      "paintgun",
+      "run",
+      "standalone",
+      "through",
+      "tile",
+      "universal-creation",
+      "visual"
+    ]
+  },
+  "source": {
+    "base": "78a49e56c934b07c38f2bf23fab2050208e14b3d",
+    "commit_subject": "Run MorphTile marketing visual through UC Paintgun",
+    "head": "6f017a81b73f2f648b0281ae69043753f233c682",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}
