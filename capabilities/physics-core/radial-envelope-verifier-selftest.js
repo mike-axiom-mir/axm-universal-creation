@@ -18,6 +18,8 @@ function verifyEnvelope(firstDirection, secondDirection, firstInterval, secondIn
   assert.equal(receipt.verified, true, `independent receipt verification failed: ${receipt.violations.join(', ')}`);
   assert.equal(receipt.determinantMatches, true);
   assert.ok(receipt.structuralChecks.every(check => check.matches));
+  assert.equal(receipt.cornerObjectIndependence, true);
+  assert.ok(receipt.reconstructionChecks.every(check => check.expectedCornerFinite && check.xMatches && check.yMatches));
   return { analysis, receipt };
 }
 
@@ -90,6 +92,26 @@ const cornerFailure = Verifier.verify(
 );
 assert.equal(cornerFailure.verified, false);
 assert.ok(cornerFailure.violations.includes('CORNER_PROJECTION_MISMATCH'));
+assert.ok(cornerFailure.violations.includes('CORNER_RECONSTRUCTION_MISMATCH'));
+assert.ok(cornerFailure.reconstructionChecks.some(check => !check.xMatches || !check.yMatches));
+
+const aliasedPointCorner = point.analysis.corners[0];
+const aliasedPointAnalysis = Object.assign({}, point.analysis, {
+  corners: [aliasedPointCorner, aliasedPointCorner, aliasedPointCorner, aliasedPointCorner]
+});
+const aliasFailure = Verifier.verify(
+  { x: 1, y: 0 },
+  { x: 5e-7, y: Math.sqrt(1 - 25e-14) },
+  { min: 2, max: 2 },
+  { min: -1, max: -1 },
+  aliasedPointAnalysis,
+  { numericTolerance: 1e-9 }
+);
+assert.equal(aliasFailure.verified, false);
+assert.equal(aliasFailure.cornerObjectIndependence, false);
+assert.ok(aliasFailure.violations.includes('CORNER_EVIDENCE_ALIASING'));
+assert.ok(aliasFailure.projectionChecks.every(check => check.firstMatches && check.secondMatches));
+assert.ok(aliasFailure.reconstructionChecks.every(check => check.expectedCornerFinite && check.xMatches && check.yMatches));
 
 const tamperedDeterminant = Object.assign({}, inverseBasis.analysis, {
   determinant: inverseBasis.analysis.determinant + 0.25
