@@ -232,16 +232,31 @@ for (const basis of basisFixtures) {
           baseAnalysis.distanceWork,
           `${transformedName}: equivalent representation must retain distance-work classification`
         );
+
+        assert.equal(
+          transformedPlan.expected.producerSchema,
+          transformedAnalysis.schema,
+          `${transformedName}: independent plan must bind the producer schema`
+        );
         assert.deepEqual(
-          transformedPlan.expected,
-          {
-            producerSchema: transformedAnalysis.schema,
-            basisWork: transformedAnalysis.basisWork,
-            geometryWork: transformedAnalysis.geometryWork,
-            distanceMethod: transformedAnalysis.distanceMethod,
-            distanceWork: transformedAnalysis.distanceWork
-          },
-          `${transformedName}: independent transformed plan must exactly match producer receipts`
+          transformedPlan.expected.basisWork,
+          transformedAnalysis.basisWork,
+          `${transformedName}: independent plan basis work must match producer receipt`
+        );
+        assert.deepEqual(
+          transformedPlan.expected.geometryWork,
+          transformedAnalysis.geometryWork,
+          `${transformedName}: independent plan geometry work must match producer receipt`
+        );
+        assert.equal(
+          transformedPlan.expected.distanceMethod,
+          transformedAnalysis.distanceMethod,
+          `${transformedName}: independent plan method must match producer receipt`
+        );
+        assert.deepEqual(
+          transformedPlan.expected.distanceWork,
+          transformedAnalysis.distanceWork,
+          `${transformedName}: independent plan distance work must match producer receipt`
         );
         assert.equal(
           basePlan.expected.distanceMethod,
