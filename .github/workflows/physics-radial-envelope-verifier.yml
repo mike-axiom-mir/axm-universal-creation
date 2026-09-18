@@ -10,6 +10,7 @@ on:
       - "capabilities/physics-core/uc-two-projection-radial-envelope-plan-verifier.js"
       - "capabilities/physics-core/radial-envelope-verifier-selftest.js"
       - "capabilities/physics-core/radial-envelope-plan-verifier-selftest.js"
+      - "capabilities/physics-core/radial-envelope-classification-matrix-selftest.js"
       - ".github/workflows/physics-radial-envelope-verifier.yml"
   workflow_dispatch:
 
@@ -28,3 +29,5 @@ jobs:
         run: node capabilities/physics-core/radial-envelope-verifier-selftest.js
       - name: Verify radial-envelope optimization plan receipts
         run: node capabilities/physics-core/radial-envelope-plan-verifier-selftest.js
+      - name: Verify radial-envelope classification matrix
+        run: node capabilities/physics-core/radial-envelope-classification-matrix-selftest.js
