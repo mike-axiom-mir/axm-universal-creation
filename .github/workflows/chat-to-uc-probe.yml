@@ -1,0 +1,31 @@
+name: Chat -> UC path probe
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  trial:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run UC trial from chat-supplied request
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/uc-probe-out
+          PYTHONPATH=src python -m axm_uc trial examples/requests/chat_path_probe.json | tee /tmp/uc-probe-out/result.json
+          test -s /tmp/uc-probe-out/result.json
+          grep -q '"passed": true' /tmp/uc-probe-out/result.json
+      - name: Package UC result
+        uses: actions/upload-artifact@v4
+        with:
+          name: chat-to-uc-trial-result
+          path: /tmp/uc-probe-out/result.json
+          retention-days: 14
