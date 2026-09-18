@@ -1,6 +1,6 @@
 'use strict';
 
-const VERSION = '0.1.1';
+const VERSION = '0.1.2';
 const SCHEMA = 'axm.uc-two-projection-radial-envelope-verifier/v0.1';
 
 function finiteDirection(direction) {
@@ -39,6 +39,13 @@ function closeEnough(actual, expected, tolerance) {
   if (!Number.isFinite(actual) || !Number.isFinite(expected)) return false;
   const scale = Math.max(1, Math.abs(actual), Math.abs(expected));
   return Math.abs(actual - expected) <= tolerance * scale;
+}
+
+function inverseProjectionPoint(firstDirection, secondDirection, firstProjection, secondProjection, determinant) {
+  return {
+    x: (firstProjection * secondDirection.y - firstDirection.y * secondProjection) / determinant,
+    y: (firstDirection.x * secondProjection - firstProjection * secondDirection.x) / determinant
+  };
 }
 
 function pointSegmentDistanceToOrigin(start, end) {
@@ -167,6 +174,11 @@ function verify(firstDirection, secondDirection, firstInterval, secondInterval, 
   }
 
   const corners = analysis.corners;
+  const cornerObjectIndependence = new Set(corners).size === corners.length;
+  if (!cornerObjectIndependence) {
+    violations.push('CORNER_EVIDENCE_ALIASING');
+  }
+
   const projectionTargets = [
     [firstInterval.min, secondInterval.min],
     [firstInterval.max, secondInterval.min],
@@ -174,6 +186,7 @@ function verify(firstDirection, secondDirection, firstInterval, secondInterval, 
     [firstInterval.min, secondInterval.max]
   ];
   const projectionChecks = [];
+  const reconstructionChecks = [];
 
   for (let index = 0; index < corners.length; index += 1) {
     const firstProjection = dot(firstDirection, corners[index]);
@@ -192,6 +205,32 @@ function verify(firstDirection, secondDirection, firstInterval, secondInterval, 
     });
     if (!firstMatches || !secondMatches) {
       violations.push('CORNER_PROJECTION_MISMATCH');
+    }
+
+    const expectedCorner = inverseProjectionPoint(
+      firstDirection,
+      secondDirection,
+      target[0],
+      target[1],
+      determinant
+    );
+    const expectedCornerFinite = finitePoint(expectedCorner);
+    const xMatches = expectedCornerFinite && closeEnough(corners[index].x, expectedCorner.x, tolerance);
+    const yMatches = expectedCornerFinite && closeEnough(corners[index].y, expectedCorner.y, tolerance);
+    reconstructionChecks.push({
+      cornerIndex: index,
+      actualX: corners[index].x,
+      actualY: corners[index].y,
+      expectedX: expectedCorner.x,
+      expectedY: expectedCorner.y,
+      expectedCornerFinite,
+      xMatches,
+      yMatches
+    });
+    if (!expectedCornerFinite) {
+      violations.push('NON_FINITE_RECONSTRUCTED_CORNER');
+    } else if (!xMatches || !yMatches) {
+      violations.push('CORNER_RECONSTRUCTION_MISMATCH');
     }
   }
 
@@ -245,6 +284,8 @@ function verify(firstDirection, secondDirection, firstInterval, secondInterval, 
     determinant,
     determinantMatches,
     structuralChecks,
+    cornerObjectIndependence,
+    reconstructionChecks,
     expectedMinimumDistance,
     expectedMaximumDistance,
     projectionChecks,
@@ -252,13 +293,15 @@ function verify(firstDirection, secondDirection, firstInterval, secondInterval, 
     evidence: [
       'Verifier inputs are first required to be finite, interval-ordered, and represented by a finite non-singular 2D direction pair; this is a verifier precondition only and does not decide the caller orthogonality eligibility boundary.',
       'The represented direction determinant and interval-derived structural receipt flags are recomputed independently before geometry evidence is trusted.',
-      'Corner projections are checked against the four represented interval endpoint pairs returned by the existing two-projection envelope contract.',
+      'All four corner evidence objects must remain identity-distinct, including point and segment envelopes whose coordinate values legitimately repeat.',
+      'Each expected world-space corner is independently reconstructed from its projection endpoint pair through the represented 2D inverse basis and compared directly with the returned corner coordinates.',
+      'Corner projections are also checked against the four represented interval endpoint pairs returned by the existing two-projection envelope contract.',
       'Radial minimum is recomputed from the world-space origin against all four returned boundary segments, except that two zero-containing projection intervals make the origin exactly feasible.',
       'Radial maximum is recomputed from all four returned corner norms rather than trusting any optimized fast-path work receipt.',
       'This verifier checks deterministic internal consistency only; it does not decide direction eligibility or certify physical correctness.'
     ],
     limitations: [
-      'The verifier operates on the helper returned corner evidence and JavaScript Number arithmetic under a caller-selected numeric tolerance.',
+      'The verifier uses JavaScript Number inverse-basis reconstruction under a caller-selected numeric tolerance; sufficiently ill-conditioned but non-singular inputs can require a tolerance appropriate to their represented scale.',
       'Structural receipt checks cover determinant and interval-derived flags only; helper-internal work counters and optimization-method labels remain implementation evidence rather than independently reproduced execution traces.',
       'Agreement does not prove exact-arithmetic geometry, global satisfiability, convergence, stability, collision correctness, 3D physics, gameplay correctness, or scientific validation.',
       'Direction eligibility remains the responsibility of the existing caller proof boundary; this verifier must not be used to admit additional directions or body pairs.'
