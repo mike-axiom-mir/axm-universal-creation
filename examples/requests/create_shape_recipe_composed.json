@@ -1,0 +1,59 @@
+{
+  "kind": "shape-recipe-asset",
+  "direction": "Create two adjustable rails from one reusable definition and paint their parts by position",
+  "inputs": {
+    "path": "creations/shape-recipe-composed.glb",
+    "recipe": {
+      "schema": "axm.shape-recipe/v0.1",
+      "name": "Painted adjustable rails",
+      "definitions": {
+        "rail": {
+          "vars": {
+            "count": 3,
+            "gap": 1.0
+          },
+          "parts": [
+            {
+              "repeat": ["var", "count"],
+              "as": "i",
+              "body": [
+                {
+                  "shape": "box",
+                  "size": [0.4, 0.2, 0.3],
+                  "pos": [["*", ["var", "gap"], ["var", "i"]], 0, 0]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "paint": {
+        "vars": {
+          "span": 4.0
+        },
+        "color": [
+          ["min", 1, ["max", 0, ["/", ["+", ["var", "x"], 2], ["var", "span"]]]],
+          0.25,
+          ["if", [">", ["var", "y"], 1], 0.9, 0.3]
+        ]
+      },
+      "parts": [
+        {
+          "use": "rail",
+          "with": {
+            "count": 2
+          },
+          "pos": [0, 0, 0]
+        },
+        {
+          "use": "rail",
+          "with": {
+            "count": 4
+          },
+          "pos": [0, 2, 0],
+          "scale": 0.5
+        }
+      ]
+    }
+  }
+}

@@ -315,6 +315,15 @@ AXM now has one versioned renderer-neutral contract for building a reusable visu
 
 Every atom's declared `uses` edges must exactly match the references in its kind-specific payload. The validator rejects unsupported fields, missing or extra edges, unresolved IDs, wrong target kinds, cycles, discontinuous LOD ranges, invalid keyframes, and undeclared palette roles. The compiler deterministically selects LOD/state/animation/palette inputs and produces package and instance digests. Materialization writes only validated `asset.package.json` and `asset.instance.json` artifacts.
 
+For shapes described by data rather than selected from a fixed preset list,
+`shape-recipe-asset` expands bounded loops, conditions and expressions into the
+existing validated procedural-3D path. Recipes can reuse embedded shape
+definitions with per-use settings and apply position-driven colour across the
+generated parts without mutating those definitions. Its receipt pins the
+MorphTile v0.4 format and conformance sources while keeping MorphTile's
+non-recipe runtime features outside this GLB-only capability. See
+[SHAPE_RECIPE_FLOW.md](SHAPE_RECIPE_FLOW.md).
+
 The installed `axm.example.modular-tank@1.0.0` package exercises every kind. Its external mesh and texture URIs remain declared references: this capability does not fetch media, render 3D content, execute shaders or animations, or run physics. See `ASSET_ATOM_FABRIC.md` for the full audit and truth boundary.
 
 ```bash
