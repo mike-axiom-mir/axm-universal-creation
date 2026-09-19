@@ -50,8 +50,19 @@ class ParallelCreationTests(unittest.TestCase):
         serial = build(p, self.root / 'one', workers=1)
         parallel = build(p, self.root / 'four', workers=4)
         self.assertEqual(p, original)
-        for file in ('asset.glb', 'library.json', 'plan.json'):
+        for file in ('asset.glb', 'library.json', 'parts-index.json', 'atom-library.json', 'plan.json'):
             self.assertEqual((self.root / 'one' / file).read_bytes(), (self.root / 'four' / file).read_bytes())
+        parts = json.loads((self.root / 'four/parts-index.json').read_text())
+        self.assertTrue(parts['source_authority'])
+        self.assertTrue(parts['realizations_are_secondary'])
+        self.assertEqual(len(parts['parts']), 5)
+        self.assertEqual(sum(part['selected_realization_root'] for part in parts['parts']), 1)
+        self.assertEqual({part['task'] for part in parts['parts']}, {'part0', 'part1', 'part2', 'part3', 'group'})
+        atoms = json.loads((self.root / 'four/atom-library.json').read_text())
+        self.assertEqual(atoms['counts']['successful_parts'], 5)
+        self.assertEqual(atoms['counts']['novel_atoms'], 2)
+        self.assertEqual(atoms['counts']['deduplicated_variants'], 3)
+        self.assertEqual(sum(task['novel_atom'] for task in atoms['tasks']), 2)
         for receipt, cap in [(serial, 1), (parallel, 4)]:
             outputs = {r['taskId']: r['output'] for r in receipt['outputs']}
             self.assertEqual(len({v['pid'] for v in outputs.values()}), 5)
