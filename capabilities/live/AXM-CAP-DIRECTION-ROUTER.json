@@ -1,0 +1,53 @@
+{
+  "id": "AXM-CAP-DIRECTION-ROUTER",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Compile ordinary-language creation intent into an explicit direction contract, compare installed capability routes by sufficiency rather than mere compatibility, compose a bounded production graph, and run supplied temporary candidate overlays without changing canonical UC.",
+  "handles": [
+    "direction-request",
+    "intent-routed-creation",
+    "temporary-candidate-instance"
+  ],
+  "input_contract": {
+    "required": [
+      "prompt"
+    ],
+    "properties": {
+      "prompt": "ordinary-language creation request",
+      "direction_contract": "optional explicit overrides for the normalized direction fields",
+      "kind": "optional exact live creation kind to test against the direction contract",
+      "inputs": "optional exact inputs for the selected live route",
+      "execute": "optional boolean; a sufficient exact route executes by default",
+      "candidate_instance": "optional detached candidate overlay with one to four testable manifests, isolated workspace, execution inputs, and disposition"
+    }
+  },
+  "output_contract": {
+    "kind": "direction-contract-route-decision-result-or-hold",
+    "contains": [
+      "purpose, deliverables, medium, dimensionality, motion, subjects, environment, interaction, platform/use, quality, editability, reusable assets, provenance, constraints, verification and ambiguity",
+      "COMPATIBLE_AND_SUFFICIENT, COMPATIBLE_BUT_INSUFFICIENT, INCOMPATIBLE or UNKNOWN_HOLD per candidate route",
+      "bounded production graph derived from installed capability manifests",
+      "exact missing requirements and inputs",
+      "optional isolated temporary candidate test/execution/disposition receipt",
+      "before/after digest evidence that canonical live manifests were not changed by a temporary candidate"
+    ]
+  },
+  "dependencies": [],
+  "relationships": [
+    "reads current live manifests rather than maintaining a second capability registry",
+    "treats a produced artifact as insufficient when the direction contract is not covered",
+    "keeps temporary candidate overlays detached from installation, registration, routing and CANON"
+  ],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:direction_router",
+    "source": "src/axm_uc/direction_router.py"
+  },
+  "limitations": [
+    "Natural-language compilation is bounded deterministic extraction, not general semantic understanding.",
+    "A composed graph is a manifest-grounded plan until exact inputs execute every step and requested verification is observed.",
+    "High quality, human acceptance, tracked-input behavior and AI-collaborator behavior remain HOLD unless exact evidence-bearing contracts are supplied.",
+    "Temporary candidate instances never install, register, route, merge, release or enter CANON automatically."
+  ],
+  "persistent_state": null
+}

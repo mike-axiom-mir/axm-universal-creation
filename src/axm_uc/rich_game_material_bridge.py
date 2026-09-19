@@ -109,7 +109,7 @@ def load_rich_material_bundle(folder):
         header = struct.pack(">IIBBBBB", size, size, 8, 2 if channels == 3 else 0, 0, 0, 0)
         if len(data) < 45 or data[:16] != b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR" or data[16:29] != header:
             raise ValueError("invalid rich material PNG header: " + name)
-        _validate_png_payload(data, size, channels)
+        _validate_png_payload(data, size, size, channels)
         payloads[name] = data
     return {
         "manifest": manifest,

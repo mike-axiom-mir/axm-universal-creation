@@ -145,6 +145,9 @@ def build_parser() -> argparse.ArgumentParser:
     create_p = sub.add_parser("create", help="route one creation request")
     create_p.add_argument("request", help="JSON request file")
 
+    direct_p = sub.add_parser("direct", help="compile ordinary language into a direction contract and route only when sufficient")
+    direct_p.add_argument("request", help="JSON direction request file")
+
     trial_p = sub.add_parser("trial", help="plan, create, and independently verify a project creation")
     trial_p.add_argument("request", help="JSON project creation request file")
     trial_p.add_argument("--per-level", type=int, default=6, help="maximum matches returned per anatomy level")
@@ -318,6 +321,11 @@ def main(argv: list[str] | None = None) -> int:
         request = json.loads(Path(args.request).read_text(encoding="utf-8"))
         _print(machine.create(request))
         return 0
+    if args.command == "direct":
+        request = json.loads(Path(args.request).read_text(encoding="utf-8"))
+        result = machine.direct(request)
+        _print(result)
+        return 0 if result.get("type") == "DIRECTION_RESULT" else 2
     if args.command == "trial":
         request = json.loads(Path(args.request).read_text(encoding="utf-8"))
         result = machine.trial(request, per_level=args.per_level)
