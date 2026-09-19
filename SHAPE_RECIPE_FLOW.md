@@ -9,11 +9,19 @@ and independently re-parses the exact GLB bytes.
 
 This is the bounded recipe-flow idea brought across from MorphTile, not the
 MorphTile engine embedded inside UC. The behavioral donor is pinned to
-`mike-axiom-mir/axm-morphtile@379098956c4da962b70ad68b60ea1bb8a75f5028`,
-`core/morphtile.js`. The implementation here is native Python fitted to UC's
-existing capability, error, publication and evidence boundaries. The owner
-directed this integration; the resulting UC contribution remains under UC's
-repository license.
+`mike-axiom-mir/axm-morphtile@13d83a2b2c0d12644442d3d9e45bcbe0af19876a`,
+`core/morphtile.js`, with the original recipe behavior traced to
+`379098956c4da962b70ad68b60ea1bb8a75f5028`. The donor's v0.4 format contract
+and cross-implementation vectors are named in the receipt as `docs/FORMAT.md`
+and `conformance/vectors.json`. The implementation here is native Python fitted
+to UC's existing capability, error, publication and evidence boundaries. The
+owner directed this integration; the resulting UC contribution remains under
+UC's repository license.
+
+The UC route deliberately carries only the recipe behavior it can prove. It
+does not embed MorphTile's world-defined-word evaluator, written-motion runtime,
+portable-kit importer, or tile-authored interface interpreter. Those are
+separate capabilities, not hidden behavior inside a deterministic GLB export.
 
 ## Live route
 

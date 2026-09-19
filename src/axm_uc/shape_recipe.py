@@ -20,10 +20,14 @@ MAX_EXPRESSION_DEPTH = 32
 SOURCE_PROVENANCE = {
     "kind": "behavioral-design-donor",
     "repository": "https://github.com/mike-axiom-mir/axm-morphtile",
-    "commit": "379098956c4da962b70ad68b60ea1bb8a75f5028",
+    "commit": "13d83a2b2c0d12644442d3d9e45bcbe0af19876a",
+    "behavior_origin_commit": "379098956c4da962b70ad68b60ea1bb8a75f5028",
     "source_path": "core/morphtile.js",
+    "contract_path": "docs/FORMAT.md",
+    "conformance_path": "conformance/vectors.json",
+    "contract_version": "0.4",
     "source_feature": "bounded recipe meshes, composed definitions, per-use settings, and position-driven paint",
-    "integration": "UC-native Python implementation targeting axm.procedural-3d/v0.1; no MorphTile runtime is embedded",
+    "integration": "UC-native Python implementation targeting axm.procedural-3d/v0.1; no MorphTile runtime, world-defined words, written motion, portable-kit importer, or tile-view runtime is embedded",
 }
 _NAME_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]{0,63}$")
 _SHAPES = {"box", "cylinder", "pyramid"}

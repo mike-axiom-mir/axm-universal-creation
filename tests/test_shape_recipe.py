@@ -251,10 +251,18 @@ class ShapeRecipeTests(unittest.TestCase):
         compiled = compile_shape_recipe(lattice_recipe())
         self.assertEqual(
             SOURCE_PROVENANCE["commit"],
+            "13d83a2b2c0d12644442d3d9e45bcbe0af19876a",
+        )
+        self.assertEqual(
+            SOURCE_PROVENANCE["behavior_origin_commit"],
             "379098956c4da962b70ad68b60ea1bb8a75f5028",
         )
+        self.assertEqual(SOURCE_PROVENANCE["contract_path"], "docs/FORMAT.md")
+        self.assertEqual(SOURCE_PROVENANCE["conformance_path"], "conformance/vectors.json")
+        self.assertEqual(SOURCE_PROVENANCE["contract_version"], "0.4")
         self.assertEqual(compiled["source_provenance"], SOURCE_PROVENANCE)
         self.assertIn("no MorphTile runtime", SOURCE_PROVENANCE["integration"])
+        self.assertIn("tile-view runtime", SOURCE_PROVENANCE["integration"])
 
 
 if __name__ == "__main__":

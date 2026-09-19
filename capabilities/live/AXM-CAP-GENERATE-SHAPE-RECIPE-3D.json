@@ -1,6 +1,6 @@
 {
   "id": "AXM-CAP-GENERATE-SHAPE-RECIPE-3D",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "status": "live",
   "purpose": "Compile bounded loops, conditions, numeric expressions, reusable shape definitions, per-use settings and position-driven paint into explicit UC procedural-3D primitives, then publish and re-verify the resulting deterministic GLB asset.",
   "handles": [
@@ -22,7 +22,7 @@
   "output_contract": {
     "kind": "validated-deterministic-glb-asset",
     "contains": [
-      "canonical recipe digest and exact pinned design-donor provenance",
+      "canonical recipe digest and exact pinned design-donor provenance, including the v0.4 format and conformance paths",
       "declared and effective budgets plus visited/generated/composition/paint counts",
       "expanded axm.procedural-3d/v0.1 specification",
       "exact GLB digest and pre/post-publication geometry validation",
@@ -52,6 +52,7 @@
     "The receiver limits generated scenes to 128 primitives even though the structural recipe walker may inspect up to 4000 nodes.",
     "Composition is self-contained inside the submitted recipe: at most 64 embedded definitions and four composed-definition levels; missing names, cycles and undeclared per-use settings remain typed HOLD.",
     "Position-driven paint is evaluated once at each generated primitive's center. It can vary assembled parts but does not claim MorphTile's finer per-triangle paint behavior.",
+    "MorphTile v0.4 world-defined words, written motion, portable kits and tile-authored views remain outside this GLB-only route instead of being implied by the donor version.",
     "Compilation and decoded GLB validation do not prove rendered appearance, aesthetic quality, collision, physics, animation or host-engine compatibility.",
     "This is a UC-native implementation of the pinned recipe-flow behavior; it does not bundle, call or redistribute the MorphTile engine."
   ],
