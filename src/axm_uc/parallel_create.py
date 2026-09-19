@@ -16,12 +16,13 @@ import sys
 import tempfile
 import time
 
-from axm_stickers import Registry, instance
+from axm_stickers import Registry, digest, instance
 from axm_stickers.assembly import import_library, library_bundle
 from .sticker_create import execute
 from .sticker_assembly import export_assembly
 from axm_stickers.assembly import CREATIVE
 from .creative_tasks import OPERATIONS as CREATIVE_OPERATIONS, execute_creative, export_creative, export_creative_sources
+from .atom_novelty import classify_creator_atoms
 
 SCHEMA = 'axm.parallel-creation/v1'
 MAX_BYTES = 48 * 1024 * 1024
@@ -229,6 +230,36 @@ def build(plan, output, *, workers=4, timeout=120):
                         raise ValueError('worker library receipt mismatch')
                     import_library(registry, bundle)
                 chosen = next(r['output']['root'] for r in receipt['outputs'] if r['taskId'] == plan['result'])
+                atom_library = classify_creator_atoms(plan)
+                atoms_by_task = {item['task']: item for item in atom_library['tasks']}
+                creator_parts = []
+                for task, result in zip(plan['tasks'], receipt['outputs'], strict=True):
+                    pin = result['output']['root']
+                    source = registry.get(pin['id'], pin['version'])
+                    creator_parts.append({
+                        'task': task['id'],
+                        'operation': task['request']['operation'],
+                        'selected_realization_root': task['id'] == plan['result'],
+                        'root': pin,
+                        'definition_digest': digest(source),
+                        'adapter': source['adapter'],
+                        'parameter_controls': sorted(source['parameters']),
+                        'declared_dependencies': list(task['dependencies']),
+                        'atom': atoms_by_task[task['id']],
+                    })
+                parts_index = {
+                    'schema': 'axm.creator-parts-index/v1',
+                    'source_authority': True,
+                    'realizations_are_secondary': True,
+                    'registry': 'stickers.sqlite',
+                    'plan': 'plan.json',
+                    'atom_library': 'atom-library.json',
+                    'parts': creator_parts,
+                    'truth': (
+                        'Every successful task root remains in the registry, including parts outside the '
+                        'selected result closure. The asset export is a replaceable realization.'
+                    ),
+                }
                 bundle = library_bundle(registry, chosen['id'], chosen['version'])
                 definition = registry.get(chosen['id'], chosen['version'])
                 if definition['adapter'] == CREATIVE:
@@ -240,8 +271,14 @@ def build(plan, output, *, workers=4, timeout=120):
                     (staged / 'asset.glb').write_bytes(artifact['body'])
                     output_fields = {'glb_sha256':sha(artifact['body']), 'primary':'asset.glb', 'export':artifact['receipt']}
                 write(staged / 'library.json', bundle)
+                write(staged / 'parts-index.json', parts_index)
+                write(staged / 'atom-library.json', atom_library)
             receipt['creation'] = {'plan_sha256': job['digest'], **output_fields,
                 'result': chosen, 'workers': workers,
+                'creator_parts': {'index': 'parts-index.json', 'registry': 'stickers.sqlite',
+                                  'atom_library': 'atom-library.json', 'count': len(creator_parts),
+                                  'novel_atoms': atom_library['counts']['novel_atoms'],
+                                  'source_authority': True},
                 'limits': 'Local authored creation; no physics or engine playback acceptance.'}
             write(staged / 'plan.json', plan); write(staged / 'receipt.json', receipt)
             # Atomic no-clobber reservation, then move only into our own directory.

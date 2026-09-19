@@ -38,7 +38,14 @@ possible asset. `axm-create-surface catalog` exposes the supported controls.
 | `sources/` + `source-index.json` | Original material bundle, effect graph/SVG and earlier composition |
 | `library.json` | Complete portable dependency closure with exact content pins |
 | `stickers.sqlite` | Every successful task saved for reuse |
+| `parts-index.json` | Discoverable roots for all retained successful creator parts, including unselected parts |
+| `atom-library.json` | Semantic novelty groups; cosmetic variants remain overrides/evidence rather than fake growth |
 | `plan.json` / `receipt.json` | Inspectable machine execution and evidence |
+
+The retained parts, recipes, controls and exact dependency pins are the machine's
+growth memory. Finished PNG/GLB output is useful evidence and distribution, but
+is not the source of future capability. Free creation grows only when accepted
+construction causes remain available for deterministic reuse and recombination.
 
 The proof calls existing Studio layer tools afterward, lowers the charge opacity,
 and saves that separate revision. The saved Studio project exactly reproduces

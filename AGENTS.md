@@ -47,6 +47,28 @@ Quality is often the accumulated result of many small correct details, not one l
 
 **Working rule:** thousands of small good details and capabilities in the right places can improve a result more than one simple big upgrade.
 
+## Creator parts are growth memory
+
+- Retain the causes of a successful creation: explicit intent, controls, parts,
+  recipes, materials, assemblies, motion, dependency pins, executable capability
+  version and verification evidence.
+- Treat rendered images, movies, GLBs and other exports as secondary realizations.
+  They may prove or distribute a result, but they do not make the machine more
+  capable by themselves.
+- Free Creation grows the machine only when tested, accepted construction causes
+  enter the reusable library. Rejected or merely attractive outputs do not
+  silently become capabilities.
+- Deduplicate growth semantically. Renames and color/tint/palette-only variants
+  are exact realization variants, not new atoms. Prefer one shape/material-family
+  atom plus bounded appearance overrides. Require meaningful geometry, topology,
+  attachment, behavior, assembly, material structure or function change before
+  counting new reusable capability.
+- Humans and optional AI use the same retained parts and recipes. AI may improve
+  interpretation and composition, but must not become a hidden required owner of
+  the capability.
+
+**Working rule:** retain what can create and reshape the output, not only the output.
+
 ## Canonical state and adaptive realization principle
 
 When useful, separate **what exists** from **how it is expressed on a particular machine**.

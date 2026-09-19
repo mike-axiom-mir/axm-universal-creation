@@ -78,8 +78,18 @@ groups. Children accept the existing explicit socket animation traces and source
 clip selection; the executor does not alter animation, material or style intent.
 
 Successful output contains `asset.glb` or `asset.png`, `library.json`, `stickers.sqlite`,
-`plan.json`, and `receipt.json`. The library contains the chosen asset's closure;
-the registry retains every successful task so unused parts remain reusable too.
+`parts-index.json`, `atom-library.json`, `plan.json`, and `receipt.json`. The library contains the
+chosen asset's portable closure. The parts index names every successful task root,
+including candidates outside the chosen result, while the registry retains their
+exact definitions and asset bytes. That creator-parts state is source authority;
+the rendered/exported asset is a replaceable realization.
+
+`atom-library.json` groups semantic equivalents. Names and flat color/tint/
+palette changes do not create new atoms; those exact variants remain replayable
+but are marked `variant_not_growth`. Shape/topology, attachment, behavior,
+assembly or effect-topology changes may create new atoms. Material-family
+structure is tracked separately, so ten colors of one shape and material family
+do not masquerade as ten new capabilities.
 Source dictionary order is preserved because existing authoring tools save that
 order in editable source bytes. Execution timestamps and PIDs vary; authored
 source, pins and GLB content remain deterministic for the same plan/tool version.
