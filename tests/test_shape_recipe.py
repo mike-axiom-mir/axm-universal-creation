@@ -61,6 +61,39 @@ def lattice_recipe(n: int = 4) -> dict:
     }
 
 
+def composed_recipe() -> dict:
+    return {
+        "schema": "axm.shape-recipe/v0.1",
+        "name": "Painted adjustable rails",
+        "definitions": {
+            "rail": {
+                "vars": {"count": 3, "gap": 1.0},
+                "parts": [{
+                    "repeat": ["var", "count"],
+                    "as": "i",
+                    "body": [{
+                        "shape": "box",
+                        "size": [0.4, 0.2, 0.3],
+                        "pos": [["*", ["var", "gap"], ["var", "i"]], 0, 0],
+                    }],
+                }],
+            }
+        },
+        "paint": {
+            "vars": {"span": 4.0},
+            "color": [
+                ["min", 1, ["max", 0, ["/", ["+", ["var", "x"], 2], ["var", "span"]]]],
+                0.25,
+                ["if", [">", ["var", "y"], 1], 0.9, 0.3],
+            ],
+        },
+        "parts": [
+            {"use": "rail", "with": {"count": 2}, "pos": [0, 0, 0]},
+            {"use": "rail", "with": {"count": 4}, "pos": [0, 2, 0], "scale": 0.5},
+        ],
+    }
+
+
 class ShapeRecipeTests(unittest.TestCase):
     def test_nested_loops_conditions_and_expressions_expand_into_real_geometry(self):
         compiled = compile_shape_recipe(lattice_recipe())
@@ -128,6 +161,77 @@ class ShapeRecipeTests(unittest.TestCase):
             compile_shape_recipe(sphere)
         self.assertEqual(caught.exception.status, "HOLD_SHAPE_RECIPE_UNSUPPORTED_SHAPE")
 
+    def test_definitions_compose_with_per_use_settings_and_position_paint(self):
+        recipe = composed_recipe()
+        unchanged = deepcopy(recipe)
+        compiled = compile_shape_recipe(recipe)
+        self.assertEqual(recipe, unchanged, "compilation must not rewrite shared definitions")
+        self.assertEqual(compiled["parts_generated"], 6)
+        self.assertEqual(compiled["definitions_declared"], 1)
+        self.assertEqual(compiled["composition_uses"], 2)
+        self.assertEqual(compiled["settings_overrides"], 2)
+        self.assertEqual(compiled["deepest_composition_depth"], 1)
+        self.assertEqual(compiled["paint_mode"], "primitive-center")
+        self.assertEqual(compiled["paint_applications"], 6)
+        primitives = compiled["specification"]["primitives"]
+        self.assertEqual(primitives[2]["translation"], [0.0, 2.0, 0.0])
+        self.assertEqual(primitives[2]["size"], [0.2, 0.1, 0.15])
+        self.assertNotEqual(primitives[0]["material"]["color"], primitives[-1]["material"]["color"])
+        self.assertEqual(
+            build_glb(compiled["specification"])["body"],
+            build_glb(compile_shape_recipe(composed_recipe())["specification"])["body"],
+        )
+
+    def test_composition_holds_missing_cycles_depth_unknown_settings_and_shared_budget(self):
+        missing = composed_recipe()
+        missing["parts"] = [{"use": "nowhere"}]
+        with self.assertRaises(ShapeRecipeError) as caught:
+            compile_shape_recipe(missing)
+        self.assertEqual(caught.exception.status, "HOLD_SHAPE_RECIPE_DEFINITION_NOT_FOUND")
+
+        cycle = composed_recipe()
+        cycle["definitions"] = {
+            "a": {"parts": [{"use": "b"}]},
+            "b": {"parts": [{"use": "a"}]},
+        }
+        cycle["parts"] = [{"use": "a"}]
+        with self.assertRaises(ShapeRecipeError) as caught:
+            compile_shape_recipe(cycle)
+        self.assertEqual(caught.exception.status, "HOLD_SHAPE_RECIPE_USES_ITSELF")
+
+        deep = composed_recipe()
+        deep["definitions"] = {
+            f"d{index}": {"parts": [{"use": f"d{index + 1}"}]} for index in range(4)
+        }
+        deep["definitions"]["d4"] = {"parts": [{"shape": "box"}]}
+        deep["parts"] = [{"use": "d0"}]
+        with self.assertRaises(ShapeRecipeError) as caught:
+            compile_shape_recipe(deep)
+        self.assertEqual(caught.exception.status, "HOLD_SHAPE_RECIPE_COMPOSITION_TOO_DEEP")
+
+        settings = composed_recipe()
+        settings["parts"] = [{"use": "rail", "with": {"undeclared": 2}}]
+        with self.assertRaises(ShapeRecipeError) as caught:
+            compile_shape_recipe(settings)
+        self.assertEqual(caught.exception.status, "HOLD_SHAPE_RECIPE_SETTINGS_NOT_ACCEPTED")
+
+        greedy = composed_recipe()
+        greedy["budget"] = 128
+        greedy["definitions"]["rail"]["vars"]["count"] = 100
+        greedy["parts"] = [{"use": "rail"}, {"use": "rail"}]
+        with self.assertRaises(ShapeRecipeError) as caught:
+            compile_shape_recipe(greedy)
+        self.assertEqual(caught.exception.status, "HOLD_SHAPE_RECIPE_OVER_BUDGET")
+
+    def test_composed_definition_change_reaches_every_use(self):
+        recipe = composed_recipe()
+        boxes = compile_shape_recipe(recipe)
+        recipe["definitions"]["rail"]["parts"][0]["body"][0]["shape"] = "pyramid"
+        pyramids = compile_shape_recipe(recipe)
+        self.assertTrue(all(part["type"] == "box" for part in boxes["specification"]["primitives"]))
+        self.assertTrue(all(part["type"] == "pyramid" for part in pyramids["specification"]["primitives"]))
+        self.assertNotEqual(boxes["recipe_sha256"], pyramids["recipe_sha256"])
+
     def test_live_capability_publishes_through_existing_validated_glb_path(self):
         with tempfile.TemporaryDirectory() as td:
             target = Path(td) / "lattice.glb"
@@ -147,7 +251,7 @@ class ShapeRecipeTests(unittest.TestCase):
         compiled = compile_shape_recipe(lattice_recipe())
         self.assertEqual(
             SOURCE_PROVENANCE["commit"],
-            "efc3e95eb31450b8f65bec81fbf5c2edb85ca3a5",
+            "379098956c4da962b70ad68b60ea1bb8a75f5028",
         )
         self.assertEqual(compiled["source_provenance"], SOURCE_PROVENANCE)
         self.assertIn("no MorphTile runtime", SOURCE_PROVENANCE["integration"])

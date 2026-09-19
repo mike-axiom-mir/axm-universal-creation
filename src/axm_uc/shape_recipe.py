@@ -13,14 +13,16 @@ from .procedural_3d import MAX_PRIMITIVES, publish_glb
 
 SCHEMA = "axm.shape-recipe/v0.1"
 MAX_RECIPE_DEPTH = 8
+MAX_COMPOSITION_DEPTH = 4
+MAX_DEFINITIONS = 64
 MAX_RECIPE_NODES = 4_000
 MAX_EXPRESSION_DEPTH = 32
 SOURCE_PROVENANCE = {
     "kind": "behavioral-design-donor",
     "repository": "https://github.com/mike-axiom-mir/axm-morphtile",
-    "commit": "efc3e95eb31450b8f65bec81fbf5c2edb85ca3a5",
+    "commit": "379098956c4da962b70ad68b60ea1bb8a75f5028",
     "source_path": "core/morphtile.js",
-    "source_feature": "bounded recipe meshes",
+    "source_feature": "bounded recipe meshes, composed definitions, per-use settings, and position-driven paint",
     "integration": "UC-native Python implementation targeting axm.procedural-3d/v0.1; no MorphTile runtime is embedded",
 }
 _NAME_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]{0,63}$")
@@ -46,7 +48,12 @@ def shape_recipe_summary() -> dict[str, Any]:
         "primitive_grammar": sorted(_SHAPES),
         "maximum_parts": MAX_PRIMITIVES,
         "maximum_recipe_depth": MAX_RECIPE_DEPTH,
+        "maximum_composition_depth": MAX_COMPOSITION_DEPTH,
+        "maximum_definitions": MAX_DEFINITIONS,
         "maximum_recipe_nodes_visited": MAX_RECIPE_NODES,
+        "composed_definitions": True,
+        "per_use_settings": True,
+        "position_paint": "evaluated at each generated primitive center",
         "source_provenance": deepcopy(SOURCE_PROVENANCE),
         "rendered_appearance_or_host_compatibility_proven": False,
     }
@@ -289,12 +296,40 @@ def _color_material(raw: Any, variables: dict[str, float], scope: dict[str, floa
     return material
 
 
+def _variables(raw: Any, label: str) -> dict[str, float]:
+    if not isinstance(raw, dict):
+        _hold("HOLD_SHAPE_RECIPE_INVALID", f"{label} must be an object", label=label)
+    variables: dict[str, float] = {}
+    for key, value in raw.items():
+        if not isinstance(key, str) or not _NAME_RE.fullmatch(key):
+            _hold("HOLD_SHAPE_RECIPE_INVALID", f"{label} contains an invalid variable name", variable=key)
+        variables[key] = _literal_number(value, f"{label}.{key}", -100_000.0, 100_000.0)
+    return variables
+
+
+def _paint(raw: Any, label: str) -> dict[str, Any]:
+    paint = _closed(raw, label, required={"color"}, optional={"vars"})
+    color = paint["color"]
+    if not isinstance(color, list) or len(color) not in {3, 4}:
+        _hold("HOLD_SHAPE_RECIPE_INVALID", f"{label}.color must contain three or four expressions")
+    return {"vars": _variables(paint.get("vars", {}), f"{label}.vars"), "color": deepcopy(color)}
+
+
+def _scale_vector(raw: Any, variables: dict[str, float], scope: dict[str, float], label: str) -> list[float]:
+    if raw is None:
+        return [1.0, 1.0, 1.0]
+    if isinstance(raw, (int, float)) and not isinstance(raw, bool):
+        value = _literal_number(raw, label, 0.001, 10_000.0)
+        return [value, value, value]
+    return _vector(raw, variables, scope, label, [1.0, 1.0, 1.0], 0.001, 10_000.0)
+
+
 def compile_shape_recipe(raw: Any) -> dict[str, Any]:
     recipe = _closed(
         raw,
         "recipe",
         required={"schema", "name", "parts"},
-        optional={"vars", "budget", "material"},
+        optional={"vars", "budget", "material", "definitions", "paint"},
     )
     if recipe["schema"] != SCHEMA:
         _hold("HOLD_SHAPE_RECIPE_INVALID", "unsupported shape recipe schema", expected=SCHEMA)
@@ -304,14 +339,7 @@ def compile_shape_recipe(raw: Any) -> dict[str, Any]:
     parts = recipe["parts"]
     if not isinstance(parts, list) or not parts:
         _hold("HOLD_SHAPE_RECIPE_INVALID", "recipe.parts must be a non-empty list")
-    raw_variables = recipe.get("vars", {})
-    if not isinstance(raw_variables, dict):
-        _hold("HOLD_SHAPE_RECIPE_INVALID", "recipe.vars must be an object")
-    variables: dict[str, float] = {}
-    for key, value in raw_variables.items():
-        if not isinstance(key, str) or not _NAME_RE.fullmatch(key):
-            _hold("HOLD_SHAPE_RECIPE_INVALID", "recipe variable name is invalid", variable=key)
-        variables[key] = _literal_number(value, f"recipe.vars.{key}", -100_000.0, 100_000.0)
+    variables = _variables(recipe.get("vars", {}), "recipe.vars")
 
     declared_budget = recipe.get("budget", MAX_RECIPE_NODES)
     if isinstance(declared_budget, bool) or not isinstance(declared_budget, int) or not 1 <= declared_budget <= MAX_RECIPE_NODES:
@@ -321,116 +349,325 @@ def compile_shape_recipe(raw: Any) -> dict[str, Any]:
         )
     effective_budget = min(declared_budget, MAX_PRIMITIVES)
     default_material = _material(recipe.get("material", _DEFAULT_MATERIAL), "recipe.material")
-    generated: list[dict[str, Any]] = []
-    nodes_visited = 0
+    root_paint = _paint(recipe["paint"], "recipe.paint") if "paint" in recipe else None
 
-    def walk(nodes: Any, scope: dict[str, float], depth: int) -> None:
-        nonlocal nodes_visited
-        if depth > MAX_RECIPE_DEPTH:
+    raw_definitions = recipe.get("definitions", {})
+    if not isinstance(raw_definitions, dict) or len(raw_definitions) > MAX_DEFINITIONS:
+        _hold(
+            "HOLD_SHAPE_RECIPE_INVALID",
+            f"recipe.definitions must be an object with at most {MAX_DEFINITIONS} entries",
+        )
+    definitions: dict[str, dict[str, Any]] = {}
+    for definition_name, raw_definition in raw_definitions.items():
+        if not isinstance(definition_name, str) or not _NAME_RE.fullmatch(definition_name):
             _hold(
-                "HOLD_SHAPE_RECIPE_TOO_DEEP",
-                f"shape recipe bodies may nest at most {MAX_RECIPE_DEPTH} levels",
-                depth=depth,
+                "HOLD_SHAPE_RECIPE_INVALID",
+                "recipe definition name is invalid",
+                definition=definition_name,
             )
-        if not isinstance(nodes, list):
-            _hold("HOLD_SHAPE_RECIPE_INVALID", "recipe body must be a list")
-        for raw_node in nodes:
-            nodes_visited += 1
-            if nodes_visited > MAX_RECIPE_NODES:
+        definition = _closed(
+            raw_definition,
+            f"recipe.definitions.{definition_name}",
+            required={"parts"},
+            optional={"vars", "material", "paint"},
+        )
+        definition_parts = definition["parts"]
+        if not isinstance(definition_parts, list) or not definition_parts:
+            _hold(
+                "HOLD_SHAPE_RECIPE_INVALID",
+                f"recipe.definitions.{definition_name}.parts must be a non-empty list",
+            )
+        definitions[definition_name] = {
+            "parts": definition_parts,
+            "vars": _variables(
+                definition.get("vars", {}),
+                f"recipe.definitions.{definition_name}.vars",
+            ),
+            "material": _material(
+                definition.get("material", _DEFAULT_MATERIAL),
+                f"recipe.definitions.{definition_name}.material",
+            ),
+            "paint": _paint(
+                definition["paint"],
+                f"recipe.definitions.{definition_name}.paint",
+            ) if "paint" in definition else None,
+        }
+
+    nodes_visited = 0
+    generated_count = 0
+    composition_uses = 0
+    settings_overrides = 0
+    paint_applications = 0
+    deepest_composition_depth = 0
+
+    def expand(
+        nodes: Any,
+        active_variables: dict[str, float],
+        active_material: dict[str, Any],
+        active_paint: dict[str, Any] | None,
+        seen: tuple[str, ...],
+        composition_depth: int,
+        label: str,
+    ) -> list[dict[str, Any]]:
+        nonlocal nodes_visited, generated_count, composition_uses
+        nonlocal settings_overrides, paint_applications, deepest_composition_depth
+        expanded: list[dict[str, Any]] = []
+
+        def walk(body: Any, scope: dict[str, float], depth: int) -> None:
+            nonlocal nodes_visited, generated_count, composition_uses
+            nonlocal settings_overrides, deepest_composition_depth
+            if depth > MAX_RECIPE_DEPTH:
                 _hold(
-                    "HOLD_SHAPE_RECIPE_NODE_BUDGET",
-                    "shape recipe exceeded its structural node-visit budget",
-                    maximum=MAX_RECIPE_NODES,
+                    "HOLD_SHAPE_RECIPE_TOO_DEEP",
+                    f"shape recipe bodies may nest at most {MAX_RECIPE_DEPTH} levels",
+                    depth=depth,
+                    body=label,
                 )
-            if not isinstance(raw_node, dict):
-                _hold("HOLD_SHAPE_RECIPE_INVALID", "recipe node must be an object")
-            if "repeat" in raw_node:
-                node = _closed(raw_node, "repeat node", required={"repeat", "body"}, optional={"as"})
-                loop_name = node.get("as", "i")
-                if not isinstance(loop_name, str) or not _NAME_RE.fullmatch(loop_name):
-                    _hold("HOLD_SHAPE_RECIPE_INVALID", "repeat.as must be a portable variable name")
-                raw_count = _number(node["repeat"], variables, scope, "repeat", -100_000.0, 100_000.0)
-                count = max(0, math.floor(raw_count))
-                if count > effective_budget:
+            if not isinstance(body, list):
+                _hold("HOLD_SHAPE_RECIPE_INVALID", "recipe body must be a list", body=label)
+            for raw_node in body:
+                nodes_visited += 1
+                if nodes_visited > MAX_RECIPE_NODES:
+                    _hold(
+                        "HOLD_SHAPE_RECIPE_NODE_BUDGET",
+                        "shape recipe exceeded its structural node-visit budget",
+                        maximum=MAX_RECIPE_NODES,
+                    )
+                if not isinstance(raw_node, dict):
+                    _hold("HOLD_SHAPE_RECIPE_INVALID", "recipe node must be an object", body=label)
+                if "repeat" in raw_node:
+                    node = _closed(raw_node, "repeat node", required={"repeat", "body"}, optional={"as"})
+                    loop_name = node.get("as", "i")
+                    if not isinstance(loop_name, str) or not _NAME_RE.fullmatch(loop_name):
+                        _hold("HOLD_SHAPE_RECIPE_INVALID", "repeat.as must be a portable variable name")
+                    raw_count = _number(
+                        node["repeat"], active_variables, scope, "repeat", -100_000.0, 100_000.0
+                    )
+                    count = max(0, math.floor(raw_count))
+                    if count > effective_budget:
+                        _hold(
+                            "HOLD_SHAPE_RECIPE_OVER_BUDGET",
+                            "shape recipe loop exceeds the receiver's primitive budget",
+                            repeat=count,
+                            maximum=effective_budget,
+                        )
+                    for index in range(count):
+                        inner = dict(scope)
+                        inner[loop_name] = float(index)
+                        inner[f"{loop_name}_of"] = float(count)
+                        inner[f"{loop_name}_at"] = index / (count - 1) if count > 1 else 0.0
+                        walk(node["body"], inner, depth + 1)
+                    continue
+                if "body" in raw_node:
+                    node = _closed(raw_node, "group node", required={"body"}, optional={"when"})
+                    if "when" in node and not _truthy(_evaluate(node["when"], active_variables, scope)):
+                        continue
+                    walk(node["body"], scope, depth + 1)
+                    continue
+                if "use" in raw_node:
+                    node = _closed(
+                        raw_node,
+                        "use node",
+                        required={"use"},
+                        optional={"when", "with", "pos", "scale", "rot", "color", "material"},
+                    )
+                    if "when" in node and not _truthy(_evaluate(node["when"], active_variables, scope)):
+                        continue
+                    definition_name = node["use"]
+                    if not isinstance(definition_name, str) or not _NAME_RE.fullmatch(definition_name):
+                        _hold("HOLD_SHAPE_RECIPE_INVALID", "use must name a portable recipe definition")
+                    if definition_name not in definitions:
+                        _hold(
+                            "HOLD_SHAPE_RECIPE_DEFINITION_NOT_FOUND",
+                            "composed recipe definition is not present",
+                            definition=definition_name,
+                        )
+                    if definition_name in seen:
+                        _hold(
+                            "HOLD_SHAPE_RECIPE_USES_ITSELF",
+                            "a composed shape cannot contain itself",
+                            definition=definition_name,
+                            chain=list(seen) + [definition_name],
+                        )
+                    if composition_depth >= MAX_COMPOSITION_DEPTH:
+                        _hold(
+                            "HOLD_SHAPE_RECIPE_COMPOSITION_TOO_DEEP",
+                            f"composed recipes may nest at most {MAX_COMPOSITION_DEPTH} definitions",
+                            definition=definition_name,
+                        )
+                    rotation = _vector(
+                        node.get("rot"), active_variables, scope, "use.rot",
+                        [0.0, 0.0, 0.0], -1_000_000.0, 1_000_000.0,
+                    )
+                    if any(value != 0 for value in rotation):
+                        _hold(
+                            "HOLD_SHAPE_RECIPE_ROTATION_UNSUPPORTED",
+                            "the current UC procedural-3D receiver does not preserve composed rotation",
+                            rotation=rotation,
+                        )
+                    definition = definitions[definition_name]
+                    child_variables = deepcopy(definition["vars"])
+                    overrides = node.get("with", {})
+                    if not isinstance(overrides, dict):
+                        _hold("HOLD_SHAPE_RECIPE_INVALID", "use.with must be an object")
+                    unknown_settings = sorted(set(overrides) - set(child_variables))
+                    if unknown_settings:
+                        _hold(
+                            "HOLD_SHAPE_RECIPE_SETTINGS_NOT_ACCEPTED",
+                            "composed shape does not declare every requested setting",
+                            definition=definition_name,
+                            unknown_settings=unknown_settings,
+                        )
+                    for setting, expression in overrides.items():
+                        child_variables[setting] = _number(
+                            expression,
+                            active_variables,
+                            scope,
+                            f"use.with.{setting}",
+                            -100_000.0,
+                            100_000.0,
+                        )
+                    composition_uses += 1
+                    settings_overrides += len(overrides)
+                    next_depth = composition_depth + 1
+                    deepest_composition_depth = max(deepest_composition_depth, next_depth)
+                    child_parts = expand(
+                        definition["parts"],
+                        child_variables,
+                        definition["material"],
+                        definition["paint"],
+                        seen + (definition_name,),
+                        next_depth,
+                        f"recipe.definitions.{definition_name}",
+                    )
+                    offset = _vector(
+                        node.get("pos"), active_variables, scope, "use.pos",
+                        [0.0, 0.0, 0.0], -100_000.0, 100_000.0,
+                    )
+                    scale = _scale_vector(node.get("scale"), active_variables, scope, "use.scale")
+                    if "material" in node and "color" in node:
+                        _hold("HOLD_SHAPE_RECIPE_INVALID", "use node may declare material or color, not both")
+                    material_override = _material(node["material"], "use.material") if "material" in node else None
+                    for child in child_parts:
+                        child = deepcopy(child)
+                        child["size"] = [
+                            _literal_number(child["size"][axis] * scale[axis], f"use.size[{axis}]", 0.001, 10_000.0)
+                            for axis in range(3)
+                        ]
+                        child["translation"] = [
+                            _literal_number(
+                                child["translation"][axis] * scale[axis] + offset[axis],
+                                f"use.translation[{axis}]",
+                                -100_000.0,
+                                100_000.0,
+                            )
+                            for axis in range(3)
+                        ]
+                        if material_override is not None:
+                            child["material"] = deepcopy(material_override)
+                        elif "color" in node:
+                            child["material"] = _color_material(
+                                node["color"], active_variables, scope, child["material"], "use.color"
+                            )
+                        expanded.append(child)
+                    continue
+
+                node = _closed(
+                    raw_node,
+                    "part node",
+                    required=set(),
+                    optional={"shape", "size", "pos", "rot", "color", "segments", "material", "when"},
+                )
+                if "when" in node and not _truthy(_evaluate(node["when"], active_variables, scope)):
+                    continue
+                if generated_count >= effective_budget:
                     _hold(
                         "HOLD_SHAPE_RECIPE_OVER_BUDGET",
-                        "shape recipe loop exceeds the receiver's primitive budget",
-                        repeat=count,
+                        "shape recipe exceeds the receiver's primitive budget",
                         maximum=effective_budget,
                     )
-                for index in range(count):
-                    inner = dict(scope)
-                    inner[loop_name] = float(index)
-                    inner[f"{loop_name}_of"] = float(count)
-                    inner[f"{loop_name}_at"] = index / (count - 1) if count > 1 else 0.0
-                    walk(node["body"], inner, depth + 1)
-                continue
-            if "body" in raw_node:
-                node = _closed(raw_node, "group node", required={"body"}, optional={"when"})
-                if "when" in node and not _truthy(_evaluate(node["when"], variables, scope)):
-                    continue
-                walk(node["body"], scope, depth + 1)
-                continue
+                shape = node.get("shape", "box")
+                if not isinstance(shape, str) or shape not in _SHAPES:
+                    _hold(
+                        "HOLD_SHAPE_RECIPE_UNSUPPORTED_SHAPE",
+                        "shape recipe requests a primitive the UC receiver cannot express",
+                        shape=shape,
+                        supported=sorted(_SHAPES),
+                    )
+                size = _vector(
+                    node.get("size"), active_variables, scope, "part.size",
+                    [1.0, 1.0, 1.0], 0.001, 10_000.0,
+                )
+                translation = _vector(
+                    node.get("pos"), active_variables, scope, "part.pos",
+                    [0.0, 0.0, 0.0], -100_000.0, 100_000.0,
+                )
+                rotation = _vector(
+                    node.get("rot"), active_variables, scope, "part.rot",
+                    [0.0, 0.0, 0.0], -1_000_000.0, 1_000_000.0,
+                )
+                if any(value != 0 for value in rotation):
+                    _hold(
+                        "HOLD_SHAPE_RECIPE_ROTATION_UNSUPPORTED",
+                        "the current UC procedural-3D receiver does not preserve primitive rotation",
+                        rotation=rotation,
+                    )
+                if "material" in node and "color" in node:
+                    _hold("HOLD_SHAPE_RECIPE_INVALID", "part node may declare material or color, not both")
+                material = (
+                    _material(node["material"], "part.material")
+                    if "material" in node
+                    else _color_material(
+                        node["color"], active_variables, scope, active_material, "part.color"
+                    )
+                    if "color" in node
+                    else deepcopy(active_material)
+                )
+                primitive: dict[str, Any] = {
+                    "type": shape,
+                    "size": size,
+                    "translation": translation,
+                    "material": material,
+                }
+                if "segments" in node:
+                    if shape != "cylinder":
+                        _hold("HOLD_SHAPE_RECIPE_INVALID", "part.segments is allowed only for cylinders")
+                    segments = _number(
+                        node["segments"], active_variables, scope, "part.segments", 3, 64
+                    )
+                    if not segments.is_integer():
+                        _hold("HOLD_SHAPE_RECIPE_INVALID", "part.segments must resolve to an integer")
+                    primitive["segments"] = int(segments)
+                expanded.append(primitive)
+                generated_count += 1
 
-            node = _closed(
-                raw_node,
-                "part node",
-                required=set(),
-                optional={"shape", "size", "pos", "rot", "color", "segments", "material", "when"},
-            )
-            if "when" in node and not _truthy(_evaluate(node["when"], variables, scope)):
-                continue
-            if len(generated) >= effective_budget:
-                _hold(
-                    "HOLD_SHAPE_RECIPE_OVER_BUDGET",
-                    "shape recipe exceeds the receiver's primitive budget",
-                    maximum=effective_budget,
+        walk(nodes, {}, 0)
+        if active_paint is not None:
+            for primitive in expanded:
+                x, y, z = primitive["translation"]
+                primitive["material"] = _color_material(
+                    active_paint["color"],
+                    active_paint["vars"],
+                    {"x": x, "y": y, "z": z},
+                    primitive["material"],
+                    f"{label}.paint.color",
                 )
-            shape = node.get("shape", "box")
-            if not isinstance(shape, str) or shape not in _SHAPES:
-                _hold(
-                    "HOLD_SHAPE_RECIPE_UNSUPPORTED_SHAPE",
-                    "shape recipe requests a primitive the UC receiver cannot express",
-                    shape=shape,
-                    supported=sorted(_SHAPES),
-                )
-            size = _vector(node.get("size"), variables, scope, "part.size", [1.0, 1.0, 1.0], 0.001, 10_000.0)
-            translation = _vector(node.get("pos"), variables, scope, "part.pos", [0.0, 0.0, 0.0], -100_000.0, 100_000.0)
-            rotation = _vector(node.get("rot"), variables, scope, "part.rot", [0.0, 0.0, 0.0], -1_000_000.0, 1_000_000.0)
-            if any(value != 0 for value in rotation):
-                _hold(
-                    "HOLD_SHAPE_RECIPE_ROTATION_UNSUPPORTED",
-                    "the current UC procedural-3D receiver does not preserve primitive rotation",
-                    rotation=rotation,
-                )
-            if "material" in node and "color" in node:
-                _hold("HOLD_SHAPE_RECIPE_INVALID", "part node may declare material or color, not both")
-            material = (
-                _material(node["material"], "part.material")
-                if "material" in node
-                else _color_material(node["color"], variables, scope, default_material, "part.color")
-                if "color" in node
-                else deepcopy(default_material)
-            )
-            primitive: dict[str, Any] = {
-                "id": f"part-{len(generated) + 1:03d}",
-                "type": shape,
-                "size": size,
-                "translation": translation,
-                "material": material,
-            }
-            if "segments" in node:
-                if shape != "cylinder":
-                    _hold("HOLD_SHAPE_RECIPE_INVALID", "part.segments is allowed only for cylinders")
-                segments = _number(node["segments"], variables, scope, "part.segments", 3, 64)
-                if not segments.is_integer():
-                    _hold("HOLD_SHAPE_RECIPE_INVALID", "part.segments must resolve to an integer")
-                primitive["segments"] = int(segments)
-            generated.append(primitive)
+                paint_applications += 1
+        return expanded
 
-    walk(parts, {}, 0)
+    generated = expand(
+        parts,
+        variables,
+        default_material,
+        root_paint,
+        (),
+        0,
+        "recipe",
+    )
     if not generated:
         _hold("HOLD_SHAPE_RECIPE_EMPTY", "shape recipe produced no primitives")
+    for index, primitive in enumerate(generated, start=1):
+        primitive["id"] = f"part-{index:03d}"
     specification = {
         "schema": "axm.procedural-3d/v0.1",
         "name": name.strip(),
@@ -444,6 +681,12 @@ def compile_shape_recipe(raw: Any) -> dict[str, Any]:
         "effective_budget": effective_budget,
         "recipe_nodes_visited": nodes_visited,
         "parts_generated": len(generated),
+        "definitions_declared": len(definitions),
+        "composition_uses": composition_uses,
+        "settings_overrides": settings_overrides,
+        "deepest_composition_depth": deepest_composition_depth,
+        "paint_mode": "primitive-center",
+        "paint_applications": paint_applications,
         "source_provenance": deepcopy(SOURCE_PROVENANCE),
         "specification": specification,
     }

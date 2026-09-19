@@ -1,8 +1,8 @@
 {
   "id": "AXM-CAP-GENERATE-SHAPE-RECIPE-3D",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "status": "live",
-  "purpose": "Compile bounded loops, conditions and numeric expressions into explicit UC procedural-3D primitives, then publish and re-verify the resulting deterministic GLB asset.",
+  "purpose": "Compile bounded loops, conditions, numeric expressions, reusable shape definitions, per-use settings and position-driven paint into explicit UC procedural-3D primitives, then publish and re-verify the resulting deterministic GLB asset.",
   "handles": [
     "shape-recipe-asset",
     "recipe-glb-asset",
@@ -15,7 +15,7 @@
     ],
     "properties": {
       "path": "target .glb file outside the protected live machine body",
-      "recipe": "closed axm.shape-recipe/v0.1 body with named numeric variables, nested repeat/body nodes, conditions, expressions and primitive parts",
+      "recipe": "closed axm.shape-recipe/v0.1 body with named numeric variables, nested repeat/body nodes, conditions, expressions, primitive parts, optional reusable definitions, per-use settings and primitive-center paint",
       "replace": "optional boolean; defaults false"
     }
   },
@@ -23,7 +23,7 @@
     "kind": "validated-deterministic-glb-asset",
     "contains": [
       "canonical recipe digest and exact pinned design-donor provenance",
-      "declared and effective budgets plus visited/generated counts",
+      "declared and effective budgets plus visited/generated/composition/paint counts",
       "expanded axm.procedural-3d/v0.1 specification",
       "exact GLB digest and pre/post-publication geometry validation",
       "explicit unobserved render and host-import boundaries"
@@ -34,6 +34,8 @@
   ],
   "relationships": [
     "turns named numbers into deterministic families of explicit primitive scenes",
+    "lets invented shapes reuse other invented shape definitions without copying or mutating those definitions",
+    "applies declared per-use settings and position expressions while keeping receiver limits explicit",
     "uses the existing procedural-3D publisher rather than introducing a second mesh renderer",
     "keeps unsupported shapes and rotation on typed HOLD instead of silently approximating them",
     "adapts the bounded recipe-flow concept from a pinned MorphTile snapshot without embedding the MorphTile runtime"
@@ -48,6 +50,8 @@
     "The current receiver supports box, cylinder and pyramid only; unsupported MorphTile primitives remain HOLD instead of being approximated.",
     "The current procedural-3D primitive contract has no rotation field, so any nonzero recipe rotation remains HOLD.",
     "The receiver limits generated scenes to 128 primitives even though the structural recipe walker may inspect up to 4000 nodes.",
+    "Composition is self-contained inside the submitted recipe: at most 64 embedded definitions and four composed-definition levels; missing names, cycles and undeclared per-use settings remain typed HOLD.",
+    "Position-driven paint is evaluated once at each generated primitive's center. It can vary assembled parts but does not claim MorphTile's finer per-triangle paint behavior.",
     "Compilation and decoded GLB validation do not prove rendered appearance, aesthetic quality, collision, physics, animation or host-engine compatibility.",
     "This is a UC-native implementation of the pinned recipe-flow behavior; it does not bundle, call or redistribute the MorphTile engine."
   ],
