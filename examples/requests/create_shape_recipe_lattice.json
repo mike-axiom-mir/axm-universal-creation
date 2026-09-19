@@ -1,0 +1,41 @@
+{
+  "kind": "shape-recipe-asset",
+  "direction": "Create a deterministic lattice shell whose named dimensions remain editable recipe data",
+  "inputs": {
+    "path": "creations/shape-recipe-lattice.glb",
+    "recipe": {
+      "schema": "axm.shape-recipe/v0.1",
+      "name": "Lattice shell",
+      "vars": {
+        "n": 4,
+        "gap": 0.55
+      },
+      "parts": [
+        {
+          "repeat": ["var", "n"],
+          "as": "x",
+          "body": [
+            {
+              "repeat": ["var", "n"],
+              "as": "y",
+              "body": [
+                {
+                  "repeat": ["var", "n"],
+                  "as": "z",
+                  "body": [
+                    {
+                      "when": ["or", ["or", ["==", ["var", "x"], 0], ["==", ["var", "y"], 0]], ["==", ["var", "z"], 0]],
+                      "shape": "box",
+                      "size": [0.2, 0.2, 0.2],
+                      "pos": [["*", ["var", "gap"], ["var", "x"]], ["*", ["var", "gap"], ["var", "y"]], ["*", ["var", "gap"], ["var", "z"]]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

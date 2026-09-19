@@ -1,0 +1,73 @@
+{
+  "id": "AXM-CAP-GENERATE-SHAPE-RECIPE-3D",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Compile bounded loops, conditions and numeric expressions into explicit UC procedural-3D primitives, then publish and re-verify the resulting deterministic GLB asset.",
+  "handles": [
+    "shape-recipe-asset",
+    "recipe-glb-asset",
+    "invented-shape-asset"
+  ],
+  "input_contract": {
+    "required": [
+      "path",
+      "recipe"
+    ],
+    "properties": {
+      "path": "target .glb file outside the protected live machine body",
+      "recipe": "closed axm.shape-recipe/v0.1 body with named numeric variables, nested repeat/body nodes, conditions, expressions and primitive parts",
+      "replace": "optional boolean; defaults false"
+    }
+  },
+  "output_contract": {
+    "kind": "validated-deterministic-glb-asset",
+    "contains": [
+      "canonical recipe digest and exact pinned design-donor provenance",
+      "declared and effective budgets plus visited/generated counts",
+      "expanded axm.procedural-3d/v0.1 specification",
+      "exact GLB digest and pre/post-publication geometry validation",
+      "explicit unobserved render and host-import boundaries"
+    ]
+  },
+  "dependencies": [
+    "AXM-CAP-GENERATE-PROCEDURAL-3D"
+  ],
+  "relationships": [
+    "turns named numbers into deterministic families of explicit primitive scenes",
+    "uses the existing procedural-3D publisher rather than introducing a second mesh renderer",
+    "keeps unsupported shapes and rotation on typed HOLD instead of silently approximating them",
+    "adapts the bounded recipe-flow concept from a pinned MorphTile snapshot without embedding the MorphTile runtime"
+  ],
+  "anatomy_refs": [],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:shape_recipe",
+    "source": "src/axm_uc/shape_recipe.py"
+  },
+  "limitations": [
+    "The current receiver supports box, cylinder and pyramid only; unsupported MorphTile primitives remain HOLD instead of being approximated.",
+    "The current procedural-3D primitive contract has no rotation field, so any nonzero recipe rotation remains HOLD.",
+    "The receiver limits generated scenes to 128 primitives even though the structural recipe walker may inspect up to 4000 nodes.",
+    "Compilation and decoded GLB validation do not prove rendered appearance, aesthetic quality, collision, physics, animation or host-engine compatibility.",
+    "This is a UC-native implementation of the pinned recipe-flow behavior; it does not bundle, call or redistribute the MorphTile engine."
+  ],
+  "persistent_state": null,
+  "root_fit": {
+    "truth": {
+      "fit": true,
+      "basis": "Recipe identity, donor provenance, expansion budgets, exact expanded specification, GLB bytes and unobserved qualities remain explicit."
+    },
+    "agency": {
+      "fit": true,
+      "basis": "The caller owns every variable, expression, part, material, output path and replacement choice; compilation does not select or install itself."
+    },
+    "continuity": {
+      "fit": true,
+      "basis": "The existing atomic procedural-3D publication and rollback path remains authoritative, while the original recipe and its digest stay available in the receipt."
+    },
+    "wisdom-before-speed": {
+      "fit": true,
+      "basis": "Depth, node visits, output count, expression grammar and receiver features are bounded; unsupported or excessive work holds before publication."
+    }
+  }
+}

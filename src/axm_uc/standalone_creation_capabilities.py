@@ -179,6 +179,20 @@ def register_standalone_creation_builtins(
         except Procedural3DError as exc:
             raise capability_error(str(exc), exc.details) from exc
 
+    def shape_recipe(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+        from .procedural_3d import Procedural3DError
+        from .shape_recipe import ShapeRecipeError, publish_shape_recipe
+
+        target = resolve_output_path(root, str(inputs["path"]))
+        if is_machine_body_path(root, target):
+            raise capability_error("shape recipe generation cannot rewrite the live machine body")
+        if "replace" in inputs and not isinstance(inputs["replace"], bool):
+            raise capability_error("shape recipe replace must be a boolean")
+        try:
+            return publish_shape_recipe(target, inputs["recipe"], replace=inputs.get("replace", False))
+        except (ShapeRecipeError, Procedural3DError) as exc:
+            raise capability_error(str(exc), exc.details) from exc
+
     def precision_cutter(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
         from .precision_cutter import PrecisionCutterError, publish_precision_cut
 
@@ -357,6 +371,7 @@ def register_standalone_creation_builtins(
         "builtin:browser_game": browser_game,
         "builtin:creation_growth": creation_growth,
         "builtin:procedural_3d": procedural_3d,
+        "builtin:shape_recipe": shape_recipe,
         "builtin:precision_cutter": precision_cutter,
         "builtin:creative_flow": creative_flow,
         "builtin:native_visual_runtime": native_visual_runtime,
