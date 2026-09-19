@@ -1,0 +1,12 @@
+{
+  "schema": "axm.layered-game-material-request/v0.1",
+  "base_profile": "sun-faded-plastic",
+  "size": 256,
+  "seed": 9137,
+  "color": [236, 145, 34],
+  "layers": [
+    {"type": "salt", "amount": 0.32, "scale": 8.0},
+    {"type": "scuff", "amount": 0.28, "scale": 20.0},
+    {"type": "wetness", "amount": 0.10, "scale": 3.5}
+  ]
+}
