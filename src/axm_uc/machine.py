@@ -12,6 +12,7 @@ from .candidate import test_capability_candidate
 from .capabilities import CapabilityError, CapabilityStore
 from .decompose import CreationDecomposer
 from .directions import SoftwareDirections
+from .direction_router import direction_routing_summary, route_direction
 from .executable import ExecutableAnatomy
 from .gap_synthesis import analyze_creation_gap, gap_synthesis_summary
 from .organ_library import ExecutableOrganLibrary
@@ -41,6 +42,7 @@ class UniversalCreationMachine:
             "topology": self.decomposer.topology.summary(),
             "executable_anatomy": self.executable_anatomy.summary(),
             "software_directions": self.direction_model.summary(),
+            "direction_routing": direction_routing_summary(),
             "executable_organs": ExecutableOrganLibrary(self.root).summary(),
             "asset_atom_schema": asset_atom_schema_summary(),
             "asset_packages": AssetPackageLibrary(self.root).summary(),
@@ -172,6 +174,10 @@ class UniversalCreationMachine:
         result["executable_anatomy"] = self.executable_anatomy.for_selected(result["registry_matches"])
         return result
 
+    def direct(self, request: dict[str, Any]) -> dict[str, Any]:
+        """Compile ordinary language into a direction contract and gate routing on sufficiency."""
+        return route_direction(self.root, request)
+
     def _capability_gap(self, request: dict[str, Any]) -> dict[str, Any]:
         kind = str(request.get("kind", "unknown"))
         inputs = request.get("inputs") if isinstance(request.get("inputs"), dict) else {}
@@ -207,8 +213,12 @@ class UniversalCreationMachine:
         if not isinstance(request, dict):
             raise TypeError("request must be an object")
         kind = request.get("kind")
+        if not isinstance(kind, str) and any(key in request for key in ("prompt", "direction", "purpose")):
+            return self.direct(request)
         if not isinstance(kind, str) or not kind.strip():
             raise ValueError("request.kind must be a non-empty string")
+        if request.get("route_mode") == "directional" or "direction_contract" in request:
+            return self.direct(request)
         manifest = self.capabilities.route(kind)
         if manifest is None:
             return self._capability_gap(request)

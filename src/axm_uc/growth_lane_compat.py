@@ -143,6 +143,8 @@ def _install_machine_creation_contract() -> None:
         if not isinstance(request, dict):
             raise TypeError("request must be an object")
         kind = request.get("kind")
+        if (not isinstance(kind, str) and any(key in request for key in ("prompt", "direction", "purpose"))) or request.get("route_mode") == "directional" or "direction_contract" in request:
+            return original_create(self, request)
         if not isinstance(kind, str) or not kind.strip():
             raise ValueError("request.kind must be a non-empty string")
         manifest = self.capabilities.route(kind)

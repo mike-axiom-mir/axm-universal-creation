@@ -432,6 +432,15 @@ def builtin_patch_project(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
         raise CapabilityError(str(exc), exc.details) from exc
 
 
+def builtin_direction_router(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+    from .direction_router import route_direction
+
+    try:
+        return route_direction(root, inputs)
+    except (TypeError, ValueError, OSError) as exc:
+        raise CapabilityError(str(exc)) from exc
+
+
 BUILTINS: dict[str, Callable[[Path, dict[str, Any]], dict[str, Any]]] = {
     "builtin:write_text": builtin_write_text,
     "builtin:write_json": builtin_write_json,
@@ -452,6 +461,7 @@ BUILTINS: dict[str, Callable[[Path, dict[str, Any]], dict[str, Any]]] = {
     "builtin:gap_synthesis": builtin_synthesize_creation_gap,
     "builtin:verify_project": builtin_verify_project,
     "builtin:patch_project": builtin_patch_project,
+    "builtin:direction_router": builtin_direction_router,
 }
 BUILTINS.update(
     register_standalone_creation_builtins(
