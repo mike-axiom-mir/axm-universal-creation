@@ -114,6 +114,9 @@ def publish_retained_glb(
                 "specification_sha256": result["specification_sha256"],
             },
         }
+        if "motion_validation" in result:
+            # Keep the decoded-output evidence beside the construction that made it.
+            retained["artifact"]["motion_validation"] = deepcopy(result["motion_validation"])
         retained["source_sha256"] = hashlib.sha256(_canonical({
             key: value for key, value in retained.items() if key != "source_sha256"
         })).hexdigest()
