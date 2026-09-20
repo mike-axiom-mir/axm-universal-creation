@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "axm-material-response",
+  "title": "AXM material response organ and pack",
+  "description": "Shape check only. Passing this says the record is well formed; it says nothing about whether the behaviour is correct in any renderer. Evidence is earned by a host, never by a validator.",
+  "definitions": {
+    "evidence": { "enum": ["inferred_candidate_not_tested", "structurally_possible_not_tested", "declared_contract_match_not_tested", "verified_payload_sha256", "verified_render_receipt"] },
+    "organ": { "type": "object", "required": ["format", "version", "id", "name", "purpose", "inputs", "outputs", "host_binding", "evidence", "known_losses", "fallback", "verify"] }
+  },
+  "oneOf": [
+    { "$ref": "#/definitions/organ" },
+    { "type": "object", "required": ["format", "families"], "properties": {
+      "format": { "const": "axm-material-response-pack" },
+      "families": { "type": "array", "items": { "type": "object", "required": ["id", "purpose", "response"] } }
+    } }
+  ]
+}
