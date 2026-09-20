@@ -1,0 +1,26 @@
+{
+  "id": "AXM-CAP-CONSTRUCTION-SEARCH",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Search declared freeform geometry and character-performance controls against explicit measurements, then retain verified construction and reusable settings.",
+  "handles": ["construction-search", "headless-shape-search"],
+  "input_contract": {
+    "required": ["path", "search"],
+    "properties": {
+      "path": "new output directory outside the protected live machine body",
+      "search": "axm.construction-search/v0.1: intent, recipe, controls, criteria, budget; optional motion_probe and warm_starts"
+    }
+  },
+  "output_contract": {
+    "kind": "measured-construction-search",
+    "contains": ["search.json with contract, trials, measurements and stop reason", "accepted winner.glb and retained creator source when criteria pass", "reusable settings and semantic construction signature"]
+  },
+  "dependencies": ["AXM-CAP-GENERATE-FORM-PATTERN-3D", "AXM-CAP-GENERATE-CHARACTER-RECIPE-3D"],
+  "implementation": {"kind": "DETERMINISTIC_SOURCE", "entrypoint": "builtin:construction_search", "source": "src/axm_uc/construction_search.py"},
+  "limitations": [
+    "Intent is made executable by caller-declared controls and criteria; prose is not silently interpreted as an aesthetic score.",
+    "Finite best-first search, bounded candidate and validation counts, same-runtime deterministic order. No global optimality or statistical-confidence claim.",
+    "Runtime pose sampling measures geometry, deformation and declared flat support contacts; no dynamics, self-intersection or unsampled-extrema guarantee.",
+    "Verified construction is retained as a candidate. Existing growth acceptance and semantic deduplication still govern reusable-library admission."
+  ]
+}
