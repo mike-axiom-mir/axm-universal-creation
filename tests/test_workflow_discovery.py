@@ -196,9 +196,12 @@ class WorkflowDiscoveryTests(unittest.TestCase):
         req = self.small(); req.pop("operators")
         before = plan(ROOT, req, memory=str(self.memory))
         with patch("axm_uc.workflow_discovery.runtime_pin", return_value="changed"):
+            req["budget"]["states"] = 1
             fresh = plan(ROOT, req, memory=str(self.memory))
             self.assertTrue(fresh["memory"]["stale"])
-            self.assertFalse(any(c["reused_structure"] for c in fresh["candidates"]))
+            self.assertEqual(fresh["status"], "READY")
+            self.assertTrue(all(c["reused_structure"] for c in fresh["candidates"]))
+            self.assertFalse(any(c["prior_evidence_current"] for c in fresh["candidates"]))
             result = experiment(ROOT, req, self.output("stale"), memory=str(self.memory), expected_plan=before["plan_sha256"])
         self.assertEqual(result["status"], "HOLD_STALE_PLAN")
         self.assertFalse(Path(self.output("stale")).exists())
