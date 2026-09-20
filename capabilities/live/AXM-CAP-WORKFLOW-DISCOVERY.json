@@ -1,0 +1,48 @@
+{
+  "id": "AXM-CAP-WORKFLOW-DISCOVERY",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Compose typed installed operators, experiment against explicit outcomes, rank worst-case quality and retain workflows after independent confirmation.",
+  "handles": [
+    "workflow-discovery"
+  ],
+  "input_contract": {
+    "required": [],
+    "required_by_operation": {
+      "plan": [
+        "request"
+      ],
+      "experiment": [
+        "request",
+        "path"
+      ],
+      "memory": [
+        "memory"
+      ]
+    },
+    "properties": {
+      "operation": "catalog, plan, experiment or memory; default plan",
+      "request": "axm.workflow-experiment/v0.1: typed construction choices, measured goals, ranking objectives, stress scenarios and finite budgets",
+      "path": "new ordinary experiment directory; never overwrite existing artifacts or machine internals",
+      "memory": "optional separate caller-owned persistent directory for observations and confirmed workflow structures",
+      "plan_sha256": "optional expected plan identity; changes return HOLD_STALE_PLAN before writes"
+    }
+  },
+  "output_contract": {
+    "kind": "workflow-evidence",
+    "contains": [
+      "retained construction inputs",
+      "measured outcomes and gaps"
+    ]
+  },
+  "dependencies": [],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:workflow_discovery",
+    "source": "src/axm_uc/workflow_discovery.py"
+  },
+  "limitations": [
+    "Only installed typed operators and explicit finite search, execution and validation scopes.",
+    "Fresh outcome checks are required; no silent canon or capability admission."
+  ]
+}
