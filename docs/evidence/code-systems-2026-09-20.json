@@ -1,0 +1,375 @@
+{
+  "environment": {
+    "node": "v24.19.0",
+    "platform": "Linux",
+    "python": "3.12.14"
+  },
+  "projects": [
+    {
+      "behavior_sha256": "b7d5bc153efeede0c81c55515953fd1597cecadb23805bc51b78265bb10f1b25",
+      "exploration": {
+        "accepted_events": [
+          "cancel",
+          "close",
+          "reopen",
+          "reserve",
+          "restock",
+          "ship"
+        ],
+        "applied": 129,
+        "counterexample": null,
+        "depth_frontier": 25,
+        "edges": 234,
+        "holds": 105,
+        "max_depth": 5,
+        "phases": [
+          "closed",
+          "open"
+        ],
+        "states": 64,
+        "status": "BOUNDED_COMPLETE",
+        "transitions": [
+          {
+            "event": "cancel",
+            "from": "open",
+            "to": "open"
+          },
+          {
+            "event": "close",
+            "from": "open",
+            "to": "closed"
+          },
+          {
+            "event": "reopen",
+            "from": "closed",
+            "to": "open"
+          },
+          {
+            "event": "reserve",
+            "from": "open",
+            "to": "open"
+          },
+          {
+            "event": "restock",
+            "from": "open",
+            "to": "open"
+          },
+          {
+            "event": "ship",
+            "from": "open",
+            "to": "open"
+          }
+        ]
+      },
+      "function_atoms": 13,
+      "input_unchanged": true,
+      "name": "inventory",
+      "replay_and_recovery": true,
+      "scenario_steps": 10,
+      "scenarios": 1,
+      "source_sha256": {
+        "javascript/module.js": "8464c98bb1bdedd233001ee3fd8711b14b6bdbcb78e3eff770968e20786c8577",
+        "javascript/runtime.js": "4355247a4ac238c8a94eeb291863e6768bb8f78923598ce522d58370572d64bb",
+        "javascript/selftest.js": "9f6de909d3d39c8d54e9a9dfd607c6e7e75e029b150bb74214b395e2bb9fd124",
+        "javascript/source-lock.json": "fa1708d48d1dd01ea4b79e953f3a93a9863ed9682593d237babfd72d627cee28",
+        "javascript/system.json": "82337810a07965bcb459f564ce7eeab05b80f23137595a4ec4cb6711fe3d8a1f",
+        "python/module.py": "03d50dbe41c9e9fe17b1827f690bef03f51e4d660ad73767056a8d49388db39d",
+        "python/runtime.py": "37181490cf6035ee2b94a653d9505d0c479b938318312d0cfc6d1cb7cdbb3167",
+        "python/selftest.py": "5621bcef9c5e0f2f5c71fb8e6c3dc511a75d4d9846916105fdd0aba25776d6a1",
+        "python/source-lock.json": "7e0c4b2d226672a23480e64e765d963f52379e79f1cf818497906dca666e6441",
+        "python/system.json": "82337810a07965bcb459f564ce7eeab05b80f23137595a4ec4cb6711fe3d8a1f"
+      },
+      "standalone_verifiers": "PASS_BOTH_LANGUAGES",
+      "status": "VERIFIED_FOR_SCENARIOS",
+      "system_atoms_in_project_archive": 1,
+      "system_sha256": "8efa59631ccc268ff1c91e702578860ffbe8b347bddb367458565c44c15d4eb8"
+    },
+    {
+      "behavior_sha256": "af900419129a3fe9bba4fcaa3e34ffefcc742d144e89dde197bf5cae495a740d",
+      "exploration": {
+        "accepted_events": [
+          "attack",
+          "hit",
+          "pause",
+          "reload",
+          "reset",
+          "resume",
+          "start"
+        ],
+        "applied": 75,
+        "counterexample": null,
+        "depth_frontier": 11,
+        "edges": 245,
+        "holds": 170,
+        "max_depth": 6,
+        "phases": [
+          "lost",
+          "paused",
+          "ready",
+          "running",
+          "won"
+        ],
+        "states": 46,
+        "status": "BOUNDED_COMPLETE",
+        "transitions": [
+          {
+            "event": "attack",
+            "from": "running",
+            "to": "running"
+          },
+          {
+            "event": "defeat",
+            "from": "running",
+            "to": "lost"
+          },
+          {
+            "event": "hit",
+            "from": "running",
+            "to": "running"
+          },
+          {
+            "event": "pause",
+            "from": "running",
+            "to": "paused"
+          },
+          {
+            "event": "reload",
+            "from": "running",
+            "to": "running"
+          },
+          {
+            "event": "reset",
+            "from": "lost",
+            "to": "ready"
+          },
+          {
+            "event": "reset",
+            "from": "won",
+            "to": "ready"
+          },
+          {
+            "event": "resume",
+            "from": "paused",
+            "to": "running"
+          },
+          {
+            "event": "start",
+            "from": "ready",
+            "to": "running"
+          },
+          {
+            "event": "victory",
+            "from": "running",
+            "to": "won"
+          }
+        ]
+      },
+      "function_atoms": 13,
+      "input_unchanged": true,
+      "name": "combat",
+      "replay_and_recovery": true,
+      "scenario_steps": 19,
+      "scenarios": 3,
+      "source_sha256": {
+        "javascript/module.js": "5f5ed73292c6b2cf960f631459f0984fd9f001e19e391dcf4f785d8bbe2eca39",
+        "javascript/runtime.js": "4355247a4ac238c8a94eeb291863e6768bb8f78923598ce522d58370572d64bb",
+        "javascript/selftest.js": "2c7870827b8f0d9754edd7e5f8f196fddedda986d8daa5274918dcbdbc8e65d1",
+        "javascript/source-lock.json": "b0c772cc95d3b16d0c6e9005c4422beec6585fdc4d58ebf2fd02e81c4cac7097",
+        "javascript/system.json": "2e20f87ac77b20b61e423a88c6bca1632d00674d30b4a2d6fb39b22b9ecece92",
+        "python/module.py": "8798b33086a07f4e3489c7c7f5349a4dc03f88b73f890efc490f7b34909ea694",
+        "python/runtime.py": "37181490cf6035ee2b94a653d9505d0c479b938318312d0cfc6d1cb7cdbb3167",
+        "python/selftest.py": "a4c47439616596a7b0ffd45ffabf705cd417a4c05a603c6b1b62b3def72df743",
+        "python/source-lock.json": "9e221fbe555647a406ffe3376222ff3575e4a50bacb13237c957a79ecc86b155",
+        "python/system.json": "2e20f87ac77b20b61e423a88c6bca1632d00674d30b4a2d6fb39b22b9ecece92"
+      },
+      "standalone_verifiers": "PASS_BOTH_LANGUAGES",
+      "status": "VERIFIED_FOR_SCENARIOS",
+      "system_atoms_in_project_archive": 1,
+      "system_sha256": "6b77b457c05609ac29668e6ec8bd87acd12b6d27790b2558581ad39146011ec9"
+    },
+    {
+      "behavior_sha256": "96b60783c607531b85acd9447d44f355c2c1c21e076145a46a675fffb06cfb0b",
+      "exploration": {
+        "accepted_events": [
+          "audit",
+          "cancel",
+          "close",
+          "reopen",
+          "reserve",
+          "restock",
+          "ship"
+        ],
+        "applied": 162,
+        "counterexample": null,
+        "depth_frontier": 25,
+        "edges": 273,
+        "holds": 111,
+        "max_depth": 5,
+        "phases": [
+          "closed",
+          "open"
+        ],
+        "states": 64,
+        "status": "BOUNDED_COMPLETE",
+        "transitions": [
+          {
+            "event": "audit",
+            "from": "open",
+            "to": "open"
+          },
+          {
+            "event": "cancel",
+            "from": "open",
+            "to": "open"
+          },
+          {
+            "event": "close",
+            "from": "open",
+            "to": "closed"
+          },
+          {
+            "event": "reopen",
+            "from": "closed",
+            "to": "open"
+          },
+          {
+            "event": "reserve",
+            "from": "open",
+            "to": "open"
+          },
+          {
+            "event": "restock",
+            "from": "open",
+            "to": "open"
+          },
+          {
+            "event": "ship",
+            "from": "open",
+            "to": "open"
+          }
+        ]
+      },
+      "function_atoms": 13,
+      "input_unchanged": true,
+      "name": "inventory-audit",
+      "replay_and_recovery": true,
+      "scenario_steps": 10,
+      "scenarios": 1,
+      "source_sha256": {
+        "javascript/module.js": "8464c98bb1bdedd233001ee3fd8711b14b6bdbcb78e3eff770968e20786c8577",
+        "javascript/runtime.js": "4355247a4ac238c8a94eeb291863e6768bb8f78923598ce522d58370572d64bb",
+        "javascript/selftest.js": "9f6de909d3d39c8d54e9a9dfd607c6e7e75e029b150bb74214b395e2bb9fd124",
+        "javascript/source-lock.json": "f38af3fa227578d26088cefde0234862b78dc69271afa6b168b341128fdfd673",
+        "javascript/system.json": "0762ae22a6fae9b7fd07a60fa04c823307044a5a84fe12468900219559e1f908",
+        "python/module.py": "03d50dbe41c9e9fe17b1827f690bef03f51e4d660ad73767056a8d49388db39d",
+        "python/runtime.py": "37181490cf6035ee2b94a653d9505d0c479b938318312d0cfc6d1cb7cdbb3167",
+        "python/selftest.py": "5621bcef9c5e0f2f5c71fb8e6c3dc511a75d4d9846916105fdd0aba25776d6a1",
+        "python/source-lock.json": "e15690c338193fa4e1ab64282e21be5161f4f591a2ff34b28d8099f3eea82962",
+        "python/system.json": "0762ae22a6fae9b7fd07a60fa04c823307044a5a84fe12468900219559e1f908"
+      },
+      "standalone_verifiers": "PASS_BOTH_LANGUAGES",
+      "status": "VERIFIED_FOR_SCENARIOS",
+      "system_atoms_in_project_archive": 2,
+      "system_sha256": "0559779e4ec619b6da16a7224a8314f0ac1c59ed97b27a8a186623771e0471ba"
+    }
+  ],
+  "retained_code_system_signatures": 3,
+  "schema": "axm.code-system-proof/v0.1",
+  "scope": "Generated code and sessions, finite declared event alphabets, replay/recovery, portable execution and construction reuse. No rendered UI, gameplay balance, timing, external effects or universal correctness claim.",
+  "seeded_defect": {
+    "change": "Removed the zero clamp from the combat hit reducer.",
+    "exploration": "COUNTEREXAMPLE",
+    "function_cases": "PASS",
+    "same_in_both_languages_and_repeats": true,
+    "scripted_scenarios": "PASS",
+    "shortest_trace": {
+      "before": {
+        "model": {
+          "ammo": 3,
+          "enemy": 9,
+          "health": 2
+        },
+        "phase": "running"
+      },
+      "events": [
+        {
+          "args": [],
+          "type": "start"
+        },
+        {
+          "args": [
+            4
+          ],
+          "type": "hit"
+        },
+        {
+          "args": [
+            4
+          ],
+          "type": "hit"
+        },
+        {
+          "args": [
+            4
+          ],
+          "type": "hit"
+        }
+      ],
+      "result": {
+        "effects": [],
+        "state": {
+          "model": {
+            "ammo": 3,
+            "enemy": 9,
+            "health": 2
+          },
+          "phase": "running"
+        },
+        "status": "HOLD_INVARIANT",
+        "violations": [
+          "resource-bounds"
+        ]
+      }
+    }
+  },
+  "sources": {
+    "atlas/code-systems.json": "dca55610442d4d459edd8d2d5826710d07d622aefe642006e3e09b2a6f5818c9",
+    "atlas/operators/code-systems.json": "77688cbcc5ac9785f6f32cd72d392aba3dfdbe5151d85b804528cda5b78bea11",
+    "examples/code-systems/combat.json": "4a9bea7b47f18d27b487e60bc4fce5f1654c4ebcbdd69c4207abe537598bd206",
+    "examples/code-systems/inventory.json": "aa22783efb6cbfdfdf3d1da86665f714154846ae1836a2869ba80836ac22229d",
+    "src/axm_uc/atlas_pipeline.py": "632dabac86d4e24f5487a83600d52705bac0196772b3058be454c53872b3006f",
+    "src/axm_uc/code_system.py": "34d6dafa2089215024897ed57326a6422e1a857c0e8109bddd6f28753b6a5405",
+    "src/axm_uc/code_system_contract.py": "fe147f051e3aa68e45cf8dc6d2d18ca06a2343077476cbcca260ff3283de7040",
+    "src/axm_uc/creation_atlas.py": "d9b9a4d951422c1c458c12e1843f07ce7208cdeeac956569e67b9c2578301970",
+    "src/axm_uc/data/code_system/runtime.js": "4355247a4ac238c8a94eeb291863e6768bb8f78923598ce522d58370572d64bb",
+    "src/axm_uc/data/code_system/runtime.py": "37181490cf6035ee2b94a653d9505d0c479b938318312d0cfc6d1cb7cdbb3167",
+    "src/axm_uc/workflow_discovery.py": "cd31d49620a9e722ed4efe43556367dd19b94f29cf9bd8dd536da023ea07363e",
+    "src/axm_uc/workflow_experiments.py": "c09c9a37af6f11810027512dfd23a447a8425126623788e53489a07541092e60",
+    "tools/code_system_demo.py": "ab459f69e349acfb18470d4fac8e6ac7ba1dc5028e701d32cb4fa3d0e9f17e6f"
+  },
+  "status": "PASS",
+  "workflow_discovery": {
+    "confirmation_repeatable": true,
+    "metrics": {
+      "session": {
+        "exploration_depth": 6,
+        "languages": 2,
+        "transition_coverage": 1.0
+      }
+    },
+    "operators": [
+      "verify-code-system"
+    ],
+    "product_hashes": {
+      "na202e84c3f4ec2d6/project/javascript/module.js": "5f5ed73292c6b2cf960f631459f0984fd9f001e19e391dcf4f785d8bbe2eca39",
+      "na202e84c3f4ec2d6/project/javascript/runtime.js": "4355247a4ac238c8a94eeb291863e6768bb8f78923598ce522d58370572d64bb",
+      "na202e84c3f4ec2d6/project/javascript/selftest.js": "2c7870827b8f0d9754edd7e5f8f196fddedda986d8daa5274918dcbdbc8e65d1",
+      "na202e84c3f4ec2d6/project/python/module.py": "8798b33086a07f4e3489c7c7f5349a4dc03f88b73f890efc490f7b34909ea694",
+      "na202e84c3f4ec2d6/project/python/runtime.py": "37181490cf6035ee2b94a653d9505d0c479b938318312d0cfc6d1cb7cdbb3167",
+      "na202e84c3f4ec2d6/project/python/selftest.py": "a4c47439616596a7b0ffd45ffabf705cd417a4c05a603c6b1b62b3def72df743"
+    },
+    "retained_structures": 1,
+    "status": "VERIFIED_WORKFLOWS",
+    "trials": 2
+  }
+}

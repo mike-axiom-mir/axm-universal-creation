@@ -234,7 +234,7 @@ class CreationAtlas:
 
     def add_experience(self, records, collection):
         """Expose retained observations and semantic construction candidates, not canon."""
-        patterns = {}
+        patterns, code_patterns = {}, {}
         for record in records:
             identity = "experience:" + digest(record)
             source = {"scope": "experience", "collection": str(collection), "record_sha256": digest(record)}
@@ -245,12 +245,22 @@ class CreationAtlas:
             if record["status"] == "CHECKS_PASSED":
                 for search in record.get("searches", []):
                     patterns.setdefault(search["semantic_signature"], []).append((identity, search))
+                for system in record.get("code_systems", []):
+                    code_patterns.setdefault(system["structural_sha256"], []).append((identity, system))
         for signature, observations in sorted(patterns.items()):
             self.add("construction:" + signature, "construction-pattern", signature,
                      "Measured construction candidate; every reuse needs the current request's checks.",
                      {"scope": "derived-experience", "semantic_signature": signature},
                      data={"observations": [{"experience": identity, **deepcopy(search)} for identity, search in observations]},
                      status="MEASURED_CANDIDATE_NOT_CANON",
+                     relations=[{"relation": "observed-in", "target": identity} for identity, _ in observations])
+        for signature, observations in sorted(code_patterns.items()):
+            construction = observations[0][1]["construction"]
+            self.add("code-pattern:" + signature, "code-pattern", construction["job"]["id"],
+                     "Retained stateful code construction; restore, reshape and execute against current cases before reuse.",
+                     {"scope": "derived-experience", "structural_sha256": signature},
+                     data={"request": deepcopy(construction), "observations": [{"experience": identity, **deepcopy(system)} for identity, system in observations]},
+                     status="VERIFIED_PAST_CONSTRUCTION_RECHECK_REQUIRED", tags=[construction["system"]["domain"]],
                      relations=[{"relation": "observed-in", "target": identity} for identity, _ in observations])
 
     def summary(self):
@@ -301,7 +311,7 @@ class CreationAtlas:
 
 
 def runtime_pin():
-    """Pin Python/data dependencies, not just the immediate capability wrapper."""
+    """Pin Python/JavaScript/data dependencies, not just the capability wrapper."""
     hashes = {p.relative_to(RUNTIME).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
-              for p in sorted(RUNTIME.rglob("*")) if p.is_file() and p.suffix in {".py", ".json"}}
+              for p in sorted(RUNTIME.rglob("*")) if p.is_file() and p.suffix in {".py", ".json", ".js", ".mjs", ".cjs"}}
     return digest(hashes)

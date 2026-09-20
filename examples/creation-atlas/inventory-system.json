@@ -1,0 +1,26 @@
+{
+  "kind": "creation-atlas",
+  "inputs": {
+    "operation": "build",
+    "path": "creations/atlas-inventory-system",
+    "memory": "creations/atlas-code-experience",
+    "intent": {
+      "purpose": "Create a portable inventory system, verify sessions and recovery, explore invariants and retain reusable causes.",
+      "direction": "software-systems",
+      "goals": [
+        "session-behavior",
+        "invariant-exploration",
+        "portable-recovery",
+        "retained-system"
+      ],
+      "parameters": {
+        "request": {
+          "atlas": "recipe:inventory-system",
+          "path": [
+            "value"
+          ]
+        }
+      }
+    }
+  }
+}

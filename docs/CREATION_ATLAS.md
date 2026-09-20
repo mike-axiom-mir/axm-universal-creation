@@ -4,9 +4,9 @@ UC's creation atlas joins its existing libraries into one inspectable graph.
 It does not replace the capability store, executable-organ library, asset atoms,
 material machinery, product workflows or construction search.
 
-The installed view currently contains 2,385 entries across 27 categories. These
-include descriptive research records. They are **not 2,385 working capabilities**.
-The index reports the evidence level, source and source digest on each entry.
+The `summary` operation reports current entry and category counts. These include
+descriptive research records, not only working capabilities. The index reports
+the evidence level, source and source digest on each entry.
 
 | Atlas category | Existing source | What the entry establishes |
 | --- | --- | --- |
@@ -25,8 +25,10 @@ The index reports the evidence level, source and source digest on each entry.
 | Construction pattern | Semantically grouped successful observations | Measured reusable candidates, separate from admitted capabilities and canon |
 | Operator | Typed adapters under `atlas/operators/` | Input/output contracts, metric units and executable tools for discovering new workflows |
 | Learned workflow | Confirmed workflow experiment collection | Deduplicated composition structure; current goals and inputs must be rechecked |
+| Code pattern | Explicitly retained software/game systems | Typed programs, control graphs and verified past behavior composition; current reuse requires fresh execution |
 
-Experience, construction patterns and learned workflows appear when a collection contains observations. Extra
+Experience, construction patterns, learned workflows and code patterns appear
+when a collection contains observations. Extra
 categories such as acoustics, joints, manufacturing processes or accessibility
 rules can be added as data. Defining a category does not implement its subject.
 
@@ -76,7 +78,7 @@ construction data. Supply a changed search contract directly to change its
 dimensions, options, acceptance criteria, motion probe or budget. Each intent
 keeps its original request plus the resolved parameters and selected knowledge.
 
-Four installed blueprints execute useful work:
+Installed blueprints execute these bounded routes:
 
 | Direction | Goals | Executed work |
 | --- | --- | --- |
@@ -84,6 +86,7 @@ Four installed blueprints execute useful work:
 | `material` | `material-policy`, `material-maps` | Material generation, PNG decoding, channel/integrity checks and caller-defined size/normal/budget policy |
 | `software` | `interface-closure`, `project-checks` | Exact installed-organ dependency discovery, source composition, independent project verification |
 | `programming` | `acceptance-cases`, `retained-code` | Typed JavaScript/Python compilation, explicit case execution, repeatability and function archive retention |
+| `software-systems` / `game-systems` | `session-behavior`, `invariant-exploration`, `portable-recovery`, `retained-system` | Stateful typed code, guarded transitions, scenario oracles, finite event exploration, replay/recovery and behavior-composition retention |
 
 Choose the goals relevant to the requested deliverable. These do not imply
 photorealism, physical balance, live browser interaction or acceptance in an
@@ -96,6 +99,11 @@ The portable runtime carries both donor packages and the atlas pack, and its
 relocation test creates a vessel plus verified retained code from another working
 directory without a donor checkout or runtime network service.
 
+The software/game system routes add stateful code and reusable behavior
+composition. Their scoped specialist procedures and executable examples are
+documented in [Code systems](CODE_SYSTEMS.md). Successful retained systems become
+`code-pattern` records in the selected experience collection; retrieving one
+never bypasses current scenario, invariant, replay and recovery checks.
 ## Planning and execution
 
 `operation: plan` takes `intent` and optional `memory`. It writes nothing. It

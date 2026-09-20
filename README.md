@@ -65,8 +65,8 @@ a GPU, browser, Blender, NumPy, or Pillow, see
 For a connected atlas of construction knowledge, explicit goal-to-blueprint
 routes and reusable measured experience, see [CREATION_ATLAS.md](docs/CREATION_ATLAS.md).
 The executable examples in `examples/creation-atlas/` cover headless construction
-search, material maps and interface-driven software. They retain the construction
-causes and recheck saved search settings under each new request's criteria.
+search, material maps, interface-driven software and stateful software/game code.
+They retain construction causes and recheck saved parts under each new request's criteria.
 The search and continuous character controller are described in
 [INTENT_DIRECTED_SEARCH.md](docs/INTENT_DIRECTED_SEARCH.md).
 For discovering new operator combinations, testing real outcomes, iterating on
@@ -461,6 +461,14 @@ UC includes a typed JavaScript/Python compiler and six executable coding
 profession procedures. Create reproducible code projects, run explicit
 acceptance cases, and retain reusable construction without a model, network
 service or external repository. See [PROGRAMMING_CREATION.md](PROGRAMMING_CREATION.md).
+
+The [stateful code-system workflow](docs/CODE_SYSTEMS.md) adds guarded reducers,
+explicit state graphs, scenario oracles, breadth-first invariant exploration and
+portable replay/recovery. Its inventory and combat examples execute in both
+languages; accepted systems become retrievable atlas construction. A seeded
+combat bug passes isolated cases but is caught by its shortest failing event
+sequence. Run `python tools/code_system_demo.py <new-directory>` to reproduce the
+software/game builds, defect observation and reuse into another workflow.
 
 ## Licensing
 

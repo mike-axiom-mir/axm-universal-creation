@@ -24,6 +24,7 @@ MAX_FILES = 5_000
 
 ROOT_FILES = (
     "LICENSE",
+    "CREATOR_OUTPUT_PERMISSION.md",
     "PORTABLE_RUNTIME.md",
     "README.md",
     "THIRD_PARTY.json",

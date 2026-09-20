@@ -1,0 +1,19 @@
+{
+  "id": "AXM-CAP-CODE-SYSTEM-STATION",
+  "version": "1.0.0",
+  "status": "live",
+  "purpose": "Expose actual stateful-code execution measurements to UC's typed workflow discovery and outcome experiments.",
+  "handles": ["code-system-station"],
+  "input_contract": {"required": ["operation", "path", "values"], "properties": {
+    "operation": "verify-code-system",
+    "path": "New output directory for a project and observation.",
+    "values": "Exactly request: a verify/retain code-system construction request."
+  }},
+  "output_contract": {"kind": "observed-stateful-code-project", "contains": ["value", "metrics", "evidence"]},
+  "dependencies": ["AXM-CAP-CODE-SYSTEM-PROJECT"],
+  "relationships": ["Typed operator atlas/operators/code-systems.json composes through the existing workflow planner and atlas executor."],
+  "anatomy_refs": [],
+  "implementation": {"kind": "DETERMINISTIC_SOURCE", "entrypoint": "builtin:code_system_station", "source": "src/axm_uc/code_system.py"},
+  "limitations": ["Measured scenarios, transition coverage, declared event exploration and language parity; not general software correctness, rendered quality or gameplay balance."],
+  "persistent_state": null
+}

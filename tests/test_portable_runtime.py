@@ -136,6 +136,19 @@ class PortableRuntimeTests(unittest.TestCase):
             programming_result = json.loads(programming.stdout)
             self.assertEqual(programming_result["result"]["status"], "CHECKS_PASSED", programming_result)
             self.assertTrue((extracted / "creations/atlas-programming/code/archive.json").is_file())
+            system = subprocess.run(
+                [sys.executable, str(extracted / "run.py"), "create",
+                 str(extracted / "examples/creation-atlas/combat-system.json")],
+                cwd=outside, check=False, capture_output=True, text=True, timeout=90,
+            )
+            self.assertEqual(system.returncode, 0, system.stderr)
+            self.assertEqual(json.loads(system.stdout)["result"]["status"], "CHECKS_PASSED")
+            project = extracted / "creations/atlas-combat-system/code"
+            for command in (["node", str(project / "javascript/runtime.js"), "verify"],
+                            [sys.executable, str(project / "python/runtime.py"), "verify"]):
+                observed = subprocess.run(command, cwd=outside, check=False, capture_output=True, text=True, timeout=30)
+                self.assertEqual(observed.returncode, 0, observed.stderr)
+                self.assertEqual(json.loads(observed.stdout)["status"], "PASS")
 
     def test_changed_declared_file_fails_closed(self):
         tampered = self.directory / "tampered.zip"

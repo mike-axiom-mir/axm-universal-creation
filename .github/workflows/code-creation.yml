@@ -25,4 +25,10 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
       - name: Verify bundled code creation and relocated standalone execution
-        run: python -m unittest discover -s tests -p test_code_creation.py -v
+        run: python -m unittest discover -s tests -p "test_code_*.py" -v
+      - name: Create software and game systems and retain executable evidence
+        run: python tools/code_system_demo.py "${{ runner.temp }}/code-system-proof"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: code-systems-${{ matrix.os }}
+          path: ${{ runner.temp }}/code-system-proof

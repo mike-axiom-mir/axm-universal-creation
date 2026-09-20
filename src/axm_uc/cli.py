@@ -22,6 +22,7 @@ def build_parser() -> argparse.ArgumentParser:
     for name, help_text in [('grammar-capsule','compose a standalone Grammar 102 language capability capsule'),
                             ('code-program','compile, inspect or reuse typed JavaScript/Python programs'),
                             ('code-workflow','build or explicitly verify/retain code through six deterministic professionals'),
+                            ('code-system','build, verify, explore or retain stateful software and game code systems'),
                             ('state-ripple','compare sparse and full evaluation of an explicit state graph'),
                             ('construction-program','compose and evaluate declared state operations'),
                             ('render-budget','select a bounded visual projection without changing source state')]:
@@ -199,17 +200,21 @@ def main(argv: list[str] | None = None) -> int:
         _print(result)
         return 0 if result.get('type') == 'CREATION_RESULT' else 1
 
-    if args.command in ('grammar-capsule', 'state-ripple', 'render-budget', 'construction-program', 'code-program', 'code-workflow'):
+    if args.command in ('grammar-capsule', 'state-ripple', 'render-budget', 'construction-program', 'code-program', 'code-workflow', 'code-system'):
         from .grammar_workbench import run_grammar_tool
         try:
             with Path(args.request).open('rb') as source:
                 data = source.read(1048577)
             if len(data) > 1048576: raise ValueError('request exceeds 1 MiB')
-            result = run_grammar_tool(root, args.command, json.loads(data))
+            if args.command == 'code-system':
+                from .code_system import operate_code_system
+                result = operate_code_system(root, json.loads(data))
+            else:
+                result = run_grammar_tool(root, args.command, json.loads(data))
             _print(result)
         except (ValueError, OSError) as exc:
             raise SystemExit(str(exc)) from exc
-        return 2 if args.command in ('code-program', 'code-workflow') and result.get('result') in ('HOLD', 'BLOCKED', 'CODE_PROGRAM_HELD') else 0
+        return 2 if (args.command == 'code-system' and result.get('status') == 'HOLD') or (args.command in ('code-program', 'code-workflow') and result.get('result') in ('HOLD', 'BLOCKED', 'CODE_PROGRAM_HELD')) else 0
 
     if args.command == 'pipelines':
         from .pipeline_map import map_capabilities

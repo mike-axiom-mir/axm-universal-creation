@@ -1,0 +1,1542 @@
+{
+  "action": "retain",
+  "job": {
+    "id": "combat-system",
+    "program": {
+      "schema": "axm.code.program.v1",
+      "name": "combat_system",
+      "functions": [
+        {
+          "name": "validAmount",
+          "params": [
+            {
+              "name": "n",
+              "type": "number"
+            }
+          ],
+          "returns": "boolean",
+          "body": {
+            "op": "and",
+            "left": {
+              "op": "gt",
+              "left": {
+                "op": "ref",
+                "name": "n"
+              },
+              "right": {
+                "op": "literal",
+                "type": "number",
+                "value": 0
+              }
+            },
+            "right": {
+              "op": "equal",
+              "left": {
+                "op": "ref",
+                "name": "n"
+              },
+              "right": {
+                "op": "floor",
+                "value": {
+                  "op": "ref",
+                  "name": "n"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "idle",
+          "params": [
+            {
+              "name": "model",
+              "type": {
+                "record": {
+                  "health": "number",
+                  "enemy": "number",
+                  "ammo": "number"
+                }
+              }
+            }
+          ],
+          "returns": {
+            "record": {
+              "health": "number",
+              "enemy": "number",
+              "ammo": "number"
+            }
+          },
+          "body": {
+            "op": "ref",
+            "name": "model"
+          }
+        },
+        {
+          "name": "strike",
+          "params": [
+            {
+              "name": "model",
+              "type": {
+                "record": {
+                  "health": "number",
+                  "enemy": "number",
+                  "ammo": "number"
+                }
+              }
+            },
+            {
+              "name": "n",
+              "type": "number"
+            }
+          ],
+          "returns": {
+            "record": {
+              "health": "number",
+              "enemy": "number",
+              "ammo": "number"
+            }
+          },
+          "body": {
+            "op": "record",
+            "fields": {
+              "health": {
+                "op": "field",
+                "value": {
+                  "op": "ref",
+                  "name": "model"
+                },
+                "key": "health"
+              },
+              "enemy": {
+                "op": "max",
+                "left": {
+                  "op": "literal",
+                  "type": "number",
+                  "value": 0
+                },
+                "right": {
+                  "op": "subtract",
+                  "left": {
+                    "op": "field",
+                    "value": {
+                      "op": "ref",
+                      "name": "model"
+                    },
+                    "key": "enemy"
+                  },
+                  "right": {
+                    "op": "ref",
+                    "name": "n"
+                  }
+                }
+              },
+              "ammo": {
+                "op": "subtract",
+                "left": {
+                  "op": "field",
+                  "value": {
+                    "op": "ref",
+                    "name": "model"
+                  },
+                  "key": "ammo"
+                },
+                "right": {
+                  "op": "literal",
+                  "type": "number",
+                  "value": 1
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "hit",
+          "params": [
+            {
+              "name": "model",
+              "type": {
+                "record": {
+                  "health": "number",
+                  "enemy": "number",
+                  "ammo": "number"
+                }
+              }
+            },
+            {
+              "name": "n",
+              "type": "number"
+            }
+          ],
+          "returns": {
+            "record": {
+              "health": "number",
+              "enemy": "number",
+              "ammo": "number"
+            }
+          },
+          "body": {
+            "op": "record",
+            "fields": {
+              "health": {
+                "op": "max",
+                "left": {
+                  "op": "literal",
+                  "type": "number",
+                  "value": 0
+                },
+                "right": {
+                  "op": "subtract",
+                  "left": {
+                    "op": "field",
+                    "value": {
+                      "op": "ref",
+                      "name": "model"
+                    },
+                    "key": "health"
+                  },
+                  "right": {
+                    "op": "ref",
+                    "name": "n"
+                  }
+                }
+              },
+              "enemy": {
+                "op": "field",
+                "value": {
+                  "op": "ref",
+                  "name": "model"
+                },
+                "key": "enemy"
+              },
+              "ammo": {
+                "op": "field",
+                "value": {
+                  "op": "ref",
+                  "name": "model"
+                },
+                "key": "ammo"
+              }
+            }
+          }
+        },
+        {
+          "name": "reload",
+          "params": [
+            {
+              "name": "model",
+              "type": {
+                "record": {
+                  "health": "number",
+                  "enemy": "number",
+                  "ammo": "number"
+                }
+              }
+            }
+          ],
+          "returns": {
+            "record": {
+              "health": "number",
+              "enemy": "number",
+              "ammo": "number"
+            }
+          },
+          "body": {
+            "op": "record",
+            "fields": {
+              "health": {
+                "op": "field",
+                "value": {
+                  "op": "ref",
+                  "name": "model"
+                },
+                "key": "health"
+              },
+              "enemy": {
+                "op": "field",
+                "value": {
+                  "op": "ref",
+                  "name": "model"
+                },
+                "key": "enemy"
+              },
+              "ammo": {
+                "op": "literal",
+                "type": "number",
+                "value": 3
+              }
+            }
+          }
+        },
+        {
+          "name": "reset",
+          "params": [
+            {
+              "name": "model",
+              "type": {
+                "record": {
+                  "health": "number",
+                  "enemy": "number",
+                  "ammo": "number"
+                }
+              }
+            }
+          ],
+          "returns": {
+            "record": {
+              "health": "number",
+              "enemy": "number",
+              "ammo": "number"
+            }
+          },
+          "body": {
+            "op": "literal",
+            "type": {
+              "record": {
+                "health": "number",
+                "enemy": "number",
+                "ammo": "number"
+              }
+            },
+            "value": {
+              "health": 10,
+              "enemy": 9,
+              "ammo": 3
+            }
+          }
+        },
+        {
+          "name": "canStrike",
+          "params": [
+            {
+              "name": "model",
+              "type": {
+                "record": {
+                  "health": "number",
+                  "enemy": "number",
+                  "ammo": "number"
+                }
+              }
+            },
+            {
+              "name": "n",
+              "type": "number"
+            }
+          ],
+          "returns": "boolean",
+          "body": {
+            "op": "and",
+            "left": {
+              "op": "call",
+              "function": "validAmount",
+              "args": [
+                {
+                  "op": "ref",
+                  "name": "n"
+                }
+              ]
+            },
+            "right": {
+              "op": "gt",
+              "left": {
+                "op": "field",
+                "value": {
+                  "op": "ref",
+                  "name": "model"
+                },
+                "key": "ammo"
+              },
+              "right": {
+                "op": "literal",
+                "type": "number",
+                "value": 0
+              }
+            }
+          }
+        },
+        {
+          "name": "canHit",
+          "params": [
+            {
+              "name": "model",
+              "type": {
+                "record": {
+                  "health": "number",
+                  "enemy": "number",
+                  "ammo": "number"
+                }
+              }
+            },
+            {
+              "name": "n",
+              "type": "number"
+            }
+          ],
+          "returns": "boolean",
+          "body": {
+            "op": "call",
+            "function": "validAmount",
+            "args": [
+              {
+                "op": "ref",
+                "name": "n"
+              }
+            ]
+          }
+        },
+        {
+          "name": "canReload",
+          "params": [
+            {
+              "name": "model",
+              "type": {
+                "record": {
+                  "health": "number",
+                  "enemy": "number",
+                  "ammo": "number"
+                }
+              }
+            }
+          ],
+          "returns": "boolean",
+          "body": {
+            "op": "lt",
+            "left": {
+              "op": "field",
+              "value": {
+                "op": "ref",
+                "name": "model"
+              },
+              "key": "ammo"
+            },
+            "right": {
+              "op": "literal",
+              "type": "number",
+              "value": 3
+            }
+          }
+        },
+        {
+          "name": "afterStrike",
+          "params": [
+            {
+              "name": "model",
+              "type": {
+                "record": {
+                  "health": "number",
+                  "enemy": "number",
+                  "ammo": "number"
+                }
+              }
+            }
+          ],
+          "returns": "string",
+          "body": {
+            "op": "if",
+            "condition": {
+              "op": "equal",
+              "left": {
+                "op": "field",
+                "value": {
+                  "op": "ref",
+                  "name": "model"
+                },
+                "key": "enemy"
+              },
+              "right": {
+                "op": "literal",
+                "type": "number",
+                "value": 0
+              }
+            },
+            "then": {
+              "op": "literal",
+              "type": "string",
+              "value": "victory"
+            },
+            "else": {
+              "op": "literal",
+              "type": "string",
+              "value": "attack"
+            }
+          }
+        },
+        {
+          "name": "afterHit",
+          "params": [
+            {
+              "name": "model",
+              "type": {
+                "record": {
+                  "health": "number",
+                  "enemy": "number",
+                  "ammo": "number"
+                }
+              }
+            }
+          ],
+          "returns": "string",
+          "body": {
+            "op": "if",
+            "condition": {
+              "op": "equal",
+              "left": {
+                "op": "field",
+                "value": {
+                  "op": "ref",
+                  "name": "model"
+                },
+                "key": "health"
+              },
+              "right": {
+                "op": "literal",
+                "type": "number",
+                "value": 0
+              }
+            },
+            "then": {
+              "op": "literal",
+              "type": "string",
+              "value": "defeat"
+            },
+            "else": {
+              "op": "literal",
+              "type": "string",
+              "value": "hit"
+            }
+          }
+        },
+        {
+          "name": "validResources",
+          "params": [
+            {
+              "name": "model",
+              "type": {
+                "record": {
+                  "health": "number",
+                  "enemy": "number",
+                  "ammo": "number"
+                }
+              }
+            }
+          ],
+          "returns": "boolean",
+          "body": {
+            "op": "and",
+            "left": {
+              "op": "and",
+              "left": {
+                "op": "and",
+                "left": {
+                  "op": "and",
+                  "left": {
+                    "op": "gte",
+                    "left": {
+                      "op": "field",
+                      "value": {
+                        "op": "ref",
+                        "name": "model"
+                      },
+                      "key": "health"
+                    },
+                    "right": {
+                      "op": "literal",
+                      "type": "number",
+                      "value": 0
+                    }
+                  },
+                  "right": {
+                    "op": "lte",
+                    "left": {
+                      "op": "field",
+                      "value": {
+                        "op": "ref",
+                        "name": "model"
+                      },
+                      "key": "health"
+                    },
+                    "right": {
+                      "op": "literal",
+                      "type": "number",
+                      "value": 10
+                    }
+                  }
+                },
+                "right": {
+                  "op": "equal",
+                  "left": {
+                    "op": "field",
+                    "value": {
+                      "op": "ref",
+                      "name": "model"
+                    },
+                    "key": "health"
+                  },
+                  "right": {
+                    "op": "floor",
+                    "value": {
+                      "op": "field",
+                      "value": {
+                        "op": "ref",
+                        "name": "model"
+                      },
+                      "key": "health"
+                    }
+                  }
+                }
+              },
+              "right": {
+                "op": "and",
+                "left": {
+                  "op": "and",
+                  "left": {
+                    "op": "gte",
+                    "left": {
+                      "op": "field",
+                      "value": {
+                        "op": "ref",
+                        "name": "model"
+                      },
+                      "key": "enemy"
+                    },
+                    "right": {
+                      "op": "literal",
+                      "type": "number",
+                      "value": 0
+                    }
+                  },
+                  "right": {
+                    "op": "lte",
+                    "left": {
+                      "op": "field",
+                      "value": {
+                        "op": "ref",
+                        "name": "model"
+                      },
+                      "key": "enemy"
+                    },
+                    "right": {
+                      "op": "literal",
+                      "type": "number",
+                      "value": 9
+                    }
+                  }
+                },
+                "right": {
+                  "op": "equal",
+                  "left": {
+                    "op": "field",
+                    "value": {
+                      "op": "ref",
+                      "name": "model"
+                    },
+                    "key": "enemy"
+                  },
+                  "right": {
+                    "op": "floor",
+                    "value": {
+                      "op": "field",
+                      "value": {
+                        "op": "ref",
+                        "name": "model"
+                      },
+                      "key": "enemy"
+                    }
+                  }
+                }
+              }
+            },
+            "right": {
+              "op": "and",
+              "left": {
+                "op": "and",
+                "left": {
+                  "op": "gte",
+                  "left": {
+                    "op": "field",
+                    "value": {
+                      "op": "ref",
+                      "name": "model"
+                    },
+                    "key": "ammo"
+                  },
+                  "right": {
+                    "op": "literal",
+                    "type": "number",
+                    "value": 0
+                  }
+                },
+                "right": {
+                  "op": "lte",
+                  "left": {
+                    "op": "field",
+                    "value": {
+                      "op": "ref",
+                      "name": "model"
+                    },
+                    "key": "ammo"
+                  },
+                  "right": {
+                    "op": "literal",
+                    "type": "number",
+                    "value": 3
+                  }
+                }
+              },
+              "right": {
+                "op": "equal",
+                "left": {
+                  "op": "field",
+                  "value": {
+                    "op": "ref",
+                    "name": "model"
+                  },
+                  "key": "ammo"
+                },
+                "right": {
+                  "op": "floor",
+                  "value": {
+                    "op": "field",
+                    "value": {
+                      "op": "ref",
+                      "name": "model"
+                    },
+                    "key": "ammo"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "exports": [
+        "idle",
+        "strike",
+        "hit",
+        "reload",
+        "reset",
+        "canStrike",
+        "canHit",
+        "canReload",
+        "afterStrike",
+        "afterHit",
+        "validResources"
+      ]
+    },
+    "cases": [
+      {
+        "id": "idle",
+        "function": "idle",
+        "args": [
+          {
+            "health": 10,
+            "enemy": 9,
+            "ammo": 3
+          }
+        ],
+        "expected": {
+          "health": 10,
+          "enemy": 9,
+          "ammo": 3
+        }
+      },
+      {
+        "id": "strike",
+        "function": "strike",
+        "args": [
+          {
+            "health": 10,
+            "enemy": 9,
+            "ammo": 3
+          },
+          3
+        ],
+        "expected": {
+          "health": 10,
+          "enemy": 6,
+          "ammo": 2
+        }
+      },
+      {
+        "id": "hit",
+        "function": "hit",
+        "args": [
+          {
+            "health": 10,
+            "enemy": 9,
+            "ammo": 3
+          },
+          4
+        ],
+        "expected": {
+          "health": 6,
+          "enemy": 9,
+          "ammo": 3
+        }
+      },
+      {
+        "id": "reload",
+        "function": "reload",
+        "args": [
+          {
+            "health": 10,
+            "enemy": 6,
+            "ammo": 2
+          }
+        ],
+        "expected": {
+          "health": 10,
+          "enemy": 6,
+          "ammo": 3
+        }
+      },
+      {
+        "id": "reset",
+        "function": "reset",
+        "args": [
+          {
+            "health": 0,
+            "enemy": 9,
+            "ammo": 3
+          }
+        ],
+        "expected": {
+          "health": 10,
+          "enemy": 9,
+          "ammo": 3
+        }
+      },
+      {
+        "id": "canStrike",
+        "function": "canStrike",
+        "args": [
+          {
+            "health": 10,
+            "enemy": 9,
+            "ammo": 3
+          },
+          3
+        ],
+        "expected": true
+      },
+      {
+        "id": "canStrikeEmpty",
+        "function": "canStrike",
+        "args": [
+          {
+            "health": 10,
+            "enemy": 0,
+            "ammo": 0
+          },
+          3
+        ],
+        "expected": false
+      },
+      {
+        "id": "canHit",
+        "function": "canHit",
+        "args": [
+          {
+            "health": 10,
+            "enemy": 9,
+            "ammo": 3
+          },
+          4
+        ],
+        "expected": true
+      },
+      {
+        "id": "canHitNegative",
+        "function": "canHit",
+        "args": [
+          {
+            "health": 10,
+            "enemy": 9,
+            "ammo": 3
+          },
+          -1
+        ],
+        "expected": false
+      },
+      {
+        "id": "canReload",
+        "function": "canReload",
+        "args": [
+          {
+            "health": 10,
+            "enemy": 6,
+            "ammo": 2
+          }
+        ],
+        "expected": true
+      },
+      {
+        "id": "canReloadFull",
+        "function": "canReload",
+        "args": [
+          {
+            "health": 10,
+            "enemy": 9,
+            "ammo": 3
+          }
+        ],
+        "expected": false
+      },
+      {
+        "id": "afterStrike",
+        "function": "afterStrike",
+        "args": [
+          {
+            "health": 10,
+            "enemy": 6,
+            "ammo": 2
+          }
+        ],
+        "expected": "attack"
+      },
+      {
+        "id": "afterStrikeWin",
+        "function": "afterStrike",
+        "args": [
+          {
+            "health": 10,
+            "enemy": 0,
+            "ammo": 0
+          }
+        ],
+        "expected": "victory"
+      },
+      {
+        "id": "afterHit",
+        "function": "afterHit",
+        "args": [
+          {
+            "health": 6,
+            "enemy": 9,
+            "ammo": 3
+          }
+        ],
+        "expected": "hit"
+      },
+      {
+        "id": "afterHitLoss",
+        "function": "afterHit",
+        "args": [
+          {
+            "health": 0,
+            "enemy": 9,
+            "ammo": 3
+          }
+        ],
+        "expected": "defeat"
+      },
+      {
+        "id": "validResources",
+        "function": "validResources",
+        "args": [
+          {
+            "health": 10,
+            "enemy": 9,
+            "ammo": 3
+          }
+        ],
+        "expected": true
+      }
+    ],
+    "requirements": [
+      {
+        "id": "declared-functions",
+        "statement": "The typed rules produce the specified values before session-level scenarios are checked.",
+        "cases": [
+          "idle",
+          "strike",
+          "hit",
+          "reload",
+          "reset",
+          "canStrike",
+          "canStrikeEmpty",
+          "canHit",
+          "canHitNegative",
+          "canReload",
+          "canReloadFull",
+          "afterStrike",
+          "afterStrikeWin",
+          "afterHit",
+          "afterHitLoss",
+          "validResources"
+        ]
+      }
+    ]
+  },
+  "system": {
+    "schema": "axm.code-system/v0.1",
+    "domain": "game",
+    "initial_model": {
+      "health": 10,
+      "enemy": 9,
+      "ammo": 3
+    },
+    "machine": {
+      "schema": "axm.deterministic-state-machine/v0.1",
+      "id": "combat-session",
+      "states": [
+        "ready",
+        "running",
+        "paused",
+        "won",
+        "lost"
+      ],
+      "initial_state": "ready",
+      "transitions": [
+        {
+          "from": "ready",
+          "event": "start",
+          "to": "running",
+          "effects": [
+            {
+              "type": "session-started"
+            }
+          ]
+        },
+        {
+          "from": "running",
+          "event": "attack",
+          "to": "running",
+          "effects": [
+            {
+              "type": "attack-feedback"
+            }
+          ]
+        },
+        {
+          "from": "running",
+          "event": "victory",
+          "to": "won",
+          "effects": [
+            {
+              "type": "victory"
+            }
+          ]
+        },
+        {
+          "from": "running",
+          "event": "hit",
+          "to": "running",
+          "effects": []
+        },
+        {
+          "from": "running",
+          "event": "defeat",
+          "to": "lost",
+          "effects": [
+            {
+              "type": "defeat"
+            }
+          ]
+        },
+        {
+          "from": "running",
+          "event": "pause",
+          "to": "paused",
+          "effects": []
+        },
+        {
+          "from": "paused",
+          "event": "resume",
+          "to": "running",
+          "effects": []
+        },
+        {
+          "from": "running",
+          "event": "reload",
+          "to": "running",
+          "effects": []
+        },
+        {
+          "from": "won",
+          "event": "reset",
+          "to": "ready",
+          "effects": []
+        },
+        {
+          "from": "lost",
+          "event": "reset",
+          "to": "ready",
+          "effects": []
+        }
+      ]
+    },
+    "bindings": [
+      {
+        "event": "start",
+        "reducer": "idle"
+      },
+      {
+        "event": "pause",
+        "reducer": "idle"
+      },
+      {
+        "event": "resume",
+        "reducer": "idle"
+      },
+      {
+        "event": "attack",
+        "reducer": "strike",
+        "guard": "canStrike",
+        "routes": {
+          "function": "afterStrike",
+          "events": [
+            "attack",
+            "victory"
+          ]
+        }
+      },
+      {
+        "event": "hit",
+        "reducer": "hit",
+        "guard": "canHit",
+        "routes": {
+          "function": "afterHit",
+          "events": [
+            "hit",
+            "defeat"
+          ]
+        }
+      },
+      {
+        "event": "reload",
+        "reducer": "reload",
+        "guard": "canReload"
+      },
+      {
+        "event": "reset",
+        "reducer": "reset"
+      }
+    ],
+    "invariants": [
+      {
+        "id": "resource-bounds",
+        "function": "validResources",
+        "statement": "Health, enemy health and ammo stay within the declared whole-number bounds."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "victory-pause-retry",
+        "steps": [
+          {
+            "event": {
+              "type": "start",
+              "args": []
+            },
+            "expect": {
+              "status": "APPLIED",
+              "state": {
+                "phase": "running",
+                "model": {
+                  "health": 10,
+                  "enemy": 9,
+                  "ammo": 3
+                }
+              },
+              "effects": [
+                {
+                  "type": "session-started"
+                }
+              ]
+            }
+          },
+          {
+            "event": {
+              "type": "attack",
+              "args": [
+                3
+              ]
+            },
+            "expect": {
+              "status": "APPLIED",
+              "state": {
+                "phase": "running",
+                "model": {
+                  "health": 10,
+                  "enemy": 6,
+                  "ammo": 2
+                }
+              },
+              "effects": [
+                {
+                  "type": "attack-feedback"
+                }
+              ]
+            }
+          },
+          {
+            "event": {
+              "type": "pause",
+              "args": []
+            },
+            "expect": {
+              "status": "APPLIED",
+              "state": {
+                "phase": "paused",
+                "model": {
+                  "health": 10,
+                  "enemy": 6,
+                  "ammo": 2
+                }
+              }
+            }
+          },
+          {
+            "event": {
+              "type": "attack",
+              "args": [
+                3
+              ]
+            },
+            "expect": {
+              "status": "HOLD_NO_TRANSITION",
+              "state": {
+                "phase": "paused",
+                "model": {
+                  "health": 10,
+                  "enemy": 6,
+                  "ammo": 2
+                }
+              }
+            }
+          },
+          {
+            "event": {
+              "type": "resume",
+              "args": []
+            },
+            "expect": {
+              "status": "APPLIED",
+              "state": {
+                "phase": "running",
+                "model": {
+                  "health": 10,
+                  "enemy": 6,
+                  "ammo": 2
+                }
+              }
+            }
+          },
+          {
+            "event": {
+              "type": "attack",
+              "args": [
+                3
+              ]
+            },
+            "expect": {
+              "status": "APPLIED",
+              "state": {
+                "phase": "running",
+                "model": {
+                  "health": 10,
+                  "enemy": 3,
+                  "ammo": 1
+                }
+              }
+            }
+          },
+          {
+            "event": {
+              "type": "attack",
+              "args": [
+                3
+              ]
+            },
+            "expect": {
+              "status": "APPLIED",
+              "state": {
+                "phase": "won",
+                "model": {
+                  "health": 10,
+                  "enemy": 0,
+                  "ammo": 0
+                }
+              },
+              "effects": [
+                {
+                  "type": "victory"
+                }
+              ]
+            }
+          },
+          {
+            "event": {
+              "type": "hit",
+              "args": [
+                9
+              ]
+            },
+            "expect": {
+              "status": "HOLD_NO_TRANSITION",
+              "state": {
+                "phase": "won",
+                "model": {
+                  "health": 10,
+                  "enemy": 0,
+                  "ammo": 0
+                }
+              }
+            }
+          },
+          {
+            "event": {
+              "type": "reset",
+              "args": []
+            },
+            "expect": {
+              "status": "APPLIED",
+              "state": {
+                "phase": "ready",
+                "model": {
+                  "health": 10,
+                  "enemy": 9,
+                  "ammo": 3
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "defeat-retry",
+        "steps": [
+          {
+            "event": {
+              "type": "start",
+              "args": []
+            },
+            "expect": {
+              "status": "APPLIED",
+              "state": {
+                "phase": "running",
+                "model": {
+                  "health": 10,
+                  "enemy": 9,
+                  "ammo": 3
+                }
+              }
+            }
+          },
+          {
+            "event": {
+              "type": "hit",
+              "args": [
+                4
+              ]
+            },
+            "expect": {
+              "status": "APPLIED",
+              "state": {
+                "phase": "running",
+                "model": {
+                  "health": 6,
+                  "enemy": 9,
+                  "ammo": 3
+                }
+              }
+            }
+          },
+          {
+            "event": {
+              "type": "hit",
+              "args": [
+                6
+              ]
+            },
+            "expect": {
+              "status": "APPLIED",
+              "state": {
+                "phase": "lost",
+                "model": {
+                  "health": 0,
+                  "enemy": 9,
+                  "ammo": 3
+                }
+              },
+              "effects": [
+                {
+                  "type": "defeat"
+                }
+              ]
+            }
+          },
+          {
+            "event": {
+              "type": "reset",
+              "args": []
+            },
+            "expect": {
+              "status": "APPLIED",
+              "state": {
+                "phase": "ready",
+                "model": {
+                  "health": 10,
+                  "enemy": 9,
+                  "ammo": 3
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "reload-and-refusal",
+        "steps": [
+          {
+            "event": {
+              "type": "start",
+              "args": []
+            },
+            "expect": {
+              "status": "APPLIED",
+              "state": {
+                "phase": "running",
+                "model": {
+                  "health": 10,
+                  "enemy": 9,
+                  "ammo": 3
+                }
+              }
+            }
+          },
+          {
+            "event": {
+              "type": "reload",
+              "args": []
+            },
+            "expect": {
+              "status": "HOLD_GUARD",
+              "state": {
+                "phase": "running",
+                "model": {
+                  "health": 10,
+                  "enemy": 9,
+                  "ammo": 3
+                }
+              }
+            }
+          },
+          {
+            "event": {
+              "type": "attack",
+              "args": [
+                3
+              ]
+            },
+            "expect": {
+              "status": "APPLIED",
+              "state": {
+                "phase": "running",
+                "model": {
+                  "health": 10,
+                  "enemy": 6,
+                  "ammo": 2
+                }
+              }
+            }
+          },
+          {
+            "event": {
+              "type": "reload",
+              "args": []
+            },
+            "expect": {
+              "status": "APPLIED",
+              "state": {
+                "phase": "running",
+                "model": {
+                  "health": 10,
+                  "enemy": 6,
+                  "ammo": 3
+                }
+              }
+            }
+          },
+          {
+            "event": {
+              "type": "attack",
+              "args": [
+                -1
+              ]
+            },
+            "expect": {
+              "status": "HOLD_GUARD",
+              "state": {
+                "phase": "running",
+                "model": {
+                  "health": 10,
+                  "enemy": 6,
+                  "ammo": 3
+                }
+              }
+            }
+          },
+          {
+            "event": {
+              "type": "hit",
+              "args": [
+                true
+              ]
+            },
+            "expect": {
+              "status": "HOLD_ARGUMENTS",
+              "state": {
+                "phase": "running",
+                "model": {
+                  "health": 10,
+                  "enemy": 6,
+                  "ammo": 3
+                }
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "exploration": {
+      "events": [
+        {
+          "type": "start",
+          "args": []
+        },
+        {
+          "type": "attack",
+          "args": [
+            3
+          ]
+        },
+        {
+          "type": "hit",
+          "args": [
+            4
+          ]
+        },
+        {
+          "type": "pause",
+          "args": []
+        },
+        {
+          "type": "resume",
+          "args": []
+        },
+        {
+          "type": "reload",
+          "args": []
+        },
+        {
+          "type": "reset",
+          "args": []
+        }
+      ],
+      "max_depth": 6,
+      "max_states": 1024,
+      "max_edges": 8000
+    }
+  }
+}
