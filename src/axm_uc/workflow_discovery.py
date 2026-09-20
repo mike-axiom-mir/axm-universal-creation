@@ -242,7 +242,8 @@ def plan(root, raw, *, memory=None):
             pins["node"] = "VERSION_UNAVAILABLE"
     from .workflow_memory import read_memory
     memory_data = read_memory(root, memory, pins=pins)
-    retained = {r["signature"] for r in memory_data["workflows"] if r["fresh"]}
+    retained = {r["signature"] for r in memory_data["workflows"]}
+    current_observations = {r["signature"] for r in memory_data["workflows"] if r["fresh"]}
     candidates, search = ([], {"states": 0, "truncated": False}) if gaps else compose(request, available, order)
     if not gaps:
         from .workflow_reuse import rebind_workflows
@@ -257,11 +258,13 @@ def plan(root, raw, *, memory=None):
         gaps.append("no compatible workflow within the declared type, unit, origin and search budgets")
     for candidate in candidates:
         candidate["reused_structure"] = candidate["signature"] in retained
+        candidate["prior_evidence_current"] = candidate["signature"] in current_observations
     report = {"schema": "axm.workflow-plan/v0.1", "status": "READY" if candidates and not gaps else "HOLD_CAPABILITY_GAP",
               "request": request, "operators": available, "candidates": candidates, "search": search,
               "gaps": gaps, "unavailable_operators": unavailable, "pins": pins, "atlas_inputs": used,
               "technical_fit": technical_fit(request, available),
-              "memory": {"eligible_structures": len(retained), "stale": memory_data["stale"], "ignored": memory_data["ignored"]},
+              "memory": {"eligible_structures": len(retained), "current_observations": len(current_observations),
+                         "stale": memory_data["stale"], "ignored": memory_data["ignored"]},
               "ranking": "All hard checks first. Weighted worst-scenario target deficits, then declared cost and stable identity.",
               "boundary": "A composed route is untested. Missing observers are gaps; prose and confidence are not invented measurements."}
     report["plan_sha256"] = digest(report)
