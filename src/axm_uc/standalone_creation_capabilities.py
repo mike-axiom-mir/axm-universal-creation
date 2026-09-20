@@ -210,6 +210,7 @@ def register_standalone_creation_builtins(
     def form_pattern(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
         from .creator_retention import CreatorRetentionError
         from .form_pattern import FormPatternError, publish_form_pattern
+        from .procedural_3d import Procedural3DError
 
         target = resolve_output_path(root, str(inputs["path"]))
         if is_machine_body_path(root, target):
@@ -224,6 +225,7 @@ def register_standalone_creation_builtins(
     def character_recipe(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
         from .character_recipe import CharacterRecipeError, publish_character_recipe
         from .creator_retention import CreatorRetentionError
+        from .procedural_3d import Procedural3DError
 
         target = resolve_output_path(root, str(inputs["path"]))
         if is_machine_body_path(root, target):
