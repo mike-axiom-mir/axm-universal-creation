@@ -222,6 +222,16 @@ class CreationAtlas:
                          tags=[blueprint["direction"], *blueprint.get("goals", {})])
                 self.blueprints[blueprint["id"]] = deepcopy(blueprint)
 
+        from .workflow_contracts import load_operators
+        operators, _ = load_operators(self.root)
+        for identity, operator in operators.items():
+            self.add("operator:" + identity, "operator", identity, operator["purpose"],
+                     self.source(self.root / operator["source"]["path"], identity), data=operator,
+                     status="TYPED_OPERATOR_EXECUTION_REQUIRED",
+                     relations=[{"relation": "executes", "target": "capability:" + cap}
+                                for cap in [operator["capability"], *operator["dependencies"]]],
+                     tags=[operator["provides"]["kind"], *operator["metrics"]])
+
     def add_experience(self, records, collection):
         """Expose retained observations and semantic construction candidates, not canon."""
         patterns = {}
