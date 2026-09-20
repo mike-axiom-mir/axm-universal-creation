@@ -180,7 +180,24 @@ def build_character_motion(specification, motion):
     for clip in motion['clips']:
         for t in sorted({t for track in clip['tracks'] for t in track['times']}):
             asset.sample(clip['name'], t)
-    return {**built, 'body': body, 'document': doc, 'motion_validation': asset.describe()}
+    validation = asset.describe()
+    if motion.get('performance_observations'):
+        errors, contacts = [], 0
+        for observation in motion['performance_observations']:
+            poses = {}
+            for row in observation['samples']:
+                if row['time'] not in poses:
+                    poses[row['time']] = asset.sample(observation['clip'], row['time'])
+                pose = poses[row['time']]
+                actual = asset.point(pose, ids[row['joint']])
+                error = math.dist(actual, row['target'])
+                require(error <= 1e-4, 'exported performance misses a declared sample target')
+                errors.append(error)
+                contacts += int(row['contact'])
+        validation['performance'] = {'max_sample_target_error_m': max(errors),
+                                     'verified_targets': len(errors), 'verified_contact_samples': contacts,
+                                     'boundary': 'Authored sample joint positions; no between-key contact or physical-balance claim.'}
+    return {**built, 'body': body, 'document': doc, 'motion_validation': validation}
 
 def publish_motion_glb(target, specification, motion, *, replace=False):
     target = Path(target).resolve()
@@ -202,5 +219,6 @@ def publish_motion_glb(target, specification, motion, *, replace=False):
         raise
     return {'operation': 'glb', 'truth_status': 'VALIDATED_EXPLICIT_SKINNED_CHARACTER', 'path': str(target),
             'bytes': len(body), 'sha256': hashlib.sha256(body).hexdigest(), 'specification_sha256': built['specification_sha256'],
-            'published': True, 'replaced': previous is not None, 'motion_validation': observed,
+            'published': True, 'replaced': previous is not None, 'motion_validation': built['motion_validation'],
+            'post_publish_pose_validation': observed,
             'rendered_appearance_observed': False, 'host_import_compatibility_observed': False}
