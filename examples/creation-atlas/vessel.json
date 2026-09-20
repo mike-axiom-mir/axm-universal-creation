@@ -1,0 +1,25 @@
+{
+  "kind": "atlas-creation",
+  "inputs": {
+    "operation": "build",
+    "path": "creations/atlas-vessel",
+    "memory": "creations/atlas-experience",
+    "intent": {
+      "purpose": "Find a vessel within the declared display envelope and retain its construction.",
+      "direction": "construction",
+      "goals": [
+        "construction-criteria",
+        "retained-source",
+        "glb-output"
+      ],
+      "parameters": {
+        "search": {
+          "atlas": "recipe:vessel",
+          "path": [
+            "value"
+          ]
+        }
+      }
+    }
+  }
+}
