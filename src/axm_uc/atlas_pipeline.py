@@ -278,7 +278,7 @@ def _experience(root, memory):
     records, ignored = [], []
     for path in paths:
         try:
-            value = json.loads(local_file(folder, path.name).read_text())
+            value = json.loads(local_file(folder, path.name).read_text(encoding="utf-8"))
             if value.get("schema") != EXPERIENCE_SCHEMA or path.stem != digest(value):
                 raise ValueError("experience schema or content identity does not match")
             if (value.get("status") not in {"CHECKS_PASSED", "HOLD_FAILED_CHECK", "HOLD_EXECUTION_ERROR"}
@@ -484,7 +484,7 @@ def build_intent(root, request, path, *, memory=None, plan_sha256=None, candidat
                     "scope": report["verification"]["scope"]})
         if step["capability"] != "AXM-CAP-CONSTRUCTION-SEARCH" or step["id"] not in results:
             continue
-        report = json.loads(local_file(target, str(Path(results[step["id"]]["report_path"]).relative_to(target))).read_text())
+        report = json.loads(local_file(target, Path(results[step["id"]]["report_path"]).relative_to(target).as_posix()).read_text(encoding="utf-8"))
         candidate = report.get("growth_candidate")
         if candidate:
             searches.append({"space_sha256": _search_key(report["search_contract"]),

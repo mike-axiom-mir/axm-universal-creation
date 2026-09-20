@@ -42,7 +42,7 @@ def load_operators(root):
     from pathlib import Path
     operators, source_kinds = {}, set()
     for path in sorted((Path(root) / "atlas/operators").glob("*.json")):
-        body = json.loads(local_file(root, path.relative_to(root).as_posix()).read_text())
+        body = json.loads(local_file(root, path.relative_to(root).as_posix()).read_text(encoding="utf-8"))
         if set(body) != {"schema", "source_kinds", "operators"} or body["schema"] != CATALOG_SCHEMA:
             raise ValueError("invalid workflow operator catalog")
         if not isinstance(body["source_kinds"], list):

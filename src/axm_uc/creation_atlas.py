@@ -172,7 +172,7 @@ class CreationAtlas:
                      data={"recipe": {"family": family, "size": 128, "seed": 1}}, status="IMPLEMENTED_GENERATOR",
                      relations=[{"relation": "realized-by", "target": "capability:AXM-CAP-GENERATE-GAME-MATERIAL"}])
         pack_path = RUNTIME / "data/material_response/pack.json"
-        pack = json.loads(pack_path.read_text())
+        pack = json.loads(pack_path.read_text(encoding="utf-8"))
         for family in pack["families"]:
             self.add("material:response:" + family["id"], "material", family["id"], family.get("purpose", ""),
                      self.source(pack_path, family["id"]), data=family, status="RESPONSE_INTENT_RENDERER_NOT_PROVEN",
@@ -192,12 +192,12 @@ class CreationAtlas:
         for filename in ("direction-catalog.json", "axis-catalog.json"):
             path = self.root / "reference/software-directions" / filename
             if path.is_file():
-                body = json.loads(local_file(self.root, str(path.relative_to(self.root))).read_text())
+                body = json.loads(local_file(self.root, path.relative_to(self.root).as_posix()).read_text(encoding="utf-8"))
                 for profile in body.get("profiles", []):
                     self.add("direction:" + profile["id"], "direction", profile["id"], profile.get("purpose", profile.get("name", "")),
                              self.source(path, profile["id"]), data=profile, status="DIRECTION_KNOWLEDGE")
         for path in sorted((self.root / "atlas").glob("*.json")):
-            body = json.loads(local_file(self.root, str(path.relative_to(self.root))).read_text())
+            body = json.loads(local_file(self.root, path.relative_to(self.root).as_posix()).read_text(encoding="utf-8"))
             if body.get("schema") != PACK_SCHEMA or set(body) - {"schema", "entries", "blueprints"}:
                 raise ValueError("invalid creation atlas pack: " + path.name)
             for entry in body.get("entries", []):
@@ -205,7 +205,7 @@ class CreationAtlas:
                 if "source_data" in entry:
                     ref = entry["source_data"]
                     source_path = local_file(self.root, ref["path"])
-                    data = json.loads(source_path.read_text())
+                    data = json.loads(source_path.read_text(encoding="utf-8"))
                     for part in ref.get("pointer", []):
                         data = data[part]
                     data = {"value": data}

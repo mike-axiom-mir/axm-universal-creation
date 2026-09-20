@@ -27,7 +27,7 @@ def read_memory(root, memory, *, pins=None):
     admissions = {}
     for path in paths:
         try:
-            value = json.loads(local_file(folder, path.relative_to(folder).as_posix()).read_text())
+            value = json.loads(local_file(folder, path.relative_to(folder).as_posix()).read_text(encoding="utf-8"))
             if not isinstance(value, dict) or value.get("schema") != OBSERVATION_SCHEMA or path.stem != digest(value):
                 raise ValueError("observation schema or identity mismatch")
             if value.get("status") not in {"CONFIRMED", "REJECTED", "INCOMPLETE", "CONFIRMATION_FAILED"}:
@@ -46,7 +46,7 @@ def read_memory(root, memory, *, pins=None):
             result["ignored"].append({"file": path.relative_to(folder).as_posix(), "reason": str(exc)})
     for path in templates:
         try:
-            value = json.loads(local_file(folder, path.relative_to(folder).as_posix()).read_text())
+            value = json.loads(local_file(folder, path.relative_to(folder).as_posix()).read_text(encoding="utf-8"))
             if not isinstance(value, dict) or value.get("schema") != TEMPLATE_SCHEMA or path.stem != digest(value):
                 raise ValueError("workflow schema or identity mismatch")
             observations = admissions.get(value["signature"], [])
