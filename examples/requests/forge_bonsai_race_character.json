@@ -1,0 +1,30 @@
+{
+  "schema": "axm.uc.character-brief/v0.1",
+  "asset_id": "axm-bonsai-race-v0-1",
+  "working_name": "Branfolk",
+  "working_name_is_canon": false,
+  "build_lane": "uc-github-actions",
+  "intent": "First signature nature race for the untitled layer-based RPG pet project: a cute little bonsai-tree-like playable person, serious enough to be a real race rather than a mascot or forced nature class.",
+  "body_rule": "Compact tree-bodied person with rooted feet, expressive wood face, asymmetrical bonsai canopy, branch limbs, moss and leaves.",
+  "equipment": [
+    "race-compatible layered cloth",
+    "belt and pouches",
+    "backpack and bedroll",
+    "twisted staff",
+    "hanging lantern"
+  ],
+  "constraints": [
+    "not a potted plant",
+    "not a generic elf/druid reskin",
+    "race defines body/looks, not class",
+    "retain separate named authoring parts",
+    "actual GLB required",
+    "fresh-import verification required",
+    "fresh-import multi-angle render proof required"
+  ],
+  "truth_boundary": [
+    "This v0.1 is an authored UC interpretation of the conversation concept, not automatic image-to-3D reconstruction.",
+    "No rig, skin, animation, clothing compatibility or target-engine gameplay claim is made until separately built and verified.",
+    "Visual similarity remains a human review gate."
+  ]
+}

@@ -1,0 +1,66 @@
+name: Bonsai race UC 3D proof
+
+on:
+  push:
+    branches:
+      - chatgpt/bonsai-race-uc-3d-v1
+    paths:
+      - 'tools/blender/axm_bonsai_race.py'
+      - 'tools/blender/verify_bonsai_race.py'
+      - 'tools/blender/render_bonsai_race.py'
+      - 'examples/requests/forge_bonsai_race_character.json'
+      - '.github/workflows/bonsai-race-uc-3d.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  forge-verify-render:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install pinned UC Blender runtime
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install 'numpy==1.26.4' 'Pillow>=10,<12' 'bpy==4.3.0'
+          python - <<'PY'
+          import bpy, numpy, PIL
+          print('bpy', bpy.app.version_string)
+          print('numpy', numpy.__version__)
+          print('Pillow', PIL.__version__)
+          assert bpy.app.version[:2] == (4, 3)
+          PY
+      - name: Forge bonsai race character through UC authored 3D lane
+        run: |
+          rm -rf /tmp/bonsai-race-uc
+          python tools/blender/axm_bonsai_race.py --output /tmp/bonsai-race-uc
+      - name: Independently verify fresh GLB import
+        run: python tools/blender/verify_bonsai_race.py --directory /tmp/bonsai-race-uc
+      - name: Inspect GLB with UC core inspector
+        run: |
+          PYTHONPATH=src python - <<'PY'
+          import json
+          from pathlib import Path
+          from axm_uc.visual_3d import inspect_glb
+          root=Path('/tmp/bonsai-race-uc')
+          result=inspect_glb(root/'bonsai-race-v0.1.glb')
+          (root/'uc-glb-inspection.json').write_text(json.dumps(result,indent=2))
+          if result.get('truth_status') != 'DECODED_GLTF_STRUCTURE' or result.get('triangles', 0) <= 0:
+              raise SystemExit('UC inspector rejected GLB structure')
+          print(json.dumps(result,indent=2))
+          PY
+      - name: Render fresh-import visual proofs
+        run: python tools/blender/render_bonsai_race.py --directory /tmp/bonsai-race-uc --resolution 720
+      - name: Upload UC character evidence
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: bonsai-race-uc-3d-v0-1
+          path: /tmp/bonsai-race-uc
+          if-no-files-found: error
+          retention-days: 14
