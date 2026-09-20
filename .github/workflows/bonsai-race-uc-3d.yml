@@ -50,8 +50,8 @@ jobs:
           root=Path('/tmp/bonsai-race-uc')
           result=inspect_glb(root/'bonsai-race-v0.1.glb')
           (root/'uc-glb-inspection.json').write_text(json.dumps(result,indent=2))
-          if not result.get('valid_glb'):
-              raise SystemExit('UC inspector rejected GLB')
+          if result.get('truth_status') != 'DECODED_GLTF_STRUCTURE' or result.get('triangles', 0) <= 0:
+              raise SystemExit('UC inspector rejected GLB structure')
           print(json.dumps(result,indent=2))
           PY
       - name: Render fresh-import visual proofs
