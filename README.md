@@ -62,6 +62,14 @@ For deterministic PNG inspection of actual GLB geometry and sampled poses withou
 a GPU, browser, Blender, NumPy, or Pillow, see
 [SOFTWARE_GLB_PREVIEW.md](docs/SOFTWARE_GLB_PREVIEW.md).
 
+For a connected atlas of construction knowledge, explicit goal-to-blueprint
+routes and reusable measured experience, see [CREATION_ATLAS.md](docs/CREATION_ATLAS.md).
+The executable examples in `examples/creation-atlas/` cover headless construction
+search, material maps and interface-driven software. They retain the construction
+causes and recheck saved search settings under each new request's criteria.
+The search and continuous character controller are described in
+[INTENT_DIRECTED_SEARCH.md](docs/INTENT_DIRECTED_SEARCH.md).
+
 ## Core rule
 
 > **Do not hide what the machine is.**
