@@ -106,16 +106,16 @@ def _normalize_clothing_region(raw: Any, index: int, part_ids: set[str]) -> dict
 def character_recipe_summary() -> dict[str, Any]:
     return {
         "schema": SCHEMA,
-        "truth_status": "LIVE_STATIC_WHOLE_CHARACTER_RECIPE",
+        "truth_status": "LIVE_WHOLE_CHARACTER_WITH_EXPLICIT_MOTION",
         "geometry": "generic form-pattern body with semantic character roles",
         "retains_source_structure": True,
         "supports_race_and_body_family_identity": True,
         "supports_equipment_sockets": True,
         "supports_race_bound_clothing_regions": True,
-        "rigging": "explicit HOLD unless a separate verified generic rig route is supplied",
-        "animation": "explicit HOLD unless a separate verified animation route is supplied",
+        "rigging": "explicit translation-rest skeleton and rigid or supplied four-influence skin",
+        "animation": "explicit LINEAR/STEP translation and quaternion clips",
         "truth_boundary": (
-            "This route can create one complete static character asset from reusable freeform parts. "
+            "This route creates complete characters from reusable freeform parts, optionally with explicit rigs and clips. "
             "It does not infer a skeleton, skin weights, animation, controller behavior, clothing fit, "
             "or aesthetic acceptance."
         ),
@@ -140,14 +140,16 @@ def compile_character_recipe(raw: Any) -> dict[str, Any]:
     if set(character) - char_required - char_optional or not char_required <= set(character):
         _hold("HOLD_CHARACTER_RECIPE_INVALID", "character identity fields do not match the bounded grammar")
 
-    if raw.get("rig") not in (None, False, "none"):
+    if raw.get("rig") not in (None, False, "none") and not (
+        isinstance(raw.get("rig"), dict) and raw["rig"].get("schema") == "axm.character-rig/v0.1"
+    ):
         _hold(
             "HOLD_GENERIC_CHARACTER_RIG_NOT_IMPLEMENTED",
             "static whole-character construction is live, but generic skeleton/skin synthesis has not been verified",
             requested_rig=deepcopy(raw.get("rig")),
         )
     animation = raw.get("animation")
-    if animation not in (None, False, "none", []):
+    if animation not in (None, False, "none", []) and not isinstance(raw.get("rig"), dict):
         _hold(
             "HOLD_GENERIC_CHARACTER_ANIMATION_NOT_IMPLEMENTED",
             "character animation requires a separately verified rig/motion route",
@@ -258,9 +260,18 @@ def compile_character_recipe(raw: Any) -> dict[str, Any]:
         else "PASS_NO_ACTIVE_ORGANS"
     )
 
+    motion = None
+    if isinstance(raw.get("rig"), dict):
+        from .character_motion import CharacterMotionError, compile_motion
+        try:
+            motion = compile_motion(form["specification"], raw["rig"], animation)
+        except CharacterMotionError as exc:
+            _hold("HOLD_CHARACTER_MOTION_INVALID", str(exc))
+
     return {
         "schema": SCHEMA,
-        "truth_status": "COMPILED_STATIC_WHOLE_CHARACTER",
+        "truth_status": "COMPILED_EXPLICIT_SKINNED_CHARACTER" if motion else "COMPILED_STATIC_WHOLE_CHARACTER",
+        "motion": motion,
         "name": name,
         "recipe_sha256": hashlib.sha256(_canonical(raw)).hexdigest(),
         "character": identity,
@@ -275,8 +286,8 @@ def compile_character_recipe(raw: Any) -> dict[str, Any]:
         "material_response_status": material_response_status,
         "material_response_holds": active_holds,
         "specification": deepcopy(form["specification"]),
-        "rig_status": "NOT_PRESENT",
-        "animation_status": "NOT_PRESENT",
+        "rig_status": "EXPLICIT_SKIN_COMPILED" if motion else "NOT_PRESENT",
+        "animation_status": "EXPLICIT_CLIPS_COMPILED" if motion and motion["clips"] else "NOT_PRESENT",
         "metadata": deepcopy(raw.get("metadata", {})),
     }
 
@@ -302,7 +313,16 @@ def publish_character_recipe(target: str | Path, recipe: Any, *, replace: bool =
         "animation_status": compiled["animation_status"],
         "automatic_canon_admission": False,
     }
-    result = publish_retained_glb(target, compiled["specification"], source, replace=replace)
+    source["motion"] = deepcopy(compiled["motion"])
+    publisher = None
+    if compiled["motion"]:
+        from .character_motion import CharacterMotionError, publish_motion_glb
+        def publisher(path, spec, *, replace=False):
+            try:
+                return publish_motion_glb(path, spec, compiled["motion"], replace=replace)
+            except (CharacterMotionError, ValueError) as exc:
+                _hold("HOLD_CHARACTER_MOTION_INVALID", str(exc))
+    result = publish_retained_glb(target, compiled["specification"], source, replace=replace, _publisher=publisher)
     result["character_recipe"] = {
         key: value for key, value in compiled.items() if key != "specification"
     }
