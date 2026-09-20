@@ -1,0 +1,137 @@
+{
+  "kind": "construction-search",
+  "inputs": {
+    "path": "creations/vessel-search",
+    "search": {
+      "schema": "axm.construction-search/v0.1",
+      "intent": "A broad-shouldered vessel inside a one-metre display envelope with controlled surface area",
+      "recipe": {
+        "schema": "axm.form-pattern/v0.1",
+        "name": "Intent-searched vessel",
+        "parts": [
+          {
+            "id": "shell",
+            "role": "body",
+            "pattern": "revolve",
+            "segments": 32,
+            "profile": [
+              [
+                0.19,
+                0
+              ],
+              [
+                0.22,
+                0.04
+              ],
+              [
+                0.36,
+                0.25
+              ],
+              [
+                0.4,
+                0.52
+              ],
+              [
+                0.22,
+                0.78
+              ],
+              [
+                0.26,
+                0.9
+              ],
+              [
+                0.22,
+                1.0
+              ]
+            ],
+            "material": {
+              "color": "#4C9B91FF",
+              "metallic": 0.55,
+              "roughness": 0.3
+            }
+          }
+        ]
+      },
+      "controls": [
+        {
+          "id": "belly",
+          "paths": [
+            [
+              "parts",
+              0,
+              "profile",
+              3,
+              0
+            ]
+          ],
+          "values": [
+            0.28,
+            0.32,
+            0.36,
+            0.4,
+            0.44
+          ]
+        },
+        {
+          "id": "neck",
+          "paths": [
+            [
+              "parts",
+              0,
+              "profile",
+              5,
+              0
+            ]
+          ],
+          "values": [
+            0.1,
+            0.14,
+            0.18,
+            0.22,
+            0.26
+          ]
+        },
+        {
+          "id": "height",
+          "paths": [
+            [
+              "parts",
+              0,
+              "profile",
+              6,
+              1
+            ]
+          ],
+          "values": [
+            0.95,
+            1,
+            1.05,
+            1.1
+          ]
+        }
+      ],
+      "criteria": [
+        {
+          "metric": "extent_x_m",
+          "min": 0.86,
+          "max": 0.91
+        },
+        {
+          "metric": "extent_z_m",
+          "min": 1.04,
+          "max": 1.08
+        },
+        {
+          "metric": "surface_area_m2",
+          "min": 2.0,
+          "max": 2.8
+        }
+      ],
+      "budget": {
+        "candidates": 64,
+        "validations": 8,
+        "validation_samples": 65
+      }
+    }
+  }
+}
