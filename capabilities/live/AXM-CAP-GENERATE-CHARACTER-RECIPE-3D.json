@@ -1,13 +1,14 @@
 {
   "id": "AXM-CAP-GENERATE-CHARACTER-RECIPE-3D",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "status": "live",
-  "purpose": "Create complete freeform characters with retained construction, optional explicit skeletons, reusable skin bindings and animation clips.",
+  "purpose": "Create freeform characters with retained construction, explicit or body-fitted skeletons, reusable skin fields and solved reach/walk performance.",
   "handles": [
     "character-recipe-asset",
     "static-character-asset",
     "whole-character-asset",
-    "animated-character-recipe-asset"
+    "animated-character-recipe-asset",
+    "character-performance-asset"
   ],
   "input_contract": {
     "required": [
@@ -16,7 +17,7 @@
     ],
     "properties": {
       "path": "target .glb file outside the protected live machine body",
-      "recipe": "axm.character-recipe/v0.1 with form body, optional axm.character-rig/v0.1 rig and explicit animation clips",
+      "recipe": "axm.character-recipe/v0.1 with form body; optional explicit rig/animation OR axm.character-performance/v0.1 body-relative fitting and sampled reach/walk",
       "replace": "optional boolean; defaults false"
     }
   },
@@ -30,7 +31,8 @@
       "race/body-family clothing regions",
       "material intent and response binding status",
       "sibling creator-source sidecar with exact recipe and compiled geometry",
-      "explicit rig and animation status"
+      "explicit rig and animation status",
+      "optional fitted landmarks, generated weights, solved clips and decoded sample-target verification"
     ]
   },
   "dependencies": [
@@ -41,7 +43,7 @@
     "treats race as body/look structure rather than a character class",
     "lets unusual body families declare their own clothing regions instead of pretending every garment fits every race",
     "keeps an entire character's construction structure available for later reshaping and reuse",
-    "executes declared skeleton/skin/clip construction without inferring anatomy or motion"
+    "compiles declared landmarks and skin fields into reusable rigs and sampled two-bone performance without inferring anatomy"
   ],
   "implementation": {
     "kind": "DETERMINISTIC_SOURCE",
@@ -50,10 +52,11 @@
   },
   "limitations": [
     "Rest skeleton uses parent-local translation with identity rotation and scale; animation supports translation and unit quaternion rotation with LINEAR/STEP interpolation.",
-    "Bindings support rigid parts, explicit four-influence vertex weights, and declared axis-blend fields. No automatic skeleton inference, anatomical weighting, IK, retargeting, cloth or corrective deformation.",
+    "Bindings support rigid parts, explicit four-influence weights, axis blends and declared segment-distance fields. Performance fits body-relative landmarks and solves disjoint two-bone reach/walk chains; no inferred anatomy, arbitrary rig retargeting, cloth or corrective deformation.",
     "Declared clothing regions are compatibility metadata, not proof that a garment fits without clipping.",
     "Material response intent can be retained even when the current renderer has not earned a response-organ binding receipt.",
-    "Visual similarity, character appeal and target-engine gameplay remain separate evidence gates."
+    "Visual similarity, character appeal and target-engine gameplay remain separate evidence gates.",
+    "Walk support targets are stationary during declared stance phases; verification covers authored samples only. No between-key contact, balance, ground collision or external-engine import guarantee. Root travel must be accumulated by a playback controller when looping."
   ],
   "persistent_state": null
 }
