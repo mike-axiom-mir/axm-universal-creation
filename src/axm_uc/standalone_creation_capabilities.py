@@ -237,6 +237,26 @@ def register_standalone_creation_builtins(
         except (CharacterRecipeError, CreatorRetentionError, Procedural3DError) as exc:
             raise capability_error(str(exc), getattr(exc, "details", {})) from exc
 
+    def material_response(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+        from .material_response import MaterialResponseHold, resolve_material_response
+
+        family = inputs.get("family")
+        if not isinstance(family, str) or not family.strip():
+            raise capability_error("material response requires a non-empty family")
+        if "variant" in inputs and inputs["variant"] is not None and not isinstance(inputs["variant"], str):
+            raise capability_error("material response variant must be text when supplied")
+        if "overrides" in inputs and inputs["overrides"] is not None and not isinstance(inputs["overrides"], dict):
+            raise capability_error("material response overrides must be an object when supplied")
+        try:
+            return resolve_material_response(
+                family.strip(),
+                variant=inputs.get("variant"),
+                overrides=copy.deepcopy(inputs.get("overrides")),
+                base_color=copy.deepcopy(inputs.get("base_color")),
+            )
+        except MaterialResponseHold as exc:
+            raise capability_error(str(exc)) from exc
+
     def precision_cutter(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
         from .precision_cutter import PrecisionCutterError, publish_precision_cut
 
@@ -418,6 +438,7 @@ def register_standalone_creation_builtins(
         "builtin:shape_recipe": shape_recipe,
         "builtin:form_pattern": form_pattern,
         "builtin:character_recipe": character_recipe,
+        "builtin:material_response": material_response,
         "builtin:precision_cutter": precision_cutter,
         "builtin:creative_flow": creative_flow,
         "builtin:native_visual_runtime": native_visual_runtime,
