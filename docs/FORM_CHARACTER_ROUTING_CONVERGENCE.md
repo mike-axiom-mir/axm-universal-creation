@@ -77,10 +77,13 @@ response contract merged in PR #219. The response layer contains 13 families bui
 from eight behaviors including subsurface transport, sheen, anisotropy, clear coat,
 micro-breakup, transmission, iridescence and wear layering.
 
-Those response families are available as deterministic intent contracts. Active
-response organs still report `HOLD_RENDERER_BINDING_NOT_TESTED` until a specific
-renderer earns its own verification receipt. A character recipe can retain that
-intent now without pretending the current static GLB has rendered the effect.
+Those response families are available as deterministic intent contracts through
+the live handles `material-response`, `material-response-intent`, and
+`surface-response-intent`, so the direction router can discover them as a real
+installed route rather than as hidden library code. Active response organs still
+report `HOLD_RENDERER_BINDING_NOT_TESTED` until a specific renderer earns its own
+verification receipt. A character recipe can resolve and retain default or per-part
+response intent now without pretending the current static GLB has rendered the effect.
 
 ## Truth boundary
 
