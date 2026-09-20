@@ -36,5 +36,15 @@
     "Declared case evidence is not full requirements or branch coverage",
     "Bounded generated-code execution is not an OS sandbox",
     "CI results on other platforms are separate evidence"
-  ]
+  ],
+  "ciHarnessRepair": {
+    "observed": "Full CI runs without PYTHONPATH; the CLI subprocess test failed to locate the source-layout package.",
+    "failedJob": "https://github.com/mike-axiom-mir/axm-universal-creation/actions/runs/35488446847/job/106018985792",
+    "reproducedCommand": "env -u PYTHONPATH python -m unittest discover -s tests -p test_code_creation.py -v",
+    "before": "10 tests, one module-discovery failure",
+    "repair": "The CLI test supplies its absolute source path explicitly and runs from a different working directory. Focused CI no longer exports PYTHONPATH.",
+    "after": "10 tests OK with PYTHONPATH unset",
+    "fixedLogSha256": "2e8f997ef415f4e1421408305d77ce0ca728f5cdc5f844c6f5c1bb2de015ce43",
+    "runtimeSourceChanged": false
+  }
 }

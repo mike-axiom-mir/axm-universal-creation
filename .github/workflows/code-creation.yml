@@ -25,6 +25,4 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
       - name: Verify bundled code creation and relocated standalone execution
-        env:
-          PYTHONPATH: src
         run: python -m unittest discover -s tests -p test_code_creation.py -v

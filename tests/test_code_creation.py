@@ -1,6 +1,6 @@
 import copy
 import hashlib
-import importlib.util
+import os
 import json
 import shutil
 import subprocess
@@ -168,6 +168,7 @@ class CodeCreationTests(unittest.TestCase):
             request = Path(td) / 'request.json'
             request.write_text('{"action":"verify","job":{"id":"missing"}}')
             result = subprocess.run([sys.executable, '-m', 'axm_uc', '--root', str(ROOT), 'code-workflow', str(request)],
+                                    cwd=td, env={**os.environ, 'PYTHONPATH': str(ROOT / 'src')},
                                     capture_output=True, text=True, timeout=150)
             self.assertEqual(result.returncode, 2, result.stderr)
             self.assertEqual(json.loads(result.stdout)['result'], 'HOLD')
