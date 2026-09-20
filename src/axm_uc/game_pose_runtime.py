@@ -30,7 +30,8 @@ def game_pose_runtime_catalog():
     return {
         "schema": "axm.game-pose-runtime-catalog/v0.1",
         "executes": ["embedded GLB transform intake", "LINEAR and STEP sampling", "quaternion shortest-arc interpolation",
-                     "local pose crossfade", "hierarchical world transforms", "socket points", "linear skin positions"],
+                     "local pose crossfade", "explicit local translation/rotation overrides",
+                     "hierarchical world transforms", "socket points", "linear skin positions"],
         "dependencies": [], "source_preserved": True,
         "matrix_convention": "row-major matrices multiplying column vectors; scene-space output",
         "limits": {"glb_bytes": MAX_BYTES, "nodes": 2048, "decoded_scalars": MAX_VALUES,
@@ -363,11 +364,13 @@ class GamePoseAsset:
             local[track["node"]][track["path"]] = value
         return local, time_s
 
-    def sample(self, clip=None, time_s=0., *, loop=False, blend=None, vertices=False):
+    def sample(self, clip=None, time_s=0., *, loop=False, blend=None, vertices=False, overrides=None):
         """Blend is an explicit source pose and target weight, not a hidden clock.
 
         {'clip': source_name, 'time_s': source_time, 'loop': bool, 'weight': 0..1}
         Weight zero returns source; weight one returns the requested target.
+        Optional overrides are unique {node, translation?, rotation?} rows,
+        applied after clip/blend sampling and before world/skin evaluation.
         """
         if type(vertices) is not bool:
             raise ValueError("vertices must be boolean")
@@ -383,6 +386,22 @@ class GamePoseAsset:
                 for path in DEFAULTS:
                     target[path] = (_slerp(source[path], target[path], weight) if path == "rotation" else
                                     [a + (b-a)*weight for a, b in zip(source[path], target[path])])
+        if overrides is not None:
+            if not isinstance(overrides, list) or len(overrides) > len(local):
+                raise ValueError("pose overrides require a bounded list")
+            seen = set()
+            for row in overrides:
+                if (not isinstance(row, dict) or 'node' not in row or len(row) < 2
+                        or set(row) - {'node', 'translation', 'rotation'}):
+                    raise ValueError("override requires node and translation and/or rotation")
+                node = _integer(row['node'], 'override node', 0, len(local)-1)
+                if node in seen or 'matrix' in local[node]:
+                    raise ValueError("duplicate override or matrix-authored node")
+                seen.add(node)
+                for path in ('translation', 'rotation'):
+                    if path in row:
+                        local[node][path] = (_quaternion(row[path]) if path == 'rotation'
+                                            else _vector(row[path], 3, 'override translation'))
         world = [None] * len(local)
         for index in self._order:
             matrix = local[index].get("matrix", None)
@@ -398,6 +417,8 @@ class GamePoseAsset:
                   "clip": clip, "time_s": time_s, "blend": copy.deepcopy(blend),
                   "local": local, "world_matrices": world, "skin_world_matrices": palettes,
                   "matrix_convention": "row-major, column vectors, scene-space; authored root already included"}
+        if overrides is not None:
+            result['overrides'] = copy.deepcopy(overrides)
         if vertices:
             deformed = []
             for mesh in self._meshes:

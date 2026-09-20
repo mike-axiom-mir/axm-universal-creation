@@ -106,13 +106,21 @@ tested replay is byte-identical in the same runtime. Every use can retain reusab
 construction; export alone does not automatically admit a new library capability.
 The existing creator-growth acceptance and semantic deduplication rules still apply.
 
-## Next connected build
+## Runtime continuation and headless search
+
+The query-time contact controller, accumulated walking root travel and measured
+skin-field search are now implemented. See [intent-directed search](INTENT_DIRECTED_SEARCH.md)
+for the live routes, bounded acceptance checks and reusable search examples.
+The exported GLB itself remains a baked realization; its retained recipe powers
+runtime control. Joint-frame limits, collision and corrective shapes remain open.
+
+## Further connected work
 
 The highest-value continuation is a **contact and deformation controller** over
 this retained body state:
 
-1. Accumulate root travel and solve support targets at runtime; measure between-key
-   slip rather than relying on dense baked samples.
+1. Extend the runtime controller with terrain and bounded collision probes; retain
+   contact and between-key deformation observations from actual requested scenarios.
 2. Add joint-frame limits, attachment tracking and corrective deformation with
    bent-pose intersection/volume checks. Preserve explicit unsupported cases.
 3. Bind observed failures to bounded controls: plant timing, pelvis height, stride,

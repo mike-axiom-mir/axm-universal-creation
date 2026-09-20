@@ -1,0 +1,28 @@
+{
+  "id": "AXM-CAP-CHARACTER-CONTROLLER",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Solve retained reach/walk construction at explicit query times, accumulate walking root travel and measure decoded contact/deformation.",
+  "handles": ["character-controller", "character-performance-probe"],
+  "input_contract": {
+    "required": ["path", "recipe", "clip", "times"],
+    "properties": {
+      "path": "new JSON output path outside the protected live machine body",
+      "recipe": "character recipe with a body-relative performance contract",
+      "clip": "declared reach or walk clip name",
+      "times": "2..1024 increasing nonnegative seconds; walk can continue across cycles",
+      "feet": "optional end-joint to form-part mapping for whole-foot contact checks",
+      "up_axis": "optional 0/1/2, default 2",
+      "ground_height_m": "optional declared support-plane height, default 0"
+    }
+  },
+  "output_contract": {"kind": "solved-character-poses-and-measurements"},
+  "dependencies": ["AXM-CAP-GENERATE-CHARACTER-RECIPE-3D"],
+  "implementation": {"kind": "DETERMINISTIC_SOURCE", "entrypoint": "builtin:character_controller", "source": "src/axm_uc/character_controller.py"},
+  "limitations": [
+    "Uses the caller's elapsed time, not a hidden wall clock. Root travel is already included in the pose.",
+    "Solves declared two-bone paths at query time. No terrain sensing, dynamics, balance, collision or arbitrary rig retargeting.",
+    "Exported GLB clips remain baked; continuous contact requires this retained-recipe controller. Normal GLB playback does not execute it.",
+    "Measurements cover listed times and decoded vertices, not unsampled extrema, shaded normals or artistic quality."
+  ]
+}

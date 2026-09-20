@@ -237,6 +237,36 @@ def register_standalone_creation_builtins(
         except (CharacterRecipeError, CreatorRetentionError, Procedural3DError) as exc:
             raise capability_error(str(exc), getattr(exc, "details", {})) from exc
 
+    def construction_search(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+        from .construction_search import publish_search
+        target = resolve_output_path(root, str(inputs['path']))
+        if is_machine_body_path(root, target):
+            raise capability_error('construction search cannot rewrite the live machine body')
+        try:
+            return publish_search(target, inputs['search'])
+        except (ValueError, RuntimeError) as exc:
+            raise capability_error(str(exc)) from exc
+
+    def character_controller(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+        from .atomic import atomic_write_json
+        from .character_controller import CharacterController
+        target = resolve_output_path(root, str(inputs['path']))
+        if is_machine_body_path(root, target):
+            raise capability_error('character controller cannot rewrite the live machine body')
+        if target.exists():
+            raise capability_error('controller output already exists')
+        try:
+            controller = CharacterController(inputs['recipe'])
+            evidence = controller.measure(inputs['clip'], inputs['times'], feet=inputs.get('feet'),
+                            up_axis=inputs.get('up_axis',2),ground_height_m=inputs.get('ground_height_m',0))
+            output = {'recipe':copy.deepcopy(inputs['recipe']), 'evidence':evidence,
+                      'poses':[controller.sample(inputs['clip'],t) for t in inputs['times']],
+                      'source_authority':True,'automatic_canon_admission':False}
+            atomic_write_json(target,output)
+            return {'operation':'character-controller','path':str(target),'evidence':evidence}
+        except (ValueError, RuntimeError) as exc:
+            raise capability_error(str(exc)) from exc
+
     def material_response(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
         from .material_response import MaterialResponseHold, resolve_material_response
 
@@ -438,6 +468,8 @@ def register_standalone_creation_builtins(
         "builtin:shape_recipe": shape_recipe,
         "builtin:form_pattern": form_pattern,
         "builtin:character_recipe": character_recipe,
+        "builtin:construction_search": construction_search,
+        "builtin:character_controller": character_controller,
         "builtin:material_response": material_response,
         "builtin:precision_cutter": precision_cutter,
         "builtin:creative_flow": creative_flow,
