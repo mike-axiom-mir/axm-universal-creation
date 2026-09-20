@@ -114,10 +114,11 @@ def character_recipe_summary() -> dict[str, Any]:
         "supports_race_bound_clothing_regions": True,
         "rigging": "explicit translation-rest skeleton and rigid or supplied four-influence skin",
         "animation": "explicit LINEAR/STEP translation and quaternion clips",
+        "performance": "body-relative landmarks, segment-distance weights, sampled two-bone reach and walk",
         "truth_boundary": (
             "This route creates complete characters from reusable freeform parts, optionally with explicit rigs and clips. "
-            "It does not infer a skeleton, skin weights, animation, controller behavior, clothing fit, "
-            "or aesthetic acceptance."
+            "Declared performance recipes can fit joints, generate segment-distance weights and solve reach/walk clips. "
+            "No inferred anatomy, controller behavior, physical balance, clothing fit or aesthetic acceptance."
         ),
     }
 
@@ -126,7 +127,7 @@ def compile_character_recipe(raw: Any) -> dict[str, Any]:
     if not isinstance(raw, dict) or raw.get("schema") != SCHEMA:
         _hold("HOLD_CHARACTER_RECIPE_INVALID", f"character recipe must use schema {SCHEMA}")
     required = {"schema", "name", "character", "form"}
-    optional = {"sockets", "clothing_regions", "material_intent", "rig", "animation", "metadata"}
+    optional = {"sockets", "clothing_regions", "material_intent", "rig", "animation", "performance", "metadata"}
     extra = set(raw) - required - optional
     if extra or not required <= set(raw):
         _hold("HOLD_CHARACTER_RECIPE_INVALID", "character recipe fields do not match the bounded grammar", unexpected=sorted(extra))
@@ -260,18 +261,35 @@ def compile_character_recipe(raw: Any) -> dict[str, Any]:
         else "PASS_NO_ACTIVE_ORGANS"
     )
 
+    performance = None
+    rig = raw.get("rig")
+    if raw.get("performance") is not None:
+        if rig not in (None, False, "none") or animation not in (None, False, "none", []):
+            _hold("HOLD_CHARACTER_PERFORMANCE_CONFLICT", "performance cannot silently override explicit rig or animation")
+        from .character_performance import fit_character_performance
+        from .character_motion import CharacterMotionError
+        try:
+            performance = fit_character_performance(raw["performance"], form["specification"], body_family=identity["body_family"])
+        except CharacterMotionError as exc:
+            _hold("HOLD_CHARACTER_PERFORMANCE_INVALID", str(exc))
+        rig, animation = performance["rig"], performance["animation"]
+
     motion = None
-    if isinstance(raw.get("rig"), dict):
+    if isinstance(rig, dict):
         from .character_motion import CharacterMotionError, compile_motion
         try:
-            motion = compile_motion(form["specification"], raw["rig"], animation)
+            motion = compile_motion(form["specification"], rig, animation)
         except CharacterMotionError as exc:
             _hold("HOLD_CHARACTER_MOTION_INVALID", str(exc))
+
+    if motion and performance:
+        motion["performance_observations"] = deepcopy(performance["observations"])
 
     return {
         "schema": SCHEMA,
         "truth_status": "COMPILED_EXPLICIT_SKINNED_CHARACTER" if motion else "COMPILED_STATIC_WHOLE_CHARACTER",
         "motion": motion,
+        "performance": performance,
         "name": name,
         "recipe_sha256": hashlib.sha256(_canonical(raw)).hexdigest(),
         "character": identity,
@@ -314,6 +332,7 @@ def publish_character_recipe(target: str | Path, recipe: Any, *, replace: bool =
         "automatic_canon_admission": False,
     }
     source["motion"] = deepcopy(compiled["motion"])
+    source["performance"] = deepcopy(compiled["performance"])
     publisher = None
     if compiled["motion"]:
         from .character_motion import CharacterMotionError, publish_motion_glb
