@@ -203,6 +203,7 @@ def experiment(root, raw, path, *, memory=None, expected_plan=None):
                            "validation_scope": {"goals": request["goals"], "objectives": request["objectives"], "scenarios": scenarios},
                            "cases": cases, "confirmation": confirmation, "ranking": ranking,
                            "cost": candidate["cost"], "reused_structure": candidate["reused_structure"],
+                           "prior_evidence_current": candidate["prior_evidence_current"],
                            "repeatability_scope": "Declared goal metrics and generated GLB/PNG/WAV/code bytes; not all environments or all inputs.",
                            "automatic_canon_admission": False}
             atomic_write_json(target / "observations" / (candidate["id"] + ".json"), observation)
