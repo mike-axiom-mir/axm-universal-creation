@@ -80,6 +80,30 @@ def character_recipe() -> dict:
 
 
 class FormAndCharacterRecipeTests(unittest.TestCase):
+    def test_base_procedural_3d_route_retains_specification_by_default(self):
+        specification = {
+            "schema": "axm.procedural-3d/v0.1",
+            "name": "retained box",
+            "primitives": [{
+                "id": "body",
+                "type": "box",
+                "size": [1.0, 2.0, 3.0],
+                "translation": [0.0, 0.0, 0.0],
+                "material": {"color": "#887766FF", "metallic": 0.0, "roughness": 0.7}
+            }]
+        }
+        with tempfile.TemporaryDirectory() as td:
+            target = Path(td) / "box.glb"
+            result = UniversalCreationMachine(ROOT).create({
+                "kind": "procedural-3d-asset",
+                "inputs": {"path": str(target), "specification": specification},
+            })
+            self.assertEqual(result["type"], "CREATION_RESULT", result)
+            source = json.loads(Path(result["result"]["creator_source"]["path"]).read_text(encoding="utf-8"))
+            self.assertEqual(source["kind"], "procedural-3d-specification")
+            self.assertEqual(source["specification"], specification)
+            self.assertTrue(source["source_authority"])
+
     def test_freeform_patterns_compile_to_explicit_surfaces(self):
         compiled = compile_form_pattern(form_recipe())
         self.assertEqual(compiled["truth_status"], "COMPILED_GENERIC_SURFACE_PATTERN")
