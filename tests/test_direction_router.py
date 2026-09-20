@@ -69,6 +69,44 @@ class DirectionRouterTests(unittest.TestCase):
             self.assertEqual(result["decision"]["exact_route"]["state"], "COMPATIBLE_AND_SUFFICIENT")
             self.assertEqual(target.read_text(encoding="utf-8"), "direction preserved\n")
 
+    def test_complete_character_intent_can_infer_one_unique_live_route_without_internal_kind(self):
+        recipe = {
+            "schema": "axm.character-recipe/v0.1",
+            "name": "Intent routed tree person",
+            "character": {"race_id": "tree", "body_family": "rooted-small"},
+            "form": {
+                "schema": "axm.form-pattern/v0.1",
+                "name": "Tree body",
+                "parts": [{
+                    "id": "body",
+                    "role": "body",
+                    "pattern": "loft",
+                    "sections": [
+                        {"at": 0.0, "radius": [0.20, 0.18]},
+                        {"at": 0.8, "radius": [0.28, 0.22]},
+                        {"at": 1.2, "radius": [0.18, 0.16]}
+                    ],
+                    "material": {"color": "#76502FFF", "metallic": 0.0, "roughness": 0.8}
+                }]
+            }
+        }
+        with tempfile.TemporaryDirectory() as td:
+            target = Path(td) / "character.glb"
+            result = UniversalCreationMachine(ROOT).create({
+                "prompt": "Create a complete editable reusable static 3D character from this character recipe",
+                "inputs": {"path": str(target), "recipe": recipe},
+            })
+            self.assertEqual(result["type"], "DIRECTION_RESULT", result)
+            self.assertEqual(result["capability"], "AXM-CAP-GENERATE-CHARACTER-RECIPE-3D")
+            self.assertEqual(result["decision"]["requested_kind"], None)
+            self.assertEqual(result["decision"]["inferred_kind"], "character-recipe-asset")
+            self.assertEqual(
+                result["decision"]["route_selection"],
+                "unique-best-installed-route-from-direction-and-complete-inputs",
+            )
+            self.assertTrue(target.is_file())
+            self.assertTrue(Path(result["result"]["creator_source"]["path"]).is_file())
+
     def test_temporary_candidate_repairs_in_isolation_without_canon_change(self):
         source = json.loads((ROOT / "capabilities/candidates/AXM-CAP-WRITE-MARKDOWN.json").read_text(encoding="utf-8"))
         failed = copy.deepcopy(source)
