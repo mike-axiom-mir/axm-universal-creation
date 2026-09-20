@@ -1,0 +1,48 @@
+{
+  "id": "AXM-CAP-GENERATE-FORM-PATTERN-3D",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Create reusable freeform 3D surface forms from deterministic profile extrusion, loft, revolve and tube patterns, including per-part translation, rotation and nonuniform scale, while retaining the exact construction recipe beside the GLB.",
+  "handles": [
+    "form-pattern-asset",
+    "freeform-shape-asset",
+    "pattern-mesh-asset"
+  ],
+  "input_contract": {
+    "required": ["path", "recipe"],
+    "properties": {
+      "path": "target .glb file outside the protected live machine body",
+      "recipe": "axm.form-pattern/v0.1 recipe containing one or more semantic parts",
+      "replace": "optional boolean; defaults false"
+    }
+  },
+  "output_contract": {
+    "kind": "validated-editable-freeform-3d-asset",
+    "contains": [
+      "explicit axm.surface-3d/v0.1 positions, normals and triangle indices",
+      "semantic parts index with roles and per-part recipe digests",
+      "exact deterministic GLB",
+      "sibling creator-source sidecar retaining the original recipe and compiled specification",
+      "explicit visual, rig, animation, collision and engine boundaries"
+    ]
+  },
+  "dependencies": ["AXM-CAP-GENERATE-PROCEDURAL-3D"],
+  "relationships": [
+    "generalizes authored profile, loft, lathe/revolve and swept-tube patterns already proven in UC specialist assets",
+    "uses UC's existing arbitrary explicit surface receiver rather than adding a second GLB encoder",
+    "provides a richer shape substrate beneath whole-character recipes",
+    "retains construction causes as source authority while treating the GLB as a realization"
+  ],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:form_pattern",
+    "source": "src/axm_uc/form_pattern.py"
+  },
+  "limitations": [
+    "This is bounded procedural surface construction, not unrestricted sculpting or arbitrary mesh CSG.",
+    "Current patterns are profile-extrude, loft, revolve and tube.",
+    "Topology is generated from declared recipes; retopology, UV authoring, texture baking and aesthetic acceptance remain separate capabilities.",
+    "A passing GLB/mesh check does not prove rigging, animation, collision, clothing fit, physics or target-engine integration."
+  ],
+  "persistent_state": null
+}
