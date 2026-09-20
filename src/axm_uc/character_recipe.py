@@ -194,10 +194,69 @@ def compile_character_recipe(raw: Any) -> dict[str, Any]:
     material_intent = deepcopy(raw.get("material_intent", {}))
     if not isinstance(material_intent, dict):
         _hold("HOLD_CHARACTER_RECIPE_INVALID", "material_intent must be an object")
-    material_response = material_intent.get("response")
-    material_response_status = "NOT_REQUESTED"
-    if material_response:
-        material_response_status = "DECLARED_NOT_BOUND_TO_THIS_STATIC_RENDERER"
+    if set(material_intent) - {"families", "response", "part_responses", "notes"}:
+        _hold(
+            "HOLD_CHARACTER_RECIPE_INVALID",
+            "material_intent accepts families, response, part_responses and notes",
+            unexpected=sorted(set(material_intent) - {"families", "response", "part_responses", "notes"}),
+        )
+    if "families" in material_intent:
+        families = material_intent["families"]
+        if not isinstance(families, list) or any(not isinstance(v, str) or not v.strip() for v in families):
+            _hold("HOLD_CHARACTER_RECIPE_INVALID", "material_intent.families must be a text list")
+        material_intent["families"] = list(dict.fromkeys(v.strip() for v in families))
+
+    from .material_response import MaterialResponseHold, resolve_material_response
+
+    def resolve_response(raw_response: Any, label: str) -> dict[str, Any]:
+        if not isinstance(raw_response, dict) or "family" not in raw_response or set(raw_response) - {"family", "variant", "overrides"}:
+            _hold(
+                "HOLD_CHARACTER_RECIPE_MATERIAL_RESPONSE_INVALID",
+                f"{label} requires family and optional variant/overrides",
+            )
+        try:
+            return resolve_material_response(
+                raw_response["family"],
+                variant=raw_response.get("variant"),
+                overrides=raw_response.get("overrides"),
+            )
+        except MaterialResponseHold as exc:
+            _hold(
+                "HOLD_CHARACTER_RECIPE_MATERIAL_RESPONSE_INVALID",
+                f"{label} could not be resolved",
+                error=str(exc),
+            )
+
+    response_resolutions: dict[str, Any] = {}
+    if material_intent.get("response") is not None:
+        response_resolutions["default"] = resolve_response(material_intent["response"], "material_intent.response")
+    part_responses = material_intent.get("part_responses", {})
+    if part_responses is not None:
+        if not isinstance(part_responses, dict):
+            _hold("HOLD_CHARACTER_RECIPE_INVALID", "material_intent.part_responses must be an object keyed by form part id")
+        unknown_parts = sorted(set(part_responses) - part_ids)
+        if unknown_parts:
+            _hold(
+                "HOLD_CHARACTER_RECIPE_MATERIAL_PART_MISSING",
+                "material response references unknown character parts",
+                missing_parts=unknown_parts,
+            )
+        for part_id, response in sorted(part_responses.items()):
+            response_resolutions[part_id] = resolve_response(
+                response,
+                f"material_intent.part_responses.{part_id}",
+            )
+    active_holds = sorted(
+        key for key, value in response_resolutions.items()
+        if value["renderer_binding"] == "HOLD_RENDERER_BINDING_NOT_TESTED"
+    )
+    material_response_status = (
+        "NOT_REQUESTED"
+        if not response_resolutions
+        else "HOLD_RENDERER_BINDING_NOT_TESTED"
+        if active_holds
+        else "PASS_NO_ACTIVE_ORGANS"
+    )
 
     return {
         "schema": SCHEMA,
@@ -212,7 +271,9 @@ def compile_character_recipe(raw: Any) -> dict[str, Any]:
         "sockets": sockets,
         "clothing_regions": clothing,
         "material_intent": material_intent,
+        "material_response_resolutions": response_resolutions,
         "material_response_status": material_response_status,
+        "material_response_holds": active_holds,
         "specification": deepcopy(form["specification"]),
         "rig_status": "NOT_PRESENT",
         "animation_status": "NOT_PRESENT",
@@ -234,6 +295,8 @@ def publish_character_recipe(target: str | Path, recipe: Any, *, replace: bool =
         "sockets": deepcopy(compiled["sockets"]),
         "clothing_regions": deepcopy(compiled["clothing_regions"]),
         "material_intent": deepcopy(compiled["material_intent"]),
+        "material_response_resolutions": deepcopy(compiled["material_response_resolutions"]),
+        "material_response_status": compiled["material_response_status"],
         "compiled_specification": deepcopy(compiled["specification"]),
         "rig_status": compiled["rig_status"],
         "animation_status": compiled["animation_status"],
