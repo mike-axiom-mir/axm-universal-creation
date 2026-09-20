@@ -1,0 +1,24 @@
+{
+  "kind": "atlas-creation",
+  "inputs": {
+    "operation": "build",
+    "path": "creations/atlas-walker",
+    "memory": "creations/atlas-experience",
+    "intent": {
+      "purpose": "Fit the wider walker and lift its feet while preserving flat-ground contact.",
+      "direction": "construction",
+      "goals": [
+        "construction-criteria",
+        "retained-source"
+      ],
+      "parameters": {
+        "search": {
+          "atlas": "recipe:broader-walker",
+          "path": [
+            "value"
+          ]
+        }
+      }
+    }
+  }
+}
