@@ -74,7 +74,9 @@ def character_recipe() -> dict:
         ],
         "material_intent": {
             "families": ["wood", "moss", "leaf"],
-            "response": {"family": "organic-layered-surface", "note": "retained intent; renderer binding separate"},
+            "response": {"family": "wood-oiled"},
+            "part_responses": {"branch-left": {"family": "wood-oiled"}},
+            "notes": "retained intent; renderer binding remains separate",
         },
     }
 
@@ -137,7 +139,9 @@ class FormAndCharacterRecipeTests(unittest.TestCase):
         self.assertEqual(compiled["character"]["body_family"], "rooted-small-tree")
         self.assertEqual(compiled["sockets"][0]["id"], "hand-right")
         self.assertEqual(compiled["clothing_regions"][0]["id"], "torso-wrap")
-        self.assertEqual(compiled["material_response_status"], "DECLARED_NOT_BOUND_TO_THIS_STATIC_RENDERER")
+        self.assertEqual(compiled["material_response_status"], "HOLD_RENDERER_BINDING_NOT_TESTED")
+        self.assertEqual(compiled["material_response_holds"], ["branch-left", "default"])
+        self.assertIn("surface.anisotropy", compiled["material_response_resolutions"]["default"]["active_organs"])
 
         with tempfile.TemporaryDirectory() as td:
             target = Path(td) / "character.glb"
