@@ -1,25 +1,29 @@
 {
   "id": "AXM-CAP-GENERATE-CHARACTER-RECIPE-3D",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "status": "live",
-  "purpose": "Create one complete static 3D character from reusable freeform body parts while retaining race/body-family identity, semantic anatomy, equipment sockets, race-bound clothing regions, material intent and the exact construction recipe.",
+  "purpose": "Create complete freeform characters with retained construction, optional explicit skeletons, reusable skin bindings and animation clips.",
   "handles": [
     "character-recipe-asset",
     "static-character-asset",
-    "whole-character-asset"
+    "whole-character-asset",
+    "animated-character-recipe-asset"
   ],
   "input_contract": {
-    "required": ["path", "recipe"],
+    "required": [
+      "path",
+      "recipe"
+    ],
     "properties": {
       "path": "target .glb file outside the protected live machine body",
-      "recipe": "axm.character-recipe/v0.1 whole-character recipe with character identity and axm.form-pattern/v0.1 body",
+      "recipe": "axm.character-recipe/v0.1 with form body, optional axm.character-rig/v0.1 rig and explicit animation clips",
       "replace": "optional boolean; defaults false"
     }
   },
   "output_contract": {
-    "kind": "validated-editable-static-3d-character",
+    "kind": "validated-editable-3d-character",
     "contains": [
-      "complete static character GLB assembled from freeform surface parts",
+      "complete character GLB, static or explicitly skinned and animated",
       "race and body-family identity",
       "semantic part index",
       "equipment/attachment sockets",
@@ -37,7 +41,7 @@
     "treats race as body/look structure rather than a character class",
     "lets unusual body families declare their own clothing regions instead of pretending every garment fits every race",
     "keeps an entire character's construction structure available for later reshaping and reuse",
-    "holds generic rig/animation requests until those capabilities are separately verified"
+    "executes declared skeleton/skin/clip construction without inferring anatomy or motion"
   ],
   "implementation": {
     "kind": "DETERMINISTIC_SOURCE",
@@ -45,8 +49,8 @@
     "source": "src/axm_uc/character_recipe.py"
   },
   "limitations": [
-    "The current route produces a complete static character, not a skinned/animated character.",
-    "Generic skeleton generation, skin weights and animation remain typed HOLDs rather than being inferred.",
+    "Rest skeleton uses parent-local translation with identity rotation and scale; animation supports translation and unit quaternion rotation with LINEAR/STEP interpolation.",
+    "Bindings support rigid parts, explicit four-influence vertex weights, and declared axis-blend fields. No automatic skeleton inference, anatomical weighting, IK, retargeting, cloth or corrective deformation.",
     "Declared clothing regions are compatibility metadata, not proof that a garment fits without clipping.",
     "Material response intent can be retained even when the current renderer has not earned a response-organ binding receipt.",
     "Visual similarity, character appeal and target-engine gameplay remain separate evidence gates."
