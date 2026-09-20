@@ -131,8 +131,12 @@ observations remain inspectable, while the reusable structure is deduplicated.
 On reuse, matching structures can be rebound even when the new graph-search
 budget is too small to rediscover them. Current input types, available operators,
 units, goal relationships and checks are reapplied. Fresh execution is mandatory.
-Changed source/runtime/catalog/environment pins make old observations stale;
-rediscovery can still retest the same structure. Pins cover the installed Python
+Changed source/runtime/catalog/environment pins make old observations stale.
+Compatible structures remain useful: they can be rebound under current operator
+contracts, explicitly marked as carrying stale prior evidence, and tested anew.
+An unrelated tool update must not erase learned composition knowledge. Removed
+operators, changed operator versions and incompatible ports prevent that reuse.
+Pins cover the installed Python
 and data runtime, indexed atlas, operator catalog, Python/platform and Node
 version when available. They are not a complete external environment lock.
 
