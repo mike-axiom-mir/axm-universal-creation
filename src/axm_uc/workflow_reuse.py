@@ -12,8 +12,6 @@ def rebind_workflows(records, request, operators, goal_order):
     candidates, ignored, visited = [], [], 0
     maximum = request["budget"]["plans"]
     for record in records:
-        if not record["fresh"]:
-            continue
         try:
             template = record["program"]
             if not 1 <= len(template["nodes"]) <= request["budget"]["steps"]:
