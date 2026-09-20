@@ -93,7 +93,7 @@ class DirectionRouterTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             target = Path(td) / "character.glb"
             result = UniversalCreationMachine(ROOT).create({
-                "prompt": "Create a complete editable reusable static 3D character from this character recipe",
+                "prompt": "Create and deliver a complete editable reusable static 3D character asset from this character recipe",
                 "inputs": {"path": str(target), "recipe": recipe},
             })
             self.assertEqual(result["type"], "DIRECTION_RESULT", result)
