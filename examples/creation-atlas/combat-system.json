@@ -1,0 +1,26 @@
+{
+  "kind": "creation-atlas",
+  "inputs": {
+    "operation": "build",
+    "path": "creations/atlas-combat-system",
+    "memory": "creations/atlas-code-experience",
+    "intent": {
+      "purpose": "Create a portable combat system, verify sessions and recovery, explore invariants and retain reusable causes.",
+      "direction": "game-systems",
+      "goals": [
+        "session-behavior",
+        "invariant-exploration",
+        "portable-recovery",
+        "retained-system"
+      ],
+      "parameters": {
+        "request": {
+          "atlas": "recipe:combat-system",
+          "path": [
+            "value"
+          ]
+        }
+      }
+    }
+  }
+}

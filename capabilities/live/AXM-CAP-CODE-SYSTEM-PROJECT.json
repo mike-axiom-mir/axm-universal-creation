@@ -1,0 +1,30 @@
+{
+  "id": "AXM-CAP-CODE-SYSTEM-PROJECT",
+  "version": "1.0.0",
+  "status": "live",
+  "purpose": "Create portable stateful software and game systems from typed programs, explicit control graphs, scenarios and bounded invariant exploration.",
+  "handles": ["code-system-project"],
+  "input_contract": {
+    "required": ["path", "request"],
+    "properties": {
+      "path": "New ordinary output directory, outside machine internals.",
+      "request": "Explicit build, verify or retain code-system request; includes typed job and axm.code-system/v0.1 contract."
+    }
+  },
+  "output_contract": {
+    "kind": "directory",
+    "contains": ["standalone-code", "session-runtime", "replay-recovery", "scenario-observations", "invariant-exploration", "construction", "optional-function-and-system-archives"]
+  },
+  "dependencies": ["AXM-CAP-WRITE-PROJECT"],
+  "relationships": ["Composes bundled code-profession procedures and Grammar 102 with the existing UC deterministic state graph; exposes original source and scoped executable evidence."],
+  "anatomy_refs": [],
+  "implementation": {"kind": "DETERMINISTIC_SOURCE", "entrypoint": "builtin:code_system_project", "source": "src/axm_uc/code_system.py"},
+  "limitations": [
+    "JavaScript and Python only; model is an explicit typed record, and effects remain data for an external host.",
+    "Exploration covers declared concrete events through a specified depth; exhausted budgets and counterexamples hold verification.",
+    "No arbitrary source execution, automatic natural-language synthesis, rendered game/UI quality, external side-effect verification, balance or whole-program proof.",
+    "Runtime execution uses fixed local processes and time/output bounds, not an OS sandbox. Restore replays checkpoints but does not authenticate them.",
+    "Retention preserves explicitly verified construction without automatic shared machine mutation or canon promotion."
+  ],
+  "persistent_state": null
+}

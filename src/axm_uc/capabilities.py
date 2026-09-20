@@ -446,7 +446,22 @@ def builtin_code_program_project(root: Path, inputs: dict[str, Any]) -> dict[str
     return create_code_project(root, inputs)
 
 
+def builtin_code_system_project(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+    from .code_system import create_code_system_project
+    return create_code_system_project(root, inputs)
+
+
+def builtin_code_system_station(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+    from .code_system import run_code_system_station
+    try:
+        return run_code_system_station(root, inputs)
+    except (ValueError, OSError) as exc:
+        raise CapabilityError(str(exc)) from exc
+
+
 BUILTINS: dict[str, Callable[[Path, dict[str, Any]], dict[str, Any]]] = {
+    "builtin:code_system_station": builtin_code_system_station,
+    "builtin:code_system_project": builtin_code_system_project,
     "builtin:code_program_project": builtin_code_program_project,
     "builtin:write_text": builtin_write_text,
     "builtin:write_json": builtin_write_json,

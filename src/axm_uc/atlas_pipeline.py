@@ -247,6 +247,18 @@ def _preflight(step, parameters, atlas, used):
                 return ["typed-code workflow needs an installed Node runtime"]
             if inputs["request"].get("action") not in {"verify", "retain"}:
                 return ["verified-code blueprint requires an explicit verify or retain action"]
+        elif step["capability"] == "AXM-CAP-CODE-SYSTEM-PROJECT":
+            import shutil
+            from .code_system_contract import prepare
+            from .state_machine import StateMachineError
+            if shutil.which("node") is None:
+                return ["code-system workflow needs an installed Node runtime"]
+            if inputs["request"].get("action") not in {"verify", "retain"}:
+                return ["code-system blueprint requires an explicit verify or retain action"]
+            try:
+                prepare(inputs["request"])
+            except (ValueError, TypeError, KeyError, AttributeError, StateMachineError) as exc:
+                return ["code-system contract: " + str(exc)]
     except (CapabilityError, ValueError, RuntimeError, KeyError) as exc:
         return ["step " + step["id"] + ": " + str(exc)]
     return []
@@ -266,7 +278,7 @@ def _experience(root, memory):
     records, ignored = [], []
     for path in paths:
         try:
-            value = json.loads(local_file(folder, path.name).read_text())
+            value = json.loads(local_file(folder, path.name).read_text(encoding="utf-8"))
             if value.get("schema") != EXPERIENCE_SCHEMA or path.stem != digest(value):
                 raise ValueError("experience schema or content identity does not match")
             if (value.get("status") not in {"CHECKS_PASSED", "HOLD_FAILED_CHECK", "HOLD_EXECUTION_ERROR"}
@@ -454,11 +466,25 @@ def build_intent(root, request, path, *, memory=None, plan_sha256=None, candidat
             relative = file.relative_to(target).as_posix()
             verified = local_file(target, relative)
             files[relative] = hashlib.sha256(verified.read_bytes()).hexdigest()
-    searches = []
+    searches, code_systems = [], []
     for step in selected["steps"]:
+        if step["capability"] == "AXM-CAP-CODE-SYSTEM-PROJECT" and step["id"] in results:
+            product = results[step["id"]]
+            if product["code_system"].get("retained") and product["code_system"]["status"] == "VERIFIED_FOR_SCENARIOS":
+                from .code_system_contract import validate_archive
+                relative = (Path(product["path"]) / "system-archive.json").relative_to(target).as_posix()
+                archive = validate_archive(json.loads(local_file(target, relative).read_text(encoding="utf-8")))
+                # Only the current creation's accepted construction enters this observation.
+                report_path = (Path(product["path"]) / "workflow.json").relative_to(target).as_posix()
+                report = json.loads(local_file(target, report_path).read_text(encoding="utf-8"))
+                key = report["retention"]["structural_sha256"]
+                entry = next(row for row in archive["entries"] if row["structural_sha256"] == key)
+                code_systems.append({"structural_sha256": key, "construction": entry["construction"],
+                    "construction_sha256": entry["construction_sha256"], "verification_sha256": digest(report["verification"]),
+                    "scope": report["verification"]["scope"]})
         if step["capability"] != "AXM-CAP-CONSTRUCTION-SEARCH" or step["id"] not in results:
             continue
-        report = json.loads(local_file(target, str(Path(results[step["id"]]["report_path"]).relative_to(target))).read_text())
+        report = json.loads(local_file(target, Path(results[step["id"]]["report_path"]).relative_to(target).as_posix()).read_text(encoding="utf-8"))
         candidate = report.get("growth_candidate")
         if candidate:
             searches.append({"space_sha256": _search_key(report["search_contract"]),
@@ -466,7 +492,7 @@ def build_intent(root, request, path, *, memory=None, plan_sha256=None, candidat
                 "checks": report["selected"]["checks"], "recipe": candidate["recipe"]})
     experience = {"schema": EXPERIENCE_SCHEMA, "status": status, "runtime_pin": plan["runtime_pin"],
                   "intent": deepcopy(request), "blueprint": blueprint["id"], "plan_sha256": plan["plan_sha256"],
-                  "goals": goals, "error": error, "searches": searches,
+                  "goals": goals, "error": error, "searches": searches, "code_systems": code_systems,
                   "run_path": str(target), "files": files,
                   "use": "Rechecked search seeds and inspectable observations; no automatic capability or canon admission."}
     atomic_write_json(target / "experience.json", experience)
@@ -496,7 +522,10 @@ def operate_atlas(root, inputs):
             raise ValueError("experience limit must be 1..100")
         signatures = {s["semantic_signature"] for r in records if r.get("status") == "CHECKS_PASSED"
                       for s in r.get("searches", [])}
+        code_signatures = {s["structural_sha256"] for r in records if r.get("status") == "CHECKS_PASSED"
+                           for s in r.get("code_systems", [])}
         return {"observations": len(records), "retained_measured_signatures": len(signatures),
+                "retained_code_system_signatures": len(code_signatures),
                 "records": [{"id": "experience:" + digest(r), "status": r["status"], "intent": r["intent"]["purpose"],
                              "blueprint": r["blueprint"], "run_path": r["run_path"]} for r in records[:limit]],
                 "ignored": ignored, "automatic_canon_admission": False}

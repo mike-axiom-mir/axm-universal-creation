@@ -1,5 +1,10 @@
 # Standalone programming creation
 
+For stateful software and game sessions, [Code systems](docs/CODE_SYSTEMS.md)
+composes this compiler/workflow with guarded state transitions, invariants,
+sequence exploration, portable replay/recovery and retained atlas construction.
+Pure-function projects below keep their existing contract.
+
 UC builds standalone JavaScript and Python modules from typed program data and
 explicit acceptance contracts. The compiler, six professional procedures and
 observers live inside UC. Python and Node.js are host runtimes; no sibling

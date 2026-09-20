@@ -1,0 +1,265 @@
+{
+  "schema": "axm.creation-atlas-pack/v0.1",
+  "entries": [
+    {
+      "id": "protocol:code-system",
+      "category": "protocol",
+      "label": "Stateful software and game coding",
+      "summary": "Typed state reducers, guards, finite control graphs, scenario observations, BFS invariant exploration and portable replay/recovery.",
+      "status": "IMPLEMENTED_BOUNDED_CODE_SYSTEM",
+      "data": {
+        "schema": "axm.code-system/v0.1"
+      },
+      "relations": [
+        {
+          "relation": "implemented-by",
+          "target": "capability:AXM-CAP-CODE-SYSTEM-PROJECT"
+        }
+      ]
+    },
+    {
+      "id": "recipe:inventory-system",
+      "category": "recipe",
+      "label": "inventory system",
+      "summary": "Editable software rules and independent expected session states; an example, not a fixed product limit.",
+      "status": "REPLAYABLE_EXAMPLE_CONTRACT",
+      "source_data": {
+        "path": "examples/code-systems/inventory.json"
+      },
+      "relations": [
+        {
+          "relation": "uses",
+          "target": "protocol:code-system"
+        }
+      ],
+      "tags": [
+        "coding",
+        "software",
+        "stateful",
+        "replay"
+      ]
+    },
+    {
+      "id": "recipe:combat-system",
+      "category": "recipe",
+      "label": "combat system",
+      "summary": "Editable game rules and independent expected session states; an example, not a fixed product limit.",
+      "status": "REPLAYABLE_EXAMPLE_CONTRACT",
+      "source_data": {
+        "path": "examples/code-systems/combat.json"
+      },
+      "relations": [
+        {
+          "relation": "uses",
+          "target": "protocol:code-system"
+        }
+      ],
+      "tags": [
+        "coding",
+        "game",
+        "stateful",
+        "replay"
+      ]
+    }
+  ],
+  "blueprints": [
+    {
+      "id": "verified-software-system",
+      "version": "0.1.0",
+      "purpose": "Build and independently observe portable software stateful code from an explicit system contract.",
+      "direction": "software-systems",
+      "parameters": {
+        "request": "object"
+      },
+      "uses": [
+        "protocol:code-system",
+        "workflow:software"
+      ],
+      "steps": [
+        {
+          "id": "code-system",
+          "capability": "AXM-CAP-CODE-SYSTEM-PROJECT",
+          "depends_on": [],
+          "inputs": {
+            "path": {
+              "output": "code"
+            },
+            "request": {
+              "from": "request.request"
+            }
+          },
+          "checks": [
+            {
+              "step": "code-system",
+              "path": [
+                "code_system",
+                "status"
+              ],
+              "equals": "VERIFIED_FOR_SCENARIOS"
+            }
+          ]
+        }
+      ],
+      "artifacts": {
+        "source": "code/construction.json",
+        "observations": "code/workflow.json",
+        "systems": "code/system-archive.json",
+        "functions": "code/archive.json"
+      },
+      "goals": {
+        "session-behavior": [
+          {
+            "step": "code-system",
+            "path": [
+              "code_system",
+              "status"
+            ],
+            "equals": "VERIFIED_FOR_SCENARIOS"
+          }
+        ],
+        "invariant-exploration": [
+          {
+            "step": "code-system",
+            "path": [
+              "code_system",
+              "verification",
+              "status"
+            ],
+            "equals": "PASS"
+          }
+        ],
+        "portable-recovery": [
+          {
+            "step": "code-system",
+            "path": [
+              "code_system",
+              "status"
+            ],
+            "equals": "VERIFIED_FOR_SCENARIOS"
+          },
+          {
+            "artifact": "source"
+          }
+        ],
+        "retained-system": [
+          {
+            "step": "code-system",
+            "path": [
+              "code_system",
+              "retained"
+            ],
+            "equals": true
+          },
+          {
+            "artifact": "systems"
+          },
+          {
+            "artifact": "functions"
+          }
+        ]
+      },
+      "limitations": [
+        "Checks cover the authored states/cases and concrete event alphabet through the declared depth. Effects remain data; no visual, audio, device, balance or arbitrary-program claim."
+      ]
+    },
+    {
+      "id": "verified-game-system",
+      "version": "0.1.0",
+      "purpose": "Build and independently observe portable game stateful code from an explicit system contract.",
+      "direction": "game-systems",
+      "parameters": {
+        "request": "object"
+      },
+      "uses": [
+        "protocol:code-system",
+        "workflow:game"
+      ],
+      "steps": [
+        {
+          "id": "code-system",
+          "capability": "AXM-CAP-CODE-SYSTEM-PROJECT",
+          "depends_on": [],
+          "inputs": {
+            "path": {
+              "output": "code"
+            },
+            "request": {
+              "from": "request.request"
+            }
+          },
+          "checks": [
+            {
+              "step": "code-system",
+              "path": [
+                "code_system",
+                "status"
+              ],
+              "equals": "VERIFIED_FOR_SCENARIOS"
+            }
+          ]
+        }
+      ],
+      "artifacts": {
+        "source": "code/construction.json",
+        "observations": "code/workflow.json",
+        "systems": "code/system-archive.json",
+        "functions": "code/archive.json"
+      },
+      "goals": {
+        "session-behavior": [
+          {
+            "step": "code-system",
+            "path": [
+              "code_system",
+              "status"
+            ],
+            "equals": "VERIFIED_FOR_SCENARIOS"
+          }
+        ],
+        "invariant-exploration": [
+          {
+            "step": "code-system",
+            "path": [
+              "code_system",
+              "verification",
+              "status"
+            ],
+            "equals": "PASS"
+          }
+        ],
+        "portable-recovery": [
+          {
+            "step": "code-system",
+            "path": [
+              "code_system",
+              "status"
+            ],
+            "equals": "VERIFIED_FOR_SCENARIOS"
+          },
+          {
+            "artifact": "source"
+          }
+        ],
+        "retained-system": [
+          {
+            "step": "code-system",
+            "path": [
+              "code_system",
+              "retained"
+            ],
+            "equals": true
+          },
+          {
+            "artifact": "systems"
+          },
+          {
+            "artifact": "functions"
+          }
+        ]
+      },
+      "limitations": [
+        "Checks cover the authored states/cases and concrete event alphabet through the declared depth. Effects remain data; no visual, audio, device, balance or arbitrary-program claim."
+      ]
+    }
+  ]
+}

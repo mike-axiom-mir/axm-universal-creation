@@ -172,7 +172,7 @@ class CreationAtlas:
                      data={"recipe": {"family": family, "size": 128, "seed": 1}}, status="IMPLEMENTED_GENERATOR",
                      relations=[{"relation": "realized-by", "target": "capability:AXM-CAP-GENERATE-GAME-MATERIAL"}])
         pack_path = RUNTIME / "data/material_response/pack.json"
-        pack = json.loads(pack_path.read_text())
+        pack = json.loads(pack_path.read_text(encoding="utf-8"))
         for family in pack["families"]:
             self.add("material:response:" + family["id"], "material", family["id"], family.get("purpose", ""),
                      self.source(pack_path, family["id"]), data=family, status="RESPONSE_INTENT_RENDERER_NOT_PROVEN",
@@ -192,12 +192,12 @@ class CreationAtlas:
         for filename in ("direction-catalog.json", "axis-catalog.json"):
             path = self.root / "reference/software-directions" / filename
             if path.is_file():
-                body = json.loads(local_file(self.root, str(path.relative_to(self.root))).read_text())
+                body = json.loads(local_file(self.root, path.relative_to(self.root).as_posix()).read_text(encoding="utf-8"))
                 for profile in body.get("profiles", []):
                     self.add("direction:" + profile["id"], "direction", profile["id"], profile.get("purpose", profile.get("name", "")),
                              self.source(path, profile["id"]), data=profile, status="DIRECTION_KNOWLEDGE")
         for path in sorted((self.root / "atlas").glob("*.json")):
-            body = json.loads(local_file(self.root, str(path.relative_to(self.root))).read_text())
+            body = json.loads(local_file(self.root, path.relative_to(self.root).as_posix()).read_text(encoding="utf-8"))
             if body.get("schema") != PACK_SCHEMA or set(body) - {"schema", "entries", "blueprints"}:
                 raise ValueError("invalid creation atlas pack: " + path.name)
             for entry in body.get("entries", []):
@@ -205,7 +205,7 @@ class CreationAtlas:
                 if "source_data" in entry:
                     ref = entry["source_data"]
                     source_path = local_file(self.root, ref["path"])
-                    data = json.loads(source_path.read_text())
+                    data = json.loads(source_path.read_text(encoding="utf-8"))
                     for part in ref.get("pointer", []):
                         data = data[part]
                     data = {"value": data}
@@ -234,7 +234,7 @@ class CreationAtlas:
 
     def add_experience(self, records, collection):
         """Expose retained observations and semantic construction candidates, not canon."""
-        patterns = {}
+        patterns, code_patterns = {}, {}
         for record in records:
             identity = "experience:" + digest(record)
             source = {"scope": "experience", "collection": str(collection), "record_sha256": digest(record)}
@@ -245,12 +245,22 @@ class CreationAtlas:
             if record["status"] == "CHECKS_PASSED":
                 for search in record.get("searches", []):
                     patterns.setdefault(search["semantic_signature"], []).append((identity, search))
+                for system in record.get("code_systems", []):
+                    code_patterns.setdefault(system["structural_sha256"], []).append((identity, system))
         for signature, observations in sorted(patterns.items()):
             self.add("construction:" + signature, "construction-pattern", signature,
                      "Measured construction candidate; every reuse needs the current request's checks.",
                      {"scope": "derived-experience", "semantic_signature": signature},
                      data={"observations": [{"experience": identity, **deepcopy(search)} for identity, search in observations]},
                      status="MEASURED_CANDIDATE_NOT_CANON",
+                     relations=[{"relation": "observed-in", "target": identity} for identity, _ in observations])
+        for signature, observations in sorted(code_patterns.items()):
+            construction = observations[0][1]["construction"]
+            self.add("code-pattern:" + signature, "code-pattern", construction["job"]["id"],
+                     "Retained stateful code construction; restore, reshape and execute against current cases before reuse.",
+                     {"scope": "derived-experience", "structural_sha256": signature},
+                     data={"request": deepcopy(construction), "observations": [{"experience": identity, **deepcopy(system)} for identity, system in observations]},
+                     status="VERIFIED_PAST_CONSTRUCTION_RECHECK_REQUIRED", tags=[construction["system"]["domain"]],
                      relations=[{"relation": "observed-in", "target": identity} for identity, _ in observations])
 
     def summary(self):
@@ -301,7 +311,7 @@ class CreationAtlas:
 
 
 def runtime_pin():
-    """Pin Python/data dependencies, not just the immediate capability wrapper."""
+    """Pin Python/JavaScript/data dependencies, not just the capability wrapper."""
     hashes = {p.relative_to(RUNTIME).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
-              for p in sorted(RUNTIME.rglob("*")) if p.is_file() and p.suffix in {".py", ".json"}}
+              for p in sorted(RUNTIME.rglob("*")) if p.is_file() and p.suffix in {".py", ".json", ".js", ".mjs", ".cjs"}}
     return digest(hashes)

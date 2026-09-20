@@ -1,0 +1,24 @@
+{
+  "schema": "axm.workflow-operators/v0.1",
+  "source_kinds": ["code-system-request"],
+  "operators": [{
+    "id": "verify-code-system",
+    "version": "0.1.0",
+    "purpose": "Compile and independently observe portable stateful software/game code, scenario behavior, invariants, transition coverage and recovery.",
+    "capability": "AXM-CAP-CODE-SYSTEM-STATION",
+    "operation": "verify-code-system",
+    "needs": {"request": {"kind": "code-system-request"}},
+    "provides": {"kind": "stateful-code-project", "quality": "checked"},
+    "metrics": {
+      "scenarios": "count", "scenario_steps": "count", "transitions": "count",
+      "transition_coverage": "ratio", "explored_states": "count", "explored_edges": "count",
+      "exploration_depth": "count", "languages": "count", "artifact_bytes": "byte"
+    },
+    "cost": 5,
+    "dependencies": ["AXM-CAP-CODE-SYSTEM-PROJECT"],
+    "limitations": [
+      "Actual execution of explicit finite contracts; source generation alone cannot satisfy this operator.",
+      "Exploration counts report coverage scope, not a confidence or quality score; arbitrary input values, real time, external effects and visual/gameplay judgment are untested."
+    ]
+  }]
+}

@@ -1,0 +1,1502 @@
+{
+  "action": "retain",
+  "job": {
+    "id": "inventory-system",
+    "program": {
+      "schema": "axm.code.program.v1",
+      "name": "inventory_system",
+      "functions": [
+        {
+          "name": "validAmount",
+          "params": [
+            {
+              "name": "n",
+              "type": "number"
+            }
+          ],
+          "returns": "boolean",
+          "body": {
+            "op": "and",
+            "left": {
+              "op": "gt",
+              "left": {
+                "op": "ref",
+                "name": "n"
+              },
+              "right": {
+                "op": "literal",
+                "type": "number",
+                "value": 0
+              }
+            },
+            "right": {
+              "op": "equal",
+              "left": {
+                "op": "ref",
+                "name": "n"
+              },
+              "right": {
+                "op": "floor",
+                "value": {
+                  "op": "ref",
+                  "name": "n"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "idle",
+          "params": [
+            {
+              "name": "model",
+              "type": {
+                "record": {
+                  "stock": "number",
+                  "reserved": "number",
+                  "shipped": "number",
+                  "received": "number"
+                }
+              }
+            }
+          ],
+          "returns": {
+            "record": {
+              "stock": "number",
+              "reserved": "number",
+              "shipped": "number",
+              "received": "number"
+            }
+          },
+          "body": {
+            "op": "ref",
+            "name": "model"
+          }
+        },
+        {
+          "name": "reserve",
+          "params": [
+            {
+              "name": "model",
+              "type": {
+                "record": {
+                  "stock": "number",
+                  "reserved": "number",
+                  "shipped": "number",
+                  "received": "number"
+                }
+              }
+            },
+            {
+              "name": "n",
+              "type": "number"
+            }
+          ],
+          "returns": {
+            "record": {
+              "stock": "number",
+              "reserved": "number",
+              "shipped": "number",
+              "received": "number"
+            }
+          },
+          "body": {
+            "op": "record",
+            "fields": {
+              "stock": {
+                "op": "field",
+                "value": {
+                  "op": "ref",
+                  "name": "model"
+                },
+                "key": "stock"
+              },
+              "reserved": {
+                "op": "add",
+                "left": {
+                  "op": "field",
+                  "value": {
+                    "op": "ref",
+                    "name": "model"
+                  },
+                  "key": "reserved"
+                },
+                "right": {
+                  "op": "ref",
+                  "name": "n"
+                }
+              },
+              "shipped": {
+                "op": "field",
+                "value": {
+                  "op": "ref",
+                  "name": "model"
+                },
+                "key": "shipped"
+              },
+              "received": {
+                "op": "field",
+                "value": {
+                  "op": "ref",
+                  "name": "model"
+                },
+                "key": "received"
+              }
+            }
+          }
+        },
+        {
+          "name": "ship",
+          "params": [
+            {
+              "name": "model",
+              "type": {
+                "record": {
+                  "stock": "number",
+                  "reserved": "number",
+                  "shipped": "number",
+                  "received": "number"
+                }
+              }
+            },
+            {
+              "name": "n",
+              "type": "number"
+            }
+          ],
+          "returns": {
+            "record": {
+              "stock": "number",
+              "reserved": "number",
+              "shipped": "number",
+              "received": "number"
+            }
+          },
+          "body": {
+            "op": "record",
+            "fields": {
+              "stock": {
+                "op": "subtract",
+                "left": {
+                  "op": "field",
+                  "value": {
+                    "op": "ref",
+                    "name": "model"
+                  },
+                  "key": "stock"
+                },
+                "right": {
+                  "op": "ref",
+                  "name": "n"
+                }
+              },
+              "reserved": {
+                "op": "subtract",
+                "left": {
+                  "op": "field",
+                  "value": {
+                    "op": "ref",
+                    "name": "model"
+                  },
+                  "key": "reserved"
+                },
+                "right": {
+                  "op": "ref",
+                  "name": "n"
+                }
+              },
+              "shipped": {
+                "op": "add",
+                "left": {
+                  "op": "field",
+                  "value": {
+                    "op": "ref",
+                    "name": "model"
+                  },
+                  "key": "shipped"
+                },
+                "right": {
+                  "op": "ref",
+                  "name": "n"
+                }
+              },
+              "received": {
+                "op": "field",
+                "value": {
+                  "op": "ref",
+                  "name": "model"
+                },
+                "key": "received"
+              }
+            }
+          }
+        },
+        {
+          "name": "cancel",
+          "params": [
+            {
+              "name": "model",
+              "type": {
+                "record": {
+                  "stock": "number",
+                  "reserved": "number",
+                  "shipped": "number",
+                  "received": "number"
+                }
+              }
+            },
+            {
+              "name": "n",
+              "type": "number"
+            }
+          ],
+          "returns": {
+            "record": {
+              "stock": "number",
+              "reserved": "number",
+              "shipped": "number",
+              "received": "number"
+            }
+          },
+          "body": {
+            "op": "record",
+            "fields": {
+              "stock": {
+                "op": "field",
+                "value": {
+                  "op": "ref",
+                  "name": "model"
+                },
+                "key": "stock"
+              },
+              "reserved": {
+                "op": "subtract",
+                "left": {
+                  "op": "field",
+                  "value": {
+                    "op": "ref",
+                    "name": "model"
+                  },
+                  "key": "reserved"
+                },
+                "right": {
+                  "op": "ref",
+                  "name": "n"
+                }
+              },
+              "shipped": {
+                "op": "field",
+                "value": {
+                  "op": "ref",
+                  "name": "model"
+                },
+                "key": "shipped"
+              },
+              "received": {
+                "op": "field",
+                "value": {
+                  "op": "ref",
+                  "name": "model"
+                },
+                "key": "received"
+              }
+            }
+          }
+        },
+        {
+          "name": "restock",
+          "params": [
+            {
+              "name": "model",
+              "type": {
+                "record": {
+                  "stock": "number",
+                  "reserved": "number",
+                  "shipped": "number",
+                  "received": "number"
+                }
+              }
+            },
+            {
+              "name": "n",
+              "type": "number"
+            }
+          ],
+          "returns": {
+            "record": {
+              "stock": "number",
+              "reserved": "number",
+              "shipped": "number",
+              "received": "number"
+            }
+          },
+          "body": {
+            "op": "record",
+            "fields": {
+              "stock": {
+                "op": "add",
+                "left": {
+                  "op": "field",
+                  "value": {
+                    "op": "ref",
+                    "name": "model"
+                  },
+                  "key": "stock"
+                },
+                "right": {
+                  "op": "ref",
+                  "name": "n"
+                }
+              },
+              "reserved": {
+                "op": "field",
+                "value": {
+                  "op": "ref",
+                  "name": "model"
+                },
+                "key": "reserved"
+              },
+              "shipped": {
+                "op": "field",
+                "value": {
+                  "op": "ref",
+                  "name": "model"
+                },
+                "key": "shipped"
+              },
+              "received": {
+                "op": "add",
+                "left": {
+                  "op": "field",
+                  "value": {
+                    "op": "ref",
+                    "name": "model"
+                  },
+                  "key": "received"
+                },
+                "right": {
+                  "op": "ref",
+                  "name": "n"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "canReserve",
+          "params": [
+            {
+              "name": "model",
+              "type": {
+                "record": {
+                  "stock": "number",
+                  "reserved": "number",
+                  "shipped": "number",
+                  "received": "number"
+                }
+              }
+            },
+            {
+              "name": "n",
+              "type": "number"
+            }
+          ],
+          "returns": "boolean",
+          "body": {
+            "op": "and",
+            "left": {
+              "op": "call",
+              "function": "validAmount",
+              "args": [
+                {
+                  "op": "ref",
+                  "name": "n"
+                }
+              ]
+            },
+            "right": {
+              "op": "lte",
+              "left": {
+                "op": "ref",
+                "name": "n"
+              },
+              "right": {
+                "op": "subtract",
+                "left": {
+                  "op": "field",
+                  "value": {
+                    "op": "ref",
+                    "name": "model"
+                  },
+                  "key": "stock"
+                },
+                "right": {
+                  "op": "field",
+                  "value": {
+                    "op": "ref",
+                    "name": "model"
+                  },
+                  "key": "reserved"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "canShip",
+          "params": [
+            {
+              "name": "model",
+              "type": {
+                "record": {
+                  "stock": "number",
+                  "reserved": "number",
+                  "shipped": "number",
+                  "received": "number"
+                }
+              }
+            },
+            {
+              "name": "n",
+              "type": "number"
+            }
+          ],
+          "returns": "boolean",
+          "body": {
+            "op": "and",
+            "left": {
+              "op": "call",
+              "function": "validAmount",
+              "args": [
+                {
+                  "op": "ref",
+                  "name": "n"
+                }
+              ]
+            },
+            "right": {
+              "op": "lte",
+              "left": {
+                "op": "ref",
+                "name": "n"
+              },
+              "right": {
+                "op": "field",
+                "value": {
+                  "op": "ref",
+                  "name": "model"
+                },
+                "key": "reserved"
+              }
+            }
+          }
+        },
+        {
+          "name": "canCancel",
+          "params": [
+            {
+              "name": "model",
+              "type": {
+                "record": {
+                  "stock": "number",
+                  "reserved": "number",
+                  "shipped": "number",
+                  "received": "number"
+                }
+              }
+            },
+            {
+              "name": "n",
+              "type": "number"
+            }
+          ],
+          "returns": "boolean",
+          "body": {
+            "op": "and",
+            "left": {
+              "op": "call",
+              "function": "validAmount",
+              "args": [
+                {
+                  "op": "ref",
+                  "name": "n"
+                }
+              ]
+            },
+            "right": {
+              "op": "lte",
+              "left": {
+                "op": "ref",
+                "name": "n"
+              },
+              "right": {
+                "op": "field",
+                "value": {
+                  "op": "ref",
+                  "name": "model"
+                },
+                "key": "reserved"
+              }
+            }
+          }
+        },
+        {
+          "name": "canRestock",
+          "params": [
+            {
+              "name": "model",
+              "type": {
+                "record": {
+                  "stock": "number",
+                  "reserved": "number",
+                  "shipped": "number",
+                  "received": "number"
+                }
+              }
+            },
+            {
+              "name": "n",
+              "type": "number"
+            }
+          ],
+          "returns": "boolean",
+          "body": {
+            "op": "call",
+            "function": "validAmount",
+            "args": [
+              {
+                "op": "ref",
+                "name": "n"
+              }
+            ]
+          }
+        },
+        {
+          "name": "canClose",
+          "params": [
+            {
+              "name": "model",
+              "type": {
+                "record": {
+                  "stock": "number",
+                  "reserved": "number",
+                  "shipped": "number",
+                  "received": "number"
+                }
+              }
+            }
+          ],
+          "returns": "boolean",
+          "body": {
+            "op": "equal",
+            "left": {
+              "op": "field",
+              "value": {
+                "op": "ref",
+                "name": "model"
+              },
+              "key": "reserved"
+            },
+            "right": {
+              "op": "literal",
+              "type": "number",
+              "value": 0
+            }
+          }
+        },
+        {
+          "name": "validStock",
+          "params": [
+            {
+              "name": "model",
+              "type": {
+                "record": {
+                  "stock": "number",
+                  "reserved": "number",
+                  "shipped": "number",
+                  "received": "number"
+                }
+              }
+            }
+          ],
+          "returns": "boolean",
+          "body": {
+            "op": "and",
+            "left": {
+              "op": "and",
+              "left": {
+                "op": "and",
+                "left": {
+                  "op": "and",
+                  "left": {
+                    "op": "and",
+                    "left": {
+                      "op": "gte",
+                      "left": {
+                        "op": "field",
+                        "value": {
+                          "op": "ref",
+                          "name": "model"
+                        },
+                        "key": "stock"
+                      },
+                      "right": {
+                        "op": "literal",
+                        "type": "number",
+                        "value": 0
+                      }
+                    },
+                    "right": {
+                      "op": "equal",
+                      "left": {
+                        "op": "field",
+                        "value": {
+                          "op": "ref",
+                          "name": "model"
+                        },
+                        "key": "stock"
+                      },
+                      "right": {
+                        "op": "floor",
+                        "value": {
+                          "op": "field",
+                          "value": {
+                            "op": "ref",
+                            "name": "model"
+                          },
+                          "key": "stock"
+                        }
+                      }
+                    }
+                  },
+                  "right": {
+                    "op": "and",
+                    "left": {
+                      "op": "gte",
+                      "left": {
+                        "op": "field",
+                        "value": {
+                          "op": "ref",
+                          "name": "model"
+                        },
+                        "key": "reserved"
+                      },
+                      "right": {
+                        "op": "literal",
+                        "type": "number",
+                        "value": 0
+                      }
+                    },
+                    "right": {
+                      "op": "equal",
+                      "left": {
+                        "op": "field",
+                        "value": {
+                          "op": "ref",
+                          "name": "model"
+                        },
+                        "key": "reserved"
+                      },
+                      "right": {
+                        "op": "floor",
+                        "value": {
+                          "op": "field",
+                          "value": {
+                            "op": "ref",
+                            "name": "model"
+                          },
+                          "key": "reserved"
+                        }
+                      }
+                    }
+                  }
+                },
+                "right": {
+                  "op": "and",
+                  "left": {
+                    "op": "gte",
+                    "left": {
+                      "op": "field",
+                      "value": {
+                        "op": "ref",
+                        "name": "model"
+                      },
+                      "key": "shipped"
+                    },
+                    "right": {
+                      "op": "literal",
+                      "type": "number",
+                      "value": 0
+                    }
+                  },
+                  "right": {
+                    "op": "equal",
+                    "left": {
+                      "op": "field",
+                      "value": {
+                        "op": "ref",
+                        "name": "model"
+                      },
+                      "key": "shipped"
+                    },
+                    "right": {
+                      "op": "floor",
+                      "value": {
+                        "op": "field",
+                        "value": {
+                          "op": "ref",
+                          "name": "model"
+                        },
+                        "key": "shipped"
+                      }
+                    }
+                  }
+                }
+              },
+              "right": {
+                "op": "and",
+                "left": {
+                  "op": "gte",
+                  "left": {
+                    "op": "field",
+                    "value": {
+                      "op": "ref",
+                      "name": "model"
+                    },
+                    "key": "received"
+                  },
+                  "right": {
+                    "op": "literal",
+                    "type": "number",
+                    "value": 0
+                  }
+                },
+                "right": {
+                  "op": "equal",
+                  "left": {
+                    "op": "field",
+                    "value": {
+                      "op": "ref",
+                      "name": "model"
+                    },
+                    "key": "received"
+                  },
+                  "right": {
+                    "op": "floor",
+                    "value": {
+                      "op": "field",
+                      "value": {
+                        "op": "ref",
+                        "name": "model"
+                      },
+                      "key": "received"
+                    }
+                  }
+                }
+              }
+            },
+            "right": {
+              "op": "lte",
+              "left": {
+                "op": "field",
+                "value": {
+                  "op": "ref",
+                  "name": "model"
+                },
+                "key": "reserved"
+              },
+              "right": {
+                "op": "field",
+                "value": {
+                  "op": "ref",
+                  "name": "model"
+                },
+                "key": "stock"
+              }
+            }
+          }
+        },
+        {
+          "name": "conserved",
+          "params": [
+            {
+              "name": "model",
+              "type": {
+                "record": {
+                  "stock": "number",
+                  "reserved": "number",
+                  "shipped": "number",
+                  "received": "number"
+                }
+              }
+            }
+          ],
+          "returns": "boolean",
+          "body": {
+            "op": "equal",
+            "left": {
+              "op": "add",
+              "left": {
+                "op": "field",
+                "value": {
+                  "op": "ref",
+                  "name": "model"
+                },
+                "key": "stock"
+              },
+              "right": {
+                "op": "field",
+                "value": {
+                  "op": "ref",
+                  "name": "model"
+                },
+                "key": "shipped"
+              }
+            },
+            "right": {
+              "op": "field",
+              "value": {
+                "op": "ref",
+                "name": "model"
+              },
+              "key": "received"
+            }
+          }
+        }
+      ],
+      "exports": [
+        "idle",
+        "reserve",
+        "ship",
+        "cancel",
+        "restock",
+        "canReserve",
+        "canShip",
+        "canCancel",
+        "canRestock",
+        "canClose",
+        "validStock",
+        "conserved"
+      ]
+    },
+    "cases": [
+      {
+        "id": "idle",
+        "function": "idle",
+        "args": [
+          {
+            "stock": 10,
+            "reserved": 0,
+            "shipped": 0,
+            "received": 10
+          }
+        ],
+        "expected": {
+          "stock": 10,
+          "reserved": 0,
+          "shipped": 0,
+          "received": 10
+        }
+      },
+      {
+        "id": "reserve",
+        "function": "reserve",
+        "args": [
+          {
+            "stock": 10,
+            "reserved": 0,
+            "shipped": 0,
+            "received": 10
+          },
+          3
+        ],
+        "expected": {
+          "stock": 10,
+          "reserved": 3,
+          "shipped": 0,
+          "received": 10
+        }
+      },
+      {
+        "id": "ship",
+        "function": "ship",
+        "args": [
+          {
+            "stock": 10,
+            "reserved": 3,
+            "shipped": 0,
+            "received": 10
+          },
+          2
+        ],
+        "expected": {
+          "stock": 8,
+          "reserved": 1,
+          "shipped": 2,
+          "received": 10
+        }
+      },
+      {
+        "id": "cancel",
+        "function": "cancel",
+        "args": [
+          {
+            "stock": 8,
+            "reserved": 1,
+            "shipped": 2,
+            "received": 10
+          },
+          1
+        ],
+        "expected": {
+          "stock": 8,
+          "reserved": 0,
+          "shipped": 2,
+          "received": 10
+        }
+      },
+      {
+        "id": "restock",
+        "function": "restock",
+        "args": [
+          {
+            "stock": 8,
+            "reserved": 0,
+            "shipped": 2,
+            "received": 10
+          },
+          4
+        ],
+        "expected": {
+          "stock": 12,
+          "reserved": 0,
+          "shipped": 2,
+          "received": 14
+        }
+      },
+      {
+        "id": "canReserve",
+        "function": "canReserve",
+        "args": [
+          {
+            "stock": 10,
+            "reserved": 0,
+            "shipped": 0,
+            "received": 10
+          },
+          3
+        ],
+        "expected": true
+      },
+      {
+        "id": "canReserveRejected",
+        "function": "canReserve",
+        "args": [
+          {
+            "stock": 10,
+            "reserved": 0,
+            "shipped": 0,
+            "received": 10
+          },
+          11
+        ],
+        "expected": false
+      },
+      {
+        "id": "canShip",
+        "function": "canShip",
+        "args": [
+          {
+            "stock": 10,
+            "reserved": 3,
+            "shipped": 0,
+            "received": 10
+          },
+          2
+        ],
+        "expected": true
+      },
+      {
+        "id": "canShipRejected",
+        "function": "canShip",
+        "args": [
+          {
+            "stock": 10,
+            "reserved": 0,
+            "shipped": 0,
+            "received": 10
+          },
+          1
+        ],
+        "expected": false
+      },
+      {
+        "id": "canCancel",
+        "function": "canCancel",
+        "args": [
+          {
+            "stock": 10,
+            "reserved": 3,
+            "shipped": 0,
+            "received": 10
+          },
+          1
+        ],
+        "expected": true
+      },
+      {
+        "id": "canRestock",
+        "function": "canRestock",
+        "args": [
+          {
+            "stock": 10,
+            "reserved": 0,
+            "shipped": 0,
+            "received": 10
+          },
+          4
+        ],
+        "expected": true
+      },
+      {
+        "id": "canRestockFraction",
+        "function": "canRestock",
+        "args": [
+          {
+            "stock": 10,
+            "reserved": 0,
+            "shipped": 0,
+            "received": 10
+          },
+          0.5
+        ],
+        "expected": false
+      },
+      {
+        "id": "canClose",
+        "function": "canClose",
+        "args": [
+          {
+            "stock": 10,
+            "reserved": 0,
+            "shipped": 0,
+            "received": 10
+          }
+        ],
+        "expected": true
+      },
+      {
+        "id": "canCloseReserved",
+        "function": "canClose",
+        "args": [
+          {
+            "stock": 10,
+            "reserved": 3,
+            "shipped": 0,
+            "received": 10
+          }
+        ],
+        "expected": false
+      },
+      {
+        "id": "validStock",
+        "function": "validStock",
+        "args": [
+          {
+            "stock": 10,
+            "reserved": 0,
+            "shipped": 0,
+            "received": 10
+          }
+        ],
+        "expected": true
+      },
+      {
+        "id": "conserved",
+        "function": "conserved",
+        "args": [
+          {
+            "stock": 10,
+            "reserved": 0,
+            "shipped": 0,
+            "received": 10
+          }
+        ],
+        "expected": true
+      }
+    ],
+    "requirements": [
+      {
+        "id": "declared-functions",
+        "statement": "The typed rules produce the specified values before session-level scenarios are checked.",
+        "cases": [
+          "idle",
+          "reserve",
+          "ship",
+          "cancel",
+          "restock",
+          "canReserve",
+          "canReserveRejected",
+          "canShip",
+          "canShipRejected",
+          "canCancel",
+          "canRestock",
+          "canRestockFraction",
+          "canClose",
+          "canCloseReserved",
+          "validStock",
+          "conserved"
+        ]
+      }
+    ]
+  },
+  "system": {
+    "schema": "axm.code-system/v0.1",
+    "domain": "software",
+    "initial_model": {
+      "stock": 10,
+      "reserved": 0,
+      "shipped": 0,
+      "received": 10
+    },
+    "machine": {
+      "schema": "axm.deterministic-state-machine/v0.1",
+      "id": "stock-service",
+      "states": [
+        "open",
+        "closed"
+      ],
+      "initial_state": "open",
+      "transitions": [
+        {
+          "from": "open",
+          "event": "reserve",
+          "to": "open",
+          "effects": []
+        },
+        {
+          "from": "open",
+          "event": "ship",
+          "to": "open",
+          "effects": []
+        },
+        {
+          "from": "open",
+          "event": "cancel",
+          "to": "open",
+          "effects": []
+        },
+        {
+          "from": "open",
+          "event": "restock",
+          "to": "open",
+          "effects": []
+        },
+        {
+          "from": "open",
+          "event": "close",
+          "to": "closed",
+          "effects": [
+            {
+              "type": "closed"
+            }
+          ]
+        },
+        {
+          "from": "closed",
+          "event": "reopen",
+          "to": "open",
+          "effects": []
+        }
+      ]
+    },
+    "bindings": [
+      {
+        "event": "reserve",
+        "reducer": "reserve",
+        "guard": "canReserve"
+      },
+      {
+        "event": "ship",
+        "reducer": "ship",
+        "guard": "canShip"
+      },
+      {
+        "event": "cancel",
+        "reducer": "cancel",
+        "guard": "canCancel"
+      },
+      {
+        "event": "restock",
+        "reducer": "restock",
+        "guard": "canRestock"
+      },
+      {
+        "event": "close",
+        "reducer": "idle",
+        "guard": "canClose"
+      },
+      {
+        "event": "reopen",
+        "reducer": "idle"
+      }
+    ],
+    "invariants": [
+      {
+        "id": "stock-bounds",
+        "function": "validStock",
+        "statement": "Quantities are whole and nonnegative; reserved stock does not exceed available stock."
+      },
+      {
+        "id": "stock-conservation",
+        "function": "conserved",
+        "statement": "On-hand plus shipped stock equals total received stock."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "order-lifecycle",
+        "steps": [
+          {
+            "event": {
+              "type": "reserve",
+              "args": [
+                3
+              ]
+            },
+            "expect": {
+              "status": "APPLIED",
+              "state": {
+                "phase": "open",
+                "model": {
+                  "stock": 10,
+                  "reserved": 3,
+                  "shipped": 0,
+                  "received": 10
+                }
+              }
+            }
+          },
+          {
+            "event": {
+              "type": "close",
+              "args": []
+            },
+            "expect": {
+              "status": "HOLD_GUARD",
+              "state": {
+                "phase": "open",
+                "model": {
+                  "stock": 10,
+                  "reserved": 3,
+                  "shipped": 0,
+                  "received": 10
+                }
+              }
+            }
+          },
+          {
+            "event": {
+              "type": "ship",
+              "args": [
+                2
+              ]
+            },
+            "expect": {
+              "status": "APPLIED",
+              "state": {
+                "phase": "open",
+                "model": {
+                  "stock": 8,
+                  "reserved": 1,
+                  "shipped": 2,
+                  "received": 10
+                }
+              }
+            }
+          },
+          {
+            "event": {
+              "type": "cancel",
+              "args": [
+                1
+              ]
+            },
+            "expect": {
+              "status": "APPLIED",
+              "state": {
+                "phase": "open",
+                "model": {
+                  "stock": 8,
+                  "reserved": 0,
+                  "shipped": 2,
+                  "received": 10
+                }
+              }
+            }
+          },
+          {
+            "event": {
+              "type": "restock",
+              "args": [
+                4
+              ]
+            },
+            "expect": {
+              "status": "APPLIED",
+              "state": {
+                "phase": "open",
+                "model": {
+                  "stock": 12,
+                  "reserved": 0,
+                  "shipped": 2,
+                  "received": 14
+                }
+              }
+            }
+          },
+          {
+            "event": {
+              "type": "close",
+              "args": []
+            },
+            "expect": {
+              "status": "APPLIED",
+              "state": {
+                "phase": "closed",
+                "model": {
+                  "stock": 12,
+                  "reserved": 0,
+                  "shipped": 2,
+                  "received": 14
+                }
+              },
+              "effects": [
+                {
+                  "type": "closed"
+                }
+              ]
+            }
+          },
+          {
+            "event": {
+              "type": "reserve",
+              "args": [
+                1
+              ]
+            },
+            "expect": {
+              "status": "HOLD_NO_TRANSITION",
+              "state": {
+                "phase": "closed",
+                "model": {
+                  "stock": 12,
+                  "reserved": 0,
+                  "shipped": 2,
+                  "received": 14
+                }
+              }
+            }
+          },
+          {
+            "event": {
+              "type": "reopen",
+              "args": []
+            },
+            "expect": {
+              "status": "APPLIED",
+              "state": {
+                "phase": "open",
+                "model": {
+                  "stock": 12,
+                  "reserved": 0,
+                  "shipped": 2,
+                  "received": 14
+                }
+              }
+            }
+          },
+          {
+            "event": {
+              "type": "reserve",
+              "args": [
+                13
+              ]
+            },
+            "expect": {
+              "status": "HOLD_GUARD",
+              "state": {
+                "phase": "open",
+                "model": {
+                  "stock": 12,
+                  "reserved": 0,
+                  "shipped": 2,
+                  "received": 14
+                }
+              }
+            }
+          },
+          {
+            "event": {
+              "type": "reserve",
+              "args": [
+                true
+              ]
+            },
+            "expect": {
+              "status": "HOLD_ARGUMENTS",
+              "state": {
+                "phase": "open",
+                "model": {
+                  "stock": 12,
+                  "reserved": 0,
+                  "shipped": 2,
+                  "received": 14
+                }
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "exploration": {
+      "events": [
+        {
+          "type": "reserve",
+          "args": [
+            2
+          ]
+        },
+        {
+          "type": "ship",
+          "args": [
+            1
+          ]
+        },
+        {
+          "type": "cancel",
+          "args": [
+            1
+          ]
+        },
+        {
+          "type": "restock",
+          "args": [
+            2
+          ]
+        },
+        {
+          "type": "close",
+          "args": []
+        },
+        {
+          "type": "reopen",
+          "args": []
+        }
+      ],
+      "max_depth": 5,
+      "max_states": 2048,
+      "max_edges": 10000
+    }
+  }
+}
