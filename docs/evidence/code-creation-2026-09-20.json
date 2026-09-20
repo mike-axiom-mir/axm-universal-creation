@@ -1,0 +1,40 @@
+{
+  "schema": "axm.uc.code-creation-evidence.v1",
+  "result": "TESTED",
+  "base": "54931ee61f2a3da6fe12a441ca7fe3717ba3198f",
+  "testedTreeBeforeEvidence": "54b678e8d3432710903a1f781f739fa546430248",
+  "runtimes": {
+    "node": "24.19.0",
+    "python": "3.12.14"
+  },
+  "fullSuite": {
+    "command": "PYTHONPATH=src python -m unittest discover -s tests -p 'test_*.py' -v",
+    "tests": 1239,
+    "skipped": 5,
+    "result": "OK",
+    "logSha256": "e285758cc27acf99cb5beb48920cc55add56a80cfb827db409202a193fd8d339"
+  },
+  "focusedTests": 10,
+  "additionalChecks": [
+    "Python compileall source/tests",
+    "Node character-inspector input routing"
+  ],
+  "demonstrations": [
+    "Two-function restock planner: four requirements and four cases in both languages, two fresh executions each",
+    "Restore two retained functions, compose total-units fold and retain exactly one additional function",
+    "Published project selftests execute independently of UC",
+    "Relocated bundled adapter runs without donor checkout",
+    "Tampered source/archive bytes and caller-supplied pass evidence refused",
+    "Failed expectations retain no archive or project; existing projects and machine body protected"
+  ],
+  "sources": {
+    "grammar": "6e9efc2ebf759f9e2d03c933eafaf71856357471",
+    "professionFabric": "c7ab2a0e655a755770b962100d3b212aa56c45c8"
+  },
+  "limits": [
+    "JavaScript/Python pure functions, not complete applications or all 102 executable languages",
+    "Declared case evidence is not full requirements or branch coverage",
+    "Bounded generated-code execution is not an OS sandbox",
+    "CI results on other platforms are separate evidence"
+  ]
+}

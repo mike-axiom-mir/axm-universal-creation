@@ -35,16 +35,26 @@ language groups and returns the selected entries plus counts omitted from the
 projection. Original input state is not changed. This creates a selection plan;
 it does not draw it or measure frame rate. Input is capped at 10,000 atoms.
 
-All three commands accept at most 1 MiB of JSON, reject non-finite Python inputs,
+The original commands accept at most 1 MiB of JSON, reject non-finite Python inputs,
 and stop subprocess work after 30 seconds. Grammar 102's pinned source archive
 is hash-checked, extracted as ordinary files into a temporary directory, executed
 through its supplied stdin CLI and removed afterwards. No installation hooks or
 package-manager operation runs at invocation. The packed source remains readable
 by extracting `third_party/grammar-workbench/grammar-102.tgz`.
 
+## Programming creation
+
+`code-program` exposes typed source generation and structural function reuse.
+`code-workflow` composes six bundled professional procedures for requirements,
+repeatable builds, actual runtime evidence and explicit retention. The ordinary
+`create` route accepts `code-program-project` to save source, tests and
+construction together. See [PROGRAMMING_CREATION.md](PROGRAMMING_CREATION.md).
+All required components live inside UC; source repositories are provenance,
+not runtime dependencies. These executable targets are JavaScript/Python only.
+
 ## Provenance and evidence
 
-Grammar 102: `ff58375b65a4033041e6de957263d4146aa7429e`.
+Grammar 102: `6e9efc2ebf759f9e2d03c933eafaf71856357471`.
 The 1.1 MB compressed archive is produced by the upstream `npm pack --ignore-scripts`
 allowlist (approximately 14.8 MB unpacked). It contains the actual 102-language
 package, not a source redirect. Its license is included inside the package.

@@ -1,0 +1,30 @@
+name: Standalone code creation
+on:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  code-creation:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            python: '3.11'
+            node: '20'
+          - os: windows-latest
+            python: '3.13'
+            node: '22'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Verify bundled code creation and relocated standalone execution
+        env:
+          PYTHONPATH: src
+        run: python -m unittest discover -s tests -p test_code_creation.py -v

@@ -1,0 +1,298 @@
+{
+  "action": "retain",
+  "job": {
+    "id": "restock-planner",
+    "program": {
+      "schema": "axm.code.program.v1",
+      "name": "inventoryRestock",
+      "functions": [
+        {
+          "name": "missingUnits",
+          "params": [
+            {
+              "name": "target",
+              "type": "number"
+            },
+            {
+              "name": "stock",
+              "type": "number"
+            }
+          ],
+          "returns": "number",
+          "body": {
+            "op": "max",
+            "left": {
+              "op": "literal",
+              "type": "number",
+              "value": 0
+            },
+            "right": {
+              "op": "floor",
+              "value": {
+                "op": "subtract",
+                "left": {
+                  "op": "ref",
+                  "name": "target"
+                },
+                "right": {
+                  "op": "ref",
+                  "name": "stock"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "restock",
+          "params": [
+            {
+              "name": "items",
+              "type": {
+                "list": {
+                  "record": {
+                    "sku": "string",
+                    "stock": "number",
+                    "reorderPoint": "number",
+                    "target": "number"
+                  }
+                }
+              }
+            }
+          ],
+          "returns": {
+            "list": {
+              "record": {
+                "sku": "string",
+                "quantity": "number"
+              }
+            }
+          },
+          "body": {
+            "op": "sortBy",
+            "input": {
+              "op": "filter",
+              "input": {
+                "op": "map",
+                "input": {
+                  "op": "filter",
+                  "input": {
+                    "op": "ref",
+                    "name": "items"
+                  },
+                  "item": "stockRow",
+                  "body": {
+                    "op": "lt",
+                    "left": {
+                      "op": "field",
+                      "value": {
+                        "op": "ref",
+                        "name": "stockRow"
+                      },
+                      "key": "stock"
+                    },
+                    "right": {
+                      "op": "field",
+                      "value": {
+                        "op": "ref",
+                        "name": "stockRow"
+                      },
+                      "key": "reorderPoint"
+                    }
+                  }
+                },
+                "item": "stockRow",
+                "body": {
+                  "op": "record",
+                  "fields": {
+                    "sku": {
+                      "op": "trim",
+                      "value": {
+                        "op": "field",
+                        "value": {
+                          "op": "ref",
+                          "name": "stockRow"
+                        },
+                        "key": "sku"
+                      }
+                    },
+                    "quantity": {
+                      "op": "call",
+                      "function": "missingUnits",
+                      "args": [
+                        {
+                          "op": "field",
+                          "value": {
+                            "op": "ref",
+                            "name": "stockRow"
+                          },
+                          "key": "target"
+                        },
+                        {
+                          "op": "field",
+                          "value": {
+                            "op": "ref",
+                            "name": "stockRow"
+                          },
+                          "key": "stock"
+                        }
+                      ]
+                    }
+                  }
+                }
+              },
+              "item": "orderRow",
+              "body": {
+                "op": "gt",
+                "left": {
+                  "op": "field",
+                  "value": {
+                    "op": "ref",
+                    "name": "orderRow"
+                  },
+                  "key": "quantity"
+                },
+                "right": {
+                  "op": "literal",
+                  "type": "number",
+                  "value": 0
+                }
+              }
+            },
+            "item": "sortedRow",
+            "key": {
+              "op": "field",
+              "value": {
+                "op": "ref",
+                "name": "sortedRow"
+              },
+              "key": "sku"
+            },
+            "descending": false
+          }
+        }
+      ],
+      "exports": [
+        "restock"
+      ]
+    },
+    "cases": [
+      {
+        "id": "mixed",
+        "function": "restock",
+        "args": [
+          [
+            {
+              "sku": " BOLT ",
+              "stock": 2,
+              "reorderPoint": 4,
+              "target": 10
+            },
+            {
+              "sku": "FULL",
+              "stock": 5,
+              "reorderPoint": 5,
+              "target": 20
+            },
+            {
+              "sku": "AXLE",
+              "stock": 1,
+              "reorderPoint": 2,
+              "target": 7
+            },
+            {
+              "sku": "ZERO",
+              "stock": 3,
+              "reorderPoint": 4,
+              "target": 1
+            }
+          ]
+        ],
+        "expected": [
+          {
+            "sku": "AXLE",
+            "quantity": 6
+          },
+          {
+            "sku": "BOLT",
+            "quantity": 8
+          }
+        ]
+      },
+      {
+        "id": "empty",
+        "function": "restock",
+        "args": [
+          []
+        ],
+        "expected": []
+      },
+      {
+        "id": "whole-units",
+        "function": "restock",
+        "args": [
+          [
+            {
+              "sku": "PART",
+              "stock": 1.1,
+              "reorderPoint": 2,
+              "target": 3.9
+            }
+          ]
+        ],
+        "expected": [
+          {
+            "sku": "PART",
+            "quantity": 2
+          }
+        ]
+      },
+      {
+        "id": "invalid-record",
+        "function": "restock",
+        "args": [
+          [
+            {
+              "sku": "BAD",
+              "stock": true,
+              "reorderPoint": 2,
+              "target": 3
+            }
+          ]
+        ],
+        "error": "VALUE_TYPE"
+      }
+    ],
+    "requirements": [
+      {
+        "id": "selection",
+        "statement": "Order only below the reorder point; omit zero quantities and handle empty input.",
+        "cases": [
+          "mixed",
+          "empty"
+        ]
+      },
+      {
+        "id": "quantity",
+        "statement": "Clamp missing whole units to zero using floor(target minus stock).",
+        "cases": [
+          "whole-units",
+          "mixed"
+        ]
+      },
+      {
+        "id": "identity",
+        "statement": "Trim labels and sort the resulting orders by Unicode code-point SKU order.",
+        "cases": [
+          "mixed"
+        ]
+      },
+      {
+        "id": "input-contract",
+        "statement": "Reject booleans where the stock contract requires numbers.",
+        "cases": [
+          "invalid-record"
+        ]
+      }
+    ]
+  }
+}
