@@ -58,8 +58,11 @@ character appearance or target-engine compatibility.
 
 ## Boundaries
 
-No automatic bone placement, inferred rig, bone rest rotations, animated scale,
-retargeting, IK, foot contact, corrective shape, cloth simulation or face solving.
+The explicit route does not infer bone placement, bone rest rotations, animated
+scale, retargeting, corrective shapes, cloth or face solving. The optional
+[body-fitted performance route](CHARACTER_PERFORMANCE.md) now adds declared
+landmark fitting, segment-distance skin fields and sampled two-bone reach/walk
+with stationary support targets at authored samples.
 Explicit vertex arrays must be rebound if topology changes; axis fields regenerate
 from the new geometry. Existing character sockets/clothing regions remain retained
 metadata, not animated socket or garment-fit proof. Material-response HOLDs remain
@@ -67,14 +70,20 @@ unchanged. Pose sampling checks positions; it does not validate shaded normals.
 Topology, collision and deformation quality during arbitrary motion remain separate
 checks. Source recipes remain authoritative; no export replaces them.
 
-## Next major build: body-aware character performance compiler
+## Body-aware performance: delivered slice and remaining work
+
+The first connected slice below is now implemented in `character_performance.py`:
+body-relative landmarks, regenerated segment weights, bend limits, reach targets
+and walk support phases. See [its contract and evidence procedure](CHARACTER_PERFORMANCE.md).
+Influence masks, corrective deformation, expression/response integration and
+runtime contact repair below remain future work.
 
 The current main already contains generic form patterns, character semantics,
 material responses, Creative Hands skeleton/skin/pose tools, two-bone solve math,
 and GLB pose evaluation. The remaining high-value work is making those tools
 cooperate around a reusable body and intended performance.
 
-Build one connected slice with these outputs:
+The larger direction remains:
 
 1. **Body-family rig recipes.** Landmark and joint relationships expressed against
    named form parts and dimensions. Fit the same biped, quadruped or branching rig
