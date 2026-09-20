@@ -1,0 +1,257 @@
+{
+  "kind": "animated-character-recipe-asset",
+  "inputs": {
+    "path": "creations/bonsai-wave.glb",
+    "recipe": {
+      "schema": "axm.character-recipe/v0.1",
+      "name": "Bonsai race test character",
+      "character": {
+        "race_id": "bonsai-nature-race",
+        "body_family": "rooted-small-tree",
+        "height_m": 1.35
+      },
+      "form": {
+        "schema": "axm.form-pattern/v0.1",
+        "name": "Small tree person",
+        "parts": [
+          {
+            "id": "trunk",
+            "role": "trunk",
+            "pattern": "loft",
+            "sections": [
+              {
+                "at": 0.1,
+                "radius": [
+                  0.22,
+                  0.18
+                ]
+              },
+              {
+                "at": 0.7,
+                "radius": [
+                  0.3,
+                  0.22
+                ],
+                "offset": [
+                  0.03,
+                  0.0
+                ]
+              },
+              {
+                "at": 1.1,
+                "radius": [
+                  0.25,
+                  0.2
+                ],
+                "offset": [
+                  -0.02,
+                  0.01
+                ]
+              }
+            ],
+            "segments": 16,
+            "material": {
+              "color": "#76502FFF",
+              "metallic": 0.0,
+              "roughness": 0.78
+            }
+          },
+          {
+            "id": "branch-left",
+            "role": "branch",
+            "pattern": "tube",
+            "path": [
+              [
+                -0.08,
+                0.0,
+                0.85
+              ],
+              [
+                -0.3,
+                0.0,
+                1.18
+              ],
+              [
+                -0.5,
+                0.02,
+                1.32
+              ]
+            ],
+            "radius": [
+              0.07,
+              0.05,
+              0.025
+            ],
+            "segments": 10,
+            "material": {
+              "color": "#4A2C18FF",
+              "metallic": 0.0,
+              "roughness": 0.82
+            }
+          },
+          {
+            "id": "eye-shell",
+            "role": "face",
+            "pattern": "revolve",
+            "profile": [
+              [
+                0.02,
+                -0.08
+              ],
+              [
+                0.1,
+                -0.04
+              ],
+              [
+                0.12,
+                0.04
+              ],
+              [
+                0.04,
+                0.08
+              ]
+            ],
+            "segments": 18,
+            "translation": [
+              0.0,
+              -0.2,
+              0.92
+            ],
+            "rotation": [
+              1.57079632679,
+              0.0,
+              0.0
+            ],
+            "material": {
+              "color": "#A86934FF",
+              "metallic": 0.0,
+              "roughness": 0.45
+            }
+          }
+        ],
+        "metadata": {
+          "intent": "cute bonsai-tree playable race"
+        }
+      },
+      "sockets": [
+        {
+          "id": "hand-right",
+          "part": "trunk",
+          "position": [
+            0.28,
+            0.0,
+            0.72
+          ],
+          "purpose": "tool attachment"
+        }
+      ],
+      "clothing_regions": [
+        {
+          "id": "torso-wrap",
+          "parts": [
+            "trunk"
+          ],
+          "body_family": "rooted-small-tree",
+          "attachment_tags": [
+            "wrap",
+            "belt"
+          ]
+        }
+      ],
+      "material_intent": {
+        "families": [
+          "wood",
+          "moss",
+          "leaf"
+        ],
+        "response": {
+          "family": "wood-oiled"
+        },
+        "part_responses": {
+          "branch-left": {
+            "family": "wood-oiled"
+          }
+        },
+        "notes": "retained intent; renderer binding remains separate"
+      },
+      "rig": {
+        "schema": "axm.character-rig/v0.1",
+        "joints": [
+          {
+            "id": "root",
+            "parent": null,
+            "translation": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "id": "branch",
+            "parent": "root",
+            "translation": [
+              0,
+              0,
+              0.85
+            ]
+          }
+        ],
+        "bindings": {
+          "trunk": {
+            "axis_blend": {
+              "from": "root",
+              "to": "branch",
+              "axis": 2,
+              "range": [
+                0,
+                1.4
+              ]
+            }
+          },
+          "eye-shell": {
+            "joint": "root"
+          },
+          "branch-left": {
+            "joint": "branch"
+          }
+        }
+      },
+      "animation": [
+        {
+          "name": "wave",
+          "tracks": [
+            {
+              "joint": "branch",
+              "path": "rotation",
+              "times": [
+                0,
+                1,
+                2
+              ],
+              "values": [
+                [
+                  0,
+                  0,
+                  0,
+                  1
+                ],
+                [
+                  0,
+                  0.7071067811865475,
+                  0,
+                  0.7071067811865476
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  1
+                ]
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

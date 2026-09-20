@@ -91,3 +91,10 @@ This convergence proves structural creation/routing/source retention only where 
 tests and generated artifacts actually exercise it. It does not convert a green unit
 suite into visual acceptance, generic rigging, universal clothing fit, target-engine
 gameplay, or automatic CANON.
+
+## Subsequent explicit motion extension
+
+The generic explicit rig/skin/clip construction path is now documented in
+[CHARACTER_MOTION_CONSTRUCTION.md](CHARACTER_MOTION_CONSTRUCTION.md). It closes
+the declared-motion composition gap while automatic anatomy/rig inference remains
+unsupported. The earlier static milestone above describes its original scope.
