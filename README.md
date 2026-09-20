@@ -442,3 +442,11 @@ inputs and incomplete searches stay visible. See [PIPELINE_MAP.md](PIPELINE_MAP.
 [GRAMMAR_WORKBENCH.md](GRAMMAR_WORKBENCH.md) exposes the packaged Grammar 102
 capability capsule, Grammar Glass sparse/full state comparison, and visual
 projection budgets through three offline JSON commands.
+
+## Licensing
+
+Current AXM-owned machine/workshop code: **PolyForm Noncommercial 1.0.0 + `CREATOR_OUTPUT_PERMISSION.md`**.
+
+Commercial Creator Output is allowed; commercial exploitation of the AXM creation machine itself requires separate permission.
+
+Earlier published versions keep any historical licenses already granted to those versions. Third-party material remains under its own terms. See `LICENSE`, `LICENSE_BOUNDARY.md`, and `CREATOR_OUTPUT_PERMISSION.md`.
