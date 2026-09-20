@@ -55,7 +55,9 @@ def main():
     scene.render.engine='BLENDER_EEVEE_NEXT'
     scene.render.image_settings.file_format='PNG'
     scene.render.film_transparent=False
-    scene.world.color=(0.025,0.028,0.022)
+    world=bpy.data.worlds.new('ProofWorld') if scene.world is None else scene.world
+    scene.world=world
+    world.color=(0.025,0.028,0.022)
 
     bpy.ops.mesh.primitive_plane_add(size=20,location=(0,0,-0.015))
     ground=bpy.context.object
