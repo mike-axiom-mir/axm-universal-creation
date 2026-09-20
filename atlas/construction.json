@@ -1,0 +1,528 @@
+{
+  "schema": "axm.creation-atlas-pack/v0.1",
+  "entries": [
+    {
+      "id": "file:glb",
+      "category": "file",
+      "label": "GLB",
+      "summary": "Native bounded glTF binary geometry and optional motion; target import needs its own checks.",
+      "status": "SUPPORTED_BOUNDED_FORMAT",
+      "data": {
+        "extension": ".glb",
+        "mime_type": "model/gltf-binary"
+      }
+    },
+    {
+      "id": "file:png",
+      "category": "file",
+      "label": "PNG",
+      "summary": "Native material map images; exact channel semantics live in the material bundle.",
+      "status": "SUPPORTED_BOUNDED_FORMAT",
+      "data": {
+        "extension": ".png",
+        "mime_type": "image/png"
+      }
+    },
+    {
+      "id": "file:wav",
+      "category": "file",
+      "label": "WAV",
+      "summary": "Bounded procedural PCM audio; listening quality is a separate observation.",
+      "status": "SUPPORTED_BOUNDED_FORMAT",
+      "data": {
+        "extension": ".wav",
+        "mime_type": "audio/wav"
+      }
+    },
+    {
+      "id": "protocol:construction-search",
+      "category": "protocol",
+      "label": "construction-search",
+      "summary": "Explicit controls, measured criteria, bounded search and decoded-output acceptance.",
+      "status": "IMPLEMENTED_CONTRACT",
+      "data": {
+        "schema": "axm.construction-search/v0.1"
+      },
+      "relations": [
+        {
+          "relation": "implemented-by",
+          "target": "capability:AXM-CAP-CONSTRUCTION-SEARCH"
+        }
+      ]
+    },
+    {
+      "id": "protocol:material-bundle",
+      "category": "protocol",
+      "label": "material-bundle",
+      "summary": "Map channel, color-space, normal orientation and content-integrity contract.",
+      "status": "IMPLEMENTED_CONTRACT",
+      "data": {
+        "schema": "axm.game-material/v0.1"
+      },
+      "relations": [
+        {
+          "relation": "implemented-by",
+          "target": "capability:AXM-CAP-INSPECT-GAME-MATERIAL"
+        }
+      ]
+    },
+    {
+      "id": "protocol:organ-goal",
+      "category": "protocol",
+      "label": "organ-goal",
+      "summary": "Exact required interfaces and caller bindings; missing or ambiguous providers hold.",
+      "status": "IMPLEMENTED_CONTRACT",
+      "data": {
+        "schema": "axm.interface-organ-goal/v0.1"
+      },
+      "relations": [
+        {
+          "relation": "implemented-by",
+          "target": "capability:AXM-CAP-COMPOSE-ORGAN-PROJECT"
+        }
+      ]
+    },
+    {
+      "id": "recipe:vessel",
+      "category": "recipe",
+      "label": "vessel",
+      "summary": "Editable measured construction search example; resolve this contract then apply the current goals.",
+      "status": "REPLAYABLE_EXAMPLE_CONTRACT",
+      "source_data": {
+        "path": "examples/construction-search/vessel.json",
+        "pointer": [
+          "inputs",
+          "search"
+        ]
+      },
+      "relations": [
+        {
+          "relation": "uses",
+          "target": "protocol:construction-search"
+        }
+      ],
+      "tags": [
+        "construction-search"
+      ]
+    },
+    {
+      "id": "recipe:broader-walker",
+      "category": "recipe",
+      "label": "broader-walker",
+      "summary": "Editable measured construction search example; resolve this contract then apply the current goals.",
+      "status": "REPLAYABLE_EXAMPLE_CONTRACT",
+      "source_data": {
+        "path": "examples/construction-search/broader-walker.json",
+        "pointer": [
+          "inputs",
+          "search"
+        ]
+      },
+      "relations": [
+        {
+          "relation": "uses",
+          "target": "protocol:construction-search"
+        }
+      ],
+      "tags": [
+        "construction-search"
+      ]
+    },
+    {
+      "id": "recipe:deformation-repair",
+      "category": "recipe",
+      "label": "deformation-repair",
+      "summary": "Editable measured construction search example; resolve this contract then apply the current goals.",
+      "status": "REPLAYABLE_EXAMPLE_CONTRACT",
+      "source_data": {
+        "path": "examples/construction-search/deformation-repair.json",
+        "pointer": [
+          "inputs",
+          "search"
+        ]
+      },
+      "relations": [
+        {
+          "relation": "uses",
+          "target": "protocol:construction-search"
+        }
+      ],
+      "tags": [
+        "construction-search"
+      ]
+    },
+    {
+      "id": "protocol:code-workflow",
+      "category": "protocol",
+      "label": "Verified typed-code workflow",
+      "summary": "Requirement-to-case mapping, repeatable compilation, observed JavaScript/Python execution and explicit function retention.",
+      "status": "IMPLEMENTED_BOUNDED_CODE_WORKFLOW",
+      "source_data": {
+        "path": "third_party/code-professions/provenance.json"
+      },
+      "relations": [
+        {
+          "relation": "implemented-by",
+          "target": "capability:AXM-CAP-CODE-PROGRAM-PROJECT"
+        }
+      ]
+    },
+    {
+      "id": "recipe:restock-code",
+      "category": "recipe",
+      "label": "Inventory restock program",
+      "summary": "Two typed functions, explicit acceptance cases and reusable function retention.",
+      "status": "REPLAYABLE_EXAMPLE_CONTRACT",
+      "source_data": {
+        "path": "examples/code/restock-project.json",
+        "pointer": [
+          "inputs",
+          "request"
+        ]
+      },
+      "relations": [
+        {
+          "relation": "uses",
+          "target": "protocol:code-workflow"
+        }
+      ]
+    }
+  ],
+  "blueprints": [
+    {
+      "id": "measured-construction",
+      "version": "0.1.0",
+      "purpose": "Search a caller-defined construction space and preserve the accepted creator source.",
+      "direction": "construction",
+      "parameters": {
+        "search": "object"
+      },
+      "uses": [
+        "protocol:construction-search",
+        "file:glb"
+      ],
+      "steps": [
+        {
+          "id": "search",
+          "capability": "AXM-CAP-CONSTRUCTION-SEARCH",
+          "depends_on": [],
+          "inputs": {
+            "path": {
+              "output": "search"
+            },
+            "search": {
+              "from": "request.search"
+            }
+          },
+          "checks": [
+            {
+              "step": "search",
+              "path": [
+                "status"
+              ],
+              "equals": "CRITERIA_MET"
+            }
+          ]
+        }
+      ],
+      "artifacts": {
+        "asset": "search/winner.glb",
+        "source": "search/winner.glb.source.json",
+        "measurements": "search/search.json"
+      },
+      "goals": {
+        "construction-criteria": [
+          {
+            "step": "search",
+            "path": [
+              "status"
+            ],
+            "equals": "CRITERIA_MET"
+          }
+        ],
+        "retained-source": [
+          {
+            "artifact": "source"
+          },
+          {
+            "artifact": "measurements"
+          }
+        ],
+        "glb-output": [
+          {
+            "artifact": "asset"
+          }
+        ]
+      },
+      "limitations": [
+        "Criteria are caller-supplied measurements. No unrequested aesthetic, collision, balance or target-engine acceptance."
+      ]
+    },
+    {
+      "id": "checked-material",
+      "version": "0.1.0",
+      "purpose": "Generate native material maps from a chosen family, then decode and measure them against the caller policy.",
+      "direction": "material",
+      "parameters": {
+        "recipe": "object",
+        "policy": "object"
+      },
+      "defaults": {
+        "policy": {}
+      },
+      "uses": [
+        "workflow:material",
+        "protocol:material-bundle",
+        "file:png"
+      ],
+      "steps": [
+        {
+          "id": "generate",
+          "capability": "AXM-CAP-GENERATE-GAME-MATERIAL",
+          "depends_on": [],
+          "inputs": {
+            "path": {
+              "output": "material"
+            },
+            "recipe": {
+              "from": "request.recipe"
+            }
+          },
+          "checks": []
+        },
+        {
+          "id": "inspect",
+          "capability": "AXM-CAP-INSPECT-GAME-MATERIAL",
+          "depends_on": [
+            "generate"
+          ],
+          "inputs": {
+            "path": {
+              "output": "checks/material.json"
+            },
+            "material": {
+              "output": "material"
+            },
+            "policy": {
+              "from": "request.policy"
+            }
+          },
+          "checks": [
+            {
+              "step": "inspect",
+              "path": [
+                "status"
+              ],
+              "equals": "PASS"
+            }
+          ]
+        }
+      ],
+      "artifacts": {
+        "bundle": "material/game-material.json",
+        "base-color": "material/base_color.png",
+        "normals": "material/normal.png",
+        "measurements": "checks/material.json"
+      },
+      "goals": {
+        "material-policy": [
+          {
+            "step": "inspect",
+            "path": [
+              "status"
+            ],
+            "equals": "PASS"
+          }
+        ],
+        "material-maps": [
+          {
+            "artifact": "bundle"
+          },
+          {
+            "artifact": "base-color"
+          },
+          {
+            "artifact": "normals"
+          }
+        ]
+      },
+      "limitations": [
+        "Pixel checks and normal lengths do not prove material appearance, seamlessness or a renderer binding."
+      ]
+    },
+    {
+      "id": "interface-software",
+      "version": "0.1.0",
+      "purpose": "Compose installed organs from required interfaces and independently inspect the resulting source project.",
+      "direction": "software",
+      "parameters": {
+        "organ_goal": "object",
+        "checks": "array"
+      },
+      "defaults": {
+        "checks": []
+      },
+      "uses": [
+        "workflow:software",
+        "protocol:organ-goal"
+      ],
+      "steps": [
+        {
+          "id": "compose",
+          "capability": "AXM-CAP-COMPOSE-ORGAN-PROJECT",
+          "depends_on": [],
+          "inputs": {
+            "path": {
+              "output": "project"
+            },
+            "organ_goal": {
+              "from": "request.organ_goal"
+            },
+            "checks": {
+              "from": "request.checks"
+            },
+            "publish_mode": "validated"
+          },
+          "checks": [
+            {
+              "step": "compose",
+              "path": [
+                "published"
+              ],
+              "equals": true
+            }
+          ]
+        },
+        {
+          "id": "verify",
+          "capability": "AXM-CAP-VERIFY-PROJECT",
+          "depends_on": [
+            "compose"
+          ],
+          "inputs": {
+            "path": {
+              "output": "project"
+            },
+            "project_type": {
+              "from": "request.organ_goal.project_type"
+            },
+            "checks": {
+              "from": "request.checks"
+            }
+          },
+          "checks": [
+            {
+              "step": "verify",
+              "path": [
+                "passed"
+              ],
+              "equals": true
+            }
+          ]
+        }
+      ],
+      "artifacts": {},
+      "goals": {
+        "interface-closure": [
+          {
+            "step": "compose",
+            "path": [
+              "organ_discovery",
+              "status"
+            ],
+            "equals": "READY_EXACT_INTERFACE_ASSEMBLY"
+          }
+        ],
+        "project-checks": [
+          {
+            "step": "verify",
+            "path": [
+              "passed"
+            ],
+            "equals": true
+          }
+        ]
+      },
+      "limitations": [
+        "Exact interfaces and project checks establish structural composition, not browser interaction or source-level semantic conformance."
+      ]
+    },
+    {
+      "id": "verified-code",
+      "version": "0.1.0",
+      "purpose": "Create and observe typed pure functions against explicit requirements and cases, retaining reusable construction.",
+      "direction": "programming",
+      "parameters": {
+        "request": "object"
+      },
+      "uses": [
+        "protocol:code-workflow",
+        "workflow:software"
+      ],
+      "steps": [
+        {
+          "id": "compile-verify",
+          "capability": "AXM-CAP-CODE-PROGRAM-PROJECT",
+          "depends_on": [],
+          "inputs": {
+            "path": {
+              "output": "code"
+            },
+            "request": {
+              "from": "request.request"
+            }
+          },
+          "checks": [
+            {
+              "step": "compile-verify",
+              "path": [
+                "code_workflow",
+                "result"
+              ],
+              "equals": "VERIFIED_FOR_CASES"
+            }
+          ]
+        }
+      ],
+      "artifacts": {
+        "construction": "code/construction.json",
+        "observations": "code/workflow.json",
+        "archive": "code/archive.json"
+      },
+      "goals": {
+        "acceptance-cases": [
+          {
+            "step": "compile-verify",
+            "path": [
+              "code_workflow",
+              "result"
+            ],
+            "equals": "VERIFIED_FOR_CASES"
+          }
+        ],
+        "retained-code": [
+          {
+            "step": "compile-verify",
+            "path": [
+              "code_workflow",
+              "archiveWritten"
+            ],
+            "equals": true
+          },
+          {
+            "artifact": "construction"
+          },
+          {
+            "artifact": "observations"
+          },
+          {
+            "artifact": "archive"
+          }
+        ]
+      },
+      "limitations": [
+        "Requires local Node and Python. Typed pure functions and declared cases, not arbitrary application synthesis or complete correctness. Verify/retain execute generated closed-grammar code; not an OS sandbox."
+      ]
+    }
+  ]
+}
