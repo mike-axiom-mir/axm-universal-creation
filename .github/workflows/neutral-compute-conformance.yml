@@ -1,0 +1,29 @@
+name: Neutral compute conformance
+
+on:
+  pull_request:
+  push:
+    branches:
+      - chatgpt/neutral-compute-conformance-v01
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Compile neutral runtime and focused proof
+        run: python -m compileall -q src/axm_uc/neutral_compute.py tests/test_neutral_compute_conformance.py
+      - name: Run neutral conformance and real UC proof
+        run: python -m unittest -v tests.test_neutral_compute_conformance
+      - name: Run full UC unittest suite
+        if: matrix.python-version == '3.11'
+        run: python -m unittest discover -s tests -p 'test_*.py' -v
