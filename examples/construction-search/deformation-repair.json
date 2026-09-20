@@ -1,0 +1,658 @@
+{
+  "kind": "construction-search",
+  "inputs": {
+    "path": "creations/deformation-repair-search",
+    "search": {
+      "schema": "axm.construction-search/v0.1",
+      "intent": "Reduce sampled local area compression and stretch by regenerating skin fields while preserving walking contacts",
+      "recipe": {
+        "schema": "axm.character-recipe/v0.1",
+        "name": "UC walking seedling",
+        "character": {
+          "race_id": "seedling",
+          "body_family": "seedling-biped"
+        },
+        "form": {
+          "schema": "axm.form-pattern/v0.1",
+          "name": "Segmented seedling body",
+          "parts": [
+            {
+              "id": "body",
+              "role": "body",
+              "pattern": "loft",
+              "segments": 16,
+              "sections": [
+                {
+                  "at": 0.95,
+                  "radius": [
+                    0.26,
+                    0.18
+                  ]
+                },
+                {
+                  "at": 1.13,
+                  "radius": [
+                    0.32,
+                    0.22
+                  ]
+                },
+                {
+                  "at": 1.38,
+                  "radius": [
+                    0.25,
+                    0.18
+                  ]
+                }
+              ],
+              "material": {
+                "color": "#48786BFF",
+                "roughness": 0.6,
+                "metallic": 0.15
+              }
+            },
+            {
+              "id": "head",
+              "role": "head",
+              "pattern": "revolve",
+              "segments": 16,
+              "profile": [
+                [
+                  0.12,
+                  -0.14
+                ],
+                [
+                  0.23,
+                  -0.04
+                ],
+                [
+                  0.2,
+                  0.13
+                ],
+                [
+                  0.07,
+                  0.2
+                ]
+              ],
+              "translation": [
+                0,
+                0,
+                1.55
+              ],
+              "material": {
+                "color": "#C6A45FFF",
+                "roughness": 0.5,
+                "metallic": 0.15
+              }
+            },
+            {
+              "id": "left-upper",
+              "role": "leg",
+              "pattern": "tube",
+              "path": [
+                [
+                  -0.18,
+                  0,
+                  1.03
+                ],
+                [
+                  -0.18,
+                  0.14,
+                  0.56
+                ]
+              ],
+              "radius": 0.1,
+              "segments": 12,
+              "material": {
+                "color": "#508F7FFF",
+                "roughness": 0.6,
+                "metallic": 0.15
+              }
+            },
+            {
+              "id": "left-lower",
+              "role": "leg",
+              "pattern": "tube",
+              "path": [
+                [
+                  -0.18,
+                  0.14,
+                  0.56
+                ],
+                [
+                  -0.18,
+                  0,
+                  0.12
+                ]
+              ],
+              "radius": 0.075,
+              "segments": 12,
+              "material": {
+                "color": "#A7864FFF",
+                "roughness": 0.6,
+                "metallic": 0.15
+              }
+            },
+            {
+              "id": "left-foot",
+              "role": "foot",
+              "pattern": "profile-extrude",
+              "outline": [
+                [
+                  -0.115,
+                  0
+                ],
+                [
+                  0.115,
+                  0
+                ],
+                [
+                  0.13,
+                  0.12
+                ],
+                [
+                  -0.13,
+                  0.12
+                ]
+              ],
+              "depth": 0.33,
+              "translation": [
+                -0.18,
+                0.035,
+                0
+              ],
+              "material": {
+                "color": "#D0AD65FF",
+                "roughness": 0.6,
+                "metallic": 0.15
+              }
+            },
+            {
+              "id": "right-upper",
+              "role": "leg",
+              "pattern": "tube",
+              "path": [
+                [
+                  0.18,
+                  0,
+                  1.03
+                ],
+                [
+                  0.18,
+                  0.14,
+                  0.56
+                ]
+              ],
+              "radius": 0.1,
+              "segments": 12,
+              "material": {
+                "color": "#508F7FFF",
+                "roughness": 0.6,
+                "metallic": 0.15
+              }
+            },
+            {
+              "id": "right-lower",
+              "role": "leg",
+              "pattern": "tube",
+              "path": [
+                [
+                  0.18,
+                  0.14,
+                  0.56
+                ],
+                [
+                  0.18,
+                  0,
+                  0.12
+                ]
+              ],
+              "radius": 0.075,
+              "segments": 12,
+              "material": {
+                "color": "#A7864FFF",
+                "roughness": 0.6,
+                "metallic": 0.15
+              }
+            },
+            {
+              "id": "right-foot",
+              "role": "foot",
+              "pattern": "profile-extrude",
+              "outline": [
+                [
+                  -0.115,
+                  0
+                ],
+                [
+                  0.115,
+                  0
+                ],
+                [
+                  0.13,
+                  0.12
+                ],
+                [
+                  -0.13,
+                  0.12
+                ]
+              ],
+              "depth": 0.33,
+              "translation": [
+                0.18,
+                0.035,
+                0
+              ],
+              "material": {
+                "color": "#D0AD65FF",
+                "roughness": 0.6,
+                "metallic": 0.15
+              }
+            }
+          ]
+        },
+        "performance": {
+          "schema": "axm.character-performance/v0.1",
+          "body_family": "seedling-biped",
+          "joints": [
+            {
+              "id": "root",
+              "parent": null,
+              "anchor": {
+                "part": "body",
+                "fraction": [
+                  0.5,
+                  0.5,
+                  0.5
+                ]
+              }
+            },
+            {
+              "id": "left-hip",
+              "parent": "root",
+              "anchor": {
+                "part": "body",
+                "fraction": [
+                  0.2,
+                  0.5,
+                  0.15
+                ]
+              }
+            },
+            {
+              "id": "left-knee",
+              "parent": "left-hip",
+              "anchor": {
+                "part": "left-upper",
+                "fraction": [
+                  0.5,
+                  0.72,
+                  0.065
+                ]
+              }
+            },
+            {
+              "id": "left-ankle",
+              "parent": "left-knee",
+              "anchor": {
+                "part": "left-foot",
+                "fraction": [
+                  0.5,
+                  0.4,
+                  1
+                ]
+              }
+            },
+            {
+              "id": "right-hip",
+              "parent": "root",
+              "anchor": {
+                "part": "body",
+                "fraction": [
+                  0.8,
+                  0.5,
+                  0.15
+                ]
+              }
+            },
+            {
+              "id": "right-knee",
+              "parent": "right-hip",
+              "anchor": {
+                "part": "right-upper",
+                "fraction": [
+                  0.5,
+                  0.72,
+                  0.065
+                ]
+              }
+            },
+            {
+              "id": "right-ankle",
+              "parent": "right-knee",
+              "anchor": {
+                "part": "right-foot",
+                "fraction": [
+                  0.5,
+                  0.4,
+                  1
+                ]
+              }
+            }
+          ],
+          "bindings": {
+            "body": {
+              "joint": "root"
+            },
+            "head": {
+              "joint": "root"
+            },
+            "left-upper": {
+              "segment_weights": {
+                "segments": [
+                  [
+                    "left-hip",
+                    "left-knee"
+                  ],
+                  [
+                    "left-knee",
+                    "left-ankle"
+                  ]
+                ],
+                "falloff": 8,
+                "max_influences": 2,
+                "softness_m": 0.005
+              }
+            },
+            "left-lower": {
+              "segment_weights": {
+                "segments": [
+                  [
+                    "left-hip",
+                    "left-knee"
+                  ],
+                  [
+                    "left-knee",
+                    "left-ankle"
+                  ]
+                ],
+                "falloff": 8,
+                "max_influences": 2,
+                "softness_m": 0.005
+              }
+            },
+            "left-foot": {
+              "joint": "left-ankle"
+            },
+            "right-upper": {
+              "segment_weights": {
+                "segments": [
+                  [
+                    "right-hip",
+                    "right-knee"
+                  ],
+                  [
+                    "right-knee",
+                    "right-ankle"
+                  ]
+                ],
+                "falloff": 8,
+                "max_influences": 2,
+                "softness_m": 0.005
+              }
+            },
+            "right-lower": {
+              "segment_weights": {
+                "segments": [
+                  [
+                    "right-hip",
+                    "right-knee"
+                  ],
+                  [
+                    "right-knee",
+                    "right-ankle"
+                  ]
+                ],
+                "falloff": 8,
+                "max_influences": 2,
+                "softness_m": 0.005
+              }
+            },
+            "right-foot": {
+              "joint": "right-ankle"
+            }
+          },
+          "clips": [
+            {
+              "name": "walk",
+              "kind": "walk",
+              "duration": 2,
+              "samples": 49,
+              "stride": 0.22,
+              "lift": 0.24,
+              "up_axis": 2,
+              "forward_axis": 1,
+              "stance_fraction": 0.6,
+              "chains": [
+                {
+                  "joints": [
+                    "left-hip",
+                    "left-knee",
+                    "left-ankle"
+                  ],
+                  "pole": [
+                    0,
+                    1,
+                    0
+                  ],
+                  "phase": 0,
+                  "keep_end_orientation": true,
+                  "max_bend_degrees": 150
+                },
+                {
+                  "joints": [
+                    "right-hip",
+                    "right-knee",
+                    "right-ankle"
+                  ],
+                  "pole": [
+                    0,
+                    1,
+                    0
+                  ],
+                  "phase": 0.5,
+                  "keep_end_orientation": true,
+                  "max_bend_degrees": 150
+                }
+              ]
+            },
+            {
+              "name": "reach",
+              "kind": "reach",
+              "duration": 2,
+              "samples": 25,
+              "chains": [
+                {
+                  "joints": [
+                    "left-hip",
+                    "left-knee",
+                    "left-ankle"
+                  ],
+                  "pole": [
+                    0,
+                    1,
+                    0
+                  ],
+                  "keep_end_orientation": true,
+                  "max_bend_degrees": 150,
+                  "targets": [
+                    {
+                      "at": 0,
+                      "point": {
+                        "part": "left-foot",
+                        "fraction": [
+                          0.5,
+                          0.4,
+                          1
+                        ],
+                        "offset_fraction": [
+                          0,
+                          0,
+                          0
+                        ]
+                      }
+                    },
+                    {
+                      "at": 0.5,
+                      "point": {
+                        "part": "left-foot",
+                        "fraction": [
+                          0.5,
+                          0.4,
+                          1
+                        ],
+                        "offset_fraction": [
+                          0,
+                          0.55,
+                          1
+                        ]
+                      }
+                    },
+                    {
+                      "at": 1,
+                      "point": {
+                        "part": "left-foot",
+                        "fraction": [
+                          0.5,
+                          0.4,
+                          1
+                        ],
+                        "offset_fraction": [
+                          0,
+                          0,
+                          0
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "controls": [
+        {
+          "id": "weight-falloff",
+          "paths": [
+            [
+              "performance",
+              "bindings",
+              "left-upper",
+              "segment_weights",
+              "falloff"
+            ],
+            [
+              "performance",
+              "bindings",
+              "left-lower",
+              "segment_weights",
+              "falloff"
+            ],
+            [
+              "performance",
+              "bindings",
+              "right-upper",
+              "segment_weights",
+              "falloff"
+            ],
+            [
+              "performance",
+              "bindings",
+              "right-lower",
+              "segment_weights",
+              "falloff"
+            ]
+          ],
+          "values": [
+            1,
+            2,
+            4,
+            8
+          ]
+        },
+        {
+          "id": "weight-softness",
+          "paths": [
+            [
+              "performance",
+              "bindings",
+              "left-upper",
+              "segment_weights",
+              "softness_m"
+            ],
+            [
+              "performance",
+              "bindings",
+              "left-lower",
+              "segment_weights",
+              "softness_m"
+            ],
+            [
+              "performance",
+              "bindings",
+              "right-upper",
+              "segment_weights",
+              "softness_m"
+            ],
+            [
+              "performance",
+              "bindings",
+              "right-lower",
+              "segment_weights",
+              "softness_m"
+            ]
+          ],
+          "values": [
+            0.005,
+            0.025,
+            0.2,
+            1.0
+          ]
+        }
+      ],
+      "criteria": [
+        {
+          "metric": "minimum_area_ratio",
+          "min": 0.77
+        },
+        {
+          "metric": "maximum_edge_ratio",
+          "max": 1.02
+        },
+        {
+          "metric": "maximum_contact_slip_m",
+          "max": 1e-05
+        },
+        {
+          "metric": "foot_penetration_m",
+          "max": 1e-05
+        }
+      ],
+      "budget": {
+        "candidates": 24,
+        "validations": 8,
+        "validation_samples": 65
+      },
+      "motion_probe": {
+        "clip": "walk",
+        "cycles": 2,
+        "feet": {
+          "left-ankle": "left-foot",
+          "right-ankle": "right-foot"
+        },
+        "up_axis": 2,
+        "ground_height_m": 0
+      }
+    }
+  }
+}
