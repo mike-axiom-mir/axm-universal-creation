@@ -1,0 +1,47 @@
+{
+  "kind": "atlas-creation",
+  "inputs": {
+    "operation": "build",
+    "path": "creations/atlas-software",
+    "memory": "creations/atlas-experience",
+    "intent": {
+      "purpose": "Construct a local interactive document from exact installed organ interfaces.",
+      "direction": "software",
+      "goals": [
+        "interface-closure",
+        "project-checks"
+      ],
+      "parameters": {
+        "organ_goal": {
+          "schema": "axm.interface-organ-goal/v0.1",
+          "id": "axm.atlas.example-site",
+          "version": "1.0.0",
+          "project_type": "static-web",
+          "required_interfaces": [
+            "local-interaction"
+          ],
+          "bindings": {
+            "document-shell": {
+              "idle_label": "Create",
+              "title": "Atlas-built source"
+            },
+            "visual-theme": {
+              "background": "#10223b"
+            },
+            "local-interaction": {
+              "active_label": "Created",
+              "state": "created"
+            }
+          }
+        },
+        "checks": [
+          {
+            "type": "contains",
+            "path": "index.html",
+            "text": "Atlas-built source"
+          }
+        ]
+      }
+    }
+  }
+}
