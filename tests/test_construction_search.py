@@ -66,6 +66,10 @@ class ConstructionSearchTests(unittest.TestCase):
         self.assertEqual(result['status'],'BUDGET_EXHAUSTED')
         self.assertIsNone(result['selected'])
         self.assertIsNone(result['growth_candidate'])
+        q['criteria'][0]['scale']=1e-320
+        bounded=search_construction(q)
+        self.assertEqual(bounded['status'],'BUDGET_EXHAUSTED')
+        json.dumps(bounded,allow_nan=False)
         q=contract('vessel');q['criteria'][0].update(min=50,max=60)
         q['budget']['candidates']=256
         result=search_construction(q)
