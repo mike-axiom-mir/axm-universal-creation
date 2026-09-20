@@ -69,6 +69,10 @@ search, material maps and interface-driven software. They retain the constructio
 causes and recheck saved search settings under each new request's criteria.
 The search and continuous character controller are described in
 [INTENT_DIRECTED_SEARCH.md](docs/INTENT_DIRECTED_SEARCH.md).
+For discovering new operator combinations, testing real outcomes, iterating on
+failed measurements and retaining confirmed reusable workflows, see
+[WORKFLOW_DISCOVERY.md](docs/WORKFLOW_DISCOVERY.md). Run the complete experiment
+with `python run.py create examples/workflows/vent-hood.json`.
 
 ## Core rule
 

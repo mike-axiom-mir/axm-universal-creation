@@ -4,8 +4,8 @@ UC's creation atlas joins its existing libraries into one inspectable graph.
 It does not replace the capability store, executable-organ library, asset atoms,
 material machinery, product workflows or construction search.
 
-The installed view currently contains 2,373 entries across 26 categories. These
-include descriptive research records. They are **not 2,373 working capabilities**.
+The installed view currently contains 2,385 entries across 27 categories. These
+include descriptive research records. They are **not 2,385 working capabilities**.
 The index reports the evidence level, source and source digest on each entry.
 
 | Atlas category | Existing source | What the entry establishes |
@@ -23,10 +23,17 @@ The index reports the evidence level, source and source digest on each entry.
 | Direction | Software direction catalog | Domain knowledge for choosing a route, not automatic capability sufficiency |
 | Experience | An explicitly selected persistent collection | Prior success/failure, measurements and causes; current reuse must be checked again |
 | Construction pattern | Semantically grouped successful observations | Measured reusable candidates, separate from admitted capabilities and canon |
+| Operator | Typed adapters under `atlas/operators/` | Input/output contracts, metric units and executable tools for discovering new workflows |
+| Learned workflow | Confirmed workflow experiment collection | Deduplicated composition structure; current goals and inputs must be rechecked |
 
-The final two categories appear when a collection contains observations. Extra
+Experience, construction patterns and learned workflows appear when a collection contains observations. Extra
 categories such as acoustics, joints, manufacturing processes or accessibility
 rules can be added as data. Defining a category does not implement its subject.
+
+[Workflow discovery](WORKFLOW_DISCOVERY.md) builds new operator graphs, executes
+bounded experiments, ranks measured outcomes across scenarios and retains
+structures only after fresh confirmation. It uses this atlas and the same
+blueprint executor; the four installed blueprints remain available.
 
 ## Retrieve only what the direction needs
 

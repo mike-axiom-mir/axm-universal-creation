@@ -244,6 +244,20 @@ def register_standalone_creation_builtins(
         except (ValueError, RuntimeError, OSError, KeyError) as exc:
             raise capability_error(str(exc)) from exc
 
+    def workflow_discovery(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+        from .workflow_discovery import operate
+        try:
+            return operate(root, inputs)
+        except (ValueError, RuntimeError, OSError, KeyError, TypeError) as exc:
+            raise capability_error(str(exc)) from exc
+
+    def workflow_station(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+        from .workflow_stations import run_station
+        try:
+            return run_station(root, inputs)
+        except (ValueError, RuntimeError, OSError, KeyError, TypeError) as exc:
+            raise capability_error(str(exc)) from exc
+
     def construction_search(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
         from .construction_search import publish_search
         target = resolve_output_path(root, str(inputs['path']))
@@ -477,6 +491,8 @@ def register_standalone_creation_builtins(
         "builtin:character_recipe": character_recipe,
         "builtin:construction_search": construction_search,
         "builtin:creation_atlas": creation_atlas,
+        "builtin:workflow_discovery": workflow_discovery,
+        "builtin:workflow_station": workflow_station,
         "builtin:character_controller": character_controller,
         "builtin:material_response": material_response,
         "builtin:precision_cutter": precision_cutter,

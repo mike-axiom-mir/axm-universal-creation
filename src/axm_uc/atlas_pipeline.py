@@ -289,7 +289,7 @@ def _search_key(search):
     return digest({k: search.get(k) for k in ("schema", "recipe", "controls", "motion_probe")})
 
 
-def plan_intent(root, request, *, memory=None):
+def plan_intent(root, request, *, memory=None, candidate_blueprint=None):
     from .capabilities import CapabilityStore
     if not isinstance(request, dict) or set(request) - {"purpose", "direction", "goals", "parameters", "blueprint"}:
         raise ValueError("intent accepts purpose, direction, goals, parameters and optional blueprint")
@@ -302,6 +302,18 @@ def plan_intent(root, request, *, memory=None):
     if not isinstance(raw_parameters, dict):
         raise ValueError("intent parameters must be an object")
     atlas, candidates = CreationAtlas(root), []
+    if candidate_blueprint is not None:
+        # Internal composition boundary: normal atlas requests cannot supply this.
+        # The workflow planner constructs it from installed typed operators.
+        _validate_blueprint(candidate_blueprint)
+        identity = candidate_blueprint["id"]
+        if identity in atlas.blueprints:
+            raise ValueError("candidate blueprint cannot replace an installed blueprint")
+        atlas.blueprints[identity] = deepcopy(candidate_blueprint)
+        atlas.add("blueprint:" + identity, "blueprint", identity, candidate_blueprint["purpose"],
+                  {"scope": "request-composition", "sha256": digest(candidate_blueprint)},
+                  data=candidate_blueprint, status="UNTESTED_COMPOSITION",
+                  relations=[{"relation": "uses", "target": ref} for ref in candidate_blueprint.get("uses", [])])
     records, ignored = _experience(root, memory)
     atlas.add_experience(records, memory)
     pin = runtime_pin()
@@ -398,13 +410,13 @@ def _observe(check, results, target, artifacts):
         return {"check": check, "passed": False, "error": str(exc)}
 
 
-def build_intent(root, request, path, *, memory=None, plan_sha256=None):
+def build_intent(root, request, path, *, memory=None, plan_sha256=None, candidate_blueprint=None):
     from .capabilities import CapabilityError, CapabilityStore
     target = _output(root, path)
     memory_path = _output(root, memory) if memory is not None else None
     if memory_path and (target == memory_path or target in memory_path.parents or memory_path in target.parents):
         raise ValueError("output and experience collection must be separate directories")
-    plan = plan_intent(root, request, memory=memory)
+    plan = plan_intent(root, request, memory=memory, candidate_blueprint=candidate_blueprint)
     if plan_sha256 is not None and plan_sha256 != plan["plan_sha256"]:
         return {"schema": RUN_SCHEMA, "status": "HOLD_STALE_PLAN", "fresh_plan": plan}
     if plan["status"] != "READY":
@@ -492,6 +504,8 @@ def operate_atlas(root, inputs):
     if inputs.get("memory") is not None:
         records, _ = _experience(root, inputs["memory"])
         atlas.add_experience(records, inputs["memory"])
+        from .workflow_memory import add_to_atlas
+        add_to_atlas(atlas, inputs["memory"])
     if operation == "summary":
         return atlas.summary()
     if operation == "get":

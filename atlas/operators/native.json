@@ -1,0 +1,325 @@
+{
+  "schema": "axm.workflow-operators/v0.1",
+  "source_kinds": [
+    "surface",
+    "form-recipe",
+    "material-recipe",
+    "material-policy",
+    "asset-policy",
+    "bake-options",
+    "render-options",
+    "character-recipe",
+    "motion-probe",
+    "code-request"
+  ],
+  "operators": [
+    {
+      "id": "compile-form",
+      "version": "0.1.0",
+      "purpose": "compile form",
+      "capability": "AXM-CAP-WORKFLOW-STATION",
+      "operation": "compile-form",
+      "needs": {
+        "recipe": {
+          "kind": "form-recipe"
+        }
+      },
+      "provides": {
+        "kind": "surface",
+        "units": "m",
+        "uv": "absent"
+      },
+      "metrics": {},
+      "cost": 1,
+      "dependencies": [
+        "AXM-CAP-GENERATE-FORM-PATTERN-3D"
+      ],
+      "limitations": []
+    },
+    {
+      "id": "derive-uvless",
+      "version": "0.1.0",
+      "purpose": "derive uvless",
+      "capability": "AXM-CAP-WORKFLOW-STATION",
+      "operation": "derive-uvless",
+      "needs": {
+        "surface": {
+          "kind": "surface",
+          "units": "m",
+          "uv": "present"
+        }
+      },
+      "provides": {
+        "kind": "surface",
+        "units": "m",
+        "uv": "absent"
+      },
+      "metrics": {},
+      "cost": 1,
+      "dependencies": [],
+      "limitations": [
+        "Derived copy removes UVs; the original geometry and UVs remain retained."
+      ],
+      "identity_from": "surface"
+    },
+    {
+      "id": "generate-material",
+      "version": "0.1.0",
+      "purpose": "generate material",
+      "capability": "AXM-CAP-WORKFLOW-STATION",
+      "operation": "generate-material",
+      "needs": {
+        "recipe": {
+          "kind": "material-recipe"
+        }
+      },
+      "provides": {
+        "kind": "material-bundle",
+        "quality": "raw"
+      },
+      "metrics": {},
+      "cost": 2,
+      "dependencies": [
+        "AXM-CAP-GENERATE-GAME-MATERIAL"
+      ],
+      "limitations": []
+    },
+    {
+      "id": "measure-material",
+      "version": "0.1.0",
+      "purpose": "measure material",
+      "capability": "AXM-CAP-WORKFLOW-STATION",
+      "operation": "measure-material",
+      "needs": {
+        "material": {
+          "kind": "material-bundle",
+          "quality": "raw"
+        },
+        "policy": {
+          "kind": "material-policy"
+        }
+      },
+      "provides": {
+        "kind": "material-bundle",
+        "quality": "checked"
+      },
+      "metrics": {
+        "map_size": "px",
+        "png_bytes": "byte",
+        "normal_error": "ratio"
+      },
+      "cost": 1,
+      "dependencies": [
+        "AXM-CAP-INSPECT-GAME-MATERIAL"
+      ],
+      "limitations": [],
+      "identity_from": "material"
+    },
+    {
+      "id": "bind-material",
+      "version": "0.1.0",
+      "purpose": "bind material",
+      "capability": "AXM-CAP-WORKFLOW-STATION",
+      "operation": "bind-material",
+      "needs": {
+        "surface": {
+          "kind": "surface",
+          "units": "m",
+          "uv": "present"
+        },
+        "material": {
+          "kind": "material-bundle",
+          "quality": "checked"
+        }
+      },
+      "provides": {
+        "kind": "asset",
+        "format": "glb",
+        "units": "m",
+        "quality": "raw"
+      },
+      "metrics": {},
+      "cost": 2,
+      "dependencies": [
+        "AXM-CAP-BIND-TEXTURED-ASSET"
+      ],
+      "limitations": []
+    },
+    {
+      "id": "bake-material",
+      "version": "0.1.0",
+      "purpose": "bake material",
+      "capability": "AXM-CAP-WORKFLOW-STATION",
+      "operation": "bake-material",
+      "needs": {
+        "surface": {
+          "kind": "surface",
+          "units": "m",
+          "uv": "absent"
+        },
+        "material": {
+          "kind": "material-bundle",
+          "quality": "checked"
+        },
+        "options": {
+          "kind": "bake-options"
+        }
+      },
+      "provides": {
+        "kind": "asset",
+        "format": "glb",
+        "units": "m",
+        "quality": "raw"
+      },
+      "metrics": {},
+      "cost": 4,
+      "dependencies": [
+        "AXM-CAP-AUTO-UNWRAP-BAKE-ASSET"
+      ],
+      "limitations": [
+        "Connected planar chart grid; intra-chart overlap, smart seams and target-engine acceptance remain unproven."
+      ]
+    },
+    {
+      "id": "measure-asset",
+      "version": "0.1.0",
+      "purpose": "measure asset",
+      "capability": "AXM-CAP-WORKFLOW-STATION",
+      "operation": "measure-asset",
+      "needs": {
+        "asset": {
+          "kind": "asset",
+          "format": "glb",
+          "units": "m",
+          "quality": "raw"
+        },
+        "policy": {
+          "kind": "asset-policy"
+        }
+      },
+      "provides": {
+        "kind": "asset",
+        "format": "glb",
+        "units": "m",
+        "quality": "checked"
+      },
+      "metrics": {
+        "texels_per_m": "px/m",
+        "artifact_bytes": "byte",
+        "triangles": "count",
+        "size_x_m": "m",
+        "size_y_m": "m",
+        "size_z_m": "m"
+      },
+      "cost": 1,
+      "dependencies": [
+        "AXM-CAP-INSPECT-TEXTURED-ASSET"
+      ],
+      "limitations": [
+        "UV density and decoded geometry are technical measures, not artistic quality."
+      ],
+      "identity_from": "asset"
+    },
+    {
+      "id": "render-preview",
+      "version": "0.1.0",
+      "purpose": "render preview",
+      "capability": "AXM-CAP-WORKFLOW-STATION",
+      "operation": "render-preview",
+      "needs": {
+        "asset": {
+          "kind": "asset",
+          "format": "glb",
+          "units": "m",
+          "quality": "checked"
+        },
+        "options": {
+          "kind": "render-options",
+          "angle_unit": "rad"
+        }
+      },
+      "provides": {
+        "kind": "preview",
+        "format": "png"
+      },
+      "metrics": {
+        "visible_triangles": "count",
+        "texture_shaded_pixels": "px",
+        "width": "px",
+        "height": "px",
+        "png_bytes": "byte"
+      },
+      "cost": 4,
+      "dependencies": [
+        "AXM-CAP-RENDER-ASSET-PREVIEW"
+      ],
+      "limitations": [
+        "CPU rasterization evidence does not measure beauty or prove an external engine."
+      ],
+      "identity_from": "asset"
+    },
+    {
+      "id": "measure-motion",
+      "version": "0.1.0",
+      "purpose": "measure motion",
+      "capability": "AXM-CAP-WORKFLOW-STATION",
+      "operation": "measure-motion",
+      "needs": {
+        "recipe": {
+          "kind": "character-recipe"
+        },
+        "probe": {
+          "kind": "motion-probe"
+        }
+      },
+      "provides": {
+        "kind": "motion-observation",
+        "units": "m"
+      },
+      "metrics": {
+        "maximum_target_error_m": "m",
+        "maximum_bend_degrees": "degree",
+        "minimum_area_ratio": "ratio",
+        "maximum_edge_ratio": "ratio",
+        "maximum_contact_slip_m": "m",
+        "foot_penetration_m": "m",
+        "peak_foot_lift_m": "m"
+      },
+      "cost": 4,
+      "dependencies": [
+        "AXM-CAP-CHARACTER-CONTROLLER"
+      ],
+      "limitations": [
+        "Only requested times and declared flat supports; absent contact or swing observations remain missing metrics."
+      ]
+    },
+    {
+      "id": "verify-code",
+      "version": "0.1.0",
+      "purpose": "verify code",
+      "capability": "AXM-CAP-WORKFLOW-STATION",
+      "operation": "verify-code",
+      "needs": {
+        "request": {
+          "kind": "code-request"
+        }
+      },
+      "provides": {
+        "kind": "code-project",
+        "quality": "checked"
+      },
+      "metrics": {
+        "cases": "count",
+        "requirements": "count",
+        "languages": "count"
+      },
+      "cost": 4,
+      "dependencies": [
+        "AXM-CAP-CODE-PROGRAM-PROJECT"
+      ],
+      "limitations": [
+        "Closed typed programs and declared cases; Node/Python execution is bounded but not an OS sandbox."
+      ]
+    }
+  ]
+}

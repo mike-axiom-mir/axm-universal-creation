@@ -116,6 +116,16 @@ class PortableRuntimeTests(unittest.TestCase):
         atlas_result = json.loads(atlas.stdout)
         self.assertEqual(atlas_result["result"]["status"], "CHECKS_PASSED", atlas_result)
         self.assertTrue((extracted / "creations/atlas-vessel/search/winner.glb.source.json").is_file())
+        discovery = subprocess.run(
+            [sys.executable, str(extracted / "run.py"), "create",
+             str(extracted / "examples/workflows/vent-hood.json")],
+            cwd=outside, check=False, capture_output=True, text=True, timeout=90,
+        )
+        self.assertEqual(discovery.returncode, 0, discovery.stderr)
+        discovery_result = json.loads(discovery.stdout)
+        self.assertEqual(discovery_result["result"]["status"], "VERIFIED_WORKFLOWS", discovery_result)
+        self.assertEqual(discovery_result["result"]["retained_structures"], 1)
+        self.assertTrue((extracted / "creations/workflow-vent/report.json").is_file())
         if shutil.which("node"):
             programming = subprocess.run(
                 [sys.executable, str(extracted / "run.py"), "create",
