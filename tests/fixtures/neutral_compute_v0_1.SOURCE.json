@@ -1,0 +1,10 @@
+{
+  "format": "axm-source-pin/v0.1",
+  "repository": "mike-axiom-mir/axm-compute-substrate",
+  "commit": "0ec916cd6ab895a9a2118e5b63a6d3c8c1e34eb4",
+  "path": "conformance/vectors.json",
+  "blob_sha": "ec5366ede678b621c43690292eff5b5e47503e47",
+  "copied_as": "tests/fixtures/neutral_compute_v0_1.json",
+  "purpose": "Cross-language Neutral Compute Substrate v0.1 behavior vectors only. UC keeps a native Python implementation.",
+  "note": "Expected HOLD/refusal states are successful conformance outcomes when named by the vector."
+}
