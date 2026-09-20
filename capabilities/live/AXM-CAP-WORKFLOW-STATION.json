@@ -1,0 +1,39 @@
+{
+  "id": "AXM-CAP-WORKFLOW-STATION",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Construct and measure one typed workflow step with existing native geometry, material, renderer, motion or code tools.",
+  "handles": [
+    "workflow-station"
+  ],
+  "input_contract": {
+    "required": [
+      "operation",
+      "path",
+      "values"
+    ],
+    "required_by_operation": {},
+    "properties": {
+      "operation": "one implemented operator action in atlas/operators/native.json",
+      "values": "exact named input ports from the corresponding operator contract",
+      "path": "new ordinary directory retaining inputs and observations"
+    }
+  },
+  "output_contract": {
+    "kind": "workflow-evidence",
+    "contains": [
+      "retained construction inputs",
+      "measured outcomes and gaps"
+    ]
+  },
+  "dependencies": [],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:workflow_station",
+    "source": "src/axm_uc/workflow_stations.py"
+  },
+  "limitations": [
+    "Only installed typed operators and explicit finite search, execution and validation scopes.",
+    "Fresh outcome checks are required; no silent canon or capability admission."
+  ]
+}
