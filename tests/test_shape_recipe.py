@@ -246,6 +246,12 @@ class ShapeRecipeTests(unittest.TestCase):
             self.assertEqual(body["post_publish_validation"]["primitives"], 37)
             self.assertTrue(body["post_publish_validation"]["passed"])
             self.assertTrue(target.is_file())
+            source_path = Path(body["creator_source"]["path"])
+            self.assertTrue(source_path.is_file())
+            retained = __import__("json").loads(source_path.read_text(encoding="utf-8"))
+            self.assertEqual(retained["kind"], "shape-recipe")
+            self.assertEqual(retained["recipe"], lattice_recipe())
+            self.assertTrue(retained["source_authority"])
 
     def test_pinned_morphtile_origin_is_visible_without_embedding_its_runtime(self):
         compiled = compile_shape_recipe(lattice_recipe())

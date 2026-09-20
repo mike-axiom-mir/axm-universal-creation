@@ -1,8 +1,8 @@
 {
   "id": "AXM-CAP-DIRECTION-ROUTER",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "status": "live",
-  "purpose": "Compile ordinary-language creation intent into an explicit direction contract, compare installed capability routes by sufficiency rather than mere compatibility, compose a bounded production graph, and run supplied temporary candidate overlays without changing canonical UC.",
+  "purpose": "Compile ordinary-language creation intent into an explicit direction contract, compare installed capability routes by sufficiency rather than mere compatibility, infer one exact live route only when complete inputs and unique semantic evidence make that selection unambiguous, compose a bounded production graph otherwise, and run supplied temporary candidate overlays without changing canonical UC.",
   "handles": [
     "direction-request",
     "intent-routed-creation",
@@ -36,7 +36,9 @@
   "relationships": [
     "reads current live manifests rather than maintaining a second capability registry",
     "treats a produced artifact as insufficient when the direction contract is not covered",
-    "keeps temporary candidate overlays detached from installation, registration, routing and CANON"
+    "keeps temporary candidate overlays detached from installation, registration, routing and CANON",
+    "may infer one exact route without an internal kind only when required inputs are complete, contradictions are absent, semantic overlap is meaningful, and the best installed route is unique",
+    "never auto-executes an ambiguous tie or a multi-step composition graph"
   ],
   "implementation": {
     "kind": "DETERMINISTIC_SOURCE",
@@ -47,7 +49,8 @@
     "Natural-language compilation is bounded deterministic extraction, not general semantic understanding.",
     "A composed graph is a manifest-grounded plan until exact inputs execute every step and requested verification is observed.",
     "High quality, human acceptance, tracked-input behavior and AI-collaborator behavior remain HOLD unless exact evidence-bearing contracts are supplied.",
-    "Temporary candidate instances never install, register, route, merge, release or enter CANON automatically."
+    "Temporary candidate instances never install, register, route, merge, release or enter CANON automatically.",
+    "Unique-route inference is routing convenience, not semantic proof; the executed route still retains its own evidence and acceptance boundaries."
   ],
   "persistent_state": null
 }

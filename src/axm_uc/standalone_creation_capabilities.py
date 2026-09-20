@@ -167,17 +167,31 @@ def register_standalone_creation_builtins(
             raise capability_error(str(exc), exc.details) from exc
 
     def procedural_3d(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
-        from .procedural_3d import Procedural3DError, publish_glb
+        from .creator_retention import CreatorRetentionError, SOURCE_SCHEMA, publish_retained_glb
+        from .procedural_3d import Procedural3DError
 
         target = resolve_output_path(root, str(inputs["path"]))
         if is_machine_body_path(root, target):
             raise capability_error("procedural 3D generation cannot rewrite the live machine body")
         if "replace" in inputs and not isinstance(inputs["replace"], bool):
             raise capability_error("procedural 3D replace must be a boolean")
+        source = {
+            "schema": SOURCE_SCHEMA,
+            "kind": "procedural-3d-specification",
+            "source_authority": True,
+            "realization_is_secondary": True,
+            "specification": copy.deepcopy(inputs["specification"]),
+            "automatic_canon_admission": False,
+        }
         try:
-            return publish_glb(target, inputs["specification"], replace=inputs.get("replace", False))
-        except Procedural3DError as exc:
-            raise capability_error(str(exc), exc.details) from exc
+            return publish_retained_glb(
+                target,
+                inputs["specification"],
+                source,
+                replace=inputs.get("replace", False),
+            )
+        except (Procedural3DError, CreatorRetentionError) as exc:
+            raise capability_error(str(exc), getattr(exc, "details", {})) from exc
 
     def shape_recipe(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
         from .procedural_3d import Procedural3DError
@@ -192,6 +206,56 @@ def register_standalone_creation_builtins(
             return publish_shape_recipe(target, inputs["recipe"], replace=inputs.get("replace", False))
         except (ShapeRecipeError, Procedural3DError) as exc:
             raise capability_error(str(exc), exc.details) from exc
+
+    def form_pattern(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+        from .creator_retention import CreatorRetentionError
+        from .form_pattern import FormPatternError, publish_form_pattern
+        from .procedural_3d import Procedural3DError
+
+        target = resolve_output_path(root, str(inputs["path"]))
+        if is_machine_body_path(root, target):
+            raise capability_error("form-pattern generation cannot rewrite the live machine body")
+        if "replace" in inputs and not isinstance(inputs["replace"], bool):
+            raise capability_error("form-pattern replace must be a boolean")
+        try:
+            return publish_form_pattern(target, inputs["recipe"], replace=inputs.get("replace", False))
+        except (FormPatternError, CreatorRetentionError, Procedural3DError) as exc:
+            raise capability_error(str(exc), getattr(exc, "details", {})) from exc
+
+    def character_recipe(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+        from .character_recipe import CharacterRecipeError, publish_character_recipe
+        from .creator_retention import CreatorRetentionError
+        from .procedural_3d import Procedural3DError
+
+        target = resolve_output_path(root, str(inputs["path"]))
+        if is_machine_body_path(root, target):
+            raise capability_error("character-recipe generation cannot rewrite the live machine body")
+        if "replace" in inputs and not isinstance(inputs["replace"], bool):
+            raise capability_error("character-recipe replace must be a boolean")
+        try:
+            return publish_character_recipe(target, inputs["recipe"], replace=inputs.get("replace", False))
+        except (CharacterRecipeError, CreatorRetentionError, Procedural3DError) as exc:
+            raise capability_error(str(exc), getattr(exc, "details", {})) from exc
+
+    def material_response(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+        from .material_response import MaterialResponseHold, resolve_material_response
+
+        family = inputs.get("family")
+        if not isinstance(family, str) or not family.strip():
+            raise capability_error("material response requires a non-empty family")
+        if "variant" in inputs and inputs["variant"] is not None and not isinstance(inputs["variant"], str):
+            raise capability_error("material response variant must be text when supplied")
+        if "overrides" in inputs and inputs["overrides"] is not None and not isinstance(inputs["overrides"], dict):
+            raise capability_error("material response overrides must be an object when supplied")
+        try:
+            return resolve_material_response(
+                family.strip(),
+                variant=inputs.get("variant"),
+                overrides=copy.deepcopy(inputs.get("overrides")),
+                base_color=copy.deepcopy(inputs.get("base_color")),
+            )
+        except MaterialResponseHold as exc:
+            raise capability_error(str(exc)) from exc
 
     def precision_cutter(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
         from .precision_cutter import PrecisionCutterError, publish_precision_cut
@@ -372,6 +436,9 @@ def register_standalone_creation_builtins(
         "builtin:creation_growth": creation_growth,
         "builtin:procedural_3d": procedural_3d,
         "builtin:shape_recipe": shape_recipe,
+        "builtin:form_pattern": form_pattern,
+        "builtin:character_recipe": character_recipe,
+        "builtin:material_response": material_response,
         "builtin:precision_cutter": precision_cutter,
         "builtin:creative_flow": creative_flow,
         "builtin:native_visual_runtime": native_visual_runtime,

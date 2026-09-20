@@ -1,0 +1,48 @@
+{
+  "id": "AXM-CAP-MATERIAL-RESPONSE-INTENT",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Resolve a named detailed material-response family and optional variant/overrides into explicit surface-behavior intent, including active subsurface, sheen, anisotropy, clear-coat, breakup, transmission, iridescence and wear-layer organs, without pretending an unverified renderer has bound them.",
+  "handles": [
+    "material-response",
+    "material-response-intent",
+    "surface-response-intent"
+  ],
+  "input_contract": {
+    "required": ["family"],
+    "properties": {
+      "family": "one installed material-response family id",
+      "variant": "optional installed family variant",
+      "overrides": "optional bounded response overrides",
+      "base_color": "optional RGB override"
+    }
+  },
+  "output_contract": {
+    "kind": "material-response-contract",
+    "contains": [
+      "resolved response values",
+      "active response organs",
+      "source/provenance digests",
+      "explicit renderer-binding status",
+      "truth boundary"
+    ]
+  },
+  "dependencies": [],
+  "relationships": [
+    "sits above existing texture/channel values rather than replacing them",
+    "can be retained inside whole-character material intent",
+    "provides material-behavior intent to future renderer/material pipeline bindings"
+  ],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:material_response",
+    "source": "src/axm_uc/material_response.py"
+  },
+  "limitations": [
+    "Resolving a response family does not prove that any current renderer implements the active organs.",
+    "Active response organs intentionally return HOLD_RENDERER_BINDING_NOT_TESTED until a renderer earns its own evidence.",
+    "This route does not generate UVs or texture maps; existing rich-material and mesh-production paths remain separate.",
+    "Material intent is not visual acceptance."
+  ],
+  "persistent_state": null
+}

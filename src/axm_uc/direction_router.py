@@ -309,6 +309,43 @@ def _classify(profile: dict[str, Any], required: set[str]) -> dict[str, Any]:
     return {**profile, "state": state, "covered_requirements": covered, "missing_requirements": missing}
 
 
+def _unique_inferred_route(routes: list[dict[str, Any]]) -> tuple[dict[str, Any] | None, str | None]:
+    """Infer one exact live route only when installed evidence makes it unambiguous.
+
+    This never invents route inputs and never executes a composition graph.  It
+    exists so ordinary language plus already-complete route inputs can reach one
+    clearly best installed capability without requiring the caller to know UC's
+    internal handle name.
+    """
+    candidates = [
+        route for route in routes
+        if route["state"] == "COMPATIBLE_AND_SUFFICIENT"
+        and not route["missing_required_inputs"]
+        and not route["contradictions"]
+        and route["handles"]
+        and len(route["semantic_overlap"]) >= 2
+    ]
+    if not candidates:
+        return None, None
+    scored = sorted(
+        candidates,
+        key=lambda route: (
+            -len(route["semantic_overlap"]),
+            -len(route["covered_requirements"]),
+            str(route["capability_id"]),
+        ),
+    )
+    top = scored[0]
+    top_score = (len(top["semantic_overlap"]), len(top["covered_requirements"]))
+    tied = [
+        route for route in scored
+        if (len(route["semantic_overlap"]), len(route["covered_requirements"])) == top_score
+    ]
+    if len(tied) != 1:
+        return None, None
+    return top, str(top["handles"][0])
+
+
 def _composition(routes: list[dict[str, Any]], required: set[str]) -> dict[str, Any]:
     missing = set(required)
     selected: list[dict[str, Any]] = []
@@ -522,6 +559,8 @@ def direction_routing_summary() -> dict[str, Any]:
         "temporary_candidate_schema": INSTANCE_SCHEMA,
         "candidate_dispositions": sorted(DISPOSITIONS),
         "manifest_derived_claims": True,
+        "unique_best_route_inference": "allowed only with complete inputs, >=2 semantic overlaps, no tie, and a sufficient live route",
+        "composition_auto_execution": False,
         "automatic_canon_admission": False,
         "truth_boundary": "A route name or produced artifact is insufficient when the direction contract is not covered. Unknown semantics, missing inputs, and unverified outputs remain typed HOLDs.",
     }
@@ -545,6 +584,13 @@ def route_direction(root: Path, raw_request: Any) -> dict[str, Any]:
     ))
     kind = request.get("kind")
     exact = next((route for route in routes if isinstance(kind, str) and kind in route["handles"]), None)
+    inferred_kind = None
+    route_selection = "caller-explicit-kind" if exact is not None else "none"
+    if exact is None and kind is None:
+        exact, inferred_kind = _unique_inferred_route(routes)
+        if exact is not None:
+            route_selection = "unique-best-installed-route-from-direction-and-complete-inputs"
+    execution_kind = kind if isinstance(kind, str) else inferred_kind
     composition = _composition(routes, required)
     gaps = _content_gaps(request, contract)
     if exact is not None:
@@ -557,6 +603,8 @@ def route_direction(root: Path, raw_request: Any) -> dict[str, Any]:
         "contract": contract,
         "required_route_features": sorted(required),
         "requested_kind": kind,
+        "inferred_kind": inferred_kind,
+        "route_selection": route_selection,
         "exact_route": exact,
         "candidate_routes": routes,
         "production_graph": composition,
@@ -578,7 +626,13 @@ def route_direction(root: Path, raw_request: Any) -> dict[str, Any]:
     if exact is not None and exact["state"] == "COMPATIBLE_AND_SUFFICIENT" and not gaps:
         if not execute:
             return {"type": "DIRECTION_ROUTE_PLAN", "truth_status": "SUFFICIENT_ROUTE_NOT_EXECUTED", "decision": decision}
-        manifest = store.route(str(kind))
+        manifest = store.route(str(execution_kind))
+        if manifest is None:
+            return {
+                "type": "DIRECTION_HOLD",
+                "truth_status": "HOLD_SELECTED_ROUTE_NOT_LIVE",
+                "decision": decision,
+            }
         try:
             result = store.invoke(manifest, inputs)
         except CapabilityError as exc:

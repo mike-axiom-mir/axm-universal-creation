@@ -8,7 +8,8 @@ from copy import deepcopy
 from pathlib import Path
 from typing import Any
 
-from .procedural_3d import MAX_PRIMITIVES, publish_glb
+from .procedural_3d import MAX_PRIMITIVES
+from .creator_retention import SOURCE_SCHEMA, publish_retained_glb
 
 
 SCHEMA = "axm.shape-recipe/v0.1"
@@ -698,6 +699,17 @@ def compile_shape_recipe(raw: Any) -> dict[str, Any]:
 
 def publish_shape_recipe(target: Path, recipe: Any, *, replace: bool = False) -> dict[str, Any]:
     compiled = compile_shape_recipe(recipe)
-    result = publish_glb(target, compiled["specification"], replace=replace)
+    source = {
+        "schema": SOURCE_SCHEMA,
+        "kind": "shape-recipe",
+        "source_authority": True,
+        "realization_is_secondary": True,
+        "recipe": deepcopy(recipe),
+        "recipe_sha256": compiled["recipe_sha256"],
+        "compiled_specification": deepcopy(compiled["specification"]),
+        "source_provenance": deepcopy(compiled["source_provenance"]),
+        "automatic_canon_admission": False,
+    }
+    result = publish_retained_glb(target, compiled["specification"], source, replace=replace)
     result["shape_recipe"] = {key: value for key, value in compiled.items() if key != "specification"}
     return result

@@ -37,3 +37,27 @@ This contract is implemented for parallel creation and the high-level surface
 creator that routes through it. Other UC exporters must adopt an equivalent
 source-closure contract before claiming that their output contributes to runtime
 self-growth.
+
+
+## Default source retention on source-first 3D routes
+
+The live source-first 3D routes now retain construction state beside the realization by default:
+
+- `procedural-3d-asset` retains the exact supplied procedural/surface specification;
+- `shape-recipe-asset` retains the original MorphTile-inspired recipe, expanded specification and donor provenance;
+- `form-pattern-asset` retains the freeform profile/loft/revolve/tube recipe plus semantic part index;
+- `character-recipe-asset` retains the whole character recipe, race/body-family identity, sockets, clothing regions, material intent and compiled geometry.
+
+These routes write a sibling `<asset>.glb.source.json` using `axm.creator-source/v1`.
+The sidecar is source authority for replay/reshaping; the GLB is a realization.
+Publication is coupled: if source retention fails, the newly written GLB is rolled
+back rather than silently leaving an end product whose construction causes were lost.
+
+This does not rewrite older specialist exporters into one format. Existing authored
+character/vehicle paths that already retain editable `.blend` sources, manifests,
+builder code and verification evidence continue to use those stronger specialist
+source records. A legacy exporter that retains only an end product still may not
+claim runtime self-growth until it adopts equivalent source closure.
+
+Source retention is not automatic CANON. It preserves what was made and how; admission
+to a reusable global library remains a separate explicit decision.
