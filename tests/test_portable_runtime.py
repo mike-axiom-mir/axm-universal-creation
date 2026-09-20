@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import os
 from pathlib import Path
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -105,6 +106,26 @@ class PortableRuntimeTests(unittest.TestCase):
         trial_result = json.loads(trial.stdout)
         self.assertTrue(trial_result["passed"])
         self.assertTrue((extracted / "creations/first-real-site/index.html").is_file())
+
+        atlas = subprocess.run(
+            [sys.executable, str(extracted / "run.py"), "create",
+             str(extracted / "examples/creation-atlas/vessel.json")],
+            cwd=outside, check=False, capture_output=True, text=True, timeout=60,
+        )
+        self.assertEqual(atlas.returncode, 0, atlas.stderr)
+        atlas_result = json.loads(atlas.stdout)
+        self.assertEqual(atlas_result["result"]["status"], "CHECKS_PASSED", atlas_result)
+        self.assertTrue((extracted / "creations/atlas-vessel/search/winner.glb.source.json").is_file())
+        if shutil.which("node"):
+            programming = subprocess.run(
+                [sys.executable, str(extracted / "run.py"), "create",
+                 str(extracted / "examples/creation-atlas/programming.json")],
+                cwd=outside, check=False, capture_output=True, text=True, timeout=60,
+            )
+            self.assertEqual(programming.returncode, 0, programming.stderr)
+            programming_result = json.loads(programming.stdout)
+            self.assertEqual(programming_result["result"]["status"], "CHECKS_PASSED", programming_result)
+            self.assertTrue((extracted / "creations/atlas-programming/code/archive.json").is_file())
 
     def test_changed_declared_file_fails_closed(self):
         tampered = self.directory / "tampered.zip"
