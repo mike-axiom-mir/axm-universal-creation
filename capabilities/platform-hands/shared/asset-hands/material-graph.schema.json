@@ -4,28 +4,124 @@
   "title": "AXM Material Graph v1",
   "description": "Editable portable material parameters used to emit MaterialX and a bounded glTF preview.",
   "type": "object",
-  "required": ["schema", "version", "id", "name", "target_canvas", "node", "parameters", "bindings", "provenance"],
+  "required": [
+    "schema",
+    "version",
+    "id",
+    "name",
+    "target_canvas",
+    "node",
+    "parameters",
+    "bindings",
+    "provenance"
+  ],
   "properties": {
-    "schema": { "const": "axm.material-graph/v1" },
-    "version": { "const": 1 },
-    "id": { "type": "string", "minLength": 1, "maxLength": 120 },
-    "name": { "type": "string", "minLength": 1, "maxLength": 240 },
-    "target_canvas": { "$ref": "target-canvas.schema.json" },
-    "node": { "const": "standard_surface" },
+    "schema": {
+      "const": "axm.material-graph/v1"
+    },
+    "version": {
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 240
+    },
+    "target_canvas": {
+      "$ref": "target-canvas.schema.json"
+    },
+    "node": {
+      "const": "standard_surface"
+    },
     "parameters": {
       "type": "object",
-      "required": ["base_color_hex", "base_color", "metallic", "roughness", "opacity"],
+      "required": [
+        "base_color_hex",
+        "base_color",
+        "metallic",
+        "roughness",
+        "opacity"
+      ],
       "properties": {
-        "base_color_hex": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" },
-        "base_color": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "type": "number", "minimum": 0, "maximum": 1 } },
-        "metallic": { "type": "number", "minimum": 0, "maximum": 1 },
-        "roughness": { "type": "number", "minimum": 0, "maximum": 1 },
-        "opacity": { "type": "number", "minimum": 0, "maximum": 1 }
+        "base_color_hex": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "base_color": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        },
+        "metallic": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "roughness": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "opacity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
       },
       "additionalProperties": true
     },
-    "bindings": { "type": "array", "maxItems": 256, "items": { "type": "object" } },
-    "provenance": { "type": "object", "required": ["engine"], "properties": { "engine": { "type": "string" } }, "additionalProperties": true }
+    "bindings": {
+      "type": "array",
+      "maxItems": 256,
+      "items": {
+        "type": "object"
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "required": [
+        "engine"
+      ],
+      "properties": {
+        "engine": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "response": {
+      "type": "object",
+      "description": "Optional surface-response intent above texture/channel values. Channels remain authoritative values; the named host must explicitly bind/test the response organs or preserve HOLD.",
+      "required": [
+        "family"
+      ],
+      "properties": {
+        "family": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "variant": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "overrides": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    }
   },
   "additionalProperties": true
 }
