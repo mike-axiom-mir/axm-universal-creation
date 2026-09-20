@@ -81,6 +81,7 @@ def publish_retained_glb(
     source: Any,
     *,
     replace: bool = False,
+    _publisher=None,
 ) -> dict[str, Any]:
     """Atomically publish a GLB plus its construction-source sidecar.
 
@@ -104,7 +105,7 @@ def publish_retained_glb(
     previous_source = sidecar.read_bytes() if sidecar.is_file() else None
 
     try:
-        result = publish_glb(target, specification, replace=replace)
+        result = (_publisher or publish_glb)(target, specification, replace=replace)
         retained = {
             **normalized,
             "artifact": {
