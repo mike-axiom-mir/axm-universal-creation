@@ -135,7 +135,8 @@ def _checks(criteria, metrics):
         observed = value is not None and math.isfinite(value)
         deficit = (max(0.,c.get('min',-math.inf)-value,value-c.get('max',math.inf)) if observed else None)
         passed = observed and deficit == 0
-        loss += deficit/c.get('scale',1) if observed else 1e6
+        # Very small declared scales must not turn retained JSON into Infinity.
+        loss = min(1e30, loss + (deficit/c.get('scale',1) if observed else 1e6))
         result.append({'metric':c['metric'],'observed':value,'min':c.get('min'),'max':c.get('max'),'passed':passed})
     return result, loss
 
