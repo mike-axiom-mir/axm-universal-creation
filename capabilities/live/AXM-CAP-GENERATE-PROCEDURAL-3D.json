@@ -2,7 +2,7 @@
   "id": "AXM-CAP-GENERATE-PROCEDURAL-3D",
   "version": "0.3.0",
   "status": "live",
-  "purpose": "Generate bounded deterministic GLB scenes from explicit primitives or supplied surface meshes, including linear vertex colors, with decoded geometry validation and atomic publication.",
+  "purpose": "Generate bounded deterministic GLB scenes from explicit primitives or supplied surface meshes, including linear vertex colors, with decoded geometry validation, atomic publication, and default retention of the exact supplied construction specification as creator-source authority.",
   "handles": [
     "procedural-3d-asset",
     "procedural-glb-asset",
@@ -29,14 +29,16 @@
       "bufferView and accessor range validation",
       "node, mesh, material, primitive, and triangle counts",
       "explicit unobserved render and host-import boundaries",
-      "decoded finite positions/normals, index bounds, nondegenerate triangles and winding agreement"
+      "decoded finite positions/normals, index bounds, nondegenerate triangles and winding agreement",
+      "sibling axm.creator-source/v1 sidecar retaining the exact supplied specification by default"
     ]
   },
   "dependencies": [],
   "relationships": [
     "originates exact binary 3D assets without requiring caller-supplied base64 bytes",
     "uses one deterministic glTF scene, node, mesh, material, accessor, bufferView, and buffer grammar",
-    "provides reusable GLB bytes to mixed projects, games, websites, viewers, and portable bundles"
+    "provides reusable GLB bytes to mixed projects, games, websites, viewers, and portable bundles",
+    "treats the GLB as a realization while the retained specification is source authority for future replay and reshaping"
   ],
   "anatomy_refs": [
     {
