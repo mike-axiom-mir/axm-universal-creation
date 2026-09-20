@@ -228,7 +228,8 @@ if __name__ == "__main__":
             result = getattr(system, sys.argv[1])(json.loads(raw, parse_constant=invalid_constant))
         else:
             raise ValueError("usage: runtime.py [verify | replay events.json | checkpoint events.json | restore checkpoint.json]")
-        output = json.dumps(result, sort_keys=True, ensure_ascii=False, allow_nan=False)
+        # Escaped JSON preserves every Unicode value even on non-UTF-8 terminals.
+        output = json.dumps(result, sort_keys=True, ensure_ascii=True, allow_nan=False)
         if len(output.encode()) > 8 * 1048576:
             raise ValueError("RESULT_BYTES_LIMIT")
         print(output)

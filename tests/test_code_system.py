@@ -314,6 +314,30 @@ class CodeSystemTests(unittest.TestCase):
                                               "values": {"request": request}})
             self.assertFalse(output.exists())
 
+    def test_unicode_effects_survive_a_non_utf8_python_terminal(self):
+        request = fixture(); request["action"] = "build"
+        label = "r\u00e9serve \U0001f30d"
+        edge = next(t for t in request["system"]["machine"]["transitions"] if t["event"] == "reserve")
+        edge["effects"].append({"label": label})
+        for scenario in request["system"]["scenarios"]:
+            for step in scenario["steps"]:
+                if step["event"]["type"] == "reserve" and step["expect"]["status"] == "APPLIED":
+                    step["expect"]["effects"] = copy.deepcopy(edge["effects"])
+        built = operate_code_system(ROOT, request)
+        self.assertEqual(built["status"], "CANDIDATE")
+        with tempfile.TemporaryDirectory() as td:
+            folder = Path(td); self.emit(built, folder)
+            python = subprocess.run([sys.executable, str(folder / "python/runtime.py"), "verify"],
+                cwd=folder, env={**os.environ, "PYTHONIOENCODING": "ascii"}, capture_output=True, timeout=30)
+            self.assertEqual(python.returncode, 0, python.stderr)
+            observed = json.loads(python.stdout)
+            javascript = self.command(folder, "javascript", "verify")
+            self.assertEqual(javascript.returncode, 0, javascript.stderr)
+            self.assertEqual(observed, json.loads(javascript.stdout))
+            self.assertEqual(observed["status"], "PASS")
+            self.assertTrue(any(e.get("label") == label for s in observed["observations"]["scenarios"]
+                                for step in s["steps"] for e in step["effects"]))
+
     def test_workflow_discovery_executes_confirms_retains_and_rechecks_stateful_code(self):
         from axm_uc.workflow_discovery import plan
         from axm_uc.workflow_experiments import experiment
