@@ -82,6 +82,17 @@ def character_recipe() -> dict:
 
 
 class FormAndCharacterRecipeTests(unittest.TestCase):
+    def test_material_response_is_routable_but_renderer_binding_stays_hold(self):
+        result = UniversalCreationMachine(ROOT).create({
+            "kind": "material-response-intent",
+            "inputs": {"family": "wood-oiled"},
+        })
+        self.assertEqual(result["type"], "CREATION_RESULT", result)
+        body = result["result"]
+        self.assertEqual(body["family"], "wood-oiled")
+        self.assertIn("surface.anisotropy", body["active_organs"])
+        self.assertEqual(body["renderer_binding"], "HOLD_RENDERER_BINDING_NOT_TESTED")
+
     def test_base_procedural_3d_route_retains_specification_by_default(self):
         specification = {
             "schema": "axm.procedural-3d/v0.1",
