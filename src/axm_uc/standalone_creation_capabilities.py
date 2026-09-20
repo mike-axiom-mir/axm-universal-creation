@@ -237,6 +237,13 @@ def register_standalone_creation_builtins(
         except (CharacterRecipeError, CreatorRetentionError, Procedural3DError) as exc:
             raise capability_error(str(exc), getattr(exc, "details", {})) from exc
 
+    def creation_atlas(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+        from .atlas_pipeline import operate_atlas
+        try:
+            return operate_atlas(root, inputs)
+        except (ValueError, RuntimeError, OSError, KeyError) as exc:
+            raise capability_error(str(exc)) from exc
+
     def construction_search(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
         from .construction_search import publish_search
         target = resolve_output_path(root, str(inputs['path']))
@@ -469,6 +476,7 @@ def register_standalone_creation_builtins(
         "builtin:form_pattern": form_pattern,
         "builtin:character_recipe": character_recipe,
         "builtin:construction_search": construction_search,
+        "builtin:creation_atlas": creation_atlas,
         "builtin:character_controller": character_controller,
         "builtin:material_response": material_response,
         "builtin:precision_cutter": precision_cutter,
