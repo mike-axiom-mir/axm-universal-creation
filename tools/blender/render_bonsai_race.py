@@ -52,7 +52,10 @@ def main():
     bpy.ops.import_scene.gltf(filepath=str(glb))
 
     scene=bpy.context.scene
-    scene.render.engine='BLENDER_EEVEE_NEXT'
+    scene.render.engine='CYCLES'
+    scene.cycles.device='CPU'
+    scene.cycles.samples=16
+    scene.cycles.use_denoising=True
     scene.render.image_settings.file_format='PNG'
     scene.render.film_transparent=False
     world=bpy.data.worlds.new('ProofWorld') if scene.world is None else scene.world
@@ -96,7 +99,7 @@ def main():
     report={
         'schema':'axm.uc.bonsai-race-render-proof/v0.1',
         'source':'fresh import of bonsai-race-v0.1.glb',
-        'renderer':'BLENDER_EEVEE_NEXT',
+        'renderer':'CYCLES_CPU',
         'resolution':args.resolution,
         'views':[name+'.png' for name,_ in views],
         'contact_sheet':'turnaround-proof.png',
