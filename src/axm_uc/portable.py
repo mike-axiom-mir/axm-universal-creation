@@ -32,6 +32,7 @@ ROOT_FILES = (
     "registry_materialization.json",
 )
 ROOT_DIRECTORIES = (
+    "atlas",
     "asset-packages",
     "assets",
     "atoms",
@@ -45,6 +46,8 @@ ROOT_DIRECTORIES = (
     "reference",
     "src",
     "state",
+    "third_party/code-professions",
+    "third_party/grammar-workbench",
     "tools",
 )
 REQUIRED_ENTRIES = frozenset(

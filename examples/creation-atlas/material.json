@@ -1,0 +1,27 @@
+{
+  "kind": "atlas-creation",
+  "inputs": {
+    "operation": "build",
+    "path": "creations/atlas-material",
+    "memory": "creations/atlas-experience",
+    "intent": {
+      "purpose": "Generate checked ceramic surface maps from the installed material family.",
+      "direction": "material",
+      "goals": [
+        "material-policy",
+        "material-maps"
+      ],
+      "parameters": {
+        "recipe": {
+          "atlas": "material:generator:ceramic",
+          "path": [
+            "recipe"
+          ]
+        },
+        "policy": {
+          "minimum_size": 128
+        }
+      }
+    }
+  }
+}

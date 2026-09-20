@@ -1,0 +1,24 @@
+{
+  "kind": "atlas-creation",
+  "inputs": {
+    "operation": "build",
+    "path": "creations/atlas-programming",
+    "memory": "creations/atlas-experience",
+    "intent": {
+      "purpose": "Build inventory restock functions, observe acceptance cases in JavaScript and Python, and preserve reusable construction.",
+      "direction": "programming",
+      "goals": [
+        "acceptance-cases",
+        "retained-code"
+      ],
+      "parameters": {
+        "request": {
+          "atlas": "recipe:restock-code",
+          "path": [
+            "value"
+          ]
+        }
+      }
+    }
+  }
+}
