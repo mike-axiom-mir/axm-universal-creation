@@ -1,0 +1,33 @@
+{
+  "id": "AXM-CAP-CODE-PROGRAM-PROJECT",
+  "version": "1.0.0",
+  "status": "live",
+  "purpose": "Create standalone JavaScript/Python code projects from explicit typed programs and acceptance contracts through six deterministic professional procedures.",
+  "handles": ["code-program-project"],
+  "input_contract": {
+    "required": ["path", "request"],
+    "properties": {
+      "path": "New ordinary project directory; existing projects and machine internals are protected.",
+      "request": "Code workflow request: action build, verify or retain plus explicit job. Verify/retain explicitly execute freshly generated bounded code."
+    }
+  },
+  "output_contract": {
+    "kind": "directory",
+    "contains": ["source-modules", "selftests", "construction", "requirements", "case-observations", "provenance", "optional-recipe-archive"]
+  },
+  "dependencies": ["AXM-CAP-WRITE-PROJECT"],
+  "relationships": ["Consumes bundled Grammar 102 compiler and Profession Fabric procedures; writes through the existing project boundary."],
+  "anatomy_refs": [],
+  "implementation": {
+    "kind": "DETERMINISTIC_SOURCE",
+    "entrypoint": "builtin:code_program_project",
+    "source": "src/axm_uc/code_creation.py"
+  },
+  "limitations": [
+    "48 closed expression operations; JavaScript and Python only; not arbitrary application synthesis or source translation.",
+    "Build mode creates candidates without execution; verify/retain require Node and Python with bounded process execution, not an OS sandbox.",
+    "Verification covers declared cases, repeated observations and requested-language parity; not full specification, branch coverage, deployment or security.",
+    "Retention is explicit, additive project data. No silent canon promotion or shared machine mutation."
+  ],
+  "persistent_state": null
+}

@@ -441,7 +441,13 @@ def builtin_direction_router(root: Path, inputs: dict[str, Any]) -> dict[str, An
         raise CapabilityError(str(exc)) from exc
 
 
+def builtin_code_program_project(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+    from .code_creation import create_code_project
+    return create_code_project(root, inputs)
+
+
 BUILTINS: dict[str, Callable[[Path, dict[str, Any]], dict[str, Any]]] = {
+    "builtin:code_program_project": builtin_code_program_project,
     "builtin:write_text": builtin_write_text,
     "builtin:write_json": builtin_write_json,
     "builtin:inspect_registry": builtin_inspect_registry,

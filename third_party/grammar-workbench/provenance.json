@@ -1,10 +1,10 @@
 [
   {
     "repo": "axm-102-grammer",
-    "commit": "ff58375b65a4033041e6de957263d4146aa7429e",
+    "commit": "6e9efc2ebf759f9e2d03c933eafaf71856357471",
     "source": "npm pack --ignore-scripts (declared package files)",
     "destination": "grammar-102.tgz",
-    "sha256": "99999808ccc12915c47149296da1039a0a7555a77713516fd82c28c6315d2781"
+    "sha256": "c03af526922b94b5a30ce6178a966399ef91affb85430174575a621e68701988"
   },
   {
     "repo": "axm-grammer-glass",

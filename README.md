@@ -443,6 +443,13 @@ inputs and incomplete searches stay visible. See [PIPELINE_MAP.md](PIPELINE_MAP.
 capability capsule, Grammar Glass sparse/full state comparison, and visual
 projection budgets through three offline JSON commands.
 
+## Standalone programming creation
+
+UC includes a typed JavaScript/Python compiler and six executable coding
+profession procedures. Create reproducible code projects, run explicit
+acceptance cases, and retain reusable construction without a model, network
+service or external repository. See [PROGRAMMING_CREATION.md](PROGRAMMING_CREATION.md).
+
 ## Licensing
 
 Current AXM-owned machine/workshop code: **PolyForm Noncommercial 1.0.0 + `CREATOR_OUTPUT_PERMISSION.md`**.

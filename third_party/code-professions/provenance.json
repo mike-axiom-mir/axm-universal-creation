@@ -1,0 +1,64 @@
+{
+  "schema": "axm.uc.code-professions-donor.v1",
+  "repository": "mike-axiom-mir/axm-profession-fabric",
+  "commit": "c7ab2a0e655a755770b962100d3b212aa56c45c8",
+  "license": "MPL-2.0",
+  "files": [
+    {
+      "path": "workflows/code/contract.mjs",
+      "sha256": "6eee11974bc13baca0c850485afa105e50b369291169a2a869fc50db8de90a3a"
+    },
+    {
+      "path": "workflows/code/index.mjs",
+      "sha256": "775b01cac7e6d92d481771d5e2022907e96be60711421686a740b0d995fe5fbf"
+    },
+    {
+      "path": "workflows/code/runtime.mjs",
+      "sha256": "61a5448041a276e1526399b0a5f2de4d09a5371bba0c6ee75b37cb410e08ee41"
+    },
+    {
+      "path": "workflows/code/observe-js.cjs",
+      "sha256": "75b0e863733884dbbaf27a2576c84ac47b4bf2184aa45556505631e21b216c4a"
+    },
+    {
+      "path": "workflows/code/observe-python.py",
+      "sha256": "9edf89cffc61b1f39bd4e4a47f4e4a8bb7d19689b4a82d293e15e7e41b31ad99"
+    },
+    {
+      "path": "professions/software/build-engineer/tools/code-build.mjs",
+      "sha256": "99b7b55501501bf8eb2eb451c51d0f1cd3d042fc55e9f3307b233bc2b82bd19c"
+    },
+    {
+      "path": "professions/software/developer-tools-engineer/tools/code-compiler.mjs",
+      "sha256": "916eac092f2817276f20c9a81de27637d254c83c6677074f3ce903131ee70a86"
+    },
+    {
+      "path": "professions/software/integration-release/tools/code-readiness.mjs",
+      "sha256": "63367e63167215321aa7a46e43040959e6f96260e9dad32a930b51b8ac5938c8"
+    },
+    {
+      "path": "professions/software/qa-playtest/tools/code-evidence.mjs",
+      "sha256": "0e77c99dfb5bb7561eba793fda3743718e2ce290e1ef23e6fc505f5b37626755"
+    },
+    {
+      "path": "professions/software/software-architect/tools/code-plan.mjs",
+      "sha256": "161b8bff75bac5fbe72fa137e44ff6eaf97a94b49812900a3c82225108702237"
+    },
+    {
+      "path": "professions/software/software-maintainer/tools/code-retention.mjs",
+      "sha256": "b38bb84f94d056b20488a7187058b7bbc9b41395675c81ed6da4efbe9cfe704b"
+    },
+    {
+      "path": "workflows/code/README.md",
+      "sha256": "1074d9b6086940dffbc9f1966717c102bd8ef35e412692dcc51db4b3c4def724"
+    },
+    {
+      "path": "LICENSE",
+      "sha256": "66a3107d5ad6a058aab753eaac2047ccb2ed0e39465dd0fe5844da3e300d5172"
+    },
+    {
+      "path": "LICENSE_BOUNDARY.md",
+      "sha256": "1bbac292377ffe45e82838bea1e3b8824ce7a5d71f37a7d040e5a0cf6cbd5c42"
+    }
+  ]
+}
