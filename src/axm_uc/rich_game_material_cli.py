@@ -5,6 +5,8 @@ import argparse
 import json
 from pathlib import Path
 
+from .material_response import material_response_catalog, resolve_material_response
+
 from .finished_layered_game_materials import (
     FINISH_BY_NAME,
     generate_finished_layered_game_material,
@@ -21,6 +23,17 @@ def build_parser() -> argparse.ArgumentParser:
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("catalog", help="show every rich base-material profile and truth boundary")
     sub.add_parser("layer-catalog", help="show reusable layer types and truth boundary")
+
+    response_catalog = sub.add_parser(
+        "response-catalog",
+        help="show the imported surface-response families/organs without claiming renderer binding",
+    )
+    response = sub.add_parser(
+        "response",
+        help="resolve one surface-response family/variant as explicit material behavior intent",
+    )
+    response.add_argument("family")
+    response.add_argument("--variant")
 
     create = sub.add_parser("create", help="write one immutable rich PBR base-material bundle")
     create.add_argument("profile", choices=sorted(PROFILE_BY_NAME))
@@ -65,6 +78,10 @@ def main(argv: list[str] | None = None) -> int:
             result["finish_truth"] = (
                 "Optional finishes alter portable material maps only; they are not lighting, outlines, geometry detail or aesthetic acceptance."
             )
+        elif args.command == "response-catalog":
+            result = material_response_catalog()
+        elif args.command == "response":
+            result = resolve_material_response(args.family, variant=args.variant)
         elif args.command == "create":
             color = tuple(args.color) if args.color is not None else None
             result = generate_rich_game_material(
