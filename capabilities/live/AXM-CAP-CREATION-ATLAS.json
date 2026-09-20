@@ -1,0 +1,29 @@
+{
+  "id": "AXM-CAP-CREATION-ATLAS",
+  "version": "0.1.0",
+  "status": "live",
+  "purpose": "Retrieve source-backed construction knowledge by category and direction, bind explicit goals to installed blueprints, execute ordinary capabilities, and retain rechecked construction experience.",
+  "handles": ["creation-atlas", "atlas-creation"],
+  "input_contract": {
+    "required": [],
+    "required_by_operation": {
+      "get": ["id"], "closure": ["ids"], "plan": ["intent"],
+      "build": ["intent", "path"], "experience": ["memory"]
+    },
+    "properties": {
+      "operation": "summary, query, get, closure, plan, build or experience",
+      "intent": "purpose, exact direction, explicit goals, typed parameters and optional blueprint id; parameters can select atlas data",
+      "memory": "optional caller-selected persistent experience directory outside machine internals",
+      "plan_sha256": "optional expected plan identity; changed source, parameters or experience returns HOLD before writes"
+    }
+  },
+  "output_contract": {"kind": "atlas-knowledge-or-goal-bound-creation", "contains": ["source and evidence labels", "deterministic route and explicit gaps", "retained intent, construction, results and goal checks", "reusable measured search seeds"]},
+  "dependencies": [],
+  "implementation": {"kind": "DETERMINISTIC_SOURCE", "entrypoint": "builtin:creation_atlas", "source": "src/axm_uc/atlas_pipeline.py"},
+  "limitations": [
+    "An index record is not proof of execution. Descriptor resources and research anatomy remain explicitly unverified.",
+    "Direction and goals are explicit contracts; arbitrary prose does not acquire invented semantics or a quality score.",
+    "Categories and blueprint compositions are extensible. Execution needs installed capabilities and bounded input contracts.",
+    "Experience preserves success and failure. Search seeds are measured again; observations never silently become canon or new capabilities."
+  ]
+}
