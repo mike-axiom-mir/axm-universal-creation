@@ -199,7 +199,7 @@ def _chains(raw, positions, parents, kind, bounds):
                 fields(target, {'at', 'point'})
                 at = number(target['at'])
                 require(0 <= at <= 1, 'target phase must be in 0..1')
-                points.append((at, anchor_point(target['point'], bounds)))
+                points.append([at, anchor_point(target['point'], bounds)])
             require(points[0][0] == 0 and points[-1][0] == 1 and all(a[0] < b[0] for a, b in zip(points, points[1:])),
                     'target phases must cover 0..1 and strictly increase')
             normalized['targets'] = points
@@ -213,7 +213,7 @@ def _chains(raw, positions, parents, kind, bounds):
     return result
 
 
-def _compile_clip(raw, positions, parents, bounds):
+def _prepare_clip(raw, positions, parents, bounds):
     require(isinstance(raw, dict), 'performance clip must be an object')
     kind = raw.get('kind')
     require(kind in ('reach', 'walk'), 'supported performance kinds are reach and walk')
@@ -234,6 +234,57 @@ def _compile_clip(raw, positions, parents, bounds):
         require(0 < stride <= 10 and 0 < lift <= 2 and .5 <= stance < .9, 'invalid stride/lift/stance')
         travel = [0., 0., 0.]
         travel[forward] = stride
+    plan = {'name': cname, 'kind': kind, 'duration': duration, 'samples': samples,
+            'chains': chains, 'root': root, 'travel': travel}
+    if kind == 'walk':
+        plan.update(forward=forward, up=up, stride=stride, lift=lift, stance=stance)
+    return plan
+
+
+def sample_performance(plan, positions, phase):
+    """Solve at an explicit phase; walk phases above one accumulate root travel.
+
+    Plans come from _prepare_clip. No hidden clock, prior frame or baked-key
+    interpolation determines this pose. Reach phases must remain within 0..1.
+    """
+    phase = number(phase)
+    require(phase >= 0 and (plan['kind'] == 'walk' or phase <= 1), 'invalid performance phase')
+    root_offset = mul(plan['travel'], phase)
+    values = {(plan['root'], 'translation'): add(positions[plan['root']], root_offset)}
+    observations = []
+    for chain in plan['chains']:
+        first, middle, end = chain['joints']
+        start, mid_rest, end_rest = [add(positions[j], root_offset) for j in chain['joints']]
+        contact, plant = False, None
+        if plan['kind'] == 'walk':
+            cycle = phase + chain['phase']
+            step = math.floor(cycle)
+            local = cycle - step
+            target = list(positions[end])
+            distance = plan['stride']*(step-chain['phase'])
+            if local <= plan['stance']:
+                contact, plant = True, step
+            else:
+                u = (local-plan['stance'])/(1-plan['stance'])
+                distance += plan['stride']*u*u*(3-2*u)
+                target[plan['up']] += plan['lift']*math.sin(math.pi*u)**2
+            target[plan['forward']] += distance
+        else:
+            target = _target_at(chain['targets'], phase)
+        q1, q2, q3, elbow = solve_chain(start, mid_rest, end_rest, target, chain['pole'])
+        bend = math.degrees(math.acos(max(-1., min(1., dot(unit(sub(elbow,start)), unit(sub(target,elbow)))))))
+        require(bend <= chain['bend'] + 1e-7, f"{plan['name']}: chain bend exceeds declared limit")
+        values[first, 'rotation'], values[middle, 'rotation'] = q1, q2
+        if chain['keep']:
+            values[end, 'rotation'] = q3
+        observations.append({'time': phase*plan['duration'], 'joint': end, 'target': target,
+                             'contact': contact, 'plant': plant, 'bend_degrees': bend})
+    return values, observations
+
+
+def _compile_clip(plan, positions):
+    cname, duration, samples = plan['name'], plan['duration'], plan['samples']
+    root, chains = plan['root'], plan['chains']
     values = {(root, 'translation'): []}
     for chain in chains:
         for j in chain['joints'][:3 if chain['keep'] else 2]:
@@ -241,37 +292,10 @@ def _compile_clip(raw, positions, parents, bounds):
     observations = []
     times = [duration*i/(samples-1) for i in range(samples)]
     for i, time in enumerate(times):
-        phase = i/(samples-1)
-        root_offset = mul(travel, phase)
-        values[root, 'translation'].append(add(positions[root], root_offset))
-        for chain in chains:
-            first, middle, end = chain['joints']
-            start, mid_rest, end_rest = [add(positions[j], root_offset) for j in chain['joints']]
-            contact = False
-            if kind == 'walk':
-                cycle = phase + chain['phase']
-                step = math.floor(cycle)
-                local = cycle - step
-                target = list(positions[end])
-                distance = stride*(step-chain['phase'])
-                if local <= stance:
-                    contact = True
-                else:
-                    u = (local-stance)/(1-stance)
-                    distance += stride*u*u*(3-2*u)
-                    target[up] += lift*math.sin(math.pi*u)**2
-                target[forward] += distance
-            else:
-                target = _target_at(chain['targets'], phase)
-            q1, q2, q3, elbow = solve_chain(start, mid_rest, end_rest, target, chain['pole'])
-            bend = math.degrees(math.acos(max(-1., min(1., dot(unit(sub(elbow,start)), unit(sub(target,elbow)))))))
-            require(bend <= chain['bend'] + 1e-7, f'{cname}: chain bend exceeds declared limit')
-            values[first, 'rotation'].append(q1)
-            values[middle, 'rotation'].append(q2)
-            if chain['keep']:
-                values[end, 'rotation'].append(q3)
-            observations.append({'time': time, 'joint': end, 'target': target, 'contact': contact,
-                                 'bend_degrees': bend})
+        solved, rows = sample_performance(plan, positions, i/(samples-1))
+        for key in values:
+            values[key].append(solved[key])
+        observations.extend({**row, 'time': time} for row in rows)
     tracks = []
     for (joint, path), keys in values.items():
         if path == 'rotation':
@@ -279,8 +303,8 @@ def _compile_clip(raw, positions, parents, bounds):
                 if dot(keys[i-1], keys[i]) < 0:
                     keys[i] = mul(keys[i], -1)
         tracks.append({'joint': joint, 'path': path, 'times': times, 'values': keys, 'interpolation': 'LINEAR'})
-    return {'name': cname, 'tracks': tracks}, {'clip': cname, 'kind': kind, 'samples': observations,
-            'root_travel': travel, 'boundary': 'Targets/contact verified at authored samples only; no physical balance, collision or between-key contact guarantee.'}
+    return {'name': cname, 'tracks': tracks}, {'clip': cname, 'kind': plan['kind'], 'samples': observations,
+            'root_travel': plan['travel'], 'boundary': 'Baked targets/contact verified at authored samples only; use the runtime controller to solve between keys. No physical balance or collision guarantee.'}
 
 
 def fit_character_performance(raw, specification, *, body_family):
@@ -291,11 +315,13 @@ def fit_character_performance(raw, specification, *, body_family):
     joints, positions, parents = _fit_joints(raw['joints'], bounds)
     bindings = _fit_bindings(raw['bindings'], specification, positions)
     require(isinstance(raw['clips'], list) and 1 <= len(raw['clips']) <= 8, 'performance needs 1..8 clips')
-    clips, observations = [], []
+    clips, observations, controllers = [], [], []
     for raw_clip in raw['clips']:
-        clip, observation = _compile_clip(raw_clip, positions, parents, bounds)
+        plan = _prepare_clip(raw_clip, positions, parents, bounds)
+        clip, observation = _compile_clip(plan, positions)
         clips.append(clip)
         observations.append(observation)
+        controllers.append(plan)
     return {'rig': {'schema': 'axm.character-rig/v0.1', 'joints': joints, 'bindings': bindings},
-            'animation': clips, 'landmarks': positions, 'observations': observations,
+            'animation': clips, 'landmarks': positions, 'observations': observations, 'controllers': controllers,
             'boundary': 'Declared body-relative fitting, segment-distance skin fields and sampled two-bone reach/walk. No inferred anatomy or automatic growth-library admission.'}
