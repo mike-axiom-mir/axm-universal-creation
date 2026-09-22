@@ -53,6 +53,30 @@
     "floating_environment_percent": 14,
     "cloud_bus_percent": 8
   },
+  "detail_pass_v2": {
+    "goal": "Raise close-range authored complexity without changing the accepted machine silhouette or turning detail into undirected polygon noise.",
+    "core": [
+      "containment petals and actuators around the luminous seed",
+      "visible guide rollers, brake fins, service scales and braided gantry conduits",
+      "layered reactor heatshields, umbilicals and diagnostic lights"
+    ],
+    "pylons": [
+      "articulated supports and readable joints",
+      "focusing coils, emitter prongs and outward-facing service consoles",
+      "structural conduit spines and porcelain energy isolators"
+    ],
+    "environment": [
+      "load ribs, workshops, roof plates and lamps as inhabited scale cues",
+      "hanging root conduits and underside photon crystals",
+      "pressure bands, utility rails, service pods, fins and sensor hardware on the cloud bus"
+    ],
+    "non_degradable": [
+      "eight separately readable process pylons",
+      "counter-rotating two-ring core silhouette",
+      "detachable named parts and retained construction causes",
+      "three descending LOD realizations and low-cost collision"
+    ]
+  },
   "anti_defaults": [
     "no primitive-only chrome sphere presentation",
     "no color-swap duplicates counted as new atoms",

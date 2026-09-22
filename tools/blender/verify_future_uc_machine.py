@@ -62,8 +62,9 @@ def inspect_asset(path: Path, manifest: dict) -> dict:
             "JOINTS_0" in primitive["attributes"] and "WEIGHTS_0" in primitive["attributes"]
             for gltf_mesh in doc.get("meshes", []) for primitive in gltf_mesh["primitives"]
         ),
-        "material_family_present": len(doc.get("materials", [])) >= 10,
-        "detailed_geometry_present": len(mesh.data.loop_triangles) >= 45000,
+        # Only material families actually used by exported geometry survive GLB export.
+        "material_family_present": len(doc.get("materials", [])) >= 14,
+        "detailed_geometry_present": len(mesh.data.loop_triangles) >= 90000,
     }
     for image in bpy.data.images:
         if image.source == "FILE" and image.packed_file and not len(image.pixels):
@@ -145,10 +146,14 @@ def main() -> None:
     triangles = [asset["counts"]["triangles"] for asset in assets]
     collision = inspect_collision(root / manifest["collision"]["path"])
     part_gates = {
-        "detailed_part_count": len(parts["parts"]) >= 500,
+        "detailed_part_count": len(parts["parts"]) >= 1200,
         "all_parts_categorized": all(row["category"] for row in parts["parts"]),
         "all_parts_controlled": all(row["controlling_bone"] for row in parts["parts"]),
         "semantic_families": {"core", "pylon", "island", "transit", "energy"}.issubset({row["category"] for row in parts["parts"]}),
+        "detail_families": {
+            "core_armor", "orbital_bearing", "reactor_detail", "pylon_focus",
+            "pylon_console", "island_architecture", "transit_detail",
+        }.issubset({row["category"] for row in parts["parts"]}),
         "strict_lod_descent": triangles[0] > triangles[1] > triangles[2] > 0,
         "lod2_reduction": triangles[2] / triangles[0] < .30,
     }

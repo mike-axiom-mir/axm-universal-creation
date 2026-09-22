@@ -153,6 +153,10 @@ def render_stills(root: Path, width: int, height: int, only_shot: str | None = N
         ("environment-rear.png", "Forge_Idle", 186, (-12.8, 15.5, 8.4), (0, 0, .70), 56, False, "rear, islands, underside and transit"),
         ("dormant-state.png", "Dormant_To_Awake", 0, (11.7, -16.0, 9.1), (0, 0, 1.0), 54, False, "dormant state"),
         ("awake-state.png", "Dormant_To_Awake", 90, (11.7, -16.0, 9.1), (0, 0, 1.0), 54, False, "awake state"),
+        ("reactor-detail.png", "Forge_Build_Pulse", 42, (4.2, -6.4, 3.1), (0, 0, 1.18), 70, True, "reactor heatshields, umbilicals and diagnostics"),
+        ("pylon-detail.png", "Forge_Build_Pulse", 68, (3.7, -7.7, 2.7), (0, -4.15, .92), 74, True, "pylon joints, focus prongs, console and conduit isolators"),
+        ("island-workshop-detail.png", "Forge_Idle", 132, (8.2, -7.5, 3.9), (5.45, -3.50, .83), 72, True, "inhabited island workshops, load ribs and underside services"),
+        ("cloud-bus-detail.png", "Forge_Idle", 186, (-9.2, -5.9, 5.7), (-5.65, -1.10, 3.35), 72, True, "transit pressure bands, utility rails, pods and sensor hardware"),
     ]
     evidence = []
     for filename, clip, frame, location, target, lens, dof, purpose in states:
@@ -222,7 +226,11 @@ def main() -> None:
     parser.add_argument("--height", type=int, default=720)
     parser.add_argument("--motion", action="store_true")
     parser.add_argument("--motion-frames", type=int, default=36)
-    parser.add_argument("--only-shot", choices=["hero-oblique.png", "core-closeup.png", "process-ring.png", "environment-rear.png", "dormant-state.png", "awake-state.png"])
+    parser.add_argument("--only-shot", choices=[
+        "hero-oblique.png", "core-closeup.png", "process-ring.png", "environment-rear.png",
+        "dormant-state.png", "awake-state.png", "reactor-detail.png", "pylon-detail.png",
+        "island-workshop-detail.png", "cloud-bus-detail.png",
+    ])
     args = parser.parse_args()
     root = args.directory.resolve()
     if args.motion:

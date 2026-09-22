@@ -66,11 +66,15 @@ class ForgeAuthor:
             "titanium": surface(textures, "UC_Aged_Titanium", "#65717c", "steel", 512),
             "porcelain": surface(textures, "UC_Porcelain_Shell", "#d9e3e4", "metal", 512),
             "gold": surface(textures, "UC_Forge_Gold", "#b77a2a", "metal", 512),
+            "copper": surface(textures, "UC_Conductive_Copper", "#7f4328", "metal", 512),
+            "ceramic_dark": surface(textures, "UC_Ceramic_Heatshield", "#273744", "metal", 512),
             "basalt": pbr_material(textures, "UC_Basalt", "#29313a", "stone", 512),
             "moss": pbr_material(textures, "UC_Living_Moss", "#496a3e", "cloth", 512),
+            "moss_light": pbr_material(textures, "UC_Young_Moss", "#72945a", "cloth", 512),
             "rubber": pbr_material(textures, "UC_Transit_Rubber", "#15191e", "rubber", 512),
             "cyan": solid("UC_Photon_Cyan", "#2fd8ff", .12, .18, 5.5),
             "cyan_soft": solid("UC_Soft_Cyan", "#64dff5", .05, .30, 2.1),
+            "core_field": solid("UC_Core_Field", "#2798bb", .08, .22, 1.15),
             "amber": solid("UC_Signal_Amber", "#ffb44b", .08, .24, 3.6),
             "dark": solid("UC_Deep_Recess", "#05090f", .45, .24, 0),
             "water": solid("UC_Waterfall_Light", "#4aaeff", .0, .16, 3.0),
@@ -124,6 +128,11 @@ def polar(radius: float, angle: float, z: float) -> tuple[float, float, float]:
     return (radius * math.cos(angle), radius * math.sin(angle), z)
 
 
+def layered_point(start: Vector, control: Vector, end: Vector, t: float) -> Vector:
+    """Sample the authored two-segment energy route without hiding its construction."""
+    return start.lerp(control, t * 2) if t <= .5 else control.lerp(end, (t - .5) * 2)
+
+
 def build_bones(h: ForgeAuthor) -> None:
     h.bone("Root", (0, 0, 0), (0, 0, .4))
     h.bone("Core", (0, 0, 2.80), (0, 0, 3.20), "Root")
@@ -150,7 +159,7 @@ def build_bones(h: ForgeAuthor) -> None:
 def build_core(h: ForgeAuthor) -> None:
     center = (0, 0, 2.80)
     h.current = "Core"
-    h.ball("UC luminous seed envelope", center, (.72, .72, .72), "cyan_soft", segments=64, rings=40, category="core")
+    h.ball("UC luminous seed envelope", center, (.72, .72, .72), "core_field", segments=64, rings=40, category="core")
     h.ball("UC concentrated inner seed", center, (.39, .39, .39), "cyan", segments=48, rings=32, category="core")
     for angle in range(0, 360, 45):
         a = math.radians(angle)
@@ -212,6 +221,89 @@ def build_core(h: ForgeAuthor) -> None:
     h.cyl("Forge downward beam", (0, 0, -.12), .10, .75, "cyan", vertices=32, category="energy")
 
 
+def build_core_detail_pass(h: ForgeAuthor) -> None:
+    """Add readable close-range mechanisms without changing the accepted silhouette."""
+    h.current = "Core"
+    for index in range(12):
+        a = index * math.tau / 12
+        p = Vector(polar(.69, a, 2.80 + .055 * math.sin(a * 2)))
+        h.box(
+            f"Seed containment petal {index:02d}", p, (.18, .34, .31),
+            "porcelain" if index % 3 else "ceramic_dark", bevel=.045,
+            rotation=(.08 * math.sin(a), .18 * math.cos(a), a), category="core_armor",
+        )
+        h.cyl(
+            f"Seed petal actuator {index:02d}", Vector(polar(.84, a, 2.80)), .035, .22,
+            "copper", axis=(-math.sin(a), math.cos(a), .2), vertices=14, category="core_actuator",
+        )
+    for index in range(8):
+        a = index * math.tau / 8 + math.pi / 8
+        low = Vector(polar(.28, a, 2.22))
+        waist = Vector(polar(.63, a, 2.52))
+        high = Vector(polar(.28, a, 3.38))
+        h.beam(f"Seed lower containment rib {index:02d}", low, waist, .025, "gold", vertices=14, category="core_rib")
+        h.beam(f"Seed upper containment rib {index:02d}", waist + Vector((0, 0, .56)), high, .025, "titanium", vertices=14, category="core_rib")
+        h.ball(f"Seed rib datum light {index:02d}", waist, (.032, .032, .032), "amber", segments=12, rings=8, category="core_light")
+
+    h.current = "Ring_A"
+    for index in range(24):
+        a = index * math.tau / 24
+        p = Vector((.21 * math.sin(a), 1.24 * math.cos(a), 2.80 + 1.24 * math.sin(a)))
+        axis = Vector((0, -math.sin(a), math.cos(a)))
+        h.cyl(f"Ring A guide roller {index:02d}", p, .043, .13, "copper", axis=axis, vertices=16, category="orbital_bearing")
+        if index % 3 == 0:
+            h.ball(f"Ring A phase sensor {index:02d}", p + axis * .11, (.035, .035, .035), "cyan", segments=12, rings=8, category="orbital_sensor")
+
+    h.current = "Ring_B"
+    for index in range(20):
+        a = index * math.tau / 20
+        p = Vector((1.52 * math.cos(a), -.23 * math.sin(a), 2.80 + 1.52 * math.sin(a)))
+        h.box(
+            f"Ring B brake fin {index:02d}", p, (.18, .09, .26),
+            "ceramic_dark" if index % 2 else "titanium", bevel=.018,
+            rotation=(0, -a, .12 * math.sin(a)), category="orbital_brake",
+        )
+
+    h.current = "Gantry"
+    for index in range(32):
+        a = index * math.tau / 32
+        radius = 1.73 if index % 2 else 2.25
+        p = Vector(polar(radius, a, 2.80 + (.05 if index % 2 else -.05)))
+        h.box(
+            f"Gantry service scale {index:02d}", p, (.14, .22, .08),
+            "copper" if index % 4 == 0 else "ceramic_dark", bevel=.016,
+            rotation=(0, 0, a), category="gantry_service",
+        )
+    for lane, radius in enumerate((1.76, 2.27)):
+        for index in range(16):
+            a0 = index * math.tau / 16 + lane * .08
+            a1 = a0 + math.tau / 32
+            h.cable(
+                f"Gantry braided conduit {lane}-{index:02d}",
+                [polar(radius, a0, 2.67 + lane * .24), polar(radius, (a0 + a1) / 2, 2.71 + lane * .24), polar(radius, a1, 2.67 + lane * .24)],
+                .015, "copper" if lane else "cyan_soft", category="gantry_conduit",
+            )
+
+    for index in range(16):
+        a = index * math.tau / 16
+        h.box(
+            f"Reactor heatshield rib {index:02d}", polar(.49, a, 1.18), (.10, .17, 1.28),
+            "ceramic_dark" if index % 2 else "titanium", bevel=.025,
+            rotation=(0, 0, a), category="reactor_detail",
+        )
+        if index % 2 == 0:
+            h.cable(
+                f"Reactor service umbilical {index:02d}",
+                [polar(.54, a, .48), polar(.68, a + .09, 1.12), polar(.58, a, 1.88)],
+                .024, "copper", category="reactor_conduit",
+            )
+    for z in (.66, 1.10, 1.54):
+        for index in range(8):
+            a = index * math.tau / 8 + z * .13
+            h.ball(f"Reactor diagnostic light {z:.2f}-{index:02d}", polar(.56, a, z), (.027, .027, .027),
+                   "amber" if index % 3 == 0 else "cyan", segments=10, rings=7, category="reactor_light")
+
+
 def build_hologram(h: ForgeAuthor, index: int, center: Vector, bone: str) -> None:
     x, y, z = center
     material = "cyan" if index not in (3, 6) else "amber"
@@ -271,6 +363,28 @@ def build_pylons(h: ForgeAuthor) -> None:
         h.cyl(f"{label} porcelain deck", (x, y, .62), .37, .09, "porcelain", vertices=48, bone=bone, category="pylon")
         h.ring(f"{label} light rim", (x, y, .68), .34, .028, "cyan", normal=(0, 0, 1), bone=bone, category="pylon_light")
         h.cyl(f"{label} hologram projector", (x, y, .78), .17, .18, "titanium", vertices=32, bone=bone, category="pylon")
+        outward = Vector((math.cos(angle), math.sin(angle), 0))
+        tangent = Vector((-math.sin(angle), math.cos(angle), 0))
+        for leg in range(4):
+            a = angle + leg * math.tau / 4 + math.pi / 4
+            foot = Vector((x + .40 * math.cos(a), y + .40 * math.sin(a), .29))
+            shoulder = Vector((x + .27 * math.cos(a), y + .27 * math.sin(a), .67))
+            h.beam(f"{label} articulated support {leg}", foot, shoulder, .034, "titanium", vertices=14, bone=bone, category="pylon_support")
+            h.ball(f"{label} support joint {leg}", shoulder, (.050, .050, .050), "gold", segments=14, rings=9, bone=bone, category="pylon_joint")
+        h.ring(f"{label} focusing coil", (x, y, .88), .235, .018, "copper", normal=(0, 0, 1), bone=bone, category="pylon_coil")
+        for prong in range(4):
+            a = prong * math.tau / 4 + angle
+            start = Vector((x + .20 * math.cos(a), y + .20 * math.sin(a), .84))
+            end = Vector((x + .29 * math.cos(a), y + .29 * math.sin(a), 1.04))
+            h.beam(f"{label} focusing prong {prong}", start, end, .022, "ceramic_dark", vertices=12, bone=bone, category="pylon_focus")
+            h.ball(f"{label} focusing emitter {prong}", end, (.035, .035, .035), "cyan", segments=12, rings=8, bone=bone, category="pylon_focus")
+        panel = Vector((x, y, .49)) + outward * .47
+        h.box(f"{label} service console", panel, (.10, .31, .27), "ceramic_dark", bevel=.025,
+              rotation=(0, 0, angle), bone=bone, category="pylon_console")
+        for signal in range(3):
+            h.ball(f"{label} console signal {signal}", panel + tangent * ((signal - 1) * .07) + outward * .055,
+                   (.022, .022, .022), "amber" if signal == index % 3 else "cyan", segments=10, rings=7,
+                   bone=bone, category="pylon_console")
         for k in range(8):
             a = k * math.tau / 8
             h.cyl(f"{label} deck fastener {k}", (x + .30 * math.cos(a), y + .30 * math.sin(a), .71), .017, .028,
@@ -284,6 +398,14 @@ def build_pylons(h: ForgeAuthor) -> None:
         h.cable(f"{label} energy path", [a0, a1, a2], .032, "cyan_soft", bone="Energy", category="energy")
         h.cable(f"{label} return path", [a0 + Vector((0, 0, .12)), a1 + Vector((0, 0, .12)), a2 + Vector((0, 0, .12))],
                 .013, "amber", bone="Energy", category="energy")
+        h.beam(f"{label} conduit spine inner", a0 + Vector((0, 0, -.08)), a1 + Vector((0, 0, -.08)), .024,
+               "frame", vertices=12, bone="Energy", category="energy_structure")
+        h.beam(f"{label} conduit spine outer", a1 + Vector((0, 0, -.08)), a2 + Vector((0, 0, -.08)), .024,
+               "frame", vertices=12, bone="Energy", category="energy_structure")
+        for collar in range(1, 6):
+            point = layered_point(a0, a1, a2, collar / 6)
+            h.cyl(f"{label} conduit isolator {collar}", point, .043, .055, "porcelain", axis=(0, 0, 1), vertices=14,
+                  bone="Energy", category="energy_isolator")
 
 
 def build_island(h: ForgeAuthor, index: int, position: tuple[float, float, float], scale: float, variant: int) -> None:
@@ -334,6 +456,42 @@ def build_island(h: ForgeAuthor, index: int, position: tuple[float, float, float
           "water", bevel=.015, bone=bone, category="waterfall")
     h.ring(f"Island {index} bridge socket", (x, y - .82 * scale, z + .97 * scale), .14 * scale, .028 * scale,
            "gold", normal=(0, -1, 0), bone=bone, category="docking")
+    # A second detail frequency turns the islands into inhabited production sites.
+    for rib in range(8):
+        a = rib * math.tau / 8 + variant * .07
+        inner = Vector((x + .18 * scale * math.cos(a), y + .18 * scale * math.sin(a), z + .94 * scale))
+        outer = Vector((x + .78 * scale * math.cos(a), y + .78 * scale * math.sin(a), z + .93 * scale))
+        h.beam(f"Island {index} surface load rib {rib}", inner, outer, .022 * scale, "gold" if rib % 3 == 0 else "titanium",
+               vertices=10, bone=bone, category="island_infrastructure")
+    for building in range(3):
+        a = (building + .22) * math.tau / 3 + variant * .31
+        radius = (.26 + .12 * building) * scale
+        bx, by = x + radius * math.cos(a), y + radius * math.sin(a)
+        height = (.16 + .06 * ((building + variant) % 3)) * scale
+        h.box(f"Island {index} workshop {building}", (bx, by, z + 1.00 * scale + height / 2),
+              (.18 * scale, .14 * scale, height), "ceramic_dark", bevel=.022 * scale,
+              rotation=(0, 0, a), bone=bone, category="island_architecture")
+        h.box(f"Island {index} workshop roof {building}", (bx, by, z + 1.02 * scale + height),
+              (.22 * scale, .18 * scale, .045 * scale), "porcelain", bevel=.018 * scale,
+              rotation=(0, 0, a), bone=bone, category="island_architecture")
+        h.ball(f"Island {index} workshop lamp {building}", (bx, by, z + 1.06 * scale + height),
+               (.025 * scale,) * 3, "amber", segments=10, rings=7, bone=bone, category="island_light")
+    for root in range(5):
+        a = root * math.tau / 5 + variant * .21
+        h.cable(
+            f"Island {index} hanging root conduit {root}",
+            [(x + .66 * scale * math.cos(a), y + .66 * scale * math.sin(a), z + .72 * scale),
+             (x + .54 * scale * math.cos(a + .12), y + .54 * scale * math.sin(a + .12), z + .15 * scale),
+             (x + .28 * scale * math.cos(a - .16), y + .28 * scale * math.sin(a - .16), z - .58 * scale)],
+            .018 * scale, "copper", bone=bone, category="island_conduit",
+        )
+    for crystal in range(6):
+        a = crystal * math.tau / 6 + variant * .19
+        radius = (.36 + .28 * (crystal % 2)) * scale
+        h.cone(f"Island {index} underside photon crystal {crystal}",
+               (x + radius * math.cos(a), y + radius * math.sin(a), z - (.46 + .18 * (crystal % 3)) * scale),
+               .035 * scale, .075 * scale, .32 * scale, "cyan" if crystal % 3 else "amber", vertices=8,
+               bone=bone, category="island_light")
 
 
 def build_islands(h: ForgeAuthor) -> None:
@@ -397,11 +555,33 @@ def build_bus(h: ForgeAuthor) -> None:
     for index in range(8):
         h.cyl(f"Cloud bus hull fastener {index}", (base.x - .78 + index * .22, base.y - .44, base.z - .27), .018, .032,
               "frame", axis=(0, -1, 0), vertices=10, bone="Bus", category="fastener")
+    h.current = "Bus"
+    for band, offset in enumerate((-.68, -.32, .10, .48, .78)):
+        h.ring(f"Cloud bus pressure band {band}", base + Vector((offset, 0, 0)), .46, .022,
+               "copper" if band in (1, 3) else "ceramic_dark", normal=(1, 0, 0), major_segments=40, minor_segments=8,
+               category="transit_detail")
+    for side in (-1, 1):
+        rail_y = base.y + side * .49
+        h.beam(f"Cloud bus side utility rail {side:+d}", (base.x - .82, rail_y, base.z - .04),
+               (base.x + .82, rail_y, base.z - .04), .025, "gold", vertices=12, category="transit_detail")
+        for pod in range(3):
+            px = base.x - .48 + pod * .48
+            h.cyl(f"Cloud bus service pod {side:+d}-{pod}", (px, rail_y, base.z - .19), .07, .18,
+                  "ceramic_dark", axis=(0, 1, 0), vertices=16, category="transit_detail")
+    for fin in range(4):
+        fx = base.x - .58 + fin * .39
+        h.box(f"Cloud bus dorsal fin {fin}", (fx, base.y + .04, base.z + .44), (.20, .055, .24),
+              "titanium", bevel=.022, rotation=(0, -.12 + fin * .08, 0), category="transit_detail")
+    h.beam("Cloud bus sensor boom", base + Vector((.62, 0, .34)), base + Vector((1.18, 0, .68)), .024,
+           "titanium", vertices=12, category="transit_sensor")
+    h.ball("Cloud bus sensor eye", base + Vector((1.18, 0, .68)), (.075, .075, .075), "cyan",
+           segments=18, rings=12, category="transit_sensor")
 
 
 def build(h: ForgeAuthor) -> None:
     build_bones(h)
     build_core(h)
+    build_core_detail_pass(h)
     build_pylons(h)
     build_islands(h)
     build_bus(h)
@@ -619,6 +799,8 @@ def main() -> None:
         Path(__file__).resolve(),
         script_dir / "axm_blender_forge.py",
         script_dir / "axm_hero_motion.py",
+        script_dir / "render_future_uc_machine.py",
+        script_dir / "verify_future_uc_machine.py",
         repo_root / "examples/requests/forge_future_uc_creation_machine.json",
     ]
     manifest = {
@@ -641,6 +823,11 @@ def main() -> None:
             "request": "examples/requests/forge_future_uc_creation_machine.json",
             "source_hashes": {str(path.relative_to(repo_root)): sha256(path) for path in source_files},
             "canonical_families": ["orbital-forge", "process-pylon", "floating-island", "cloud-bus"],
+            "detail_pass": "v2-close-range-mechanical-layering",
+            "detail_families": [
+                "core-containment", "orbital-bearings", "gantry-service-conduits", "reactor-heatshield",
+                "pylon-focus-and-console", "inhabited-island-infrastructure", "transit-service-hardware",
+            ],
             "material_families": [material.name for material in bpy.data.materials if not material.name.startswith("UC_Collision")],
             "deduplication_rule": "Appearance-only variants do not create new reusable atoms.",
         },
