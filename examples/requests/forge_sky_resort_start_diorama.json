@@ -1,0 +1,117 @@
+{
+  "schema": "axm.uc.game-asset-brief/v0.2",
+  "asset_id": "inverted-water-sanctuary-start-v1",
+  "title": "Inverted Water Sanctuary — Opening-World Diorama",
+  "source_references": [
+    {
+      "filename": "1000001915.png",
+      "sha256": "752c50158fb3926029058415a6a4ad04579035cf2b02a12756ce858fcd75f658",
+      "dimensions_px": [1536, 864],
+      "role": "primary composition and atmosphere reference; no pixel projection"
+    },
+    {
+      "filename": "1000001916.png",
+      "sha256": "353866f990416d048a309b558bfd5ac3707286f7b5a1fc3a66cde42cbdbb5d88",
+      "dimensions_px": [1536, 864],
+      "role": "water-boundary, sanctuary and transit-scale reference; no pixel projection"
+    },
+    {
+      "filename": "1000001920.png",
+      "sha256": "7199e70886c1fb73459f56fbc42c055bd6ed1ed41bb276b28d1c99c5cb1e5380",
+      "dimensions_px": [1536, 864],
+      "role": "primary water-torus thickness and direct portal-arrival reference; the pictured staircase is explicitly excluded"
+    }
+  ],
+  "identity_sentence": "A miniature keepsake of the opening world: an ocean volcano lifts living water upward into a protected floating sanctuary whose impossible hydrology reads before any architecture.",
+  "signature_element": "A wide reverse-water helix grows from the lower crater and blossoms into a horizontal moving water shield around the upper island.",
+  "world_role": "Decorative art-prop Easter egg and modular environment prototype for the future opening area.",
+  "palette": {
+    "abyss_ocean": "#082c4a",
+    "lagoon_turquoise": "#20b9c7",
+    "water_light": "#52dfff",
+    "foam_white": "#d9fbff",
+    "wet_basalt": "#24313a",
+    "volcanic_rock": "#3d4445",
+    "living_green": "#3e7b4d",
+    "young_green": "#72a85a",
+    "beach_stone": "#d9c89d",
+    "sanctuary_ivory": "#d9e4dc",
+    "sun_gold": "#b8843c",
+    "crystal_cyan": "#4bdfff"
+  },
+  "shape_language": [
+    "a vertical three-act silhouette: grounded volcanic island, open helix, protected floating crown",
+    "a massive asymmetric ocean-current torus with readable volume, curling crest, foam filaments and suspended droplets",
+    "eroded basalt terraces with inhabited scale cues on every visible side",
+    "slender ivory-and-gold sanctuary spires gathered around a turquoise lagoon",
+    "a portal gate embedded directly in the water boundary, with no physical crossing outside it",
+    "radial resort pavilions, palms and landing beacons arranged without bridges or stairs"
+  ],
+  "composition": {
+    "primary_focal": "the reverse-water ascent and its readable connection to both islands",
+    "secondary_focal": "the upper sanctuary and complete water boundary",
+    "tertiary_focal": "lower ruins, palms, waterfalls and the empty bus-arrival socket",
+    "negative_space": "preserve open sky around the middle helix and a clear gap outside the upper shield"
+  },
+  "motion": [
+    "counter-phased water ribbons rotate upward without the islands spinning",
+    "the upper shield circulates in layered directions so it reads as a boundary rather than a rigid ring",
+    "waterfalls and foam drift with a slower phase than the main ascent",
+    "the floating island breathes subtly while the arrival beacon pulses",
+    "an awakening clip grows the shield and sanctuary light from a dormant state"
+  ],
+  "asset_family": [
+    "lower tropical volcanic island with ruins",
+    "reverse-water helix and foam/droplet detail kit",
+    "floating resort sanctuary with lagoon and underside geology",
+    "animated water-shield boundary",
+    "empty bus-arrival gate and replacement socket",
+    "low-cost collision set and three geometry realization levels"
+  ],
+  "detail_budget": {
+    "water_system_percent": 34,
+    "upper_sanctuary_percent": 38,
+    "lower_island_percent": 22,
+    "arrival_socket_percent": 6
+  },
+  "non_degradable": [
+    "reverse-water flow visibly originates in the lower crater",
+    "water becomes a complete safe boundary around the upper island",
+    "no staircase geometry or staircase placeholder",
+    "no bridge geometry or bridge placeholder",
+    "bus scene is not duplicated; only a replacement-ready arrival socket is retained",
+    "upper and lower islands remain independent modular assemblies",
+    "three descending LOD realizations and separate low-cost collision"
+  ],
+  "anti_defaults": [
+    "no ordinary downward tornado",
+    "no plain blue tube used as the entire water effect",
+    "no staircase, spiral staircase, causeway or bridge",
+    "no full-size hero bus competing with the separate bus-scene work",
+    "no flattened billboard or source-image projection",
+    "no primitive-only island cones without authored shore, underside and habitation detail",
+    "no claim of ocean-fluid simulation; the water is art-directed loopable geometry"
+  ],
+  "outputs": [
+    "editable Blender source retaining named construction parts",
+    "animated GLB in LOD0, LOD1 and LOD2 realizations",
+    "separate UCX collision GLB",
+    "parts index, assembly recipe, asset manifest and verification receipt",
+    "fresh-import multi-angle stills and motion proof"
+  ],
+  "acceptance_cues": [
+    "the lower crater, rising water and shield read as one causal system",
+    "the upper sanctuary remains legible inside—not replaced by—the shield",
+    "the arrival gate is visible but connects to no bridge or staircase",
+    "distant LOD keeps the vertical water silhouette and the upper shield",
+    "animations survive GLB export and fresh import",
+    "every retained part records its semantic family and controlling bone"
+  ],
+  "truth_boundary": [
+    "This is a deterministic authored UC interpretation of the supplied concepts, not automatic image-to-3D reconstruction.",
+    "Unseen surfaces, exact scale, architecture and hydrology are authored interpretations.",
+    "The water uses loopable geometry and shading, not physically simulated fluid.",
+    "Structural and animation verification do not by themselves establish final visual acceptance.",
+    "No target-engine gameplay, navigation, networking or final bus integration claim is made."
+  ]
+}
