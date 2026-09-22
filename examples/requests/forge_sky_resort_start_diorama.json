@@ -54,12 +54,17 @@
     "negative_space": "preserve open sky around the middle helix and a clear gap outside the upper shield"
   },
   "motion": [
-    "counter-phased water ribbons rotate upward without the islands spinning",
+    "counter-phased water ribbons circulate around a vertical axis without the islands spinning",
+    "small luminous tracer packets travel upward through the helix and fade before each deterministic wrap",
     "the upper shield circulates in layered directions so it reads as a boundary rather than a rigid ring",
     "waterfalls and foam drift with a slower phase than the main ascent",
     "the floating island breathes subtly while the arrival beacon pulses",
     "an awakening clip grows the shield and sanctuary light from a dormant state"
   ],
+  "water_profiles": {
+    "prop": "Stable glossy opaque water for the decorative miniature and broad renderer compatibility.",
+    "world-study": "Moderately transparent transmission layers reveal internal foam and upward tracer motion while retaining enough body to survive overlapping real-time sheets."
+  },
   "asset_family": [
     "lower tropical volcanic island with ruins",
     "reverse-water helix and foam/droplet detail kit",
@@ -105,6 +110,7 @@
     "the arrival gate is visible but connects to no bridge or staircase",
     "distant LOD keeps the vertical water silhouette and the upper shield",
     "animations survive GLB export and fresh import",
+    "world-study water exports alpha blending, transmission, IOR and clearcoat rather than relying on the Blender authoring scene alone",
     "every retained part records its semantic family and controlling bone"
   ],
   "truth_boundary": [

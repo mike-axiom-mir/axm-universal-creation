@@ -61,6 +61,19 @@ def inspect_asset(path: Path, manifest: dict) -> dict:
         "WaterShield.A", "WaterShield.B", "WaterShield.C",
     }
     node_names = {node.get("name", "") for node in doc.get("nodes", [])}
+    materials = {material.get("name", ""): material for material in doc.get("materials", [])}
+    world_water = manifest.get("water_profile") == "world-study"
+    world_water_names = {
+        "Sanctuary_Rising_Water_Translucent",
+        "Sanctuary_Water_Light_Translucent",
+        "Sanctuary_Upcurrent_Glint",
+    }
+    flow_bones = {
+        f"WaterFlow.{suffix}.{packet_index}"
+        for suffix in ("A", "B", "C")
+        for packet_index in range(6)
+    }
+    world_materials = [materials.get(name, {}) for name in world_water_names]
     forbidden = ("stair", "bridge", "causeway")
     gates = {
         "one_skin": len(doc.get("skins", [])) == 1,
@@ -79,6 +92,30 @@ def inspect_asset(path: Path, manifest: dict) -> dict:
         ),
         "material_family_present": len(doc.get("materials", [])) >= 16,
         "detailed_geometry_present": len(mesh.data.loop_triangles) >= 85000,
+        "world_water_materials_present": (
+            world_water_names.issubset(materials) if world_water else True
+        ),
+        "world_water_alpha_blend": (
+            all(material.get("alphaMode") == "BLEND" for material in world_materials)
+            if world_water else True
+        ),
+        "world_water_transmission": (
+            all(material.get("extensions", {}).get("KHR_materials_transmission", {})
+                .get("transmissionFactor", 0) >= .20 for material in world_materials)
+            if world_water else True
+        ),
+        "world_water_ior": (
+            all("KHR_materials_ior" in material.get("extensions", {})
+                for material in world_materials) if world_water else True
+        ),
+        "world_water_clearcoat": (
+            all("KHR_materials_clearcoat" in material.get("extensions", {})
+                for material in world_materials) if world_water else True
+        ),
+        "world_flow_bones_present": (
+            flow_bones.issubset(node_names) and flow_bones.issubset(set(arm.data.bones.keys()))
+            if world_water else True
+        ),
     }
     clips = []
     for expected in manifest["animations"]:
@@ -172,6 +209,10 @@ def main() -> None:
         "lod2_reduction": triangles[2] / triangles[0] < .30,
         "replacement_contract_present": recipe["replacement_contract"]["socket"] == "Socket_Bus_Arrival",
         "separate_vehicle_declared": manifest["integration_socket"]["vehicle_included"] is False,
+        "world_flow_tracer_parts": (
+            "water_flow_tracer" in categories
+            if manifest.get("water_profile") == "world-study" else True
+        ),
     }
     result = {
         "schema": "axm.uc.inverted-water-sanctuary-verification/v1",

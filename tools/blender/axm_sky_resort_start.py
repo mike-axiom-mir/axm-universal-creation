@@ -36,6 +36,9 @@ CLIPS = [
     ("Watershield_Pulse", 5.0, True),
     ("Arrival_Awakening", 4.0, False),
 ]
+WATER_PROFILES = ("prop", "world-study")
+FLOW_PACKET_COUNT = 6
+WATER_ASCENT_TURNS = {"A": 1.68, "B": 1.50, "C": 1.86}
 
 
 def sha256(path: Path) -> str:
@@ -96,15 +99,50 @@ def opaque_water_material(name: str, color: str, emission_strength: float = 0.0,
     return mat
 
 
+def world_water_material(name: str, color: str, alpha: float, transmission: float,
+                         emission_strength: float, roughness: float) -> bpy.types.Material:
+    """Layered translucent water that remains portable through glTF.
+
+    Moderate alpha and transmission reveal foam and flow tracers without making
+    stacked ribbons disappear.  Back-face transparency is disabled because the
+    solidified sheets already contain authored inner surfaces; rendering another
+    implicit transparent back layer only amplifies sorting artifacts.
+    """
+    mat = transparent_material(name, color, alpha, emission_strength,
+                               transmission, roughness)
+    mat.show_transparent_back = False
+    mat.use_transparency_overlap = False
+    bsdf = mat.node_tree.nodes.get("Principled BSDF")
+    coat = bsdf.inputs.get("Coat Weight")
+    if coat:
+        coat.default_value = .36
+    coat_roughness = bsdf.inputs.get("Coat Roughness")
+    if coat_roughness:
+        coat_roughness.default_value = .035
+    return mat
+
+
 class DioramaAuthor:
     """Small adapter matching UC's retained rigid-rig compiler contract."""
 
-    def __init__(self, output: Path):
+    def __init__(self, output: Path, water_profile: str = "prop"):
         self.output = output
+        self.water_profile = water_profile
         self.parts: list[bpy.types.Object] = []
         self.bones: dict[str, tuple[tuple[float, float, float], tuple[float, float, float], str | None]] = {}
         self.current = "Root"
         textures = output / "textures"
+        if water_profile == "world-study":
+            rising_water = world_water_material(
+                "Sanctuary_Rising_Water_Translucent", "#0b83b4", .58, .48, .025, .055)
+            light_water = world_water_material(
+                "Sanctuary_Water_Light_Translucent", "#4cddf5", .40, .68, .12, .045)
+            flow_glint = world_water_material(
+                "Sanctuary_Upcurrent_Glint", "#b8f8ff", .66, .22, .72, .075)
+        else:
+            rising_water = opaque_water_material("Sanctuary_Rising_Water", "#168fc0", .06, .09)
+            light_water = opaque_water_material("Sanctuary_Water_Light", "#52dfff", .28, .12)
+            flow_glint = light_water
         self.mat = {
             "obsidian": surface(textures, "Sanctuary_Obsidian_Plinth", "#111922", "steel", 512),
             "basalt": pbr_material(textures, "Sanctuary_Wet_Basalt", "#354750", "stone", 512),
@@ -117,8 +155,9 @@ class DioramaAuthor:
             "wood": pbr_material(textures, "Sanctuary_Palm_Wood", "#5b3c24", "wood", 512),
             "deep_ocean": transparent_material("Sanctuary_Deep_Ocean", "#082c4a", .82, .05, .18, .13),
             "lagoon": transparent_material("Sanctuary_Lagoon", "#20b9c7", .74, .18, .42, .08),
-            "water": opaque_water_material("Sanctuary_Rising_Water", "#168fc0", .06, .09),
-            "water_light": opaque_water_material("Sanctuary_Water_Light", "#52dfff", .28, .12),
+            "water": rising_water,
+            "water_light": light_water,
+            "flow_glint": flow_glint,
             "foam": opaque_water_material("Sanctuary_Foam", "#d9fbff", .34, .31),
             "cloud": transparent_material("Sanctuary_Cloud", "#dbeaf0", .15, 0, 0, 1.0),
             "crystal": transparent_material("Sanctuary_Crystal", "#4bdfff", .72, 2.2, .30, .08),
@@ -205,6 +244,10 @@ def build_bones(h: DioramaAuthor) -> None:
     h.bone("VolcanoCore", (0, 0, 2.20), (0, 0, 2.75), "LowerIsland")
     for suffix in ("A", "B", "C"):
         h.bone(f"WaterSpiral.{suffix}", (0, 0, 3.10), (0, 0, 3.62), "Root")
+        if h.water_profile == "world-study":
+            for packet_index in range(FLOW_PACKET_COUNT):
+                h.bone(f"WaterFlow.{suffix}.{packet_index}", (0, 0, 3.10), (0, 0, 3.62),
+                       f"WaterSpiral.{suffix}")
     h.bone("UpperIsland", (0, 0, 7.15), (0, 0, 7.70), "Root")
     for suffix in ("A", "B", "C"):
         h.bone(f"WaterShield.{suffix}", (0, 0, 8.05), (0, 0, 8.55), "UpperIsland")
@@ -451,6 +494,28 @@ def build_water_ascent(h: DioramaAuthor) -> None:
             h.ball(f"Suspended ascent droplet {suffix} {droplet_index:02d}", polar(radius, angle, z),
                    (scale, scale * .72, scale * 1.55), "foam", segments=10, rings=7,
                    bone=bone, category="water_droplet")
+        if h.water_profile == "world-study":
+            for packet_index in range(FLOW_PACKET_COUNT):
+                packet_bone = f"WaterFlow.{suffix}.{packet_index}"
+                base_t = (packet_index + .5) / FLOW_PACKET_COUNT
+                tracer_points = []
+                for bead_index in range(5):
+                    sample_t = base_t + (bead_index - 2) * .012
+                    angle = phase + math.tau * turns * sample_t
+                    radius = (.72 + 1.55 * math.sin(math.pi * sample_t) ** 1.10 +
+                              .16 * math.sin(angle * 2.0))
+                    z = 3.02 + 4.12 * sample_t + .11 * math.sin(angle * 1.5)
+                    point = Vector(polar(radius + .025, angle, z))
+                    tracer_points.append(point)
+                    if bead_index in (0, 2, 4):
+                        bead_scale = .030 + .010 * (bead_index == 2)
+                        h.ball(f"Upcurrent tracer {suffix} {packet_index} bead {bead_index}", point,
+                               (bead_scale, bead_scale, bead_scale * 1.55), "flow_glint",
+                               segments=10, rings=7, bone=packet_bone,
+                               category="water_flow_tracer")
+                h.cable(f"Upcurrent tracer {suffix} {packet_index} streak", tracer_points,
+                        .014 if suffix == "A" else .011, "flow_glint", bone=packet_bone,
+                        category="water_flow_tracer")
     # Dense inner core makes the reverse flow read as volume at miniature scale.
     for index in range(8):
         phase = index * math.tau / 8
@@ -679,6 +744,28 @@ def keyframe_bones(arm, frame: int) -> None:
         bone.keyframe_insert("scale", frame=frame, group=bone.name)
 
 
+def animate_flow_packets(bones, progress: float, reveal: float = 1.0) -> None:
+    """Send a visible pulse upward through tracer packets fixed to the helix.
+
+    Rigid bones cannot follow a changing spline radius without leaving the water
+    corridor.  The geometry therefore stays embedded in the authored sheet and
+    a staggered scale envelope carries the directional cue upward.  This is
+    deterministic motion language for a future world, not a fluid-simulation claim.
+    """
+    for suffix in WATER_ASCENT_TURNS:
+        for packet_index in range(FLOW_PACKET_COUNT):
+            name = f"WaterFlow.{suffix}.{packet_index}"
+            bone = bones.get(name)
+            if bone is None:
+                continue
+            base_t = (packet_index + .5) / FLOW_PACKET_COUNT
+            distance = abs(((base_t - progress + .5) % 1.0) - .5)
+            pulse = max(0.0, 1.0 - distance / .24)
+            pulse = pulse * pulse * (3.0 - 2.0 * pulse)
+            scale = max(.001, reveal * (.018 + .982 * pulse))
+            bone.scale = (scale, scale, scale)
+
+
 def animate(arm) -> list[dict]:
     arm.animation_data_create()
     rows = []
@@ -713,6 +800,7 @@ def animate(arm) -> list[dict]:
                 bones["ArrivalGate"].scale = (1 + .025 * math.sin(phase * 3),) * 3
                 bones["Socket_Bus_Arrival"].location.y = .08 * math.sin(phase)
                 bones["CloudBank"].rotation_euler.y = phase * .08
+                animate_flow_packets(bones, t)
             elif clip_name == "Watershield_Pulse":
                 # Calm, axis-locked circulation: one revolution per five-second
                 # loop, with only a very small breathing offset.  Large sheet
@@ -729,6 +817,7 @@ def animate(arm) -> list[dict]:
                 bones["WaterShield.C"].rotation_euler.y = phase
                 bones["ArrivalGate"].scale = (1 + .025 * math.sin(phase) ** 4,) * 3
                 bones["CloudBank"].rotation_euler.y = -phase * .06
+                animate_flow_packets(bones, t)
             else:
                 ease = t * t * (3 - 2 * t)
                 water_scale = .18 + .82 * ease
@@ -744,6 +833,7 @@ def animate(arm) -> list[dict]:
                 bones["ArrivalGate"].scale = (.25 + .75 * ease,) * 3
                 bones["Socket_Bus_Arrival"].location.y = .48 * (1 - ease)
                 bones["CloudBank"].scale = (.70 + .30 * ease,) * 3
+                animate_flow_packets(bones, t, ease)
             keyframe_bones(arm, frame)
         for curve in action.fcurves:
             for point in curve.keyframe_points:
@@ -853,6 +943,7 @@ def assembly_recipe() -> dict:
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--water-profile", choices=WATER_PROFILES, default="prop")
     argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
     args = parser.parse_args(argv)
     output = args.output.resolve()
@@ -862,7 +953,7 @@ def main() -> None:
     bpy.context.scene.unit_settings.scale_length = 1.0
     bpy.context.scene.render.fps = FPS
 
-    author = DioramaAuthor(output)
+    author = DioramaAuthor(output, args.water_profile)
     build(author)
     index = parts_index(author)
     (output / "parts-index.json").write_text(json.dumps(index, indent=2) + "\n", encoding="utf-8")
@@ -935,6 +1026,7 @@ def main() -> None:
         "status": "STRUCTURE_EXPORTED_VISUAL_REVIEW_REQUIRED",
         "meters_per_unit": 1.0,
         "recommended_decorative_instance_scale": .12,
+        "water_profile": args.water_profile,
         "forward_axis": "-Y in Blender; +Z in glTF",
         "source_references": [
             {"filename": "1000001915.png", "sha256": "752c50158fb3926029058415a6a4ad04579035cf2b02a12756ce858fcd75f658"},
@@ -952,7 +1044,11 @@ def main() -> None:
             "source_hashes": {str(path.relative_to(repo_root)): sha256(path) for path in source_files},
             "canonical_families": ["lower-volcanic-island", "reverse-water-ascent", "floating-sanctuary", "water-boundary", "arrival-gate"],
             "material_families": [material.name for material in bpy.data.materials if not material.name.startswith("Sanctuary_Collision")],
-            "water_realization": "art-directed ribbon, curve, spray and droplet geometry; not fluid simulation",
+            "water_realization": (
+                "layered alpha/transmission water with foam, droplets and upward tracer packets; not fluid simulation"
+                if args.water_profile == "world-study" else
+                "opaque glossy ribbon, curve, spray and droplet geometry; not fluid simulation"
+            ),
             "deduplication_rule": "Appearance-only variants do not create new reusable atoms.",
         },
         "bones": [{"name": name, "parent": values[2]} for name, values in author.bones.items()],

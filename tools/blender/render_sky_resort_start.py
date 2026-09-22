@@ -227,7 +227,10 @@ def render_motion(root: Path, width: int, height: int, count: int) -> dict:
         rows.append({"path": f"motion-frames/{path.name}", "source_frame": frame,
                      "sha256": sha256(path)})
         print("SKY_RESORT_MOTION_FRAME", index + 1, count, flush=True)
-    duration_seconds = (last - first) / scene.render.fps
+    manifest = json.loads((root / "asset-manifest.json").read_text(encoding="utf-8"))
+    duration_seconds = next(
+        row["seconds"] for row in manifest["animations"] if row["name"] == action.name
+    )
     playback_fps = count / duration_seconds
     receipt = {"clip": "Watershield_Pulse", "source_lod": "Inverted_Water_Sanctuary_LOD1.glb",
                "sampled_frames": count, "clip_duration_seconds": duration_seconds,
