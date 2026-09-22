@@ -1,0 +1,81 @@
+name: Future UC creation machine asset pack
+
+on:
+  push:
+    branches:
+      - codex/future-uc-creation-machine-assets-v1
+    paths:
+      - 'tools/blender/axm_future_uc_machine.py'
+      - 'tools/blender/verify_future_uc_machine.py'
+      - 'tools/blender/render_future_uc_machine.py'
+      - 'examples/requests/forge_future_uc_creation_machine.json'
+      - '.github/workflows/future-uc-creation-machine.yml'
+  pull_request:
+    paths:
+      - 'tools/blender/axm_future_uc_machine.py'
+      - 'tools/blender/verify_future_uc_machine.py'
+      - 'tools/blender/render_future_uc_machine.py'
+      - 'examples/requests/forge_future_uc_creation_machine.json'
+      - '.github/workflows/future-uc-creation-machine.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  forge-verify-render:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install pinned UC Blender runtime
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install 'numpy==1.26.4' 'Pillow>=10,<12' 'bpy==4.3.0'
+          python - <<'PY'
+          import bpy, numpy, PIL
+          print('bpy', bpy.app.version_string)
+          print('numpy', numpy.__version__)
+          print('Pillow', PIL.__version__)
+          assert bpy.app.version[:2] == (4, 3)
+          PY
+      - name: Forge editable source, animated LODs and collision through UC
+        run: |
+          rm -rf /tmp/future-uc-creation-machine
+          PYTHONPATH=tools/blender python tools/blender/axm_future_uc_machine.py --output /tmp/future-uc-creation-machine
+      - name: Independently verify fresh GLB imports and animation playback
+        run: PYTHONPATH=tools/blender python tools/blender/verify_future_uc_machine.py --directory /tmp/future-uc-creation-machine
+      - name: Inspect LODs with the UC core GLB decoder
+        run: |
+          PYTHONPATH=src python - <<'PY'
+          import json
+          from pathlib import Path
+          from axm_uc.visual_3d import inspect_glb
+          root = Path('/tmp/future-uc-creation-machine')
+          rows = {}
+          for path in sorted(root.glob('Future_UC_Creation_Machine_LOD*.glb')):
+              rows[path.name] = inspect_glb(path)
+              if rows[path.name].get('truth_status') != 'DECODED_GLTF_STRUCTURE' or rows[path.name].get('triangles', 0) <= 0:
+                  raise SystemExit(f'UC inspector rejected {path.name}')
+          (root/'uc-glb-inspection.json').write_text(json.dumps(rows, indent=2) + '\n')
+          print(json.dumps(rows, indent=2))
+          PY
+      - name: Render fresh-import visual evidence
+        run: PYTHONPATH=tools/blender python tools/blender/render_future_uc_machine.py --directory /tmp/future-uc-creation-machine --width 960 --height 720
+      - name: Render animation evidence
+        run: PYTHONPATH=tools/blender python tools/blender/render_future_uc_machine.py --directory /tmp/future-uc-creation-machine --width 640 --height 360 --motion --motion-frames 36
+      - name: Encode motion proof
+        run: |
+          ffmpeg -y -framerate 12 -i /tmp/future-uc-creation-machine/motion-frames/%04d.png -c:v libx264 -pix_fmt yuv420p -crf 18 /tmp/future-uc-creation-machine/future-uc-build-pulse.mp4
+          ffmpeg -y -i /tmp/future-uc-creation-machine/future-uc-build-pulse.mp4 -vf "fps=12,scale=640:-1:flags=lanczos" -loop 0 /tmp/future-uc-creation-machine/future-uc-build-pulse.webp
+      - name: Upload complete UC creation pack and evidence
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: future-uc-creation-machine-v1
+          path: /tmp/future-uc-creation-machine
+          if-no-files-found: error
+          retention-days: 14

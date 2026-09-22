@@ -1,0 +1,86 @@
+{
+  "schema": "axm.uc.game-asset-brief/v0.2",
+  "asset_id": "future-uc-creation-machine-v1",
+  "title": "Future Universal Creation Machine",
+  "source_reference": {
+    "filename": "1000001717.png",
+    "sha256": "8840c68b4f3614072a4ff2483b4bd2971a332ba0c06e8d4c62db788f084508f6",
+    "dimensions_px": [1229, 1536],
+    "role": "visual direction and semantic reference; not projected or reconstructed geometry"
+  },
+  "identity_sentence": "An optimistic artifact-making civilization has grown around a precise living forge where human intent and machine possibility become reusable worlds.",
+  "signature_element": "A luminous seed core inside counter-rotating orbital machinery, feeding eight detachable process pylons through visible energy paths.",
+  "palette": {
+    "obsidian_frame": "#111923",
+    "aged_titanium": "#65717C",
+    "porcelain_shell": "#D9E3E4",
+    "forge_gold": "#B77A2A",
+    "photon_cyan": "#2FD8FF",
+    "signal_amber": "#FFB44B",
+    "living_moss": "#496A3E",
+    "basalt": "#29313A"
+  },
+  "shape_language": [
+    "nested orbital arcs and radial gantries",
+    "faceted hexagonal ports and readable mechanical joints",
+    "layered plates over exposed structural ribs",
+    "faceted floating geology with inhabited scale cues",
+    "small fasteners, vents, cables and light nodes concentrated near interaction surfaces"
+  ],
+  "composition": {
+    "primary_focal": "seed core and orbital forge",
+    "secondary_rhythm": "eight process pylons around the forge",
+    "tertiary_depth": "floating-island kit, transit bus and distant creation spires",
+    "negative_space": "keep the core readable through the rings and preserve gaps between every pylon"
+  },
+  "motion": [
+    "counter-rotating orbital rings communicate continuous operation",
+    "core breathing and light pulse communicate stored possibility",
+    "pylons float with staggered phases so the system feels alive rather than synchronized",
+    "islands drift slowly while the cloud-bus and rotors provide faster transport motion",
+    "build-pulse clip travels outward from the seed core through the process ring"
+  ],
+  "asset_family": [
+    "animated orbital creation forge",
+    "eight detachable process pylons: Intent, Simulation, Test Lanes, Composition, Workflow Discovery, Growth Memory, New Organs, Creation Output",
+    "six-piece floating-island environment kit",
+    "animated cloud-bus transit asset",
+    "low-cost collision set and three geometry realization levels"
+  ],
+  "detail_budget": {
+    "orbital_forge_percent": 58,
+    "process_pylons_percent": 20,
+    "floating_environment_percent": 14,
+    "cloud_bus_percent": 8
+  },
+  "anti_defaults": [
+    "no primitive-only chrome sphere presentation",
+    "no color-swap duplicates counted as new atoms",
+    "no flattened poster billboard or image projection",
+    "no decorative motion without a readable state meaning",
+    "no hidden dependency on a model or online service at runtime",
+    "no claim that the human and Mir character figures have been reconstructed in this machine-first pack"
+  ],
+  "outputs": [
+    "editable Blender source retaining named construction parts",
+    "animated GLB in LOD0, LOD1 and LOD2 realizations",
+    "separate UCX collision GLB",
+    "parts index, assembly recipe, asset manifest and verification receipt",
+    "fresh-import multi-angle stills and motion proof"
+  ],
+  "acceptance_cues": [
+    "the forge reads first at both hero and environment distance",
+    "the two orbital rings remain visibly separate in silhouette",
+    "all eight pylons are identifiable by different hologram geometry rather than color alone",
+    "rear and underside surfaces are authored rather than left as a detailed facade",
+    "animations survive GLB export and fresh import",
+    "LOD triangle counts descend while the signature silhouette remains intact",
+    "every retained part records its semantic family and controlling bone"
+  ],
+  "truth_boundary": [
+    "This is a deterministic authored UC interpretation of the supplied concept image, not automatic image-to-3D reconstruction.",
+    "Unseen surfaces, scale and exact mechanical construction are authored interpretations.",
+    "Structural and animation verification do not by themselves establish AAA visual acceptance.",
+    "No target-engine gameplay, navigation, networking or character-rig integration claim is made in this pack."
+  ]
+}
