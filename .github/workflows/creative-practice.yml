@@ -40,3 +40,4 @@ jobs:
         with:
           name: creative-practice-cartridge
           path: ${{ runner.temp }}/practice-proof
+          retention-days: 14

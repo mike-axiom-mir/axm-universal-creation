@@ -134,3 +134,4 @@ jobs:
         with:
           name: visual-template-proof
           path: visual-template-proof
+          retention-days: 14

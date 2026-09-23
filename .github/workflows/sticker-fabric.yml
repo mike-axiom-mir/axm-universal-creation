@@ -54,3 +54,4 @@ jobs:
         with:
           name: sticker-fabric-proof-and-standalone-core
           path: ${{ runner.temp }}/sticker-proof
+          retention-days: 14
