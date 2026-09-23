@@ -90,18 +90,18 @@ jobs:
           print(json.dumps(rows, indent=2))
           PY
 
-      - name: Render multi-angle evidence from exported GLB
+      - name: Render compact multi-angle CI evidence from exported GLB
         run: |
           python tools/blender/render_sky_resort_start.py -- \
             --directory "/tmp/sky-resort-${{ matrix.profile }}" \
-            --width 800 --height 600
+            --width 360 --height 270
 
-      - name: Render durable motion proof frames
+      - name: Render compact durable motion proof frames
         run: |
           python tools/blender/render_sky_resort_start.py -- \
             --directory "/tmp/sky-resort-${{ matrix.profile }}" \
-            --width 640 --height 480 \
-            --motion --motion-frames 48
+            --width 360 --height 270 \
+            --motion --motion-frames 12
 
       - name: Write durable build receipt
         run: |
