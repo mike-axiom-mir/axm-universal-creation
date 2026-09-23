@@ -32,3 +32,4 @@ jobs:
         with:
           name: code-systems-${{ matrix.os }}
           path: ${{ runner.temp }}/code-system-proof
+          retention-days: 14
