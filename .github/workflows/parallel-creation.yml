@@ -63,3 +63,4 @@ jobs:
         with:
           name: parallel-creation-${{ matrix.os }}
           path: ${{ runner.temp }}/parallel-proof
+          retention-days: 14
