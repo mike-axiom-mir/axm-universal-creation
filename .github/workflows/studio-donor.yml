@@ -44,3 +44,4 @@ jobs:
         with:
           name: studio-layered-effect-proof
           path: ${{ runner.temp }}/studio-proof
+          retention-days: 14
