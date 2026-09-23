@@ -210,7 +210,8 @@ def render_motion(root: Path, width: int, height: int, count: int) -> dict:
     _, arm = imported_asset(root, "Inverted_Water_Sanctuary_LOD1.glb")
     camera = studio(width, height)
     scene = bpy.context.scene
-    action = find_action("Watershield_Pulse")
+    clip_name = "Watershield_Pulse"
+    action = find_action(clip_name)
     action_set(arm, action)
     aim(camera, (14.2, -18.2, 10.7), (0, 0, 5.05), 56)
     folder = root / "motion-frames"
@@ -228,11 +229,18 @@ def render_motion(root: Path, width: int, height: int, count: int) -> dict:
                      "sha256": sha256(path)})
         print("SKY_RESORT_MOTION_FRAME", index + 1, count, flush=True)
     manifest = json.loads((root / "asset-manifest.json").read_text(encoding="utf-8"))
-    duration_seconds = next(
-        row["seconds"] for row in manifest["animations"] if row["name"] == action.name
+    animation = next(
+        (row for row in manifest["animations"] if row["name"] == clip_name),
+        None,
     )
+    if animation is None:
+        available = [row.get("name") for row in manifest.get("animations", [])]
+        raise RuntimeError(
+            f"Manifest missing canonical motion clip {clip_name!r}; available={available}"
+        )
+    duration_seconds = animation["seconds"]
     playback_fps = count / duration_seconds
-    receipt = {"clip": "Watershield_Pulse", "source_lod": "Inverted_Water_Sanctuary_LOD1.glb",
+    receipt = {"clip": clip_name, "source_lod": "Inverted_Water_Sanctuary_LOD1.glb",
                "sampled_frames": count, "clip_duration_seconds": duration_seconds,
                "playback_fps": playback_fps, "viewport_px": [width, height],
                "frames": rows}
