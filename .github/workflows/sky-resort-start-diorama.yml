@@ -1,0 +1,107 @@
+name: Sky resort start diorama durable proof
+
+on:
+  push:
+    branches:
+      - codex/sky-resort-start-diorama-v1
+    paths:
+      - 'tools/blender/axm_sky_resort_start.py'
+      - 'tools/blender/render_sky_resort_start.py'
+      - 'tools/blender/verify_sky_resort_start.py'
+      - 'examples/requests/forge_sky_resort_start_diorama.json'
+      - '.github/workflows/sky-resort-start-diorama.yml'
+      - 'docs/SKY_RESORT_DEPARTMENT.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  forge-verify-render-package:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 50
+    strategy:
+      fail-fast: false
+      matrix:
+        profile:
+          - prop
+          - world-study
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install pinned UC Blender runtime
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install 'numpy==1.26.4' 'Pillow>=10,<12' 'bpy==4.3.0'
+          python - <<'PY'
+          import bpy, numpy, PIL
+          print('bpy', bpy.app.version_string)
+          print('numpy', numpy.__version__)
+          print('Pillow', PIL.__version__)
+          assert bpy.app.version[:2] == (4, 3)
+          PY
+
+      - name: Validate source request
+        run: |
+          python -m json.tool examples/requests/forge_sky_resort_start_diorama.json >/dev/null
+          python -m py_compile             tools/blender/axm_sky_resort_start.py             tools/blender/render_sky_resort_start.py             tools/blender/verify_sky_resort_start.py
+
+      - name: Forge deterministic sanctuary asset
+        run: |
+          rm -rf "/tmp/sky-resort-${{ matrix.profile }}"
+          python tools/blender/axm_sky_resort_start.py --             --output "/tmp/sky-resort-${{ matrix.profile }}"             --water-profile "${{ matrix.profile }}"
+
+      - name: Verify fresh-import GLB, animation, LOD and collision
+        run: |
+          python tools/blender/verify_sky_resort_start.py --             --directory "/tmp/sky-resort-${{ matrix.profile }}"
+
+      - name: Inspect exported GLBs through UC core
+        run: |
+          PROFILE="${{ matrix.profile }}" PYTHONPATH=src python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          from axm_uc.visual_3d import inspect_glb
+
+          root = Path('/tmp') / f"sky-resort-{os.environ['PROFILE']}"
+          rows = {}
+          for path in sorted(root.glob('Inverted_Water_Sanctuary_LOD*.glb')):
+              result = inspect_glb(path)
+              rows[path.name] = result
+              if result.get('truth_status') != 'DECODED_GLTF_STRUCTURE' or result.get('triangles', 0) <= 0:
+                  raise SystemExit(f'UC inspector rejected {path.name}')
+          (root / 'uc-glb-inspection.json').write_text(json.dumps(rows, indent=2) + '\n')
+          print(json.dumps(rows, indent=2))
+          PY
+
+      - name: Render multi-angle evidence from exported GLB
+        run: |
+          python tools/blender/render_sky_resort_start.py --             --directory "/tmp/sky-resort-${{ matrix.profile }}"             --width 800 --height 600
+
+      - name: Render durable motion proof frames
+        run: |
+          python tools/blender/render_sky_resort_start.py --             --directory "/tmp/sky-resort-${{ matrix.profile }}"             --width 640 --height 480             --motion --motion-frames 48
+
+      - name: Write durable build receipt
+        run: |
+          cat > "/tmp/sky-resort-${{ matrix.profile }}/github-build-receipt.txt" <<EOF
+          repository=${GITHUB_REPOSITORY}
+          commit=${GITHUB_SHA}
+          branch=${GITHUB_REF_NAME}
+          water_profile=${{ matrix.profile }}
+          workflow_run=${GITHUB_RUN_ID}
+          generated_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          EOF
+
+      - name: Upload complete reproducible asset evidence
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sky-resort-start-${{ matrix.profile }}-${{ github.sha }}
+          path: /tmp/sky-resort-${{ matrix.profile }}
+          if-no-files-found: error
+          retention-days: 90
