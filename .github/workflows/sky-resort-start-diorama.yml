@@ -33,6 +33,12 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Install headless Blender graphics runtime
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libegl1
+          ldconfig -p | grep 'libEGL.so.1'
+
       - name: Install pinned UC Blender runtime
         run: |
           python -m pip install --upgrade pip
@@ -48,16 +54,22 @@ jobs:
       - name: Validate source request
         run: |
           python -m json.tool examples/requests/forge_sky_resort_start_diorama.json >/dev/null
-          python -m py_compile             tools/blender/axm_sky_resort_start.py             tools/blender/render_sky_resort_start.py             tools/blender/verify_sky_resort_start.py
+          python -m py_compile \
+            tools/blender/axm_sky_resort_start.py \
+            tools/blender/render_sky_resort_start.py \
+            tools/blender/verify_sky_resort_start.py
 
       - name: Forge deterministic sanctuary asset
         run: |
           rm -rf "/tmp/sky-resort-${{ matrix.profile }}"
-          python tools/blender/axm_sky_resort_start.py --             --output "/tmp/sky-resort-${{ matrix.profile }}"             --water-profile "${{ matrix.profile }}"
+          python tools/blender/axm_sky_resort_start.py -- \
+            --output "/tmp/sky-resort-${{ matrix.profile }}" \
+            --water-profile "${{ matrix.profile }}"
 
       - name: Verify fresh-import GLB, animation, LOD and collision
         run: |
-          python tools/blender/verify_sky_resort_start.py --             --directory "/tmp/sky-resort-${{ matrix.profile }}"
+          python tools/blender/verify_sky_resort_start.py -- \
+            --directory "/tmp/sky-resort-${{ matrix.profile }}"
 
       - name: Inspect exported GLBs through UC core
         run: |
@@ -80,11 +92,16 @@ jobs:
 
       - name: Render multi-angle evidence from exported GLB
         run: |
-          python tools/blender/render_sky_resort_start.py --             --directory "/tmp/sky-resort-${{ matrix.profile }}"             --width 800 --height 600
+          python tools/blender/render_sky_resort_start.py -- \
+            --directory "/tmp/sky-resort-${{ matrix.profile }}" \
+            --width 800 --height 600
 
       - name: Render durable motion proof frames
         run: |
-          python tools/blender/render_sky_resort_start.py --             --directory "/tmp/sky-resort-${{ matrix.profile }}"             --width 640 --height 480             --motion --motion-frames 48
+          python tools/blender/render_sky_resort_start.py -- \
+            --directory "/tmp/sky-resort-${{ matrix.profile }}" \
+            --width 640 --height 480 \
+            --motion --motion-frames 48
 
       - name: Write durable build receipt
         run: |
