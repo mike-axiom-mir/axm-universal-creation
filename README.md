@@ -477,3 +477,7 @@ Current AXM-owned machine/workshop code: **PolyForm Noncommercial 1.0.0 + `CREAT
 Commercial Creator Output is allowed; commercial exploitation of the AXM creation machine itself requires separate permission.
 
 Earlier published versions keep any historical licenses already granted to those versions. Third-party material remains under its own terms. See `LICENSE`, `LICENSE_BOUNDARY.md`, and `CREATOR_OUTPUT_PERMISSION.md`.
+
+## Reusable simulation method
+
+[Simulation experience and reuse](docs/SIMULATION_EXPERIENCE_REUSE.md) connects the shared method to this repository, with existing machinery, proposed experiments and explicit evidence limits.
