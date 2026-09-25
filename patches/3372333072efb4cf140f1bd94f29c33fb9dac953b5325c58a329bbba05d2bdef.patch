@@ -1,0 +1,1832 @@
+diff --git a/README.md b/README.md
+index 69e3bd1..6488936 100644
+--- a/README.md
++++ b/README.md
+@@ -69,6 +69,10 @@ search, material maps and interface-driven software. They retain the constructio
+ causes and recheck saved search settings under each new request's criteria.
+ The search and continuous character controller are described in
+ [INTENT_DIRECTED_SEARCH.md](docs/INTENT_DIRECTED_SEARCH.md).
++For discovering new operator combinations, testing real outcomes, iterating on
++failed measurements and retaining confirmed reusable workflows, see
++[WORKFLOW_DISCOVERY.md](docs/WORKFLOW_DISCOVERY.md). Run the complete experiment
++with `python run.py create examples/workflows/vent-hood.json`.
+ 
+ ## Core rule
+ 
+diff --git a/capabilities/live/AXM-CAP-WORKFLOW-DISCOVERY.json b/capabilities/live/AXM-CAP-WORKFLOW-DISCOVERY.json
+new file mode 100644
+index 0000000..17ae55c
+--- /dev/null
++++ b/capabilities/live/AXM-CAP-WORKFLOW-DISCOVERY.json
+@@ -0,0 +1,48 @@
++{
++  "id": "AXM-CAP-WORKFLOW-DISCOVERY",
++  "version": "0.1.0",
++  "status": "live",
++  "purpose": "Compose typed installed operators, experiment against explicit outcomes, rank worst-case quality and retain workflows after independent confirmation.",
++  "handles": [
++    "workflow-discovery"
++  ],
++  "input_contract": {
++    "required": [],
++    "required_by_operation": {
++      "plan": [
++        "request"
++      ],
++      "experiment": [
++        "request",
++        "path"
++      ],
++      "memory": [
++        "memory"
++      ]
++    },
++    "properties": {
++      "operation": "catalog, plan, experiment or memory; default plan",
++      "request": "axm.workflow-experiment/v0.1: typed construction choices, measured goals, ranking objectives, stress scenarios and finite budgets",
++      "path": "new ordinary experiment directory; never overwrite existing artifacts or machine internals",
++      "memory": "optional separate caller-owned persistent directory for observations and confirmed workflow structures",
++      "plan_sha256": "optional expected plan identity; changes return HOLD_STALE_PLAN before writes"
++    }
++  },
++  "output_contract": {
++    "kind": "workflow-evidence",
++    "contains": [
++      "retained construction inputs",
++      "measured outcomes and gaps"
++    ]
++  },
++  "dependencies": [],
++  "implementation": {
++    "kind": "DETERMINISTIC_SOURCE",
++    "entrypoint": "builtin:workflow_discovery",
++    "source": "src/axm_uc/workflow_discovery.py"
++  },
++  "limitations": [
++    "Only installed typed operators and explicit finite search, execution and validation scopes.",
++    "Fresh outcome checks are required; no silent canon or capability admission."
++  ]
++}
+diff --git a/capabilities/live/AXM-CAP-WORKFLOW-STATION.json b/capabilities/live/AXM-CAP-WORKFLOW-STATION.json
+new file mode 100644
+index 0000000..8315388
+--- /dev/null
++++ b/capabilities/live/AXM-CAP-WORKFLOW-STATION.json
+@@ -0,0 +1,39 @@
++{
++  "id": "AXM-CAP-WORKFLOW-STATION",
++  "version": "0.1.0",
++  "status": "live",
++  "purpose": "Construct and measure one typed workflow step with existing native geometry, material, renderer, motion or code tools.",
++  "handles": [
++    "workflow-station"
++  ],
++  "input_contract": {
++    "required": [
++      "operation",
++      "path",
++      "values"
++    ],
++    "required_by_operation": {},
++    "properties": {
++      "operation": "one implemented operator action in atlas/operators/native.json",
++      "values": "exact named input ports from the corresponding operator contract",
++      "path": "new ordinary directory retaining inputs and observations"
++    }
++  },
++  "output_contract": {
++    "kind": "workflow-evidence",
++    "contains": [
++      "retained construction inputs",
++      "measured outcomes and gaps"
++    ]
++  },
++  "dependencies": [],
++  "implementation": {
++    "kind": "DETERMINISTIC_SOURCE",
++    "entrypoint": "builtin:workflow_station",
++    "source": "src/axm_uc/workflow_stations.py"
++  },
++  "limitations": [
++    "Only installed typed operators and explicit finite search, execution and validation scopes.",
++    "Fresh outcome checks are required; no silent canon or capability admission."
++  ]
++}
+diff --git a/docs/CREATION_ATLAS.md b/docs/CREATION_ATLAS.md
+index 5533e4e..ff11f70 100644
+--- a/docs/CREATION_ATLAS.md
++++ b/docs/CREATION_ATLAS.md
+@@ -4,8 +4,8 @@ UC's creation atlas joins its existing libraries into one inspectable graph.
+ It does not replace the capability store, executable-organ library, asset atoms,
+ material machinery, product workflows or construction search.
+ 
+-The installed view currently contains 2,373 entries across 26 categories. These
+-include descriptive research records. They are **not 2,373 working capabilities**.
++The installed view currently contains 2,385 entries across 27 categories. These
++include descriptive research records. They are **not 2,385 working capabilities**.
+ The index reports the evidence level, source and source digest on each entry.
+ 
+ | Atlas category | Existing source | What the entry establishes |
+@@ -23,11 +23,18 @@ The index reports the evidence level, source and source digest on each entry.
+ | Direction | Software direction catalog | Domain knowledge for choosing a route, not automatic capability sufficiency |
+ | Experience | An explicitly selected persistent collection | Prior success/failure, measurements and causes; current reuse must be checked again |
+ | Construction pattern | Semantically grouped successful observations | Measured reusable candidates, separate from admitted capabilities and canon |
++| Operator | Typed adapters under `atlas/operators/` | Input/output contracts, metric units and executable tools for discovering new workflows |
++| Learned workflow | Confirmed workflow experiment collection | Deduplicated composition structure; current goals and inputs must be rechecked |
+ 
+-The final two categories appear when a collection contains observations. Extra
++Experience, construction patterns and learned workflows appear when a collection contains observations. Extra
+ categories such as acoustics, joints, manufacturing processes or accessibility
+ rules can be added as data. Defining a category does not implement its subject.
+ 
++[Workflow discovery](WORKFLOW_DISCOVERY.md) builds new operator graphs, executes
++bounded experiments, ranks measured outcomes across scenarios and retains
++structures only after fresh confirmation. It uses this atlas and the same
++blueprint executor; the four installed blueprints remain available.
++
+ ## Retrieve only what the direction needs
+ 
+ Use the ordinary machine route `creation-atlas` (alias `atlas-creation`):
+diff --git a/docs/WORKFLOW_DISCOVERY.md b/docs/WORKFLOW_DISCOVERY.md
+new file mode 100644
+index 0000000..4d9a26a
+--- /dev/null
++++ b/docs/WORKFLOW_DISCOVERY.md
+@@ -0,0 +1,167 @@
++# Discover, test and retain construction workflows
++
++`workflow-discovery` composes installed typed operators into new dependency
++graphs. It executes candidate graphs through the existing atlas blueprint
++executor, observes their outcomes, iterates around failures and promising
++results, and retains confirmed structures in caller-owned experience.
++
++The initial catalog contains ten adapters for real native tools: form compilation,
++derived UV removal, material generation and inspection, direct texture binding,
++automatic UV baking, decoded asset inspection, CPU preview rendering, sampled
++character motion and typed JavaScript/Python acceptance tests. They are indexed
++as `operator` records in the existing creation atlas. A declaration is not a
++successful test, and indexing a research organ does not implement it.
++
++## Use the ordinary machine
++
++```sh
++python run.py create examples/workflows/vent-hood.json
++```
++
++The example supplies geometry, material/bake choices and measurable goals, not a
++finished sequence of steps. The planner discovers both direct texturing and UV
++regeneration. Insufficient density stops a candidate before preview rendering.
++Valid products are compared on density, source map resolution and byte cost.
++Source map resolution matters: increasing a baked atlas's size alone does not
++create additional source detail. None of these metrics claims artistic quality.
++
++The `workflow-discovery` capability accepts:
++
++| Operation | Inputs | Result |
++| --- | --- | --- |
++| `catalog` | none | Installed operators, units, measurements and accepted source kinds |
++| `plan` | `request`, optional `memory` | Compositions, type reachability, missing observers/tools, dependency pins and plan identity; no creation writes |
++| `experiment` | `request`, new `path`, optional `memory`, optional `plan_sha256` | Bounded trials, diagnoses, ranking, confirmation and retained construction causes |
++| `memory` | `memory` | Confirmed workflow structures and observation counts; reuse still requires execution |
++
++Use `creation-atlas` with the same `memory` and category `learned-workflow` to
++retrieve the resulting structures alongside existing knowledge. Calling through
++Python, the CLI or an optional AI uses exactly the same operations.
++
++## Intent must name observable outcomes
++
++The experiment request schema is `axm.workflow-experiment/v0.1`:
++
++- `intent` retains the direction in human language.
++- `inputs` maps named sources to explicit types and a finite list of candidate
++  JSON construction values. Atlas selectors can load existing recipes as values.
++- `goals` names required output types and numeric checks with units and bounds.
++- `objectives` defines ranking: goal, metric, unit, minimize/maximize, target,
++  normalization scale and weight. Targets saturate; excess detail earns no credit.
++- `scenarios` adds up to three stress cases by overriding input values. Baseline
++  always runs. Passing baseline alone cannot satisfy a failing stress case.
++- `budget` bounds search states, plans, graph steps, actual trials, iteration
++  rounds, batch size and confirmation repetitions.
++- `operators` can restrict the catalog available to this request.
++
++Types match explicitly, including required units or coordinate attributes. There
++is no implicit millimetre/metre conversion. Missing units, unknown measurements
++and missing capabilities remain gaps. The current source adapters accept
++construction objects, not arbitrary external paths with unpinned contents.
++
++`same_origin_as` requires two goals to refer to the same constructed artifact:
++the preview must depict the asset being measured. `uses_goal` requires a goal's
++dependency closure to contain another goal's producer: the asset must use the
++material whose source quality was checked. Unrelated good test objects cannot
++satisfy a product's quality contract.
++
++## Iteration before, during and after construction
++
++Before execution, deterministic backward search wires compatible ports, shares
++dependencies, checks goal relationships and bounds the graph. A separate type
++reachability report explains which input ports lack matching providers.
++
++During execution, every step retains its actual inputs and observations. Failed
++checks stop dependent work. Diagnoses include operator, expected/observed values,
++tool checks, errors and steps not executed. The next round first removes
++candidates with exactly the same failed dependency closure and checks, then
++explores nearby settings/structures around the best valid result or the failed
++candidate that made the most progress. Execution exceptions are not cached as
++deterministic failures. Batched rounds may spend work on similar candidates
++before feedback reaches the next round; `batch_size: 1` applies feedback after
++each candidate.
++
++After a candidate passes every scenario, fresh directories receive confirmation
++builds of its hardest observed cases. Declared goal metrics and realized
++GLB/PNG/WAV/code bytes must reproduce exactly. Confirmation consumes the same
++trial budget. Missing confirmation, interruption, incomplete scenarios and
++changed bytes cannot become accepted workflows. A progress checkpoint preserves
++completed evidence; interrupted experiments are restarted, not resumed as PASS.
++
++This is bounded deterministic exploration and repair. It does not mutate
++arbitrary source code, invent new algorithms without testing, or infer a
++probability of correctness from repeated success. Failure reuse is local to one
++experiment and one pinned context. Every new experiment reexecutes current goals.
++
++## Rank product outcomes, not declarations
++
++Only confirmed candidates enter the ranking. For each objective, the engine
++computes the nonnegative distance from its target divided by the declared scale.
++It takes that objective's worst deficit over all scenarios, then sums the
++weighted deficits. Lower is better. Declared operator cost and stable candidate
++identity break ties; wall-clock noise does not reorder results. The report also
++retains the nondominated objective vectors as a Pareto frontier.
++
++Hard checks cannot be traded away for a good score. A lower polygon count,
++larger texture, smaller file or faster route is not universally better; the
++request chooses the relevant constraints and targets. The engine does not
++silently score aesthetic intent, physics or an external target it did not test.
++
++The budgets currently allow at most 20,000 search states, 128 candidate plans,
++16 graph steps, 256 actual trials and four confirmation repetitions. Individual
++tools keep their existing geometry, image, process and other work limits. A
++budgeted stop reports untried candidates and truncation; it is not proof of
++global optimality. Search bounds are independently reported from experiment
++bounds. The deterministic search order is not guaranteed to find the best route
++in a truncated space.
++
++## Learning keeps construction causes
++
++`memory/workflow-observations/` stores successful, failed and incomplete observed
++attempts with selected source values, goals, cases, wiring, runtime/catalog pins,
++diagnoses and evidence hashes. `memory/workflows/` stores confirmed reusable
++structure. Full per-step output and artifacts remain in each experiment folder;
++keep those folders with the collection when moving a complete evidence archive.
++
++Semantic identity includes operators, versions, wiring, source types and shared
++dependencies. It excludes settings, names, colors and prose. Four accepted color
++or resolution settings do not count as four new workflow capabilities. All
++observations remain inspectable, while the reusable structure is deduplicated.
++
++On reuse, matching structures can be rebound even when the new graph-search
++budget is too small to rediscover them. Current input types, available operators,
++units, goal relationships and checks are reapplied. Fresh execution is mandatory.
++Changed source/runtime/catalog/environment pins make old observations stale.
++Compatible structures remain useful: they can be rebound under current operator
++contracts, explicitly marked as carrying stale prior evidence, and tested anew.
++An unrelated tool update must not erase learned composition knowledge. Removed
++operators, changed operator versions and incompatible ports prevent that reuse.
++Pins cover the installed Python
++and data runtime, indexed atlas, operator catalog, Python/platform and Node
++version when available. They are not a complete external environment lock.
++
++The collection is ordinary caller-owned data, not a tamper-proof authority.
++Content identities detect accidental edits; a past observation does not authorize
++execution outside the ordinary capability boundary. Neither a confirmed workflow
++nor a GitHub merge silently promotes machine canon or modifies installed tools.
++
++## Extending tested understanding
++
++Add an operator catalog under `atlas/operators/` with schema
++`axm.workflow-operators/v0.1`. Each operator declares version, capability,
++operation, input/output types, metric units, cost, dependencies and limitations.
++The capability accepts `operation`, `path` and `values`, and returns `status`,
++`value`, `metrics` and evidence. A new source kind needs a real validating adapter.
++Built-in station operations are implemented in `workflow_stations.py`; adding a
++JSON name alone does not implement an operation. Ordinary capability source and
++tests remain authoritative.
++
++The next substantial expansion is more outcome observers and repair operators:
++actual target-engine import/runtime tests, collision/support/physical constraints,
++UV distortion and source-detail preservation, motion sweeps and task-specific
++perceptual review. Each should expose measured quantities, units, applicability,
++failure localization and retained test inputs through this same contract. That
++allows a new tool to participate in discovered pipelines instead of requiring
++another fixed end-to-end workflow. Open-ended intent interpretation can then map
++human goals to these explicit contracts while leaving unknown requirements
++visible and preserving the deterministic execution path.
+diff --git a/src/axm_uc/atlas_pipeline.py b/src/axm_uc/atlas_pipeline.py
+index c3a7fcd..967ac6d 100644
+--- a/src/axm_uc/atlas_pipeline.py
++++ b/src/axm_uc/atlas_pipeline.py
+@@ -289,7 +289,7 @@ def _search_key(search):
+     return digest({k: search.get(k) for k in ("schema", "recipe", "controls", "motion_probe")})
+ 
+ 
+-def plan_intent(root, request, *, memory=None):
++def plan_intent(root, request, *, memory=None, candidate_blueprint=None):
+     from .capabilities import CapabilityStore
+     if not isinstance(request, dict) or set(request) - {"purpose", "direction", "goals", "parameters", "blueprint"}:
+         raise ValueError("intent accepts purpose, direction, goals, parameters and optional blueprint")
+@@ -302,6 +302,18 @@ def plan_intent(root, request, *, memory=None):
+     if not isinstance(raw_parameters, dict):
+         raise ValueError("intent parameters must be an object")
+     atlas, candidates = CreationAtlas(root), []
++    if candidate_blueprint is not None:
++        # Internal composition boundary: normal atlas requests cannot supply this.
++        # The workflow planner constructs it from installed typed operators.
++        _validate_blueprint(candidate_blueprint)
++        identity = candidate_blueprint["id"]
++        if identity in atlas.blueprints:
++            raise ValueError("candidate blueprint cannot replace an installed blueprint")
++        atlas.blueprints[identity] = deepcopy(candidate_blueprint)
++        atlas.add("blueprint:" + identity, "blueprint", identity, candidate_blueprint["purpose"],
++                  {"scope": "request-composition", "sha256": digest(candidate_blueprint)},
++                  data=candidate_blueprint, status="UNTESTED_COMPOSITION",
++                  relations=[{"relation": "uses", "target": ref} for ref in candidate_blueprint.get("uses", [])])
+     records, ignored = _experience(root, memory)
+     atlas.add_experience(records, memory)
+     pin = runtime_pin()
+@@ -398,13 +410,13 @@ def _observe(check, results, target, artifacts):
+         return {"check": check, "passed": False, "error": str(exc)}
+ 
+ 
+-def build_intent(root, request, path, *, memory=None, plan_sha256=None):
++def build_intent(root, request, path, *, memory=None, plan_sha256=None, candidate_blueprint=None):
+     from .capabilities import CapabilityError, CapabilityStore
+     target = _output(root, path)
+     memory_path = _output(root, memory) if memory is not None else None
+     if memory_path and (target == memory_path or target in memory_path.parents or memory_path in target.parents):
+         raise ValueError("output and experience collection must be separate directories")
+-    plan = plan_intent(root, request, memory=memory)
++    plan = plan_intent(root, request, memory=memory, candidate_blueprint=candidate_blueprint)
+     if plan_sha256 is not None and plan_sha256 != plan["plan_sha256"]:
+         return {"schema": RUN_SCHEMA, "status": "HOLD_STALE_PLAN", "fresh_plan": plan}
+     if plan["status"] != "READY":
+@@ -492,6 +504,8 @@ def operate_atlas(root, inputs):
+     if inputs.get("memory") is not None:
+         records, _ = _experience(root, inputs["memory"])
+         atlas.add_experience(records, inputs["memory"])
++        from .workflow_memory import add_to_atlas
++        add_to_atlas(atlas, inputs["memory"])
+     if operation == "summary":
+         return atlas.summary()
+     if operation == "get":
+diff --git a/src/axm_uc/creation_atlas.py b/src/axm_uc/creation_atlas.py
+index ae646aa..3b46683 100644
+--- a/src/axm_uc/creation_atlas.py
++++ b/src/axm_uc/creation_atlas.py
+@@ -222,6 +222,16 @@ class CreationAtlas:
+                          tags=[blueprint["direction"], *blueprint.get("goals", {})])
+                 self.blueprints[blueprint["id"]] = deepcopy(blueprint)
+ 
++        from .workflow_contracts import load_operators
++        operators, _ = load_operators(self.root)
++        for identity, operator in operators.items():
++            self.add("operator:" + identity, "operator", identity, operator["purpose"],
++                     self.source(self.root / operator["source"]["path"], identity), data=operator,
++                     status="TYPED_OPERATOR_EXECUTION_REQUIRED",
++                     relations=[{"relation": "executes", "target": "capability:" + cap}
++                                for cap in [operator["capability"], *operator["dependencies"]]],
++                     tags=[operator["provides"]["kind"], *operator["metrics"]])
++
+     def add_experience(self, records, collection):
+         """Expose retained observations and semantic construction candidates, not canon."""
+         patterns = {}
+diff --git a/src/axm_uc/standalone_creation_capabilities.py b/src/axm_uc/standalone_creation_capabilities.py
+index 057ae5b..008192f 100644
+--- a/src/axm_uc/standalone_creation_capabilities.py
++++ b/src/axm_uc/standalone_creation_capabilities.py
+@@ -244,6 +244,20 @@ def register_standalone_creation_builtins(
+         except (ValueError, RuntimeError, OSError, KeyError) as exc:
+             raise capability_error(str(exc)) from exc
+ 
++    def workflow_discovery(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
++        from .workflow_discovery import operate
++        try:
++            return operate(root, inputs)
++        except (ValueError, RuntimeError, OSError, KeyError, TypeError) as exc:
++            raise capability_error(str(exc)) from exc
++
++    def workflow_station(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
++        from .workflow_stations import run_station
++        try:
++            return run_station(root, inputs)
++        except (ValueError, RuntimeError, OSError, KeyError, TypeError) as exc:
++            raise capability_error(str(exc)) from exc
++
+     def construction_search(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+         from .construction_search import publish_search
+         target = resolve_output_path(root, str(inputs['path']))
+@@ -477,6 +491,8 @@ def register_standalone_creation_builtins(
+         "builtin:character_recipe": character_recipe,
+         "builtin:construction_search": construction_search,
+         "builtin:creation_atlas": creation_atlas,
++        "builtin:workflow_discovery": workflow_discovery,
++        "builtin:workflow_station": workflow_station,
+         "builtin:character_controller": character_controller,
+         "builtin:material_response": material_response,
+         "builtin:precision_cutter": precision_cutter,
+diff --git a/src/axm_uc/workflow_contracts.py b/src/axm_uc/workflow_contracts.py
+new file mode 100644
+index 0000000..c45db72
+--- /dev/null
++++ b/src/axm_uc/workflow_contracts.py
+@@ -0,0 +1,178 @@
++"""Finite, explicit intent and operator contracts for reproducible workflow search."""
++from __future__ import annotations
++
++from copy import deepcopy
++import json
++import math
++import re
++
++from .creation_atlas import canonical, digest, local_file, text
++
++REQUEST_SCHEMA = "axm.workflow-experiment/v0.1"
++CATALOG_SCHEMA = "axm.workflow-operators/v0.1"
++NAME = re.compile(r"[a-z][a-z0-9_-]{0,63}\Z")
++LIMITS = {"states": (2000, 20000), "plans": (24, 128), "steps": (10, 16),
++          "trials": (24, 256), "rounds": (8, 128), "batch_size": (3, 16), "confirmation_cases": (1, 4)}
++
++
++def name(value):
++    if not isinstance(value, str) or not NAME.fullmatch(value):
++        raise ValueError("names require lowercase letters, digits, hyphens or underscores")
++    return value
++
++
++def type_contract(value):
++    if (not isinstance(value, dict) or not value.get("kind") or len(value) > 12
++            or any(not isinstance(k, str) or not isinstance(v, str) or not v for k, v in value.items())):
++        raise ValueError("type requires a kind and explicit string-valued attributes")
++    return value
++
++
++def matches(provided, required):
++    return all(provided.get(k) == v for k, v in required.items())
++
++
++def number(value, label):
++    if type(value) not in {int, float} or not math.isfinite(value) or abs(value) > 1e12:
++        raise ValueError(label + " must be finite and within +/- 1e12")
++    return value
++
++
++def load_operators(root):
++    from pathlib import Path
++    operators, source_kinds = {}, set()
++    for path in sorted((Path(root) / "atlas/operators").glob("*.json")):
++        body = json.loads(local_file(root, path.relative_to(root).as_posix()).read_text())
++        if set(body) != {"schema", "source_kinds", "operators"} or body["schema"] != CATALOG_SCHEMA:
++            raise ValueError("invalid workflow operator catalog")
++        if not isinstance(body["source_kinds"], list):
++            raise ValueError("operator source kinds must be a list")
++        source_kinds.update(name(k) for k in body["source_kinds"])
++        for raw in body["operators"]:
++            op = deepcopy(raw)
++            required = {"id", "version", "purpose", "capability", "operation", "needs", "provides", "metrics", "cost", "dependencies", "limitations"}
++            if set(op) - (required | {"identity_from"}) or not required <= set(op):
++                raise ValueError("invalid workflow operator fields")
++            identity = name(op["id"])
++            if identity in operators or len(operators) >= 64:
++                raise ValueError("duplicate operator or catalog exceeds 64 operators")
++            for field in ("version", "purpose", "capability", "operation"):
++                text(op[field], "operator " + field)
++            if not isinstance(op["needs"], dict) or not 1 <= len(op["needs"]) <= 8:
++                raise ValueError("operator requires 1..8 input ports")
++            for port, contract in op["needs"].items():
++                name(port)
++                type_contract(contract)
++            type_contract(op["provides"])
++            if not isinstance(op["metrics"], dict) or len(op["metrics"]) > 32:
++                raise ValueError("operator metric contract must be a bounded map")
++            for metric, unit in op["metrics"].items():
++                name(metric)
++                text(unit, "metric unit")
++            if not 0 < number(op["cost"], "declared cost") <= 100000:
++                raise ValueError("operator cost must be positive and bounded")
++            if not isinstance(op["dependencies"], list) or not isinstance(op["limitations"], list):
++                raise ValueError("operator dependencies and limitations must be lists")
++            if "identity_from" in op and op["identity_from"] not in op["needs"]:
++                raise ValueError("identity_from must refer to an input port")
++            op["source"] = {"path": path.relative_to(root).as_posix(), "sha256": digest(body)}
++            operators[identity] = op
++    return operators, source_kinds
++
++
++def validate_request(raw, source_kinds):
++    if not isinstance(raw, dict) or set(raw) - {"schema", "intent", "inputs", "goals", "objectives", "scenarios", "budget", "operators"}:
++        raise ValueError("unsupported workflow experiment fields")
++    if raw.get("schema") != REQUEST_SCHEMA or len(canonical(raw).encode()) > 2_000_000:
++        raise ValueError("workflow request needs its schema and at most 2 MB")
++    request = deepcopy(raw)
++    text(request.get("intent"), "intent")
++    inputs, goals = request.get("inputs"), request.get("goals")
++    if not isinstance(inputs, dict) or not 1 <= len(inputs) <= 12:
++        raise ValueError("workflow requires 1..12 explicit input sources")
++    for identity, source in inputs.items():
++        name(identity)
++        if not isinstance(source, dict) or set(source) != {"type", "values"}:
++            raise ValueError("source needs type and values")
++        type_contract(source["type"])
++        if source["type"]["kind"] not in source_kinds:
++            raise ValueError("no declared source adapter for kind: " + source["type"]["kind"])
++        if not isinstance(source["values"], list) or not 1 <= len(source["values"]) <= 8:
++            raise ValueError("source requires 1..8 candidate values")
++        if any(not isinstance(v, dict) for v in source["values"]):
++            raise ValueError("source values are retained JSON construction objects, not unpinned external paths")
++    if not isinstance(goals, dict) or not 1 <= len(goals) <= 8:
++        raise ValueError("workflow requires 1..8 measured goals")
++    for identity, goal in goals.items():
++        name(identity)
++        if not isinstance(goal, dict) or set(goal) - {"type", "checks", "same_origin_as", "uses_goal"}:
++            raise ValueError("goal needs type/checks and optional same_origin_as/uses_goal")
++        type_contract(goal.get("type"))
++        checks = goal.get("checks")
++        if not isinstance(checks, list) or not 1 <= len(checks) <= 16:
++            raise ValueError("every goal needs 1..16 observable numeric checks")
++        for check in checks:
++            if (not isinstance(check, dict) or set(check) - {"metric", "unit", "min", "max"}
++                    or not {"metric", "unit"} <= set(check) or not {"min", "max"} & set(check)):
++                raise ValueError("goal check requires metric, unit and min/max")
++            name(check["metric"])
++            text(check["unit"], "check unit")
++            for key in ("min", "max"):
++                if key in check:
++                    number(check[key], key)
++            if check.get("min", -math.inf) > check.get("max", math.inf):
++                raise ValueError("goal minimum exceeds maximum")
++        for relation in ("same_origin_as", "uses_goal"):
++            if relation in goal and (goal[relation] not in goals or goal[relation] == identity):
++                raise ValueError("goal relation must refer to a different goal")
++    ordered, pending = [], set(goals)
++    while pending:
++        ready = sorted(g for g in pending if all(goals[g].get(r) in {None, *ordered} for r in ("same_origin_as", "uses_goal")))
++        if not ready:
++            raise ValueError("cyclic goal origin constraints")
++        ordered.extend(ready)
++        pending.difference_update(ready)
++    objectives = request.setdefault("objectives", [])
++    if not isinstance(objectives, list) or len(objectives) > 16:
++        raise ValueError("at most 16 ranking objectives")
++    for obj in objectives:
++        if not isinstance(obj, dict) or set(obj) != {"goal", "metric", "unit", "direction", "target", "scale", "weight"}:
++            raise ValueError("objective requires goal, metric, unit, direction, target, scale and weight")
++        if obj["goal"] not in goals or obj["direction"] not in {"minimize", "maximize"}:
++            raise ValueError("unknown objective goal or direction")
++        name(obj["metric"])
++        text(obj["unit"], "objective unit")
++        for key in ("target", "scale", "weight"):
++            number(obj[key], key)
++        if obj["scale"] < 1e-12 or obj["weight"] <= 0:
++            raise ValueError("objective scale must be at least 1e-12 and weight positive")
++    for goal_id, goal in goals.items():
++        units = {}
++        for check in [*goal["checks"], *(o for o in objectives if o["goal"] == goal_id)]:
++            prior = units.setdefault(check["metric"], check["unit"])
++            if prior != check["unit"]:
++                raise ValueError("conflicting units for one goal measurement")
++    scenarios = request.setdefault("scenarios", [])
++    if not isinstance(scenarios, list) or len(scenarios) > 3:
++        raise ValueError("at most three stress scenarios in addition to baseline")
++    seen = {"baseline"}
++    for scenario in scenarios:
++        if not isinstance(scenario, dict) or set(scenario) != {"id", "inputs"}:
++            raise ValueError("scenario requires id and input overrides")
++        identity = name(scenario["id"])
++        if identity in seen or not isinstance(scenario["inputs"], dict) or set(scenario["inputs"]) - set(inputs):
++            raise ValueError("duplicate scenario or unknown input override")
++        seen.add(identity)
++        if any(not isinstance(v, dict) for v in scenario["inputs"].values()):
++            raise ValueError("scenario overrides must be JSON construction objects")
++    budget = request.setdefault("budget", {})
++    if not isinstance(budget, dict) or set(budget) - set(LIMITS):
++        raise ValueError("unsupported workflow budget")
++    for key, (default, maximum) in LIMITS.items():
++        value = budget.setdefault(key, default)
++        if type(value) is not int or not 1 <= value <= maximum:
++            raise ValueError(f"{key} budget must be 1..{maximum}")
++    if "operators" in request and (not isinstance(request["operators"], list) or not request["operators"]
++                                  or len(set(request["operators"])) != len(request["operators"])):
++        raise ValueError("operator selection must be a nonempty unique list")
++    return request, ordered
+diff --git a/src/axm_uc/workflow_discovery.py b/src/axm_uc/workflow_discovery.py
+new file mode 100644
+index 0000000..79404f8
+--- /dev/null
++++ b/src/axm_uc/workflow_discovery.py
+@@ -0,0 +1,317 @@
++"""Goal-directed composition of installed typed operators, independent of AI."""
++from __future__ import annotations
++
++from copy import deepcopy
++import platform
++import sys
++
++from .atlas_pipeline import _capability_gaps, _parameters
++from .creation_atlas import CreationAtlas, digest, runtime_pin
++from .workflow_contracts import load_operators, matches, validate_request
++
++
++class SearchLimit(Exception):
++    pass
++
++
++def source_values(request, atlas):
++    used = set()
++    for source in request["inputs"].values():
++        source["values"] = [_parameters(v, atlas, used) for v in source["values"]]
++    for scenario in request["scenarios"]:
++        scenario["inputs"] = {k: _parameters(v, atlas, used) for k, v in scenario["inputs"].items()}
++    return sorted(used)
++
++
++def origin(ref, nodes, operators):
++    if "source" in ref:
++        return "source:" + ref["source"]
++    node = next(n for n in nodes if n["id"] == ref["node"])
++    port = operators[node["operator"]].get("identity_from")
++    return origin(node["inputs"][port], nodes, operators) if port else node["id"]
++
++
++def uses(ref, wanted, nodes):
++    by_id, pending, seen = {n["id"]: n for n in nodes}, [ref], set()
++    while pending:
++        current = pending.pop()
++        if "node" not in current or current["node"] in seen:
++            continue
++        seen.add(current["node"])
++        children = list(by_id[current["node"]]["inputs"].values())
++        if wanted in children:
++            return True
++        pending.extend(children)
++    return False
++
++
++def choice_order(candidate):
++    return tuple(v for _, v in sorted(candidate["program"]["choices"].items()))
++
++
++def technical_fit(request, operators):
++    """Type reachability is a preflight fact, never an execution success claim."""
++    providers = [("source:" + k, v["type"]) for k, v in sorted(request["inputs"].items())]
++    pending, connections = set(operators), {}
++    while pending:
++        ready = []
++        for key in sorted(pending):
++            ports = {p: [identity for identity, contract in providers if matches(contract, needs)]
++                     for p, needs in operators[key]["needs"].items()}
++            if all(ports.values()):
++                connections[key] = {"type_reachable": True, "inputs": ports}
++                ready.append(key)
++        if not ready:
++            break
++        for key in ready:
++            providers.append(("operator:" + key, operators[key]["provides"]))
++            pending.remove(key)
++    for key in sorted(pending):
++        ports = {p: {"required": needs, "matches": [identity for identity, contract in providers if matches(contract, needs)],
++                     "available_same_kind": [{"provider": identity, "type": contract} for identity, contract in providers
++                                             if contract["kind"] == needs["kind"]]}
++                 for p, needs in operators[key]["needs"].items()}
++        connections[key] = {"type_reachable": False, "inputs": ports}
++    return connections
++
++
++def workflow_signature(program, request, operators):
++    """Structure, source sharing and contracts; excludes settings and prose labels."""
++    nodes, sources, mapped = {n["id"]: n for n in program["nodes"]}, {}, {}
++    def visit(ref):
++        if "source" in ref:
++            key = ref["source"]
++            if key not in sources:
++                sources[key] = len(sources)
++            return {"source": sources[key], "type": request["inputs"][key]["type"]}
++        key = ref["node"]
++        if key in mapped:
++            return {"shared": mapped[key]}
++        node = nodes[key]
++        index = len(mapped)
++        mapped[key] = index
++        op = operators[node["operator"]]
++        return {"node": index, "operator": op["id"], "version": op["version"],
++                "inputs": {p: visit(r) for p, r in sorted(node["inputs"].items())}}
++    # Sort outputs by type and producer, not caller labels.
++    refs = sorted(program["outputs"].values(), key=lambda r: (nodes[r["node"]]["operator"], r["node"]))
++    return digest([visit(r) for r in refs])
++
++
++def compose(request, operators, goal_order):
++    limits = request["budget"]
++    state_count, truncated = 0, False
++    candidates, identities = [], set()
++
++    def tick():
++        nonlocal state_count
++        state_count += 1
++        if state_count > limits["states"]:
++            raise SearchLimit()
++
++    def resolve(required, state, metrics, stack):
++        tick()
++        # Already-built ports are preferred and preserve dependency identity.
++        for node in state["nodes"]:
++            op = operators[node["operator"]]
++            if matches(op["provides"], required) and all(op["metrics"].get(k) == v for k, v in metrics.items()):
++                yield {"node": node["id"]}, state
++        if not metrics:
++            for key, source in sorted(request["inputs"].items()):
++                if not matches(source["type"], required):
++                    continue
++                choices = [state["choices"][key]] if key in state["choices"] else range(len(source["values"]))
++                for choice in choices:
++                    updated = {**state, "choices": {**state["choices"], key: choice}}
++                    yield {"source": key}, updated
++        if len(state["nodes"]) >= limits["steps"]:
++            return
++        for identity, op in sorted(operators.items(), key=lambda pair: (pair[1]["cost"], pair[0])):
++            if (identity in stack or not matches(op["provides"], required)
++                    or not all(op["metrics"].get(k) == v for k, v in metrics.items())):
++                continue
++            ports = sorted(op["needs"])
++            def wire(index, current, bindings):
++                if index == len(ports):
++                    yield current, bindings
++                    return
++                port = ports[index]
++                for ref, next_state in resolve(op["needs"][port], current, {}, stack | {identity}):
++                    yield from wire(index + 1, next_state, {**bindings, port: ref})
++            for current, bindings in wire(0, state, {}):
++                tick()
++                node = {"operator": identity, "inputs": bindings}
++                node["id"] = "n" + digest(node)[:16]
++                if any(n["id"] == node["id"] for n in current["nodes"]):
++                    continue
++                if len(current["nodes"]) >= limits["steps"]:
++                    continue
++                yield {"node": node["id"]}, {**current, "nodes": [*current["nodes"], node]}
++
++    def finish(index, state, outputs):
++        if index == len(goal_order):
++            # Drop branches created while attempting a different goal binding.
++            needed = set()
++            by_id = {n["id"]: n for n in state["nodes"]}
++            def mark(ref):
++                if "node" in ref and ref["node"] not in needed:
++                    needed.add(ref["node"])
++                    for child in by_id[ref["node"]]["inputs"].values():
++                        mark(child)
++            for ref in outputs.values():
++                mark(ref)
++            nodes = [n for n in state["nodes"] if n["id"] in needed]
++            used_sources = {r["source"] for n in nodes for r in n["inputs"].values() if "source" in r}
++            program = {"nodes": nodes, "outputs": outputs,
++                       "choices": {k: v for k, v in sorted(state["choices"].items()) if k in used_sources}}
++            identity = digest(program)
++            if identity not in identities:
++                identities.add(identity)
++                candidates.append({"id": identity, "program": program,
++                    "signature": workflow_signature(program, request, operators),
++                    "cost": sum(operators[n["operator"]]["cost"] for n in nodes)})
++                if len(candidates) >= limits["plans"]:
++                    raise SearchLimit()
++            return
++        goal_id = goal_order[index]
++        goal = request["goals"][goal_id]
++        metrics = {c["metric"]: c["unit"] for c in goal["checks"]}
++        metrics.update({o["metric"]: o["unit"] for o in request["objectives"] if o["goal"] == goal_id})
++        for ref, current in resolve(goal["type"], state, metrics, set()):
++            parent = goal.get("same_origin_as")
++            if parent and origin(ref, current["nodes"], operators) != origin(outputs[parent], current["nodes"], operators):
++                continue
++            parent = goal.get("uses_goal")
++            if parent and not uses(ref, outputs[parent], current["nodes"]):
++                continue
++            finish(index + 1, current, {**outputs, goal_id: ref})
++
++    try:
++        finish(0, {"nodes": [], "choices": {}}, {})
++    except SearchLimit:
++        truncated = True
++    candidates.sort(key=lambda c: (c["cost"], len(c["program"]["nodes"]), choice_order(c), c["id"]))
++    return candidates, {"states": min(state_count, limits["states"]), "truncated": truncated,
++                         "space": "Installed typed operators and declared input choices only; not an exhaustive universe."}
++
++
++def plan(root, raw, *, memory=None):
++    operators, source_kinds = load_operators(root)
++    request, order = validate_request(raw, source_kinds)
++    atlas = CreationAtlas(root)
++    used = source_values(request, atlas)
++    request, order = validate_request(request, source_kinds)
++    requested = request.get("operators", sorted(operators))
++    unknown = sorted(set(requested) - set(operators))
++    gaps, unavailable, available = [], {}, {}
++    if unknown:
++        gaps.append("unknown operators: " + ", ".join(unknown))
++    for identity in requested:
++        if identity not in operators:
++            continue
++        op = operators[identity]
++        missing = []
++        for cap in [op["capability"], *op["dependencies"]]:
++            missing.extend(_capability_gaps(atlas, cap))
++        if op["operation"] == "verify-code":
++            import shutil
++            if shutil.which("node") is None:
++                missing.append("Node is unavailable for actual code verification")
++        if missing:
++            unavailable[identity] = sorted(set(missing))
++        else:
++            available[identity] = op
++    for goal_id, goal in request["goals"].items():
++        metrics = [(c["metric"], c["unit"]) for c in goal["checks"]]
++        metrics += [(o["metric"], o["unit"]) for o in request["objectives"] if o["goal"] == goal_id]
++        producers = [o for o in available.values() if matches(o["provides"], goal["type"])]
++        if not producers:
++            gaps.append("no installed producer for goal: " + goal_id)
++        for metric, unit in metrics:
++            if not any(o["metrics"].get(metric) == unit for o in producers):
++                gaps.append(f"no observer for {goal_id}.{metric} in {unit}")
++    pins = {"runtime": runtime_pin(), "atlas": atlas.summary()["snapshot_sha256"],
++            "operators": digest(available), "python": sys.version, "platform": platform.platform()}
++    if any(op["operation"] == "verify-code" for op in available.values()):
++        import subprocess
++        import shutil
++        try:
++            result = subprocess.run([shutil.which("node"), "--version"], capture_output=True, text=True, timeout=5, check=True)
++            pins["node"] = result.stdout.strip()
++        except (OSError, subprocess.SubprocessError):
++            pins["node"] = "VERSION_UNAVAILABLE"
++    from .workflow_memory import read_memory
++    memory_data = read_memory(root, memory, pins=pins)
++    retained = {r["signature"] for r in memory_data["workflows"]}
++    current_observations = {r["signature"] for r in memory_data["workflows"] if r["fresh"]}
++    candidates, search = ([], {"states": 0, "truncated": False}) if gaps else compose(request, available, order)
++    if not gaps:
++        from .workflow_reuse import rebind_workflows
++        reused, reuse_gaps = rebind_workflows(memory_data["workflows"], request, available, order)
++        memory_data["ignored"].extend(reuse_gaps)
++        merged = {c["id"]: c for c in [*reused, *candidates]}
++        candidates = sorted(merged.values(), key=lambda c: (c["signature"] not in retained, c["cost"], choice_order(c), c["id"]))
++        if len(candidates) > request["budget"]["plans"]:
++            search["truncated"] = True
++            candidates = candidates[:request["budget"]["plans"]]
++    if not candidates and not gaps:
++        gaps.append("no compatible workflow within the declared type, unit, origin and search budgets")
++    for candidate in candidates:
++        candidate["reused_structure"] = candidate["signature"] in retained
++        candidate["prior_evidence_current"] = candidate["signature"] in current_observations
++    report = {"schema": "axm.workflow-plan/v0.1", "status": "READY" if candidates and not gaps else "HOLD_CAPABILITY_GAP",
++              "request": request, "operators": available, "candidates": candidates, "search": search,
++              "gaps": gaps, "unavailable_operators": unavailable, "pins": pins, "atlas_inputs": used,
++              "technical_fit": technical_fit(request, available),
++              "memory": {"eligible_structures": len(retained), "current_observations": len(current_observations),
++                         "stale": memory_data["stale"], "ignored": memory_data["ignored"]},
++              "ranking": "All hard checks first. Weighted worst-scenario target deficits, then declared cost and stable identity.",
++              "boundary": "A composed route is untested. Missing observers are gaps; prose and confidence are not invented measurements."}
++    report["plan_sha256"] = digest(report)
++    return report
++
++
++def compile_candidate(candidate, request, operators, scenario):
++    program = candidate["program"]
++    parameters = {key: {"value": deepcopy(scenario["inputs"].get(key, request["inputs"][key]["values"][choice]))}
++                  for key, choice in program["choices"].items()}
++    steps, goals = [], {}
++    for node in program["nodes"]:
++        op = operators[node["operator"]]
++        values = {port: {"from": ("request." + ref["source"] + ".value" if "source" in ref
++                                   else "steps." + ref["node"] + ".value")} for port, ref in node["inputs"].items()}
++        steps.append({"id": node["id"], "capability": op["capability"],
++                      "depends_on": sorted({r["node"] for r in node["inputs"].values() if "node" in r}),
++                      "inputs": {"operation": op["operation"], "path": {"output": node["id"]}, "values": values},
++                      "checks": [{"step": node["id"], "path": ["status"], "equals": "PASS"}]})
++    for identity, goal in request["goals"].items():
++        node_id = program["outputs"][identity]["node"]
++        checks = [{"step": node_id, "path": ["metrics", c["metric"]],
++                   **{k: c[k] for k in ("min", "max") if k in c}} for c in goal["checks"]]
++        goals[identity] = checks
++        next(s for s in steps if s["id"] == node_id)["checks"].extend(deepcopy(checks))
++    blueprint = {"id": "discovered-" + candidate["id"], "version": "0.1.0", "purpose": request["intent"],
++                 "direction": "workflow-experiment", "parameters": {key: "object" for key in parameters},
++                 "defaults": {}, "uses": ["operator:" + key for key in sorted({n["operator"] for n in program["nodes"]})],
++                 "steps": steps, "goals": goals, "artifacts": {},
++                 "limitations": [s for key in sorted({n["operator"] for n in program["nodes"]}) for s in operators[key]["limitations"]]}
++    intent = {"purpose": request["intent"], "direction": "workflow-experiment", "goals": sorted(goals),
++              "blueprint": blueprint["id"], "parameters": parameters}
++    return blueprint, intent
++
++
++def operate(root, inputs):
++    operation = inputs.get("operation", "plan")
++    if operation == "catalog":
++        operators, kinds = load_operators(root)
++        return {"operators": operators, "source_kinds": sorted(kinds)}
++    if operation == "memory":
++        from .workflow_memory import read_memory
++        return read_memory(root, inputs["memory"])
++    if operation == "plan":
++        return plan(root, inputs["request"], memory=inputs.get("memory"))
++    if operation == "experiment":
++        from .workflow_experiments import experiment
++        return experiment(root, inputs["request"], inputs["path"], memory=inputs.get("memory"),
++                          expected_plan=inputs.get("plan_sha256"))
++    raise ValueError("unknown workflow discovery operation")
+diff --git a/src/axm_uc/workflow_experiments.py b/src/axm_uc/workflow_experiments.py
+new file mode 100644
+index 0000000..9d7b71c
+--- /dev/null
++++ b/src/axm_uc/workflow_experiments.py
+@@ -0,0 +1,245 @@
++"""Bounded before/after iteration, actual outcomes, robust ranking and confirmation."""
++from __future__ import annotations
++
++from collections import Counter
++import hashlib
++import math
++from pathlib import Path
++
++from .atomic import atomic_write_json
++from .atlas_pipeline import _output, build_intent
++from .creation_atlas import digest
++from .workflow_discovery import choice_order, compile_candidate, plan
++from .workflow_memory import OBSERVATION_SCHEMA, retain
++
++
++def _diagnose(run, candidate):
++    by_id = {n["id"]: n for n in candidate["program"]["nodes"]}
++    failed = [c for c in run.get("checks", []) if not c["passed"]]
++    step = (run.get("error") or {}).get("step") or (failed[0]["check"]["step"] if failed else None)
++    result = run.get("steps", {}).get(step, {})
++    evidence = result.get("evidence", {})
++    return {"step": step, "operator": by_id.get(step, {}).get("operator"),
++            "failed_checks": failed, "error": run.get("error"), "metrics": result.get("metrics", {}),
++            "tool_checks": [c for c in evidence.get("checks", []) if not c.get("passed")],
++            "not_executed": [n["id"] for n in candidate["program"]["nodes"] if n["id"] not in run.get("steps", {})]}
++
++
++def _measure(run, candidate, request):
++    metrics = {}
++    for goal, ref in candidate["program"]["outputs"].items():
++        values = run.get("steps", {}).get(ref["node"], {}).get("metrics", {})
++        needed = {c["metric"] for c in request["goals"][goal]["checks"]}
++        needed.update(o["metric"] for o in request["objectives"] if o["goal"] == goal)
++        metrics[goal] = {key: values[key] for key in sorted(needed)
++                         if type(values.get(key)) in {int, float} and math.isfinite(values[key])}
++        if set(metrics[goal]) != needed:
++            return metrics, False
++    return metrics, True
++
++
++def _deficits(metrics, objectives):
++    values = []
++    for obj in objectives:
++        measured = metrics[obj["goal"]][obj["metric"]]
++        delta = measured - obj["target"] if obj["direction"] == "minimize" else obj["target"] - measured
++        values.append(max(0., delta / obj["scale"]))
++    return values
++
++
++def _rank(cases, request):
++    worst = [max(_deficits(c["metrics"], request["objectives"])[i] for c in cases)
++             for i in range(len(request["objectives"]))]
++    score = sum(d * o["weight"] for d, o in zip(worst, request["objectives"]))
++    return {"weighted_worst_deficit": score, "objective_deficits": worst,
++            "targets_satisfied": all(d == 0 for d in worst)}
++
++
++def _prefixes(candidate, request, operators, scenario):
++    """Context-sensitive failure reuse, including goal checks on every ancestor."""
++    blueprint, intent = compile_candidate(candidate, request, operators, scenario)
++    checks = {s["id"]: s["checks"] for s in blueprint["steps"]}
++    values, signatures = intent["parameters"], {}
++    for node in candidate["program"]["nodes"]:
++        # Check step ids are structural but not necessary to prefix identity.
++        own_checks = [{k: v for k, v in c.items() if k != "step"} for c in checks[node["id"]]]
++        signatures[node["id"]] = digest({"operator": operators[node["operator"]], "checks": own_checks,
++            "inputs": {p: {"value": values[r["source"]]["value"]} if "source" in r
++                       else {"prefix": signatures[r["node"]]} for p, r in node["inputs"].items()}})
++    return signatures
++
++
++def _case(root, candidate, request, operators, scenario, path):
++    blueprint, intent = compile_candidate(candidate, request, operators, scenario)
++    try:
++        run = build_intent(root, intent, str(path), candidate_blueprint=blueprint)
++    except (ValueError, RuntimeError, OSError) as exc:
++        # An unreadable/oversized evidence file or other boundary failure cannot
++        # terminate the search with an apparently successful partial candidate.
++        run = {"status": "HOLD_EVIDENCE_ERROR", "error": {"step": None, "message": str(exc)}}
++    metrics, measured = _measure(run, candidate, request)
++    passed = run["status"] == "CHECKS_PASSED" and measured
++    products = {p: sha for p, sha in run.get("files", {}).items()
++                if Path(p).suffix in {".glb", ".png", ".wav", ".js", ".py", ".html", ".css"}}
++    report_path = path / "run.json"
++    return {"scenario": scenario["id"], "status": "PASS" if passed else "FAIL", "metrics": metrics,
++            "run_path": str(path), "run_sha256": hashlib.sha256(report_path.read_bytes()).hexdigest() if report_path.is_file() else None,
++            "run_status": run["status"], "product_hashes": products,
++            "diagnosis": None if passed else _diagnose(run, candidate),
++            "passed_steps": sum(r.get("status") == "PASS" for r in run.get("steps", {}).values())}
++
++
++def _distance(candidate, anchor, request):
++    if anchor is None:
++        return (0, 0)
++    left = Counter(n["operator"] for n in candidate["program"]["nodes"])
++    right = Counter(n["operator"] for n in anchor["program"]["nodes"])
++    topology = sum((left - right).values()) + sum((right - left).values())
++    a, b = candidate["program"]["choices"], anchor["program"]["choices"]
++    changes = sum(a.get(k) != b.get(k) for k in set(a) | set(b))
++    return topology, changes
++
++
++def experiment(root, raw, path, *, memory=None, expected_plan=None):
++    fresh = plan(root, raw, memory=memory)
++    if expected_plan is not None and expected_plan != fresh["plan_sha256"]:
++        return {"status": "HOLD_STALE_PLAN", "fresh_plan": fresh}
++    if fresh["status"] != "READY":
++        return {"status": fresh["status"], "plan": fresh}
++    target = _output(root, path)
++    if memory is not None:
++        collection = _output(root, memory)
++        if target == collection or target in collection.parents or collection in target.parents:
++            raise ValueError("experiment output and memory must be separate directories")
++    if target.exists():
++        raise ValueError("workflow experiment output already exists")
++    target.mkdir(parents=True)
++    atomic_write_json(target / "plan.json", fresh)
++    request, operators = fresh["request"], fresh["operators"]
++    limits = request["budget"]
++    scenarios = [{"id": "baseline", "inputs": {}}, *request["scenarios"]]
++    pending, outcomes, rounds, failures = list(fresh["candidates"]), [], [], {}
++    trials, anchor, best, most_progress = 0, None, None, -1
++    stop_reason = "candidate_space_exhausted"
++
++    def checkpoint():
++        atomic_write_json(target / "progress.json", {"completed_trials": trials, "outcomes": outcomes,
++                          "rounds": rounds, "remaining_candidates": len(pending), "resumable": False,
++                          "note": "Interrupted work is evidence only. Start a fresh experiment; no partial admission."})
++
++    for round_number in range(1, limits["rounds"] + 1):
++        if not pending:
++            break
++        iteration = {"round": round_number, "mode": "explore" if anchor is None else "refine" if best else "repair",
++                     "basis": None if anchor is None else anchor["id"], "attempts": [], "pruned": []}
++        # Reject only identical failed dependency closures under identical checks.
++        survivors = []
++        for candidate in pending:
++            cached = None
++            for scenario in scenarios:
++                for node, fingerprint in _prefixes(candidate, request, operators, scenario).items():
++                    if fingerprint in failures:
++                        cached = {"candidate": candidate["id"], "scenario": scenario["id"], "step": node,
++                                  "because": failures[fingerprint]}
++                        break
++                if cached:
++                    break
++            if cached:
++                iteration["pruned"].append(cached)
++                outcomes.append({"candidate": candidate["id"], "signature": candidate["signature"],
++                                 "status": "PRUNED_IDENTICAL_FAILURE", "evidence": cached})
++            else:
++                survivors.append(candidate)
++        pending = sorted(survivors, key=lambda c: (_distance(c, anchor, request), not c["reused_structure"], c["cost"], choice_order(c), c["id"]))
++        for _ in range(min(limits["batch_size"], len(pending))):
++            if trials >= limits["trials"]:
++                stop_reason = "trial_budget"
++                break
++            candidate = pending.pop(0)
++            cases, confirmation, status = [], [], "INCOMPLETE"
++            for scenario in scenarios:
++                if trials >= limits["trials"]:
++                    break
++                trial_path = target / "trials" / (f"{trials + 1:04d}-" + scenario["id"])
++                observed = _case(root, candidate, request, operators, scenario, trial_path)
++                trials += 1
++                cases.append(observed)
++                if observed["status"] != "PASS":
++                    status = "REJECTED"
++                    diagnosis = observed["diagnosis"]
++                    if diagnosis["step"] and observed["run_status"] == "HOLD_FAILED_CHECK":
++                        fingerprint = _prefixes(candidate, request, operators, scenario)[diagnosis["step"]]
++                        failures[fingerprint] = {"candidate": candidate["id"], "scenario": scenario["id"],
++                                                 "diagnosis": diagnosis, "run_sha256": observed["run_sha256"]}
++                    if best is None and observed["passed_steps"] > most_progress:
++                        most_progress, anchor = observed["passed_steps"], candidate
++                    break
++            ranking = None
++            if len(cases) == len(scenarios) and all(c["status"] == "PASS" for c in cases):
++                ranking = _rank(cases, request)
++                # Rebuild the hardest observed cases in new directories. No cached PASS.
++                hardest = sorted(cases, key=lambda c: (-sum(d * o["weight"] for d, o in
++                                 zip(_deficits(c["metrics"], request["objectives"]), request["objectives"])), c["scenario"]))
++                for index in range(limits["confirmation_cases"]):
++                    if trials >= limits["trials"]:
++                        break
++                    prior = hardest[index % len(hardest)]
++                    scenario = next(s for s in scenarios if s["id"] == prior["scenario"])
++                    observed = _case(root, candidate, request, operators, scenario,
++                                     target / "trials" / f"{trials + 1:04d}-confirmation")
++                    trials += 1
++                    observed["repeatable"] = (observed["status"] == "PASS" and observed["metrics"] == prior["metrics"]
++                                               and observed["product_hashes"] == prior["product_hashes"])
++                    confirmation.append(observed)
++                    if not observed["repeatable"]:
++                        status = "CONFIRMATION_FAILED"
++                        break
++                if len(confirmation) == limits["confirmation_cases"] and all(c["repeatable"] for c in confirmation):
++                    status = "CONFIRMED"
++            observation = {"schema": OBSERVATION_SCHEMA, "status": status, "candidate": candidate["id"],
++                           "signature": candidate["signature"], "pins": fresh["pins"], "intent": request["intent"],
++                           "request_sha256": digest(request), "program": candidate["program"],
++                           "source_values": {k: request["inputs"][k]["values"][v] for k, v in candidate["program"]["choices"].items()},
++                           "validation_scope": {"goals": request["goals"], "objectives": request["objectives"], "scenarios": scenarios},
++                           "cases": cases, "confirmation": confirmation, "ranking": ranking,
++                           "cost": candidate["cost"], "reused_structure": candidate["reused_structure"],
++                           "prior_evidence_current": candidate["prior_evidence_current"],
++                           "repeatability_scope": "Declared goal metrics and generated GLB/PNG/WAV/code bytes; not all environments or all inputs.",
++                           "automatic_canon_admission": False}
++            atomic_write_json(target / "observations" / (candidate["id"] + ".json"), observation)
++            retained_id = retain(root, memory, observation, candidate, request, operators)
++            outcome = {"candidate": candidate["id"], "signature": candidate["signature"], "status": status,
++                       "ranking": ranking, "cost": candidate["cost"], "observation": "observations/" + candidate["id"] + ".json",
++                       "retained_observation": retained_id}
++            outcomes.append(outcome)
++            iteration["attempts"].append({"candidate": candidate["id"], "status": status,
++                                          "failed": next((c["diagnosis"] for c in cases if c["status"] != "PASS"), None)})
++            if status == "CONFIRMED":
++                key = (ranking["weighted_worst_deficit"], candidate["cost"], candidate["id"])
++                if best is None or key < best:
++                    best, anchor = key, candidate
++            checkpoint()
++        rounds.append(iteration)
++        checkpoint()
++        if trials >= limits["trials"]:
++            stop_reason = "trial_budget"
++            break
++    else:
++        if pending:
++            stop_reason = "round_budget"
++    ranked = sorted((o for o in outcomes if o["status"] == "CONFIRMED"),
++                    key=lambda o: (o["ranking"]["weighted_worst_deficit"], o["cost"], o["candidate"]))
++    frontier = [o["candidate"] for o in ranked if not any(
++        all(a <= b for a, b in zip(other["ranking"]["objective_deficits"], o["ranking"]["objective_deficits"]))
++        and any(a < b for a, b in zip(other["ranking"]["objective_deficits"], o["ranking"]["objective_deficits"]))
++        for other in ranked)]
++    report = {"schema": "axm.workflow-experiment-result/v0.1", "status": "VERIFIED_WORKFLOWS" if ranked else "HOLD_NO_CONFIRMED_WORKFLOW",
++              "path": str(target), "plan_sha256": fresh["plan_sha256"], "trials": trials, "rounds": rounds,
++              "outcomes": outcomes, "ranked": ranked, "pareto_frontier": frontier,
++              "selected": ranked[0] if ranked else None, "untried": [c["id"] for c in pending],
++              "retained_structures": len({o["signature"] for o in ranked}) if memory else 0,
++              "stop_reason": stop_reason, "search": fresh["search"], "automatic_canon_admission": False,
++              "boundary": "Bounded experimental evidence, not statistical confidence or global optimality. Every reuse reruns current goals; unavailable physics, aesthetic or target checks stay gaps."}
++    report["report_sha256"] = digest(report)
++    atomic_write_json(target / "report.json", report)
++    return report
+diff --git a/src/axm_uc/workflow_memory.py b/src/axm_uc/workflow_memory.py
+new file mode 100644
+index 0000000..1a54f05
+--- /dev/null
++++ b/src/axm_uc/workflow_memory.py
+@@ -0,0 +1,96 @@
++"""Caller-owned workflow experience; measured candidates, never machine canon."""
++from __future__ import annotations
++
++import json
++
++from .atomic import atomic_write_json
++from .atlas_pipeline import _output
++from .creation_atlas import digest, local_file
++
++OBSERVATION_SCHEMA = "axm.workflow-observation/v0.1"
++TEMPLATE_SCHEMA = "axm.learned-workflow/v0.1"
++
++
++def read_memory(root, memory, *, pins=None):
++    result = {"workflows": [], "observations": 0, "stale": [], "ignored": [], "automatic_canon_admission": False}
++    if memory is None:
++        return result
++    folder = _output(root, memory)
++    if not folder.exists():
++        return result
++    if not folder.is_dir():
++        raise ValueError("workflow memory must be a directory")
++    paths = sorted(folder.glob("workflow-observations/*.json"))
++    templates = sorted(folder.glob("workflows/*.json"))
++    if len(paths) + len(templates) > 4096 or sum(p.lstat().st_size for p in paths + templates) > 64_000_000:
++        raise ValueError("workflow memory exceeds 4096 records or 64 MB; choose a scoped collection")
++    admissions = {}
++    for path in paths:
++        try:
++            value = json.loads(local_file(folder, path.relative_to(folder).as_posix()).read_text())
++            if not isinstance(value, dict) or value.get("schema") != OBSERVATION_SCHEMA or path.stem != digest(value):
++                raise ValueError("observation schema or identity mismatch")
++            if value.get("status") not in {"CONFIRMED", "REJECTED", "INCOMPLETE", "CONFIRMATION_FAILED"}:
++                raise ValueError("unknown observation status")
++            result["observations"] += 1
++            if value["status"] == "CONFIRMED":
++                if not value.get("confirmation") or not value.get("cases"):
++                    raise ValueError("confirmation and case evidence required")
++                if (any(c.get("status") != "PASS" or c.get("run_status") != "CHECKS_PASSED"
++                        or not isinstance(c.get("metrics"), dict) or not c.get("run_sha256")
++                        for c in [*value["cases"], *value["confirmation"]])
++                        or not all(c.get("repeatable") is True for c in value["confirmation"])):
++                    raise ValueError("workflow lacks complete passing and repeatable evidence")
++                admissions.setdefault(value["signature"], []).append((path.stem, value))
++        except (ValueError, KeyError, OSError, TypeError, AttributeError) as exc:
++            result["ignored"].append({"file": path.relative_to(folder).as_posix(), "reason": str(exc)})
++    for path in templates:
++        try:
++            value = json.loads(local_file(folder, path.relative_to(folder).as_posix()).read_text())
++            if not isinstance(value, dict) or value.get("schema") != TEMPLATE_SCHEMA or path.stem != digest(value):
++                raise ValueError("workflow schema or identity mismatch")
++            observations = admissions.get(value["signature"], [])
++            if not observations:
++                raise ValueError("workflow has no retained confirmed observation")
++            fresh = any(v.get("pins") == pins for _, v in observations) if pins is not None else False
++            result["workflows"].append({**value, "fresh": fresh, "observations": [key for key, _ in observations],
++                                         "evidence": "PAST_OBSERVATION_RECHECK_REQUIRED"})
++            if pins is not None and not fresh:
++                result["stale"].append(value["signature"])
++        except (ValueError, KeyError, OSError, TypeError, AttributeError) as exc:
++            result["ignored"].append({"file": path.relative_to(folder).as_posix(), "reason": str(exc)})
++    # More than one version of a structurally identical template is not growth.
++    unique = {}
++    for item in result["workflows"]:
++        if item["signature"] not in unique or item["fresh"]:
++            unique[item["signature"]] = item
++    result["workflows"] = [unique[key] for key in sorted(unique)]
++    return result
++
++
++def retain(root, memory, observation, candidate, request, operators):
++    if memory is None:
++        return None
++    folder = _output(root, memory)
++    identity = digest(observation)
++    atomic_write_json(folder / "workflow-observations" / (identity + ".json"), observation)
++    if observation["status"] == "CONFIRMED":
++        known = read_memory(root, memory)
++        if candidate["signature"] not in {r["signature"] for r in known["workflows"]}:
++            value = {"schema": TEMPLATE_SCHEMA, "signature": candidate["signature"],
++                     "program": {k: v for k, v in candidate["program"].items() if k != "choices"},
++                     "source_types": {k: request["inputs"][k]["type"] for k in candidate["program"]["choices"]},
++                     "operators": {n["operator"]: operators[n["operator"]]["version"] for n in candidate["program"]["nodes"]},
++                     "use": "Reusable structure. Rebind inputs, compile current goals and execute fresh checks on every use.",
++                     "automatic_canon_admission": False}
++            atomic_write_json(folder / "workflows" / (digest(value) + ".json"), value)
++    return identity
++
++
++def add_to_atlas(atlas, memory):
++    records = read_memory(atlas.root, memory)
++    for item in records["workflows"]:
++        atlas.add("workflow:" + item["signature"], "learned-workflow", item["signature"], item["use"],
++                  {"scope": "workflow-memory", "collection": str(memory), "observations": item["observations"]},
++                  data=item, status="MEASURED_CANDIDATE_RECHECK_REQUIRED",
++                  relations=[{"relation": "uses", "target": "operator:" + key} for key in item["operators"]])
+diff --git a/src/axm_uc/workflow_reuse.py b/src/axm_uc/workflow_reuse.py
+new file mode 100644
+index 0000000..70e71f5
+--- /dev/null
++++ b/src/axm_uc/workflow_reuse.py
+@@ -0,0 +1,89 @@
++"""Rebind retained structures to current types and goals; never replay a past PASS."""
++from __future__ import annotations
++
++from itertools import product
++
++from .creation_atlas import digest
++from .workflow_contracts import matches
++from .workflow_discovery import origin, uses, workflow_signature
++
++
++def rebind_workflows(records, request, operators, goal_order):
++    candidates, ignored, visited = [], [], 0
++    maximum = request["budget"]["plans"]
++    for record in records:
++        try:
++            template = record["program"]
++            if not 1 <= len(template["nodes"]) <= request["budget"]["steps"]:
++                continue
++            source_keys = sorted(record["source_types"])
++            source_options = [sorted((k for k, v in request["inputs"].items()
++                                      if matches(v["type"], record["source_types"][old])), key=lambda k: (k != old, k))
++                              for old in source_keys]
++            for mapped in product(*source_options):
++                visited += 1
++                if visited > 4096:
++                    return candidates, [*ignored, {"reason": "retained binding budget reached"}]
++                if len(set(mapped)) != len(mapped):
++                    continue
++                sources = dict(zip(source_keys, mapped))
++                nodes, replacements, types = [], {}, {}
++                for old in template["nodes"]:
++                    op = operators[old["operator"]]
++                    if op["version"] != record["operators"][op["id"]] or set(old["inputs"]) != set(op["needs"]):
++                        raise ValueError("retained operator contract changed")
++                    bindings = {}
++                    for port, ref in old["inputs"].items():
++                        if set(ref) == {"source"}:
++                            key = sources[ref["source"]]
++                            current, provided = {"source": key}, request["inputs"][key]["type"]
++                        elif set(ref) == {"node"}:
++                            key = replacements[ref["node"]]
++                            current, provided = {"node": key}, types[key]
++                        else:
++                            raise ValueError("invalid retained port reference")
++                        if not matches(provided, op["needs"][port]):
++                            raise ValueError("retained port no longer fits")
++                        bindings[port] = current
++                    node = {"operator": op["id"], "inputs": bindings}
++                    node["id"] = "n" + digest(node)[:16]
++                    if node["id"] in types:
++                        raise ValueError("duplicate retained node")
++                    nodes.append(node)
++                    replacements[old["id"]], types[node["id"]] = node["id"], op["provides"]
++                output_options = []
++                for goal_id in goal_order:
++                    goal = request["goals"][goal_id]
++                    measurements = [(c["metric"], c["unit"]) for c in goal["checks"]]
++                    measurements += [(o["metric"], o["unit"]) for o in request["objectives"] if o["goal"] == goal_id]
++                    output_options.append([{"node": n["id"]} for n in nodes
++                        if matches(types[n["id"]], goal["type"])
++                        and all(operators[n["operator"]]["metrics"].get(k) == unit for k, unit in measurements)])
++                for refs in product(*output_options):
++                    visited += 1
++                    if visited > 4096:
++                        return candidates, [*ignored, {"reason": "retained binding budget reached"}]
++                    outputs = dict(zip(goal_order, refs))
++                    if any(g.get("same_origin_as") and origin(outputs[k], nodes, operators)
++                           != origin(outputs[g["same_origin_as"]], nodes, operators) for k, g in request["goals"].items()):
++                        continue
++                    if any(g.get("uses_goal") and not uses(outputs[k], outputs[g["uses_goal"]], nodes)
++                           for k, g in request["goals"].items()):
++                        continue
++                    # Retain only ancestors of the newly bound goals.
++                    needed = {r["node"] for r in refs}
++                    for node in reversed(nodes):
++                        if node["id"] in needed:
++                            needed.update(r["node"] for r in node["inputs"].values() if "node" in r)
++                    selected = [n for n in nodes if n["id"] in needed]
++                    keys = sorted({r["source"] for n in selected for r in n["inputs"].values() if "source" in r})
++                    for choices in product(*(range(len(request["inputs"][k]["values"])) for k in keys)):
++                        program = {"nodes": selected, "outputs": outputs, "choices": dict(zip(keys, choices))}
++                        candidates.append({"id": digest(program), "program": program,
++                            "signature": workflow_signature(program, request, operators),
++                            "cost": sum(operators[n["operator"]]["cost"] for n in selected)})
++                        if len(candidates) >= maximum:
++                            return candidates, ignored
++        except (KeyError, ValueError, TypeError) as exc:
++            ignored.append({"signature": record.get("signature"), "reason": str(exc)})
++    return candidates, ignored
+diff --git a/src/axm_uc/workflow_stations.py b/src/axm_uc/workflow_stations.py
+new file mode 100644
+index 0000000..081f4c3
+--- /dev/null
++++ b/src/axm_uc/workflow_stations.py
+@@ -0,0 +1,106 @@
++"""Small construction/observation adapters; no arbitrary code or claimed simulation."""
++from __future__ import annotations
++
++from copy import deepcopy
++from pathlib import Path
++
++from .atomic import atomic_write_json
++from .atlas_pipeline import _output
++
++
++def run_station(root, inputs):
++    from .material_pipeline import run_station as material_station, bound_specification, asset_quality
++    from .procedural_3d import build_glb, publish_glb, verify_glb
++
++    if set(inputs) != {"operation", "path", "values"} or not isinstance(inputs["values"], dict):
++        raise ValueError("workflow station requires operation, path and values")
++    action, values = inputs["operation"], deepcopy(inputs["values"])
++    from .workflow_contracts import load_operators
++    operators, _ = load_operators(root)
++    contract = next((o for o in operators.values() if o["operation"] == action
++                     and o["capability"] == "AXM-CAP-WORKFLOW-STATION"), None)
++    if contract is None or set(values) != set(contract["needs"]):
++        raise ValueError("unknown workflow station or mismatched input ports")
++    target = _output(root, inputs["path"])
++    if target.exists():
++        raise ValueError("workflow station output already exists")
++    target.mkdir(parents=True)
++    atomic_write_json(target / "inputs.json", values)
++    metrics, status = {}, "PASS"
++    if action == "compile-form":
++        from .form_pattern import compile_form_pattern
++        evidence = compile_form_pattern(values["recipe"])
++        value = evidence["specification"]
++        verify_glb(build_glb(value)["body"])
++        atomic_write_json(target / "surface.json", value)
++    elif action == "derive-uvless":
++        value = values["surface"]
++        before = verify_glb(build_glb(value)["body"])
++        if any("textures" in part for part in value["primitives"]):
++            raise ValueError("UV derivation needs unbound source geometry")
++        for part in value["primitives"]:
++            part.pop("texcoords", None)
++        after = verify_glb(build_glb(value)["body"])
++        evidence = {"before": before, "after": after,
++                    "change": "UVs removed from derived geometry; retained input is authoritative."}
++        atomic_write_json(target / "surface.json", value)
++    elif action == "generate-material":
++        value = str(target / "material")
++        evidence = material_station(root, "generate-game-material", {"path": value, "recipe": values["recipe"]})
++    elif action == "measure-material":
++        value = values["material"]
++        evidence = material_station(root, "inspect-game-material", {
++            "path": str(target / "quality.json"), "material": value, "policy": values["policy"]})
++        status = evidence["status"]
++        measurements = evidence["measurements"]
++        metrics = {"map_size": min(measurements["dimensions"]), "png_bytes": measurements["png_bytes"],
++                   "normal_error": measurements["maximum_normal_error"]}
++    elif action in {"bind-material", "bake-material"}:
++        surface = values["surface"]
++        bindings = {p["id"]: {"path": values["material"], "wrap": "clamp"} for p in surface["primitives"]}
++        if action == "bind-material":
++            value = str(target / "asset.glb")
++            evidence = publish_glb(Path(value), bound_specification(root, {"specification": surface, "materials": bindings}))
++        else:
++            folder = target / "bake"
++            evidence = material_station(root, "auto-unwrap-bake-asset", {"path": str(folder),
++                "specification": surface, "materials": bindings, "options": values["options"]})
++            value = str(folder / "asset.glb")
++        verify_glb(Path(value).read_bytes())
++    elif action == "measure-asset":
++        value = values["asset"]
++        if set(values["policy"]) - {"minimum_texels_per_m", "maximum_size_m"}:
++            raise ValueError("asset policy contains unsupported fields")
++        evidence = asset_quality(root, {"asset": value, **values["policy"]})
++        status = evidence["status"]
++        densities = [b["texels_per_m"]["p10"] for p in evidence["uv"]["primitives"] for b in p.get("bindings", [])]
++        metrics = {"artifact_bytes": Path(value).stat().st_size, "triangles": evidence["geometry"]["triangles"],
++                   **{f"size_{axis}_m": size for axis, size in zip("xyz", evidence["size_m"])}}
++        if densities:
++            metrics["texels_per_m"] = min(densities)
++    elif action == "render-preview":
++        value = str(target / "preview.png")
++        evidence = material_station(root, "render-asset-preview", {
++            "path": value, "asset": values["asset"], "options": values["options"]})
++        metrics = {key: evidence[key] for key in ("visible_triangles", "texture_shaded_pixels", "width", "height")}
++        metrics["png_bytes"] = Path(value).stat().st_size
++    elif action == "measure-motion":
++        from .character_controller import CharacterController
++        evidence = CharacterController(values["recipe"]).measure(**values["probe"])
++        metrics = evidence["metrics"]
++        value = str(target / "observation.json")
++    elif action == "verify-code":
++        from .code_creation import create_code_project
++        if values["request"].get("action") not in {"verify", "retain"}:
++            raise ValueError("workflow code experiments require actual verify or retain execution")
++        value = str(target / "project")
++        evidence = create_code_project(root, {"path": value, "request": values["request"]})
++        report = evidence["code_workflow"]
++        status = "PASS" if report["result"] == "VERIFIED_FOR_CASES" else "FAIL"
++        metrics = {"cases": report["caseCount"], "requirements": report["requirementCount"],
++                   "languages": len(report["languages"])}
++    else:
++        raise ValueError("workflow station implementation unavailable: " + str(action))
++    result = {"status": status, "value": value, "metrics": metrics, "evidence": evidence}
++    atomic_write_json(target / "observation.json", result)
++    return result
+diff --git a/tests/test_portable_runtime.py b/tests/test_portable_runtime.py
+index faa65a7..5626fe6 100644
+--- a/tests/test_portable_runtime.py
++++ b/tests/test_portable_runtime.py
+@@ -116,6 +116,16 @@ class PortableRuntimeTests(unittest.TestCase):
+         atlas_result = json.loads(atlas.stdout)
+         self.assertEqual(atlas_result["result"]["status"], "CHECKS_PASSED", atlas_result)
+         self.assertTrue((extracted / "creations/atlas-vessel/search/winner.glb.source.json").is_file())
++        discovery = subprocess.run(
++            [sys.executable, str(extracted / "run.py"), "create",
++             str(extracted / "examples/workflows/vent-hood.json")],
++            cwd=outside, check=False, capture_output=True, text=True, timeout=90,
++        )
++        self.assertEqual(discovery.returncode, 0, discovery.stderr)
++        discovery_result = json.loads(discovery.stdout)
++        self.assertEqual(discovery_result["result"]["status"], "VERIFIED_WORKFLOWS", discovery_result)
++        self.assertEqual(discovery_result["result"]["retained_structures"], 1)
++        self.assertTrue((extracted / "creations/workflow-vent/report.json").is_file())
+         if shutil.which("node"):
+             programming = subprocess.run(
+                 [sys.executable, str(extracted / "run.py"), "create",
+diff --git a/tests/test_workflow_discovery.py b/tests/test_workflow_discovery.py
+new file mode 100644
+index 0000000..f394a2c
+--- /dev/null
++++ b/tests/test_workflow_discovery.py
+@@ -0,0 +1,304 @@
++import copy
++import json
++from pathlib import Path
++import shutil
++import tempfile
++import unittest
++from unittest.mock import patch
++
++from axm_uc.atlas_pipeline import operate_atlas
++from axm_uc.capabilities import CapabilityStore
++from axm_uc.workflow_discovery import origin, plan, uses
++from axm_uc.workflow_experiments import experiment
++from axm_uc.workflow_memory import read_memory
++
++ROOT = Path(__file__).resolve().parents[1]
++
++
++def request():
++    value = json.loads((ROOT / "examples/workflows/vent-hood.json").read_text())["inputs"]["request"]
++    value["inputs"]["render"]["values"][0].update(width=64, height=64)
++    value["goals"]["preview"]["checks"][0]["min"] = 100
++    return value
++
++
++class WorkflowDiscoveryTests(unittest.TestCase):
++    @classmethod
++    def setUpClass(cls):
++        cls.temp = tempfile.TemporaryDirectory()
++        cls.folder = Path(cls.temp.name)
++        cls.memory = cls.folder / "memory"
++        cls.request = request()
++        cls.result = experiment(ROOT, cls.request, str(cls.folder / "first"), memory=str(cls.memory))
++
++    @classmethod
++    def tearDownClass(cls):
++        cls.temp.cleanup()
++
++    def output(self, name):
++        return str(self.folder / name)
++
++    def observation(self, result, outcome):
++        return json.loads((Path(result["path"]) / outcome["observation"]).read_text())
++
++    def small(self):
++        req = request()
++        req["inputs"]["material"]["values"] = req["inputs"]["material"]["values"][:1]
++        req["inputs"]["bake"]["values"] = req["inputs"]["bake"]["values"][1:2]
++        req["operators"] = ["generate-material", "measure-material", "derive-uvless", "bake-material", "measure-asset", "render-preview"]
++        return req
++
++    def test_deterministic_composition_discovers_two_routes_and_keeps_origins(self):
++        req = request()
++        original = copy.deepcopy(req)
++        first = plan(ROOT, req)
++        self.assertEqual(first, plan(ROOT, req))
++        self.assertEqual(req, original)
++        self.assertEqual(first["status"], "READY")
++        self.assertEqual(len(first["candidates"]), 8)
++        self.assertEqual(len({c["signature"] for c in first["candidates"]}), 2)
++        for candidate in first["candidates"]:
++            program = candidate["program"]
++            self.assertEqual(origin(program["outputs"]["asset"], program["nodes"], first["operators"]),
++                             origin(program["outputs"]["preview"], program["nodes"], first["operators"]))
++            self.assertTrue(uses(program["outputs"]["asset"], program["outputs"]["material"], program["nodes"]))
++
++    def test_actual_iteration_repairs_uvs_and_ranks_quality_then_confirms(self):
++        result = self.result
++        self.assertEqual(result["status"], "VERIFIED_WORKFLOWS", result)
++        self.assertEqual(result["trials"], 12)
++        self.assertEqual(len(result["ranked"]), 4)
++        observed = [self.observation(result, o) for o in result["outcomes"]]
++        direct = next(o for o in observed if any(n["operator"] == "bind-material" for n in o["program"]["nodes"]))
++        diagnosis = direct["cases"][0]["diagnosis"]
++        self.assertEqual(direct["status"], "REJECTED")
++        self.assertEqual(diagnosis["operator"], "measure-asset")
++        self.assertLess(diagnosis["metrics"]["texels_per_m"], 35)
++        self.assertTrue(diagnosis["not_executed"])
++        selected = self.observation(result, result["selected"])
++        first_valid = next(o for o in observed if o["status"] == "CONFIRMED")
++        self.assertLess(selected["ranking"]["weighted_worst_deficit"], first_valid["ranking"]["weighted_worst_deficit"])
++        self.assertGreater(selected["cases"][0]["metrics"]["asset"]["texels_per_m"], 90)
++        self.assertEqual(selected["cases"][0]["metrics"]["material"]["map_size"], 32)
++        self.assertTrue(all(c["repeatable"] for c in selected["confirmation"]))
++        self.assertEqual({r["mode"] for r in result["rounds"]}, {"explore", "repair", "refine"})
++        self.assertEqual(len(read_memory(ROOT, str(self.memory))["workflows"]), 1)
++
++    def test_learning_rebinds_under_a_search_budget_too_small_to_rediscover(self):
++        req = self.small()
++        req["budget"]["states"] = 1
++        # Catalog restriction changes the environment pin; use the original scope.
++        req.pop("operators")
++        self.assertEqual(plan(ROOT, req)["status"], "HOLD_CAPABILITY_GAP")
++        reused = plan(ROOT, req, memory=str(self.memory))
++        self.assertEqual(reused["status"], "READY", reused)
++        self.assertTrue(all(c["reused_structure"] for c in reused["candidates"]))
++        replay = experiment(ROOT, req, self.output("rebound"), memory=str(self.memory))
++        self.assertEqual(replay["status"], "VERIFIED_WORKFLOWS", replay)
++        self.assertGreater(replay["trials"], 0)
++        self.assertEqual(len(read_memory(ROOT, str(self.memory))["workflows"]), 1)
++
++    def test_reused_workflow_rechecks_stricter_goals_and_does_not_inherit_pass(self):
++        req = self.small(); req.pop("operators")
++        req["budget"]["states"] = 1
++        req["goals"]["asset"]["checks"][0]["min"] = 100000
++        result = experiment(ROOT, req, self.output("strict"), memory=str(self.memory))
++        self.assertEqual(result["status"], "HOLD_NO_CONFIRMED_WORKFLOW", result)
++        self.assertTrue(all(o["status"] != "CONFIRMED" for o in result["outcomes"]))
++        observation = self.observation(result, result["outcomes"][0])
++        self.assertTrue(observation["reused_structure"])
++        self.assertEqual(observation["cases"][0]["diagnosis"]["operator"], "measure-asset")
++
++    def test_stress_failure_blocks_retention_even_when_baseline_passes(self):
++        req = self.small()
++        enlarged = copy.deepcopy(req["inputs"]["surface"]["values"][0])
++        for p in enlarged["primitives"]:
++            p["positions"] = [[v * 4 for v in xyz] for xyz in p["positions"]]
++        req["scenarios"] = [{"id": "larger-geometry", "inputs": {"surface": enlarged}}]
++        memory = self.output("stress-memory")
++        result = experiment(ROOT, req, self.output("stress"), memory=memory)
++        self.assertEqual(result["status"], "HOLD_NO_CONFIRMED_WORKFLOW")
++        obs = self.observation(result, result["outcomes"][0])
++        self.assertEqual([c["status"] for c in obs["cases"]], ["PASS", "FAIL"])
++        self.assertEqual(read_memory(ROOT, memory)["workflows"], [])
++
++    def test_ranking_uses_worst_observed_scenario(self):
++        req = self.small()
++        larger = copy.deepcopy(req["inputs"]["surface"]["values"][0])
++        for p in larger["primitives"]:
++            p["positions"] = [[v * 1.25 for v in xyz] for xyz in p["positions"]]
++        req["scenarios"] = [{"id": "larger", "inputs": {"surface": larger}}]
++        result = experiment(ROOT, req, self.output("worst-case"))
++        self.assertEqual(result["status"], "VERIFIED_WORKFLOWS", result)
++        obs = self.observation(result, result["selected"])
++        low = min(c["metrics"]["asset"]["texels_per_m"] for c in obs["cases"])
++        self.assertAlmostEqual(obs["ranking"]["objective_deficits"][0], (90 - low) / 90)
++        self.assertEqual(obs["confirmation"][0]["scenario"], "larger")
++
++    def test_missing_observer_units_and_type_fit_hold_without_writes(self):
++        for field in ("metric", "unit", "source-type"):
++            req = request()
++            if field == "metric":
++                req["goals"]["asset"]["checks"][0]["metric"] = "artistic_beauty"
++            elif field == "unit":
++                req["goals"]["asset"]["checks"][0]["unit"] = "px/cm"
++                req["objectives"][0]["unit"] = "px/cm"
++            else:
++                req["inputs"]["surface"]["type"]["units"] = "mm"
++            out = self.output("gap-" + field)
++            result = experiment(ROOT, req, out)
++            self.assertEqual(result["status"], "HOLD_CAPABILITY_GAP", result)
++            self.assertFalse(Path(out).exists())
++
++    def test_budget_cannot_promote_unconfirmed_or_partial_cases(self):
++        req = self.small(); req["budget"]["trials"] = 1
++        memory = self.output("budget-memory")
++        result = experiment(ROOT, req, self.output("budget"), memory=memory)
++        self.assertEqual(result["status"], "HOLD_NO_CONFIRMED_WORKFLOW")
++        self.assertEqual(result["outcomes"][0]["status"], "INCOMPLETE")
++        self.assertEqual(result["trials"], 1)
++        self.assertEqual(read_memory(ROOT, memory)["workflows"], [])
++
++    def test_confirmation_rejects_changed_product_bytes(self):
++        from axm_uc import workflow_experiments as module
++        actual = module._case
++        calls = []
++        def changed(*args):
++            outcome = actual(*args); calls.append(outcome)
++            if len(calls) == 2:
++                outcome["product_hashes"] = {"asset.glb": "changed"}
++            return outcome
++        with patch.object(module, "_case", side_effect=changed):
++            result = experiment(ROOT, self.small(), self.output("nondeterministic"))
++        self.assertEqual(result["outcomes"][0]["status"], "CONFIRMATION_FAILED")
++        self.assertIsNone(result["selected"])
++
++    def test_failure_prefix_reuse_stops_duplicate_work_but_not_changed_context(self):
++        req = self.small()
++        req["goals"]["asset"]["checks"][0]["min"] = 100000
++        req["inputs"]["render"]["values"].append({"width": 80, "height": 80})
++        result = experiment(ROOT, req, self.output("prune"))
++        self.assertEqual(result["trials"], 1)
++        self.assertEqual([o["status"] for o in result["outcomes"]], ["REJECTED", "PRUNED_IDENTICAL_FAILURE"])
++        req["inputs"]["bake"]["values"].append({"atlas_size": 128, "padding_px": 4})
++        changed = experiment(ROOT, req, self.output("prune-changed"))
++        self.assertEqual(changed["trials"], 2)
++
++    def test_execution_errors_are_not_cached_as_deterministic_failures(self):
++        req = self.small()
++        req["inputs"]["material"]["values"][0]["color"] = "invalid"
++        req["inputs"]["render"]["values"].append({"width": 80, "height": 80})
++        result = experiment(ROOT, req, self.output("uncached-errors"))
++        self.assertEqual(result["trials"], 2)
++        self.assertTrue(all(o["status"] == "REJECTED" for o in result["outcomes"]))
++
++    def test_changed_runtime_pin_invalidates_memory_and_expected_plan_before_writes(self):
++        req = self.small(); req.pop("operators")
++        before = plan(ROOT, req, memory=str(self.memory))
++        with patch("axm_uc.workflow_discovery.runtime_pin", return_value="changed"):
++            req["budget"]["states"] = 1
++            fresh = plan(ROOT, req, memory=str(self.memory))
++            self.assertTrue(fresh["memory"]["stale"])
++            self.assertEqual(fresh["status"], "READY")
++            self.assertTrue(all(c["reused_structure"] for c in fresh["candidates"]))
++            self.assertFalse(any(c["prior_evidence_current"] for c in fresh["candidates"]))
++            result = experiment(ROOT, req, self.output("stale"), memory=str(self.memory), expected_plan=before["plan_sha256"])
++        self.assertEqual(result["status"], "HOLD_STALE_PLAN")
++        self.assertFalse(Path(self.output("stale")).exists())
++
++    def test_recolors_and_source_renames_do_not_count_as_new_structures(self):
++        req = request(); before = plan(ROOT, req)
++        req["inputs"]["pigment"] = req["inputs"].pop("material")
++        for value in req["inputs"]["pigment"]["values"]:
++            value["color"] = [170, 30, 50]
++        req["intent"] = "Another name for the same technical task"
++        after = plan(ROOT, req)
++        self.assertEqual({c["signature"] for c in before["candidates"]}, {c["signature"] for c in after["candidates"]})
++
++    def test_memory_is_queryable_through_atlas_and_tampering_is_ignored(self):
++        result = operate_atlas(ROOT, {"operation": "query", "categories": ["learned-workflow"], "memory": str(self.memory)})
++        self.assertEqual(result["matches"], 1)
++        memory = self.folder / "tampered-memory"
++        shutil.copytree(self.memory, memory)
++        one = next((memory / "workflows").glob("*.json"))
++        value = json.loads(one.read_text()); value["program"]["nodes"][0]["operator"] = "uninstalled"
++        one.write_text(json.dumps(value))
++        report = read_memory(ROOT, str(memory))
++        self.assertEqual(report["workflows"], [])
++        self.assertTrue(report["ignored"])
++
++    def test_machine_interface_and_output_protection(self):
++        store = CapabilityStore(ROOT)
++        cap = store.route("workflow-discovery")
++        report = store.invoke(cap, {"operation": "plan", "request": self.small()})
++        self.assertEqual(report["status"], "READY")
++        with self.assertRaisesRegex(ValueError, "live machine"):
++            experiment(ROOT, self.small(), str(ROOT / "src/workflow-write"))
++        with self.assertRaisesRegex(ValueError, "separate"):
++            experiment(ROOT, self.small(), self.output("nested"), memory=self.output("nested/memory"))
++
++    def test_invalid_cycles_nonfinite_inputs_and_unpinned_file_ingress_rejected(self):
++        bad = request(); bad["goals"]["material"]["uses_goal"] = "asset"
++        with self.assertRaisesRegex(ValueError, "cyclic"):
++            plan(ROOT, bad)
++        bad = request(); bad["objectives"][0]["scale"] = float("nan")
++        with self.assertRaises(ValueError):
++            plan(ROOT, bad)
++        bad = request(); bad["objectives"][0]["unit"] = "px/cm"
++        with self.assertRaisesRegex(ValueError, "conflicting units"):
++            plan(ROOT, bad)
++        bad = request(); bad["inputs"]["surface"]["values"] = ["/tmp/unpinned.glb"]
++        with self.assertRaisesRegex(ValueError, "unpinned"):
++            plan(ROOT, bad)
++
++    def test_character_probe_executes_decoded_motion_and_missing_contact_metric_fails(self):
++        recipe = json.loads((ROOT / "examples/character-motion/seedling-performance.json").read_text())["inputs"]["recipe"]
++        req = {"schema": "axm.workflow-experiment/v0.1", "intent": "Verify queried motion geometry",
++               "inputs": {"body": {"type": {"kind": "character-recipe"}, "values": [recipe]},
++                          "probe": {"type": {"kind": "motion-probe"}, "values": [{"clip": "walk", "times": [0, .37, 2.37]}]}},
++               "goals": {"motion": {"type": {"kind": "motion-observation", "units": "m"},
++                          "checks": [{"metric": "maximum_target_error_m", "unit": "m", "max": .000001}]}},
++               "budget": {"trials": 2}}
++        result = experiment(ROOT, req, self.output("motion"))
++        self.assertEqual(result["status"], "VERIFIED_WORKFLOWS", result)
++        req["goals"]["motion"]["checks"].append({"metric": "maximum_contact_slip_m", "unit": "m", "max": .001})
++        missing = experiment(ROOT, req, self.output("motion-no-contact"))
++        self.assertEqual(missing["status"], "HOLD_NO_CONFIRMED_WORKFLOW")
++        observation = self.observation(missing, missing["outcomes"][0])
++        self.assertIn("absent", observation["cases"][0]["diagnosis"]["failed_checks"][0]["error"])
++
++    def test_form_recipe_can_discover_a_new_material_and_preview_pipeline(self):
++        req = self.small()
++        req["inputs"].pop("surface")
++        req["inputs"]["form"] = {"type": {"kind": "form-recipe"}, "values": [{
++            "schema": "axm.form-pattern/v0.1", "name": "Parametric tapered cover",
++            "parts": [{"id": "cover", "pattern": "revolve", "segments": 8,
++                       "profile": [[.12, 0], [.18, .3], [.1, .45]],
++                       "material": {"color": "#ffffff", "metallic": 1, "roughness": 1}}]}]}
++        req["inputs"]["bake"]["values"] = [{"atlas_size": 128, "padding_px": 4}]
++        req["goals"]["asset"]["checks"][0]["min"] = 1
++        req["operators"].remove("derive-uvless")
++        req["operators"].append("compile-form")
++        result = experiment(ROOT, req, self.output("form"))
++        self.assertEqual(result["status"], "VERIFIED_WORKFLOWS", result)
++        obs = self.observation(result, result["selected"])
++        self.assertTrue(any(n["operator"] == "compile-form" for n in obs["program"]["nodes"]))
++
++    @unittest.skipUnless(shutil.which("node"), "Node is required for actual code verification")
++    def test_code_operator_executes_both_languages_and_retains_sources(self):
++        code = json.loads((ROOT / "examples/code/restock-project.json").read_text())["inputs"]["request"]
++        req = {"schema": "axm.workflow-experiment/v0.1", "intent": "Run declared inventory acceptance cases",
++               "inputs": {"program": {"type": {"kind": "code-request"}, "values": [code]}},
++               "goals": {"code": {"type": {"kind": "code-project", "quality": "checked"},
++                          "checks": [{"metric": "cases", "unit": "count", "min": 3},
++                                     {"metric": "languages", "unit": "count", "min": 2}]}},
++               "budget": {"trials": 2}}
++        result = experiment(ROOT, req, self.output("code"))
++        self.assertEqual(result["status"], "VERIFIED_WORKFLOWS", result)
++        obs = self.observation(result, result["selected"])
++        self.assertTrue(any(p.endswith(".js") for p in obs["cases"][0]["product_hashes"]))
++        self.assertTrue(any(p.endswith(".py") for p in obs["cases"][0]["product_hashes"]))
++
++
++if __name__ == "__main__":
++    unittest.main()

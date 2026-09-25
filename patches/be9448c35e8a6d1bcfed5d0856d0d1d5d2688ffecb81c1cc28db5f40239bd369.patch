@@ -1,0 +1,682 @@
+diff --git a/capabilities/live/AXM-CAP-GENERATE-CHARACTER-RECIPE-3D.json b/capabilities/live/AXM-CAP-GENERATE-CHARACTER-RECIPE-3D.json
+index 6e09a48..2400297 100644
+--- a/capabilities/live/AXM-CAP-GENERATE-CHARACTER-RECIPE-3D.json
++++ b/capabilities/live/AXM-CAP-GENERATE-CHARACTER-RECIPE-3D.json
+@@ -1,25 +1,29 @@
+ {
+   "id": "AXM-CAP-GENERATE-CHARACTER-RECIPE-3D",
+-  "version": "0.1.0",
++  "version": "0.2.0",
+   "status": "live",
+-  "purpose": "Create one complete static 3D character from reusable freeform body parts while retaining race/body-family identity, semantic anatomy, equipment sockets, race-bound clothing regions, material intent and the exact construction recipe.",
++  "purpose": "Create complete freeform characters with retained construction, optional explicit skeletons, reusable skin bindings and animation clips.",
+   "handles": [
+     "character-recipe-asset",
+     "static-character-asset",
+-    "whole-character-asset"
++    "whole-character-asset",
++    "animated-character-recipe-asset"
+   ],
+   "input_contract": {
+-    "required": ["path", "recipe"],
++    "required": [
++      "path",
++      "recipe"
++    ],
+     "properties": {
+       "path": "target .glb file outside the protected live machine body",
+-      "recipe": "axm.character-recipe/v0.1 whole-character recipe with character identity and axm.form-pattern/v0.1 body",
++      "recipe": "axm.character-recipe/v0.1 with form body, optional axm.character-rig/v0.1 rig and explicit animation clips",
+       "replace": "optional boolean; defaults false"
+     }
+   },
+   "output_contract": {
+-    "kind": "validated-editable-static-3d-character",
++    "kind": "validated-editable-3d-character",
+     "contains": [
+-      "complete static character GLB assembled from freeform surface parts",
++      "complete character GLB, static or explicitly skinned and animated",
+       "race and body-family identity",
+       "semantic part index",
+       "equipment/attachment sockets",
+@@ -37,7 +41,7 @@
+     "treats race as body/look structure rather than a character class",
+     "lets unusual body families declare their own clothing regions instead of pretending every garment fits every race",
+     "keeps an entire character's construction structure available for later reshaping and reuse",
+-    "holds generic rig/animation requests until those capabilities are separately verified"
++    "executes declared skeleton/skin/clip construction without inferring anatomy or motion"
+   ],
+   "implementation": {
+     "kind": "DETERMINISTIC_SOURCE",
+@@ -45,8 +49,8 @@
+     "source": "src/axm_uc/character_recipe.py"
+   },
+   "limitations": [
+-    "The current route produces a complete static character, not a skinned/animated character.",
+-    "Generic skeleton generation, skin weights and animation remain typed HOLDs rather than being inferred.",
++    "Rest skeleton uses parent-local translation with identity rotation and scale; animation supports translation and unit quaternion rotation with LINEAR/STEP interpolation.",
++    "Bindings support rigid parts, explicit four-influence vertex weights, and declared axis-blend fields. No automatic skeleton inference, anatomical weighting, IK, retargeting, cloth or corrective deformation.",
+     "Declared clothing regions are compatibility metadata, not proof that a garment fits without clipping.",
+     "Material response intent can be retained even when the current renderer has not earned a response-organ binding receipt.",
+     "Visual similarity, character appeal and target-engine gameplay remain separate evidence gates."
+diff --git a/docs/CHARACTER_MOTION_CONSTRUCTION.md b/docs/CHARACTER_MOTION_CONSTRUCTION.md
+new file mode 100644
+index 0000000..94b05a6
+--- /dev/null
++++ b/docs/CHARACTER_MOTION_CONSTRUCTION.md
+@@ -0,0 +1,105 @@
++# Retained character motion construction
++
++This extends the whole-character route from static form to an explicit skeleton,
++skin and clips. It preserves the current freeform compiler, material intent,
++character semantics and source-first publication. No Blender or model is needed.
++
++## Invoke
++
++`PYTHONPATH=src python -m axm_uc create examples/character-motion/bonsai-wave.json`
++
++The existing `character-recipe-asset` and `whole-character-asset` handles accept
++motion; `animated-character-recipe-asset` makes that intent discoverable. Static
++recipes keep their prior path. The new alias does not invent animation if omitted.
++
++The optional recipe `rig` uses `axm.character-rig/v0.1`:
++
++- `joints`: parent-first rows with unique `id`, `parent` (null for the single root)
++  and parent-local `translation`. Rest orientation and scale are identity.
++- `bindings`: exactly one binding for every compiled form part. Either `joint`
++  for rigid binding, `weights` with one named-joint weight map per compiled vertex,
++  or `axis_blend` with `from`, `to`, `axis` (0/1/2) and increasing `range`.
++- Explicit weights allow up to four influences, must be nonnegative and sum to
++  one; malformed weights are refused. Axis blend deterministically clamps a
++  construction-space coordinate into a two-joint linear weight field. It is a
++  reusable control, not anatomical automatic weighting.
++
++Optional `animation` is a list of named clips. Each has `tracks` with `joint`,
++`path` (translation or rotation), `times`, `values`, and optional `interpolation`
++(LINEAR or STEP). Rotation uses unit xyzw quaternions. Translation keys are
++absolute parent-local positions, not deltas. Times start at zero and strictly
++increase; no timing, loop or gait is invented. Existing pose playback supports
++explicit looping and blending.
++
++The compiler emits standard glTF skins, inverse bind matrices, JOINTS_0,
++WEIGHTS_0, joint hierarchy, animation samplers and channels. Static geometry is
++validated by UC's existing encoder before motion is added. The independent
++existing GamePoseAsset decoder then checks the final bytes and evaluates rest
++pose and authored key transforms. Numerical tests compare deformed positions
++with analytic rotation and weighted translation, not the encoder's own answer.
++
++Construction sidecars retain the exact form, rig, weights/weight field, clips,
++material intent and normalized motion. Replay creates byte-identical GLBs in the
++tested environment. Failed source-sidecar writes restore previous GLB and source
++bytes. This is process-level rollback, not a crash-atomic multi-file transaction.
++No automatic library admission or capability growth is claimed merely by export.
++
++## Evidence procedure
++
++`PYTHONPATH=src python -m unittest tests.test_character_motion tests.test_form_character_recipe -v`
++
++`PYTHONPATH=src python tools/character_motion_demo.py /tmp/uc-motion-demo --plot`
++
++The demo creates two differently shaped freeform bodies with the identical rig,
++axis-blend recipe and clip. It decodes the resulting GLBs and optionally plots
++actual vertex samples at three times. Matplotlib is optional for this diagnostic
++only, never a runtime dependency. This proves deformation/reuse, not finished
++character appearance or target-engine compatibility.
++
++## Boundaries
++
++No automatic bone placement, inferred rig, bone rest rotations, animated scale,
++retargeting, IK, foot contact, corrective shape, cloth simulation or face solving.
++Explicit vertex arrays must be rebound if topology changes; axis fields regenerate
++from the new geometry. Existing character sockets/clothing regions remain retained
++metadata, not animated socket or garment-fit proof. Material-response HOLDs remain
++unchanged. Pose sampling checks positions; it does not validate shaded normals.
++Topology, collision and deformation quality during arbitrary motion remain separate
++checks. Source recipes remain authoritative; no export replaces them.
++
++## Next major build: body-aware character performance compiler
++
++The current main already contains generic form patterns, character semantics,
++material responses, Creative Hands skeleton/skin/pose tools, two-bone solve math,
++and GLB pose evaluation. The remaining high-value work is making those tools
++cooperate around a reusable body and intended performance.
++
++Build one connected slice with these outputs:
++
++1. **Body-family rig recipes.** Landmark and joint relationships expressed against
++   named form parts and dimensions. Fit the same biped, quadruped or branching rig
++   recipe to different proportions. Preserve fit controls and report missing
++   landmarks rather than assuming humanoid anatomy.
++2. **Deformation construction.** Segment-distance weight fields, influence masks,
++   explicit joint limits and corrective shapes. Keep material seams and attachment
++   regions stable. Validate bent poses, not only bind pose.
++3. **Performance recipes.** Idle/reach/walk actions with phase, support contacts,
++   root travel, targets and explicit pole/axis conventions. Connect existing IK
++   solve math to declared rigs. Retarget by body relationships, not bone-name luck.
++4. **Expression and response.** Layer face/secondary motion without changing body
++   identity. Bind retained material response to a real renderer; preserve unsupported
++   response behavior as an explicit limitation instead of flattening the source.
++5. **Observe, repair, retain.** Render turntables and motion; measure contact slip,
++   joint limits, mesh intersections and attachment drift; inspect appearance.
++   Retain accepted rig/weight/motion recipes through the existing creator-growth
++   machinery, deduplicating structural methods separately from appearance variants.
++
++Acceptance demonstration: two substantially different bodies use the same retained
++rig/performance family to reach and walk. Change a limb proportion and regenerate
++without manually rewriting skeleton, weights or keys. Export, reimport and sample
++both in an independent host; verify contact and attachment behavior. Demonstrate
++that a third construction can retrieve the accepted method, while a rejected
++candidate leaves the reusable library unchanged.
++
++This should grow through actual requested body families. Universal anatomical
++inference or guaranteed aesthetic quality is not a prerequisite or a promise.
+diff --git a/docs/FORM_CHARACTER_ROUTING_CONVERGENCE.md b/docs/FORM_CHARACTER_ROUTING_CONVERGENCE.md
+index 4a9404a..bc6c846 100644
+--- a/docs/FORM_CHARACTER_ROUTING_CONVERGENCE.md
++++ b/docs/FORM_CHARACTER_ROUTING_CONVERGENCE.md
+@@ -91,3 +91,10 @@ This convergence proves structural creation/routing/source retention only where
+ tests and generated artifacts actually exercise it. It does not convert a green unit
+ suite into visual acceptance, generic rigging, universal clothing fit, target-engine
+ gameplay, or automatic CANON.
++
++## Subsequent explicit motion extension
++
++The generic explicit rig/skin/clip construction path is now documented in
++[CHARACTER_MOTION_CONSTRUCTION.md](CHARACTER_MOTION_CONSTRUCTION.md). It closes
++the declared-motion composition gap while automatic anatomy/rig inference remains
++unsupported. The earlier static milestone above describes its original scope.
+diff --git a/src/axm_uc/character_motion.py b/src/axm_uc/character_motion.py
+new file mode 100644
+index 0000000..a658446
+--- /dev/null
++++ b/src/axm_uc/character_motion.py
+@@ -0,0 +1,206 @@
++"""Explicit reusable translation-rest skeletons, skins and clips over form geometry."""
++from __future__ import annotations
++import hashlib
++import json
++import math
++from pathlib import Path
++import struct
++from .atomic import atomic_write_bytes
++from .game_pose_runtime import GamePoseAsset, _parse
++from .procedural_3d import build_glb, MAX_REPLACED_FILE_BYTES
++
++SCHEMA = 'axm.character-rig/v0.1'
++
++class CharacterMotionError(ValueError):
++    pass
++
++def require(ok, message):
++    if not ok:
++        raise CharacterMotionError(message)
++
++def fields(value, required, optional=()):
++    require(isinstance(value, dict) and set(required) <= set(value)
++            and not set(value)-set(required)-set(optional), 'unsupported or missing motion fields')
++
++def name(value):
++    require(isinstance(value, str) and 0 < len(value) <= 120 and value.strip() == value, 'invalid motion name')
++    return value
++
++def number(value):
++    require(type(value) in (int, float) and abs(value) <= 100000 and math.isfinite(value), 'invalid motion number')
++    return float(value)
++
++def vector(value, width):
++    require(isinstance(value, list) and len(value) == width, 'invalid motion vector')
++    return [number(v) for v in value]
++
++def compile_motion(specification, rig, animation=None):
++    fields(rig, {'schema', 'joints', 'bindings'})
++    require(rig['schema'] == SCHEMA, 'unsupported character rig schema')
++    joints = rig['joints']
++    require(isinstance(joints, list) and 1 <= len(joints) <= 128, 'rig requires 1..128 joints')
++    normalized, ids = [], {}
++    for row in joints:
++        fields(row, {'id', 'parent', 'translation'})
++        jid = name(row['id'])
++        require(jid not in ids, 'duplicate joint')
++        parent = row['parent']
++        require(parent is None or isinstance(parent, str) and parent in ids,
++                'joints must be parent-first; missing parents and cycles are refused')
++        translation = vector(row['translation'], 3)
++        world = [v + (normalized[ids[parent]]['world'][i] if parent else 0) for i, v in enumerate(translation)]
++        ids[jid] = len(normalized)
++        normalized.append({'id': jid, 'parent': parent, 'translation': translation, 'world': world})
++    require(sum(j['parent'] is None for j in normalized) == 1, 'exactly one skeleton root required')
++    parts, bindings = specification['primitives'], rig['bindings']
++    require(isinstance(bindings, dict) and set(bindings) == {p['id'] for p in parts}, 'bind every form part exactly once')
++    skin = {}
++    for part in parts:
++        binding = bindings[part['id']]
++        require(isinstance(binding, dict), 'part binding must be an object')
++        if set(binding) == {'joint'}:
++            require(isinstance(binding['joint'], str) and binding['joint'] in ids, 'unknown rigid joint')
++            rows = [{binding['joint']: 1.0}] * len(part['positions'])
++        elif set(binding) == {'axis_blend'}:
++            blend = binding['axis_blend']
++            fields(blend, {'from', 'to', 'axis', 'range'})
++            require(isinstance(blend['from'], str) and isinstance(blend['to'], str)
++                    and blend['from'] in ids and blend['to'] in ids and blend['from'] != blend['to'], 'invalid blend joints')
++            axis = blend['axis']
++            require(type(axis) is int and axis in (0, 1, 2), 'blend axis must be 0, 1 or 2')
++            low, high = vector(blend['range'], 2)
++            require(low < high, 'blend range must increase')
++            rows = []
++            for point in part['positions']:
++                weight = min(1., max(0., (point[axis]-low)/(high-low)))
++                rows.append({blend['from']: 1-weight, blend['to']: weight})
++        else:
++            fields(binding, {'weights'})
++            rows = binding['weights']
++            require(isinstance(rows, list) and len(rows) == len(part['positions']), 'weight rows must match compiled vertices')
++        result = []
++        for row in rows:
++            require(isinstance(row, dict) and 1 <= len(row) <= 4 and set(row) <= set(ids), 'weights require 1..4 known joints')
++            ordered = sorted((ids[j], number(w)) for j, w in row.items())
++            require(all(w >= 0 for _, w in ordered) and abs(sum(w for _, w in ordered)-1) <= 1e-6,
++                    'weights must be nonnegative and sum to one; no silent repair')
++            result.append({'joints': [j for j, _ in ordered]+[0]*(4-len(ordered)),
++                           'weights': [w for _, w in ordered]+[0.]*(4-len(ordered))})
++        skin[part['id']] = result
++    clips = [] if animation in (None, False, 'none') else animation
++    require(isinstance(clips, list) and len(clips) <= 32, 'animation requires at most 32 clips')
++    seen, output, total = set(), [], 0
++    for clip in clips:
++        fields(clip, {'name', 'tracks'})
++        cname = name(clip['name'])
++        require(cname not in seen, 'duplicate clip name')
++        seen.add(cname)
++        tracks = clip['tracks']
++        require(isinstance(tracks, list) and 1 <= len(tracks) <= 256, 'clip requires 1..256 tracks')
++        targets, out = set(), []
++        for track in tracks:
++            fields(track, {'joint', 'path', 'times', 'values'}, {'interpolation'})
++            joint, path = track['joint'], track['path']
++            require(isinstance(joint, str) and joint in ids and path in ('translation', 'rotation'), 'invalid track target')
++            require((joint, path) not in targets, 'duplicate track target')
++            targets.add((joint, path))
++            times = track['times']
++            require(isinstance(times, list) and 2 <= len(times) <= 4096, 'track requires 2..4096 times')
++            times = [number(t) for t in times]
++            total += len(times)
++            require(total <= 65536 and times[0] == 0 and all(a < b for a, b in zip(times, times[1:])), 'invalid key times/budget')
++            values = track['values']
++            require(isinstance(values, list) and len(values) == len(times), 'track times/values differ')
++            values = [vector(v, 4 if path == 'rotation' else 3) for v in values]
++            if path == 'rotation':
++                require(all(abs(sum(x*x for x in v)-1) <= 1e-6 for v in values), 'rotation requires unit xyzw quaternion')
++            mode = track.get('interpolation', 'LINEAR')
++            require(mode in ('LINEAR', 'STEP'), 'unsupported interpolation')
++            out.append({'joint': joint, 'path': path, 'times': times, 'values': values, 'interpolation': mode})
++        output.append({'name': cname, 'tracks': out})
++    return {'schema': SCHEMA, 'joints': normalized, 'skin': skin, 'clips': output,
++            'boundary': 'Explicit translation-rest skeleton, rigid or supplied four-influence skin, LINEAR/STEP clips; no anatomy inference, auto-weighting, IK, cloth or aesthetic acceptance.'}
++
++def build_character_motion(specification, motion):
++    built = build_glb(specification)
++    doc, payload = _parse(built['body'])
++    binary = bytearray(payload)
++    def accessor(rows, shape, code='f', target=None):
++        binary.extend(b'\0' * (-len(binary) % 4))
++        start = len(binary)
++        for row in rows:
++            binary.extend(struct.pack('<'+code*len(row), *row))
++        view = {'buffer': 0, 'byteOffset': start, 'byteLength': len(binary)-start}
++        if target is not None:
++            view['target'] = target
++        doc['bufferViews'].append(view)
++        a = {'bufferView': len(doc['bufferViews'])-1, 'componentType': 5126 if code == 'f' else 5123, 'count': len(rows), 'type': shape}
++        if shape == 'SCALAR':
++            a.update(min=[min(r[0] for r in rows)], max=[max(r[0] for r in rows)])
++        doc['accessors'].append(a)
++        return len(doc['accessors'])-1
++    offset = len(doc['nodes'])
++    joints = motion['joints']
++    ids = {j['id']: offset+i for i, j in enumerate(joints)}
++    inverses = []
++    for j in joints:
++        doc['nodes'].append({'name': j['id'], 'translation': j['translation']})
++        x,y,z = j['world']
++        inverses.append([1,0,0,0, 0,1,0,0, 0,0,1,0, -x,-y,-z,1])
++    for j in joints:
++        if j['parent'] is None:
++            doc['scenes'][0]['nodes'].append(ids[j['id']])
++        else:
++            doc['nodes'][ids[j['parent']]].setdefault('children', []).append(ids[j['id']])
++    doc['skins'] = [{'joints': list(ids.values()), 'skeleton': offset, 'inverseBindMatrices': accessor(inverses, 'MAT4')}]
++    for node in doc['nodes'][:offset]:
++        rows = motion['skin'][node['name']]
++        attrs = doc['meshes'][node['mesh']]['primitives'][0]['attributes']
++        attrs['JOINTS_0'] = accessor([r['joints'] for r in rows], 'VEC4', 'H', 34962)
++        attrs['WEIGHTS_0'] = accessor([r['weights'] for r in rows], 'VEC4', target=34962)
++        node['skin'] = 0
++    if motion['clips']:
++        doc['animations'] = []
++    for clip in motion['clips']:
++        samplers, channels = [], []
++        for track in clip['tracks']:
++            samplers.append({'input': accessor([[t] for t in track['times']], 'SCALAR'),
++                             'output': accessor(track['values'], 'VEC4' if track['path'] == 'rotation' else 'VEC3'),
++                             'interpolation': track['interpolation']})
++            channels.append({'sampler': len(samplers)-1, 'target': {'node': ids[track['joint']], 'path': track['path']}})
++        doc['animations'].append({'name': clip['name'], 'samplers': samplers, 'channels': channels})
++    doc['buffers'][0]['byteLength'] = len(binary)
++    raw = json.dumps(doc, sort_keys=True, separators=(',', ':'), allow_nan=False).encode()
++    raw += b' ' * (-len(raw) % 4)
++    binary.extend(b'\0' * (-len(binary) % 4))
++    body = (struct.pack('<4sII', b'glTF', 2, 28+len(raw)+len(binary)) + struct.pack('<I4s', len(raw), b'JSON') + raw
++            + struct.pack('<I4s', len(binary), b'BIN\0') + binary)
++    asset = GamePoseAsset(body)
++    asset.sample(vertices=True)
++    for clip in motion['clips']:
++        for t in sorted({t for track in clip['tracks'] for t in track['times']}):
++            asset.sample(clip['name'], t)
++    return {**built, 'body': body, 'document': doc, 'motion_validation': asset.describe()}
++
++def publish_motion_glb(target, specification, motion, *, replace=False):
++    target = Path(target).resolve()
++    require(target.suffix.lower() == '.glb', 'motion output requires .glb')
++    require(not target.exists() or target.is_file() and replace, 'motion destination exists or is not a file')
++    previous = target.read_bytes() if target.exists() else None
++    require(previous is None or len(previous) <= MAX_REPLACED_FILE_BYTES, 'replacement exceeds rollback budget')
++    built = build_character_motion(specification, motion)
++    try:
++        atomic_write_bytes(target, built['body'])
++        body = target.read_bytes()
++        require(body == built['body'], 'published motion bytes changed')
++        observed = GamePoseAsset(body).describe()
++    except Exception:
++        if previous is None:
++            target.unlink(missing_ok=True)
++        else:
++            atomic_write_bytes(target, previous)
++        raise
++    return {'operation': 'glb', 'truth_status': 'VALIDATED_EXPLICIT_SKINNED_CHARACTER', 'path': str(target),
++            'bytes': len(body), 'sha256': hashlib.sha256(body).hexdigest(), 'specification_sha256': built['specification_sha256'],
++            'published': True, 'replaced': previous is not None, 'motion_validation': observed,
++            'rendered_appearance_observed': False, 'host_import_compatibility_observed': False}
+diff --git a/src/axm_uc/character_recipe.py b/src/axm_uc/character_recipe.py
+index f37c887..1f5cbe1 100644
+--- a/src/axm_uc/character_recipe.py
++++ b/src/axm_uc/character_recipe.py
+@@ -106,16 +106,16 @@ def _normalize_clothing_region(raw: Any, index: int, part_ids: set[str]) -> dict
+ def character_recipe_summary() -> dict[str, Any]:
+     return {
+         "schema": SCHEMA,
+-        "truth_status": "LIVE_STATIC_WHOLE_CHARACTER_RECIPE",
++        "truth_status": "LIVE_WHOLE_CHARACTER_WITH_EXPLICIT_MOTION",
+         "geometry": "generic form-pattern body with semantic character roles",
+         "retains_source_structure": True,
+         "supports_race_and_body_family_identity": True,
+         "supports_equipment_sockets": True,
+         "supports_race_bound_clothing_regions": True,
+-        "rigging": "explicit HOLD unless a separate verified generic rig route is supplied",
+-        "animation": "explicit HOLD unless a separate verified animation route is supplied",
++        "rigging": "explicit translation-rest skeleton and rigid or supplied four-influence skin",
++        "animation": "explicit LINEAR/STEP translation and quaternion clips",
+         "truth_boundary": (
+-            "This route can create one complete static character asset from reusable freeform parts. "
++            "This route creates complete characters from reusable freeform parts, optionally with explicit rigs and clips. "
+             "It does not infer a skeleton, skin weights, animation, controller behavior, clothing fit, "
+             "or aesthetic acceptance."
+         ),
+@@ -140,14 +140,16 @@ def compile_character_recipe(raw: Any) -> dict[str, Any]:
+     if set(character) - char_required - char_optional or not char_required <= set(character):
+         _hold("HOLD_CHARACTER_RECIPE_INVALID", "character identity fields do not match the bounded grammar")
+ 
+-    if raw.get("rig") not in (None, False, "none"):
++    if raw.get("rig") not in (None, False, "none") and not (
++        isinstance(raw.get("rig"), dict) and raw["rig"].get("schema") == "axm.character-rig/v0.1"
++    ):
+         _hold(
+             "HOLD_GENERIC_CHARACTER_RIG_NOT_IMPLEMENTED",
+             "static whole-character construction is live, but generic skeleton/skin synthesis has not been verified",
+             requested_rig=deepcopy(raw.get("rig")),
+         )
+     animation = raw.get("animation")
+-    if animation not in (None, False, "none", []):
++    if animation not in (None, False, "none", []) and not isinstance(raw.get("rig"), dict):
+         _hold(
+             "HOLD_GENERIC_CHARACTER_ANIMATION_NOT_IMPLEMENTED",
+             "character animation requires a separately verified rig/motion route",
+@@ -258,9 +260,18 @@ def compile_character_recipe(raw: Any) -> dict[str, Any]:
+         else "PASS_NO_ACTIVE_ORGANS"
+     )
+ 
++    motion = None
++    if isinstance(raw.get("rig"), dict):
++        from .character_motion import CharacterMotionError, compile_motion
++        try:
++            motion = compile_motion(form["specification"], raw["rig"], animation)
++        except CharacterMotionError as exc:
++            _hold("HOLD_CHARACTER_MOTION_INVALID", str(exc))
++
+     return {
+         "schema": SCHEMA,
+-        "truth_status": "COMPILED_STATIC_WHOLE_CHARACTER",
++        "truth_status": "COMPILED_EXPLICIT_SKINNED_CHARACTER" if motion else "COMPILED_STATIC_WHOLE_CHARACTER",
++        "motion": motion,
+         "name": name,
+         "recipe_sha256": hashlib.sha256(_canonical(raw)).hexdigest(),
+         "character": identity,
+@@ -275,8 +286,8 @@ def compile_character_recipe(raw: Any) -> dict[str, Any]:
+         "material_response_status": material_response_status,
+         "material_response_holds": active_holds,
+         "specification": deepcopy(form["specification"]),
+-        "rig_status": "NOT_PRESENT",
+-        "animation_status": "NOT_PRESENT",
++        "rig_status": "EXPLICIT_SKIN_COMPILED" if motion else "NOT_PRESENT",
++        "animation_status": "EXPLICIT_CLIPS_COMPILED" if motion and motion["clips"] else "NOT_PRESENT",
+         "metadata": deepcopy(raw.get("metadata", {})),
+     }
+ 
+@@ -302,7 +313,16 @@ def publish_character_recipe(target: str | Path, recipe: Any, *, replace: bool =
+         "animation_status": compiled["animation_status"],
+         "automatic_canon_admission": False,
+     }
+-    result = publish_retained_glb(target, compiled["specification"], source, replace=replace)
++    source["motion"] = deepcopy(compiled["motion"])
++    publisher = None
++    if compiled["motion"]:
++        from .character_motion import CharacterMotionError, publish_motion_glb
++        def publisher(path, spec, *, replace=False):
++            try:
++                return publish_motion_glb(path, spec, compiled["motion"], replace=replace)
++            except (CharacterMotionError, ValueError) as exc:
++                _hold("HOLD_CHARACTER_MOTION_INVALID", str(exc))
++    result = publish_retained_glb(target, compiled["specification"], source, replace=replace, _publisher=publisher)
+     result["character_recipe"] = {
+         key: value for key, value in compiled.items() if key != "specification"
+     }
+diff --git a/src/axm_uc/creator_retention.py b/src/axm_uc/creator_retention.py
+index 98ab8cc..d6c0d16 100644
+--- a/src/axm_uc/creator_retention.py
++++ b/src/axm_uc/creator_retention.py
+@@ -81,6 +81,7 @@ def publish_retained_glb(
+     source: Any,
+     *,
+     replace: bool = False,
++    _publisher=None,
+ ) -> dict[str, Any]:
+     """Atomically publish a GLB plus its construction-source sidecar.
+ 
+@@ -104,7 +105,7 @@ def publish_retained_glb(
+     previous_source = sidecar.read_bytes() if sidecar.is_file() else None
+ 
+     try:
+-        result = publish_glb(target, specification, replace=replace)
++        result = (_publisher or publish_glb)(target, specification, replace=replace)
+         retained = {
+             **normalized,
+             "artifact": {
+diff --git a/tests/test_character_motion.py b/tests/test_character_motion.py
+new file mode 100644
+index 0000000..7724c19
+--- /dev/null
++++ b/tests/test_character_motion.py
+@@ -0,0 +1,106 @@
++from copy import deepcopy
++import json
++import math
++from pathlib import Path
++import tempfile
++import unittest
++from unittest.mock import patch
++from axm_uc.character_recipe import compile_character_recipe, publish_character_recipe, CharacterRecipeError
++from axm_uc.character_motion import build_character_motion
++from axm_uc.game_pose_runtime import GamePoseAsset
++from axm_uc.machine import UniversalCreationMachine
++from tests.test_form_character_recipe import character_recipe
++
++ROOT = Path(__file__).resolve().parents[1]
++
++def recipe():
++    r = character_recipe()
++    r['rig'] = {'schema': 'axm.character-rig/v0.1', 'joints': [
++        {'id': 'root', 'parent': None, 'translation': [0,0,0]},
++        {'id': 'branch', 'parent': 'root', 'translation': [0,0,.85]}],
++        'bindings': {'trunk': {'joint': 'root'}, 'eye-shell': {'joint': 'root'}, 'branch-left': {'joint': 'branch'}}}
++    r['animation'] = [{'name': 'wave', 'tracks': [{'joint': 'branch', 'path': 'rotation',
++        'times': [0,1,2], 'values': [[0,0,0,1], [0,math.sin(math.pi/4),0,math.cos(math.pi/4)], [0,0,0,1]]}]}]
++    return r
++
++def build(r):
++    c = compile_character_recipe(r)
++    return build_character_motion(c['specification'], c['motion']), c
++
++class MotionTests(unittest.TestCase):
++    def test_rest_pose_and_rotation_against_analytic_positions(self):
++        b, c = build(recipe()); a = GamePoseAsset(b['body'])
++        rest, posed = a.sample(vertices=True), a.sample('wave', 1, vertices=True)
++        for group, observed in zip(c['specification']['primitives'], rest['meshes']):
++            for expected, actual in zip(group['positions'], observed['positions']):
++                for x,y in zip(expected, actual): self.assertAlmostEqual(x,y,places=5)
++        for p,q in zip(rest['meshes'][1]['positions'], posed['meshes'][1]['positions']):
++            for expected, actual in zip([p[2]-.85,p[1],.85-p[0]], q): self.assertAlmostEqual(expected,actual,places=5)
++        self.assertEqual(rest['meshes'][0], posed['meshes'][0])
++        self.assertEqual(a.sample('wave', 0, vertices=True)['meshes'], a.sample('wave', 2, vertices=True)['meshes'])
++
++    def test_axis_blend_deforms_fractionally(self):
++        r=recipe();r['rig']['bindings']['trunk']={'axis_blend': {'from':'root','to':'branch','axis':2,'range':[0,2]}}
++        r['animation'][0]['tracks']=[{'joint':'branch','path':'translation','times':[0,1], 'values':[[0,0,.85],[2,0,.85]]}]
++        b,c=build(r);a=GamePoseAsset(b['body']);rest=a.sample(vertices=True);posed=a.sample('wave',1,vertices=True)
++        for p,q in zip(rest['meshes'][0]['positions'],posed['meshes'][0]['positions']):
++            self.assertAlmostEqual(q[0]-p[0],min(1,max(0,p[2]/2))*2,places=5)
++
++    def test_reuse_across_shape_changes_is_deterministic(self):
++        first=recipe();second=deepcopy(first);second['form']['parts'][1]['radius']=[.12,.09,.04]
++        b,_=build(first);other,_=build(second)
++        self.assertNotEqual(b['body'],other['body']);self.assertEqual(other['body'],build(second)[0]['body'])
++        self.assertEqual(first['rig'],second['rig']);self.assertEqual(first['animation'],second['animation'])
++
++    def test_static_route_unchanged(self):
++        c=compile_character_recipe(character_recipe());self.assertIsNone(c['motion'])
++        self.assertEqual(c['rig_status'],'NOT_PRESENT')
++
++    def test_invalid_motion_is_refused(self):
++        mutations=[lambda r:r['rig']['joints'][0].update(parent='branch'),
++                   lambda r:r['rig']['bindings'].pop('trunk'),
++                   lambda r:r['rig']['bindings']['trunk'].update(joint='missing'),
++                   lambda r:r['rig']['joints'][1].update(rotation=[0,0,0,1]),
++                   lambda r:r['animation'][0]['tracks'][0].update(times=[0,0,1]),
++                   lambda r:r['animation'][0]['tracks'][0].update(values=[[0,0,0,0]]*3),
++                   lambda r:r['animation'][0]['tracks'][0].update(interpolation='CUBICSPLINE'),
++                   lambda r:r['rig']['bindings'].update(trunk={'weights':[]}),
++                   lambda r:r['rig']['joints'][0].update(translation=[float('nan'),0,0])]
++        for mutate in mutations:
++            with self.subTest(mutate=mutate):
++                r=recipe();mutate(r)
++                with self.assertRaises(CharacterRecipeError):compile_character_recipe(r)
++
++    def test_explicit_mixed_weights(self):
++        r=recipe();count=compile_character_recipe(character_recipe())['specification']['primitives'][0]['positions']
++        r['rig']['bindings']['trunk']={'weights':[{'root':.25,'branch':.75} for _ in count]}
++        b,c=build(r);self.assertEqual(c['motion']['skin']['trunk'][0]['weights'],[.25,.75,0,0])
++        r['rig']['bindings']['trunk']['weights'][0]={'root':.5}
++        with self.assertRaises(CharacterRecipeError):compile_character_recipe(r)
++
++    def test_live_route_retains_and_replays_source(self):
++        with tempfile.TemporaryDirectory() as t:
++            path=Path(t)/'character.glb'
++            result=UniversalCreationMachine(ROOT).create({'kind':'character-recipe-asset','inputs':{'path':str(path),'recipe':recipe()}})
++            self.assertEqual(result['type'],'CREATION_RESULT',result)
++            source=json.loads(path.with_suffix('.glb.source.json').read_text())
++            replay=Path(t)/'replay.glb';publish_character_recipe(replay,source['recipe'])
++            self.assertEqual(path.read_bytes(),replay.read_bytes())
++            self.assertTrue(source['source_authority']);self.assertFalse(source['automatic_canon_admission'])
++            self.assertEqual(source['rig_status'],'EXPLICIT_SKIN_COMPILED')
++
++    def test_sidecar_failure_restores_both_prior_files(self):
++        with tempfile.TemporaryDirectory() as t:
++            path=Path(t)/'character.glb';publish_character_recipe(path,recipe())
++            side=path.with_suffix('.glb.source.json');before=(path.read_bytes(),side.read_bytes())
++            r=recipe();r['form']['parts'][1]['radius']=[.1,.08,.03]
++            with patch('axm_uc.creator_retention.atomic_write_json',side_effect=OSError('disk')):
++                with self.assertRaises(OSError):publish_character_recipe(path,r,replace=True)
++            self.assertEqual(before,(path.read_bytes(),side.read_bytes()))
++
++    def test_step_and_parent_translation(self):
++        r=recipe();r['animation'][0]['tracks']=[{'joint':'root','path':'translation','times':[0,1], 'values':[[0,0,0],[2,0,0]],'interpolation':'STEP'}]
++        b,_=build(r);a=GamePoseAsset(b['body']);rest=a.sample(vertices=True)
++        self.assertEqual(rest['meshes'],a.sample('wave',.5,vertices=True)['meshes'])
++        for p,q in zip(rest['meshes'][1]['positions'],a.sample('wave',1,vertices=True)['meshes'][1]['positions']):
++            self.assertAlmostEqual(q[0]-p[0],2,places=5)
+diff --git a/tools/character_motion_demo.py b/tools/character_motion_demo.py
+new file mode 100644
+index 0000000..31379b2
+--- /dev/null
++++ b/tools/character_motion_demo.py
+@@ -0,0 +1,51 @@
++"""Create two bodies from one retained rig/clip and inspect actual GLB deformation.
++Run: PYTHONPATH=src python tools/character_motion_demo.py /tmp/uc-motion-demo
++Optional --plot adds a technical pose sheet (matplotlib required only for plotting).
++"""
++from copy import deepcopy
++import argparse
++import json
++from pathlib import Path
++from axm_uc.character_recipe import publish_character_recipe, compile_character_recipe
++from axm_uc.game_pose_runtime import load_game_pose_glb
++
++ROOT = Path(__file__).resolve().parents[1]
++
++def main():
++    parser=argparse.ArgumentParser();parser.add_argument('output',type=Path);parser.add_argument('--plot',action='store_true');args=parser.parse_args()
++    args.output.mkdir(parents=True,exist_ok=True)
++    request=json.loads((ROOT/'examples/character-motion/bonsai-wave.json').read_text())
++    recipes=[request['inputs']['recipe'],deepcopy(request['inputs']['recipe'])]
++    recipes[1]['name']='Broad bonsai, shared motion'
++    recipes[1]['form']['parts'][0]['sections'][1]['radius']=[.48,.30]
++    recipes[1]['form']['parts'][1]['radius']=[.12,.09,.04]
++    outputs=[]
++    for i,r in enumerate(recipes):
++        path=args.output/f'body-{i+1}.glb';publish_character_recipe(path,r)
++        asset=load_game_pose_glb(path)
++        outputs.append({'path':str(path),'decoded':asset.describe(),'poses':[asset.sample('wave',t,vertices=True) for t in (0,.5,1)]})
++    receipt={'shared_rig':recipes[0]['rig']==recipes[1]['rig'],'shared_clips':recipes[0]['animation']==recipes[1]['animation'],
++             'outputs':[{'path':r['path'],'decoded':r['decoded']} for r in outputs],
++             'boundary':'Offline decoded vertex deformation. Plot is a technical pose view, not a material or target-engine render.'}
++    (args.output/'receipt.json').write_text(json.dumps(receipt,indent=2)+'\n')
++    if args.plot:
++        import matplotlib
++        matplotlib.use('Agg')
++        import matplotlib.pyplot as plt
++        from mpl_toolkits.mplot3d.art3d import Poly3DCollection
++        fig=plt.figure(figsize=(12,8),facecolor='#101923')
++        for row,(r,out) in enumerate(zip(recipes,outputs)):
++            spec=compile_character_recipe(r)['specification']
++            for col,pose in enumerate(out['poses']):
++                ax=fig.add_subplot(2,3,row*3+col+1,projection='3d',facecolor='#101923')
++                for part,mesh in zip(spec['primitives'],pose['meshes']):
++                    p=mesh['positions'];ix=part['indices'];faces=[[p[ix[k+j]] for j in range(3)] for k in range(0,len(ix),3)]
++                    ax.add_collection3d(Poly3DCollection(faces,facecolor=part['material']['color'][:7],edgecolor='#b1c0bf',linewidth=.12))
++                ax.set(xlim=(-.9,.9),ylim=(-.6,.6),zlim=(0,1.8));ax.set_box_aspect((1.8,1.2,1.8));ax.view_init(18,-65)
++                ax.set_axis_off();ax.set_title(f'Body {row+1} / {pose["time_s"]:g} seconds',color='white')
++        fig.suptitle('UC retained character motion | same rig + clip, two freeform bodies',color='white',fontsize=16)
++        fig.text(.5,.035,'Actual exported GLB vertices sampled by UC pose runtime | technical deformation view',ha='center',color='#a8b9c9')
++        fig.savefig(args.output/'pose-proof.png',dpi=120,facecolor=fig.get_facecolor())
++    print(json.dumps(receipt,indent=2))
++
++if __name__=='__main__':main()

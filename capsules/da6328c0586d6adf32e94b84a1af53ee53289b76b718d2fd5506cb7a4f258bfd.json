@@ -1,0 +1,246 @@
+{
+  "capsule_id": "da6328c0586d6adf32e94b84a1af53ee53289b76b718d2fd5506cb7a4f258bfd",
+  "evidence": {
+    "files": [
+      {
+        "additions": 12,
+        "binary": false,
+        "content_sha256": "6dda4788fd5a71b00768cef0dd9dadb690f062263abb15455dc59b8d177a4a98",
+        "deletions": 2,
+        "path": "GRAMMAR_WORKBENCH.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Programming creation",
+          "Provenance and evidence"
+        ]
+      },
+      {
+        "additions": 111,
+        "binary": false,
+        "content_sha256": "869c4535bd3df4553eecfbfc7cee4a08554dcefc5edac2f4620ea86b4652cc6c",
+        "deletions": 0,
+        "path": "PROGRAMMING_CREATION.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Standalone programming creation",
+          "Create a project",
+          "Inspect and compose",
+          "Professional workflow",
+          "Reuse and growth",
+          "Scope and evidence"
+        ]
+      },
+      {
+        "additions": 7,
+        "binary": false,
+        "content_sha256": "c41e8a8d1d0b48114b9d1a8350dbf68dfb9b39af8dd207fb36ff21b9fde86828",
+        "deletions": 0,
+        "path": "README.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Standalone programming creation",
+          "Licensing"
+        ]
+      },
+      {
+        "additions": 33,
+        "binary": false,
+        "content_sha256": "6ee5bc8a297487af0d14ec0f17bfdc0b76bc0e028077a14074e7c5b6001c83ee",
+        "deletions": 0,
+        "path": "capabilities/live/AXM-CAP-CODE-PROGRAM-PROJECT.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 6,
+        "binary": false,
+        "content_sha256": "20dd09f3125293b0179ef5cda39a12fe493c65eefbf80591e8f147da05f46c29",
+        "deletions": 0,
+        "path": "src/axm_uc/capabilities.py",
+        "status": "M",
+        "symbols": [
+          "builtin_direction_router",
+          "builtin_code_program_project"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 6,
+        "binary": false,
+        "content_sha256": "4af35678675e05b04e3350cfb12559f3d7d1a7fc271542988b489b854b45442a",
+        "deletions": 3,
+        "path": "src/axm_uc/cli.py",
+        "status": "M",
+        "symbols": [
+          "build_parser",
+          "main"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 76,
+        "binary": false,
+        "content_sha256": "544a3ad9b033105578ddc1c55d278d015a62270439a7ec61345f1fde26cdfd39",
+        "deletions": 0,
+        "path": "src/axm_uc/code_creation.py",
+        "status": "A",
+        "symbols": [
+          "create_code_project",
+          "_project_readme"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 44,
+        "binary": false,
+        "content_sha256": "d85ae3ab88426c01a6d483d3ca33707156208290c8e4abf98ff3b7ee2f2b5e8c",
+        "deletions": 8,
+        "path": "src/axm_uc/grammar_workbench.py",
+        "status": "M",
+        "symbols": [
+          "_profession_donor",
+          "run_grammar_tool"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 178,
+        "binary": false,
+        "content_sha256": "ca4a4e22bd886601ad157428d77102913b97b9fc66949d0b0eb21255b81eae03",
+        "deletions": 0,
+        "path": "tests/test_code_creation.py",
+        "status": "A",
+        "symbols": [
+          "CodeCreationTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 23,
+        "binary": false,
+        "content_sha256": "1bbac292377ffe45e82838bea1e3b8824ce7a5d71f37a7d040e5a0cf6cbd5c42",
+        "deletions": 0,
+        "path": "third_party/code-professions/source/LICENSE_BOUNDARY.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "AXM MPL License Boundary",
+          "AXM-owned material",
+          "Historical grants",
+          "Third-party material",
+          "Outputs and interfaces"
+        ]
+      },
+      {
+        "additions": 114,
+        "binary": false,
+        "content_sha256": "1074d9b6086940dffbc9f1966717c102bd8ef35e412692dcc51db4b3c4def724",
+        "deletions": 0,
+        "path": "third_party/code-professions/source/workflows/code/README.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Deterministic coding workflow",
+          "Run",
+          "Request grammar",
+          "Execution, retention and recovery",
+          "Evidence"
+        ]
+      }
+    ],
+    "patch_sha256": "a002fdba364925f6f9d002856a31f9babfa73eac7753d152cd5dbaf5e5640207"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "configuration",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "axiom",
+      "axm",
+      "boundary",
+      "build",
+      "builtin",
+      "cap",
+      "capabilities",
+      "cli",
+      "code",
+      "codex",
+      "coding",
+      "compose",
+      "create",
+      "creation",
+      "creation-machine",
+      "deterministic",
+      "direction",
+      "donor",
+      "evidence",
+      "execution",
+      "from",
+      "grammar",
+      "grants",
+      "growth",
+      "historical",
+      "inspect",
+      "interfaces",
+      "json",
+      "license",
+      "licensing",
+      "live",
+      "material",
+      "merge",
+      "mike",
+      "mir",
+      "mpl",
+      "outputs",
+      "owned",
+      "parser",
+      "party",
+      "profession",
+      "professional",
+      "professions",
+      "program",
+      "programming",
+      "project",
+      "provenance",
+      "pull",
+      "readme",
+      "recovery",
+      "request",
+      "retention",
+      "reuse",
+      "router",
+      "run",
+      "scope",
+      "source",
+      "standalone",
+      "third",
+      "tool",
+      "universal-creation",
+      "workbench",
+      "workflow",
+      "workflows"
+    ]
+  },
+  "source": {
+    "base": "54931ee61f2a3da6fe12a441ca7fe3717ba3198f",
+    "commit_subject": "Merge pull request #227 from mike-axiom-mir/codex/programming-creation-workflow",
+    "head": "399055941a2f579225436fa9b1ff82984598e45b",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

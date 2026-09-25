@@ -1,0 +1,1977 @@
+diff --git a/PROGRAMMING_CREATION.md b/PROGRAMMING_CREATION.md
+index fda5902..f7e4ab8 100644
+--- a/PROGRAMMING_CREATION.md
++++ b/PROGRAMMING_CREATION.md
+@@ -1,5 +1,10 @@
+ # Standalone programming creation
+ 
++For stateful software and game sessions, [Code systems](docs/CODE_SYSTEMS.md)
++composes this compiler/workflow with guarded state transitions, invariants,
++sequence exploration, portable replay/recovery and retained atlas construction.
++Pure-function projects below keep their existing contract.
++
+ UC builds standalone JavaScript and Python modules from typed program data and
+ explicit acceptance contracts. The compiler, six professional procedures and
+ observers live inside UC. Python and Node.js are host runtimes; no sibling
+diff --git a/README.md b/README.md
+index 6488936..05a0c94 100644
+--- a/README.md
++++ b/README.md
+@@ -65,8 +65,8 @@ a GPU, browser, Blender, NumPy, or Pillow, see
+ For a connected atlas of construction knowledge, explicit goal-to-blueprint
+ routes and reusable measured experience, see [CREATION_ATLAS.md](docs/CREATION_ATLAS.md).
+ The executable examples in `examples/creation-atlas/` cover headless construction
+-search, material maps and interface-driven software. They retain the construction
+-causes and recheck saved search settings under each new request's criteria.
++search, material maps, interface-driven software and stateful software/game code.
++They retain construction causes and recheck saved parts under each new request's criteria.
+ The search and continuous character controller are described in
+ [INTENT_DIRECTED_SEARCH.md](docs/INTENT_DIRECTED_SEARCH.md).
+ For discovering new operator combinations, testing real outcomes, iterating on
+@@ -462,6 +462,14 @@ profession procedures. Create reproducible code projects, run explicit
+ acceptance cases, and retain reusable construction without a model, network
+ service or external repository. See [PROGRAMMING_CREATION.md](PROGRAMMING_CREATION.md).
+ 
++The [stateful code-system workflow](docs/CODE_SYSTEMS.md) adds guarded reducers,
++explicit state graphs, scenario oracles, breadth-first invariant exploration and
++portable replay/recovery. Its inventory and combat examples execute in both
++languages; accepted systems become retrievable atlas construction. A seeded
++combat bug passes isolated cases but is caught by its shortest failing event
++sequence. Run `python tools/code_system_demo.py <new-directory>` to reproduce the
++software/game builds, defect observation and reuse into another workflow.
++
+ ## Licensing
+ 
+ Current AXM-owned machine/workshop code: **PolyForm Noncommercial 1.0.0 + `CREATOR_OUTPUT_PERMISSION.md`**.
+diff --git a/capabilities/live/AXM-CAP-CODE-SYSTEM-PROJECT.json b/capabilities/live/AXM-CAP-CODE-SYSTEM-PROJECT.json
+new file mode 100644
+index 0000000..a26986f
+--- /dev/null
++++ b/capabilities/live/AXM-CAP-CODE-SYSTEM-PROJECT.json
+@@ -0,0 +1,30 @@
++{
++  "id": "AXM-CAP-CODE-SYSTEM-PROJECT",
++  "version": "1.0.0",
++  "status": "live",
++  "purpose": "Create portable stateful software and game systems from typed programs, explicit control graphs, scenarios and bounded invariant exploration.",
++  "handles": ["code-system-project"],
++  "input_contract": {
++    "required": ["path", "request"],
++    "properties": {
++      "path": "New ordinary output directory, outside machine internals.",
++      "request": "Explicit build, verify or retain code-system request; includes typed job and axm.code-system/v0.1 contract."
++    }
++  },
++  "output_contract": {
++    "kind": "directory",
++    "contains": ["standalone-code", "session-runtime", "replay-recovery", "scenario-observations", "invariant-exploration", "construction", "optional-function-and-system-archives"]
++  },
++  "dependencies": ["AXM-CAP-WRITE-PROJECT"],
++  "relationships": ["Composes bundled code-profession procedures and Grammar 102 with the existing UC deterministic state graph; exposes original source and scoped executable evidence."],
++  "anatomy_refs": [],
++  "implementation": {"kind": "DETERMINISTIC_SOURCE", "entrypoint": "builtin:code_system_project", "source": "src/axm_uc/code_system.py"},
++  "limitations": [
++    "JavaScript and Python only; model is an explicit typed record, and effects remain data for an external host.",
++    "Exploration covers declared concrete events through a specified depth; exhausted budgets and counterexamples hold verification.",
++    "No arbitrary source execution, automatic natural-language synthesis, rendered game/UI quality, external side-effect verification, balance or whole-program proof.",
++    "Runtime execution uses fixed local processes and time/output bounds, not an OS sandbox. Restore replays checkpoints but does not authenticate them.",
++    "Retention preserves explicitly verified construction without automatic shared machine mutation or canon promotion."
++  ],
++  "persistent_state": null
++}
+diff --git a/capabilities/live/AXM-CAP-CODE-SYSTEM-STATION.json b/capabilities/live/AXM-CAP-CODE-SYSTEM-STATION.json
+new file mode 100644
+index 0000000..32b84b5
+--- /dev/null
++++ b/capabilities/live/AXM-CAP-CODE-SYSTEM-STATION.json
+@@ -0,0 +1,19 @@
++{
++  "id": "AXM-CAP-CODE-SYSTEM-STATION",
++  "version": "1.0.0",
++  "status": "live",
++  "purpose": "Expose actual stateful-code execution measurements to UC's typed workflow discovery and outcome experiments.",
++  "handles": ["code-system-station"],
++  "input_contract": {"required": ["operation", "path", "values"], "properties": {
++    "operation": "verify-code-system",
++    "path": "New output directory for a project and observation.",
++    "values": "Exactly request: a verify/retain code-system construction request."
++  }},
++  "output_contract": {"kind": "observed-stateful-code-project", "contains": ["value", "metrics", "evidence"]},
++  "dependencies": ["AXM-CAP-CODE-SYSTEM-PROJECT"],
++  "relationships": ["Typed operator atlas/operators/code-systems.json composes through the existing workflow planner and atlas executor."],
++  "anatomy_refs": [],
++  "implementation": {"kind": "DETERMINISTIC_SOURCE", "entrypoint": "builtin:code_system_station", "source": "src/axm_uc/code_system.py"},
++  "limitations": ["Measured scenarios, transition coverage, declared event exploration and language parity; not general software correctness, rendered quality or gameplay balance."],
++  "persistent_state": null
++}
+diff --git a/docs/CODE_SYSTEMS.md b/docs/CODE_SYSTEMS.md
+new file mode 100644
+index 0000000..c2a5a61
+--- /dev/null
++++ b/docs/CODE_SYSTEMS.md
+@@ -0,0 +1,210 @@
++# Coding stateful software and games
++
++UC's typed-code workflow now composes **stateful systems**, in addition to pure
++functions. The same program, control graph and event contract generate standalone
++JavaScript and Python implementations. Humans, AI and deterministic planners can
++supply the same explicit construction data. No AI, sibling repository, package
++download, Git checkout or network service is required at creation/runtime.
++Creation uses the bundled Grammar/Profession packages and installed Node/Python.
++Each emitted language subsequently runs on its own host runtime.
++
++This builds reusable software/game logic and session hosts. It does not generate
++an arbitrary application UI or a finished game from prose. The existing browser
++arena, organ composition and product lifecycle capabilities remain separate
++realization paths.
++
++## Run the complete workflow
++
++```sh
++python tools/code_system_demo.py /tmp/code-system-proof
++PYTHONPATH=src python -m axm_uc code-system examples/code-systems/inventory.json
++PYTHONPATH=src python -m axm_uc create examples/creation-atlas/combat-system.json
++```
++
++The first command produces three portable examples, a discovered workflow with
++two fresh builds, reusable construction collections and a proof receipt:
++
++| Product | Authored behavior | Observed exploration |
++| --- | --- | --- |
++| Inventory service | Reserve, ship, cancel, restock, close/reopen; whole-number bounds and stock conservation | 64 states, 234 event checks through depth 5 |
++| Combat session | Start, guarded attack, incoming damage, pause/resume, reload, victory/defeat and restart | 46 states, 245 event checks through depth 6 |
++| Inventory with audit | Retrieve the accepted inventory construction from the atlas; add an audit transition using the retained identity reducer | New behavior composition, unchanged 13 reusable function atoms; prior system preserved |
++
++The examples are editable contracts. The compiler contains no inventory or
++combat implementation. Their arithmetic, conditions, records and calls are
++ordinary Grammar operations. The state graph is compiled by UC's existing
++`state_machine.py`; its original data-only effects contract is preserved.
++
++The demo also removes the combat reducer's zero clamp. Its function cases and
++scripted scenarios still pass. Breadth-first exploration discovers
++`start → hit(4) → hit(4) → hit(4)`: health would go below zero. The attempted
++transition is refused atomically, the shortest counterexample is retained, and
++the defective system cannot receive successful verification or retention.
++
++## Construction contract
++
++`code-system` accepts `catalog`, `build`, `verify`, `retain` and `restore`.
++The first three creation actions require `job` and `system`. `job` is the existing
++typed-code job: `id`, explicit `program`, `cases`, `requirements`, and optional
++`languages`. Every exported function still requires successful acceptance
++coverage. Only `retain` accepts prior `archive` and `system_archive` values.
++
++| System field | Contract |
++| --- | --- |
++| `schema` | `axm.code-system/v0.1` |
++| `domain` | `software` or `game`; explicit direction metadata |
++| `initial_model` | Exact initial typed record |
++| `machine` | Existing `axm.deterministic-state-machine/v0.1` graph |
++| `bindings` | Event names, reducer exports, optional guard and route-selector exports |
++| `invariants` | Unique ids, explicit statements and boolean function exports |
++| `scenarios` | Event sequences with independently authored expected status and complete state after every step; optional expected effects |
++| `exploration` | Concrete event alphabet plus `max_depth`, `max_states` and `max_edges` |
++
++An event is `{"type":"reserve","args":[3]}`. A state is
++`{"phase":"open","model":{"stock":10,"reserved":0,"shipped":0,"received":10}}`.
++
++A reducer receives the model followed by event arguments and returns the same
++record type. Its optional guard has the same parameters and returns a boolean.
++An invariant receives only the model and returns a boolean. The compiler checks
++these bindings and adds reserved `ucSystemInitial`/`ucSystemIdentity` exports for
++initialization and typed state admission. Their names are unavailable to authored
++functions.
++
++A normal event selects the graph transition with its name. A conditional binding
++can instead declare `routes: {"function":"afterHit","events":["hit","defeat"]}`.
++The selector receives the proposed model; its result must name an explicitly
++allowed transition from the current phase. The combat example uses this to enter
++defeat or victory automatically from the resulting resource values.
++
++Refusal never partially changes the current state. Missing transitions, guard
++refusals, argument errors, execution failures and attempted invariant violations
++remain distinguishable. Effects are returned as data after a successful step;
++the host never performs them. No clock, random source, I/O action or user-supplied
++source string is hidden in the model.
++
++## Executed specialist procedures
++
++| Procedure | Actual operation/evidence |
++| --- | --- |
++| Software architect | Complete system/graph/type binding preflight, then existing requirement-to-case mapping |
++| Developer tools and build | Bundled Grammar compilation in both targets, repeated-build/source identity checks |
++| QA and integration | Existing fresh-process function cases, then independently assessed stateful observations |
++| Game systems | `System.explore()` performs deterministic breadth-first exploration, state deduplication, invariant checks, transition coverage and shortest counterexamples |
++| Stateful QA | Checks exact scenario states, refused-step preservation, repeats, language parity, replay and checkpoint recovery |
++| Software maintainer | Existing function-closure retention plus additive behavior-composition archives and atlas retrieval |
++
++These are bounded executable procedures with existing profession ownership, not
++a claim that complete professional bodies or subjective judgment are solved.
++
++Verification executes each requested language twice in fresh processes. The
++Python assessor compares actual outputs with the declared oracles outside the
++generated host. Every declared transition and every event binding must have been
++observed successfully across the scenarios/exploration. Missing observations,
++runtime failures, divergences, exhausted exploration budgets and counterexamples
++return HOLD and cannot publish a verified project.
++
++## Portable products and recovery
++
++`code-system-project` uses the ordinary UC project writer with exactly `path` and
++`request`. The destination must be new and outside machine internals. `build`
++publishes a source CANDIDATE without runtime execution; `verify`/`retain` publish
++only after their required checks pass. Atlas blueprints require verification.
++
++Projects contain `request.json`, `construction.json`, `workflow.json`, source
++modules, function selftests, session runtimes, exact source locks, licenses and
++optional function/system archives. Generated sources remain realizations of the
++retained construction.
++
++```sh
++node javascript/runtime.js verify
++python python/runtime.py verify
++node javascript/runtime.js replay events.json
++python python/runtime.py checkpoint events.json > checkpoint.json
++node javascript/runtime.js restore checkpoint.json
++```
++
++`verify` checks scenarios, exploration and recovery and returns a nonzero exit
++status on failure. `observe` emits measurements for independent assessment.
++The APIs expose `initial`, `step`, `replay`, `checkpoint`, `restore`, `explore`,
++`observe` and `verify`. JavaScript uses `require('./runtime').load()`; Python can
++load the runtime file through `importlib` or import it from its own project.
++Multiple Python products can coexist without colliding on a shared `module`
++import. Loading checks exact emitted source bytes before loading generated code.
++
++Replay records refused events and continues. Checkpoints retain their explicit
++event history and claimed final state, bind the program/behavior/host version,
++and re-execute that history before restoring. A checkpoint produced by Python can
++be restored by JavaScript and vice versa. Changed source, mismatched identities,
++invalid states or inconsistent replay are refused. These checks are integrity
++and compatibility evidence, not authenticated saves or an OS sandbox.
++
++## Reusable atlas knowledge
++
++`software-systems` and `game-systems` blueprint directions support
++`session-behavior`, `invariant-exploration`, `portable-recovery` and
++`retained-system` goals. See `examples/creation-atlas/*-system.json`.
++
++Successful retained creations enter the explicitly selected experience
++collection as `code-pattern` records. Retrieve a pattern's `data.request`, modify
++the construction, and verify it under the new intent. An atlas parameter can use
++`{"atlas":"code-pattern:<identity>","path":["request"]}` directly.
++
++Function closures retain their existing structural deduplication. System
++composition identity includes initial data, public phase/event/field names,
++transitions/effects and the structural identities of reducer/guard/selector/
++invariant functions. Module, function and graph labels do not create another
++behavior atom. New public behavior does. Repeated retention is idempotent;
++new observations are additive, and full archives hold without evicting entries.
++
++`restore` returns construction with `REQUIRES_FRESH_EXECUTION`. Past observations
++and descriptive atlas records cannot stand in for current checks. These updates
++do not automatically mutate shared machine capabilities or promote canon.
++
++## Discovery and measured goals
++
++The installed `verify-code-system` operator connects these systems to
++[workflow discovery](WORKFLOW_DISCOVERY.md). Its input type is
++`code-system-request`; its output is `stateful-code-project` with `quality: checked`.
++The planner finds the operator from those contracts without a supplied blueprint.
++The station requires `verify` or `retain`, executes the full system workflow and
++reports measured scenario, transition, exploration, language and artifact counts.
++
++The demo requests complete declared transition coverage, two executed languages
++and exploration through depth six. Discovery builds and independently rebuilds
++the combat system, compares product bytes and goal measurements, then retains
++the confirmed workflow structure. The emitted `discovery-request.json` is an
++editable request for the ordinary `workflow-discovery` capability's `plan` and
++`experiment` operations. A later request must run its checks again: requesting
++depth seven cannot inherit the earlier depth-six result.
++
++These measurements describe the scope actually checked. More states or event
++checks do not imply better software, game design or statistical confidence.
++
++## Bounds and remaining work
++
++System requests are at most 1 MiB. The authored program can have up to 30
++functions plus two host-validation functions; Grammar's existing type, data,
++expression and per-call work bounds still apply. Systems allow up to 32 event
++bindings/invariants/alphabet events, 64 scenarios, 128 steps per scenario and
++1,024 scenario steps in total. Exploration declares depth 1..32, states 1..4,096
++and edges 1..20,000. Each system observer has a 20-second timeout and an 8 MiB
++output bound. Checkpoint histories are limited to 10,000 events.
++
++`BOUNDED_COMPLETE` means all reachable states through the declared depth were
++checked with the supplied concrete event alphabet. It does not quantify over
++arbitrary numeric values, event timing or all possible programs. The report
++retains depth/frontier, state/edge counts and observed transitions instead of
++inventing a confidence score.
++
++UI/input realization, fixed-time simulation integration, asynchronous external
++effects, concurrency, multiplayer, migration of old saves, performance budgets,
++game feel, visuals and sound need their own contracts and observations. This
++workflow supplies reusable stateful code and evidence for those later products.
++
++```sh
++PYTHONPATH=src python -m unittest discover -s tests -p 'test_code_*.py' -v
++```
++
++CI repeats the coding tests and the full demo on Linux/Node 20/Python 3.11 and
++Windows/Node 22/Python 3.13. Portable-runtime tests also unpack UC elsewhere and
++create/execute a combat system without donor checkouts or the original cwd.
+diff --git a/docs/CREATION_ATLAS.md b/docs/CREATION_ATLAS.md
+index ff11f70..dfd19d6 100644
+--- a/docs/CREATION_ATLAS.md
++++ b/docs/CREATION_ATLAS.md
+@@ -4,9 +4,9 @@ UC's creation atlas joins its existing libraries into one inspectable graph.
+ It does not replace the capability store, executable-organ library, asset atoms,
+ material machinery, product workflows or construction search.
+ 
+-The installed view currently contains 2,385 entries across 27 categories. These
+-include descriptive research records. They are **not 2,385 working capabilities**.
+-The index reports the evidence level, source and source digest on each entry.
++The `summary` operation reports current entry and category counts. These include
++descriptive research records, not only working capabilities. The index reports
++the evidence level, source and source digest on each entry.
+ 
+ | Atlas category | Existing source | What the entry establishes |
+ | --- | --- | --- |
+@@ -25,8 +25,10 @@ The index reports the evidence level, source and source digest on each entry.
+ | Construction pattern | Semantically grouped successful observations | Measured reusable candidates, separate from admitted capabilities and canon |
+ | Operator | Typed adapters under `atlas/operators/` | Input/output contracts, metric units and executable tools for discovering new workflows |
+ | Learned workflow | Confirmed workflow experiment collection | Deduplicated composition structure; current goals and inputs must be rechecked |
++| Code pattern | Explicitly retained software/game systems | Typed programs, control graphs and verified past behavior composition; current reuse requires fresh execution |
+ 
+-Experience, construction patterns and learned workflows appear when a collection contains observations. Extra
++Experience, construction patterns, learned workflows and code patterns appear
++when a collection contains observations. Extra
+ categories such as acoustics, joints, manufacturing processes or accessibility
+ rules can be added as data. Defining a category does not implement its subject.
+ 
+@@ -76,7 +78,7 @@ construction data. Supply a changed search contract directly to change its
+ dimensions, options, acceptance criteria, motion probe or budget. Each intent
+ keeps its original request plus the resolved parameters and selected knowledge.
+ 
+-Four installed blueprints execute useful work:
++Installed blueprints execute these bounded routes:
+ 
+ | Direction | Goals | Executed work |
+ | --- | --- | --- |
+@@ -84,6 +86,7 @@ Four installed blueprints execute useful work:
+ | `material` | `material-policy`, `material-maps` | Material generation, PNG decoding, channel/integrity checks and caller-defined size/normal/budget policy |
+ | `software` | `interface-closure`, `project-checks` | Exact installed-organ dependency discovery, source composition, independent project verification |
+ | `programming` | `acceptance-cases`, `retained-code` | Typed JavaScript/Python compilation, explicit case execution, repeatability and function archive retention |
++| `software-systems` / `game-systems` | `session-behavior`, `invariant-exploration`, `portable-recovery`, `retained-system` | Stateful typed code, guarded transitions, scenario oracles, finite event exploration, replay/recovery and behavior-composition retention |
+ 
+ Choose the goals relevant to the requested deliverable. These do not imply
+ photorealism, physical balance, live browser interaction or acceptance in an
+@@ -96,6 +99,11 @@ The portable runtime carries both donor packages and the atlas pack, and its
+ relocation test creates a vessel plus verified retained code from another working
+ directory without a donor checkout or runtime network service.
+ 
++The software/game system routes add stateful code and reusable behavior
++composition. Their scoped specialist procedures and executable examples are
++documented in [Code systems](CODE_SYSTEMS.md). Successful retained systems become
++`code-pattern` records in the selected experience collection; retrieving one
++never bypasses current scenario, invariant, replay and recovery checks.
+ ## Planning and execution
+ 
+ `operation: plan` takes `intent` and optional `memory`. It writes nothing. It
+diff --git a/src/axm_uc/atlas_pipeline.py b/src/axm_uc/atlas_pipeline.py
+index 967ac6d..0761b9c 100644
+--- a/src/axm_uc/atlas_pipeline.py
++++ b/src/axm_uc/atlas_pipeline.py
+@@ -247,6 +247,18 @@ def _preflight(step, parameters, atlas, used):
+                 return ["typed-code workflow needs an installed Node runtime"]
+             if inputs["request"].get("action") not in {"verify", "retain"}:
+                 return ["verified-code blueprint requires an explicit verify or retain action"]
++        elif step["capability"] == "AXM-CAP-CODE-SYSTEM-PROJECT":
++            import shutil
++            from .code_system_contract import prepare
++            from .state_machine import StateMachineError
++            if shutil.which("node") is None:
++                return ["code-system workflow needs an installed Node runtime"]
++            if inputs["request"].get("action") not in {"verify", "retain"}:
++                return ["code-system blueprint requires an explicit verify or retain action"]
++            try:
++                prepare(inputs["request"])
++            except (ValueError, TypeError, KeyError, AttributeError, StateMachineError) as exc:
++                return ["code-system contract: " + str(exc)]
+     except (CapabilityError, ValueError, RuntimeError, KeyError) as exc:
+         return ["step " + step["id"] + ": " + str(exc)]
+     return []
+@@ -266,7 +278,7 @@ def _experience(root, memory):
+     records, ignored = [], []
+     for path in paths:
+         try:
+-            value = json.loads(local_file(folder, path.name).read_text())
++            value = json.loads(local_file(folder, path.name).read_text(encoding="utf-8"))
+             if value.get("schema") != EXPERIENCE_SCHEMA or path.stem != digest(value):
+                 raise ValueError("experience schema or content identity does not match")
+             if (value.get("status") not in {"CHECKS_PASSED", "HOLD_FAILED_CHECK", "HOLD_EXECUTION_ERROR"}
+@@ -454,11 +466,25 @@ def build_intent(root, request, path, *, memory=None, plan_sha256=None, candidat
+             relative = file.relative_to(target).as_posix()
+             verified = local_file(target, relative)
+             files[relative] = hashlib.sha256(verified.read_bytes()).hexdigest()
+-    searches = []
++    searches, code_systems = [], []
+     for step in selected["steps"]:
++        if step["capability"] == "AXM-CAP-CODE-SYSTEM-PROJECT" and step["id"] in results:
++            product = results[step["id"]]
++            if product["code_system"].get("retained") and product["code_system"]["status"] == "VERIFIED_FOR_SCENARIOS":
++                from .code_system_contract import validate_archive
++                relative = (Path(product["path"]) / "system-archive.json").relative_to(target).as_posix()
++                archive = validate_archive(json.loads(local_file(target, relative).read_text(encoding="utf-8")))
++                # Only the current creation's accepted construction enters this observation.
++                report_path = (Path(product["path"]) / "workflow.json").relative_to(target).as_posix()
++                report = json.loads(local_file(target, report_path).read_text(encoding="utf-8"))
++                key = report["retention"]["structural_sha256"]
++                entry = next(row for row in archive["entries"] if row["structural_sha256"] == key)
++                code_systems.append({"structural_sha256": key, "construction": entry["construction"],
++                    "construction_sha256": entry["construction_sha256"], "verification_sha256": digest(report["verification"]),
++                    "scope": report["verification"]["scope"]})
+         if step["capability"] != "AXM-CAP-CONSTRUCTION-SEARCH" or step["id"] not in results:
+             continue
+-        report = json.loads(local_file(target, str(Path(results[step["id"]]["report_path"]).relative_to(target))).read_text())
++        report = json.loads(local_file(target, Path(results[step["id"]]["report_path"]).relative_to(target).as_posix()).read_text(encoding="utf-8"))
+         candidate = report.get("growth_candidate")
+         if candidate:
+             searches.append({"space_sha256": _search_key(report["search_contract"]),
+@@ -466,7 +492,7 @@ def build_intent(root, request, path, *, memory=None, plan_sha256=None, candidat
+                 "checks": report["selected"]["checks"], "recipe": candidate["recipe"]})
+     experience = {"schema": EXPERIENCE_SCHEMA, "status": status, "runtime_pin": plan["runtime_pin"],
+                   "intent": deepcopy(request), "blueprint": blueprint["id"], "plan_sha256": plan["plan_sha256"],
+-                  "goals": goals, "error": error, "searches": searches,
++                  "goals": goals, "error": error, "searches": searches, "code_systems": code_systems,
+                   "run_path": str(target), "files": files,
+                   "use": "Rechecked search seeds and inspectable observations; no automatic capability or canon admission."}
+     atomic_write_json(target / "experience.json", experience)
+@@ -496,7 +522,10 @@ def operate_atlas(root, inputs):
+             raise ValueError("experience limit must be 1..100")
+         signatures = {s["semantic_signature"] for r in records if r.get("status") == "CHECKS_PASSED"
+                       for s in r.get("searches", [])}
++        code_signatures = {s["structural_sha256"] for r in records if r.get("status") == "CHECKS_PASSED"
++                           for s in r.get("code_systems", [])}
+         return {"observations": len(records), "retained_measured_signatures": len(signatures),
++                "retained_code_system_signatures": len(code_signatures),
+                 "records": [{"id": "experience:" + digest(r), "status": r["status"], "intent": r["intent"]["purpose"],
+                              "blueprint": r["blueprint"], "run_path": r["run_path"]} for r in records[:limit]],
+                 "ignored": ignored, "automatic_canon_admission": False}
+diff --git a/src/axm_uc/capabilities.py b/src/axm_uc/capabilities.py
+index a9b9f1b..9786e5e 100644
+--- a/src/axm_uc/capabilities.py
++++ b/src/axm_uc/capabilities.py
+@@ -446,7 +446,22 @@ def builtin_code_program_project(root: Path, inputs: dict[str, Any]) -> dict[str
+     return create_code_project(root, inputs)
+ 
+ 
++def builtin_code_system_project(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
++    from .code_system import create_code_system_project
++    return create_code_system_project(root, inputs)
++
++
++def builtin_code_system_station(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
++    from .code_system import run_code_system_station
++    try:
++        return run_code_system_station(root, inputs)
++    except (ValueError, OSError) as exc:
++        raise CapabilityError(str(exc)) from exc
++
++
+ BUILTINS: dict[str, Callable[[Path, dict[str, Any]], dict[str, Any]]] = {
++    "builtin:code_system_station": builtin_code_system_station,
++    "builtin:code_system_project": builtin_code_system_project,
+     "builtin:code_program_project": builtin_code_program_project,
+     "builtin:write_text": builtin_write_text,
+     "builtin:write_json": builtin_write_json,
+diff --git a/src/axm_uc/cli.py b/src/axm_uc/cli.py
+index 721d3f3..6bee451 100644
+--- a/src/axm_uc/cli.py
++++ b/src/axm_uc/cli.py
+@@ -22,6 +22,7 @@ def build_parser() -> argparse.ArgumentParser:
+     for name, help_text in [('grammar-capsule','compose a standalone Grammar 102 language capability capsule'),
+                             ('code-program','compile, inspect or reuse typed JavaScript/Python programs'),
+                             ('code-workflow','build or explicitly verify/retain code through six deterministic professionals'),
++                            ('code-system','build, verify, explore or retain stateful software and game code systems'),
+                             ('state-ripple','compare sparse and full evaluation of an explicit state graph'),
+                             ('construction-program','compose and evaluate declared state operations'),
+                             ('render-budget','select a bounded visual projection without changing source state')]:
+@@ -199,17 +200,21 @@ def main(argv: list[str] | None = None) -> int:
+         _print(result)
+         return 0 if result.get('type') == 'CREATION_RESULT' else 1
+ 
+-    if args.command in ('grammar-capsule', 'state-ripple', 'render-budget', 'construction-program', 'code-program', 'code-workflow'):
++    if args.command in ('grammar-capsule', 'state-ripple', 'render-budget', 'construction-program', 'code-program', 'code-workflow', 'code-system'):
+         from .grammar_workbench import run_grammar_tool
+         try:
+             with Path(args.request).open('rb') as source:
+                 data = source.read(1048577)
+             if len(data) > 1048576: raise ValueError('request exceeds 1 MiB')
+-            result = run_grammar_tool(root, args.command, json.loads(data))
++            if args.command == 'code-system':
++                from .code_system import operate_code_system
++                result = operate_code_system(root, json.loads(data))
++            else:
++                result = run_grammar_tool(root, args.command, json.loads(data))
+             _print(result)
+         except (ValueError, OSError) as exc:
+             raise SystemExit(str(exc)) from exc
+-        return 2 if args.command in ('code-program', 'code-workflow') and result.get('result') in ('HOLD', 'BLOCKED', 'CODE_PROGRAM_HELD') else 0
++        return 2 if (args.command == 'code-system' and result.get('status') == 'HOLD') or (args.command in ('code-program', 'code-workflow') and result.get('result') in ('HOLD', 'BLOCKED', 'CODE_PROGRAM_HELD')) else 0
+ 
+     if args.command == 'pipelines':
+         from .pipeline_map import map_capabilities
+diff --git a/src/axm_uc/code_system.py b/src/axm_uc/code_system.py
+new file mode 100644
+index 0000000..42c9eed
+--- /dev/null
++++ b/src/axm_uc/code_system.py
+@@ -0,0 +1,252 @@
++"""Create portable stateful software/game systems over bundled code professionals."""
++from __future__ import annotations
++
++from copy import deepcopy
++import hashlib
++import json
++from pathlib import Path
++import shutil
++import subprocess
++import sys
++import tempfile
++
++from .code_system_contract import SCHEMA, canonical, digest, exact, prepare, retain_system, validate_archive
++from .data.code_system.runtime import same
++from .grammar_workbench import run_grammar_tool
++from .state_machine import StateMachineError
++
++WORKFLOW_SCHEMA = "axm.code-system-workflow/v0.1"
++RUNTIME = Path(__file__).parent / "data/code_system"
++STATIONS = [
++    {"id": "system-contract", "profession": "software-architect", "procedure": "Bind the typed model, guards, reducers and route selectors to an explicit state graph."},
++    {"id": "code-workflow", "profession": "six bundled coding procedures", "procedure": "Typecheck, compile twice, build, execute requirement cases, assess and optionally retain function closures."},
++    {"id": "state-exploration", "profession": "game-systems-designer", "procedure": "Explore the declared finite event alphabet breadth-first; measure states/edges and preserve shortest failing traces."},
++    {"id": "system-evidence", "profession": "software-qa-playtest", "procedure": "Compare declared step oracles, repeats, languages, input preservation, replay, recovery and observed transition coverage."},
++    {"id": "system-retention", "profession": "software-maintainer", "procedure": "Retain verified construction and semantically deduplicated behavior composition on explicit request."},
++]
++
++
++def _files(root, system, workflow):
++    plan = workflow["build"]["plan"]
++    behavior = {key: system[key] for key in ("initial_model", "machine", "bindings", "invariants")}
++    hosts = {suffix: (RUNTIME / ("runtime." + suffix)).read_text(encoding="utf-8") for suffix in ("js", "py")}
++    host_hashes = {suffix: hashlib.sha256(source.encode()).hexdigest() for suffix, source in hosts.items()}
++    config = {"system": system, "system_sha256": digest({"program": plan["program"], "behavior": behavior, "hosts": host_hashes})}
++    files = {}
++    for target in workflow["build"]["targets"]:
++        language = target["language"]
++        suffix = "js" if language == "javascript" else "py"
++        for artifact in target["artifacts"]:
++            files[language + "/" + artifact["path"]] = artifact["content"]
++        files[language + "/runtime." + suffix] = hosts[suffix]
++        files[language + "/system.json"] = canonical(config) + "\n"
++        lock = {name: hashlib.sha256(files[language + "/" + name].encode()).hexdigest()
++                for name in ("module." + suffix, "runtime." + suffix, "system.json")}
++        files[language + "/source-lock.json"] = canonical(lock) + "\n"
++    return config, files
++
++
++def _execute(files, language, run):
++    """Fresh fixed commands against emitted source, not caller-supplied receipts."""
++    node = shutil.which("node")
++    command = [node, "runtime.js", "observe"] if language == "javascript" else [sys.executable, "runtime.py", "observe"]
++    with tempfile.TemporaryDirectory(prefix="uc-code-system-") as temp:
++        folder = Path(temp)
++        prefix = language + "/"
++        for name, content in files.items():
++            if name.startswith(prefix):
++                (folder / name[len(prefix):]).write_text(content, encoding="utf-8", newline="\n")
++        # Output goes to temporary files so a failed observer cannot fill memory.
++        with tempfile.TemporaryFile() as out, tempfile.TemporaryFile() as err:
++            try:
++                completed = subprocess.run(command, cwd=folder, stdin=subprocess.DEVNULL, stdout=out, stderr=err, timeout=20, check=False)
++            except subprocess.TimeoutExpired:
++                return {"language": language, "run": run, "status": "HOLD", "error": "SYSTEM_OBSERVER_TIMEOUT"}
++            out.seek(0); err.seek(0)
++            body, errors = out.read(8 * 1048576 + 1), err.read(4096)
++        if completed.returncode or len(body) > 8 * 1048576:
++            return {"language": language, "run": run, "status": "HOLD", "error": errors.decode(errors="replace") or "SYSTEM_OBSERVER_OUTPUT_LIMIT"}
++        return {"language": language, "run": run, "status": "OBSERVED", "output": json.loads(body)}
++
++
++def assess(system, config, observations, languages):
++    """Compare observations with authored oracles outside the generated runtime."""
++    issues, cases = [], []
++    if len(observations) != len(languages) * 2:
++        issues.append({"code": "OBSERVATIONS_INCOMPLETE"})
++    baseline = None
++    observed_transitions, accepted_events = set(), set()
++    for observation in observations:
++        context = {key: observation[key] for key in ("language", "run")}
++        if observation["status"] != "OBSERVED":
++            issues.append({"code": "EXECUTION_FAILED", **context, "detail": observation.get("error")})
++            continue
++        output = observation["output"]
++        if output.get("system_sha256") != config["system_sha256"] or output.get("input_unchanged") is not True:
++            issues.append({"code": "SYSTEM_OR_INPUT_IDENTITY", **context})
++        if baseline is None:
++            baseline = output
++        elif not same(baseline, output):
++            issues.append({"code": "REPEAT_OR_LANGUAGE_DIVERGENCE", **context})
++        actual_scenarios = output.get("scenarios", [])
++        if [row.get("id") for row in actual_scenarios] != [row["id"] for row in system["scenarios"]]:
++            issues.append({"code": "SCENARIOS_INCOMPLETE", **context})
++            continue
++        for scenario, observed in zip(system["scenarios"], actual_scenarios):
++            if observed.get("replay_equal") is not True or observed.get("recovery_equal") is not True:
++                issues.append({"code": "REPLAY_OR_RECOVERY_MISMATCH", "scenario": scenario["id"], **context})
++            if len(observed.get("steps", [])) != len(scenario["steps"]):
++                issues.append({"code": "SCENARIO_STEPS_INCOMPLETE", "scenario": scenario["id"], **context})
++                continue
++            for index, (step, actual) in enumerate(zip(scenario["steps"], observed["steps"])):
++                expected = step["expect"]
++                passed = all(same(actual.get(field), wanted) for field, wanted in expected.items())
++                cases.append({**context, "scenario": scenario["id"], "step": index, "passed": passed})
++                if not passed:
++                    issues.append({"code": "SCENARIO_EXPECTATION", **context, "scenario": scenario["id"], "step": index, "expected": expected, "actual": actual})
++                if actual["status"] == "APPLIED":
++                    observed_transitions.add(canonical(actual["transition"]))
++                    accepted_events.add(step["event"]["type"])
++        explored = output.get("exploration", {})
++        if explored.get("status") != "BOUNDED_COMPLETE":
++            issues.append({"code": "EXPLORATION_" + str(explored.get("status", "MISSING")), **context,
++                           "counterexample": explored.get("counterexample")})
++        observed_transitions.update(canonical(row) for row in explored.get("transitions", []))
++        accepted_events.update(explored.get("accepted_events", []))
++    required_transitions = {canonical({key: row[key] for key in ("from", "event", "to")}) for row in system["machine"]["transitions"]}
++    missing = required_transitions - observed_transitions
++    missing_events = {row["event"] for row in system["bindings"]} - accepted_events
++    if missing or missing_events:
++        issues.append({"code": "TRANSITION_COVERAGE_INCOMPLETE", "transitions": [json.loads(row) for row in sorted(missing)], "events": sorted(missing_events)})
++    return {"status": "PASS" if not issues else "HOLD", "issues": issues, "case_checks": cases,
++            "observed_transition_count": len(observed_transitions), "required_transition_count": len(required_transitions),
++            "observations": observations, "scope": "Authored scenarios and invariants over the declared event alphabet through the stated depth; not arbitrary inputs or whole-program correctness."}
++
++
++def operate_code_system(root, raw):
++    stages = []
++    try:
++        if len(canonical(raw).encode()) > 1048576:
++            raise ValueError("code-system request exceeds 1 MiB")
++        if isinstance(raw, dict) and raw.get("action") == "catalog":
++            exact(raw, {"action"})
++            return {"schema": WORKFLOW_SCHEMA, "status": "CATALOG", "system_schema": SCHEMA,
++                    "actions": ["build", "verify", "retain", "restore"], "stations": STATIONS,
++                    "languages": ["javascript", "python"], "domains": ["software", "game"], "ai_required": False}
++        if isinstance(raw, dict) and raw.get("action") == "restore":
++            exact(raw, {"action", "system_archive", "structural_sha256"})
++            archive = validate_archive(raw["system_archive"])
++            row = next((entry for entry in archive["entries"] if entry["structural_sha256"] == raw["structural_sha256"]), None)
++            if row is None:
++                raise ValueError("retained system identity is absent")
++            return {"schema": WORKFLOW_SCHEMA, "status": "RESTORED_CONSTRUCTION", "request": deepcopy(row["construction"]), "verification": "REQUIRES_FRESH_EXECUTION"}
++        request, graph = prepare(raw)
++        stages.append({"id": "system-contract", "status": "CONTRACT_READY", "state_graph": graph})
++        workflow_request = {"action": request["action"], "job": request["job"]}
++        if "archive" in request:
++            workflow_request["archive"] = request["archive"]
++        if "system_archive" in request:
++            validate_archive(request["system_archive"])
++        workflow = run_grammar_tool(root, "code-workflow", workflow_request)
++        stages.append({"id": "code-workflow", "status": workflow["result"], "stations": workflow["stations"]})
++        result = {"schema": WORKFLOW_SCHEMA, "status": "HOLD", "stages": stages, "code_workflow": workflow,
++                  "verification": None, "retention": None, "files": {}}
++        if workflow["result"] not in {"CANDIDATE", "VERIFIED_FOR_CASES"}:
++            return result
++        config, files = _files(root, request["system"], workflow)
++        result.update({"system_sha256": config["system_sha256"], "files": files, "status": "CANDIDATE"})
++        if request["action"] != "build":
++            languages = workflow["build"]["plan"]["languages"]
++            observations = [_execute(files, language, run) for language in languages for run in (1, 2)]
++            verification = assess(request["system"], config, observations, languages)
++            result["verification"] = verification
++            explored = all(row.get("output", {}).get("exploration", {}).get("status") == "BOUNDED_COMPLETE" for row in observations)
++            stages.append({"id": "state-exploration", "status": "PASS" if explored else "HOLD"})
++            stages.append({"id": "system-evidence", "status": verification["status"], "transitions": verification["observed_transition_count"]})
++            result["status"] = "VERIFIED_FOR_SCENARIOS" if verification["status"] == "PASS" else "HOLD"
++            if verification["status"] != "PASS":
++                result["files"] = {}
++                return result
++            if request["action"] == "retain":
++                result["retention"] = retain_system(request.get("system_archive"), request["system"],
++                    workflow["retention"]["captured"], raw, verification)
++                stages.append({"id": "system-retention", "status": result["retention"]["status"]})
++        result["artifact_sha256"] = {name: hashlib.sha256(content.encode()).hexdigest() for name, content in sorted(files.items())}
++        return result
++    except (ValueError, TypeError, KeyError, AttributeError, OSError, StateMachineError, RecursionError) as exc:
++        return {"schema": WORKFLOW_SCHEMA, "status": "HOLD", "stages": stages, "diagnostic": str(exc)[:1000], "files": {}, "retention": None}
++
++
++def create_code_system_project(root, inputs):
++    from .capabilities import CapabilityError, _is_machine_body_path, _resolve_output_path, builtin_write_project
++    try:
++        exact(inputs, {"path", "request"})
++        if not isinstance(inputs["path"], str) or not inputs["path"].strip():
++            raise ValueError("path must be a nonempty string")
++        target = _resolve_output_path(Path(root), inputs["path"])
++        if _is_machine_body_path(Path(root), target) or target.exists():
++            raise ValueError("code-system project must be a new directory outside the machine body")
++        report = operate_code_system(root, inputs["request"])
++        if report["status"] not in {"CANDIDATE", "VERIFIED_FOR_SCENARIOS"}:
++            raise CapabilityError("code-system workflow did not pass", {"workflow": report})
++        files = report.pop("files")
++        files["request.json"] = canonical(inputs["request"]) + "\n"
++        files["workflow.json"] = canonical(report) + "\n"
++        files["construction.json"] = canonical({"system": inputs["request"]["system"], "program": report["code_workflow"]["build"]["plan"]["program"]}) + "\n"
++        files["LICENSE-UC.txt"] = (Path(root) / "LICENSE").read_text(encoding="utf-8")
++        files["CREATOR_OUTPUT_PERMISSION.md"] = (Path(root) / "CREATOR_OUTPUT_PERMISSION.md").read_text(encoding="utf-8")
++        files["LICENSE-GRAMMAR-MPL-2.0.txt"] = (Path(root) / "third_party/code-professions/source/LICENSE").read_text(encoding="utf-8")
++        files["NOTICE.txt"] = "Copyright 2026 Mike - Axiom/Mir.\nGenerated with AXM Universal Creation and bundled Grammar 102 / Profession Fabric.\nGrammar modules retain MPL-2.0; UC session-host sources retain UC's attached license.\nThe existing creator-output permission and its runtime-code boundary are attached without alteration.\nExact donor provenance and source identities are in workflow.json. No third-party runtime package is required.\n"
++        files["README.md"] = _readme(inputs["request"], report)
++        if report["retention"] is not None:
++            files["system-archive.json"] = canonical(report["retention"]["archive"]) + "\n"
++            files["archive.json"] = canonical(report["code_workflow"]["retention"]["archive"]) + "\n"
++        result = builtin_write_project(root, {"path": inputs["path"], "files": files, "project_type": "generic", "publish_mode": "validated", "replace": False})
++        result["code_system"] = {"status": report["status"], "system_sha256": report["system_sha256"], "verification": report["verification"],
++                                 "retained": report["retention"] is not None, "evidence": "workflow.json"}
++        return result
++    except (ValueError, TypeError, OSError) as exc:
++        raise CapabilityError(str(exc)) from exc
++
++
++def run_code_system_station(root, inputs):
++    """Typed workflow-discovery station backed by actual system execution."""
++    from .atlas_pipeline import _output
++    from .atomic import atomic_write_json
++    exact(inputs, {"operation", "path", "values"})
++    exact(inputs["values"], {"request"})
++    request = inputs["values"]["request"]
++    if inputs["operation"] != "verify-code-system" or not isinstance(request, dict) or request.get("action") not in {"verify", "retain"}:
++        raise ValueError("code-system station requires explicit verify or retain execution")
++    target = _output(root, inputs["path"])
++    target.mkdir(parents=True, exist_ok=False)
++    atomic_write_json(target / "inputs.json", inputs["values"])
++    project = target / "project"
++    evidence = create_code_system_project(root, {"path": str(project), "request": request})
++    verification = evidence["code_system"]["verification"]
++    observations = verification["observations"]
++    measured = observations[0]["output"]
++    metrics = {"scenarios": len(measured["scenarios"]),
++               "scenario_steps": sum(len(row["steps"]) for row in measured["scenarios"]),
++               "transitions": verification["observed_transition_count"],
++               "transition_coverage": verification["observed_transition_count"] / verification["required_transition_count"],
++               "explored_states": measured["exploration"]["states"], "explored_edges": measured["exploration"]["edges"],
++               "exploration_depth": measured["exploration"]["max_depth"],
++               "languages": len({row["language"] for row in observations}),
++               "artifact_bytes": sum(path.stat().st_size for path in project.rglob("*") if path.is_file())}
++    result = {"status": "PASS", "value": str(project), "metrics": metrics, "evidence": evidence}
++    atomic_write_json(target / "observation.json", result)
++    return result
++
++
++def _readme(request, report):
++    return ("# " + request["job"]["id"] + "\n\nPortable " + request["system"]["domain"] + " system: `" + report["status"] + "`.\n\n"
++            "The generated modules and session hosts need only Node.js or Python, independently of UC.\n\n"
++            "```sh\nnode javascript/runtime.js verify\npython python/runtime.py verify\nnode javascript/runtime.js replay events.json\npython python/runtime.py checkpoint events.json\nnode javascript/runtime.js restore checkpoint.json\n```\n\n"
++            "Choose the commands for the languages requested in your construction. An event is `{\"type\":\"eventName\",\"args\":[]}`; event files contain arrays. "
++            "`verify` compares scenarios, exploration and recovery and exits nonzero on failure. `observe` emits raw measurements; UC independently assesses them against the authored expectations.\n\n"
++            "Library: JavaScript `require('./javascript/runtime').load()`; Python `runtime.load()` with `python/` on the import path. "
++            "Both expose initial, step, replay, checkpoint, restore, explore, observe and verify. Refused steps leave state unchanged. Replay records refusals and continues. "
++            "Effects are returned as data and never performed. The loader checks the emitted source bytes before use. Checkpoints bind this program/behavior/host version and re-execute their history before restoring state; these checks are not authentication.\n\n"
++            "Keep typed construction and explicit cases when reshaping this output. Retained archives preserve construction, not only generated text. "
++            "Exploration covers the stated finite alphabet and depth, not all inputs, arbitrary timing, balance, visuals, external side effects or whole-program correctness.\n")
+diff --git a/src/axm_uc/code_system_contract.py b/src/axm_uc/code_system_contract.py
+new file mode 100644
+index 0000000..711f203
+--- /dev/null
++++ b/src/axm_uc/code_system_contract.py
+@@ -0,0 +1,253 @@
++"""Bind typed programs to UC's existing deterministic state graph."""
++from __future__ import annotations
++
++from copy import deepcopy
++import hashlib
++import json
++import re
++
++from .state_machine import compile_state_machine
++
++SCHEMA = "axm.code-system/v0.1"
++ARCHIVE_SCHEMA = "axm.code-system-archive/v0.1"
++ID = re.compile(r"[A-Za-z][A-Za-z0-9_-]{0,79}\Z")
++RESERVED = {"ucSystemInitial", "ucSystemIdentity"}
++STATUSES = {"APPLIED", "HOLD_NO_TRANSITION", "HOLD_GUARD", "HOLD_ARGUMENTS", "HOLD_EXECUTION", "HOLD_INVARIANT"}
++
++
++def canonical(value):
++    return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False)
++
++
++def digest(value):
++    return hashlib.sha256(canonical(value).encode()).hexdigest()
++
++
++def exact(value, required, optional=()):
++    if not isinstance(value, dict) or set(value) - set(required) - set(optional) or set(required) - set(value):
++        raise ValueError("expected fields " + ", ".join(sorted(required)) + "; optional " + ", ".join(sorted(optional)))
++
++
++def identity(value, label):
++    if not isinstance(value, str) or not ID.fullmatch(value):
++        raise ValueError(label + " must be an ASCII identifier of 1..80 characters")
++    return value
++
++
++def rows(value, label, maximum, minimum=1):
++    if not isinstance(value, list) or not minimum <= len(value) <= maximum:
++        raise ValueError(f"{label} needs {minimum}..{maximum} entries")
++    return value
++
++
++def integer(value, label, low, high):
++    if type(value) is not int or not low <= value <= high:
++        raise ValueError(f"{label} must be an integer in {low}..{high}")
++
++
++def event(value, bindings):
++    exact(value, {"type", "args"})
++    if value["type"] not in bindings or not isinstance(value["args"], list) or len(value["args"]) > 15:
++        raise ValueError("event requires a declared type and at most 15 arguments")
++
++
++def prepare(request):
++    # Round trip rejects non-JSON numbers before any generated code is executed.
++    body = canonical(request)
++    if len(body.encode()) > 1048576:
++        raise ValueError("code-system request exceeds 1 MiB")
++    request = json.loads(body)
++    exact(request, {"action", "job", "system"}, {"archive", "system_archive"})
++    if request["action"] not in {"build", "verify", "retain"}:
++        raise ValueError("action must be build, verify or retain")
++    if request["action"] != "retain" and ({"archive", "system_archive"} & set(request)):
++        raise ValueError("archives belong only to explicit retain requests")
++    job, system = request["job"], request["system"]
++    exact(job, {"id", "program", "cases", "requirements"}, {"languages"})
++    exact(system, {"schema", "domain", "initial_model", "machine", "bindings", "invariants", "scenarios", "exploration"})
++    if system["schema"] != SCHEMA or system["domain"] not in {"software", "game"}:
++        raise ValueError("unsupported code-system schema or domain")
++    compiled = compile_state_machine(system["machine"])
++    system["machine"] = compiled["machine"]
++    # Declaration order is not transition priority.
++    system["machine"]["states"].sort()
++    program = job["program"]
++    exact(program, {"schema", "name", "functions", "exports"})
++    functions = {}
++    for function in rows(program["functions"], "program functions", 30):
++        exact(function, {"name", "params", "returns", "body"})
++        name = function["name"]
++        if name in functions or name in RESERVED:
++            raise ValueError("duplicate or reserved function name")
++        functions[name] = function
++    exports = program["exports"]
++    if not isinstance(exports, list):
++        raise ValueError("program exports must be a list")
++
++    def exported(name):
++        if not isinstance(name, str) or name not in functions or name not in exports:
++            raise ValueError("system function must be an explicit program export: " + str(name))
++        return functions[name]
++
++    bindings, signals, model_type = {}, set(), None
++    for binding in rows(system["bindings"], "bindings", 32):
++        exact(binding, {"event", "reducer"}, {"guard", "routes"})
++        key = identity(binding["event"], "binding event")
++        if key in bindings:
++            raise ValueError("duplicate event binding")
++        reducer = exported(binding["reducer"])
++        params = rows(reducer["params"], "reducer parameters", 16)
++        for parameter in params:
++            exact(parameter, {"name", "type"})
++        current_type = params[0]["type"]
++        if not isinstance(current_type, dict) or set(current_type) != {"record"}:
++            raise ValueError("system model must be an explicit record type")
++        if model_type is None:
++            model_type = current_type
++        if current_type != model_type or reducer["returns"] != model_type:
++            raise ValueError("every reducer must consume and return the same model type")
++        if "guard" in binding:
++            guard = exported(binding["guard"])
++            if [p["type"] for p in guard["params"]] != [p["type"] for p in params] or guard["returns"] != "boolean":
++                raise ValueError("guard must match reducer parameters and return boolean")
++        if "routes" in binding:
++            route = binding["routes"]
++            exact(route, {"function", "events"})
++            selector = exported(route["function"])
++            if [p["type"] for p in selector["params"]] != [model_type] or selector["returns"] != "string":
++                raise ValueError("route selector must consume the proposed model and return a string")
++            routes = rows(route["events"], "route events", 32)
++            if any(not isinstance(v, str) or not v for v in routes) or len(set(routes)) != len(routes):
++                raise ValueError("route events must be unique nonempty strings")
++            route["events"].sort()
++        else:
++            routes = [key]
++        signals.update(routes)
++        bindings[key] = binding
++    graph_signals = {row["event"] for row in system["machine"]["transitions"]}
++    if signals != graph_signals:
++        raise ValueError("bound transition signals and state-graph events must match exactly")
++    invariant_ids = set()
++    for invariant in rows(system["invariants"], "invariants", 32):
++        exact(invariant, {"id", "function", "statement"})
++        key = identity(invariant["id"], "invariant id")
++        if key in invariant_ids or not isinstance(invariant["statement"], str) or not invariant["statement"].strip():
++            raise ValueError("invariants need unique ids and nonempty statements")
++        invariant_ids.add(key)
++        function = exported(invariant["function"])
++        if [p["type"] for p in function["params"]] != [model_type] or function["returns"] != "boolean":
++            raise ValueError("invariant must consume the model and return boolean")
++
++    scenario_ids, step_count = set(), 0
++    for scenario in rows(system["scenarios"], "scenarios", 64):
++        exact(scenario, {"id", "steps"})
++        key = identity(scenario["id"], "scenario id")
++        if key in scenario_ids:
++            raise ValueError("duplicate scenario id")
++        scenario_ids.add(key)
++        for step in rows(scenario["steps"], "scenario steps", 128):
++            exact(step, {"event", "expect"})
++            event(step["event"], bindings)
++            exact(step["expect"], {"status", "state"}, {"effects"})
++            if step["expect"]["status"] not in STATUSES:
++                raise ValueError("unknown scenario expected status")
++            exact(step["expect"]["state"], {"phase", "model"})
++            if step["expect"]["state"]["phase"] not in system["machine"]["states"]:
++                raise ValueError("scenario expects an undeclared phase")
++            if "effects" in step["expect"] and not isinstance(step["expect"]["effects"], list):
++                raise ValueError("expected effects must be a list")
++            step_count += 1
++    if step_count > 1024:
++        raise ValueError("scenario suite exceeds 1024 steps")
++    exploration = system["exploration"]
++    exact(exploration, {"events", "max_depth", "max_states", "max_edges"})
++    for field, low, high in (("max_depth", 1, 32), ("max_states", 1, 4096), ("max_edges", 1, 20000)):
++        integer(exploration[field], field, low, high)
++    events = rows(exploration["events"], "exploration events", 32)
++    for value in events:
++        event(value, bindings)
++    if len({canonical(value) for value in events}) != len(events):
++        raise ValueError("duplicate exploration events")
++    # Alphabet order is a declared tie breaker for shortest counterexamples.
++    system["bindings"].sort(key=lambda row: row["event"])
++    system["invariants"].sort(key=lambda row: row["id"])
++    system["scenarios"].sort(key=lambda row: row["id"])
++    program["functions"] += [
++        {"name": "ucSystemInitial", "params": [], "returns": model_type,
++         "body": {"op": "literal", "type": model_type, "value": system["initial_model"]}},
++        {"name": "ucSystemIdentity", "params": [{"name": "model", "type": model_type}], "returns": model_type,
++         "body": {"op": "ref", "name": "model"}},
++    ]
++    program["exports"] += sorted(RESERVED)
++    case_ids = {row.get("id") for row in job["cases"]}
++    if case_ids & RESERVED or any(row.get("id") == "ucSystemModelContract" for row in job["requirements"]):
++        raise ValueError("reserved system acceptance id")
++    job["cases"] += [
++        {"id": "ucSystemInitial", "function": "ucSystemInitial", "args": [], "expected": system["initial_model"]},
++        {"id": "ucSystemIdentity", "function": "ucSystemIdentity", "args": [system["initial_model"]], "expected": system["initial_model"]},
++    ]
++    job["requirements"].append({"id": "ucSystemModelContract", "statement": "The initial and restored model obey its declared record type.", "cases": sorted(RESERVED)})
++    return request, compile_state_machine(system["machine"])
++
++
++def structural_system(system, captures):
++    """Code identities ignore private function names; event/field/phase names are public semantics."""
++    functions = {row["function"]: row["structuralSha256"] for row in captures}
++    body = {key: deepcopy(system[key]) for key in ("initial_model", "machine", "bindings", "invariants")}
++    body["machine"].pop("id")
++    for binding in body["bindings"]:
++        for field in ("reducer", "guard"):
++            if field in binding:
++                binding[field] = functions[binding[field]]
++        if "routes" in binding:
++            binding["routes"]["function"] = functions[binding["routes"]["function"]]
++    body["invariants"] = sorted({functions[row["function"]] for row in body["invariants"]})
++    return body
++
++
++def validate_archive(previous):
++    archive = deepcopy(previous) if previous is not None else {"schema": ARCHIVE_SCHEMA, "entries": []}
++    exact(archive, {"schema", "entries"})
++    if archive["schema"] != ARCHIVE_SCHEMA:
++        raise ValueError("unknown system archive schema")
++    entries, seen = rows(archive["entries"], "archive entries", 128, 0), set()
++    for row in entries:
++        exact(row, {"structural_sha256", "structure", "construction", "construction_sha256", "observations"})
++        if row["structural_sha256"] != digest(row["structure"]) or row["structural_sha256"] in seen:
++            raise ValueError("system archive structural identity mismatch")
++        if row["construction_sha256"] != digest(row["construction"]):
++            raise ValueError("system archive construction identity mismatch")
++        seen.add(row["structural_sha256"])
++        rows(row["observations"], "archive observations", 128)
++        for observation in row["observations"]:
++            exact(observation, {"request_sha256", "verification_sha256"})
++            if any(not isinstance(value, str) or not re.fullmatch(r"[0-9a-f]{64}", value) for value in observation.values()):
++                raise ValueError("invalid retained observation identity")
++    return archive
++
++
++def retain_system(previous, system, captures, request, verification):
++    archive = validate_archive(previous)
++    entries = archive["entries"]
++    structure = structural_system(system, captures)
++    key = digest(structure)
++    construction = deepcopy(request)
++    construction.pop("archive", None)
++    construction.pop("system_archive", None)
++    observation = {"request_sha256": digest(construction), "verification_sha256": digest(verification)}
++    entry = next((row for row in entries if row["structural_sha256"] == key), None)
++    if entry is None:
++        if len(entries) >= 128:
++            raise ValueError("system archive is full; no entries were evicted")
++        entry = {"structural_sha256": key, "structure": structure, "construction": construction,
++                 "construction_sha256": digest(construction), "observations": []}
++        entries.append(entry)
++    if observation not in entry["observations"]:
++        if len(entry["observations"]) >= 128:
++            raise ValueError("system observation archive is full")
++        entry["observations"].append(observation)
++        entry["observations"].sort(key=canonical)
++    entries.sort(key=lambda row: row["structural_sha256"])
++    if len(canonical(archive).encode()) > 1048576:
++        raise ValueError("system archive exceeds 1 MiB; no entries were evicted")
++    return {"structural_sha256": key, "archive": archive, "status": "RETAINED_VERIFIED_CONSTRUCTION"}
+diff --git a/src/axm_uc/creation_atlas.py b/src/axm_uc/creation_atlas.py
+index 3b46683..568804d 100644
+--- a/src/axm_uc/creation_atlas.py
++++ b/src/axm_uc/creation_atlas.py
+@@ -172,7 +172,7 @@ class CreationAtlas:
+                      data={"recipe": {"family": family, "size": 128, "seed": 1}}, status="IMPLEMENTED_GENERATOR",
+                      relations=[{"relation": "realized-by", "target": "capability:AXM-CAP-GENERATE-GAME-MATERIAL"}])
+         pack_path = RUNTIME / "data/material_response/pack.json"
+-        pack = json.loads(pack_path.read_text())
++        pack = json.loads(pack_path.read_text(encoding="utf-8"))
+         for family in pack["families"]:
+             self.add("material:response:" + family["id"], "material", family["id"], family.get("purpose", ""),
+                      self.source(pack_path, family["id"]), data=family, status="RESPONSE_INTENT_RENDERER_NOT_PROVEN",
+@@ -192,12 +192,12 @@ class CreationAtlas:
+         for filename in ("direction-catalog.json", "axis-catalog.json"):
+             path = self.root / "reference/software-directions" / filename
+             if path.is_file():
+-                body = json.loads(local_file(self.root, str(path.relative_to(self.root))).read_text())
++                body = json.loads(local_file(self.root, path.relative_to(self.root).as_posix()).read_text(encoding="utf-8"))
+                 for profile in body.get("profiles", []):
+                     self.add("direction:" + profile["id"], "direction", profile["id"], profile.get("purpose", profile.get("name", "")),
+                              self.source(path, profile["id"]), data=profile, status="DIRECTION_KNOWLEDGE")
+         for path in sorted((self.root / "atlas").glob("*.json")):
+-            body = json.loads(local_file(self.root, str(path.relative_to(self.root))).read_text())
++            body = json.loads(local_file(self.root, path.relative_to(self.root).as_posix()).read_text(encoding="utf-8"))
+             if body.get("schema") != PACK_SCHEMA or set(body) - {"schema", "entries", "blueprints"}:
+                 raise ValueError("invalid creation atlas pack: " + path.name)
+             for entry in body.get("entries", []):
+@@ -205,7 +205,7 @@ class CreationAtlas:
+                 if "source_data" in entry:
+                     ref = entry["source_data"]
+                     source_path = local_file(self.root, ref["path"])
+-                    data = json.loads(source_path.read_text())
++                    data = json.loads(source_path.read_text(encoding="utf-8"))
+                     for part in ref.get("pointer", []):
+                         data = data[part]
+                     data = {"value": data}
+@@ -234,7 +234,7 @@ class CreationAtlas:
+ 
+     def add_experience(self, records, collection):
+         """Expose retained observations and semantic construction candidates, not canon."""
+-        patterns = {}
++        patterns, code_patterns = {}, {}
+         for record in records:
+             identity = "experience:" + digest(record)
+             source = {"scope": "experience", "collection": str(collection), "record_sha256": digest(record)}
+@@ -245,6 +245,8 @@ class CreationAtlas:
+             if record["status"] == "CHECKS_PASSED":
+                 for search in record.get("searches", []):
+                     patterns.setdefault(search["semantic_signature"], []).append((identity, search))
++                for system in record.get("code_systems", []):
++                    code_patterns.setdefault(system["structural_sha256"], []).append((identity, system))
+         for signature, observations in sorted(patterns.items()):
+             self.add("construction:" + signature, "construction-pattern", signature,
+                      "Measured construction candidate; every reuse needs the current request's checks.",
+@@ -252,6 +254,14 @@ class CreationAtlas:
+                      data={"observations": [{"experience": identity, **deepcopy(search)} for identity, search in observations]},
+                      status="MEASURED_CANDIDATE_NOT_CANON",
+                      relations=[{"relation": "observed-in", "target": identity} for identity, _ in observations])
++        for signature, observations in sorted(code_patterns.items()):
++            construction = observations[0][1]["construction"]
++            self.add("code-pattern:" + signature, "code-pattern", construction["job"]["id"],
++                     "Retained stateful code construction; restore, reshape and execute against current cases before reuse.",
++                     {"scope": "derived-experience", "structural_sha256": signature},
++                     data={"request": deepcopy(construction), "observations": [{"experience": identity, **deepcopy(system)} for identity, system in observations]},
++                     status="VERIFIED_PAST_CONSTRUCTION_RECHECK_REQUIRED", tags=[construction["system"]["domain"]],
++                     relations=[{"relation": "observed-in", "target": identity} for identity, _ in observations])
+ 
+     def summary(self):
+         categories = dict(sorted(Counter(r["category"] for r in self.records.values()).items()))
+@@ -301,7 +311,7 @@ class CreationAtlas:
+ 
+ 
+ def runtime_pin():
+-    """Pin Python/data dependencies, not just the immediate capability wrapper."""
++    """Pin Python/JavaScript/data dependencies, not just the capability wrapper."""
+     hashes = {p.relative_to(RUNTIME).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
+-              for p in sorted(RUNTIME.rglob("*")) if p.is_file() and p.suffix in {".py", ".json"}}
++              for p in sorted(RUNTIME.rglob("*")) if p.is_file() and p.suffix in {".py", ".json", ".js", ".mjs", ".cjs"}}
+     return digest(hashes)
+diff --git a/src/axm_uc/data/code_system/runtime.py b/src/axm_uc/data/code_system/runtime.py
+new file mode 100644
+index 0000000..01239ca
+--- /dev/null
++++ b/src/axm_uc/data/code_system/runtime.py
+@@ -0,0 +1,240 @@
++"""Portable generated-system host. Only the CLI reads files or writes stdout."""
++from collections import deque
++from copy import deepcopy
++import json
++
++
++def same(a, b):
++    if type(a) in (int, float) and type(b) in (int, float):
++        return a == b
++    if type(a) is not type(b):
++        return False
++    if isinstance(a, dict):
++        return set(a) == set(b) and all(same(a[k], b[k]) for k in a)
++    if isinstance(a, list):
++        return len(a) == len(b) and all(same(x, y) for x, y in zip(a, b))
++    return a == b
++
++
++def key(value):
++    # Normalize integral floats for state deduplication (True remains boolean).
++    if type(value) is float and value.is_integer():
++        value = int(value)
++    if isinstance(value, dict):
++        return "{" + ",".join(json.dumps(k, ensure_ascii=False) + ":" + key(value[k]) for k in sorted(value)) + "}"
++    if isinstance(value, list):
++        return "[" + ",".join(key(v) for v in value) + "]"
++    return json.dumps(value, ensure_ascii=False, allow_nan=False)
++
++
++class System:
++    def __init__(self, config, functions):
++        self.config = deepcopy(config)
++        self.spec = self.config["system"]
++        self.functions = dict(functions)
++        self.bindings = {row["event"]: row for row in self.spec["bindings"]}
++        self.transitions = {(row["from"], row["event"]): row for row in self.spec["machine"]["transitions"]}
++
++    def _violations(self, model):
++        return [row["id"] for row in self.spec["invariants"] if self.functions[row["function"]](deepcopy(model)) is not True]
++
++    def _state(self, value):
++        if not isinstance(value, dict) or set(value) != {"phase", "model"} or value["phase"] not in self.spec["machine"]["states"]:
++            raise ValueError("STATE_INVALID")
++        self.functions["ucSystemIdentity"](value["model"])
++        if self._violations(value["model"]):
++            raise ValueError("STATE_INVARIANT")
++        return deepcopy(value)
++
++    def initial(self):
++        return self._state({"phase": self.spec["machine"]["initial_state"], "model": self.functions["ucSystemInitial"]()})
++
++    def step(self, state, event):
++        current = self._state(state)
++        held = lambda status, **extra: {"status": status, "state": deepcopy(current), "effects": [], **extra}
++        if not isinstance(event, dict) or set(event) != {"type", "args"} or not isinstance(event.get("type"), str) or not isinstance(event.get("args"), list):
++            return held("HOLD_ARGUMENTS")
++        binding = self.bindings.get(event["type"])
++        if binding is None:
++            return held("HOLD_NO_TRANSITION")
++        routes = binding.get("routes", {}).get("events", [event["type"]])
++        if not any((current["phase"], signal) in self.transitions for signal in routes):
++            return held("HOLD_NO_TRANSITION")
++        try:
++            args = [deepcopy(current["model"]), *deepcopy(event["args"])]
++            if "guard" in binding and self.functions[binding["guard"]](*args) is not True:
++                return held("HOLD_GUARD")
++            proposed = self.functions[binding["reducer"]](*args)
++            self.functions["ucSystemIdentity"](proposed)
++            signal = self.functions[binding["routes"]["function"]](deepcopy(proposed)) if "routes" in binding else event["type"]
++            if signal not in routes or (current["phase"], signal) not in self.transitions:
++                return held("HOLD_EXECUTION", error="ROUTE_UNDECLARED")
++            violations = self._violations(proposed)
++            if violations:
++                return held("HOLD_INVARIANT", violations=violations)
++            transition = self.transitions[(current["phase"], signal)]
++            return {"status": "APPLIED", "state": {"phase": transition["to"], "model": deepcopy(proposed)},
++                    "effects": deepcopy(transition["effects"]), "transition": {k: transition[k] for k in ("from", "event", "to")}}
++        except (ValueError, TypeError, OverflowError) as exc:
++            code = str(exc)
++            if code == "ARGUMENT_COUNT" or code == "VALUE_TYPE" or isinstance(exc, TypeError):
++                return held("HOLD_ARGUMENTS")
++            return held("HOLD_EXECUTION", error=code[:160])
++
++    def replay(self, events, state=None):
++        if not isinstance(events, list) or len(events) > 10000:
++            raise ValueError("EVENT_LIMIT")
++        current = self.initial() if state is None else self._state(state)
++        results = []
++        for event in events:
++            result = self.step(current, event)
++            results.append(result)
++            current = result["state"]
++        return {"state": current, "results": results}
++
++    def checkpoint(self, events):
++        replay = self.replay(events)
++        return {"schema": "axm.code-system-checkpoint/v0.1", "system_sha256": self.config["system_sha256"],
++                "events": deepcopy(events), "state": replay["state"]}
++
++    def restore(self, checkpoint):
++        if not isinstance(checkpoint, dict) or set(checkpoint) != {"schema", "system_sha256", "events", "state"}:
++            raise ValueError("CHECKPOINT_INVALID")
++        if checkpoint["schema"] != "axm.code-system-checkpoint/v0.1" or checkpoint["system_sha256"] != self.config["system_sha256"]:
++            raise ValueError("CHECKPOINT_SYSTEM_MISMATCH")
++        self._state(checkpoint["state"])
++        replay = self.replay(checkpoint["events"])
++        if not same(replay["state"], checkpoint["state"]):
++            raise ValueError("CHECKPOINT_REPLAY_MISMATCH")
++        return deepcopy(replay["state"])
++
++    def explore(self):
++        contract = self.spec["exploration"]
++        initial = self.initial()
++        queue = deque([(initial, [])])
++        seen = {key(initial)}
++        edges = applied = holds = frontier = 0
++        covered = set()
++        accepted_events = set()
++        phases = {initial["phase"]}
++
++        def report(status, counterexample=None):
++            return {"status": status, "states": len(seen), "edges": edges, "applied": applied, "holds": holds,
++                    "depth_frontier": frontier, "max_depth": contract["max_depth"], "phases": sorted(phases),
++                    "transitions": [json.loads(row) for row in sorted(covered)], "accepted_events": sorted(accepted_events), "counterexample": counterexample}
++
++        while queue:
++            state, trace = queue.popleft()
++            if len(trace) == contract["max_depth"]:
++                frontier += 1
++                continue
++            for event in contract["events"]:
++                if edges >= contract["max_edges"]:
++                    return report("BUDGET_EXHAUSTED")
++                result = self.step(state, event)
++                edges += 1
++                if result["status"] not in {"APPLIED", "HOLD_NO_TRANSITION", "HOLD_GUARD"}:
++                    return report("COUNTEREXAMPLE", {"events": trace + [deepcopy(event)], "before": state, "result": result})
++                if result["status"] != "APPLIED":
++                    holds += 1
++                    continue
++                applied += 1
++                accepted_events.add(event["type"])
++                covered.add(key(result["transition"]))
++                phases.add(result["state"]["phase"])
++                state_key = key(result["state"])
++                if state_key not in seen:
++                    if len(seen) >= contract["max_states"]:
++                        return report("BUDGET_EXHAUSTED")
++                    seen.add(state_key)
++                    queue.append((result["state"], trace + [deepcopy(event)]))
++        return report("BOUNDED_COMPLETE")
++
++    def observe(self):
++        scenarios, input_unchanged = [], True
++        for scenario in self.spec["scenarios"]:
++            current, actual, events = self.initial(), [], []
++            for step in scenario["steps"]:
++                before_state, before_event = deepcopy(current), deepcopy(step["event"])
++                result = self.step(current, step["event"])
++                input_unchanged &= same(current, before_state) and same(step["event"], before_event)
++                actual.append(result)
++                events.append(step["event"])
++                current = result["state"]
++            replay = self.replay(events)
++            cut = len(events) // 2
++            restored = self.restore(self.checkpoint(events[:cut]))
++            resumed = self.replay(events[cut:], restored)
++            scenarios.append({"id": scenario["id"], "steps": actual, "replay_equal": same(replay["results"], actual),
++                              "recovery_equal": same(resumed["results"], actual[cut:]) and same(self.restore(self.checkpoint(events)), current)})
++        return {"system_sha256": self.config["system_sha256"], "scenarios": scenarios,
++                "input_unchanged": input_unchanged, "exploration": self.explore()}
++
++    def verify(self):
++        observed, issues = self.observe(), []
++        coverage, events = set(), set()
++        for expected, actual in zip(self.spec["scenarios"], observed["scenarios"]):
++            if not actual["replay_equal"] or not actual["recovery_equal"]:
++                issues.append({"code": "REPLAY_OR_RECOVERY", "scenario": expected["id"]})
++            for index, (step, output) in enumerate(zip(expected["steps"], actual["steps"])):
++                if not all(same(output.get(field), value) for field, value in step["expect"].items()):
++                    issues.append({"code": "SCENARIO_EXPECTATION", "scenario": expected["id"], "step": index})
++                if output["status"] == "APPLIED":
++                    coverage.add(key(output["transition"])); events.add(step["event"]["type"])
++        exploration = observed["exploration"]
++        if exploration["status"] != "BOUNDED_COMPLETE":
++            issues.append({"code": "EXPLORATION_" + exploration["status"]})
++        coverage.update(key(row) for row in exploration["transitions"])
++        events.update(exploration["accepted_events"])
++        required = {key({k: row[k] for k in ("from", "event", "to")}) for row in self.spec["machine"]["transitions"]}
++        if required - coverage or {row["event"] for row in self.spec["bindings"]} - events:
++            issues.append({"code": "TRANSITION_COVERAGE_INCOMPLETE"})
++        if not observed["input_unchanged"]:
++            issues.append({"code": "INPUT_MUTATED"})
++        return {"status": "PASS" if not issues else "HOLD", "issues": issues, "observations": observed}
++
++
++def load():
++    import hashlib
++    from pathlib import Path
++    folder = Path(__file__).resolve().parent
++    lock = json.loads((folder / "source-lock.json").read_text(encoding="utf-8"))
++    for name in ("runtime.py", "module.py", "system.json"):
++        if hashlib.sha256((folder / name).read_bytes()).hexdigest() != lock.get(name):
++            raise ValueError("RUNTIME_SOURCE_CHANGED:" + name)
++    # Execute the checked source bytes, avoiding stale/tampered bytecode caches
++    # and global module-name collisions between independent generated products.
++    namespace = {"__name__": "uc_code_" + lock["module.py"], "__file__": str(folder / "module.py")}
++    exec(compile((folder / "module.py").read_bytes(), str(folder / "module.py"), "exec"), namespace)
++    config = json.loads((folder / "system.json").read_text(encoding="utf-8"))
++    return System(config, namespace["FUNCTIONS"])
++
++
++if __name__ == "__main__":
++    import sys
++    from pathlib import Path
++    try:
++        system = load()
++        if len(sys.argv) == 1 or sys.argv[1:] == ["verify"]:
++            result = system.verify()
++        elif sys.argv[1:] == ["observe"]:
++            result = system.observe()
++        elif len(sys.argv) == 3 and sys.argv[1] in {"replay", "checkpoint", "restore"}:
++            raw = Path(sys.argv[2]).read_bytes()
++            if len(raw) > 1048576:
++                raise ValueError("REQUEST_BYTES_LIMIT")
++            def invalid_constant(value):
++                raise ValueError("JSON_NONFINITE:" + value)
++            result = getattr(system, sys.argv[1])(json.loads(raw, parse_constant=invalid_constant))
++        else:
++            raise ValueError("usage: runtime.py [verify | replay events.json | checkpoint events.json | restore checkpoint.json]")
++        # Escaped JSON preserves every Unicode value even on non-UTF-8 terminals.
++        output = json.dumps(result, sort_keys=True, ensure_ascii=True, allow_nan=False)
++        if len(output.encode()) > 8 * 1048576:
++            raise ValueError("RESULT_BYTES_LIMIT")
++        print(output)
++        if result.get("status") == "HOLD":
++            sys.exit(1)
++    except (ValueError, TypeError, OSError, KeyError) as error:
++        print(json.dumps({"status": "HOLD", "error": str(error)[:300]}), file=sys.stderr)
++        sys.exit(2)
+diff --git a/src/axm_uc/portable.py b/src/axm_uc/portable.py
+index 5325b73..6b71c70 100644
+--- a/src/axm_uc/portable.py
++++ b/src/axm_uc/portable.py
+@@ -24,6 +24,7 @@ MAX_FILES = 5_000
+ 
+ ROOT_FILES = (
+     "LICENSE",
++    "CREATOR_OUTPUT_PERMISSION.md",
+     "PORTABLE_RUNTIME.md",
+     "README.md",
+     "THIRD_PARTY.json",
+diff --git a/src/axm_uc/workflow_contracts.py b/src/axm_uc/workflow_contracts.py
+index c45db72..64ef674 100644
+--- a/src/axm_uc/workflow_contracts.py
++++ b/src/axm_uc/workflow_contracts.py
+@@ -42,7 +42,7 @@ def load_operators(root):
+     from pathlib import Path
+     operators, source_kinds = {}, set()
+     for path in sorted((Path(root) / "atlas/operators").glob("*.json")):
+-        body = json.loads(local_file(root, path.relative_to(root).as_posix()).read_text())
++        body = json.loads(local_file(root, path.relative_to(root).as_posix()).read_text(encoding="utf-8"))
+         if set(body) != {"schema", "source_kinds", "operators"} or body["schema"] != CATALOG_SCHEMA:
+             raise ValueError("invalid workflow operator catalog")
+         if not isinstance(body["source_kinds"], list):
+diff --git a/src/axm_uc/workflow_memory.py b/src/axm_uc/workflow_memory.py
+index 1a54f05..240a4e9 100644
+--- a/src/axm_uc/workflow_memory.py
++++ b/src/axm_uc/workflow_memory.py
+@@ -27,7 +27,7 @@ def read_memory(root, memory, *, pins=None):
+     admissions = {}
+     for path in paths:
+         try:
+-            value = json.loads(local_file(folder, path.relative_to(folder).as_posix()).read_text())
++            value = json.loads(local_file(folder, path.relative_to(folder).as_posix()).read_text(encoding="utf-8"))
+             if not isinstance(value, dict) or value.get("schema") != OBSERVATION_SCHEMA or path.stem != digest(value):
+                 raise ValueError("observation schema or identity mismatch")
+             if value.get("status") not in {"CONFIRMED", "REJECTED", "INCOMPLETE", "CONFIRMATION_FAILED"}:
+@@ -46,7 +46,7 @@ def read_memory(root, memory, *, pins=None):
+             result["ignored"].append({"file": path.relative_to(folder).as_posix(), "reason": str(exc)})
+     for path in templates:
+         try:
+-            value = json.loads(local_file(folder, path.relative_to(folder).as_posix()).read_text())
++            value = json.loads(local_file(folder, path.relative_to(folder).as_posix()).read_text(encoding="utf-8"))
+             if not isinstance(value, dict) or value.get("schema") != TEMPLATE_SCHEMA or path.stem != digest(value):
+                 raise ValueError("workflow schema or identity mismatch")
+             observations = admissions.get(value["signature"], [])
+diff --git a/tests/test_code_system.py b/tests/test_code_system.py
+new file mode 100644
+index 0000000..5252ca2
+--- /dev/null
++++ b/tests/test_code_system.py
+@@ -0,0 +1,380 @@
++import copy
++import json
++import os
++from pathlib import Path
++import shutil
++import subprocess
++import sys
++import tempfile
++import unittest
++from unittest.mock import patch
++
++ROOT = Path(__file__).resolve().parents[1]
++sys.path.insert(0, str(ROOT / "src"))
++from axm_uc.atlas_pipeline import build_intent, operate_atlas, plan_intent
++from axm_uc.code_system import create_code_system_project, operate_code_system, run_code_system_station
++from axm_uc.code_system_contract import digest
++from axm_uc.capabilities import CapabilityError
++from axm_uc.machine import UniversalCreationMachine
++
++
++def fixture(name="inventory"):
++    return json.loads((ROOT / "examples/code-systems" / (name + ".json")).read_text())
++
++
++@unittest.skipUnless(shutil.which("node"), "Node is required for bundled code compilation")
++class CodeSystemTests(unittest.TestCase):
++    @classmethod
++    def setUpClass(cls):
++        cls.inventory = operate_code_system(ROOT, fixture())
++        cls.combat = operate_code_system(ROOT, fixture("combat"))
++        for report in (cls.inventory, cls.combat):
++            if report["status"] != "VERIFIED_FOR_SCENARIOS":
++                raise AssertionError(str(report.get("diagnostic") or report.get("verification")))
++
++    def emit(self, result, root):
++        for name, source in result["files"].items():
++            path = root / name; path.parent.mkdir(parents=True, exist_ok=True)
++            path.write_text(source, encoding="utf-8", newline="\n")
++
++    def command(self, root, language, *args):
++        command = ["node", str(root / "javascript/runtime.js")] if language == "javascript" else [sys.executable, str(root / "python/runtime.py")]
++        env = dict(os.environ); env.pop("PYTHONPATH", None)
++        return subprocess.run([*command, *args], cwd=root.parent, env=env, capture_output=True, text=True, encoding="utf-8", timeout=30)
++
++    def test_real_software_and_game_have_observed_scenarios_and_complete_declared_exploration(self):
++        for report, states, edges, transitions in [(self.inventory, 64, 234, 6), (self.combat, 46, 245, 10)]:
++            verification = report["verification"]
++            self.assertEqual(verification["issues"], [])
++            self.assertEqual(len(verification["observations"]), 4)
++            self.assertTrue(all(row["passed"] for row in verification["case_checks"]))
++            self.assertEqual(verification["observed_transition_count"], transitions)
++            for row in verification["observations"]:
++                output = row["output"]
++                self.assertTrue(output["input_unchanged"])
++                self.assertTrue(all(s["replay_equal"] and s["recovery_equal"] for s in output["scenarios"]))
++                self.assertEqual(output["exploration"]["status"], "BOUNDED_COMPLETE")
++                self.assertEqual(output["exploration"]["states"], states)
++                self.assertEqual(output["exploration"]["edges"], edges)
++            for filename, source in report["files"].items():
++                import hashlib
++                self.assertEqual(report["artifact_sha256"][filename], hashlib.sha256(source.encode()).hexdigest())
++
++    def test_declaration_order_does_not_change_generated_system(self):
++        request = fixture(); request["action"] = "build"
++        before = copy.deepcopy(request)
++        one = operate_code_system(ROOT, request)
++        self.assertEqual(request, before)
++        self.assertIsNone(one["verification"])
++        self.assertIsNone(one["retention"])
++        for key in ("functions", "exports"):
++            request["job"]["program"][key].reverse()
++        request["job"]["cases"].reverse()
++        for key in ("bindings", "invariants", "scenarios"):
++            request["system"][key].reverse()
++        for key in ("states", "transitions"):
++            request["system"]["machine"][key].reverse()
++        two = operate_code_system(ROOT, request)
++        self.assertEqual(two["status"], "CANDIDATE", two.get("diagnostic"))
++        self.assertEqual(one["files"], two["files"])
++        self.assertEqual(one["system_sha256"], two["system_sha256"])
++
++    def test_exploration_finds_shortest_sequence_bug_that_function_cases_and_scenarios_miss(self):
++        request = fixture("combat")
++        hit = next(f for f in request["job"]["program"]["functions"] if f["name"] == "hit")
++        hit["body"]["fields"]["health"] = hit["body"]["fields"]["health"]["right"]  # remove only the zero clamp
++        result = operate_code_system(ROOT, request)
++        self.assertEqual(result["code_workflow"]["result"], "VERIFIED_FOR_CASES")
++        self.assertEqual(result["status"], "HOLD")
++        self.assertTrue(all(row["passed"] for row in result["verification"]["case_checks"]))
++        self.assertEqual(result["files"], {})
++        self.assertIsNone(result["retention"])
++        for observation in result["verification"]["observations"]:
++            exploration = observation["output"]["exploration"]
++            self.assertEqual(exploration["status"], "COUNTEREXAMPLE")
++            failed = exploration["counterexample"]
++            self.assertEqual([e["type"] for e in failed["events"]], ["start", "hit", "hit", "hit"])
++            self.assertEqual(failed["result"]["status"], "HOLD_INVARIANT")
++            self.assertEqual(failed["result"]["state"], failed["before"])
++            self.assertEqual(failed["before"]["model"]["health"], 2)
++
++    def test_wrong_scenario_oracle_holds_even_when_grammar_cases_pass(self):
++        request = fixture(); request["system"]["scenarios"][0]["steps"][0]["expect"]["state"]["model"]["stock"] = 999
++        result = operate_code_system(ROOT, request)
++        self.assertEqual(result["status"], "HOLD")
++        self.assertEqual(result["code_workflow"]["result"], "VERIFIED_FOR_CASES")
++        self.assertTrue(any(row["code"] == "SCENARIO_EXPECTATION" for row in result["verification"]["issues"]))
++
++    def test_exhausted_budget_and_unobserved_transitions_cannot_pass(self):
++        limited = fixture(); limited["system"]["exploration"]["max_edges"] = 1
++        held = operate_code_system(ROOT, limited)
++        self.assertEqual(held["status"], "HOLD")
++        self.assertTrue(any(row["code"] == "EXPLORATION_BUDGET_EXHAUSTED" for row in held["verification"]["issues"]))
++        unreachable = fixture()
++        unreachable["system"]["machine"]["states"].append("unreachable")
++        unreachable["system"]["machine"]["transitions"].append({"from": "unreachable", "event": "restock", "to": "unreachable", "effects": []})
++        held = operate_code_system(ROOT, unreachable)
++        self.assertEqual(held["status"], "HOLD")
++        self.assertTrue(any(row["code"] == "TRANSITION_COVERAGE_INCOMPLETE" for row in held["verification"]["issues"]))
++
++    def test_malformed_composition_is_held_before_compiler_or_observer_invocation(self):
++        variants = []
++        request = fixture(); request["system"]["bindings"][0]["guard"] = "missing"; variants.append(request)
++        request = fixture(); request["system"]["bindings"].append(copy.deepcopy(request["system"]["bindings"][0])); variants.append(request)
++        request = fixture(); request["system"]["initial_model"]["stock"] = float("nan"); variants.append(request)
++        request = fixture(); request["system"]["exploration"]["max_depth"] = True; variants.append(request)
++        request = fixture(); request["observations"] = [{"status": "PASS"}]; variants.append(request)
++        request = fixture(); request["system"]["machine"]["transitions"].append(copy.deepcopy(request["system"]["machine"]["transitions"][0])); variants.append(request)
++        request = fixture(); request["job"]["program"]["functions"][1]["returns"] = "number"; variants.append(request)
++        with patch("axm_uc.code_system.run_grammar_tool") as compiler, patch("axm_uc.code_system._execute") as executor:
++            for request in variants:
++                self.assertEqual(operate_code_system(ROOT, request)["status"], "HOLD")
++            compiler.assert_not_called(); executor.assert_not_called()
++
++    def test_type_error_and_raw_code_never_reach_stateful_executor(self):
++        for body in [{"op": "literal", "type": "string", "value": "wrong"}, {"op": "raw", "source": "process.exit()"}]:
++            request = fixture(); request["job"]["program"]["functions"][1]["body"] = body
++            with patch("axm_uc.code_system._execute") as executor:
++                self.assertEqual(operate_code_system(ROOT, request)["status"], "HOLD")
++                executor.assert_not_called()
++
++    def test_portable_checkpoint_crosses_languages_and_refuses_changed_state_or_system(self):
++        with tempfile.TemporaryDirectory() as td:
++            root = Path(td) / "portable"; root.mkdir(); self.emit(self.combat, root)
++            scenario = fixture("combat")["system"]["scenarios"][0]
++            events = [step["event"] for step in scenario["steps"][:5]]
++            path = root / "events.json"; path.write_text(json.dumps(events))
++            for source, receiver in [("javascript", "python"), ("python", "javascript")]:
++                checkpoint = self.command(root, source, "checkpoint", str(path))
++                self.assertEqual(checkpoint.returncode, 0, checkpoint.stderr)
++                snapshot = json.loads(checkpoint.stdout)
++                saved = root / "checkpoint.json"; saved.write_text(json.dumps(snapshot))
++                restored = self.command(root, receiver, "restore", str(saved))
++                self.assertEqual(restored.returncode, 0, restored.stderr)
++                self.assertEqual(json.loads(restored.stdout), scenario["steps"][4]["expect"]["state"])
++                for bad in ({**snapshot, "system_sha256": "0" * 64}, {**snapshot, "state": {"phase": "running", "model": {"health": 9, "enemy": 6, "ammo": 2}}}):
++                    saved.write_text(json.dumps(bad))
++                    failed = self.command(root, receiver, "restore", str(saved))
++                    self.assertEqual(failed.returncode, 2)
++                    self.assertIn("CHECKPOINT_", failed.stderr)
++
++    def test_python_only_emission_still_observes_real_session_twice(self):
++        request = fixture(); request["action"] = "verify"; request["job"]["languages"] = ["python"]
++        report = operate_code_system(ROOT, request)
++        self.assertEqual(report["status"], "VERIFIED_FOR_SCENARIOS")
++        self.assertEqual(len(report["verification"]["observations"]), 2)
++        self.assertTrue(all(path.startswith("python/") for path in report["files"]))
++
++    def test_generated_verifier_exits_nonzero_and_source_edits_are_detected(self):
++        request = fixture(); request["action"] = "build"
++        request["system"]["scenarios"][0]["steps"][0]["expect"]["state"]["model"]["stock"] = 999
++        built = operate_code_system(ROOT, request)
++        with tempfile.TemporaryDirectory() as td:
++            root = Path(td) / "project"; root.mkdir(); self.emit(built, root)
++            for language, suffix in (("javascript", "js"), ("python", "py")):
++                verified = self.command(root, language, "verify")
++                self.assertEqual(verified.returncode, 1, verified.stderr)
++                self.assertEqual(json.loads(verified.stdout)["status"], "HOLD")
++                self.assertIn("SCENARIO_EXPECTATION", verified.stdout)
++                module = root / language / ("module." + suffix)
++                module.write_bytes(module.read_bytes() + (b'\n// edited\n' if suffix == "js" else b'\n# edited\n'))
++                refused = self.command(root, language, "observe")
++                self.assertEqual(refused.returncode, 2)
++                self.assertIn("RUNTIME_SOURCE_CHANGED", refused.stderr)
++
++    def test_two_python_products_can_load_in_one_host_without_module_cache_collision(self):
++        with tempfile.TemporaryDirectory() as td:
++            root = Path(td)
++            self.emit(self.inventory, root / "inventory"); self.emit(self.combat, root / "combat")
++            script = root / "host.py"
++            script.write_text('import importlib.util, json\nfrom pathlib import Path\n'
++                'def load(name):\n'
++                '    path=Path(__file__).parent/name/"python/runtime.py"\n'
++                '    spec=importlib.util.spec_from_file_location(name+"_runtime",path)\n'
++                '    module=importlib.util.module_from_spec(spec); spec.loader.exec_module(module)\n'
++                '    return module.load()\n'
++                'inventory=load("inventory"); combat=load("combat")\n'
++                'print(json.dumps([inventory.initial(),combat.initial(),inventory.initial()]))\n')
++            env = dict(os.environ); env.pop("PYTHONPATH", None)
++            result = subprocess.run([sys.executable, str(script)], cwd=root.parent, env=env, capture_output=True, text=True, timeout=30)
++            self.assertEqual(result.returncode, 0, result.stderr)
++            a, b, again = json.loads(result.stdout)
++            self.assertEqual(a, again)
++            self.assertEqual(a["model"], fixture()["system"]["initial_model"])
++            self.assertEqual(b["model"], fixture("combat")["system"]["initial_model"])
++
++    def test_retention_is_idempotent_and_restore_requires_fresh_verification(self):
++        request = fixture(); request["archive"] = self.inventory["code_workflow"]["retention"]["archive"]
++        request["system_archive"] = self.inventory["retention"]["archive"]
++        before = copy.deepcopy(request)
++        result = operate_code_system(ROOT, request)
++        self.assertEqual(result["status"], "VERIFIED_FOR_SCENARIOS")
++        self.assertEqual(result["retention"], self.inventory["retention"])
++        self.assertEqual(request, before)
++        restored = operate_code_system(ROOT, {"action": "restore", "system_archive": result["retention"]["archive"], "structural_sha256": result["retention"]["structural_sha256"]})
++        self.assertEqual(restored["request"], fixture())
++        self.assertEqual(restored["verification"], "REQUIRES_FRESH_EXECUTION")
++
++    def test_function_and_project_renames_do_not_create_new_behavior_atoms(self):
++        request = fixture()
++        names = {function["name"]: "renamed_" + function["name"] for function in request["job"]["program"]["functions"]}
++        def rename_calls(value):
++            if isinstance(value, dict):
++                if value.get("op") == "call": value["function"] = names[value["function"]]
++                for child in value.values(): rename_calls(child)
++            elif isinstance(value, list):
++                for child in value: rename_calls(child)
++        for function in request["job"]["program"]["functions"]:
++            function["name"] = names[function["name"]]; rename_calls(function["body"])
++        request["job"]["program"]["exports"] = [names[name] for name in request["job"]["program"]["exports"]]
++        for case in request["job"]["cases"]: case["function"] = names[case["function"]]
++        for binding in request["system"]["bindings"]:
++            binding["reducer"] = names[binding["reducer"]]
++            if "guard" in binding: binding["guard"] = names[binding["guard"]]
++        for invariant in request["system"]["invariants"]: invariant["function"] = names[invariant["function"]]
++        request["job"]["id"] = "renamed-system"
++        request["job"]["program"]["name"] = "renamed_program"
++        request["system"]["machine"]["id"] = "renamed-graph"
++        request["system_archive"] = self.inventory["retention"]["archive"]
++        result = operate_code_system(ROOT, request)
++        self.assertEqual(result["status"], "VERIFIED_FOR_SCENARIOS", result.get("diagnostic"))
++        self.assertEqual(result["retention"]["structural_sha256"], self.inventory["retention"]["structural_sha256"])
++        self.assertEqual(len(result["retention"]["archive"]["entries"]), 1)
++
++    def test_restored_parts_form_a_new_workflow_without_losing_original(self):
++        original = self.inventory["retention"]
++        restored = operate_code_system(ROOT, {"action": "restore", "system_archive": original["archive"], "structural_sha256": original["structural_sha256"]})["request"]
++        restored["job"]["id"] = "inventory-with-audit"
++        restored["system"]["machine"]["transitions"].append({"from": "open", "event": "audit", "to": "open", "effects": [{"type": "audit-requested"}]})
++        restored["system"]["bindings"].append({"event": "audit", "reducer": "idle"})
++        restored["system"]["exploration"]["events"].append({"type": "audit", "args": []})
++        restored["system_archive"] = original["archive"]
++        restored["archive"] = self.inventory["code_workflow"]["retention"]["archive"]
++        result = operate_code_system(ROOT, restored)
++        self.assertEqual(result["status"], "VERIFIED_FOR_SCENARIOS", result.get("diagnostic"))
++        self.assertEqual(len(result["retention"]["archive"]["entries"]), 2)
++        self.assertEqual(len(original["archive"]["entries"]), 1)
++        self.assertEqual(len(result["code_workflow"]["retention"]["archive"]["entries"]), len(self.inventory["code_workflow"]["retention"]["archive"]["entries"]))
++
++    def test_changed_archives_are_refused(self):
++        for target in ("structure", "construction"):
++            archive = copy.deepcopy(self.inventory["retention"]["archive"])
++            archive["entries"][0][target]["extra"] = "changed"
++            result = operate_code_system(ROOT, {"action": "restore", "system_archive": archive, "structural_sha256": archive["entries"][0]["structural_sha256"]})
++            self.assertEqual(result["status"], "HOLD")
++            self.assertIn("identity mismatch", result["diagnostic"])
++
++    def test_project_protections_precede_execution_and_failed_cases_publish_nothing(self):
++        with tempfile.TemporaryDirectory() as td:
++            existing = Path(td) / "existing"; existing.mkdir()
++            with patch("axm_uc.code_system.operate_code_system") as execute:
++                for path in (existing, ROOT / "src/forbidden-code-system"):
++                    with self.assertRaises(CapabilityError): create_code_system_project(ROOT, {"path": str(path), "request": fixture()})
++                execute.assert_not_called()
++            bad = fixture(); bad["system"]["exploration"]["max_states"] = 1
++            target = Path(td) / "failed"
++            result = UniversalCreationMachine(ROOT).create({"kind": "code-system-project", "inputs": {"path": str(target), "request": bad}})
++            self.assertEqual(result["type"], "CREATION_ERROR")
++            self.assertFalse(target.exists())
++
++    def test_atlas_build_retains_retrievable_construction_and_reverifies_reuse(self):
++        with tempfile.TemporaryDirectory() as td:
++            root = Path(td); memory = root / "experience"
++            intent = json.loads((ROOT / "examples/creation-atlas/inventory-system.json").read_text())["inputs"]["intent"]
++            plan = plan_intent(ROOT, intent)
++            self.assertEqual(plan["status"], "READY", plan.get("gaps"))
++            first = build_intent(ROOT, intent, str(root / "first"), memory=str(memory))
++            self.assertEqual(first["status"], "CHECKS_PASSED", first.get("error"))
++            self.assertTrue((root / "first/code/python/runtime.py").is_file())
++            patterns = operate_atlas(ROOT, {"operation": "query", "memory": str(memory), "categories": ["code-pattern"]})
++            self.assertEqual(patterns["matches"], 1)
++            pattern = patterns["entries"][0]["id"]
++            intent["parameters"]["request"] = {"atlas": pattern, "path": ["request"]}
++            again = build_intent(ROOT, intent, str(root / "reused"), memory=str(memory))
++            self.assertEqual(again["status"], "CHECKS_PASSED", again.get("error"))
++            knowledge = operate_atlas(ROOT, {"operation": "experience", "memory": str(memory)})
++            self.assertEqual(knowledge["retained_code_system_signatures"], 1)
++            self.assertEqual(knowledge["observations"], 2)
++            self.assertFalse(knowledge["automatic_canon_admission"])
++
++    def test_cli_returns_nonzero_for_held_system(self):
++        with tempfile.TemporaryDirectory() as td:
++            path = Path(td) / "request.json"; path.write_text('{"action":"verify"}')
++            completed = subprocess.run([sys.executable, "-m", "axm_uc", "--root", str(ROOT), "code-system", str(path)],
++                cwd=td, env={**os.environ, "PYTHONPATH": str(ROOT / "src")}, capture_output=True, text=True, timeout=30)
++            self.assertEqual(completed.returncode, 2, completed.stderr)
++            self.assertEqual(json.loads(completed.stdout)["status"], "HOLD")
++
++    def test_discovery_station_refuses_generation_only_before_writing(self):
++        request = fixture(); request["action"] = "build"
++        with tempfile.TemporaryDirectory() as td:
++            output = Path(td) / "not-verified"
++            with self.assertRaisesRegex(ValueError, "verify or retain"):
++                run_code_system_station(ROOT, {"operation": "verify-code-system", "path": str(output),
++                                              "values": {"request": request}})
++            self.assertFalse(output.exists())
++
++    def test_unicode_effects_survive_a_non_utf8_python_terminal(self):
++        request = fixture(); request["action"] = "build"
++        label = "r\u00e9serve \U0001f30d"
++        edge = next(t for t in request["system"]["machine"]["transitions"] if t["event"] == "reserve")
++        edge["effects"].append({"label": label})
++        for scenario in request["system"]["scenarios"]:
++            for step in scenario["steps"]:
++                if step["event"]["type"] == "reserve" and step["expect"]["status"] == "APPLIED":
++                    step["expect"]["effects"] = copy.deepcopy(edge["effects"])
++        built = operate_code_system(ROOT, request)
++        self.assertEqual(built["status"], "CANDIDATE")
++        with tempfile.TemporaryDirectory() as td:
++            folder = Path(td); self.emit(built, folder)
++            python = subprocess.run([sys.executable, str(folder / "python/runtime.py"), "verify"],
++                cwd=folder, env={**os.environ, "PYTHONIOENCODING": "ascii"}, capture_output=True, timeout=30)
++            self.assertEqual(python.returncode, 0, python.stderr)
++            observed = json.loads(python.stdout)
++            javascript = self.command(folder, "javascript", "verify")
++            self.assertEqual(javascript.returncode, 0, javascript.stderr)
++            self.assertEqual(observed, json.loads(javascript.stdout))
++            self.assertEqual(observed["status"], "PASS")
++            self.assertTrue(any(e.get("label") == label for s in observed["observations"]["scenarios"]
++                                for step in s["steps"] for e in step["effects"]))
++
++    def test_workflow_discovery_executes_confirms_retains_and_rechecks_stateful_code(self):
++        from axm_uc.workflow_discovery import plan
++        from axm_uc.workflow_experiments import experiment
++        from axm_uc.workflow_memory import read_memory
++        request = {"schema": "axm.workflow-experiment/v0.1", "intent": "Create recoverable combat logic in both languages",
++            "inputs": {"construction": {"type": {"kind": "code-system-request"}, "values": [fixture("combat")]}},
++            "goals": {"session": {"type": {"kind": "stateful-code-project", "quality": "checked"},
++                "checks": [{"metric": "transition_coverage", "unit": "ratio", "min": 1, "max": 1},
++                           {"metric": "languages", "unit": "count", "min": 2},
++                           {"metric": "exploration_depth", "unit": "count", "min": 6}]}},
++            "budget": {"trials": 2}}
++        discovered = plan(ROOT, request)
++        self.assertEqual(discovered["status"], "READY", discovered)
++        self.assertEqual([[n["operator"] for n in c["program"]["nodes"]] for c in discovered["candidates"]], [["verify-code-system"]])
++        with tempfile.TemporaryDirectory() as td:
++            folder = Path(td); memory = str(folder / "memory")
++            result = experiment(ROOT, request, str(folder / "first"), memory=memory)
++            self.assertEqual(result["status"], "VERIFIED_WORKFLOWS", result)
++            self.assertEqual(result["trials"], 2)
++            observation = json.loads((folder / "first" / result["selected"]["observation"]).read_text())
++            self.assertEqual(observation["cases"][0]["metrics"]["session"],
++                             {"transition_coverage": 1, "languages": 2, "exploration_depth": 6})
++            self.assertTrue(observation["confirmation"][0]["repeatable"])
++            self.assertTrue(any(p.endswith("runtime.js") for p in observation["cases"][0]["product_hashes"]))
++            self.assertTrue(any(p.endswith("runtime.py") for p in observation["cases"][0]["product_hashes"]))
++            self.assertEqual(len(read_memory(ROOT, memory)["workflows"]), 1)
++            request["budget"]["states"] = 1
++            self.assertEqual(plan(ROOT, request)["status"], "HOLD_CAPABILITY_GAP")
++            rebound = plan(ROOT, request, memory=memory)
++            self.assertEqual(rebound["status"], "READY")
++            self.assertTrue(rebound["candidates"][0]["reused_structure"])
++            request["goals"]["session"]["checks"][2]["min"] = 7
++            strict = experiment(ROOT, request, str(folder / "strict"), memory=memory)
++            self.assertEqual(strict["status"], "HOLD_NO_CONFIRMED_WORKFLOW", strict)
++            self.assertIsNone(strict["selected"])
++            self.assertEqual(len(read_memory(ROOT, memory)["workflows"]), 1)
++
++
++if __name__ == "__main__":
++    unittest.main()
+diff --git a/tests/test_creation_atlas.py b/tests/test_creation_atlas.py
+index 3a063a8..e35074f 100644
+--- a/tests/test_creation_atlas.py
++++ b/tests/test_creation_atlas.py
+@@ -17,7 +17,7 @@ class CreationAtlasTests(unittest.TestCase):
+         self.temp = tempfile.TemporaryDirectory()
+         self.addCleanup(self.temp.cleanup)
+         self.root = Path(self.temp.name)
+-        for directory in ("capabilities/live", "atlas", "examples/construction-search", "examples/code", "executable-organs", "asset-packages"):
++        for directory in ("capabilities/live", "atlas", "examples/construction-search", "examples/code", "examples/code-systems", "executable-organs", "asset-packages"):
+             shutil.copytree(ROOT / directory, self.root / directory)
+         source = ROOT / "third_party/code-professions/provenance.json"
+         destination = self.root / "third_party/code-professions/provenance.json"
+diff --git a/tests/test_portable_runtime.py b/tests/test_portable_runtime.py
+index 5626fe6..17d3e5f 100644
+--- a/tests/test_portable_runtime.py
++++ b/tests/test_portable_runtime.py
+@@ -136,6 +136,19 @@ class PortableRuntimeTests(unittest.TestCase):
+             programming_result = json.loads(programming.stdout)
+             self.assertEqual(programming_result["result"]["status"], "CHECKS_PASSED", programming_result)
+             self.assertTrue((extracted / "creations/atlas-programming/code/archive.json").is_file())
++            system = subprocess.run(
++                [sys.executable, str(extracted / "run.py"), "create",
++                 str(extracted / "examples/creation-atlas/combat-system.json")],
++                cwd=outside, check=False, capture_output=True, text=True, timeout=90,
++            )
++            self.assertEqual(system.returncode, 0, system.stderr)
++            self.assertEqual(json.loads(system.stdout)["result"]["status"], "CHECKS_PASSED")
++            project = extracted / "creations/atlas-combat-system/code"
++            for command in (["node", str(project / "javascript/runtime.js"), "verify"],
++                            [sys.executable, str(project / "python/runtime.py"), "verify"]):
++                observed = subprocess.run(command, cwd=outside, check=False, capture_output=True, text=True, timeout=30)
++                self.assertEqual(observed.returncode, 0, observed.stderr)
++                self.assertEqual(json.loads(observed.stdout)["status"], "PASS")
+ 
+     def test_changed_declared_file_fails_closed(self):
+         tampered = self.directory / "tampered.zip"
+diff --git a/tools/code_system_demo.py b/tools/code_system_demo.py
+new file mode 100644
+index 0000000..1afd3a1
+--- /dev/null
++++ b/tools/code_system_demo.py
+@@ -0,0 +1,134 @@
++"""Reproduce portable software/game builds, a found defect and construction reuse."""
++from __future__ import annotations
++
++import argparse
++import copy
++import hashlib
++import json
++from pathlib import Path
++import platform
++import subprocess
++import sys
++
++ROOT = Path(__file__).resolve().parents[1]
++sys.path.insert(0, str(ROOT / "src"))
++from axm_uc.atlas_pipeline import build_intent, operate_atlas
++from axm_uc.code_system import operate_code_system
++from axm_uc.code_system_contract import canonical
++from axm_uc.data.code_system.runtime import same
++from axm_uc.workflow_discovery import plan
++from axm_uc.workflow_experiments import experiment
++
++
++def write(path, value):
++    path.write_text(json.dumps(value, sort_keys=True, ensure_ascii=False, indent=2, allow_nan=False) + "\n", encoding="utf-8", newline="\n")
++
++
++def require(condition, message):
++    if not condition:
++        raise RuntimeError(message)
++
++
++def demonstrate(output):
++    output = Path(output).resolve()
++    output.mkdir(parents=True, exist_ok=False)
++    memory, projects = output / "experience", []
++
++    def build(name, intent):
++        result = build_intent(ROOT, intent, str(output / name), memory=str(memory))
++        require(result["status"] == "CHECKS_PASSED", str(result.get("error", result.get("plan"))))
++        project = output / name / "code"
++        receipt = json.loads((project / "workflow.json").read_text(encoding="utf-8"))
++        outputs = []
++        for language, command in (("javascript", ["node", "javascript/runtime.js", "verify"]),
++                                  ("python", [sys.executable, "python/runtime.py", "verify"])):
++            run = subprocess.run(command, cwd=project, check=False, capture_output=True, text=True, encoding="utf-8", timeout=30)
++            require(run.returncode == 0, run.stdout + run.stderr)
++            observed = json.loads(run.stdout)
++            require(observed["status"] == "PASS", "standalone verifier did not pass")
++            outputs.append(observed)
++        require(same(*outputs), "standalone JavaScript/Python session observations differ")
++        measured = outputs[0]["observations"]
++        projects.append({"name": name, "status": receipt["status"], "system_sha256": receipt["system_sha256"],
++            "behavior_sha256": receipt["retention"]["structural_sha256"], "source_sha256": receipt["artifact_sha256"],
++            "scenarios": len(measured["scenarios"]), "scenario_steps": sum(len(s["steps"]) for s in measured["scenarios"]),
++            "standalone_verifiers": "PASS_BOTH_LANGUAGES", "input_unchanged": measured["input_unchanged"],
++            "replay_and_recovery": all(s["replay_equal"] and s["recovery_equal"] for s in measured["scenarios"]),
++            "exploration": measured["exploration"], "function_atoms": len(receipt["code_workflow"]["retention"]["archive"]["entries"]),
++            "system_atoms_in_project_archive": len(receipt["retention"]["archive"]["entries"])})
++        return receipt
++
++    for name in ("inventory", "combat"):
++        intent = json.loads((ROOT / "examples/creation-atlas" / (name + "-system.json")).read_text())["inputs"]["intent"]
++        build(name, intent)
++
++    # The current example oracles deliberately do not cover repeated lethal hits.
++    flawed = json.loads((ROOT / "examples/code-systems/combat.json").read_text())
++    flawed["action"] = "verify"
++    hit = next(f for f in flawed["job"]["program"]["functions"] if f["name"] == "hit")
++    hit["body"]["fields"]["health"] = hit["body"]["fields"]["health"]["right"]
++    held = operate_code_system(ROOT, flawed)
++    require(held["status"] == "HOLD" and held["code_workflow"]["result"] == "VERIFIED_FOR_CASES", "seeded defect was not isolated by sequence exploration")
++    require(all(row["passed"] for row in held["verification"]["case_checks"]), "seeded probe unexpectedly failed a scripted scenario")
++    failures = [row["output"]["exploration"]["counterexample"] for row in held["verification"]["observations"]]
++    require(all(same(failures[0], row) for row in failures[1:]), "counterexample differed across runs or languages")
++    write(output / "seeded-defect.json", held)
++
++    patterns = operate_atlas(ROOT, {"operation": "query", "categories": ["code-pattern"], "memory": str(memory)})
++    identity = next(row["id"] for row in patterns["entries"] if row["label"] == "inventory-system")
++    retained = operate_atlas(ROOT, {"operation": "get", "id": identity, "memory": str(memory)})
++    request = copy.deepcopy(retained["data"]["request"])
++    request["job"]["id"] = "inventory-with-audit"
++    request["system"]["machine"]["transitions"].append({"from": "open", "event": "audit", "to": "open", "effects": [{"type": "audit-requested"}]})
++    request["system"]["bindings"].append({"event": "audit", "reducer": "idle"})
++    request["system"]["exploration"]["events"].append({"type": "audit", "args": []})
++    request["archive"] = json.loads((output / "inventory/code/archive.json").read_text())
++    request["system_archive"] = json.loads((output / "inventory/code/system-archive.json").read_text())
++    build("inventory-audit", {"purpose": "Compose a new audit command from retained inventory parts without replacing the original.",
++        "direction": "software-systems", "goals": ["session-behavior", "invariant-exploration", "portable-recovery", "retained-system"],
++        "parameters": {"request": request}})
++    require(projects[0]["function_atoms"] == projects[2]["function_atoms"], "reuse unexpectedly created duplicate function atoms")
++    require(projects[2]["system_atoms_in_project_archive"] == 2, "new system did not preserve its prior construction")
++    knowledge = operate_atlas(ROOT, {"operation": "experience", "memory": str(memory)})
++    discovery_request = {"schema": "axm.workflow-experiment/v0.1", "intent": "Create recoverable combat logic in both languages",
++        "inputs": {"construction": {"type": {"kind": "code-system-request"},
++                                    "values": [json.loads((ROOT / "examples/code-systems/combat.json").read_text())]}},
++        "goals": {"session": {"type": {"kind": "stateful-code-project", "quality": "checked"},
++            "checks": [{"metric": "transition_coverage", "unit": "ratio", "min": 1, "max": 1},
++                       {"metric": "languages", "unit": "count", "min": 2},
++                       {"metric": "exploration_depth", "unit": "count", "min": 6}]}},
++        "budget": {"trials": 2}}
++    write(output / "discovery-request.json", discovery_request)
++    discovered = plan(ROOT, discovery_request)
++    require(discovered["status"] == "READY", "stateful-code workflow was not discovered")
++    experiment_path, workflow_memory = output / "discovered-code", output / "workflow-memory"
++    discovered_result = experiment(ROOT, discovery_request, str(experiment_path), memory=str(workflow_memory))
++    require(discovered_result["status"] == "VERIFIED_WORKFLOWS", canonical(discovered_result))
++    observation = json.loads((experiment_path / discovered_result["selected"]["observation"]).read_text())
++    require(all(row["repeatable"] for row in observation["confirmation"]), "discovered system did not reproduce")
++    source_paths = ["src/axm_uc/code_system.py", "src/axm_uc/code_system_contract.py", "src/axm_uc/data/code_system/runtime.py",
++                    "src/axm_uc/data/code_system/runtime.js", "src/axm_uc/atlas_pipeline.py", "src/axm_uc/creation_atlas.py",
++                    "src/axm_uc/workflow_discovery.py", "src/axm_uc/workflow_experiments.py", "atlas/operators/code-systems.json",
++                    "examples/code-systems/inventory.json", "examples/code-systems/combat.json", "atlas/code-systems.json",
++                    "tools/code_system_demo.py"]
++    proof = {"schema": "axm.code-system-proof/v0.1", "status": "PASS", "environment": {"python": platform.python_version(),
++        "node": subprocess.check_output(["node", "--version"], text=True).strip(), "platform": platform.system()},
++        "sources": {name: hashlib.sha256((ROOT / name).read_bytes()).hexdigest() for name in source_paths},
++        "projects": projects, "seeded_defect": {"change": "Removed the zero clamp from the combat hit reducer.",
++        "function_cases": "PASS", "scripted_scenarios": "PASS", "exploration": "COUNTEREXAMPLE", "shortest_trace": failures[0],
++        "same_in_both_languages_and_repeats": True}, "retained_code_system_signatures": knowledge["retained_code_system_signatures"],
++        "workflow_discovery": {"status": discovered_result["status"], "trials": discovered_result["trials"],
++            "operators": [node["operator"] for node in observation["program"]["nodes"]],
++            "metrics": observation["cases"][0]["metrics"], "confirmation_repeatable": True,
++            "retained_structures": discovered_result["retained_structures"],
++            "product_hashes": observation["cases"][0]["product_hashes"]},
++        "scope": "Generated code and sessions, finite declared event alphabets, replay/recovery, portable execution and construction reuse. No rendered UI, gameplay balance, timing, external effects or universal correctness claim."}
++    write(output / "proof.json", proof)
++    return proof
++
++
++if __name__ == "__main__":
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("output", help="New directory for full runnable products and evidence")
++    args = parser.parse_args()
++    print(canonical(demonstrate(args.output)))

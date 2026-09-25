@@ -1,0 +1,321 @@
+{
+  "capsule_id": "3372333072efb4cf140f1bd94f29c33fb9dac953b5325c58a329bbba05d2bdef",
+  "evidence": {
+    "files": [
+      {
+        "additions": 4,
+        "binary": false,
+        "content_sha256": "0ced3abbbf6347dfbd037d70fd9af737c2c1a8c4d95c1c203f5484821e69a0d2",
+        "deletions": 0,
+        "path": "README.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Core rule"
+        ]
+      },
+      {
+        "additions": 48,
+        "binary": false,
+        "content_sha256": "6f16c23e9e1fb2ca9e03a2fd644ae0e8a8efb4a49bb310639f3c850697796331",
+        "deletions": 0,
+        "path": "capabilities/live/AXM-CAP-WORKFLOW-DISCOVERY.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 39,
+        "binary": false,
+        "content_sha256": "5cb70d9054a7923a78d5f1f1a87934ecdf300b9090698fc0100035064f80a8d6",
+        "deletions": 0,
+        "path": "capabilities/live/AXM-CAP-WORKFLOW-STATION.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 10,
+        "binary": false,
+        "content_sha256": "e92ce9d0fc500bc7030befe0979b7f7e72bff83f128b1a3928505298918f0e55",
+        "deletions": 3,
+        "path": "docs/CREATION_ATLAS.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Retrieve only what the direction needs"
+        ]
+      },
+      {
+        "additions": 167,
+        "binary": false,
+        "content_sha256": "cf222076c60545a99640eb1bcaa68df7d30baf016638e03c089df1ee68270e81",
+        "deletions": 0,
+        "path": "docs/WORKFLOW_DISCOVERY.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Discover, test and retain construction workflows",
+          "Use the ordinary machine",
+          "Intent must name observable outcomes",
+          "Iteration before, during and after construction",
+          "Rank product outcomes, not declarations",
+          "Learning keeps construction causes",
+          "Extending tested understanding"
+        ]
+      },
+      {
+        "additions": 17,
+        "binary": false,
+        "content_sha256": "80e643f6c7a8d0ab7cbb2c19ccaeaea0d91860ce2379402a584489cc0bb36cd4",
+        "deletions": 3,
+        "path": "src/axm_uc/atlas_pipeline.py",
+        "status": "M",
+        "symbols": [
+          "_search_key",
+          "plan_intent",
+          "_observe",
+          "build_intent",
+          "operate_atlas"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 10,
+        "binary": false,
+        "content_sha256": "42d8c6bdfd4f84117224f249f40a4367fff833088ce8e1c794ad05f6abfc351c",
+        "deletions": 0,
+        "path": "src/axm_uc/creation_atlas.py",
+        "status": "M",
+        "symbols": [
+          "CreationAtlas"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 16,
+        "binary": false,
+        "content_sha256": "3713cb40aa0418b331461f696fd7b46f540371c0149064b8e5a74901e786e7bd",
+        "deletions": 0,
+        "path": "src/axm_uc/standalone_creation_capabilities.py",
+        "status": "M",
+        "symbols": [
+          "register_standalone_creation_builtins"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 178,
+        "binary": false,
+        "content_sha256": "8943f049d13c0e4b0ba4cace5d95e55b6bb4193ed82f8460d9910b5483c58040",
+        "deletions": 0,
+        "path": "src/axm_uc/workflow_contracts.py",
+        "status": "A",
+        "symbols": [
+          "name",
+          "type_contract",
+          "matches",
+          "number",
+          "load_operators",
+          "validate_request"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 317,
+        "binary": false,
+        "content_sha256": "cd31d49620a9e722ed4efe43556367dd19b94f29cf9bd8dd536da023ea07363e",
+        "deletions": 0,
+        "path": "src/axm_uc/workflow_discovery.py",
+        "status": "A",
+        "symbols": [
+          "SearchLimit",
+          "source_values",
+          "origin",
+          "uses",
+          "choice_order",
+          "technical_fit",
+          "workflow_signature",
+          "compose",
+          "plan",
+          "compile_candidate",
+          "operate"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 245,
+        "binary": false,
+        "content_sha256": "c09c9a37af6f11810027512dfd23a447a8425126623788e53489a07541092e60",
+        "deletions": 0,
+        "path": "src/axm_uc/workflow_experiments.py",
+        "status": "A",
+        "symbols": [
+          "_diagnose",
+          "_measure",
+          "_deficits",
+          "_rank",
+          "_prefixes",
+          "_case",
+          "_distance",
+          "experiment"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 96,
+        "binary": false,
+        "content_sha256": "33d8c337747db303e5400cdebb089f09195bc8aaf4dad9cb5060eb78b9ac07ae",
+        "deletions": 0,
+        "path": "src/axm_uc/workflow_memory.py",
+        "status": "A",
+        "symbols": [
+          "read_memory",
+          "retain",
+          "add_to_atlas"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 89,
+        "binary": false,
+        "content_sha256": "9194c69333c0c67042f5072b76c533e018ff7bbd457e4be541ab9d3cd3e674b4",
+        "deletions": 0,
+        "path": "src/axm_uc/workflow_reuse.py",
+        "status": "A",
+        "symbols": [
+          "rebind_workflows"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 106,
+        "binary": false,
+        "content_sha256": "4cde95588208f98c855e3bfb535084c4eeba34b3fe2684bd64db529a304fb90a",
+        "deletions": 0,
+        "path": "src/axm_uc/workflow_stations.py",
+        "status": "A",
+        "symbols": [
+          "run_station"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 10,
+        "binary": false,
+        "content_sha256": "9c4fc578f7664bc5e90b4fe150a391d684e289dd1423d3a814a6cf409d03fc8f",
+        "deletions": 0,
+        "path": "tests/test_portable_runtime.py",
+        "status": "M",
+        "symbols": [
+          "PortableRuntimeTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 304,
+        "binary": false,
+        "content_sha256": "5d921378b3cc5b280d5e21c6497b27140565791b74067a0baa482f7dfab7bf56",
+        "deletions": 0,
+        "path": "tests/test_workflow_discovery.py",
+        "status": "A",
+        "symbols": [
+          "request",
+          "WorkflowDiscoveryTests"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "de1bfa05699974804d5d216abbe20f4ecd118aa7869ea447e3233df21ae2bfe4"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 9,
+    "kinds": [
+      "code",
+      "configuration",
+      "knowledge",
+      "organ-capability",
+      "protocol-state",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "add",
+      "after",
+      "atlas",
+      "axiom",
+      "axm",
+      "before",
+      "build",
+      "builtins",
+      "candidate",
+      "cap",
+      "capabilities",
+      "case",
+      "causes",
+      "choice",
+      "codex",
+      "compile",
+      "compose",
+      "construction",
+      "contract",
+      "contracts",
+      "creation",
+      "creation-machine",
+      "declarations",
+      "deficits",
+      "diagnose",
+      "direction",
+      "discover",
+      "discovery",
+      "distance",
+      "during",
+      "experiment",
+      "experiments",
+      "extending",
+      "fit",
+      "from",
+      "intent",
+      "iteration",
+      "json",
+      "keeps",
+      "key",
+      "learning",
+      "limit",
+      "live",
+      "load",
+      "machine",
+      "matches",
+      "measure",
+      "memory",
+      "merge",
+      "mike",
+      "mir",
+      "must",
+      "name",
+      "needs",
+      "not",
+      "number",
+      "observable",
+      "observe",
+      "only",
+      "operate",
+      "operators",
+      "order",
+      "ordinary",
+      "origin"
+    ]
+  },
+  "source": {
+    "base": "06fe1c101b29610f67aa8dc4a54410b352996dd4",
+    "commit_subject": "Merge pull request #229 from mike-axiom-mir/codex/workflow-discovery",
+    "head": "8ea49a35e6fffe48a1598d0b64435f56d4f29828",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

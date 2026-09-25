@@ -1,0 +1,1427 @@
+diff --git a/README.md b/README.md
+index 2eeeb35..69e3bd1 100644
+--- a/README.md
++++ b/README.md
+@@ -62,6 +62,14 @@ For deterministic PNG inspection of actual GLB geometry and sampled poses withou
+ a GPU, browser, Blender, NumPy, or Pillow, see
+ [SOFTWARE_GLB_PREVIEW.md](docs/SOFTWARE_GLB_PREVIEW.md).
+ 
++For a connected atlas of construction knowledge, explicit goal-to-blueprint
++routes and reusable measured experience, see [CREATION_ATLAS.md](docs/CREATION_ATLAS.md).
++The executable examples in `examples/creation-atlas/` cover headless construction
++search, material maps and interface-driven software. They retain the construction
++causes and recheck saved search settings under each new request's criteria.
++The search and continuous character controller are described in
++[INTENT_DIRECTED_SEARCH.md](docs/INTENT_DIRECTED_SEARCH.md).
++
+ ## Core rule
+ 
+ > **Do not hide what the machine is.**
+diff --git a/capabilities/live/AXM-CAP-CREATION-ATLAS.json b/capabilities/live/AXM-CAP-CREATION-ATLAS.json
+new file mode 100644
+index 0000000..58078ba
+--- /dev/null
++++ b/capabilities/live/AXM-CAP-CREATION-ATLAS.json
+@@ -0,0 +1,29 @@
++{
++  "id": "AXM-CAP-CREATION-ATLAS",
++  "version": "0.1.0",
++  "status": "live",
++  "purpose": "Retrieve source-backed construction knowledge by category and direction, bind explicit goals to installed blueprints, execute ordinary capabilities, and retain rechecked construction experience.",
++  "handles": ["creation-atlas", "atlas-creation"],
++  "input_contract": {
++    "required": [],
++    "required_by_operation": {
++      "get": ["id"], "closure": ["ids"], "plan": ["intent"],
++      "build": ["intent", "path"], "experience": ["memory"]
++    },
++    "properties": {
++      "operation": "summary, query, get, closure, plan, build or experience",
++      "intent": "purpose, exact direction, explicit goals, typed parameters and optional blueprint id; parameters can select atlas data",
++      "memory": "optional caller-selected persistent experience directory outside machine internals",
++      "plan_sha256": "optional expected plan identity; changed source, parameters or experience returns HOLD before writes"
++    }
++  },
++  "output_contract": {"kind": "atlas-knowledge-or-goal-bound-creation", "contains": ["source and evidence labels", "deterministic route and explicit gaps", "retained intent, construction, results and goal checks", "reusable measured search seeds"]},
++  "dependencies": [],
++  "implementation": {"kind": "DETERMINISTIC_SOURCE", "entrypoint": "builtin:creation_atlas", "source": "src/axm_uc/atlas_pipeline.py"},
++  "limitations": [
++    "An index record is not proof of execution. Descriptor resources and research anatomy remain explicitly unverified.",
++    "Direction and goals are explicit contracts; arbitrary prose does not acquire invented semantics or a quality score.",
++    "Categories and blueprint compositions are extensible. Execution needs installed capabilities and bounded input contracts.",
++    "Experience preserves success and failure. Search seeds are measured again; observations never silently become canon or new capabilities."
++  ]
++}
+diff --git a/docs/CREATION_ATLAS.md b/docs/CREATION_ATLAS.md
+new file mode 100644
+index 0000000..5533e4e
+--- /dev/null
++++ b/docs/CREATION_ATLAS.md
+@@ -0,0 +1,184 @@
++# Direction, knowledge, construction and evidence
++
++UC's creation atlas joins its existing libraries into one inspectable graph.
++It does not replace the capability store, executable-organ library, asset atoms,
++material machinery, product workflows or construction search.
++
++The installed view currently contains 2,373 entries across 26 categories. These
++include descriptive research records. They are **not 2,373 working capabilities**.
++The index reports the evidence level, source and source digest on each entry.
++
++| Atlas category | Existing source | What the entry establishes |
++| --- | --- | --- |
++| Shape | Form-pattern grammar and asset atoms | Available construction operations, or explicitly unresolved mesh descriptors |
++| Texture | Material channel contracts and texture atoms | Channel meaning and descriptor references; an external asset URI is not an installed texture |
++| Material | Native generator families and material-response pack | Generatable map families versus richer response intent requiring a renderer binding |
++| Organ | Executable packages and research anatomy | Installed source/declared fixtures versus descriptive organs; indexing does not run fixtures |
++| Capability | Live manifests and implementation references | Installed route, inputs, dependencies, implementation and limitations |
++| Protocol | Construction, material-bundle and organ-goal contracts | The contract used by an existing executor or verifier |
++| Workflow | Product lifecycle profiles | Required stages, owners and evidence; unexecuted stages remain work to do |
++| Blueprint | Installed `atlas/*.json` packs | Goal checks and a dependency graph of existing capabilities |
++| Recipe | Existing construction-search examples | Editable starting contracts, loaded from their original files |
++| File | Grammar profiles and bounded native output formats | Actual supported format/validation scope, not an incentive to emit every format |
++| Direction | Software direction catalog | Domain knowledge for choosing a route, not automatic capability sufficiency |
++| Experience | An explicitly selected persistent collection | Prior success/failure, measurements and causes; current reuse must be checked again |
++| Construction pattern | Semantically grouped successful observations | Measured reusable candidates, separate from admitted capabilities and canon |
++
++The final two categories appear when a collection contains observations. Extra
++categories such as acoustics, joints, manufacturing processes or accessibility
++rules can be added as data. Defining a category does not implement its subject.
++
++## Retrieve only what the direction needs
++
++Use the ordinary machine route `creation-atlas` (alias `atlas-creation`):
++
++```python
++from pathlib import Path
++from axm_uc.machine import UniversalCreationMachine
++
++machine = UniversalCreationMachine(Path.cwd())
++result = machine.create({
++    "kind": "creation-atlas",
++    "inputs": {"operation": "query", "query": "ceramic",
++               "categories": ["material"], "limit": 10}
++})
++```
++
++`summary` returns category counts; `get` returns one full record; `closure` follows
++its typed relationships. Search is deterministic lexical retrieval with explicit
++category filters. Search rank is not evidence that a part meets a goal.
++
++For creation, `purpose` retains the human direction, `direction` selects an exact
++route family, `goals` name required outcomes, and `parameters` carry executable
++contracts. Humans and optional AI can supply these same values. UC does not
++silently translate arbitrary prose into geometry, physics or an aesthetic score.
++
++```json
++{
++  "purpose": "Find a vessel inside the declared display envelope",
++  "direction": "construction",
++  "goals": ["construction-criteria", "retained-source", "glb-output"],
++  "parameters": {
++    "search": {"atlas": "recipe:vessel", "path": ["value"]}
++  }
++}
++```
++
++The `atlas` reference pulls the original recipe into the request as literal
++construction data. Supply a changed search contract directly to change its
++dimensions, options, acceptance criteria, motion probe or budget. Each intent
++keeps its original request plus the resolved parameters and selected knowledge.
++
++Four installed blueprints execute useful work:
++
++| Direction | Goals | Executed work |
++| --- | --- | --- |
++| `construction` | `construction-criteria`, `retained-source`, `glb-output` | Headless form/character search, decoded-output measurement, retained GLB and creator source |
++| `material` | `material-policy`, `material-maps` | Material generation, PNG decoding, channel/integrity checks and caller-defined size/normal/budget policy |
++| `software` | `interface-closure`, `project-checks` | Exact installed-organ dependency discovery, source composition, independent project verification |
++| `programming` | `acceptance-cases`, `retained-code` | Typed JavaScript/Python compilation, explicit case execution, repeatability and function archive retention |
++
++Choose the goals relevant to the requested deliverable. These do not imply
++photorealism, physical balance, live browser interaction or acceptance in an
++unobserved target engine.
++
++The programming route connects the standalone compiler/workflow already on
++`main`; it requires local Node and Python. It verifies bounded pure functions
++against declared cases. See [PROGRAMMING_CREATION.md](../PROGRAMMING_CREATION.md).
++The portable runtime carries both donor packages and the atlas pack, and its
++relocation test creates a vessel plus verified retained code from another working
++directory without a donor checkout or runtime network service.
++
++## Planning and execution
++
++`operation: plan` takes `intent` and optional `memory`. It writes nothing. It
++requires complete declared goal coverage, typed parameters, existing knowledge,
++available capability entrypoints and an acyclic step graph. Existing search and
++organ contracts also receive domain preflight. Organ selection pins the exact
++packages selected by the existing interface resolver.
++
++Sufficient blueprints are ordered by step count, then id. An explicit `blueprint`
++can select one. Unknown directions, goals, interfaces, parameters and required
++capabilities return gaps. A blueprint is not selected merely because it shares a
++keyword with the purpose.
++
++`operation: build` adds a new `path`, optional `memory`, and optionally the
++`plan_sha256` returned by planning. A changed plan holds before creation. Plans
++pin the atlas snapshot, declared sources, Python/data runtime and resolved
++request. This is deliberately conservative: unrelated indexed source changes
++can require a fresh plan. It is not a sandbox or a complete external runtime lock.
++
++Execution invokes the ordinary capability store in dependency order. Every
++step's checks run before downstream work. Goals refer to observed result fields
++or retained files. A failed check stops the pipeline and preserves its cause.
++`CHECKS_PASSED` means the requested checks passed, within their stated scope.
++
++Each run keeps:
++
++- `intent.json`: resolved plan, original direction, selected knowledge and pins;
++- the actual deliverables and each executor's source/evidence files;
++- `run.json`: step results, checks, goal observations and file digests;
++- `experience.json`: reusable observations and measured construction candidates.
++
++Creation refuses an existing output directory and the protected live machine
++body. Blueprint output bindings remain inside the new creation directory.
++Installed blueprints are executable machine configuration and use the effects
++and boundaries of their selected capabilities; this is not an untrusted-plugin
++sandbox. Request parameters cannot install a blueprint or capability.
++
++## Growth by use, with fresh verification
++
++Set `memory` to a persistent experience directory shared by later requests.
++Successes and executed failures enter it as content-addressed observations.
++The output and memory directories must be separate. The same collection is
++queryable through `query`, `get`, `closure`, `summary` and `experience`.
++
++Successful searches contribute their actual settings, construction recipe,
++semantic signature and checks. Compatible construction-space and runtime pins
++allow a later search to try those settings first. New criteria and budgets still
++govern acceptance; previous success cannot turn an impossible new request into a
++pass. Failed observations remain retrievable and do not supply accepted seeds.
++
++The construction-pattern view groups by UC's existing semantic signature.
++Repeated uses, renames and appearance-only variants do not count as new
++construction capability. Observation count and distinct construction signatures
++are reported separately. These are candidates; existing tested acceptance and
++admission rules still decide reusable-library/canon growth.
++
++Experience is past evidence, not fresh verification of the old artifact. Its
++content identity detects accidentally edited records; it is not an authorship or
++trust signature. Warm seeds must undergo the receiving search's measurements.
++The JSON backend loads a selected collection of at most 4,096 records/64 MB per
++request. Larger deployments need scoped collections or an indexed storage
++adapter; the category model has no fixed subject ceiling.
++
++## Extending the connected machine
++
++Add records/blueprints to a versioned `axm.creation-atlas-pack/v0.1` file under
++`atlas/`. Records have unique ids, arbitrary categories, source-backed data,
++evidence labels and typed relationships. `source_data` can point at an existing
++JSON file and field path instead of copying a donor catalog.
++
++A blueprint declares `direction`, typed `parameters`, optional `defaults`,
++`uses`, `steps`, `artifacts`, `goals` and `limitations`. Each step names an installed
++capability, explicit dependencies, inputs and checks. Inputs use literal JSON,
++`{"from": "request.parameter"}`, `{"from": "steps.prior.field"}` or
++`{"output": "relative/path"}`. Goal checks compare observed result fields with
++`equals` or finite numeric bounds, or require a named artifact. Every goal needs
++a check; forward references and cycles are rejected.
++
++The next major build is **goal-driven composition of new blueprints**: typed
++input/output/effect contracts, unit and coordinate compatibility, reusable
++construction edits, and a planner that searches compatible compositions. It
++should connect shape, motion, material and target-realization checks in the same
++construction body, then propose any missing operator through existing growth
++machinery. This atlas provides the inspectable parts, provenance, goals and
++measured experience for that planner; it does not claim that synthesis already
++exists.
++
++Run the examples in `examples/creation-atlas/` through `machine.create`, or run:
++
++```sh
++PYTHONPATH=src python tools/creation_atlas_demo.py /tmp/uc-atlas-demo
++PYTHONPATH=src:tests python -m unittest test_creation_atlas -v
++```
+diff --git a/src/axm_uc/atlas_pipeline.py b/src/axm_uc/atlas_pipeline.py
+new file mode 100644
+index 0000000..c3a7fcd
+--- /dev/null
++++ b/src/axm_uc/atlas_pipeline.py
+@@ -0,0 +1,503 @@
++"""Goal-bound blueprint execution and reusable, rechecked construction experience."""
++from __future__ import annotations
++
++from copy import deepcopy
++import hashlib
++import json
++import math
++from pathlib import Path
++
++from .atomic import atomic_write_json
++from .creation_atlas import CreationAtlas, REFERENCE_DEPENDENCIES, canonical, digest, local_file, runtime_pin, strings, text
++
++PLAN_SCHEMA = "axm.atlas-intent-plan/v0.1"
++RUN_SCHEMA = "axm.atlas-creation-run/v0.1"
++EXPERIENCE_SCHEMA = "axm.atlas-experience/v0.1"
++
++
++def _relative(value):
++    value = text(value, "output path")
++    path = Path(value)
++    if path.is_absolute() or ".." in path.parts or "\\" in value or value in {".", ""}:
++        raise ValueError("blueprint output must be a non-empty relative path")
++    if path.parts[0] in {"intent.json", "run.json", "experience.json"}:
++        raise ValueError("blueprint output conflicts with retained pipeline state")
++    return path.as_posix()
++
++
++def _output(root, value):
++    from .capabilities import _is_machine_body_path, _resolve_output_path
++    path = _resolve_output_path(Path(root), text(value, "path"))
++    if _is_machine_body_path(Path(root), path):
++        raise ValueError("atlas creation cannot rewrite the live machine body")
++    return path
++
++
++def _at(value, path):
++    if not isinstance(path, list) or len(path) > 32:
++        raise ValueError("field path must be a list with at most 32 components")
++    for key in path:
++        if isinstance(value, dict) and isinstance(key, str) and key in value:
++            value = value[key]
++        elif isinstance(value, list) and type(key) is int and 0 <= key < len(value):
++            value = value[key]
++        else:
++            raise ValueError("referenced field is absent: " + str(path))
++    return deepcopy(value)
++
++
++def _parameters(value, atlas, used):
++    if isinstance(value, dict) and "atlas" in value:
++        if set(value) - {"atlas", "path"}:
++            raise ValueError("atlas parameter accepts only atlas and path")
++        entry = atlas.get(value["atlas"])
++        used.add(entry["id"])
++        # A loaded value is literal data, never recursively evaluated as bindings.
++        return _at(entry["data"], value.get("path", []))
++    if isinstance(value, dict):
++        return {key: _parameters(child, atlas, used) for key, child in value.items()}
++    if isinstance(value, list):
++        return [_parameters(child, atlas, used) for child in value]
++    return deepcopy(value)
++
++
++def _bindings(value, parameters, results, target):
++    from .capabilities import _resolve_binding
++    if isinstance(value, dict) and "output" in value:
++        if set(value) != {"output"}:
++            raise ValueError("output binding accepts only output")
++        path = target / _relative(value["output"])
++        if not path.resolve().is_relative_to(target.resolve()):
++            raise ValueError("output binding leaves the creation directory")
++        return str(path)
++    if isinstance(value, dict) and "from" in value:
++        return _resolve_binding(value, parameters, results)
++    if isinstance(value, dict):
++        return {key: _bindings(child, parameters, results, target) for key, child in value.items()}
++    if isinstance(value, list):
++        return [_bindings(child, parameters, results, target) for child in value]
++    return deepcopy(value)
++
++
++def _binding_refs(value):
++    if isinstance(value, dict):
++        if "from" in value:
++            if set(value) - {"from", "default"} or not isinstance(value["from"], str):
++                raise ValueError("blueprint bindings accept from and optional default")
++            yield value
++        elif "output" in value:
++            if set(value) != {"output"}:
++                raise ValueError("invalid output binding")
++            _relative(value["output"])
++        else:
++            for child in value.values():
++                yield from _binding_refs(child)
++    elif isinstance(value, list):
++        for child in value:
++            yield from _binding_refs(child)
++
++
++def _check_contract(check, step_ids, artifacts):
++    if not isinstance(check, dict):
++        raise ValueError("goal checks must be objects")
++    if "artifact" in check:
++        if set(check) != {"artifact"} or check["artifact"] not in artifacts:
++            raise ValueError("goal check references an unknown artifact")
++        return
++    if set(check) - {"step", "path", "equals", "min", "max"} or check.get("step") not in step_ids:
++        raise ValueError("goal check references an unknown step or unsupported field")
++    path = check.get("path")
++    if not isinstance(path, list) or not path or len(path) > 32 or any(type(k) not in {str, int} for k in path):
++        raise ValueError("goal check needs a field path")
++    comparisons = set(check) & {"equals", "min", "max"}
++    if not comparisons or ("equals" in comparisons and len(comparisons) > 1):
++        raise ValueError("goal check needs equals or numeric bounds")
++    for key in ("min", "max"):
++        if key in check and (type(check[key]) not in {int, float} or not math.isfinite(check[key])):
++            raise ValueError("check bounds must be finite numbers")
++    if check.get("min", -math.inf) > check.get("max", math.inf):
++        raise ValueError("check minimum exceeds maximum")
++
++
++def _validate_blueprint(blueprint):
++    allowed = {"id", "version", "purpose", "direction", "parameters", "defaults", "uses", "steps", "goals", "artifacts", "limitations"}
++    if not isinstance(blueprint, dict) or set(blueprint) - allowed:
++        raise ValueError("unsupported blueprint fields")
++    for field in ("id", "version", "purpose", "direction"):
++        text(blueprint.get(field), "blueprint " + field)
++    parameters, defaults = blueprint.get("parameters"), blueprint.get("defaults", {})
++    if not isinstance(parameters, dict) or not isinstance(defaults, dict) or set(defaults) - set(parameters):
++        raise ValueError("blueprint parameters/defaults must agree")
++    for name, kind in parameters.items():
++        text(name, "parameter")
++        if kind not in {"object", "array", "string", "number", "boolean"}:
++            raise ValueError("unsupported parameter type")
++    strings(blueprint.get("uses", []), "blueprint uses")
++    steps = blueprint.get("steps")
++    if not isinstance(steps, list) or not 1 <= len(steps) <= 32:
++        raise ValueError("blueprint requires 1..32 steps")
++    ordered, by_id = [], {}
++    for step in steps:
++        if not isinstance(step, dict) or set(step) != {"id", "capability", "depends_on", "inputs", "checks"}:
++            raise ValueError("step requires id, capability, depends_on, inputs and checks")
++        identity = text(step["id"], "step id")
++        if "." in identity or identity in by_id:
++            raise ValueError("step ids must be unique and cannot contain dots")
++        text(step["capability"], "capability")
++        strings(step["depends_on"], "step dependencies")
++        if not isinstance(step["inputs"], dict) or not isinstance(step["checks"], list):
++            raise ValueError("invalid step inputs/checks")
++        by_id[identity] = step
++    pending = set(by_id)
++    while pending:
++        ready = sorted(key for key in pending if set(by_id[key]["depends_on"]) <= set(ordered))
++        if not ready:
++            raise ValueError("blueprint has cyclic or missing step dependencies")
++        ordered.extend(ready)
++        pending.difference_update(ready)
++    ancestors = {}
++    for identity in ordered:
++        step = by_id[identity]
++        ancestors[identity] = set(step["depends_on"])
++        for parent in step["depends_on"]:
++            ancestors[identity].update(ancestors[parent])
++        for ref in _binding_refs(step["inputs"]):
++            parts = ref["from"].split(".")
++            if len(parts) < 2 or parts[0] not in {"request", "steps"}:
++                raise ValueError("binding must name an explicit request field or prior step")
++            if parts[0] == "request" and parts[1] not in parameters:
++                raise ValueError("binding references an undeclared parameter")
++            if parts[0] == "steps" and parts[1] not in ancestors[identity]:
++                raise ValueError("step binding must name a dependency")
++        for check in step["checks"]:
++            _check_contract(check, {identity}, {})
++    artifacts = blueprint.get("artifacts", {})
++    if not isinstance(artifacts, dict) or len(artifacts) > 64:
++        raise ValueError("artifacts must map at most 64 names to relative files")
++    for value in artifacts.values():
++        _relative(value)
++    goals = blueprint.get("goals")
++    if not isinstance(goals, dict) or not 1 <= len(goals) <= 32:
++        raise ValueError("blueprint needs 1..32 goals tied to checks")
++    for goal, checks in goals.items():
++        text(goal, "goal")
++        if not isinstance(checks, list) or not checks:
++            raise ValueError("every goal needs an observable check")
++        for check in checks:
++            _check_contract(check, by_id, artifacts)
++    return [deepcopy(by_id[key]) for key in ordered]
++
++
++def _capability_gaps(atlas, identity, seen=None):
++    from .capabilities import BUILTINS
++    seen = set() if seen is None else set(seen)
++    if identity in seen:
++        return ["capability dependency cycle: " + identity]
++    seen.add(identity)
++    record = atlas.records.get("capability:" + identity)
++    if record is None:
++        return ["missing capability: " + identity]
++    manifest, gaps = record["data"], []
++    impl = manifest.get("implementation", {})
++    kind = impl.get("kind")
++    dependencies = list(manifest.get("dependencies", []))
++    if kind in {"DETERMINISTIC_SOURCE", "LOCAL_PROVIDER_BOUNDARY", "EXTERNAL_EVIDENCE_BOUNDARY"}:
++        if impl.get("entrypoint") not in BUILTINS:
++            gaps.append("entrypoint unavailable: " + identity)
++        if impl.get("entrypoint") == "builtin:creation_atlas":
++            gaps.append("blueprint cannot recursively invoke the atlas pipeline")
++    elif kind == "DETERMINISTIC_ALIAS":
++        dependencies.append(impl.get("delegate", ""))
++    elif kind == "DETERMINISTIC_COMPOSITE":
++        dependencies.extend(s.get("capability", "") for s in impl.get("steps", []))
++    else:
++        gaps.append("unsupported capability implementation: " + identity)
++    for dependency in sorted(set(dependencies)):
++        if dependency in REFERENCE_DEPENDENCIES:
++            if REFERENCE_DEPENDENCIES[dependency] not in atlas.records:
++                gaps.append("missing source registry: " + dependency)
++        else:
++            gaps.extend(_capability_gaps(atlas, dependency, seen))
++    return sorted(set(gaps))
++
++
++def _preflight(step, parameters, atlas, used):
++    """Ask existing domain contracts about readiness without performing creation."""
++    if any(ref["from"].startswith("steps.") for ref in _binding_refs(step["inputs"])):
++        return []
++    from .capabilities import CapabilityError, CapabilityStore
++    try:
++        inputs = _bindings(step["inputs"], parameters, {}, Path("/atlas-planning-only"))
++        manifest = atlas.get("capability:" + step["capability"])["data"]
++        missing = CapabilityStore.missing_required_inputs(manifest, inputs)
++        if missing:
++            return ["step " + step["id"] + " missing input: " + key for key in missing]
++        if step["capability"] == "AXM-CAP-CONSTRUCTION-SEARCH":
++            from .construction_search import _validate
++            _validate(inputs["search"])
++        elif step["capability"] == "AXM-CAP-COMPOSE-ORGAN-PROJECT":
++            from .organ_discovery import discover_interface_assembly
++            result = discover_interface_assembly(atlas.root, inputs["organ_goal"])
++            if result["status"] != "READY_EXACT_INTERFACE_ASSEMBLY":
++                return ["organ goal: " + result["status"]]
++            used.update("organ:" + ref for ref in result["selected_candidate"]["package_refs"])
++        elif step["capability"] == "AXM-CAP-CODE-PROGRAM-PROJECT":
++            import shutil
++            if shutil.which("node") is None:
++                return ["typed-code workflow needs an installed Node runtime"]
++            if inputs["request"].get("action") not in {"verify", "retain"}:
++                return ["verified-code blueprint requires an explicit verify or retain action"]
++    except (CapabilityError, ValueError, RuntimeError, KeyError) as exc:
++        return ["step " + step["id"] + ": " + str(exc)]
++    return []
++
++
++def _experience(root, memory):
++    if memory is None:
++        return [], []
++    folder = _output(root, memory)
++    if folder.exists() and not folder.is_dir():
++        raise ValueError("memory path must be a directory")
++    paths = sorted(folder.glob("*.json"))
++    if len(paths) > 4096:
++        raise ValueError("experience collection exceeds 4096 records; select a scoped collection")
++    if sum(p.lstat().st_size for p in paths) > 64_000_000:
++        raise ValueError("experience collection exceeds 64 MB; select a scoped collection")
++    records, ignored = [], []
++    for path in paths:
++        try:
++            value = json.loads(local_file(folder, path.name).read_text())
++            if value.get("schema") != EXPERIENCE_SCHEMA or path.stem != digest(value):
++                raise ValueError("experience schema or content identity does not match")
++            if (value.get("status") not in {"CHECKS_PASSED", "HOLD_FAILED_CHECK", "HOLD_EXECUTION_ERROR"}
++                    or not isinstance(value.get("searches"), list) or not isinstance(value.get("intent"), dict)
++                    or not all(isinstance(value["intent"].get(k), str) for k in ("purpose", "direction"))
++                    or not isinstance(value.get("blueprint"), str)):
++                raise ValueError("experience observation is incomplete")
++            for seed in value["searches"]:
++                if (not isinstance(seed, dict) or not isinstance(seed.get("space_sha256"), str)
++                        or not isinstance(seed.get("warm_start"), dict) or not isinstance(seed.get("semantic_signature"), str)):
++                    raise ValueError("experience search seed is incomplete")
++            records.append(value)
++        except (ValueError, OSError) as exc:
++            ignored.append({"file": path.name, "reason": str(exc)})
++    return records, ignored
++
++
++def _search_key(search):
++    # Goals/budgets may change; the construction space must match exactly.
++    return digest({k: search.get(k) for k in ("schema", "recipe", "controls", "motion_probe")})
++
++
++def plan_intent(root, request, *, memory=None):
++    from .capabilities import CapabilityStore
++    if not isinstance(request, dict) or set(request) - {"purpose", "direction", "goals", "parameters", "blueprint"}:
++        raise ValueError("intent accepts purpose, direction, goals, parameters and optional blueprint")
++    text(request.get("purpose"), "intent purpose")
++    direction = text(request.get("direction"), "intent direction")
++    goals = strings(request.get("goals"), "intent goals")
++    if not goals or len(goals) > 32 or len(canonical(request).encode()) > 2_000_000:
++        raise ValueError("intent requires 1..32 goals and at most 2 MB")
++    raw_parameters = request.get("parameters", {})
++    if not isinstance(raw_parameters, dict):
++        raise ValueError("intent parameters must be an object")
++    atlas, candidates = CreationAtlas(root), []
++    records, ignored = _experience(root, memory)
++    atlas.add_experience(records, memory)
++    pin = runtime_pin()
++    for identity, blueprint in sorted(atlas.blueprints.items()):
++        if request.get("blueprint") and identity != request["blueprint"]:
++            continue
++        if blueprint["direction"] != direction:
++            continue
++        gaps, used = [], {"blueprint:" + identity}
++        steps = _validate_blueprint(blueprint)
++        missing_goals = sorted(set(goals) - set(blueprint["goals"]))
++        gaps.extend("unbound goal: " + goal for goal in missing_goals)
++        params = {**deepcopy(blueprint.get("defaults", {})), **deepcopy(raw_parameters)}
++        unknown, missing = set(params) - set(blueprint["parameters"]), set(blueprint["parameters"]) - set(params)
++        gaps.extend("unknown parameter: " + key for key in sorted(unknown))
++        gaps.extend("missing parameter: " + key for key in sorted(missing))
++        try:
++            params = _parameters(params, atlas, used)
++        except ValueError as exc:
++            gaps.append(str(exc))
++        for key, value in params.items():
++            actual = ("boolean" if type(value) is bool else "object" if isinstance(value, dict) else
++                      "array" if isinstance(value, list) else "string" if isinstance(value, str) else
++                      "number" if type(value) in {int, float} else "null")
++            if key in blueprint["parameters"] and actual != blueprint["parameters"][key]:
++                gaps.append("parameter type mismatch: " + key)
++        for ref in blueprint.get("uses", []):
++            used.add(ref)
++            if ref not in atlas.records:
++                gaps.append("missing atlas requirement: " + ref)
++        for step in steps:
++            gaps.extend(_capability_gaps(atlas, step["capability"]))
++            manifest = atlas.records.get("capability:" + step["capability"], {}).get("data")
++            if manifest:
++                gaps.extend("step " + step["id"] + " missing input: " + key
++                            for key in CapabilityStore.missing_required_inputs(manifest, step["inputs"]))
++            for binding in _binding_refs(step["inputs"]):
++                if binding["from"].startswith("request.") and "default" not in binding:
++                    try:
++                        _at(params, binding["from"].split(".")[1:])
++                    except ValueError as exc:
++                        gaps.append(str(exc))
++            if not gaps:
++                gaps.extend(_preflight(step, params, atlas, used))
++        candidates.append({"blueprint": identity, "gaps": sorted(set(gaps)), "parameters": params,
++                           "steps": steps, "used": sorted(used), "missing_goals": missing_goals})
++    candidates.sort(key=lambda c: (len(c["missing_goals"]), len(c["gaps"]), len(c["steps"]), c["blueprint"]))
++    chosen = next((candidate for candidate in candidates if not candidate["gaps"]), None)
++    selected, reused = None, []
++    if chosen:
++        blueprint = atlas.blueprints[chosen["blueprint"]]
++        parameters = deepcopy(chosen["parameters"])
++        search = parameters.get("search")
++        if isinstance(search, dict) and search.get("schema") == "axm.construction-search/v0.1":
++            key = _search_key(search)
++            starts = list(search.get("warm_starts", []))
++            for record in records:
++                if record.get("runtime_pin") != pin or record.get("status") != "CHECKS_PASSED":
++                    continue
++                for item in record.get("searches", []):
++                    if item.get("space_sha256") == key and item.get("warm_start") not in starts and len(starts) < 16:
++                        starts.append(deepcopy(item["warm_start"]))
++                        reused.append(digest(record))
++            if starts:
++                search["warm_starts"] = starts
++        closure = atlas.closure(chosen["used"] + ["experience:" + ref for ref in reused])
++        selected = {"blueprint": deepcopy(blueprint), "steps": chosen["steps"], "parameters": parameters,
++                    "knowledge": closure, "reused_experience": sorted(set(reused))}
++    plan = {"schema": PLAN_SCHEMA, "status": "READY" if selected else "HOLD_CAPABILITY_GAP",
++            "intent": deepcopy(request), "selected": selected,
++            "candidates": [{"blueprint": c["blueprint"], "gaps": c["gaps"]} for c in candidates],
++            "gaps": [] if selected else (candidates[0]["gaps"] if candidates else ["no blueprint for direction: " + direction]),
++            "runtime_pin": pin, "atlas_snapshot_sha256": atlas.summary()["snapshot_sha256"],
++            "experience": {"observations": len(records), "ignored": ignored},
++            "selection_rule": "Exact direction and complete declared goals; sufficient routes ordered by step count then id.",
++            "boundary": "READY means a bound route. Only execution can supply observed checks; prose is retained, not silently scored."}
++    plan["plan_sha256"] = digest(plan)
++    return plan
++
++
++def _observe(check, results, target, artifacts):
++    try:
++        if "artifact" in check:
++            path = local_file(target, artifacts[check["artifact"]])
++            return {"check": check, "passed": True, "sha256": hashlib.sha256(path.read_bytes()).hexdigest()}
++        value = _at(results[check["step"]], check["path"])
++        if "equals" in check:
++            passed = canonical(value) == canonical(check["equals"])
++        else:
++            passed = (type(value) in {int, float} and math.isfinite(value)
++                      and check.get("min", -math.inf) <= value <= check.get("max", math.inf))
++        return {"check": check, "passed": passed, "observed": value}
++    except (ValueError, KeyError, OSError) as exc:
++        return {"check": check, "passed": False, "error": str(exc)}
++
++
++def build_intent(root, request, path, *, memory=None, plan_sha256=None):
++    from .capabilities import CapabilityError, CapabilityStore
++    target = _output(root, path)
++    memory_path = _output(root, memory) if memory is not None else None
++    if memory_path and (target == memory_path or target in memory_path.parents or memory_path in target.parents):
++        raise ValueError("output and experience collection must be separate directories")
++    plan = plan_intent(root, request, memory=memory)
++    if plan_sha256 is not None and plan_sha256 != plan["plan_sha256"]:
++        return {"schema": RUN_SCHEMA, "status": "HOLD_STALE_PLAN", "fresh_plan": plan}
++    if plan["status"] != "READY":
++        return {"schema": RUN_SCHEMA, "status": plan["status"], "plan": plan}
++    if target.exists():
++        raise ValueError("atlas creation output already exists")
++    selected = plan["selected"]
++    blueprint, params = selected["blueprint"], selected["parameters"]
++    target.mkdir(parents=True, exist_ok=False)
++    atomic_write_json(target / "intent.json", plan)
++    results, checks, error, status = {}, [], None, "CHECKS_PASSED"
++    store = CapabilityStore(root)
++    for step in selected["steps"]:
++        try:
++            inputs = _bindings(step["inputs"], params, results, target)
++            manifest = store.by_id(step["capability"])
++            if manifest is None:
++                raise ValueError("planned capability is no longer installed")
++            results[step["id"]] = store.invoke(manifest, inputs)
++            observed = [_observe(c, results, target, blueprint.get("artifacts", {})) for c in step["checks"]]
++            checks.extend(observed)
++            if not all(c["passed"] for c in observed):
++                status = "HOLD_FAILED_CHECK"
++                break
++        except (CapabilityError, ValueError, RuntimeError, OSError) as exc:
++            status, error = "HOLD_EXECUTION_ERROR", {"step": step["id"], "message": str(exc)}
++            break
++    goals = {goal: [_observe(c, results, target, blueprint.get("artifacts", {})) for c in blueprint["goals"][goal]]
++             for goal in request["goals"]}
++    if status == "CHECKS_PASSED" and not all(c["passed"] for group in goals.values() for c in group):
++        status = "HOLD_FAILED_CHECK"
++    files = {}
++    for file in sorted(target.rglob("*")):
++        if file.is_file():
++            relative = file.relative_to(target).as_posix()
++            verified = local_file(target, relative)
++            files[relative] = hashlib.sha256(verified.read_bytes()).hexdigest()
++    searches = []
++    for step in selected["steps"]:
++        if step["capability"] != "AXM-CAP-CONSTRUCTION-SEARCH" or step["id"] not in results:
++            continue
++        report = json.loads(local_file(target, str(Path(results[step["id"]]["report_path"]).relative_to(target))).read_text())
++        candidate = report.get("growth_candidate")
++        if candidate:
++            searches.append({"space_sha256": _search_key(report["search_contract"]),
++                "warm_start": candidate["warm_start"], "semantic_signature": candidate["semantic_signature"],
++                "checks": report["selected"]["checks"], "recipe": candidate["recipe"]})
++    experience = {"schema": EXPERIENCE_SCHEMA, "status": status, "runtime_pin": plan["runtime_pin"],
++                  "intent": deepcopy(request), "blueprint": blueprint["id"], "plan_sha256": plan["plan_sha256"],
++                  "goals": goals, "error": error, "searches": searches,
++                  "run_path": str(target), "files": files,
++                  "use": "Rechecked search seeds and inspectable observations; no automatic capability or canon admission."}
++    atomic_write_json(target / "experience.json", experience)
++    if memory_path:
++        memory_path.mkdir(parents=True, exist_ok=True)
++        atomic_write_json(memory_path / (digest(experience) + ".json"), experience)
++    run = {"schema": RUN_SCHEMA, "status": status, "path": str(target), "plan_sha256": plan["plan_sha256"],
++           "steps": results, "checks": checks, "goals": goals, "error": error, "files": files,
++           "experience_sha256": digest(experience), "reused_experience": selected["reused_experience"],
++           "automatic_canon_admission": False,
++           "boundary": "Checks cover the declared goals and observed artifacts only. Target, aesthetic and physical claims need their own checks."}
++    atomic_write_json(target / "run.json", run)
++    return run
++
++
++def operate_atlas(root, inputs):
++    operation = inputs.get("operation", "query")
++    if operation in {"plan", "build"}:
++        if operation == "plan":
++            return plan_intent(root, inputs["intent"], memory=inputs.get("memory"))
++        return build_intent(root, inputs["intent"], inputs["path"], memory=inputs.get("memory"),
++                            plan_sha256=inputs.get("plan_sha256"))
++    if operation == "experience":
++        records, ignored = _experience(root, inputs["memory"])
++        limit = inputs.get("limit", 20)
++        if type(limit) is not int or not 1 <= limit <= 100:
++            raise ValueError("experience limit must be 1..100")
++        signatures = {s["semantic_signature"] for r in records if r.get("status") == "CHECKS_PASSED"
++                      for s in r.get("searches", [])}
++        return {"observations": len(records), "retained_measured_signatures": len(signatures),
++                "records": [{"id": "experience:" + digest(r), "status": r["status"], "intent": r["intent"]["purpose"],
++                             "blueprint": r["blueprint"], "run_path": r["run_path"]} for r in records[:limit]],
++                "ignored": ignored, "automatic_canon_admission": False}
++    atlas = CreationAtlas(root)
++    if inputs.get("memory") is not None:
++        records, _ = _experience(root, inputs["memory"])
++        atlas.add_experience(records, inputs["memory"])
++    if operation == "summary":
++        return atlas.summary()
++    if operation == "get":
++        return atlas.get(inputs["id"])
++    if operation == "closure":
++        return atlas.closure(strings(inputs["ids"], "ids"))
++    if operation == "query":
++        return atlas.query(inputs.get("query", ""), inputs.get("categories"), inputs.get("limit", 20))
++    raise ValueError("unknown atlas operation")
+diff --git a/src/axm_uc/creation_atlas.py b/src/axm_uc/creation_atlas.py
+new file mode 100644
+index 0000000..ae646aa
+--- /dev/null
++++ b/src/axm_uc/creation_atlas.py
+@@ -0,0 +1,297 @@
++"""A source-backed view of UC knowledge, construction parts and executable routes.
++
++The atlas joins existing libraries. Indexing a record never upgrades its evidence
++or installs its resource. New categories are data; new execution stays in the
++ordinary capability machinery.
++"""
++from __future__ import annotations
++
++from collections import Counter
++from copy import deepcopy
++import hashlib
++import json
++from pathlib import Path
++import re
++
++from .asset_atoms import AssetPackageLibrary
++from .organ_library import ExecutableOrganLibrary
++from .registry import Registry
++
++SCHEMA = "axm.creation-atlas/v0.1"
++PACK_SCHEMA = "axm.creation-atlas-pack/v0.1"
++RUNTIME = Path(__file__).resolve().parent
++REFERENCE_DEPENDENCIES = {"reference Universal Creation Map v0.1": "registry:universal-creation-map"}
++
++
++def canonical(value):
++    return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False)
++
++
++def digest(value):
++    return hashlib.sha256(canonical(value).encode()).hexdigest()
++
++
++def text(value, label):
++    if not isinstance(value, str) or not 1 <= len(value.strip()) <= 4000:
++        raise ValueError(label + " requires non-empty text up to 4000 characters")
++    return value.strip()
++
++
++def strings(value, label):
++    if not isinstance(value, list) or any(not isinstance(v, str) or not v.strip() for v in value):
++        raise ValueError(label + " must be a list of non-empty strings")
++    if len(value) != len(set(value)):
++        raise ValueError(label + " contains duplicates")
++    return list(value)
++
++
++def local_file(root, name):
++    """Only explicit ordinary files inside the requested source root."""
++    base, relative = Path(root).resolve(), Path(text(name, "source path"))
++    if relative.is_absolute() or ".." in relative.parts or "\\" in name:
++        raise ValueError("source path must stay inside its library")
++    path = base / relative
++    if any(p.is_symlink() for p in [path, *path.parents] if p != base and base in p.parents):
++        raise ValueError("atlas source paths must not use symlinks")
++    if not path.is_file() or not path.resolve().is_relative_to(base):
++        raise ValueError("atlas source is missing: " + name)
++    if path.stat().st_size > 16_000_000:
++        raise ValueError("atlas source exceeds 16 MB")
++    return path
++
++
++def _tokens(value):
++    return set(re.findall(r"[a-z0-9]+", value.casefold()))
++
++
++class CreationAtlas:
++    def __init__(self, root):
++        self.root = Path(root).resolve()
++        self.records = {}
++        self.blueprints = {}
++        self.sources = {}
++        self._load()
++
++    def source(self, path, selector=None):
++        path = Path(path).absolute()
++        if path.is_relative_to(self.root):
++            scope, base = "machine", self.root
++        elif path.is_relative_to(RUNTIME):
++            scope, base = "runtime", RUNTIME
++        else:
++            raise ValueError("atlas source is outside the machine and installed runtime")
++        relative = path.relative_to(base).as_posix()
++        path = local_file(base, relative)
++        key = scope + ":" + relative
++        if key not in self.sources:
++            self.sources[key] = {"scope": scope, "path": relative,
++                                 "sha256": hashlib.sha256(path.read_bytes()).hexdigest()}
++        return {**self.sources[key], "selector": selector}
++
++    def add(self, identity, category, label, summary, source, *, data=None,
++            status="DESCRIPTIVE", relations=None, tags=None):
++        identity, category = text(identity, "entry id"), text(category, "category")
++        if identity in self.records:
++            raise ValueError("duplicate atlas entry: " + identity)
++        self.records[identity] = {"id": identity, "category": category,
++            "label": text(label, "label"), "summary": str(summary), "source": source,
++            "evidence": {"status": status, "execution_observed_by_indexing": False},
++            "relations": deepcopy(relations or []), "tags": strings(tags or [], "tags"),
++            "data": deepcopy(data or {})}
++
++    def _load(self):
++        registry = Registry(self.root)
++        for cap in registry.capability_manifests():
++            source = self.source(self.root / cap.pop("_manifest_path"))
++            relations = [{"relation": "requires", "target": REFERENCE_DEPENDENCIES.get(c, "capability:" + c)}
++                         for c in cap.get("dependencies", [])]
++            for ref in cap.get("anatomy_refs", []):
++                if isinstance(ref, dict) and ref.get("id"):
++                    relations.append({"relation": ref.get("role", "references"), "target": "anatomy:" + ref["id"]})
++            impl = cap.get("implementation", {})
++            pins = []
++            if impl.get("source"):
++                try:
++                    pins.append(self.source(local_file(self.root, impl["source"])))
++                except ValueError:
++                    # Minimal embedded bodies may load Python from an installed package.
++                    candidate = RUNTIME / Path(impl["source"]).name
++                    if candidate.is_file():
++                        pins.append(self.source(candidate))
++            self.add("capability:" + cap["id"], "capability", cap["id"], cap.get("purpose", ""), source,
++                     data={**cap, "implementation_sources": pins}, status="INSTALLED_MANIFEST",
++                     relations=relations, tags=list(cap.get("handles", [])))
++
++        if registry.master_path.is_file():
++            source = self.source(registry.master_path)
++            self.add("registry:universal-creation-map", "metadata", "Universal Creation Map v0.1",
++                     "Source registry of descriptive anatomy; not a list of implemented capabilities.", source,
++                     data={"records": len(registry.master_records())}, status="DESCRIPTIVE_RESEARCH")
++            for row in registry.master_records():
++                self.add("anatomy:" + row["id"], row.get("level", "knowledge"), row.get("name", row["id"]),
++                         row.get("definition", ""), {**source, "selector": row["id"]}, data=row,
++                         status="DESCRIPTIVE_RESEARCH", tags=[row.get("domain_code", "unknown")])
++
++        organs = ExecutableOrganLibrary(self.root)
++        providers = {}
++        for organ in organs.list():
++            for interface in organ["provides"]:
++                providers.setdefault(interface, []).append("organ:" + organ["ref"])
++        for organ in organs.list():
++            relations = [{"relation": "requires-interface-provider", "target": target}
++                         for interface in organ.get("requires", []) for target in providers.get(interface, [])]
++            self.add("organ:" + organ["ref"], "organ", organ["id"], organ.get("purpose", ""),
++                     self.source(self.root / organ["source_path"]), data=organ,
++                     status="VALIDATED_PACKAGE_FIXTURES_NOT_RUN", relations=relations,
++                     tags=list(dict.fromkeys(organ["provides"] + organ.get("requires", []))))
++
++        assets = AssetPackageLibrary(self.root)
++        for package in assets.list():
++            body = assets.inspect(package["ref"])
++            source = self.source(body["source"])
++            prefix = "asset:" + package["ref"] + "/"
++            for atom in body["atoms"]:
++                self.add(prefix + atom["id"], atom["kind"], atom["id"], atom.get("purpose", ""),
++                         {**source, "selector": atom["id"]}, data=atom,
++                         status="VALIDATED_DESCRIPTOR_RESOURCES_NOT_RESOLVED",
++                         relations=[{"relation": "uses", "target": prefix + ref} for ref in atom.get("uses", [])],
++                         tags=[body["asset_class"]])
++
++        from .form_pattern import form_pattern_summary
++        from .game_material_bridge import MAP_CHANNELS
++        from .game_material_styles import FAMILIES
++        from .grammar import GRAMMAR_BY_SUFFIX
++        from .product_workflow import PROFILES
++        for name in form_pattern_summary()["patterns"]:
++            self.add("shape:" + name, "shape", name, "Parameterized surface construction pattern",
++                     self.source(RUNTIME / "form_pattern.py", name), data={"pattern": name}, status="IMPLEMENTED_GRAMMAR",
++                     relations=[{"relation": "realized-by", "target": "capability:AXM-CAP-GENERATE-FORM-PATTERN-3D"}])
++        for family in FAMILIES:
++            self.add("material:generator:" + family, "material", family, "Procedural material map family",
++                     self.source(RUNTIME / "game_material_styles.py", family),
++                     data={"recipe": {"family": family, "size": 128, "seed": 1}}, status="IMPLEMENTED_GENERATOR",
++                     relations=[{"relation": "realized-by", "target": "capability:AXM-CAP-GENERATE-GAME-MATERIAL"}])
++        pack_path = RUNTIME / "data/material_response/pack.json"
++        pack = json.loads(pack_path.read_text())
++        for family in pack["families"]:
++            self.add("material:response:" + family["id"], "material", family["id"], family.get("purpose", ""),
++                     self.source(pack_path, family["id"]), data=family, status="RESPONSE_INTENT_RENDERER_NOT_PROVEN",
++                     relations=[{"relation": "resolved-by", "target": "capability:AXM-CAP-MATERIAL-RESPONSE-INTENT"}])
++        for channel, count in sorted(MAP_CHANNELS.items()):
++            self.add("texture:" + channel, "texture", channel, "Material map channel contract",
++                     self.source(RUNTIME / "game_material_bridge.py", channel), data={"channels": count},
++                     status="IMPLEMENTED_BUNDLE_CHANNEL",
++                     relations=[{"relation": "checked-by", "target": "capability:AXM-CAP-INSPECT-GAME-MATERIAL"}])
++        for suffix, profile in sorted(GRAMMAR_BY_SUFFIX.items()):
++            self.add("file:" + suffix[1:], "file", suffix, "File grammar and available validation",
++                     self.source(RUNTIME / "grammar.py", suffix), data=profile, status="DECLARED_VALIDATION_SCOPE")
++        for name, profile in sorted(PROFILES.items()):
++            self.add("workflow:" + name, "workflow", name, "Product lifecycle, owners and expected evidence",
++                     self.source(RUNTIME / "product_workflow.py", name), data=profile, status="LIFECYCLE_CONTRACT",
++                     relations=[{"relation": "planned-by", "target": "capability:AXM-CAP-PRODUCT-WORKFLOW"}])
++        for filename in ("direction-catalog.json", "axis-catalog.json"):
++            path = self.root / "reference/software-directions" / filename
++            if path.is_file():
++                body = json.loads(local_file(self.root, str(path.relative_to(self.root))).read_text())
++                for profile in body.get("profiles", []):
++                    self.add("direction:" + profile["id"], "direction", profile["id"], profile.get("purpose", profile.get("name", "")),
++                             self.source(path, profile["id"]), data=profile, status="DIRECTION_KNOWLEDGE")
++        for path in sorted((self.root / "atlas").glob("*.json")):
++            body = json.loads(local_file(self.root, str(path.relative_to(self.root))).read_text())
++            if body.get("schema") != PACK_SCHEMA or set(body) - {"schema", "entries", "blueprints"}:
++                raise ValueError("invalid creation atlas pack: " + path.name)
++            for entry in body.get("entries", []):
++                source, data = self.source(path, entry["id"]), deepcopy(entry.get("data", {}))
++                if "source_data" in entry:
++                    ref = entry["source_data"]
++                    source_path = local_file(self.root, ref["path"])
++                    data = json.loads(source_path.read_text())
++                    for part in ref.get("pointer", []):
++                        data = data[part]
++                    data = {"value": data}
++                    source = {**source, "data_source": self.source(source_path, ref.get("pointer", []))}
++                self.add(entry["id"], entry["category"], entry.get("label", entry["id"]), entry.get("summary", ""),
++                         source, data=data, status=entry.get("status", "DESCRIPTIVE"),
++                         relations=entry.get("relations"), tags=entry.get("tags"))
++            for blueprint in body.get("blueprints", []):
++                identity = "blueprint:" + text(blueprint.get("id"), "blueprint id")
++                self.add(identity, "blueprint", blueprint["id"], blueprint.get("purpose", ""), self.source(path, identity),
++                         data=blueprint, status="DECLARED_EXECUTABLE_RECIPE",
++                         relations=[{"relation": "uses", "target": ref} for ref in blueprint.get("uses", [])]
++                         + [{"relation": "executes", "target": "capability:" + s["capability"]} for s in blueprint.get("steps", [])],
++                         tags=[blueprint["direction"], *blueprint.get("goals", {})])
++                self.blueprints[blueprint["id"]] = deepcopy(blueprint)
++
++    def add_experience(self, records, collection):
++        """Expose retained observations and semantic construction candidates, not canon."""
++        patterns = {}
++        for record in records:
++            identity = "experience:" + digest(record)
++            source = {"scope": "experience", "collection": str(collection), "record_sha256": digest(record)}
++            self.add(identity, "experience", record["intent"]["purpose"], record["status"], source,
++                     data=record, status="PAST_OBSERVATION_RECHECK_REQUIRED",
++                     tags=[record["blueprint"], record["intent"]["direction"]],
++                     relations=[{"relation": "used-blueprint", "target": "blueprint:" + record["blueprint"]}])
++            if record["status"] == "CHECKS_PASSED":
++                for search in record.get("searches", []):
++                    patterns.setdefault(search["semantic_signature"], []).append((identity, search))
++        for signature, observations in sorted(patterns.items()):
++            self.add("construction:" + signature, "construction-pattern", signature,
++                     "Measured construction candidate; every reuse needs the current request's checks.",
++                     {"scope": "derived-experience", "semantic_signature": signature},
++                     data={"observations": [{"experience": identity, **deepcopy(search)} for identity, search in observations]},
++                     status="MEASURED_CANDIDATE_NOT_CANON",
++                     relations=[{"relation": "observed-in", "target": identity} for identity, _ in observations])
++
++    def summary(self):
++        categories = dict(sorted(Counter(r["category"] for r in self.records.values()).items()))
++        missing = sorted({edge["target"] for r in self.records.values() for edge in r["relations"]
++                          if edge["target"] not in self.records})
++        return {"schema": SCHEMA, "entries": len(self.records), "categories": categories,
++                "blueprints": sorted(self.blueprints), "snapshot_sha256": digest(self.records),
++                "unresolved_references": missing, "indexing_proves_execution": False}
++
++    def get(self, identity):
++        if identity not in self.records:
++            raise ValueError("unknown atlas entry: " + str(identity))
++        return deepcopy(self.records[identity])
++
++    def query(self, query="", categories=None, limit=20):
++        if not isinstance(query, str) or type(limit) is not int or not 1 <= limit <= 100:
++            raise ValueError("query requires text and limit 1..100")
++        categories = strings(categories or [], "categories")
++        wanted, rows = _tokens(query), []
++        for row in self.records.values():
++            if categories and row["category"] not in categories:
++                continue
++            words = _tokens(" ".join([row["id"], row["label"], row["summary"], *row["tags"]]))
++            score = len(wanted & words)
++            if wanted and not score:
++                continue
++            rows.append((score, row["id"], row))
++        rows.sort(key=lambda r: (-r[0], r[1]))
++        return {"schema": SCHEMA, "query": query, "matches": len(rows),
++                "entries": [{**{k: deepcopy(v) for k, v in row.items() if k != "data"}, "score": score}
++                            for score, _, row in rows[:limit]],
++                "selection": "Lexical retrieval only; a match does not prove goal sufficiency."}
++
++    def closure(self, identities):
++        pending, selected, missing = list(identities), {}, set()
++        while pending:
++            identity = pending.pop()
++            if identity in selected or identity in missing:
++                continue
++            if identity not in self.records:
++                missing.add(identity)
++                continue
++            row = self.get(identity)
++            selected[identity] = row
++            pending.extend(edge["target"] for edge in row["relations"])
++        return {"entries": [selected[k] for k in sorted(selected)], "missing": sorted(missing)}
++
++
++def runtime_pin():
++    """Pin Python/data dependencies, not just the immediate capability wrapper."""
++    hashes = {p.relative_to(RUNTIME).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
++              for p in sorted(RUNTIME.rglob("*")) if p.is_file() and p.suffix in {".py", ".json"}}
++    return digest(hashes)
+diff --git a/src/axm_uc/portable.py b/src/axm_uc/portable.py
+index 17797b5..5325b73 100644
+--- a/src/axm_uc/portable.py
++++ b/src/axm_uc/portable.py
+@@ -32,6 +32,7 @@ ROOT_FILES = (
+     "registry_materialization.json",
+ )
+ ROOT_DIRECTORIES = (
++    "atlas",
+     "asset-packages",
+     "assets",
+     "atoms",
+@@ -45,6 +46,8 @@ ROOT_DIRECTORIES = (
+     "reference",
+     "src",
+     "state",
++    "third_party/code-professions",
++    "third_party/grammar-workbench",
+     "tools",
+ )
+ REQUIRED_ENTRIES = frozenset(
+diff --git a/src/axm_uc/standalone_creation_capabilities.py b/src/axm_uc/standalone_creation_capabilities.py
+index 22d4e84..057ae5b 100644
+--- a/src/axm_uc/standalone_creation_capabilities.py
++++ b/src/axm_uc/standalone_creation_capabilities.py
+@@ -237,6 +237,13 @@ def register_standalone_creation_builtins(
+         except (CharacterRecipeError, CreatorRetentionError, Procedural3DError) as exc:
+             raise capability_error(str(exc), getattr(exc, "details", {})) from exc
+ 
++    def creation_atlas(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
++        from .atlas_pipeline import operate_atlas
++        try:
++            return operate_atlas(root, inputs)
++        except (ValueError, RuntimeError, OSError, KeyError) as exc:
++            raise capability_error(str(exc)) from exc
++
+     def construction_search(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+         from .construction_search import publish_search
+         target = resolve_output_path(root, str(inputs['path']))
+@@ -469,6 +476,7 @@ def register_standalone_creation_builtins(
+         "builtin:form_pattern": form_pattern,
+         "builtin:character_recipe": character_recipe,
+         "builtin:construction_search": construction_search,
++        "builtin:creation_atlas": creation_atlas,
+         "builtin:character_controller": character_controller,
+         "builtin:material_response": material_response,
+         "builtin:precision_cutter": precision_cutter,
+diff --git a/tests/test_creation_atlas.py b/tests/test_creation_atlas.py
+new file mode 100644
+index 0000000..3a063a8
+--- /dev/null
++++ b/tests/test_creation_atlas.py
+@@ -0,0 +1,207 @@
++import copy
++import json
++from pathlib import Path
++import shutil
++import tempfile
++import unittest
++
++from axm_uc.atlas_pipeline import build_intent, operate_atlas, plan_intent
++from axm_uc.capabilities import CapabilityStore
++from axm_uc.creation_atlas import CreationAtlas, digest
++
++ROOT = Path(__file__).resolve().parents[1]
++
++
++class CreationAtlasTests(unittest.TestCase):
++    def setUp(self):
++        self.temp = tempfile.TemporaryDirectory()
++        self.addCleanup(self.temp.cleanup)
++        self.root = Path(self.temp.name)
++        for directory in ("capabilities/live", "atlas", "examples/construction-search", "examples/code", "executable-organs", "asset-packages"):
++            shutil.copytree(ROOT / directory, self.root / directory)
++        source = ROOT / "third_party/code-professions/provenance.json"
++        destination = self.root / "third_party/code-professions/provenance.json"
++        destination.parent.mkdir(parents=True)
++        shutil.copy2(source, destination)
++
++    def intent(self, name="vessel"):
++        return json.loads((ROOT / "examples/creation-atlas" / (name + ".json")).read_text())["inputs"]["intent"]
++
++    def pack(self):
++        return json.loads((self.root / "atlas/construction.json").read_text())
++
++    def save_pack(self, pack):
++        (self.root / "atlas/construction.json").write_text(json.dumps(pack))
++
++    def test_index_joins_real_sources_without_promoting_descriptors(self):
++        atlas = CreationAtlas(self.root)
++        self.assertEqual(atlas.summary(), CreationAtlas(self.root).summary())
++        for category in ("texture", "shape", "organ", "capability", "protocol", "workflow", "blueprint", "material", "file"):
++            self.assertGreater(atlas.summary()["categories"][category], 0)
++        row = atlas.query("armor normal", ["texture"])["entries"][0]
++        self.assertEqual(row["evidence"]["status"], "VALIDATED_DESCRIPTOR_RESOURCES_NOT_RESOLVED")
++        self.assertFalse(row["evidence"]["execution_observed_by_indexing"])
++        self.assertEqual(len(row["source"]["sha256"]), 64)
++        closure = atlas.closure(["blueprint:checked-material"])
++        self.assertIn("capability:AXM-CAP-INSPECT-GAME-MATERIAL", [r["id"] for r in closure["entries"]])
++        store = CapabilityStore(self.root)
++        self.assertEqual(store.invoke(store.route("creation-atlas"), {"operation": "summary"}), atlas.summary())
++
++    def test_categories_and_blueprints_extend_as_data(self):
++        pack = self.pack()
++        pack["entries"].append({"id": "acoustics:room", "category": "acoustics", "summary": "Declared room response", "data": {"seconds": 1.2}})
++        route = copy.deepcopy(pack["blueprints"][0])
++        route.update(id="custom-construction", direction="custom-direction")
++        pack["blueprints"].append(route)
++        self.save_pack(pack)
++        atlas = CreationAtlas(self.root)
++        self.assertEqual(atlas.query(categories=["acoustics"])["matches"], 1)
++        request = self.intent(); request["direction"] = "custom-direction"
++        self.assertEqual(plan_intent(self.root, request)["selected"]["blueprint"]["id"], "custom-construction")
++        pack["entries"].append(copy.deepcopy(pack["entries"][-1])); self.save_pack(pack)
++        with self.assertRaisesRegex(ValueError, "duplicate atlas"):
++            CreationAtlas(self.root)
++
++    def test_plan_binds_exact_goals_and_does_not_write(self):
++        request = self.intent()
++        before = copy.deepcopy(request)
++        first = plan_intent(self.root, request)
++        self.assertEqual(first, plan_intent(self.root, request))
++        self.assertEqual(request, before)
++        self.assertEqual(first["status"], "READY")
++        self.assertIn("recipe:vessel", [r["id"] for r in first["selected"]["knowledge"]["entries"]])
++        self.assertFalse((self.root / "creations").exists())
++        request["goals"].append("photorealistic-and-physically-stable")
++        held = build_intent(self.root, request, "creations/unknown")
++        self.assertEqual(held["status"], "HOLD_CAPABILITY_GAP")
++        self.assertFalse((self.root / "creations").exists())
++        request["direction"] = "uninstalled-direction"
++        self.assertIn("no blueprint", plan_intent(self.root, request)["gaps"][0])
++
++    def test_missing_sources_inputs_metrics_and_capabilities_hold_before_creation(self):
++        request = self.intent(); request["parameters"]["search"]["atlas"] = "recipe:missing"
++        self.assertEqual(plan_intent(self.root, request)["status"], "HOLD_CAPABILITY_GAP")
++        request = self.intent(); request["parameters"] = {}
++        self.assertIn("missing parameter: search", plan_intent(self.root, request)["gaps"])
++        search = CreationAtlas(self.root).get("recipe:vessel")["data"]["value"]
++        search["criteria"][0]["metric"] = "beauty"
++        request["parameters"] = {"search": search}
++        self.assertEqual(plan_intent(self.root, request)["status"], "HOLD_CAPABILITY_GAP")
++        (self.root / "capabilities/live/AXM-CAP-CONSTRUCTION-SEARCH.json").unlink()
++        self.assertEqual(plan_intent(self.root, self.intent())["status"], "HOLD_CAPABILITY_GAP")
++
++    def test_actual_search_retention_warm_reuse_and_changed_goals_remeasure(self):
++        request = self.intent()
++        first = build_intent(self.root, request, "creations/first", memory="creations/experience")
++        self.assertEqual(first["status"], "CHECKS_PASSED", first.get("error"))
++        self.assertTrue((self.root / "creations/first/search/winner.glb.source.json").is_file())
++        second = build_intent(self.root, request, "creations/second", memory="creations/experience")
++        self.assertEqual(second["status"], "CHECKS_PASSED")
++        self.assertEqual(second["steps"]["search"]["counts"]["visited"], 1)
++        self.assertTrue(second["reused_experience"])
++        search = CreationAtlas(self.root).get("recipe:vessel")["data"]["value"]
++        search["criteria"][0].update(min=50, max=60)
++        request["parameters"]["search"] = search
++        third = build_intent(self.root, request, "creations/impossible", memory="creations/experience")
++        self.assertEqual(third["status"], "HOLD_FAILED_CHECK")
++        self.assertTrue(third["reused_experience"])
++        self.assertFalse((self.root / "creations/impossible/search/winner.glb").exists())
++        memory = operate_atlas(self.root, {"operation": "experience", "memory": "creations/experience"})
++        self.assertEqual(memory["observations"], 3)
++        self.assertEqual(memory["retained_measured_signatures"], 1)
++        self.assertFalse(memory["automatic_canon_admission"])
++        patterns = operate_atlas(self.root, {"operation": "query", "memory": "creations/experience", "categories": ["construction-pattern"]})
++        self.assertEqual(patterns["matches"], 1)
++        observed = operate_atlas(self.root, {"operation": "get", "memory": "creations/experience", "id": memory["records"][0]["id"]})
++        self.assertEqual(observed["category"], "experience")
++
++    def test_stale_plan_detects_changed_source_and_experience(self):
++        request = self.intent()
++        plan = plan_intent(self.root, request, memory="creations/memory")
++        build_intent(self.root, request, "creations/first", memory="creations/memory")
++        result = build_intent(self.root, request, "creations/stale", memory="creations/memory", plan_sha256=plan["plan_sha256"])
++        self.assertEqual(result["status"], "HOLD_STALE_PLAN")
++        self.assertFalse((self.root / "creations/stale").exists())
++        plan = plan_intent(self.root, request)
++        path = self.root / "examples/construction-search/vessel.json"
++        body = json.loads(path.read_text()); body["inputs"]["search"]["budget"]["candidates"] = 2
++        path.write_text(json.dumps(body))
++        self.assertEqual(build_intent(self.root, request, "creations/changed", plan_sha256=plan["plan_sha256"])["status"], "HOLD_STALE_PLAN")
++
++    def test_material_pipeline_decodes_output_and_stops_on_failed_policy(self):
++        request = self.intent("material")
++        first = build_intent(self.root, request, "creations/material")
++        self.assertEqual(first["status"], "CHECKS_PASSED", first.get("error"))
++        self.assertEqual(first["steps"]["inspect"]["measurements"]["size"], 128)
++        request["parameters"]["policy"]["minimum_size"] = 256
++        failed = build_intent(self.root, request, "creations/material-failed", memory="creations/memory")
++        self.assertEqual(failed["status"], "HOLD_FAILED_CHECK")
++        self.assertFalse(failed["goals"]["material-policy"][0]["passed"])
++        self.assertTrue((self.root / "creations/material-failed/intent.json").exists())
++
++    def test_organ_goal_resolves_actual_libraries_then_checks_project(self):
++        request = self.intent("software")
++        plan = plan_intent(self.root, request)
++        refs = [r["id"] for r in plan["selected"]["knowledge"]["entries"]]
++        self.assertIn("organ:axm.web.shell@1.0.0", refs)
++        result = build_intent(self.root, request, "creations/software")
++        self.assertEqual(result["status"], "CHECKS_PASSED", result.get("error"))
++        self.assertTrue(result["steps"]["verify"]["passed"])
++        request["parameters"]["organ_goal"]["required_interfaces"] = ["missing-interface"]
++        held = build_intent(self.root, request, "creations/missing")
++        self.assertEqual(held["status"], "HOLD_CAPABILITY_GAP")
++        self.assertFalse((self.root / "creations/missing").exists())
++
++    @unittest.skipUnless(shutil.which("node"), "Node is required for observed typed-code execution")
++    def test_newly_installed_compiler_composes_through_blueprint_data(self):
++        for directory in ("third_party/code-professions", "third_party/grammar-workbench"):
++            shutil.copytree(ROOT / directory, self.root / directory, dirs_exist_ok=True)
++        request = self.intent("programming")
++        result = build_intent(self.root, request, "creations/programming")
++        self.assertEqual(result["status"], "CHECKS_PASSED", result.get("error"))
++        self.assertEqual(result["steps"]["compile-verify"]["code_workflow"]["languages"], ["javascript", "python"])
++        self.assertTrue((self.root / "creations/programming/code/archive.json").is_file())
++        candidate = CreationAtlas(self.root).get("recipe:restock-code")["data"]["value"]
++        candidate["action"] = "build"
++        request["parameters"]["request"] = candidate
++        self.assertEqual(plan_intent(self.root, request)["status"], "HOLD_CAPABILITY_GAP")
++
++    def test_dependency_cycles_forward_bindings_and_missing_evidence_reject(self):
++        pack = self.pack(); route = pack["blueprints"][0]
++        route["steps"][0]["depends_on"] = ["search"]; self.save_pack(pack)
++        with self.assertRaisesRegex(ValueError, "cyclic"):
++            plan_intent(self.root, self.intent())
++        route["steps"][0]["depends_on"] = []
++        route["steps"][0]["inputs"]["search"] = {"from": "steps.future.result"}; self.save_pack(pack)
++        with self.assertRaisesRegex(ValueError, "dependency"):
++            plan_intent(self.root, self.intent())
++        route["steps"][0]["inputs"]["search"] = {"from": "request.search"}
++        route["goals"]["retained-source"] = []; self.save_pack(pack)
++        with self.assertRaisesRegex(ValueError, "observable check"):
++            plan_intent(self.root, self.intent())
++
++    def test_paths_existing_outputs_and_modified_memory_preserve_state(self):
++        request = self.intent()
++        with self.assertRaisesRegex(ValueError, "live machine"):
++            build_intent(self.root, request, "src/overwrite")
++        with self.assertRaisesRegex(ValueError, "separate directories"):
++            build_intent(self.root, request, "creations/same", memory="creations/same/memory")
++        build_intent(self.root, request, "creations/first", memory="creations/memory")
++        old = (self.root / "creations/first/run.json").read_bytes()
++        with self.assertRaisesRegex(ValueError, "already exists"):
++            build_intent(self.root, request, "creations/first")
++        self.assertEqual((self.root / "creations/first/run.json").read_bytes(), old)
++        memory_file = next((self.root / "creations/memory").glob("*.json"))
++        body = json.loads(memory_file.read_text()); body["status"] = "tampered"
++        memory_file.write_text(json.dumps(body))
++        plan = plan_intent(self.root, request, memory="creations/memory")
++        self.assertEqual(plan["experience"]["observations"], 0)
++        self.assertEqual(len(plan["experience"]["ignored"]), 1)
++        self.assertEqual(plan["selected"]["reused_experience"], [])
++        pack = self.pack(); pack["entries"][0]["source_data"] = {"path": "../outside.json"}; self.save_pack(pack)
++        with self.assertRaisesRegex(ValueError, "inside"):
++            CreationAtlas(self.root)
++
++
++if __name__ == "__main__":
++    unittest.main()
+diff --git a/tests/test_portable_runtime.py b/tests/test_portable_runtime.py
+index abb0a81..faa65a7 100644
+--- a/tests/test_portable_runtime.py
++++ b/tests/test_portable_runtime.py
+@@ -3,6 +3,7 @@ from __future__ import annotations
+ import json
+ import os
+ from pathlib import Path
++import shutil
+ import subprocess
+ import sys
+ import tempfile
+@@ -106,6 +107,26 @@ class PortableRuntimeTests(unittest.TestCase):
+         self.assertTrue(trial_result["passed"])
+         self.assertTrue((extracted / "creations/first-real-site/index.html").is_file())
+ 
++        atlas = subprocess.run(
++            [sys.executable, str(extracted / "run.py"), "create",
++             str(extracted / "examples/creation-atlas/vessel.json")],
++            cwd=outside, check=False, capture_output=True, text=True, timeout=60,
++        )
++        self.assertEqual(atlas.returncode, 0, atlas.stderr)
++        atlas_result = json.loads(atlas.stdout)
++        self.assertEqual(atlas_result["result"]["status"], "CHECKS_PASSED", atlas_result)
++        self.assertTrue((extracted / "creations/atlas-vessel/search/winner.glb.source.json").is_file())
++        if shutil.which("node"):
++            programming = subprocess.run(
++                [sys.executable, str(extracted / "run.py"), "create",
++                 str(extracted / "examples/creation-atlas/programming.json")],
++                cwd=outside, check=False, capture_output=True, text=True, timeout=60,
++            )
++            self.assertEqual(programming.returncode, 0, programming.stderr)
++            programming_result = json.loads(programming.stdout)
++            self.assertEqual(programming_result["result"]["status"], "CHECKS_PASSED", programming_result)
++            self.assertTrue((extracted / "creations/atlas-programming/code/archive.json").is_file())
++
+     def test_changed_declared_file_fails_closed(self):
+         tampered = self.directory / "tampered.zip"
+         with zipfile.ZipFile(self.first) as source, zipfile.ZipFile(
+diff --git a/tools/creation_atlas_demo.py b/tools/creation_atlas_demo.py
+new file mode 100644
+index 0000000..62911c2
+--- /dev/null
++++ b/tools/creation_atlas_demo.py
+@@ -0,0 +1,66 @@
++"""Execute connected atlas routes and demonstrate reuse plus an honest failed goal."""
++import argparse
++import copy
++import json
++from pathlib import Path
++
++from axm_uc.atlas_pipeline import operate_atlas
++from axm_uc.creation_atlas import CreationAtlas
++from axm_uc.machine import UniversalCreationMachine
++
++
++def main():
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("directory", type=Path)
++    args = parser.parse_args()
++    root = Path(__file__).resolve().parents[1]
++    target = args.directory.resolve()
++    target.mkdir(parents=True, exist_ok=False)
++    machine = UniversalCreationMachine(root)
++    memory = str(target / "experience")
++    outcomes = []
++    for name, example in (("vessel", "vessel"), ("vessel-reuse", "vessel"),
++                          ("walker", "walker"), ("material", "material"), ("software", "software"), ("programming", "programming"),
++                          ("impossible-envelope", "vessel")):
++        request = json.loads((root / "examples/creation-atlas" / (example + ".json")).read_text())
++        request["inputs"].update(path=str(target / name), memory=memory)
++        if name == "impossible-envelope":
++            search = CreationAtlas(root).get("recipe:vessel")["data"]["value"]
++            search["criteria"][0].update(min=50, max=60)
++            request["inputs"]["intent"]["parameters"]["search"] = search
++        result = machine.create(copy.deepcopy(request))
++        if result["type"] != "CREATION_RESULT":
++            raise RuntimeError(result)
++        run = result["result"]
++        expected = "HOLD_FAILED_CHECK" if name == "impossible-envelope" else "CHECKS_PASSED"
++        if run["status"] != expected:
++            raise RuntimeError(run)
++        counts = run["steps"].get("search", {}).get("counts", {})
++        outcomes.append({"case": name, "status": run["status"], "files": len(run["files"]),
++                         "visited": counts.get("visited"), "reused": len(run["reused_experience"])})
++    summary = {"atlas": operate_atlas(root, {"operation": "summary", "memory": memory}),
++               "experience": operate_atlas(root, {"operation": "experience", "memory": memory}),
++               "outcomes": outcomes}
++    (target / "proof.json").write_text(json.dumps(summary, indent=2) + "\n")
++    rows = ["| Case | Observed status | Search trials | Reused observations |", "| --- | --- | ---: | ---: |"]
++    rows.extend("| {case} | {status} | {trials} | {reused} |".format(**row, trials=row["visited"] if row["visited"] is not None else "n/a")
++                for row in outcomes)
++    (target / "README.md").write_text(
++        "# UC connected atlas proof\n\n"
++        "These are actual executions of the installed construction, material and software blueprints. "
++        "Each case contains retained intent, source/artifacts, goal checks and an experience record.\n\n"
++        + "\n".join(rows) + "\n\n"
++        "The second vessel search remeasures saved settings. The impossible envelope still fails. "
++        "Seven observations contain two distinct measured construction signatures; repeated use is not counted as a new capability.\n\n"
++        "Material evidence covers decoded maps and the stated policy. Software evidence covers exact organ composition and structural project checks. "
++        "These do not claim artistic quality, live browser behavior, physical balance or an untested engine.\n\n"
++        "Run and memory paths record the original execution location. To reproduce in a current UC checkout: "
++        "`PYTHONPATH=src python tools/creation_atlas_demo.py /tmp/uc-atlas-demo`.\n"
++    )
++    print(json.dumps({"path": str(target), "outcomes": outcomes,
++                      "observations": summary["experience"]["observations"],
++                      "construction_patterns": summary["experience"]["retained_measured_signatures"]}, indent=2))
++
++
++if __name__ == "__main__":
++    main()

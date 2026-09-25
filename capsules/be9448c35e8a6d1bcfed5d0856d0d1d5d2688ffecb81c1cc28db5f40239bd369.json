@@ -1,0 +1,196 @@
+{
+  "capsule_id": "be9448c35e8a6d1bcfed5d0856d0d1d5d2688ffecb81c1cc28db5f40239bd369",
+  "evidence": {
+    "files": [
+      {
+        "additions": 14,
+        "binary": false,
+        "content_sha256": "5e252699f7d9a3f3a1716eacc22c0d0b3b60e88d9bfd9c9c5e7e12b0873e6513",
+        "deletions": 10,
+        "path": "capabilities/live/AXM-CAP-GENERATE-CHARACTER-RECIPE-3D.json",
+        "status": "M",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 105,
+        "binary": false,
+        "content_sha256": "a5b9b556ff5f26d499e3c0e579438596b36dd32b9eb80353defa11872d16bfda",
+        "deletions": 0,
+        "path": "docs/CHARACTER_MOTION_CONSTRUCTION.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Retained character motion construction",
+          "Invoke",
+          "Evidence procedure",
+          "Boundaries",
+          "Next major build: body-aware character performance compiler"
+        ]
+      },
+      {
+        "additions": 7,
+        "binary": false,
+        "content_sha256": "c7817c50498a8f3b213432d0a8b4f6e0179f88081a8c79aada5be88509e693ee",
+        "deletions": 0,
+        "path": "docs/FORM_CHARACTER_ROUTING_CONVERGENCE.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Subsequent explicit motion extension"
+        ]
+      },
+      {
+        "additions": 206,
+        "binary": false,
+        "content_sha256": "12c09355f236ca3ab9b30424c851c1b9a1073e3d2c5675d16d3b5d82544b09e5",
+        "deletions": 0,
+        "path": "src/axm_uc/character_motion.py",
+        "status": "A",
+        "symbols": [
+          "CharacterMotionError",
+          "require",
+          "fields",
+          "name",
+          "number",
+          "vector",
+          "compile_motion",
+          "build_character_motion",
+          "publish_motion_glb"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 30,
+        "binary": false,
+        "content_sha256": "20116a661af48e8eaea5ebb463caa36d2a6738361baac4738a2ce0165fb6c821",
+        "deletions": 10,
+        "path": "src/axm_uc/character_recipe.py",
+        "status": "M",
+        "symbols": [
+          "character_recipe_summary",
+          "compile_character_recipe",
+          "publish_character_recipe"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 2,
+        "binary": false,
+        "content_sha256": "fa2fd11482a0858e804a2ff9787f428dfce6d078c3f75957c0bc2fbacb16de5a",
+        "deletions": 1,
+        "path": "src/axm_uc/creator_retention.py",
+        "status": "M",
+        "symbols": [
+          "publish_retained_glb"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 106,
+        "binary": false,
+        "content_sha256": "b076f532013d0ccc34a4a8d6d1988f613f01a239c248c3b3c6b64000140c6836",
+        "deletions": 0,
+        "path": "tests/test_character_motion.py",
+        "status": "A",
+        "symbols": [
+          "recipe",
+          "build",
+          "MotionTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 51,
+        "binary": false,
+        "content_sha256": "95b26a054d7b5d2b6e5ab6c3fc59fadcc529529f1759eea05cdc5e645d93db03",
+        "deletions": 0,
+        "path": "tools/character_motion_demo.py",
+        "status": "A",
+        "symbols": [
+          "main"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "578e262dbfcb8a43690ae05c73e43907f40ee9eea8da4f1f13e83b44085c3a3a"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "configuration",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "aware",
+      "axiom",
+      "axm",
+      "body",
+      "boundaries",
+      "build",
+      "cap",
+      "capabilities",
+      "character",
+      "codex",
+      "compile",
+      "compiler",
+      "construction",
+      "convergence",
+      "creation-machine",
+      "creator",
+      "demo",
+      "error",
+      "evidence",
+      "explicit",
+      "extension",
+      "fields",
+      "form",
+      "from",
+      "generate",
+      "glb",
+      "invoke",
+      "json",
+      "live",
+      "major",
+      "merge",
+      "mike",
+      "mir",
+      "motion",
+      "name",
+      "next",
+      "number",
+      "performance",
+      "procedure",
+      "publish",
+      "pull",
+      "recipe",
+      "request",
+      "require",
+      "retained",
+      "retention",
+      "routing",
+      "standalone",
+      "subsequent",
+      "summary",
+      "tools",
+      "universal-creation",
+      "vector"
+    ]
+  },
+  "source": {
+    "base": "35ac0ac2f5cd3910ce129536b9b0946b8cc9ea85",
+    "commit_subject": "Merge pull request #224 from mike-axiom-mir/codex/character-motion-construction",
+    "head": "208ad661a7b9571cf4a4ba5549d42ad5cafff310",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

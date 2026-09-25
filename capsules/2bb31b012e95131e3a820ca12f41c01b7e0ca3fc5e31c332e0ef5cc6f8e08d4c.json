@@ -1,0 +1,368 @@
+{
+  "capsule_id": "2bb31b012e95131e3a820ca12f41c01b7e0ca3fc5e31c332e0ef5cc6f8e08d4c",
+  "evidence": {
+    "files": [
+      {
+        "additions": 5,
+        "binary": false,
+        "content_sha256": "c816f556ee3a546a6ec233d97715e5b00d20a45f42e465fec0afa48f40aff2c3",
+        "deletions": 0,
+        "path": "PROGRAMMING_CREATION.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Standalone programming creation"
+        ]
+      },
+      {
+        "additions": 10,
+        "binary": false,
+        "content_sha256": "7fb8e8613f42c8f480837ab1b522d9ab1bc3f3572a49db1ba2edae9f42323e08",
+        "deletions": 2,
+        "path": "README.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Licensing"
+        ]
+      },
+      {
+        "additions": 30,
+        "binary": false,
+        "content_sha256": "f4736456487cc0419299031b39d49015e008a977ba0e4c54a28808b713ad7125",
+        "deletions": 0,
+        "path": "capabilities/live/AXM-CAP-CODE-SYSTEM-PROJECT.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 19,
+        "binary": false,
+        "content_sha256": "e1d75ec8db5226991dd6623c6180f5f2515d36b052f9f6eae590341501363773",
+        "deletions": 0,
+        "path": "capabilities/live/AXM-CAP-CODE-SYSTEM-STATION.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 210,
+        "binary": false,
+        "content_sha256": "77b3317b394ec42a02c153cc31f61097e4680c9ffe96fafe40daa1685c368f0a",
+        "deletions": 0,
+        "path": "docs/CODE_SYSTEMS.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Coding stateful software and games",
+          "Run the complete workflow",
+          "Construction contract",
+          "Executed specialist procedures",
+          "Portable products and recovery",
+          "Reusable atlas knowledge",
+          "Discovery and measured goals",
+          "Bounds and remaining work"
+        ]
+      },
+      {
+        "additions": 13,
+        "binary": false,
+        "content_sha256": "65fc7e2c3654b611c92898da9979e79ee359919aa6eaac3b86e2d5a77b483926",
+        "deletions": 5,
+        "path": "docs/CREATION_ATLAS.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Planning and execution"
+        ]
+      },
+      {
+        "additions": 33,
+        "binary": false,
+        "content_sha256": "f31c65ccf7fb5dcf6d10037820da828637699e6115848acb7df5c77496f8d75d",
+        "deletions": 4,
+        "path": "src/axm_uc/atlas_pipeline.py",
+        "status": "M",
+        "symbols": [
+          "_preflight",
+          "_experience",
+          "build_intent",
+          "operate_atlas"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 15,
+        "binary": false,
+        "content_sha256": "2c184104dfecaa47dec792b4ee37ef23ddc14711c21bcb0e09bfd4bf31a4f2d3",
+        "deletions": 0,
+        "path": "src/axm_uc/capabilities.py",
+        "status": "M",
+        "symbols": [
+          "builtin_code_program_project",
+          "builtin_code_system_project",
+          "builtin_code_system_station"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 8,
+        "binary": false,
+        "content_sha256": "4f2452f6dbfe374562ae98f7003c26d6527bc3921359693251dd603a01242607",
+        "deletions": 3,
+        "path": "src/axm_uc/cli.py",
+        "status": "M",
+        "symbols": [
+          "build_parser",
+          "main"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 252,
+        "binary": false,
+        "content_sha256": "34d6dafa2089215024897ed57326a6422e1a857c0e8109bddd6f28753b6a5405",
+        "deletions": 0,
+        "path": "src/axm_uc/code_system.py",
+        "status": "A",
+        "symbols": [
+          "_files",
+          "_execute",
+          "assess",
+          "operate_code_system",
+          "create_code_system_project",
+          "run_code_system_station",
+          "_readme"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 253,
+        "binary": false,
+        "content_sha256": "fe147f051e3aa68e45cf8dc6d2d18ca06a2343077476cbcca260ff3283de7040",
+        "deletions": 0,
+        "path": "src/axm_uc/code_system_contract.py",
+        "status": "A",
+        "symbols": [
+          "canonical",
+          "digest",
+          "exact",
+          "identity",
+          "rows",
+          "integer",
+          "event",
+          "prepare",
+          "structural_system",
+          "validate_archive",
+          "retain_system"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 17,
+        "binary": false,
+        "content_sha256": "d8e38e9742c84bae745280dbe50156f7f98f27aa959052a661794188e6c74aec",
+        "deletions": 7,
+        "path": "src/axm_uc/creation_atlas.py",
+        "status": "M",
+        "symbols": [
+          "CreationAtlas",
+          "runtime_pin"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 240,
+        "binary": false,
+        "content_sha256": "744a79a6ac08150a7d556abfe76d264659e7b1b75f199025bd9b8d0db31215c9",
+        "deletions": 0,
+        "path": "src/axm_uc/data/code_system/runtime.py",
+        "status": "A",
+        "symbols": [
+          "same",
+          "key",
+          "System",
+          "load"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 1,
+        "binary": false,
+        "content_sha256": "466714deb4fab18440facb340f861cf84eaa61a00933e21c69e4c5d407f0b120",
+        "deletions": 0,
+        "path": "src/axm_uc/portable.py",
+        "status": "M",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 1,
+        "binary": false,
+        "content_sha256": "9ca9719926a6c4e1b799f697db8839c17e15d5fb64d41613b12363bf6a637bc9",
+        "deletions": 1,
+        "path": "src/axm_uc/workflow_contracts.py",
+        "status": "M",
+        "symbols": [
+          "load_operators"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 2,
+        "binary": false,
+        "content_sha256": "f981f2939b951640d85ed9a3f8e15a06f4bad069eb0ddafa6bc743ea61ac98c4",
+        "deletions": 2,
+        "path": "src/axm_uc/workflow_memory.py",
+        "status": "M",
+        "symbols": [
+          "read_memory"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 380,
+        "binary": false,
+        "content_sha256": "4806416ff0590a1e4c0daa29bd98b4a8867597fb465356dd05763cc52f12e30f",
+        "deletions": 0,
+        "path": "tests/test_code_system.py",
+        "status": "A",
+        "symbols": [
+          "fixture",
+          "CodeSystemTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 1,
+        "binary": false,
+        "content_sha256": "74a806c67a2b2ff2d0a15cea90eb805f7efabfb3f1a7edd40f36ffac9ef8b282",
+        "deletions": 1,
+        "path": "tests/test_creation_atlas.py",
+        "status": "M",
+        "symbols": [
+          "CreationAtlasTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 13,
+        "binary": false,
+        "content_sha256": "05690d6499133edabcdc36472f9739100dc4aa32ce5c85bce6fa929968c3deba",
+        "deletions": 0,
+        "path": "tests/test_portable_runtime.py",
+        "status": "M",
+        "symbols": [
+          "PortableRuntimeTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 134,
+        "binary": false,
+        "content_sha256": "ab459f69e349acfb18470d4fac8e6ac7ba1dc5028e701d32cb4fa3d0e9f17e6f",
+        "deletions": 0,
+        "path": "tools/code_system_demo.py",
+        "status": "A",
+        "symbols": [
+          "write",
+          "require",
+          "demonstrate"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "404c3de2f9e0a5584bb1244d7ad84866071155bb1f2289eec700b5d6c72e4e76"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 9,
+    "kinds": [
+      "code",
+      "configuration",
+      "knowledge",
+      "organ-capability",
+      "protocol-state",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "archive",
+      "assess",
+      "atlas",
+      "axiom",
+      "axm",
+      "bounds",
+      "build",
+      "builtin",
+      "canonical",
+      "cap",
+      "capabilities",
+      "cli",
+      "code",
+      "codex",
+      "coding",
+      "complete",
+      "construction",
+      "contract",
+      "contracts",
+      "create",
+      "creation",
+      "creation-machine",
+      "demo",
+      "demonstrate",
+      "digest",
+      "discovery",
+      "event",
+      "exact",
+      "execute",
+      "executed",
+      "execution",
+      "experience",
+      "fixture",
+      "from",
+      "game",
+      "games",
+      "goals",
+      "identity",
+      "integer",
+      "intent",
+      "json",
+      "key",
+      "knowledge",
+      "licensing",
+      "live",
+      "load",
+      "measured",
+      "memory",
+      "merge",
+      "mike",
+      "mir",
+      "operate",
+      "operators",
+      "parser",
+      "pin",
+      "pipeline",
+      "planning",
+      "portable",
+      "preflight",
+      "prepare",
+      "procedures",
+      "products",
+      "program",
+      "programming"
+    ]
+  },
+  "source": {
+    "base": "8ea49a35e6fffe48a1598d0b64435f56d4f29828",
+    "commit_subject": "Merge pull request #230 from mike-axiom-mir/codex/software-game-code-systems",
+    "head": "daee7eca0311cdf930ed5fb99edb02ddc6283e71",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

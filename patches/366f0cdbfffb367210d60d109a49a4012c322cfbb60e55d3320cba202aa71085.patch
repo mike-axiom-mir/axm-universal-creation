@@ -1,0 +1,928 @@
+diff --git a/capabilities/live/AXM-CAP-GENERATE-CHARACTER-RECIPE-3D.json b/capabilities/live/AXM-CAP-GENERATE-CHARACTER-RECIPE-3D.json
+index 2400297..c0d9830 100644
+--- a/capabilities/live/AXM-CAP-GENERATE-CHARACTER-RECIPE-3D.json
++++ b/capabilities/live/AXM-CAP-GENERATE-CHARACTER-RECIPE-3D.json
+@@ -1,13 +1,14 @@
+ {
+   "id": "AXM-CAP-GENERATE-CHARACTER-RECIPE-3D",
+-  "version": "0.2.0",
++  "version": "0.3.0",
+   "status": "live",
+-  "purpose": "Create complete freeform characters with retained construction, optional explicit skeletons, reusable skin bindings and animation clips.",
++  "purpose": "Create freeform characters with retained construction, explicit or body-fitted skeletons, reusable skin fields and solved reach/walk performance.",
+   "handles": [
+     "character-recipe-asset",
+     "static-character-asset",
+     "whole-character-asset",
+-    "animated-character-recipe-asset"
++    "animated-character-recipe-asset",
++    "character-performance-asset"
+   ],
+   "input_contract": {
+     "required": [
+@@ -16,7 +17,7 @@
+     ],
+     "properties": {
+       "path": "target .glb file outside the protected live machine body",
+-      "recipe": "axm.character-recipe/v0.1 with form body, optional axm.character-rig/v0.1 rig and explicit animation clips",
++      "recipe": "axm.character-recipe/v0.1 with form body; optional explicit rig/animation OR axm.character-performance/v0.1 body-relative fitting and sampled reach/walk",
+       "replace": "optional boolean; defaults false"
+     }
+   },
+@@ -30,7 +31,8 @@
+       "race/body-family clothing regions",
+       "material intent and response binding status",
+       "sibling creator-source sidecar with exact recipe and compiled geometry",
+-      "explicit rig and animation status"
++      "explicit rig and animation status",
++      "optional fitted landmarks, generated weights, solved clips and decoded sample-target verification"
+     ]
+   },
+   "dependencies": [
+@@ -41,7 +43,7 @@
+     "treats race as body/look structure rather than a character class",
+     "lets unusual body families declare their own clothing regions instead of pretending every garment fits every race",
+     "keeps an entire character's construction structure available for later reshaping and reuse",
+-    "executes declared skeleton/skin/clip construction without inferring anatomy or motion"
++    "compiles declared landmarks and skin fields into reusable rigs and sampled two-bone performance without inferring anatomy"
+   ],
+   "implementation": {
+     "kind": "DETERMINISTIC_SOURCE",
+@@ -50,10 +52,11 @@
+   },
+   "limitations": [
+     "Rest skeleton uses parent-local translation with identity rotation and scale; animation supports translation and unit quaternion rotation with LINEAR/STEP interpolation.",
+-    "Bindings support rigid parts, explicit four-influence vertex weights, and declared axis-blend fields. No automatic skeleton inference, anatomical weighting, IK, retargeting, cloth or corrective deformation.",
++    "Bindings support rigid parts, explicit four-influence weights, axis blends and declared segment-distance fields. Performance fits body-relative landmarks and solves disjoint two-bone reach/walk chains; no inferred anatomy, arbitrary rig retargeting, cloth or corrective deformation.",
+     "Declared clothing regions are compatibility metadata, not proof that a garment fits without clipping.",
+     "Material response intent can be retained even when the current renderer has not earned a response-organ binding receipt.",
+-    "Visual similarity, character appeal and target-engine gameplay remain separate evidence gates."
++    "Visual similarity, character appeal and target-engine gameplay remain separate evidence gates.",
++    "Walk support targets are stationary during declared stance phases; verification covers authored samples only. No between-key contact, balance, ground collision or external-engine import guarantee. Root travel must be accumulated by a playback controller when looping."
+   ],
+   "persistent_state": null
+ }
+diff --git a/docs/CHARACTER_MOTION_CONSTRUCTION.md b/docs/CHARACTER_MOTION_CONSTRUCTION.md
+index 94b05a6..e8cb16a 100644
+--- a/docs/CHARACTER_MOTION_CONSTRUCTION.md
++++ b/docs/CHARACTER_MOTION_CONSTRUCTION.md
+@@ -58,8 +58,11 @@ character appearance or target-engine compatibility.
+ 
+ ## Boundaries
+ 
+-No automatic bone placement, inferred rig, bone rest rotations, animated scale,
+-retargeting, IK, foot contact, corrective shape, cloth simulation or face solving.
++The explicit route does not infer bone placement, bone rest rotations, animated
++scale, retargeting, corrective shapes, cloth or face solving. The optional
++[body-fitted performance route](CHARACTER_PERFORMANCE.md) now adds declared
++landmark fitting, segment-distance skin fields and sampled two-bone reach/walk
++with stationary support targets at authored samples.
+ Explicit vertex arrays must be rebound if topology changes; axis fields regenerate
+ from the new geometry. Existing character sockets/clothing regions remain retained
+ metadata, not animated socket or garment-fit proof. Material-response HOLDs remain
+@@ -67,14 +70,20 @@ unchanged. Pose sampling checks positions; it does not validate shaded normals.
+ Topology, collision and deformation quality during arbitrary motion remain separate
+ checks. Source recipes remain authoritative; no export replaces them.
+ 
+-## Next major build: body-aware character performance compiler
++## Body-aware performance: delivered slice and remaining work
++
++The first connected slice below is now implemented in `character_performance.py`:
++body-relative landmarks, regenerated segment weights, bend limits, reach targets
++and walk support phases. See [its contract and evidence procedure](CHARACTER_PERFORMANCE.md).
++Influence masks, corrective deformation, expression/response integration and
++runtime contact repair below remain future work.
+ 
+ The current main already contains generic form patterns, character semantics,
+ material responses, Creative Hands skeleton/skin/pose tools, two-bone solve math,
+ and GLB pose evaluation. The remaining high-value work is making those tools
+ cooperate around a reusable body and intended performance.
+ 
+-Build one connected slice with these outputs:
++The larger direction remains:
+ 
+ 1. **Body-family rig recipes.** Landmark and joint relationships expressed against
+    named form parts and dimensions. Fit the same biped, quadruped or branching rig
+diff --git a/docs/CHARACTER_PERFORMANCE.md b/docs/CHARACTER_PERFORMANCE.md
+new file mode 100644
+index 0000000..25183e3
+--- /dev/null
++++ b/docs/CHARACTER_PERFORMANCE.md
+@@ -0,0 +1,126 @@
++# Body-fitted character performance
++
++UC now compiles declared landmarks, skin fields and performance targets into the
++existing explicit skeleton/skin/clip route. One template can regenerate its joints,
++weights and motion when the form body changes. Compilation uses only the Python
++standard library and UC's existing two-bone locus solver.
++
++## Use
++
++```sh
++PYTHONPATH=src python -m axm_uc create examples/character-motion/seedling-performance.json
++PYTHONPATH=src python tools/character_performance_demo.py /tmp/uc-performance --plot
++PYTHONPATH=src python -m unittest tests.test_character_performance -v
++```
++
++The request handle is `character-performance-asset`; existing character-recipe
++handles also accept performance. As with the animated-character alias, the handle
++does not invent a missing performance. The demo exports two differently
++proportioned bodies using exactly the same template, replays construction, and
++optionally draws actual decoded GLB vertices. Plotting alone needs matplotlib.
++Use a fresh output directory; the demo refuses overwriting existing assets.
++
++## Construction contract
++
++Recipe `performance` is mutually exclusive with an explicit `rig` or `animation`.
++Its schema is `axm.character-performance/v0.1`, with these required fields:
++
++| Field | Meaning |
++| --- | --- |
++| `body_family` | Must match the character's declared body family. |
++| `joints` | Parent-first `{id, parent, anchor}` rows; one root, at most 128 joints. |
++| `bindings` | Exactly one skin binding for each named form part. |
++| `clips` | One to eight named reach or walk recipes. |
++
++An anchor is an explicit `[x,y,z]` point, or
++`{part, fraction:[x,y,z], offset?:[x,y,z], offset_fraction?:[x,y,z]}`.
++Fractions are in 0..1 of the named part's compiled, transformed axis-aligned bounds.
++Offsets are construction-space metres; fractional offsets scale with those bounds.
++Landmarks are declared controls, not anatomical inference. Parent-local translations
++are derived from fitted world positions; rest rotations and scales remain identity.
++
++Bindings accept the existing rigid `joint`, explicit vertex `weights`, or
++`axis_blend` contracts. A generated field is:
++
++```json
++{"segment_weights": {
++  "segments": [["hip", "knee"], ["knee", "ankle"]],
++  "falloff": 4,
++  "softness_m": 0.025,
++  "max_influences": 2
++}}
++```
++
++Each segment contributes to its **start joint** according to inverse distance to
++the finite segment. Weights are sorted deterministically, truncated to the declared
++one-to-four influences, and normalized. Defaults are falloff 2, softness .02 m,
++four influences. Segments must be nonzero and have distinct influence joints.
++These are geometric fields; they do not infer muscle structure, volume preservation
++or material seams. They regenerate after topology changes; explicit vertex arrays
++still require rebinding.
++
++## Reach and walk
++
++Every clip declares `name`, `kind`, `duration`, `samples`, and `chains`.
++Duration is .01..120 seconds; 3..257 uniformly spaced samples are emitted.
++Each chain declares three consecutive joint IDs and a construction-space `pole`
++direction. Chains are disjoint and may share static ancestors, but cannot animate
++one another's ancestors. Their joints must be below the skeleton root.
++
++Optional chain controls are `keep_end_orientation` (default false) and
++`max_bend_degrees` (greater than 0, at most 180, default 180; measured bend 0 means a straight limb). Enabling the former
++counter-rotates the end joint to preserve its identity world orientation. The latter
++limits bend at authored samples; it is not a full joint-limit model. Unreachable
++targets, zero-length segments and ambiguous pole/endpoint configurations are refused.
++
++- **Reach:** each chain has `targets:[{at,point},...]`. Phase `at` starts at 0,
++  ends at 1, and strictly increases. Points use the same anchor contract. Targets
++  interpolate linearly in construction space, independently of optional clip
++  `root_translation`, which is the root's total travel over the clip.
++- **Walk:** the clip declares `stride`, `lift`, `up_axis`, `forward_axis`, and
++  `stance_fraction` (.5 to less than .9). Each chain declares `phase` in [0,1).
++  The root travels one positive stride along the forward axis. During support the
++  end target stays at one world point; swing advances to the next plant with
++  smoothstep travel and a squared-sine lift. Up/forward are distinct positive axes
++  0/1/2; Z-up is not hardcoded. The original end height defines each support plane.
++
++The compiler generates LINEAR quaternion/translation tracks and preserves quaternion
++sign continuity. Endpoints repeat relative pose after one stride, but the standard
++clip player does not accumulate root travel when wrapping. A controller must do so
++for continuous forward locomotion. Sampling between keys interpolates rotations;
++it does not rerun IK and can introduce contact drift.
++
++## Evidence and retention
++
++The independent GLB pose decoder checks each exported end joint against its declared
++sample target, with an absolute .0001 m tolerance. Publication exposes the maximum
++error and verified target/contact sample counts. These are measured positions,
++not proof that arbitrary feet touch a ground surface. The fixture additionally
++checks whole rigid foot vertices remain level and on its ground plane during
++support, and clear that plane during swing.
++
++Source sidecars preserve the original performance template, exact body recipe,
++fitted landmarks, generated weights, solved clips, target observations and the
++decoded-output validation linked to the artifact's hash. The
++tested replay is byte-identical in the same runtime. Every use can retain reusable
++construction; export alone does not automatically admit a new library capability.
++The existing creator-growth acceptance and semantic deduplication rules still apply.
++
++## Next connected build
++
++The highest-value continuation is a **contact and deformation controller** over
++this retained body state:
++
++1. Accumulate root travel and solve support targets at runtime; measure between-key
++   slip rather than relying on dense baked samples.
++2. Add joint-frame limits, attachment tracking and corrective deformation with
++   bent-pose intersection/volume checks. Preserve explicit unsupported cases.
++3. Bind observed failures to bounded controls: plant timing, pelvis height, stride,
++   pole direction, influence masks and corrective shapes. Refit and compare results.
++4. Retain accepted corrections as reusable body-family construction through the
++   existing growth path, separately from recolors or one-off exported variants.
++
++This release does not establish dynamic balance, ground/collision sensing, arbitrary
++rig retargeting, facial expression, cloth, shaded-normal correctness or external
++engine compatibility. The seedling is a technical construction fixture, not a
++finished character-art claim.
+diff --git a/src/axm_uc/character_motion.py b/src/axm_uc/character_motion.py
+index a658446..8ebf5cd 100644
+--- a/src/axm_uc/character_motion.py
++++ b/src/axm_uc/character_motion.py
+@@ -180,7 +180,24 @@ def build_character_motion(specification, motion):
+     for clip in motion['clips']:
+         for t in sorted({t for track in clip['tracks'] for t in track['times']}):
+             asset.sample(clip['name'], t)
+-    return {**built, 'body': body, 'document': doc, 'motion_validation': asset.describe()}
++    validation = asset.describe()
++    if motion.get('performance_observations'):
++        errors, contacts = [], 0
++        for observation in motion['performance_observations']:
++            poses = {}
++            for row in observation['samples']:
++                if row['time'] not in poses:
++                    poses[row['time']] = asset.sample(observation['clip'], row['time'])
++                pose = poses[row['time']]
++                actual = asset.point(pose, ids[row['joint']])
++                error = math.dist(actual, row['target'])
++                require(error <= 1e-4, 'exported performance misses a declared sample target')
++                errors.append(error)
++                contacts += int(row['contact'])
++        validation['performance'] = {'max_sample_target_error_m': max(errors),
++                                     'verified_targets': len(errors), 'verified_contact_samples': contacts,
++                                     'boundary': 'Authored sample joint positions; no between-key contact or physical-balance claim.'}
++    return {**built, 'body': body, 'document': doc, 'motion_validation': validation}
+ 
+ def publish_motion_glb(target, specification, motion, *, replace=False):
+     target = Path(target).resolve()
+@@ -202,5 +219,6 @@ def publish_motion_glb(target, specification, motion, *, replace=False):
+         raise
+     return {'operation': 'glb', 'truth_status': 'VALIDATED_EXPLICIT_SKINNED_CHARACTER', 'path': str(target),
+             'bytes': len(body), 'sha256': hashlib.sha256(body).hexdigest(), 'specification_sha256': built['specification_sha256'],
+-            'published': True, 'replaced': previous is not None, 'motion_validation': observed,
++            'published': True, 'replaced': previous is not None, 'motion_validation': built['motion_validation'],
++            'post_publish_pose_validation': observed,
+             'rendered_appearance_observed': False, 'host_import_compatibility_observed': False}
+diff --git a/src/axm_uc/character_performance.py b/src/axm_uc/character_performance.py
+new file mode 100644
+index 0000000..4e82e4d
+--- /dev/null
++++ b/src/axm_uc/character_performance.py
+@@ -0,0 +1,301 @@
++"""Body-relative rig fitting and sampled two-bone performances.
++
++Landmarks are declared, never inferred. Reuses UC's two-bone locus solver and
++emits the existing explicit character-motion contract. Z-up is not assumed.
++"""
++from __future__ import annotations
++
++from copy import deepcopy
++import math
++
++from .character_motion import fields, name, number, require, vector
++from .limb_geometry import two_bone_entry_range
++
++SCHEMA = 'axm.character-performance/v0.1'
++
++
++def add(a, b):
++    return [x + y for x, y in zip(a, b)]
++
++
++def sub(a, b):
++    return [x - y for x, y in zip(a, b)]
++
++
++def mul(a, scale):
++    return [x * scale for x in a]
++
++
++def dot(a, b):
++    return sum(x * y for x, y in zip(a, b))
++
++
++def cross(a, b):
++    return [a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0]]
++
++
++def unit(a):
++    length = math.hypot(*a)
++    require(length > 1e-9, 'direction or segment has zero length')
++    return mul(a, 1 / length)
++
++
++def conjugate(q):
++    return [-q[0], -q[1], -q[2], q[3]]
++
++
++def product(a, b):
++    v = add(add(mul(b[:3], a[3]), mul(a[:3], b[3])), cross(a[:3], b[:3]))
++    return v + [a[3]*b[3] - dot(a[:3], b[:3])]
++
++
++def rotation_between(a, b, pole):
++    a, b = unit(a), unit(b)
++    cosine = max(-1., min(1., dot(a, b)))
++    if cosine < -1 + 1e-10:
++        # The declared pole selects the otherwise ambiguous half-turn axis.
++        return unit(sub(pole, mul(a, dot(pole, a)))) + [0.]
++    q = cross(a, b) + [1 + cosine]
++    return mul(q, 1 / math.hypot(*q))
++
++
++def solve_chain(start, middle_rest, end_rest, target, pole):
++    upper, lower = sub(middle_rest, start), sub(end_rest, middle_rest)
++    require(min(math.hypot(*upper), math.hypot(*lower)) > 1e-9,
++            'chain segment has zero length')
++    pole = unit(pole)
++    locus = two_bone_entry_range(start, target, math.hypot(*upper), math.hypot(*lower), pole)
++    require(locus.status == 'reachable' and locus.locus != 'sphere',
++            'target is unreachable or has an ambiguous coincident endpoint')
++    if locus.radius_m > 1e-9:
++        bend = unit(sub(pole, mul(locus.circle_axis, dot(pole, locus.circle_axis))))
++        middle = add(locus.center, mul(bend, locus.radius_m))
++    else:
++        middle = list(locus.center)
++    upper_q = rotation_between(upper, sub(middle, start), pole)
++    lower_world_q = rotation_between(lower, sub(target, middle), pole)
++    lower_q = product(conjugate(upper_q), lower_world_q)
++    return upper_q, lower_q, conjugate(lower_world_q), middle
++
++
++def _bounds(specification):
++    return {p['id']: ([min(v[i] for v in p['positions']) for i in range(3)],
++                      [max(v[i] for v in p['positions']) for i in range(3)])
++            for p in specification['primitives']}
++
++
++def anchor_point(raw, bounds):
++    if isinstance(raw, list):
++        return vector(raw, 3)
++    fields(raw, {'part', 'fraction'}, {'offset', 'offset_fraction'})
++    require(isinstance(raw['part'], str) and raw['part'] in bounds, 'landmark references unknown form part')
++    fraction = vector(raw['fraction'], 3)
++    require(all(0 <= v <= 1 for v in fraction), 'landmark fractions must be in 0..1')
++    low, high = bounds[raw['part']]
++    offset = vector(raw.get('offset', [0, 0, 0]), 3)
++    relative = vector(raw.get('offset_fraction', [0, 0, 0]), 3)
++    return [a + (b-a)*(f+r) + o for a, b, f, r, o in zip(low, high, fraction, relative, offset)]
++
++
++def _fit_joints(rows, bounds):
++    require(isinstance(rows, list) and 1 <= len(rows) <= 128, 'performance needs 1..128 landmark joints')
++    positions, parents, joints = {}, {}, []
++    for row in rows:
++        fields(row, {'id', 'parent', 'anchor'})
++        jid = name(row['id'])
++        require(jid not in positions, 'duplicate fitted joint')
++        parent = row['parent']
++        require(parent is None or isinstance(parent, str) and parent in positions, 'fitted joints must be parent-first')
++        position = anchor_point(row['anchor'], bounds)
++        positions[jid], parents[jid] = position, parent
++        joints.append({'id': jid, 'parent': parent,
++                       'translation': sub(position, positions[parent]) if parent else position})
++    require(sum(p is None for p in parents.values()) == 1, 'fitted skeleton must have one root')
++    return joints, positions, parents
++
++
++def _segment_distance(point, start, end):
++    direction = sub(end, start)
++    length2 = dot(direction, direction)
++    require(length2 > 1e-18, 'weight segment has zero length')
++    fraction = min(1., max(0., dot(sub(point, start), direction) / length2))
++    return math.hypot(*sub(point, add(start, mul(direction, fraction))))
++
++
++def _fit_bindings(raw, specification, positions):
++    require(isinstance(raw, dict) and set(raw) == {p['id'] for p in specification['primitives']},
++            'performance bindings must cover every part exactly')
++    bindings = {}
++    for part in specification['primitives']:
++        binding = raw[part['id']]
++        require(isinstance(binding, dict), 'invalid fitted binding')
++        if set(binding) != {'segment_weights'}:
++            # Rigid and caller-owned weights stay supported by the existing compiler.
++            bindings[part['id']] = deepcopy(binding)
++            continue
++        field = binding['segment_weights']
++        fields(field, {'segments'}, {'falloff', 'max_influences', 'softness_m'})
++        segments = field['segments']
++        require(isinstance(segments, list) and 1 <= len(segments) <= 32, 'weight field needs 1..32 segments')
++        power = number(field.get('falloff', 2))
++        softness = number(field.get('softness_m', .02))
++        limit = field.get('max_influences', 4)
++        require(1 <= power <= 8 and 1e-5 <= softness <= 1 and type(limit) is int and 1 <= limit <= 4,
++                'invalid segment weight settings')
++        starts = set()
++        for segment in segments:
++            require(isinstance(segment, list) and len(segment) == 2 and all(isinstance(j, str) and j in positions for j in segment),
++                    'weight segment requires two known joints')
++            require(segment[0] not in starts, 'duplicate weight influence joint')
++            starts.add(segment[0])
++            _segment_distance(positions[segment[0]], positions[segment[0]], positions[segment[1]])
++        rows = []
++        for point in part['positions']:
++            influences = [(a, 1 / (softness + _segment_distance(point, positions[a], positions[b]))**power)
++                          for a, b in segments]
++            influences.sort(key=lambda row: (-row[1], row[0]))
++            selected = influences[:limit]
++            total = sum(w for _, w in selected)
++            rows.append({j: w/total for j, w in selected})
++        bindings[part['id']] = {'weights': rows}
++    return bindings
++
++
++def _target_at(targets, phase):
++    for a, b in zip(targets, targets[1:]):
++        if phase <= b[0]:
++            blend = (phase-a[0])/(b[0]-a[0])
++            return add(a[1], mul(sub(b[1], a[1]), blend))
++    return list(targets[-1][1])
++
++
++def _chains(raw, positions, parents, kind, bounds):
++    require(isinstance(raw, list) and 1 <= len(raw) <= 16, 'clip needs 1..16 chains')
++    seen, result = set(), []
++    for chain in raw:
++        fields(chain, {'joints', 'pole', 'phase'} if kind == 'walk' else {'joints', 'pole', 'targets'},
++               {'keep_end_orientation', 'max_bend_degrees'})
++        ids = chain['joints']
++        require(isinstance(ids, list) and len(ids) == 3 and all(isinstance(j, str) and j in positions for j in ids)
++                and len(set(ids)) == 3, 'chain needs three distinct known joints')
++        require(not seen.intersection(ids) and parents[ids[1]] == ids[0] and parents[ids[2]] == ids[1],
++                'chains must be disjoint consecutive parent-child joints')
++        seen.update(ids)
++        pole = unit(vector(chain['pole'], 3))
++        keep = chain.get('keep_end_orientation', False)
++        require(type(keep) is bool, 'keep_end_orientation must be boolean')
++        bend = number(chain.get('max_bend_degrees', 180))
++        require(0 < bend <= 180, 'max bend must be in 0..180')
++        normalized = {'joints': ids, 'pole': pole, 'keep': keep, 'bend': bend}
++        if kind == 'walk':
++            phase = number(chain['phase'])
++            require(0 <= phase < 1, 'walk phase must be in [0,1)')
++            normalized['phase'] = phase
++        else:
++            targets = chain['targets']
++            require(isinstance(targets, list) and 2 <= len(targets) <= 128, 'reach requires 2..128 targets')
++            points = []
++            for target in targets:
++                fields(target, {'at', 'point'})
++                at = number(target['at'])
++                require(0 <= at <= 1, 'target phase must be in 0..1')
++                points.append((at, anchor_point(target['point'], bounds)))
++            require(points[0][0] == 0 and points[-1][0] == 1 and all(a[0] < b[0] for a, b in zip(points, points[1:])),
++                    'target phases must cover 0..1 and strictly increase')
++            normalized['targets'] = points
++        result.append(normalized)
++    # Ancestor rotation would require solving in that ancestor's animated frame.
++    for chain in result:
++        parent = parents[chain['joints'][0]]
++        while parent is not None:
++            require(parent not in seen, 'animated chain ancestors are unsupported')
++            parent = parents[parent]
++    return result
++
++
++def _compile_clip(raw, positions, parents, bounds):
++    require(isinstance(raw, dict), 'performance clip must be an object')
++    kind = raw.get('kind')
++    require(kind in ('reach', 'walk'), 'supported performance kinds are reach and walk')
++    common = {'name', 'kind', 'duration', 'samples', 'chains'}
++    fields(raw, common | ({'stride', 'lift', 'up_axis', 'forward_axis', 'stance_fraction'} if kind == 'walk' else set()),
++           {'root_translation'} if kind == 'reach' else set())
++    cname, duration, samples = name(raw['name']), number(raw['duration']), raw['samples']
++    require(.01 <= duration <= 120 and type(samples) is int and 3 <= samples <= 257, 'invalid clip duration/sample count')
++    chains = _chains(raw['chains'], positions, parents, kind, bounds)
++    root = next(j for j, p in parents.items() if p is None)
++    require(all(root not in c['joints'] for c in chains), 'chain joints must be below the motion root')
++    travel = vector(raw.get('root_translation', [0, 0, 0]), 3)
++    if kind == 'walk':
++        forward, up = raw['forward_axis'], raw['up_axis']
++        require(type(forward) is int and type(up) is int and forward in (0,1,2) and up in (0,1,2) and forward != up,
++                'walk requires distinct forward and up axes')
++        stride, lift, stance = number(raw['stride']), number(raw['lift']), number(raw['stance_fraction'])
++        require(0 < stride <= 10 and 0 < lift <= 2 and .5 <= stance < .9, 'invalid stride/lift/stance')
++        travel = [0., 0., 0.]
++        travel[forward] = stride
++    values = {(root, 'translation'): []}
++    for chain in chains:
++        for j in chain['joints'][:3 if chain['keep'] else 2]:
++            values[j, 'rotation'] = []
++    observations = []
++    times = [duration*i/(samples-1) for i in range(samples)]
++    for i, time in enumerate(times):
++        phase = i/(samples-1)
++        root_offset = mul(travel, phase)
++        values[root, 'translation'].append(add(positions[root], root_offset))
++        for chain in chains:
++            first, middle, end = chain['joints']
++            start, mid_rest, end_rest = [add(positions[j], root_offset) for j in chain['joints']]
++            contact = False
++            if kind == 'walk':
++                cycle = phase + chain['phase']
++                step = math.floor(cycle)
++                local = cycle - step
++                target = list(positions[end])
++                distance = stride*(step-chain['phase'])
++                if local <= stance:
++                    contact = True
++                else:
++                    u = (local-stance)/(1-stance)
++                    distance += stride*u*u*(3-2*u)
++                    target[up] += lift*math.sin(math.pi*u)**2
++                target[forward] += distance
++            else:
++                target = _target_at(chain['targets'], phase)
++            q1, q2, q3, elbow = solve_chain(start, mid_rest, end_rest, target, chain['pole'])
++            bend = math.degrees(math.acos(max(-1., min(1., dot(unit(sub(elbow,start)), unit(sub(target,elbow)))))))
++            require(bend <= chain['bend'] + 1e-7, f'{cname}: chain bend exceeds declared limit')
++            values[first, 'rotation'].append(q1)
++            values[middle, 'rotation'].append(q2)
++            if chain['keep']:
++                values[end, 'rotation'].append(q3)
++            observations.append({'time': time, 'joint': end, 'target': target, 'contact': contact,
++                                 'bend_degrees': bend})
++    tracks = []
++    for (joint, path), keys in values.items():
++        if path == 'rotation':
++            for i in range(1, len(keys)):
++                if dot(keys[i-1], keys[i]) < 0:
++                    keys[i] = mul(keys[i], -1)
++        tracks.append({'joint': joint, 'path': path, 'times': times, 'values': keys, 'interpolation': 'LINEAR'})
++    return {'name': cname, 'tracks': tracks}, {'clip': cname, 'kind': kind, 'samples': observations,
++            'root_travel': travel, 'boundary': 'Targets/contact verified at authored samples only; no physical balance, collision or between-key contact guarantee.'}
++
++
++def fit_character_performance(raw, specification, *, body_family):
++    fields(raw, {'schema', 'body_family', 'joints', 'bindings', 'clips'})
++    require(raw['schema'] == SCHEMA, 'unsupported performance schema')
++    require(raw['body_family'] == body_family, 'performance body family does not match character')
++    bounds = _bounds(specification)
++    joints, positions, parents = _fit_joints(raw['joints'], bounds)
++    bindings = _fit_bindings(raw['bindings'], specification, positions)
++    require(isinstance(raw['clips'], list) and 1 <= len(raw['clips']) <= 8, 'performance needs 1..8 clips')
++    clips, observations = [], []
++    for raw_clip in raw['clips']:
++        clip, observation = _compile_clip(raw_clip, positions, parents, bounds)
++        clips.append(clip)
++        observations.append(observation)
++    return {'rig': {'schema': 'axm.character-rig/v0.1', 'joints': joints, 'bindings': bindings},
++            'animation': clips, 'landmarks': positions, 'observations': observations,
++            'boundary': 'Declared body-relative fitting, segment-distance skin fields and sampled two-bone reach/walk. No inferred anatomy or automatic growth-library admission.'}
+diff --git a/src/axm_uc/character_recipe.py b/src/axm_uc/character_recipe.py
+index 1f5cbe1..3512b75 100644
+--- a/src/axm_uc/character_recipe.py
++++ b/src/axm_uc/character_recipe.py
+@@ -114,10 +114,11 @@ def character_recipe_summary() -> dict[str, Any]:
+         "supports_race_bound_clothing_regions": True,
+         "rigging": "explicit translation-rest skeleton and rigid or supplied four-influence skin",
+         "animation": "explicit LINEAR/STEP translation and quaternion clips",
++        "performance": "body-relative landmarks, segment-distance weights, sampled two-bone reach and walk",
+         "truth_boundary": (
+             "This route creates complete characters from reusable freeform parts, optionally with explicit rigs and clips. "
+-            "It does not infer a skeleton, skin weights, animation, controller behavior, clothing fit, "
+-            "or aesthetic acceptance."
++            "Declared performance recipes can fit joints, generate segment-distance weights and solve reach/walk clips. "
++            "No inferred anatomy, controller behavior, physical balance, clothing fit or aesthetic acceptance."
+         ),
+     }
+ 
+@@ -126,7 +127,7 @@ def compile_character_recipe(raw: Any) -> dict[str, Any]:
+     if not isinstance(raw, dict) or raw.get("schema") != SCHEMA:
+         _hold("HOLD_CHARACTER_RECIPE_INVALID", f"character recipe must use schema {SCHEMA}")
+     required = {"schema", "name", "character", "form"}
+-    optional = {"sockets", "clothing_regions", "material_intent", "rig", "animation", "metadata"}
++    optional = {"sockets", "clothing_regions", "material_intent", "rig", "animation", "performance", "metadata"}
+     extra = set(raw) - required - optional
+     if extra or not required <= set(raw):
+         _hold("HOLD_CHARACTER_RECIPE_INVALID", "character recipe fields do not match the bounded grammar", unexpected=sorted(extra))
+@@ -260,18 +261,35 @@ def compile_character_recipe(raw: Any) -> dict[str, Any]:
+         else "PASS_NO_ACTIVE_ORGANS"
+     )
+ 
++    performance = None
++    rig = raw.get("rig")
++    if raw.get("performance") is not None:
++        if rig not in (None, False, "none") or animation not in (None, False, "none", []):
++            _hold("HOLD_CHARACTER_PERFORMANCE_CONFLICT", "performance cannot silently override explicit rig or animation")
++        from .character_performance import fit_character_performance
++        from .character_motion import CharacterMotionError
++        try:
++            performance = fit_character_performance(raw["performance"], form["specification"], body_family=identity["body_family"])
++        except CharacterMotionError as exc:
++            _hold("HOLD_CHARACTER_PERFORMANCE_INVALID", str(exc))
++        rig, animation = performance["rig"], performance["animation"]
++
+     motion = None
+-    if isinstance(raw.get("rig"), dict):
++    if isinstance(rig, dict):
+         from .character_motion import CharacterMotionError, compile_motion
+         try:
+-            motion = compile_motion(form["specification"], raw["rig"], animation)
++            motion = compile_motion(form["specification"], rig, animation)
+         except CharacterMotionError as exc:
+             _hold("HOLD_CHARACTER_MOTION_INVALID", str(exc))
+ 
++    if motion and performance:
++        motion["performance_observations"] = deepcopy(performance["observations"])
++
+     return {
+         "schema": SCHEMA,
+         "truth_status": "COMPILED_EXPLICIT_SKINNED_CHARACTER" if motion else "COMPILED_STATIC_WHOLE_CHARACTER",
+         "motion": motion,
++        "performance": performance,
+         "name": name,
+         "recipe_sha256": hashlib.sha256(_canonical(raw)).hexdigest(),
+         "character": identity,
+@@ -314,6 +332,7 @@ def publish_character_recipe(target: str | Path, recipe: Any, *, replace: bool =
+         "automatic_canon_admission": False,
+     }
+     source["motion"] = deepcopy(compiled["motion"])
++    source["performance"] = deepcopy(compiled["performance"])
+     publisher = None
+     if compiled["motion"]:
+         from .character_motion import CharacterMotionError, publish_motion_glb
+diff --git a/src/axm_uc/creator_retention.py b/src/axm_uc/creator_retention.py
+index d6c0d16..ca4e6a8 100644
+--- a/src/axm_uc/creator_retention.py
++++ b/src/axm_uc/creator_retention.py
+@@ -114,6 +114,9 @@ def publish_retained_glb(
+                 "specification_sha256": result["specification_sha256"],
+             },
+         }
++        if "motion_validation" in result:
++            # Keep the decoded-output evidence beside the construction that made it.
++            retained["artifact"]["motion_validation"] = deepcopy(result["motion_validation"])
+         retained["source_sha256"] = hashlib.sha256(_canonical({
+             key: value for key, value in retained.items() if key != "source_sha256"
+         })).hexdigest()
+diff --git a/tests/test_character_performance.py b/tests/test_character_performance.py
+new file mode 100644
+index 0000000..b00d9c7
+--- /dev/null
++++ b/tests/test_character_performance.py
+@@ -0,0 +1,169 @@
++"""Check fitted performance against decoded world positions and contact geometry."""
++from copy import deepcopy
++import json
++import math
++from pathlib import Path
++import tempfile
++import unittest
++
++from axm_uc.character_motion import build_character_motion, CharacterMotionError
++from axm_uc.character_performance import solve_chain
++from axm_uc.character_recipe import compile_character_recipe, publish_character_recipe, CharacterRecipeError
++from axm_uc.game_pose_runtime import GamePoseAsset
++from axm_uc.machine import UniversalCreationMachine
++
++ROOT = Path(__file__).resolve().parents[1]
++
++
++def recipe():
++    return json.loads((ROOT/'examples/character-motion/seedling-performance.json').read_text())['inputs']['recipe']
++
++
++def taller(source):
++    result = deepcopy(source)
++    for part in result['form']['parts']:
++        part['scale'] = [1.25, 1, 1.3]
++        part['translation'] = [v*s for v, s in zip(part.get('translation', [0,0,0]), [1.25,1,1.3])]
++    return result
++
++
++def build(source):
++    compiled = compile_character_recipe(source)
++    built = build_character_motion(compiled['specification'], compiled['motion'])
++    asset = GamePoseAsset(built['body'])
++    nodes = {node['name']: i for i, node in enumerate(built['document']['nodes'])}
++    return compiled, built, asset, nodes
++
++
++class CharacterPerformanceTests(unittest.TestCase):
++    def test_same_template_refits_different_proportions_and_replays(self):
++        first = recipe()
++        other = taller(first)
++        a, ab, aa, _ = build(first)
++        b, bb, ba, _ = build(other)
++        self.assertEqual(first['performance'], other['performance'])
++        self.assertNotEqual(a['performance']['landmarks'], b['performance']['landmarks'])
++        self.assertNotEqual(a['motion']['skin'], b['motion']['skin'])
++        self.assertNotEqual(ab['body'], bb['body'])
++        self.assertEqual(bb['body'], build(other)[1]['body'])
++        for c, built, asset in ((a,ab,aa),(b,bb,ba)):
++            for p, mesh in zip(c['specification']['primitives'], asset.sample(vertices=True)['meshes']):
++                for expected, actual in zip(p['positions'], mesh['positions']):
++                    self.assertLess(math.dist(expected, actual), 1e-6)
++            for rows in c['motion']['skin'].values():
++                for row in rows:
++                    self.assertAlmostEqual(sum(row['weights']), 1)
++                    self.assertTrue(all(w >= 0 for w in row['weights']))
++            proof = built['motion_validation']['performance']
++            self.assertEqual(proof['verified_targets'], 123)
++            self.assertGreater(proof['verified_contact_samples'], 0)
++            self.assertLess(proof['max_sample_target_error_m'], 1e-5)
++
++    def test_walk_support_vertices_stay_planted_and_swing_clears_ground(self):
++        c, _, asset, nodes = build(recipe())
++        observations = c['performance']['observations'][0]['samples']
++        rest = asset.sample(vertices=True)
++        foot_mesh = {side: next(m for m in rest['meshes'] if m['node'] == nodes[side+'-foot'])
++                     for side in ('left','right')}
++        prior, lifted = {}, 0
++        for row in observations:
++            side = row['joint'].split('-')[0]
++            pose = asset.sample('walk', row['time'], vertices=True)
++            mesh = next(m for m in pose['meshes'] if m['node'] == nodes[side+'-foot'])
++            actual = asset.point(pose, nodes[row['joint']])
++            self.assertLess(math.dist(actual, row['target']), 1e-6)
++            for p, q in zip(foot_mesh[side]['positions'], mesh['positions']):
++                # End counter-rotation keeps the entire rigid foot level, not just its joint.
++                expected = [v + t-r for v, t, r in zip(p, row['target'], c['performance']['landmarks'][row['joint']])]
++                self.assertLess(math.dist(q, expected), 1e-6)
++            height = min(p[2] for p in mesh['positions'])
++            if row['contact']:
++                self.assertAlmostEqual(height, 0, places=6)
++                if side in prior and prior[side]['contact'] and row['time'] < 2:
++                    self.assertLess(math.dist(row['target'], prior[side]['target']), 1e-9)
++            elif height > .02:
++                lifted += 1
++            prior[side] = row
++        self.assertGreater(lifted, 5)
++        start, end = asset.sample('walk',0), asset.sample('walk',2)
++        delta = [b-a for a,b in zip(asset.point(start,nodes['root']),asset.point(end,nodes['root']))]
++        self.assertLess(math.dist(delta,[0,.22,0]),1e-6)
++        for side in ('left','right'):
++            # A cycle repeats relative pose while advancing the root by one stride.
++            p, q = asset.point(start,nodes[side+'-ankle']),asset.point(end,nodes[side+'-ankle'])
++            self.assertLess(math.dist([b-a for a,b in zip(p,q)],delta),1e-6)
++
++    def test_reach_target_stays_in_world_space_when_root_moves(self):
++        r = recipe()
++        r['performance']['clips'][1]['root_translation'] = [0,.03,0]
++        c, _, asset, nodes = build(r)
++        for row in c['performance']['observations'][1]['samples']:
++            pose = asset.sample('reach',row['time'])
++            self.assertLess(math.dist(asset.point(pose,nodes['left-ankle']),row['target']),1e-6)
++        # The peak was defined in foot bounds: depth .33, height .12, offset .55/1.
++        peak = asset.point(asset.sample('reach',1),nodes['left-ankle'])
++        self.assertLess(math.dist(peak,[-.18,.1835,.24]),1e-6)
++
++    def test_nonplanar_solver_preserves_lengths_and_reconstructs_endpoint(self):
++        start, middle, end, target = [1,2,3],[1.2,2.9,3.2],[1.7,3.4,3.8],[1.8,2.4,3.7]
++        q1, q2, _, elbow = solve_chain(start,middle,end,target,[0,1,0])
++        self.assertAlmostEqual(math.dist(start,elbow),math.dist(start,middle))
++        self.assertAlmostEqual(math.dist(elbow,target),math.dist(middle,end))
++        def rotate(q,v):
++            x,y,z,w=q
++            matrix=[[1-2*(y*y+z*z),2*(x*y-z*w),2*(x*z+y*w)],
++                    [2*(x*y+z*w),1-2*(x*x+z*z),2*(y*z-x*w)],
++                    [2*(x*z-y*w),2*(y*z+x*w),1-2*(x*x+y*y)]]
++            return [sum(a*b for a,b in zip(row,v)) for row in matrix]
++        upper=rotate(q1,[b-a for a,b in zip(start,middle)])
++        lower=rotate(q1,rotate(q2,[b-a for a,b in zip(middle,end)]))
++        self.assertLess(math.dist([a+b+c for a,b,c in zip(start,upper,lower)],target),1e-8)
++
++    def test_live_route_retains_fitting_causes_and_exact_replay(self):
++        with tempfile.TemporaryDirectory() as t:
++            target=Path(t)/'body.glb'
++            r=recipe()
++            result=UniversalCreationMachine(ROOT).create({'kind':'character-performance-asset','inputs':{'path':str(target),'recipe':r}})
++            self.assertEqual(result['type'],'CREATION_RESULT',result)
++            source=json.loads(target.with_suffix('.glb.source.json').read_text())
++            self.assertEqual(source['recipe']['performance'],r['performance'])
++            self.assertEqual(len(source['performance']['landmarks']),7)
++            self.assertEqual(source['artifact']['motion_validation']['performance']['verified_targets'],123)
++            self.assertLess(source['artifact']['motion_validation']['performance']['max_sample_target_error_m'],1e-5)
++            self.assertTrue(source['source_authority'])
++            self.assertFalse(source['automatic_canon_admission'])
++            replay=Path(t)/'replay.glb'
++            publish_character_recipe(replay,source['recipe'])
++            self.assertEqual(target.read_bytes(),replay.read_bytes())
++
++    def test_invalid_or_unsupported_performance_is_refused(self):
++        mutations=[
++            lambda r:r['performance'].update(body_family='different'),
++            lambda r:r['performance']['joints'][1]['anchor'].update(part='missing'),
++            lambda r:r['performance']['joints'][1]['anchor'].update(fraction=[2,0,0]),
++            lambda r:r['performance']['joints'][1].update(parent='left-ankle'),
++            lambda r:r['performance']['bindings'].pop('body'),
++            lambda r:r['performance']['bindings']['left-upper']['segment_weights'].update(max_influences=5),
++            lambda r:r['performance']['bindings']['left-upper']['segment_weights'].update(segments=[['left-hip','left-hip']]),
++            lambda r:r['performance']['clips'][0].update(stride=10),
++            lambda r:r['performance']['clips'][0].update(up_axis=1),
++            lambda r:r['performance']['clips'][0].update(samples=True),
++            lambda r:r['performance']['clips'][0]['chains'][0].update(max_bend_degrees=1),
++            lambda r:r['performance']['clips'][0]['chains'][0].update(pole=[0,0,0]),
++            lambda r:r['performance']['clips'][1]['chains'][0]['targets'][1].update(at=0),
++            lambda r:r['performance']['clips'][1]['chains'][0]['targets'][1].update(point=[99,99,99]),
++            lambda r:r.update(rig={'schema':'axm.character-rig/v0.1'}),
++        ]
++        for mutate in mutations:
++            with self.subTest(mutate=mutate):
++                r=recipe();mutate(r)
++                with self.assertRaises(CharacterRecipeError):
++                    compile_character_recipe(r)
++        for args in (([0,0,0],[0,0,0],[1,0,0],[.5,0,0],[0,1,0]),
++                     ([0,0,0],[1,1,0],[2,0,0],[1,0,0],[1,0,0])):
++            with self.assertRaises(CharacterMotionError):
++                solve_chain(*args)
++
++
++if __name__ == '__main__':
++    unittest.main()
+diff --git a/tools/character_performance_demo.py b/tools/character_performance_demo.py
+new file mode 100644
+index 0000000..843cb0e
+--- /dev/null
++++ b/tools/character_performance_demo.py
+@@ -0,0 +1,78 @@
++"""Regenerate two bodies from one performance template and observe exported poses.
++
++PYTHONPATH=src python tools/character_performance_demo.py /tmp/uc-performance --plot
++Matplotlib is optional and used only for a technical pose sheet, never compilation.
++"""
++from copy import deepcopy
++import argparse
++import json
++from pathlib import Path
++
++from axm_uc.character_motion import build_character_motion
++from axm_uc.character_recipe import compile_character_recipe, publish_character_recipe
++from axm_uc.game_pose_runtime import load_game_pose_glb
++
++ROOT = Path(__file__).resolve().parents[1]
++
++
++def main():
++    parser = argparse.ArgumentParser()
++    parser.add_argument('output', type=Path)
++    parser.add_argument('--plot', action='store_true')
++    args = parser.parse_args()
++    args.output.mkdir(parents=True, exist_ok=True)
++    source = json.loads((ROOT/'examples/character-motion/seedling-performance.json').read_text())['inputs']['recipe']
++    tall = deepcopy(source)
++    tall['name'] = 'Tall seedling, same performance construction'
++    for part in tall['form']['parts']:
++        part['scale'] = [1.25,1,1.3]
++        part['translation'] = [v*s for v,s in zip(part.get('translation',[0,0,0]),[1.25,1,1.3])]
++    outputs, receipt = [], {'shared_performance': source['performance'] == tall['performance'], 'bodies': []}
++    for i, recipe in enumerate((source,tall)):
++        target = args.output/f'body-{i+1}.glb'
++        published = publish_character_recipe(target,recipe)
++        compiled = compile_character_recipe(recipe)
++        # Load published bytes again, not the compiler's intermediate geometry.
++        asset = load_game_pose_glb(target)
++        replay = build_character_motion(compiled['specification'],compiled['motion'])
++        assert replay['body'] == target.read_bytes(), 'construction replay changed bytes'
++        outputs.append((compiled,asset))
++        receipt['bodies'].append({'file':target.name,'landmarks':compiled['performance']['landmarks'],
++                                  'motion_validation':published['motion_validation'],
++                                  'exact_replay':True})
++    receipt['boundary'] = ('Decoded sample positions and rigid foot contacts. Plot is a technical vertex view; '
++                           'no shaded-normal, continuous contact, physical balance or external-engine claim.')
++    if args.plot:
++        import matplotlib
++        matplotlib.use('Agg')
++        import matplotlib.pyplot as plt
++        from mpl_toolkits.mplot3d.art3d import Poly3DCollection
++        states = [('walk',0),('walk',.5),('walk',1),('walk',1.5),('reach',1)]
++        fig = plt.figure(figsize=(16,9),facecolor='#101923')
++        for row,(compiled,asset) in enumerate(outputs):
++            for col,(clip,time) in enumerate(states):
++                pose = asset.sample(clip,time,vertices=True)
++                ax = fig.add_subplot(2,len(states),row*len(states)+col+1,projection='3d',facecolor='#101923')
++                for part,mesh in zip(compiled['specification']['primitives'],pose['meshes']):
++                    points,indices = mesh['positions'],part['indices']
++                    faces = [[points[indices[k+j]] for j in range(3)] for k in range(0,len(indices),3)]
++                    ax.add_collection3d(Poly3DCollection(faces,facecolor=part['material']['color'][:7],
++                                                       edgecolor='#b7c4c0',linewidth=.12))
++                ax.plot([-.55,.55],[0,0],[0,0],color='#6e8597',linewidth=.6)
++                ax.plot([0,0],[-.3,.6],[0,0],color='#6e8597',linewidth=.6)
++                ax.set(xlim=(-.65,.65),ylim=(-.3,.65),zlim=(0,2.4))
++                ax.set_box_aspect((1.3,.95,2.4))
++                ax.view_init(12,-40)
++                ax.set_axis_off()
++                ax.set_title(f'Body {row+1} / {clip} {time:g}s',color='#e2ebef',fontsize=10)
++        fig.suptitle('UC body-fitted performance | one retained template, two proportions',color='white',fontsize=18,y=.96)
++        fig.text(.5,.045,'Landmarks + segment weights + two-bone targets → exported GLB → decoded vertex poses',
++                 ha='center',color='#b3c4d1',fontsize=11)
++        fig.savefig(args.output/'performance-proof.png',dpi=120,facecolor=fig.get_facecolor())
++        plt.close(fig)
++    (args.output/'receipt.json').write_text(json.dumps(receipt,indent=2)+'\n')
++    print(json.dumps(receipt,indent=2))
++
++
++if __name__ == '__main__':
++    main()

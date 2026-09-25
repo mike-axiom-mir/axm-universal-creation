@@ -1,0 +1,81 @@
+{
+  "capsule_id": "07536073eb37d5803c7f6ce3aa324d58ee3eaff0baf79043d7487be50b8d3eec",
+  "evidence": {
+    "files": [
+      {
+        "additions": 4,
+        "binary": false,
+        "content_sha256": "29ecb4cb0ea68b7ae9f1cf5a64481e1aa16e5d5af890270dcb2a95b9cd23242e",
+        "deletions": 0,
+        "path": "README.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Reusable simulation method"
+        ]
+      },
+      {
+        "additions": 40,
+        "binary": false,
+        "content_sha256": "2a90aa31fd117ae31487b04c48492505132634bf3c024c879c76ba1559723973",
+        "deletions": 0,
+        "path": "docs/SIMULATION_EXPERIENCE_REUSE.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Reuse simulation experience in creation",
+          "First useful comparison",
+          "Neural experiment boundary"
+        ]
+      }
+    ],
+    "patch_sha256": "abe645b5be21d14c91235ce3c0498406cdcb5522a1e8b18663c920cb6cf7788c"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 1,
+    "kinds": [
+      "knowledge"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "axiom",
+      "axm",
+      "boundary",
+      "codex",
+      "comparison",
+      "creation",
+      "creation-machine",
+      "experience",
+      "experiment",
+      "first",
+      "from",
+      "merge",
+      "method",
+      "mike",
+      "mir",
+      "neural",
+      "pull",
+      "readme",
+      "request",
+      "reusable",
+      "reuse",
+      "simulation",
+      "standalone",
+      "technique",
+      "universal-creation",
+      "useful"
+    ]
+  },
+  "source": {
+    "base": "08cd56220b927ff03432122c4470031597f9f697",
+    "commit_subject": "Merge pull request #234 from mike-axiom-mir/codex/simulation-technique-reuse-2026-09-25",
+    "head": "4478dbb10d582173288f30cdbd36ab2347beec99",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

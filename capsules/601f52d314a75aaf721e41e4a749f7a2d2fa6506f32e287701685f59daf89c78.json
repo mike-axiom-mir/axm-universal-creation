@@ -1,0 +1,239 @@
+{
+  "capsule_id": "601f52d314a75aaf721e41e4a749f7a2d2fa6506f32e287701685f59daf89c78",
+  "evidence": {
+    "files": [
+      {
+        "additions": 8,
+        "binary": false,
+        "content_sha256": "d0808ecd2be21db28d28813b3316ec40e93fc6dd9daa4d658b90b99e2b9a7818",
+        "deletions": 0,
+        "path": "README.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Core rule"
+        ]
+      },
+      {
+        "additions": 29,
+        "binary": false,
+        "content_sha256": "90afc248ebc8b8e82c1b155ea83f882af3d8dcf6a3ebb81ceb216171e8148948",
+        "deletions": 0,
+        "path": "capabilities/live/AXM-CAP-CREATION-ATLAS.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 184,
+        "binary": false,
+        "content_sha256": "4635bde9983c46d045b71f7b8f1b22dde7af25d581192b75651728d3a6070c1d",
+        "deletions": 0,
+        "path": "docs/CREATION_ATLAS.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Direction, knowledge, construction and evidence",
+          "Retrieve only what the direction needs",
+          "Planning and execution",
+          "Growth by use, with fresh verification",
+          "Extending the connected machine"
+        ]
+      },
+      {
+        "additions": 503,
+        "binary": false,
+        "content_sha256": "4b46f0d83837ffc39a52744bb8a51e161b77dc95a852731112e76ba378ab9362",
+        "deletions": 0,
+        "path": "src/axm_uc/atlas_pipeline.py",
+        "status": "A",
+        "symbols": [
+          "_relative",
+          "_output",
+          "_at",
+          "_parameters",
+          "_bindings",
+          "_binding_refs",
+          "_check_contract",
+          "_validate_blueprint",
+          "_capability_gaps",
+          "_preflight",
+          "_experience",
+          "_search_key",
+          "plan_intent",
+          "_observe",
+          "build_intent",
+          "operate_atlas"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 297,
+        "binary": false,
+        "content_sha256": "4e66c1fadd8115734f46b3970d12c92f25838f6d1ff82e73ac71318e93aff10b",
+        "deletions": 0,
+        "path": "src/axm_uc/creation_atlas.py",
+        "status": "A",
+        "symbols": [
+          "canonical",
+          "digest",
+          "text",
+          "strings",
+          "local_file",
+          "_tokens",
+          "CreationAtlas",
+          "runtime_pin"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 3,
+        "binary": false,
+        "content_sha256": "ce449aae9be9113e3b1f0cb7a0a968567c7e9650af9e07314d704fd23af45a60",
+        "deletions": 0,
+        "path": "src/axm_uc/portable.py",
+        "status": "M",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 8,
+        "binary": false,
+        "content_sha256": "75ea9d38d86a2c5159867d3f977a46a08eb56c021085b350513989896d434108",
+        "deletions": 0,
+        "path": "src/axm_uc/standalone_creation_capabilities.py",
+        "status": "M",
+        "symbols": [
+          "register_standalone_creation_builtins"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 207,
+        "binary": false,
+        "content_sha256": "a8823994e3a82a86858252797ea200259bae23bbc7aeffde48a6d6cbb3c421c7",
+        "deletions": 0,
+        "path": "tests/test_creation_atlas.py",
+        "status": "A",
+        "symbols": [
+          "CreationAtlasTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 21,
+        "binary": false,
+        "content_sha256": "336d18d4857a8076c9339e29f8d47ab190eb4307b91507e53165b0c8fa3c3c31",
+        "deletions": 0,
+        "path": "tests/test_portable_runtime.py",
+        "status": "M",
+        "symbols": [
+          "PortableRuntimeTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 66,
+        "binary": false,
+        "content_sha256": "332cbd031c2ee036e4b0814c9155cd618b0cd3ced107e89b1a07145b352bf743",
+        "deletions": 0,
+        "path": "tools/creation_atlas_demo.py",
+        "status": "A",
+        "symbols": [
+          "main"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "6561776a8858c7b12edbe21ed8b724162bacf18dd7bb23c38fcf598b9f554447"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "configuration",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "atlas",
+      "axiom",
+      "axm",
+      "binding",
+      "bindings",
+      "blueprint",
+      "build",
+      "builtins",
+      "canonical",
+      "cap",
+      "capabilities",
+      "capability",
+      "check",
+      "codex",
+      "connected",
+      "construction",
+      "contract",
+      "creation",
+      "creation-machine",
+      "demo",
+      "digest",
+      "direction",
+      "evidence",
+      "execution",
+      "experience",
+      "extending",
+      "fresh",
+      "from",
+      "gaps",
+      "growth",
+      "intent",
+      "json",
+      "key",
+      "knowledge",
+      "live",
+      "local",
+      "machine",
+      "merge",
+      "mike",
+      "mir",
+      "needs",
+      "observe",
+      "only",
+      "operate",
+      "output",
+      "parameters",
+      "pin",
+      "pipeline",
+      "plan",
+      "planning",
+      "portable",
+      "preflight",
+      "pull",
+      "readme",
+      "refs",
+      "register",
+      "relative",
+      "request",
+      "retrieve",
+      "rule",
+      "runtime",
+      "search",
+      "standalone",
+      "strings"
+    ]
+  },
+  "source": {
+    "base": "399055941a2f579225436fa9b1ff82984598e45b",
+    "commit_subject": "Merge pull request #228 from mike-axiom-mir/codex/creation-atlas",
+    "head": "06fe1c101b29610f67aa8dc4a54410b352996dd4",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

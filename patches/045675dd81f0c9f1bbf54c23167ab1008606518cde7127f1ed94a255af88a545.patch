@@ -1,0 +1,1288 @@
+diff --git a/capabilities/live/AXM-CAP-CHARACTER-CONTROLLER.json b/capabilities/live/AXM-CAP-CHARACTER-CONTROLLER.json
+new file mode 100644
+index 0000000..8dfc095
+--- /dev/null
++++ b/capabilities/live/AXM-CAP-CHARACTER-CONTROLLER.json
+@@ -0,0 +1,28 @@
++{
++  "id": "AXM-CAP-CHARACTER-CONTROLLER",
++  "version": "0.1.0",
++  "status": "live",
++  "purpose": "Solve retained reach/walk construction at explicit query times, accumulate walking root travel and measure decoded contact/deformation.",
++  "handles": ["character-controller", "character-performance-probe"],
++  "input_contract": {
++    "required": ["path", "recipe", "clip", "times"],
++    "properties": {
++      "path": "new JSON output path outside the protected live machine body",
++      "recipe": "character recipe with a body-relative performance contract",
++      "clip": "declared reach or walk clip name",
++      "times": "2..1024 increasing nonnegative seconds; walk can continue across cycles",
++      "feet": "optional end-joint to form-part mapping for whole-foot contact checks",
++      "up_axis": "optional 0/1/2, default 2",
++      "ground_height_m": "optional declared support-plane height, default 0"
++    }
++  },
++  "output_contract": {"kind": "solved-character-poses-and-measurements"},
++  "dependencies": ["AXM-CAP-GENERATE-CHARACTER-RECIPE-3D"],
++  "implementation": {"kind": "DETERMINISTIC_SOURCE", "entrypoint": "builtin:character_controller", "source": "src/axm_uc/character_controller.py"},
++  "limitations": [
++    "Uses the caller's elapsed time, not a hidden wall clock. Root travel is already included in the pose.",
++    "Solves declared two-bone paths at query time. No terrain sensing, dynamics, balance, collision or arbitrary rig retargeting.",
++    "Exported GLB clips remain baked; continuous contact requires this retained-recipe controller. Normal GLB playback does not execute it.",
++    "Measurements cover listed times and decoded vertices, not unsampled extrema, shaded normals or artistic quality."
++  ]
++}
+diff --git a/capabilities/live/AXM-CAP-CONSTRUCTION-SEARCH.json b/capabilities/live/AXM-CAP-CONSTRUCTION-SEARCH.json
+new file mode 100644
+index 0000000..33b454d
+--- /dev/null
++++ b/capabilities/live/AXM-CAP-CONSTRUCTION-SEARCH.json
+@@ -0,0 +1,26 @@
++{
++  "id": "AXM-CAP-CONSTRUCTION-SEARCH",
++  "version": "0.1.0",
++  "status": "live",
++  "purpose": "Search declared freeform geometry and character-performance controls against explicit measurements, then retain verified construction and reusable settings.",
++  "handles": ["construction-search", "headless-shape-search"],
++  "input_contract": {
++    "required": ["path", "search"],
++    "properties": {
++      "path": "new output directory outside the protected live machine body",
++      "search": "axm.construction-search/v0.1: intent, recipe, controls, criteria, budget; optional motion_probe and warm_starts"
++    }
++  },
++  "output_contract": {
++    "kind": "measured-construction-search",
++    "contains": ["search.json with contract, trials, measurements and stop reason", "accepted winner.glb and retained creator source when criteria pass", "reusable settings and semantic construction signature"]
++  },
++  "dependencies": ["AXM-CAP-GENERATE-FORM-PATTERN-3D", "AXM-CAP-GENERATE-CHARACTER-RECIPE-3D"],
++  "implementation": {"kind": "DETERMINISTIC_SOURCE", "entrypoint": "builtin:construction_search", "source": "src/axm_uc/construction_search.py"},
++  "limitations": [
++    "Intent is made executable by caller-declared controls and criteria; prose is not silently interpreted as an aesthetic score.",
++    "Finite best-first search, bounded candidate and validation counts, same-runtime deterministic order. No global optimality or statistical-confidence claim.",
++    "Runtime pose sampling measures geometry, deformation and declared flat support contacts; no dynamics, self-intersection or unsampled-extrema guarantee.",
++    "Verified construction is retained as a candidate. Existing growth acceptance and semantic deduplication still govern reusable-library admission."
++  ]
++}
+diff --git a/docs/CHARACTER_PERFORMANCE.md b/docs/CHARACTER_PERFORMANCE.md
+index 25183e3..84fad33 100644
+--- a/docs/CHARACTER_PERFORMANCE.md
++++ b/docs/CHARACTER_PERFORMANCE.md
+@@ -106,13 +106,21 @@ tested replay is byte-identical in the same runtime. Every use can retain reusab
+ construction; export alone does not automatically admit a new library capability.
+ The existing creator-growth acceptance and semantic deduplication rules still apply.
+ 
+-## Next connected build
++## Runtime continuation and headless search
++
++The query-time contact controller, accumulated walking root travel and measured
++skin-field search are now implemented. See [intent-directed search](INTENT_DIRECTED_SEARCH.md)
++for the live routes, bounded acceptance checks and reusable search examples.
++The exported GLB itself remains a baked realization; its retained recipe powers
++runtime control. Joint-frame limits, collision and corrective shapes remain open.
++
++## Further connected work
+ 
+ The highest-value continuation is a **contact and deformation controller** over
+ this retained body state:
+ 
+-1. Accumulate root travel and solve support targets at runtime; measure between-key
+-   slip rather than relying on dense baked samples.
++1. Extend the runtime controller with terrain and bounded collision probes; retain
++   contact and between-key deformation observations from actual requested scenarios.
+ 2. Add joint-frame limits, attachment tracking and corrective deformation with
+    bent-pose intersection/volume checks. Preserve explicit unsupported cases.
+ 3. Bind observed failures to bounded controls: plant timing, pelvis height, stride,
+diff --git a/docs/INTENT_DIRECTED_SEARCH.md b/docs/INTENT_DIRECTED_SEARCH.md
+new file mode 100644
+index 0000000..ba5de33
+--- /dev/null
++++ b/docs/INTENT_DIRECTED_SEARCH.md
+@@ -0,0 +1,137 @@
++# Intent-directed headless construction search
++
++UC can now vary freeform geometry, fitted rigs, skin fields and reach/walk controls
++without rendering every trial. A successful search retains the construction that
++met the declared measurements, along with enough information to reproduce the
++search and reuse its settings. Runtime search uses the standard library only.
++
++This builds on the existing form compiler, character-performance compiler,
++two-bone solver, GLB decoder, mesh measurements and semantic atom classifier.
++The older paint-channel simulation remains available for its own purpose.
++
++## Run
++
++```sh
++PYTHONPATH=src python -m axm_uc create examples/construction-search/vessel.json
++PYTHONPATH=src python -m axm_uc create examples/construction-search/broader-walker.json
++PYTHONPATH=src python -m axm_uc create examples/construction-search/deformation-repair.json
++PYTHONPATH=src python tools/construction_search_demo.py /tmp/uc-search-proof --plot
++```
++
++Each request writes a **new** output directory. It contains `search.json`; a passing
++search also writes `winner.glb` and its retained creator-source sidecar. Existing
++outputs are refused. The demo adds measured timings, warm-start comparisons and an
++optional plot of actual decoded vertices. Only plotting requires matplotlib.
++
++The attached monolith checkpoint inspected for this build contained UC commit
++`78b16c01b543733688d7d036552b63679c87c10b`. Work continued from current GitHub main
++`4af36911bfc86500d3c731dc25123d18260bc21c`, preserving the newer character machinery.
++The archive itself was not rewritten or promoted to current UC.
++
++## Make intent executable
++
++`search` uses `axm.construction-search/v0.1`:
++
++| Field | Contract |
++| --- | --- |
++| `intent` | Human-readable purpose, retained unchanged. |
++| `recipe` | A form-pattern or character recipe. |
++| `controls` | One to eight named controls, each with existing field `paths` and 1..33 ordered `values`. |
++| `criteria` | One to sixteen known metrics with `min` and/or `max`; optional positive `scale` normalizes violations during search. |
++| `budget` | Maximum `candidates` (1..256), `validations` (1..32), and `validation_samples` (17..257). |
++| `motion_probe` | Optional clip, cycles (1..4), foot-part mapping, up axis and ground-plane height. Required for motion criteria. |
++| `warm_starts` | Optional prior settings, within current controls. Every reused setting is measured again. |
++
++For example, one control can set the same value on symmetric parts:
++
++```json
++{"id":"leg-weight-falloff",
++ "paths":[["performance","bindings","left-upper","segment_weights","falloff"],
++          ["performance","bindings","right-upper","segment_weights","falloff"]],
++ "values":[1,2,4,8]}
++```
++
++Paths may change geometry and performance construction only. They must exist and
++must not overlap. Values may be numeric parameters, vectors, or complete bounded
++construction options accepted by the receiving compiler. No arbitrary expression,
++shell command or generated program is executed. A human, deterministic upstream
++system or optional AI can translate prose into this same contract.
++
++Available geometry metrics are X/Y/Z extent, surface area, vertex count and triangle
++count. Motion metrics are target error, maximum bend, minimum triangle-area ratio,
++maximum edge-length ratio, whole-foot contact drift, ground penetration and peak
++foot lift. The reported peak lift is the lowest observed peak among the declared
++feet. Missing contact or swing coverage remains missing evidence. Unknown metrics
++are rejected: an unsupported aesthetic goal cannot silently become a passing score.
++
++## Search order and stopping
++
++1. Try supplied warm starts, then the recipe's current option tuple (first option
++   when the current value is outside the supplied list).
++2. Traverse neighboring option tuples, prioritizing neighbors of candidates with
++   smaller normalized criterion violations. Ties use stable insertion order.
++3. Compile cheap geometry and reject exact geometric misses before motion work.
++4. Evaluate promising motion candidates at nine coarse query times.
++5. Verify coarse passes at the denser requested times, using decoded output.
++   At the end, use remaining validation slots on the best unresolved coarse
++   candidates too: a coarse grid can miss a useful swing peak.
++6. Stop when all declared criteria pass dense validation, or a budget/finite option
++   space is exhausted. A budget failure does not publish a winner.
++
++The budgets count work, not elapsed wall time. This preserves search order across
++faster/slower machines. Timings belong to the demo's observations, not to the
++acceptance decision. Search does not claim an optimal solution; the first verified
++acceptable candidate is enough for this contract. Increasing a budget expands the
++search effort, not the meaning of its checks.
++
++“Confident” is represented as explicit passed measurements and their scope, with
++`probability: null`. Repeating the same observations does not manufacture a
++statistical confidence percentage. Finite option-space exhaustion concerns only
++the declared options, never all possible shapes.
++
++## Continuous performance and deformation repair
++
++`CharacterController(recipe).sample(clip, elapsed_s, vertices=True)` solves the
++retained two-bone construction at the exact supplied time. It uses the existing
++GLB pose decoder's validated local transform overrides, then its ordinary world
++transform and skin evaluation. The underlying GLB bytes remain unchanged.
++
++For walking, phase may pass one: support targets advance by plant identity while
++root travel accumulates across cycles. Query order does not matter, and there is no
++hidden wall clock. Reach remains a bounded one-shot performance. Unreachable or
++ambiguous poses between baked keys are refused when queried.
++
++The `character-controller` / `character-performance-probe` live route accepts
++`path`, `recipe`, `clip`, and increasing `times`, with optional `feet`, `up_axis`
++and `ground_height_m`. It retains the recipe, solved transforms and measurements.
++
++The deformation example varies skin-field falloff and softness while preserving
++form geometry. It measures triangle-area compression and edge stretch in bent
++poses, and retains fields that pass the declared limits. This is a concrete
++construction correction, not a claim of anatomical or volume-preserving skinning.
++
++**Baked GLB playback and runtime control are distinct realizations.** A normal GLB
++player still interpolates the exported keys. It does not automatically execute UC's
++controller. Use the retained recipe with the controller for query-time contacts;
++do not apply the controller's root travel a second time.
++
++## Growth and boundaries
++
++The report retains intent, options, constraints, stop reason, trial settings,
++failures, measured winner, exact recipe, semantic signature and warm-start settings.
++Renames and color-only variants are handled by the existing semantic atom
++classifier rather than counted as new construction. Invalid candidates are not
++used to suppress later valid alternatives. A saved result is a reusable growth
++candidate; existing acceptance/deduplication still governs library admission.
++
++The same machinery can search additional shapes by supplying different form
++recipes and controls. New measurement families require real evaluators. Headless
++execution does not establish physics, dynamic balance, collision, self-intersection,
++unsampled deformation extrema, shaded-normal correctness, artistic quality or
++external-engine compatibility. Render only the useful finalists for visual review;
++retain those observations separately from numerical acceptance.
++
++Next useful extensions are bounded collision/clearance probes, multiple terrain
++scenarios, richer objective trade-offs and accepted-candidate retrieval from the
++existing reusable library. These can extend the present controller and search;
++they do not require replacing the construction model.
+diff --git a/src/axm_uc/character_controller.py b/src/axm_uc/character_controller.py
+new file mode 100644
+index 0000000..0588ee8
+--- /dev/null
++++ b/src/axm_uc/character_controller.py
+@@ -0,0 +1,118 @@
++"""Stateless performance evaluation at caller-owned time, with decoded mesh checks."""
++from __future__ import annotations
++
++import math
++
++from .character_motion import build_character_motion, number, require
++from .character_performance import sample_performance
++from .character_recipe import compile_character_recipe
++from .game_pose_runtime import GamePoseAsset
++from .mesh_quality import _area3
++
++
++class CharacterController:
++    """An explicit recipe owns the body; elapsed seconds own the simulation clock."""
++
++    def __init__(self, recipe):
++        self.compiled = compile_character_recipe(recipe)
++        performance = self.compiled['performance']
++        require(performance is not None, 'runtime controller requires a performance recipe')
++        self.plans = {p['name']: p for p in performance['controllers']}
++        self.landmarks = performance['landmarks']
++        self.built = build_character_motion(self.compiled['specification'], self.compiled['motion'])
++        self.asset = GamePoseAsset(self.built['body'])
++        document = self.built['document']
++        self.joint_nodes = {j['id']: node for j, node in
++                            zip(self.compiled['motion']['joints'], document['skins'][0]['joints'])}
++        self.part_nodes = {n['name']: i for i, n in enumerate(document['nodes']) if 'mesh' in n}
++
++    def sample(self, clip, elapsed_s, *, vertices=False):
++        require(isinstance(clip, str) and clip in self.plans, 'unknown performance clip')
++        elapsed_s = number(elapsed_s)
++        require(elapsed_s >= 0, 'elapsed time cannot be negative')
++        plan = self.plans[clip]
++        values, observations = sample_performance(plan, self.landmarks, elapsed_s/plan['duration'])
++        rows = {}
++        for (joint, path), value in values.items():
++            node = self.joint_nodes[joint]
++            rows.setdefault(node, {'node': node})[path] = value
++        pose = self.asset.sample(vertices=vertices, overrides=list(rows.values()))
++        for row in observations:
++            actual = self.asset.point(pose, self.joint_nodes[row['joint']])
++            row['target_error_m'] = math.dist(actual, row['target'])
++            require(row['target_error_m'] <= 1e-6, 'runtime solve missed its end target')
++        pose['performance'] = {'clip': clip, 'elapsed_s': elapsed_s,
++                               'phase': elapsed_s/plan['duration'], 'observations': observations,
++                               'root_travel_included': True,
++                               'boundary': 'IK solved at this query time. Flat declared support paths; no terrain sensing, dynamics or unsampled deformation proof.'}
++        return pose
++
++    def measure(self, clip, times, *, feet=None, up_axis=2, ground_height_m=0):
++        """Observe queried poses, triangle/edge distortion and declared foot surfaces."""
++        require(isinstance(clip, str) and clip in self.plans, 'unknown performance clip')
++        require(isinstance(times, list) and 2 <= len(times) <= 1024, 'measurement needs 2..1024 times')
++        times = [number(t) for t in times]
++        require(times[0] >= 0 and all(a < b for a,b in zip(times,times[1:])), 'measurement times must increase')
++        require(type(up_axis) is int and up_axis in (0,1,2), 'invalid measurement up axis')
++        ground = number(ground_height_m)
++        feet = {} if feet is None else feet
++        ends = {c['joints'][-1] for c in self.plans[clip]['chains']}
++        require(isinstance(feet, dict) and set(feet) <= ends
++                and all(isinstance(p, str) and p in self.part_nodes for p in feet.values()), 'invalid end-joint to foot-part mapping')
++        require(len(set(feet.values())) == len(feet), 'each foot part must have one end joint')
++        rest = self.asset.sample(vertices=True)['meshes']
++        spec = self.compiled['specification']
++        require(len(times)*sum(len(p['positions']) + len(p['indices']) for p in spec['primitives']) <= 4_000_000,
++                'controller measurement work budget exceeded')
++        topology = []
++        for part, mesh in zip(spec['primitives'], rest):
++            indices, points = part['indices'], mesh['positions']
++            triangles = [indices[i:i+3] for i in range(0,len(indices),3)]
++            areas = [_area3(*(points[v] for v in tri)) for tri in triangles]
++            edges = sorted({tuple(sorted((a,b))) for tri in triangles for a,b in zip(tri,tri[1:]+tri[:1])})
++            lengths = [math.dist(points[a],points[b]) for a,b in edges]
++            require(all(a > 1e-12 for a in areas) and all(d > 1e-10 for d in lengths), 'collapsed rest geometry')
++            topology.append((triangles,areas,edges,lengths))
++        metrics = {'maximum_target_error_m': 0., 'maximum_bend_degrees': 0.,
++                   'minimum_area_ratio': float('inf'), 'maximum_edge_ratio': 0.}
++        if feet:
++            metrics.update(maximum_contact_slip_m=0., foot_penetration_m=0.)
++        reference, compared, peaks, contacts = {}, set(), {joint: None for joint in feet}, 0
++        for time in times:
++            pose = self.sample(clip, time, vertices=True)
++            meshes = {m['node']: m for m in pose['meshes']}
++            for mesh, top in zip(pose['meshes'], topology):
++                points = mesh['positions']
++                triangles, areas, edges, lengths = top
++                metrics['minimum_area_ratio'] = min(metrics['minimum_area_ratio'],
++                    *(_area3(*(points[v] for v in tri))/a for tri,a in zip(triangles,areas)))
++                metrics['maximum_edge_ratio'] = max(metrics['maximum_edge_ratio'],
++                    *(math.dist(points[a],points[b])/d for (a,b),d in zip(edges,lengths)))
++            for row in pose['performance']['observations']:
++                metrics['maximum_target_error_m'] = max(metrics['maximum_target_error_m'], row['target_error_m'])
++                metrics['maximum_bend_degrees'] = max(metrics['maximum_bend_degrees'], row['bend_degrees'])
++                joint = row['joint']
++                if joint not in feet:
++                    continue
++                points = meshes[self.part_nodes[feet[joint]]]['positions']
++                height = min(p[up_axis] for p in points) - ground
++                metrics['foot_penetration_m'] = max(metrics['foot_penetration_m'], -height)
++                if row['contact']:
++                    contacts += 1
++                    if (joint,row['plant']) in reference:
++                        compared.add(joint)
++                    first = reference.setdefault((joint,row['plant']),points)
++                    metrics['maximum_contact_slip_m'] = max(metrics['maximum_contact_slip_m'],
++                                                            *(math.dist(a,b) for a,b in zip(first,points)))
++                else:
++                    peaks[joint] = max(height, peaks[joint] if peaks[joint] is not None else height)
++        if feet:
++            # Missing a swing is missing evidence, not a zero-height successful observation.
++            if all(v is not None for v in peaks.values()):
++                metrics['peak_foot_lift_m'] = min(peaks.values())
++            if compared != set(feet):
++                metrics.pop('maximum_contact_slip_m')
++        return {'schema': 'axm.character-controller-evidence/v0.1', 'clip': clip, 'times_s': times,
++                'source_sha256': self.asset.source_sha256, 'metrics': metrics,
++                'contact_samples': contacts, 'foot_parts': feet,
++                'boundary': 'Measured at listed times, using decoded GLB vertices. No unsampled extrema, self-intersection, balance, shaded-normal or artistic-quality claim.'}
+diff --git a/src/axm_uc/character_performance.py b/src/axm_uc/character_performance.py
+index 4e82e4d..0f5a6db 100644
+--- a/src/axm_uc/character_performance.py
++++ b/src/axm_uc/character_performance.py
+@@ -199,7 +199,7 @@ def _chains(raw, positions, parents, kind, bounds):
+                 fields(target, {'at', 'point'})
+                 at = number(target['at'])
+                 require(0 <= at <= 1, 'target phase must be in 0..1')
+-                points.append((at, anchor_point(target['point'], bounds)))
++                points.append([at, anchor_point(target['point'], bounds)])
+             require(points[0][0] == 0 and points[-1][0] == 1 and all(a[0] < b[0] for a, b in zip(points, points[1:])),
+                     'target phases must cover 0..1 and strictly increase')
+             normalized['targets'] = points
+@@ -213,7 +213,7 @@ def _chains(raw, positions, parents, kind, bounds):
+     return result
+ 
+ 
+-def _compile_clip(raw, positions, parents, bounds):
++def _prepare_clip(raw, positions, parents, bounds):
+     require(isinstance(raw, dict), 'performance clip must be an object')
+     kind = raw.get('kind')
+     require(kind in ('reach', 'walk'), 'supported performance kinds are reach and walk')
+@@ -234,6 +234,57 @@ def _compile_clip(raw, positions, parents, bounds):
+         require(0 < stride <= 10 and 0 < lift <= 2 and .5 <= stance < .9, 'invalid stride/lift/stance')
+         travel = [0., 0., 0.]
+         travel[forward] = stride
++    plan = {'name': cname, 'kind': kind, 'duration': duration, 'samples': samples,
++            'chains': chains, 'root': root, 'travel': travel}
++    if kind == 'walk':
++        plan.update(forward=forward, up=up, stride=stride, lift=lift, stance=stance)
++    return plan
++
++
++def sample_performance(plan, positions, phase):
++    """Solve at an explicit phase; walk phases above one accumulate root travel.
++
++    Plans come from _prepare_clip. No hidden clock, prior frame or baked-key
++    interpolation determines this pose. Reach phases must remain within 0..1.
++    """
++    phase = number(phase)
++    require(phase >= 0 and (plan['kind'] == 'walk' or phase <= 1), 'invalid performance phase')
++    root_offset = mul(plan['travel'], phase)
++    values = {(plan['root'], 'translation'): add(positions[plan['root']], root_offset)}
++    observations = []
++    for chain in plan['chains']:
++        first, middle, end = chain['joints']
++        start, mid_rest, end_rest = [add(positions[j], root_offset) for j in chain['joints']]
++        contact, plant = False, None
++        if plan['kind'] == 'walk':
++            cycle = phase + chain['phase']
++            step = math.floor(cycle)
++            local = cycle - step
++            target = list(positions[end])
++            distance = plan['stride']*(step-chain['phase'])
++            if local <= plan['stance']:
++                contact, plant = True, step
++            else:
++                u = (local-plan['stance'])/(1-plan['stance'])
++                distance += plan['stride']*u*u*(3-2*u)
++                target[plan['up']] += plan['lift']*math.sin(math.pi*u)**2
++            target[plan['forward']] += distance
++        else:
++            target = _target_at(chain['targets'], phase)
++        q1, q2, q3, elbow = solve_chain(start, mid_rest, end_rest, target, chain['pole'])
++        bend = math.degrees(math.acos(max(-1., min(1., dot(unit(sub(elbow,start)), unit(sub(target,elbow)))))))
++        require(bend <= chain['bend'] + 1e-7, f"{plan['name']}: chain bend exceeds declared limit")
++        values[first, 'rotation'], values[middle, 'rotation'] = q1, q2
++        if chain['keep']:
++            values[end, 'rotation'] = q3
++        observations.append({'time': phase*plan['duration'], 'joint': end, 'target': target,
++                             'contact': contact, 'plant': plant, 'bend_degrees': bend})
++    return values, observations
++
++
++def _compile_clip(plan, positions):
++    cname, duration, samples = plan['name'], plan['duration'], plan['samples']
++    root, chains = plan['root'], plan['chains']
+     values = {(root, 'translation'): []}
+     for chain in chains:
+         for j in chain['joints'][:3 if chain['keep'] else 2]:
+@@ -241,37 +292,10 @@ def _compile_clip(raw, positions, parents, bounds):
+     observations = []
+     times = [duration*i/(samples-1) for i in range(samples)]
+     for i, time in enumerate(times):
+-        phase = i/(samples-1)
+-        root_offset = mul(travel, phase)
+-        values[root, 'translation'].append(add(positions[root], root_offset))
+-        for chain in chains:
+-            first, middle, end = chain['joints']
+-            start, mid_rest, end_rest = [add(positions[j], root_offset) for j in chain['joints']]
+-            contact = False
+-            if kind == 'walk':
+-                cycle = phase + chain['phase']
+-                step = math.floor(cycle)
+-                local = cycle - step
+-                target = list(positions[end])
+-                distance = stride*(step-chain['phase'])
+-                if local <= stance:
+-                    contact = True
+-                else:
+-                    u = (local-stance)/(1-stance)
+-                    distance += stride*u*u*(3-2*u)
+-                    target[up] += lift*math.sin(math.pi*u)**2
+-                target[forward] += distance
+-            else:
+-                target = _target_at(chain['targets'], phase)
+-            q1, q2, q3, elbow = solve_chain(start, mid_rest, end_rest, target, chain['pole'])
+-            bend = math.degrees(math.acos(max(-1., min(1., dot(unit(sub(elbow,start)), unit(sub(target,elbow)))))))
+-            require(bend <= chain['bend'] + 1e-7, f'{cname}: chain bend exceeds declared limit')
+-            values[first, 'rotation'].append(q1)
+-            values[middle, 'rotation'].append(q2)
+-            if chain['keep']:
+-                values[end, 'rotation'].append(q3)
+-            observations.append({'time': time, 'joint': end, 'target': target, 'contact': contact,
+-                                 'bend_degrees': bend})
++        solved, rows = sample_performance(plan, positions, i/(samples-1))
++        for key in values:
++            values[key].append(solved[key])
++        observations.extend({**row, 'time': time} for row in rows)
+     tracks = []
+     for (joint, path), keys in values.items():
+         if path == 'rotation':
+@@ -279,8 +303,8 @@ def _compile_clip(raw, positions, parents, bounds):
+                 if dot(keys[i-1], keys[i]) < 0:
+                     keys[i] = mul(keys[i], -1)
+         tracks.append({'joint': joint, 'path': path, 'times': times, 'values': keys, 'interpolation': 'LINEAR'})
+-    return {'name': cname, 'tracks': tracks}, {'clip': cname, 'kind': kind, 'samples': observations,
+-            'root_travel': travel, 'boundary': 'Targets/contact verified at authored samples only; no physical balance, collision or between-key contact guarantee.'}
++    return {'name': cname, 'tracks': tracks}, {'clip': cname, 'kind': plan['kind'], 'samples': observations,
++            'root_travel': plan['travel'], 'boundary': 'Baked targets/contact verified at authored samples only; use the runtime controller to solve between keys. No physical balance or collision guarantee.'}
+ 
+ 
+ def fit_character_performance(raw, specification, *, body_family):
+@@ -291,11 +315,13 @@ def fit_character_performance(raw, specification, *, body_family):
+     joints, positions, parents = _fit_joints(raw['joints'], bounds)
+     bindings = _fit_bindings(raw['bindings'], specification, positions)
+     require(isinstance(raw['clips'], list) and 1 <= len(raw['clips']) <= 8, 'performance needs 1..8 clips')
+-    clips, observations = [], []
++    clips, observations, controllers = [], [], []
+     for raw_clip in raw['clips']:
+-        clip, observation = _compile_clip(raw_clip, positions, parents, bounds)
++        plan = _prepare_clip(raw_clip, positions, parents, bounds)
++        clip, observation = _compile_clip(plan, positions)
+         clips.append(clip)
+         observations.append(observation)
++        controllers.append(plan)
+     return {'rig': {'schema': 'axm.character-rig/v0.1', 'joints': joints, 'bindings': bindings},
+-            'animation': clips, 'landmarks': positions, 'observations': observations,
++            'animation': clips, 'landmarks': positions, 'observations': observations, 'controllers': controllers,
+             'boundary': 'Declared body-relative fitting, segment-distance skin fields and sampled two-bone reach/walk. No inferred anatomy or automatic growth-library admission.'}
+diff --git a/src/axm_uc/construction_search.py b/src/axm_uc/construction_search.py
+new file mode 100644
+index 0000000..af1ed42
+--- /dev/null
++++ b/src/axm_uc/construction_search.py
+@@ -0,0 +1,311 @@
++"""Intent-directed finite construction search; no model, renderer or hidden clock.
++
++The supplied intent is made executable by explicit controls and measurements.
++Acceptance means the declared checks passed, never a probability of correctness.
++"""
++from __future__ import annotations
++
++from copy import deepcopy
++import hashlib
++import heapq
++import json
++import math
++from pathlib import Path
++import platform
++import shutil
++
++from .atom_novelty import classify_creator_atoms
++from .character_controller import CharacterController
++from .character_motion import fields, name, number, require, CharacterMotionError
++from .character_recipe import CharacterRecipeError, compile_character_recipe
++from .form_pattern import FormPatternError, compile_form_pattern
++from .game_pose_runtime import GamePoseAsset
++from .mesh_quality import _area3
++from .procedural_3d import Procedural3DError, build_glb
++
++SCHEMA = 'axm.construction-search/v0.1'
++GEOMETRY_METRICS = {'extent_x_m', 'extent_y_m', 'extent_z_m', 'surface_area_m2', 'vertices', 'triangles'}
++MOTION_METRICS = {'maximum_target_error_m', 'maximum_bend_degrees', 'minimum_area_ratio',
++                  'maximum_edge_ratio', 'maximum_contact_slip_m', 'foot_penetration_m', 'peak_foot_lift_m'}
++
++
++def canonical(value):
++    return json.dumps(value, sort_keys=True, separators=(',', ':'), allow_nan=False)
++
++
++def digest(value):
++    return hashlib.sha256(canonical(value).encode()).hexdigest()
++
++
++def _geometry(specification):
++    parts = specification['primitives']
++    points = [p for part in parts for p in part['positions']]
++    require(len(points) <= 10000 and sum(len(p['indices']) for p in parts) <= 60000,
++            'search supports at most 10000 vertices and 20000 triangles per candidate')
++    metrics = {f'extent_{axis}_m': max(p[i] for p in points)-min(p[i] for p in points)
++               for i,axis in enumerate('xyz')}
++    metrics.update(vertices=len(points), triangles=sum(len(p['indices'])//3 for p in parts),
++                   surface_area_m2=sum(_area3(*(part['positions'][v] for v in part['indices'][k:k+3]))
++                                       for part in parts for k in range(0,len(part['indices']),3)))
++    return metrics
++
++
++def _locate(recipe, path):
++    require(isinstance(path, list) and 2 <= len(path) <= 24, 'control paths need 2..24 components')
++    node = recipe
++    for token in path[:-1]:
++        require((isinstance(node, dict) and isinstance(token, str) and token in node)
++                or (isinstance(node, list) and type(token) is int and 0 <= token < len(node)),
++                'control references a missing construction field')
++        node = node[token]
++    key = path[-1]
++    require((isinstance(node, dict) and isinstance(key, str) and key in node)
++            or (isinstance(node, list) and type(key) is int and 0 <= key < len(node)),
++            'control references a missing construction field')
++    return node, key
++
++
++def _validate(raw):
++    fields(raw, {'schema','intent','recipe','controls','criteria','budget'}, {'motion_probe','warm_starts'})
++    require(raw['schema'] == SCHEMA, 'unsupported construction-search schema')
++    require(isinstance(raw['intent'], str) and 0 < len(raw['intent'].strip()) <= 2000, 'search needs explicit intent')
++    require(isinstance(raw['recipe'], dict), 'search recipe must be an object')
++    character = raw['recipe'].get('schema') == 'axm.character-recipe/v0.1'
++    require(character or raw['recipe'].get('schema') == 'axm.form-pattern/v0.1', 'search supports form and character recipes')
++    require(len(canonical(raw).encode()) <= 2_000_000, 'search contract exceeds 2 MB')
++    controls = raw['controls']
++    require(isinstance(controls, list) and 1 <= len(controls) <= 8, 'search needs 1..8 controls')
++    ids, paths = set(), []
++    for control in controls:
++        fields(control, {'id','paths','values'})
++        cid = name(control['id'])
++        require(cid not in ids, 'duplicate search control')
++        ids.add(cid)
++        require(isinstance(control['values'], list) and 1 <= len(control['values']) <= 33, 'control needs 1..33 options')
++        require(len(set(canonical(v) for v in control['values'])) == len(control['values']), 'duplicate control options')
++        require(isinstance(control['paths'], list) and 1 <= len(control['paths']) <= 64, 'control needs 1..64 paths')
++        for path in control['paths']:
++            _locate(raw['recipe'], path)
++            require(path[0] in ({'form','performance'} if character else {'parts'}), 'only construction fields can be searched')
++            require(not any(path[:min(len(path),len(p))] == p[:min(len(path),len(p))] for p in paths),
++                    'control paths overlap')
++            paths.append(path)
++    criteria = raw['criteria']
++    require(isinstance(criteria, list) and 1 <= len(criteria) <= 16, 'search needs 1..16 measured criteria')
++    metrics = set()
++    for criterion in criteria:
++        fields(criterion, {'metric'}, {'min','max','scale'})
++        metric = criterion['metric']
++        require(isinstance(metric, str) and metric in GEOMETRY_METRICS | MOTION_METRICS
++                and metric not in metrics, 'unknown or duplicate metric; unsupported intent must not be silently scored')
++        metrics.add(metric)
++        require('min' in criterion or 'max' in criterion, 'criterion needs min and/or max')
++        low = number(criterion['min']) if 'min' in criterion else -math.inf
++        high = number(criterion['max']) if 'max' in criterion else math.inf
++        require(low <= high and number(criterion.get('scale',1)) > 0, 'invalid criterion bounds/scale')
++    fields(raw['budget'], {'candidates','validations','validation_samples'})
++    for key,low,high in (('candidates',1,256),('validations',1,32),('validation_samples',17,257)):
++        value = raw['budget'][key]
++        require(type(value) is int and low <= value <= high, f'invalid {key} budget')
++    probe = raw.get('motion_probe')
++    if probe is not None:
++        fields(probe, {'clip','cycles','feet','up_axis','ground_height_m'})
++        name(probe['clip'])
++        require(character and isinstance(raw['recipe'].get('performance'),dict), 'motion search requires character performance')
++        require(type(probe['cycles']) is int and 1 <= probe['cycles'] <= 4, 'probe needs 1..4 cycles')
++        require(type(probe['up_axis']) is int and probe['up_axis'] in (0,1,2), 'invalid probe up axis')
++        number(probe['ground_height_m'])
++        require(isinstance(probe['feet'],dict), 'feet must map end joints to form parts')
++    require(not metrics.intersection(MOTION_METRICS) or probe is not None, 'motion metrics require a motion probe')
++    if metrics.intersection({'maximum_contact_slip_m','foot_penetration_m','peak_foot_lift_m'}):
++        require(bool(probe['feet']), 'foot metrics require explicit foot parts')
++    warm = raw.get('warm_starts',[])
++    require(isinstance(warm,list) and len(warm) <= 16, 'at most 16 warm starts')
++    for settings in warm:
++        require(isinstance(settings,dict) and set(settings) == ids, 'warm starts must name every control')
++        for c in controls:
++            require(canonical(settings[c['id']]) in [canonical(v) for v in c['values']], 'warm start outside declared options')
++    return character
++
++
++def _checks(criteria, metrics):
++    result, loss = [], 0.
++    for c in criteria:
++        value = metrics.get(c['metric'])
++        observed = value is not None and math.isfinite(value)
++        deficit = (max(0.,c.get('min',-math.inf)-value,value-c.get('max',math.inf)) if observed else None)
++        passed = observed and deficit == 0
++        # Very small declared scales must not turn retained JSON into Infinity.
++        loss = min(1e30, loss + (deficit/c.get('scale',1) if observed else 1e6))
++        result.append({'metric':c['metric'],'observed':value,'min':c.get('min'),'max':c.get('max'),'passed':passed})
++    return result, loss
++
++
++def _form(recipe, character):
++    return compile_form_pattern(recipe['form'] if character else recipe)['specification']
++
++
++def _evaluate(recipe, character, probe, samples, *, geometry_only=False):
++    spec = _form(recipe,character)
++    metrics, evidence = _geometry(spec), None
++    if geometry_only:
++        return metrics, evidence
++    if probe is not None:
++        controller = CharacterController(recipe)
++        require(probe['clip'] in controller.plans, 'motion probe names a missing clip')
++        plan = controller.plans[probe['clip']]
++        require(plan['kind'] == 'walk' or probe['cycles'] == 1, 'reach probes cannot loop')
++        duration = plan['duration']*probe['cycles']
++        evidence = controller.measure(probe['clip'],[duration*i/(samples-1) for i in range(samples)],
++                    feet=probe['feet'],up_axis=probe['up_axis'],ground_height_m=probe['ground_height_m'])
++        metrics.update(evidence['metrics'])
++        asset = controller.asset
++    else:
++        if character:
++            compiled = compile_character_recipe(recipe)
++            if compiled['motion']:
++                from .character_motion import build_character_motion
++                body = build_character_motion(compiled['specification'],compiled['motion'])['body']
++            else:
++                body = build_glb(compiled['specification'])['body']
++        else:
++            body = build_glb(spec)['body']
++        asset = GamePoseAsset(body)
++        evidence = {'source_sha256':asset.source_sha256, 'boundary':'Decoded rest geometry; no motion or artistic-quality evidence.'}
++    # Acceptance uses decoded output, including float32 geometry precision.
++    observed = deepcopy(spec)
++    for part,mesh in zip(observed['primitives'],asset.sample(vertices=True)['meshes']):
++        part['positions'] = mesh['positions']
++    metrics.update(_geometry(observed))
++    return metrics, evidence
++
++
++def search_construction(raw):
++    """Best-first traversal of neighboring declared options, then deeper verification."""
++    character = _validate(raw)
++    controls, criteria, budget = raw['controls'], raw['criteria'], raw['budget']
++    probe = raw.get('motion_probe')
++    geometry_criteria = [c for c in criteria if c['metric'] in GEOMETRY_METRICS]
++    start = []
++    for c in controls:
++        node,key = _locate(raw['recipe'],c['paths'][0])
++        values = [canonical(v) for v in c['values']]
++        start.append(values.index(canonical(node[key])) if canonical(node[key]) in values else 0)
++    seeds = [tuple([next(i for i,v in enumerate(c['values']) if canonical(v)==canonical(s[c['id']])) for c in controls])
++             for s in raw.get('warm_starts',[])] + [tuple(start)]
++    queue, queued, history, cache = [], set(), [], {}
++    for index, point in enumerate(seeds):
++        if point not in queued:
++            heapq.heappush(queue,(-1.,index,point)); queued.add(point)
++    serial, validations, evaluations, duplicates, selected = len(queue), 0, 0, 0, None
++    caught = (CharacterMotionError, CharacterRecipeError, FormPatternError, Procedural3DError, ValueError)
++
++    def validate(row):
++        nonlocal validations
++        validations += 1
++        row['validation_attempted'] = True
++        try:
++            metrics,evidence = _evaluate(row['recipe'],character,probe,budget['validation_samples'])
++            checks,loss = _checks(criteria,metrics)
++            row.update(metrics=metrics,checks=checks,loss=loss,evidence=evidence,
++                       status='ACCEPTED' if all(c['passed'] for c in checks) else 'VALIDATION_FAILED')
++        except caught as exc:
++            row.update(status='VALIDATION_FAILED',reason=str(exc),loss=1e30)
++        return row if row['status']=='ACCEPTED' else None
++
++    while queue and len(history) < budget['candidates']:
++        _,_,point = heapq.heappop(queue)
++        recipe,settings = deepcopy(raw['recipe']),{}
++        for c,i in zip(controls,point):
++            settings[c['id']] = deepcopy(c['values'][i])
++            for path in c['paths']:
++                node,key = _locate(recipe,path); node[key] = deepcopy(c['values'][i])
++        novelty = classify_creator_atoms({'tasks':[{'id':'candidate','dependencies':[],
++                    'request':{'operation':'construct_recipe','recipe':recipe}}]})['tasks'][0]
++        signature = novelty['atom_signature']
++        row = {'trial':len(history)+1,'settings':settings,'recipe':recipe,'signature':signature,
++               'status':'REJECTED','loss':1e30,'validation_attempted':False}
++        if signature in cache:
++            duplicates += 1
++            prior = cache[signature]
++            row.update(status='DUPLICATE_STRUCTURE',duplicate_of=prior['trial'],loss=prior['loss'])
++        else:
++            evaluations += 1
++            try:
++                metrics,_ = _evaluate(recipe,character,probe,9,geometry_only=True)
++                cheap_checks,cheap_loss = _checks(geometry_criteria,metrics)
++                if all(c['passed'] for c in cheap_checks):
++                    metrics,_ = _evaluate(recipe,character,probe,9)
++                    checks,loss = _checks(criteria,metrics)
++                    row.update(status='COARSE_CANDIDATE',metrics=metrics,checks=checks,loss=loss)
++                    if all(c['passed'] for c in checks) and validations < budget['validations']:
++                        selected = validate(row)
++                else:
++                    row.update(status='GEOMETRY_REJECTED',metrics=metrics,checks=cheap_checks,loss=cheap_loss)
++            except caught as exc:
++                row['reason'] = str(exc)
++            if row['status'] != 'REJECTED':
++                cache[signature] = row
++        history.append(row)
++        if selected is not None:
++            break
++        for axis,c in enumerate(controls):
++            for step in (-1,1):
++                neighbor = list(point); neighbor[axis] += step; neighbor = tuple(neighbor)
++                if 0 <= neighbor[axis] < len(c['values']) and neighbor not in queued:
++                    queued.add(neighbor); serial += 1
++                    heapq.heappush(queue,(row['loss'],serial,neighbor))
++    # Coarse sampling can miss a useful swing peak. Recheck the best unresolved
++    # candidates densely instead of treating a cheap observation as a proof.
++    if selected is None:
++        pending = sorted((r for r in history if r['status']=='COARSE_CANDIDATE' and not r['validation_attempted']),
++                         key=lambda r:(r['loss'],r['trial']))
++        for row in pending:
++            if validations >= budget['validations']:
++                break
++            selected = validate(row)
++            if selected is not None:
++                break
++    status = ('CRITERIA_MET' if selected else 'BUDGET_EXHAUSTED' if queue or any(
++        r['status']=='COARSE_CANDIDATE' and not r['validation_attempted'] for r in history) else 'SPACE_EXHAUSTED')
++    best = min(history,key=lambda r:(r['loss'],r['trial']))
++    public_history = [{k:v for k,v in row.items() if k not in ('recipe','evidence')} for row in history]
++    return {'schema':SCHEMA,'implementation_version':'0.1.0','python_version':platform.python_version(),
++            'status':status,'intent':raw['intent'],'search_contract':deepcopy(raw),
++            'contract_sha256':digest(raw),'selected':deepcopy(selected),'best_trial':best['trial'],
++            'history':public_history,'counts':{'visited':len(history),'evaluated':evaluations,
++            'deduplicated':duplicates,'deep_validations':validations,'declared_combinations':math.prod(len(c['values']) for c in controls)},
++            'acceptance':{'basis':'DECLARED_MEASUREMENTS','probability':None,'global_optimality_claimed':False,
++                          'validation_samples':budget['validation_samples'] if probe else 0},
++            'growth_candidate':({'semantic_signature':selected['signature'],'recipe':deepcopy(selected['recipe']),
++                'warm_start':deepcopy(selected['settings']),'evidence':deepcopy(selected['evidence']),
++                'automatic_canon_admission':False} if selected else None),
++            'boundary':'Finite supplied construction options and measured criteria. Deterministic within the same runtime. No invented aesthetic score, global search completeness, physical realism or automatic library admission.'}
++
++
++def publish_search(directory, contract):
++    """Retain all trials and, on acceptance, the actual GLB and creator source."""
++    from .atomic import atomic_write_json
++    from .character_recipe import publish_character_recipe
++    from .form_pattern import publish_form_pattern
++    target = Path(directory).resolve()
++    require(not target.exists(), 'search output directory already exists')
++    report = search_construction(contract)
++    target.mkdir(parents=True, exist_ok=False)
++    try:
++        if report['selected']:
++            recipe = report['selected']['recipe']
++            publisher = publish_character_recipe if recipe['schema']=='axm.character-recipe/v0.1' else publish_form_pattern
++            publication = publisher(target/'winner.glb',recipe)
++            require(publication['sha256']==report['selected']['evidence']['source_sha256'],
++                    'published winner differs from the verified construction')
++            report['publication'] = {'asset':'winner.glb','creator_source':'winner.glb.source.json',
++                                     'sha256':publication['sha256'],
++                                     'runtime_contact_requires_controller':bool(contract.get('motion_probe'))}
++        atomic_write_json(target/'search.json',report)
++    except Exception:
++        shutil.rmtree(target)
++        raise
++    return {'operation':'construction-search','status':report['status'],'path':str(target),
++            'report_path':str(target/'search.json'),'counts':report['counts'],
++            'publication':report.get('publication'),'acceptance':report['acceptance']}
+diff --git a/src/axm_uc/game_pose_runtime.py b/src/axm_uc/game_pose_runtime.py
+index dee5db0..f1d249c 100644
+--- a/src/axm_uc/game_pose_runtime.py
++++ b/src/axm_uc/game_pose_runtime.py
+@@ -30,7 +30,8 @@ def game_pose_runtime_catalog():
+     return {
+         "schema": "axm.game-pose-runtime-catalog/v0.1",
+         "executes": ["embedded GLB transform intake", "LINEAR and STEP sampling", "quaternion shortest-arc interpolation",
+-                     "local pose crossfade", "hierarchical world transforms", "socket points", "linear skin positions"],
++                     "local pose crossfade", "explicit local translation/rotation overrides",
++                     "hierarchical world transforms", "socket points", "linear skin positions"],
+         "dependencies": [], "source_preserved": True,
+         "matrix_convention": "row-major matrices multiplying column vectors; scene-space output",
+         "limits": {"glb_bytes": MAX_BYTES, "nodes": 2048, "decoded_scalars": MAX_VALUES,
+@@ -363,11 +364,13 @@ class GamePoseAsset:
+             local[track["node"]][track["path"]] = value
+         return local, time_s
+ 
+-    def sample(self, clip=None, time_s=0., *, loop=False, blend=None, vertices=False):
++    def sample(self, clip=None, time_s=0., *, loop=False, blend=None, vertices=False, overrides=None):
+         """Blend is an explicit source pose and target weight, not a hidden clock.
+ 
+         {'clip': source_name, 'time_s': source_time, 'loop': bool, 'weight': 0..1}
+         Weight zero returns source; weight one returns the requested target.
++        Optional overrides are unique {node, translation?, rotation?} rows,
++        applied after clip/blend sampling and before world/skin evaluation.
+         """
+         if type(vertices) is not bool:
+             raise ValueError("vertices must be boolean")
+@@ -383,6 +386,22 @@ class GamePoseAsset:
+                 for path in DEFAULTS:
+                     target[path] = (_slerp(source[path], target[path], weight) if path == "rotation" else
+                                     [a + (b-a)*weight for a, b in zip(source[path], target[path])])
++        if overrides is not None:
++            if not isinstance(overrides, list) or len(overrides) > len(local):
++                raise ValueError("pose overrides require a bounded list")
++            seen = set()
++            for row in overrides:
++                if (not isinstance(row, dict) or 'node' not in row or len(row) < 2
++                        or set(row) - {'node', 'translation', 'rotation'}):
++                    raise ValueError("override requires node and translation and/or rotation")
++                node = _integer(row['node'], 'override node', 0, len(local)-1)
++                if node in seen or 'matrix' in local[node]:
++                    raise ValueError("duplicate override or matrix-authored node")
++                seen.add(node)
++                for path in ('translation', 'rotation'):
++                    if path in row:
++                        local[node][path] = (_quaternion(row[path]) if path == 'rotation'
++                                            else _vector(row[path], 3, 'override translation'))
+         world = [None] * len(local)
+         for index in self._order:
+             matrix = local[index].get("matrix", None)
+@@ -398,6 +417,8 @@ class GamePoseAsset:
+                   "clip": clip, "time_s": time_s, "blend": copy.deepcopy(blend),
+                   "local": local, "world_matrices": world, "skin_world_matrices": palettes,
+                   "matrix_convention": "row-major, column vectors, scene-space; authored root already included"}
++        if overrides is not None:
++            result['overrides'] = copy.deepcopy(overrides)
+         if vertices:
+             deformed = []
+             for mesh in self._meshes:
+diff --git a/src/axm_uc/standalone_creation_capabilities.py b/src/axm_uc/standalone_creation_capabilities.py
+index 4ee97a5..22d4e84 100644
+--- a/src/axm_uc/standalone_creation_capabilities.py
++++ b/src/axm_uc/standalone_creation_capabilities.py
+@@ -237,6 +237,36 @@ def register_standalone_creation_builtins(
+         except (CharacterRecipeError, CreatorRetentionError, Procedural3DError) as exc:
+             raise capability_error(str(exc), getattr(exc, "details", {})) from exc
+ 
++    def construction_search(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
++        from .construction_search import publish_search
++        target = resolve_output_path(root, str(inputs['path']))
++        if is_machine_body_path(root, target):
++            raise capability_error('construction search cannot rewrite the live machine body')
++        try:
++            return publish_search(target, inputs['search'])
++        except (ValueError, RuntimeError) as exc:
++            raise capability_error(str(exc)) from exc
++
++    def character_controller(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
++        from .atomic import atomic_write_json
++        from .character_controller import CharacterController
++        target = resolve_output_path(root, str(inputs['path']))
++        if is_machine_body_path(root, target):
++            raise capability_error('character controller cannot rewrite the live machine body')
++        if target.exists():
++            raise capability_error('controller output already exists')
++        try:
++            controller = CharacterController(inputs['recipe'])
++            evidence = controller.measure(inputs['clip'], inputs['times'], feet=inputs.get('feet'),
++                            up_axis=inputs.get('up_axis',2),ground_height_m=inputs.get('ground_height_m',0))
++            output = {'recipe':copy.deepcopy(inputs['recipe']), 'evidence':evidence,
++                      'poses':[controller.sample(inputs['clip'],t) for t in inputs['times']],
++                      'source_authority':True,'automatic_canon_admission':False}
++            atomic_write_json(target,output)
++            return {'operation':'character-controller','path':str(target),'evidence':evidence}
++        except (ValueError, RuntimeError) as exc:
++            raise capability_error(str(exc)) from exc
++
+     def material_response(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+         from .material_response import MaterialResponseHold, resolve_material_response
+ 
+@@ -438,6 +468,8 @@ def register_standalone_creation_builtins(
+         "builtin:shape_recipe": shape_recipe,
+         "builtin:form_pattern": form_pattern,
+         "builtin:character_recipe": character_recipe,
++        "builtin:construction_search": construction_search,
++        "builtin:character_controller": character_controller,
+         "builtin:material_response": material_response,
+         "builtin:precision_cutter": precision_cutter,
+         "builtin:creative_flow": creative_flow,
+diff --git a/tests/test_character_controller.py b/tests/test_character_controller.py
+new file mode 100644
+index 0000000..b353f1d
+--- /dev/null
++++ b/tests/test_character_controller.py
+@@ -0,0 +1,88 @@
++from copy import deepcopy
++import json
++import math
++from pathlib import Path
++import tempfile
++import unittest
++
++from axm_uc.character_controller import CharacterController
++from axm_uc.character_motion import CharacterMotionError
++from axm_uc.machine import UniversalCreationMachine
++
++ROOT = Path(__file__).resolve().parents[1]
++
++
++def recipe():
++    return json.loads((ROOT/'examples/character-motion/seedling-performance.json').read_text())['inputs']['recipe']
++
++
++class CharacterControllerTests(unittest.TestCase):
++    def test_sparse_baked_keys_drift_but_query_time_solve_preserves_contact(self):
++        r=recipe();r['performance']['clips'][0]['samples']=3
++        controller=CharacterController(r)
++        node=controller.joint_nodes['left-ankle']
++        wanted=controller.landmarks['left-ankle']
++        baked=controller.asset.point(controller.asset.sample('walk',.37),node)
++        actual=controller.asset.point(controller.sample('walk',.37),node)
++        self.assertGreater(math.dist(baked,wanted),.001)
++        self.assertLess(math.dist(actual,wanted),1e-8)
++        report=controller.measure('walk',[4*i/80 for i in range(81)],
++                                  feet={'left-ankle':'left-foot','right-ankle':'right-foot'})
++        self.assertLess(report['metrics']['maximum_contact_slip_m'],1e-7)
++        self.assertLess(report['metrics']['foot_penetration_m'],1e-7)
++        self.assertGreater(report['metrics']['peak_foot_lift_m'],.1)
++
++    def test_root_travel_crosses_cycles_and_query_order_does_not_change_state(self):
++        r=recipe();before=deepcopy(r)
++        c=CharacterController(r)
++        body=c.built['body']
++        first=c.sample('walk',.23,vertices=True)
++        far=c.sample('walk',20.23,vertices=True)
++        self.assertEqual(first,c.sample('walk',.23,vertices=True))
++        root=c.joint_nodes['root']
++        a,b=c.asset.point(first,root),c.asset.point(far,root)
++        self.assertLess(math.dist([y-x for x,y in zip(a,b)],[0,2.2,0]),1e-7)
++        for joint in ('left-ankle','right-ankle'):
++            a,b=c.asset.point(first,c.joint_nodes[joint]),c.asset.point(far,c.joint_nodes[joint])
++            self.assertLess(math.dist([y-x for x,y in zip(a,b)],[0,2.2,0]),1e-7)
++        self.assertEqual(body,c.built['body'])
++        self.assertEqual(r,before)
++        a=c.asset.point(c.sample('walk',1.999999),root)
++        b=c.asset.point(c.sample('walk',2.000001),root)
++        self.assertLess(math.dist(a,b),1e-5)
++
++    def test_unreachable_between_key_motion_is_refused_when_queried(self):
++        r=recipe();r['performance']['clips'][0].update(samples=3,lift=2)
++        c=CharacterController(r)
++        with self.assertRaises(CharacterMotionError):
++            c.sample('walk',1.6)
++        for time in (-1,float('nan')):
++            with self.assertRaises(CharacterMotionError):c.sample('walk',time)
++        with self.assertRaises(CharacterMotionError):c.sample('reach',3)
++        with self.assertRaises(CharacterMotionError):c.sample('missing',0)
++
++    def test_override_validation_and_missing_contact_evidence(self):
++        c=CharacterController(recipe())
++        for rows in ([{'node':9999,'translation':[0,0,0]}],
++                     [{'node':0,'rotation':[0,0,0,0]}],
++                     [{'node':0,'translation':[0,0,0]}]*2,
++                     [{'node':0,'scale':[1,1,1]}],
++                     [{'node':0,'translation':[float('inf'),0,0]}]):
++            with self.assertRaises(ValueError):c.asset.sample(overrides=rows)
++        report=c.measure('walk',[0,1.5],feet={'left-ankle':'left-foot','right-ankle':'right-foot'})
++        self.assertNotIn('maximum_contact_slip_m',report['metrics'])
++
++    def test_live_probe_keeps_recipe_and_observed_poses(self):
++        with tempfile.TemporaryDirectory() as t:
++            path=Path(t)/'probe.json'
++            result=UniversalCreationMachine(ROOT).create({'kind':'character-controller','inputs':{
++                'path':str(path),'recipe':recipe(),'clip':'walk','times':[0,.37,2.37,4.37]}})
++            self.assertEqual(result['type'],'CREATION_RESULT',result)
++            observed=json.loads(path.read_text())
++            self.assertEqual(len(observed['poses']),4)
++            self.assertTrue(observed['source_authority'])
++            self.assertEqual(observed['recipe'],recipe())
++            self.assertEqual(observed['poses'][-1]['performance']['elapsed_s'],4.37)
++
++
++if __name__=='__main__':unittest.main()
+diff --git a/tests/test_construction_search.py b/tests/test_construction_search.py
+new file mode 100644
+index 0000000..8e6973f
+--- /dev/null
++++ b/tests/test_construction_search.py
+@@ -0,0 +1,136 @@
++from copy import deepcopy
++import json
++from pathlib import Path
++import tempfile
++import unittest
++
++from axm_uc.construction_search import search_construction, publish_search
++from axm_uc.character_controller import CharacterController
++from axm_uc.machine import UniversalCreationMachine
++
++ROOT = Path(__file__).resolve().parents[1]
++
++
++def contract(name='broader-walker'):
++    return json.loads((ROOT/f'examples/construction-search/{name}.json').read_text())['inputs']['search']
++
++
++class ConstructionSearchTests(unittest.TestCase):
++    def test_shape_and_motion_search_is_repeatable_and_meets_declared_checks(self):
++        q=contract();before=deepcopy(q)
++        a,b=search_construction(q),search_construction(q)
++        self.assertEqual(a,b)
++        self.assertEqual(q,before)
++        self.assertEqual(a['status'],'CRITERIA_MET')
++        self.assertTrue(all(c['passed'] for c in a['selected']['checks']))
++        self.assertNotEqual(a['selected']['recipe'],q['recipe'])
++        self.assertLess(a['counts']['deep_validations'],a['counts']['evaluated'])
++        self.assertLess(a['counts']['visited'],a['counts']['declared_combinations'])
++        self.assertIsNone(a['acceptance']['probability'])
++        self.assertFalse(a['growth_candidate']['automatic_canon_admission'])
++        # Different verification times from the search itself observe the actual winner.
++        c=CharacterController(a['selected']['recipe'])
++        proof=c.measure('walk',[4*i/97 for i in range(98)],feet=q['motion_probe']['feet'])
++        self.assertLess(proof['metrics']['maximum_contact_slip_m'],1e-6)
++        self.assertGreater(proof['metrics']['peak_foot_lift_m'],.15)
++
++    def test_retained_settings_accelerate_reuse_but_are_rechecked_for_new_intent(self):
++        q=contract()
++        first=search_construction(q)
++        q['warm_starts']=[first['growth_candidate']['warm_start']]
++        reused=search_construction(q)
++        self.assertEqual(reused['status'],'CRITERIA_MET')
++        self.assertEqual(reused['counts']['visited'],1)
++        q['criteria'][0].update(min=.85,max=.9)
++        changed=search_construction(q)
++        self.assertEqual(changed['history'][0]['status'],'GEOMETRY_REJECTED')
++        self.assertEqual(changed['status'],'CRITERIA_MET')
++        self.assertNotEqual(changed['selected']['settings'],first['selected']['settings'])
++
++    def test_search_can_repair_a_measured_skin_distortion(self):
++        q=contract('deformation-repair')
++        times=[4*i/64 for i in range(65)]
++        before=CharacterController(q['recipe']).measure('walk',times)['metrics']
++        self.assertLess(before['minimum_area_ratio'],.72)
++        result=search_construction(q)
++        self.assertEqual(result['status'],'CRITERIA_MET')
++        after=result['selected']['metrics']
++        self.assertGreaterEqual(after['minimum_area_ratio'],.77)
++        self.assertLessEqual(after['maximum_edge_ratio'],1.02)
++        self.assertEqual(result['selected']['recipe']['form'],q['recipe']['form'])
++        self.assertNotEqual(result['selected']['recipe']['performance']['bindings'],q['recipe']['performance']['bindings'])
++
++    def test_budget_and_exhaustion_never_promote_a_failed_candidate(self):
++        q=contract();q['budget']['candidates']=1
++        result=search_construction(q)
++        self.assertEqual(result['status'],'BUDGET_EXHAUSTED')
++        self.assertIsNone(result['selected'])
++        self.assertIsNone(result['growth_candidate'])
++        q['criteria'][0]['scale']=1e-320
++        bounded=search_construction(q)
++        self.assertEqual(bounded['status'],'BUDGET_EXHAUSTED')
++        json.dumps(bounded,allow_nan=False)
++        q=contract('vessel');q['criteria'][0].update(min=50,max=60)
++        q['budget']['candidates']=256
++        result=search_construction(q)
++        self.assertEqual(result['status'],'SPACE_EXHAUSTED')
++        self.assertIsNone(result['selected'])
++        self.assertEqual(result,search_construction(q))
++
++    def test_dense_verification_can_refuse_a_coarse_success(self):
++        q=contract()
++        q['controls'][0]['values']=[.4];q['controls'][1]['values']=[.2]
++        q['criteria'].append({'metric':'maximum_bend_degrees','max':83})
++        result=search_construction(q)
++        self.assertIsNone(result['selected'])
++        self.assertEqual(result['counts']['deep_validations'],1)
++        self.assertEqual(result['history'][0]['status'],'VALIDATION_FAILED')
++
++    def test_cosmetic_variants_deduplicate_without_hiding_invalid_construction(self):
++        q=contract('vessel')
++        q['controls']=[{'id':'paint','paths':[['parts',0,'material','color']],
++                        'values':['#4C9B91FF','#FFCC00FF','#AACC11FF']}]
++        q['criteria']=[{'metric':'extent_x_m','min':50}]
++        result=search_construction(q)
++        self.assertEqual(result['counts']['evaluated'],1)
++        self.assertEqual(result['counts']['deduplicated'],2)
++        q['recipe']=search_construction(contract('vessel'))['selected']['recipe']
++        q['controls'][0]['values']=['invalid-color','#4C9B91FF']
++        q['recipe']['parts'][0]['material']['color']='invalid-color'
++        q['criteria']=[{'metric':'extent_x_m','min':.7}]
++        result=search_construction(q)
++        self.assertEqual(result['status'],'CRITERIA_MET')
++        self.assertEqual(result['counts']['evaluated'],2)
++
++    def test_live_route_publishes_verified_source_and_existing_outputs_survive(self):
++        with tempfile.TemporaryDirectory() as t:
++            target=Path(t)/'search'
++            q=contract('vessel')
++            result=UniversalCreationMachine(ROOT).create({'kind':'headless-shape-search','inputs':{
++                'path':str(target),'search':q}})
++            self.assertEqual(result['type'],'CREATION_RESULT',result)
++            report=json.loads((target/'search.json').read_text())
++            self.assertEqual(report['status'],'CRITERIA_MET')
++            source=json.loads((target/'winner.glb.source.json').read_text())
++            self.assertEqual(source['recipe'],report['selected']['recipe'])
++            self.assertEqual(source['artifact']['sha256'],report['selected']['evidence']['source_sha256'])
++            before=(target/'winner.glb').read_bytes()
++            with self.assertRaises(ValueError):publish_search(target,q)
++            self.assertEqual(before,(target/'winner.glb').read_bytes())
++
++    def test_unmeasurable_or_conflicting_search_contracts_are_rejected(self):
++        mutations=[lambda q:q['criteria'].append({'metric':'beauty','min':99}),
++                   lambda q:q['budget'].update(candidates=True),
++                   lambda q:q['budget'].update(validation_samples=100000),
++                   lambda q:q['controls'].append(deepcopy(q['controls'][0])),
++                   lambda q:q['controls'][0].update(paths=[['metadata','missing']]),
++                   lambda q:q['controls'][0].update(values=[float('nan')]),
++                   lambda q:q.update(warm_starts=[{'body-width':.9,'foot-lift':.12}]),
++                   lambda q:q.pop('motion_probe')]
++        for mutate in mutations:
++            with self.subTest(mutate=mutate):
++                q=contract();mutate(q)
++                with self.assertRaises(ValueError):search_construction(q)
++
++
++if __name__=='__main__':unittest.main()
+diff --git a/tools/construction_search_demo.py b/tools/construction_search_demo.py
+new file mode 100644
+index 0000000..d9514c8
+--- /dev/null
++++ b/tools/construction_search_demo.py
+@@ -0,0 +1,106 @@
++"""Run measured headless construction searches and render actual decoded output.
++
++PYTHONPATH=src python tools/construction_search_demo.py /tmp/uc-search-proof --plot
++Matplotlib is an optional diagnostic dependency; UC search itself is stdlib-only.
++"""
++from copy import deepcopy
++import argparse
++import json
++from pathlib import Path
++import platform
++import time
++
++from axm_uc.character_controller import CharacterController
++from axm_uc.construction_search import publish_search, search_construction
++from axm_uc.form_pattern import compile_form_pattern
++from axm_uc.game_pose_runtime import load_game_pose_glb, GamePoseAsset
++from axm_uc.procedural_3d import build_glb
++
++ROOT=Path(__file__).resolve().parents[1]
++
++
++def main():
++    parser=argparse.ArgumentParser()
++    parser.add_argument('output',type=Path)
++    parser.add_argument('--plot',action='store_true')
++    args=parser.parse_args()
++    args.output.mkdir(parents=True,exist_ok=False)
++    receipt={'python_version':platform.python_version(),'runs':[],'boundary':
++             'Measured on this host, not a hardware-independent speed claim. Plots show decoded vertices, not material/normal or external-engine verification.'}
++    runs={}
++    for name in ('vessel','broader-walker','deformation-repair'):
++        request=json.loads((ROOT/f'examples/construction-search/{name}.json').read_text())
++        contract=request['inputs']['search']
++        begin=time.perf_counter()
++        publish_search(args.output/name,contract)
++        elapsed=time.perf_counter()-begin
++        report=json.loads((args.output/name/'search.json').read_text())
++        if report['status']!='CRITERIA_MET':
++            raise RuntimeError(f'{name} did not meet its declared checks: {report["status"]}')
++        warm=deepcopy(contract)
++        warm['warm_starts']=[report['growth_candidate']['warm_start']]
++        begin=time.perf_counter()
++        reuse=search_construction(warm)
++        warm_elapsed=time.perf_counter()-begin
++        (args.output/name/'reuse.json').write_text(json.dumps(reuse,indent=2)+'\n')
++        runs[name]=(contract,report)
++        receipt['runs'].append({'name':name,'status':report['status'],'counts':report['counts'],
++                                'elapsed_seconds':elapsed,'reuse_counts':reuse['counts'],
++                                'reuse_elapsed_seconds':warm_elapsed,'selected':report['selected']['settings'],
++                                'metrics':report['selected']['metrics']})
++    # Inspect the published selected GLB once more through its own decoder.
++    for name,(_,report) in runs.items():
++        assert load_game_pose_glb(args.output/name/'winner.glb').source_sha256==report['publication']['sha256']
++    if args.plot:
++        import matplotlib
++        matplotlib.use('Agg')
++        import matplotlib.pyplot as plt
++        from mpl_toolkits.mplot3d.art3d import Poly3DCollection
++
++        fig=plt.figure(figsize=(14,10),facecolor='#101923')
++        def draw(index,spec,pose,title,*,height=1.9,limits=None):
++            ax=fig.add_subplot(2,3,index,projection='3d',facecolor='#101923')
++            for part,mesh in zip(spec['primitives'],pose['meshes']):
++                p,ids=mesh['positions'],part['indices']
++                faces=[[p[v] for v in ids[k:k+3]] for k in range(0,len(ids),3)]
++                ax.add_collection3d(Poly3DCollection(faces,facecolor=part['material']['color'][:7],
++                                                     edgecolor='#b9cac9',linewidth=.15))
++            ax.set(xlim=(-.55,.55),ylim=(-.35,.85),zlim=(0,height))
++            if limits:ax.set(**limits)
++            ax.set_box_aspect((1.1,1.2,height));ax.view_init(13,-48)
++            ax.set_axis_off();ax.set_title(title,color='#e6eef2',fontsize=11,pad=2)
++            return ax
++        contract,report=runs['vessel']
++        for index,recipe,title in ((1,contract['recipe'],'Vessel / initial construction'),
++                                    (2,report['selected']['recipe'],'Vessel / measured selection')):
++            spec=compile_form_pattern(recipe)['specification']
++            asset=GamePoseAsset(build_glb(spec)['body'])
++            draw(index,spec,asset.sample(vertices=True),title,height=1.2,
++                 limits={'ylim':(-.55,.55)})
++        ax=fig.add_subplot(2,3,3,facecolor='#101923')
++        ax.set_axis_off()
++        lines=['HEADLESS SEARCH / OBSERVED']
++        for row in receipt['runs']:
++            lines += ['',row['name'].replace('-',' ').upper(),
++                      f"{row['counts']['visited']} trials · {row['counts']['deep_validations']} deep checks",
++                      f"{row['elapsed_seconds']:.3f}s here · reuse: {row['reuse_counts']['visited']} trial"]
++        ax.text(.02,.9,'\n'.join(lines),transform=ax.transAxes,color='#d6e4ec',fontsize=12,va='top',linespacing=1.7)
++        contract,report=runs['broader-walker']
++        for index,recipe,title in ((4,contract['recipe'],'Walk / initial body and lift'),
++                                    (5,report['selected']['recipe'],'Walk / selected body and lift')):
++            c=CharacterController(recipe)
++            draw(index,c.compiled['specification'],c.sample('walk',1.6,vertices=True),title)
++        _,report=runs['deformation-repair']
++        c=CharacterController(report['selected']['recipe'])
++        draw(6,c.compiled['specification'],c.sample('walk',1.6,vertices=True),'Skin / measured field correction')
++        fig.suptitle('UC intent-directed construction | search → verify → retain → reuse',color='white',fontsize=18,y=.97)
++        fig.text(.5,.035,'Actual decoded GLB vertices and query-time IK · technical geometry evidence · no aesthetic score',
++                 ha='center',color='#aebfce',fontsize=11)
++        fig.subplots_adjust(left=.035,right=.97,top=.88,bottom=.09,wspace=.08,hspace=.2)
++        fig.savefig(args.output/'UC_Headless_Search_Proof.png',dpi=130,facecolor=fig.get_facecolor())
++        plt.close(fig)
++    (args.output/'benchmark.json').write_text(json.dumps(receipt,indent=2)+'\n')
++    print(json.dumps(receipt,indent=2))
++
++
++if __name__=='__main__':main()

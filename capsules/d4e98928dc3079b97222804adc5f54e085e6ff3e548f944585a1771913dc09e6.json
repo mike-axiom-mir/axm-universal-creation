@@ -1,0 +1,42 @@
+{
+  "capsule_id": "d4e98928dc3079b97222804adc5f54e085e6ff3e548f944585a1771913dc09e6",
+  "evidence": {
+    "files": [],
+    "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 0,
+    "kinds": [],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "14d",
+      "actions",
+      "artifact",
+      "axiom",
+      "axm",
+      "codex",
+      "creation-machine",
+      "from",
+      "merge",
+      "mike",
+      "mir",
+      "pull",
+      "request",
+      "retention",
+      "standalone",
+      "universal-creation"
+    ]
+  },
+  "source": {
+    "base": "daee7eca0311cdf930ed5fb99edb02ddc6283e71",
+    "commit_subject": "Merge pull request #233 from mike-axiom-mir/codex/actions-artifact-retention-14d",
+    "head": "08cd56220b927ff03432122c4470031597f9f697",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

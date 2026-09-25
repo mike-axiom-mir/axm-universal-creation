@@ -1,0 +1,769 @@
+diff --git a/GRAMMAR_WORKBENCH.md b/GRAMMAR_WORKBENCH.md
+index 9c90a23..909f8bf 100644
+--- a/GRAMMAR_WORKBENCH.md
++++ b/GRAMMAR_WORKBENCH.md
+@@ -35,16 +35,26 @@ language groups and returns the selected entries plus counts omitted from the
+ projection. Original input state is not changed. This creates a selection plan;
+ it does not draw it or measure frame rate. Input is capped at 10,000 atoms.
+ 
+-All three commands accept at most 1 MiB of JSON, reject non-finite Python inputs,
++The original commands accept at most 1 MiB of JSON, reject non-finite Python inputs,
+ and stop subprocess work after 30 seconds. Grammar 102's pinned source archive
+ is hash-checked, extracted as ordinary files into a temporary directory, executed
+ through its supplied stdin CLI and removed afterwards. No installation hooks or
+ package-manager operation runs at invocation. The packed source remains readable
+ by extracting `third_party/grammar-workbench/grammar-102.tgz`.
+ 
++## Programming creation
++
++`code-program` exposes typed source generation and structural function reuse.
++`code-workflow` composes six bundled professional procedures for requirements,
++repeatable builds, actual runtime evidence and explicit retention. The ordinary
++`create` route accepts `code-program-project` to save source, tests and
++construction together. See [PROGRAMMING_CREATION.md](PROGRAMMING_CREATION.md).
++All required components live inside UC; source repositories are provenance,
++not runtime dependencies. These executable targets are JavaScript/Python only.
++
+ ## Provenance and evidence
+ 
+-Grammar 102: `ff58375b65a4033041e6de957263d4146aa7429e`.
++Grammar 102: `6e9efc2ebf759f9e2d03c933eafaf71856357471`.
+ The 1.1 MB compressed archive is produced by the upstream `npm pack --ignore-scripts`
+ allowlist (approximately 14.8 MB unpacked). It contains the actual 102-language
+ package, not a source redirect. Its license is included inside the package.
+diff --git a/PROGRAMMING_CREATION.md b/PROGRAMMING_CREATION.md
+new file mode 100644
+index 0000000..fda5902
+--- /dev/null
++++ b/PROGRAMMING_CREATION.md
+@@ -0,0 +1,111 @@
++# Standalone programming creation
++
++UC builds standalone JavaScript and Python modules from typed program data and
++explicit acceptance contracts. The compiler, six professional procedures and
++observers live inside UC. Python and Node.js are host runtimes; no sibling
++repository, npm install, network service, Git command or model is required.
++Repository references record the origin of bundled components.
++
++## Create a project
++
++```sh
++PYTHONPATH=src python -m axm_uc create examples/code/restock-project.json
++node creations/restock-code/javascript/selftest.js
++python creations/restock-code/python/selftest.py
++```
++
++The example builds a two-function restock planner: select low stock, compute
++missing whole units, omit zero orders, trim labels and sort results. Four cases
++cover mixed stock, empty input, fractional units and invalid boolean input.
++The explicit operation tree generates both languages; the compiler contains no
++prewritten restock implementation.
++
++`code-program-project` uses UC's ordinary project writer. It creates a new
++directory and protects existing projects and machine internals. `build` writes
++candidates without execution, `verify` runs cases, and `retain` also saves
++reusable construction after successful verification. Failed verification returns
++a structured creation error without publishing a project or replacing archives.
++A candidate remains labelled `CANDIDATE` even when its text files validate.
++
++Each project keeps source modules, selftests, `request.json`, `construction.json`,
++`workflow.json`, licenses/provenance, and optional `archive.json`/`retention.json`.
++The generated modules run independently of UC. Retain construction data when
++reshaping or reusing them; generated text is a realization of that construction.
++
++## Inspect and compose
++
++```sh
++PYTHONPATH=src python -m axm_uc code-program examples/code/catalog.json
++PYTHONPATH=src python -m axm_uc code-program examples/code/compile-invoice.json
++PYTHONPATH=src python -m axm_uc code-workflow examples/code/restock-workflow.json
++```
++
++These commands return JSON without publishing files; held code commands exit 2.
++Python callers use `run_grammar_tool(root, operation, request)` from
++`axm_uc.grammar_workbench`.
++
++`code-program` provides `catalog`, `validate`, `compile`, `recipe`, `capture`
++and `restore`. Compile takes `program`, `languageId` and optional `cases`.
++Recipe takes `id` and `languageId`. Restore takes `archive`, `structuralSha256`
++and optional `name`, returning typed program data. Direct capture is structural
++capture; use the professional `retain` action for verification before acceptance.
++
++The 48 operations cover arithmetic, comparisons, lazy conditions, immutable
++bindings, records, lists, typed calls, map/filter/fold, stable sorting, bounded
++indexing/slicing, nullable defaults and explicit string operations. Programs
++declare typed functions and exports with acyclic dependencies. Raw source,
++arbitrary imports, shell and networking are absent. Operation shapes are in the
++bundled compiler's `code-programs/README.md`; `examples/code/` has runnable JSON.
++
++## Professional workflow
++
++| Station | Procedure |
++| --- | --- |
++| Architect | Map requirements to cases and reachable exports; refuse contradictions |
++| Developer Tools | Validate typed source and generate each language twice |
++| Build | Compare builds and verify program, source-map and artifact identity |
++| QA | Parse and run in fresh processes; compare values/errors, inputs, repeats and languages |
++| Integration | Report readiness for the declared cases on the same artifacts |
++| Maintainer | Retain additive function closures and construction causes on request |
++
++Workflow actions are `catalog`, `build`, `verify` and `retain`. The latter three
++take a `job`; retain optionally takes a previous `archive`. Jobs contain `id`,
++one of `program`/`recipeId`, optional `languages`, `cases` and `requirements`.
++Explicit programs need explicit cases/requirements. Recipe cases are always
++retained; extra cases extend them. Every export needs a successful value case,
++and every case must map to a requirement. Full profession bodies remain
++EXPERIMENTAL. Matching cases does not establish that prose requirements are
++complete or that all branches were exercised.
++
++## Reuse and growth
++
++Load a project's `archive.json` into a later retain request, or select a captured
++structural identity and restore it. Compose restored typed functions with new
++operations/functions, declare the next exports and cases, and verify afresh.
++Renames add no structural atoms; helper dependency closures remain available.
++No entries are silently evicted. The suite restores the restock planner, adds
++a total-units fold, executes both languages and retains exactly one additional
++function. It also runs a published project's own standalone selftests.
++
++## Scope and evidence
++
++This is a restricted pure-function grammar, not arbitrary source translation or
++complete application generation. JavaScript and Python are executable targets;
++the separate 102-language advisory catalog retains its meaning. Grammar's
++100,000-unit per-call work budget and bounded data sizes apply. The executor
++uses fixed commands and temporary directories, two runs per language,
++15-second subprocess timeouts and bounded output; it is not an OS sandbox.
++The workflow timeout is 150 seconds; other grammar operations retain 30 seconds.
++Requests are capped at 1 MiB.
++
++Ten local integration tests cover runtime behavior, repeatable builds, source
++hashes, restored composition, archive growth, bad expectations, project
++protections, refusal paths, CLI status and a relocated bundle with no donor
++checkout. Altered source/archive bytes are refused. CI repeats these checks
++on Linux and Windows. Whole-repository results are reported separately.
++
++Bundled sources: Grammar 102 `6e9efc2ebf759f9e2d03c933eafaf71856357471` and
++Profession Fabric `c7ab2a0e655a755770b962100d3b212aa56c45c8`, with MPL-2.0
++licenses and exact provenance under `third_party/grammar-workbench/` and
++`third_party/code-professions/`. Existing Grammar Glass components retain
++their separate source and Apache-2.0 license.
+diff --git a/README.md b/README.md
+index 57fd9ae..2eeeb35 100644
+--- a/README.md
++++ b/README.md
+@@ -443,6 +443,13 @@ inputs and incomplete searches stay visible. See [PIPELINE_MAP.md](PIPELINE_MAP.
+ capability capsule, Grammar Glass sparse/full state comparison, and visual
+ projection budgets through three offline JSON commands.
+ 
++## Standalone programming creation
++
++UC includes a typed JavaScript/Python compiler and six executable coding
++profession procedures. Create reproducible code projects, run explicit
++acceptance cases, and retain reusable construction without a model, network
++service or external repository. See [PROGRAMMING_CREATION.md](PROGRAMMING_CREATION.md).
++
+ ## Licensing
+ 
+ Current AXM-owned machine/workshop code: **PolyForm Noncommercial 1.0.0 + `CREATOR_OUTPUT_PERMISSION.md`**.
+diff --git a/capabilities/live/AXM-CAP-CODE-PROGRAM-PROJECT.json b/capabilities/live/AXM-CAP-CODE-PROGRAM-PROJECT.json
+new file mode 100644
+index 0000000..7b419d4
+--- /dev/null
++++ b/capabilities/live/AXM-CAP-CODE-PROGRAM-PROJECT.json
+@@ -0,0 +1,33 @@
++{
++  "id": "AXM-CAP-CODE-PROGRAM-PROJECT",
++  "version": "1.0.0",
++  "status": "live",
++  "purpose": "Create standalone JavaScript/Python code projects from explicit typed programs and acceptance contracts through six deterministic professional procedures.",
++  "handles": ["code-program-project"],
++  "input_contract": {
++    "required": ["path", "request"],
++    "properties": {
++      "path": "New ordinary project directory; existing projects and machine internals are protected.",
++      "request": "Code workflow request: action build, verify or retain plus explicit job. Verify/retain explicitly execute freshly generated bounded code."
++    }
++  },
++  "output_contract": {
++    "kind": "directory",
++    "contains": ["source-modules", "selftests", "construction", "requirements", "case-observations", "provenance", "optional-recipe-archive"]
++  },
++  "dependencies": ["AXM-CAP-WRITE-PROJECT"],
++  "relationships": ["Consumes bundled Grammar 102 compiler and Profession Fabric procedures; writes through the existing project boundary."],
++  "anatomy_refs": [],
++  "implementation": {
++    "kind": "DETERMINISTIC_SOURCE",
++    "entrypoint": "builtin:code_program_project",
++    "source": "src/axm_uc/code_creation.py"
++  },
++  "limitations": [
++    "48 closed expression operations; JavaScript and Python only; not arbitrary application synthesis or source translation.",
++    "Build mode creates candidates without execution; verify/retain require Node and Python with bounded process execution, not an OS sandbox.",
++    "Verification covers declared cases, repeated observations and requested-language parity; not full specification, branch coverage, deployment or security.",
++    "Retention is explicit, additive project data. No silent canon promotion or shared machine mutation."
++  ],
++  "persistent_state": null
++}
+diff --git a/src/axm_uc/capabilities.py b/src/axm_uc/capabilities.py
+index 75c448c..a9b9f1b 100644
+--- a/src/axm_uc/capabilities.py
++++ b/src/axm_uc/capabilities.py
+@@ -441,7 +441,13 @@ def builtin_direction_router(root: Path, inputs: dict[str, Any]) -> dict[str, An
+         raise CapabilityError(str(exc)) from exc
+ 
+ 
++def builtin_code_program_project(root: Path, inputs: dict[str, Any]) -> dict[str, Any]:
++    from .code_creation import create_code_project
++    return create_code_project(root, inputs)
++
++
+ BUILTINS: dict[str, Callable[[Path, dict[str, Any]], dict[str, Any]]] = {
++    "builtin:code_program_project": builtin_code_program_project,
+     "builtin:write_text": builtin_write_text,
+     "builtin:write_json": builtin_write_json,
+     "builtin:inspect_registry": builtin_inspect_registry,
+diff --git a/src/axm_uc/cli.py b/src/axm_uc/cli.py
+index 6eb1635..721d3f3 100644
+--- a/src/axm_uc/cli.py
++++ b/src/axm_uc/cli.py
+@@ -20,6 +20,8 @@ def build_parser() -> argparse.ArgumentParser:
+     sub = parser.add_subparsers(dest="command", required=True)
+ 
+     for name, help_text in [('grammar-capsule','compose a standalone Grammar 102 language capability capsule'),
++                            ('code-program','compile, inspect or reuse typed JavaScript/Python programs'),
++                            ('code-workflow','build or explicitly verify/retain code through six deterministic professionals'),
+                             ('state-ripple','compare sparse and full evaluation of an explicit state graph'),
+                             ('construction-program','compose and evaluate declared state operations'),
+                             ('render-budget','select a bounded visual projection without changing source state')]:
+@@ -197,16 +199,17 @@ def main(argv: list[str] | None = None) -> int:
+         _print(result)
+         return 0 if result.get('type') == 'CREATION_RESULT' else 1
+ 
+-    if args.command in ('grammar-capsule', 'state-ripple', 'render-budget', 'construction-program'):
++    if args.command in ('grammar-capsule', 'state-ripple', 'render-budget', 'construction-program', 'code-program', 'code-workflow'):
+         from .grammar_workbench import run_grammar_tool
+         try:
+             with Path(args.request).open('rb') as source:
+                 data = source.read(1048577)
+             if len(data) > 1048576: raise ValueError('request exceeds 1 MiB')
+-            _print(run_grammar_tool(root, args.command, json.loads(data)))
++            result = run_grammar_tool(root, args.command, json.loads(data))
++            _print(result)
+         except (ValueError, OSError) as exc:
+             raise SystemExit(str(exc)) from exc
+-        return 0
++        return 2 if args.command in ('code-program', 'code-workflow') and result.get('result') in ('HOLD', 'BLOCKED', 'CODE_PROGRAM_HELD') else 0
+ 
+     if args.command == 'pipelines':
+         from .pipeline_map import map_capabilities
+diff --git a/src/axm_uc/code_creation.py b/src/axm_uc/code_creation.py
+new file mode 100644
+index 0000000..c9082d3
+--- /dev/null
++++ b/src/axm_uc/code_creation.py
+@@ -0,0 +1,76 @@
++"""Create ordinary projects from explicit, reproducibly compiled code contracts."""
++from __future__ import annotations
++
++import json
++from pathlib import Path
++
++from .grammar_workbench import run_grammar_tool
++
++
++def create_code_project(root: Path, inputs: dict) -> dict:
++    # Use the established project writer and its protection of existing projects.
++    from .capabilities import CapabilityError, builtin_write_project
++
++    if not isinstance(inputs, dict) or set(inputs) != {'path', 'request'}:
++        raise CapabilityError('code-program-project requires exactly path and request')
++    if not isinstance(inputs['path'], str) or not inputs['path'].strip():
++        raise CapabilityError('code project path must be a nonempty string')
++    request = inputs['request']
++    if not isinstance(request, dict) or request.get('action') not in ('build', 'verify', 'retain'):
++        raise CapabilityError('code project action must be build, verify or retain')
++    try:
++        workflow = run_grammar_tool(root, 'code-workflow', request)
++    except (ValueError, OSError) as exc:
++        raise CapabilityError(str(exc)) from exc
++    if workflow['result'] not in ('CANDIDATE', 'VERIFIED_FOR_CASES'):
++        raise CapabilityError('code workflow did not produce an accepted project candidate', {'workflow': workflow})
++
++    def json_text(value):
++        return json.dumps(value, indent=2, ensure_ascii=False, allow_nan=False, sort_keys=True) + '\n'
++
++    build = workflow['build']
++    files = {
++        'request.json': json_text(request),
++        'construction.json': json_text(build['plan']),
++        'workflow.json': json_text(workflow),
++        'README.md': _project_readme(build, workflow['result']),
++        'LICENSE-MPL-2.0.txt': (Path(root) / 'third_party/code-professions/source/LICENSE').read_text(encoding='utf-8'),
++        'NOTICE.txt': 'Generated using AXM Grammar 102 with its embedded bounded runtime.\n'
++                      'Grammar source: ' + build['compiler']['repository'] + ' @ ' + build['compiler']['commit'] + '\n'
++                      'Profession source: ' + workflow['professionDonor']['repository'] + ' @ ' + workflow['professionDonor']['commit'] + '\n'
++                      'Copyright 2026 Mike - Axiom/Mir. Source licenses and provenance remain attached.\n',
++    }
++    for target in build['targets']:
++        for artifact in target['artifacts']:
++            files[target['language'] + '/' + artifact['path']] = artifact['content']
++    if workflow['retention'] is not None:
++        files['archive.json'] = json_text(workflow['retention']['archive'])
++        files['retention.json'] = json_text(workflow['retention'])
++    result = builtin_write_project(root, {'path': inputs['path'], 'files': files, 'project_type': 'generic',
++                                         'publish_mode': 'validated', 'replace': False})
++    result['code_workflow'] = {
++        'result': workflow['result'], 'buildSha256': build['buildSha256'],
++        'stations': workflow['stations'], 'languages': build['plan']['languages'],
++        'caseCount': len(build['plan']['cases']), 'requirementCount': len(build['plan']['requirements']),
++        'archiveWritten': workflow['retention'] is not None,
++        'runtimeEvidence': 'workflow.json', 'construction': 'construction.json',
++    }
++    return result
++
++
++def _project_readme(build, status):
++    commands = []
++    if 'javascript' in build['plan']['languages']:
++        commands.append('node javascript/selftest.js')
++    if 'python' in build['plan']['languages']:
++        commands.append('python python/selftest.py')
++    return ('# ' + build['plan']['id'] + '\n\n'
++            'Creation result: `' + status + '`. These are standalone typed pure-function modules.\n'
++            'JavaScript exposes CommonJS exports; Python exposes named functions and `FUNCTIONS`.\n\n'
++            '```sh\n' + '\n'.join(commands) + '\n```\n\n'
++            '`request.json` retains the creation request. `construction.json` retains the normalized\n'
++            'program, requirements and cases; `workflow.json` retains exact source and runtime evidence.\n'
++            'If retention was requested, `archive.json` carries reusable function dependency closures.\n'
++            'Restore with UC `code-program` action `restore`, then verify against the next job contract.\n\n'
++            'Passing cases is bounded evidence, not correctness for all inputs or a complete application.\n'
++            'Generated source is a realization; keep construction data when changing or reusing it.\n')
+diff --git a/src/axm_uc/grammar_workbench.py b/src/axm_uc/grammar_workbench.py
+index 7c5f20d..b8b7a9f 100644
+--- a/src/axm_uc/grammar_workbench.py
++++ b/src/axm_uc/grammar_workbench.py
+@@ -1,16 +1,35 @@
+-"""Pinned offline Grammar 102 / Glass process adapters. No caller code execution."""
++"""Pinned offline Grammar adapters and explicit bounded code-workflow execution."""
+ from __future__ import annotations
+ import hashlib
+ import json
+ from pathlib import Path, PurePosixPath
+ import shutil
+ import subprocess
++import sys
+ import tarfile
+ import tempfile
+ 
+ 
++OPERATIONS = ('grammar-capsule', 'state-ripple', 'render-budget', 'construction-program', 'code-program', 'code-workflow')
++
++
++def _profession_donor(root):
++    folder = Path(root) / 'third_party/code-professions'
++    provenance = json.loads((folder / 'provenance.json').read_text(encoding='utf-8'))
++    seen = set()
++    for record in provenance['files']:
++        relative = PurePosixPath(record['path'])
++        if relative.is_absolute() or '..' in relative.parts or '\\' in record['path'] or str(relative) in seen:
++            raise ValueError('unsafe profession donor path')
++        seen.add(str(relative))
++        source = folder / 'source' / relative
++        if source.is_symlink() or hashlib.sha256(source.read_bytes()).hexdigest() != record['sha256']:
++            raise ValueError('pinned profession donor digest mismatch: ' + str(relative))
++    return (folder / 'source').resolve(), provenance
++
++
+ def run_grammar_tool(root, operation, request):
+-    if operation not in ('grammar-capsule','state-ripple','render-budget','construction-program'):
++    if operation not in OPERATIONS:
+         raise ValueError('unknown grammar tool')
+     body=json.dumps(request,allow_nan=False).encode()
+     if len(body)>1048576:raise ValueError('request exceeds 1 MiB')
+@@ -18,29 +37,46 @@ def run_grammar_tool(root, operation, request):
+     if not node:raise ValueError('Node.js is required for the grammar workbench')
+     folder=Path(root)/'third_party/grammar-workbench'
+     provenance=json.loads((folder/'provenance.json').read_text())
+-    names={'grammar-102.tgz'} if operation=='grammar-capsule' else {'state-ripple-core.js','construction-program-core.js','playground-core.js','render-budget-core.js'}
++    grammar_operation = operation in ('grammar-capsule', 'code-program', 'code-workflow')
++    names={'grammar-102.tgz'} if grammar_operation else {'state-ripple-core.js','construction-program-core.js','playground-core.js','render-budget-core.js'}
+     for name in names:
+         record=next(p for p in provenance if p['destination']==name)
+         if hashlib.sha256((folder/name).read_bytes()).hexdigest()!=record['sha256']:
+             raise ValueError('pinned donor digest mismatch: '+name)
+     with tempfile.TemporaryDirectory(prefix='axm-grammar-') as temp:
+-        if operation=='grammar-capsule':
++        if grammar_operation:
+             # Extract only ordinary package files after validating the complete archive.
+             with tarfile.open(folder/'grammar-102.tgz','r:gz') as archive:
+                 members=archive.getmembers()
+                 if len(members)>2000 or sum(m.size for m in members)>32*1024*1024:
+                     raise ValueError('grammar archive exceeds package bounds')
++                seen = set()
+                 for m in members:
+                     p=PurePosixPath(m.name)
+-                    if not m.isfile() or p.is_absolute() or '..' in p.parts or not p.parts or p.parts[0]!='package':
++                    if not m.isfile() or p.is_absolute() or '..' in p.parts or '\\' in m.name or not p.parts or p.parts[0]!='package' or p.as_posix() in seen:
+                         raise ValueError('unsafe grammar archive member')
++                    seen.add(p.as_posix())
+                 for m in members:
+                     p=Path(temp)/m.name;p.parent.mkdir(parents=True,exist_ok=True)
+                     p.write_bytes(archive.extractfile(m).read())
+-            command=[node,str(Path(temp)/'package/bin/axm-grammar-capabilities.js')]
++            package = Path(temp) / 'package'
++            if operation == 'code-workflow':
++                professionals, professional_pin = _profession_donor(root)
++                compiler_pin = next(p for p in provenance if p['destination'] == 'grammar-102.tgz')
++                identities = {
++                    'compiler': {'repository': 'mike-axiom-mir/axm-102-grammer', 'commit': compiler_pin['commit']},
++                    'professionals': {k: professional_pin[k] for k in ('repository', 'commit')},
++                }
++                command = [node, str(folder.resolve() / 'run-code-workflow.mjs'), str(package),
++                           str(professionals), sys.executable, json.dumps(identities)]
++            else:
++                entry = 'axm-code-program.js' if operation == 'code-program' else 'axm-grammar-capabilities.js'
++                command = [node, str(package / 'bin' / entry)]
+         else:command=[node,str(folder.resolve()/'run-glass.js'),operation]
++        timeout = 150 if operation == 'code-workflow' else 30
+         try:
+-            r=subprocess.run(command,input=body,stdout=subprocess.PIPE,stderr=subprocess.PIPE,timeout=30,check=False)
+-        except subprocess.TimeoutExpired as exc:raise ValueError('grammar tool exceeded 30 seconds') from exc
++            r=subprocess.run(command,input=body,stdout=subprocess.PIPE,stderr=subprocess.PIPE,timeout=timeout,check=False)
++        except subprocess.TimeoutExpired as exc:raise ValueError(f'grammar tool exceeded {timeout} seconds') from exc
+         if r.returncode:raise ValueError(r.stderr.decode(errors='replace')[:4000])
++        if len(r.stdout) > 16 * 1048576: raise ValueError('grammar result exceeds 16 MiB')
+         return json.loads(r.stdout)
+diff --git a/tests/test_code_creation.py b/tests/test_code_creation.py
+new file mode 100644
+index 0000000..361431c
+--- /dev/null
++++ b/tests/test_code_creation.py
+@@ -0,0 +1,178 @@
++import copy
++import hashlib
++import os
++import json
++import shutil
++import subprocess
++import sys
++import tempfile
++import unittest
++from pathlib import Path
++from unittest.mock import patch
++
++ROOT = Path(__file__).resolve().parents[1]
++sys.path.insert(0, str(ROOT / 'src'))
++from axm_uc.grammar_workbench import run_grammar_tool
++from axm_uc.machine import UniversalCreationMachine
++
++
++@unittest.skipUnless(shutil.which('node'), 'Node is required for generated code')
++class CodeCreationTests(unittest.TestCase):
++    def request(self):
++        return json.loads((ROOT / 'examples/code/restock-workflow.json').read_text())
++
++    def run_job(self, request):
++        return run_grammar_tool(ROOT, 'code-workflow', request)
++
++    def test_catalog_compiler_and_repeatable_candidate(self):
++        catalog = run_grammar_tool(ROOT, 'code-program', {'action': 'catalog'})
++        self.assertEqual(len(catalog['operations']), 48)
++        self.assertEqual(catalog['languages'], ['javascript', 'python'])
++        workflow = self.run_job({'action': 'catalog'})
++        self.assertEqual(len(workflow['stations']), 6)
++        request = self.request(); request['action'] = 'build'
++        before = copy.deepcopy(request)
++        one = self.run_job(request)
++        self.assertEqual(one['result'], 'CANDIDATE', one)
++        self.assertIsNone(one['qa'])
++        self.assertEqual(one, self.run_job(request))
++        self.assertEqual(request, before)
++        for target in one['build']['targets']:
++            for artifact in target['artifacts']:
++                self.assertEqual(hashlib.sha256(artifact['content'].encode()).hexdigest(), artifact['sha256'])
++
++    def test_custom_multifunction_program_executes_on_both_runtimes(self):
++        result = self.run_job(self.request())
++        self.assertEqual(result['result'], 'VERIFIED_FOR_CASES', result)
++        self.assertTrue(all(r['passed'] for r in result['qa']['requirementCoverage']))
++        self.assertEqual(len(result['qa']['observations']), 4)
++        self.assertEqual(len(result['retention']['archive']['entries']), 2)
++        for observation in result['qa']['observations']:
++            self.assertEqual(observation['status'], 'COMPLETE')
++            cases = {c['id']: c for c in observation['cases']}
++            self.assertEqual(cases['mixed']['actual'], [{'sku': 'AXLE', 'quantity': 6}, {'sku': 'BOLT', 'quantity': 8}])
++            self.assertEqual(cases['whole-units']['actual'], [{'sku': 'PART', 'quantity': 2}])
++            self.assertEqual(cases['invalid-record']['error'], 'VALUE_TYPE')
++            self.assertTrue(all(c['inputUnchanged'] for c in observation['cases']))
++
++    def test_restore_then_compose_new_capability_and_retain(self):
++        original = self.run_job(self.request())
++        archive = original['retention']['archive']
++        root = next(c for c in original['retention']['captured'] if c['function'] == 'restock')
++        restored = run_grammar_tool(ROOT, 'code-program', {'action': 'restore', 'archive': archive,
++            'structuralSha256': root['structuralSha256'], 'name': 'restockParts'})
++        function = next(f for f in restored['functions'] if f['name'] == 'restockParts')
++        # A new function composes retained construction with a fold; no copied source text.
++        restored['functions'].append({'name': 'totalUnits', 'params': [{'name': 'items', 'type': function['params'][0]['type']}],
++            'returns': 'number', 'body': {'op': 'fold',
++                'input': {'op': 'call', 'function': 'restockParts', 'args': [{'op': 'ref', 'name': 'items'}]},
++                'item': 'order', 'acc': 'units', 'initial': {'op': 'literal', 'type': 'number', 'value': 0},
++                'body': {'op': 'add', 'left': {'op': 'ref', 'name': 'units'},
++                         'right': {'op': 'field', 'value': {'op': 'ref', 'name': 'order'}, 'key': 'quantity'}}}})
++        restored['exports'] = ['totalUnits']
++        original_cases = self.request()['job']['cases']
++        cases = [{'id': 'mixed-total', 'function': 'totalUnits', 'args': original_cases[0]['args'], 'expected': 14},
++                 {'id': 'empty-total', 'function': 'totalUnits', 'args': [[]], 'expected': 0}]
++        job = {'id': 'restock-total', 'program': restored, 'cases': cases,
++               'requirements': [{'id': 'sum-units', 'statement': 'Total the accepted restock quantities.', 'cases': [c['id'] for c in cases]}]}
++        result = self.run_job({'action': 'retain', 'job': job, 'archive': archive})
++        self.assertEqual(result['result'], 'VERIFIED_FOR_CASES', result)
++        self.assertEqual(len(archive['entries']), 2)
++        self.assertEqual(len(result['retention']['archive']['entries']), 3)
++
++    def test_project_route_writes_standalone_modules_and_construction(self):
++        with tempfile.TemporaryDirectory() as td:
++            target = Path(td) / 'project'
++            request = {'kind': 'code-program-project', 'inputs': {'path': str(target), 'request': self.request()}}
++            result = UniversalCreationMachine(ROOT).create(request)
++            self.assertEqual(result['type'], 'CREATION_RESULT', result)
++            self.assertTrue(result['result']['published'])
++            self.assertTrue(result['result']['validation']['passed'])
++            self.assertTrue(result['result']['code_workflow']['archiveWritten'])
++            for name in ['construction.json', 'workflow.json', 'archive.json', 'request.json', 'LICENSE-MPL-2.0.txt']:
++                self.assertTrue((target / name).is_file(), name)
++            for command in [['node', 'javascript/selftest.js'], [sys.executable, 'python/selftest.py']]:
++                run = subprocess.run(command, cwd=target, capture_output=True, text=True, timeout=30)
++                self.assertEqual(run.returncode, 0, run.stdout + run.stderr)
++            # Existing accepted data cannot be replaced by repeating the request.
++            before = (target / 'construction.json').read_bytes()
++            again = UniversalCreationMachine(ROOT).create(request)
++            self.assertEqual(again['type'], 'CREATION_ERROR')
++            self.assertEqual((target / 'construction.json').read_bytes(), before)
++
++    def test_failed_expectation_writes_no_project_or_archive(self):
++        request = self.request(); request['job']['cases'][0]['expected'][0]['quantity'] = 999
++        result = self.run_job(request)
++        self.assertEqual(result['result'], 'HOLD')
++        self.assertIsNone(result['retention'])
++        with tempfile.TemporaryDirectory() as td:
++            target = Path(td) / 'failed'
++            result = UniversalCreationMachine(ROOT).create({'kind': 'code-program-project', 'inputs': {'path': str(target), 'request': request}})
++            self.assertEqual(result['type'], 'CREATION_ERROR')
++            self.assertFalse(target.exists())
++
++    def test_machine_body_and_replacement_flags_remain_protected(self):
++        request = self.request(); request['action'] = 'build'
++        machine = UniversalCreationMachine(ROOT)
++        result = machine.create({'kind': 'code-program-project', 'inputs': {'path': str(ROOT / 'src/forbidden-code-project'), 'request': request}})
++        self.assertEqual(result['type'], 'CREATION_ERROR')
++        self.assertIn('machine body', result['message'])
++        result = machine.create({'kind': 'code-program-project', 'inputs': {'path': 'creations/unused', 'request': request, 'replace': True}})
++        self.assertEqual(result['type'], 'CREATION_ERROR')
++
++    def test_conflicts_missing_cases_and_arbitrary_source_are_held(self):
++        request = self.request()
++        bad = copy.deepcopy(request); bad['job']['cases'] = []
++        self.assertIn('ACCEPTANCE_CASES_REQUIRED', self.run_job(bad)['diagnostic'])
++        bad = copy.deepcopy(request); bad['job']['program']['functions'][0]['body'] = {'op': 'raw', 'source': 'process.exit()'}
++        self.assertIn('PROGRAM_HELD', self.run_job(bad)['diagnostic'])
++        bad = copy.deepcopy(request); bad['observations'] = [{'status': 'PASS'}]
++        self.assertEqual(self.run_job(bad)['result'], 'HOLD')
++        bad = copy.deepcopy(request); bad['job']['languages'] = ['rust']
++        self.assertEqual(self.run_job(bad)['result'], 'HOLD')
++        bad = copy.deepcopy(request); bad['job']['cases'].append({**bad['job']['cases'][1], 'id': 'conflict', 'expected': [{'sku': 'X', 'quantity': 1}]})
++        self.assertIn('CONFLICTING_EXPECTATIONS', self.run_job(bad)['diagnostic'])
++
++    def test_malformed_and_large_request_are_rejected_before_subprocess(self):
++        with patch('axm_uc.grammar_workbench.subprocess.run') as run:
++            for request in [{'action': 'catalog', 'extra': float('nan')}, {'action': 'catalog', 'extra': 'x' * 1048576}]:
++                with self.assertRaises(ValueError):
++                    self.run_job(request)
++            run.assert_not_called()
++
++    def test_relocated_bundle_has_no_donor_checkout_dependency(self):
++        # Copy only UC's adapter and bundled sources, outside UC and every donor checkout.
++        with tempfile.TemporaryDirectory(prefix='uc-code-standalone-') as td:
++            root = Path(td)
++            for name in ['grammar-workbench', 'code-professions']:
++                shutil.copytree(ROOT / 'third_party' / name, root / 'third_party' / name)
++            shutil.copyfile(ROOT / 'src/axm_uc/grammar_workbench.py', root / 'adapter.py')
++            runner = root / 'run.py'
++            runner.write_text('import json\nfrom pathlib import Path\nfrom adapter import run_grammar_tool\n'
++                'print(json.dumps(run_grammar_tool(Path(__file__).parent, "code-workflow", '
++                '{"action":"verify","job":{"id":"offline","recipeId":"split-and-join"}})))\n')
++            result = subprocess.run([sys.executable, str(runner)], cwd=root, capture_output=True, text=True, timeout=150)
++            self.assertEqual(result.returncode, 0, result.stderr)
++            self.assertEqual(json.loads(result.stdout)['result'], 'VERIFIED_FOR_CASES')
++            source = root / 'third_party/code-professions/source/workflows/code/index.mjs'
++            source.write_text(source.read_text() + '\n// changed\n')
++            with self.assertRaisesRegex(ValueError, 'profession donor digest mismatch'):
++                run_grammar_tool(root, 'code-workflow', {'action': 'catalog'})
++            archive = root / 'third_party/grammar-workbench/grammar-102.tgz'
++            archive.write_bytes(archive.read_bytes() + b'changed')
++            with self.assertRaisesRegex(ValueError, 'pinned donor digest mismatch'):
++                run_grammar_tool(root, 'code-program', {'action': 'catalog'})
++
++    def test_cli_reports_held_request_as_nonzero(self):
++        with tempfile.TemporaryDirectory() as td:
++            request = Path(td) / 'request.json'
++            request.write_text('{"action":"verify","job":{"id":"missing"}}')
++            result = subprocess.run([sys.executable, '-m', 'axm_uc', '--root', str(ROOT), 'code-workflow', str(request)],
++                                    cwd=td, env={**os.environ, 'PYTHONPATH': str(ROOT / 'src')},
++                                    capture_output=True, text=True, timeout=150)
++            self.assertEqual(result.returncode, 2, result.stderr)
++            self.assertEqual(json.loads(result.stdout)['result'], 'HOLD')
++
++
++if __name__ == '__main__':
++    unittest.main()
+diff --git a/third_party/code-professions/source/LICENSE_BOUNDARY.md b/third_party/code-professions/source/LICENSE_BOUNDARY.md
+new file mode 100644
+index 0000000..f8ae087
+--- /dev/null
++++ b/third_party/code-professions/source/LICENSE_BOUNDARY.md
+@@ -0,0 +1,23 @@
++# AXM MPL License Boundary
++
++Effective for the current repository state from 2026-09-20 forward.
++
++## AXM-owned material
++
++Unless a file or directory states otherwise, AXM-owned reusable software in the current and future repository state is licensed under the Mozilla Public License 2.0 (MPL-2.0).
++
++The intended boundary is file-level reciprocity: AXM-covered files can be used as part of larger works, including commercial works, while distributed modifications to those covered files remain subject to MPL-2.0.
++
++## Historical grants
++
++This migration does not revoke licenses already granted for earlier published versions. Material previously distributed under Apache-2.0 or another license remains usable under that historical grant for the version that was distributed under it.
++
++## Third-party material
++
++Third-party, vendored, imported, upstream, generated-from-upstream, asset, dataset, or donor material remains governed by its own license, copyright, NOTICE, provenance, or attribution files. This root license does not relicense third-party material.
++
++## Outputs and interfaces
++
++Generated outputs, user-authored work, public interchange formats, protocols, assets, or separately marked components may carry different terms where explicitly stated.
++
++Required Notice: Copyright 2026 Mike - Axiom/Mir.
+diff --git a/third_party/code-professions/source/workflows/code/README.md b/third_party/code-professions/source/workflows/code/README.md
+new file mode 100644
+index 0000000..2f4173b
+--- /dev/null
++++ b/third_party/code-professions/source/workflows/code/README.md
+@@ -0,0 +1,114 @@
++# Deterministic coding workflow
++
++Six existing Professional Bodies expose executable procedures for bounded code
++creation. Humans, models and deterministic callers use the same JSON. The gap
++was machinery and handoffs, not missing role names. Full bodies remain
++**EXPERIMENTAL**; existing scoped maturity records are unchanged.
++
++| Package | Public export | Work |
++| --- | --- | --- |
++| Software Architect | `code-plan` | Map requirements to cases and reachable exports; refuse contradictions |
++| Developer Tools Engineer | `code-compiler` | Resolve typed source or a recipe; compile twice |
++| Build Engineer | `code-build` | Compare builds, verify source identity, artifact paths and digests |
++| Software QA / Playtest | `code-evidence` | Assess actual values/errors, input preservation, repeated runs and language agreement |
++| Integration / Release Engineer | `code-readiness` | Give bounded readiness tied to the same build and QA |
++| Software Maintainer | `code-retention` | Retain verified construction causes and deduplicated function closures on request |
++
++Package manifests expose the public seams. `index.mjs` coordinates them without
++copying specialist logic. `contract.mjs` supplies institutional JSON/identity
++utilities. The compiler and optional executor are host-supplied capabilities.
++
++## Run
++
++Use a clean Grammar 102 checkout containing `code-programs/`. The tested source
++is `mike-axiom-mir/axm-102-grammer` at
++`6e9efc2ebf759f9e2d03c933eafaf71856357471`.
++
++```sh
++node tools/run-code-workflow.mjs ../axm-102-grammer workflows/code/examples/invoice.json python3
++npm test
++AXM_CODE_COMPILER=../axm-102-grammer npm run test:code
++```
++
++The CLI records the actual clean checkout revision; it does not install or
++modify the compiler. An embedding consumer can carry an exact source snapshot:
++
++```js
++import {runCodeWorkflow} from './workflows/code/index.mjs';
++import {createCodeExecutor} from './workflows/code/runtime.mjs';
++const result = runCodeWorkflow(request, {
++  compiler, compilerIdentity: {repository, commit},
++  execute: createCodeExecutor({python: '/path/to/python'})
++});
++```
++
++`compiler` implements Grammar's `catalog`, `getRecipe`, `validate`, `compile`
++and `remember`. The host verifies the declared identity against its source.
++Hashes detect changed/stale inputs; they do not authenticate a dishonest host.
++
++## Request grammar
++
++| Action | Fields | Behavior |
++| --- | --- | --- |
++| `catalog` | None | Operations, recipes and stations |
++| `build` | `job` | Repeatable candidate source; no execution |
++| `verify` | `job` | Rebuild, parse and run every case twice per target |
++| `retain` | `job`, optional previous `archive` | Verify afresh; return additive archive only on PASS |
++
++A job has `id`, exactly one of `program` or `recipeId`, and optional `languages`
++(JavaScript and Python by default). Explicit programs require `cases` and
++`requirements`. A case has `id`, `function`, `args`, and exactly one of `expected`
++or `error`. A requirement has `id`, nonempty `statement`, and case IDs. Every
++case must belong to a requirement; every export needs a successful value case.
++All helpers must be reachable from exports. Reachability is not branch coverage.
++Recipes retain their bundled cases; additional cases/requirements extend them.
++
++Programs use Grammar's 48-operation typed expression language. Raw source,
++hidden fields, recursion and unimplemented targets stay held. The result keeps
++the normalized program, plan, source maps, artifacts, compiler revision, actual
++observations, requirement coverage and readiness. Artifacts include standalone
++source and selftests. The executor reports actual values independently of the
++selftests' PASS text; QA compares those values with the declared oracles.
++
++## Execution, retention and recovery
++
++`build` constructs source only. `verify` and `retain` explicitly request the
++optional executor: fixed Node/Python commands, fresh temporary directories,
++syntax checks, 15-second process timeouts, 8 MiB output bounds, stripped
++interpreter environment hooks, and no shell. Missing executables are BLOCKED;
++process failures and mismatched cases cannot pass. Only freshly generated
++closed-grammar modules enter this standard workflow. It is not an OS sandbox or
++arbitrary-source runner. Grammar's per-invocation work limits still apply.
++No model, network or caller workspace scan is needed.
++
++Retention returns a new archive and its construction plan. It does not write
++storage, evict old entries or promote canon. Consumers save returned values
++through their ordinary persistence boundary. Grammar's `restore` export yields
++a portable program to rerun with new requirements. Renames add no structural
++atoms. On failure, the previous archive stays untouched. Removing the consumer
++registration rolls back this integration without rewriting prior creations.
++
++`VERIFIED_FOR_CASES` means the requested cases on the observed runtimes. It does
++not prove complete requirements, all branches, application quality, deployment
++readiness or whole-profession equivalence. External observations admitted by
++`code-evidence` are caller supplied; the standard coordinator gets them directly
++from its executor during the same invocation.
++
++## Evidence
++
++`tests/validate-code-workflow.mjs`: 27 checks cover incomplete/conflicting
++requirements, omitted/duplicate/stale evidence, input mutation, runtime failure,
++repeatability, language disagreement, unverified retention and actual execution
++of a frozen Grammar-generated JavaScript fixture naming its source revision.
++
++`tests/code-workflow-integration.mjs`: eight recipes plus a restored dependency
++closure produce 9 successful jobs, 36 fresh runtime processes and 68 successful
++case observations, with separate deliberate failures, build drift and unavailable
++executor checks. CI exercises Node 20/Python 3.11 and Node 22/Python 3.13. Local
++checks used Node 24.19.0 and Python 3.12.14; CI results remain separately visible.
++
++Existing package, maturity and research checks pass. No occupational research
++or maturity promotion is inferred. Procedures derive from existing package
++ownership/evidence contracts and the inspected compiler contract. A seeded
++first-run/second-run disagreement exposed a QA reporting defect during
++development; QA now compares every complete run across languages.

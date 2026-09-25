@@ -1,0 +1,233 @@
+{
+  "capsule_id": "366f0cdbfffb367210d60d109a49a4012c322cfbb60e55d3320cba202aa71085",
+  "evidence": {
+    "files": [
+      {
+        "additions": 11,
+        "binary": false,
+        "content_sha256": "d12bd7dc2657fd0d9320f86cfb6c551223c89686e0110a4491b70f55d79be893",
+        "deletions": 8,
+        "path": "capabilities/live/AXM-CAP-GENERATE-CHARACTER-RECIPE-3D.json",
+        "status": "M",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 13,
+        "binary": false,
+        "content_sha256": "40cbb53cca4c428a7d874bf19235c60477d76e245c89e7dd6bdc851931bfe2a5",
+        "deletions": 4,
+        "path": "docs/CHARACTER_MOTION_CONSTRUCTION.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Boundaries",
+          "Body-aware performance: delivered slice and remaining work"
+        ]
+      },
+      {
+        "additions": 126,
+        "binary": false,
+        "content_sha256": "6856bf3d47401512f5ef7b488457f790d726626d9d5096adc7563b1ba51ed4d0",
+        "deletions": 0,
+        "path": "docs/CHARACTER_PERFORMANCE.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Body-fitted character performance",
+          "Use",
+          "Construction contract",
+          "Reach and walk",
+          "Evidence and retention",
+          "Next connected build"
+        ]
+      },
+      {
+        "additions": 20,
+        "binary": false,
+        "content_sha256": "202bf14dbb9c2343a958ae33d8253a7e6093a6a1b5be74b7d743a73391ace2d4",
+        "deletions": 2,
+        "path": "src/axm_uc/character_motion.py",
+        "status": "M",
+        "symbols": [
+          "build_character_motion",
+          "publish_motion_glb"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 301,
+        "binary": false,
+        "content_sha256": "f4523dfd179faf1f978ce0686f68331a6d68db619335a2702e779ed69bb850d6",
+        "deletions": 0,
+        "path": "src/axm_uc/character_performance.py",
+        "status": "A",
+        "symbols": [
+          "add",
+          "sub",
+          "mul",
+          "dot",
+          "cross",
+          "unit",
+          "conjugate",
+          "product",
+          "rotation_between",
+          "solve_chain",
+          "_bounds",
+          "anchor_point",
+          "_fit_joints",
+          "_segment_distance",
+          "_fit_bindings",
+          "_target_at",
+          "_chains",
+          "_compile_clip",
+          "fit_character_performance"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 24,
+        "binary": false,
+        "content_sha256": "563f7cdae9695a1e949c49d7f89e9fbc84a0056ed1a8d5dda14176d199db9f10",
+        "deletions": 5,
+        "path": "src/axm_uc/character_recipe.py",
+        "status": "M",
+        "symbols": [
+          "character_recipe_summary",
+          "compile_character_recipe",
+          "publish_character_recipe"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 3,
+        "binary": false,
+        "content_sha256": "8263311569260a00e71dd855b0e9cf2e1f964c1c28cc3efcad448f9acd17db4f",
+        "deletions": 0,
+        "path": "src/axm_uc/creator_retention.py",
+        "status": "M",
+        "symbols": [
+          "publish_retained_glb"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 169,
+        "binary": false,
+        "content_sha256": "b27e022a5bf0e316b6edd94add92def341746ec6a35ef3e75b67174220733f9e",
+        "deletions": 0,
+        "path": "tests/test_character_performance.py",
+        "status": "A",
+        "symbols": [
+          "recipe",
+          "taller",
+          "build",
+          "CharacterPerformanceTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 78,
+        "binary": false,
+        "content_sha256": "3a50e0996575013357b7a19f1acb63c66246b22c3755e7fe553c0420f3a73a4c",
+        "deletions": 0,
+        "path": "tools/character_performance_demo.py",
+        "status": "A",
+        "symbols": [
+          "main"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "11ec81e2e7690c90418296a5689375b803c93fb987a67c896484bcd74ec99768"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "configuration",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "add",
+      "anchor",
+      "aware",
+      "axiom",
+      "axm",
+      "between",
+      "bindings",
+      "body",
+      "boundaries",
+      "bounds",
+      "build",
+      "cap",
+      "capabilities",
+      "chain",
+      "chains",
+      "character",
+      "clip",
+      "codex",
+      "compile",
+      "conjugate",
+      "connected",
+      "construction",
+      "contract",
+      "creation-machine",
+      "creator",
+      "cross",
+      "delivered",
+      "demo",
+      "distance",
+      "dot",
+      "evidence",
+      "fit",
+      "fitted",
+      "from",
+      "generate",
+      "glb",
+      "joints",
+      "json",
+      "live",
+      "merge",
+      "mike",
+      "mir",
+      "motion",
+      "mul",
+      "next",
+      "performance",
+      "point",
+      "product",
+      "publish",
+      "pull",
+      "reach",
+      "recipe",
+      "remaining",
+      "request",
+      "retained",
+      "retention",
+      "rotation",
+      "segment",
+      "slice",
+      "solve",
+      "standalone",
+      "sub",
+      "summary",
+      "taller"
+    ]
+  },
+  "source": {
+    "base": "208ad661a7b9571cf4a4ba5549d42ad5cafff310",
+    "commit_subject": "Merge pull request #225 from mike-axiom-mir/codex/body-aware-performance",
+    "head": "4af36911bfc86500d3c731dc25123d18260bc21c",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}

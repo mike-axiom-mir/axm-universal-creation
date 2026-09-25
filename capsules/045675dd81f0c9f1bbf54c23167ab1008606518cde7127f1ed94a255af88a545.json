@@ -1,0 +1,259 @@
+{
+  "capsule_id": "045675dd81f0c9f1bbf54c23167ab1008606518cde7127f1ed94a255af88a545",
+  "evidence": {
+    "files": [
+      {
+        "additions": 28,
+        "binary": false,
+        "content_sha256": "ff622c88d2f26aa8120860b14a422504f187553995f68bd5477e066c09f6fdd2",
+        "deletions": 0,
+        "path": "capabilities/live/AXM-CAP-CHARACTER-CONTROLLER.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 26,
+        "binary": false,
+        "content_sha256": "4d9987ec32605a496c37c4101e67cfafec27f26e2074ccc8ebd80c80d1cb63b2",
+        "deletions": 0,
+        "path": "capabilities/live/AXM-CAP-CONSTRUCTION-SEARCH.json",
+        "status": "A",
+        "symbols": [],
+        "topics": []
+      },
+      {
+        "additions": 11,
+        "binary": false,
+        "content_sha256": "35f765155321f4730868f0add31bdb7366fdd9a2d1ec3f736d5fbfe8e9d94720",
+        "deletions": 3,
+        "path": "docs/CHARACTER_PERFORMANCE.md",
+        "status": "M",
+        "symbols": [],
+        "topics": [
+          "Runtime continuation and headless search",
+          "Further connected work"
+        ]
+      },
+      {
+        "additions": 137,
+        "binary": false,
+        "content_sha256": "8e1a20bfd2482ca83c0e2e9fd6d33d9b1e0fdacd388c106610c2c1d92d308f98",
+        "deletions": 0,
+        "path": "docs/INTENT_DIRECTED_SEARCH.md",
+        "status": "A",
+        "symbols": [],
+        "topics": [
+          "Intent-directed headless construction search",
+          "Run",
+          "Make intent executable",
+          "Search order and stopping",
+          "Continuous performance and deformation repair",
+          "Growth and boundaries"
+        ]
+      },
+      {
+        "additions": 118,
+        "binary": false,
+        "content_sha256": "b7a0d5fc0671d5c2689c17742b8df2e7ce59d9d4f14669172f3ae494f84ead29",
+        "deletions": 0,
+        "path": "src/axm_uc/character_controller.py",
+        "status": "A",
+        "symbols": [
+          "CharacterController"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 64,
+        "binary": false,
+        "content_sha256": "2a44cdacde249c6c77047c5c5710c91e424e910f5de6eb1e1cee834a020d44c9",
+        "deletions": 38,
+        "path": "src/axm_uc/character_performance.py",
+        "status": "M",
+        "symbols": [
+          "_chains",
+          "_prepare_clip",
+          "sample_performance",
+          "_compile_clip",
+          "fit_character_performance"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 311,
+        "binary": false,
+        "content_sha256": "67ca03d67e92045b2b94d9bf5b54a10d04dfba9c33a7830557d91594fe8fbe88",
+        "deletions": 0,
+        "path": "src/axm_uc/construction_search.py",
+        "status": "A",
+        "symbols": [
+          "canonical",
+          "digest",
+          "_geometry",
+          "_locate",
+          "_validate",
+          "_checks",
+          "_form",
+          "_evaluate",
+          "search_construction",
+          "publish_search"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 23,
+        "binary": false,
+        "content_sha256": "481845c2106c6fae13393454c6a92dbfe177a357fcf76550c9451248f0f47de2",
+        "deletions": 2,
+        "path": "src/axm_uc/game_pose_runtime.py",
+        "status": "M",
+        "symbols": [
+          "game_pose_runtime_catalog",
+          "GamePoseAsset"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 32,
+        "binary": false,
+        "content_sha256": "84f14839a569c2989595de841e511ab743980d2073055ce4b627f938872d807a",
+        "deletions": 0,
+        "path": "src/axm_uc/standalone_creation_capabilities.py",
+        "status": "M",
+        "symbols": [
+          "register_standalone_creation_builtins"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 88,
+        "binary": false,
+        "content_sha256": "6009eda3da39a4cb1a6b72a4797c1131cf5c51f94b782296f338396de4af0b5a",
+        "deletions": 0,
+        "path": "tests/test_character_controller.py",
+        "status": "A",
+        "symbols": [
+          "recipe",
+          "CharacterControllerTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 136,
+        "binary": false,
+        "content_sha256": "7dd48c00a55ff745a7181e3961af5e6d3886179aa5240107c5a4700954ee8c2d",
+        "deletions": 0,
+        "path": "tests/test_construction_search.py",
+        "status": "A",
+        "symbols": [
+          "contract",
+          "ConstructionSearchTests"
+        ],
+        "topics": []
+      },
+      {
+        "additions": 106,
+        "binary": false,
+        "content_sha256": "b511919d6766bd95fb3d3d05d993e3c5c9ef2e698d6383bef04ffba48f037996",
+        "deletions": 0,
+        "path": "tools/construction_search_demo.py",
+        "status": "A",
+        "symbols": [
+          "main"
+        ],
+        "topics": []
+      }
+    ],
+    "patch_sha256": "f80db20b05db83ffb4be6e348f172e66d4dcdc06c86a1469210f8b36e5e89d5e"
+  },
+  "protocol": "axm-beacon/0.1",
+  "signals": {
+    "attention_score": 8,
+    "kinds": [
+      "code",
+      "configuration",
+      "knowledge",
+      "organ-capability",
+      "test-change"
+    ],
+    "meaning": "candidate-for-inspection-not-truth",
+    "tags": [
+      "asset",
+      "axiom",
+      "axm",
+      "boundaries",
+      "builtins",
+      "canonical",
+      "cap",
+      "capabilities",
+      "catalog",
+      "chains",
+      "character",
+      "checks",
+      "clip",
+      "codex",
+      "compile",
+      "connected",
+      "construction",
+      "continuation",
+      "continuous",
+      "contract",
+      "control",
+      "controller",
+      "creation",
+      "creation-machine",
+      "deformation",
+      "demo",
+      "digest",
+      "directed",
+      "evaluate",
+      "executable",
+      "fit",
+      "form",
+      "from",
+      "further",
+      "game",
+      "geometry",
+      "growth",
+      "headless",
+      "intent",
+      "json",
+      "live",
+      "locate",
+      "make",
+      "merge",
+      "mike",
+      "mir",
+      "order",
+      "performance",
+      "pose",
+      "prepare",
+      "publish",
+      "pull",
+      "recipe",
+      "register",
+      "repair",
+      "request",
+      "run",
+      "runtime",
+      "sample",
+      "search",
+      "simulation",
+      "standalone",
+      "stopping",
+      "tools"
+    ]
+  },
+  "source": {
+    "base": "4af36911bfc86500d3c731dc25123d18260bc21c",
+    "commit_subject": "Merge pull request #226 from mike-axiom-mir/codex/intent-simulation-control",
+    "head": "54931ee61f2a3da6fe12a441ca7fe3717ba3198f",
+    "repo": "mike-axiom-mir/axm-universal-creation"
+  },
+  "transfer": {
+    "auto_apply": false,
+    "mode": "proposal-only",
+    "standalone_receiver": true
+  }
+}
